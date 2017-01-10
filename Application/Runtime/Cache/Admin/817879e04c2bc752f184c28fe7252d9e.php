@@ -1,0 +1,376 @@
+<?php if (!defined('THINK_PATH')) exit();?><script>  
+    if(!window.jQuery){
+      var path = window.location.pathname;
+      path = path.replace("/admin/","");
+      console.log(path);
+      window.location.href = "<?php echo ($host_name); ?>#" + path;
+    }
+</script>
+
+<div class="pageContent autoflow statistic">
+<div class="indexContent">
+
+ <div>
+  <table class="table-dashboard portlet-table">
+     <thead>
+       <tr>
+        <th></th>
+         <th>浏览量(PV)<span class="badge1" data-container="body" data-toggle="popover" data-placement="bottom" data-content="用户每打开一个网站页面就被记录1次。用户多次打开同一页面，浏览量值累计。">?</span></th>
+         <th>访客数(UV)<span class="badge1" data-container="body" data-toggle="popover" data-placement="bottom" data-content="一天之内您网站的独立访客数(以Cookie为依据)，一天内同一访客多次访问您网站只计算1个访客。">?</span></th>
+         <th>IP数<span class="badge1" data-container="body" data-toggle="popover" data-placement="bottom" data-content="一天之内您网站的独立访问ip数。">?</span></th>
+         <th>平均访问时长<span class="badge1" data-container="body" data-toggle="popover" data-placement="bottom" data-content="访客浏览某一页面时所花费的平均时长。">?</span></th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td>今日</td>
+         <td><?php echo ($todaylist["pv"]); ?></td>
+         <td><?php echo ($todaylist["uv"]); ?></td>
+         <td><?php echo ($todaylist["ip"]); ?></td>
+         <td class="time"><?php echo (ceil($todaylist["staytime"])); ?></td>
+       </tr>
+       <tr>
+         <td>昨日</td>
+         <td><?php if($yesterdaylist["pv"] != '' ): echo ($yesterdaylist["pv"]); else: ?> --<?php endif; ?></td>
+         <td><?php if($yesterdaylist["uv"] != '' ): echo ($yesterdaylist["uv"]); else: ?> --<?php endif; ?></td>
+         <td><?php if($yesterdaylist["ip"] != '' ): echo ($yesterdaylist["ip"]); else: ?> --<?php endif; ?></td>
+         <td class="time"><?php if($yesterdaylist["staytime"] != '' ): echo (ceil($yesterdaylist["staytime"])); else: ?> --<?php endif; ?></td>
+       </tr>
+       <tr>
+         <td>预计今日</td>
+         <td><?php if($expectedtoday["pv"] != '' ): echo ($expectedtoday["pv"]); else: ?> --<?php endif; ?></td>
+         <td><?php if($expectedtoday["uv"] != '' ): echo ($expectedtoday["uv"]); else: ?> --<?php endif; ?></td>
+         <td><?php if($expectedtoday["ip"] != '' ): echo ($expectedtoday["ip"]); else: ?> --<?php endif; ?></td>
+         <td class="time"><?php if($yesterdaylist["staytime"] != '' ): echo (ceil($expectedtoday["staytime"])); else: ?> --<?php endif; ?></td>
+       </tr>
+     </tbody>
+   </table>
+ </div>
+  <div class="portlet-tab">
+    <div class="btn-group">
+      <button type="button" data-type="1" class="btn btn-sm active">今天</button>
+      <button type="button" data-type="2" class="btn btn-sm">昨天</button>
+      <button type="button" data-type="3" class="btn btn-sm">最近7天</button>
+      <button type="button" data-type="4" class="btn btn-sm">最近30天</button>
+      <button type="button" data-type="0" class="btn btn-sm">最近3个月</button>
+    </div>
+  </div>
+  <div class="portlet light bg-inverse portlet-table">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-area-chart"></i>
+        <span class="caption-subject bold font-green-haze uppercase">
+        流量统计 </span>
+        <span class="caption-helper">今天</span>
+      </div>
+    </div>
+    <div class="portlet-body row">
+      <div id="echart" class="chart loading"></div>
+    </div>
+  </div>
+  
+  <div class="portlet-row row">
+    <div class="col-md-6">
+    </div>
+  </div>
+  <div class="portlet-row row">
+    <div class="col-md-6">
+      <div class="portlet light bg-inverse">
+        <div class="portlet-title">
+          <div class="caption">
+            <i class="fa fa-area-chart"></i>
+            <span class="caption-subject bold font-green-haze uppercase">
+            区域分布 </span>
+            <span class="caption-helper">今天</span>
+          </div>
+        </div>
+        <div class="portlet-body row">
+          <div id="echart-map" class="chart chart-map loading"></div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>
+</div>
+<script>
+   function echart(date,pageviews,visitors,type) {
+    var myChart = echarts.init(document.getElementById('echart')); 
+    if ($('#echart').size() != 1) {
+        return;
+    }
+    var w = $(window).width();
+    //if(w > 1000){
+      zoom = 100;
+    //}else if(w > 768){
+    //  zoom = 50;
+    //}else{
+    //  zoom = 25;
+    //}
+    option = {
+      tooltip : {
+        trigger: 'axis'
+      },
+      color: ['#4fa8f9','#b9dcfd'],
+      
+      legend: {
+        data:['PV','UV']
+      },
+      toolbox: {
+        show : true,
+        feature : {
+          dataZoom : {show: true},
+          saveAsImage : {show: true}
+        }
+      },
+      calculable : true,
+      dataZoom : {
+        show : true,
+        realtime : true,
+        start : 0,
+        end : zoom
+        
+      },
+      grid:{
+        x: 40,
+        x2: 40,
+        y: 50,
+        borderColor: "#eee",
+      },
+      xAxis : [
+        {
+          type : 'category',
+          boundaryGap : false,
+          data : date,
+        }
+      ],
+      yAxis : [
+        {
+          type : 'value'
+        }
+      ],
+      series : [       
+        {
+          name:'UV',
+          type:'line',
+          data: visitors,
+          itemStyle: {normal: {areaStyle: {type: 'default'}}},
+          calculable:false
+        },
+        {
+          name:'PV',
+          type:'line',
+          data: pageviews,
+          calculable:false
+        }
+      ]
+    };
+    myChart.setOption(option); 
+    window.onresize = myChart.resize;
+  }
+  function echartMap(data) {
+    var mapChart = echarts.init(document.getElementById('echart-map')); 
+    if ($('#echart-map').size() != 1) {
+        return;
+    }
+    var arr = [];
+    $(data).each(function(i,v) {
+      arr.push(v.value);
+    })
+    var max = Math.max.apply(null,arr);
+    option = {
+      dataRange: {
+        min: 0,
+        max: max,
+        x: 'left',
+        y: 'bottom',
+        text:['高','低'],           // 文本，默认为数值文本
+        calculable : false,
+        itemGap: 0
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter:function(params){                    	
+          var res = '<div class="map-chart charts-tooltip">'+
+          '<div class="charts-tooltip-header">'+
+            '<span class="category">'+params.data.name+'</span>'+
+            '<span class="indicator"></span>'+
+          '</div>'+
+          '<div class="charts-tooltip-body">'+
+            '<p class="charts-tooltip-item">'+
+              '<span class="icon" style="color:#4fa8f9">●</span>'+
+              '<span class="label">浏览量</span>'+
+              '<span class="value">'+params.data.value+'</span>'+
+            '</p>'+
+            '<p class="charts-tooltip-item">'+
+              '<span class="icon" style="color:#dd0000">●</span>'+
+              '<span class="label">占比</span>'+
+              '<span class="value">'+params.data.rate+'%</span>'+
+            '</p>'+
+          '</div>'+
+        '</div>';
+        return res;
+        }
+      },
+      series: [
+        {
+          name: 'PV',
+          type: 'map',
+          mapType: 'china',
+          roam: false,
+          itemStyle:{
+             normal:{
+              borderWidth:1,
+              borderColor:'#ddd'
+            }
+          },
+          label: {
+            normal: {
+              show: false
+            },
+            emphasis: {
+              show: true
+            }
+          },
+          data:data
+        }
+      ]
+    };
+
+    mapChart.setOption(option); 
+    $(window).resize(function(){
+      mapChart.resize();
+    })
+  }
+
+  function stattrafficline(type) {
+    var data = {type:type}
+    $.ajax({
+        url:'/admin/test/demodata',
+        data:data,
+        dataType:"json",
+        cache: false,
+        global: false,
+        success: function(e,v){
+          if(!!e.pageviews || !!e.visitors || !!e.date) {
+            echart(e.date,e.pageviews,e.visitors,type);
+            $('#echart').removeClass('loading');
+            stattrafficmap(type);
+            stattrafficlist(type,1);
+          }
+        }
+    })
+  }
+
+  function stattrafficlist(type,module){
+	  var data = {type:type,shw_module:module};
+    $.ajax({
+		    url:'/admin/test/demodata',
+		    data:data,
+		    dataType:"json",
+		    cache: false,
+        global: false,
+		    success: function(e,v){
+          //受访页面
+          var pv = '';
+          if(e.pvlist) {
+            $(e.pvlist).each(function(i,v) {
+              var pv1 = '<tr>';
+              var pv2 = '';
+              if(v.shw_cidtitle!='' && v.shw_navtitle != '') {
+                pv2='<td class="hidden-xs">'+v.shw_navtitle+'-'+v.shw_cidtitle+'</td>';
+              }else if(v.shw_navtitle == '') {
+                pv2='<td class="hidden-xs">'+v.shw_cidtitle+'</td>';
+              }else{
+            	  pv2='<td class="hidden-xs">'+v.shw_navtitle+'</td>';
+              }
+              var pv3='<td>'+v.shw_title+'</td>'+
+              '<td>'+v.num+'</td>'+
+              '<td>'+v.clientipnum+'</td>'+
+              '<td><div class="data-percentage" style="width:'+v.proportion+'%">'+v.proportion+'%</div></td>'+
+              '</tr>';
+              pv = pv+pv1+pv2+pv3;
+            })
+          }
+          $('#pvlist').html(pv);
+          //入口页面
+          var entrance = '';
+          if(e.entrancelist) {
+            $(e.entrancelist).each(function(i,v) {
+              var entrance1 = '<tr>';
+              var entrance2 = '';
+              if(v.shw_title!='') {
+                entrance2='<td>'+v.shw_cidtitle+'-'+v.shw_title+'</td>';
+              }else {
+                entrance2='<td>'+v.shw_cidtitle+'</td>';
+              }
+              var entrance3 = '<td>'+v.num+'</td>'+
+              '<td>'+v.uvnum+'</td>'+
+              '<td><div class="data-percentage" style="width:'+v.proportion+'%">'+v.proportion+'%</div></td>'+
+              '</tr>';
+              entrance = entrance+entrance1+entrance2+entrance3;
+            })
+          }
+          $('#entrancelist').html(entrance);
+          //来源网站
+          var source = ''
+          if(e.sourcelist) {
+            $(e.sourcelist).each(function(i,v) {
+              source += '<tr>'+
+              '<td>'+v.referurlhost_name+'</td>'+
+              '<td>'+v.num+'</td>'+
+              '<td>'+v.uv+'</td>'+
+              '<td><div class="data-percentage" style="width:'+v.proportion+'%">'+v.proportion+'%</div></td>'+
+              '</tr>';
+            })
+          }
+          $('#sourcelist').html(source);
+		    }
+	  })
+  }
+  function stattrafficmap(type) {
+    var data = {type:type};
+    $.ajax({
+        url:'/admin/test/locationdata',
+        dataType:"json",
+        data: data,
+        cache: false,
+        global: false,
+        success: function(e,v){
+          if(e) {
+            echartMap(e);
+            $('#echart-map').removeClass('loading');
+          }
+        }
+    })
+  }
+
+  $('.portlet-tab .btn').click(function() {
+    $(this).addClass('active').siblings().removeClass('active');
+    $('.caption-helper').text($(this).text());
+    stattrafficline($(this).data('type'));
+  })  
+  if($("#echart-script").hasClass('loaded')){
+    stattrafficline(1);
+  }else{
+    $("#echart-script").load(function(){
+      stattrafficline(1); 
+    })     
+  }
+  
+  function timeFormat(seconds) {
+    var seconds = parseInt(seconds);
+    if(!isNaN(seconds)) {
+      var s = seconds%60;
+      var m = parseInt(seconds/60);
+      var mm = m%60;
+      var h = parseInt(m/60);
+      return (h>=10?h:'0'+h)+':'+(mm>=10?mm:'0'+mm)+':'+(s>=10?s:'0'+s)
+    }
+  }
+  $(function() {
+    $('.time').each(function() {
+      $(this).text(timeFormat($(this).text()));
+    })
+    $('[data-toggle="popover"]').popover({trigger:"hover"});
+  })
+</script>

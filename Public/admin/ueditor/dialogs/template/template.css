@@ -1,0 +1,26 @@
+@import url(/min?b=./Public/admin/plugins&f=font-awesome/css/font-awesome.min.css,bootstrap/css/bootstrap-custom.css);
+@import url(/min?b=./Public/admin/css&f=ie8.css,blocks.css,plugins.css,app.css,style.css,theme-colors/default.css);
+.wrap{ padding: 10px;font-size: 14px;}
+.left{width:80%; float: left; padding: 0 10px}
+.right{width:20%;float: right;padding: 5px 10px;}
+.right .pre{height: 430px; overflow-y: auto; border: 1px solid #ccc;}
+.right .preitem{border: white 1px solid;margin: 5px 0;padding: 2px 0;}
+.right .preitem:hover{background-color: lemonChiffon;cursor: pointer;border: #ccc 1px solid;}
+.right .preitem img{display: block;margin: 0 auto;width:100px;}
+.clear{clear: both;}
+.top{line-height: 24px;padding: 5px;}
+.top label{ margin-bottom: 0}
+.bottom{height:430px;width:auto; margin: 0 auto; padding: 15px; overflow-x: hidden; overflow-y: auto;  border: #ccc 1px solid;}
+.transparent{ background: url("images/bg.gif") repeat;}
+.bottom table tr td{border:1px dashed #ccc;}
+#colorPicker{width: 17px;height: 17px;border: 1px solid #CCC;display: inline-block;border-radius: 3px;box-shadow: 2px 2px 5px #D3D6DA;}
+p{margin: 5px 0}
+table{clear:both;margin-bottom:10px;border-collapse:collapse;word-break:break-all;}
+ol{padding-left:40px; }
+.right h4{
+  text-align: center;
+  margin: 0;
+  border: 1px solid #ccc;
+  line-height: 1.6em;
+  border-bottom: 0;
+}

@@ -1,0 +1,8 @@
+﻿/*可以在这里添加你自己的css*/
+
+@import url(/min?b=./Public/admin/plugins&f=font-awesome/css/font-awesome.min.css,bootstrap/css/bootstrap-custom.css);
+@import url(/min?b=./Public/admin/css&f=ie8.css,blocks.css,plugins.css,app.css,style.css,theme-colors/default.css);
+
+body{padding: 10px !important; background: transparent;}
+.carousel .item{white-space: nowrap;}
+.carousel{overflow: hidden;}

@@ -1,0 +1,8 @@
+<script>  
+    if(!window.jQuery){
+      var path = window.location.pathname;
+      path = path.replace("/admin/","");
+      console.log(path);
+      window.location.href = "{$host_name}#" + path;
+    }
+</script>

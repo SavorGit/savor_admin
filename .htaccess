@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+#RewriteLog "rewrite.log"
+#public目录,sys目录...,不进行重写
+RewriteCond %{REQUEST_URI} !^(/public(.*)|/sys(.*))$
+#这些后缀的文件，不进行RewriteRule
+RewriteCond %{REQUEST_URI} !^.*(\.css|\.js|\.gif|\.png|\.jpg|\.jpeg|\.bmp)$
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+#RewriteRule ^(.*)$ index.php [L,E=PATH_INFO:$1]
+</IfModule>

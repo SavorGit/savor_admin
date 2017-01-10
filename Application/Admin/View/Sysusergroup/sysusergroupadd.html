@@ -1,0 +1,39 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_name}/sysusergroup/sysusergroupAdd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="acttype" value="{$acttype}">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          权限分组名：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+          <p class="form-heading">允许查看模块：</p>
+          <div class="row sm-row" data-check="list" data-parent=".pageContent">
+            <volist name="groupList" id="vo" key="n">
+	            <div class="col-xs-4 col-sm-3 col-md-2">
+		            <label>
+		              	<input type="checkbox" name="rank[]" value="{$vo.rank}" 
+		              	<volist name="vinfo.code" id="vos"> <if condition="$vo.rank eq $vos">checked  
+		              	<if condition="($vo['rank'] eq 'sysusergroup.sysusergroupList') or ($vo['rank'] eq 'user.userList')">readonly</if></if></volist>>&nbsp;{$vo.title}
+		            </label>
+	            </div>
+            </volist>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+	    <div class="pull-left">
+	    	<label>
+		     	<input type="checkbox" data-check="all" data-parent=".pageContent"> 全部
+		    </label>
+		  </div>
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>

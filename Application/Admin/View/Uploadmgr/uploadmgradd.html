@@ -1,0 +1,16 @@
+<!--使用测试 start-->
+<link href="/Public/admin/assets/plugins/dropzone/css/dropzone.css" rel="stylesheet" type="text/css"/>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/uploadmgr/uploadmgrAdd" class="dropzone" id="dropzone" enctype="multipart/form-data" style="height: 100px">
+    <!-- <input type="hidden" name="acttype" value="{$acttype}">
+    <input type="hidden" name="id" value="{$vinfo.id}"> -->
+    <!--{if $cout.vinfo.img_up !=''}<img src="/html/upload/100_100_{$cout.vinfo.img_up}" height="40" border="0" />{/if}-->
+    <div class="fallback">
+      <input type="file" name="fileup[]" multiple="multiple" />
+    </div>
+    <button class="btn btn-primary close-m" type="submit">完成上传</button>
+  </form>
+  <div class="modal-footer">
+    <button class="btn btn-primary close-m" id="finish-upload" type="button">完成上传</button>
+  </div>
+</div>

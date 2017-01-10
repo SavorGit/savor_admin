@@ -1,0 +1,62 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_name}/user/userRank" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="acttype" value="{$acttype}">
+    <input type="hidden" name="uid" value="{$vinfo.id}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row group-static">
+        <label class="col-xs-12 col-sm-2 control-label">
+          用户昵称：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <p class="form-control-static">{$vinfo.remark}</p>
+        </div>
+      </div>
+      <div class="form-group row group-static">
+        <label class="col-xs-12 col-sm-2 control-label">
+          登录名称：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <p class="form-control-static">{$vinfo.username}</p>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          用户分组：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="group" id="group" class="form-control bs-select" title="请选择分组...">
+          <!--<option value=0>未分组</option>-->
+          <volist name="groupslist" id="vo">
+            <option value="{$vo.id}" groupid="{$vo.id}" <if condition="$vinfo['gid'] eq $vo['id']">selected</if>> {$vo.name} </option>
+          </volist>
+          </select>
+          <p class="form-heading">允许查看模块：</p>
+          <div class="row sm-row" id="allow_module">
+            <volist name="userrank" id="vo" key="n">
+            <div class="col-xs-4 col-sm-3 col-md-2">
+              <input type="checkbox" name="rank[]" value="{$vo.rank}" disabled <volist name="vinfo.code" id="vos"> <if condition="$vo.rank eq $vos">checked</if></volist>>&nbsp;{$vo.title}
+            </div>
+            </volist>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>
+    </div>
+  </form>
+</div>
+
+<script>
+$(function(){
+  $("#group").change(function(){
+    var gid = $(this).find(":selected").attr("groupid");
+    $.post("{$host_name}/user/currentRank", { gid:gid },function(data){
+      $("#allow_module").empty();
+      $("#allow_module").html(data);
+      });
+  })
+})
+</script>

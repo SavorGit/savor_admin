@@ -1,0 +1,216 @@
+	/*
+  	file icon font: file
+  	Creation date: 19/02/2016 14:44
+  	*/
+
+@font-face {
+  font-family: "file";
+  src: url("./file.eot");
+  src: url("./file.eot?#iefix") format("embedded-opentype"),
+       url("./file.woff") format("woff"),
+       url("./file.ttf") format("truetype"),
+       url("./file.svg#file") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "file";
+    src: url("./file.svg#file") format("svg");
+  }
+}
+
+[class^="file-"]:before, [class*=" file-"]:before,
+[class^="file-"]:after, [class*=" file-"]:after {   
+  font-family: file;
+  font-style: normal;
+}
+
+.file-3dm:before { content: "\f100"; }
+.file-3ds:before { content: "\f101"; }
+.file-3g2:before { content: "\f102"; }
+.file-3gp:before { content: "\f103"; }
+.file-7z:before { content: "\f104"; }
+.file-aac:before { content: "\f105"; }
+.file-ai:before { content: "\f106"; }
+.file-aif:before { content: "\f107"; }
+.file-angel:before { content: "\f108"; }
+.file-apk:before { content: "\f109"; }
+.file-app:before { content: "\f10a"; }
+.file-asf:before { content: "\f10b"; }
+.file-asp:before { content: "\f10c"; }
+.file-aspx:before { content: "\f10d"; }
+.file-asx-multimedia:before { content: "\f10e"; }
+.file-avi:before { content: "\f10f"; }
+.file-bak:before { content: "\f110"; }
+.file-bat:before { content: "\f111"; }
+.file-bin:before { content: "\f112"; }
+.file-blank-file:before { content: "\f113"; }
+.file-bmp:before { content: "\f114"; }
+.file-cab:before { content: "\f115"; }
+.file-cad:before { content: "\f116"; }
+.file-cdr:before { content: "\f117"; }
+.file-cer:before { content: "\f118"; }
+.file-cfg:before { content: "\f119"; }
+.file-cfm:before { content: "\f11a"; }
+.file-cgi:before { content: "\f11b"; }
+.file-class:before { content: "\f11c"; }
+.file-com:before { content: "\f11d"; }
+.file-cpl:before { content: "\f11e"; }
+.file-cpp:before { content: "\f11f"; }
+.file-crx:before { content: "\f120"; }
+.file-csr:before { content: "\f121"; }
+.file-css:before { content: "\f122"; }
+.file-csv:before { content: "\f123"; }
+.file-cue:before { content: "\f124"; }
+.file-cur:before { content: "\f125"; }
+.file-dat:before { content: "\f126"; }
+.file-db:before { content: "\f127"; }
+.file-dbf:before { content: "\f128"; }
+.file-dds:before { content: "\f129"; }
+.file-debian-file:before { content: "\f12a"; }
+.file-dem:before { content: "\f12b"; }
+.file-demon:before { content: "\f12c"; }
+.file-dll:before { content: "\f12d"; }
+.file-dmg:before { content: "\f12e"; }
+.file-dmp:before { content: "\f12f"; }
+.file-doc:before { content: "\f130"; }
+.file-docx:before { content: "\f131"; }
+.file-drv:before { content: "\f132"; }
+.file-dtd:before { content: "\f133"; }
+.file-dwg:before { content: "\f134"; }
+.file-dxf:before { content: "\f135"; }
+.file-elf-file:before { content: "\f136"; }
+.file-elf:before { content: "\f137"; }
+.file-eml-file:before { content: "\f138"; }
+.file-eps:before { content: "\f139"; }
+.file-eps:before { content: "\f13a"; }
+.file-exe:before { content: "\f13b"; }
+.file-fla:before { content: "\f13c"; }
+.file-flash:before { content: "\f13d"; }
+.file-flv:before { content: "\f13e"; }
+.file-fnt:before { content: "\f13f"; }
+.file-fon:before { content: "\f140"; }
+.file-gam:before { content: "\f141"; }
+.file-gbr:before { content: "\f142"; }
+.file-ged:before { content: "\f143"; }
+.file-gif:before { content: "\f144"; }
+.file-gpx:before { content: "\f145"; }
+.file-gz:before { content: "\f146"; }
+.file-gzip:before { content: "\f147"; }
+.file-hqz:before { content: "\f148"; }
+.file-html:before { content: "\f149"; }
+.file-ibooks:before { content: "\f14a"; }
+.file-icns:before { content: "\f14b"; }
+.file-ico:before { content: "\f14c"; }
+.file-ics:before { content: "\f14d"; }
+.file-iff:before { content: "\f14e"; }
+.file-indd:before { content: "\f14f"; }
+.file-ipa-file:before { content: "\f150"; }
+.file-iso:before { content: "\f151"; }
+.file-iso:before { content: "\f152"; }
+.file-jar:before { content: "\f153"; }
+.file-jpg-image:before { content: "\f154"; }
+.file-js:before { content: "\f155"; }
+.file-jsp:before { content: "\f156"; }
+.file-key:before { content: "\f157"; }
+.file-kml:before { content: "\f158"; }
+.file-kmz:before { content: "\f159"; }
+.file-lnk:before { content: "\f15a"; }
+.file-log:before { content: "\f15b"; }
+.file-lua:before { content: "\f15c"; }
+.file-m3u:before { content: "\f15d"; }
+.file-m4a:before { content: "\f15e"; }
+.file-m4v:before { content: "\f15f"; }
+.file-mach-o-file:before { content: "\f160"; }
+.file-mach-o:before { content: "\f161"; }
+.file-max:before { content: "\f162"; }
+.file-mdb:before { content: "\f163"; }
+.file-mdf:before { content: "\f164"; }
+.file-mid:before { content: "\f165"; }
+.file-mim:before { content: "\f166"; }
+.file-mov:before { content: "\f167"; }
+.file-mp3:before { content: "\f168"; }
+.file-mp4:before { content: "\f169"; }
+.file-mpa:before { content: "\f16a"; }
+.file-mpg:before { content: "\f16b"; }
+.file-msg-file:before { content: "\f16c"; }
+.file-msg:before { content: "\f16d"; }
+.file-msi:before { content: "\f16e"; }
+.file-nes:before { content: "\f16f"; }
+.file-object:before { content: "\f170"; }
+.file-odb:before { content: "\f171"; }
+.file-odc:before { content: "\f172"; }
+.file-odf:before { content: "\f173"; }
+.file-odg:before { content: "\f174"; }
+.file-odi:before { content: "\f175"; }
+.file-odp:before { content: "\f176"; }
+.file-ods:before { content: "\f177"; }
+.file-odt:before { content: "\f178"; }
+.file-odt:before { content: "\f179"; }
+.file-odx:before { content: "\f17a"; }
+.file-ogg:before { content: "\f17b"; }
+.file-otf:before { content: "\f17c"; }
+.file-otf:before { content: "\f17d"; }
+.file-pages:before { content: "\f17e"; }
+.file-pct:before { content: "\f17f"; }
+.file-pdb:before { content: "\f180"; }
+.file-pdf:before { content: "\f181"; }
+.file-pif:before { content: "\f182"; }
+.file-pkg:before { content: "\f183"; }
+.file-pl:before { content: "\f184"; }
+.file-png:before { content: "\f185"; }
+.file-pps:before { content: "\f186"; }
+.file-ppt:before { content: "\f187"; }
+.file-pptx:before { content: "\f188"; }
+.file-ps:before { content: "\f189"; }
+.file-psd:before { content: "\f18a"; }
+.file-pub:before { content: "\f18b"; }
+.file-python:before { content: "\f18c"; }
+.file-ra:before { content: "\f18d"; }
+.file-rar:before { content: "\f18e"; }
+.file-raw:before { content: "\f18f"; }
+.file-rm:before { content: "\f190"; }
+.file-rom-file:before { content: "\f191"; }
+.file-rom:before { content: "\f192"; }
+.file-rpm:before { content: "\f193"; }
+.file-rss:before { content: "\f194"; }
+.file-rtf-icon-format:before { content: "\f195"; }
+.file-sav:before { content: "\f196"; }
+.file-sdf:before { content: "\f197"; }
+.file-sitx:before { content: "\f198"; }
+.file-sql:before { content: "\f199"; }
+.file-sql-1:before { content: "\f19a"; }
+.file-srt:before { content: "\f19b"; }
+.file-svg:before { content: "\f19c"; }
+.file-swf:before { content: "\f19d"; }
+.file-sys:before { content: "\f19e"; }
+.file-tar:before { content: "\f19f"; }
+.file-tex:before { content: "\f1a0"; }
+.file-tga:before { content: "\f1a1"; }
+.file-thm:before { content: "\f1a2"; }
+.file-tiff:before { content: "\f1a3"; }
+.file-tmp-icon:before { content: "\f1a4"; }
+.file-torrent:before { content: "\f1a5"; }
+.file-ttf:before { content: "\f1a6"; }
+.file-txt:before { content: "\f1a7"; }
+.file-uue:before { content: "\f1a8"; }
+.file-vb:before { content: "\f1a9"; }
+.file-vcd:before { content: "\f1aa"; }
+.file-vcf:before { content: "\f1ab"; }
+.file-vob:before { content: "\f1ac"; }
+.file-wav:before { content: "\f1ad"; }
+.file-wma:before { content: "\f1ae"; }
+.file-wmv:before { content: "\f1af"; }
+.file-wpd:before { content: "\f1b0"; }
+.file-wps:before { content: "\f1b1"; }
+.file-wsf:before { content: "\f1b2"; }
+.file-xhtml-icon:before { content: "\f1b3"; }
+.file-xlr:before { content: "\f1b4"; }
+.file-xls:before { content: "\f1b5"; }
+.file-xlsx:before { content: "\f1b6"; }
+.file-xml:before { content: "\f1b7"; }
+.file-yuv:before { content: "\f1b8"; }
+.file-zip:before { content: "\f1b9"; }
+.file-zip-file:before { content: "\f1ba"; }

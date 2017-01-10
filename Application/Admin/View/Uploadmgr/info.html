@@ -1,0 +1,51 @@
+<div class="pageContent">
+  <!-- test -->
+  <div class="pageFormContent modal-body">
+    <div class="row dz-mb-100">
+      <div class="dz-file-show">
+        <if condition="($file['shw_fileext'] eq 'png') or ($file['shw_fileext'] eq 'jpg') or ($file['shw_fileext'] eq 'gif') or ($file['shw_fileext'] eq 'jpeg')">
+          <img src="{$imgup_show}{$file.shw_savepath}/{$file.shw_savename}"/>
+        <else/>
+          <i class="file-{$file.shw_fileext}"></i>
+        </if>
+      </div>
+      <div class="dz-file-info">
+        <ul>
+          <li><span class="tit">文件路经：</span><input class="form-control dz-url" type="text" value="{$imgup_show}{$file.shw_savepath}/{$file.shw_savename}" readonly></li>
+          <li><span class="tit">文件标题：</span>{$file.shw_title}</li>
+          <li><span class="tit">文件类型：</span> {$file.shw_fileext}</li>
+          <li><span class="tit">文件大小：</span> <span data-size="{$file.shw_size}"></span></li>
+          <if condition="($file['shw_fileext'] eq 'png') or ($file['shw_fileext'] eq 'jpg') or ($file['shw_fileext'] eq 'gif') or ($file['shw_fileext'] eq 'jpeg')">
+            <li><span class="tit">图片尺寸：</span>{$file.shw_width} x {$file.shw_height}</li>
+          </if>
+          <li><span class="tit">发布日期：</span> {$file.shw_savepath}</li>
+          
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(function(){
+    $('.dz-url').click(function(){
+      $(this).select();
+    })
+    $("[data-size]").each(function(){
+      var $bytes = parseInt($(this).data("size"));
+        if ($bytes >= 1073741824) {
+            $bytes = '<strong>' + parseFloat($bytes / 1073741824).toFixed(1) + '</strong> GB';
+        }else if ($bytes >= 100000){
+            $bytes = '<strong>' + parseFloat($bytes / 1048576).toFixed(1) + '</strong> MB';
+        }else if ($bytes >= 1024){
+            $bytes = '<strong>' + parseFloat($bytes / 1024).toFixed(1) + '</strong> KB';
+        }else if ($bytes > 1){
+            $bytes = '<strong>' + $bytes + '</strong> B';
+        }else if ($bytes == 1){
+            $bytes = '<strong>' + $bytes + '</strong> B';
+        }else{
+            $bytes = '<strong>0</strong> B';
+        }
+      $(this).html($bytes);
+    })
+  })
+</script>

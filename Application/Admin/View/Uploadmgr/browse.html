@@ -1,0 +1,390 @@
+
+
+<div class="pageContent">
+  <div id="dz-filecontainer{$multiple}">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#dropbase{$multiple}" data-toggle="tab"><span>上传</span></a></li>
+      <li class=""><a href="#files{$multiple}" data-toggle="tab"><span>文件库</span></a></li>
+      <li class="pull-right"><a data-dismiss="modal" href="#">&times;</a></li>
+    </ul>
+    <div class="tab-content">
+      <div id="dropbase{$multiple}" class="tab-pane fade active in">
+        <div class="dropbase">
+          <form method="post" action="{$host_name}/uploadmgr/uploadmgrAdd" id="dropzone2{$multiple}" enctype="multipart/form-data"></form>
+          <h2>拖拽文件到这里或点击上传</h2>
+          <h4>(文件上传不能超过<if condition='$_REQUEST.s_type eq "image"'>300KB<else/>2MB</if>)</h4>
+          <div class="btn btn-primary btn-sm browse">
+            <span><i class="fa fa-upload"></i> 点击上传</span>
+            <div id="file-input2{$multiple}"></div>
+          </div>
+        </div> 
+      </div>  
+      <!--  -->
+      <div id="files{$multiple}" class="files-container tab-pane fade">
+        <textarea class="load-tmp hidden"></textarea>
+        <div class="dz-file-viewport">
+          <form id="file-list{$multiple}" class="dropzone clearfix" data-column="4">
+            <volist name="uploadmgrlist" id="vlist">
+              <div class="dz-preview dz-file-preview" data-list-file>
+                <div class="file-content" data-wh="{$vlist.shw_width} x {$vlist.shw_height}" data-title="{$vlist.shw_title}" data-src="/Public/uploads/{$vlist.shw_savepath}/{$vlist.shw_savename}">
+                  <div class="dz-overlay hidden"></div>
+                  <label class="dz-check">
+                    <input type="checkbox" value="{$vlist.id}" name="selected[]">
+                    <span><i class="fa fa-check"></i></span>
+                  </label>
+                  <div class="dz-details" title="{$vlist.shw_title}">
+                    <if condition="($vlist['shw_fileext'] eq 'png') or ($vlist['shw_fileext'] eq 'jpg') or ($vlist['shw_fileext'] eq 'gif') or ($vlist['shw_fileext'] eq 'jpeg')">
+                      <if condition="($vlist.shw_width gt 160) && ($vlist['shw_height'] gt 160)">
+                        <img src="/Public/uploads/{$vlist.shw_savepath}/160x160_{$vlist.shw_savename}"/>
+                      <else/>
+                        <img class="dz-nthumb" src="/Public/uploads/{$vlist.shw_savepath}/{$vlist.shw_savename}"/>
+                      </if>
+                    <else/>
+                    <div class="dz-file">
+                      <i class="file-{$vlist.shw_fileext}"></i>
+                      <span>{$vlist.shw_title}</span>
+                    </div>
+                    </if>
+                  </div>
+                  <div class="dz-info clearfix">  
+                    <div class="dz-size" data-dz-size data-size="{$vlist.shw_size}"></div>
+                    <a warn="警告" title="你确定要删除这文件吗？" target="ajaxTodo" href="{$host_name}/uploadmgr/uploadmgrDel?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon pull-right del-file"><span><i class="fa fa-trash"></i></span></a>
+                    <!-- <a title="文件信息" href="{$host_name}/uploadmgr/uploadmgrInfo?id={$vlist.id}" target="dialog" class="btn btn-primary btn-icon pull-right" data-dz-remove><i class='fa fa-search'></i></a> -->
+                  </div>
+                </div>
+              </div>
+            </volist>
+          </form>
+          <div class="loadpoint" data-load=0></div>
+        </div>
+        <div class="modal-footer">
+          <div class="multiple-select pull-left hidden">
+            已选择<strong>0</strong>图片
+          </div>
+          <ul class="dz-info-main pull-left">
+            <li>
+              <span class="tit">标题：</span>
+              <span data-file-title></span>
+            </li>
+            <li <if condition="$_REQUEST.s_type neq 'image' or ($_REQUEST['s_type'] neq 'video')">class="hidden"</if>>
+              <span class="tit ml-10">尺寸：</span>
+              <span data-file-wh></span>
+            </li>
+          </ul>
+          <button class="btn btn-primary btn-sm" type="button" data-set-image>
+          <if condition="$multiple eq ''">
+            <if condition="$_REQUEST.s_type eq 'image'">
+              设为展示图片
+            <else/>
+              选择文件
+            </if>
+          <else/>
+            添加到内容
+          </if></button> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="preview-template2{$multiple}" style="display: none;">
+  
+  <div class="dz-preview dz-file-preview">
+    <div class="file-content dz-file-uploading">
+      <div class="dz-details">    
+        <img data-dz-thumbnail />
+        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+      </div>
+      <div class="dz-info clearfix">  
+        <div class="dz-size" data-dz-size></div>
+        <div class="btn btn-danger btn-icon dz-remove pull-right" data-dz-remove><i class='fa fa-trash'></i></div>
+      </div>
+      <div class="dz-success-mark"><i class="fa fa-check-circle"></i></div>
+      <div class="dz-error-message"><span data-dz-errormessage></span></div>
+    </div>
+  </div>
+      <!-- 
+      <div class="dz-error-mark"><span>✘</span></div> -->
+</div>
+<div class="upload-overlay hidden"></div>
+
+
+<script type="text/javascript">
+    var url = '{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type={$_REQUEST.s_type}<if condition='$_REQUEST.s_type eq "ext"'>&s_ext={$_REQUEST.s_ext}</if><if condition="$multiple neq ''">&multiple=2</if>';
+    var success = {};
+    var error = {}
+    //var maxSize = <if condition='$_REQUEST.s_type eq "image"'>307200<else/>2097152</if>;
+    var myDropzone2 = new Dropzone('#dropzone2{$multiple}', {
+        paramName: "fileup[]",
+        url: "{$host_name}/uploadmgr/uploadmgrAdd",
+        method: "post",
+        maxFilesize: <if condition='$_REQUEST.s_type eq "image"'>0.3<else/>2</if>,
+        //uploadMultiple: true,
+        //autoProcessQueue: false,
+        previewsContainer: "#file-list{$multiple}",
+        hiddenInputContainer: "#file-input2{$multiple}",
+        previewTemplate: $("#preview-template2{$multiple}").html(),
+        acceptedFiles: "<if condition='$_REQUEST.s_type eq "ext"'>.{$_REQUEST.s_ext}<else/><if condition='$_REQUEST.s_type eq "other"'>.pdf,.zip,.rar,.txt,.doc,.docx,.ppt,.xls,.xlsx,.csv<else/>{$_REQUEST.s_type}/*</if></if>",
+        // accept: function(file, done) {
+        //   ////console.log(file);
+        //   if(file.size > maxSize){
+        //     done("文件已超过<if condition='$_REQUEST.s_type eq "image"'>300K<else/>2M</if>B!不能上传。");
+        //     setTimeout(function(){
+        //       $(file.previewElement).remove();
+        //     },550)
+        //   }else{
+        //     done();
+        //   }
+        // },
+        init: function() {
+          this.on("addedfile", function(file) {
+            $('a[href="#files{$multiple}"]').tab('show');
+            $(".upload-overlay").removeClass("hidden");
+             var t = file.previewElement;
+             var n = file.name;
+             var split = n.split('.');
+             var sl = split.length;
+             var ext = split[sl-1].toLowerCase();
+             var name = n.replace('.'+ext, '');
+             ////console.log(ext);
+             var icon = Dropzone.createElement("<div class='dz-file'><i class='file-"+ext+"'></i><span>"+name+"</span></div>");      
+             if(ext != 'jpg' && ext != 'gif' && ext != 'jpeg' && ext != 'png'){           
+               var r = t.querySelector(".dz-details").appendChild(icon);
+               ////console.log(r);
+             }
+            
+          });
+        },
+        success: function(a,v){
+          
+          var m;
+          if(v){
+            var m = eval("("+v+")");
+            if(m.status == 0){
+              $(a.previewElement).find(".dz-error-message").addClass("show");
+              $(a.previewElement).find("[data-dz-errormessage]").text(m.info);
+            }else if(m.status == 1){
+              success[m.name] = 1;
+              $(a.previewElement).addClass("dz-success");
+              $(a.previewElement).find('.file-content').append("<div class='dz-overlay'></div>");
+            }else if(m.status == 2){
+              //$(a.previewElement).addClass("dz-error");
+              $(a.previewElement).find(".dz-error-message").addClass("show");
+              $(a.previewElement).find("[data-dz-errormessage]").text("上传失败！");
+            }
+
+          }       
+          
+        },
+        queuecomplete: function(){
+          $(".upload-overlay").addClass("hidden"); 
+          if(to){
+            clearTimeout(to);
+          }
+          var to = setTimeout(function(){
+            if(countObj(success) > 0){
+              
+              $('#file-list{$multiple}').load(url+" #file-list{$multiple} .dz-preview", function(){
+                ////console.log('loaded');
+                var success = {};
+                getDataSize()
+                initUI($(this));
+                loadFileAjax(1);
+                $("#file{$multiple} .loadpoint").data("next",2);
+
+              });
+              //$("#file-list{$multiple} .dz-overlay").addClass("hidden");
+            }else{
+              $("#file-list{$multiple} .dz-error").remove();
+              $("#file-list{$multiple} .dz-overlay").addClass("hidden");
+            }
+          },2500)
+        }   
+    });
+    if($(".del-select")){
+      $(".del-select").click(function(){
+        var msg = $(this).data("msg");
+        var form = $(this).data("form")
+        alertMsg.confirm(msg,{okCall: function(){$(form).submit()}})
+      })
+    }
+    loadFileAjax(1);
+    function loadFileAjax(i){
+      $("#files{$multiple} .loadpoint").data("load",0);
+      $("#background").addClass("hidden");
+      $("#progressBar").addClass("hidden");
+      i = i + 1;
+      $('#files{$multiple} .load-tmp').load(url+"&pageNum="+i+" #file-list{$multiple} .dz-preview", function(){
+        var data = $(this).html();
+        ////console.log(data);
+        $("#background").removeClass("hidden");
+        $("#progressBar").removeClass("hidden");    
+        if(data != ""){
+          ////console.log("load");
+          $("#file-list{$multiple}").append(data);
+          getDataSize();
+          initUI($("#files{$multiple}"));
+          $("#files{$multiple} .loadpoint").data("next",i);
+          $("#files{$multiple} .loadpoint").data("load",1);
+        }        
+      })
+    }
+    function col(){
+      bw = $(window).width();
+      var w = $("#file-list{$multiple}").width();
+      var iw = parseInt(w / 120);
+      if (iw > 10) {
+        iw = 10;
+      }
+      if (iw < 2) {
+        iw = 2;
+      }
+      //console.log(iw);
+      $("#file-list{$multiple}").attr("data-column", iw);
+    }
+    col();
+    $(window).on('resize', function(e) {
+      col();
+    });
+    getDataSize();
+    function getDataSize(){
+      $("[data-size]").each(function(){
+        var $bytes = parseInt($(this).data("size"));
+          if ($bytes >= 1073741824) {
+              $bytes = '<strong>' + parseFloat($bytes / 1073741824).toFixed(1) + '</strong> GB';
+          }else if ($bytes >= 100000){
+              $bytes = '<strong>' + parseFloat($bytes / 1048576).toFixed(1) + '</strong> MB';
+          }else if ($bytes >= 1024){
+              $bytes = '<strong>' + parseFloat($bytes / 1024).toFixed(1) + '</strong> KB';
+          }else if ($bytes > 1){
+              $bytes = '<strong>' + $bytes + '</strong> B';
+          }else if ($bytes == 1){
+              $bytes = '<strong>' + $bytes + '</strong> B';
+          }else{
+              $bytes = '<strong>0</strong> B';
+          }
+        $(this).html($bytes);
+      })
+      
+    }
+    $('a[href="#files{$multiple}"]').on('shown.bs.tab',function(){
+      col();
+      $("#dz-filecontainer{$multiple} .dz-file-viewport").animate({scrollTop: 0});
+    })
+    $('a[href="#files{$multiple}"]').on('show.bs.tab',function(){
+      var h = $(window).height();
+      $("#dz-filecontainer{$multiple} .dz-file-viewport").css("max-height",h - 170)
+    })
+    var mult = "{$multiple}";
+    var itv;
+    var cntrlIsPressed = false;
+    $(document).keydown(function(event){
+      if(event.which=="17" && mult != ""){
+        cntrlIsPressed = true;
+      }else{
+        cntrlIsPressed = false;
+      }
+    });
+
+    $(document).keyup(function(){
+      cntrlIsPressed = false;
+    });
+
+    $('#dz-filecontainer{$multiple}').on("click","#files{$multiple} .dz-details",function(){
+      if(!cntrlIsPressed){
+        $('#files{$multiple}').find('input').prop("checked",false);
+        $(this).parent().find('input').prop("checked",true);       
+      }else{
+        if($(this).parent().find('input').prop("checked")){
+          $(this).parent().find('input').prop("checked",false);
+        }else{
+          $(this).parent().find('input').prop("checked",true);
+        }
+      }
+      getImageInfo($(this));
+    });
+    $(document).on("click","#files{$multiple} input",function(){
+      if(!cntrlIsPressed){
+        $('#files{$multiple}').find('input').prop("checked",false);
+        $(this).prop("checked",true);     
+      }
+      getImageInfo($(this));
+    });
+    //领取图片数据
+    function getImageInfo($this){
+      $('#files{$multiple}').find('.file-content').removeClass("active");
+      var $file = $this.closest('.file-content');
+      $file.addClass("active");
+      var $ck = $('#files{$multiple} input:checked')
+      var count = $ck.length;
+      var btn = $('#dz-filecontainer{$multiple} [data-set-image]');
+      var mselect = $("#dz-filecontainer{$multiple} .multiple-select");
+      var prop = $("#dz-filecontainer{$multiple} .dz-info-main");
+      if (count == 1) {
+        var $file = $ck.closest('.file-content');
+        var title = $file.data("title");
+        var wh = $file.data("wh");
+        var src = $file.data("src");
+        $("#files{$multiple}").find("[data-file-title]").text(title);
+        $("#files{$multiple}").find("[data-file-wh]").text(wh);
+        btn.data("src",src);
+        btn.data("name",title);
+        mselect.addClass("hidden");
+        prop.removeClass("hidden");
+      }else{
+        var files = [];
+        var titles = [];
+        $('#files{$multiple} input:checked').each(function(e){
+          var f = $(this).closest('.file-content');
+          var src = f.data("src");
+          var title = f.data("title");
+          files.push(src);
+          titles.push(title);
+        })
+        btn.data("src",files);
+        btn.data("name",titles);
+        //console.log(btn.data("src"));
+        mselect.find("strong").text(count);
+        prop.addClass("hidden");
+        mselect.removeClass("hidden");
+      }
+      
+    }
+    $(document).on("click",".del-file", function(){
+      clearInterval(itv);
+      var itv = setInterval(function(){
+        var cl = $('.alertContent').attr("class");
+        //console.log(cl);
+        if(cl == 'alertContent correct'){
+          clearInterval(itv);
+
+          $('#file-list{$multiple}').load(url+" #file-list{$multiple} .dz-preview", function(){
+            //console.log('loaded');
+            getDataSize();
+            initUI($(this));
+            loadFileAjax(1);
+          })
+        }
+      },50)
+    })
+    $("#files{$multiple} .dz-file-viewport").scroll(function(){
+      //console.log("scroll")
+      var t = $("#file-list{$multiple}").height();
+      var c = $(this).height();
+      var s = $(this).scrollTop();
+      var n = $("#files{$multiple} .loadpoint").data("next");
+      var l = $("#files{$multiple} .loadpoint").data("load");
+      //console.log(s+"-"+(t-c))
+      if((t-c-100) < s && l == "1"){
+        loadFileAjax(n);         
+      }
+    })
+
+    function reloadFile(){
+      $('#file-list{$multiple}').load(url+" #file-list{$multiple} .dz-preview", function(){
+        //console.log('loaded');
+        getDataSize();
+        initUI($(this));
+        loadFileAjax(1);
+      })
+    }
+</script>
