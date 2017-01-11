@@ -28,7 +28,11 @@ $config = array(
     'HTML_FILE_SUFFIX' => '.html',// 默认静态文件后缀
     'HOST_NAME'=>'http://'.$_SERVER['HTTP_HOST'],
     'SITE_NAME'=> '寻味后台管理',
+    'SHOW_ERROR_MSG' =>  true, //显示错误信息
+
 );
+
+
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
     $config['TMPL_EXCEPTION_FILE'] = APP_PATH.'Site/View/Public/404.html';// 异常页面的模板文件

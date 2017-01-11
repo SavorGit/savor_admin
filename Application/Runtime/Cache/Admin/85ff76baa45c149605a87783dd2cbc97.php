@@ -200,7 +200,6 @@
   <script src="<?php echo ($site_host_name); ?>/min?b=./Public/admin/assets/plugins&f=bootstrap/js/bootstrap.js,lazyload.js,bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js,bootstrap-select/bootstrap-select.min.js,jquery-tags-input/jquery.tagsinput.min.js,bootstrap-switch/js/bootstrap-switch.min.js,footable/footable.js,dropzone/dropzone.js,hammer.min.js,jquery.hammer.js"></script>
   <script type="text/javascript" src="<?php echo ($site_host_name); ?>/min?b=./Public/admin/ueditor&f=ueditor.config.js,ueditor.all.js"></script>
   <script src="<?php echo ($site_host_name); ?>/min?b=./Public/admin/assets/plugins/dwzjs&f=dwz.js,dwz.regional.zh.js" type="text/javascript"></script>
-
   <script src="/Public/admin/assets/js/main.js"></script>
   <script type="text/javascript">
   function addEvent(elem, event, fn) {
