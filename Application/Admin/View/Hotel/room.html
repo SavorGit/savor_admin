@@ -1,0 +1,88 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hotel/room" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/addRoom" title="新增包间" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="name" value="{$name}" placeholder="包间名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>酒店ID</th>
+              <th>包间ID</th>
+              <th>酒店名称</th>
+              <th>包间名称</th>
+              <th>包间类型</th>
+              <th>备注</th>
+              <th>创建时间</th>
+              <th>最后更新时间</th>
+              <th>删除状态</th>
+              <th>冻结状态</th>         
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="酒店ID">{$vlist.hotel_id}</td>
+              <td data-title="包间ID">{$vlist.id}</td>
+              <td data-title="酒店名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.name}</td>
+              <td data-title="包间类型">{$vlist.type}</td>
+              <td data-title="备注">{$vlist.remark}</td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="最后更新时间">{$vlist.update_time}</td>
+
+              <td data-title="删除状态">
+                <if condition="$vlist.flag eq 1"> 删除  <else/> 正常 </if> 
+              </td>
+
+              <td data-title="冻结状态">
+                <if condition="$vlist.state eq 1"> 正常
+                 <elseif condition="$vlist.state eq 2"/> 冻结 
+                 <else />报损
+                 </if> 
+              </td>
+              
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/addRoom?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

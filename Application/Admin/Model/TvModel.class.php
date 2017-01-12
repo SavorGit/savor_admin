@@ -1,6 +1,6 @@
 <?php
 /**
- *酒店model
+ *TV model
  *@author  hongwei <[<email address>]>
  * 
  */
@@ -8,8 +8,9 @@ namespace Admin\Model;
 
 use Common\Lib\Page;
 use Admin\Model\BaseModel;
+use Admin\Model\BoxModel;
 
-class HotelModel extends BaseModel
+class TvModel extends BaseModel
 {
 
 	public function getList($where, $order='id desc', $start=0,$size=5)
@@ -37,40 +38,39 @@ class HotelModel extends BaseModel
 
 
 
-
-
 	/**
-	 * 酒店ID转换为酒店名称
+	 * 机顶盒ID转换为机顶盒名称
 	 * @param  array  $result [description]
 	 * @return [type]         [description]
 	 */
-	public function hotelIdToName($result=[])
+	public function boxIdToBoxName($result=[])
 	{
 		if(!$result || !is_array($result))
 		{
 			return [];
 		}
 
-		$arrHotelId = [];
+		$boxId = [];
 
 		foreach ($result as $value) 
 		{
-			$arrHotelId[] = $value['hotel_id'];
+			$boxId[] = $value['box_id'];
 		}
 
 		$filter       = [];
-		$filter['id'] = ['IN',$arrHotelId];
+		$filter['id'] = ['IN',$boxId];
 
+		$boxModel = new BoxModel;
 		
-		$arrHotel = $this->getAll('id,name',$filter);
-
+		$arrBox = $boxModel->getAll('id,name',$filter);
+		
 		foreach ($result as &$value) 
 		{
-			foreach ($arrHotel as  $row) 
+			foreach ($arrBox as  $row) 
 			{
-				if($value['hotel_id'] == $row['id'])
+				if($value['box_id'] == $row['id'])
 				{
-					$value['hotel_name'] = $row['name'];
+					$value['box_name'] = $row['name'];
 				}
 			}
 		}
@@ -78,6 +78,7 @@ class HotelModel extends BaseModel
 		return $result;
 
 	}//End Function
+
 
 
 

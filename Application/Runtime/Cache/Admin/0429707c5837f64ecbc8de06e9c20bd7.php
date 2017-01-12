@@ -43,8 +43,10 @@
               <!-- <th class="table-checkbox">
                 <input type="checkbox" data-check="all" data-parent=".table" />
               </th> -->
+              <th>酒店ID</th>
               <th>酒店名称</th>
               <th>酒店地址</th>
+              <th>酒店区域</th>
               <th>酒店维护人</th>
               <th>手机</th>
               <th>固定电话</th>
@@ -54,6 +56,7 @@
               <th>酒楼状态</th>
               <th>状态变更说明</th>
               <th>备注</th>
+              <th>GPS</th>
               <th>创建日期</th>
               <th>最后更新日期</th>
               <th>删除状态</th>
@@ -65,8 +68,10 @@
               <!-- <td class="table-checkbox">
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
+              <td data-title="酒店ID"><?php echo ($vlist["id"]); ?></td>
               <td data-title="酒店名称"><?php echo ($vlist["name"]); ?></td>
               <td data-title="酒店地址"><?php echo ($vlist["addr"]); ?></td>
+              <td data-title="酒店区域"><?php echo ($vlist["area_name"]); ?></td>
               <td data-title="酒店维护人"><?php echo ($vlist["contactor"]); ?></td>
               <td data-title="手机"><?php echo ($vlist["mobile"]); ?></td>
               <td data-title="固定电话"><?php echo ($vlist["tel"]); ?></td>
@@ -82,6 +87,7 @@
               </td>
               <td data-title="状态变更说明"><?php echo ($vlist["state_change_reason"]); ?></td>
               <td data-title="备注"><?php echo ($vlist["remark"]); ?></td>
+              <td data-title="备注"><?php echo ($vlist["gps"]); ?></td>
               <td data-title="创建日期"><?php echo ($vlist["create_time"]); ?></td>
               <td data-title="最后更新日期"><?php echo ($vlist["update_time"]); ?></td>
               <td data-title="删除状态">

@@ -25,6 +25,19 @@
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
+          酒店区域:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="area_id" class="form-control bs-select" title="请选择..." required>
+              
+             <?php if(is_array($area)): $i = 0; $__LIST__ = $area;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$row): $mod = ($i % 2 );++$i;?><option value="<?php echo ($row['id']); ?>" <?php if($row['id'] == $vinfo['area_id']): ?>selected<?php endif; ?> > <?php echo ($row['name']); ?> </option><?php endforeach; endif; else: echo "" ;endif; ?>
+
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
          酒店维护人：
         </label>
         <div class="col-xs-12 col-sm-10">
@@ -120,6 +133,14 @@
         </div>
       </div>
 
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         GPS:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="gps">
+        </div>
+      </div>
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
