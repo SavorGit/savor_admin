@@ -32,8 +32,8 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
-              <th>酒店ID</th>
               <th>包间ID</th>
+              <th>酒店ID</th>
               <th>酒店名称</th>
               <th>包间名称</th>
               <th>包间类型</th>
@@ -48,11 +48,16 @@
           <tbody data-check="list" data-parent=".table">
             <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td data-title="酒店ID">{$vlist.hotel_id}</td>
               <td data-title="包间ID">{$vlist.id}</td>
+              <td data-title="酒店ID">{$vlist.hotel_id}</td>
               <td data-title="酒店名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.name}</td>
-              <td data-title="包间类型">{$vlist.type}</td>
+              <td data-title="包间类型">
+	              <if condition="$vlist.type eq 1"> 包间
+	              <elseif condition="$vlist.type eq 2"/>大厅
+	              <else/> 等候区 
+	              </if> 
+              </td>
               <td data-title="备注">{$vlist.remark}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="最后更新时间">{$vlist.update_time}</td>
