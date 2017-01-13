@@ -10,17 +10,17 @@
           包间ID:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" name="room_id" minlength="2" maxlength="20" value="<?php echo ($vinfo["room_id"]); ?>" required>
+           <input type="text" class="form-control" name="room_id" minlength="1" maxlength="20"  readonly="readonly" value="<?php echo ($room_id); ?>" required>
         </div>
       </div>
 
 
-      <?php if(!empty($vinfo['room_name'])): ?><div class="form-group row">
+      <?php if(!empty($room_name)): ?><div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           包间名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="<?php echo ($vinfo["room_name"]); ?>" >
+           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="<?php echo ($room_name); ?>" >
         </div>
       </div><?php endif; ?> 
 

@@ -47,9 +47,10 @@
               <th>酒店名称</th>
               <th>酒店地址</th>
               <th>酒店区域</th>
-              <th>酒店维护人</th>
+              <th>酒店联系人</th>
               <th>手机</th>
               <th>固定电话</th>
+              <th>酒店维护人</th>
               <th>酒楼级别</th>
               <th>是否重点</th>
               <th>安装日期</th>
@@ -72,9 +73,10 @@
               <td data-title="酒店名称"><?php echo ($vlist["name"]); ?></td>
               <td data-title="酒店地址"><?php echo ($vlist["addr"]); ?></td>
               <td data-title="酒店区域"><?php echo ($vlist["area_name"]); ?></td>
-              <td data-title="酒店维护人"><?php echo ($vlist["contactor"]); ?></td>
+              <td data-title="酒店联系人"><?php echo ($vlist["contactor"]); ?></td>
               <td data-title="手机"><?php echo ($vlist["mobile"]); ?></td>
               <td data-title="固定电话"><?php echo ($vlist["tel"]); ?></td>
+              <td data-title="酒店联系人"><?php echo ($vlist["maintainer"]); ?></td>
               <td data-title="酒楼级别"><?php echo ($vlist["level"]); ?></td>
               <td data-title="是否重点">
                 <?php if($vlist["iskey"] == 1): ?>是  <?php else: ?> 否<?php endif; ?> 
@@ -101,6 +103,11 @@
                   <a data-tip="修改" target="dialog" mask="true" href="<?php echo ($host_name); ?>/hotel/add?id=<?php echo ($vlist["id"]); ?>&acttype=1" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+
+                  <a data-tip="新增包间" target="dialog" mask="true" href="<?php echo ($host_name); ?>/hotel/addRoom?hotel_id=<?php echo ($vlist["id"]); ?>&acttype=1" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+
                 </div>
               </td>
 

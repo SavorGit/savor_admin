@@ -1,64 +1,68 @@
 <!--修改样式2 p元素自适应宽度 start-->
 <div class="pageContent">
-  <form method="post" action="{$host_name}/hotel/doAddRoom" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <form method="post" action="{$host_name}/device/doAddBox" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="id" value="{$vinfo.id}">
 
     <div class="pageFormContent modal-body">
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-          酒店ID:
+          包间ID:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" name="hotel_id" minlength="2" maxlength="20"  readonly="readonly" value="{$hotel_id}">
+           <input type="text" class="form-control" name="room_id" minlength="1" maxlength="20"  readonly="readonly" value="{$vinfo.room_id}" required>
         </div>
       </div>
 
 
-      <if condition="!empty($hotel_name)">  
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          酒店名称:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" minlength="2" maxlength="20"  readonly="readonly" value="{$hotel_name}" >
-        </div>
-      </div>
-
-      </if> 
-
-
+      <if condition="!empty($vinfo['room_name'])">  
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           包间名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="name" minlength="2" maxlength="20" value="{$vinfo.name}" required>
+           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="{$vinfo.room_name}" >
+        </div>
+      </div>
+      </if> 
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          机顶盒名称:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="name" minlength="1" maxlength="20" value="{$vinfo.name}" required>
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-          包间类型:
+          mac地址:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="type" class="form-control bs-select" title="请选择..." required>
-              <option value="1" <if condition="$vinfo.type eq 1"> selected </if>  >包间</option><br>
-              <option value="2" <if condition="$vinfo.type eq 2"> selected </if>  >大厅</option><br>
-              <option value="3" <if condition="$vinfo.type eq 3"> selected </if>  >等候区</option>
-          </select>
+          <input type="text" class="form-control" name="mac" minlength="12" maxlength="12" value="{$vinfo.mac}" required>
         </div>
       </div>
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-         备注
+         切换时间:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="remark" minlength="1" maxlength="20" value="{$vinfo.remark}">
+          <input type="text" class="form-control digits" name="switch_time" minlength="1" maxlength="20" value="{$vinfo.switch_time}">
         </div>
       </div>
 
+
+        <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         音量:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="volum" minlength="1" maxlength="20" value="{$vinfo.volum}">
+        </div>
+      </div>
   
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">

@@ -1,7 +1,7 @@
-<!--修改样式2 p元素自适应宽度 start-->
+<?php if (!defined('THINK_PATH')) exit();?><!--修改样式2 p元素自适应宽度 start-->
 <div class="pageContent">
-  <form method="post" action="{$host_name}/device/doAddBox" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-    <input type="hidden" name="id" value="{$vinfo.id}">
+  <form method="post" action="<?php echo ($host_name); ?>/device/doAddBox" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="<?php echo ($vinfo["id"]); ?>">
 
     <div class="pageFormContent modal-body">
 
@@ -10,21 +10,19 @@
           包间ID:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" name="room_id" minlength="1" maxlength="20"  readonly="readonly" value="{$room_id}" required>
+           <input type="text" class="form-control" name="room_id" minlength="1" maxlength="20"  readonly="readonly" value="<?php echo ($vinfo["room_id"]); ?>" required>
         </div>
       </div>
 
 
-      <if condition="!empty($room_name)">  
-      <div class="form-group row">
+      <?php if(!empty($vinfo['room_name'])): ?><div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           包间名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="{$room_name}" >
+           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="<?php echo ($vinfo["room_name"]); ?>" >
         </div>
-      </div>
-      </if> 
+      </div><?php endif; ?> 
 
 
       <div class="form-group row">
@@ -32,7 +30,7 @@
           机顶盒名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="name" minlength="1" maxlength="20" value="{$vinfo.name}" required>
+          <input type="text" class="form-control" name="name" minlength="1" maxlength="20" value="<?php echo ($vinfo["name"]); ?>" required>
         </div>
       </div>
 
@@ -41,7 +39,7 @@
           mac地址:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="mac" minlength="12" maxlength="12" value="{$vinfo.mac}" required>
+          <input type="text" class="form-control" name="mac" minlength="12" maxlength="12" value="<?php echo ($vinfo["mac"]); ?>" required>
         </div>
       </div>
 
@@ -50,7 +48,7 @@
          切换时间:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control digits" name="switch_time" minlength="1" maxlength="20" value="{$vinfo.switch_time}">
+          <input type="text" class="form-control digits" name="switch_time" minlength="1" maxlength="20" value="<?php echo ($vinfo["switch_time"]); ?>">
         </div>
       </div>
 
@@ -60,7 +58,7 @@
          音量:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="volum" minlength="1" maxlength="20" value="{$vinfo.volum}">
+          <input type="text" class="form-control" name="volum" minlength="1" maxlength="20" value="<?php echo ($vinfo["volum"]); ?>">
         </div>
       </div>
   
@@ -70,8 +68,8 @@
         </label>
         <div class="col-xs-12 col-sm-10">
          <select name="flag" class="form-control bs-select" title="请选择..." required>
-              <option value="0" <if condition="$vinfo.flag eq 0"> selected </if>  >正常</option><br>
-              <option value="1" <if condition="$vinfo.flag eq 1"> selected </if>  >删除</option>
+              <option value="0" <?php if($vinfo["flag"] == 0): ?>selected<?php endif; ?>  >正常</option><br>
+              <option value="1" <?php if($vinfo["flag"] == 1): ?>selected<?php endif; ?>  >删除</option>
           </select>
         </div>
       </div>
@@ -82,8 +80,8 @@
         </label>
         <div class="col-xs-12 col-sm-10">
          <select name="state" class="form-control bs-select" title="请选择..." required>
-              <option value="0" <if condition="$vinfo.state eq 0"> selected </if>  >正常</option><br>
-              <option value="1" <if condition="$vinfo.state eq 1"> selected </if>  >删除</option>
+              <option value="0" <?php if($vinfo["state"] == 0): ?>selected<?php endif; ?>  >正常</option><br>
+              <option value="1" <?php if($vinfo["state"] == 1): ?>selected<?php endif; ?>  >删除</option>
           </select>
         </div>
       </div>

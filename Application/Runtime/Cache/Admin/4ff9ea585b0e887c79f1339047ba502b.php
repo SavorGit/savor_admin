@@ -38,10 +38,10 @@
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-         酒店维护人：
+         酒店联系人：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="contactor" minlength="1" maxlength="20" value="<?php echo ($vinfo["contactor"]); ?>" required>
+          <input type="text" class="form-control" name="contactor" minlength="1" maxlength="20" value="<?php echo ($vinfo["contactor"]); ?>" >
         </div>
       </div>
 
@@ -62,6 +62,16 @@
           <input name="tel" type="text" class="form-control" value="<?php echo ($vinfo["tel"]); ?>" />
         </div>
       </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         酒店维护人：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="maintainer" minlength="1" maxlength="20" value="<?php echo ($vinfo["maintainer"]); ?>" >
+        </div>
+      </div>
+
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">

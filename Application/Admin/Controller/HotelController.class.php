@@ -209,8 +209,32 @@ class HotelController extends BaseController
 	 */
 	public function addRoom()
 	{	
-		$id = I('get.id');
+		$id = I('get.hotel_id');
 
+		$hotelModel = new HotelModel;
+		
+		
+		$temp = $hotelModel->getRow('name',['id'=>$id]);
+
+		$this->assign('hotel_name',$temp['name']);
+		
+		$this->assign('hotel_id',$id);
+
+			
+		return $this->display('addRoom');
+
+	}
+
+
+
+	/**
+	 * 新增酒店包间
+	 * 
+	 */
+	public function editRoom()
+	{	
+		$id = I('get.id');
+			
 		$roomModel = new RoomModel;
 		$hotelModel = new HotelModel;
 
@@ -229,7 +253,6 @@ class HotelController extends BaseController
 		return $this->display('addRoom');
 
 	}
-
 
 
 

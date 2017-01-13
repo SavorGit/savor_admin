@@ -148,27 +148,49 @@ class DeviceController extends BaseController
 	 */
 	public function addBox()
 	{	
-		$id = I('get.id');
+		$room_id = I('get.room_id');
 
-		$boxModel = new BoxModel;
+		
 		$roomModel = new RoomModel;
 
-		if($id)
-		{
-			$vinfo = $boxModel->where('id='.$id)->find();
+		$temp = $roomModel->getRow('name',['id'=>$room_id]);
+		
 
-			$temp = $roomModel->getRow('name',['id'=>$vinfo['room_id']]);
-			
-			$vinfo['room_name'] = $temp['name'];
+		$this->assign('room_name',$temp['name']);
 
-			$this->assign('vinfo',$vinfo);
-
-		}
+		$this->assign('room_id',$room_id);
 			
 		return $this->display('addbox');
 
 	}
 
+
+	/**
+	 * 编辑机顶盒
+	 * 
+	 */
+	public function editBox()
+	{	
+		$id = I('get.id');
+
+		$roomModel = new RoomModel;
+
+		$boxModel  = new BoxModel;
+
+		$vinfo  = [];
+
+		$vinfo = $boxModel->getRow('*',['id'=>$id]);
+
+		
+		$temp = $roomModel->getRow('name',['id'=>$vinfo['room_id']]);
+		
+		$vinfo['room_name'] = $temp['name'];
+
+		$this->assign('vinfo',$vinfo);
+		
+		return $this->display('editBox');
+
+	}
 
 
 		/**
@@ -235,6 +257,7 @@ class DeviceController extends BaseController
 		$save['state']       = I('post.state','','intval');
 		$save['switch_time'] = I('post.switch_time','','trim');
 		$save['volum']       = I('post.volum','','trim');
+		$save['room_id']     = I('post.room_id','','intval');
 		
 		$boxModel = new BoxModel;
 

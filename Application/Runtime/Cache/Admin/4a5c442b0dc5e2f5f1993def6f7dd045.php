@@ -18,7 +18,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="<?php echo ($host_name); ?>/device/addBox?acttype=0" title="新增机顶盒" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
+    
           </div>
         </div>
         <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
@@ -71,7 +71,7 @@
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="<?php echo ($host_name); ?>/device/addBox?id=<?php echo ($vlist["id"]); ?>&acttype=1" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="<?php echo ($host_name); ?>/device/editBox?id=<?php echo ($vlist["id"]); ?>&acttype=1" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>

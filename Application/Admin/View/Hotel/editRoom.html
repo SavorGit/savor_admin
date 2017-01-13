@@ -10,18 +10,18 @@
           酒店ID:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" name="hotel_id" minlength="2" maxlength="20"  readonly="readonly" value="{$hotel_id}">
+           <input type="text" class="form-control" name="hotel_id" minlength="2" maxlength="20" value="{$vinfo.hotel_id}" required>
         </div>
       </div>
 
 
-      <if condition="!empty($hotel_name)">  
+      <if condition="!empty($vinfo['hotel_name'])">  
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           酒店名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" minlength="2" maxlength="20"  readonly="readonly" value="{$hotel_name}" >
+           <input type="text" class="form-control" minlength="2" maxlength="20"  readonly="readonly" value="{$vinfo.hotel_name}" >
         </div>
       </div>
 

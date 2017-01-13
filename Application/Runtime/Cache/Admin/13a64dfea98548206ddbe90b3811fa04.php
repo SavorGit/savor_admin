@@ -18,7 +18,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="<?php echo ($host_name); ?>/hotel/addRoom" title="新增包间" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
+           
           </div>
         </div>
         <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
@@ -40,8 +40,8 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
-              <th>酒店ID</th>
               <th>包间ID</th>
+              <th>酒店ID</th>
               <th>酒店名称</th>
               <th>包间名称</th>
               <th>包间类型</th>
@@ -55,11 +55,15 @@
           </thead>
           <tbody data-check="list" data-parent=".table">
             <?php if(is_array($list)): $i = 0; $__LIST__ = $list;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vlist): $mod = ($i % 2 );++$i;?><tr target="sid_user">
-              <td data-title="酒店ID"><?php echo ($vlist["hotel_id"]); ?></td>
               <td data-title="包间ID"><?php echo ($vlist["id"]); ?></td>
+              <td data-title="酒店ID"><?php echo ($vlist["hotel_id"]); ?></td>
               <td data-title="酒店名称"><?php echo ($vlist["hotel_name"]); ?></td>
               <td data-title="包间名称"><?php echo ($vlist["name"]); ?></td>
-              <td data-title="包间类型"><?php echo ($vlist["type"]); ?></td>
+              <td data-title="包间类型">
+	              <?php if($vlist["type"] == 1): ?>包间
+	              <?php elseif($vlist["type"] == 2): ?>大厅
+	              <?php else: ?> 等候区<?php endif; ?> 
+              </td>
               <td data-title="备注"><?php echo ($vlist["remark"]); ?></td>
               <td data-title="创建时间"><?php echo ($vlist["create_time"]); ?></td>
               <td data-title="最后更新时间"><?php echo ($vlist["update_time"]); ?></td>
@@ -79,6 +83,11 @@
                   <a data-tip="修改" target="dialog" mask="true" href="<?php echo ($host_name); ?>/hotel/addRoom?id=<?php echo ($vlist["id"]); ?>&acttype=1" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+
+                  <a data-tip="新增机顶盒" target="dialog" mask="true" href="<?php echo ($host_name); ?>/device/addBox?room_id=<?php echo ($vlist["id"]); ?>&acttype=1" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+
                 </div>
               </td>
 
