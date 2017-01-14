@@ -16,5 +16,17 @@ $config = array(
 	'DB_CHARSET'=> 'utf8', // 字符集
 	'DB_DEBUG'  =>  TRUE, // 数据库调试模式 开启后可以记录SQL日志
 
+
+	/***********OSSS上传配置**********/
+	'OSS_ACCESS_ID'   => 'tnDh4AQqRYbV9mq8',
+	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
+	'OSS_ENDPOINT'    => 'oss-cn-hangzhou.aliyuncs.com',  //注意不要在前面加 http:// 
+	'OSS_TEST_BUCKET' => '219bucket',                     //资源空间,即桶
+	'OSS_SYNC_CALLBACK_URL'=>'http://devp.savorx.cn/admin/send/syncCallback', //上传异步回调地址
+	/***********OSSS上传配置**********/
+	
+
 );
+
+
 return $config;

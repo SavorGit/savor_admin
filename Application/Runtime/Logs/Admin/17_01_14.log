@@ -1,0 +1,1529 @@
+[ 2017-01-14T14:57:57+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484376994189
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000470s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000686s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000723s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000057s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000103s ]
+NOTIC: [8] Undefined variable: vinfo E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 27 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.006233s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.006266s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000534s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000568s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001002s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001087s ]
+
+[ 2017-01-14T15:04:59+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484376994189
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000428s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000575s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000618s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000069s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000118s ]
+NOTIC: [8] Undefined variable: vinfo E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 27 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.006539s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.006592s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000548s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000599s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000768s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000816s ]
+
+[ 2017-01-14T15:05:28+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484376994189
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000381s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000463s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000498s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0005s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0006s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+
+[ 2017-01-14T15:05:57+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484376994189
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000383s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000556s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000594s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000053s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000088s ]
+NOTIC: [8] Undefined variable: vinfo E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 27 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.005156s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.005190s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000251s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000286s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000488s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000519s ]
+
+[ 2017-01-14T15:06:01+08:00 ] 127.0.0.1 /admin/send/getOssParams
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000024s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000725s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000979s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001060s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0004s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0005s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001102s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001190s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000562s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000965s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001071s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0006s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_sysmenu` WHERE isenable=1 order by displayorder desc [ RunTime:0.0004s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_staffauth` WHERE staff_id = '1' [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select VERSION() as version [ RunTime:0.0001s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000126s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000251s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.009040s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.009079s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000277s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000306s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000513s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000561s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=font-awesome/css/font-awesome.min.css,simple-line-icons/css/simple-line-icons.css,bootstrap/css/bootstrap-custom.css,bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css,bootstrap-fileinput/bootstrap-fileinput.css,jquery-tags-input/jquery.tagsinput.css,bootstrap-switch/css/bootstrap-switch.min.css,bootstrap-select/bootstrap-select.min.css,footable/footable.css,dropzone/css/dropzone.css,icons-files/file.css,baidumap/searchinfowindow.min.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000518s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000682s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000738s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000816s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000907s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/css&f=core.css,components.css,plugins.css,style.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000024s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000644s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001027s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001116s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000888s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000996s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=jquery.min.js,jquery.cookie.min.js,jquery.validate.js,jquery.bgiframe.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000766s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.003729s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.003817s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001277s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001476s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=bootstrap/js/bootstrap.js,lazyload.js,bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js,bootstrap-select/bootstrap-select.min.js,jquery-tags-input/jquery.tagsinput.min.js,bootstrap-switch/js/bootstrap-switch.min.js,footable/footable.js,dropzone/dropzone.js,hammer.min.js,jquery.hammer.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000572s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000553s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000602s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000702s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000766s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /min?b=./Public/admin/ueditor&f=ueditor.config.js,ueditor.all.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000804s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000798s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000878s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.002245s ]
+INFO: [ app_end ] --END-- [ RunTime:0.002363s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins/dwzjs&f=dwz.js,dwz.regional.zh.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000405s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000768s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000829s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000758s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000827s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000016s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000368s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001220s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001329s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000505s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001407s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001550s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000034s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000821s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000610s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000670s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000601s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000902s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001073s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000024s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000626s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000733s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000801s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /tools/icons
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000673s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001038s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001160s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000111s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000249s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.008625s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.008689s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000319s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000412s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000980s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001061s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000037s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000990s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000736s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000812s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000340s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000580s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000630s ]
+
+[ 2017-01-14T15:06:08+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000582s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000914s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001013s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000081s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001159s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000820s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000902s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000635s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001394s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001657s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /admin/send/video?_=1484377568659
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000026s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001456s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000971s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001062s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0008s ]
+SQL: INSERT INTO `savor_syslog` (`loginid`,`actionid`,`clientip`,`areaname`,`logtime`,`opprate`,`program`) VALUES ('1','44','127.0.0.1','本机地址,','2017-01-14 15:06:09','查看','当前栏目') [ RunTime:0.0005s ]
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000077s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000172s ]
+NOTIC: [8] Undefined variable: pageNum E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 13 行.
+NOTIC: [8] Undefined variable: numPerPage E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 14 行.
+NOTIC: [8] Undefined variable: _order E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 15 行.
+NOTIC: [8] Undefined variable: _sort E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 16 行.
+NOTIC: [8] Undefined variable: name E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 26 行.
+NOTIC: [8] Undefined variable: list E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 57 行.
+NOTIC: [8] Undefined variable: page E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 95 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.013080s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.013128s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001030s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001104s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001253s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001325s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000543s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000779s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000846s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000522s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000700s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000765s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000026s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000658s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000543s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000596s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000391s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000777s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000844s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000016s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000487s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000509s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000560s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000589s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000749s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000829s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001025s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000524s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000575s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000387s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000467s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000508s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000421s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000461s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000499s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000351s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000524s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000572s ]
+
+[ 2017-01-14T15:06:09+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000032s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000650s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000557s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000622s ]
+
+[ 2017-01-14T15:06:10+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484377568660
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000024s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000780s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000550s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000596s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0005s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000058s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000096s ]
+NOTIC: [8] Undefined variable: vinfo E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 27 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007032s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007070s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000274s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000298s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000460s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000489s ]
+
+[ 2017-01-14T15:06:16+08:00 ] 127.0.0.1 /admin/send/getOssParams
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000598s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000529s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000573s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0006s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0005s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000663s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000724s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000016s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000429s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000563s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000618s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0005s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_sysmenu` WHERE isenable=1 order by displayorder desc [ RunTime:0.0005s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_staffauth` WHERE staff_id = '1' [ RunTime:0.0007s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select VERSION() as version [ RunTime:0.0002s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000069s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000113s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.009457s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.009508s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000334s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000363s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000538s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000596s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=font-awesome/css/font-awesome.min.css,simple-line-icons/css/simple-line-icons.css,bootstrap/css/bootstrap-custom.css,bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css,bootstrap-fileinput/bootstrap-fileinput.css,jquery-tags-input/jquery.tagsinput.css,bootstrap-switch/css/bootstrap-switch.min.css,bootstrap-select/bootstrap-select.min.css,footable/footable.css,dropzone/css/dropzone.css,icons-files/file.css,baidumap/searchinfowindow.min.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000688s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000522s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000570s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001430s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001571s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/css&f=core.css,components.css,plugins.css,style.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000332s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000447s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000486s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000784s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000866s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=jquery.min.js,jquery.cookie.min.js,jquery.validate.js,jquery.bgiframe.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000412s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000875s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000952s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000840s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000916s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=bootstrap/js/bootstrap.js,lazyload.js,bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js,bootstrap-select/bootstrap-select.min.js,jquery-tags-input/jquery.tagsinput.min.js,bootstrap-switch/js/bootstrap-switch.min.js,footable/footable.js,dropzone/dropzone.js,hammer.min.js,jquery.hammer.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000346s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000469s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000509s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000755s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000825s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /min?b=./Public/admin/ueditor&f=ueditor.config.js,ueditor.all.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000025s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000639s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001080s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001206s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001067s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001167s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins/dwzjs&f=dwz.js,dwz.regional.zh.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000591s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000634s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000695s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000728s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000791s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000586s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000717s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000783s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000025s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001006s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000973s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001057s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000662s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000871s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000976s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000563s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000779s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000862s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000025s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000788s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000841s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000930s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /tools/icons
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000510s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000916s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000992s ]
+INFO: [ view_parse ] --START--
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.000455s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.000501s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000270s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000298s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000493s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000525s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000032s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000605s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000653s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000718s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000555s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000554s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000615s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000897s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000471s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000514s ]
+
+[ 2017-01-14T15:08:46+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000562s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000827s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000909s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000547s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000708s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000798s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /admin/send/video?_=1484377726640
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000347s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000471s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000512s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0007s ]
+SQL: INSERT INTO `savor_syslog` (`loginid`,`actionid`,`clientip`,`areaname`,`logtime`,`opprate`,`program`) VALUES ('1','44','127.0.0.1','本机地址,','2017-01-14 15:08:47','查看','当前栏目') [ RunTime:0.0005s ]
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000069s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000160s ]
+NOTIC: [8] Undefined variable: pageNum E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 13 行.
+NOTIC: [8] Undefined variable: numPerPage E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 14 行.
+NOTIC: [8] Undefined variable: _order E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 15 行.
+NOTIC: [8] Undefined variable: _sort E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 16 行.
+NOTIC: [8] Undefined variable: name E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 26 行.
+NOTIC: [8] Undefined variable: list E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 57 行.
+NOTIC: [8] Undefined variable: page E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 95 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.022451s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.022506s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000469s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000503s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000669s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000707s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000546s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001183s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001314s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000384s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001416s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001500s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000521s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000683s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000739s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000519s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000677s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000730s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000364s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000498s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000543s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000349s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000722s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000786s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000024s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000780s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000535s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000587s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000402s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000552s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000621s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000358s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000990s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001052s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000807s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000851s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000912s ]
+
+[ 2017-01-14T15:08:47+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000458s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000616s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000669s ]
+
+[ 2017-01-14T15:08:48+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484377726641
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000509s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000847s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000916s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0004s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000057s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000092s ]
+NOTIC: [8] Undefined variable: vinfo E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 27 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.005577s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.005614s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000253s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000277s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000467s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000505s ]
+
+[ 2017-01-14T15:12:27+08:00 ] 127.0.0.1 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000479s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000904s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000990s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0005s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_sysmenu` WHERE isenable=1 order by displayorder desc [ RunTime:0.0003s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_staffauth` WHERE staff_id = '1' [ RunTime:0.0005s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select VERSION() as version [ RunTime:0.0001s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000076s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000131s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.010101s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.010150s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000276s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000303s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000465s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000512s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=font-awesome/css/font-awesome.min.css,simple-line-icons/css/simple-line-icons.css,bootstrap/css/bootstrap-custom.css,bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css,bootstrap-fileinput/bootstrap-fileinput.css,jquery-tags-input/jquery.tagsinput.css,bootstrap-switch/css/bootstrap-switch.min.css,bootstrap-select/bootstrap-select.min.css,footable/footable.css,dropzone/css/dropzone.css,icons-files/file.css,baidumap/searchinfowindow.min.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001200s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000742s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000815s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000520s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000578s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/css&f=core.css,components.css,plugins.css,style.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000401s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000822s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000926s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000481s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000534s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=jquery.min.js,jquery.cookie.min.js,jquery.validate.js,jquery.bgiframe.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000475s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000863s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000938s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000835s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000934s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=bootstrap/js/bootstrap.js,lazyload.js,bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js,bootstrap-select/bootstrap-select.min.js,jquery-tags-input/jquery.tagsinput.min.js,bootstrap-switch/js/bootstrap-switch.min.js,footable/footable.js,dropzone/dropzone.js,hammer.min.js,jquery.hammer.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000513s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000736s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000819s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000622s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000680s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /min?b=./Public/admin/ueditor&f=ueditor.config.js,ueditor.all.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000563s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000708s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000781s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000729s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000807s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins/dwzjs&f=dwz.js,dwz.regional.zh.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000043s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000790s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000626s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000692s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000463s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000517s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000339s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000449s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000515s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000545s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000511s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000560s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000562s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001056s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001219s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000531s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000745s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000820s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000475s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000525s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000587s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /tools/icons
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000028s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000926s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000808s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000890s ]
+INFO: [ view_parse ] --START--
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.001156s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.001258s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000449s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000500s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001912s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001991s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000370s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000526s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000583s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000402s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001438s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001523s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000501s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000466s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000508s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000053s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000814s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000863s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000960s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000344s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000474s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000518s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /admin/send/video?_=1484377948201
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000533s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000696s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000763s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000626s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000927s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001028s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000529s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000720s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000796s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000406s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000474s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000519s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000572s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000571s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000624s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000413s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000480s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000529s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000022s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000492s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000492s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000542s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000016s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000477s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000468s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000512s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000330s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000437s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000486s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000340s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000446s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000482s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000324s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000433s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000472s ]
+
+[ 2017-01-14T15:12:28+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000318s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000454s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000493s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000411s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000513s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000556s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0004s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_sysmenu` WHERE isenable=1 order by displayorder desc [ RunTime:0.0004s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT * FROM `savor_staffauth` WHERE staff_id = '1' [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select VERSION() as version [ RunTime:0.0001s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000061s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000098s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007408s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007447s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000249s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000274s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000494s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000547s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=font-awesome/css/font-awesome.min.css,simple-line-icons/css/simple-line-icons.css,bootstrap/css/bootstrap-custom.css,bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css,bootstrap-fileinput/bootstrap-fileinput.css,jquery-tags-input/jquery.tagsinput.css,bootstrap-switch/css/bootstrap-switch.min.css,bootstrap-select/bootstrap-select.min.css,footable/footable.css,dropzone/css/dropzone.css,icons-files/file.css,baidumap/searchinfowindow.min.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000745s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000522s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000571s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000746s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000819s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/css&f=core.css,components.css,plugins.css,style.css
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000492s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000585s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000670s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000832s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000946s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=jquery.min.js,jquery.cookie.min.js,jquery.validate.js,jquery.bgiframe.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000355s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000659s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000720s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000470s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000518s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins&f=bootstrap/js/bootstrap.js,lazyload.js,bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js,bootstrap-select/bootstrap-select.min.js,jquery-tags-input/jquery.tagsinput.min.js,bootstrap-switch/js/bootstrap-switch.min.js,footable/footable.js,dropzone/dropzone.js,hammer.min.js,jquery.hammer.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000501s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000460s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000499s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000572s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000648s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /min?b=./Public/admin/ueditor&f=ueditor.config.js,ueditor.all.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000529s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000838s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000915s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001209s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001295s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /min?b=./Public/admin/assets/plugins/dwzjs&f=dwz.js,dwz.regional.zh.js
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000493s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000692s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000754s ]
+NOTIC: [8] Undefined index: SUBDOMAIN_DOCUMENT_ROOT E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\Minify\config.php 第 89 行.
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000798s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000872s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /tools/icons
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000537s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000713s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000773s ]
+INFO: [ view_parse ] --START--
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.000645s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.000711s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000389s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000433s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000731s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000781s ]
+
+[ 2017-01-14T15:12:43+08:00 ] 127.0.0.1 /admin/send/video?_=1484377963536
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000018s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000507s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000739s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000809s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0004s ]
+SQL: INSERT INTO `savor_syslog` (`loginid`,`actionid`,`clientip`,`areaname`,`logtime`,`opprate`,`program`) VALUES ('1','44','127.0.0.1','本机地址,','2017-01-14 15:12:43','查看','当前栏目') [ RunTime:0.0010s ]
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000057s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000115s ]
+NOTIC: [8] Undefined variable: pageNum E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 13 行.
+NOTIC: [8] Undefined variable: numPerPage E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 14 行.
+NOTIC: [8] Undefined variable: _order E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 15 行.
+NOTIC: [8] Undefined variable: _sort E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 16 行.
+NOTIC: [8] Undefined variable: name E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 26 行.
+NOTIC: [8] Undefined variable: list E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 57 行.
+NOTIC: [8] Undefined variable: page E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\0334f2f161bb33ffc1059b3afbd47029.php 第 95 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.010911s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.010955s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000365s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000401s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000672s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000714s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000525s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000746s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000817s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000421s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000489s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000535s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000501s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001425s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001531s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000357s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000459s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000500s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000317s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000433s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000472s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000312s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000422s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000460s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000011s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000332s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000467s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000513s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000443s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000526s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000577s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000345s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000435s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000474s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000313s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000434s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000473s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000011s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000318s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000433s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000471s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000021s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000419s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001337s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.001524s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000394s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000662s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000716s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000332s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000550s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000604s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000019s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000355s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000884s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000973s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000013s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000341s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000470s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000521s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000711s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000655s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000775s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000012s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000327s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000448s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000485s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000039s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000628s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000902s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000999s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000017s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000343s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000479s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000524s ]
+
+[ 2017-01-14T15:12:44+08:00 ] 127.0.0.1 /hammer.min.js.map
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000043s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000621s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000657s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000757s ]
+
+[ 2017-01-14T15:12:46+08:00 ] 127.0.0.1 /admin/send/addMedia?acttype=0&_=1484377963537
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000014s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000504s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000536s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000580s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+NOTIC: [8] Undefined variable: actionId E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 207 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000055s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000089s ]
+NOTIC: [8] Undefined variable: row E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 5 行.
+NOTIC: [8] Undefined variable: vinfo E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\4adc62382a799ea08316339331e5440f.php 第 27 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.005331s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.005370s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000261s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000287s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000498s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000536s ]
+
+[ 2017-01-14T15:13:02+08:00 ] 127.0.0.1 /admin/sysmenu/sysmenuList?_=1484377963539
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000015s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000483s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000639s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000705s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+SQL: INSERT INTO `savor_syslog` (`loginid`,`actionid`,`clientip`,`areaname`,`logtime`,`opprate`,`program`) VALUES ('1','2','127.0.0.1','本机地址,','2017-01-14 15:13:02','查看','当前栏目') [ RunTime:0.0002s ]
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 14 and defined E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 257 行.
+NOTIC: [8] Undefined variable: ip E:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 260 行.
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu`  where 1 order by id desc [ RunTime:0.0002s ]
+NOTIC: [2] mt_rand(): max(0) is smaller than min(1) E:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php 第 1095 行.
+SQL: select * from `savor_sysmenu`  where 1 order by id desc limit 0,50 [ RunTime:0.0003s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000047s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000086s ]
+NOTIC: [8] Undefined variable: searchTitle E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\75252bcc55d1731809379768aca7f358.php 第 27 行.
+NOTIC: [8] Undefined variable: searchCode E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\75252bcc55d1731809379768aca7f358.php 第 31 行.
+NOTIC: [8] Undefined variable: searchCode E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\75252bcc55d1731809379768aca7f358.php 第 31 行.
+NOTIC: [8] Undefined variable: searchCode E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\75252bcc55d1731809379768aca7f358.php 第 31 行.
+NOTIC: [8] Undefined variable: searchCode E:\phpStudy\WWW\savor_admin\Application\Runtime\Cache\Admin\75252bcc55d1731809379768aca7f358.php 第 31 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.014809s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.014842s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000286s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000309s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000465s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000497s ]
+
