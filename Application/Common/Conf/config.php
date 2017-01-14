@@ -53,8 +53,8 @@ $config['MANGER_KEY'] = array(
     'cms'=>'程序节点',
     'system'=>'系统节点',
     'send' =>'发布节点',
-    'version'=>'版本管理',
-    'ad' =>'广告管理',
+    'version'=>'版本节点',
+    'ad' =>'广告节点',
 );
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
