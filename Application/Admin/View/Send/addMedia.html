@@ -52,7 +52,7 @@ filename = ''
 key = ''
 expire = 0
 g_object_name = ''
-g_object_name_type = ''
+g_object_name_type = 'random_name';
 now = timestamp = Date.parse(new Date()) / 1000; 
 
 function send_request()
@@ -242,7 +242,8 @@ var uploader = new plupload.Uploader({
             if (info.status == 200)
             {
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name) + ' 回调服务器返回的内容是:' + info.response;
-                document.getElementById('oss_addr').value = file.name;
+                document.getElementById('oss_addr').value = get_uploaded_object_name(file.name);
+                console && console.log(get_uploaded_object_name(file.name));
             }
             else if (info.status == 203)
             {

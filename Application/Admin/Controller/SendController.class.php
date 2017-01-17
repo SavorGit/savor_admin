@@ -8,7 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
-use Admin\Controller\MediaModel;
+use Admin\Model\MediaModel;
 
 class SendController extends BaseController 
 {
@@ -18,7 +18,37 @@ class SendController extends BaseController
 	  * [addVideo description]
 	  */
 	 public function video()
-	 {
+	 {	
+
+	 	$mediaModel = new MediaModel;
+		
+		$size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $order = I('_order','id');
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+
+        $where = "1=1";
+        
+        $name = I('name');
+
+        if($name)
+        {
+        	$this->assign('name',$name);
+        	$where .= "	AND name LIKE '%{$name}%'";
+        }
+
+        $result = $mediaModel->getList($where,$orders,$start,$size);
+
+        //print_r($result);die;
+   		$this->assign('list', $result['list']);
+   	    $this->assign('page',  $result['page']);
+
 	 	return $this->display('video');
 
 	 }//End Function
@@ -75,9 +105,11 @@ class SendController extends BaseController
 		$expire               = 30; //设置该policy超时时间是10s. 即这个policy过了这个有效时间，将不能访问
 		$end                  = $now + $expire;
 		$expiration           = $this->_gmt_iso8601($end);
-		
+
+		$rand = rand(10,99);
+			
 		//资源空间的目录前缀
-		$dir                  = 'user-dir/';
+		$dir                  = 'media/'.date('Ym').'/'.date('d').'/'.$rand.'/';
 		
 		//最大文件大小.用户可以自己设置
 		$condition            = array(0=>'content-length-range', 1=>0, 2=>1048576000);
@@ -170,19 +202,29 @@ class SendController extends BaseController
 		}
 		else
 		{	
-			$user                = session('sysUserInfo');
-			$save['create_time'] = date('Y-m-d H:i:s');
-			$save['creator']     = $user['username'];
-			$save['oss_addr']    = I('post.oss_addr','','trim');
 
+
+			$save['oss_addr']    = I('post.oss_addr','','trim');
+			
 			if(!$save['oss_addr'])
 			{
 				return $this->output('OSS上传失败!', 'send/doAddMedia');
 			}
 
+			$user                = session('sysUserInfo');
+			$save['create_time'] = date('Y-m-d H:i:s');
+			$save['creator']     = $user['username'];
+			
+
+			$tempInfo = pathinfo($save['oss_addr']);
+
+			$save['surfix'] = $tempInfo['extension'];
+
+			
+
 			if($mediaModel->add($save))
 			{
-				return $this->output('添加成功!', 'send/doAddMedia');
+				return $this->output('添加成功!', 'send/video');
 			}
 			else
 			{
