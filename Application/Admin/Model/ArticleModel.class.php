@@ -9,17 +9,25 @@ namespace Admin\Model;
 use Admin\Model\BaseModel;
 use Common\Lib\Page;
 
-class CategoModel extends BaseModel
+class ArticleModel extends BaseModel
 {
-	protected $tableName='mb_category';
+	protected $tableName='mb_content';
 
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 		return $list;
 	}
 
+	//É¾³ıÊı¾İ
+	public function delData($id) {
+		$delSql = "DELETE FROM `savor_mb_content` WHERE id = '{$id}'";
+		$result = $this -> execute($delSql);
+		return  $result;
+	}
+
 	public function getList($where, $order='id desc', $start=0,$size=5)
 	{
+
 
 		$list = $this->where($where)
 			->order($order)
