@@ -139,25 +139,25 @@ class ReleaseController extends BaseController
 		{
 			if($catModel->where('id='.$id)->save($save))
 			{
-				$this->output('操作成功!', 'release/addCate');
+				return $this->output('操作成功!', 'release/doAddCat');
 			}
 			else
 			{
-				$this->output('操作失败!', 'release/doAddCat');
+				return $this->output('操作失败!', 'release/doAddCat');
 			}
 		}
 		else
 		{
 
 			$save['create_time'] = date('Y-m-d H:i:s');
-
+//刷新页面，关闭当前
 			if($catModel->add($save))
 			{
-				$this->output('操作成功!', 'release/addCate');
+				return $this->output('添加分类成功!', 'release/category', 1);
 			}
 			else
 			{
-				$this->output('操作失败!', 'release/doAddCat');
+				return $this->output('操作失败!', 'release/doAddCat');
 			}
 
 		}
