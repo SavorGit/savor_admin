@@ -1,0 +1,42 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/syslog/syslogList" method="post">
+    <div class="searchBar">
+      <div class="clearfix">
+      	<div class="col-xs-12 col-sm-6 col-md-8">
+          <div class="tools-group s2">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/article/addarticle" title="发布文章" target="dialog" mask="true">
+            <i class="fa fa-sign-in"></i><span>发布文章</span></a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/article/addvideo"  title="发布视频" target="dialog" mask="true">
+            <i class="fa fa-plus"></i><span>发布视频</span></a>
+          </div>
+        </div>
+		<div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="searchTitle" value="{$searchTitle}" placeholder="列表名称/操作动作/时间">
+            <span class="input-group-btn">
+              <select name="shwcid" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="">所有栏目</option>
+                <volist name="classList" id="vo">
+                  <option value="<if condition="$key neq 0">{$vo.id}</if>" data-content='<span class="lvl">{$vo.html}</span>{$vo.modulename}'<if condition="$vo.id eq $shwcid">selected</if>>{$vo.modulename}</option>
+                </volist>
+              </select>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  $(function(){
+    $(".class-filter").change(function (){
+      $(this).closest("form").submit();
+    })
+  })
+</script>
