@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hotel/room" method="post" >
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/release/category" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -31,21 +31,29 @@
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
-            <tr id="post">
-              <th>序号</th>
-              <th>分类名称</th>
-              <th>排序</th>
-              <th>创建时间</th>
-              <th class="table-tool">操作</th>
-            </tr>
+          <tr id="post">
+            <th>序号</th>
+            <th>分类名称</th>
+            <th>排序</th>
+            <th>创建时间</th>
+            <th>删除状态</th>
+            <th class="table-tool">操作</th>
+          </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-            <volist name="list" id="vlist">
+          <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="分类名称">{$vlist.name}</td>
               <td data-title="排序">{$vlist.sort_num}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="删除状态">
+                <if condition="$vlist['state'] eq 0">
+                  正常
+                  <else/>
+                  删除
+                </if>
+              </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/release/addCate?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
@@ -55,7 +63,7 @@
               </td>
 
             </tr>
-            </volist>
+          </volist>
           </tbody>
         </table>
       </form>
