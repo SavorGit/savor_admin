@@ -48,6 +48,11 @@ $config['MANGER_LEVEL'] = array(
     '1'=>'二级栏目'
 );
 
+$config['MANGER_STATE'] = array(
+    '2'=>'审核通过',
+    '3'=>'审核不通过'
+);
+
 $config['MANGER_KEY'] = array(
     'colum'=>'栏目节点',
     'cms'=>'程序节点',
