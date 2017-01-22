@@ -59,6 +59,7 @@ $config['MANGER_KEY'] = array(
     'system'=>'系统节点',
     'send' =>'发布节点',
     'version'=>'版本节点',
+    'menu' =>'节目节点',
     'ad' =>'广告节点',
 );
 $config['MOBILE_TYPE'] = array(
