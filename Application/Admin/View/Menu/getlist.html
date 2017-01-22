@@ -1,0 +1,129 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/getlist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="col-xs-3 col-sm-3">
+          <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
+            <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+          </div>
+        </div>
+
+        <div class="col-xs-3 col-sm-3 ">
+          <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
+            <input name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+          </div>
+        </div>
+
+
+          <div class="col-xs-4 col-sm-4 col-md-4 pull-right">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" name="titlename" value="{$name}" placeholder="输入名称查找">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+            </div>
+          </div>
+
+
+
+
+
+      </div>
+
+
+
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+            <th>序号</th>
+            <th>名称</th>
+            <th>创建日期</th>
+            <th>更新日期</th>
+            <th>是否选择洒楼</th>
+            <th>节目详情</th>
+            <th>状态</th>
+            <th>操作日志</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td><input name="ids" value="{$vlist.id}" type="checkbox"></td>
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="名称">{$vlist.menu_name}</td>
+              <td data-title="创建日期">{$vlist.create_time}</td>
+              <td data-title="更新日期">{$vlist.update_time}</td>
+              <td data-title="是否选择洒楼">
+
+                <if condition="$vlist.count eq 0"> <a data-tip="请选择酒楼" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
+                    <else/> 酒楼数为{$vlist.count}
+                  </if>
+              </td>
+              <td data-title="节目详情">
+                <a data-tip="请选择节目" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/getdetail?id={$vlist.id}&name={$vlist.menu_name}">请选择节目</a>
+              </td>
+              <td data-title="状态">
+
+                <if condition="$vlist['state'] eq 0">
+                  下线
+                  <elseif condition="$vlist['state'] eq 3"/>
+                  上线
+                </if>
+              </td>
+
+              <td class="table-tool" data-title="操作日志">
+                <div class="tools-edit">
+                  <a data-tip="日志查看" target="dialog" mask="true"
+                    href="#"
+                  class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true"
+
+                    href="{$host_name}/menu/alter?id={$vlist.id}"
+                   class="btn btn-success btn-icon">
+                  <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

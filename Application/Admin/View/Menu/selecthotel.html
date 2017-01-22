@@ -1,0 +1,98 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return dialogSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+
+        </div>
+        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="{$host_name}/menu/hotelconfirm" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return dialogSearch(this);">
+        <input name="menuid" type="hidden" value="{$menu_id}">
+        <input name="menuname" type="hidden" value="{$menu_name}">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <!-- <th class="table-checkbox">
+              <input type="checkbox" data-check="all" data-parent=".table" />
+            </th> -->
+            <th width="22"><input type="checkbox" data-check="all" data-parent=".pageContent"> 全选</th>
+            <th>酒店ID</th>
+            <th>酒店名称</th>
+            <th>酒店地址</th>
+            <th>酒店区域</th>
+            <th>酒店联系人</th>
+            <th>手机</th>
+            <th>固定电话</th>
+            <th>酒店维护人</th>
+            <th>酒楼级别</th>
+            <th>是否重点</th>
+            <th>安装日期</th>
+            <th>酒楼状态</th>
+
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <!-- <td class="table-checkbox">
+                <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
+              </td> -->
+              <td><input name="ids[]" value="{$vlist.id}" type="checkbox"></td>
+              <input name="ns[]" type="hidden" value="{$vlist.name}">
+              <td data-title="酒店ID">{$vlist.id}</td>
+              <td data-title="酒店名称">{$vlist.name}</td>
+              <td data-title="酒店地址">{$vlist.addr}</td>
+              <td data-title="酒店区域">{$vlist.area_name}</td>
+              <td data-title="酒店联系人">{$vlist.contractor}</td>
+              <td data-title="手机">{$vlist.mobile}</td>
+              <td data-title="固定电话">{$vlist.tel}</td>
+              <td data-title="酒店联系人">{$vlist.maintainer}</td>
+              <td data-title="酒楼级别">{$vlist.level}</td>
+              <td data-title="是否重点">
+                <if condition="$vlist.iskey eq 1"> 是  <else/> 否 </if>
+              </td>
+              <td data-title="安装日期">{$vlist.install_date}</td>
+              <td data-title="酒楼状态">
+                <if condition="$vlist.state eq 1"> 正常
+                  <elseif condition="$vlist.state eq 2"/> 冻结
+                  <else />报损
+                </if>
+              </td>
+
+
+            </tr>
+          </volist>
+          </tbody>
+
+        </table>
+        <div class="row">
+
+          <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+          <button class="btn btn-success btn-sm add" type="submit" >发布节目了</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
