@@ -17,6 +17,7 @@ use Admin\Model\MenuListModel;
 use Admin\Model\MenuItemModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
+use Admin\Model\MenuListOpeModel;
 class MenuController extends BaseController {
 
     public function __construct() {
@@ -242,13 +243,19 @@ class MenuController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        $starttime = I('starttime',date("Y-m-d H:i", time()-86400));
-        $endtime = I('endtime', date("Y-m-d H:i"));
+        $starttime = I('starttime');
+        $endtime = I('endtime');
+        if($starttime == ''){
+            $starttime = date("Y-m-d H:i", time()-86400);
+        }
+        if($endtime == ''){
+            $endtime = date("Y-m-d H:i");
+        }
         $starttime = $starttime.':00';
         $endtime = $endtime.':00';
         $where = "1=1";
         $name = I('titlename');
-        $name = 'xiao';
+        //$name = 'xiao';
         if ($starttime > $endtime) {
             $this->display('getlist');
         } else {
@@ -270,9 +277,11 @@ class MenuController extends BaseController {
 
     }
 
+
+
     public function doaddmenu(){
         //表单提交即是新增和导入ajax区分以及与修改进行区分
-       var_dump($_POST);
+
 
             $id = I('post.id','');
 
@@ -285,41 +294,68 @@ class MenuController extends BaseController {
             $save['creator_id'] = $userInfo['id'];
             $save['state']    = 0;
             $save['menu_name'] = I('post.program');
-            $save['create_time'] = date('Y-m-d H:i:s');
             $save['update_time'] = date('Y-m-d H:i:s');
+
+             $data = array();
+            $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
+            $name_arr = explode (',',substr(I('post.rightname',''),0,-1));
+            $time_arr = explode (',',substr(I('post.rightime',''),0,-1));
             if( $id ) {
-                //save
+                //先删除menuid，后插入
+
+                $i = 1;
+                foreach($id_arr as $k=>$v) {
+                    $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
+                        'create_time'=>$time_arr[$k],
+                        'update_time'=>$save['update_time'],
+                        'menu_id'=>$id,'sort_num'=>$i,
+                    );
+                    $i++;
+                }
+                var_dump($data);
+                die;
+                $mlModel->delData($id);
+                $res = $mItemModel->addAll($data);
+                if ($res) {
+                    //添加操作日志非针对饭店
+                    $type = 2;
+                    $this->addlog($data, $id, $type);
+                    $this->output('操作成功!', 'menu/getlist');
+                } else {
+
+                }
+
             } else {
+                //判断名字是否存在
+                $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
+               if ($count) {
+                   $this->output('操作失败名字已经有!', 'menu/addmenu');
+               }
                 $result = $mlModel->add($save);
-                var_dump($result);
-                //获取最后id即menuid
                 if ( $result ) {
                     $menu_id = $mlModel->getLastInsID();
-
-                    $data = array();
                     //将内容添加到savor_menu_item表
-                    $id_arr = explode (',',I('post.rightid','') );
-                    $name_arr = explode (',',I('post.rightname',''));
-                    //合并后aid作为key,name作为val
-                    $com_arr = array_combine($id_arr, $name_arr);
                     $i = 1;
-                    foreach ($com_arr as $k=>$v) {
-                        $data[] = array('ads_id'=>$k,'ads_name'=>$v,
-                            'create_time'=>$save['create_time'],
+                    foreach($id_arr as $k=>$v) {
+                        $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
+                            'create_time'=>$time_arr[$k],
                             'update_time'=>$save['update_time'],
                             'menu_id'=>$menu_id,'sort_num'=>$i,
                         );
                         $i++;
                     }
-                    var_dump($data);
                     $res = $mItemModel->addAll($data);
-                    ob_clean();
+
+
                     if ($res) {
-                        //添加操作日志
-                        $this->output('操作成功!', 'menu/addmenu');
+                        //添加操作日志不在这边加
+                        $this->addlog($data, $menu_id);
+                        $this->output('操作成功!', 'menu/getlist');
+                    } else {
+
                     }
                 } else {
-                    $this->output('操作失败名字已经有!', 'menu/addmenu');
+
                 }
             }
 
@@ -330,6 +366,27 @@ class MenuController extends BaseController {
 
     }
 
+    /*
+     * 添加操作日志
+     */
+    public function addlog($data, $id, $type=1) {
+        //1是插入2是更新
+        $dat = array();
+        $userInfo = session('sysUserInfo');
+        $save['operator_name'] = $userInfo['username'];
+        $save['operator_id'] = $userInfo['id'];
+        $save['menu_id'] = $id;
+        $save['insert_time'] = date('Y-m-d H:i:s');
+        $save['type'] = $type;
+        foreach ($data as $k=>$v) {
+            $dat[]= array('ads_id'=>$v['ads_id'],'ads_name'=>$v['ads_name'],
+                'create_time'=>$v['create_time'],
+            );
+        }
+        $save['menu_content'] = json_encode($dat);
+        $mlOpeModel = new MenuListOpeModel();
+        $mlOpeModel->add($save);
+    }
 
 
 
@@ -340,62 +397,27 @@ class MenuController extends BaseController {
     public function addmenu() {
         //左边表单提交，右边表单提交，导入ajax,id修改
         $userInfo = session('sysUserInfo');
+        $menu_name = I('get.name'.'');
+        $type = I('type');
+        if ( $type == 2 ) {
+            $menuid = I('id','0');
+            if ($menuid) {
+                $mItemModel = new MenuItemModel();
+                $order = I('_order','id');
+                $sort = I('_sort','asc');
+                $orders = $order.' '.$sort;
+                $where = "1=1";
+                $field = "ads_name,ads_id,duration,sort_num,create_time";
+                $where .= " AND menu_id={$menuid}  ";
+                $res = $mItemModel->getWhere($where,$orders, $field);
+                $this->assign('menuid',$menuid);
+                $this->assign('menuname',$menu_name);
+                $this->assign('list',$res);
 
-        $form_1 = '';
-        if ( $form_1 ) {
-            //获取选取类型
-            $m_type = I('post.m_type','0');
-            $st_time = I('post.sttime','0');
-            $endtime = I('post.endtime','0');
-            $starttime = I('post.sttime',date("Y-m-d H:i", time()-3600));
-            $endtime = I('post.endtime', date("Y-m-d H:i"));
-            $starttime = $starttime.':00';
-            $endtime = $endtime.':00';
-            $where = "1=1";
-            $field = "id,name,media_id";
-            $searchtitle = I('post.searchtitle','');
-            if ($starttime > $endtime) {
-                $this->display('addmenu');
-            } else {
-                //1节目2广告3宣传片 0
-                $adModel = new AdsModel();
-                if ($m_type == 0) {
-
-                    $where .= "	AND name LIKE '%{$searchtitle}%'";
-                    $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
-
-                    $where .= "	AND (`type`) in (1,2) ";
-                    $result = $adModel->getWhere($where, $field);
-
-                    $result[] = array('id'=>0,'name'=>'酒楼宣传片');
-                    $result[] = array('id'=>1,'name'=>'1酒楼片源');
-                    $result[] = array('id'=>2,'name'=>'2酒楼片源');
-                    $result[] = array('id'=>3,'name'=>'3酒楼片源');
-                    $result[] = array('id'=>4,'name'=>'4酒楼片源');
-                    $result[] = array('id'=>5,'name'=>'5酒楼片源');
-                    $result[] = array('id'=>0,'name'=>'6酒楼片源');
-
-
-                } else if($m_type == 3){
-                    $result[] = array('id'=>0,'name'=>'酒楼宣传片');
-                    $result[] = array('id'=>0,'name'=>'1酒楼片源');
-                    $result[] = array('id'=>0,'name'=>'2酒楼片源');
-                    $result[] = array('id'=>0,'name'=>'3酒楼片源');
-                    $result[] = array('id'=>0,'name'=>'4酒楼片源');
-                    $result[] = array('id'=>0,'name'=>'5酒楼片源');
-                    $result[] = array('id'=>0,'name'=>'6酒楼片源');
-
-                } else {
-                    $where .= "	AND name LIKE '%{$searchtitle}%'";
-                    $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
-                    $where .= "	AND type = '{$m_type}'";
-                    $result = $adModel->getWhere($where, $field);
-                }
-                var_dump($result);
-                $this->assign('leftlist', $result);
             }
+            $this->display('altermenu');
         } else {
-
+            $this->display('addmenu');
         }
 
         /*
@@ -426,18 +448,21 @@ class MenuController extends BaseController {
         $this->assign('vcainfo',$vinfo);
 
         */
-         $this->display('addmenu');
+
 
     }
 
-
-
     public function get_se_left(){
-
-
         $m_type = I('post.m_type','0');
-        $starttime = I('post.starttime',date("Y-m-d H:i", time()-3600));
+        $starttime = I('post.starttime');
         $endtime = I('post.endtime', date("Y-m-d H:i"));
+        if($starttime == ''){
+            $starttime = date("Y-m-d H:i", time()-86400);
+        }
+        if($endtime == ''){
+            $endtime = date("Y-m-d H:i");
+        }
+
         $starttime = $starttime.':00';
         $endtime = $endtime.':00';
         $where = "1=1";
@@ -446,21 +471,22 @@ class MenuController extends BaseController {
         if ($starttime > $endtime) {
             $result = array('error'=>0);
         }
+        if ($searchtitle) {
+            $where .= "	AND name LIKE '%{$searchtitle}%'";
+        }
         $adModel = new AdsModel();
         if ($m_type == 0) {
-
-            $where .= "	AND name LIKE '%{$searchtitle}%'";
             $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
 
             $where .= "	AND (`type`) in (1,2) ";
             $result = $adModel->getWhere($where, $field);
 
             $result[] = array('id'=>0,'name'=>'酒楼宣传片','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>1,'name'=>'1酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>2,'name'=>'2酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>3,'name'=>'3酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>4,'name'=>'4酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>5,'name'=>'5酒楼片源','create_time'=>date("Y-m-d H:i:s"));
+            $result[] = array('id'=>0,'name'=>'1酒楼片源','create_time'=>date("Y-m-d H:i:s"));
+            $result[] = array('id'=>0,'name'=>'2酒楼片源','create_time'=>date("Y-m-d H:i:s"));
+            $result[] = array('id'=>0,'name'=>'3酒楼片源','create_time'=>date("Y-m-d H:i:s"));
+            $result[] = array('id'=>0,'name'=>'4酒楼片源','create_time'=>date("Y-m-d H:i:s"));
+            $result[] = array('id'=>0,'name'=>'5酒楼片源','create_time'=>date("Y-m-d H:i:s"));
             $result[] = array('id'=>0,'name'=>'6酒楼片源','create_time'=>date("Y-m-d H:i:s"));
 
 
@@ -474,22 +500,12 @@ class MenuController extends BaseController {
             $result[] = array('id'=>0,'name'=>'6酒楼片源');
 
         } else {
-            $where .= "	AND name LIKE '%{$searchtitle}%'";
             $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
             $where .= "	AND type = '{$m_type}'";
             $result = $adModel->getWhere($where, $field);
         }
-
-
         echo json_encode($result);
         die;
-        $m_type = I('post.m_type','0');
-        $st_time = I('post.sttime','0');
-        $endtime = I('post.endtime','0');
-        $starttime = I('post.sttime',date("Y-m-d H:i", time()-3600));
-        $endtime = I('post.endtime', date("Y-m-d H:i"));
-        $searchtitle = I('post.searchtitle','');
-        var_dump($_POST);
     }
 
 
