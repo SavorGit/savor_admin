@@ -9,9 +9,9 @@ namespace Admin\Model;
 use Admin\Model\BaseModel;
 use Common\Lib\Page;
 
-class MenuListModel extends BaseModel
+class MenuListOpeModel extends BaseModel
 {
-	protected $tableName='menu_list';
+	protected $tableName='menulist_ope_log';
 
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
@@ -20,7 +20,7 @@ class MenuListModel extends BaseModel
 
 	//É¾³ýÊý¾Ý
 	public function delData($id) {
-		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";
+		$delSql = "DELETE FROM `savor_mb_content` WHERE id = '{$id}'";
 		$result = $this -> execute($delSql);
 		return  $result;
 	}
