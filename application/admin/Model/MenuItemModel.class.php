@@ -22,6 +22,15 @@ class MenuItemModel extends BaseModel
 	}
 
 
+	//删除数据
+	public function delData($id) {
+		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";
+		$result = $this -> execute($delSql);
+
+		return  $result;
+	}
+
+
 	public function getList($where, $order='id desc', $start=0,$size=5)
 	{	
 		
