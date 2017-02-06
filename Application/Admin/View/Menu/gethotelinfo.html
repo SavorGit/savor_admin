@@ -1,0 +1,33 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="#" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="menuname" value="{$menuname}">
+    <input type="hidden" name="menuid" value="{$menuid}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+
+        <div class="col-xs-12 col-sm-10">
+
+          <p class="form-heading">酒楼信息查看：</p>
+          <div class="row sm-row" data-check="list" data-parent=".pageContent">
+            <volist name="vinfo" id="vo" key="n">
+            <div class="col-xs-4 col-sm-3 col-md-2">
+              <label>
+
+
+                  <input type="checkbox" name="hoid[]" value="{$vo.hoid}" disabled />&nbsp;{$vo.honame}
+                <input type="hidden" name="honame[]" value="{$vo.honame}" />
+
+
+              </label>
+            </div>
+              </volist>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+
+    </div>
+  </form>
+</div>
