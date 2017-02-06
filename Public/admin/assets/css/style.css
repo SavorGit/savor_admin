@@ -1553,7 +1553,7 @@ input[type="number"]{-moz-appearance:textfield;}
     top: 0;
     left: 0;
     z-index: 1;
-    border: 1000px solid #499ff6;
+    border: 1000px solid #202020;
     background: #499ff6;
     -webkit-transition: border .5s;
        -moz-transition: border .5s;
