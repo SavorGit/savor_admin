@@ -17,9 +17,6 @@ class ArticleController extends BaseController {
     }
     
     public function manager() {
-        //实例化redis
-//         $redis = SavorRedis::getInstance();
-//         $redis->set($cache_key, json_encode(array()));
         $this->display('index');
     }
 
@@ -28,8 +25,6 @@ class ArticleController extends BaseController {
     {
 
         $mediaModel = new MediaModel;
-
-
         $order = I('_order','id');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
@@ -39,9 +34,8 @@ class ArticleController extends BaseController {
 
         $where = "1=1";
         $result = $mediaModel->getWhere($where,$fields);
-
        return $result;
-    }//End Function
+    }
 
     public function delart() {
         $gid = I('get.id', 0, 'int');
@@ -182,10 +176,6 @@ class ArticleController extends BaseController {
         } else {
             $save['oss_addr'] = '';
         }
-
-
-
-
         $old_img = I('post.shwimage','');
         $path = SITE_TP_PATH.'/Public/'.$this->path;
         if ( !(is_dir($path)) ) {
@@ -202,7 +192,6 @@ class ArticleController extends BaseController {
                 $this->output('添加图片失败!', 'article/addarticle');
             }
         }
-
         if($id)
         {
             if($artModel->where('id='.$id)->save($save))
