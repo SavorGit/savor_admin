@@ -25,13 +25,15 @@ class MenuController extends BaseController {
     }
 
     public function hotelconfirm(){
+        //var_dump($_POST);
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         $ids = I('ids');
-        $nds = I('ns');
         $data = array();
+        $arr = array();
         foreach($ids as $k=>$v){
-            $data[] = array('hoid'=>$v,'honame'=>$nds[$k]);
+            $arr = explode('|', $v);
+            $data[] = array('hoid'=>$arr[0],'honame'=>$arr[1]);
         }
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
@@ -41,7 +43,8 @@ class MenuController extends BaseController {
 
     public function publishMenu(){
         //隐患要把数组都改成checked
-        var_dump($_POST);
+       // var_dump($_POST);
+
         $time = date("Y-m-d H:i:s");
         $menuid = I('post.menuid');
         $menuname = I('post.menuname');
@@ -51,7 +54,10 @@ class MenuController extends BaseController {
         $menuHoModel = new MenuHotelModel();
         $menuLogModel = new MenuListLogModel();
         $menuliModel = new MenuListModel();
+        $mItemModel = new MenuItemModel();
         $com_arr = array_combine($hotel_id_arr, $hotel_name);
+       // var_dump($com_arr);
+
         $i = 1;
         $data = array();
         $sava = array();
@@ -65,6 +71,7 @@ class MenuController extends BaseController {
             );
             //插入savor_menu_hotel
             $res = $menuHoModel->add($data);
+
             $userInfo = session('sysUserInfo');
             //根据session得到用户名
             if ($res) {
@@ -72,7 +79,16 @@ class MenuController extends BaseController {
                 $save['menu_id'] = $menuid;
                 $save['hotel_id'] = $k;
                 //获得menu_id内容
-                $save['menu_content'] = 'abcerer';
+
+                $order = I('_order','id');
+                $sort = I('_sort','asc');
+                $orders = $order.' '.$sort;
+                $where = "1=1";
+                $field = "ads_name,ads_id,duration";
+                $where .= " AND menu_id={$menuid}  ";
+                $res = $mItemModel->getWhere($where,$orders, $field);
+                $content = json_encode($res);
+                $save['menu_content'] = $content;
                 $save['operator_id'] = $userInfo['id'];
                 $save['operator_name'] = $userInfo['username'];
                 $save['insert_time'] = $time;
@@ -82,18 +98,56 @@ class MenuController extends BaseController {
 
         //获得menuid数组
         $menu_arr = $menuliModel->getAll('id');
-        var_dump($menu_arr);
+       // var_dump($menu_arr);
+        $com_arr = array_flip($com_arr);
         foreach ($menu_arr as $k=>$v) {
-            //获取menu_id对应该的hotelid数组
-            //hotelid和现在的hotel取交集，count个数减去交集即可
-            //update
-        }
 
-        $res = $menuHoModel->addAll($data);
-       // 插入操作日志并同时操作menu_log
-        if ( $res ) {
+            $bak_ho_arr = array();
+            $sql = "SELECT hotel_id FROM savor_menu_hotel WHERE create_time=
+                (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id={$v['id']})";
+            $bak_hotel_id_arr = $menuliModel->query($sql);
+            foreach ($bak_hotel_id_arr as $bk=>$bv){
+                $bak_ho_arr[] = $bv['hotel_id'];
+            }
 
+            $dat = array();
+            if ($menuid == $v['id']) {
+                //获取count
+                $count_arr = $menuliModel->field('count')->where(array('id'=>$v['id']))->find();
+                $count = $count_arr['count'];
+                if ($count == 0) {
+                    $dat['count'] = count($com_arr);
+                } else {
+                    //取差集在最新发布的而不在原来的hotel
+                    var_dump($com_arr, $bak_ho_arr);
+                    $inter = array_diff($com_arr, $bak_ho_arr);
+                    var_dump($inter);
+                    var_dump($bak_ho_arr);
+                    $in_count = count($inter);
+                    $dat['count'] = $count+$in_count;
+                }
+            } else{
+                $inter = array_intersect($bak_ho_arr, $com_arr);
+                $in_count = count($inter);
+                //获取本身自有的count
+                $count_arr = $menuliModel->field('count')->where(array('id'=>$v['id']))->find();
+                $count = $count_arr['count'];
+                //获取menu_id对应该的hotelid数组
+                //hotelid和现在的hotel取交集，count个数减去交集即可
+                //update
+                $dat = array();
+                $dat['count'] = $count-$in_count;
+               // var_dump($bak_ho_arr, $com_arr,$count, $in_count, $v['id']);
+
+            }
+
+            if($dat['count'] != 0) {
+                $dat['state'] = 1;
+            }
+
+            $menuliModel->where(array('id'=>$v['id']))->save($dat);
         }
+        $this->output('发布成功了!', 'menu/getlist');
 
 
         //$vinfo = $hotelModel->where('id='.$id)->find();
@@ -141,7 +195,7 @@ class MenuController extends BaseController {
 
     public function gethotelmanager()
     {
-        var_dump($_POST);
+       // var_dump($_POST);
         $hotelModel = new HotelModel;
         $areaModel  = new AreaModel;
 
@@ -218,9 +272,86 @@ class MenuController extends BaseController {
         $this->assign('page',  $result['page']);
         $this->display('selecthotel');
     }
+    /*
+     * 获取log日志，并进行对比
+     */
+    public function getlog() {
+        $menu_id = I('id');
+        $menu_name = I('menuname');
+        $mlOpeModel = new MenuListOpeModel();
+        $list = $mlOpeModel->field('menu_content,id,insert_time')->where(array('menu_id'=>$menu_id))->order('id asc')->select();
+        $data = array();
+        foreach ($list as $lk=>$lv){
+            //如果是第一期不比较
+            if ($lk == 0) {
+                $datp = array();
+                $dat = $mlOpeModel->field('menu_content,id,insert_time')->where(array('id'=>$lv['id']))->select();
+                $log_arr = json_decode($lv['menu_content'],true);
+                foreach ($log_arr as $lav) {
+                    $datp[] = '增加'.$lav['ads_name'];
+                }
+                $data[$dat[0]['insert_time']] = $datp;
+               // var_dump($data);
+
+            } else {
+                //获取上期数据
+                $bak = array();
+                $sec = array();
+                $dat = $mlOpeModel->field('menu_content,id,insert_time')->where(array('id'=>$lv['id']-1))->select();
+
+                $bak_log_arr = json_decode($dat[0]['menu_content'],true);
+                foreach ($bak_log_arr as $bav) {
+                    $bak[] = $bav['ads_name'];
+                }
+                //获取这期数据
+                $dat = $mlOpeModel->field('menu_content,id,insert_time')->where(array('id'=>$lv['id']))->select();
+                $log_arr = json_decode($lv['menu_content'],true);
+                foreach ($log_arr as $lav) {
+                    $sec[] = $lav['ads_name'];
+                }
+               // var_dump($sec,$bak);
+
+                //取新的有旧的没有则加
+                $arr_add = array_diff($sec, $bak);
+                foreach($arr_add as &$av){
+                    $av = '增加'.$av;
+                }
+                var_dump($arr_add);
+                $arr_minus = array_diff($bak, $sec);
+                foreach($arr_minus as &$av){
+                    $av = '减少'.$av;
+                }
+                var_dump($arr_minus);
+
+                $data[$lv['insert_time']] = array_merge($arr_add, $arr_minus);
+
+
+            }
+
+        }
+        echo '<hr/><hr/>';
+        var_dump($data);
+    }
 
     public function getHotelInfo(){
 
+        $menu_id = I('menuid');
+        $menu_name = I('menuname');
+        $data = array();
+        $mItemModel = new MenuItemModel();
+        $sql = "SELECT hotel_id,hotel_name FROM savor_menu_hotel WHERE create_time=
+                (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id=$menu_id)";
+
+        $bak_hotel_id_arr = $mItemModel->query($sql);
+
+        foreach ($bak_hotel_id_arr as $bk=>$bv){
+            $data[] = array('hoid'=>$bv['hotel_id'],'honame'=>$bv['hotel_name']);
+        }
+        $this->assign('menuid', $menu_id);
+        $this->assign('menuname', $menu_name);
+        $this->assign('vinfo', $data);
+
+        $this->display('gethotelinfo');
     }
     
     public function manager() {
@@ -281,9 +412,7 @@ class MenuController extends BaseController {
 
     public function doaddmenu(){
         //表单提交即是新增和导入ajax区分以及与修改进行区分
-
-
-            $id = I('post.id','');
+        $id = I('post.id','');
 
             //添加到menu_list 表
             $mlModel = new MenuListModel();
@@ -295,32 +424,47 @@ class MenuController extends BaseController {
             $save['state']    = 0;
             $save['menu_name'] = I('post.program');
             $save['update_time'] = date('Y-m-d H:i:s');
+            $save['create_time'] = date('Y-m-d H:i:s');
 
-             $data = array();
             $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
             $name_arr = explode (',',substr(I('post.rightname',''),0,-1));
             $time_arr = explode (',',substr(I('post.rightime',''),0,-1));
+            $co_arr = $id_arr;
+            $id_arr = array();
+            $dura_arr = array();
+            foreach ($co_arr as $cv) {
+                $arr = explode('|', $cv);
+                $id_arr[] = $arr[0];
+                $dura_arr[] = $arr[1];
+            }
+
             if( $id ) {
                 //先删除menuid，后插入
-
+                $mItemModel->delData($id);
                 $i = 1;
+                $data = array();
+                $sql = '';
+                $value = '';
+                $sql = "INSERT INTO `savor_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
                 foreach($id_arr as $k=>$v) {
                     $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
                         'create_time'=>$time_arr[$k],
-                        'update_time'=>$save['update_time'],
-                        'menu_id'=>$id,'sort_num'=>$i,
-                    );
+                        );
                     $i++;
                 }
-                var_dump($data);
-                die;
-                $mlModel->delData($id);
-                $res = $mItemModel->addAll($data);
+                foreach($id_arr as $k=>$v) {
+
+                    $value .= "('$v','$name_arr[$k]','$time_arr[$k]','{$save['update_time']}','$id','$i','$dura_arr[$k]'),";
+                    $i++;
+                }
+                $sql .= substr($value,0,-1);
+
+                $res = $mItemModel->execute($sql);
                 if ($res) {
                     //添加操作日志非针对饭店
                     $type = 2;
                     $this->addlog($data, $id, $type);
-                    $this->output('操作成功!', 'menu/getlist');
+                    $this->output('操作成功!', 'menu/getlist',2);
                 } else {
 
                 }
@@ -335,13 +479,14 @@ class MenuController extends BaseController {
                 if ( $result ) {
                     $menu_id = $mlModel->getLastInsID();
                     //将内容添加到savor_menu_item表
+                    $data = array();
                     $i = 1;
                     foreach($id_arr as $k=>$v) {
                         $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
                             'create_time'=>$time_arr[$k],
                             'update_time'=>$save['update_time'],
                             'menu_id'=>$menu_id,'sort_num'=>$i,
-                        );
+                            'duration'=>$dura_arr[$k]);
                         $i++;
                     }
                     $res = $mItemModel->addAll($data);
@@ -350,7 +495,7 @@ class MenuController extends BaseController {
                     if ($res) {
                         //添加操作日志不在这边加
                         $this->addlog($data, $menu_id);
-                        $this->output('操作成功!', 'menu/getlist');
+                        $this->output('操作成功!', 'menu/getlist',2);
                     } else {
 
                     }
@@ -466,10 +611,11 @@ class MenuController extends BaseController {
         $starttime = $starttime.':00';
         $endtime = $endtime.':00';
         $where = "1=1";
-        $field = "id,name,media_id,create_time";
+        $field = "id,name,media_id,create_time,duration";
         $searchtitle = I('post.searchtitle','');
         if ($starttime > $endtime) {
             $result = array('error'=>0);
+            return $result;
         }
         if ($searchtitle) {
             $where .= "	AND name LIKE '%{$searchtitle}%'";
@@ -481,24 +627,22 @@ class MenuController extends BaseController {
             $where .= "	AND (`type`) in (1,2) ";
             $result = $adModel->getWhere($where, $field);
 
-            $result[] = array('id'=>0,'name'=>'酒楼宣传片','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>0,'name'=>'1酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>0,'name'=>'2酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>0,'name'=>'3酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>0,'name'=>'4酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>0,'name'=>'5酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-            $result[] = array('id'=>0,'name'=>'6酒楼片源','create_time'=>date("Y-m-d H:i:s"));
-
+            $result[] = array('id'=>0,'name'=>'酒楼宣传片','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'1酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'2酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'3酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'4酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'5酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'6酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
 
         } else if($m_type == 3){
-            $result[] = array('id'=>0,'name'=>'酒楼宣传片');
-            $result[] = array('id'=>0,'name'=>'1酒楼片源');
-            $result[] = array('id'=>0,'name'=>'2酒楼片源');
-            $result[] = array('id'=>0,'name'=>'3酒楼片源');
-            $result[] = array('id'=>0,'name'=>'4酒楼片源');
-            $result[] = array('id'=>0,'name'=>'5酒楼片源');
-            $result[] = array('id'=>0,'name'=>'6酒楼片源');
-
+            $result[] = array('id'=>0,'name'=>'酒楼宣传片','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'1酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'2酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'3酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'4酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'5酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
+            $result[] = array('id'=>0,'name'=>'6酒楼片源','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
         } else {
             $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
             $where .= "	AND type = '{$m_type}'";
