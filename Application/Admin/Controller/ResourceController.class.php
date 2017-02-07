@@ -21,14 +21,14 @@ class ResourceController extends BaseController{
         $beg_time = I('begin_time','');
         $end_time = I('end_time','');
         $orders = $order.' '.$sort;
-        $start = ($start-1) * $size;
+        $pagenum = ($start-1) * $size>0?($start-1) * $size:0;
         $where = "1=1";
         if($name)   $where.= "	AND name LIKE '%{$name}%'";
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
         if($end_time)   $where.=" AND create_time<='$end_time'";
         
 	 	$mediaModel = new \Admin\Model\MediaModel();
-        $result = $mediaModel->getList($where,$orders,$start,$size);
+        $result = $mediaModel->getList($where,$orders,$pagenum,$size);
         $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('timeinfo',$time_info);
         $this->assign('pageNum',$start);
@@ -110,7 +110,7 @@ class ResourceController extends BaseController{
 		$rand = rand(10,99);
 			
 		//资源空间的目录前缀
-		$dir = 'media/'.date('Ym').'/'.date('d').'/'.$rand.'/';
+		$dir = C('OSS_ADDR_PATH');
 		
 		//最大文件大小.用户可以自己设置
 		$condition = array(0=>'content-length-range', 1=>0, 2=>1048576000);

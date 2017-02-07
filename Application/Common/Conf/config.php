@@ -29,6 +29,7 @@ $config = array(
     'HOST_NAME'=>'http://'.$_SERVER['HTTP_HOST'],
     'SITE_NAME'=> '寻味后台管理',
     'SHOW_ERROR_MSG' =>  true, //显示错误信息
+    'OSS_ADDR_PATH'=>'media/resource/',
 
 );
 
