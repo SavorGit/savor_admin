@@ -9,7 +9,7 @@
     </ul>
     <div class="tab-content">
     <div id="dropbase" class="tab-pane fade active in pageContent">
-		  <form method="post" name=theform action="{$host_name}/resource/addResource" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		  <form method="post" name=theform action="{$host_name}/{$action_url}" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		   	<input type="hidden" name="id" value="{$row.id}">
 		   	<input type="hidden" name="oss_addr" id='oss_addr' value=''>
 		    <div class="pageFormContent modal-body">
