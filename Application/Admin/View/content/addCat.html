@@ -1,0 +1,92 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<include file="Public/script"/>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/release/doAddCat" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+
+    <div class="pageFormContent modal-body">
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          分类名称
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="cat_name" minlength="2" maxlength="20" value="{$vinfo.name}" required>
+        </div>
+      </div>
+
+
+
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          分类序号:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="sort" minlength="1"  value="{$vinfo.sort_num}" required>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          分类图片：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <div class="fileinput fileinput-new" data-fileinput>
+            <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+              <a data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=image" data-browse-file>
+                <if condition="($vinfo['img_url'] eq 'NULL') OR $vinfo['img_url'] eq ''">
+                  <img src="/Public/admin/assets/img/noimage.png" border="0" />
+                  <else />
+                  <img src="/Public/{$vinfo.img_url}" border="0" />
+                </if>
+              </a>
+            </div>
+            <span class="help-block">请上传512x320像素的jpg格式图片，展示效果最佳，文件大小在300KB内</span>
+            <div>
+              <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=image" data-browse-file>
+                选择图片
+              </a>
+              <input type="hidden" name="shwimage" value="{$vinfo.shw_image}">
+              <input type="hidden" name="oldpicurl" value="{$vinfo.img_url}">
+
+              <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                删除 </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          删除状态:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="state" class="form-control bs-select" title="请选择..." required>
+            <option value="0" <if condition="$vinfo.state eq 0"> selected </if>  >正常</option><br>
+            <option value="1" <if condition="$vinfo.state eq 1"> selected </if>  >删除</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>
+    </div>
+
+  </form>
+</div>
