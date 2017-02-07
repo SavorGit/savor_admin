@@ -13,7 +13,33 @@
           <input type="text" class="form-control" name="name" minlength="2" maxlength="20" value="{$vinfo.name}" required>
         </div>
       </div>
-
+	  <div class="form-group row">
+         <label class="col-xs-12 col-sm-2 control-label">
+           logo图片：
+         </label>
+              <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                  <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                    <a data-target="#modal-file" href="{$host_name}/resource/addResource" data-browse-file>
+                      <if condition="($vinfo['shw_image'] eq 'NULL') OR $vinfo['shw_image'] eq ''">
+                        <img src="/Public/admin/assets/img/noimage.png" border="0" />
+                      <else />
+                        <img src="{$vinfo.shw_image.full}" border="0" />
+                      </if>
+                    </a>
+                  </div>
+                  <div>
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/addResource" data-browse-file>
+                      选择图片                     
+                    </a>
+                    <input type="hidden" name="media_id" id="media_id" value="">
+                    <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                    删除 </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           酒店地址:
@@ -126,7 +152,6 @@
         </div>
       </div>
 
-      
        <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
          状态变更说明:
@@ -144,7 +169,7 @@
           <input type="text" class="form-control" name="remark">
         </div>
       </div>
-
+<!--  
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
          GPS:
@@ -152,15 +177,14 @@
         <div class="col-xs-12 col-sm-10">
           <input type="text" class="form-control" name="gps">
         </div>
-      </div>
-
+      </div>-->
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           删除状态:
         </label>
         <div class="col-xs-12 col-sm-10">
          <select name="flag" class="form-control bs-select" title="请选择..." required>
-              <option value="0" <if condition="$vinfo.flag eq 0"> selected </if>  >正常</option><br>
+              <option value="0" <if condition="$vinfo.flag eq 0"> selected </if>  >正常</option>
               <option value="1" <if condition="$vinfo.flag eq 1"> selected </if>  >删除</option>
           </select>
         </div>

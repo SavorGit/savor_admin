@@ -74,16 +74,16 @@
               <td data-title="url">{$vlist.oss_addr}</td>
               <td data-title="上传时间">{$vlist.create_time}</td>
               <td data-title="状态">
-              <a data-tip="<if condition="$vlist['flag'] eq 0">正常<else/>冻结</if>" target="ajaxTodo" href="{$host_name}/sensitive/sensitiveSwitch?id={$vlist.id}&status={$vlist.mgr_status}" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+              <a data-tip="<if condition="$vlist['flag'] eq 0">正常<else/>冻结</if>" target="ajaxTodo" href="#" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 	<i class="<if condition="$vlist['flag'] eq 0">fa fa-toggle-on<else/>fa fa-toggle-off</if>"></i>
                 	</span></a>
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/Send/updateMedia?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="#" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a data-action="delete" data-tip="删除" title="你确定要删除吗？" target="ajaxTrash" href="{$host_name}/banner/bannerDel?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
+                  <a data-action="delete" data-tip="删除" title="你确定要删除吗？" target="ajaxTrash" href="#" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
                   <span><i class="fa fa-trash"></i></span></a>
                 </div>
               </td>
