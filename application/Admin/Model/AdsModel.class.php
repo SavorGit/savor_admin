@@ -15,8 +15,7 @@ class AdsModel extends BaseModel
 
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
-var_dump($this->getLastSql());
-		ob_clean();
+
 		return $list;
 	}
 
