@@ -3,7 +3,7 @@ $DB_MASTER_HOST = 'localhost';
 $DB_SLAVE_HOST  = 'localhost';
 $db_name = 'savoradmin';
 $db_user = 'root';
-$db_pwd = 'root';
+$db_pwd = '';
 
 //redis缓存配置
 $redis['db1']['0']['host'] = '';
@@ -29,11 +29,11 @@ $config_db =  array(
  	'REDIS_CONFIG' => $redis,
     
     //OSSS上传配置
-    'OSS_ACCESS_ID'   => 'tnDh4AQqRYbV9mq8',
-    'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
-    'OSS_ENDPOINT'    => 'oss-cn-hangzhou.aliyuncs.com',  //注意不要在前面加 http://
-    'OSS_TEST_BUCKET' => '219bucket',                     //资源空间,即桶
-    'OSS_SYNC_CALLBACK_URL'=>'http://devp.savorx.cn/admin/notify/syncCallback', //上传异步回调地址
+	'OSS_ACCESS_ID'   => 'tnDh4AQqRYbV9mq8',
+	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
+	'OSS_HOST'    => 'oss-cn-hangzhou.aliyuncs.com',  //注意不要在前面加 http:// 
+	'OSS_BUCKET' => '219bucket',                     //资源空间,即桶
+	'OSS_SYNC_CALLBACK_URL'=>'http://devp.savorx.cn/admin/notify/syncCallback', //上传异步回调地址
     //end
 );
 return $config_db;

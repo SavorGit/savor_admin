@@ -146,7 +146,7 @@ class ResourceController extends BaseController{
 	 public function getOssParams(){
 	 	$id = C('OSS_ACCESS_ID');
 		$key = C('OSS_ACCESS_KEY');
-		$host = 'http://'.C('OSS_TEST_BUCKET').'.'.C('OSS_ENDPOINT');
+		$host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST');
 		$callbackUrl = C('OSS_SYNC_CALLBACK_URL');
 	    $callback_param = array(
 	    			 'callbackUrl'=>$callbackUrl, 

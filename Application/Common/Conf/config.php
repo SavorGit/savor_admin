@@ -54,6 +54,13 @@ $config['MANGER_STATE'] = array(
     '3'=>'审核不通过'
 );
 
+$config['HOTEL_LEVEL'] = array(
+    '3'=>'3A',
+    '4'=>'4A',
+    '5'=>'5A',
+    '6'=>'6A',
+);
+
 $config['MANGER_KEY'] = array(
     'colum'=>'栏目节点',
     'cms'=>'程序节点',
