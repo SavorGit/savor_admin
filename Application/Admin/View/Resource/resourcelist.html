@@ -1,0 +1,99 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/resource/resourceList" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+      <div class="col-xs-12 col-sm-4 col-md-5">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/resource/addResource" title="新增资源" target="dialog" mask="true"><i class="fa fa-plus"></i>新增资源</a>
+          </div>
+        </div>
+        
+       <div class="col-xs-12 col-sm-5 col-md-2 pull-left">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="keywords" value="{$keywords}" placeholder="输入资源名称查找">
+          </div>
+        </div> 
+           <div class="goods-date">
+        	<div class="form-inline">
+            	<div class="form-group">
+                    <label>上传时间：</label>
+                    <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+                         <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
+                         <span class="input-group-btn">
+                           <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                           <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+                         </span>
+                     </div>
+                 </div>
+                   <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+                     <input name="end_time" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$timeinfo.end_time}" readonly>
+                     <span class="input-group-btn">
+                       <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                       <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+                     </span>
+                     <span class="input-group-btn">
+              			<button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search">搜索</i></button>
+            		</span>
+                 </div>
+             </div>
+         </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>资源名称</th>
+              <th>资源类型</th>
+              <th>创建者</th>
+              <th>url</th>
+              <th>上传时间</th>
+              <th>状态</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="ID">{$vlist.id}</td>
+              <td data-title="资源名称">{$vlist.name}</td>
+              <td data-title="资源类型">{$vlist.surfix}</td>
+              <td data-title="创建者">{$vlist.creator}</td>
+              <td data-title="url">{$vlist.oss_addr}</td>
+              <td data-title="上传时间">{$vlist.create_time}</td>
+              <td data-title="状态">
+              <a data-tip="<if condition="$vlist['flag'] eq 0">正常<else/>冻结</if>" target="ajaxTodo" href="{$host_name}/sensitive/sensitiveSwitch?id={$vlist.id}&status={$vlist.mgr_status}" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                	<i class="<if condition="$vlist['flag'] eq 0">fa fa-toggle-on<else/>fa fa-toggle-off</if>"></i>
+                	</span></a>
+              </td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/Send/updateMedia?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                  <a data-action="delete" data-tip="删除" title="你确定要删除吗？" target="ajaxTrash" href="{$host_name}/banner/bannerDel?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
+                  <span><i class="fa fa-trash"></i></span></a>
+                </div>
+              </td>
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

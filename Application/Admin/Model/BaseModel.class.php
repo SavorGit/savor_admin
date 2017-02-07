@@ -9,10 +9,7 @@ namespace Admin\Model;
 
 use Think\Model;
 
-class BaseModel extends Model
-{
-
-
+class BaseModel extends Model{
 	/**
 	 * 获取单条数据
 	 * @param  string  $field  [description]
@@ -23,19 +20,14 @@ class BaseModel extends Model
 	 * @param  string  $group  [description]
 	 * @return [type]          [description]
 	 */
-	public function getRow($field='*',$filter='',$order='',$group='')
-	{
-
-		return $this->field($field)
+	public function getRow($field='*',$filter='',$order='',$group=''){
+		$res = $this->field($field)
 				    ->where($filter)
 				    ->order($order)
 				    ->group($group)
 				    ->find();
-
-	}//End Function
-	
-
-
+		return $res;
+	}
 
 	/**
 	 * 获取多条数据
@@ -47,24 +39,15 @@ class BaseModel extends Model
 	 * @param  string  $group  [description]
 	 * @return [type]          [description]
 	 */
-	public function getAll($field='*',$filter='',$offset=0,$limit=10,$order='',$group='')
-	{
-
-		return $this->field($field)
+	public function getAll($field='*',$filter='',$offset=0,$limit=10,$order='',$group=''){
+		$res = $this->field($field)
 					->where($filter)
 					->limit($offset,$limit)
 					->order($order)
 					->group($group)
 					->select();
+		return $res;
+	}
 
-	}//End Function
-
-
-
-
-
-
-
-
-}//End CLASS
+}
 

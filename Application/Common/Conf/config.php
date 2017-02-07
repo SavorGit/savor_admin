@@ -57,10 +57,11 @@ $config['MANGER_KEY'] = array(
     'colum'=>'栏目节点',
     'cms'=>'程序节点',
     'system'=>'系统节点',
-    'send' =>'发布节点',
+    'send' =>'内容节点',
     'version'=>'版本节点',
     'menu' =>'节目节点',
     'ad' =>'广告节点',
+    'hotel' =>'酒楼节点',
 );
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),

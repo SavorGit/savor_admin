@@ -12,24 +12,18 @@ use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
 use Admin\Model\RoomModel;
 
-class HotelController extends BaseController 
-{
-
-	 public function __construct() {
+class HotelController extends BaseController {
+    public function __construct() {
         parent::__construct();
     }
-
 
     /**
      * 酒店列表
      * 
-     * @return [type] [description]
      */
-	public function manager()
-	{	
+	public function manager(){	
 		$hotelModel = new HotelModel;
 		$areaModel  = new AreaModel;
-
 		$size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -54,13 +48,10 @@ class HotelController extends BaseController
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
-        //print_r($result);die;
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('index');
-
-	}//End Function
-
+	}
 
 
 
@@ -68,26 +59,17 @@ class HotelController extends BaseController
 	 * 新增酒店
 	 * 
 	 */
-	public function add()
-	{	
+	public function add(){	
 		$id = I('get.id');
-
 		$hotelModel = new HotelModel;
-
 		$areaModel  = new AreaModel;
-
 		$area = $areaModel->getAllArea();
 		$this->assign('area',$area);
-		
-		if($id)
-		{
+		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();
 			$this->assign('vinfo',$vinfo);
-
 		}
-			
-		return $this->display('add');
-
+		$this->display('add');
 	}
 
 
