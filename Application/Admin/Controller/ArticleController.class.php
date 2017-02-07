@@ -86,6 +86,55 @@ class ArticleController extends BaseController {
         $this->display('addart');
 
     }
+    /*
+     * 显示并生成H5页面地址
+     */
+    public function showcontent($id){
+        //geneStatiContent
+
+        $artModel = new ArticleModel();
+
+        $vinfo = $artModel->where('id='.$id)->find();
+        $content = html_entity_decode($vinfo['content']);
+        $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
+        $replacment = '<img src='.__ROOT__ .'${1}>';
+        $content =  preg_replace($pattern, $replacment, $content);
+        /*
+               $pregRule = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
+               $suffix = 'gggggggg';
+               $content = preg_replace($pregRule, '<img src="${1}'.$suffix.'" style="max-width:100%">', $content);
+
+
+
+
+               $content ='<img class="img-responsive" src="/Public/uploads/2017-01-08/14838869561180598520.png"/>';
+
+
+               $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
+               $replacment = '<img src="www.a.com${1}">';
+               echo preg_replace($pattern, $replacment, $content);
+
+               die;
+               preg_match_all($pattern,$content,$matchContent);
+               print_r($matchContent);
+               die;*/
+        $this->assign('content',$content);
+        ob_start();
+        $this->display('showcontent');
+       // $content = html_entity_decode ($vinfo['content']);
+        $content = ob_get_contents();//取得php页面输出的全部内容
+        echo $content;
+        $path = SITE_TP_PATH.'/Public/html';
+        if ( !(is_dir($path)) ) {
+            mkdir ( $path, 0777, true );
+        }
+        $fp = fopen($path."/$id.html", "w");
+       // var_dump($fp);
+        fwrite($fp, $content);
+        fclose($fp);
+        ob_end_clean();
+
+    }
 
 
 
@@ -196,6 +245,9 @@ class ArticleController extends BaseController {
         {
             if($artModel->where('id='.$id)->save($save))
             {
+                $this->showcontent($id);
+
+
                 $this->output('操作成功!', 'article/addvideo');
             }
             else
@@ -208,6 +260,10 @@ class ArticleController extends BaseController {
             $save['create_time'] = date('Y-m-d H:i:s');
             if($artModel->add($save))
             {
+                $id = $artModel->getLastInsID();
+                $this->showcontent($id);
+                $dat['content_url'] = 'html/$id.'.'html';
+                $artModel->where('id='.$id)->save($dat);
                 $this->output('操作成功!', 'article/addvideo');
             }
             else
@@ -254,6 +310,9 @@ class ArticleController extends BaseController {
         {
             if($artModel->where('id='.$id)->save($save))
             {
+                $this->showcontent($id);
+
+
                 $this->output('操作成功!', 'release/addCate');
             }
             else
@@ -266,6 +325,11 @@ class ArticleController extends BaseController {
             $save['create_time'] = date('Y-m-d H:i:s');
             if($artModel->add($save))
             {
+                $arid = $artModel->getLastInsID();
+                $this->showcontent($arid);
+                $dat['content_url'] = 'html/$id.'.'html';
+                $artModel->where('id='.$arid)->save($dat);
+
                 $this->output('操作成功!', 'release/addCate');
             }
             else
