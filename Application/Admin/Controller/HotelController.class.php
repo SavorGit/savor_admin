@@ -8,10 +8,6 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
-use Admin\Model\HotelModel;
-use Admin\Model\AreaModel;
-use Admin\Model\RoomModel;
-
 class HotelController extends BaseController {
     public function __construct() {
         parent::__construct();
@@ -22,8 +18,8 @@ class HotelController extends BaseController {
      * 
      */
 	public function manager(){	
-		$hotelModel = new HotelModel;
-		$areaModel  = new AreaModel;
+		$hotelModel = new \Admin\Model\HotelModel();
+		$areaModel  = new \Admin\Model\AreaModel();
 		$size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -36,23 +32,17 @@ class HotelController extends BaseController {
         $start  = ( $start-1 ) * $size;
 
         $where = "1=1";
-        
         $name = I('name');
-
-        if($name)
-        {
+        if($name){
         	$this->assign('name',$name);
         	$where .= "	AND name LIKE '%{$name}%'";
         }
-
         $result = $hotelModel->getList($where,$orders,$start,$size);
-
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('index');
 	}
-
 
 
 	/**
@@ -61,8 +51,8 @@ class HotelController extends BaseController {
 	 */
 	public function add(){	
 		$id = I('get.id');
-		$hotelModel = new HotelModel;
-		$areaModel  = new AreaModel;
+		$hotelModel = new \Admin\Model\HotelModel();
+		$areaModel  = new \Admin\Model\AreaModel();
 		$area = $areaModel->getAllArea();
 		$this->assign('area',$area);
 		if($id){
@@ -73,14 +63,10 @@ class HotelController extends BaseController {
 	}
 
 
-
 	/**
 	 * 保存或者更新酒店信息
-	 * 
-	 * @return [type] [description]
 	 */
-	public function doAdd()
-	{
+	public function doAdd(){
 		$id                          = I('post.id');
 		$save                        = [];
 		$save['name']                = I('post.name','','trim');
@@ -100,54 +86,33 @@ class HotelController extends BaseController {
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
 		$save['area_id']             = I('post.area_id','','intval');
-		
-		$hotelModel = new HotelModel;
-
-		if($id)
-		{
-			if($hotelModel->where('id='.$id)->save($save))
-			{
-				$this->output('操作成功!', 'hotel/manager');
-			}
-			else
-			{
-				 $this->output('操作失败!', 'hotel/add');
+		$hotelModel = new \Admin\Model\HotelModel();
+		if($id){
+			if($hotelModel->where('id='.$id)->save($save)){
+			    $this->output('操作成功!', 'hotel/manager');
+			}else{
+			    $this->output('操作失败!', 'hotel/add');
 			}		
-		}
-		else
-		{	
-			
+		}else{	
 			$save['create_time'] = date('Y-m-d H:i:s');
-			if($hotelModel->add($save))
-			{
+			if($hotelModel->add($save)){
 				$this->output('操作成功!', 'hotel/manager');
-			}
-			else
-			{
+			}else{
 				 $this->output('操作失败!', 'hotel/add');
 			}	
-
 		}		
 
-
-	}//End Function
+	}
 
 
 
 
 	/**
 	 * 包间列表
-	 *
-	 * 
-	 * @return [type] [description]
 	 */
-	public function room()
-	{
-
-		$roomModel = new RoomModel;
-		$hotelModel = new HotelModel;
-
-
+	public function room(){
+		$roomModel = new \Admin\Model\RoomModel();
+		$hotelModel = new \Admin\Model\HotelModel();
 		$size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -158,95 +123,56 @@ class HotelController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-
         $where = "1=1";
-        
         $name = I('name');
 
-        if($name)
-        {
+        if($name){
         	$this->assign('name',$name);
         	$where .= "	AND name LIKE '%{$name}%'";
         }
-
         $result = $roomModel->getList($where,$orders,$start,$size);
-
         $result['list'] = $hotelModel->hotelIdToName($result['list']);
-
-  		
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('room');
 
-
-	}//End Function
-
-
-
-
+	}
 
 	/**
 	 * 新增酒店包间
 	 * 
 	 */
-	public function addRoom()
-	{	
+	public function addRoom(){	
 		$id = I('get.hotel_id');
-
-		$hotelModel = new HotelModel;
-		
-		
+		$hotelModel = new \Admin\Model\HotelModel();
 		$temp = $hotelModel->getRow('name',['id'=>$id]);
-
 		$this->assign('hotel_name',$temp['name']);
-		
 		$this->assign('hotel_id',$id);
-
-			
-		return $this->display('addRoom');
-
+		$this->display('addRoom');
 	}
-
-
 
 	/**
 	 * 新增酒店包间
 	 * 
 	 */
-	public function editRoom()
-	{	
+	public function editRoom(){	
 		$id = I('get.id');
-			
-		$roomModel = new RoomModel;
-		$hotelModel = new HotelModel;
-
-		if($id)
-		{
+		$roomModel = new \Admin\Model\RoomModel();
+		$hotelModel = new \Admin\Model\HotelModel();
+		if($id){
 			$vinfo = $roomModel->where('id='.$id)->find();
-
 			$temp = $hotelModel->getRow('name',['id'=>$vinfo['hotel_id']]);
-			
-			$vinfo['hotel_name'] = $temp['name'];
-
+			$this->assign('hotel_name',$temp['name']);
+			$this->assign('hotel_id',$vinfo['hotel_id']);
 			$this->assign('vinfo',$vinfo);
-
 		}
-			
-		return $this->display('addRoom');
-
+		$this->display('addRoom');
 	}
-
-
-
-
 
 	/**
 	 * 保存或者更新酒店信息
-	 * 
-	 * @return [type] [description]
 	 */
-	public function doAddRoom()
-	{
+	public function doAddRoom(){
 		$id                  = I('post.id');
 		$save                = [];
 		$save['hotel_id']    = I('post.hotel_id','','intval');
@@ -257,41 +183,22 @@ class HotelController extends BaseController {
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
 
-		
-		$RoomModel = new RoomModel;
-
-		if($id)
-		{
-			if($RoomModel->where('id='.$id)->save($save))
-			{
+		$RoomModel = new \Admin\Model\RoomModel();
+		if($id){
+			if($RoomModel->where('id='.$id)->save($save)){
 				$this->output('操作成功!', 'hotel/addRoom');
-			}
-			else
-			{
+			}else{
 				 $this->output('操作失败!', 'hotel/doAddRoom');
 			}		
-		}
-		else
-		{	
-			
+		}else{	
 			$save['create_time'] = date('Y-m-d H:i:s');
-
-			if($RoomModel->add($save))
-			{
+			if($RoomModel->add($save)){
 				$this->output('操作成功!', 'hotel/addRoom');
-			}
-			else
-			{
+			}else{
 				 $this->output('操作失败!', 'hotel/doAddRoom');
 			}	
-
 		}		
+	}
 
 
-	}//End Function
-
-
-
-
-
-}//End Class
+}
