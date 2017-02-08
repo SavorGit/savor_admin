@@ -7,7 +7,11 @@ namespace Admin\Controller;
 use Admin\Controller\BaseController;
 
 class ResourceController extends BaseController{
-	 
+	 private $oss_host = '';
+	 public function __construct(){
+	     parent::__construct();
+	     $this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	 }
 	 /**
 	  * 资源列表
 	  */
@@ -54,8 +58,7 @@ class ResourceController extends BaseController{
 	         $result = $this->add_media();
              $this->output($result['message'], $result['url']);
 	     }else{
-	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-	         $this->assign('oss_host',$oss_host);
+	         $this->assign('oss_host',$this->oss_host);
 	         $this->display('addresource');
 	     }
 	 }
@@ -81,22 +84,32 @@ class ResourceController extends BaseController{
 	         $mediaModel = new \Admin\Model\MediaModel();
 	         $result = $mediaModel->getList($where,$orders,$start,$size);
 	         $this->assign('datalist', $result['list']);
-	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-	         $this->assign('oss_host',$oss_host);
+	         $this->assign('oss_host',$this->oss_host);
 	         $this->display('uploadresource');
 	     }
 	 }
 	 
 	 public function editResource(){
          $mediaModel = new \Admin\Model\MediaModel();
+         $media_id = I('request.id',0,'intval');
 	     if(IS_POST){
-	         $media_id                = I('post.id');
-	         $save              = [];
-	         $save['name']  	   = I('post.name','','trim');
+	         $save = array();
+	         $flag = I('request.flag');
+	         if($flag){
+	             if($flag==2)  $flag = 0;
+	             $save['flag'] = $flag;
+	         }else{
+	             $name = I('post.name','','trim');
+	             $type = I('post.type',3,'intval');
+	             $duration = I('post.duration','');
+	             $description = I('post.description','');
+	             $save['name'] = $name;
+	             $save['type'] = $type;
+	             if($duration)  $save['duration'] = $duration;
+	             if($description)   $save['description'] = $description;
+	         }
 	         $message = $url = '';
 	         if($media_id){
-	             $save['flag']      = I('post.flag','','intval');
-	             $save['state']     = I('post.state','','intval');
 	             if($mediaModel->where('id='.$media_id)->save($save)){
 	                 $message = '更新成功!';
 	                 $url = 'resource/resourceList';
@@ -105,11 +118,15 @@ class ResourceController extends BaseController{
 	                 $url = 'resource/resourceList';
 	             }
 	         }
+	         $this->output($message, $url,2);
 	     }else{
-             $message = '更新失败!';
-             $url = 'resource/resourceList';
+	         $vinfo = $mediaModel->find($media_id);
+	         if($vinfo){
+	             $vinfo['oss_addr'] = $this->oss_host.$vinfo['oss_addr'];
+	         }
+	         $this->assign('vinfo',$vinfo);
+	         $this->display('editresource');
 	     }
-         $this->output($message, $url);
 	 }
 	 
 	 private function add_media(){
@@ -151,7 +168,7 @@ class ResourceController extends BaseController{
 	             $message = '添加失败!';
 	             $url = 'resource/resourceList';
 	         }
-	         $oss_addr = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/'.$save['oss_addr'];
+	         $oss_addr = $this->oss_host.$save['oss_addr'];
 	     }
 	     $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
 	     return $result;
