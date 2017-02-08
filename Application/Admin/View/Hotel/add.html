@@ -22,9 +22,9 @@
                   <div class="fileinput-preview thumbnail" data-trigger="fileinput">
                     <a data-target="#modal-file" href="{$host_name}/resource/uploadResource" data-browse-file>
                       <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
-                        <img src="/Public/admin/assets/img/noimage.png" border="0" />
+                        <img id="logoImg" src="/Public/admin/assets/img/noimage.png" border="0" />
                       <else />
-                        <img src="{$vinfo.oss_addr}" border="0" />
+                        <img id="logoImg" src="{$vinfo.oss_addr}" border="0" />
                       </if>
                     </a>
                   </div>

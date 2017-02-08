@@ -66,6 +66,9 @@
                  </if> 
               </td>
               <td data-title="维护人">{$vlist.maintainer}</td>
+              <td data-title="包间数量"><a target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">{$vlist.name}包间数:{$vlist.room_num}</a></td>
+              <td data-title="机顶盒数量"><a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">{$vlist.name}机顶盒数:{$vlist.box_num}</a></td>
+              <td data-title="电视数量"><a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">{$vlist.name}tv数:{$vlist.tv_num}</a></td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="查看" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">

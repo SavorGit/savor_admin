@@ -38,8 +38,14 @@ class HotelController extends BaseController {
         	$where .= "	AND name LIKE '%{$name}%'";
         }
         $result = $hotelModel->getList($where,$orders,$start,$size);
-        $result['list'] = $areaModel->areaIdToAareName($result['list']);
-   		$this->assign('list', $result['list']);
+        $datalist = $areaModel->areaIdToAareName($result['list']);
+        foreach ($datalist as $k=>$v){
+            $nums = $hotelModel->getStatisticalNumByHotelId($v['id']);
+            $datalist[$k]['room_num'] = $nums['room_num'];
+            $datalist[$k]['box_num'] = $nums['box_num'];
+            $datalist[$k]['tv_num'] = $nums['tv_num'];
+        }
+   		$this->assign('list', $datalist);
    	    $this->assign('page',  $result['page']);
         $this->display('index');
 	}
@@ -113,6 +119,7 @@ class HotelController extends BaseController {
 	public function room(){
 		$roomModel = new \Admin\Model\RoomModel();
 		$hotelModel = new \Admin\Model\HotelModel();
+		$hotel_id = I('hotel_id',0);
 		$size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -130,8 +137,12 @@ class HotelController extends BaseController {
         	$this->assign('name',$name);
         	$where .= "	AND name LIKE '%{$name}%'";
         }
+        if($hotel_id){
+            $where.=" AND hotel_id='$hotel_id'";
+        }
         $result = $roomModel->getList($where,$orders,$start,$size);
         $result['list'] = $hotelModel->hotelIdToName($result['list']);
+        $this->assign('hotel_id',$hotel_id);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('room');
@@ -175,7 +186,8 @@ class HotelController extends BaseController {
 	public function doAddRoom(){
 		$id                  = I('post.id');
 		$save                = [];
-		$save['hotel_id']    = I('post.hotel_id','','intval');
+		$hotel_id    = I('post.hotel_id','','intval');
+		$save['hotel_id'] = $hotel_id;
 		$save['name']        = I('post.name','','trim');
 		$save['type']        = I('post.type','','intval');
 		$save['flag']        = I('post.flag','','intval');
@@ -186,14 +198,14 @@ class HotelController extends BaseController {
 		$RoomModel = new \Admin\Model\RoomModel();
 		if($id){
 			if($RoomModel->where('id='.$id)->save($save)){
-				$this->output('操作成功!', 'hotel/addRoom');
+				$this->output('操作成功!', 'hotel/room?hotel_id='.$hotel_id,2);
 			}else{
 				 $this->output('操作失败!', 'hotel/doAddRoom');
 			}		
 		}else{	
 			$save['create_time'] = date('Y-m-d H:i:s');
 			if($RoomModel->add($save)){
-				$this->output('操作成功!', 'hotel/addRoom');
+				$this->output('操作成功!', 'hotel/room?hotel_id='.$hotel_id);
 			}else{
 				 $this->output('操作失败!', 'hotel/doAddRoom');
 			}	
