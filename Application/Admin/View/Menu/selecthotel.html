@@ -2,6 +2,8 @@
 <!--显示列表样式1 start-->
 <div class="pageHeader">
   <form onsubmit="return dialogSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+    <input type="hidden" value="{$hot}" name="hot" />
+    <input type="hidden" value="{$ext}" name="infp" />
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -27,6 +29,8 @@
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="{$host_name}/menu/hotelconfirm" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return dialogSearch(this);">
+
+        <input type="hidden" value="{$hopu}" name="hopu" />
         <input name="menuid" type="hidden" value="{$menu_id}">
         <input name="menuname" type="hidden" value="{$menu_name}">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
@@ -57,8 +61,10 @@
               <!-- <td class="table-checkbox">
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
-              <td><input name="ids[]" value="{$vlist.id}" type="checkbox"></td>
-              <input name="ns[]" type="hidden" value="{$vlist.name}">
+              <td><input name="ids[]" value="{$vlist.id}|{$vlist.name}" type="checkbox">
+
+              </td>
+
               <td data-title="酒店ID">{$vlist.id}</td>
               <td data-title="酒店名称">{$vlist.name}</td>
               <td data-title="酒店地址">{$vlist.addr}</td>

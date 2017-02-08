@@ -5,15 +5,14 @@
     <input type="hidden" name="menuid" value="{$menuid}">
     <div class="pageFormContent modal-body">
       <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          确认酒楼信息:请输入任意数字
-        </label>
+
         <div class="col-xs-12 col-sm-10">
-          <input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+
           <p class="form-heading">酒楼信息确认：</p>
           <div class="row sm-row" data-check="list" data-parent=".pageContent">
             <volist name="vinfo" id="vo" key="n">
             <div class="col-xs-4 col-sm-3 col-md-2">
+              <input type="hidden" name="hoty" value="{$hoty}" />
               <label>
 
 
@@ -27,7 +26,24 @@
           </div>
         </div>
       </div>
-    </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          预约发布：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
+            <input name="logtime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+          </div>
+        </div>
+      </div>
+
+        </div>
+
     <div class="modal-footer">
 	    <div class="pull-left">
 	    	<label>

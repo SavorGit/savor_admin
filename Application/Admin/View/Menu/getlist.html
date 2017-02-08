@@ -80,7 +80,7 @@
               <td data-title="是否选择洒楼">
 
                 <if condition="$vlist.count eq 0"> <a data-tip="请选择酒楼" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
-                    <else/> 酒楼数为{$vlist.count}
+                    <else/> <a data-tip="酒楼数为" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_name}">{$vlist.count}</a>
                   </if>
               </td>
               <td data-title="节目详情">
@@ -90,7 +90,7 @@
 
                 <if condition="$vlist['state'] eq 0">
                   下线
-                  <elseif condition="$vlist['state'] eq 3"/>
+                  <elseif condition="$vlist['state'] eq 1"/>
                   上线
                 </if>
               </td>
@@ -98,7 +98,7 @@
               <td class="table-tool" data-title="操作日志">
                 <div class="tools-edit">
                   <a data-tip="日志查看" target="dialog" mask="true"
-                    href="#"
+                    href="{$host_name}/menu/getlog?id={$vlist.id}&name={$vlist.menu_name}"
                   class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
@@ -110,7 +110,7 @@
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true"
 
-                    href="{$host_name}/menu/alter?id={$vlist.id}"
+                    href="{$host_name}/menu/addmenu?id={$vlist.id}&type=2&name={$vlist.menu_name}"
                    class="btn btn-success btn-icon">
                   <i class="fa fa-pencil"></i>
                   </a>

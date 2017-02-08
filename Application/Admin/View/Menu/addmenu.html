@@ -5,14 +5,14 @@
 			<div class='wrap'>
 				<form method="post"  id="poa"
 action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-					<input type="hidden" name="id" value="{$vinfo.id}">
+
 				<section>
 					<div class='up'>
 						<div class='jia' ><img src="/Public/admin/assets/img/menu/img_1.jpg" onclick="moveOption(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))"/></div>
 
 
 
-						<div class='cancel'>
+						<div class='cancel' style="height:100%">
 
 								<input value="form1" type="hidden" name="form1" />
 							<div class='cancel_1'>
@@ -25,13 +25,13 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 								</select>
 								<span>开始日期</span>
 								<input type="date" id="starttime" name="sttime" class='sttime'>
-								<input type="text" class='search' value="名称" name="searchtitle" id="searchtitle" required/>
+								<input type="text" class='search' style="width:100px;" placeholder="名称" name="searchtitle" id="searchtitle" />
 
 							</div>
 							<div class='cancel_1'>
 								<span>结束日期</span>
 								<input type="date" name="endtime" class='sttime' id="endtime">
-								<p class='search' style=""><button class="btn btn-primary" type="button" style="margin-left: 10px;" id="f_search"><i class="fa fa-search"></i></button></p>
+								<p class='' style=""><button class="btn btn-primary" type="button" style="margin-left: 10px;" id="f_search"><i class="fa fa-search"></i></button></p>
 
 							</div>
 
@@ -52,8 +52,8 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 							<select id="left2" size="15"  style="width:160px;">
 
 							</select>
-							<div>
-							<button class="btn btn-default close-m" type="reset">取消</button></div>
+							<div >
+							<button style="margin-left:180px;" class="btn btn-default btn-lg close-m" type="reset">取消</button></div>
 						</div>
 						<div class='save'>
 							<div class='save_1'>
@@ -67,38 +67,30 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 							<div class='save_3' style="position:relative;">
 
 									<select id="right" size="15" multiple style="width:175px;"
-											ondblclick="moveOption(document.getElementById('right'),document.getElementById('left'))">
-										<option value="0">1</option>
-										<option value="20">2</option>
-										<option value="0">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
+											ondblclick="moveOption_ri(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))">
 									</select>
 
 								<select id="right2" size="15" multiple style="width:175px;"
-										ondblclick="moveOption(document.getElementById('right'),document.getElementById('left'))">
-									<option value="0">1</option>
-									<option value="0">2</option>
-									<option value="3">3</option>
-									<option value="4">4</option>
-									<option value="5">5</option>
+										ondblclick="">
 								</select>
 									<button style="width: 60px;height: 30px;position: absolute;top: 320px;left: 100px;" type="submit">保存</button>
 								<input type='hidden' id="options_value1" name="rightid" value="" />
 								<input type='hidden' id="options_value2" name="rightname" value="" />
+								<input type='hidden' id="options_value3" name="rightime" value="" />
+								<input type='hidden' id="options_value4" name="rightduration" value="" />
 
 								<div class='right_save'>
 									<!--删除-->
 									<div><img src="/Public/admin/assets/img/menu/img_2.jpg"
-											  onClick="deleteSelectItem(document.getElementById('left'));deleteSelectItem(document.getElementById('right'))"/></div>
+											  onClick="deleteSelectItem(document.getElementById('right'),document.getElementById('right2'))"/></div>
 									<!--置顶-->
 									<div><img src="/Public/admin/assets/img/menu/img_3.jpg" onclick="moveTop(document.getElementById('right'),document.getElementById('right2'));"/></div>
 									<!--上移-->
-									<div><img src="/Public/admin/assets/img/menu/img_4.jpg" onclick="moveUp(document.getElementById('right'));"/></div>
+									<div><img src="/Public/admin/assets/img/menu/img_4.jpg" onclick="moveUp(document.getElementById('right'),document.getElementById('right2'));"/></div>
 									<!--复制-->
 									<div><img src="/Public/admin/assets/img/menu/img_5.jpg" onclick="copyRow()"/></div>
 									<!--下移-->
-									<div><img src="/Public/admin/assets/img/menu/img_6.jpg" onclick="moveDown(document.getElementById('right'));"/></div>
+									<div><img src="/Public/admin/assets/img/menu/img_6.jpg" onclick="moveDown(document.getElementById('right'),document.getElementById('right2'));"/></div>
 									<!--置底-->
 									<div><img src="/Public/admin/assets/img/menu/img_7.jpg" onclick="moveBottom(document.getElementById('right'),document.getElementById('right2'));"/></div>
 									<p>导入</p>
@@ -131,9 +123,9 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 							$("#left").empty();
 							$("#left2").empty();
 
-							alert(data.length);
-							for(var i=0,l=data.length;i<l;i++){
 
+							var strdu = '';
+							for(var i=0,l=data.length;i<l;i++){
 								for(var key in data[i]) {
 									if (key == 'id') {
 										var ids = data[i][key];
@@ -141,13 +133,19 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 										var name = data[i][key];
 									}else if(key == 'create_time') {
 										var cr_time = data[i][key];
+									}else if(key == 'duration') {
+										var dura = data[i][key];
+
 									}
 
 								}
-								$("#left").append("<option value="+ids+" >"+name+"</option>");
+								$("#left").append("<option value="+ids+"|"+dura+" >"+name+"</option>");
 								$("#left2").append("<option value="+ids+" >"+cr_time+"</option>");
-								//$("#left").append("<option value="+value.id+" >"+value.name+"</option>");
+
+								strdu = strdu+","+ dura;
+								if (strdu.substr(0,1)==',') 									strdu=strdu.substr(1);
 							}
+							$("#options_value4").val(strdu);
 
 						}
 					});
@@ -166,15 +164,18 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 		var max = option.length;
 		var str = '';
 		var str2 = '';
+		var str3 = '';
 		var i;
 
 		for(i=0;i<max;i++){
 			str += option[i].value + ',';
 			str2 += option[i].text + ',';
+			str3 += option2[i].text + ',';
 
 		}
 		document.getElementById('options_value1').value = str;
 		document.getElementById('options_value2').value = str2;
+		document.getElementById('options_value3').value = str3;
 
 	}
 

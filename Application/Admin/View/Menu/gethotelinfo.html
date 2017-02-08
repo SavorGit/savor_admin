@@ -1,33 +1,46 @@
 <!--修改样式2 p元素自适应宽度 start-->
+<form onsubmit="return dialogSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+<div class="pageHeader">
+
+    <button class="btn btn-success btn-sm add" type="submit" id="choosedata"><i class="fa">新加酒楼</i></button>
+
+</div>
 <div class="pageContent">
-  <form method="post" action="#" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <input type="hidden" name="addhotel" value="2">
     <input type="hidden" name="menuname" value="{$menuname}">
     <input type="hidden" name="menuid" value="{$menuid}">
     <div class="pageFormContent modal-body">
-      <div class="form-group row">
-
-        <div class="col-xs-12 col-sm-10">
-
-          <p class="form-heading">酒楼信息查看：</p>
-          <div class="row sm-row" data-check="list" data-parent=".pageContent">
-            <volist name="vinfo" id="vo" key="n">
-            <div class="col-xs-4 col-sm-3 col-md-2">
-              <label>
 
 
-                  <input type="checkbox" name="hoid[]" value="{$vo.hoid}" disabled />&nbsp;{$vo.honame}
-                <input type="hidden" name="honame[]" value="{$vo.honame}" />
 
 
-              </label>
-            </div>
-              </volist>
-          </div>
-        </div>
+      <div class="no-more-tables">
+
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>酒店名称</th>
+            <th>预约发布时间</th>
+
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="vinfo" id="vo">
+            <tr target="sid_user">
+              <input type="hidden" value="{$vo.hoid}" name="inf[]" />
+              <td data-title="酒店名称">{$vo.honame}</td>
+              <td data-title="预约发布时间">{$vo.pub_time}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+
       </div>
-    </div>
+
     <div class="modal-footer">
 
     </div>
-  </form>
+
 </div>
+
+  </div></form>

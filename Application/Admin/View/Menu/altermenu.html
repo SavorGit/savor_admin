@@ -57,7 +57,7 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 						</div>
 						<div class='save'>
 							<div class='save_1'>
-								<p>节目单名称</p><input type="text" name="program" value="{$menuname}" onblur="getna()"/>
+								<p>节目单名称</p><input type="text" disabled name="program" value="{$menuname}" onblur="getna()"/>
 							</div>
 							<div class='save_2'>
 								<p>节目名称</p>
@@ -69,7 +69,7 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 									<select id="right" size="15" multiple style="width:175px;"
 											ondblclick="moveOption_ri(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))">
 										<volist name="list" id="vlist">
-											<option value="{$vlist.ads_id}">{$vlist.ads_name}</option>
+											<option value="{$vlist.ads_id}|{$vlist.duration}">{$vlist.ads_name}</option>
 										</volist>
 									</select>
 
@@ -79,10 +79,10 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 										<option value="{$vlist.ads_id}">{$vlist.create_time}</option>
 									</volist>
 								</select>
-									<button style="width: 60px;height: 30px;position: absolute;top: 320px;left: 100px;" type="submit">保存</button>
+									<button style="width: 60px;height: 30px;position: absolute;top: 320px;left: 100px;" type="submit" onclick="getna()">保存</button>
 								<input type='hidden' id="options_value1" name="rightid" value="" />
 								<input type='hidden' id="options_value2" name="rightname" value="" />
-
+								<input type='hidden' id="options_value3" name="rightime" value="" />
 								<div class='right_save'>
 									<!--删除-->
 									<div><img src="/Public/admin/assets/img/menu/img_2.jpg"
@@ -114,7 +114,6 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 	$(function() {
 		$("#f_search").click(
 
-				//alert($("#m_type option:selected").val());
 				function(){
 					$.ajax({
 						type:"POST",
@@ -137,10 +136,13 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 										var name = data[i][key];
 									}else if(key == 'create_time') {
 										var cr_time = data[i][key];
+									}else if(key == 'duration') {
+										var dura = data[i][key];
+
 									}
 
 								}
-								$("#left").append("<option value="+ids+" >"+name+"</option>");
+								$("#left").append("<option value="+ids+"|"+dura+">"+name+"</option>");
 								$("#left2").append("<option value="+ids+" >"+cr_time+"</option>");
 								//$("#left").append("<option value="+value.id+" >"+value.name+"</option>");
 							}
@@ -162,15 +164,18 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 		var max = option.length;
 		var str = '';
 		var str2 = '';
+		var str3 = '';
 		var i;
 
 		for(i=0;i<max;i++){
 			str += option[i].value + ',';
 			str2 += option[i].text + ',';
+			str3 += option2[i].text + ',';
 
 		}
 		document.getElementById('options_value1').value = str;
 		document.getElementById('options_value2').value = str2;
+		document.getElementById('options_value3').value = str3;
 
 	}
 
