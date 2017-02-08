@@ -61,6 +61,17 @@ $config['HOTEL_LEVEL'] = array(
     '6'=>'6A',
 );
 
+$config['HOTEL_STATE'] = array(
+    '1'=>'正常',
+    '2'=>'冻结',
+    '3'=>'报损',
+);
+
+$config['HOTEL_KEY'] = array(
+    '1'=>'重点',
+    '2'=>'非重点',
+);
+
 $config['MANGER_KEY'] = array(
     'colum'=>'栏目节点',
     'cms'=>'程序节点',
