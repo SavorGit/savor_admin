@@ -141,7 +141,7 @@ function send_request()
   
     if (xmlhttp!=null)
     {
-        serverUrl = '{$host_name}'+'/resource/getOssParams';
+        serverUrl = '{$host_name}'+'/alioss/getOssParams';
 
         xmlhttp.open( "GET", serverUrl, false );
         xmlhttp.send( null );

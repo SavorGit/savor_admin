@@ -3,7 +3,7 @@ $DB_MASTER_HOST = 'localhost';
 $DB_SLAVE_HOST  = 'localhost';
 $db_name = 'savoradmin';
 $db_user = 'root';
-$db_pwd = '';
+$db_pwd = 'root';
 
 //redis缓存配置
 $redis['db1']['0']['host'] = '';
@@ -33,7 +33,7 @@ $config_db =  array(
 	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
 	'OSS_HOST'    => 'oss-cn-hangzhou.aliyuncs.com',  //注意不要在前面加 http:// 
 	'OSS_BUCKET' => '219bucket',                     //资源空间,即桶
-	'OSS_SYNC_CALLBACK_URL'=>'http://devp.savorx.cn/admin/notify/syncCallback', //上传异步回调地址
+	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
     //end
 );
 return $config_db;
