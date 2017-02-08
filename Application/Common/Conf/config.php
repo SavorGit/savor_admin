@@ -54,6 +54,19 @@ $config['MANGER_STATE'] = array(
     '3'=>'审核不通过'
 );
 
+$config['RESOURCE_TYPE'] = array(
+    '1'=>'视频',
+    '2'=>'图片',
+    '3'=>'其他',
+);
+$config['RESOURCE_TYPEINFO'] = array(
+    'mp4'=>1,
+    'mov'=>1,
+    'jpg'=>2,
+    'gif'=>2,
+    'png'=>2,
+    'bmp'=>2,
+);
 $config['HOTEL_LEVEL'] = array(
     '3'=>'3A',
     '4'=>'4A',
