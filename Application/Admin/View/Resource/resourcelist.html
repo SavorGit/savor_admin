@@ -65,7 +65,7 @@
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-            <volist name="list" id="vlist">
+            <volist name="datalist" id="vlist">
             <tr target="sid_user">
               <td data-title="ID">{$vlist.id}</td>
               <td data-title="资源名称">{$vlist.name}</td>
@@ -83,8 +83,6 @@
                   <a data-tip="修改" target="dialog" mask="true" href="#" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a data-action="delete" data-tip="删除" title="你确定要删除吗？" target="ajaxTrash" href="#" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
-                  <span><i class="fa fa-trash"></i></span></a>
                 </div>
               </td>
             </tr>

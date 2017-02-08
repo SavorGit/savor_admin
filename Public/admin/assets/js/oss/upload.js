@@ -1,4 +1,3 @@
-
 accessid = ''
 accesskey = ''
 host = ''
@@ -9,7 +8,7 @@ filename = ''
 key = ''
 expire = 0
 g_object_name = ''
-g_object_name_type = ''
+g_object_name_type = 'random_name';
 now = timestamp = Date.parse(new Date()) / 1000; 
 
 function send_request()
@@ -26,7 +25,8 @@ function send_request()
   
     if (xmlhttp!=null)
     {
-        serverUrl = './php/get.php'
+        serverUrl = '/alioss/getOssParams';
+
         xmlhttp.open( "GET", serverUrl, false );
         xmlhttp.send( null );
         return xmlhttp.responseText
@@ -156,9 +156,10 @@ var uploader = new plupload.Uploader({
     filters: {
         mime_types : [ //只允许上传图片和zip文件
         { title : "Image files", extensions : "jpg,gif,png,bmp" }, 
-        { title : "Zip files", extensions : "zip,rar" }
+        { title : "Video files", extensions : "mp4,mov" }
         ],
-        max_file_size : '10mb', //最大只能上传10mb的文件
+        
+        max_file_size : '5000mb', //最大只能上传10mb的文件
         prevent_duplicates : true //不允许选取重复文件
     },
 
@@ -196,11 +197,14 @@ var uploader = new plupload.Uploader({
 		FileUploaded: function(up, file, info) {
             if (info.status == 200)
             {
-                document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name) + ' 回调服务器返回的内容是:' + info.response;
+                document.getElementById('oss_addr').value = get_uploaded_object_name(file.name);
+                document.getElementById('media_url').value = document.getElementById('oss_host').value+get_uploaded_object_name(file.name);
+                console && console.log(get_uploaded_object_name(file.name));
             }
             else if (info.status == 203)
             {
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传到OSS成功，但是oss访问用户设置的上传回调服务器失败，失败原因是:' + info.response;
+                document.getElementById('oss_addr').value = '2';
             }
             else
             {
@@ -211,19 +215,22 @@ var uploader = new plupload.Uploader({
 		Error: function(up, err) {
             if (err.code == -600) {
                 document.getElementById('console').appendChild(document.createTextNode("\n选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小"));
+                console && console.log("\n选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小");
             }
             else if (err.code == -601) {
                 document.getElementById('console').appendChild(document.createTextNode("\n选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型"));
+                console && console.log('\n选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型')
             }
             else if (err.code == -602) {
                 document.getElementById('console').appendChild(document.createTextNode("\n这个文件已经上传过一遍了"));
+                console && console.log("\n这个文件已经上传过一遍了");
             }
             else 
             {
                 document.getElementById('console').appendChild(document.createTextNode("\nError xml:" + err.response));
+                console && console.log("\nError xml:" + err.response);
             }
 		}
 	}
 });
-
 uploader.init();
