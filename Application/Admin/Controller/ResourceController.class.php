@@ -50,45 +50,9 @@ class ResourceController extends BaseController{
 
 
 	 public function addResource(){
-         $mediaModel = new \Admin\Model\MediaModel();
 	     if(IS_POST){
-	         $save = array();
-	         $type = I('post.type',0,'intval');
-	         $duration = I('post.duration','');
-	         $description = I('post.description','');
-	         $save['name'] = I('post.name','','trim');
-             $save['oss_addr'] = I('post.oss_addr','','trim');
-             if($duration)  $save['duration'] = $duration;
-             if($description)   $save['description'] = $description;
-	         $message = $url = '';
-             if(!$save['oss_addr']){
-                 $message = 'OSS上传失败!';
-                 $url = 'resource/resourceList';
-             }else{
-                 $user = session('sysUserInfo');
-                 $tempInfo = pathinfo($save['oss_addr']);
-                 $surfix = $tempInfo['extension'];
-                 $typeinfo = C('RESOURCE_TYPEINFO');
-                 if(!$type){
-                     if(isset($typeinfo[$surfix])){
-                         $type = $typeinfo[$surfix];
-                     }else{
-                         $type = 3;
-                     }
-                 }
-                 $save['surfix'] = $surfix;
-                 $save['create_time'] = date('Y-m-d H:i:s');
-                 $save['creator'] = $user['username'];
-                 $save['type'] = $type;
-                 if($mediaModel->add($save)){
-                     $message = '添加成功!';
-                     $url = 'resource/resourceList';
-                 }else{
-                     $message = '添加失败!';
-                     $url = 'resource/resourceList';
-                 }
-             }
-             $this->output($message, $url);
+	         $result = $this->add_media();
+             $this->output($result['message'], $result['url']);
 	     }else{
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 	         $this->assign('oss_host',$oss_host);
@@ -97,27 +61,14 @@ class ResourceController extends BaseController{
 	 }
 	 
 	 public function uploadResource(){
-	     $mediaModel = new \Admin\Model\MediaModel();
 	     $code = 10001;
 	     $data = array();
 	     if(IS_POST){
-	         $save = array();
-	         $save['name'] = I('post.name','','trim');
-	         $save['oss_addr'] = I('post.oss_addr','','trim');
-	         if($save['oss_addr']){
-	             $user = session('sysUserInfo');
-	             $save['create_time'] = date('Y-m-d H:i:s');
-	             $save['creator'] = $user['username'];
-	             $tempInfo = pathinfo($save['oss_addr']);
-	             $save['surfix'] = $tempInfo['extension'];
-	             print_r($save);exit;
-	             $media_id = $mediaModel->add($save);
-	             if($media_id){
-	                 $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-	                 $code = 10000;
-	                 $data['media_id'] = $media_id;
-	                 $data['path'] = $oss_host.$save['oss_addr'];
-	             }
+	         $result = $this->add_media();
+	         if($result['media_id']){
+	             $code = 10000;
+	             $data['media_id'] = $result['media_id'];
+	             $data['path'] = $result['oss_addr'];
 	         }
 	         $res_data = array('code'=>$code,'data'=>$data);
 	         echo json_encode($res_data);
@@ -127,9 +78,11 @@ class ResourceController extends BaseController{
 	         $orders = 'id desc';
 	         $start = 0;
 	         $size = 8;
+	         $mediaModel = new \Admin\Model\MediaModel();
 	         $result = $mediaModel->getList($where,$orders,$start,$size);
 	         $this->assign('datalist', $result['list']);
-	         $this->assign('action_url','resource/uploadResource');
+	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	         $this->assign('oss_host',$oss_host);
 	         $this->display('uploadresource');
 	     }
 	 }
@@ -157,6 +110,51 @@ class ResourceController extends BaseController{
              $url = 'resource/resourceList';
 	     }
          $this->output($message, $url);
+	 }
+	 
+	 private function add_media(){
+	     $mediaModel = new \Admin\Model\MediaModel();
+	     $save = array();
+	     $type = I('post.type',0,'intval');
+	     $duration = I('post.duration','');
+	     $description = I('post.description','');
+	     $save['name'] = I('post.name','','trim');
+	     $save['oss_addr'] = I('post.oss_addr','','trim');
+	     if($duration)  $save['duration'] = $duration;
+	     if($description)   $save['description'] = $description;
+	     $message = $url = $oss_addr = '';
+	     $media_id = 0;
+	     if(!$save['oss_addr']){
+	         $message = 'OSS上传失败!';
+	         $url = 'resource/resourceList';
+	     }else{
+	         $user = session('sysUserInfo');
+	         $tempInfo = pathinfo($save['oss_addr']);
+	         $surfix = $tempInfo['extension'];
+	         $typeinfo = C('RESOURCE_TYPEINFO');
+	         if(!$type){
+	             if(isset($typeinfo[$surfix])){
+	                 $type = $typeinfo[$surfix];
+	             }else{
+	                 $type = 3;
+	             }
+	         }
+	         $save['surfix'] = $surfix;
+	         $save['create_time'] = date('Y-m-d H:i:s');
+	         $save['creator'] = $user['username'];
+	         $save['type'] = $type;
+	         $media_id = $mediaModel->add($save);
+	         if($media_id){
+	             $message = '添加成功!';
+	             $url = 'resource/resourceList';
+	         }else{
+	             $message = '添加失败!';
+	             $url = 'resource/resourceList';
+	         }
+	         $oss_addr = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/'.$save['oss_addr'];
+	     }
+	     $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
+	     return $result;
 	 }
 	 
 }
