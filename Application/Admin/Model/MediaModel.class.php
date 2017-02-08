@@ -29,5 +29,11 @@ class MediaModel extends BaseModel{
         return $data;
 	}
 
+	public function getWhere($where, $field){
+		$list = $this->where($where)->field($field)->select();
+
+		return $list;
+	}
+
 
 }
