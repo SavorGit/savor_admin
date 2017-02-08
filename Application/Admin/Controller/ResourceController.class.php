@@ -120,10 +120,7 @@ class ResourceController extends BaseController{
 	         }
 	         $this->output($message, $url,2);
 	     }else{
-	         $vinfo = $mediaModel->find($media_id);
-	         if($vinfo){
-	             $vinfo['oss_addr'] = $this->oss_host.$vinfo['oss_addr'];
-	         }
+	         $vinfo = $mediaModel->getMediaInfoById($media_id);
 	         $this->assign('vinfo',$vinfo);
 	         $this->display('editresource');
 	     }

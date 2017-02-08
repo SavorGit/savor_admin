@@ -63,6 +63,11 @@ class HotelController extends BaseController {
 		$this->assign('area',$area);
 		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();
+			if(!empty($vinfo['media_id'])){
+			    $mediaModel = new \Admin\Model\MediaModel();
+			    $media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
+			    $vinfo['oss_addr'] = $media_info['oss_addr'];
+			}
 			$this->assign('vinfo',$vinfo);
 		}
 		$this->display('add');
@@ -92,6 +97,7 @@ class HotelController extends BaseController {
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
 		$save['area_id']             = I('post.area_id','','intval');
+		$save['media_id']             = I('post.media_id','0','intval');
 		$hotelModel = new \Admin\Model\HotelModel();
 		if($id){
 			if($hotelModel->where('id='.$id)->save($save)){
