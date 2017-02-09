@@ -36,22 +36,19 @@
         <div class="col-xs-12 col-sm-10">
           <div class="fileinput fileinput-new" data-fileinput>
             <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-              <a data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=image" data-browse-file>
-                <if condition="($vinfo['img_url'] eq 'NULL') OR $vinfo['img_url'] eq ''">
-                  <img src="/Public/admin/assets/img/noimage.png" border="0" />
+              <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
+                <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
+                  <img id="media_idImg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
                   <else />
-                  <img src="/Public/{$vinfo.img_url}" border="0" />
+                  <img id="media_idImg" src="{$vainfo.videooss_addr}" border="0" />
                 </if>
               </a>
             </div>
-            <span class="help-block">请上传512x320像素的jpg格式图片，展示效果最佳，文件大小在300KB内</span>
             <div>
-              <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=image" data-browse-file>
-                选择图片
+              <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
+                选择视频
               </a>
-              <input type="hidden" name="shwimage" value="{$vinfo.shw_image}">
-              <input type="hidden" name="oldpicurl" value="{$vinfo.img_url}">
-
+              <input type="hidden" name="media_id" id="media_id" value="">
               <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
                 删除 </a>
             </div>
@@ -59,28 +56,7 @@
         </div>
       </div>
 
-
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          删除状态:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-          <select name="state" class="form-control bs-select" title="请选择..." required>
-            <option value="0" <if condition="$vinfo.state eq 0"> selected </if>  >正常</option><br>
-            <option value="1" <if condition="$vinfo.state eq 1"> selected </if>  >删除</option>
-          </select>
-        </div>
-      </div>
-
     </div>
-
-
-
-
-
-
-
-
 
 
     <div class="modal-footer">
