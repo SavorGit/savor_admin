@@ -156,7 +156,7 @@ var uploader = new plupload.Uploader({
     filters: {
         mime_types : [ //只允许上传图片和zip文件
         { title : "Image files", extensions : "jpg,gif,png,bmp" }, 
-        { title : "Video files", extensions : "mp4,mov" }
+        { title : "files", extensions: "mp4"} 
         ],
         
         max_file_size : '5000mb', //最大只能上传10mb的文件
@@ -197,6 +197,7 @@ var uploader = new plupload.Uploader({
 		FileUploaded: function(up, file, info) {
             if (info.status == 200)
             {
+            	document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name) + ' 回调服务器返回的内容是:' + info.response;
                 document.getElementById('oss_addr').value = get_uploaded_object_name(file.name);
                 document.getElementById('media_url').value = document.getElementById('oss_host').value+get_uploaded_object_name(file.name);
                 console && console.log(get_uploaded_object_name(file.name));
