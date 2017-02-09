@@ -93,14 +93,25 @@ class ResourceController extends BaseController{
 	 
 	 public function editResource(){
          $mediaModel = new \Admin\Model\MediaModel();
+         $media_id = I('request.id',0,'intval');
 	     if(IS_POST){
-	         $media_id                = I('post.id');
-	         $save              = [];
-	         $save['name']  	   = I('post.name','','trim');
+	         $save = array();
+	         $flag = I('request.flag');
+	         if($flag){
+	             if($flag==2)  $flag = 0;
+	             $save['flag'] = $flag;
+	         }else{
+	             $name = I('post.name','','trim');
+	             $type = I('post.type',3,'intval');
+	             $duration = I('post.duration','');
+	             $description = I('post.description','');
+	             $save['name'] = $name;
+	             $save['type'] = $type;
+	             if($duration)  $save['duration'] = $duration;
+	             if($description)   $save['description'] = $description;
+	         }
 	         $message = $url = '';
 	         if($media_id){
-	             $save['flag']      = I('post.flag','','intval');
-	             $save['state']     = I('post.state','','intval');
 	             if($mediaModel->where('id='.$media_id)->save($save)){
 	                 $message = '更新成功!';
 	                 $url = 'resource/resourceList';
@@ -109,11 +120,12 @@ class ResourceController extends BaseController{
 	                 $url = 'resource/resourceList';
 	             }
 	         }
+	         $this->output($message, $url,2);
 	     }else{
-             $message = '更新失败!';
-             $url = 'resource/resourceList';
+	         $vinfo = $mediaModel->getMediaInfoById($media_id);
+	         $this->assign('vinfo',$vinfo);
+	         $this->display('editresource');
 	     }
-         $this->output($message, $url);
 	 }
 	 
 	 private function add_media(){
