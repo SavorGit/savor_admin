@@ -34,27 +34,27 @@
             </div>
             <div class="form-group row">
               <label class="col-xs-12 col-sm-2 control-label">
-                封面图片：
+                文章图片：
               </label>
               <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
                   <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                    <a data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=image" data-browse-file>
-                      <if condition="($vinfo['img_url'] eq 'NULL') OR $vinfo['img_url'] eq ''">
-                        <img src="/Public/admin/assets/img/noimage.png" border="0" />
-                      <else />
-                        <img src="/Public/{$vinfo.img_url}" border="0" />
+                    <a data-target="#modal-file" href="{$host_name}/resource/uploadResource" data-browse-file>
+                      <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                        <img src="/Public/admin/assets/img/noimage.png" border="0" id="logoImg" />
+                        <else />
+                        <img src="{$vinfo.oss_addr}" id="logoImg"
+                             border="0" />
                       </if>
                     </a>
                   </div>
-                  <span class="help-block">请上传512x320像素的jpg格式图片，展示效果最佳，文件大小在300KB内</span>
                   <div>
-                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=image" data-browse-file>
-                      选择图片                     
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource" data-browse-file>
+                      选择图片
                     </a>
-                    <input type="hidden" name="shwimage" value="{$vinfo.shw_image.full}">
+                    <input type="hidden" name="media_id" id="media_id" value="">
                     <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
-                    删除 </a>
+                      删除 </a>
                   </div>
                 </div>
               </div>

@@ -10,8 +10,10 @@ use Admin\Model\CategoModel;
 class ReleaseController extends BaseController{
 
 	public $path = 'category/img';
+	public $oss_host = '';
 	public function __construct() {
 		parent::__construct();
+		$this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 	}
 
 
@@ -52,7 +54,8 @@ class ReleaseController extends BaseController{
 		$id = I('get.id');
 		$catModel = new CategoModel;
 		if($id){
-			$vinfo = $catModel->where('id='.$id)->find();
+			$vinfo = $catModel->find($id);
+			$vinfo['oss_addr'] = $vinfo['img_url'];
 			$this->assign('vinfo',$vinfo);
 		}
 		return $this->display('addCat');
@@ -70,22 +73,14 @@ class ReleaseController extends BaseController{
 		$save['sort_num']    = I('post.sort','','intval');
 		$save['state']    = I('post.state','0','intval');
 		$save['update_time'] = date('Y-m-d H:i:s');
-
-		$old_img = I('post.shwimage','');
-		$path = SITE_TP_PATH.'/Public/'.$this->path;
-		if ( !(is_dir($path)) ) {
-			mkdir ( $path, 0777, true );
-		}
-		if ( $old_img == '') {
-
-		} else {
-			$result = $catModel->getImgRes($path, $old_img);
-			if ($result['res'] == 1) {
-				$save['img_url']  = $this->path.'/'.$result['pic'];
-			} else {
-				$this->output('添加图片失败!', 'release/addCate');
-			}
-		}
+		$mediaid = I('post.media_id');
+		$mediaModel = new \Admin\Model\MediaModel();
+		//$mediaid = 11;
+		$oss_addr = $mediaModel->find($mediaid);
+		$oss_addr = $oss_addr['oss_addr'];
+		$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+		$oss_addr = $image_host.$oss_addr;
+		$save['img_url'] = $oss_addr;
 		if($id){
 		    $res_save = $catModel->where('id='.$id)->save($save);
 			if($res_save){

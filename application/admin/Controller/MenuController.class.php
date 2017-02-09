@@ -26,7 +26,7 @@ class MenuController extends BaseController {
 
     public function hotelconfirm(){
 
-        //var_dump($_POST);
+
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         //2是新增
@@ -47,7 +47,8 @@ class MenuController extends BaseController {
 
     public function publishMenu(){
         //隐患要把数组都改成checked
-        //var_dump($_POST);
+
+
         $hoty = I('post.hoty');
         $putime = I('logtime');
         if($putime == '') {
@@ -78,8 +79,7 @@ class MenuController extends BaseController {
         //var_dump($hoty);
 
         if ($hoty == 2) {
-           //获取原来最大
-            echo 'ekjrjer';
+
             $sql = "SELECT MAX(create_time) as time  FROM savor_menu_hotel WHERE menu_id=$menuid";
             $crt = $menuliModel->query($sql);
             $timec = $crt[0]['time'];
@@ -109,6 +109,7 @@ class MenuController extends BaseController {
                     $where = "1=1";
                     $field = "ads_name,ads_id,duration";
                     $where .= " AND menu_id={$menuid}  ";
+
                     $res = $mItemModel->getWhere($where,$orders, $field);
                     $content = json_encode($res);
                     $save['menu_content'] = $content;
@@ -264,7 +265,20 @@ class MenuController extends BaseController {
     }//End Function
 
     public function selectHotel(){
-        //var_dump($_POST);
+
+        $areaModel  = new AreaModel;
+        $menliModel  = new MenuListModel();
+        //城市
+        $area_arr = $areaModel->getAllArea();
+
+        $this->assign('area', $area_arr);
+
+        $men_arr = $menliModel->getAllmenu();
+
+
+
+        $this->assign('include', $men_arr);
+
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         $hotelModel = new HotelModel;
@@ -283,10 +297,100 @@ class MenuController extends BaseController {
 
         $where = "1=1";
         $name = I('name');
+        //时间筛选
+        $starttime = I('starttime');
+        $endtime = I('endtime');
+        if($starttime == ''){
+            $starttime = date("Y-m-d H:i", time()-31536000);
+        }
+        if($endtime == ''){
+            $endtime = date("Y-m-d H:i");
+        }
+        $starttime = $starttime.':00';
+        $endtime = $endtime.':00';
+        $where = "1=1";
+        $name = I('titlename');
+        //$name = 'xiao';
+        if ($starttime > $endtime) {
+            $this->display('selecthotel');
+            die;
+        }
+        $where .= "	AND (`install_date`) > '{$starttime}' AND (`install_date`) < '{$endtime}' ";
         if($name)
         {
             $this->assign('name',$name);
             $where .= "	AND name LIKE '%{$name}%' ";
+        }
+        //城市
+        $area_v = I('area_v');
+        if ($area_v) {
+            $this->assign('area_k',$area_v);
+            $where .= "	AND area_id = $area_v";
+        }
+        //级别
+        $level_v = I('level_v');
+        if ($level_v) {
+            $this->assign('level_k',$level_v);
+            $where .= "	AND level = $level_v";
+        }
+        //状态
+        $state_v = I('state_v');
+        if ($state_v) {
+            $this->assign('state_k',state_v);
+            $where .= "	AND state = $state_v";
+        }
+        //重点
+        $key_v = I('key_v');
+        if ($key_v) {
+            $this->assign('key_k',$key_v);
+            $where .= "	AND iskey = $key_v";
+        }
+        //包含
+        $include_v = I('include_v');
+        //获取节目单对应hotelid
+        if ($include_v) {
+                //取部分包含节目单
+                $bak_ho_arr = array();
+                foreach ($include_v as $iv) {
+                    $menuliModel = new MenuListModel();
+
+                    $sql = "SELECT hotel_id FROM savor_menu_hotel WHERE create_time=
+                (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id={$iv})";
+                    $bak_hotel_id_arr = $menuliModel->query($sql);
+                    foreach ($bak_hotel_id_arr as $bk=>$bv){
+                        $bak_ho_arr[] = $bv['hotel_id'];
+                    }
+                }
+            $bak_ho_arr = array_unique($bak_ho_arr);
+            $bak_ho_str = implode(',', $bak_ho_arr);
+            if($bak_ho_str){
+                $where .= "	AND id  in ($bak_ho_str)";
+            }else{
+                $where .= "	AND id  in ('')";
+            }
+            $this->assign('include_k',$include_v);
+        } else {
+            $exc_v = I('exc_v');
+            if ($exc_v) {
+                $bak_ho_arr_p = array();
+                foreach ($exc_v as $iv) {
+                    $menuliModel = new MenuListModel();
+
+                    $sql = "SELECT hotel_id FROM savor_menu_hotel WHERE create_time=
+                (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id={$iv})";
+                    $bak_hotel_id_arr = $menuliModel->query($sql);
+                    foreach ($bak_hotel_id_arr as $bk=>$bv){
+                        $bak_ho_arr_p[] = $bv['hotel_id'];
+                    }
+                }
+                $bak_ho_arr_p = array_unique($bak_ho_arr_p);
+                $bak_ho_str = implode(',', $bak_ho_arr_p);
+                if($bak_ho_str){
+                    $where .= "	AND id not in ($bak_ho_str)";
+                }
+            } else {
+
+            }
         }
 
         $type = I('type');
@@ -310,6 +414,7 @@ class MenuController extends BaseController {
         }
         $hot = I('hot');
 
+
         if($hot == 2){
             $str = I('infp');
             $where .= "	AND id not in ({$str}) ";
@@ -320,15 +425,15 @@ class MenuController extends BaseController {
         }
 
 
+
         $result = $hotelModel->getList($where,$orders,$start,$size);
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         //print_r($result);die;
-        $menu_id = I('menuid');
-        $menu_name = I('menuname');
+
 
         $this->assign('ext', $str);
-        $this->assign('menu_id', $menu_id);
-        $this->assign('menu_name', $menu_name);
+        $this->assign('menuid', $menu_id);
+        $this->assign('menuname', $menu_name);
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('selecthotel');
@@ -338,7 +443,8 @@ class MenuController extends BaseController {
      */
     public function getlog() {
         $menu_id = I('id');
-        $menu_name = I('menuname');
+        $menu_name = I('name');
+        $this->assign('menuname', $menu_name);
         $mlOpeModel = new MenuListOpeModel();
         $list = $mlOpeModel->field('menu_content,id,insert_time')->where(array('menu_id'=>$menu_id))->order('id asc')->select();
         $data = array();
@@ -390,8 +496,12 @@ class MenuController extends BaseController {
             }
 
         }
-        echo '<hr/><hr/>';
-        //var_dump($data);
+        $this->assign('vinfo', $data);
+        var_dump($data);
+
+
+
+        $this->display('opelog');
     }
 
     public function getHotelInfo(){

@@ -18,6 +18,12 @@ class MenuListModel extends BaseModel
 		return $list;
 	}
 
+	public function getAllmenu()
+	{
+		return $this->select();
+
+	}
+
 	//É¾³ýÊý¾Ý
 	public function delData($id) {
 		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";

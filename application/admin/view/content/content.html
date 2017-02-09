@@ -78,7 +78,11 @@
               <td data-title="内容类型">
                 <if condition="$vlist.type eq 1"> 图文
                   <elseif condition="$vlist.type eq 2"/>图集
-                  <elseif condition="$vlist.type eq 3"/>视频
+                  <elseif condition="$vlist.type eq 3"/>
+                    <if condition="$vlist.oss_addr eq ''">
+                          视频（非点播）
+                      <else/> 视频（点播）
+                    </if>
                   <else/> 纯文本
                 </if>
               </td>
@@ -95,7 +99,12 @@
 
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/article/addarticle?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true"
+                  <if condition="$vlist['type'] eq 3">
+                    href="{$host_name}/article/addvideo?id={$vlist.id}&acttype=3"
+                    <else/>
+                    href="{$host_name}/article/addarticle?id={$vlist.id}&acttype=1"
+                  </if> class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>
@@ -104,6 +113,17 @@
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/article/delart?id={$vlist.id}&acttype=1"  class="btn btn-success btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
+                </div>
+
+                <div class="tools-edit">
+
+
+                  <a data-tip="预览页面" target="_blank" mask="true"
+                     href="__PUBLIC__/html/{$vlist.id}.html" target="_blank"  class="btn btn-success btn-icon">
+                    <i class="icon-list"></i>
+                  </a>
+
+
                 </div>
 
 
