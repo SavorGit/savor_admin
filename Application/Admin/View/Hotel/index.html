@@ -35,24 +35,16 @@
               <!-- <th class="table-checkbox">
                 <input type="checkbox" data-check="all" data-parent=".table" />
               </th> -->
-              <th>酒店ID</th>
+              <th>ID</th>
               <th>酒店名称</th>
-              <th>酒店地址</th>
-              <th>酒店区域</th>
-              <th>酒店联系人</th>
-              <th>手机</th>
-              <th>固定电话</th>
-              <th>酒店维护人</th>
-              <th>酒楼级别</th>
-              <th>是否重点</th>
-              <th>安装日期</th>
-              <th>酒楼状态</th>
-              <th>状态变更说明</th>
-              <th>备注</th>
-              <th>GPS</th>
-              <th>创建日期</th>
-              <th>最后更新日期</th>
-              <th>删除状态</th>
+              <th>地址</th>
+              <th>联系人</th>
+              <th>联系电话</th>
+              <th>状态</th>
+              <th>维护人</th>
+              <th>包间数量</th>
+              <th>机顶盒数量</th>
+              <th>电视数量</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -64,44 +56,29 @@
               </td> -->
               <td data-title="酒店ID">{$vlist.id}</td>
               <td data-title="酒店名称">{$vlist.name}</td>
-              <td data-title="酒店地址">{$vlist.addr}</td>
-              <td data-title="酒店区域">{$vlist.area_name}</td>
-              <td data-title="酒店联系人">{$vlist.contractor}</td>
-              <td data-title="手机">{$vlist.mobile}</td>
-              <td data-title="固定电话">{$vlist.tel}</td>
-              <td data-title="酒店联系人">{$vlist.maintainer}</td>
-              <td data-title="酒楼级别">{$vlist.level}</td>
-              <td data-title="是否重点">
-                <if condition="$vlist.iskey eq 1"> 是  <else/> 否 </if> 
-              </td>
-              <td data-title="安装日期">{$vlist.install_date}</td>
-              <td data-title="酒楼状态">
+              <td data-title="地址">{$vlist.addr}</td>
+              <td data-title="联系人">{$vlist.contractor}</td>
+              <td data-title="联系电话">{$vlist.mobile}</td>
+              <td data-title="状态">
                  <if condition="$vlist.state eq 1"> 正常
                  <elseif condition="$vlist.state eq 2"/> 冻结 
                  <else />报损
                  </if> 
               </td>
-              <td data-title="状态变更说明">{$vlist.state_change_reason}</td>
-              <td data-title="备注">{$vlist.remark}</td>
-              <td data-title="备注">{$vlist.gps}</td>
-              <td data-title="创建日期">{$vlist.create_time}</td>
-              <td data-title="最后更新日期">{$vlist.update_time}</td>
-              <td data-title="删除状态">
-                  <if condition="$vlist['flag'] eq 0">
-                      正常
-                  <else/>
-                      删除
-                  </if>
-              </td>
-
+              <td data-title="维护人">{$vlist.maintainer}</td>
+              <td data-title="包间数量"><a target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">{$vlist.name}包间数:{$vlist.room_num}</a></td>
+              <td data-title="机顶盒数量"><a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">{$vlist.name}机顶盒数:{$vlist.box_num}</a></td>
+              <td data-title="电视数量"><a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">{$vlist.name}tv数:{$vlist.tv_num}</a></td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
+                  <a data-tip="查看" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                  <i class="fa fa-search-minus"></i>
                   </a>
-
                   <a data-tip="新增包间" target="dialog" mask="true" href="{$host_name}/hotel/addRoom?hotel_id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
+                  <i class="fa fa-plus"></i>
+                  </a>
+                  <a data-tip="宣传片管理" target="navTab" rel="hotel/pubmanager" href="{$host_name}/hotel/pubmanager?hotel_id={$vlist.id}" class="btn btn-success btn-icon">
+                  <i class="fa fa-bullhorn"></i>
                   </a>
 
                 </div>

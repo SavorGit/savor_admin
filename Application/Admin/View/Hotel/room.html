@@ -2,6 +2,7 @@
 <!--显示列表样式1 start-->
 <div class="pageHeader">
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hotel/room" method="post" >
+    <input type="hidden" name="hotel_id" value="{$hotel_id}"/>
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -10,7 +11,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
           <div class="tools-group">
-           
+          <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/addRoom?hotel_id={$hotel_id}&acttype=1" title="新增包间" target="dialog" mask="true"><i class="fa fa-plus"></i>新增包间</a>
           </div>
         </div>
         <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
@@ -75,12 +76,11 @@
               
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/addRoom?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/editRoom?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-
                   <a data-tip="新增机顶盒" target="dialog" mask="true" href="{$host_name}/device/addBox?room_id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
+                    <i class="fa fa-plus"></i>
                   </a>
 
                 </div>

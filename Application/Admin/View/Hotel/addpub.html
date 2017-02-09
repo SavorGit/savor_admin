@@ -1,0 +1,96 @@
+<div class="pageContent">
+  <form method="post" action="{$host_name}/hotel/doAddPub" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="ads_id" value="{$vainfo.id}">
+    <input type="hidden" name="hotel_id" value="{$vinfo.id}">
+    <div class="pageFormContent modal-body">
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label col-md-offset-4">
+                酒楼宣传片
+            </label>
+        </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼名称:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <label class="col-xs-12 col-sm-2 control-label">
+                {$vinfo.name}({$vinfo.id})
+            </label>
+        </div>
+      </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                视频封面：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                        <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&img=covervideo_idImg" data-browse-file>
+                            <if condition="($vainfo['oss_addr'] eq 'NULL') OR $vainfo['oss_addr'] eq ''">
+                                <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idImg" />
+                                <else />
+                                <img src="{$vainfo.oss_addr}" id="covervideo_idImg" border="0" />
+                            </if>
+                        </a>
+                    </div>
+                    <div>
+                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&img=covervideo_idImg" data-browse-file>
+                            选择封面
+                        </a>
+                        <input type="hidden" name="covervideo_id" id="covervideo_id" value="">
+                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                            删除 </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                视频内容：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                        <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
+                            <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
+                                <img id="media_idImg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+                                <else />
+                                <img id="media_idImg" src="{$vainfo.videooss_addr}" border="0" />
+                            </if>
+                        </a>
+                    </div>
+                    <div>
+                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
+                            选择视频
+                        </a>
+                        <input type="hidden" name="media_id" id="media_id" value="">
+                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                            删除 </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          宣传片名称:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control"style="width: 214px;" name="adsname" minlength="2" maxlength="20" value="{$vainfo.name}" required>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          描述:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <textarea name="descri" placeholder="请输入描述，允许为空"rows="7"cols="27">{$vainfo.description}</textarea>
+        </div>
+      </div>
+       <button type="submit" class="btn btn-primary" style="margin-left: 50%;">&nbsp;提交&nbsp;</button>
+        </div>
+  </form>
+</div>
