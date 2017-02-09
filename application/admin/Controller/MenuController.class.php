@@ -297,25 +297,10 @@ class MenuController extends BaseController {
 
         $where = "1=1";
         $name = I('name');
-        //时间筛选
-        $starttime = I('starttime');
-        $endtime = I('endtime');
-        if($starttime == ''){
-            $starttime = date("Y-m-d H:i", time()-31536000);
-        }
-        if($endtime == ''){
-            $endtime = date("Y-m-d H:i");
-        }
-        $starttime = $starttime.':00';
-        $endtime = $endtime.':00';
-        $where = "1=1";
-        $name = I('titlename');
-        //$name = 'xiao';
-        if ($starttime > $endtime) {
-            $this->display('selecthotel');
-            die;
-        }
-        $where .= "	AND (`install_date`) > '{$starttime}' AND (`install_date`) < '{$endtime}' ";
+        $beg_time = I('starttime','');
+        $end_time = I('endtime','');
+        if($beg_time)   $where.=" AND install_date>='$beg_time'";
+        if($end_time)   $where.=" AND install_date<='$end_time'";
         if($name)
         {
             $this->assign('name',$name);
@@ -658,7 +643,7 @@ class MenuController extends BaseController {
                     //添加操作日志不在这边加
                     $this->addlog($data, $menu_id);
 
-                    $this->success('新增成功', 'menu/addmenu');
+                    $this->output('新增成功', 'menu/addmenu');
 
                 } else {
 
