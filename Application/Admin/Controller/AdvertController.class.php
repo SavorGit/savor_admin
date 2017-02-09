@@ -27,6 +27,7 @@ class AdvertController extends BaseController{
         $orders = $order.' '.$sort;
         $pagenum = ($start-1) * $size>0?($start-1) * $size:0;
         $where = array();
+        $where['flag'] = array('EQ',"0");
         if($name)       $where['name'] = array('LIKE',"%$name%");
         if($beg_time)   $where['create_time'] = array('EGT',"$beg_time");
         if($end_time)   $where['create_time'] = array('ELT',"$end_time");
@@ -176,6 +177,11 @@ class AdvertController extends BaseController{
 	     switch ($atype){
 	         case 1:
 	             $is_online = I('flag');
+	             if($is_online==1){
+	                 $is_online = 2;
+	             }else{
+	                 $is_online = 1;
+	             }
 	             $data = array('is_online'=>$is_online);
 	             $res = $adsModel->where("id='$adsid'")->save($data);
 	             if($res){
