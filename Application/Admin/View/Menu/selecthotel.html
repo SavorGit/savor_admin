@@ -254,11 +254,23 @@
 <script type="text/javascript">
   $(function(){
     $("#exch").change(function(){
-      $('#inch').attr("disabled","disabled");
+      var valu = $(this).val();
+      if (valu == null) {
+        $('#inch').attr("disabled",false);
+      } else {
+        $('#inch').attr("disabled","disabled");
+      }
+
     });
 
     $("#inch").change(function(){
-      $('#exch').attr("disabled","disabled");
+
+      var valu = $(this).val();
+      if (valu == null) {
+        $('#exch').attr("disabled",false);
+      } else {
+        $('#exch').attr("disabled","disabled");
+      }
 
     });
   })
