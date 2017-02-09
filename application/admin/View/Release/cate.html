@@ -36,7 +36,7 @@
             <th>分类名称</th>
             <th>排序</th>
             <th>创建时间</th>
-            <th>删除状态</th>
+            <th>状态</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -47,12 +47,11 @@
               <td data-title="分类名称">{$vlist.name}</td>
               <td data-title="排序">{$vlist.sort_num}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
-              <td data-title="删除状态">
-                <if condition="$vlist['state'] eq 0">
-                  正常
-                  <else/>
-                  删除
-                </if>
+              <td data-title="状态">
+                <select name="state{$vlist.id}" id="cstate" data-state="{$vlist.id}" data-style="btn-primary">
+                  <option value ="0"  <if condition="$vlist.state eq 0"> selected </if>  >关闭</option>
+                  <option value ="1"  <if condition="$vlist.state eq 1"> selected </if>  >开启</option>
+                </select>
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
@@ -72,3 +71,33 @@
   </div>
   {$page}
 </div>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+  $(function() {
+
+    $("select").each(function(){
+      $(this).change(function(){
+        var sta = $(this).val();
+        var cid = $(this).attr('data-state');
+        $.ajax({
+          type:"POST",
+          dataType: "json",
+          url:"{$host_name}/release/changestate",
+          data:"state="+sta+"&cid="+cid,
+          success:function(data){
+            if(data == 1) {
+              alert('修改成功');
+            } else {
+              alert('修改失败');
+            }
+
+          }
+        });
+      })
+    });
+
+
+     
+  });
+</script>
