@@ -29,10 +29,21 @@ class MediaModel extends BaseModel{
         return $data;
 	}
 
+
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 
 		return $list;
+	}
+
+
+	public function getMediaInfoById($media_id){
+	    $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	    $vinfo = $this->find($media_id);
+	    if($vinfo){
+	        $vinfo['oss_addr'] = $oss_host.$vinfo['oss_addr'];
+	    }
+	    return $vinfo;
 	}
 
 
