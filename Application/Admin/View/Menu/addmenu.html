@@ -2,108 +2,105 @@
 
 
 <link href="/Public/admin/assets/css/item.css" rel="stylesheet" type="text/css" />
-			<div class='wrap'>
-				<form method="post"  id="poa"
-action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+<div class='wrap'>
+	<form method="post"  id="poa"
+		  action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 
-				<section>
-					<div class='up'>
-						<div class='jia' ><img src="/Public/admin/assets/img/menu/img_1.jpg" onclick="moveOption(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))"/></div>
-
-
-
-						<div class='cancel' style="height:100%">
-
-								<input value="form1" type="hidden" name="form1" />
-							<div class='cancel_1'>
-
-								<select name="m_type"  id="m_type">
-									<option value="0">全部</option>
-									<option value="1">节目</option>
-									<option value="2">广告</option>
-									<option value="3">宣传片</option>
-								</select>
-								<span>开始日期</span>
-								<input type="date" id="starttime" name="sttime" class='sttime'>
-								<input type="text" class='search' style="width:100px;" placeholder="名称" name="searchtitle" id="searchtitle" />
-
-							</div>
-							<div class='cancel_1'>
-								<span>结束日期</span>
-								<input type="date" name="endtime" class='sttime' id="endtime">
-								<p class='' style=""><button class="btn btn-primary" type="button" style="margin-left: 10px;" id="f_search"><i class="fa fa-search"></i></button></p>
-
-							</div>
-
-							<div class='cancel_2'>
-								<p>节目名称</p>
-								<p class='times'>上传时间</p>
-							</div>
-
-								<select id="left" size="15"  style="width:170px;" multiple="multiple">
+		<section>
+			<div class='up'>
+				<div class='jia' ><img src="/Public/admin/assets/img/menu/img_1.jpg" onclick="moveOption(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))"/></div>
 
 
 
+				<div class='cancel' style="height:100%">
 
+					<input value="form1" type="hidden" name="form1" />
+					<div class='cancel_1'>
 
+						<select name="m_type"  id="m_type" style="height: 27px;">
+							<option value="0">全部</option>
+							<option value="1">节目</option>
+							<option value="2">广告</option>
+							<option value="3">宣传片</option>
+						</select>
+						<span>开始日期</span>
+						<input type="date" id="starttime" name="sttime" class='sttime'>
+						<input type="text" class='search' style="width:100px;height: 27px;" placeholder="名称" name="searchtitle" id="searchtitle" />
 
-								</select>
+					</div>
+					<div class='cancel_1' style="margin-left: 11px;padding-top: 12px;">
+						<span>结束日期</span>
+						<input type="date" name="endtime" class='sttime' id="endtime">
+						<p class='' style=""><button class="btn btn-primary"  style="margin-left: 10px;height: 27px;line-height: 16px;" id="f_search"><i class="fa fa-search"></i></button></p>
 
-							<select id="left2" size="15"  style="width:160px;">
-
-							</select>
-							<div >
-							<button style="margin-left:180px;" class="btn btn-default btn-lg close-m" type="reset">取消</button></div>
-						</div>
-						<div class='save'>
-							<div class='save_1'>
-								<p>节目单名称</p><input type="text" name="program" required onblur="getna()"/>
-							</div>
-							<div class='save_2'>
-								<p>节目名称</p>
-								<p class='times'>上传时间</p>
-
-							</div>
-							<div class='save_3' style="position:relative;">
-
-									<select id="right" size="15" multiple style="width:175px;"
-											ondblclick="moveOption_ri(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))">
-									</select>
-
-								<select id="right2" size="15" multiple style="width:175px;"
-										ondblclick="">
-								</select>
-									<button style="width: 60px;height: 30px;position: absolute;top: 320px;left: 100px;" type="submit">保存</button>
-								<input type='hidden' id="options_value1" name="rightid" value="" />
-								<input type='hidden' id="options_value2" name="rightname" value="" />
-								<input type='hidden' id="options_value3" name="rightime" value="" />
-								<input type='hidden' id="options_value4" name="rightduration" value="" />
-
-								<div class='right_save'>
-									<!--删除-->
-									<div><img src="/Public/admin/assets/img/menu/img_2.jpg"
-											  onClick="deleteSelectItem(document.getElementById('right'),document.getElementById('right2'))"/></div>
-									<!--置顶-->
-									<div><img src="/Public/admin/assets/img/menu/img_3.jpg" onclick="moveTop(document.getElementById('right'),document.getElementById('right2'));"/></div>
-									<!--上移-->
-									<div><img src="/Public/admin/assets/img/menu/img_4.jpg" onclick="moveUp(document.getElementById('right'),document.getElementById('right2'));"/></div>
-									<!--复制-->
-									<div><img src="/Public/admin/assets/img/menu/img_5.jpg" onclick="copyRow()"/></div>
-									<!--下移-->
-									<div><img src="/Public/admin/assets/img/menu/img_6.jpg" onclick="moveDown(document.getElementById('right'),document.getElementById('right2'));"/></div>
-									<!--置底-->
-									<div><img src="/Public/admin/assets/img/menu/img_7.jpg" onclick="moveBottom(document.getElementById('right'),document.getElementById('right2'));"/></div>
-									<p>导入</p>
-									<p>导出</p>
-								</div>
-
-							</div>
-						</div>
 					</div>
 
-				</section>
-</form>
+					<div class='cancel_2'style="background-color: #d6e6f1;">
+						<p>节目名称</p>
+						<p class='times'>上传时间</p>
+					</div>
+
+					<select id="left" size="15"  style="width:170px;margin-left: 11px;" onscroll="document.getElementById('left2').scrollTop = this.scrollTop;">
+
+					</select>
+
+					<select id="left2" size="15"  style="width:160px;margin-left: 48px;" class="righ">
+
+					</select>
+					<div >
+						<button style="margin-left:170px;margin-top:10px;font-size:15px;line-height: 7px;"class="btn btn-default btn-lg close-m" type="reset">取消</button></div>
+				</div>
+				<div class='save'>
+					<div class='save_1'>
+						<p style="margin-top:-4px;font-size: 15px;">节目单名称</p><input type="text" name="program" required onblur="getna()"style="height: 27px;"/>
+					</div>
+					<div class='save_2' style="background-color:#d6e6f1 ;">
+						<p style="width: 175px;float: left;margin-left: 30px;">节目名称</p>
+						<p class='times' style="width: 135px;float: left;">上传时间</p>
+
+					</div>
+					<div class='save_3' style="position:relative;">
+
+						<select id="right" size="15" multiple style="width:175px;margin-left: 5px;"
+								ondblclick="moveOption_ri(document.getElementById('left'),document.getElementById('right'),document.getElementById('left2'),document.getElementById('right2'))"onscroll="document.getElementById('right2').scrollTop = this.scrollTop;">
+
+						</select>
+
+						<select id="right2" size="15" multiple style="width:175px;"
+								ondblclick="">
+
+						</select>
+						<button style="width: 60px;height: 30px;position: absolute;top: 320px;left: 100px;" type="submit">保存</button>
+						<input type='hidden' id="options_value1" name="rightid" value="" />
+						<input type='hidden' id="options_value2" name="rightname" value="" />
+						<input type='hidden' id="options_value3" name="rightime" value="" />
+						<input type='hidden' id="options_value4" name="rightduration" value="" />
+
+						<div class='right_save' style="background-color:#d6e6f1 ;width: 16px;">
+							<!--删除-->
+							<div><img src="/Public/admin/assets/img/menu/img_2.jpg"
+									  onClick="deleteSelectItem(document.getElementById('right'),document.getElementById('right2'))"/></div>
+							<!--置顶-->
+							<div><img src="/Public/admin/assets/img/menu/img_3.jpg" onclick="moveTop(document.getElementById('right'),document.getElementById('right2'));"/></div>
+							<!--上移-->
+							<div><img src="/Public/admin/assets/img/menu/img_4.jpg" onclick="moveUp(document.getElementById('right'),document.getElementById('right2'));"/></div>
+							<!--复制-->
+							<div><img src="/Public/admin/assets/img/menu/img_5.jpg" onclick="copyRow()"/></div>
+							<!--下移-->
+							<div><img src="/Public/admin/assets/img/menu/img_6.jpg" onclick="moveDown(document.getElementById('right'),document.getElementById('right2'));"/></div>
+							<!--置底-->
+							<div><img src="/Public/admin/assets/img/menu/img_7.jpg" onclick="moveBottom(document.getElementById('right'),document.getElementById('right2'));"/></div>
+							<p>导入</p>
+							<p>导出</p>
+						</div>
+
+					</div>
+				</div>
 			</div>
+
+		</section>
+	</form>
+</div>
 
 <SCRIPT LANGUAGE="JavaScript">
 
@@ -118,7 +115,7 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 						url:"{$host_name}/menu/get_se_left",
 						data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val(),
 						success:function(data){
-							alert(data);
+
 
 							$("#left").empty();
 							$("#left2").empty();
@@ -184,6 +181,8 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 
 </script>
 
-
+<script type="text/javascript">
+	console.log($('.ssd').scroll());
+</script>
 
 
