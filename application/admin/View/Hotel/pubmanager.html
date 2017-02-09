@@ -1,0 +1,157 @@
+	<include file="Public/script"/>
+
+<div class="pageHeader">
+<!--显示列表样式1 start-->
+    <form onsubmit="return  dialogSearch(this);" id="pagerForm" action="{$host_name}/hotel/pubmanager" method="post" >
+<div class="Top" style="height: 95px;width: 100%;border-bottom: 1px solid #BCBCBC;">
+	<h1 style="font-size: 18px;margin-left: 20px;padding-top:30px;margin-bottom: 0;color:#515151">{$vainfo['name']}宣传片管理</h1><br />
+	<span style="margin-left: 20px;color: #BCBCBC;">筛选</span>
+</div>
+<div class="top-txt">
+ <div class="goods-date">
+        	<div class="form-inline">
+            	<div class="form-group">
+										<input type="text" placeholder="输入名称查询" style="margin-left: 20px;margin-top: 5px;width: 298px;height: 30px;margin-right: 17px;"/>
+                    <label>上传时间：</label>
+                    <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+                         <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
+                         <span class="input-group-btn">
+                           <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                           <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+                         </span>
+                     </div>
+                     <button type="submit" class="btn btn-primary" style="margin-left: 15px;">搜索</button>
+                 </div>
+
+
+
+             </div>
+
+     <div class="form-group">
+         <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/addpub?hoid={$vainfo['id']}&acttype=0" title="新增宣传片" target="dialog" mask="true"style="margin-left: 20px;margin-top: 5px;"><i class="fa fa-plus"></i> 新增宣传片</a>
+     </div>
+         </div>       
+</div>
+	<!----------------------->
+
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+        <input type="hidden" name="hotel_id" value="{$vainfo['id']}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+
+        </div>
+        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
+          
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+
+
+
+<div class="pageContent" id="pagecontent"style="top: 180px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <!-- <th class="table-checkbox">
+                <input type="checkbox" data-check="all" data-parent=".table" />
+              </th> -->
+              <th><input type="checkbox" name="quan" id="quanxuan" class="box1"/>全选</th>
+              <th>名称</th>
+              <th>封面图片</th>
+              <th>创建人</th>
+              <th>简介</th>
+              <th>所属酒店</th>
+              <th>创建时间</th>
+              <th>状态</th>
+              <th>操作</th>
+             
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <!-- <td class="table-checkbox">
+                <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
+              </td> -->
+              <td><input name="ids" value="{$vlist.id}" type="checkbox" class="box1"></td>
+              <td data-title="宣传片名称">{$vlist.name}</td>
+              <td data-title="封面图片"><a data-tip="预览" target="dialog" mask="true" href="{$host_name}/hotel/getpic?id={$vlist.id}" class="btn btn-success btn-icon">
+                  <i class="fa fa-pencil"></i>
+              </a></td>
+              <td data-title="创建人"></td>
+              <td data-title="简介"></td>
+              <td data-title="所属酒店">{$vainfo['name']}</td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="宣传片状态">
+                 <if condition="$vlist.state eq 1"> 已审核
+                 <elseif condition="$vlist.state eq 0"/> 未审核
+                 <else />失败
+                 </if> 
+              </td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/addpub?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+
+                  <a data-tip="删除" target="dialog" mask="true" href="{$host_name}/hotel/delpub?ads_id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+
+
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+  $(function(){
+  	//console.log($("input[name='quan']").attr("checked"))
+  	/*$("#quanxuan").click(function(){
+  		alert('asd')
+  	})
+  	if($('#quanxuan').prop('!checked')){
+  		//selectAll();
+  		alert('ad')
+  	}else{
+  	}
+  	//selectAll();
+  function selectAll() {
+  	var chbox = $('.box1');
+ for (var i=0;i<chbox.length;i++) {
+ 	console.log(1)
+  var e=chbox[i];
+  e.checked=!e.checked;
+ }
+}*/
+  $("input[type='checkbox']").click(function(){
+  	alert('asdasd');
+  })
+  	
+  	
+  	
+  	
+  	
+  	
+  })
+ 
+</script>
