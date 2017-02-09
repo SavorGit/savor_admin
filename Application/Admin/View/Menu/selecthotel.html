@@ -8,21 +8,182 @@
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
     <input type="hidden" name="_sort" value="{$_sort}"/>
+
+    <input name="menuid" type="hidden" value="{$menuid}">
+    <input name="menuname" type="hidden" value="{$menuname}">
+
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3">
+        <div class="form-group row" style="z-index: 99999">
 
-        </div>
-        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
+          <div class="form-group row">
+            <div class="col-xs-3 col-sm-3">
+              <div class="input-group-sm">
+                <label class="col-xs-1 col-sm-1 control-label">
+                  城市：
+                </label>
+
+                <span class="input-group-btn">
+              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.name}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    级别：
+                  </label>
+
+                <span class="input-group-btn">
+              <select name="level_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_LEVEL')" id="vo">
+                  <option value="{$key}" <if condition="$key eq level_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    状态：
+                  </label>
+
+                <span class="input-group-btn">
+              <select name="state_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_STATE')" id="vo">
+                  <option value="{$key}" <if condition="$key eq state_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    包含酒楼：
+                  </label>
+
+                <span class="input-group-btn">
+              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <volist name="include" id="vo">
+                  <option value="{$vo.id}"
+                  <volist name="include_k" id="kvo" key="p">
+
+                    <if condition="$kvo.p eq $vo.id">selected</if>
+                  </volist>
+                  >{$vo.menu_name}
+                  </option><br>
+
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+
+
+            </div>
+
+            <div class="form-group row">
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    重点：
+                  </label>
+
+                <span class="input-group-btn">
+              <select name="key_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_KEY')" id="vo">
+                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
+                  <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="col-xs-3 col-sm-3 ">
+                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
+                  <input name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    排除酒楼：
+                  </label>
+
+                <span class="input-group-btn">
+              <select id="exch" name="exc_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <volist name="include" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $exc_k">selected</if>>{$vo.menu_name}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+
+
+
+            </div>
+
+            <div class="form-group row">
+
+              <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="input-group input-group-sm">
+                  <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
+                </div>
+              </div>
+
+
+            </div>
+
           </div>
+
+
         </div>
       </div>
-    </div>
   </form>
 </div>
 <div class="pageContent" id="pagecontent">
@@ -31,8 +192,9 @@
       <form method="post" action="{$host_name}/menu/hotelconfirm" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return dialogSearch(this);">
 
         <input type="hidden" value="{$hopu}" name="hopu" />
-        <input name="menuid" type="hidden" value="{$menu_id}">
-        <input name="menuname" type="hidden" value="{$menu_name}">
+        <input name="menuid" type="hidden" value="{$menuid}">
+        <input name="menuname" type="hidden" value="{$menuname}">
+
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
@@ -42,12 +204,7 @@
             <th width="22"><input type="checkbox" data-check="all" data-parent=".pageContent"> 全选</th>
             <th>酒店ID</th>
             <th>酒店名称</th>
-            <th>酒店地址</th>
-            <th>酒店区域</th>
-            <th>酒店联系人</th>
-            <th>手机</th>
-            <th>固定电话</th>
-            <th>酒店维护人</th>
+
             <th>酒楼级别</th>
             <th>是否重点</th>
             <th>安装日期</th>
@@ -67,12 +224,6 @@
 
               <td data-title="酒店ID">{$vlist.id}</td>
               <td data-title="酒店名称">{$vlist.name}</td>
-              <td data-title="酒店地址">{$vlist.addr}</td>
-              <td data-title="酒店区域">{$vlist.area_name}</td>
-              <td data-title="酒店联系人">{$vlist.contractor}</td>
-              <td data-title="手机">{$vlist.mobile}</td>
-              <td data-title="固定电话">{$vlist.tel}</td>
-              <td data-title="酒店联系人">{$vlist.maintainer}</td>
               <td data-title="酒楼级别">{$vlist.level}</td>
               <td data-title="是否重点">
                 <if condition="$vlist.iskey eq 1"> 是  <else/> 否 </if>
@@ -84,8 +235,6 @@
                   <else />报损
                 </if>
               </td>
-
-
             </tr>
           </volist>
           </tbody>
@@ -94,7 +243,7 @@
         <div class="row">
 
           <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
-          <button class="btn btn-success btn-sm add" type="submit" >发布节目了</button>
+          <button class="btn btn-success btn-sm add" type="submit" >发布节目</button>
         </div>
       </form>
 
@@ -102,3 +251,15 @@
   </div>
   {$page}
 </div>
+<script type="text/javascript">
+  $(function(){
+    $("#exch").change(function(){
+      $('#inch').attr("disabled","disabled");
+    });
+
+    $("#inch").change(function(){
+      $('#exch').attr("disabled","disabled");
+
+    });
+  })
+</script>
