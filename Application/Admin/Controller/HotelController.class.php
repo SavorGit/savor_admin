@@ -8,6 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Admin\Model\AdsModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
 use Admin\Model\RoomModel;
@@ -16,6 +17,128 @@ class HotelController extends BaseController {
     public function __construct() {
         parent::__construct();
     }
+
+	/*
+	 * 添加宣传片media_1,media_2;
+	 */
+
+	public function addpub(){
+		//acctype=0 添加 ，acctype=1修改
+		$acctype = I('get.acctype');
+
+		$hoid = I('get.id');
+		$id = 1485;
+		$hotelModel = new HotelModel;
+
+		$hoinfo = $hotelModel->where('id='.$id)->find();
+		if($acctype == 1) {
+			$ads_id = I('get.adsid');
+			$adsModel = new AdsModel();
+			$vainfo = $adsModel->find($ads_id);
+			$this->assign('vainfo', $vainfo);
+		}
+		$this->assign('vinfo',$hoinfo);
+
+		$this->display('addpub');
+	}
+
+	/*
+	 * 对宣传片添加或者修改
+	 */
+	public function doAddPub(){
+		$adsModel = new AdsModel();
+		$id                  = I('post.ads_id');
+		$save                = [];
+		$save['description']        = I('post.descri');
+		$save['name']    = I('post.adsname');
+		//视频封面mediaid
+		$media_a   = I('post.media_id');
+		$mediaModel = new \Admin\Model\MediaModel();
+		$oss_arr = $mediaModel->find($media_a);
+		$oss_addr = $oss_arr['oss_addr'];
+		$save['duration'] = $oss_arr['oss_addr'];
+		$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+		$oss_addr = $image_host.$oss_addr;
+		$save['img_url'] = $oss_addr;
+
+		//视频资源mediaid
+		$save['media_id']    = I('post.media_id');
+
+		$save['hotel_id']    = I('post.ho_id');
+		if($id){
+			$res_save = $adsModel->where('id='.$id)->save($save);
+			if($res_save){
+				 $this->output('操作成功!', 'hotel/doAddPub');
+			}else{
+				 $this->output('操作失败!', 'hotel/doAddPub');
+			}
+		}else{
+			$save['create_time'] = date('Y-m-d H:i:s');
+			$save['type'] = 3;
+			//刷新页面，关闭当前
+			$res_save = $adsModel->add($save);
+			if($res_save){
+				ob_clean();
+				 $this->output('添加宣传片成功!', 'hotel/pubmanager');
+			}else{
+				 $this->output('操作失败!', 'hotel/doAddPub');
+			}
+		}
+	}
+
+
+	/*
+	 * 宣传片列表
+	 */
+	public function pubmanager() {
+		var_dump($_REQUEST);
+		$hoid = I('hotel_id');
+		$hotelModel = new HotelModel;
+		$hoinfo = $hotelModel->find($hoid);
+		var_dump($hoinfo);
+		$this->assign('vainfo',$hoinfo);
+
+		$adsModel = new AdsModel();
+		$size   = I('numPerPage',50);//显示每页记录数
+		$this->assign('numPerPage',$size);
+		$start = I('pageNum',1);
+		$this->assign('pageNum',$start);
+		$order = I('_order','id');
+		$this->assign('_order',$order);
+		$sort = I('_sort','desc');
+		$this->assign('_sort',$sort);
+		$orders = $order.' '.$sort;
+		$start  = ( $start-1 ) * $size;
+
+		$where = "1=1";
+
+		$name = I('name');
+
+		if($name)
+		{
+			$this->assign('name',$name);
+			$where .= "	AND name LIKE '%{$name}%'";
+		}
+
+
+		$where .= "	AND hotel_id =  $hoid";
+		var_dump($where);
+
+
+
+		$result = $adsModel->getList($where,$orders,$start,$size);
+
+
+		$this->assign('list', $result['list']);
+		$this->assign('page',  $result['page']);
+		$this->display('pubmanager');
+	}
+
+	public function delpub(){
+		$ads_id = I('get.$ads_id');
+		//判断节目单是否含有ads_id
+		
+	}
 
     /**
      * 酒店列表
