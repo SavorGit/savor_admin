@@ -18,6 +18,8 @@ class MenuListModel extends BaseModel
 		return $list;
 	}
 
+
+
 	//É¾³ýÊý¾Ý
 	public function delData($id) {
 		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";

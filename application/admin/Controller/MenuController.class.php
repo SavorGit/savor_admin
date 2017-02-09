@@ -160,11 +160,19 @@ class MenuController extends BaseController {
                     }
 
                 }
-            } else{
+            } else {
                 $inter = array_intersect($bak_ho_arr, $com_arr);
                 $in_count = count($inter);
                 //获取本身自有的count
                 $count_arr = $menuliModel->field('count')->where(array('id'=>$v['id']))->find();
+
+                //menu_id
+                //删除sav_menu_item遍历id,就是删除次id
+                if($in_count>0){
+                    $map['hotel_id']  = array('in',$inter);
+                    $map['menu_id']  = array('in',$v['id']);
+                    $menuHoModel->where($map)->delete(); //
+                }
                 $count = $count_arr['count'];
                 //获取menu_id对应该的hotelid数组
                 //hotelid和现在的hotel取交集，count个数减去交集即可
@@ -297,25 +305,10 @@ class MenuController extends BaseController {
 
         $where = "1=1";
         $name = I('name');
-        //时间筛选
-        $starttime = I('starttime');
-        $endtime = I('endtime');
-        if($starttime == ''){
-            $starttime = date("Y-m-d H:i", time()-31536000);
-        }
-        if($endtime == ''){
-            $endtime = date("Y-m-d H:i");
-        }
-        $starttime = $starttime.':00';
-        $endtime = $endtime.':00';
-        $where = "1=1";
-        $name = I('titlename');
-        //$name = 'xiao';
-        if ($starttime > $endtime) {
-            $this->display('selecthotel');
-            die;
-        }
-        $where .= "	AND (`install_date`) > '{$starttime}' AND (`install_date`) < '{$endtime}' ";
+        $beg_time = I('starttime','');
+        $end_time = I('endtime','');
+        if($beg_time)   $where.=" AND install_date>='$beg_time'";
+        if($end_time)   $where.=" AND install_date<='$end_time'";
         if($name)
         {
             $this->assign('name',$name);
@@ -626,7 +619,7 @@ class MenuController extends BaseController {
                 //添加操作日志非针对饭店
                 $type = 2;
                 $this->addlog($data, $id, $type);
-                $this->output('操作成功!', 'menu/getlist',2);
+                $this->output('操作成功!', 'menu/getlist');
             } else {
 
             }
@@ -658,7 +651,7 @@ class MenuController extends BaseController {
                     //添加操作日志不在这边加
                     $this->addlog($data, $menu_id);
 
-                    $this->success('新增成功', 'menu/addmenu');
+                    $this->output('新增成功', 'menu/addmenu');
 
                 } else {
 
