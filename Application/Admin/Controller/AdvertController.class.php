@@ -119,6 +119,8 @@ class AdvertController extends BaseController{
 	             $this->output($message, $url);
 	         }
 	     }else{
+	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	         $this->assign('oss_host',$oss_host);
 	         $this->assign('action_url','advert/addAdvert');
 	         $this->display('addadvert');
 	     }
