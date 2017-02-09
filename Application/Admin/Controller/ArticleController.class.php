@@ -54,6 +54,14 @@ class ArticleController extends BaseController {
         }
     }
 
+    public function showpic() {
+
+        $img = 'http://219bucket.oss-cn-hangzhou.aliyuncs.com/media/resource/jRsCNXAAsp.png';
+        $this->assign('imgd', $img);
+        $this->display('showpic');
+        echo $img;
+    }
+
 
 
     /**
@@ -73,6 +81,8 @@ class ArticleController extends BaseController {
         if ($acctype && $id)
         {
             $vinfo = $artModel->where('id='.$id)->find();
+            $vinfo['oss_addr'] = $vinfo['img_url'];
+
             $this->assign('vinfo',$vinfo);
 
         } else {
