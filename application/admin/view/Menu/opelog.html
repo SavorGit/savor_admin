@@ -1,0 +1,50 @@
+<include file="Public/script"/>
+<link href="/Public/admin/assets/css/m_reset.css" rel="stylesheet" type="text/css" />
+<link href="/Public/admin/assets/css/upload.css" rel="stylesheet" type="text/css" />
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+
+      <div class='wrap'>
+        <div class='head'>
+          <p>更新信息</p>
+          <span>×</span>
+        </div>
+        <div class='center'>
+          <div class='up'>
+            <p>{$menuname}</p>
+          </div>
+          <div class='down'>
+            <div class='left' id='left'>
+              <ul>
+                <volist name="vinfo" id="vlist">
+                <li>
+                  <p>{$key}</p>
+                  <span>></span>
+                </li>
+                </volist>
+              </ul>
+            </div>
+            <div class='right' id='right' style="">
+            <volist name="vinfo" id="vlist">
+
+              <volist name="vlist" id="vt">
+              <p>{$vt}</p><br />
+                </volist>
+
+              </volist>
+            </div>
+          </div>
+        </div>
+        <div class='foot'>
+          <button>退出</button>
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+
+
+
+
