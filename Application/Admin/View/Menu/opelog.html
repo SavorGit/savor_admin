@@ -1,0 +1,68 @@
+<include file="Public/script"/>
+<link href="/Public/admin/assets/css/m_reset.css" rel="stylesheet" type="text/css" />
+<link href="/Public/admin/assets/css/upload.css" rel="stylesheet" type="text/css" />
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+
+      <div class='wrap'>
+        <div class='head'>
+          <p>更新信息</p>
+          <span>×</span>
+        </div>
+        <div class='center'>
+          <div class='up'>
+            <p>{$menuname}</p>
+          </div>
+          <div class='down'>
+
+            <div class='left' id='left'>
+              <ul>
+                <volist name="vinfo" id="vlist">
+                <li class="tabtwo">
+                  <p>{$key}</p>
+                  <span>></span>
+                </li>
+            </volist>
+              </ul>
+            </div>
+            <!--11-->
+            <volist name="vinfo" id="vlist">
+            <div class='right' style="">
+
+              <volist name="vlist" id="vinfo">
+              <p>{$vinfo}</p>
+              </volist>
+
+            </div>
+            </volist>
+            <!--22-->
+          </div>
+        </div>
+        <div class='foot'>
+          <button>退出</button>
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+    var tab = document.getElementsByClassName('tabtwo');
+    var righ = document.getElementsByClassName('right');
+		var a;
+		for(a=0;a<tab.length;a++){
+			  tab[a].index=a;
+				tab[a].onmousemove=function(){
+					for(a=0;a<righ.length;a++)
+				{
+					righ[a].style.display='none';
+				}
+				righ[this.index].style.display='block';
+				}
+			
+		}
+</script>
+
+
