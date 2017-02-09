@@ -74,6 +74,8 @@ class ResourceController extends BaseController{
 	         echo json_encode($res_data);
 	         exit;
 	     }else{
+	         $hidden_filed = I('get.filed','media_id');
+	         $hidden_img = I('get.img','media_idimg');
 	         $where = ' flag=0';
 	         $orders = 'id desc';
 	         $start = 0;
@@ -82,6 +84,8 @@ class ResourceController extends BaseController{
 	         $result = $mediaModel->getList($where,$orders,$start,$size);
 	         $this->assign('datalist', $result['list']);
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	         $this->assign('hidden_filed',$hidden_filed);
+	         $this->assign('hidden_img',$hidden_img);
 	         $this->assign('oss_host',$oss_host);
 	         $this->display('uploadresource');
 	     }

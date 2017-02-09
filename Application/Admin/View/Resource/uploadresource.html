@@ -7,6 +7,8 @@
     </ul>
     <div class="tab-content">
     <div id="dropbase" class="tab-pane fade active in pageContent">
+    	<input id="hidden_filed" type="hidden" value="{$hidden_filed}">
+    	<input id="hidden_img" type="hidden" value="{$hidden_img}">
     	<input id="oss_host" type="hidden" value="{$oss_host}">
 		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/resource/uploadResource" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		   	<input id="oss_id" type="hidden" name="id" value="{$row.id}">
@@ -94,6 +96,7 @@
                   <div class="dz-details" title="{$vinfo.name}">
                     <if condition="($vinfo['surfix'] eq 'png') or ($vinfo['surfix'] eq 'jpg') or ($vinfo['surfix'] eq 'gif') or ($vinfo['surfix'] eq 'jpeg')">
                         <img class="dz-nthumb" style="width:100%" src="{$vinfo.oss_addr}"/>
+                        <span style="width:100%;height:1.4em;line-height:1.4em;padding:0 10px;position:absolute;bottom:10px;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,0.5);">{$vinfo.name}</span>
                     <else/>
                     <div class="dz-file">
                       <i class="file-{$vinfo.surfix}"></i>
@@ -101,11 +104,11 @@
                     </div>
                     </if>
                   </div>
-                  <div class="dz-info clearfix">  
-                    <div class="dz-size" data-dz-size data-size=""></div>
-                    <!--<a warn="警告" title="你确定要删除这文件吗？" target="ajaxTodo" href="#" calback="navTabAjaxDone" class="btn btn-danger btn-icon pull-right del-file"><span><i class="fa fa-trash"></i></span></a>
-                     <a title="文件信息" href="#" target="dialog" class="btn btn-primary btn-icon pull-right" data-dz-remove><i class='fa fa-search'></i></a> -->
-                  </div>
+                  <!-- <div class="dz-info clearfix">  
+                    <div class="dz-size" data-dz-size data-size="{$vlist.shw_size}"></div>
+                    <a warn="警告" title="你确定要删除这文件吗？" target="ajaxTodo" href="{$host_name}/uploadmgr/uploadmgrDel?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon pull-right del-file"><span><i class="fa fa-trash"></i></span></a>
+                    <a title="文件信息" href="{$host_name}/uploadmgr/uploadmgrInfo?id={$vlist.id}" target="dialog" class="btn btn-primary btn-icon pull-right" data-dz-remove><i class='fa fa-search'></i></a>
+                  </div> -->
                 </div>
               </div>
             </volist>
@@ -124,6 +127,10 @@
 
 <script src='__PUBLIC__/admin/assets/js/oss/upload.js'></script>
 <script>
+/*==============================mark by s++================================*/
+
+var hiddenType=$("#hidden_filed").val();
+var hiddenImg=$("#hidden_img").val();
 //选择本地图片点击保存 
 $("#saveImg").click(function(){
     $.ajax({
@@ -137,11 +144,11 @@ $("#saveImg").click(function(){
         	"type":$("input[name='type']").val(),
         	"duration":$("#resource_duration").val(),
         	"description":$("#description").val(),
-        	},
+        },
         success:function(result){
             if(result.code==10000){
-                $("#media_id").val(result.data.media_id);
-                $("#logoImg").attr("src",result.data.path);
+                $("#"+hiddenType).val(result.data.media_id);
+                $("#"+hiddenImg).attr("src",result.data.path).show();
                 $("#dz-filecontainer .nav-tabs .pull-right a").click();
             }else{
                $("#dz-filecontainer .nav-tabs .pull-right a").click();
@@ -161,9 +168,16 @@ function getImageInfo($this){
   var $ck = $('#files input:checked')
   var count = $ck.length;
   if(count==1){
-    $("#media_id").val($ck.val());
+    //alert($ck.val());
+    $("#"+hiddenType).val($ck.val());
     $("#dz-filecontainer .nav-tabs .pull-right a").click();
-    $("#logoImg").attr("src",$file.find(".dz-nthumb").attr("src"));
+    if($file.find(".dz-nthumb").size()>0){
+      $("#"+hiddenImg).attr("src",$file.find(".dz-nthumb").attr("src")).show();
+      $("#logoName").hide();
+    }else{
+      $("#"+hiddenImg).hide();
+      $("#logoName").text($file.find(".dz-file").text()).show();
+    }    
   }else{
     alert("只能选择一张图片");
   }  
@@ -190,9 +204,13 @@ $(document).on("click","#files input",function(){
 });
 var pageNum=1;
 $("#files .dz-file-viewport").scroll(function(){
+  //console.log("scroll")
   var t = $("#file-list").height();
   var c = $(this).height();
   var s = $(this).scrollTop();
+  // var n = $("#files{$multiple} .loadpoint").data("next");
+  // var l = $("#files{$multiple} .loadpoint").data("load");
+  //console.log(s+"-"+(t-c))
   if((t-c) <= s){
     $.ajax({
       url:"{$host_name}/resource/resourceList?isbrowse=1&pageNum="+pageNum,
@@ -202,6 +220,7 @@ $("#files .dz-file-viewport").scroll(function(){
         if(result.code==10000&&result.data.length>0){          
           var str="";
           for(var i in result.data){
+            //console.log(result.data[i].surfix+"|||"+result.data[i].name);
             if(typeof(result.data[i])=='object'){
                 str+='<div class="dz-preview dz-file-preview" data-list-file>'+
                 '<div class="file-content" data-wh="" data-title="'+result.data[i].name+'" data-src="'+result.data[i].oss_addr+'">'+
@@ -213,6 +232,7 @@ $("#files .dz-file-viewport").scroll(function(){
                   '<div class="dz-details" title="'+result.data[i].name+'">';
                   if(result.data[i].surfix=="png"||result.data[i].surfix=="jpg"||result.data[i].surfix=="gif"||result.data[i].surfix=="jpeg"){
                     str+='<img class="dz-nthumb" style="width:100%" src="'+result.data[i].oss_addr+'"/>';
+                    str+='<span style="width:100%;height:1.4em;line-height:1.4em;padding:0 10px;position:absolute;bottom:10px;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,0.5);">'+result.data[i].name+'</span>'
                   }else{
                     str+='<div class="dz-file">'+
                       '<i class="file-'+result.data[i].surfix+'"></i>'+
@@ -220,10 +240,10 @@ $("#files .dz-file-viewport").scroll(function(){
                     '</div>';
                   }
                   str+='</div>'+              
-                  '<div class="dz-info clearfix">'+
-                    '<div class="dz-size" data-dz-size data-size="'+result.data[i].shw_size+'"></div>'+
-                    '<a warn="警告" title="你确定要删除这文件吗？" target="ajaxTodo" href="{$host_name}/uploadmgr/uploadmgrDel?id='+result.data[i].id+'" calback="navTabAjaxDone" class="btn btn-danger btn-icon pull-right del-file"><span><i class="fa fa-trash"></i></span></a>'+
-                  '</div>'+
+                  // '<div class="dz-info clearfix">'+
+                  //   '<div class="dz-size" data-dz-size data-size="'+result.data[i].shw_size+'"></div>'+
+                  //   '<a warn="警告" title="你确定要删除这文件吗？" target="ajaxTodo" href="{$host_name}/uploadmgr/uploadmgrDel?id='+result.data[i].id+'" calback="navTabAjaxDone" class="btn btn-danger btn-icon pull-right del-file"><span><i class="fa fa-trash"></i></span></a>'+
+                  // '</div>'+
                 '</div>'+
               '</div>';
             }else{
@@ -239,7 +259,7 @@ $("#files .dz-file-viewport").scroll(function(){
       }
     })       
   }
-})
+});
 $("input[type='radio']").click(function() {
   var id = $(this).attr("id");
   if (id == 1) {

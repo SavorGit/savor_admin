@@ -1,0 +1,68 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_name}/resource/editResource" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+   	<input type="hidden" name="id" value="{$vinfo.id}">
+    <div class="pageFormContent modal-body">
+		<div class="form-group row">
+	         <label class="col-xs-12 col-sm-2 control-label">
+	          资源URL:
+	        </label>
+	        <div class="col-xs-12 col-sm-10">
+	          <input type="text" class="form-control" id="media_url" value="{$vinfo.oss_addr}" readonly>
+	      	 </div>
+	      </div>
+		 <div class="form-group row">
+	         <label class="col-xs-12 col-sm-2 control-label">
+	          资源名称:
+	        </label>
+	        <div class="col-xs-12 col-sm-10">
+	          <input type="text" class="form-control" name="name" minlength="2" maxlength="20" value="{$vinfo.name}" required>
+	      	 </div>
+	      </div>
+	      <div class="form-group row">
+              <label class="col-xs-12 col-sm-2 control-label">
+                资源类型：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                <volist name=":C('RESOURCE_TYPE')" id="vo">
+                  <input name="type" type="radio" id="{$key}" value="{$key}" <if condition="$key eq $vinfo['type']">checked </if>/>&nbsp;{$vo}
+                  &nbsp;&nbsp;
+                </volist>
+              </div>
+          		</div>
+ 			<div class="form-group row" id="duration" style="display:none;">
+              <label class="col-xs-12 col-sm-2 control-label">
+                视频时长：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                <input name="duration" type="text" value="" class="form-control" />
+              </div>
+            </div>           		
+	      <div class="form-group row">
+              <label class="col-xs-12 col-sm-2 control-label">
+                页面描述：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                <textarea name="description" type="textInput" class="form-control"></textarea>
+                <span class="tips">注：请输入资源描述，允许为空。</span>
+              </div>
+         		 </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>
+<script>
+  $(function() {
+    $("input[type='radio']").click(function() {
+      var id = $(this).attr("id");
+      if (id == 1) {
+        $("#duration").show();
+      } else {
+        $("#duration").hide();
+      }
+    });
+  });
+</script>
