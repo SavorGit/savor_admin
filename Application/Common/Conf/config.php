@@ -59,6 +59,11 @@ $config['RESOURCE_TYPE'] = array(
     '2'=>'图片',
     '3'=>'其他',
 );
+$config['ADS_TYPE'] = array(
+    '1'=>'广告',
+    '2'=>'节目',
+    '3'=>'宣传片',
+);
 $config['RESOURCE_TYPEINFO'] = array(
     'mp4'=>1,
     'mov'=>1,
