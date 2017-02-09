@@ -27,11 +27,10 @@ class HotelController extends BaseController {
 		//acctype=0 添加 ，acctype=1修改
 		$acctype = I('get.acctype');
 
-		$hoid = I('get.id');
-		$id = 1485;
+		$hoid = I('get.hoid');
 		$hotelModel = new HotelModel;
 
-		$hoinfo = $hotelModel->where('id='.$id)->find();
+		$hoinfo = $hotelModel->where('id='.$hoid)->find();
 		if($acctype == 1) {
 			$ads_id = I('get.adsid');
 			$adsModel = new AdsModel();
@@ -87,18 +86,27 @@ class HotelController extends BaseController {
 		}
 	}
 
+	public function getpic(){
+		//获取地址
+		$pic = I('get.id');
+		//$this->assign('showpic');
+	}
+
+
+
 
 	/*
 	 * 宣传片列表
 	 */
 	public function pubmanager() {
-		var_dump($_REQUEST);
-		$hoid = I('hotel_id');
+
+		$hoid = I('hotel_id',1486);
+
+
 		$hotelModel = new HotelModel;
 		$hoinfo = $hotelModel->find($hoid);
-		var_dump($hoinfo);
-		$this->assign('vainfo',$hoinfo);
 
+		$this->assign('vainfo',$hoinfo);
 		$adsModel = new AdsModel();
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
@@ -123,7 +131,7 @@ class HotelController extends BaseController {
 
 
 		$where .= "	AND hotel_id =  $hoid";
-		var_dump($where);
+
 
 
 
