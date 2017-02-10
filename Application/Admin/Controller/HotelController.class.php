@@ -18,6 +18,8 @@ class HotelController extends BaseController {
 	 *
 	 */
 	public function manager(){
+		$menuHoModel = new \Admin\Model\MenuHotelModel();
+		$menlistModel = new \Admin\Model\MenuListModel();
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
 		$size   = I('numPerPage',50);//显示每页记录数
@@ -40,10 +42,20 @@ class HotelController extends BaseController {
 		$result = $hotelModel->getList($where,$orders,$start,$size);
 		$datalist = $areaModel->areaIdToAareName($result['list']);
 		foreach ($datalist as $k=>$v){
+			$conditon = array();
+			$men_arr = array();
 			$nums = $hotelModel->getStatisticalNumByHotelId($v['id']);
 			$datalist[$k]['room_num'] = $nums['room_num'];
 			$datalist[$k]['box_num'] = $nums['box_num'];
 			$datalist[$k]['tv_num'] = $nums['tv_num'];
+			$hotel_id = $datalist[$k]['id'];
+			$condition['hotel_id'] = $hotel_id;
+			$arr = $menuHoModel->where($condition)->order('id desc')->find();
+			$menuid = $arr['menu_id'];
+			$men_arr = $menlistModel->find($menuid);
+			$menuname = $men_arr['menu_name'];
+			$datalist[$k]['menu_id'] = $menuid;
+			$datalist[$k]['menu_name'] = $menuname;
 		}
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
@@ -68,6 +80,9 @@ class HotelController extends BaseController {
 				$media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
 				$vinfo['oss_addr'] = $media_info['oss_addr'];
 			}
+			$this->assign('vinfo',$vinfo);
+		}else{
+			$vinfo['state'] = 2;
 			$this->assign('vinfo',$vinfo);
 		}
 		$this->display('add');
@@ -165,6 +180,8 @@ class HotelController extends BaseController {
 		$temp = $hotelModel->getRow('name',['id'=>$id]);
 		$this->assign('hotel_name',$temp['name']);
 		$this->assign('hotel_id',$id);
+		$vinfo['state'] = 2;
+		$this->assign('vinfo',$vinfo);
 		$this->display('addRoom');
 	}
 

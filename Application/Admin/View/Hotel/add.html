@@ -105,9 +105,13 @@
         <label class="col-xs-12 col-sm-2 control-label">
          酒楼级别：
         </label>
-        <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="level" value="{$vinfo.level}" >
-        </div>
+          <div class="col-xs-12 col-sm-10">
+          <select name="level" class="form-control bs-select" title="请选择..." required data-style="btn-success btn-sm" data-container="body">
+              <volist name=":C('HOTEL_LEVEL')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $vinfo['level']">selected</if>>{$vo}</option><br>
+              </volist>
+          </select>
+              </div>
       </div>
 
       <div class="form-group row">
@@ -144,9 +148,9 @@
           酒楼状态:
         </label>
         <div class="col-xs-12 col-sm-10">
-         <select name="state" class="form-control bs-select" title="请选择..." required>
+         <select name="state" id="state" class="form-control bs-select" required>
+             <option value="2" <if condition="$vinfo.state eq 2"> selected </if> >冻结</option><br>
               <option value="1" <if condition="$vinfo.state eq 1"> selected </if> >正常</option><br>
-              <option value="2" <if condition="$vinfo.state eq 2"> selected </if> >冻结</option><br>
               <option value="3" <if condition="$vinfo.state eq 3"> selected </if> >报损</option>
           </select>
         </div>
@@ -200,3 +204,10 @@
 
   </form>
 </div>
+<script type="text/javascript">
+    $(function(){
+
+       // $("#state option[bs-title-option]").attr("selected",true);
+
+    });
+</script>

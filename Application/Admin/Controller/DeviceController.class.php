@@ -127,6 +127,8 @@ class DeviceController extends BaseController{
 		$temp = $roomModel->getRow('name',['id'=>$room_id]);
 		$this->assign('room_name',$temp['name']);
 		$this->assign('room_id',$room_id);
+		$vinfo['state'] = 2;
+		$this->assign('vinfo', $vinfo);
 		return $this->display('addBox');
 	}
 

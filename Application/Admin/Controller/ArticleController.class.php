@@ -228,7 +228,7 @@ $mediainfo['oss_addr'];
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             $save['duration'] = $oss_arr['duration'];
-            $save['media_id']    = $media_id;
+            $save['media_key_id']    = $media_id;
         }
         if($id)
         {
