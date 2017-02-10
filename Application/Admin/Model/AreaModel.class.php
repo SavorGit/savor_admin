@@ -18,7 +18,7 @@ class AreaModel extends Model
 	 */
 	public function getAllArea()
 	{
-		return $this->select();
+		return $this->limit(20)->select();
 
 	}
 
