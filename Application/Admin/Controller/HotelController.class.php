@@ -354,6 +354,31 @@ class HotelController extends BaseController {
 			}
 		}
 	}
+	/*
+	 * 修改状态
+	 */
+	public function operateStatus(){
+
+
+		$adsid = I('request.adsid','0','intval');
+		$adsModel = new \Admin\Model\AdsModel();
+		$message = '';
+		$is_online = I('request.flag');
+		$data = array('is_online'=>$is_online);
+		$res = $adsModel->where("id='$adsid'")->save($data);
+
+		if($res){
+			$message = '更新状态成功';
+		}
+
+		if($message){
+			$this->output($message, 'hotel/pubmanager',2);
+		}else{
+			$this->output('操作失败', 'hotel/pubmanager');
+		}
+
+
+	}
 
 	public function delpub(){
 		$ads_id = I('get.ads_id');
