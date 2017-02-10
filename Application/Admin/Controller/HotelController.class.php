@@ -357,7 +357,15 @@ class HotelController extends BaseController {
 
 	public function delpub(){
 		$ads_id = I('get.ads_id');
-		$this->output('白玉涛开发', 'hotel/pubmanager');
+		$hotel_id = I('get.hotel_id');
+		$adsModel = new \Admin\Model\AdsModel();
+		$bool = $adsModel->where('id='.$ads_id)->delete();
+		if($bool){
+			$this->output('删除宣传片成功!', U('hotel/pubmanager?hotel_id='.$hotel_id));
+		} else {
+			$this->output('删除宣传片失败!', 'hotel/pubmanager');
+		}
+		;
 	}
 
 }
