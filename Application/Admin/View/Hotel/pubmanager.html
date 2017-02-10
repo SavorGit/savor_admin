@@ -77,23 +77,29 @@
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
               <td data-title="宣传片名称">{$vlist.name}</td>
-              <td data-title="视频地址">{$vlist.oss_addr}</td>
-              <td data-title="创建人"></td>
-              <td data-title="简介"></td>
-              <td data-title="所属酒店">{$vainfo['name']}</td>
+              <td data-title="封面图片"><a data-tip="预览" target="dialog" mask="true" href="{$host_name}/hotel/getpic?img={$vlist.img_url}" class="btn btn-success btn-icon">
+                <i class="fa fa-pencil"></i>
+              </a></td>
+              <td data-title="创建人">{$vlist.creator_name}</td>
+              <td data-title="简介">{$vlist.description}</td>
+              <td data-title="所属酒店">{$hotelinfo['name']}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="宣传片状态">
-                 <if condition="$vlist.state eq 1"> 已审核
-                 <elseif condition="$vlist.state eq 0"/> 未审核
-                 <else />失败
-                 </if> 
+                <if condition="$vlist['is_online'] eq 1">
+                  <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/hotel/operateStatus?adsid={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                  <else/>
+                  <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/hotel/operateStatus?adsid={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                </if>
+
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/addpub?hotel_id={$hotelinfo.id}&ads_id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a class="btn btn-danger btn-icon" warn="警告" data-tip="" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/hotel/delpub?ads_id={$vlist.id}" calback="navTabAjaxDone" data-original-title="删除">
+                  <a style="display:none;" class="btn btn-danger btn-icon" warn="警告" data-tip="" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/hotel/delpub?ads_id={$vlist.id}&hotel_id={$hotelinfo.id}" calback="navTabAjaxDone" data-original-title="删除">
 				  <span>
 				   <i class="fa fa-trash"></i>
 				  </span>

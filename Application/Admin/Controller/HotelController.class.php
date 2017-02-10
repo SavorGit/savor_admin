@@ -248,6 +248,7 @@ class HotelController extends BaseController {
 		$result = $adsModel->getList($where,$orders,$start,$size);
 		$datalist = $result['list'];
 		$mediaModel = new \Admin\Model\MediaModel();
+		$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 		foreach ($datalist as $k=>$v){
 			$media_id = $v['media_id'];
 			if($media_id){
@@ -257,6 +258,7 @@ class HotelController extends BaseController {
 				$oss_addr = '';
 			}
 			$datalist[$k]['oss_addr'] = $oss_addr;
+			$datalist[$k]['img_url'] = $oss_host.$datalist[$k]['img_url'];
 		}
 
 		$time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
@@ -266,6 +268,16 @@ class HotelController extends BaseController {
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
 		$this->display('pubmanager');
+	}
+
+	/*
+	 * 显示图片
+	 */
+	public function getpic(){
+		//获取地址
+		$pic_url = I('get.img');
+		$this->assign('shw', $pic_url);
+		$this->display('showpic');
 	}
 
 
@@ -327,6 +339,9 @@ class HotelController extends BaseController {
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
 		}else{
+			$userInfo = session('sysUserInfo');
+			$save['creator_id'] = $userInfo['id'];
+			$save['creator_name'] = $userInfo['username'];
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$save['type'] = 3;
 			//刷新页面，关闭当前
@@ -338,10 +353,43 @@ class HotelController extends BaseController {
 			}
 		}
 	}
+	/*
+	 * 修改状态
+	 */
+	public function operateStatus(){
+
+
+		$adsid = I('request.adsid','0','intval');
+		$adsModel = new \Admin\Model\AdsModel();
+		$message = '';
+		$is_online = I('request.flag');
+		$data = array('is_online'=>$is_online);
+		$res = $adsModel->where("id='$adsid'")->save($data);
+
+		if($res){
+			$message = '更新状态成功';
+		}
+
+		if($message){
+			$this->output($message, 'hotel/pubmanager',2);
+		}else{
+			$this->output('操作失败', 'hotel/pubmanager');
+		}
+
+
+	}
 
 	public function delpub(){
 		$ads_id = I('get.ads_id');
-		$this->output('白玉涛开发', 'hotel/pubmanager');
+		$hotel_id = I('get.hotel_id');
+		$adsModel = new \Admin\Model\AdsModel();
+		$bool = $adsModel->where('id='.$ads_id)->delete();
+		if($bool){
+			$this->output('删除宣传片成功!', U('hotel/pubmanager?hotel_id='.$hotel_id));
+		} else {
+			$this->output('删除宣传片失败!', 'hotel/pubmanager');
+		}
+		;
 	}
 
 }

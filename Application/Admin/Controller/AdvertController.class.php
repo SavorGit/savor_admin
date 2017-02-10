@@ -107,7 +107,8 @@ class AdvertController extends BaseController{
 	                 $ads_data['media_id'] = $media_id;
 	                 $ads_data['type'] = $adstype;
 	                 $ads_data['create_time'] = date('Y-m-d H:i:s');
-	                 if($duration)  $ads_data['duration'] = $duration;
+					 $ads_data['is_online'] = 2;
+					 if($duration)  $ads_data['duration'] = $duration;
 	                 if($description)   $ads_data['description'] = $description;
 	                 $ads_data['creator_name'] = $user['username'];
 	                 $adsModel->add($ads_data);
@@ -170,21 +171,21 @@ class AdvertController extends BaseController{
 	 }
 	 
 	 public function operateStatus(){
+
+
 	     $adsid = I('request.adsid','0','intval');
 	     $atype = I('request.atype');//1状态 2操作
 	     $adsModel = new \Admin\Model\AdsModel();
 	     $message = '';
 	     switch ($atype){
 	         case 1:
-	             $is_online = I('flag');
-	             if($is_online==1){
-	                 $is_online = 2;
-	             }else{
-	                 $is_online = 1;
-	             }
+	             $is_online = I('request.flag');
+
 	             $data = array('is_online'=>$is_online);
+
 	             $res = $adsModel->where("id='$adsid'")->save($data);
-	             if($res){
+
+				 if($res){
 	                 $message = '更新状态成功';
 	             }
 	             break;
