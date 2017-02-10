@@ -138,7 +138,7 @@ class ArticleController extends BaseController {
         if ( !(is_dir($path)) ) {
             mkdir ( $path, 0777, true );
         }
-        $fp = fopen($path."/$id.html", "w");
+        $fp = fopen($path."/".$id."html", "w");
        // var_dump($fp);
         fwrite($fp, $content);
         fclose($fp);
@@ -326,7 +326,7 @@ class ArticleController extends BaseController {
             {
                 $arid = $artModel->getLastInsID();
                 $this->showcontent($arid);
-                $dat['content_url'] = 'html/$id.'.'html';
+                $dat['content_url'] = 'html/'.$id.'.html';
                 $artModel->where('id='.$arid)->save($dat);
 
                 $this->output('操作成功!', 'release/addCate');
