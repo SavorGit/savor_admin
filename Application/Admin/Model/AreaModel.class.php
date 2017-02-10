@@ -10,7 +10,7 @@ use Think\Model;
 
 class AreaModel extends Model
 {
-
+	protected $tableName='area_info';
 	/**
 	 * 
 	 * 
@@ -18,7 +18,7 @@ class AreaModel extends Model
 	 */
 	public function getAllArea()
 	{
-		return $this->limit(20)->select();
+		return $this->select();
 
 	}
 
