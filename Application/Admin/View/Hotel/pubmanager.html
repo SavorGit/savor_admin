@@ -85,10 +85,14 @@
               <td data-title="所属酒店">{$hotelinfo['name']}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="宣传片状态">
-                 <if condition="$vlist.state eq 1"> 已审核
-                 <elseif condition="$vlist.state eq 0"/> 未审核
-                 <else />失败
-                 </if> 
+                <if condition="$vlist['is_online'] eq 1">
+                  <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/hotel/operateStatus?adsid={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                  <else/>
+                  <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/hotel/operateStatus?adsid={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                </if>
+
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
