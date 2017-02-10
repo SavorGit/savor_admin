@@ -77,10 +77,12 @@
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
               <td data-title="宣传片名称">{$vlist.name}</td>
-              <td data-title="视频地址">{$vlist.oss_addr}</td>
-              <td data-title="创建人"></td>
-              <td data-title="简介"></td>
-              <td data-title="所属酒店">{$vainfo['name']}</td>
+              <td data-title="封面图片"><a data-tip="预览" target="dialog" mask="true" href="{$host_name}/hotel/getpic?img={$vlist.img_url}" class="btn btn-success btn-icon">
+                <i class="fa fa-pencil"></i>
+              </a></td>
+              <td data-title="创建人">{$vlist.creator_name}</td>
+              <td data-title="简介">{$vlist.description}</td>
+              <td data-title="所属酒店">{$hotelinfo['name']}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="宣传片状态">
                  <if condition="$vlist.state eq 1"> 已审核

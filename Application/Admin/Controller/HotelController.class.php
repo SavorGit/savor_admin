@@ -248,6 +248,7 @@ class HotelController extends BaseController {
 		$result = $adsModel->getList($where,$orders,$start,$size);
 		$datalist = $result['list'];
 		$mediaModel = new \Admin\Model\MediaModel();
+		$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 		foreach ($datalist as $k=>$v){
 			$media_id = $v['media_id'];
 			if($media_id){
@@ -257,6 +258,7 @@ class HotelController extends BaseController {
 				$oss_addr = '';
 			}
 			$datalist[$k]['oss_addr'] = $oss_addr;
+			$datalist[$k]['img_url'] = $oss_host.$datalist[$k]['img_url'];
 		}
 
 		$time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
@@ -266,6 +268,16 @@ class HotelController extends BaseController {
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
 		$this->display('pubmanager');
+	}
+
+	/*
+	 * 显示图片
+	 */
+	public function getpic(){
+		//获取地址
+		$pic_url = I('get.img');
+		$this->assign('shw', $pic_url);
+		$this->display('showpic');
 	}
 
 
@@ -299,6 +311,7 @@ class HotelController extends BaseController {
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+		var_dump($_POST);
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
 		$ads_id = I('post.ads_id');
@@ -327,6 +340,9 @@ class HotelController extends BaseController {
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
 		}else{
+			$userInfo = session('sysUserInfo');
+			$save['creator_id'] = $userInfo['id'];
+			$save['creator_name'] = $userInfo['username'];
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$save['type'] = 3;
 			//刷新页面，关闭当前
