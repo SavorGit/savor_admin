@@ -10,15 +10,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/add?acttype=0" title="新增用户" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addClient" title="发布新版" target="dialog" mask="true"><i class="fa fa-plus"></i>发布新版</a>
           </div>
         </div>
       </div>
@@ -33,19 +25,13 @@
           <thead>
             <tr id="post">
               <th>ID</th>
-              <th>酒店ID</th>
-              <th>区域ID</th>
-              <th>包间ID</th>
+              <th>应用类型</th>
+              <th>应用URL</th>
+              <th>目标版本</th>
               <th>升级版本</th>
-              <th>最高版本</th>
-              <th>最低版本</th>
-              <th>升级开始时间</th>
-              <th>升级结束时间</th>
-              <th>终端类型</th>
-              <th>升级链接</th>
-              <th>备注</th>
-              <th>开启状态</th>
-              <th>是否强制更新</th>
+              <th>升级类型</th>
+              <th>创建时间</th>
+              <th>更新时间</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -53,32 +39,13 @@
             <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="ID">{$vlist.id}</td>
-              <td data-title="酒店ID">{$vlist.id}</td>
-              <td data-title="区域ID">{$vlist.name}</td>
-              <td data-title="包间ID">{$vlist.addr}</td>
+              <td data-title="应用类型">{$vlist.id}</td>
+              <td data-title="应用URL">{$vlist.name}</td>
+              <td data-title="目标版本">{$vlist.addr}</td>
               <td data-title="升级版本">{$vlist.area_name}</td>
-              <td data-title="最高版本">{$vlist.contractor}</td>
-              <td data-title="最低版本">{$vlist.mobile}</td>
-              <td data-title="升级开始时间">{$vlist.tel}</td>
-              <td data-title="升级结束时间">{$vlist.maintainer}</td>
-              <td data-title="终端类型">
-              <if condition="$vlist.state eq 1"> 小平台
-                 <elseif condition="$vlist.state eq 2"/> 机顶盒 
-                 <elseif condition="$vlist.state eq 3"/> 安卓 
-                 <else />IOS
-              </if> 
-              </td>
-              <td data-title="升级链接">{$vlist.maintainer}</td>
-              <td data-title="备注">{$vlist.maintainer}</td>
-                   
-              <td data-title="是否开启">
-                  <if condition="$vlist['flag'] eq 0">
-                      否
-                  <else/>
-                      是
-                  </if>
-              </td>
-
+              <td data-title="升级类型">{$vlist.contractor}</td>
+              <td data-title="创建时间">{$vlist.tel}</td>
+              <td data-title="更新时间">{$vlist.maintainer}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">

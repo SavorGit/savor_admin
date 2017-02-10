@@ -1,0 +1,88 @@
+<div class="pageContent">
+  <div id="dz-filecontainer">
+    <div class="tab-content">
+	   	<input id="oss_host" type="hidden" value="{$oss_host}">
+	   	<input id="devicedata" type="hidden" value="{$devicedata}">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addClient" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		    <div class="pageFormContent modal-body">
+		         <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                应用类型：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                <volist name=":C('DEVICE_TYPE')" id="vo">
+		                 <if condition="$key gt 2">
+		                  <input name="devicetype" type="radio" id="{$key}" value="{$key}" <if condition="$key eq 3">checked</if> />&nbsp;{$vo}
+		                  &nbsp;&nbsp;
+		                  </if>
+		                </volist>
+		              </div>
+		         </div>
+		         <div id="device">
+	            	<div class="form-group row">
+						<label class="col-xs-12 col-sm-2 control-label">
+								最低版本：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<select name="version_min" class="form-control bs-select">
+								<volist name="android_vinfo.min" id="vo">
+									<option value="{$key}" >{$vo}</option>
+								</volist>
+							</select>
+						</div>
+				     </div>
+	            	<div class="form-group row">
+						<label class="col-xs-12 col-sm-2 control-label">
+								最高版本：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<select name="version_max" class="form-control bs-select">
+								<volist name="android_vinfo.max" id="vo">
+									<option value="{$key}" >{$vo}</option>
+								</volist>
+							</select>
+						</div>
+				     </div>
+	            	<div class="form-group row">
+						<label class="col-xs-12 col-sm-2 control-label">
+								升级版本：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<select name="version" class="form-control bs-select">
+								<volist name="android_vinfo.max" id="vo">
+									<option value="{$key}" >{$vo}</option>
+								</volist>
+							</select>
+						</div>
+				     </div>
+			     </div>
+				 <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                升级类型：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                <input name="update_type" type="hidden" value="0">
+						<input name="update_type" type="checkbox" value="1" class="make-switch status" data-size="small" data-on-text="强制更新" data-off-text="手动更新" >
+				      </div>
+		         </div>
+		    </div>
+		    <div class="modal-footer">
+		      <button class="btn btn-default close-m" type="button">取消</button>
+		      <button class="btn btn-primary" type="submit">提交</button>     
+		    </div>
+		  </form>
+      </div>
+  </div>
+</div>
+<script>
+  $(function() {
+    $("input[name='devicetype']").click(function() {
+      var id = $(this).attr("id");
+      if (id == 4) {
+    	  //解析json字符串 进行重置数据
+      }else{
+    	  //解析字符串 进行重置数据
+      }
+    });
+  });
+</script>
