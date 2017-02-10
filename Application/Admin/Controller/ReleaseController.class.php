@@ -55,7 +55,8 @@ class ReleaseController extends BaseController{
 		$catModel = new CategoModel;
 		if($id){
 			$vinfo = $catModel->find($id);
-			$vinfo['oss_addr'] = $vinfo['img_url'];
+			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			$vinfo['oss_addr'] = $image_host.$vinfo['img_url'];
 			$this->assign('vinfo',$vinfo);
 		}
 		return $this->display('addCat');
@@ -96,8 +97,6 @@ class ReleaseController extends BaseController{
 		//$mediaid = 11;
 		$oss_addr = $mediaModel->find($mediaid);
 		$oss_addr = $oss_addr['oss_addr'];
-		$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-		$oss_addr = $image_host.$oss_addr;
 		$save['img_url'] = $oss_addr;
 		if($id){
 			$res_save = $catModel->where('id='.$id)->save($save);

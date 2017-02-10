@@ -54,6 +54,14 @@ class ArticleController extends BaseController {
         }
     }
 
+    public function showpic() {
+        $img = I('get.pic');
+
+        $this->assign('imgd', $img);
+        $this->display('showpic');
+        echo $img;
+    }
+
 
 
     /**
@@ -73,6 +81,8 @@ class ArticleController extends BaseController {
         if ($acctype && $id)
         {
             $vinfo = $artModel->where('id='.$id)->find();
+            $vinfo['oss_addr'] = $vinfo['img_url'];
+
             $this->assign('vinfo',$vinfo);
 
         } else {
@@ -281,7 +291,6 @@ class ArticleController extends BaseController {
         $save                = [];
         $save['title']        = I('post.title','','trim');
         $save['category_id']        = I('post.cate','','trim');
-        $save['img_url']    = I('post.shwimage','');
         $save['source']    = I('post.source','');
         $save['operators']    = I('post.operators','');
         $save['content']    = I('post.content','htmlspecialchars');
@@ -290,29 +299,19 @@ class ArticleController extends BaseController {
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
         $save['bespeak'] = 0;
-        $old_img = I('post.shwimage','');
-        $path = SITE_TP_PATH.'/Public/'.$this->path;
-        if ( !(is_dir($path)) ) {
-            mkdir ( $path, 0777, true );
-        }
-        if ( $old_img == '') {
-
-        } else {
-            $result = $artModel->getImgRes($path, $old_img);
-
-            if ($result['res'] == 1) {
-                $save['img_url']  = $this->path.'/'.$result['pic'];
-            } else {
-                $this->output('添加图片失败!', 'article/addarticle');
-            }
-        }
+        $mediaid = I('post.media_id');
+        $mediaModel = new \Admin\Model\MediaModel();
+        $oss_addr = $mediaModel->find($mediaid);
+        $oss_addr = $oss_addr['oss_addr'];
+        $save['oss_addr'] = $oss_addr;
+        $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        $oss_addr = $image_host.$oss_addr;
+        $save['img_url'] = $oss_addr;
         if($id)
         {
             if($artModel->where('id='.$id)->save($save))
             {
                 $this->showcontent($id);
-
-
                 $this->output('操作成功!', 'release/addCate');
             }
             else
