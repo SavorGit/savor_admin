@@ -86,6 +86,7 @@ class DeviceController extends BaseController{
         }else{
             $result = $tvModel->getList($where,$orders,$start,$size);
         }
+		
         $result['list'] = $tvModel->boxIdToBoxName($result['list']);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);

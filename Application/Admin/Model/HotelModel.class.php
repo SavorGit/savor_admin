@@ -64,7 +64,7 @@ class HotelModel extends BaseModel{
 	    }
 	    if($room_num){
 	        $rooms_str = join(',', $all_rooms);
-	        $sql = "select id as box_id,room_id from savor_box where room_id in ('$rooms_str')";
+	        $sql = "select id as box_id,room_id from savor_box where room_id in ($rooms_str)";
 	        $res = $this->query($sql);
 	        $all_box = array();
 	        foreach ($res as $k=>$v){
@@ -72,12 +72,12 @@ class HotelModel extends BaseModel{
 	            $all_box[] = $v['box_id'];
 	        }
 	        if($type == 'box'){
-	            $nums = array('box_num'=>$room_num,'box'=>$all_box);
+	            $nums = array('box_num'=>$box_num,'box'=>$all_box);
 	            return $nums;
 	        }
 	        if($box_num){
 	            $box_str = join(',', $all_box);
-	            $sql = "select count(id) as tv_num from savor_tv where box_id in ('$box_str')";
+	            $sql = "select count(id) as tv_num from savor_tv where box_id in ($box_str)";
 	            $res = $this->query($sql);
                 $tv_num = $res[0]['tv_num'];
                 if($type == 'tv'){
