@@ -171,10 +171,10 @@ class ResourceController extends BaseController{
 	                 $last_filesize = $oss_filesize-200;
 	                 $last_range = "$last_filesize-$oss_filesize";
 	                 $end_file = $aliyun->getObject($save['oss_addr'],$last_range);
-	                 $fileinfo = md5($beg_file.$end_file);
+	                 $fileinfo = $beg_file.$end_file;
 	             }
 	         }else{
-	             $fileinfo = $aliyun->getObject($oss_addr,'');
+	             $fileinfo = $aliyun->getObject($save['oss_addr'],'');
 	         }
 	         if($fileinfo){
 	             $save['md5'] = md5($fileinfo);
