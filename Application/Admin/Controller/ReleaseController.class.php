@@ -27,9 +27,9 @@ class ReleaseController extends BaseController{
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','sort_num');
+		$order = I('_order','create_time');
 		$this->assign('_order',$order);
-		$sort = I('_sort','asc');
+		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;

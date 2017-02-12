@@ -7,25 +7,196 @@
     <input type="hidden" name="_order" value="{$_order}"/>
     <input type="hidden" name="_sort" value="{$_sort}"/>
     <div class="searchBar">
+
+
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3">
-          <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/add?acttype=0" title="新增酒店" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增酒店</a>
+      </div>
+      <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                城市：
+              </label>
+
+                <span class="input-group-btn input-group-sm">
+              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+            </div>
+          </div>
+
+
+
+
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+                <label>级别：</label>
+                <span class="input-group-btn input-group-sm">
+              <select name="level_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_LEVEL')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+              </div>
+
+          <div class="form-group">
+              <div class="input-group-sm input-group">
+                <label>
+                  状态：
+                </label>
+
+               <span class="input-group-btn input-group-sm">
+              <select name="state_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_STATE')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+              </div>
+            </div>
+
+          <div class="form-group">
+              <div class="input-group-sm input-group">
+                <label>
+                  包含酒楼：
+                </label>
+
+                <span class="input-group-btn input-group-sm">
+              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <volist name="include" id="vo">
+                  <option value="{$vo.id}"
+                  <volist name="include_k" id="kvo" key="p">
+
+                    <if condition="$kvo.p eq $vo.id">selected</if>
+                  </volist>
+                  >{$vo.menu_name}
+                  </option><br>
+
+                </volist>
+              </select>
+            </span>
+
+
+
+              </div>
+            </div>
+
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="width:94px;">
+                合作维护人：
+              </label>
+
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人">
+                </volist>
+              </select>
+            </span>
+
+
+            </div>
+          </div>
+
+
+
+
+
+
           </div>
         </div>
-        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
+
+        <div class="form-inline" style="margin-top:3px;">
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                重点：
+              </label>
+                <span class="input-group-btn">
+              <select name="key_v" style="" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_KEY')" id="vo">
+                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+            </div>
+
+          </div>
+
+
+
+          <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}">
+              <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" style="width:135px;">
+
+              <input style="width:73px;padding:0px;margin:0px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                排除酒楼：
+              </label>
+                <span class="input-group-btn">
+              <select id="exch" name="exc_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <volist name="include" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $exc_k">selected</if>>{$vo.menu_name}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
-          </div>
-        </div>
+            </div>
+
+
+              <div class="input-group input-group-sm pull-right">
+                <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/add?acttype=0" title="新增酒店" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增酒店</a>
+              </div>
+
+
+
+
       </div>
+
     </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="top:80px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -41,7 +212,8 @@
               <th>联系人</th>
               <th>联系电话</th>
               <th>状态</th>
-              <th>维护人</th>
+              <th>合作维护人</th>
+              <th>技术运维人</th>
               <th>包间数量</th>
               <th>机顶盒数量</th>
               <th>电视数量</th>
@@ -66,10 +238,11 @@
                  <else />报损
                  </if> 
               </td>
-              <td data-title="维护人">{$vlist.maintainer}</td>
-              <td data-title="包间数量"><a target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">{$vlist.name}包间数:{$vlist.room_num}</a></td>
-              <td data-title="机顶盒数量"><a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">{$vlist.name}机顶盒数:{$vlist.box_num}</a></td>
-              <td data-title="电视数量"><a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">{$vlist.name}tv数:{$vlist.tv_num}</a></td>
+              <td data-title="合作维护人">{$vlist.maintainer}</td>
+              <td data-title="技术运维人">{$vlist.tech_maintainer}</td>
+              <td data-title="包间数量"><a target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">包间数:{$vlist.room_num}</a></td>
+              <td data-title="机顶盒数量"><a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">机顶盒数:{$vlist.box_num}</a></td>
+              <td data-title="电视数量"><a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">tv数:{$vlist.tv_num}</a></td>
               <td data-title="节目单"><a target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a></td>
 
               <td class="table-tool" data-title="操作">
@@ -97,3 +270,36 @@
   </div>
   {$page}
 </div>
+
+  <script type="text/javascript">
+          $(function(){
+            $("#exch").change(function(){
+              var valu = $(this).val();
+              if (valu == null) {
+                $('#inch').attr("disabled",false);
+              } else {
+                $('#inch').attr("disabled","disabled");
+              }
+
+            });
+
+            $("#inch").change(function(){
+
+              var valu = $(this).val();
+              if (valu == null) {
+                $('#exch').attr("disabled",false);
+              } else {
+                $('#exch').attr("disabled","disabled");
+              }
+
+            });
+
+            $(".form-control.date").datetimepicker({
+              minView: "month", //选择日期后，不会再跳转去选择时分秒
+              language:  'zh-CN',
+              format: 'yyyy-mm-dd',
+              todayBtn:  1,
+              autoclose: 1,
+            });
+          })
+</script>

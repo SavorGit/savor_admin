@@ -44,7 +44,7 @@ class AreaModel extends Model
 			{	
 				if($value['area_id'] == $row['id'])
 				{
-					$value['area_name'] = $row['name'];
+					$value['area_name'] = $row['region_name'];
 				}
 					
 			}
