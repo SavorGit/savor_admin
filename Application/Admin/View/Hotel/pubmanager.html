@@ -85,7 +85,7 @@
               <td data-title="所属酒店">{$hotelinfo['name']}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="宣传片状态">
-                <if condition="$vlist['is_online'] eq 1">
+                <if condition="$vlist['state'] eq 1">
                   <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/hotel/operateStatus?adsid={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-on"></i></span></a>
                   <else/>
