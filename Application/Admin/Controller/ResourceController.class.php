@@ -100,7 +100,7 @@ class ResourceController extends BaseController{
 	         $flag = I('request.flag');
 	         if($flag){
 	             if($flag==2)  $flag = 0;
-	             $save['flag'] = $flag;
+	             $save['state'] = $flag;
 	         }else{
 	             $name = I('post.name','','trim');
 	             $type = I('post.type',3,'intval');
