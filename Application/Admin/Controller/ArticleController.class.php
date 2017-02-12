@@ -224,6 +224,8 @@ $mediainfo['oss_addr'];
             $oss_addr = $oss_arr['oss_addr'];
             $save['oss_addr'] = $oss_addr;
             $save['img_url'] = $image_host.$oss_addr;
+        }else{
+            $this->output('封面必填!', 'article/addvideo');
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
@@ -280,6 +282,11 @@ $mediainfo['oss_addr'];
         $save['bespeak_time'] = I('post.logtime','');
         $save['bespeak'] = 0;
         $mediaid = I('post.media_id');
+
+        if(!$mediaid){
+            $this->output('封面必填!', 'article/doAddarticle',3);
+            die;
+        }
         $mediaModel = new \Admin\Model\MediaModel();
         $oss_addr = $mediaModel->find($mediaid);
         $oss_addr = $oss_addr['oss_addr'];
@@ -292,11 +299,11 @@ $mediainfo['oss_addr'];
             if($artModel->where('id='.$id)->save($save))
             {
                 $this->showcontent($id);
-                $this->output('操作成功!', 'release/addCate');
+                $this->output('操作成功!', 'content/getlist',2);
             }
             else
             {
-                $this->output('操作失败!', 'release/doAddCat');
+                $this->output('操作失败!', 'article/doAddarticle');
             }
         }
         else

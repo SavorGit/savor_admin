@@ -76,7 +76,7 @@ class HotelController extends BaseController {
 			$this->assign('state_k',state_v);
 			$where .= "	AND state = $state_v";
 		}
-		
+
 		//重点
 		$key_v = I('key_v');
 		if ($key_v) {
