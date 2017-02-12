@@ -45,6 +45,10 @@ class MediaModel extends BaseModel{
 	    }
 	    return $vinfo;
 	}
+	
+	public function getMediaInfoByName($name){
+	    
+	}
 
 
 }

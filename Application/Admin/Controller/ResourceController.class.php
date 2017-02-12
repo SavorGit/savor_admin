@@ -135,12 +135,15 @@ class ResourceController extends BaseController{
 	     $type = I('post.type',0,'intval');
 	     $duration = I('post.duration','');
 	     $description = I('post.description','');
-	     $save['name'] = I('post.name','','trim');
+	     $name = I('post.name','','trim');
 	     $save['oss_addr'] = I('post.oss_addr','','trim');
 	     if($duration)  $save['duration'] = $duration;
 	     if($description)   $save['description'] = $description;
 	     $message = $url = $oss_addr = '';
 	     $media_id = 0;
+
+	     
+	     $save['name'] = $name;
 	     if(!$save['oss_addr']){
 	         $message = 'OSS上传失败!';
 	         $url = 'resource/resourceList';

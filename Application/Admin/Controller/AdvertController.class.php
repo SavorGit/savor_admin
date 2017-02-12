@@ -5,6 +5,7 @@
  */
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
+use Common\Lib\Aliyun;
 
 class AdvertController extends BaseController{
 	 private $oss_host = '';
@@ -79,7 +80,7 @@ class AdvertController extends BaseController{
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
 	         
-	         $message = $url = $oss_addr = '';
+	         $message = $url = '';
 	         $media_id = 0;
 	         if($ossaddr){
 	             $user = session('sysUserInfo');
@@ -94,6 +95,24 @@ class AdvertController extends BaseController{
                  $media_data = array();
                  $media_data['name'] = $name;
                  $media_data['oss_addr'] = $ossaddr;
+                 $accessKeyId = C('OSS_ACCESS_ID');
+                 $accessKeySecret = C('OSS_ACCESS_KEY');
+                 $endpoint = C('OSS_HOST');
+                 $bucket = C('OSS_BUCKET');
+                 $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+                 $aliyun->setBucket($bucket);
+ 	             $oss_filesize = I('post.oss_filesize');
+	             if($oss_filesize){
+	                 $range = '0-199';
+	                 $beg_file = $aliyun->getObject($ossaddr,$range);
+	                 $last_filesize = $oss_filesize-200;
+	                 $last_range = "$last_filesize-$oss_filesize";
+	                 $end_file = $aliyun->getObject($ossaddr,$last_range);
+	                 $fileinfo = $beg_file.$end_file;
+	                 if($fileinfo){
+	                     $media_data['md5'] = md5($fileinfo);
+	                 }
+	             }
                  if($duration)  $media_data['duration'] = $duration;
                  if($description)   $media_data['description'] = $description;
 	             $media_data['surfix'] = $surfix;
@@ -173,8 +192,6 @@ class AdvertController extends BaseController{
 	 }
 	 
 	 public function operateStatus(){
-
-
 	     $adsid = I('request.adsid','0','intval');
 	     $atype = I('request.atype');//1状态 2操作
 	     $adsModel = new \Admin\Model\AdsModel();
@@ -182,11 +199,8 @@ class AdvertController extends BaseController{
 	     switch ($atype){
 	         case 1:
 	             $is_online = I('request.flag');
-
 	             $data = array('is_online'=>$is_online);
-
 	             $res = $adsModel->where("id='$adsid'")->save($data);
-
 				 if($res){
 	                 $message = '更新状态成功';
 	             }
