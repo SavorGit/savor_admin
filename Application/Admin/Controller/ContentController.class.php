@@ -1,6 +1,6 @@
 <?php
 namespace Admin\Controller;
-// use Common\Lib\SavorRedis;
+    // use Common\Lib\SavorRedis;
 /**
  * @desc 功能测试类
  *
@@ -9,12 +9,12 @@ use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
 use Admin\Model\CategoModel;
 class ContentController extends BaseController {
-    
+
 
     public function __construct() {
         parent::__construct();
     }
-    
+
 
 
     public function getlist(){
@@ -29,32 +29,30 @@ class ContentController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        $starttime = I('starttime',date("Y-m-d H:i", time()-3600));
-        $endtime = I('endtime', date("Y-m-d H:i"));
-        $starttime = $starttime.':00';
-        $endtime = $endtime.':00';
+
         $where = "1=1";
         $name = I('titlename');
 
-        if ($starttime > $endtime) {
-            $this->display('content');
-        } else {
-            if($name)
-            {
-                $this->assign('name',$name);
-                $where .= "	AND title LIKE '%{$name}%'";
-                $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
-            }
-            $result = $artModel->getList($where,$orders,$start,$size);
-           // foreach($result['list']
+        $beg_time = I('starttime','');
+        $end_time = I('endtime','');
+        if($beg_time)   $where.=" AND create_time>='$beg_time'";
+        if($end_time)   $where.=" AND create_time<='$end_time'";
+        if($name)
+        {
+            $this->assign('name',$name);
+            $where .= "	AND title LIKE '%{$name}%'";
 
-            $this->assign('list', $result['list']);
-            $this->assign('page',  $result['page']);
-
-            $this->display('content');
         }
+        $result = $artModel->getList($where,$orders,$start,$size);
+        // foreach($result['list']
+
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+
+        $this->display('content');
+
 
     }
-    
+
 
 }
