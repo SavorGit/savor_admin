@@ -110,10 +110,10 @@
             </div>
           </div>
 
-          <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}">
+          <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
               <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn">
-                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn default date-reset  btn-sm" type="button" style="display:none"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
             </div>
