@@ -21,10 +21,10 @@
                   </span>
           </div>
 
-          <div class="input-group input-group-sm date form_date" data-date="{$vinfo.log_time}" style="width:135px;" data-ymd="true">
+          <div class="input-group input-group-sm date form_date" data-date="{$vinfo.log_time}"  data-ymd="true">
 
-            <input style="width:73px;padding:0px;margin:0px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
-                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+            <input   name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
@@ -47,7 +47,7 @@
 
       <div class="form-inline" style="margin-top:10px;">
         <div class="tools-group s2">
-          <a class="btn btn-success btn-sm add" href="{$host_name}/article/addarticle" title="发布文章" target="navTab" mask="true">
+          <a class="btn btn-success btn-sm add" href="{$host_name}/article/addarticle" title="发布文章" target="dialog" mask="true">
             <i class="fa fa-sign-in"></i><span>发布文章</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addvideo"  title="发布视频" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>发布视频</span></a>

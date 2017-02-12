@@ -69,7 +69,7 @@
          酒店联系人：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="contractor" minlength="1" maxlength="20" value="{$vinfo.contractor}" >
+          <input type="text" class="form-control" name="contractor" minlength="1" required value="{$vinfo.contractor}" >
         </div>
       </div>
 
@@ -96,7 +96,7 @@
          合作维护人：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="maintainer" minlength="1" maxlength="20" value="{$vinfo.maintainer}" >
+          <input type="text" class="form-control" name="maintainer" required minlength="1" maxlength="20" value="{$vinfo.maintainer}" >
         </div>
       </div>
 
@@ -105,7 +105,7 @@
                 技术运维人：
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="text" class="form-control" name="techmaintainer" minlength="1" maxlength="20" value="{$vinfo.tech_maintainer}" >
+                <input type="text" class="form-control" name="techmaintainer" required minlength="1" maxlength="20" value="{$vinfo.tech_maintainer}" >
             </div>
         </div>
 
@@ -142,7 +142,7 @@
         </label>
         <div class="col-xs-12 col-sm-10">
            <div class="input-group date form_datetime" data-date="{$vinfo.install_date}">
-                  <input name="install_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.install_date}" readonly>
+                  <input name="install_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.install_date}" readonly required>
                   <span class="input-group-btn">
                     <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
@@ -170,7 +170,7 @@
          状态变更说明:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="state_change_reason">
+          <input type="text" class="form-control" name="state_change_reason" >
         </div>
       </div>
 
