@@ -79,7 +79,7 @@ class AdvertController extends BaseController{
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
 	         
-	         $message = $url = $oss_addr = '';
+	         $message = $url = '';
 	         $media_id = 0;
 	         if($ossaddr){
 	             $user = session('sysUserInfo');
@@ -94,7 +94,7 @@ class AdvertController extends BaseController{
                  $media_data = array();
                  $media_data['name'] = $name;
                  $media_data['oss_addr'] = $ossaddr;
-                 if($oss_addr){
+                 if($ossaddr){
                      $accessKeyId = C('OSS_ACCESS_ID');
                      $accessKeySecret = C('OSS_ACCESS_KEY');
                      $endpoint = C('OSS_HOST');
