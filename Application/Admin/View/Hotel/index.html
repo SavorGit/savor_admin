@@ -28,6 +28,7 @@
             </span>
             </div>
           </div>
+
           <div class="form-group">
             <div class="input-group-sm input-group">
                 <label>级别：</label>
@@ -35,24 +36,22 @@
               <select name="level_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_LEVEL')" id="vo">
-                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option>
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
             </div>
               </div>
-
           <div class="form-group">
               <div class="input-group-sm input-group">
                 <label>
                   状态：
                 </label>
-
                <span class="input-group-btn input-group-sm">
               <select name="state_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_STATE')" id="vo">
-                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option>
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
@@ -72,7 +71,7 @@
                     <if condition="$kvo.p eq $vo.id">selected</if>
                   </volist>
                   >{$vo.menu_name}
-                  </option>
+                  </option><br>
                 </volist>
               </select>
             </span>
@@ -85,6 +84,8 @@
               </label>
                 <span class="input-group-btn input-group-sm">
                 <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人">
+                </volist>
+              </select>
             </span>
             </div>
           </div>
@@ -99,7 +100,7 @@
                 重点：
               </label>
                 <span class="input-group-btn">
-              <select name="key_v" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+              <select name="key_v" style="" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_KEY')" id="vo">
                   <option value="{$key}" <if condition="$key eq $key_k">selected</if>>{$vo}</option><br>
@@ -108,6 +109,7 @@
             </span>
             </div>
           </div>
+
           <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}">
               <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn">
@@ -115,7 +117,9 @@
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
             </div>
+
             <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" style="width:135px;">
+
               <input style="width:73px;padding:0px;margin:0px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
@@ -137,6 +141,7 @@
             </span>
             </div>
           </div>
+
             <div class="input-group input-group-sm">
               <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
             <span class="input-group-btn">
@@ -147,7 +152,6 @@
                 <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/add?acttype=0" title="新增酒店" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增酒店</a>
               </div>
       </div>
-
     </div>
   </form>
 </div>
@@ -198,7 +202,7 @@
               <td data-title="包间数量"><a target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">包间数:{$vlist.room_num}</a></td>
               <td data-title="机顶盒数量"><a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">机顶盒数:{$vlist.box_num}</a></td>
               <td data-title="电视数量"><a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">tv数:{$vlist.tv_num}</a></td>
-              <td data-title="节目单"><a target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a></td>
+              <td data-title="节目单"> <if condition="$vlist.menu_id GT 0">  <a target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a><else />无</if></td>
 
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">

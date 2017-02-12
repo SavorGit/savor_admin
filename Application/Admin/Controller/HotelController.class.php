@@ -26,6 +26,7 @@ class HotelController extends BaseController {
 		$areaModel  = new \Admin\Model\AreaModel();
 		//城市
 		$area_arr = $areaModel->getAllArea();
+
 		$this->assign('area', $area_arr);
 		//包含酒楼
 		$men_arr = $menliModel->select();
@@ -34,7 +35,6 @@ class HotelController extends BaseController {
 		$per_arr = $hotelModel->distinct(true)->field('area_id')->select();
 		$per_ho_arr = $areaModel->areaIdToAareName($per_arr);
 		$this->assign('per_ho', $per_ho_arr);*/
-
 		$ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
@@ -46,6 +46,7 @@ class HotelController extends BaseController {
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
+
 
 		$where = "1=1";
 		$name = I('name');
@@ -75,6 +76,7 @@ class HotelController extends BaseController {
 			$this->assign('state_k',$state_v);
 			$where .= "	AND state = $state_v";
 		}
+
 		//重点
 		$key_v = I('key_v');
 		if ($key_v) {
@@ -155,10 +157,17 @@ class HotelController extends BaseController {
 			$condition['hotel_id'] = $hotel_id;
 			$arr = $menuHoModel->where($condition)->order('id desc')->find();
 			$menuid = $arr['menu_id'];
-			$men_arr = $menlistModel->find($menuid);
-			$menuname = $men_arr['menu_name'];
-			$datalist[$k]['menu_id'] = $menuid;
-			$datalist[$k]['menu_name'] = $menuname;
+			if($menuid){
+				$men_arr = $menlistModel->find($menuid);
+				$menuname = $men_arr['menu_name'];
+				$datalist[$k]['menu_id'] = $menuid;
+				$datalist[$k]['menu_name'] = $menuname;
+
+			}else{
+				$datalist[$k]['menu_id'] = '';
+				$datalist[$k]['menu_name'] = '无';
+			}
+
 		}
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
