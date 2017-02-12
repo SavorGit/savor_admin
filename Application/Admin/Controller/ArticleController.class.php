@@ -109,6 +109,32 @@ class ArticleController extends BaseController {
         ob_end_clean();
     }
 
+    public function homemanager(){
+        $catModel = new CategoModel;
+        $size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $order = I('_order','create_time');
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        $where = "1=1";
+        $name = I('name');
+        if($name){
+            $this->assign('name',$name);
+            $where .= "	AND name LIKE '%{$name}%'";
+        }
+        $result = $catModel->getList($where,$orders,$start,$size);
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+       
+        $this->display('homearticle');
+        die;
+    }
+
 
     /**
      * 添加视频
