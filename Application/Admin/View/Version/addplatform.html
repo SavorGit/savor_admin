@@ -1,0 +1,202 @@
+<div class="pageContent">
+  <div id="dz-filecontainer">
+    <div class="tab-content">
+	   	<input id="oss_host" type="hidden" value="{$oss_host}">
+	   	<input id="devicedata" type="hidden" value="{$devicedata}">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addUpgrade" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		    <input name="name" type="hidden" value="platform">
+		    <div class="pageFormContent modal-body">
+            	<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+							最低版本：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<select name="version_min" class="form-control bs-select">
+							<volist name="version_vinfo.min" id="vo">
+								<option value="{$key}" >{$vo}</option>
+							</volist>
+						</select>
+					</div>
+			     </div>
+            	<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+							最高版本：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<select name="version_max" class="form-control bs-select">
+							<volist name="version_vinfo.max" id="vo">
+								<option value="{$key}" >{$vo}</option>
+							</volist>
+						</select>
+					</div>
+			     </div>
+            	<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+							升级版本：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<select name="version" class="form-control bs-select">
+							<volist name="version_vinfo.max" id="vo">
+								<option value="{$key}" >{$vo}</option>
+							</volist>
+						</select>
+					</div>
+			     </div>
+				 <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                升级类型：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                <input name="update_type" type="hidden" value="0">
+						<input name="update_type" type="checkbox" value="1" class="make-switch status" data-size="small" data-on-text="强制更新" data-off-text="手动更新" >
+				      </div>
+		         </div>
+		         <div style="margin-left: 95px;margin-bottom: 30px;">
+		         <span>升级时间：</span>
+		      		<select name="version" class="bs-select">
+						<for start='0' end='24'>
+							<option value="{$i}" >{$i}</option>
+						</for>
+					</select>
+		      	<span style="margin: 3px;">至</span>
+		      		<select name="version" class="bs-select">
+						<for start='0' end='24'>
+							<option value="{$i}" >{$i}</option>
+						</for>
+					</select>
+			   </div>
+			   <div style="margin-left: 95px;margin-bottom: 30px;">
+      				<span>目标酒楼</span>
+      				<button type="button" class="btn btn-primary" style="margin-left: 20px;" data-toggle="modal" data-target="#myModal" data-toggle="modal" data-target="#myModal">添加酒楼</button>
+      			</div>
+			      <div style="margin-left: 106px;margin-bottom: 30px;" id="jia">
+			      	
+			      </div>
+		    </div>
+		    <div class="modal-footer">
+		      <button class="btn btn-default close-m" type="button">取消</button>
+		      <button class="btn btn-primary" type="submit">提交</button>     
+		    </div>
+		  </form>
+      </div>
+  </div>
+</div>
+<!-----------------酒楼--------------------->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">酒楼选择</h4>
+      </div>
+      <div class="modal-body">
+        <div style="margin: 20px;">
+        	<span>城市</span>
+        	<select name="area_v" style="margin-left: 15px;width: 70px;">
+        		<option>全部</option>
+        	</select>
+        	<span style="margin-left: 15px;">级别</span>
+        	<select name="level_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_LEVEL')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select>
+        	<span style="margin-left: 15px;">状态</span>
+        	<select name="state_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_STATE')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select>
+        	<span name="key_v" style="margin-left: 15px;">重点</span>
+        	<select style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_KEY')" id="vo">
+                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select><br />
+        	<span style="margin-top: 10px;">维护人</span>
+        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/>
+        	<input type="text" name="name" style="width: 153px;margin-left: 40px;"placeholder="输入酒楼名称查找" style="margin-left: 30px;"/>
+        	<button type="button" class="btn btn-primary" style="margin-left: 15px;height: 26px;line-height: 14px;">查询</button>
+        	<div style="margin-top: 10px;">
+        		<input type="radio" id="checkquan"name="one" class="one" /><span>全选</span><input type="radio"name="one" class="one" id="checkfan" style="margin-left: 10px;"/><span>反选</span><br />
+        		<p style="width:100%;border: 1px solid black;margin-top: 15px;"></p>
+        		<div>
+        			<input type="checkbox" id="a" class="checks"/><span>酒楼一</span>
+        			<input type="checkbox"id="b" class="checks" /><span>酒楼2</span>
+        			<input type="checkbox"id="c" class="checks" /><span>酒楼3</span>
+        		</div>
+        		<div style="margin-top: 20px;">
+        	<button type="button" class="btn btn-primary"data-dismiss="modal" id="yes" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+        	<button type="button" class="btn btn-primary"data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+        			
+        		</div>
+        	</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+/*------全选-------*/
+
+	$('#checkquan').click(function(){
+		
+	if($('#checkquan').prop("checked")){
+		$(".checks").prop('checked',true)
+	}else{
+		$(".checks").removeAttr('checked');
+	}
+	})
+/*------反选----------*/
+$('#checkfan').click(function(){
+	 $(".checks").each(function(){     
+   
+     if($(this).prop("checked"))     
+   {     
+    $(this).removeAttr("checked");     
+         
+   }     
+   else    
+   {     
+    $(this).prop("checked",true);
+         
+   }     
+        
+    })  
+})
+/*----------选取---------------*/
+
+	$('#yes').click(function(){
+		var url = '{$host_name}'+'/hotel/manager';
+		//ajax 请求
+	        /* 
+	        请求参数
+	        area_v
+			level_v
+			state_v
+			key_v
+			main_v
+			name
+			ajaxversion =1 */
+	    
+		var id = [];
+		var name = [];
+		$('[class="checks"]:checked').each(function(){
+			id.push($(this).attr('id'));
+			name.push($(this).next().html());
+			
+		})
+		console.log(id)
+		console.log(name)
+			var jia = document.getElementById('jia');
+			jia.innerHTML='';
+		for(var i=0;i<name.length;i++){
+			jia.innerHTML+='<a class="jiulou" id="'+id[i]+'">'+name[i]+'<span class="del">,</span></a>'
+		}
+	})
+</script>

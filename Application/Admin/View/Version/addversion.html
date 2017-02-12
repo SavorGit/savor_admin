@@ -2,7 +2,7 @@
   <div id="dz-filecontainer">
     <div class="tab-content">
 	   	<input id="oss_host" type="hidden" value="{$oss_host}">
-		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/{$action_url}" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addVersion" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		   	<input type="hidden" name="vid" value="{$vinfo.id}">
 		   	<input type="hidden" name="oss_addr" id='oss_addr' value=''>
 		    <div class="pageFormContent modal-body">
