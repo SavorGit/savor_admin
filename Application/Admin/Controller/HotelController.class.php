@@ -138,7 +138,9 @@ class HotelController extends BaseController {
 
 		$result = $hotelModel->getList($where,$orders,$start,$size);
 		$datalist = $areaModel->areaIdToAareName($result['list']);
+
 		foreach ($datalist as $k=>$v){
+
 			$conditon = array();
 			$men_arr = array();
 			$nums = $hotelModel->getStatisticalNumByHotelId($v['id']);
@@ -148,11 +150,20 @@ class HotelController extends BaseController {
 			$hotel_id = $datalist[$k]['id'];
 			$condition['hotel_id'] = $hotel_id;
 			$arr = $menuHoModel->where($condition)->order('id desc')->find();
+
+
 			$menuid = $arr['menu_id'];
-			$men_arr = $menlistModel->find($menuid);
-			$menuname = $men_arr['menu_name'];
-			$datalist[$k]['menu_id'] = $menuid;
-			$datalist[$k]['menu_name'] = $menuname;
+			if($menuid){
+				$men_arr = $menlistModel->find($menuid);
+				$menuname = $men_arr['menu_name'];
+				$datalist[$k]['menu_id'] = $menuid;
+				$datalist[$k]['menu_name'] = $menuname;
+
+			}else{
+				$datalist[$k]['menu_id'] = '';
+				$datalist[$k]['menu_name'] = '无';
+			}
+
 		}
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);

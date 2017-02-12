@@ -95,8 +95,9 @@ $config['MANGER_LEVEL'] = array(
 );
 
 $config['MANGER_STATE'] = array(
+    '0'=>'未审核',
     '2'=>'审核通过',
-    '3'=>'审核不通过'
+    '3'=>'审核不通过',
 );
 $config['MANGER_KEY'] = array(
     'colum'=>'栏目节点',

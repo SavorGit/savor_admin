@@ -78,6 +78,9 @@ class ArticleController extends BaseController {
         $id = I('get.id');
         $acctype = I('get.acttype');
 
+        $vinfo['state'] = 0;
+        $this->assign('vinfo',$vinfo);
+
         if ($acctype && $id)
         {
             $vinfo = $artModel->where('id='.$id)->find();
@@ -163,6 +166,9 @@ class ArticleController extends BaseController {
         $userInfo = session('sysUserInfo');
         $uname = $userInfo['username'];
         $this->assign('uname',$uname);
+        $vinfo['state'] = 0;
+        $this->assign('vinfo',$vinfo);
+
 
         $id = I('get.id');
 
