@@ -135,12 +135,10 @@ class HotelController extends BaseController {
 		    $size = 1000;
 		    $result = $hotelModel->getList($where,$orders,$start,$size);
 		    $res_hotel = array();
-		    foreach ($res_hotel as $v){
+		    foreach ($result['list'] as $v){
 		        $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
 		    }
-		    $code = 10000;
-		    $res = json_encode(array('code'=>$code,'data'=>$res_hotel));
-		    echo $res;
+		    echo json_encode($res_hotel);
 		    exit;
 		}else{
 		    $result = $hotelModel->getList($where,$orders,$start,$size);
