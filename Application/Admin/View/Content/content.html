@@ -51,6 +51,9 @@
             <i class="fa fa-sign-in"></i><span>发布文章</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addvideo"  title="发布视频" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>发布视频</span></a>
+
+          <a class="btn btn-success btn-sm add" href="{$host_name}/article/homemanager"  title="首页内容管理" target="navTab" mask="true">
+            <i class="fa fa-plus"></i><span>首页内容管理</span></a>
         </div>
       </div>
 
@@ -92,7 +95,7 @@
                 <if condition="$vlist.type eq 1"> 图文
                   <elseif condition="$vlist.type eq 2"/>图集
                   <elseif condition="$vlist.type eq 3"/>
-                    <if condition="$vlist.oss_addr eq ''">
+                    <if condition="$vlist.media_key_id eq 0">
                           视频（非点播）
                       <else/> 视频（点播）
                     </if>
@@ -107,6 +110,8 @@
                   审核通过
                   <elseif condition="$vlist['state'] eq 3"/>
                   审核未通过
+                  <else />
+                  未审核
                 </if>
               </td>
 
@@ -133,6 +138,11 @@
 
                   <a data-tip="预览页面" target="_blank" mask="true"
                      href="__PUBLIC__/html/{$vlist.id}.html" target="_blank"  class="btn btn-success btn-icon">
+                    <i class="icon-list"></i>
+                  </a>
+
+                  <a data-tip="添加至首页" target="dialog" mask="true"
+                     href="{$host_name}/article/addhome?id={$vlist.id}&acttype=1" target="_blank"  class="btn btn-success btn-icon">
                     <i class="icon-list"></i>
                   </a>
 

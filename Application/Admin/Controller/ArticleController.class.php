@@ -109,6 +109,38 @@ class ArticleController extends BaseController {
         ob_end_clean();
     }
 
+    public function addhome(){
+        $id = I('get.id');
+        //判断表中是否有
+
+    }
+
+    public function homemanager(){
+        $catModel = new CategoModel;
+        $size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $order = I('_order','create_time');
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        $where = "1=1";
+        $name = I('name');
+        if($name){
+            $this->assign('name',$name);
+            $where .= "	AND name LIKE '%{$name}%'";
+        }
+        $result = $catModel->getList($where,$orders,$start,$size);
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+
+        $this->display('homearticle');
+        die;
+    }
+
 
     /**
      * 添加视频
@@ -154,7 +186,7 @@ class ArticleController extends BaseController {
         $save['category_id']        = I('post.cate','','trim');
         $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
         $media_id = I('post.media_id','0','intval');//视频id
-        $save['img_url']    = I('post.shwimage','');
+
 
         $save['source']    = I('post.source','');
         $save['content']    = I('post.content','','htmlspecialchars');
@@ -171,13 +203,16 @@ class ArticleController extends BaseController {
             $oss_addr = $oss_arr['oss_addr'];
             $save['oss_addr'] = $oss_addr;
             $save['img_url'] = $image_host.$oss_addr;
+            $save['type'] = 1;
         }else{
             $this->output('封面必填!', 'article/addvideo');
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             $save['duration'] = $oss_arr['duration'];
+            $save['vod_md5'] = $oss_arr['md5'];
             $save['media_key_id']    = $media_id;
+
         }
         if($id){
             if($artModel->where('id='.$id)->save($save)){
@@ -187,6 +222,7 @@ class ArticleController extends BaseController {
                 $this->output('操作失败!', 'content/getlist');
             }
         }else{
+            $save['type'] = 3;
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
             $uname = $userInfo['username'];
