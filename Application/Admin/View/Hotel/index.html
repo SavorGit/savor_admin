@@ -84,8 +84,6 @@
               </label>
                 <span class="input-group-btn input-group-sm">
                 <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人">
-                </volist>
-              </select>
             </span>
             </div>
           </div>
@@ -110,15 +108,15 @@
             </div>
           </div>
 
-          <div class="input-group input-group-sm date form_date" data-date="{$vinfo.log_time}" data-ymd="true">
+          <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
               <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn">
-                    <button class="btn default date-reset  btn-sm" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
             </div>
 
-            <div class="input-group input-group-sm date form_date" data-date="{$vinfo.log_time}" style="width:135px;" data-ymd="true">
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}" style="width:135px;">
 
               <input style="width:73px;padding:0px;margin:0px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn" style="padding:0px;margin:0px;" >

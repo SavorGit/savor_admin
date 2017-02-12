@@ -1,0 +1,26 @@
+<div class="pageContent">
+  <div id="dz-filecontainer">
+    <div class="tab-content">
+	   	<input id="oss_host" type="hidden" value="{$oss_host}">
+	   	<input id="devicedata" type="hidden" value="{$devicedata}">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addUpgrade" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		    <input name="name" type="hidden" value="box">
+		    <div class="pageFormContent modal-body">
+   			   <div style="margin-left: 40%;margin-bottom: 30px;">
+      				<span>目标酒店列表（共{$hnum}家）</span>
+      			</div>
+      			<foreach name="datalist" item="hoteldata">
+      				<div class="form-inline">
+      				<volist name="hoteldata" id="hotel">
+		            	<span>{$hotel.name}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			     	</volist>
+			     	</div><br>
+				</foreach>
+		    </div>
+		    <div class="modal-footer">
+		      <button class="btn btn-primary close-m" type="button">确定</button>
+		    </div>
+		  </form>
+      </div>
+  </div>
+</div>

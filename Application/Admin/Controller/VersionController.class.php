@@ -65,11 +65,11 @@ class VersionController extends BaseController{
 	    $this->assign('page',  $result['page']);
 	    $this->display('platform');
 	}
-		
+	
 	public function addUpgrade(){
 	    $upgradeModel = new \Admin\Model\UpgradeModel();
 	    $versionModel = new \Admin\Model\VersionModel();
-	    $name = I('get.name','client');
+	    $name = I('name','client');
 	    if(IS_POST){
 	        $device_type = I('post.devicetype');//终端类型：1小平台，2机顶盒，3,4手机
 	        $add_data = array();
@@ -80,6 +80,17 @@ class VersionController extends BaseController{
 	        $add_data['update_type'] = I('post.update_type');
 	        $add_data['create_time'] = date('Y-m-d H:i:s');
 	        $add_data['state'] = 0;
+	        if($device_type==1 || $device_type==2){
+	            $upgrade_time_start = I('post.upgrade_time_start',0,'intval');
+	            $upgrade_time_end = I('post.upgrade_time_end',0,'intval');
+	            if($upgrade_time_start>$upgrade_time_end){
+	                $this->output('升级开始时间不能大于结束时间', 'version/addUpgrade', 3);
+	            }
+	            $area_id = I('post.area_id',0,'intval');
+	            $hotel_id = I('post.hotel_id','');
+	            if($area_id)   $add_data['area_id'] = $area_id;
+	            if($hotel_id)   $add_data['hotel_id'] = $hotel_id;
+	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
 	            $navTab = "version/$name";
@@ -103,13 +114,13 @@ class VersionController extends BaseController{
 	        $version = array();
 	        foreach ($datalist as $k=>$v){
 	            $version_code = $v['version_code'];
-	            $version[$v['device_type']][] = $version_code;
+	            $version[$v['device_type']][$version_code] = $v['version_name'];
 	        }
 	        if($name=='client'){
 	            $android = $version[3];
-	            ksort($android);
-	            $android_min = $android;
 	            krsort($android);
+	            $android_min = $android;
+	            ksort($android);
 	            $android_max = $android;
 	            $android_vinfo = array(
 	                'min'=>$android_min,
@@ -117,9 +128,9 @@ class VersionController extends BaseController{
 	            );
 	            $ios = $version[4];
 	            ksort($ios);
-	            $ios_min = $ios;
-	            krsort($ios);
 	            $ios_max = $ios;
+	            krsort($ios);
+	            $ios_min = $ios;
 	            $ios_vinfo = array(
 	                'min'=>$ios_min,
 	                'max'=>$ios_max,
@@ -127,28 +138,23 @@ class VersionController extends BaseController{
 	            $devicedata = array('3'=>$android_vinfo,'4'=>$ios_vinfo);
 	            $this->assign('devicedata',json_encode($devicedata));
 	            $this->assign('android_vinfo',$android_vinfo);
-	        }elseif($name=='box'){
-	            $version = $version[2];
-	            ksort($version);
-	            $version_min = $version;
-	            krsort($version);
-	            $version_max = $version;
-	            $version_vinfo = array(
-	                'min'=>$version_min,
-	                'max'=>$version_max,
-	            );
-	            $this->assign('version_vinfo',$version_vinfo);	            
-	        }elseif($name=='platform'){
-	            $version = $version[1];
-	            ksort($version);
-	            $version_min = $version;
-	            krsort($version);
-	            $version_max = $version;
-	            $version_vinfo = array(
-	                'min'=>$version_min,
-	                'max'=>$version_max,
-	            );
-	            $this->assign('version_vinfo',$version_vinfo);	            
+	        }else{
+	            if(isset($device_condition[$name])){
+	                $device_type =$device_condition[$name];
+	                $version = $version[$device_type];
+	                ksort($version);
+	                $version_max = $version;
+	                krsort($version);
+	                $version_min = $version;
+	                $version_vinfo = array(
+	                    'min'=>$version_min,
+	                    'max'=>$version_max,
+	                );
+	                $this->assign('version_vinfo',$version_vinfo);
+	                $areaModel  = new \Admin\Model\AreaModel();
+	                $area_arr = $areaModel->getAllArea();
+	                $this->assign('area', $area_arr);
+	            }
 	        }
 	        $display_html = "add$name";
 	        $this->display($display_html);
@@ -184,7 +190,25 @@ class VersionController extends BaseController{
 	    $this->output($message, $navTab, 2);
 	}
 
-	
+	public function hotelList(){
+	    $hnum = I('get.hnum',0,'intval');
+	    $id = I('get.id',0,'intval');
+	    $datalist = array();
+	    if($id){
+	        $upgradeModel = new \Admin\Model\UpgradeModel();
+	        $res = $upgradeModel->find($id);
+            if($res['hotel_id']){
+                $hotelModel = new \Admin\Model\HotelModel();
+                $res_hotel = $hotelModel->getHotelByIds($res['hotel_id'],'id,name');
+                if(!empty($res_hotel)){
+                    $datalist = array_chunk($res_hotel, 5);
+                }
+            }	        
+	    }
+	    $this->assign('hnum',$hnum);
+	    $this->assign('datalist',$datalist);
+	    $this->display('hotelist');
+	}
 	public function versionList(){
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $start = I('pageNum',1);
@@ -277,21 +301,6 @@ class VersionController extends BaseController{
 	    }
 	}
 	
-	public function getHostList(){
-	   $hotel = array(
-	       array('hotel_id'=>1495,'hotel_name'=>'花家怡园'),
-	       array('hotel_id'=>1494,'hotel_name'=>'依偎客'),
-	       array('hotel_id'=>1493,'hotel_name'=>'采购'),
-	       array('hotel_id'=>1492,'hotel_name'=>'盐府(大望路店)'),
-	       array('hotel_id'=>1490,'hotel_name'=>'全茂北京菜'),
-	   );
-	   $code = 10000;
-	   $res = json_encode(array('code'=>$code,'data'=>$hotel));
-	   echo $res;
-	   exit;
-	}
-	
-	
 	private function upgradeList($device_type,$orders,$pagenum,$size){
 	    $where = array();
 	    if(is_array($device_type)){
@@ -329,11 +338,12 @@ class VersionController extends BaseController{
 	        }
 	        if($device_type==1 || $device_type==2){
 	            if ($v['hotel_id']){
-	                $hotel_target = count(explode(',',$v['hotel_id'])).'家';
+	                $hotel_id = trim($v['hotel_id'],',');
+	                $hotel_num = count(explode(',',$hotel_id));
 	            }else{
-	                $hotel_target = '全部';
+	                $hotel_num = 0;
 	            }
-	            $datalist[$k]['hotel_target'] = $hotel_target;
+	            $datalist[$k]['hotel_num'] = $hotel_num;
 	        }
 	    }
 	    $page = $result['page'];

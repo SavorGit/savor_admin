@@ -49,6 +49,16 @@ class HotelModel extends BaseModel{
 		return $result;
 	}
 	
+	public function getHotelByIds($hotel_ids,$field="*"){
+	    $hotel_ids = trim($hotel_ids,',');
+	    $filter = array();
+	    $filter['id'] = array('IN',$hotel_ids);
+	    $res = $this->field($field)
+	    ->where($filter)
+	    ->select();
+	    return $res;
+	}
+	
 	public function getStatisticalNumByHotelId($hotel_id,$type=''){
 	    $sql = "select id as room_id,hotel_id from savor_room where hotel_id='$hotel_id'";
 	    $res = $this->query($sql);
