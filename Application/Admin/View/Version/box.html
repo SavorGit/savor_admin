@@ -10,7 +10,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addUpgrade?name=client" title="发布新版" target="dialog" mask="true"><i class="fa fa-plus"></i>发布新版</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addUpgrade?name=box" title="机顶盒升级" target="dialog" mask="true"><i class="fa fa-plus"></i>机顶盒升级</a>
           </div>
         </div>
       </div>
@@ -33,6 +33,7 @@
               <th>升级类型</th>
               <th>创建时间</th>
               <th>更新时间</th>
+              <th>目标酒店</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -48,6 +49,7 @@
               <td data-title="升级类型">{$vlist.update_typestr}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
+              <td data-title="目标酒店">{$vlist.hotel_target}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
 	              <if condition="$vlist['state'] eq 1">

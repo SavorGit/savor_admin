@@ -42,10 +42,9 @@
                     <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
                       <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
                         <img id="media_idImg" src="/Public/admin/assets/img/noimage.png" border="0" />
-
                         <else />
                         <img id="media_idImg" src="{$vinfo.oss_addr}" border="0" />
-
+                        <input type="hidden" name="imvvv", value="{$vinfo.oss_addr}" required />
                       </if>
                     </a>
                   </div>

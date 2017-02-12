@@ -3,8 +3,8 @@ namespace Admin\Model;
 use Admin\Model\BaseModel;
 use Common\Lib\Page;
 
-class VersionModel extends BaseModel{
-	protected $tableName='device_version';
+class UpgradeModel extends BaseModel{
+	protected $tableName='device_upgrade';
 
 	public function getList($where, $order='id desc', $start=0,$size=5){
 		$list = $this->where($where)
