@@ -5,6 +5,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Common\Lib\Aliyun;
 class VersionController extends BaseController{
     private $oss_host = '';
     public function __construct(){
@@ -119,18 +120,18 @@ class VersionController extends BaseController{
 	        if($name=='client'){
 	            $android = $version[3];
 	            krsort($android);
-	            $android_min = $android;
-	            ksort($android);
 	            $android_max = $android;
+	            ksort($android);
+	            $android_min = $android;
 	            $android_vinfo = array(
 	                'min'=>$android_min,
 	                'max'=>$android_max,
 	            );
 	            $ios = $version[4];
 	            ksort($ios);
-	            $ios_max = $ios;
-	            krsort($ios);
 	            $ios_min = $ios;
+	            krsort($ios);
+	            $ios_max = $ios;
 	            $ios_vinfo = array(
 	                'min'=>$ios_min,
 	                'max'=>$ios_max,
@@ -143,9 +144,9 @@ class VersionController extends BaseController{
 	                $device_type =$device_condition[$name];
 	                $version = $version[$device_type];
 	                ksort($version);
-	                $version_max = $version;
-	                krsort($version);
 	                $version_min = $version;
+	                krsort($version);
+	                $version_max = $version;
 	                $version_vinfo = array(
 	                    'min'=>$version_min,
 	                    'max'=>$version_max,
@@ -267,14 +268,19 @@ class VersionController extends BaseController{
 	        }
 	        $version_data = array('version_name'=>$version_name,'version_code'=>$version_code,'device_type'=>$devicetype);
 	        if($remark)    $version_data['remark'] = $remark;
+	        $version_data['create_time'] = date('Y-m-d H:i:s');
 	        if($oss_addr){
 	            $version_data['oss_addr'] = $oss_addr;
-	            /*
-	            $file_url = $this->oss_host.$oss_addr;
-	            $file_info = file_get_contents($file_url);
-	            $md5_file = md5_file($file_info);
-	            $version_data['md5'] = $md5_file;
-	            */
+	            $accessKeyId = C('OSS_ACCESS_ID');
+	            $accessKeySecret = C('OSS_ACCESS_KEY');
+	            $endpoint = C('OSS_HOST');
+	            $bucket = C('OSS_BUCKET');
+	            $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+	            $aliyun->setBucket($bucket);
+	            $fileinfo = $aliyun->getObject($oss_addr,'');
+	            if($fileinfo){
+	                $version_data['md5'] = md5($fileinfo);
+	            }
 	        }
 	        $versionModel = new \Admin\Model\VersionModel();
 	        $res_version = $versionModel->add($version_data);

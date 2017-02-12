@@ -116,8 +116,10 @@ class AliossController extends Controller{
 		// 6.验证签名
 		$ok = openssl_verify($authStr, $authorization, $pubKey, OPENSSL_ALGO_MD5);
 		if($ok == 1){
+		    parse_str($body,$bodyinfo);
+		    $size = $bodyinfo['size'];
 		    header("Content-Type: application/json");
-		    $data = array("Status"=>"Ok");
+		    $data = array("Status"=>"Ok",'size'=>$size);
 		    echo json_encode($data);
 		}else{
 		    //header("http/1.1 403 Forbidden");
