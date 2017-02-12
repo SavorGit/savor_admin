@@ -109,6 +109,12 @@ class ArticleController extends BaseController {
         ob_end_clean();
     }
 
+    public function addhome(){
+        $id = I('get.id');
+        //判断表中是否有
+
+    }
+
     public function homemanager(){
         $catModel = new CategoModel;
         $size   = I('numPerPage',50);//显示每页记录数
@@ -130,7 +136,7 @@ class ArticleController extends BaseController {
         $result = $catModel->getList($where,$orders,$start,$size);
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
-       
+
         $this->display('homearticle');
         die;
     }
