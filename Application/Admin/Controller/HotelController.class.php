@@ -18,8 +18,24 @@ class HotelController extends BaseController {
 	 *
 	 */
 	public function manager(){
+
+		$menliModel  = new \Admin\Model\MenuListModel();
+		$menuHoModel = new \Admin\Model\MenuHotelModel();
+		$menlistModel = new \Admin\Model\MenuListModel();
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
+		//城市
+		$area_arr = $areaModel->getAllArea();
+
+		$this->assign('area', $area_arr);
+		//包含酒楼
+		$men_arr = $menliModel->select();
+		$this->assign('include', $men_arr);
+		/*//合作维护人
+		$per_arr = $hotelModel->distinct(true)->field('area_id')->select();
+		$per_ho_arr = $areaModel->areaIdToAareName($per_arr);
+		$this->assign('per_ho', $per_ho_arr);*/
+
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
@@ -31,19 +47,112 @@ class HotelController extends BaseController {
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
 
+
 		$where = "1=1";
 		$name = I('name');
+		$beg_time = I('starttime','');
+		$end_time = I('endtime','');
+		if($beg_time)   $where.=" AND install_date>='$beg_time'";
+		if($end_time)   $where.=" AND install_date<='$end_time'";
 		if($name){
 			$this->assign('name',$name);
 			$where .= "	AND name LIKE '%{$name}%'";
 		}
+		//城市
+		$area_v = I('area_v');
+		if ($area_v) {
+			$this->assign('area_k',$area_v);
+			$where .= "	AND area_id = $area_v";
+		}
+		//级别
+		$level_v = I('level_v');
+		if ($level_v) {
+			$this->assign('level_k',$level_v);
+			$where .= "	AND level = $level_v";
+		}
+		//状态
+		$state_v = I('state_v');
+		if ($state_v) {
+			$this->assign('state_k',state_v);
+			$where .= "	AND state = $state_v";
+		}
+		
+		//重点
+		$key_v = I('key_v');
+		if ($key_v) {
+			$this->assign('key_k',$key_v);
+			$where .= "	AND iskey = $key_v";
+		}
+		//合作维护人
+		$main_v = I('main_v');
+		if ($main_v) {
+			$this->assign('main_k',$main_v);
+			$where .= "	AND maintainer LIKE '%{$main_v}%'";
+		}
+		//包含
+		$include_v = I('include_v');
+		//获取节目单对应hotelid
+		if ($include_v) {
+			//取部分包含节目单
+			$bak_ho_arr = array();
+			foreach ($include_v as $iv) {
+
+				$sql = "SELECT hotel_id FROM savor_menu_hotel WHERE create_time=
+                (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id={$iv})";
+				$bak_hotel_id_arr = $menuHoModel->query($sql);
+				foreach ($bak_hotel_id_arr as $bk=>$bv){
+					$bak_ho_arr[] = $bv['hotel_id'];
+				}
+			}
+			$bak_ho_arr = array_unique($bak_ho_arr);
+			$bak_ho_str = implode(',', $bak_ho_arr);
+			if($bak_ho_str){
+				$where .= "	AND id  in ($bak_ho_str)";
+			}else{
+				$where .= "	AND id  in ('')";
+			}
+			$this->assign('include_k',$include_v);
+		} else {
+			$exc_v = I('exc_v');
+			if ($exc_v) {
+				$bak_ho_arr_p = array();
+				foreach ($exc_v as $iv) {
+
+					$sql = "SELECT hotel_id FROM savor_menu_hotel WHERE create_time=
+                (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id={$iv})";
+					$bak_hotel_id_arr = $menuHoModel->query($sql);
+					foreach ($bak_hotel_id_arr as $bk=>$bv){
+						$bak_ho_arr_p[] = $bv['hotel_id'];
+					}
+				}
+				$bak_ho_arr_p = array_unique($bak_ho_arr_p);
+				$bak_ho_str = implode(',', $bak_ho_arr_p);
+				if($bak_ho_str){
+					$where .= "	AND id not in ($bak_ho_str)";
+				}
+			} else {
+
+			}
+		}
+
+
 		$result = $hotelModel->getList($where,$orders,$start,$size);
 		$datalist = $areaModel->areaIdToAareName($result['list']);
 		foreach ($datalist as $k=>$v){
+			$conditon = array();
+			$men_arr = array();
 			$nums = $hotelModel->getStatisticalNumByHotelId($v['id']);
 			$datalist[$k]['room_num'] = $nums['room_num'];
 			$datalist[$k]['box_num'] = $nums['box_num'];
 			$datalist[$k]['tv_num'] = $nums['tv_num'];
+			$hotel_id = $datalist[$k]['id'];
+			$condition['hotel_id'] = $hotel_id;
+			$arr = $menuHoModel->where($condition)->order('id desc')->find();
+			$menuid = $arr['menu_id'];
+			$men_arr = $menlistModel->find($menuid);
+			$menuname = $men_arr['menu_name'];
+			$datalist[$k]['menu_id'] = $menuid;
+			$datalist[$k]['menu_name'] = $menuname;
 		}
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
@@ -69,6 +178,9 @@ class HotelController extends BaseController {
 				$vinfo['oss_addr'] = $media_info['oss_addr'];
 			}
 			$this->assign('vinfo',$vinfo);
+		}else{
+			$vinfo['state'] = 2;
+			$this->assign('vinfo',$vinfo);
 		}
 		$this->display('add');
 	}
@@ -84,6 +196,7 @@ class HotelController extends BaseController {
 		$save['addr']                = I('post.addr','','trim');
 		$save['contractor']          = I('post.contractor','','trim');
 		$save['maintainer']          = I('post.maintainer','','trim');
+		$save['tech_maintainer']          = I('post.techmaintainer','','trim');
 		$save['tel']                 = I('post.tel','','trim');
 		$save['level']               = I('post.level','','trim');
 		$save['iskey']               = I('post.iskey','','intval');
@@ -165,6 +278,8 @@ class HotelController extends BaseController {
 		$temp = $hotelModel->getRow('name',['id'=>$id]);
 		$this->assign('hotel_name',$temp['name']);
 		$this->assign('hotel_id',$id);
+		$vinfo['state'] = 2;
+		$this->assign('vinfo',$vinfo);
 		$this->display('addRoom');
 	}
 

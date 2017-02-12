@@ -18,7 +18,11 @@ class MenuListModel extends BaseModel
 		return $list;
 	}
 
+	public function getAllmenu()
+	{
+		return $this->select();
 
+	}
 
 	//É¾³ýÊý¾Ý
 	public function delData($id) {

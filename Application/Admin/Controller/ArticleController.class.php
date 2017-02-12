@@ -88,7 +88,7 @@ class ArticleController extends BaseController {
         } else {
 
         }
-        $where = "state=0";
+        $where = "1=1";
         $field = 'id,name';
         $vinfo = $catModel->getWhere($where, $field);
 
@@ -207,7 +207,7 @@ $mediainfo['oss_addr'];
 
 
         $save['source']    = I('post.source','');
-        $save['operators']    = I('post.operators','');
+
         $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = I('post.state','0','intval');
@@ -228,7 +228,7 @@ $mediainfo['oss_addr'];
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             $save['duration'] = $oss_arr['duration'];
-            $save['media_id']    = $media_id;
+            $save['media_key_id']    = $media_id;
         }
         if($id)
         {
@@ -245,6 +245,9 @@ $mediainfo['oss_addr'];
         else
         {
             $save['create_time'] = date('Y-m-d H:i:s');
+            $userInfo = session('sysUserInfo');
+            $uname = $userInfo['username'];
+            $save['operators']    = $uname;
             if($artModel->add($save))
             {
                 $id = $artModel->getLastInsID();
@@ -269,7 +272,7 @@ $mediainfo['oss_addr'];
         $save['title']        = I('post.title','','trim');
         $save['category_id']        = I('post.cate','','trim');
         $save['source']    = I('post.source','');
-        $save['operators']    = I('post.operators','');
+
         $save['content']    = I('post.content','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = I('post.state','0','intval');
@@ -299,8 +302,12 @@ $mediainfo['oss_addr'];
         else
         {
             $save['create_time'] = date('Y-m-d H:i:s');
+            $userInfo = session('sysUserInfo');
+            $uname = $userInfo['username'];
+            $save['operators']    = $uname;
             if($artModel->add($save))
             {
+
                 $arid = $artModel->getLastInsID();
                 $this->showcontent($arid);
                 $dat['content_url'] = 'html/'.$arid.'.html';

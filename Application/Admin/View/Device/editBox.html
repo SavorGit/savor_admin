@@ -82,8 +82,9 @@
         </label>
         <div class="col-xs-12 col-sm-10">
          <select name="state" class="form-control bs-select" title="请选择..." required>
-              <option value="0" <if condition="$vinfo.state eq 0"> selected </if>  >正常</option><br>
-              <option value="1" <if condition="$vinfo.state eq 1"> selected </if>  >删除</option>
+           <option value="2" <if condition="$vinfo.state eq 2"> selected </if> >冻结</option><br>
+           <option value="1" <if condition="$vinfo.state eq 1"> selected </if> >正常</option><br>
+           <option value="3" <if condition="$vinfo.state eq 3"> selected </if> >报损</option>
           </select>
         </div>
       </div>

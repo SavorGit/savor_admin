@@ -533,9 +533,9 @@ class MenuController extends BaseController {
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','id');
+        $order = I('_order','update_time');
         $this->assign('_order',$order);
-        $sort = I('_sort','asc');
+        $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
