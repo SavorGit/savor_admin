@@ -1,21 +1,15 @@
 <?php
 namespace Admin\Controller;
-// use Common\Lib\SavorRedis;
 /**
- * @desc 功能测试类
+ * @desc 内容管理
  *
  */
 use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
-use Admin\Model\CategoModel;
 class ContentController extends BaseController {
-    
-
     public function __construct() {
         parent::__construct();
     }
-    
-
 
     public function getlist(){
         $artModel = new ArticleModel();
@@ -39,22 +33,15 @@ class ContentController extends BaseController {
         if ($starttime > $endtime) {
             $this->display('content');
         } else {
-            if($name)
-            {
+            if($name){
                 $this->assign('name',$name);
                 $where .= "	AND title LIKE '%{$name}%'";
                 $where .= "	AND (`create_time`) > '{$starttime}' AND (`create_time`) < '{$endtime}' ";
             }
             $result = $artModel->getList($where,$orders,$start,$size);
-           // foreach($result['list']
-
             $this->assign('list', $result['list']);
             $this->assign('page',  $result['page']);
-
             $this->display('content');
         }
-
     }
-    
-
 }

@@ -19,11 +19,8 @@ class ArticleController extends BaseController {
     public function manager() {
         $this->display('index');
     }
-
-
-    public function video()
-    {
-
+    
+    public function video(){
         $mediaModel = new MediaModel;
         $order = I('_order','id');
         $this->assign('_order',$order);
@@ -31,7 +28,6 @@ class ArticleController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $fields = "id, name, oss_addr";
-
         $where = "1=1";
         $result = $mediaModel->getWhere($where,$fields);
        return $result;
@@ -42,7 +38,6 @@ class ArticleController extends BaseController {
         //查找是否在节目单中引用function()若引用则无法删除
         if($gid) {
             $artModel = new ArticleModel();
-
             $result = $artModel -> delData($gid);
             if($result) {
                 $this->output('删除成功', 'content/getlist',2);
@@ -56,12 +51,10 @@ class ArticleController extends BaseController {
 
     public function showpic() {
         $img = I('get.pic');
-
         $this->assign('imgd', $img);
         $this->display('showpic');
         echo $img;
     }
-
 
 
     /**
@@ -74,24 +67,19 @@ class ArticleController extends BaseController {
         $userInfo = session('sysUserInfo');
         $uname = $userInfo['username'];
         $this->assign('uname',$uname);
-
         $id = I('get.id');
         $acctype = I('get.acttype');
 
-        if ($acctype && $id)
-        {
+        $vinfo['state'] = 0;
+        $this->assign('vinfo',$vinfo);
+        if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
             $vinfo['oss_addr'] = $vinfo['img_url'];
-
             $this->assign('vinfo',$vinfo);
-
-        } else {
-
         }
         $where = "1=1";
         $field = 'id,name';
         $vinfo = $catModel->getWhere($where, $field);
-
         $this->assign('vcainfo',$vinfo);
         $this->display('addart');
 
@@ -100,76 +88,43 @@ class ArticleController extends BaseController {
      * 显示并生成H5页面地址
      */
     public function showcontent($id){
-        //geneStatiContent
-
         $artModel = new ArticleModel();
-
         $vinfo = $artModel->where('id='.$id)->find();
         $content = html_entity_decode($vinfo['content']);
         $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
         $replacment = '<img src='.__ROOT__ .'${1}>';
         $content =  preg_replace($pattern, $replacment, $content);
-        /*
-               $pregRule = "/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
-               $suffix = 'gggggggg';
-               $content = preg_replace($pregRule, '<img src="${1}'.$suffix.'" style="max-width:100%">', $content);
-
-
-
-
-               $content ='<img class="img-responsive" src="/Public/uploads/2017-01-08/14838869561180598520.png"/>';
-
-
-               $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
-               $replacment = '<img src="www.a.com${1}">';
-               echo preg_replace($pattern, $replacment, $content);
-
-               die;
-               preg_match_all($pattern,$content,$matchContent);
-               print_r($matchContent);
-               die;*/
         $this->assign('content',$content);
         ob_start();
         $this->display('showcontent');
         $content = ob_get_contents();//取得php页面输出的全部内容
         echo $content;
-
         $path = SITE_TP_PATH.'/Public/html';
-
         if ( !(is_dir($path)) ) {
             mkdir ( $path, 0777, true );
         }
-
         $fp = fopen($path."/".$id.".html", "w");
-       // var_dump($fp);
         fwrite($fp, $content);
         fclose($fp);
         ob_end_clean();
-
     }
-
 
 
     /**
      * 添加视频
      */
     public function addVideo(){
-
-
         $catModel = new CategoModel();
         $artModel = new ArticleModel();
         $mediaModel = new MediaModel;
-
         $userInfo = session('sysUserInfo');
         $uname = $userInfo['username'];
         $this->assign('uname',$uname);
-
+        $vinfo['state'] = 0;
+        $this->assign('vinfo',$vinfo);
         $id = I('get.id');
-
         $acctype = I('get.acttype');
-
-        if ($acctype && $id)
-        {
+        if ($acctype && $id){
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
             $media_id = $vainfo['media_key_id'];
@@ -179,19 +134,15 @@ class ArticleController extends BaseController {
                 $mediaModel = new \Admin\Model\MediaModel();
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['media_id']);
                 $vainfo['videooss_addr'] = $oss_host.
-$mediainfo['oss_addr'];
                 $vainfo['vid_type'] = 1;
             }
             $this->assign('vainfo',$vainfo);
-
         }
-
         $where = "1=1";
         $field = 'id,name';
         $vinfo = $catModel->getWhere($where, $field);
         $this->assign('vcainfo',$vinfo);
         $this->display('addvideo');
-
     }
 
     public function doAddvideo(){
@@ -205,67 +156,54 @@ $mediainfo['oss_addr'];
         $media_id = I('post.media_id','0','intval');//视频id
         $save['img_url']    = I('post.shwimage','');
 
-
         $save['source']    = I('post.source','');
-
         $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = I('post.state','0','intval');
-
         $save['tx_url'] = I('post.yunhref','');
         $save['update_time'] = date('Y-m-d H:i:s');
         $addtype = I('post.r1','0',intval);
         $save['bespeak_time'] = I('post.logtime','');
         $save['bespeak'] = 0;
-
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
         if($covermedia_id){
             $oss_arr = $mediaModel->find($covermedia_id);
             $oss_addr = $oss_arr['oss_addr'];
             $save['oss_addr'] = $oss_addr;
             $save['img_url'] = $image_host.$oss_addr;
+        }else{
+            $this->output('封面必填!', 'article/addvideo');
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             $save['duration'] = $oss_arr['duration'];
             $save['media_key_id']    = $media_id;
         }
-        if($id)
-        {
-            if($artModel->where('id='.$id)->save($save))
-            {
+        if($id){
+            if($artModel->where('id='.$id)->save($save)){
                 $this->showcontent($id);
-                $this->output('操作成功!', 'article/addvideo');
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
             }
-            else
-            {
-                $this->output('操作失败!', 'article/addvideo');
-            }
-        }
-        else
-        {
+        }else{
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
             $uname = $userInfo['username'];
             $save['operators']    = $uname;
-            if($artModel->add($save))
-            {
+            if($artModel->add($save)){
                 $id = $artModel->getLastInsID();
                 $this->showcontent($id);
                 $dat['content_url'] = 'html/'.$id.'.html';
                 $artModel->where('id='.$id)->save($dat);
-                $this->output('操作成功!', 'article/addvideo');
-            }
-            else
-            {
-                $this->output('操作失败!', 'article/addvideo');
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
             }
         }
     }
 
-
-    public function doAddarticle()
-    {
+    public function doAddarticle(){
         $artModel = new ArticleModel();
         $id                  = I('post.id');
         $save                = [];
@@ -280,6 +218,10 @@ $mediainfo['oss_addr'];
         $save['bespeak_time'] = I('post.logtime','');
         $save['bespeak'] = 0;
         $mediaid = I('post.media_id');
+        if(!$mediaid){
+            $this->output('封面必填!', 'article/doAddarticle',3);
+            die;
+        }
         $mediaModel = new \Admin\Model\MediaModel();
         $oss_addr = $mediaModel->find($mediaid);
         $oss_addr = $oss_addr['oss_addr'];
@@ -287,51 +229,27 @@ $mediainfo['oss_addr'];
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
         $oss_addr = $image_host.$oss_addr;
         $save['img_url'] = $oss_addr;
-        if($id)
-        {
-            if($artModel->where('id='.$id)->save($save))
-            {
+        if($id){
+            if($artModel->where('id='.$id)->save($save)){
                 $this->showcontent($id);
-                $this->output('操作成功!', 'release/addCate');
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
             }
-            else
-            {
-                $this->output('操作失败!', 'release/doAddCat');
-            }
-        }
-        else
-        {
+        }else{
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
             $uname = $userInfo['username'];
             $save['operators']    = $uname;
-            if($artModel->add($save))
-            {
-
+            if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
                 $this->showcontent($arid);
                 $dat['content_url'] = 'html/'.$arid.'.html';
                 $artModel->where('id='.$arid)->save($dat);
-
-                $this->output('操作成功!', 'release/addCate');
-            }
-            else
-            {
-                $this->output('操作失败!', 'release/doAddCat');
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
             }
         }
-
-
-    }//End Function
-
-
-
-
-
-
-
-
-
-
-
+    }
 }
