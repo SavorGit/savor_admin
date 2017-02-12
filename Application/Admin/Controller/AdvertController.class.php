@@ -183,7 +183,7 @@ class AdvertController extends BaseController{
 	         case 1:
 	             $is_online = I('request.flag');
 
-	             $data = array('is_online'=>$is_online);
+	             $data = array('state'=>$is_online);
 
 	             $res = $adsModel->where("id='$adsid'")->save($data);
 

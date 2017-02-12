@@ -85,11 +85,11 @@
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="类型">{$vlist.type_str}</td>
               <td data-title="状态">
-              <if condition="$vlist['is_online'] eq 1">
-              <a data-tip="正常" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+              <if condition="$vlist['state'] eq 1">
+              <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-on"></i></span></a>
               <else/>
-              <a data-tip="下线" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+              <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-off"></i></span></a>
               </if>
               

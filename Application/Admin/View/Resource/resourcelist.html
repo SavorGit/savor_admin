@@ -74,12 +74,12 @@
               <td data-title="url">{$vlist.oss_addr}</td>
               <td data-title="上传时间">{$vlist.create_time}</td>
               <td data-title="状态">
-              <if condition="$vlist['flag'] eq 0">
-              <a data-tip="正常" target="ajaxTodo" href="{$host_name}/resource/editResource?id={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
-              <else/>
-              <a data-tip="冻结" target="ajaxTodo" href="{$host_name}/resource/editResource?id={$vlist.id}&flag=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+              <if condition="$vlist['state'] eq 0">
+              <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/resource/editResource?id={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-off"></i></span></a>
+              <else/>
+              <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/resource/editResource?id={$vlist.id}&flag=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
               </if>
               
               </td>
