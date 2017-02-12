@@ -120,18 +120,18 @@ class VersionController extends BaseController{
 	        if($name=='client'){
 	            $android = $version[3];
 	            krsort($android);
-	            $android_min = $android;
-	            ksort($android);
 	            $android_max = $android;
+	            ksort($android);
+	            $android_min = $android;
 	            $android_vinfo = array(
 	                'min'=>$android_min,
 	                'max'=>$android_max,
 	            );
 	            $ios = $version[4];
 	            ksort($ios);
-	            $ios_max = $ios;
-	            krsort($ios);
 	            $ios_min = $ios;
+	            krsort($ios);
+	            $ios_max = $ios;
 	            $ios_vinfo = array(
 	                'min'=>$ios_min,
 	                'max'=>$ios_max,
@@ -144,9 +144,9 @@ class VersionController extends BaseController{
 	                $device_type =$device_condition[$name];
 	                $version = $version[$device_type];
 	                ksort($version);
-	                $version_max = $version;
-	                krsort($version);
 	                $version_min = $version;
+	                krsort($version);
+	                $version_max = $version;
 	                $version_vinfo = array(
 	                    'min'=>$version_min,
 	                    'max'=>$version_max,
@@ -268,6 +268,7 @@ class VersionController extends BaseController{
 	        }
 	        $version_data = array('version_name'=>$version_name,'version_code'=>$version_code,'device_type'=>$devicetype);
 	        if($remark)    $version_data['remark'] = $remark;
+	        $version_data['create_time'] = date('Y-m-d H:i:s');
 	        if($oss_addr){
 	            $version_data['oss_addr'] = $oss_addr;
 	            $accessKeyId = C('OSS_ACCESS_ID');

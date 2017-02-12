@@ -5,6 +5,7 @@
  */
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
+use Common\Lib\Aliyun;
 
 class ResourceController extends BaseController{
 	 
@@ -154,6 +155,29 @@ class ResourceController extends BaseController{
 	             }else{
 	                 $type = 3;
 	             }
+	         }
+	         $fileinfo = '';
+	         $accessKeyId = C('OSS_ACCESS_ID');
+	         $accessKeySecret = C('OSS_ACCESS_KEY');
+	         $endpoint = C('OSS_HOST');
+	         $bucket = C('OSS_BUCKET');
+	         $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+	         $aliyun->setBucket($bucket);
+	         if($type==1){//视频
+	             $oss_filesize = I('post.oss_filesize');
+	             if($oss_filesize){
+	                 $range = '0-199';
+	                 $beg_file = $aliyun->getObject($save['oss_addr'],$range);
+	                 $last_filesize = $oss_filesize-200;
+	                 $last_range = "$last_filesize-$oss_filesize";
+	                 $end_file = $aliyun->getObject($save['oss_addr'],$last_range);
+	                 $fileinfo = md5($beg_file.$end_file);
+	             }
+	         }else{
+	             $fileinfo = $aliyun->getObject($oss_addr,'');
+	         }
+	         if($fileinfo){
+	             $save['md5'] = md5($fileinfo);
 	         }
 	         $save['surfix'] = $surfix;
 	         $save['create_time'] = date('Y-m-d H:i:s');
