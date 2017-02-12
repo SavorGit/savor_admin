@@ -31,22 +31,22 @@
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-          分类图片：
+          封面图片：
         </label>
         <div class="col-xs-12 col-sm-10">
           <div class="fileinput fileinput-new" data-fileinput>
             <div class="fileinput-preview thumbnail" data-trigger="fileinput">
               <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
-                <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
-                  <img id="media_idImg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+                <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                  <img id="media_idImg" src="/Public/admin/assets/img/noimage.png" border="0" />
                   <else />
-                  <img id="media_idImg" src="{$vainfo.videooss_addr}" border="0" />
+                  <img id="media_idImg" src="{$vinfo.oss_addr}" border="0" />
                 </if>
               </a>
             </div>
             <div>
               <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
-                选择视频
+                选择图片
               </a>
               <input type="hidden" name="media_id" id="media_id" value="">
               <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
