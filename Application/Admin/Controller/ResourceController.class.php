@@ -12,7 +12,7 @@ class ResourceController extends BaseController{
 	 /**
 	  * 资源列表
 	  */
-	 public function resourceList(){	
+	 public function resourceList(){
 		$size   = I('numPerPage',8);//显示每页记录数
         $start = I('pageNum',1);
         $order = I('_order','id');
@@ -149,13 +149,18 @@ class ResourceController extends BaseController{
 	         $tempInfo = pathinfo($save['oss_addr']);
 	         $surfix = $tempInfo['extension'];
 	         $typeinfo = C('RESOURCE_TYPEINFO');
-	         if(!$type){
-	             if(isset($typeinfo[$surfix])){
-	                 $type = $typeinfo[$surfix];
-	             }else{
-	                 $type = 3;
-	             }
-	         }
+// 	         if(!$type){
+// 	             if(isset($typeinfo[$surfix])){
+// 	                 $type = $typeinfo[$surfix];
+// 	             }else{
+// 	                 $type = 3;
+// 	             }
+// 	         }
+             if(isset($typeinfo[$surfix])){
+                 $type = $typeinfo[$surfix];
+             }else{
+                 $type = 3;
+             }
 	         $fileinfo = '';
 	         $accessKeyId = C('OSS_ACCESS_ID');
 	         $accessKeySecret = C('OSS_ACCESS_KEY');
@@ -167,11 +172,14 @@ class ResourceController extends BaseController{
 	             $oss_filesize = I('post.oss_filesize');
 	             if($oss_filesize){
 	                 $range = '0-199';
-	                 $beg_file = $aliyun->getObject($save['oss_addr'],$range);
-	                 $last_filesize = $oss_filesize-200;
-	                 $last_range = "$last_filesize-$oss_filesize";
-	                 $end_file = $aliyun->getObject($save['oss_addr'],$last_range);
-	                 $fileinfo = $beg_file.$end_file;
+	                 $bengin_info = $aliyun->getObject($save['oss_addr'],$range);
+	                 $last_range = $oss_filesize-199;
+	                 $last_size = $oss_filesize-1;
+	                 $last_range = $last_size - 199;
+	                 $last_range = $last_range.'-'.$last_size;
+	                 $end_info = $aliyun->getObject($save['oss_addr'],$last_range);
+	                 $file_str = md5($bengin_info).md5($end_info);
+	                 $fileinfo = strtoupper($file_str);
 	             }
 	         }else{
 	             $fileinfo = $aliyun->getObject($save['oss_addr'],'');

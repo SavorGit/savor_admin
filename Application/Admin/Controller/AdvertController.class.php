@@ -104,11 +104,14 @@ class AdvertController extends BaseController{
                      $oss_filesize = I('post.oss_filesize');
                      if($oss_filesize){
                          $range = '0-199';
-                         $beg_file = $aliyun->getObject($ossaddr,$range);
-                         $last_filesize = $oss_filesize-200;
-                         $last_range = "$last_filesize-$oss_filesize";
-                         $end_file = $aliyun->getObject($ossaddr,$last_range);
-                         $fileinfo = $beg_file.$end_file;
+                         $bengin_info = $aliyun->getObject($ossaddr,$range);
+                         $last_range = $oss_filesize-199;
+                         $last_size = $oss_filesize-1;
+                         $last_range = $last_size - 199;
+                         $last_range = $last_range.'-'.$last_size;
+                         $end_info = $aliyun->getObject($ossaddr,$last_range);
+                         $file_str = md5($bengin_info).md5($end_info);
+                         $fileinfo = strtoupper($file_str);
                          if($fileinfo){
                              $media_data['md5'] = md5($fileinfo);
                          }
