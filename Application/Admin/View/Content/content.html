@@ -92,7 +92,7 @@
                 <if condition="$vlist.type eq 1"> 图文
                   <elseif condition="$vlist.type eq 2"/>图集
                   <elseif condition="$vlist.type eq 3"/>
-                    <if condition="$vlist.oss_addr eq ''">
+                    <if condition="$vlist.media_key_id eq 0">
                           视频（非点播）
                       <else/> 视频（点播）
                     </if>

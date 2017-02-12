@@ -154,7 +154,7 @@ class ArticleController extends BaseController {
         $save['category_id']        = I('post.cate','','trim');
         $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
         $media_id = I('post.media_id','0','intval');//视频id
-        $save['img_url']    = I('post.shwimage','');
+
 
         $save['source']    = I('post.source','');
         $save['content']    = I('post.content','','htmlspecialchars');
@@ -171,13 +171,16 @@ class ArticleController extends BaseController {
             $oss_addr = $oss_arr['oss_addr'];
             $save['oss_addr'] = $oss_addr;
             $save['img_url'] = $image_host.$oss_addr;
+            $save['type'] = 1;
         }else{
             $this->output('封面必填!', 'article/addvideo');
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             $save['duration'] = $oss_arr['duration'];
+            $save['vod_md5'] = $oss_arr['md5'];
             $save['media_key_id']    = $media_id;
+
         }
         if($id){
             if($artModel->where('id='.$id)->save($save)){
@@ -187,6 +190,7 @@ class ArticleController extends BaseController {
                 $this->output('操作失败!', 'content/getlist');
             }
         }else{
+            $save['type'] = 3;
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
             $uname = $userInfo['username'];
