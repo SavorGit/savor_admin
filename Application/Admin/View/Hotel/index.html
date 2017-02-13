@@ -206,10 +206,21 @@
               <td data-title="合作维护人">{$vlist.maintainer}</td>
               <td data-title="技术运维人">{$vlist.tech_maintainer}</td>
               <td data-title="包间数量"><a target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">包间数:{$vlist.room_num}</a></td>
-              <td data-title="机顶盒数量"><a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">机顶盒数:{$vlist.box_num}</a></td>
-              <td data-title="电视数量"><a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">tv数:{$vlist.tv_num}</a></td>
+              <td data-title="机顶盒数量">
+              <if condition="$vlist.box_num gt 0">
+              <a target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">机顶盒数:{$vlist.box_num}</a>
+              <else />
+              机顶盒数:{$vlist.box_num}
+              </if>
+              </td>
+              <td data-title="电视数量">
+              <if condition="$vlist.tv_num gt 0">
+              <a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">tv数:{$vlist.tv_num}</a>
+              <else />
+              tv数:{$vlist.tv_num}
+              </if>
+              </td>
               <td data-title="节目单"> <if condition="$vlist.menu_id GT 0">  <a target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a><else />无</if></td>
-
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="查看" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">

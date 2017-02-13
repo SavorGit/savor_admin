@@ -42,10 +42,10 @@ class DeviceController extends BaseController{
             if($rooms['room_num']){
                 $rooms_str = join(',', $rooms['room']);
                 $where.=" AND room_id in ($rooms_str)";
+                $result = $boxModel->getList($where,$orders,$start,$size);
+                $result['list'] = $boxModel->roomIdToRoomName($result['list']);
             }
         }
-        $result = $boxModel->getList($where,$orders,$start,$size);
-        $result['list'] = $boxModel->roomIdToRoomName($result['list']);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('box');
