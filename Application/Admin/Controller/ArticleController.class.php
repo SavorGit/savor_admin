@@ -81,7 +81,8 @@ class ArticleController extends BaseController {
         $this->assign('vinfo',$vinfo);
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
-            $vinfo['oss_addr'] = $vinfo['img_url'];
+            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
             $this->assign('vinfo',$vinfo);
         }
         $where = "1=1";
@@ -265,12 +266,12 @@ class ArticleController extends BaseController {
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
             $media_id = $vainfo['media_key_id'];
-            $vainfo['oss_addr'] = $oss_host.$vainfo['oss_addr'];
+            $vainfo['oss_addr'] = $oss_host.$vainfo['img_url'];
             $vainfo['vid_type'] = 2;
             if($media_id){
                 $mediaModel = new \Admin\Model\MediaModel();
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['media_id']);
-                $vainfo['videooss_addr'] = $oss_host.
+                $vainfo['videooss_addr'] = $oss_host.$mediainfo['oss_addr'];
                 $vainfo['vid_type'] = 1;
             }
             $this->assign('vainfo',$vainfo);
@@ -306,14 +307,15 @@ class ArticleController extends BaseController {
         if($covermedia_id){
             $oss_arr = $mediaModel->find($covermedia_id);
             $oss_addr = $oss_arr['oss_addr'];
-            $save['oss_addr'] = $oss_addr;
-            $save['img_url'] = $image_host.$oss_addr;
+            //$save['oss_addr'] = $oss_addr;
+            $save['img_url'] = $oss_addr;
             $save['type'] = 1;
         }else{
             $this->output('封面必填!', 'article/addvideo');
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
+            //$save['oss_addr'] = $oss_arr['oss_addr'];
             $save['duration'] = $oss_arr['duration'];
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_key_id']    = $media_id;
@@ -363,10 +365,10 @@ class ArticleController extends BaseController {
         $mediaModel = new \Admin\Model\MediaModel();
         $oss_addr = $mediaModel->find($mediaid);
         $oss_addr = $oss_addr['oss_addr'];
-        $save['oss_addr'] = $oss_addr;
-        $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-        $oss_addr = $image_host.$oss_addr;
         $save['img_url'] = $oss_addr;
+        $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+       // $oss_addr = $image_host.$oss_addr;
+
         if($id){
             if($artModel->where('id='.$id)->save($save)){
                 $this->showcontent($id);
