@@ -158,12 +158,21 @@ class DeviceController extends BaseController{
 	 */
 	public function editBox(){	
 		$id = I('get.id');
+		$hotel_id = I('get.hotel_id','0','intval');
 		$roomModel = new RoomModel;
 		$boxModel  = new BoxModel;
 		$vinfo  = [];
 		$vinfo = $boxModel->getRow('*',['id'=>$id]);
-		$temp = $roomModel->getRow('name',['id'=>$vinfo['room_id']]);
-		$vinfo['room_name'] = $temp['name'];
+		if($hotel_id){
+		    $room_list = $roomModel->where("hotel_id='$hotel_id'")->field('id,name')->select();
+		}else{
+		    $room_list = $roomModel->field('id,name')->select();
+		}
+		$rooms = array();
+		foreach ($room_list as $v){
+		    $rooms[$v['id']] = $v['name'];
+		}
+		$this->assign('rooms',$rooms);
 		$this->assign('vinfo',$vinfo);
 		$this->display('editBox');
 	}
@@ -213,13 +222,13 @@ class DeviceController extends BaseController{
 		$boxModel = new BoxModel;
 		if($id){
 			if($boxModel->where('id='.$id)->save($save)){
-				$this->output('更新成功!', 'device/addBox');
+				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		
 		}else{	
 			if($boxModel->add($save)){
-				$this->output('添加成功!', 'device/addBox');
+				$this->output('添加成功!', 'device/box');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');
 			}	

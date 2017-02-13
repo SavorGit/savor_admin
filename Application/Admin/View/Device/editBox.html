@@ -7,25 +7,16 @@
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-          包间ID:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" name="room_id" minlength="1" maxlength="20"  readonly="readonly" value="{$vinfo.room_id}" required>
-        </div>
-      </div>
-
-
-      <if condition="!empty($vinfo['room_name'])">  
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
           包间名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="{$vinfo.room_name}" >
+        	<select name="room_id" class="form-control bs-select">
+        	<volist name="rooms" id="vo">
+        		<option value="{$key}" <if condition="$key eq $vinfo['room_id']">selected</if> >{$vo}</option>
+		    </volist>
+		</select>
         </div>
       </div>
-      </if> 
-
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
