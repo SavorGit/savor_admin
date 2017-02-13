@@ -101,7 +101,7 @@ class ReleaseController extends BaseController{
 		if($id){
 			$res_save = $catModel->where('id='.$id)->save($save);
 			if($res_save){
-				return $this->output('操作成功!', 'release/doAddCat');
+				$this->output('操作成功!', 'release/category');
 			}else{
 				return $this->output('操作失败!', 'release/doAddCat');
 			}
@@ -111,9 +111,9 @@ class ReleaseController extends BaseController{
 			//刷新页面，关闭当前
 			$res_save = $catModel->add($save);
 			if($res_save){
-				return $this->output('添加分类成功!', 'release/category', 1);
+				$this->output('添加分类成功!', 'release/category');
 			}else{
-				return $this->output('操作失败!', 'release/doAddCat');
+				$this->output('操作失败!', 'release/doAddCat');
 			}
 		}
 	}
