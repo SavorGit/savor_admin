@@ -135,9 +135,18 @@ class AdvertController extends BaseController{
 					 if($duration)  $ads_data['duration'] = $duration;
 	                 if($description)   $ads_data['description'] = $description;
 	                 $ads_data['creator_name'] = $user['username'];
-	                 $adsModel->add($ads_data);
-	                 $message = '添加成功!';
-	                 $url = 'advert/adsList';
+// 	                 $adsModel->add($ads_data);
+// 	                 $message = '添加成功!';
+// 	                 $url = 'advert/adsList';
+	                 $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
+	                 if(empty($nass['name'])){
+	                     $adsModel->add($ads_data);
+	                     $message = '添加成功!';
+	                     $url = 'advert/adsList';
+	                 }else{
+	                     $message = '文件名已存在，请换一个名称';
+	                     $url = 'advert/adsList';
+	                 }
 	             }else{
 	                 $message = '添加失败!';
 	                 $url = 'advert/adsList';
