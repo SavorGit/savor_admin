@@ -1,5 +1,13 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
+<style type="text/css">
+.searchBar label{
+	width: auto;
+	text-align: center;
+	margin-top: 15px;
+	line-height: 2px;
+}
+</style>
 <div class="pageHeader">
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hotel/manager" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
@@ -98,7 +106,7 @@
                 重点：
               </label>
                 <span class="input-group-btn">
-              <select name="key_v" style="" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+              <select name="key_v" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_KEY')" id="vo">
                   <option value="{$key}" <if condition="$key eq $key_k">selected</if>>{$vo}</option><br>
@@ -109,7 +117,7 @@
           </div>
 
           <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
-              <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+              <input style="margin-left: 6px;" name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn">
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -118,7 +126,7 @@
 
             <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}" style="width:135px;">
 
-              <input style="width:73px;padding:0px;margin:0px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+              <input style="width:73px;padding:0px;margin:0px;margin-left: 15px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
                   <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -127,7 +135,7 @@
 
           <div class="form-group">
             <div class="input-group-sm input-group">
-              <label class="col-xs-1 col-sm-1 control-label">
+              <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
                 排除酒楼：
               </label>
                 <span class="input-group-btn">

@@ -191,14 +191,22 @@ class ResourceController extends BaseController{
 	         $save['create_time'] = date('Y-m-d H:i:s');
 	         $save['creator'] = $user['username'];
 	         $save['type'] = $type;
-	         $media_id = $mediaModel->add($save);
-	         if($media_id){
-	             $message = '添加成功!';
-	             $url = 'resource/resourceList';
+	         
+	         $nass = $mediaModel->where(array('name'=>$save['name']))->field('name')->find();
+	         if(empty($nass['name'])){
+	             $media_id = $mediaModel->add($save);
+    	         if($media_id){
+    	             $message = '添加成功!';
+    	             $url = 'resource/resourceList';
+    	         }else{
+    	             $message = '添加失败!';
+    	             $url = 'resource/resourceList';
+    	         }
 	         }else{
-	             $message = '添加失败!';
-	             $url = 'resource/resourceList';
+	             $message = '文件名已存在，请换一个名称';
+	              $url = 'resource/resourceList';
 	         }
+	         
 	         $oss_addr = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/'.$save['oss_addr'];
 	     }
 	     $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
