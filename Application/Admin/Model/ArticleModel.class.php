@@ -56,27 +56,24 @@ class ArticleModel extends BaseModel
 			return [];
 		}
 		$arrArtId = [];
-		foreach ($result as $value){
-			$arrArtId[] = $value['content_id'];
+		foreach($result as &$value) {
+			$contentid = $value['content_id'];
+			$info = $this->find($contentid);
+			$value['media_key_id'] = $info['media_key_id'];
+			$value['category_id'] = $info['category_id'];
+			$value['operators'] = $info['operators'];
+			$value['title'] = $info['title'];
 		}
-		$filter       = [];
-		$filter['id'] = ['IN',$arrArtId];
-		$arr = $this->getAll('id,title,media_key_id,category_id,operators,update_time',$filter);
-		foreach ($arr as &$value){
+
+		foreach ($result as &$value){
 			foreach ($cat_arr as  $row){
 				if($value['category_id'] == $row['id']){
 					$value['cat_name'] = $row['name'];
 				}
 			}
-			foreach ($result as $res){
-				if($value['id'] == $res['content_id']){
-					$value['sort'] = $res['sort_num'];
-					$value['aid'] = $res['content_id'];
-				}
-			}
-
 		}
-		return $arr;
+
+		return $result;
 	}
 
 

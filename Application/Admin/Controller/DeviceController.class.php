@@ -102,6 +102,7 @@ class DeviceController extends BaseController{
 		$box_id = I('box_id',0);
 		$boxModel = new BoxModel;
 		$tvModel =  new TvModel;
+
 		if($id){
 			$vinfo = $tvModel->where('id='.$id)->find();
 			$box_id = $vinfo['box_id'];
@@ -112,8 +113,11 @@ class DeviceController extends BaseController{
 		    $vinfo = array();
 		    $vinfo['box_name'] = $temp['name'];
 		    $vinfo['box_id'] = $box_id;
+			$vinfo['state'] = 1;
 		}
+
 		$this->assign('vinfo',$vinfo);
+
 		$this->display('addTv');
 	}
 

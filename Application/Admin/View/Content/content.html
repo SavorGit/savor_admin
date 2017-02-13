@@ -52,7 +52,7 @@
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addvideo"  title="发布视频" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>发布视频</span></a>
 
-          <a class="btn btn-success btn-sm add" href="{$host_name}/article/homemanager"  title="首页内容管理" target="navTab" mask="true">
+          <a class="btn btn-success btn-sm add" href="{$host_name}/article/homemanager" rel="article/homemanager"  title="首页内容管理" target="navTab" mask="true">
             <i class="fa fa-plus"></i><span>首页内容管理</span></a>
         </div>
       </div>
@@ -141,9 +141,9 @@
                     <i class="icon-list"></i>
                   </a>
 
-                  <a data-tip="添加至首页" target="dialog" mask="true"
-                     href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"   class="btn btn-success btn-icon">
-                    <i class="icon-list"></i>
+
+                  <a data-tip="添加至首页2" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
+                    <i class="fa fa-bullhorn"></i>
                   </a>
 
 

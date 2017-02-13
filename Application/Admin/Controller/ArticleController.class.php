@@ -35,8 +35,15 @@ class ArticleController extends BaseController {
 
     public function delart() {
         $gid = I('get.id', 0, 'int');
-        //查找是否在节目单中引用function()若引用则无法删除
+        //查找是否在首页内容中引用
+
         if($gid) {
+            $mbHomeModel = new \Admin\Model\HomeModel();
+            $res = $mbHomeModel->where('content_id='.$gid)->find();
+            if($res) {
+                $this->output('首页有引用不可删除', 'content/getlist',1);
+                die;
+            }
             $artModel = new ArticleModel();
             $result = $artModel -> delData($gid);
             if($result) {
@@ -113,9 +120,7 @@ class ArticleController extends BaseController {
         $id = I('get.id');
         $mbHomeModel = new \Admin\Model\HomeModel();
         if($id){
-            $vinfo = $mbHomeModel->where(array('content_id'=>$id))->find();
-
-
+            $vinfo = $mbHomeModel->where(array('id'=>$id))->find();
 
             $this->assign('vinfo',$vinfo);
 
@@ -125,46 +130,61 @@ class ArticleController extends BaseController {
 
     public function doaddhome(){
 
-        $artid = I('artid');
-        //如果是修改
-        $id = I('post.id');
-        //判断表中是否有
+        //文章id
         $mbHomeModel = new \Admin\Model\HomeModel();
-        if($id){
+        $artid = $_REQUEST['artid'];
+        $type = $_REQUEST['acttype'];
+        $id = I('post.id');
+      //  var_dump($artid,$type);
+        if($type == 1){
+            //判断表中是否有
 
-           // $save['content_id'] = $artid;
+            $res = $mbHomeModel->where('content_id='.$artid)->find();
+
+            if( $res ){
+                $this->output('文章已经存在', 'content/getlist',2);
+            } else {
+
+                $artModel = new  \Admin\Model\ArticleModel();
+                $arr = $artModel->find($artid);
+                $state = $arr['state'];
+                if ($state != 2) {
+                    $this->output('审核状态不允许', 'content/getlist',2);
+                }
+                $mbHomeModel = new \Admin\Model\HomeModel();
+                $userInfo = session('sysUserInfo');
+                $save[] = array();
+                $md5 = $arr['vod_md5'];
+                if ($md5) {
+                    $save['is_demand'] = 1;
+                }
+                $save['content_id'] = $artid;
+                $save['sort_num'] = 2;
+                $save['creator_id'] = $userInfo['id'];
+                $save['create_time'] = date("Y-m-d H:i:s", time());
+                $save['update_time'] = $save['create_time'];
+
+                $res = $mbHomeModel->add($save);
+                if($res){
+                    $this->output('操作成功!', 'article/homemanager',2);
+                }else{
+                    $this->output('操作失败!', 'content/getlist');
+                }
+            }
+        } else {
             $save['sort_num'] = I('sort');
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
-                 $this->output('操作成功!', 'article/homemanager',2);
+                $this->output('操作成功!', 'article/homemanager',1);
             }else{
-                 $this->output('操作失败!', 'article/homemanager');
+                $this->output('操作失败!', 'article/homemanager');
             }
-            die;
+
         }
 
 
-        $artModel = new  \Admin\Model\ArticleModel();
-        $arr = $artModel->find($artid);
-        $mbHomeModel = new \Admin\Model\HomeModel();
-        $userInfo = session('sysUserInfo');
-        $save[] = array();
-        $md5 = $arr['vod_md5'];
-        if ($md5) {
-            $save['is_demand'] = 1;
-        }
-        $save['content_id'] = $artid;
-        $save['sort_num'] = 2;
-        $save['creator_id'] = $userInfo['id'];
-        $save['create_time'] = date("Y-m-d H:i:s", time());
-        $save['update_time'] = $save['create_time'];
 
-        $res = $mbHomeModel->add($save);
-        if($res){
-            $this->output('操作成功!', 'article/homemanager',2,1);
-        }else{
-            $this->output('操作失败!', 'content/getlist');
-        }
+
 
 
 
@@ -206,6 +226,26 @@ class ArticleController extends BaseController {
 
     }
 
+    /*
+     * 修改状态
+     */
+    public function changestatus(){
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        $id = I('request.id');
+        $flag = I('request.flag');
+
+        $save['state'] = $flag;
+        if($mbHomeModel->where('id='.$id)->save($save)){
+            $message = '更新成功!';
+            $url = 'article/homemanager';
+        }else{
+            $message = '更新失败!';
+            $url = 'article/homemanager';
+        }
+        $this->output($message, $url,2);
+
+
+    }
 
     /**
      * 添加视频
@@ -319,10 +359,7 @@ class ArticleController extends BaseController {
         $save['bespeak_time'] = I('post.logtime','');
         $save['bespeak'] = 0;
         $mediaid = I('post.media_id');
-        if(!$mediaid){
-            $this->output('封面必填!', 'article/doAddarticle',3);
-            die;
-        }
+
         $mediaModel = new \Admin\Model\MediaModel();
         $oss_addr = $mediaModel->find($mediaid);
         $oss_addr = $oss_addr['oss_addr'];
@@ -338,6 +375,10 @@ class ArticleController extends BaseController {
                 $this->output('操作失败!', 'content/getlist');
             }
         }else{
+            if(!$mediaid){
+                $this->output('封面必填!', 'article/doAddarticle',3);
+                die;
+            }
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
             $uname = $userInfo['username'];

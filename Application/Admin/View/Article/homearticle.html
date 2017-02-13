@@ -43,20 +43,25 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td data-title="序号">{$vlist.aid}</td>
+              <td data-title="序号">{$vlist.id}</td>
               <td data-title="标题">{$vlist.title}</td>
               <td data-title="分类">{$vlist.cat_name}</td>
-              <td data-title="排序">{$vlist.sort}</td>
+              <td data-title="排序">{$vlist.sort_num}</td>
               <td data-title="最后时间">{$vlist.update_time}</td>
               <td data-title="状态">
-                <select name="state{$vlist.id}" id="cstate" data-state="{$vlist.id}" data-style="btn-primary">
-                  <option value ="0"  <if condition="$vlist.state eq 0"> selected </if>  >关闭</option>
-                  <option value ="1"  <if condition="$vlist.state eq 1"> selected </if>  >开启</option>
-                </select>
+                <if condition="$vlist['state'] eq 0">
+                  <a data-tip="已经下线" target="ajaxTodo" href="{$host_name}/article/changestatus?id={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                  <else/>
+                  <a data-tip="已经上线" target="ajaxTodo" href="{$host_name}/article/changestatus?id={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                </if>
+
               </td>
+
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/article/addhome?id={$vlist.aid}&acttype=1" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/article/addhome?id={$vlist.id}&acttype=2" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>

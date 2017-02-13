@@ -108,8 +108,10 @@ class VersionController extends BaseController{
 	        );
 	        $where = array();
 	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
+
 	        $order = 'id desc';
 	        $datalist = $versionModel->getAllList($filed, $where, $order);
+			//var_dump($datalist);
 	        $android = array();
 	        $ios = array();
 	        $version = array();
@@ -117,6 +119,7 @@ class VersionController extends BaseController{
 	            $version_code = $v['version_code'];
 	            $version[$v['device_type']][$version_code] = $v['version_name'];
 	        }
+			//var_dump($version);
 	        if($name=='client'){
 	            $android = $version[3];
 	            krsort($android);
@@ -151,6 +154,7 @@ class VersionController extends BaseController{
 	                    'min'=>$version_min,
 	                    'max'=>$version_max,
 	                );
+
 	                $this->assign('version_vinfo',$version_vinfo);
 	                $areaModel  = new \Admin\Model\AreaModel();
 	                $area_arr = $areaModel->getAllArea();
