@@ -29,26 +29,7 @@ class HomeModel extends BaseModel{
 	 * @param  array  $result [description]
 	 * @return [type]         [description]
 	 */
-	public function hotelIdToName($result=[]){
-		if(!$result || !is_array($result)){
-			return [];
-		}
-		$arrHotelId = [];
-		foreach ($result as $value){
-			$arrHotelId[] = $value['hotel_id'];
-		}
-		$filter       = [];
-		$filter['id'] = ['IN',$arrHotelId];
-		$arrHotel = $this->getAll('id,name',$filter);
-		foreach ($result as &$value){
-			foreach ($arrHotel as  $row){
-				if($value['hotel_id'] == $row['id']){
-					$value['hotel_name'] = $row['name'];
-				}
-			}
-		}
-		return $result;
-	}
+
 	
 	public function getHotelByIds($hotel_ids,$field="*"){
 	    $hotel_ids = trim($hotel_ids,',');

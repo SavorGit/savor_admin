@@ -51,6 +51,35 @@ class ArticleModel extends BaseModel
 	}//End Function
 
 
+	public function changeIdjName($result=[],$cat_arr){
+		if(!$result || !is_array($result)){
+			return [];
+		}
+		$arrArtId = [];
+		foreach ($result as $value){
+			$arrArtId[] = $value['content_id'];
+		}
+		$filter       = [];
+		$filter['id'] = ['IN',$arrArtId];
+		$arr = $this->getAll('id,title,media_key_id,category_id,operators,update_time',$filter);
+		foreach ($arr as &$value){
+			foreach ($cat_arr as  $row){
+				if($value['category_id'] == $row['id']){
+					$value['cat_name'] = $row['name'];
+				}
+			}
+			foreach ($result as $res){
+				if($value['id'] == $res['content_id']){
+					$value['sort'] = $res['sort_num'];
+					$value['aid'] = $res['content_id'];
+				}
+			}
+
+		}
+		return $arr;
+	}
+
+
 	public function getImgRes($path, $old_img) {
 		$arr = explode('.', $old_img);
 		$img_type = $arr[1];

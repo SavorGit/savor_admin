@@ -111,34 +111,99 @@ class ArticleController extends BaseController {
 
     public function addhome(){
         $id = I('get.id');
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        if($id){
+            $vinfo = $mbHomeModel->where(array('content_id'=>$id))->find();
+
+
+
+            $this->assign('vinfo',$vinfo);
+
+        }
+        return $this->display('addhome');
+    }
+
+    public function doaddhome(){
+
+        $artid = I('artid');
+        //如果是修改
+        $id = I('post.id');
         //判断表中是否有
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        if($id){
+
+           // $save['content_id'] = $artid;
+            $save['sort_num'] = I('sort');
+            $res_save = $mbHomeModel->where('id='.$id)->save($save);
+            if($res_save){
+                 $this->output('操作成功!', 'article/homemanager',2);
+            }else{
+                 $this->output('操作失败!', 'article/homemanager');
+            }
+            die;
+        }
+
+
+        $artModel = new  \Admin\Model\ArticleModel();
+        $arr = $artModel->find($artid);
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        $userInfo = session('sysUserInfo');
+        $save[] = array();
+        $md5 = $arr['vod_md5'];
+        if ($md5) {
+            $save['is_demand'] = 1;
+        }
+        $save['content_id'] = $artid;
+        $save['sort_num'] = 2;
+        $save['creator_id'] = $userInfo['id'];
+        $save['create_time'] = date("Y-m-d H:i:s", time());
+        $save['update_time'] = $save['create_time'];
+
+        $res = $mbHomeModel->add($save);
+        if($res){
+            $this->output('操作成功!', 'article/homemanager',2,1);
+        }else{
+            $this->output('操作失败!', 'content/getlist');
+        }
+
+
 
     }
 
     public function homemanager(){
-        $catModel = new CategoModel;
+
+
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        $artModel = new  \Admin\Model\ArticleModel();
+        $catModel = new \Admin\Model\CategoModel;
+        $cat_arr = $catModel->select();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','create_time');
+        $order = I('_order','sort_num');
         $this->assign('_order',$order);
-        $sort = I('_sort','desc');
+        $sort = I('_sort','asc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
+
+        $result = $mbHomeModel->getList($where,$orders,$start,$size);
+
+        $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
+
         $name = I('name');
         if($name){
+            //根据id取
             $this->assign('name',$name);
             $where .= "	AND name LIKE '%{$name}%'";
         }
-        $result = $catModel->getList($where,$orders,$start,$size);
-        $this->assign('list', $result['list']);
+        $this->assign('list', $datalist);
         $this->assign('page',  $result['page']);
 
         $this->display('homearticle');
-        die;
+
     }
 
 
