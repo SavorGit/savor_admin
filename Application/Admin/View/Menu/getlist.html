@@ -66,7 +66,6 @@
             <th>更新日期</th>
             <th>是否选择洒楼</th>
             <th>节目详情</th>
-            <th>状态</th>
             <th>操作日志</th>
             <th class="table-tool">操作</th>
           </tr>
@@ -88,15 +87,6 @@
               <td data-title="节目详情">
                 <a data-tip="查看" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/getdetail?id={$vlist.id}&name={$vlist.menu_name}">查看</a>
               </td>
-              <td data-title="状态">
-
-                <if condition="$vlist['state'] eq 0">
-                  下线
-                  <elseif condition="$vlist['state'] eq 1"/>
-                  上线
-                </if>
-              </td>
-
               <td class="table-tool" data-title="操作日志">
                 <div class="tools-edit">
                   <a data-tip="日志查看" target="dialog" mask="true"
