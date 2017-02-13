@@ -563,11 +563,109 @@ class MenuController extends BaseController {
 
     }
 
+    public function doaddmen(){
+        //表单提交即是新增和导入ajax区分以及与修改进行区分
+        $id = I('post.id','');
+       // var_dump($_POST);
 
+        //添加到menu_list 表
+        $mlModel = new MenuListModel();
+        $mItemModel = new MenuItemModel();
+        $save                = [];
+        $userInfo = session('sysUserInfo');
+        $save['creator_name'] = $userInfo['username'];
+        $save['creator_id'] = $userInfo['id'];
+        $save['state']    = 0;
+        $save['menu_name'] = I('post.program');
+        $save['update_time'] = date('Y-m-d H:i:s');
+        $save['create_time'] = date('Y-m-d H:i:s');
+
+        $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
+        $dura_arr = explode (',',substr(I('post.rightdur',''),0,-1) );
+        $name_arr = explode (',',substr(I('post.rightname',''),0,-1));
+        $time_arr = explode (',',substr(I('post.rightime',''),0,-1));
+        $co_arr = $id_arr;
+
+
+        if( $id ) {
+            //先删除menuid，后插入
+            $mItemModel->delData($id);
+            $i = 1;
+            $data = array();
+            $sql = '';
+            $value = '';
+            $sql = "INSERT INTO `savor_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
+            foreach($id_arr as $k=>$v) {
+                $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
+                    'create_time'=>$time_arr[$k],
+                );
+                $i++;
+            }
+            foreach($id_arr as $k=>$v) {
+
+                $value .= "('$v','$name_arr[$k]','$time_arr[$k]','{$save['update_time']}','$id','$i','$dura_arr[$k]'),";
+                $i++;
+            }
+            $sql .= substr($value,0,-1);
+
+            $res = $mItemModel->execute($sql);
+            if ($res) {
+                //添加操作日志非针对饭店
+                $type = 2;
+                $this->addlog($data, $id, $type);
+                $this->output('操作成功!', 'menu/getlist');
+            } else {
+
+            }
+
+        } else {
+            //判断名字是否存在
+            $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
+            if ($count) {
+                $this->output('操作失败名字已经有!', 'menu/addmenu');
+            }
+            $result = $mlModel->add($save);
+            if ( $result ) {
+                $menu_id = $mlModel->getLastInsID();
+                //将内容添加到savor_menu_item表
+                $data = array();
+                $i = 1;
+                foreach($id_arr as $k=>$v) {
+                    $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
+                        'create_time'=>$time_arr[$k],
+                        'update_time'=>$save['update_time'],
+                        'menu_id'=>$menu_id,'sort_num'=>$i,
+                        'duration'=>$dura_arr[$k]);
+                    $i++;
+                }
+                $res = $mItemModel->addAll($data);
+
+
+                if ($res) {
+                    //添加操作日志不在这边加
+                    $this->addlog($data, $menu_id);
+
+                    $this->output('新增成功', 'menu/addmen');
+
+                } else {
+
+                }
+            } else {
+
+            }
+        }
+
+
+
+
+
+
+    }
 
     public function doaddmenu(){
         //表单提交即是新增和导入ajax区分以及与修改进行区分
         $id = I('post.id','');
+       // var_dump($_POST);
 
         //添加到menu_list 表
         $mlModel = new MenuListModel();
@@ -712,6 +810,7 @@ class MenuController extends BaseController {
                 $field = "ads_name,ads_id,duration,sort_num,create_time";
                 $where .= " AND menu_id={$menuid}  ";
                 $res = $mItemModel->getWhere($where,$orders, $field);
+
                 $this->assign('menuid',$menuid);
                 $this->assign('menuname',$menu_name);
                 $this->assign('list',$res);
@@ -754,7 +853,82 @@ class MenuController extends BaseController {
 
     }
 
+
+
+
+    /*
+   * 添加节目管理
+   */
+    public function addmen() {
+
+
+        if($_POST){
+            $this->assign('bbt',$bbta);
+        }
+        //左边表单提交，右边表单提交，导入ajax,id修改
+        $userInfo = session('sysUserInfo');
+        $menu_name = I('get.name'.'');
+        $type = I('type');
+        if ( $type == 2 ) {
+            $menuid = I('id','0');
+            if ($menuid) {
+                $mItemModel = new MenuItemModel();
+                $order = I('_order','id');
+                $sort = I('_sort','asc');
+                $orders = $order.' '.$sort;
+                $where = "1=1";
+                $field = "ads_name,ads_id,duration,sort_num,create_time";
+                $where .= " AND menu_id={$menuid}  ";
+                $res = $mItemModel->getWhere($where,$orders, $field);
+                $this->assign('menuid',$menuid);
+                $this->assign('menuname',$menu_name);
+                $this->assign('list',$res);
+
+            }
+            $this->display('addmenuct');
+        } else {
+            $this->display('addmenuct');
+        }
+
+        /*
+        $prModel = new ProgramModel();
+
+
+        $prModel->getWhere();
+        $artModel = new ArticleModel();
+        $userInfo = session('sysUserInfo');
+        $uname = $userInfo['username'];
+        $this->assign('uname',$uname);
+
+
+        $acctype = I('get.acttype');
+
+        if ($acctype && $id)
+        {
+            $vinfo = $artModel->where('id='.$id)->find();
+            $this->assign('vinfo',$vinfo);
+
+        } else {
+
+        }
+        $where = "state=0";
+        $field = 'id,name';
+        $vinfo = $catModel->getWhere($where, $field);
+
+        $this->assign('vcainfo',$vinfo);
+
+        */
+
+
+    }
+
+    public function addtest(){
+        $this->output('操作成功','menu/getlist');
+    }
+
+
     public function get_se_left(){
+        var_dump($_POST);
         $m_type = I('post.m_type','0');
 
         $where = "1=1";
@@ -772,6 +946,7 @@ class MenuController extends BaseController {
         $adModel = new AdsModel();
         if ($m_type == 0) {
             $where .= "	AND (`type`) in (1,2) ";
+            var_dump($where);
             $result = $adModel->getWhere($where, $field);
 
             $result[] = array('id'=>0,'name'=>'酒楼宣传片','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);
