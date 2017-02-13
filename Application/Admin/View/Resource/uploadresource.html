@@ -76,7 +76,7 @@
            		 </div>
 		    </div>
 		    <div class="modal-footer">
-		      <button class="btn btn-default close-m" type="button">取消</button>
+		      <button id="cancel_upload" class="btn btn-default close-m" type="button">取消</button>
 		      <button id="saveImg" class="btn btn-primary" type="button">保存</button>     
 		    </div>
 		  </form>
@@ -161,7 +161,9 @@ $("#saveImg").click(function(){
         }
     })
 })
-
+$("#cancel_upload").click(function(){
+	$("#dz-filecontainer .nav-tabs .pull-right a").click();
+})
 //领取图片数据
 function getImageInfo($this){
   $('#files').find('.file-content').removeClass("active");
