@@ -88,6 +88,7 @@ class DeviceController extends BaseController{
         }
 		
         $result['list'] = $tvModel->boxIdToBoxName($result['list']);
+        $this->assign('hotel_id',$hotel_id);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('tv');
@@ -168,13 +169,13 @@ class DeviceController extends BaseController{
 		$tvModel = new TvModel;
 		if($id){
 			if($tvModel->where('id='.$id)->save($save)){
-				$this->output('更新成功!', 'device/addTv');
+				$this->output('更新成功!', 'device/tv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
 		}else{	
 			if($tvModel->add($save)){
-				$this->output('添加成功!', 'device/addTv');
+				$this->output('添加成功!', 'device/tv');
 			}else{
 				 $this->output('添加失败!', 'device/doAddTv');
 			}	
