@@ -6,6 +6,7 @@
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
     <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" name="hotel_id" value="{$hotel_id}"/>
     <div class="searchBar">
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
@@ -35,6 +36,7 @@
               <th>机顶盒ID</th>
               <th>包间名称</th>
               <th>机顶盒名称</th>
+              <th>电视数量</th>
               <th>mac地址</th>
               <th>切换时间</th>
               <th>音量</th>
@@ -49,6 +51,14 @@
               <td data-title="机顶盒ID">{$vlist.id}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒名称">{$vlist.name}</td>
+              <td data-title="电视数量">
+              <if condition="$vlist.tv_num gt 0">
+              <a target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$hotel_id}&box_id={$vlist.id}">tv数:{$vlist.tv_num}</a>
+              <else />
+              tv数:{$vlist.tv_num}
+              </if>
+              </td>
+              
               <td data-title="mac地址">{$vlist.mac}</td>
               <td data-title="切换时间">{$vlist.switch_time}</td>
               <td data-title="音量">{$vlist.volum}</td>

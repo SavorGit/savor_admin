@@ -43,9 +43,18 @@ class DeviceController extends BaseController{
                 $rooms_str = join(',', $rooms['room']);
                 $where.=" AND room_id in ($rooms_str)";
                 $result = $boxModel->getList($where,$orders,$start,$size);
+                if(!empty($result['list'])){
+                    $tvModel = new \Admin\Model\TvModel();
+                    foreach ($result['list'] as $k=>$v){
+                        $box_id = $v['id'];
+                        $tv_num = $tvModel->where("box_id='$box_id'")->count();
+                        $result['list'][$k]['tv_num'] = $tv_num;
+                    }
+                }
                 $result['list'] = $boxModel->roomIdToRoomName($result['list']);
             }
         }
+   		$this->assign('hotel_id', $hotel_id);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('box');
@@ -58,6 +67,7 @@ class DeviceController extends BaseController{
      */
     public function tv(){
     	$hotel_id = I('hotel_id',0,'intval');
+    	$box_id = I('box_id',0,'intval');
     	$size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -75,7 +85,10 @@ class DeviceController extends BaseController{
         	$where['tv_brand'] = array('LIKE',"%$name%");
         }
     	$tvModel = new TvModel;
-        if($hotel_id){
+    	if($box_id){
+    	    $where['box_id'] = $box_id;
+    	    $result = $tvModel->getList($where,$orders,$start,$size);
+    	}elseif($hotel_id){
             $hotelModel = new \Admin\Model\HotelModel();
             $boxs = $hotelModel->getStatisticalNumByHotelId($hotel_id,'box');
             if($boxs['box_num']){
@@ -89,6 +102,7 @@ class DeviceController extends BaseController{
 		
         $result['list'] = $tvModel->boxIdToBoxName($result['list']);
         $this->assign('hotel_id',$hotel_id);
+        $this->assign('box_id',$box_id);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
         $this->display('tv');
