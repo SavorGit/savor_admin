@@ -311,7 +311,7 @@ class ArticleController extends BaseController {
             $save['img_url'] = $oss_addr;
             $save['type'] = 1;
         }else{
-            $this->output('封面必填!', 'article/addvideo');
+            $this->output('封面必填!', 'article/addvideo',3);
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
@@ -355,7 +355,7 @@ class ArticleController extends BaseController {
         $save['source']    = I('post.source','');
 
         $save['content']    = I('post.content','htmlspecialchars');
-        $save['type']    = I('post.ctype','','intval');
+        $save['type']    = I('post.ctype','1','intval');//0纯文本，1图文，2图集，3视频
         $save['state']    = I('post.state','0','intval');
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
@@ -367,8 +367,6 @@ class ArticleController extends BaseController {
         $oss_addr = $oss_addr['oss_addr'];
         $save['img_url'] = $oss_addr;
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-       // $oss_addr = $image_host.$oss_addr;
-
         if($id){
             if($artModel->where('id='.$id)->save($save)){
                 $this->showcontent($id);
@@ -379,7 +377,6 @@ class ArticleController extends BaseController {
         }else{
             if(!$mediaid){
                 $this->output('封面必填!', 'article/doAddarticle',3);
-                die;
             }
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
