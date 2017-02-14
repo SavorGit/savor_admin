@@ -69,7 +69,6 @@ class MenuController extends BaseController {
         $menuliModel = new MenuListModel();
         $mItemModel = new MenuItemModel();
         $com_arr = array_combine($hotel_id_arr, $hotel_name);
-        // //var_dump($com_arr);
 
         $i = 1;
         $data = array();
@@ -81,7 +80,7 @@ class MenuController extends BaseController {
         if ($hoty == 2) {
 
             $sql = "SELECT MAX(create_time) as time  FROM savor_menu_hotel WHERE menu_id=$menuid";
-            $crt = $menuliModel->query($sql);
+            $crt = $menuHoModel->query($sql);
             $timec = $crt[0]['time'];
         }
         foreach ($com_arr as $k=>$v) {
@@ -123,24 +122,30 @@ class MenuController extends BaseController {
 
 
         //获得menuid数组
-        $menu_arr = $menuliModel->getAll('id');
-        // //var_dump($menu_arr);
+        $menu_arr = $menuliModel->field('id')->select();
+        //var_dump($menu_arr);
         $com_arr = array_flip($com_arr);
+       // var_dump($com_arr);
         foreach ($menu_arr as $k=>$v) {
 
             $bak_ho_arr = array();
             $sql = "SELECT hotel_id FROM savor_menu_hotel WHERE create_time=
                 (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id={$v['id']})";
-            $bak_hotel_id_arr = $menuliModel->query($sql);
+           // echo $sql;
+
+            $bak_hotel_id_arr = $menuHoModel->query($sql);
+            //var_dump($bak_hotel_id_arr);
             foreach ($bak_hotel_id_arr as $bk=>$bv){
                 $bak_ho_arr[] = $bv['hotel_id'];
             }
+
 
             $dat = array();
             if ($menuid == $v['id']) {
                 //获取count
                 $count_arr = $menuliModel->field('count')->where(array('id'=>$v['id']))->find();
                 $count = $count_arr['count'];
+
                 if ($hoty != 2) {
                     if ($count == 0) {
                         $dat['count'] = count($com_arr);
@@ -162,12 +167,17 @@ class MenuController extends BaseController {
                 }
             } else {
                 $inter = array_intersect($bak_ho_arr, $com_arr);
+                //var_dump($bak_ho_arr);
+                //var_dump($com_arr);
+                //var_dump($inter);
+                //echo '<hr/><hr/>';
                 $in_count = count($inter);
                 //获取本身自有的count
                 $count_arr = $menuliModel->field('count')->where(array('id'=>$v['id']))->find();
 
                 //menu_id
                 //删除sav_menu_item遍历id,就是删除次id
+                //var_dump($inter,$v['id']);
                 if($in_count>0){
                     $map['hotel_id']  = array('in',$inter);
                     $map['menu_id']  = array('in',$v['id']);
@@ -187,9 +197,11 @@ class MenuController extends BaseController {
                 $dat['state'] = 1;
             }
 
+
             $menuliModel->where(array('id'=>$v['id']))->save($dat);
         }
-        $this->output('发布成功了!', 'menu/getlist');
+
+         $this->output('发布成功了!', 'menu/getlist');
 
 
         //$vinfo = $hotelModel->where('id='.$id)->find();
@@ -508,6 +520,7 @@ class MenuController extends BaseController {
                 (SELECT MAX(create_time) FROM savor_menu_hotel WHERE menu_id=$menu_id)";
 
         $bak_hotel_id_arr = $mItemModel->query($sql);
+       // var_dump($bak_hotel_id_arr);
 
         foreach ($bak_hotel_id_arr as $bk=>$bv){
             $data[] = array('hoid'=>$bv['hotel_id'],'honame'=>$bv['hotel_name'],'pub_time'=>$bv['pub_time']);
@@ -608,7 +621,7 @@ class MenuController extends BaseController {
                     $i++;
                 }
                 $sql .= substr($value,0,-1);
-
+               
                 $res = $mItemModel->execute($sql);
                 foreach($id_arr as $k=>$v) {
                     $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
