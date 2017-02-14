@@ -98,7 +98,13 @@ class HotelModel extends BaseModel{
 	    }
 	    $nums = array('room_num'=>$room_num,'box_num'=>$box_num,'tv_num'=>$tv_num);
 	    return $nums;
-	    
+	}
+	
+	public function getMacaddrByHotelId($hotel_id){
+	    $sql = "select * from savor_hotel_ext where hotel_id='$hotel_id' limit 1";
+	    $result = $this->query($sql);
+	    $data = !empty($result)?$result[0]:array();
+	    return $data;
 	}
 
 }

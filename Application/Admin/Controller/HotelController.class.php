@@ -190,6 +190,8 @@ class HotelController extends BaseController {
 				$media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
 				$vinfo['oss_addr'] = $media_info['oss_addr'];
 			}
+			$res_hotelext = $hotelModel->getMacaddrByHotelId($id);
+			$vinfo['mac_addr'] = $res_hotelext['mac_addr'];
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -203,7 +205,7 @@ class HotelController extends BaseController {
 	 * 保存或者更新酒店信息
 	 */
 	public function doAdd(){
-		$id                          = I('post.id');
+		$hotel_id                    = I('post.id');
 		$save                        = [];
 		$save['name']                = I('post.name','','trim');
 		$save['addr']                = I('post.addr','','trim');
@@ -225,19 +227,28 @@ class HotelController extends BaseController {
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['media_id']             = I('post.media_id','0','intval');
 		$hotelModel = new \Admin\Model\HotelModel();
-		if($id){
-			if($hotelModel->where('id='.$id)->save($save)){
-				$this->output('操作成功!', 'hotel/manager');
-			}else{
-				$this->output('操作失败!', 'hotel/add');
-			}
+		if($hotel_id){
+		    $res = $hotelModel->where('id='.$hotel_id)->save($save);
 		}else{
 			$save['create_time'] = date('Y-m-d H:i:s');
-			if($hotelModel->add($save)){
-				$this->output('操作成功!', 'hotel/manager');
-			}else{
-				$this->output('操作失败!', 'hotel/add');
-			}
+			$hotel_id = $hotelModel->add($save);
+		}
+		if($hotel_id){
+		    $mac_addr = I('post.mac_addr','','trim');
+		    $res_hotelext = $hotelModel->getMacaddrByHotelId($hotel_id);
+		    $model = M('hotel_ext');
+		    $data = array('mac_addr'=>$mac_addr);
+		    if(empty($res_hotelext)){
+		        $data['hotel_id'] = $hotel_id;
+		        $model->add($data);
+		    }else{
+		        if($mac_addr!=$res_hotelext['mac_addr']){
+		            $model->where('id='.$res_hotelext['id'])->save($data);
+		        }
+		    }
+		    $this->output('操作成功!', 'hotel/manager');
+		}else{
+		    $this->output('操作失败!', 'hotel/add');
 		}
 
 	}

@@ -225,10 +225,6 @@ class VersionController extends BaseController{
 	    $where = array();
 	    if($name)      $where['version_name'] = array('LIKE',"%$name%");
 	    if($device_type)   $where['device_type'] = $device_type;
-	    if($device_type == 3){
-	        $this->display('client');
-	        exit;
-	    }
 	    $versionModel = new \Admin\Model\VersionModel();
 	    $result = $versionModel->getList($where,$orders,$pagenum,$size);
 	    $datalist = $result['list'];
