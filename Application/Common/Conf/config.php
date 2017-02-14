@@ -72,7 +72,10 @@ $config['HOTEL_LEVEL'] = array(
     '5'=>'5A',
     '6'=>'6A',
 );
-
+$config['CONTENT_TYPE'] = array(
+    '1'=>'图文',
+    '3'=>'视频',
+);
 $config['HOTEL_STATE'] = array(
     '1'=>'正常',
     '2'=>'冻结',
