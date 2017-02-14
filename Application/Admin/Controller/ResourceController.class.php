@@ -52,7 +52,7 @@ class ResourceController extends BaseController{
 
 	 public function addResource(){
 	     if(IS_POST){
-	         $result = $this->add_media();
+	         $result = $this->handle_resource();
              $this->output($result['message'], $result['url']);
 	     }else{
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
@@ -65,7 +65,7 @@ class ResourceController extends BaseController{
 	     $code = 10001;
 	     $data = array();
 	     if(IS_POST){
-	         $result = $this->add_media();
+	         $result = $this->handle_resource();
 	         if($result['media_id']){
 	             $code = 10000;
 	             $data['media_id'] = $result['media_id'];
@@ -127,85 +127,6 @@ class ResourceController extends BaseController{
 	         $this->assign('vinfo',$vinfo);
 	         $this->display('editresource');
 	     }
-	 }
-	 
-	 private function add_media(){
-	     $mediaModel = new \Admin\Model\MediaModel();
-	     $save = array();
-	     $type = I('post.type',0,'intval');
-	     $duration = I('post.duration','');
-	     $description = I('post.description','');
-	     $save['name'] = I('post.name','','trim');
-	     $save['oss_addr'] = I('post.oss_addr','','trim');
-	     if($duration)  $save['duration'] = $duration;
-	     if($description)   $save['description'] = $description;
-	     $message = $url = $oss_addr = '';
-	     $media_id = 0;
-	     if(!$save['oss_addr']){
-	         $message = 'OSS上传失败!';
-	         $url = 'resource/resourceList';
-	     }else{
-	         $user = session('sysUserInfo');
-	         $tempInfo = pathinfo($save['oss_addr']);
-	         $surfix = $tempInfo['extension'];
-	         $typeinfo = C('RESOURCE_TYPEINFO');
-	         if(!$type){
-	             if(isset($typeinfo[$surfix])){
-	                 $type = $typeinfo[$surfix];
-	             }else{
-	                 $type = 3;
-	             }
-	         }
-	         $fileinfo = '';
-	         $accessKeyId = C('OSS_ACCESS_ID');
-	         $accessKeySecret = C('OSS_ACCESS_KEY');
-	         $endpoint = C('OSS_HOST');
-	         $bucket = C('OSS_BUCKET');
-	         $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
-	         $aliyun->setBucket($bucket);
-	         if($type==1){//视频
-	             $oss_filesize = I('post.oss_filesize');
-	             if($oss_filesize){
-	                 $range = '0-199';
-	                 $bengin_info = $aliyun->getObject($save['oss_addr'],$range);
-	                 $last_range = $oss_filesize-199;
-	                 $last_size = $oss_filesize-1;
-	                 $last_range = $last_size - 199;
-	                 $last_range = $last_range.'-'.$last_size;
-	                 $end_info = $aliyun->getObject($save['oss_addr'],$last_range);
-	                 $file_str = md5($bengin_info).md5($end_info);
-	                 $fileinfo = strtoupper($file_str);
-	             }
-	         }else{
-	             $fileinfo = $aliyun->getObject($save['oss_addr'],'');
-	         }
-	         if($fileinfo){
-	             $save['md5'] = md5($fileinfo);
-	         }
-	         $save['surfix'] = $surfix;
-	         $save['create_time'] = date('Y-m-d H:i:s');
-	         $save['creator'] = $user['username'];
-	         $save['type'] = $type;
-	         
-	         $nass = $mediaModel->where(array('name'=>$save['name']))->field('name')->find();
-	         if(empty($nass['name'])){
-	             $media_id = $mediaModel->add($save);
-    	         if($media_id){
-    	             $message = '添加成功!';
-    	             $url = 'resource/resourceList';
-    	         }else{
-    	             $message = '添加失败!';
-    	             $url = 'resource/resourceList';
-    	         }
-	         }else{
-	             $message = '文件名已存在，请换一个名称';
-	              $url = 'resource/resourceList';
-	         }
-	         
-	         $oss_addr = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/'.$save['oss_addr'];
-	     }
-	     $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
-	     return $result;
 	 }
 	 
 }

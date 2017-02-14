@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Controller;
 use Think\Controller;
+use Common\Lib\Aliyun;
 /**
  * @desc 基础类，所有后台类必须继承此类
  *
@@ -287,6 +288,87 @@ class BaseController extends Controller {
             }
         }
         return $title_name;
-        
+    }
+    
+    
+    /**
+     * 处理资源
+     * @return array 
+     */
+    protected function handle_resource(){
+        $add_mediadata = array();
+        $type = I('post.type',0,'intval');//资源类型资1视频2图片3其他
+        $duration = I('post.duration','');
+        $description = I('post.description','');
+        $add_mediadata['name'] = I('post.name','','trim');
+        $add_mediadata['oss_addr'] = I('post.oss_addr','','trim');
+        if($duration)  $add_mediadata['duration'] = $duration;
+        if($description)   $add_mediadata['description'] = $description;
+        $message = $url = $oss_addr = '';
+        $media_id = 0;
+        $mediaModel = new \Admin\Model\MediaModel();
+        $nass = $mediaModel->where(array('name'=>$add_mediadata['name']))->field('name')->find();
+        if(!empty($nass['name'])){
+            $message = '文件名已存在，请换一个名称';
+            $url = 'resource/resourceList';
+            return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
+        }
+        if(!$add_mediadata['oss_addr']){
+            $message = 'OSS上传失败!';
+            $url = 'resource/resourceList';
+            return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
+        }
+        if(!$type){
+            $tempInfo = pathinfo($add_mediadata['oss_addr']);
+            $surfix = $tempInfo['extension'];
+            $typeinfo = C('RESOURCE_TYPEINFO');
+            if(isset($typeinfo[$surfix])){
+                $type = $typeinfo[$surfix];
+            }else{
+                $type = 3;
+            }
+        }
+        $fileinfo = '';
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = C('OSS_HOST');
+        $bucket = C('OSS_BUCKET');
+        $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+        $aliyun->setBucket($bucket);
+        if($type==1){//视频
+            $oss_filesize = I('post.oss_filesize');
+            if($oss_filesize){
+                $range = '0-199';
+                $bengin_info = $aliyun->getObject($add_mediadata['oss_addr'],$range);
+                $last_range = $oss_filesize-199;
+                $last_size = $oss_filesize-1;
+                $last_range = $last_size - 199;
+                $last_range = $last_range.'-'.$last_size;
+                $end_info = $aliyun->getObject($add_mediadata['oss_addr'],$last_range);
+                $file_str = md5($bengin_info).md5($end_info);
+                $fileinfo = strtoupper($file_str);
+            }
+        }else{
+            $fileinfo = $aliyun->getObject($add_mediadata['oss_addr'],'');
+        }
+        if($fileinfo){
+            $add_mediadata['md5'] = md5($fileinfo);
+        }
+        $user = session('sysUserInfo');
+        $add_mediadata['surfix'] = $surfix;
+        $add_mediadata['create_time'] = date('Y-m-d H:i:s');
+        $add_mediadata['creator'] = $user['username'];
+        $add_mediadata['type'] = $type;
+        $media_id = $mediaModel->add($add_mediadata);
+        if($media_id){
+            $message = '添加成功!';
+            $url = 'resource/resourceList';
+        }else{
+            $message = '添加失败!';
+            $url = 'resource/resourceList';
+        }
+        $oss_addr = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/'.$add_mediadata['oss_addr'];
+        $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
+        return $result;
     }
 }

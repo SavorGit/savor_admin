@@ -71,7 +71,6 @@ class AdvertController extends BaseController{
 
 	 public function addAdvert(){
 	     if(IS_POST){
-	         $mediaModel = new \Admin\Model\MediaModel();
 	         $adsModel = new \Admin\Model\AdsModel();
 	         $ossaddr = I('post.oss_addr','','trim');
 	         $duration = I('post.duration','');
@@ -79,80 +78,31 @@ class AdvertController extends BaseController{
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
 	         
-	         $message = $url = '';
-	         $media_id = 0;
-	         if($ossaddr){
-	             $user = session('sysUserInfo');
-	             $tempInfo = pathinfo($ossaddr);
-	             $surfix = $tempInfo['extension'];
-	             $typeinfo = C('RESOURCE_TYPEINFO');
-                 if(isset($typeinfo[$surfix])){
-                     $type = $typeinfo[$surfix];
-                 }else{
-                     $type = 3;
-                 }
-                 $media_data = array();
-                 $media_data['name'] = $name;
-                 $media_data['oss_addr'] = $ossaddr;
-                 if($ossaddr){
-                     $accessKeyId = C('OSS_ACCESS_ID');
-                     $accessKeySecret = C('OSS_ACCESS_KEY');
-                     $endpoint = C('OSS_HOST');
-                     $bucket = C('OSS_BUCKET');
-                     $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
-                     $aliyun->setBucket($bucket);
-                     $oss_filesize = I('post.oss_filesize');
-                     if($oss_filesize){
-                         $range = '0-199';
-                         $bengin_info = $aliyun->getObject($ossaddr,$range);
-                         $last_range = $oss_filesize-199;
-                         $last_size = $oss_filesize-1;
-                         $last_range = $last_size - 199;
-                         $last_range = $last_range.'-'.$last_size;
-                         $end_info = $aliyun->getObject($ossaddr,$last_range);
-                         $file_str = md5($bengin_info).md5($end_info);
-                         $fileinfo = strtoupper($file_str);
-                         if($fileinfo){
-                             $media_data['md5'] = md5($fileinfo);
-                         }
-                     }
-                 }
-                 
-                 if($duration)  $media_data['duration'] = $duration;
-                 if($description)   $media_data['description'] = $description;
-	             $media_data['surfix'] = $surfix;
-	             $media_data['create_time'] = date('Y-m-d H:i:s');
-	             $media_data['creator'] = $user['username'];
-	             $media_data['type'] = $type;
-	             $media_id = $mediaModel->add($media_data);
-	             if($media_id){
-	                 $ads_data = array();
-	                 $ads_data['name'] = $name;
-	                 $ads_data['media_id'] = $media_id;
-	                 $ads_data['type'] = $adstype;
-	                 $ads_data['create_time'] = date('Y-m-d H:i:s');
-					 $ads_data['is_online'] = 2;
-					 if($duration)  $ads_data['duration'] = $duration;
-	                 if($description)   $ads_data['description'] = $description;
-	                 $ads_data['creator_name'] = $user['username'];
-// 	                 $adsModel->add($ads_data);
-// 	                 $message = '添加成功!';
-// 	                 $url = 'advert/adsList';
-	                 $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
-	                 if(empty($nass['name'])){
-	                     $adsModel->add($ads_data);
-	                     $message = '添加成功!';
-	                     $url = 'advert/adsList';
-	                 }else{
-	                     $message = '文件名已存在，请换一个名称';
-	                     $url = 'advert/adsList';
-	                 }
-	             }else{
-	                 $message = '添加失败!';
-	                 $url = 'advert/adsList';
-	             }
-	             $this->output($message, $url);
-	         }
+             $result_media = $this->handle_resource();
+             if(!$result_media['media_id']){
+                 $this->output($result_media['message'], 'advert/adsList');
+             }
+             $media_id = $result_media['media_id'];
+             $ads_data = array();
+             $ads_data['name'] = $name;
+             $ads_data['media_id'] = $media_id;
+             $ads_data['type'] = $adstype;
+             $ads_data['create_time'] = date('Y-m-d H:i:s');
+			 $ads_data['is_online'] = 2;
+			 if($duration)  $ads_data['duration'] = $duration;
+             if($description)   $ads_data['description'] = $description;
+             $user = session('sysUserInfo');
+             $ads_data['creator_name'] = $user['username'];
+             $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
+             if(empty($nass['name'])){
+                 $adsModel->add($ads_data);
+                 $message = '添加成功!';
+                 $url = 'advert/adsList';
+             }else{
+                 $message = '文件名已存在，请换一个名称';
+                 $url = 'advert/adsList';
+             }
+             $this->output($message, $url);
 	     }else{
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 			 $vinfo['type'] = 1;
