@@ -149,18 +149,13 @@ class ResourceController extends BaseController{
 	         $tempInfo = pathinfo($save['oss_addr']);
 	         $surfix = $tempInfo['extension'];
 	         $typeinfo = C('RESOURCE_TYPEINFO');
-// 	         if(!$type){
-// 	             if(isset($typeinfo[$surfix])){
-// 	                 $type = $typeinfo[$surfix];
-// 	             }else{
-// 	                 $type = 3;
-// 	             }
-// 	         }
-             if(isset($typeinfo[$surfix])){
-                 $type = $typeinfo[$surfix];
-             }else{
-                 $type = 3;
-             }
+	         if(!$type){
+	             if(isset($typeinfo[$surfix])){
+	                 $type = $typeinfo[$surfix];
+	             }else{
+	                 $type = 3;
+	             }
+	         }
 	         $fileinfo = '';
 	         $accessKeyId = C('OSS_ACCESS_ID');
 	         $accessKeySecret = C('OSS_ACCESS_KEY');

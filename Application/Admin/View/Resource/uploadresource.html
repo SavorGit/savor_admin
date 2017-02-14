@@ -52,7 +52,7 @@
 		              </label>
 		              <div class="col-xs-12 col-sm-10">
 		                <volist name=":C('RESOURCE_TYPE')" id="vo">
-		                  <input name="type" type="radio" id="{$key}" value="{$key}" />&nbsp;{$vo}
+		                  <input class="resource_type" name="type" type="radio" id="{$key}" value="{$key}" />&nbsp;{$vo}
 		                  &nbsp;&nbsp;
 		                </volist>
 		              </div>
@@ -132,6 +132,11 @@
 
 var hiddenType=$("#hidden_filed").val();
 var hiddenImg=$("#hidden_img").val();
+var resourceType="";
+$(".resource_type").click(function(){
+  resourceType=$(this).val();
+});
+console.log(resourceType);
 //选择本地图片点击保存 
 $("#saveImg").click(function(){
     $.ajax({
@@ -143,11 +148,12 @@ $("#saveImg").click(function(){
         	"oss_addr":$("#oss_addr").val(),
         	"oss_filesize":$("#oss_filesize").val(),
         	"name":$("#resource_name").val(),
-        	"type":$("input[name='type']").val(),
+        	"type":resourceType,
         	"duration":$("#resource_duration").val(),
         	"description":$("#description").val(),
         },
         success:function(result){
+          //console.log($("#resource_type").val());
             if(result.code==10000){
                 $("#"+hiddenType).val(result.data.media_id);
                 $("#"+hiddenImg).attr("src",result.data.path).show();
@@ -265,7 +271,8 @@ $("#files .dz-file-viewport").scroll(function(){
   }
 });
 $("input[type='radio']").click(function() {
-  var id = $(this).attr("id");
+  var id = $(this).val();
+  console.log(id);
   if (id == 1) {
     $("#duration").show();
   } else {
