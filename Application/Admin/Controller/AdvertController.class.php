@@ -5,7 +5,6 @@
  */
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
-use Common\Lib\Aliyun;
 class AdvertController extends BaseController{
 	 private $oss_host = '';
 	 public function __construct(){

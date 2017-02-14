@@ -8,7 +8,7 @@
     <div class="tab-content">
     <div id="dropbase" class="tab-pane fade active in pageContent">
     	<input id="hidden_filed" type="hidden" value="{$hidden_filed}">
-    	<input id="hidden_img" type="hidden" value="{$hidden_img}">
+    	<input id="up_resourcetype" type="hidden" value="{$rtype}">
     	<input id="oss_host" type="hidden" value="{$oss_host}">
 		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/resource/uploadResource" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		   	<input id="oss_id" type="hidden" name="id" value="{$row.id}">
@@ -136,7 +136,7 @@ var fileExt="{$file_allexts.file_ext}";
 /*==============================mark by s++================================*/
 
 var hiddenType=$("#hidden_filed").val();
-var hiddenImg=$("#hidden_img").val();
+var hiddenImg=hiddenType+'img';
 var resourceType="";
 $(".resource_type").click(function(){
   resourceType=$(this).val();
@@ -217,7 +217,8 @@ $(document).on("click","#files input",function(){
   }
   getImageInfo($(this));
 });
-var pageNum=1;
+var pageNum=2;
+var rtype=$("#up_resourcetype").val();
 $("#files .dz-file-viewport").scroll(function(){
   //console.log("scroll")
   var t = $("#file-list").height();
@@ -228,7 +229,7 @@ $("#files .dz-file-viewport").scroll(function(){
   //console.log(s+"-"+(t-c))
   if((t-c) <= s){
     $.ajax({
-      url:"{$host_name}/resource/resourceList?isbrowse=1&pageNum="+pageNum,
+      url:"{$host_name}/resource/resourceList?isbrowse=1&pageNum="+pageNum+"&rtype="+rtype,
       type:"get",
       dataType:"json",
       success:function(result){

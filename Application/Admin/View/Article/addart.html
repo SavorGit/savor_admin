@@ -41,18 +41,17 @@
               <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
                   <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                    <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
+                    <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
                       <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
-                        <img id="media_idImg" src="/Public/admin/assets/img/noimage.png" border="0" />
-
+                        <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
                         <else />
-                        <img id="media_idImg" src="{$vinfo.oss_addr}" border="0" />
-
+                        <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+						<span id="media_idimgname"></span>
                       </if>
                     </a>
                   </div>
                   <div>
-                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&img=media_idImg" data-browse-file>
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
                       选择图片
                     </a>
                     <input type="hidden" name="media_id" id="media_id" value="">

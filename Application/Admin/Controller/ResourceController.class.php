@@ -5,7 +5,6 @@
  */
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
-use Common\Lib\Aliyun;
 
 class ResourceController extends BaseController{
 	 
@@ -27,6 +26,8 @@ class ResourceController extends BaseController{
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
         if($end_time)   $where.=" AND create_time<='$end_time'";
         $isbrowse = I('isbrowse');
+        $type = I('rtype','0','intval');
+        if($type)   $where.=" AND type='$type'";
 	 	$mediaModel = new \Admin\Model\MediaModel();
         $result = $mediaModel->getList($where,$orders,$pagenum,$size);
         if($isbrowse){
@@ -76,9 +77,18 @@ class ResourceController extends BaseController{
 	         echo json_encode($res_data);
 	         exit;
 	     }else{
+	         /*
+	          * 隐藏域文件规则：
+	          * filed 为:media_id时
+	          * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+              * <span id="media_idimgname"></span>
+	          */
 	         $hidden_filed = I('get.filed','media_id');
-	         $hidden_img = I('get.img','media_idimg');
+	         $rtype = I('get.rtype',0);
 	         $where = ' flag=0';
+	         if($rtype){
+	             $where.=" and type='$rtype'";	             
+	         }
 	         $orders = 'id desc';
 	         $start = 0;
 	         $size = 50;
@@ -87,8 +97,8 @@ class ResourceController extends BaseController{
 	         $this->assign('datalist', $result['list']);
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 	         $this->get_file_exts();
+	         $this->assign('rtype',$rtype);
 	         $this->assign('hidden_filed',$hidden_filed);
-	         $this->assign('hidden_img',$hidden_img);
 	         $this->assign('oss_host',$oss_host);
 	         $this->display('uploadresource');
 	     }
