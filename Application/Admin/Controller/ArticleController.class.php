@@ -329,6 +329,7 @@ update_time='".$dat['update_time']."'";
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['media_id']);
                 $vainfo['videooss_addr'] = $oss_host.$mediainfo['oss_addr'];
                 $vainfo['vid_type'] = 1;
+                $vainfo['videoname'] = $mediainfo['name'];
             }
             $this->assign('vainfo',$vainfo);
         }
@@ -340,6 +341,7 @@ update_time='".$dat['update_time']."'";
     }
 
     public function doAddvideo(){
+        //var_dump($_POST);
         $mediaModel = new \Admin\Model\MediaModel();
         $artModel = new ArticleModel();
         $id                  = I('post.id');
@@ -358,7 +360,8 @@ update_time='".$dat['update_time']."'";
         $save['update_time'] = date('Y-m-d H:i:s');
         $addtype = I('post.r1','0',intval);
         $save['bespeak_time'] = I('post.logtime','');
-        $save['bespeak'] = 0;
+        $save['duration'] = I('post.dura','0','intval');
+        $v_type    = I('post.r1','0','intval');
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
         if($covermedia_id){
             $oss_arr = $mediaModel->find($covermedia_id);
@@ -373,12 +376,17 @@ update_time='".$dat['update_time']."'";
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             //$save['oss_addr'] = $oss_arr['oss_addr'];
-            $save['duration'] = $oss_arr['duration'];
+            //$save['duration'] = $oss_arr['duration'];
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id']    = $media_id;
 
         }
         if($id){
+            if($addtype == 2){
+                //mediaid去除，md5,
+                $save['vod_md5'] = '';
+                $save['media_id'] = '';
+            }
             $save['content_url'] = 'html/video/'.$id.'.html';
 
             if($artModel->where('id='.$id)->save($save)){

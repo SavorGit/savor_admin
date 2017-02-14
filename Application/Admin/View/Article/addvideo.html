@@ -96,7 +96,7 @@
                           <else />
                           <img id="media_idimg" src="{$vainfo.videooss_addr}" border="0" />
                         </if>
-                        <span id="media_idimgname"></span>
+                        <span id="media_idimgname">{$vainfo.videoname}</span>
                       </a>
                     </div>
                     <div>
@@ -170,6 +170,15 @@
               </div>
             </div>
 
+          <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+              时长：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+              <input name="dura" type="text" value="{$vainfo.duration}"  minlength="2" maxlength="30" class="form-control" required/>
+            </div>
+          </div>
+
             <div class="form-group row">
               <label class="col-xs-12 col-sm-2 control-label">
                 状态：
@@ -218,12 +227,14 @@
   $(function() {
 
     var rval = $("input[name='id']").val();
+    console.log(rval);
     if (rval == 0) {
       $("#dianbo").css('display', 'none');
       $("#nei").css('display', 'none');
 
     } else {
       var rval = $("input[name='r1']:checked").val();
+
       if (rval == 1) {
         $("#dianbo").css('display', 'block');
         $("#nei").css('display', 'block');
