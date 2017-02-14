@@ -1,21 +1,16 @@
 <?php
 namespace Admin\Controller;
-    // use Common\Lib\SavorRedis;
 /**
  * @desc 功能测试类
  *
  */
 use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
-use Admin\Model\CategoModel;
 class ContentController extends BaseController {
-
 
     public function __construct() {
         parent::__construct();
     }
-
-
 
     public function getlist(){
         $artModel = new ArticleModel();
@@ -32,28 +27,26 @@ class ContentController extends BaseController {
 
         $where = "1=1";
         $name = I('titlename');
+        $type = I('type',10,'intval');//10为全部
 
-        $beg_time = I('starttime','');
-        $end_time = I('endtime','');
+        $beg_time = I('begin_time','');
+        $end_time = I('end_time','');
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
-        if($end_time)   $where.=" AND create_time<='$end_time'";
-        if($name)
-        {
+        if($end_time)   $where.=" AND create_time<='$end_time 23:59:59'";
+        if($name){
             $this->assign('name',$name);
             $where .= "	AND title LIKE '%{$name}%'";
-
         }
-
+        if($type!=10){
+            $where .= "	AND type='$type'";
+        }
         $result = $artModel->getList($where,$orders,$start,$size);
-        // foreach($result['list']
-
+        $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
+        $this->assign('timeinfo',$time_info);
+        $this->assign('ctype', $type);
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
-
         $this->display('content');
-
-
     }
-
 
 }
