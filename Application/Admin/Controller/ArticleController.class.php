@@ -274,7 +274,7 @@ update_time='".$dat['update_time']."'";
         if($name){
             //根据id取
             $this->assign('name',$name);
-            $where .= "	AND name LIKE '%{$name}%'";
+            $where .= " AND name LIKE '%{$name}%'";
         }
         $this->assign('list', $datalist);
         $this->assign('page',  $result['page']);
