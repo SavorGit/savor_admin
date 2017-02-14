@@ -40,7 +40,7 @@
                   <div class="fileinput-preview thumbnail" data-trigger="fileinput">
                     <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
                       <if condition="($vainfo['oss_addr'] eq 'NULL') OR $vainfo['oss_addr'] eq ''">
-                        <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idImg" />
+                        <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
                         <else />
                         <img src="{$vainfo.oss_addr}" id="covervideo_idimg" border="0" />
                       </if>
