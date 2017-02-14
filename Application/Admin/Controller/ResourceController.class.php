@@ -13,7 +13,7 @@ class ResourceController extends BaseController{
 	  * 资源列表
 	  */
 	 public function resourceList(){
-		$size   = I('numPerPage',8);//显示每页记录数
+		$size   = I('numPerPage',50);//显示每页记录数
         $start = I('pageNum',1);
         $order = I('_order','id');
         $sort = I('_sort','desc');
@@ -81,11 +81,12 @@ class ResourceController extends BaseController{
 	         $where = ' flag=0';
 	         $orders = 'id desc';
 	         $start = 0;
-	         $size = 8;
+	         $size = 50;
 	         $mediaModel = new \Admin\Model\MediaModel();
 	         $result = $mediaModel->getList($where,$orders,$start,$size);
 	         $this->assign('datalist', $result['list']);
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	         $this->get_file_exts();
 	         $this->assign('hidden_filed',$hidden_filed);
 	         $this->assign('hidden_img',$hidden_img);
 	         $this->assign('oss_host',$oss_host);
