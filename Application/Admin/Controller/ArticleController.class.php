@@ -285,7 +285,7 @@ class ArticleController extends BaseController {
             if($media_id){
                 $mediaModel = new \Admin\Model\MediaModel();
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['media_id']);
-                $vainfo['videooss_addr'] = $oss_host.$mediainfo['oss_addr'];
+                $vainfo['videooss_addr'] = $mediainfo['oss_addr'];
                 $vainfo['vid_type'] = 1;
                 $vainfo['videoname'] = $mediainfo['name'];
             }
@@ -328,7 +328,6 @@ class ArticleController extends BaseController {
             $oss_arr = $mediaModel->find($media_id);
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id']    = $media_id;
-
         }
         if($id){
             if($addtype == 2){

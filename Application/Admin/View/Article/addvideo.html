@@ -1,6 +1,6 @@
 <div class="pageContent">
   <form method="post" action="{$host_name}/article/doAddvideo" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-    <input type="hidden" name="id" value="{$vainfo.id}">
+    <input type="hidden" id="video_id" name="id" value="{$vainfo.id}">
     <div class="pageFormContent modal-body">
       <div class="tabsContent">
         <div class="tab-content">
@@ -225,16 +225,12 @@
 </div>
 <script type="text/javascript">
   $(function() {
-
-    var rval = $("input[name='id']").val();
-    console.log(rval);
+    var rval = $("#video_id").val();
     if (rval == 0) {
       $("#dianbo").css('display', 'none');
       $("#nei").css('display', 'none');
-
     } else {
       var rval = $("input[name='r1']:checked").val();
-
       if (rval == 1) {
         $("#dianbo").css('display', 'block');
         $("#nei").css('display', 'block');
@@ -243,8 +239,6 @@
         $("#nei").css('display', 'none');
       }
     }
-
-
 
     $("input[name='r1']").click(
             function () {

@@ -1,0 +1,118 @@
+[ 2017-02-15T00:00:05+08:00 ] 127.0.0.1 /admin/resource/uploadResource?filed=media_id&rtype=1
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000064s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000030s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000053s ]
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0002s ]
+NOTIC: [8] Undefined variable: actionId /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php 第 208 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php on line 15 and defined /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php 第 258 行.
+NOTIC: [8] Undefined variable: ip /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php 第 261 行.
+SQL: SELECT * FROM `savor_media` WHERE (  flag=0 and type='1' ) ORDER BY id desc LIMIT 0,50   [ RunTime:0.0003s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `savor_media` WHERE (  flag=0 and type='1' ) LIMIT 1   [ RunTime:0.0001s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000033s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000060s ]
+NOTIC: [8] Undefined variable: row /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 15 行.
+NOTIC: [8] Undefined variable: vinfo /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 47 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 106 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 107 行.
+NOTIC: [8] Undefined variable: vlist /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 108 行.
+NOTIC: [8] Undefined variable: multiple /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 229 行.
+NOTIC: [8] Undefined variable: multiple /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Runtime/Cache/Admin/b1453e07b7a07e418a5ff5e992ce9a29.php 第 230 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.004590s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.004615s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000040s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000057s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000030s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000049s ]
+
+[ 2017-02-15T00:00:19+08:00 ] 127.0.0.1 /admin/article/doAddvideo
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000009s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000072s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000027s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000048s ]
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0002s ]
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0003s ]
+NOTIC: [8] Undefined variable: actionId /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php 第 208 行.
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php on line 15 and defined /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php 第 258 行.
+NOTIC: [8] Undefined variable: ip /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/BaseController.class.php 第 261 行.
+NOTIC: [8] Use of undefined constant intval - assumed 'intval' /Applications/XAMPP/xamppfiles/htdocs/www/savor_admin/Application/Admin/Controller/ArticleController.class.php 第 316 行.
+SQL: SELECT * FROM `savor_media` WHERE `id` = 37 LIMIT 1   [ RunTime:0.0002s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = 39 LIMIT 1   [ RunTime:0.0001s ]
+SQL: SELECT * FROM `savor_mb_content` WHERE `title` = '121211222' LIMIT 1   [ RunTime:0.0002s ]
+ERR: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'media_id' in 'field list'
+
