@@ -2,7 +2,7 @@
 namespace Admin\Controller;
     // use Common\Lib\SavorRedis;
 /**
- * @desc 功能测试类
+ * @desc 节目单类
  *
  */
 use Admin\Controller\BaseController;
