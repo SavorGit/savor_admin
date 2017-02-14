@@ -37,6 +37,7 @@
               <th>酒店ID</th>
               <th>酒店名称</th>
               <th>包间名称</th>
+              <th>机顶盒数量</th>
               <th>包间类型</th>
               <th>备注</th>
               <th>创建时间</th>
@@ -53,6 +54,13 @@
               <td data-title="酒店ID">{$vlist.hotel_id}</td>
               <td data-title="酒店名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.name}</td>
+              <td data-title="机顶盒数量">
+              <if condition="$vlist.box_num gt 0">
+              <a title="机顶盒数量" target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$hotel_id}&room_id={$vlist.id}">{$vlist.box_num}</a>
+              <else />
+              {$vlist.box_num}
+              </if>
+              </td>
               <td data-title="包间类型">
 	              <if condition="$vlist.type eq 1"> 包间
 	              <elseif condition="$vlist.type eq 2"/>大厅

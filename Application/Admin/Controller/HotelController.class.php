@@ -284,7 +284,14 @@ class HotelController extends BaseController {
 			$where.=" AND hotel_id='$hotel_id'";
 		}
 		$result = $roomModel->getList($where,$orders,$start,$size);
-		$result['list'] = $hotelModel->hotelIdToName($result['list']);
+		if(!empty($result['list'])){
+		    $boxModel = new \Admin\Model\BoxModel();
+		    foreach ($result['list'] as $k=>$v){
+		        $room_id = $v['id'];
+		        $result['list'][$k]['box_num'] = $boxModel->where("room_id='$room_id'")->count();
+		    }
+		    $result['list'] = $hotelModel->hotelIdToName($result['list']);
+		}
 		$this->assign('hotel_id',$hotel_id);
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
