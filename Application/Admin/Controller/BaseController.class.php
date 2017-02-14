@@ -290,6 +290,49 @@ class BaseController extends Controller {
         return $title_name;
     }
     
+    /**
+     * 获取文件后缀名列表
+     * @param number $type 资源类型1视频2图片3其他
+     */
+    protected function get_file_exts($type=3){
+        $res_files = array();
+        $resource_typeinfo = C('RESOURCE_TYPEINFO');
+        foreach ($resource_typeinfo as $k=>$v){
+            $res_files[$v][] = $k;
+        }
+        $img_ext = $file_ext = '';
+        switch ($type){
+            case 1:
+                if(!empty($res_files[1])){
+                    $file_ext = join(',', $res_files[1]);
+                }
+                break;
+            case 2:
+                if(!empty($res_files[2])){
+                    $img_ext = join(',', $res_files[2]);
+                }
+                break;
+            case 3:
+                if(!empty($res_files[1])){
+                    $file_ext = join(',', $res_files[1]);
+                }
+                if(!empty($res_files[2])){
+                    $img_ext = join(',', $res_files[2]);
+                }
+                break;
+            default:
+                if(!empty($res_files[1])){
+                    $file_ext = join(',', $res_files[1]);
+                }
+                if(!empty($res_files[2])){
+                    $img_ext = join(',', $res_files[2]);
+                }
+                break;
+        }
+        $file_allexts = array('img_ext'=>$img_ext,'file_ext'=>$file_ext);
+        $this->assign('file_allexts',$file_allexts);
+        return $file_allexts;
+    }
     
     /**
      * 处理资源

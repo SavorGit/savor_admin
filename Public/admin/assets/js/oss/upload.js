@@ -143,6 +143,10 @@ function set_upload_param(up, filename, ret)
 
     up.start();
 }
+var imgsR=(imgs == undefined) ? "Image files" : imgs;
+var filesR=(files == undefined) ? "files" : files;
+var imgExtR=(imgExt == undefined) ? "jpg,gif,png,bmp" : imgExt;
+var fileExtR=(fileExt == undefined) ? "mp4,apk,ipa,war" : fileExt;
 
 var uploader = new plupload.Uploader({
 	runtimes : 'html5,flash,silverlight,html4',
@@ -155,8 +159,8 @@ var uploader = new plupload.Uploader({
 
     filters: {
         mime_types : [ //只允许上传图片和zip文件
-        { title : "Image files", extensions : "jpg,gif,png,bmp" }, 
-        { title : "files", extensions: "mp4,apk,ipa,war"}
+        { title : imgsR, extensions : imgExtR}, 
+        { title : filesR, extensions: fileExtR}
         ],
         
         max_file_size : '5000mb', //最大只能上传10mb的文件

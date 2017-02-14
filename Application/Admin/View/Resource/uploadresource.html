@@ -183,10 +183,10 @@ function getImageInfo($this){
     $("#dz-filecontainer .nav-tabs .pull-right a").click();
     if($file.find(".dz-nthumb").size()>0){
       $("#"+hiddenImg).attr("src",$file.find(".dz-nthumb").attr("src")).show();
-      $("#logoName").hide();
+      $("#"+hiddenImg+"name").hide();
     }else{
       $("#"+hiddenImg).hide();
-      $("#logoName").text($file.find(".dz-file").text()).show();
+      $("#"+hiddenImg+"name").text($file.find(".dz-file").text()).show();
     }    
   }else{
     alert("只能选择一张图片");

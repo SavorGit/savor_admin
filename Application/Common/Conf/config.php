@@ -60,9 +60,11 @@ $config['ADS_TYPE'] = array(
 $config['RESOURCE_TYPEINFO'] = array(
     'mp4'=>1,
     'mov'=>1,
+    'war'=>1,
     'jpg'=>2,
-    'gif'=>2,
     'png'=>2,
+    'gif'=>2,
+    'jpeg'=>2,
     'bmp'=>2,
 );
 $config['HOTEL_LEVEL'] = array(

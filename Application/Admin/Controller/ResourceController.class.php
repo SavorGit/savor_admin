@@ -55,6 +55,7 @@ class ResourceController extends BaseController{
 	         $result = $this->handle_resource();
              $this->output($result['message'], $result['url']);
 	     }else{
+	         $this->get_file_exts();
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 	         $this->assign('oss_host',$oss_host);
 	         $this->display('addresource');

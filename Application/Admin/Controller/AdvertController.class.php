@@ -104,6 +104,7 @@ class AdvertController extends BaseController{
              }
              $this->output($message, $url);
 	     }else{
+	         $this->get_file_exts(1);
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 			 $vinfo['type'] = 1;
 			 $this->assign('vinfo',$vinfo);
