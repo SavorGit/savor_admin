@@ -274,7 +274,7 @@ update_time='".$dat['update_time']."'";
         if($name){
             //根据id取
             $this->assign('name',$name);
-            $where .= " AND name LIKE '%{$name}%'";
+            $where .= "	AND name LIKE '%{$name}%'";
         }
         $this->assign('list', $datalist);
         $this->assign('page',  $result['page']);
@@ -483,7 +483,7 @@ update_time='".$dat['update_time']."'";
                 $this->output('失败封面必填!', 'content/getlist',3);
                 die;
             }
-            $ret = $artModel->where('title='.$save['title'])->find();
+            $ret = $artModel->where(array('title'=>$save['title']))->find();
             //  var_dump($ret);
             if($ret){
                 $this->output('失败文章标题存在!', 'content/getlist',3);
