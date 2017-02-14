@@ -318,9 +318,9 @@ class BaseController extends Controller {
             $url = 'resource/resourceList';
             return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
         }
+        $tempInfo = pathinfo($add_mediadata['oss_addr']);
+        $surfix = $tempInfo['extension'];
         if(!$type){
-            $tempInfo = pathinfo($add_mediadata['oss_addr']);
-            $surfix = $tempInfo['extension'];
             $typeinfo = C('RESOURCE_TYPEINFO');
             if(isset($typeinfo[$surfix])){
                 $type = $typeinfo[$surfix];
