@@ -25,9 +25,9 @@ class ResourceController extends BaseController{
         if($name)   $where.= "	AND name LIKE '%{$name}%'";
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
         if($end_time)   $where.=" AND create_time<='$end_time'";
+        $rtype = I('get.rtype',0,'intval');
+        if($rtype)  $where.=" AND type='$rtype'";
         $isbrowse = I('isbrowse');
-        $type = I('rtype','0','intval');
-        if($type)   $where.=" AND type='$type'";
 	 	$mediaModel = new \Admin\Model\MediaModel();
         $result = $mediaModel->getList($where,$orders,$pagenum,$size);
         if($isbrowse){

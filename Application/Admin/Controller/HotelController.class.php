@@ -439,6 +439,7 @@ class HotelController extends BaseController {
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
 		$ads_id = I('post.ads_id');
@@ -461,6 +462,8 @@ class HotelController extends BaseController {
 		$save['hotel_id'] = I('post.hotel_id');
 		if($ads_id){
 			$res_save = $adsModel->where('id='.$ads_id)->save($save);
+			$dat['update_time'] = date("Y-m-d H:i:s");
+			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
 				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
@@ -473,7 +476,9 @@ class HotelController extends BaseController {
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$save['type'] = 3;
 			//刷新页面，关闭当前
+			$dat['update_time'] = date("Y-m-d H:i:s");
 			$res_save = $adsModel->add($save);
+			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
 				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{

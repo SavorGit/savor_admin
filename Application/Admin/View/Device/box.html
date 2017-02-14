@@ -58,7 +58,6 @@
               tv数:{$vlist.tv_num}
               </if>
               </td>
-              
               <td data-title="mac地址">{$vlist.mac}</td>
               <td data-title="切换时间">{$vlist.switch_time}</td>
               <td data-title="音量">{$vlist.volum}</td>
@@ -78,7 +77,7 @@
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/device/editBox?hotel_id={$hotel_id}&id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
+                  <i class="fa fa-pencil"></i>
                   </a>
                  <a data-tip="新增TV" target="dialog" mask="true" href="{$host_name}/device/addTv?box_id={$vlist.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-plus"></i>

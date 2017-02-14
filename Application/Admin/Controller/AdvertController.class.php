@@ -156,8 +156,6 @@ class AdvertController extends BaseController{
 	 }
 	 
 	 public function operateStatus(){
-
-
 	     $adsid = I('request.adsid','0','intval');
 	     $atype = I('request.atype');//1状态 2操作
 	     $adsModel = new \Admin\Model\AdsModel();
@@ -165,11 +163,8 @@ class AdvertController extends BaseController{
 	     switch ($atype){
 	         case 1:
 	             $is_online = I('request.flag');
-
 	             $data = array('state'=>$is_online);
-
 	             $res = $adsModel->where("id='$adsid'")->save($data);
-
 				 if($res){
 	                 $message = '更新状态成功';
 	             }
@@ -190,8 +185,6 @@ class AdvertController extends BaseController{
 	     }else{
 	         $this->output('操作失败', 'advert/adsList');
 	     }
-	     
-	     
 	 }
 	 
 }

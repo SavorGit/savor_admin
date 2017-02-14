@@ -553,20 +553,21 @@ class MenuController extends BaseController {
 
         }
 
-            $result = $mlModel->getList($where,$orders,$start,$size);
+        $result = $mlModel->getList($where,$orders,$start,$size);
 
-            $this->assign('list', $result['list']);
-            $this->assign('page',  $result['page']);
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
 
-            $this->display('getlist');
+        $this->display('getlist');
 
 
     }
 
     public function doaddmen(){
         //表单提交即是新增和导入ajax区分以及与修改进行区分
+
         $id = I('post.id','');
-       // var_dump($_POST);
+        // var_dump($_POST);
 
         //添加到menu_list 表
         $mlModel = new MenuListModel();
@@ -594,21 +595,30 @@ class MenuController extends BaseController {
             $data = array();
             $sql = '';
             $value = '';
-            $sql = "INSERT INTO `savor_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
-            foreach($id_arr as $k=>$v) {
-                $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
-                    'create_time'=>$time_arr[$k],
-                );
-                $i++;
-            }
-            foreach($id_arr as $k=>$v) {
 
-                $value .= "('$v','$name_arr[$k]','$time_arr[$k]','{$save['update_time']}','$id','$i','$dura_arr[$k]'),";
-                $i++;
-            }
-            $sql .= substr($value,0,-1);
+            if(I('post.rightname')==''){
+               $res = true;
+                $data = array();
+            }else{
+                $sql = "INSERT INTO `savor_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
 
-            $res = $mItemModel->execute($sql);
+                foreach($id_arr as $k=>$v) {
+
+                    $value .= "('$v','$name_arr[$k]','$time_arr[$k]','{$save['update_time']}','$id','$i','$dura_arr[$k]'),";
+                    $i++;
+                }
+                $sql .= substr($value,0,-1);
+
+                $res = $mItemModel->execute($sql);
+                foreach($id_arr as $k=>$v) {
+                    $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
+                        'create_time'=>$time_arr[$k],
+                    );
+                    $i++;
+                }
+            }
+
+
             if ($res) {
                 //添加操作日志非针对饭店
                 $type = 2;
@@ -665,7 +675,7 @@ class MenuController extends BaseController {
     public function doaddmenu(){
         //表单提交即是新增和导入ajax区分以及与修改进行区分
         $id = I('post.id','');
-       // var_dump($_POST);
+        // var_dump($_POST);
 
         //添加到menu_list 表
         $mlModel = new MenuListModel();
@@ -713,6 +723,8 @@ class MenuController extends BaseController {
             $sql .= substr($value,0,-1);
 
             $res = $mItemModel->execute($sql);
+            $dat['update_time'] = date('Y-m-d H:i:s');
+            $mlModel->where('id='.$id)->save($dat);
             if ($res) {
                 //添加操作日志非针对饭店
                 $type = 2;
@@ -862,9 +874,7 @@ class MenuController extends BaseController {
     public function addmen() {
 
 
-        if($_POST){
-            $this->assign('bbt',$bbta);
-        }
+
         //左边表单提交，右边表单提交，导入ajax,id修改
         $userInfo = session('sysUserInfo');
         $menu_name = I('get.name'.'');
@@ -928,7 +938,6 @@ class MenuController extends BaseController {
 
 
     public function get_se_left(){
-        var_dump($_POST);
         $m_type = I('post.m_type','0');
 
         $where = "1=1";
@@ -946,7 +955,6 @@ class MenuController extends BaseController {
         $adModel = new AdsModel();
         if ($m_type == 0) {
             $where .= "	AND (`type`) in (1,2) ";
-            var_dump($where);
             $result = $adModel->getWhere($where, $field);
 
             $result[] = array('id'=>0,'name'=>'酒楼宣传片','create_time'=>date("Y-m-d H:i:s"),'duration'=>0);

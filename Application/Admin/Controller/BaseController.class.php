@@ -288,6 +288,7 @@ class BaseController extends Controller {
             }
         }
         return $title_name;
+        
     }
     
     /**
@@ -336,7 +337,6 @@ class BaseController extends Controller {
     
     /**
      * 处理资源
-     * @return array 
      */
     protected function handle_resource(){
         $add_mediadata = array();

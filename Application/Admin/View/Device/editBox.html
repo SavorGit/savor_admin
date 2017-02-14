@@ -4,20 +4,18 @@
     <input type="hidden" name="id" value="{$vinfo.id}">
 
     <div class="pageFormContent modal-body">
-
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           包间名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-        	<select name="room_id" class="form-control bs-select">
+         <select name="room_id" class="form-control bs-select">
         	<volist name="rooms" id="vo">
         		<option value="{$key}" <if condition="$key eq $vinfo['room_id']">selected</if> >{$vo}</option>
 		    </volist>
 		</select>
         </div>
       </div>
-
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           机顶盒名称:

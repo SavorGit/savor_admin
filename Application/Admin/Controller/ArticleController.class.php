@@ -67,7 +67,7 @@ class ArticleController extends BaseController {
     /**
      * 添加文章
      */
-    public function addArticle(){
+    public function addAaddrticle(){
 
         $catModel = new CategoModel();
         $artModel = new ArticleModel();
@@ -107,7 +107,40 @@ class ArticleController extends BaseController {
         $this->display('showcontent');
         $content = ob_get_contents();//取得php页面输出的全部内容
         echo $content;
-        $path = SITE_TP_PATH.'/Public/html';
+        $path = SITE_TP_PATH.'/Public/html/article';
+        if ( !(is_dir($path)) ) {
+            mkdir ( $path, 0777, true );
+        }
+        $fp = fopen($path."/".$id.".html", "w");
+        fwrite($fp, $content);
+        fclose($fp);
+        ob_end_clean();
+    }
+
+
+
+    /*
+    * 显示并生成H5页面地址视频地址
+    */
+    public function showvideocontent($id, $url){
+        $artModel = new ArticleModel();
+        $vinfo = $artModel->where('id='.$id)->find();
+        $content = html_entity_decode($vinfo['content']);
+        $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
+        $replacment = '<img src='.__ROOT__ .'${1}>';
+        $url_arr = explode('?id=', $url);
+        $url_id = $url_arr['1'];
+        //var_dump($url_id);
+        $this->assign('videoaaa', $url_id);
+        $this->assign('videobbb', $url_id);
+        $content =  preg_replace($pattern, $replacment, $content);
+        $this->assign('content',$content);
+        ob_start();
+        $this->display('showvideocontent');
+        $content = ob_get_contents();//取得php页面输出的全部内容
+        //echo $content;
+        $content = str_replace('videobbbqqqqqqqqqq',$url_id,$content);
+        $path = SITE_TP_PATH.'/Public/html/video';
         if ( !(is_dir($path)) ) {
             mkdir ( $path, 0777, true );
         }
@@ -143,16 +176,36 @@ class ArticleController extends BaseController {
             $res = $mbHomeModel->where('content_id='.$artid)->find();
 
             if( $res ){
-                $this->output('文章已经存在', 'content/getlist',2);
+                $this->output('失败文章已经存在', 'content/getlist',2);
             } else {
 
                 $artModel = new  \Admin\Model\ArticleModel();
                 $arr = $artModel->find($artid);
                 $state = $arr['state'];
                 if ($state != 2) {
-                    $this->output('审核状态不允许', 'content/getlist',2);
+                    $this->output('失败审核状态不允许', 'content/getlist',2);
                 }
+
+                //期刊
+                $mbperModel = new \Admin\Model\MbPeriodModel();
+                $num = $mbperModel->count();
+
+                $time = time();
+                $dat['period'] = date("YmdHis",$time);
+                $dat['update_time'] = date("Y-m-d H:i:s",$time);
+                if($num>0){
+                    $sql = "update savor_mb_period set period=".$dat['period'].",
+update_time='".$dat['update_time']."'";
+
+                    $rest = $mbperModel->execute($sql);
+
+                }else{
+                    $mbperModel->add($dat);
+                }
+
+
                 $mbHomeModel = new \Admin\Model\HomeModel();
+
                 $userInfo = session('sysUserInfo');
                 $save[] = array();
                 $md5 = $arr['vod_md5'];
@@ -167,6 +220,9 @@ class ArticleController extends BaseController {
 
                 $res = $mbHomeModel->add($save);
                 if($res){
+
+
+
                     $this->output('操作成功!', 'article/homemanager',2);
                 }else{
                     $this->output('操作失败!', 'content/getlist');
@@ -218,7 +274,7 @@ class ArticleController extends BaseController {
         if($name){
             //根据id取
             $this->assign('name',$name);
-            $where .= "	AND name LIKE '%{$name}%'";
+            $where .= " AND name LIKE '%{$name}%'";
         }
         $this->assign('list', $datalist);
         $this->assign('page',  $result['page']);
@@ -265,7 +321,7 @@ class ArticleController extends BaseController {
         if ($acctype && $id){
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
-            $media_id = $vainfo['media_key_id'];
+            $media_id = $vainfo['media_id'];
             $vainfo['oss_addr'] = $oss_host.$vainfo['img_url'];
             $vainfo['vid_type'] = 2;
             if($media_id){
@@ -296,7 +352,7 @@ class ArticleController extends BaseController {
 
         $save['source']    = I('post.source','');
         $save['content']    = I('post.content','','htmlspecialchars');
-        $save['type']    = I('post.ctype','','intval');
+        $save['type']    = 3;
         $save['state']    = I('post.state','0','intval');
         $save['tx_url'] = I('post.yunhref','');
         $save['update_time'] = date('Y-m-d H:i:s');
@@ -310,25 +366,39 @@ class ArticleController extends BaseController {
             //$save['oss_addr'] = $oss_addr;
             $save['img_url'] = $oss_addr;
             $save['type'] = 1;
+
         }else{
-            $this->output('封面必填!', 'article/addvideo',3);
+
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
             //$save['oss_addr'] = $oss_arr['oss_addr'];
             $save['duration'] = $oss_arr['duration'];
             $save['vod_md5'] = $oss_arr['md5'];
-            $save['media_key_id']    = $media_id;
+            $save['media_id']    = $media_id;
 
         }
         if($id){
+            $save['content_url'] = 'html/video/'.$id.'.html';
+
             if($artModel->where('id='.$id)->save($save)){
-                $this->showcontent($id);
+                $this->showvideocontent($id, $save['tx_url']);
                 $this->output('操作成功!', 'content/getlist');
             }else{
                 $this->output('操作失败!', 'content/getlist');
             }
         }else{
+            if(!$covermedia_id) {
+                $this->output('失败封面必填!', 'article/addvideo', 3);
+                die;
+            }
+
+
+            $ret = $artModel->where(array('title'=>$save['title']))->find();
+            if($ret){
+                $this->output('失败文章标题存在!', 'content/getlist',3);
+            }
+
             $save['type'] = 3;
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
@@ -336,8 +406,8 @@ class ArticleController extends BaseController {
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $id = $artModel->getLastInsID();
-                $this->showcontent($id);
-                $dat['content_url'] = 'html/'.$id.'.html';
+                $this->showvideocontent($id, $save['tx_url']);
+                $dat['content_url'] = 'html/video/'.$id.'.html';
                 $artModel->where('id='.$id)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
@@ -346,7 +416,38 @@ class ArticleController extends BaseController {
         }
     }
 
+
+    /**
+     * 添加文章
+     */
+    public function addArticle(){
+
+        $catModel = new CategoModel();
+        $artModel = new ArticleModel();
+        $userInfo = session('sysUserInfo');
+        $uname = $userInfo['username'];
+        $this->assign('uname',$uname);
+        $id = I('get.id');
+        $acctype = I('get.acttype');
+
+        $vinfo['state'] = 0;
+        $this->assign('vinfo',$vinfo);
+        if ($acctype && $id){
+            $vinfo = $artModel->where('id='.$id)->find();
+            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
+            $this->assign('vinfo',$vinfo);
+        }
+        $where = "1=1";
+        $field = 'id,name';
+        $vinfo = $catModel->getWhere($where, $field);
+        $this->assign('vcainfo',$vinfo);
+        $this->display('addart');
+
+    }
+
     public function doAddarticle(){
+
         $artModel = new ArticleModel();
         $id                  = I('post.id');
         $save                = [];
@@ -355,7 +456,7 @@ class ArticleController extends BaseController {
         $save['source']    = I('post.source','');
 
         $save['content']    = I('post.content','htmlspecialchars');
-        $save['type']    = I('post.ctype','1','intval');//0纯文本，1图文，2图集，3视频
+        $save['type']    = I('post.ctype','','intval');
         $save['state']    = I('post.state','0','intval');
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
@@ -367,7 +468,10 @@ class ArticleController extends BaseController {
         $oss_addr = $oss_addr['oss_addr'];
         $save['img_url'] = $oss_addr;
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+       // $oss_addr = $image_host.$oss_addr;
+
         if($id){
+            $save['content_url'] = 'html/article/'.$id.'.html';
             if($artModel->where('id='.$id)->save($save)){
                 $this->showcontent($id);
                 $this->output('操作成功!', 'content/getlist');
@@ -376,7 +480,13 @@ class ArticleController extends BaseController {
             }
         }else{
             if(!$mediaid){
-                $this->output('封面必填!', 'article/doAddarticle',3);
+                $this->output('失败封面必填!', 'content/getlist',3);
+                die;
+            }
+            $ret = $artModel->where('title='.$save['title'])->find();
+            //  var_dump($ret);
+            if($ret){
+                $this->output('失败文章标题存在!', 'content/getlist',3);
             }
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
@@ -385,7 +495,7 @@ class ArticleController extends BaseController {
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
                 $this->showcontent($arid);
-                $dat['content_url'] = 'html/'.$arid.'.html';
+                $dat['content_url'] = 'html/article/'.$arid.'.html';
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
