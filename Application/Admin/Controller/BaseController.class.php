@@ -364,13 +364,11 @@ class BaseController extends Controller {
         }
         $tempInfo = pathinfo($add_mediadata['oss_addr']);
         $surfix = $tempInfo['extension'];
-        if(!$type){
-            $typeinfo = C('RESOURCE_TYPEINFO');
-            if(isset($typeinfo[$surfix])){
-                $type = $typeinfo[$surfix];
-            }else{
-                $type = 3;
-            }
+        $typeinfo = C('RESOURCE_TYPEINFO');
+        if(isset($typeinfo[$surfix])){
+            $type = $typeinfo[$surfix];
+        }else{
+            $type = 3;
         }
         $fileinfo = '';
         $accessKeyId = C('OSS_ACCESS_ID');
