@@ -134,6 +134,15 @@
               </div>
             </div>
 
+          <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+              时长：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+              <input alt="数字"  name="dura" type="number" value="{$vainfo.duration}"  minlength="1" maxlength="30" class="form-control" required/>
+            </div>
+          </div>
+
 
 
 
@@ -170,14 +179,7 @@
               </div>
             </div>
 
-          <div class="form-group row">
-            <label class="col-xs-12 col-sm-2 control-label">
-              时长：
-            </label>
-            <div class="col-xs-12 col-sm-10">
-              <input name="dura" type="text" value="{$vainfo.duration}"  minlength="2" maxlength="30" class="form-control" required/>
-            </div>
-          </div>
+
 
             <div class="form-group row">
               <label class="col-xs-12 col-sm-2 control-label">
@@ -223,7 +225,10 @@
 
   </form>
 </div>
+<iframe id="id_iframe" name="id_iframe" style="display:none;"></iframe>
 <script type="text/javascript">
+
+
   $(function() {
     var rval = $("#video_id").val();
     if (rval == 0) {

@@ -94,10 +94,12 @@ class ArticleController extends BaseController {
     public function showcontent($id){
         $artModel = new ArticleModel();
         $vinfo = $artModel->where('id='.$id)->find();
+        $title = $vinfo['title'];
         $content = html_entity_decode($vinfo['content']);
         $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
         $replacment = '<img src='.__ROOT__ .'${1}>';
         $content =  preg_replace($pattern, $replacment, $content);
+        $this->assign('contenttitle', $title);
         $this->assign('content',$content);
         ob_start();
         $this->display('showcontent');
@@ -121,11 +123,13 @@ class ArticleController extends BaseController {
     public function showvideocontent($id, $url){
         $artModel = new ArticleModel();
         $vinfo = $artModel->where('id='.$id)->find();
+        $title = $vinfo['title'];
         $content = html_entity_decode($vinfo['content']);
         $pattern="/<[img|IMG].*?src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?>/";
         $replacment = '<img src='.__ROOT__ .'${1}>';
         $url_arr = explode('?id=', $url);
         $url_id = $url_arr['1'];
+        $this->assign('contenttitle', $title);
         $this->assign('videoaaa', $url_id);
         $this->assign('videobbb', $url_id);
         $content =  preg_replace($pattern, $replacment, $content);
