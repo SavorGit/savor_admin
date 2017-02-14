@@ -144,7 +144,7 @@ class ResourceController extends BaseController{
 	                 $url = 'resource/resourceList';
 	             }
 	         }
-	         $this->output($message, $url,2);
+	         $this->output($message, $url);
 	     }else{
 	         $vinfo = $mediaModel->getMediaInfoById($media_id);
 	         $this->assign('vinfo',$vinfo);

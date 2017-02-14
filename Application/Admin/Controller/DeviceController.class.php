@@ -32,28 +32,33 @@ class DeviceController extends BaseController{
         $where = "1=1";
         $name = I('name');
         $hotel_id = I('hotel_id',0,'intval');
+        $room_id = I('room_id',0,'intval');
         if($name){
         	$this->assign('name',$name);
         	$where .= "	AND name LIKE '%{$name}%'";
         }
-        if($hotel_id){
+        if($room_id){
+            $where.=" AND room_id='$room_id'";
+            $result = $boxModel->getList($where,$orders,$start,$size);
+        }elseif($hotel_id){
             $hotelModel = new \Admin\Model\HotelModel();
             $rooms = $hotelModel->getStatisticalNumByHotelId($hotel_id,'room');
             if($rooms['room_num']){
                 $rooms_str = join(',', $rooms['room']);
                 $where.=" AND room_id in ($rooms_str)";
                 $result = $boxModel->getList($where,$orders,$start,$size);
-                if(!empty($result['list'])){
-                    $tvModel = new \Admin\Model\TvModel();
-                    foreach ($result['list'] as $k=>$v){
-                        $box_id = $v['id'];
-                        $tv_num = $tvModel->where("box_id='$box_id'")->count();
-                        $result['list'][$k]['tv_num'] = $tv_num;
-                    }
-                }
-                $result['list'] = $boxModel->roomIdToRoomName($result['list']);
             }
         }
+        if(!empty($result['list'])){
+            $tvModel = new \Admin\Model\TvModel();
+            foreach ($result['list'] as $k=>$v){
+                $box_id = $v['id'];
+                $tv_num = $tvModel->where("box_id='$box_id'")->count();
+                $result['list'][$k]['tv_num'] = $tv_num;
+            }
+            $result['list'] = $boxModel->roomIdToRoomName($result['list']);
+        }
+   		$this->assign('room_id', $room_id);
    		$this->assign('hotel_id', $hotel_id);
    		$this->assign('list', $result['list']);
    	    $this->assign('page',  $result['page']);
