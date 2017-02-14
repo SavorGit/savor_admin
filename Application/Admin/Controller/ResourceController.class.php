@@ -24,7 +24,10 @@ class ResourceController extends BaseController{
         $where = "1=1";
         if($name)   $where.= "	AND name LIKE '%{$name}%'";
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
-        if($end_time)   $where.=" AND create_time<='$end_time'";
+        if($end_time){
+            $end_time = "$end_time 23:59:59";
+            $where.=" AND create_time<='$end_time'";
+        }
         $rtype = I('get.rtype',0,'intval');
         if($rtype){
             $where.=" AND type='$rtype'";
