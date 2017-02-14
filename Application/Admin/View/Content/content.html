@@ -151,14 +151,14 @@
                 </div>
 
                 <div class="tools-edit">
-                  <a data-tip="预览页面" target="_blank" mask="true" <if condition="$vlist.type eq 1">
+                  <a data-tip="" data-original-title="预览" data-toggle="view" data-target="#modal-view" <if condition="$vlist.type eq 1">
                   href="__PUBLIC__/html/article/{$vlist.id}.html"
                     <elseif condition="$vlist.type eq 3"/>
                   href="__PUBLIC__/html/video/{$vlist.id}.html"
                     <else/>  href="__PUBLIC__/html/article/{$vlist.id}.html"
                   </if>
                      target="_blank"  class="btn btn-success btn-icon">
-                    <i class="icon-list"></i>
+                    <i class="fa fa-eye"></i>
                   </a>
                   <a data-tip="添加至首页2" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
                     <i class="fa fa-bullhorn"></i>
