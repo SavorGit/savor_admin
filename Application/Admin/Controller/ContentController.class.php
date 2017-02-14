@@ -23,7 +23,7 @@ class ContentController extends BaseController {
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','create_time');
+        $order = I('_order','update_time');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
@@ -43,6 +43,7 @@ class ContentController extends BaseController {
             $where .= "	AND title LIKE '%{$name}%'";
 
         }
+
         $result = $artModel->getList($where,$orders,$start,$size);
         // foreach($result['list']
 
