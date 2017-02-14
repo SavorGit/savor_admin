@@ -111,7 +111,6 @@ class VersionController extends BaseController{
 
 	        $order = 'id desc';
 	        $datalist = $versionModel->getAllList($filed, $where, $order);
-			//var_dump($datalist);
 	        $android = array();
 	        $ios = array();
 	        $version = array();
@@ -119,7 +118,6 @@ class VersionController extends BaseController{
 	            $version_code = $v['version_code'];
 	            $version[$v['device_type']][$version_code] = $v['version_name'];
 	        }
-			//var_dump($version);
 	        if($name=='client'){
 	            $android = $version[3];
 	            krsort($android);
@@ -128,7 +126,7 @@ class VersionController extends BaseController{
 	            $android_min = $android;
 	            $android_vinfo = array(
 	                'min'=>$android_min,
-	                'max'=>$android_max,
+	                'max'=>$android_max
 	            );
 	            $ios = $version[4];
 	            ksort($ios);
@@ -137,10 +135,11 @@ class VersionController extends BaseController{
 	            $ios_max = $ios;
 	            $ios_vinfo = array(
 	                'min'=>$ios_min,
-	                'max'=>$ios_max,
+	                'max'=>$ios_max
 	            );
 	            $devicedata = array('3'=>$android_vinfo,'4'=>$ios_vinfo);
-	            $this->assign('devicedata',json_encode($devicedata));
+	            $devicedata = json_encode($devicedata,true);
+	            $this->assign('devicedata',$devicedata);
 	            $this->assign('android_vinfo',$android_vinfo);
 	        }else{
 	            if(isset($device_condition[$name])){
