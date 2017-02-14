@@ -62,12 +62,16 @@ class MenuController extends BaseController {
         $menuid = I('post.menuid');
         $menuname = I('post.menuname');
         $hotel_id_arr = I('post.hoid');
-        $hotel_name = I('post.honame');
         $hotelModel = new HotelModel;
         $menuHoModel = new MenuHotelModel();
         $menuLogModel = new MenuListLogModel();
         $menuliModel = new MenuListModel();
         $mItemModel = new MenuItemModel();
+        $hotel_name = array();
+        foreach($hotel_id_arr as $hv){
+            $h_name =$hotelModel->find($hv);
+            $hotel_name[] = $h_name['name'];
+        }
         $com_arr = array_combine($hotel_id_arr, $hotel_name);
 
         $i = 1;
