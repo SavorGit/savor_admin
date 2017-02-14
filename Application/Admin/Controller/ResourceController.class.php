@@ -26,7 +26,9 @@ class ResourceController extends BaseController{
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
         if($end_time)   $where.=" AND create_time<='$end_time'";
         $rtype = I('get.rtype',0,'intval');
-        if($rtype)  $where.=" AND type='$rtype'";
+        if($rtype){
+            $where.=" AND type='$rtype'";
+        }
         $isbrowse = I('isbrowse');
 	 	$mediaModel = new \Admin\Model\MediaModel();
         $result = $mediaModel->getList($where,$orders,$pagenum,$size);
@@ -85,6 +87,7 @@ class ResourceController extends BaseController{
 	          */
 	         $hidden_filed = I('get.filed','media_id');
 	         $rtype = I('get.rtype',0);
+	         $autofill = I('get.autofill',0);
 	         $where = ' flag=0';
 	         if($rtype){
 	             $where.=" and type='$rtype'";	             
@@ -101,6 +104,7 @@ class ResourceController extends BaseController{
 	         }else{
 	             $this->get_file_exts();
 	         }
+	         $this->assign('autofill',$autofill);
 	         $this->assign('rtype',$rtype);
 	         $this->assign('hidden_filed',$hidden_filed);
 	         $this->assign('oss_host',$oss_host);

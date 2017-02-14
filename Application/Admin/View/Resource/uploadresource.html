@@ -7,6 +7,7 @@
     </ul>
     <div class="tab-content">
     <div id="dropbase" class="tab-pane fade active in pageContent">
+    	<input id="autofill" type="hidden" value="{$autofill}">
     	<input id="hidden_filed" type="hidden" value="{$hidden_filed}">
     	<input id="up_resourcetype" type="hidden" value="{$rtype}">
     	<input id="oss_host" type="hidden" value="{$oss_host}">
@@ -183,6 +184,7 @@ function getImageInfo($this){
   $file.addClass("active");
   var $ck = $('#files input:checked')
   var count = $ck.length;
+  var autofill = $("#autofill").val();
   if(count==1){
     //alert($ck.val());
     $("#"+hiddenType).val($ck.val());
@@ -192,7 +194,12 @@ function getImageInfo($this){
       $("#"+hiddenImg+"name").hide();
     }else{
       $("#"+hiddenImg).hide();
-      $("#"+hiddenImg+"name").text($file.find(".dz-file").text()).show();
+      if(autofill==1){
+    	  var autofillname = $file.find(".dz-file").text();
+    	  $("#"+hiddenImg+"name").val($.trim(autofillname));
+      }else{
+    	  $("#"+hiddenImg+"name").text($file.find(".dz-file").text()).show(); 
+      }
     }    
   }else{
     alert("只能选择一张图片");
