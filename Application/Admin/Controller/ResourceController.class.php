@@ -96,7 +96,11 @@ class ResourceController extends BaseController{
 	         $result = $mediaModel->getList($where,$orders,$start,$size);
 	         $this->assign('datalist', $result['list']);
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-	         $this->get_file_exts();
+	         if($rtype){
+	             $this->get_file_exts($rtype);
+	         }else{
+	             $this->get_file_exts();
+	         }
 	         $this->assign('rtype',$rtype);
 	         $this->assign('hidden_filed',$hidden_filed);
 	         $this->assign('oss_host',$oss_host);
