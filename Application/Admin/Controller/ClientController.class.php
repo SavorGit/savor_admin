@@ -17,23 +17,24 @@ class ClientController extends Controller {
             $articleModel = new \Admin\Model\ArticleModel();
             $vinfo = $articleModel->where('id='.$id)->find();
             $vinfo['content'] = html_entity_decode($vinfo['content']);
+            if($vinfo['type']==1){//图文
+                $display_html = 'showcontent';
+            }elseif($vinfo['type']==3){
+                $tx_url = $vinfo['tx_url'];
+                $url_arr = explode('?id=', $tx_url);
+                $url_id = $url_arr['1'];
+                $play_js = "(function(){ var option ={'auto_play':'0','file_id':'$url_id','app_id':'1252891964','width':1280,'height':720,'https':1};new qcVideo.Player('id_video_container_$url_id', option ); })()";
+                $this->assign('videourl_id', $url_id);
+                $this->assign('play_js', $play_js);
+                $display_html = 'showvideocontent';
+            }else{
+                $display_html = 'showcontent';
+            }
         }else{
             $vinfo = array();
+            $display_html = 'showcontent';
         }
         $this->assign('vinfo',$vinfo);
-        if($vinfo['type']==1){//图文
-            $display_html = 'showcontent';
-        }elseif($vinfo['type']==3){
-            $tx_url = $vinfo['tx_url'];
-            $url_arr = explode('?id=', $tx_url);
-            $url_id = $url_arr['1'];
-            $play_js = "(function(){ var option ={'auto_play':'0','file_id':'$url_id','app_id':'1252891964','width':1280,'height':720,'https':1};new qcVideo.Player('id_video_container_$url_id', option ); })()";
-            $this->assign('videourl_id', $url_id);
-            $this->assign('play_js', $play_js);
-            $display_html = 'showvideocontent';
-        }else{
-            $display_html = 'showcontent';
-        }
         $this->display($display_html);
     }
 }
