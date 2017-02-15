@@ -192,6 +192,9 @@ class HotelController extends BaseController {
 			}
 			$res_hotelext = $hotelModel->getMacaddrByHotelId($id);
 			$vinfo['mac_addr'] = $res_hotelext['mac_addr'];
+			$vinfo['ip_local'] = $res_hotelext['ip_local'];
+			$vinfo['ip'] = $res_hotelext['ip'];
+			$vinfo['server_location'] = $res_hotelext['server_location'];
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -235,14 +238,20 @@ class HotelController extends BaseController {
 		}
 		if($hotel_id){
 		    $mac_addr = I('post.mac_addr','','trim');
+			$ip_local = I('post.ip_local','','trim');
+			$ip = I('post.ip','','trim');
+			$server_location = I('post.server_location','','trim');
 		    $res_hotelext = $hotelModel->getMacaddrByHotelId($hotel_id);
 		    $model = M('hotel_ext');
-		    $data = array('mac_addr'=>$mac_addr);
+		    $data['mac_addr'] = $mac_addr;
+			$data['ip_local'] = $ip_local;
+			$data['ip'] = $ip;
+			$data['server_location'] = $server_location;
 		    if(empty($res_hotelext)){
 		        $data['hotel_id'] = $hotel_id;
 		        $model->add($data);
 		    }else{
-		        if($mac_addr!=$res_hotelext['mac_addr']){
+		        if($mac_addr!=$res_hotelext['mac_addr'] || $ip_local!=$res_hotelext['ip_local'] || $ip!=$res_hotelext['ip'] || $server_location!=$res_hotelext['server_location'] ){
 		            $model->where('id='.$res_hotelext['id'])->save($data);
 		        }
 		    }
