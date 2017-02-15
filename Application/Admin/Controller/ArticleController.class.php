@@ -157,7 +157,22 @@ class ArticleController extends BaseController {
         }
         return $this->display('addhome');
     }
-
+    public function delhome(){
+        $id = I('get.id');
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        if($id){
+//             $vinfo = $mbHomeModel->where(array('id'=>$id))->find();
+//             $this->assign('vinfo',$vinfo);
+            $res_save=$mbHomeModel->where('id='.$id)->delete();
+            if($res_save){
+                $this->output('操作成功!', 'homemanager',1);
+            }else{
+                $this->output('操作失败!', 'homemanager');
+            }
+            
+        }
+//         return $this->display('addhome');
+    }
     public function doaddhome(){
         //文章id
         $mbHomeModel = new \Admin\Model\HomeModel();
