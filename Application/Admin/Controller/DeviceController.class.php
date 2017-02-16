@@ -134,6 +134,7 @@ class DeviceController extends BaseController{
 		    $vinfo['box_name'] = $temp['name'];
 		    $vinfo['box_id'] = $box_id;
 			$vinfo['state'] = 1;
+			$vinfo['tv_source'] = 1;
 		}
 
 		$this->assign('vinfo',$vinfo);
@@ -152,6 +153,9 @@ class DeviceController extends BaseController{
 		$this->assign('room_name',$temp['name']);
 		$this->assign('room_id',$room_id);
 		$vinfo['state'] = 2;
+		$vinfo['name'] = $temp['name'];
+		$vinfo['switch_time'] = 30;
+		$vinfo['volum'] = 50;
 		$this->assign('vinfo', $vinfo);
 		return $this->display('addBox');
 	}

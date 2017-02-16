@@ -356,6 +356,7 @@ class HotelController extends BaseController {
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
 
+
 		$RoomModel = new \Admin\Model\RoomModel();
 		if($id){
 			if($RoomModel->where('id='.$id)->save($save)){
@@ -365,6 +366,7 @@ class HotelController extends BaseController {
 			}
 		}else{
 			$save['create_time'] = date('Y-m-d H:i:s');
+			$save['flag']        = 1;
 			if($RoomModel->add($save)){
 				$this->output('操作成功!', 'hotel/room');
 			}else{
