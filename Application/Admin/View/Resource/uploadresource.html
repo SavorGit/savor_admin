@@ -123,11 +123,14 @@
             已选择<strong>0</strong>图片
           </div>
         </div>
+
+
       </div>
     </div>
   </div>
 </div>
 <script>
+
 var imgs="Image files";
 var files="files";
 var imgExt="{$file_allexts.img_ext}";
@@ -161,12 +164,16 @@ $("#saveImg").click(function(){
         },
         success:function(result){
           //console.log($("#resource_type").val());
+
             if(result.code==10000){
                 $("#"+hiddenType).val(result.data.media_id);
                 $("#"+hiddenImg).attr("src",result.data.path).show();
+
                 $("#dz-filecontainer .nav-tabs .pull-right a").click();
             }else{
                $("#dz-filecontainer .nav-tabs .pull-right a").click();
+                alert('上传文件名称已经存在');
+
             }
         },
         error:function(){
@@ -241,6 +248,7 @@ $("#files .dz-file-viewport").scroll(function(){
       type:"get",
       dataType:"json",
       success:function(result){
+
         if(result.code==10000&&result.data.length>0){          
           var str="";
           for(var i in result.data){
