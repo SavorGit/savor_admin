@@ -72,13 +72,17 @@ class ResourceController extends BaseController{
 	     $code = 10001;
 	     $data = array();
 	     if(IS_POST){
+	         $msg = '';
 	         $result = $this->handle_resource();
 	         if($result['media_id']){
 	             $code = 10000;
 	             $data['media_id'] = $result['media_id'];
 	             $data['path'] = $result['oss_addr'];
+	         }else{
+	             $code = 10001;
+	             $msg = $result['message'];
 	         }
-	         $res_data = array('code'=>$code,'data'=>$data);
+	         $res_data = array('code'=>$code,'data'=>$data,'msg'=>$msg);
 	         echo json_encode($res_data);
 	         exit;
 	     }else{
