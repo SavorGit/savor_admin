@@ -175,7 +175,6 @@ $("#saveImg").click(function(){
                 $("#dz-filecontainer .nav-tabs .pull-right a").click();
             }else{
                alert(result.msg);
-               $("#dz-filecontainer .nav-tabs .pull-right a").click();
             };      
                        
         },
@@ -235,31 +234,18 @@ $(document).keyup(function(){
   cntrlIsPressed = false;
 });
 $("#files input").click(function(){
-  alert(444);
   if(!cntrlIsPressed){
     $('#files').find('input').prop("checked",false);
     $(this).prop("checked",true); 
     getImageInfo($(this));    
   }  
 })
-// $(document).on("click","#files input",function(){
-//   alert(444);
-//   if(!cntrlIsPressed){
-//     $('#files').find('input').prop("checked",false);
-//     $(this).prop("checked",true); 
-//     getImageInfo($(this));    
-//   }  
-// });
 var pageNum=2;
 var rtype=$("#up_resourcetype").val();
 $("#files .dz-file-viewport").scroll(function(){
-  //console.log("scroll")
   var t = $("#file-list").height();
   var c = $(this).height();
   var s = $(this).scrollTop();
-  // var n = $("#files{$multiple} .loadpoint").data("next");
-  // var l = $("#files{$multiple} .loadpoint").data("load");
-  //console.log(s+"-"+(t-c))
   if((t-c) <= s){
     $.ajax({
       url:"{$host_name}/resource/resourceList?isbrowse=1&pageNum="+pageNum+"&rtype="+rtype,
