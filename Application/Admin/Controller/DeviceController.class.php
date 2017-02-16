@@ -199,6 +199,7 @@ class DeviceController extends BaseController{
 		$save['tv_source'] = I('post.tv_source','','trim');
 		$save['box_id']    = I('post.box_id','','intval');
 		$tvModel = new TvModel;
+		$save['flag'] = 0;
 		if($id){
 			if($tvModel->where('id='.$id)->save($save)){
 				$this->output('更新成功!', 'device/box');
@@ -228,6 +229,7 @@ class DeviceController extends BaseController{
 		$save['switch_time'] = I('post.switch_time','','trim');
 		$save['volum']       = I('post.volum','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
+		$save['flag'] = 0;
 		$boxModel = new BoxModel;
 		if($id){
 			if($boxModel->where('id='.$id)->save($save)){

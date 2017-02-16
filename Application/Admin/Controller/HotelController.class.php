@@ -355,7 +355,7 @@ class HotelController extends BaseController {
 		$save['state']       = I('post.state','','intval');
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
-
+		$save['flag']        = 0;
 
 		$RoomModel = new \Admin\Model\RoomModel();
 		if($id){
@@ -366,7 +366,7 @@ class HotelController extends BaseController {
 			}
 		}else{
 			$save['create_time'] = date('Y-m-d H:i:s');
-			$save['flag']        = 1;
+			$save['flag']        = 0;
 			if($RoomModel->add($save)){
 				$this->output('操作成功!', 'hotel/room');
 			}else{
@@ -468,6 +468,8 @@ class HotelController extends BaseController {
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+
+
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
@@ -477,6 +479,7 @@ class HotelController extends BaseController {
 
 		$save = [];
 		$save['description'] = I('post.descri');
+		$save['duration'] = I('post.duration');
 		$save['name'] = I('post.adsname');
 		if($covermedia_id){
 			$oss_arr = $mediaModel->find($covermedia_id);
@@ -485,7 +488,6 @@ class HotelController extends BaseController {
 		}
 		if($media_id){
 			$oss_arr = $mediaModel->find($media_id);
-			$save['duration'] = $oss_arr['duration'];
 			$save['media_id']    = $media_id;
 		}
 		$save['hotel_id'] = I('post.hotel_id');
