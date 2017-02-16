@@ -157,14 +157,15 @@ $(function(){
 
     var host_name = $("#host_name").val();
     $('#modal-file-ueditor').on('show.bs.modal',function(){
-        $(this).find('.modal-content').load(host_name+'/uploadmgr/uploadmgrList?browseFile=true&s_type=image&multiple=2')
+        //$(this).find('.modal-content').load(host_name+'/uploadmgr/uploadmgrList?browseFile=true&s_type=image&multiple=2')
+        $(this).find('.modal-content').load(host_name+'/resource/uploadResource?filed=ueditor&rtype=2')
     });
     $('#modal-file-ueditor').on('hidden.bs.modal',function(){
         $(this).find('.modal-content').html("");
     });
 
     $('#modal-attachfiles').on('show.bs.modal',function(){
-        $(this).find('.modal-content').load(host_name+'/uploadmgr/uploadmgrList?browseFile=true&s_type=other&multiple=2')
+        $(this).find('.modal-content').load(host_name+'/resource/uploadResource?filed=ueditor&rtype=2')
     });
     $('#modal-attachfiles').on('hidden.bs.modal',function(){
         $(this).find('.modal-content').html("");
