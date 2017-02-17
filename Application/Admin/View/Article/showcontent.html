@@ -33,48 +33,21 @@
 
 </body>
 <script>
-  $(document).ready(function() {
-
-    $("#topLabel").hide();
-    $("#img_dv").hide();
+  
     var urlResource = window.location.search.split('?');
-    if (urlResource.length <= 1) {
-      $("#img_dv").hide();
-      return;
-    }
+    // alert(window.location.search);
     var result = urlResource[1].split('=');
-    if (result[0] == 'location' && result.length > 0) {
-      if (result[1] == 'in') {
-        //当前是 点播状态 隐藏 播放器video_dv 下载条topLabel
-        $(".contentD").hide();
-        $("#topLabel").hide();
-        $("#img_dv").show();
-        $('#img_dv').css("margin-top","15px");
-        $('#contentView').css("margin-top","1px");
-      }else if  (result[1] == 'read') {
+    if (result[0] == 'location' &&result[1] == 'newRead') {
         //当前是 阅读状态 隐藏下载条topLabel
-        $("#topLabel").hide();
-        $("#img_dv").hide();
+    
+        var topLabel=document.getElementById("topLabel");
+        topLabel.style.display="none";
         $('#contentView').css("margin-top","10px");
-      }else if  (result[1] == 'newRead') {
-        //当前是 阅读状态 隐藏下载条topLabel
-        $(".contentD").remove();
-        $("#topLabel").hide();
-        $("#img_dv").hide();
-        $('#contentView').css("margin-top","10px");
-      }else{
-      }
-    }else{
     }
-  });
-</script>
-<script>
-  $(document).ready(function() {
     var button = document.getElementById('topLabel');
     button.onclick = function (){
-      window.location.href = 'http://download.savorx.cn/xiazai.html';
+      window.location.href = 'http://rerdian.com/d';
     }
-  });
 </script>
 </html>
 
