@@ -83,7 +83,7 @@ class MenuController extends BaseController {
 
         if ($hoty == 2) {
 
-            $sql = "SELECT MAX(create_time) as time  FROM ".$be_prefix."_menu_hotel WHERE menu_id=".$menuid;
+            $sql = "SELECT MAX(create_time) as time  FROM `savor_menu_hotel` WHERE menu_id=".$menuid;
             $crt = $menuHoModel->query($sql);
             $timec = $crt[0]['time'];
         }
@@ -133,8 +133,8 @@ class MenuController extends BaseController {
         foreach ($menu_arr as $k=>$v) {
 
             $bak_ho_arr = array();
-            $sql = "SELECT hotel_id FROM $be_prefix"."_menu_hotel WHERE create_time=
-                (SELECT MAX(create_time) FROM ".$be_prefix."_menu_hotel WHERE menu_id={$v['id']})";
+            $sql = "SELECT hotel_id FROM `savor_menu_hotel` WHERE create_time=
+                (SELECT MAX(create_time) FROM `savor_menu_hotel` WHERE menu_id={$v['id']})";
            // echo $sql;
 
             $bak_hotel_id_arr = $menuHoModel->query($sql);
@@ -363,8 +363,8 @@ class MenuController extends BaseController {
             foreach ($include_v as $iv) {
                 $menuliModel = new MenuListModel();
 
-                $sql = "SELECT hotel_id FROM".$befo."_menu_hotel WHERE create_time=
-                (SELECT MAX(create_time) FROM ".$befo."_menu_hotel WHERE menu_id={$iv})";
+                $sql = "SELECT hotel_id FROM `savor_menu_hotel` WHERE create_time=
+                (SELECT MAX(create_time) FROM `savor_menu_hotel` WHERE menu_id={$iv})";
                 $bak_hotel_id_arr = $menuliModel->query($sql);
                 foreach ($bak_hotel_id_arr as $bk=>$bv){
                     $bak_ho_arr[] = $bv['hotel_id'];
@@ -385,8 +385,8 @@ class MenuController extends BaseController {
                 foreach ($exc_v as $iv) {
                     $menuliModel = new MenuListModel();
 
-                    $sql = "SELECT hotel_id FROM".$befo."_menu_hotel WHERE create_time=
-                (SELECT MAX(create_time) FROM ".$befo."_menu_hotel WHERE menu_id={$iv})";
+                    $sql = "SELECT hotel_id FROM `savor_menu_hotel` WHERE create_time=
+                (SELECT MAX(create_time) FROM  `savor_menu_hotel` WHERE menu_id={$iv})";
                     $bak_hotel_id_arr = $menuliModel->query($sql);
                     foreach ($bak_hotel_id_arr as $bk=>$bv){
                         $bak_ho_arr_p[] = $bv['hotel_id'];
@@ -520,8 +520,8 @@ class MenuController extends BaseController {
         $menu_name = I('menuname');
         $data = array();
         $mItemModel = new MenuItemModel();
-        $sql = "SELECT hotel_id,hotel_name,pub_time FROM ". $befo."_menu_hotel WHERE create_time=
-                (SELECT MAX(create_time) FROM ".$befo."_menu_hotel WHERE menu_id=$menu_id)";
+        $sql = "SELECT hotel_id,hotel_name,pub_time FROM `savor_menu_hotel` WHERE create_time=
+                (SELECT MAX(create_time) FROM `savor_menu_hotel` WHERE menu_id=$menu_id)";
 
         $bak_hotel_id_arr = $mItemModel->query($sql);
        // var_dump($bak_hotel_id_arr);
@@ -582,7 +582,8 @@ class MenuController extends BaseController {
 
     public function doaddmen(){
         //表单提交即是新增和导入ajax区分以及与修改进行区分
-        $befo  = C('DB_PREFIX');
+
+
         $id = I('post.id','');
         // var_dump($_POST);
 
@@ -595,8 +596,7 @@ class MenuController extends BaseController {
         $save['creator_id'] = $userInfo['id'];
         $save['state']    = 0;
         $save['menu_name'] = I('post.program');
-        $save['update_time'] = date('Y-m-d H:i:s');
-        $save['create_time'] = date('Y-m-d H:i:s');
+
 
         $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
         $dura_arr = explode (',',substr(I('post.rightdur',''),0,-1) );
@@ -608,6 +608,9 @@ class MenuController extends BaseController {
         if( $id ) {
             //先删除menuid，后插入
             $mItemModel->delData($id);
+            //更新menulist
+            $sav['update_time'] = date("Y-m-d H:i:s");
+            $mlModel->where(array('id'=>$id))->save($sav);
             $i = 1;
             $data = array();
             $sql = '';
@@ -617,7 +620,7 @@ class MenuController extends BaseController {
                $res = true;
                 $data = array();
             }else{
-                $sql = "INSERT INTO `".$befo."_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
+                $sql = "INSERT INTO `savor_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
 
                 foreach($id_arr as $k=>$v) {
 
@@ -640,13 +643,17 @@ class MenuController extends BaseController {
                 //添加操作日志非针对饭店
                 $type = 2;
                 $this->addlog($data, $id, $type);
-                $this->output('操作成功!', 'menu/getlist');
+               // $this->success('新增成功', '#menu/getlist');
+                //$this->display()
+                $this->output('修改成功!', 'menu/getlist',1);
             } else {
 
             }
 
         } else {
             //判断名字是否存在
+            $save['update_time'] = date('Y-m-d H:i:s');
+            $save['create_time'] = date('Y-m-d H:i:s');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
                 $this->output('操作失败名字已经有!', 'menu/addmenu');
