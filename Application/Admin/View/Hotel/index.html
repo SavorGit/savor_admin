@@ -183,7 +183,6 @@
               <th>机顶盒数量</th>
               <th>电视数量</th>
               <th>节目单</th>
-              <th>配置</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -222,13 +221,6 @@
               </if>
               </td>
               <td data-title="节目单"> <if condition="$vlist.menu_id GT 0">  <a title="{$vlist.name}节目单列表" target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a><else />无</if></td>
-	          <td data-title="配置网络">
-	              <if condition="$vlist.tv_num gt 0">
-	              <a title="{$vlist.name}电视列表" target="dialog" mask="true" rel="device/tv" href="{$host_name}/device/network?hotel_id={$vlist.id}">{$vlist.id}</a>
-	              <else />
-	              {$vlist.tv_num}
-	              </if>
-              </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="查看" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
@@ -237,7 +229,6 @@
                   <a data-tip="新增包间" target="dialog" mask="true" href="{$host_name}/hotel/addRoom?hotel_id={$vlist.id}&acttype=1" class="btn btn-success btn-icon">
                   <i class="fa fa-plus"></i>
                   </a>
-                  
                   <a data-tip="宣传片管理" target="navTab" title="宣传片管理列表" rel="hotel/pubmanager" href="{$host_name}/hotel/pubmanager?hotel_id={$vlist.id}" class="btn btn-success btn-icon">
                   <i class="fa fa-bullhorn"></i>
                   </a>

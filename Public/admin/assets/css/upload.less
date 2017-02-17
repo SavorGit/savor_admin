@@ -1,0 +1,112 @@
+@import url('m_reset.css');
+html{
+    font-size: 62.5%;
+}
+//封装弹性盒
+.box(@ver){
+    display: -webkit-box;
+    -webkit-box-orient: @ver;//vertical垂直排序   horizontal水平排列
+}
+//封装position
+.pos(@a){
+    position: @a;//absolute绝对定位   relative相对定位
+}
+//封装宽高
+.full(@w,@h,@bg){
+    width: @w;
+    height: @h;
+    background: @bg;
+}
+html,body,{
+   .full(100%,100%,none);
+}
+.wrap{
+    .full(70%,90%,none);
+    margin: 0 auto;
+    border: 1px solid #333;
+    .box(vertical);
+}
+.head{
+    .full(100%,4rem,#434343);
+    .box(horizontal);
+    .pos(relative);
+    color: #fff;
+    p{
+        font-size:1.5rem;
+        line-height: 4rem;
+        margin-left: 0.5rem;
+    }
+    span{
+        font-size: 2.0rem;
+        .pos(absolute);
+        top:0;
+        right: 1rem;
+    }
+}
+.center{
+    -webkit-box-flex: 1;
+    .box(vertical);
+    .up{
+        .full(95%,4rem,none);
+        border-bottom: 1px solid #ccc;
+        margin: 0 auto;
+        p{
+            font-size: 1.8rem;
+            line-height: 4rem;
+        }
+    }
+    .down{
+        .full(95%,33rem,none);
+        margin: 0 auto;
+        margin-top: 1rem;
+        .box(horizontal);
+    }
+    .left{
+        .full(40%,100%,none);
+        border: 1px solid #ccc;
+        ul li{
+            .box(horizontal);
+            -webkit-box-flex: 1;
+            height: 2.8rem;
+            line-height: 2.8rem;
+            border-bottom: 1px solid #ccc;
+            .pos(relative);
+            p{
+                margin-left: 6rem;
+            }
+            span{
+                .pos(absolute);
+                right: 1rem;
+                font-size: 2.0rem;
+            }
+        }
+        li:hover{
+            background: #434343;
+            color: #fff;
+        }
+    }
+    .big{
+        width: 55%;
+    }
+    .right{
+        .full(55%,100%,none);
+        border: 1px solid #ccc;
+        border-left: none;
+        p{
+           margin-left: 2rem;
+           margin-top: 1rem;
+        }
+    }
+}
+.foot{
+    .full(100%,15%,#f2f2f2);
+    button{
+        .full(8rem,3rem,#ff6600);
+        color: #fff;
+        border: none;
+        border-radius: 0.5rem;
+        margin: 0 auto;
+         display: block;
+         margin-top: 2rem;
+    }
+}

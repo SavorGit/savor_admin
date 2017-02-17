@@ -1,0 +1,236 @@
+@import url('m_reset.css');
+html {
+  font-size: 62.5%;
+}
+html,
+body,
+.wrap {
+  width: 90%;
+  height: 100%;
+  background: none;
+}
+.wrap {
+  margin: 0 auto;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+header {
+  width: 100%;
+  height: 4rem;
+  background: #333333;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  position: relative;
+}
+header p {
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 4rem;
+  padding-left: 1rem;
+}
+header span {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  color: #fff;
+  font-size: 2rem;
+}
+section {
+  -webkit-box-flex: 1;
+  border: 1px solid #333;
+  overflow: auto;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+section .up {
+  width: 90%;
+  height: 45rem;
+  background: none;
+  margin: 0 auto;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  position: relative;
+}
+section .up .jia {
+  font-size: 2.4rem;
+  line-height: 45rem;
+  position: absolute;
+  left: 35rem;
+}
+section .up .cancel {
+  margin: 1rem 1rem;
+  width: 45%;
+  height: 95%;
+  background: #d6e6f1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+section .up .cancel .cancel_1 {
+  width: 100%;
+  height: 6rem;
+  background: none;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  position: relative;
+}
+section .up .cancel .cancel_1 select {
+  width: 5rem;
+  height: 2.5rem;
+  background: #ffffff;
+  margin: 1.5rem 1rem;
+}
+section .up .cancel .cancel_1 .time {
+  height: 2.5rem;
+}
+section .up .cancel .cancel_1 .search {
+  width: 10rem;
+  height: 2.5rem;
+  background: #ffffff;
+}
+section .up .cancel .cancel_1 .but {
+  width: 4rem;
+  height: 2.5rem;
+  background: #ff4500;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+}
+section .up .cancel .cancel_1 .but p {
+  text-align: center;
+  line-height: 2.4rem;
+  color: #fff;
+}
+section .up .cancel .cancel_2 {
+  width: 100%;
+  height: 3rem;
+  background: #c2c6c9;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  position: relative;
+}
+section .up .cancel .cancel_2 p {
+  font-size: 1.5rem;
+  line-height: 3rem;
+  margin-left: 4rem;
+}
+section .up .cancel .cancel_2 .times {
+  position: absolute;
+  right: 8rem;
+}
+section .up .cancel .cancel_3 {
+  -webkit-box-flex: 1;
+  background: #f2f2f2;
+  overflow: auto;
+  position: relative;
+}
+section .up .cancel .cancel_3 p {
+  font-size: 1.5rem;
+  padding-left: 4rem;
+  line-height: 3rem;
+}
+section .up .cancel .cancel_3 p span {
+  position: absolute;
+  right: 4rem;
+}
+section .up .save {
+  width: 45%;
+  height: 95%;
+  background: #d6e6f1;
+  margin: 1rem 1rem 1rem 5rem;
+}
+section .up .save .save_1 {
+  width: 100%;
+  height: 6rem;
+  background: none;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+}
+section .up .save .save_1 p {
+  font-size: 1.6rem;
+  line-height: 6rem;
+  padding-left: 2rem;
+}
+section .up .save .save_1 input {
+  width: 20rem;
+  height: 3rem;
+  background: #ffffff;
+  border: 1px solid #333;
+  margin: 1.5rem 1rem;
+}
+section .up .save .save_2 {
+  width: 100%;
+  height: 3rem;
+  background: #c2c6c9;
+}
+section .up .save .save_2 p {
+  font-size: 1.5rem;
+  line-height: 3rem;
+  padding-left: 2rem;
+}
+section .up .save .save_3 {
+  -webkit-box-flex: 1;
+  background: #dad9d7;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+}
+section .up .save .save_3 .left_save {
+  width: 80%;
+  height: 33rem;
+  background: #f2f2f2;
+  overflow: auto;
+}
+section .up .save .save_3 .left_save p {
+  font-size: 1.5rem;
+  padding-left: 2rem;
+  line-height: 3rem;
+}
+section .up .save .save_3 .left_save p span {
+  padding-left: 9rem;
+}
+section .up .save .save_3 .right_save {
+  width: 20%;
+  height: 33rem;
+  background: #f2f2f2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+section .up .save .save_3 .right_save img {
+  margin-left: 1rem;
+  margin-top: 1rem;
+}
+section .up .save .save_3 .right_save p {
+  font-size: 1.5rem;
+  margin: 1rem 1rem;
+  color: #ff0000;
+}
+section .down {
+  width: 100%;
+  height: 6rem;
+  background: #e4eff6;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  position: relative;
+}
+section .down p {
+  font-size: 1.5rem;
+  text-align: center;
+  line-height: 4rem;
+  color: #fff;
+}
+section .down .box_1 {
+  width: 13rem;
+  height: 4rem;
+  background: #beb8b1;
+  border-radius: 1rem;
+  position: absolute;
+  top: 1rem;
+  left: 13rem;
+}
+section .down .box_2 {
+  width: 13rem;
+  height: 4rem;
+  background: #f89c19;
+  border-radius: 1rem;
+  position: absolute;
+  top: 1rem;
+  right: 15rem;
+}

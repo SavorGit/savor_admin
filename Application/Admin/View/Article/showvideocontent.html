@@ -16,7 +16,7 @@
   <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.js"></script>
 </head>
 <body>
-<div id="topLabel" style="background-color: #e7e7e7; width: 100%; height: 50px; position: fixed; top: 0px; left: 0px; z-index: 100;">
+<div id="topLabel" style="background-color: #e7e7e7; width: 100%; height: 50px; position: fixed; top: 0px; left: 0px; z-index: 100;display:none;">
   <img src="/Public/admin/assets/img/topAlert.png" name="myself" style="margin-top: 5px; margin-left: 10px; width: 178.5px; height: 40px;"/>
   <div id="downLoad" style="background-color: red; border-radius: 5px; position: absolute; top: 10px; right: 10px;height: 30px;">
     <p style="color: white; width: 80px; height: 40px; margin-top: 5px; text-align: center;"> 立即下载 </p>
@@ -25,7 +25,7 @@
 </div>
 <div id='contentView' class="viewport" style="margin-top: 50px">
 
-  <div id="id_video_container_{$videoaaa}" class="contentD" style="width:100%;height:300px;"></div><script src="https://qzonestyle.gtimg.cn/open/qcloud/video/h5/h5connect.js" charset="utf-8"></script> <script type="text/javascript"> (function(){ var option ={"auto_play":"0","file_id":"videobbbqqqqqqqqqq","app_id":"1252891964","width":1280,"height":720,"https":1}; /*调用播放器进行播放*/ new qcVideo.Player( /*代码中的id_video_container将会作为播放器放置的容器使用,可自行替换*/ "id_video_container_{$videoaaa}", option ); })() </script>
+  <div id="id_video_container_{$videoaaa}" class="contentD" style="width:100%;height:300px;display:none;"></div><script src="https://qzonestyle.gtimg.cn/open/qcloud/video/h5/h5connect.js" charset="utf-8"></script> <script type="text/javascript"> (function(){ var option ={"auto_play":"0","file_id":"videobbbqqqqqqqqqq","app_id":"1252891964","width":1280,"height":720,"https":1}; /*调用播放器进行播放*/ new qcVideo.Player( /*代码中的id_video_container将会作为播放器放置的容器使用,可自行替换*/ "id_video_container_{$videoaaa}", option ); })() </script>
   <div class="box_nr">
     {$content}
   </div>
@@ -33,23 +33,27 @@
 
 </body>
 <script>
-  
-    var urlResource = window.location.search.split('?');
-    // alert(window.location.search);
-    var result = urlResource[1].split('=');
-    if (result[0] == 'location' &&result[1] == 'newRead') {
-        //当前是 阅读状态 隐藏下载条topLabel
-        var tmp=document.getElementById("verrre").value;
-        var cont=document.getElementById("id_video_container_"+tmp);
-        var topLabel=document.getElementById("topLabel");
-        cont.style.display="none";
-        topLabel.style.display="none";
-        $('#contentView').css("margin-top","10px");
-    }
+    var urlResource = window.location.href;
+    var tmp=document.getElementById("verrre").value;
+    var cont=document.getElementById("id_video_container_"+tmp);
+    var topLabel=document.getElementById("topLabel");
+    if(urlResource.indexOf("?")==-1){
+      cont.style.display="block";
+      topLabel.style.display="block";
+      $('#contentView').css("margin-top","10px");  
+      
+    }else{
+      urlResource = urlResource.split('?');
+      var result = urlResource[1].split('=');
+      if (!(result[0] == 'location' &&result[1] == 'newRead')) {
+          cont.style.display="none";
+          topLabel.style.display="none";
+          $('#contentView').css("margin-top","10px");         
+      }
+    };    
     var button = document.getElementById('topLabel');
     button.onclick = function (){
       window.location.href = 'http://rerdian.com/d';
     }
 </script>
 </html>
-

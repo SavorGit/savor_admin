@@ -5,5 +5,5 @@ define('SITE_TP_PATH' , __DIR__);
 define('APP_PATH', SITE_TP_PATH . '/Application/');
 //判断连接配置文件
 define('APP_DEBUG',true);
-define('APP_STATUS','config_test');
+define('APP_STATUS','config_online');
 require './framework/ThinkPHP/ThinkPHP.php';

@@ -1,0 +1,30 @@
+@charset "utf-8";
+
+* { margin: 0px; padding: 0px; font-family: "Microsoft YaHei",Arial,Helvetica,sans-serif/*"Microsoft Yahei",verdana*/; box-sizing: border-box;}
+body { background: #fff;}
+li { list-style: none;}
+a { text-decoration: none; color: #000; outline: none; -webkit-tap-highlight-color:rgba(0,0,0,0);}
+.clear { zoom: 1;}
+.clear:after { display: block; clear: both; content: '';}
+
+table { width: 100%;}
+img { border: 0px;}
+input, select { outline: none; background: white;}
+
+.box_nr img { width: 100%; }
+.box_nr{width: 94%; height: 100%; margin:0 auto; text-align:justify; text-justify:inter-ideograph; margin-bottom:5%;}
+.box_nr p{margin-top:4%; font-size:18px;}
+.box_nr h4{margin-top:4%; font-size:18px;}
+.box_nr h3{margin-top:4%; font-size:20px;}
+
+.viewport { margin: 0px auto; max-width: 640px; min-width: 300px;}
+	.title { height: 32px; background: #ccc; text-align: center; line-height: 30px;}
+	.dv_vo { font-size: 0px; position: relative;}
+	.dv_vo img { width: 100%;}
+	.dv_py { background: url(play.png) center center no-repeat; background-size: 100%; width: 60px; height: 60px; position: absolute; top: 50%; left: 50%; margin-left: -30px; margin-top: -30px;}
+
+@media screen and (min-width: 480px){
+	.viewport { }
+		.title { height: 50px; line-height: 46px;}
+		.dv_py { width: 80px; height: 80px; margin-left: -40px; margin-top: -40px;}
+}

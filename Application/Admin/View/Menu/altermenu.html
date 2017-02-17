@@ -121,12 +121,12 @@ action="{$host_name}/menu/doaddmenu" class="pageForm required-validate" enctype=
 						url:"{$host_name}/menu/get_se_left",
 						data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val(),
 						success:function(data){
-							alert(data);
+
 
 							$("#left").empty();
 							$("#left2").empty();
 
-							alert(data.length);
+						
 							for(var i=0,l=data.length;i<l;i++){
 
 								for(var key in data[i]) {

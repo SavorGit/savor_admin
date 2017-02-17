@@ -1,9 +1,9 @@
 <?php
-$DB_MASTER_HOST = 'localhost';
-$DB_SLAVE_HOST  = 'localhost';
-$db_name = 'savoradmin';
-$db_user = 'root';
-$db_pwd = 'root';
+$DB_MASTER_HOST = 'rm-m5e5ujb814xuex9v6.mysql.rds.aliyuncs.com';
+$DB_SLAVE_HOST  = 'rm-m5e5ujb814xuex9v6.mysql.rds.aliyuncs.com';
+$db_name = 'savor_duo';
+$db_user = 'php_admin';
+$db_pwd = 'php_admin_api';
 
 //redis缓存配置
 $redis['db1']['0']['host'] = '';
@@ -14,7 +14,7 @@ $redis['db1']['1']['port'] = '';
 $redis['db1']['1']['isMaster'] = '0';
 
 $config_db =  array(
-	'DB_DEPLOY_TYPE' => 1, //数据库主从支持
+	'DB_DEPLOY_TYPE' => 1, //数据库主从支�?
     'DB_RW_SEPARATE' => true, //读写分离
     'DB_TYPE' => 'mysql',
     'DB_HOST' => "$DB_MASTER_HOST,$DB_SLAVE_HOST",
@@ -31,14 +31,11 @@ $config_db =  array(
     //OSSS上传配置
 	'OSS_ACCESS_ID'   => 'tnDh4AQqRYbV9mq8',
 	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
-	'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
-	'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
-	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
-    //end
+	'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //ע�ⲻҪ��ǰ��� http://
+	'OSS_BUCKET' => 'redian-development',                     //��Դ�ռ�,��Ͱ
+	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //�ϴ��첽�ص���ַ
+        //end
 );
 return $config_db;
-
-
-
 
 
