@@ -368,7 +368,7 @@ class HotelController extends BaseController {
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$save['flag']        = 0;
 			if($RoomModel->add($save)){
-				$this->output('操作成功!', 'hotel/room');
+				$this->output('操作成功!', 'hotel/manager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
