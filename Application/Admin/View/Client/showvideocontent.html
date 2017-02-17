@@ -34,14 +34,18 @@
 <script>
     var urlResource = window.location.search.split('?');
     var result = urlResource[1].split('=');
+    var tmp=document.getElementById("verrre").value;
+    var cont=document.getElementById("id_video_container_"+tmp);
+    var topLabel=document.getElementById("topLabel");
     if (result[0] == 'location' &&result[1] == 'newRead') {
         //当前是 阅读状态 隐藏下载条topLabel
-        var tmp=document.getElementById("verrre").value;
-        var cont=document.getElementById("id_video_container_"+tmp);
-        var topLabel=document.getElementById("topLabel");
+
         cont.style.display="none";
         topLabel.style.display="none";
         $('#contentView').css("margin-top","10px");
+    }else{
+        cont.style.display="";
+        topLabel.style.display="";
     }
     var button = document.getElementById('topLabel');
     button.onclick = function (){

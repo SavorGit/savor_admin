@@ -116,6 +116,11 @@ class ArticleController extends BaseController {
     }
 
 
+    public function showcontentff($id){
+
+    }
+
+
 
     /*
     * 显示并生成H5页面地址视频地址
@@ -252,6 +257,10 @@ class ArticleController extends BaseController {
         $where = "1=1";
         $result = $mbHomeModel->getList($where,$orders,$start,$size);
         $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
+        echo 'lldldfl';
+        var_dump($result['page']);
+        file_put_contents('./abc.txt', $result['page']);
+
         $name = I('name');
         if($name){
             //根据id取
@@ -337,6 +346,10 @@ class ArticleController extends BaseController {
         $save['duration'] = I('post.dura','0','intval');
         $v_type    = I('post.r1','0','intval');
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        $save['bespeak_time'] = I('post.logtime','');
+        if($save['bespeak_time'] == ''){
+            $save['bespeak_time'] = date('Y-m-d H:i:s');
+        }
         if($covermedia_id){
             $oss_arr = $mediaModel->find($covermedia_id);
             $oss_addr = $oss_arr['oss_addr'];
@@ -354,9 +367,9 @@ class ArticleController extends BaseController {
                 $save['vod_md5'] = '';
                 $save['media_id'] = '';
             }
-            $save['content_url'] = 'html/video/'.$id.'.html';
+            //$save['content_url'] = 'html/video/'.$id.'.html';
             if($artModel->where('id='.$id)->save($save)){
-                $this->showvideocontent($id, $save['tx_url']);
+                //$this->showvideocontent($id, $save['tx_url']);
                 $this->output('操作成功!', 'content/getlist');
             }else{
                 $this->output('操作失败!', 'content/getlist');
@@ -377,8 +390,8 @@ class ArticleController extends BaseController {
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $id = $artModel->getLastInsID();
-                $this->showvideocontent($id, $save['tx_url']);
-                $dat['content_url'] = 'html/video/'.$id.'.html';
+               // $this->showvideocontent($id, $save['tx_url']);
+                $dat['content_url'] = 'content/'.$id.'.html';
                 $artModel->where('id='.$id)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
@@ -418,6 +431,8 @@ class ArticleController extends BaseController {
     }
 
     public function doAddarticle(){
+        //var_dump($_POST);
+
         $artModel = new ArticleModel();
         $id                  = I('post.id');
         $save                = [];
@@ -429,6 +444,11 @@ class ArticleController extends BaseController {
         $save['state']    = I('post.state','0','intval');
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
+        if($save['bespeak_time'] == ''){
+            $save['bespeak_time'] = date('Y-m-d H:i:s');
+        }
+       // var_dump($save['bespeak_time']);
+
         $save['bespeak'] = 0;
         $mediaid = I('post.media_id');
         $mediaModel = new \Admin\Model\MediaModel();
@@ -437,9 +457,9 @@ class ArticleController extends BaseController {
         $save['img_url'] = $oss_addr;
         $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
         if($id){
-            $save['content_url'] = 'html/article/'.$id.'.html';
+            //$save['content_url'] = 'content/'.$id.'.html';
             if($artModel->where('id='.$id)->save($save)){
-                $this->showcontent($id);
+                //$this->showcontent($id);
                 $this->output('操作成功!', 'content/getlist');
             }else{
                 $this->output('操作失败!', 'content/getlist');
@@ -459,8 +479,8 @@ class ArticleController extends BaseController {
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
-                $this->showcontent($arid);
-                $dat['content_url'] = 'html/article/'.$arid.'.html';
+                //$this->showcontent($arid);
+                $dat['content_url'] = 'content/'.$arid.'.html';
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{

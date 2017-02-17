@@ -151,12 +151,11 @@
                 </div>
 
                 <div class="tools-edit">
-                  <a data-tip="" data-original-title="预览" data-toggle="view" data-target="#modal-view" <if condition="$vlist.type eq 1">
-                  href="__PUBLIC__/html/article/{$vlist.id}.html"
-                    <elseif condition="$vlist.type eq 3"/>
-                  href="__PUBLIC__/html/video/{$vlist.id}.html"
-                    <else/>  href="__PUBLIC__/html/article/{$vlist.id}.html"
-                  </if>
+                  <a data-tip="" target="ajaxTodo"
+                     data-original-title="预览" data-toggle="view" data-target="#modal-view"
+                  href="__ROOT__/content/{$vlist.id}.html"
+
+
                      target="_blank"  class="btn btn-success btn-icon">
                     <i class="fa fa-eye"></i>
                   </a>
