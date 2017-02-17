@@ -6,4 +6,5 @@ define('APP_PATH', SITE_TP_PATH . '/Application/');
 //判断连接配置文件
 define('APP_DEBUG',true);
 define('APP_STATUS','config_test');
+#当前测试
 require './framework/ThinkPHP/ThinkPHP.php';
