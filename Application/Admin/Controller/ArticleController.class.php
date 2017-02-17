@@ -257,9 +257,8 @@ class ArticleController extends BaseController {
         $where = "1=1";
         $result = $mbHomeModel->getList($where,$orders,$start,$size);
         $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
-        echo 'lldldfl';
-        var_dump($result['page']);
-        file_put_contents('./abc.txt', $result['page']);
+
+        //file_put_contents('./abc.txt', $result['page']);
 
         $name = I('name');
         if($name){

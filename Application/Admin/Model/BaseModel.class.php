@@ -49,5 +49,14 @@ class BaseModel extends Model{
 		return $res;
 	}
 
+	public function getrealAll($field='*',$filter='',$offset=0,$limit=10,$order='',$group=''){
+		$res = $this->field($field)
+			->where($filter)
+			->order($order)
+			->group($group)
+			->select();
+		return $res;
+	}
+
 }
 

@@ -42,7 +42,7 @@ class TvModel extends BaseModel{
 		$filter       = [];
 		$filter['id'] = ['IN',$boxId];
 		$boxModel = new BoxModel;
-		$arrBox = $boxModel->getAll('id,name',$filter);
+		$arrBox = $boxModel->getrealAll('id,name',$filter);
 		foreach ($result as &$value){
 			foreach ($arrBox as  $row){
 				if($value['box_id'] == $row['id']){

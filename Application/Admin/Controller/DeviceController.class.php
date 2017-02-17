@@ -106,6 +106,8 @@ class DeviceController extends BaseController{
         }
 		
         $result['list'] = $tvModel->boxIdToBoxName($result['list']);
+
+
         $this->assign('hotel_id',$hotel_id);
         $this->assign('box_id',$box_id);
    		$this->assign('list', $result['list']);
