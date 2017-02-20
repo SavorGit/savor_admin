@@ -76,6 +76,20 @@ class ArticleModel extends BaseModel
 		return $result;
 	}
 
+	public function  changeCatname($result){
+		$catModel = new CategoModel;
+		$cat_arr =  $catModel->field('id,name')->select();
+		foreach ($result as &$value){
+			foreach ($cat_arr as  $row){
+				if($value['category_id'] == $row['id']){
+					$value['cat_name'] = $row['name'];
+				}
+			}
+		}
+		return $result;
+
+	}
+
 
 	public function getImgRes($path, $old_img) {
 		$arr = explode('.', $old_img);
