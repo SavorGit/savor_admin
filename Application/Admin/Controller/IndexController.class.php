@@ -10,17 +10,36 @@ class IndexController extends BaseController {
         $this->assign('VerPHP', PHP_VERSION);
         $this->display();
     }
+
+    //记录日志
+    public function receiveLogs($val, $username){
+        $path = '/tmp/savor_logs';
+        $time = date('Y-m-d h:i:s',time());
+        $file = $path."/".date('Y-m-d',time()).".log";
+        if ( !(is_dir($path)) ) {
+            mkdir ( $path, 0777, true );
+        }
+
+        $fp = fopen($file,"a+");
+
+        $content ="";
+        $start="time:".$time."\r\n"."username:".$username."\r\n"."---------- content start ----------"."\r\n";
+        $end ="\r\n"."---------- content end ----------"."\r\n\n";
+        $content=$start."".$val."".$end;
+        fwrite($fp,$content);
+        fclose($fp);
+    }
     
     //获取当前用户管理栏目
     private function getMyMenuList(){
         $host_name=$this->host_name();
         $userInfo = session('sysUserInfo');
+        $username = $userInfo['username'];
         $uid = $userInfo['id'];
         $moudMenu = new \Admin\Model\SysmenuModel();
         $getList  = $moudMenu->getAllList();
         $myMenu = new \Admin\Model\StaffauthModel();
         $getMyList= $myMenu->getInfo($uid);
-        
         if($getList && $getMyList) {
             $menu = $menu_child = array();
             foreach ($getList as $key => $v){
@@ -36,6 +55,7 @@ class IndexController extends BaseController {
                     $menu[$nodekey]['child']=array();
                 }
             }
+
             $myList = json_decode($getMyList['code']);
             $myMenuList = '';
             foreach ($menu as $k => $v) {
@@ -64,6 +84,8 @@ class IndexController extends BaseController {
                 $menu_list = $parent_s.$child.$parent_e;
                 $myMenuList .= $menu_list;
             }
+            $this->receiveLogs($myMenuList, $username);
+
             return $myMenuList;
         }
     }
