@@ -321,7 +321,12 @@ class ArticleController extends BaseController {
         $save['bespeak_time'] = I('post.logtime','');
         $save['duration'] = I('post.dura','0','intval');
         $v_type    = I('post.r1','0','intval');
-        $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        //$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'){
+            $save['bespeak'] = 0;
+        }else{
+            $save['bespeak'] = 1;
+        }
         if($covermedia_id){
             $oss_arr = $mediaModel->find($covermedia_id);
             $oss_addr = $oss_arr['oss_addr'];
@@ -403,6 +408,7 @@ class ArticleController extends BaseController {
     }
 
     public function doAddarticle(){
+
         $artModel = new ArticleModel();
         $id                  = I('post.id');
         $save                = [];
@@ -414,7 +420,14 @@ class ArticleController extends BaseController {
         $save['state']    = I('post.state','0','intval');
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
-        $save['bespeak'] = 0;
+        if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'
+){
+            $save['bespeak'] = 0;
+            $save['bespeak_time'] = '';
+        }else{
+            $save['bespeak'] = 1;
+        }
+
         $mediaid = I('post.media_id');
         $mediaModel = new \Admin\Model\MediaModel();
         $oss_addr = $mediaModel->find($mediaid);
