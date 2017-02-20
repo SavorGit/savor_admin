@@ -457,7 +457,7 @@ class ArticleController extends BaseController {
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
-                $this->showcontent($arid);
+                //$this->showcontent($arid);
                $dat['content_url'] = 'content/'.$arid.'.html';
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
