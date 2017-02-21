@@ -192,6 +192,9 @@ class HotelController extends BaseController {
 			}
 			$res_hotelext = $hotelModel->getMacaddrByHotelId($id);
 			$vinfo['mac_addr'] = $res_hotelext['mac_addr'];
+			$vinfo['ip_local'] = $res_hotelext['ip_local'];
+			$vinfo['ip'] = $res_hotelext['ip'];
+			$vinfo['server_location'] = $res_hotelext['server_location'];
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -235,14 +238,20 @@ class HotelController extends BaseController {
 		}
 		if($hotel_id){
 		    $mac_addr = I('post.mac_addr','','trim');
+			$ip_local = I('post.ip_local','','trim');
+			$ip = I('post.ip','','trim');
+			$server_location = I('post.server_location','','trim');
 		    $res_hotelext = $hotelModel->getMacaddrByHotelId($hotel_id);
 		    $model = M('hotel_ext');
-		    $data = array('mac_addr'=>$mac_addr);
+		    $data['mac_addr'] = $mac_addr;
+			$data['ip_local'] = $ip_local;
+			$data['ip'] = $ip;
+			$data['server_location'] = $server_location;
 		    if(empty($res_hotelext)){
 		        $data['hotel_id'] = $hotel_id;
 		        $model->add($data);
 		    }else{
-		        if($mac_addr!=$res_hotelext['mac_addr']){
+		        if($mac_addr!=$res_hotelext['mac_addr'] || $ip_local!=$res_hotelext['ip_local'] || $ip!=$res_hotelext['ip'] || $server_location!=$res_hotelext['server_location'] ){
 		            $model->where('id='.$res_hotelext['id'])->save($data);
 		        }
 		    }
@@ -346,6 +355,7 @@ class HotelController extends BaseController {
 		$save['state']       = I('post.state','','intval');
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
+		$save['flag']        = 0;
 
 		$RoomModel = new \Admin\Model\RoomModel();
 		if($id){
@@ -356,8 +366,9 @@ class HotelController extends BaseController {
 			}
 		}else{
 			$save['create_time'] = date('Y-m-d H:i:s');
+			$save['flag']        = 0;
 			if($RoomModel->add($save)){
-				$this->output('操作成功!', 'hotel/room');
+				$this->output('操作成功!', 'hotel/manager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
@@ -457,6 +468,8 @@ class HotelController extends BaseController {
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+
+
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
@@ -466,6 +479,7 @@ class HotelController extends BaseController {
 
 		$save = [];
 		$save['description'] = I('post.descri');
+		$save['duration'] = I('post.duration');
 		$save['name'] = I('post.adsname');
 		if($covermedia_id){
 			$oss_arr = $mediaModel->find($covermedia_id);
@@ -474,7 +488,6 @@ class HotelController extends BaseController {
 		}
 		if($media_id){
 			$oss_arr = $mediaModel->find($media_id);
-			$save['duration'] = $oss_arr['duration'];
 			$save['media_id']    = $media_id;
 		}
 		$save['hotel_id'] = I('post.hotel_id');
@@ -488,6 +501,11 @@ class HotelController extends BaseController {
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
 		}else{
+			//判断宣传片名称是否存在
+			$count = $adsModel->where(array('name'=>$save['name'],'hotel_id'=>$save['hotel_id']))->count();
+			if ($count >1 ){
+				$this->output('宣传片已经存在', 'hotel/addpub',1,0);
+			}
 			$userInfo = session('sysUserInfo');
 			$save['creator_id'] = $userInfo['id'];
 			$save['creator_name'] = $userInfo['username'];
