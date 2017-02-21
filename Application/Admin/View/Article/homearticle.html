@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/release/category" method="post" >
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/article/homemanager" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -63,6 +63,10 @@
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/article/addhome?id={$vlist.id}&acttype=2" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
+                  </a>
+                  
+                   <a warn="警告" data-tip="移除" title="你确定要从首页移除吗？" target="ajaxTodo" href="{$host_name}/article/delhome?id={$vlist.id}&acttype=2"  class="btn btn-success btn-icon">
+                    <i class="fa fa-trash"></i>
                   </a>
                 </div>
               </td>
