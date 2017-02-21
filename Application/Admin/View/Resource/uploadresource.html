@@ -85,8 +85,11 @@
 	  </div>
       <!--  -->
       <div id="files" class="files-container tab-pane fade">
-        <textarea class="load-tmp hidden"></textarea>
-        <div class="dz-file-viewport" style="max-height: 188px; padding:0;width:100%;">
+
+        <textarea class="load-tmp " id="titlename" name="titlename"></textarea>
+        <button id="searchmedia" class="btn btn-primary" type="button" style="margin-top:-25px;">搜索</button>
+
+        <div class="dz-file-viewport" style="max-height: 188px; padding:0;width:100%;margin-top:20px;">
           <form id="file-list" style="margin:0;" class="dropzone clearfix" data-column="4">
             <volist name="datalist" id="vinfo">
               <div class="dz-preview dz-file-preview" data-list-file>
@@ -174,6 +177,30 @@ $("#saveImg").click(function(){
         }
     })
 })
+
+//查找数据
+$("#searchmedia").click(function(){
+  $.ajax({
+    url:"{$host_name}/resource/searchResource",
+    type:"post",
+    dataType:"html",
+    data:{
+      "filed":$("#hidden_filed").val(),
+      "rtype":$("#up_resourcetype").val(),
+      "autofill":$("#autofill").val(),
+      "name":$("#titlename").val(),
+    },
+    success:function(result){
+      $("#file-list").html('');
+      $("#file-list").html(result);
+    },
+    error:function(){
+
+      $("#dz-filecontainer .nav-tabs .pull-right a").click();
+    }
+  })
+})
+
 $("#cancel_upload").click(function(){
 	$("#dz-filecontainer .nav-tabs .pull-right a").click();
 })

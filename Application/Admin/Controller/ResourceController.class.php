@@ -68,52 +68,115 @@ class ResourceController extends BaseController{
 	     }
 	 }
 	 
-	 public function uploadResource(){
-	     $code = 10001;
-	     $data = array();
-	     if(IS_POST){
-	         $result = $this->handle_resource();
-	         if($result['media_id']){
-	             $code = 10000;
-	             $data['media_id'] = $result['media_id'];
-	             $data['path'] = $result['oss_addr'];
-	         }
-	         $res_data = array('code'=>$code,'data'=>$data);
-	         echo json_encode($res_data);
-	         exit;
-	     }else{
-	         /*
-	          * 隐藏域文件规则：
-	          * filed 为:media_id时
-	          * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
-              * <span id="media_idimgname"></span>
-	          */
-	         $hidden_filed = I('get.filed','media_id');
-	         $rtype = I('get.rtype',0);
-	         $autofill = I('get.autofill',0);
-	         $where = ' flag=0';
-	         if($rtype){
-	             $where.=" and type='$rtype'";	             
-	         }
-	         $orders = 'id desc';
-	         $start = 0;
-	         $size = 50;
-	         $mediaModel = new \Admin\Model\MediaModel();
-	         $result = $mediaModel->getList($where,$orders,$start,$size);
-	         $this->assign('datalist', $result['list']);
-	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-	         if($rtype){
-	             $this->get_file_exts($rtype);
-	         }else{
-	             $this->get_file_exts();
-	         }
-	         $this->assign('autofill',$autofill);
-	         $this->assign('rtype',$rtype);
-	         $this->assign('hidden_filed',$hidden_filed);
-	         $this->assign('oss_host',$oss_host);
-	         $this->display('uploadresource');
-	     }
-	 }
+
+
+	public function uploadResource(){
+		$code = 10001;
+		$data = array();
+		if(IS_POST){
+			$result = $this->handle_resource();
+			if($result['media_id']){
+				$code = 10000;
+				$data['media_id'] = $result['media_id'];
+				$data['path'] = $result['oss_addr'];
+			}
+			$res_data = array('code'=>$code,'data'=>$data);
+			echo json_encode($res_data);
+			exit;
+		}else{
+			/*
+             * 隐藏域文件规则：
+             * filed 为:media_id时
+             * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+             * <span id="media_idimgname"></span>
+             */
+			$hidden_filed = I('get.filed','media_id');
+			$rtype = I('get.rtype',0);
+			$autofill = I('get.autofill',0);
+			$where = ' flag=0';
+			if($rtype){
+				$where.=" and type='$rtype'";
+			}
+			$orders = 'id desc';
+			$start = 0;
+			$size = 50;
+			$mediaModel = new \Admin\Model\MediaModel();
+			$result = $mediaModel->getList($where,$orders,$start,$size);
+			$this->assign('datalist', $result['list']);
+			$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			if($rtype){
+				$this->get_file_exts($rtype);
+			}else{
+				$this->get_file_exts();
+			}
+			$this->assign('autofill',$autofill);
+			$this->assign('rtype',$rtype);
+			$this->assign('hidden_filed',$hidden_filed);
+			$this->assign('oss_host',$oss_host);
+			$this->display('uploadresource');
+		}
+	}
+
+
+	public function searchResource(){
+		$data = array();
+			/*
+             * 隐藏域文件规则：
+             * filed 为:media_id时
+             * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+             * <span id="media_idimgname"></span>
+             */
+
+			$hidden_filed = I('post.filed','media_id');
+			$rtype = I('post.rtype',0);
+			$autofill = I('post.autofill',0);
+			$name = I('post.name','');
+			$where = ' flag=0';
+			if($rtype){
+				$where.=" and type='$rtype'";
+			}
+			if($name){
+				$where.=" and name like '%". $name."%'";
+			}
+
+			$orders = 'id desc';
+			$start = 0;
+			$size = 50;
+			$mediaModel = new \Admin\Model\MediaModel();
+			//$result = $mediaModel->getList($where,$orders,$start,$size);
+			$result = $mediaModel->where($where)->select();
+			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			foreach ($result as $k=>$v){
+				$result[$k]['oss_addr'] = $image_host.$v['oss_addr'];
+			}
+			//var_dump($result);
+			$result['list'] = array_slice($result,0,30);
+			$list = '';
+
+			foreach ( $result['list'] as $rk=>$vinfo) {
+				$list .= ' <div class="dz-preview dz-file-preview" data-list-file> <div class="file-content" data-wh="" data-title="'.$vinfo['name'].'" data-src="'.$vinfo['oss_addr'].'"> <div class="dz-overlay hidden"></div>
+                  <label class="dz-check">  <input type="checkbox" value="'.$vinfo['id'].'" name="selected[]">
+                    <span><i class="fa fa-check"></i></span>
+                  </label> <div class="dz-details" title="'.$vinfo['name'].'">';
+				if($vinfo['surfix'] == 'png' || $vinfo['surfix'] == 'jpg' || $vinfo['surfix'] == 'gif' || $vinfo['surfix'] == 'jpeg'){
+					$list .= '<img class="dz-nthumb" style="width:100%" src="'.$vinfo['oss_addr'].'"/> <span style="width:100%;height:1.4em;line-height:1.4em;padding:0 10px;position:absolute;bottom:10px;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,0.5);">"'.$vinfo['name'].'"</span>';
+				}else{
+					$list .= '<div class="dz-file">
+                      <i class="file-"'.$vinfo['surfix'].'"></i>
+                      <span>"'.$vinfo['name'].'"</span>
+                    </div>';
+				}
+
+				$list .= ' </div></div></div>';
+
+
+			}
+			echo $list;
+
+
+
+
+	}
 	 
 	 public function editResource(){
          $mediaModel = new \Admin\Model\MediaModel();
