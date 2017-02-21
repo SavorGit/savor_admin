@@ -27,6 +27,7 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
+            <th>序号</th>
             <th>机顶盒ID</th>
             <th>机顶盒MAC</th>
             <th>包间ID</th>
@@ -43,6 +44,7 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
+              <td data-title="序号">{$vlist.indnum}</td>
               <td data-title="机顶盒ID">{$vlist.box_id}</td>
               <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
               <td data-title="包间ID">{$vlist.room_id}</td>

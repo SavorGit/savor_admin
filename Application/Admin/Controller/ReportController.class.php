@@ -41,7 +41,9 @@ class ReportController extends BaseController{
 		}
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
+		$ind = $start;
 		foreach ($result['list'] as &$val) {
+			$val['indnum'] = ++$ind;
 			$d_time = strtotime($val['last_heart_time']);
 			$diff = $time - $d_time;
 			if($diff< 3600) {
