@@ -130,7 +130,7 @@ class ResourceController extends BaseController{
 			$hidden_filed = I('post.filed','media_id');
 			$rtype = I('post.rtype',0);
 			$autofill = I('post.autofill',0);
-			$name = I('post.name','');
+			$name = I('post.name','','trim');
 			$where = ' flag=0';
 			if($rtype){
 				$where.=" and type='$rtype'";
