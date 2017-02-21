@@ -531,8 +531,8 @@ class HotelController extends BaseController {
 		$adsid = I('request.adsid','0','intval');
 		$adsModel = new \Admin\Model\AdsModel();
 		$message = '';
-		$is_online = I('request.flag');
-		$data = array('state'=>$is_online);
+		$flag = I('request.flag');
+		$data = array('state'=>$flag);
 
 		$res = $adsModel->where("id='$adsid'")->save($data);
 

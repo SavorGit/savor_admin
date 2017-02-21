@@ -159,11 +159,34 @@ class AdvertController extends BaseController{
 	     $adsid = I('request.adsid','0','intval');
 	     $atype = I('request.atype');//1状态 2操作
 	     $adsModel = new \Admin\Model\AdsModel();
+		 $mItemModel = new \Admin\Model\MenuItemModel();
+		 $menuliModel = new \Admin\Model\MenuListModel();
 	     $message = '';
 	     switch ($atype){
 	         case 1:
-	             $is_online = I('request.flag');
-	             $data = array('state'=>$is_online);
+	             $flag = I('request.flag');
+				 if($flag == 0) {
+					 //判断是否引用
+					 //遍历节目单
+
+					 $menu_arr = $menuliModel->field('id,menu_name')->select();
+					 $ret = 0;
+					 $dat['ads_id'] = $adsid;
+					 foreach ($menu_arr as $k=>$v) {
+						 $dat['menu_id'] = $v['id'];
+						 $rec = $mItemModel->where($dat)->find();
+						if( count($rec)>0 ){
+							$ret = 1;
+							$menu_name = $v['menu_name'];
+							break;
+						}
+					 }
+					 if($ret == 1){
+						 $this->output('广告存在节目列表'.$menu_name.'中', 'advert/adsList',2,0);
+						 die;
+					 }
+				 }
+				 $data = array('state'=>$flag);
 	             $res = $adsModel->where("id='$adsid'")->save($data);
 				 if($res){
 	                 $message = '更新状态成功';
@@ -183,7 +206,7 @@ class AdvertController extends BaseController{
 	     if($message){
 	         $this->output($message, 'advert/adsList',2);
 	     }else{
-	         $this->output('操作失败', 'advert/adsList');
+	         $this->output('操作失败了啊', 'advert/adsList',2,0);
 	     }
 	 }
 	 

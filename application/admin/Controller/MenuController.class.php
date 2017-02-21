@@ -972,7 +972,7 @@ class MenuController extends BaseController {
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
         if($end_time)   $where.=" AND create_time<='$end_time'";
 
-
+        $where .= " AND state=1 ";
         if ($searchtitle) {
             $where .= "	AND name LIKE '%{$searchtitle}%'";
         }
