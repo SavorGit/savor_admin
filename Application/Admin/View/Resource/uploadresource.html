@@ -167,6 +167,12 @@ $("#saveImg").click(function(){
             if(result.code==10000){
                 $("#"+hiddenType).val(result.data.media_id);
                 $("#"+hiddenImg).attr("src",result.data.path).show();
+                if(hiddenType=='ueditor'){
+                    var ueIn = UE.getEditor("editor");
+                    ueIn.execCommand('insertimage', {
+                         src:result.data.path
+                    });
+                  };
                 $("#dz-filecontainer .nav-tabs .pull-right a").click();
             }else{
                $("#dz-filecontainer .nav-tabs .pull-right a").click();
@@ -219,6 +225,12 @@ function getImageInfo($this){
     if($file.find(".dz-nthumb").size()>0){
       $("#"+hiddenImg).attr("src",$file.find(".dz-nthumb").attr("src")).show();
       $("#"+hiddenImg+"name").hide();
+      if(hiddenType=='ueditor'){
+          var ueIn = UE.getEditor("editor");
+          ueIn.execCommand('insertimage', {
+               src:$file.find(".dz-nthumb").attr("src")
+          });
+        }
     }else{
       $("#"+hiddenImg).hide();
       if(autofill==1){
