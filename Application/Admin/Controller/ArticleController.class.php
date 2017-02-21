@@ -314,7 +314,7 @@ class ArticleController extends BaseController {
         $save['source']    = I('post.source','');
         $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = 3;
-        $save['state']    = I('post.state','0','intval');
+        $save['state']    = 0;
         $save['tx_url'] = I('post.yunhref','');
         $save['update_time'] = date('Y-m-d H:i:s');
         $addtype = I('post.r1','0',intval);
@@ -417,7 +417,7 @@ class ArticleController extends BaseController {
         $save['source']    = I('post.source','');
         $save['content']    = I('post.content','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
-        $save['state']    = I('post.state','0','intval');
+        $save['state']    = 0;
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
         if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'
