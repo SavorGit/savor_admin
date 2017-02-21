@@ -41,11 +41,11 @@ class ContentController extends BaseController {
             $where .= "	AND type='$type'";
         }
         $result = $artModel->getList($where,$orders,$start,$size);
-	$result = $artModel->changeCatname($result['list']);
+	$result['list'] = $artModel->changeCatname($result['list']);
         $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('timeinfo',$time_info);
         $this->assign('ctype', $type);
-        $this->assign('list', $result);
+        $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('content');
     }
@@ -113,11 +113,11 @@ class ContentController extends BaseController {
         }
         $where .= " AND state in (0,1,3)";
         $result = $artModel->getList($where,$orders,$start,$size);
-        $result = $artModel->changeCatname($result['list']);
+        $result['list'] = $artModel->changeCatname($result['list']);
         $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('timeinfo',$time_info);
         $this->assign('ctype', $type);
-        $this->assign('list', $result);
+        $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('contentcheck');
     }
