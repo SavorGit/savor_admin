@@ -281,8 +281,14 @@ class ArticleController extends BaseController {
         $id = I('get.id');
         $acctype = I('get.acttype');
         if ($acctype && $id){
+
+
+
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
+            if ($vainfo['bespeak_time'] == '0000-00-00 00:00:00') {
+                $vainfo['bespeak_time'] = '';
+            }
             $media_id = $vainfo['media_id'];
             $vainfo['oss_addr'] = $oss_host.$vainfo['img_url'];
             $vainfo['vid_type'] = 2;
@@ -310,9 +316,9 @@ class ArticleController extends BaseController {
             //             $this->assign('vinfo',$vinfo);
             $res_save=$mbHomeModel->where('id='.$id)->delete();
             if($res_save){
-                $this->output('操作成功!', 'homemanager',1);
+                $this->output('操作成功!', 'article/homemanager',2);
             }else{
-                $this->output('操作失败!', 'homemanager');
+                $this->output('操作失败!', 'article/homemanager');
             }
 
         }
@@ -412,6 +418,11 @@ class ArticleController extends BaseController {
         $this->assign('vinfo',$vinfo);
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
+
+            if ($vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
+                $vinfo['bespeak_time'] = '';
+            }
+
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
             $this->assign('vinfo',$vinfo);
@@ -425,6 +436,7 @@ class ArticleController extends BaseController {
     }
 
     public function doAddarticle(){
+
 
         $artModel = new ArticleModel();
         $id                  = I('post.id');
@@ -447,10 +459,12 @@ class ArticleController extends BaseController {
 
         $mediaid = I('post.media_id');
         $mediaModel = new \Admin\Model\MediaModel();
-        $oss_addr = $mediaModel->find($mediaid);
-        $oss_addr = $oss_addr['oss_addr'];
-        $save['img_url'] = $oss_addr;
-        $image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        if($mediaid){
+            $oss_addr = $mediaModel->find($mediaid);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['img_url'] = $oss_addr;
+        }
+
         if($id){
          
             if($artModel->where('id='.$id)->save($save)){

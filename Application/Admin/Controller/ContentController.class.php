@@ -28,7 +28,7 @@ class ContentController extends BaseController {
         $where = "1=1";
         $name = I('titlename');
         $type = I('type',10,'intval');//10为全部
-        $where .= " AND state=2 ";
+        //$where .= " AND state=2 ";
         $beg_time = I('begin_time','');
         $end_time = I('end_time','');
         if($beg_time)   $where.=" AND create_time>='$beg_time'";

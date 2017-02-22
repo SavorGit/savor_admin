@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>{$vinfo.title}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta content="yes" name="apple-mobile-web-app-capable">
-  <meta content="black" name="apple-mobile-web-app-status-bar-style">
-  <meta content="telephone=no" name="format-detection">
-  <meta http-equiv="Expires" CONTENT="-1">
-  <meta http-equiv="Cache-Control" CONTENT="no-cache">
-  <meta http-equiv="Pragma" CONTENT="no-cache">
-  <link href="/Public/admin/assets/css/stylecontent.css" rel="stylesheet">
-  <link href="/Public/admin/assets/css/weixin.css" rel="stylesheet">
-  <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.js"></script>
+    <title>{$vinfo.title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta http-equiv="Expires" CONTENT="-1">
+    <meta http-equiv="Cache-Control" CONTENT="no-cache">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <link href="/Public/admin/assets/css/stylecontent.css" rel="stylesheet">
+    <link href="/Public/admin/assets/css/weixin.css" rel="stylesheet">
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.js"></script>
 </head>
 <body>
-<div id="topLabel" style="background-color: #e7e7e7; width: 100%; height: 50px; position: fixed; top: 0px; left: 0px; z-index: 100;">
-  <img src="/Public/admin/assets/img/topAlert.png" name="myself" style="margin-top: 5px; margin-left: 10px; width: 178.5px; height: 40px;"/>
-  <div id="downLoad" style="background-color: red; border-radius: 5px; position: absolute; top: 10px; right: 10px;height: 30px;">
-    <p style="color: white; width: 80px; height: 40px; margin-top: 5px; text-align: center;"> 立即下载 </p>
-    <input type="hidden" id="verrre" value="{$videourl_id}" />
-  </div>
+<div id="topLabel" style="background-color:black; width: 100%; height: 53px; position: fixed; top: 0px; left: 0px; z-index: 100;">
+    <img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 5px; margin-left: 10px; width: 188px; height: 40px;"/>
+    <div id="downLoad" style="background-color: white; border-radius: 11px; position: absolute; top: 11px; right: 35px;height: 30px;">
+        <p style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
+        <input type="hidden" id="verrre" value="{$videourl_id}" />
+    </div>
+    <span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"/></span>
 </div>
 <div id='contentView' class="viewport" style="margin-top: 50px">
-  <div id="id_video_container_{$videourl_id}" class="contentD" style="width:100%;height:200px;"></div>
-  <script src="https://qzonestyle.gtimg.cn/open/qcloud/video/h5/h5connect.js" charset="utf-8"></script> 
-  <script type="text/javascript">{$play_js}</script>
-  <div class="box_nr">
-    {$vinfo.content}
-  </div>
+    <div id="id_video_container_{$videourl_id}" class="contentD" style="width:100%;height:204px;"></div>
+    <script src="https://qzonestyle.gtimg.cn/open/qcloud/video/h5/h5connect.js" charset="utf-8"></script>
+    <script type="text/javascript">{$play_js}</script>
+    <div class="box_nr">
+        {$vinfo.content}
+    </div>
 </div>
 </body>
 <script>
@@ -37,6 +38,7 @@
     var tmp=document.getElementById("verrre").value;
     var cont=document.getElementById("id_video_container_"+tmp);
     var topLabel=document.getElementById("topLabel");
+    var disnone = document.getElementById('disnone');
     if (result[0] == 'location' &&result[1] == 'newRead') {
         //当前是 阅读状态 隐藏下载条topLabel
 
@@ -46,11 +48,13 @@
     }else{
         cont.style.display="";
         topLabel.style.display="";
-
     }
     var button = document.getElementById('topLabel');
-    button.onclick = function (){
-      window.location.href = 'http://rerdian.com/d';
+    topLabel.onclick = function (){
+        window.location.href = 'http://rerdian.com/d';
+    }
+    disnone.onclick=function(){
+        topLabel.style.display='none';
     }
 </script>
 </html>

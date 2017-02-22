@@ -72,6 +72,7 @@
             <th>创建人</th>
             <th>创建时间</th>
             <th>状态</th>
+            <th class="table-tool">操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -107,6 +108,20 @@
                 <i class="fa fa-toggle-off"></i></span></a>
                 </if>
 
+              </td>
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="" target="ajaxTodo"
+                     data-original-title="预览" data-toggle="view" data-target="#modal-view"
+                     href="__ROOT__/content/{$vlist.id}.html"
+
+
+                     target="_blank"  class="btn btn-success btn-icon">
+                    <i class="fa fa-eye"></i>
+                  </a>
+
+                </div>
               </td>
 
 
