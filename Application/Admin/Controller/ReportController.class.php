@@ -35,9 +35,14 @@ class ReportController extends BaseController{
 		$start  = ( $start-1 ) * $size;
 		$where = "1=1";
 		$name = I('name');
+		$type = I('type');
 		if($name){
 			$this->assign('name',$name);
 			$where .= "	AND hotel_name LIKE '%{$name}%'";
+		}
+
+		if($type){
+			$where .= "	AND type= '{$type}' ";
 		}
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();

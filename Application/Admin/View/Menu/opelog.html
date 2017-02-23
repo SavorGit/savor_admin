@@ -27,15 +27,15 @@
               </ul>
             </div>
             <!--11-->
+            <div style="width: 100%;">	      	
             <volist name="vinfo" id="vlist">
             <div class='right' style="">
-
               <volist name="vlist" id="vinfo">
               <p>{$vinfo}</p>
               </volist>
-
             </div>
             </volist>
+            </div>
             <!--22-->
           </div>
         </div>
@@ -46,6 +46,7 @@
   </div>
 
 <script type="text/javascript">
+	$('.right').first().show().siblings().hide()
     var tab = document.getElementsByClassName('tabtwo');
     var righ = document.getElementsByClassName('right');
 		var a;
