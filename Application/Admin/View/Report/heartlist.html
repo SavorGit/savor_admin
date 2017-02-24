@@ -57,7 +57,14 @@
             <th>区域名称</th>
             <th>最后一次心跳距离现在时间</th>
             <th>类型</th>
-            <th>分区</th>
+          <!--   <th>分区</th> -->
+            <th>酒楼外网IP</th>
+            <th>小平台IP</th>
+            <th>广告期号</th>
+            <th>点播期号</th>
+            <th>APK版本号</th>
+            <th>WAR版本号</th>
+            <th>LOGO期号</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -79,7 +86,14 @@
                   <else/>错误
                 </if>
               </td>
-              <td data-title="分区">{$vlist.pt}</td>
+              <!-- <td data-title="分区">{$vlist.pt}</td> -->
+              <td data-title="酒楼外网IP">{$vlist.hotel_ip}</th>
+            <td data-title="小平台IP">{$vlist.small_ip}</th>
+            <td data-title="广告期号">{$vlist.vod_period}</th>
+            <td data-title="点播期号">{$vlist.demand_period}</th>
+            <td data-title="APK版本号">{$vlist.apk_version}</th>
+            <td data-title="WAR版本号">{$vlist.war_version}</th>
+            <td data-title="LOGO期号">{$vlist.logo_period}</th>
             </tr>
           </volist>
           </tbody>
