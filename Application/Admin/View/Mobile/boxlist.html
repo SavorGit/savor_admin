@@ -1,0 +1,76 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/mobile/boxreport" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+
+          <div class="form-group">
+          <div class="input-group input-group-sm pull-right">
+            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          </div>
+
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+
+            <th>序号</th>
+            <th>区域标识</th>
+            <th>区域名称</th>
+            <th>酒店标识</th>
+            <th>酒店名称</th>
+            <th>包间标识</th>
+            <th>包间名称</th>
+            <th>机顶盒标识</th>
+            <th>机顶盒名称</th>
+            <th>机顶盒MAC</th>
+            <th>投屏次数</th>
+            <th>点播次数</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.indnum}</td>
+              <td data-title="区域标识">{$vlist.area_id}</td>
+              <td data-title="区域名称">{$vlist.area_name}</td>
+              <td data-title="酒店标识">{$vlist.hotel_id}</td>
+              <td data-title="酒店名称">{$vlist.hotel_name}</td>
+              <td data-title="包间标识">{$vlist.room_id}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒标识">{$vlist.box_id}</td>
+              <td data-title="机顶盒名称">{$vlist.box_name}</td>
+              <td data-title="机顶盒MAC">{$vlist.box_name}</td>
+              <td data-title="投屏次数">{$vlist.project_count}</td>
+              <td data-title="点播次数">{$vlist.demand_count}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
