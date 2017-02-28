@@ -1,0 +1,86 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/version/sqlup" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              查询筛选：
+            </label>
+                <span class="input-group-btn">
+               <select name="type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <option value=1 >小平台</option>
+                 <option value=2 >机顶盒</option>
+                 <option value=3 >手机android</option>
+                 <option value=4>手机iphone</option>
+               </select>
+          </div>
+
+          </div>
+          <div class="form-group">
+          <div class="input-group input-group-sm pull-right">
+            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          </div>
+
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+
+
+
+          <tr id="post">
+            <th>序号</th>
+            <th>版本名称</th>
+            <th>版本号</th>
+            <th>语句</th>
+            <th>终端类型</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.indnum}</td>
+              <td data-title="版本名称">{$vlist.version_name}</td>
+              <td data-title="版本号">{$vlist.version_code}</td>
+              <td data-title="语句">{$vlist.sql_lang}</td>
+              <td data-title="类型">
+                <if condition="$vlist.device_type eq 1"> 小平台
+                  <elseif condition="$vlist.type eq 2"/>机顶盒
+                  <elseif condition="$vlist.type eq 3"/>3手机android
+                  <elseif condition="$vlist.type eq 4"/>4手机iphone
+                  <else/>错误
+                </if>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

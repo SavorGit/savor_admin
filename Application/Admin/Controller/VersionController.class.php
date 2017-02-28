@@ -30,6 +30,42 @@ class VersionController extends BaseController{
 	    $this->assign('page',  $result['page']);
 	    $this->display('client');
 	}
+
+	public function sqlup(){
+		$heartModel = new \Admin\Model\DeviceSqlModel();
+		$size   = I('numPerPage',50);//显示每页记录数
+		$this->assign('numPerPage',$size);
+		$start = I('pageNum',1);
+		$this->assign('pageNum',$start);
+		$order = I('_order','id');
+		$this->assign('_order',$order);
+		$sort = I('_sort','desc');
+		$this->assign('_sort',$sort);
+		$orders = $order.' '.$sort;
+		$start  = ( $start-1 ) * $size;
+		$where = "1=1";
+		$name = I('name');
+		$type = I('type');
+		if($name){
+			$this->assign('name',$name);
+			$where .= "	AND hotel_name LIKE '%{$name}%'";
+		}
+
+		if($type){
+			$where .= "	AND device_type= '{$type}' ";
+		}
+		$result = $heartModel->getList($where,$orders,$start,$size);
+		$time = time();
+		$ind = $start;
+		foreach ($result['list'] as &$val) {
+			$val['indnum'] = ++$ind;
+
+		}
+
+		$this->assign('list', $result['list']);
+		$this->assign('page',  $result['page']);
+		$this->display('sqlup');
+	}
 	
 	public function box(){
 	    $size   = I('numPerPage',50);//显示每页记录数
