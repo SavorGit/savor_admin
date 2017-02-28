@@ -236,7 +236,14 @@ class ArticleController extends BaseController {
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
         $result = $mbHomeModel->getList($where,$orders,$start,$size);
+        $con_id_arr = $mbHomeModel->field('content_id')->select();
+        $t_size = $artModel->getTotalSize($con_id_arr);
+
+
         $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
+
+
+
         $name = I('name');
         if($name){
             //根据id取
@@ -244,6 +251,7 @@ class ArticleController extends BaseController {
             $where .= "	AND name LIKE '%{$name}%'";
         }
         $this->assign('list', $datalist);
+        $this->assign('tsize', $t_size);
         $this->assign('page',  $result['page']);
         $this->display('homearticle');
     }
@@ -286,7 +294,7 @@ class ArticleController extends BaseController {
 
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
-            if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00') {
+            if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00' || $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vainfo['bespeak_time'] = '';
             }
             $media_id = $vainfo['media_id'];
@@ -342,7 +350,10 @@ class ArticleController extends BaseController {
         $save['update_time'] = date('Y-m-d H:i:s');
         $addtype = I('post.r1','0',intval);
         $save['bespeak_time'] = I('post.logtime','');
-        $save['duration'] = I('post.dura','0','intval');
+
+        $minu = I('post.minu','0','intval');
+        $seco = I('post.seco','0','intval');
+        $save['duration'] = $minu*60+$seco;
         $v_type    = I('post.r1','0','intval');
         //$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
         if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'){
@@ -360,6 +371,8 @@ class ArticleController extends BaseController {
         }
         if($media_id){
             $oss_arr = $mediaModel->find($media_id);
+            $oss_path = $oss_arr['oss_addr'];
+            $save['size'] = $artModel->getOssSize($oss_path);
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id']    = $media_id;
         }
@@ -421,7 +434,7 @@ class ArticleController extends BaseController {
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
 
-            if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00') {
+            if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vinfo['bespeak_time'] = '';
             }
 

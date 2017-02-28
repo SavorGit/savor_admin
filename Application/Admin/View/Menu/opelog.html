@@ -8,7 +8,6 @@
       <div class='wrap'>
         <div class='head'>
           <p>更新信息</p>
-          <span>×</span>
         </div>
         <div class='center'>
           <div class='up'>
@@ -52,7 +51,7 @@
 		var a;
 		for(a=0;a<tab.length;a++){
 			  tab[a].index=a;
-				tab[a].onmousemove=function(){
+				tab[a].onclick=function(){
 					for(a=0;a<righ.length;a++)
 				{
 					righ[a].style.display='none';

@@ -50,7 +50,63 @@ class ArticleModel extends BaseModel
 
 	}//End Function
 
+	public function getOssSize($oss_path) {
+		$accessKeyId = C('OSS_ACCESS_ID');
+		$accessKeySecret = C('OSS_ACCESS_KEY');
+		$endpoint = C('OSS_HOST');
+		$bucket = C('OSS_BUCKET');
+		$aliyun = new \Common\Lib\Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+		$aliyun->setBucket($bucket);
+		$ossClient = $aliyun->getOssClient();
+		$info = $ossClient->getObjectMeta($aliyun->getBucket(), $oss_path);
+		$byt = $this->byteFormat($info['content-length'],'MB');
+		return $byt;
+	}
 
+	public function byteFormat($bytes, $unit = "", $decimals = 2) {
+		$units = array('B' => 0, 'KB' => 1, 'MB' => 2, 'GB' => 3, 'TB' => 4, 'PB' => 5, 'EB' => 6, 'ZB' => 7, 'YB' => 8);
+
+		$value = 0;
+		if ($bytes > 0) {
+			// Generate automatic prefix by bytes
+			// If wrong prefix given
+			if (!array_key_exists($unit, $units)) {
+				$pow = floor(log($bytes)/log(1024));
+				$unit = array_search($pow, $units);
+			}
+
+			// Calculate byte value by prefix
+			$value = ($bytes/pow(1024,floor($units[$unit])));
+		}
+
+		// If decimals is not numeric or decimals is less than 0
+		// then set default value
+		if (!is_numeric($decimals) || $decimals < 0) {
+			$decimals = 2;
+		}
+
+		// Format output
+		return sprintf('%.' . $decimals . 'f '.$unit, $value);
+	}
+
+
+
+	public function getTotalSize($result=[]){
+		if(!$result || !is_array($result)){
+			return [];
+		}
+		$arrArtId = [];
+		$size = 0;
+
+		foreach($result as &$value) {
+			$contentid = $value['content_id'];
+			$info = $this->where(array('type'=>3))->find($contentid);
+			$size+= $info['size'];
+
+		}
+		return $size;
+
+	}
 	public function changeIdjName($result=[],$cat_arr){
 		if(!$result || !is_array($result)){
 			return [];
@@ -63,6 +119,8 @@ class ArticleModel extends BaseModel
 			$value['category_id'] = $info['category_id'];
 			$value['operators'] = $info['operators'];
 			$value['title'] = $info['title'];
+			$value['type'] = $info['type'];
+			$value['size'] = $info['size'];
 		}
 
 		foreach ($result as &$value){
