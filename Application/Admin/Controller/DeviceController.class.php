@@ -227,7 +227,7 @@ class DeviceController extends BaseController{
 		$boxModel = new BoxModel;
 		if($id){
 			if($boxModel->where('id='.$id)->save($save)){
-				$this->output('更新成功!', 'hotel/room');
+				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		
