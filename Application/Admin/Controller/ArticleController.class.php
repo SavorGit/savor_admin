@@ -238,12 +238,7 @@ class ArticleController extends BaseController {
         $result = $mbHomeModel->getList($where,$orders,$start,$size);
         $con_id_arr = $mbHomeModel->field('content_id')->select();
         $t_size = $artModel->getTotalSize($con_id_arr);
-
-
         $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
-
-
-
         $name = I('name');
         if($name){
             //根据id取

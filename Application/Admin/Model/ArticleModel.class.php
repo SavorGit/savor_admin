@@ -115,7 +115,7 @@ class ArticleModel extends BaseModel
 		foreach($result as &$value) {
 			$contentid = $value['content_id'];
 			$info = $this->find($contentid);
-			$value['media_key_id'] = $info['media_key_id'];
+			$value['media_id'] = $info['media_id'];
 			$value['category_id'] = $info['category_id'];
 			$value['operators'] = $info['operators'];
 			$value['title'] = $info['title'];
