@@ -286,7 +286,7 @@ class ArticleController extends BaseController {
 
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
-            if ($vainfo['bespeak_time'] == '0000-00-00 00:00:00') {
+            if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00') {
                 $vainfo['bespeak_time'] = '';
             }
             $media_id = $vainfo['media_id'];
@@ -347,6 +347,8 @@ class ArticleController extends BaseController {
         //$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
         if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'){
             $save['bespeak'] = 0;
+            $save['bespeak_time'] ='1970-01-01 00:00:00';
+
         }else{
             $save['bespeak'] = 1;
         }
@@ -419,7 +421,7 @@ class ArticleController extends BaseController {
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
 
-            if ($vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
+            if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00') {
                 $vinfo['bespeak_time'] = '';
             }
 
@@ -452,7 +454,7 @@ class ArticleController extends BaseController {
         if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'
 ){
             $save['bespeak'] = 0;
-            $save['bespeak_time'] = '';
+            $save['bespeak_time'] = '1970-01-01 00:00:00';
         }else{
             $save['bespeak'] = 1;
         }
