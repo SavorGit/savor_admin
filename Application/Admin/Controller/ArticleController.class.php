@@ -328,6 +328,39 @@ class ArticleController extends BaseController {
         //         return $this->display('addhome');
     }
 
+
+    public function addSort(){
+        $mbHomeModel = new \Admin\Model\HomeModel();
+        $artModel = new  \Admin\Model\ArticleModel();
+        $catModel = new \Admin\Model\CategoModel;
+        $cat_arr = $catModel->select();
+        $size   = I('numPerPage',250);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $order = I('_order','id');
+        $this->assign('_order',$order);
+        $sort = I('_sort','asc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        $where = "1=1";
+        $result = $mbHomeModel->getList($where,$orders,$start,$size);
+        $con_id_arr = $mbHomeModel->field('content_id')->select();
+        $t_size = $artModel->getTotalSize($con_id_arr);
+        $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
+        $name = I('name');
+        if($name){
+            //根据id取
+            $this->assign('name',$name);
+            $where .= "	AND name LIKE '%{$name}%'";
+        }
+        $this->assign('list', $datalist);
+        $this->assign('tsize', $t_size);
+        $this->assign('page',  $result['page']);
+        $this->display('homesort');
+    }
+
     public function doAddvideo(){
         $mediaModel = new \Admin\Model\MediaModel();
         $artModel = new ArticleModel();
