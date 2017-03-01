@@ -19,8 +19,11 @@ class LoginController extends BaseController {
             $error_msg = '你的账户输入错误已达上限，请联系管理员。';
             $cache_key = 'login_'.getClientIP();
             $cache_db = Cache::getInstance('db');
+            //var_dump($cache_db);
+
             $cache_locknum = $cache_db->get($cache_key);
-            file_put_contents('/tmp/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);
+            file_put_contents('/application_data/app_logs/php/savor_admin
+/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);
             if(!empty($cache_locknum) && $cache_locknum==$lock_max){
                 $this->assign('errormsg', $error_msg);
                 $this->display('Login/index');
