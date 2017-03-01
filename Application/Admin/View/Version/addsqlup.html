@@ -1,0 +1,93 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<include file="Public/script"/>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/version/doAddsqlup" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+
+    <div class="pageFormContent modal-body">
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          终端类型：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <volist name=":C('DEVICE_TYPE')" id="vo">
+
+              <input name="devicetype" type="radio" id="{$key}" value="{$key}" <if condition="$key eq $vinfo['device_type']">checked</if> />&nbsp;{$vo}
+              &nbsp;&nbsp;
+          </volist>
+        </div>
+      </div>
+
+
+
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          版本名称:
+        </label>
+        <select id="vername"  name="vername" data-style="btn-success btn-sm" class="col-xs-1 col-md-1" >
+          <volist name="vinfo" id="vo">
+
+              <option value="{$key}" data-content='{$vo}'>{$vinfo.version_name}</option>
+
+          </volist>
+        </select>
+      </div>
+
+
+      <div class="form-group">
+        <label class="col-xs-12 col-sm-2 control-label">SQL语句</label>
+        <textarea class="form-control" rows="3" id="sqls" name="sqls"></textarea>
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>
+    </div>
+
+  </form>
+</div>
+<script type="text/javascript">
+  $(function() {
+    function changeType(val){
+
+      $.ajax({
+        type:"POST",
+        ContentType: "application/json; charset=utf-8",
+        dataType: "json",
+        url:"{$host_name}/version/getvname",
+        data:"tid="+val,
+        success:function(data){
+          if(data.error==0){
+            var data = data.message;
+            for(var i=0,l=data.length;i<l;i++) {
+              for (var key in data[i]) {
+                //alert(key);
+                if (key == 'id') {
+                  var id = data[i][key];
+                }else if(key == 'version_name') {
+                  var name = data[i][key];
+                }
+              }
+
+              $("#vername").append("<option value="+id+">"+name+"</option>");
+            }
+          } else {
+
+          }
+        }
+      });
+    }
+
+
+    $("input[name='devicetype']").click(function() {
+      var id = $(this).attr("id");
+      changeType(id);
+    });
+  });
+</script>

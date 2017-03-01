@@ -11,6 +11,10 @@
         <div class="form-inline" style="margin-top:3px;">
         <div class="form-group">
           <div class="input-group input-group-sm">
+
+
+
+
             <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
               查询筛选：
             </label>
@@ -24,6 +28,8 @@
                </select>
           </div>
 
+
+
           </div>
           <div class="form-group">
           <div class="input-group input-group-sm pull-right">
@@ -32,6 +38,8 @@
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
           </div>
+
+            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addsqlup" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i>新增</a>
           </div>
 
         </div>
@@ -57,6 +65,7 @@
             <th>版本号</th>
             <th>语句</th>
             <th>终端类型</th>
+            <th>操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -68,11 +77,18 @@
               <td data-title="语句">{$vlist.sql_lang}</td>
               <td data-title="类型">
                 <if condition="$vlist.device_type eq 1"> 小平台
-                  <elseif condition="$vlist.type eq 2"/>机顶盒
-                  <elseif condition="$vlist.type eq 3"/>3手机android
-                  <elseif condition="$vlist.type eq 4"/>4手机iphone
+                  <elseif condition="$vlist.device_type eq 2"/>机顶盒
+                  <elseif condition="$vlist.device_type eq 3"/>3手机android
+                  <elseif condition="$vlist.device_type eq 4"/>4手机iphone
                   <else/>错误
                 </if>
+              </td>
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" rel="version/sqlup" href="{$host_name}/version/delSqlup?vid={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
+                </div>
               </td>
             </tr>
           </volist>
