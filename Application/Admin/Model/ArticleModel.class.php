@@ -59,7 +59,13 @@ class ArticleModel extends BaseModel
 		$aliyun->setBucket($bucket);
 		$ossClient = $aliyun->getOssClient();
 		$info = $ossClient->getObjectMeta($aliyun->getBucket(), $oss_path);
-		$byt = $this->byteFormat($info['content-length'],'MB');
+		if($info){
+			
+$byt = $this->byteFormat($info['content-length'],'MB');
+		}else{
+			$byt = '0MB';
+		}
+
 		return $byt;
 	}
 
@@ -112,6 +118,7 @@ class ArticleModel extends BaseModel
 			return [];
 		}
 		$arrArtId = [];
+		$index = 1;
 		foreach($result as &$value) {
 			$contentid = $value['content_id'];
 			$info = $this->find($contentid);
@@ -121,6 +128,8 @@ class ArticleModel extends BaseModel
 			$value['title'] = $info['title'];
 			$value['type'] = $info['type'];
 			$value['size'] = $info['size'];
+			$value['index'] = $index;
+			$index++;
 		}
 
 		foreach ($result as &$value){
