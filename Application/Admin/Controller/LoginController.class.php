@@ -20,6 +20,7 @@ class LoginController extends BaseController {
             $cache_key = 'login_'.getClientIP();
             $cache_db = Cache::getInstance('db');
             $cache_locknum = $cache_db->get($cache_key);
+            file_put_contents('/tmp/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);
             if(!empty($cache_locknum) && $cache_locknum==$lock_max){
                 $this->assign('errormsg', $error_msg);
                 $this->display('Login/index');
