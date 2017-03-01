@@ -251,6 +251,72 @@ class MenuController extends BaseController {
         $this->display('getdetailmenu');
     }
 
+    public function getfile(){
+        $upload = new \Think\Upload();
+        $upload->exts = array('xls','xlsx','xlsm','csv');
+        $upload->maxSize = 2097152;
+        $upload->rootPath = $this->imgup_path();
+        $upload->savePath = '';
+        $info = $upload->upload();
+        //var_dump($info);
+
+        if(empty($info['file_data'])){
+            $errMsg = $upload->getError();
+            $this->output($errMsg, 'importdata', 0,0);
+        }
+        $path = SITE_TP_PATH.'/Public/uploads/'.$info['file_data']['savepath'].$info['file_data']['savename'];
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        //echo $path;
+        $ret[] = $path;
+        echo json_encode($ret);
+        die;
+        if (!file_exists($path)) {
+            $this->output('上传文件失败', 'importdata', 0,0);
+        }
+        $type = strtolower(pathinfo($path, PATHINFO_EXTENSION) );
+        if($type=='xlsx' || $type=='xls'){
+            $objPHPExcel = \PHPExcel_IOFactory::load($path);
+        }elseif($type=='csv'){
+            $objReader = \PHPExcel_IOFactory::createReader('CSV')
+                ->setDelimiter(',')
+                ->setInputEncoding('GBK')//不设置将导致中文列内容返回boolean(false)或乱码
+                ->setEnclosure('"')
+                ->setLineEnding("\r\n")
+                ->setSheetIndex(0);
+            $objPHPExcel = $objReader->load($path);
+        }else{
+            $this->output('文件格式不正确', 'importdata', 0,0);
+        }
+        $sheet = $objPHPExcel->getSheet(0);
+        //获取行数与列数,注意列数需要转换
+        $highestRowNum = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+        //取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+        $filed = array();
+        for($i=0; $i<$highestColumnNum;$i++){
+            $cellName = \PHPExcel_Cell::stringFromColumnIndex($i).'1';
+            $cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+            $filed[]= $cellVal;
+        }
+        //开始取出数据并存入数组
+        $data = array();
+        for($i=2;$i<=$highestRowNum;$i++){//ignore row 1
+            $row = array();
+            for($j=0; $j<$highestColumnNum;$j++){
+                $cellName = \PHPExcel_Cell::stringFromColumnIndex($j).$i;
+                $cellVal = $sheet->getCell($cellName)->getValue();
+                $row[$filed[$j]] = $cellVal;
+            }
+            $data []= $row;
+        }
+        var_dump($data);
+        die;
+        var_dump($info);
+        echo 'success';
+        die;
+    }
+
     public function gethotelmanager()
     {
         // //var_dump($_POST);
@@ -889,69 +955,207 @@ class MenuController extends BaseController {
 
     }
 
+    /*
+     * 处理excel数据
+     */
+    public function analyseExcel(){
+        $adsModel = new \Admin\Model\AdsModel();
+        $path = $_POST['excelpath'];
+        if  ($path == '') {
+            $res = array('error'=>0,'message'=>array());
+            echo json_encode($res);
+        }
+        $adsname = I('post.adsname','');
+
+        if ($adsname) {
+            $name_arr = explode (',',substr(I('post.rightname',''),0,-1));
+        }
+        $type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        vendor("PHPExcel.PHPExcel.IOFactory");
+
+        if ($type == 'xlsx' || $type == 'xls') {
+            $objPHPExcel = \PHPExcel_IOFactory::load($path);
+        } elseif ($type == 'csv') {
+            $objReader = \PHPExcel_IOFactory::createReader('CSV')
+                ->setDelimiter(',')
+                ->setInputEncoding('GBK')//不设置将导致中文列内容返回boolean(false)或乱码
+                ->setEnclosure('"')
+                ->setLineEnding("\r\n")
+                ->setSheetIndex(0);
+            $objPHPExcel = $objReader->load($path);
+        } else {
+            $this->output('文件格式不正确', 'importdata', 0, 0);
+        }
+
+        $sheet = $objPHPExcel->getSheet(0);
+        //获取行数与列数,注意列数需要转换
+        $highestRowNum = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+       // var_dump($highestRowNum, $highestColumn, $highestColumnNum);
+        //取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+        $filed = array();
+        for ($i = 0; $i < $highestColumnNum; $i++) {
+            $cellName = \PHPExcel_Cell::stringFromColumnIndex($i) . '1';
+            $cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+            $filed[] = $cellVal;
+        }
+       // var_dump($filed);
+
+        //开始取出数据并存入数组
+        $data = array();
+        for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
+            $row = array();
+            for ($j = 0; $j < $highestColumnNum; $j++) {
+                $cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
+                $cellVal = $sheet->getCell($cellName)->getValue();
+                $row[$filed[$j]] = $cellVal;
+            }
+            $data [] = $row;
+        }
+        //var_dump($data);
+        $ex_arr = array();
+        $remove_arr = array();
+        $inc_arr = array();
+        foreach ($data as $rk=>$rv) {
+            foreach($rv as $sk=>$sv){
+                $ex_arr[] = $sv;
+                break;
+            }
+            $xuan_arr = array('酒楼宣传片','1酒楼片源','2酒楼片源','3酒楼片源','4酒楼片源','5酒楼片源','6酒楼片源');
+            if (in_array($sv, $xuan_arr)) {
+                $inc_arr[] = array(
+                    'id'=>0,
+                    'name'=>$sv,
+                    'duration'=>0,
+                    'create_time'=>date("Y-m-d H:i:s"),
+                );
+            }else{
+                $res = $adsModel->where(array('name'=>$sv))->find();
+
+                if ($res) {
+                    //var_dump($res);
+                    $inc_arr[] = array(
+                        'id'=>$res['id'],
+                        'name'=>$res['name'],
+                        'duration'=>$res['duration'],
+                        'create_time'=>$res['create_time'],
+                    );
+                } else{
+                    $remove_arr[] = $sv;
+                }
+            }
+
+        }
+        $list = '';
+        /*foreach ($inc_arr as $ik=>$iv) {
+            $list .= ' <div id="'.$iv['id'].'" dur="'.$iv['duration'].'" class="divlist2"><span class="sleft">'.$iv['name'].'</span><span class="sright">'.$iv['create_time'].' </span></div>';
+        }*/
+        //$list = h($list);
+
+        if ($remove_arr) {
+            $res = array('error'=>1,'message'=>$remove_arr);
+
+        } else {
+            $res = array('error'=>0,'message'=>$inc_arr);
+        }
+       // ob_clean();
+        echo json_encode($res);
+    }
 
 
 
     /*
    * 添加节目管理
    */
-    public function addmen() {
+    public function addmen()
+    {
 
+        if (isset($_POST['excelsub'])) {
+            //excel判断
+            $path = $_POST['excelpath'];
+            $type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            vendor("PHPExcel.PHPExcel.IOFactory");
 
-
-        //左边表单提交，右边表单提交，导入ajax,id修改
-        $userInfo = session('sysUserInfo');
-        $menu_name = I('get.name'.'');
-        $type = I('type');
-        if ( $type == 2 ) {
-            $menuid = I('id','0');
-            if ($menuid) {
-                $mItemModel = new MenuItemModel();
-                $order = I('_order','id');
-                $sort = I('_sort','asc');
-                $orders = $order.' '.$sort;
-                $where = "1=1";
-                $field = "ads_name,ads_id,duration,sort_num,create_time";
-                $where .= " AND menu_id={$menuid}  ";
-                $res = $mItemModel->getWhere($where,$orders, $field);
-                $this->assign('menuid',$menuid);
-                $this->assign('menuname',$menu_name);
-                $this->assign('list',$res);
-
+            if ($type == 'xlsx' || $type == 'xls') {
+                $objPHPExcel = \PHPExcel_IOFactory::load($path);
+                die;
+            } elseif ($type == 'csv') {
+                $objReader = \PHPExcel_IOFactory::createReader('CSV')
+                    ->setDelimiter(',')
+                    ->setInputEncoding('GBK')//不设置将导致中文列内容返回boolean(false)或乱码
+                    ->setEnclosure('"')
+                    ->setLineEnding("\r\n")
+                    ->setSheetIndex(0);
+                $objPHPExcel = $objReader->load($path);
+            } else {
+                $this->output('文件格式不正确', 'importdata', 0, 0);
             }
+
+            $sheet = $objPHPExcel->getSheet(0);
+            //获取行数与列数,注意列数需要转换
+            $highestRowNum = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+            $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+            var_dump($highestRowNum, $highestColumn, $highestColumnNum);
+            //取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+            $filed = array();
+            for ($i = 0; $i < $highestColumnNum; $i++) {
+                $cellName = \PHPExcel_Cell::stringFromColumnIndex($i) . '1';
+                $cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+                $filed[] = $cellVal;
+            }
+            var_dump($filed);
+
+            //开始取出数据并存入数组
+            $data = array();
+            for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
+                $row = array();
+                for ($j = 0; $j < $highestColumnNum; $j++) {
+                    $cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
+                    $cellVal = $sheet->getCell($cellName)->getValue();
+                    $row[$filed[$j]] = $cellVal;
+                }
+                $data [] = $row;
+            }
+            var_dump($data);
+            // ob_clean();
+            // die;
+            die;
+            $str = 'xxxxxxxxx';
+            $this->assign('xiaob', $str);
+            $this->assign('tiantian', $str);
             $this->display('addmenuct');
-        } else {
-            $this->display('addmenuct');
+
+
+
         }
 
-        /*
-        $prModel = new ProgramModel();
+            //左边表单提交，右边表单提交，导入ajax,id修改
+            $userInfo = session('sysUserInfo');
+            $menu_name = I('get.name' . '');
+            $type = I('type');
+            if ($type == 2) {
+                $menuid = I('id', '0');
+                if ($menuid) {
+                    $mItemModel = new MenuItemModel();
+                    $order = I('_order', 'id');
+                    $sort = I('_sort', 'asc');
+                    $orders = $order . ' ' . $sort;
+                    $where = "1=1";
+                    $field = "ads_name,ads_id,duration,sort_num,create_time";
+                    $where .= " AND menu_id={$menuid}  ";
+                    $res = $mItemModel->getWhere($where, $orders, $field);
+                    $this->assign('menuid', $menuid);
+                    $this->assign('menuname', $menu_name);
+                    $this->assign('list', $res);
 
+                }
+                $this->display('addmenuct');
+            } else {
+                $this->display('addmenuct');
+            }
 
-        $prModel->getWhere();
-        $artModel = new ArticleModel();
-        $userInfo = session('sysUserInfo');
-        $uname = $userInfo['username'];
-        $this->assign('uname',$uname);
-
-
-        $acctype = I('get.acttype');
-
-        if ($acctype && $id)
-        {
-            $vinfo = $artModel->where('id='.$id)->find();
-            $this->assign('vinfo',$vinfo);
-
-        } else {
-
-        }
-        $where = "state=0";
-        $field = 'id,name';
-        $vinfo = $catModel->getWhere($where, $field);
-
-        $this->assign('vcainfo',$vinfo);
-
-        */
 
 
     }
@@ -969,8 +1173,12 @@ class MenuController extends BaseController {
         $searchtitle = I('post.searchtitle','');
         $beg_time = I('starttime','');
         $end_time = I('endtime','');
+
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
-        if($end_time)   $where.=" AND create_time<='$end_time'";
+        if($end_time)   {
+            $end_time=date("Y-m-d",strtotime($end_time."+1 day"));
+            $where.=" AND create_time<'$end_time'";
+        }
 
         $where .= " AND state=1 ";
         if ($searchtitle) {
