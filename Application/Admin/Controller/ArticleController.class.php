@@ -333,6 +333,7 @@ class ArticleController extends BaseController {
     }
 
     public function doSort(){
+
         $sort_str= I('post.soar');
         $sort_arr = explode(',', $sort_str);
         $sql = 'update savor_mb_home  SET sort_num = CASE id
@@ -345,10 +346,10 @@ class ArticleController extends BaseController {
         $mbHome = new \Admin\Model\HomeModel();
         $bool = $mbHome->execute($sql);
         if($bool){
-            $this->output('操作成功','content/getlist');
-            echo 'success';
+            $this->output('操作成功','article/homemanager');
+
         } else{
-            echo 'fail';
+            $this->output('未改顺序','content/getlist',1,0);
         }
 
         /*    SET display_order = CASE id
