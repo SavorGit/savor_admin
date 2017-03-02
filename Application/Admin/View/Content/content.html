@@ -10,7 +10,33 @@
       <div class="clearfix">
       </div>
       <div class="form-inline" style="margin-top:3px;">
-
+		<div class="form-group">
+              <div class="input-group-sm input-group">
+                <label>分类：</label>
+                <span class="input-group-btn input-group-sm">
+                <select name="category_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+	                <option value=0 >全部</option>
+	                <volist name="vcainfo" id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $category_id">selected</if>>{$vo.name}</option><br>
+	                </volist>
+              </select>
+              </span>
+              </div>
+        </div>
+        <div class="form-group">
+              <div class="input-group-sm input-group">
+                <label>内容类型：</label>
+                <span class="input-group-btn input-group-sm">
+                <select name="content_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+	                <option value=0 >全部</option>
+	                <volist name="content_type_arr" id="vo">
+	                  <option value="{$key}" <if condition="$key eq $content_type">selected</if>>{$vo}</option><br>
+	                </volist>
+              </select>
+              </span>
+              </div>
+        </div>
+           
         <div class="form-group">
 
           <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$timeinfo.now_time}">

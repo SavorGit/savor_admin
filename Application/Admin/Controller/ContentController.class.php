@@ -29,6 +29,29 @@ class ContentController extends BaseController {
         $name = I('titlename');
         $type = I('type',10,'intval');//10为全部
         //$where .= " AND state=2 ";
+        $category_id = I('category_id',0,'intval');
+        if($category_id) $where .=" AND category_id='$category_id'";
+        $content_type = I('content_type','','intval');
+        if(is_numeric($content_type)){
+            switch ($content_type){
+                case 0:
+                    $where .= " AND type=0";
+                    break;
+                case 1:
+                    $where .=" AND type=1";
+                    break;
+                case 2:
+                    $where .=" AND type=2";
+                    break;
+                case 3:
+                    $where .=" AND type=3 and media_id=0";
+                    break;
+                case 4:
+                    $where .=" AND type=3 and media_id>0"; 
+                    break;
+            }
+            $this->assign('content_type',$content_type);
+        }
         $beg_time = I('begin_time','');
         $end_time = I('end_time','');
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
@@ -41,9 +64,16 @@ class ContentController extends BaseController {
             $where .= "	AND type='$type'";
         }
         $result = $artModel->getList($where,$orders,$start,$size);
-	$result['list'] = $artModel->changeCatname($result['list']);
-        $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
-        $this->assign('timeinfo',$time_info);
+	    $result['list'] = $artModel->changeCatname($result['list']);
+	    $catModel = new \Admin\Model\CategoModel();
+	    $where = " state=1";
+    	$field = 'id,name';
+    	$category_list = $catModel->getWhere($where, $field);
+    	$this->assign('vcainfo',$category_list);
+	    $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
+        $this->assign('content_type_arr',$this->content_type_arr);
+	    $this->assign('category_id',$category_id);
+	    $this->assign('timeinfo',$time_info);
         $this->assign('ctype', $type);
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
