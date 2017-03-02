@@ -51,7 +51,6 @@ class ArticleModel extends BaseModel
 	}//End Function
 
 	public function getOssSize($oss_path) {
-		$oss_path = 'media/resource/NdeAytxJrT.mp4';
 		$accessKeyId = C('OSS_ACCESS_ID');
 		$accessKeySecret = C('OSS_ACCESS_KEY');
 		$endpoint = C('OSS_HOST');

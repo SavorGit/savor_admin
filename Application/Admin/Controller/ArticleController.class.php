@@ -466,7 +466,7 @@ WHERE id IN (1,2,3)*/
                // $this->showvideocontent($id, $save['tx_url']);
                 $dat['content_url'] = 'content/'.$id.'.html';
                 $artModel->where('id='.$id)->save($dat);
-                $this->output('操作成功!', 'content/getlist');
+                $this->output('操作成功!', 'content/getlist',1);
             }else{
                 $this->output('操作失败!', 'content/getlist');
             }
