@@ -168,13 +168,14 @@ class ArticleController extends BaseController {
             //判断表中是否有
             $res = $mbHomeModel->where('content_id='.$artid)->find();
             if( $res ){
-                $this->output('失败文章已经存在', 'content/getlist',2);
+                $this->output('失败文章已经存在', 'content/getlist',3,0);
             } else {
                 $artModel = new  \Admin\Model\ArticleModel();
                 $arr = $artModel->find($artid);
                 $state = $arr['state'];
                 if ($state != 2) {
-                    $this->output('失败审核状态不允许', 'content/getlist',2);
+                    $this->output('失败审核状态不允许', 'content/getlist',3,0);
+
                 }
                 //期刊
                 $mbperModel = new \Admin\Model\MbPeriodModel();
@@ -188,7 +189,7 @@ class ArticleController extends BaseController {
                 }else{
                     $mbperModel->add($dat);
                 }
-                $mbHomeModel = new \Admin\Model\HomeModel();
+
                 $userInfo = session('sysUserInfo');
                 $save[] = array();
                 $md5 = $arr['vod_md5'];
@@ -196,7 +197,8 @@ class ArticleController extends BaseController {
                     $save['is_demand'] = 1;
                 }
                 $save['content_id'] = $artid;
-                $save['sort_num'] = 2;
+                $max_nu = $mbHomeModel->max('sort_num');
+                $save['sort_num'] = $max_nu+1;
                 $save['creator_id'] = $userInfo['id'];
                 $save['create_time'] = date("Y-m-d H:i:s", time());
                 $save['update_time'] = $save['create_time'];
@@ -208,10 +210,12 @@ class ArticleController extends BaseController {
                 }
             }
         } else {
-            $save['sort_num'] = I('sort');
+            $max_nu = $mbHomeModel->max('sort_num');
+            $save['sort_num'] = $max_nu+1;
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
-                $this->output('操作成功!', 'article/homemanager',1);
+                $this->output('操作成功!', 'content/getlist',3);
+                die;
             }else{
                 $this->output('操作失败!', 'article/homemanager');
             }
@@ -341,6 +345,7 @@ class ArticleController extends BaseController {
         $mbHome = new \Admin\Model\HomeModel();
         $bool = $mbHome->execute($sql);
         if($bool){
+            $this->output('操作成功','content/getlist');
             echo 'success';
         } else{
             echo 'fail';

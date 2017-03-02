@@ -127,10 +127,14 @@
                 alert(data);
                 if(data == 'success'){
                   //$("#mymodal2").modal('show');
+                  //
+                 // $(".modal .fade .in .no-transform").css('display','none');
+                  //refresh();
+                  location.href = "#content/getlist";
                 }else{
                  // $("#mymodal2").modal('show');
                 }
-                refresh();
+
 
               }
             });
@@ -140,7 +144,7 @@
    // window.location.reload();//刷新当前页面.
 
     //或者下方刷新方法
-    parent.location.reload();
+    //parent.location.reload();
     // opener.location.reload()刷新父窗口对象（用于单开窗口
     //top.location.reload()刷新最顶端对象（用于多开窗口）
   }
@@ -192,11 +196,12 @@
     $('.bottoms').click(function(){
 
       //var lasts = $('.divlist2').last().index()
-      $shuju.each(function(){
+      /*$shuju.each(function(){
         if($(this).is('.active')){
           $(this).insertAfter($(this).next());
         }
-      })
+      })*/
+      $('.shuju>.active:last').next().insertBefore($('.shuju>.active:first'));
     })
     /*置底*/
     $('.bottomz').click(function(){
