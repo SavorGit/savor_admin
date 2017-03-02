@@ -328,27 +328,51 @@ class ArticleController extends BaseController {
         //         return $this->display('addhome');
     }
 
+    public function doSort(){
+        $sort_str= I('post.soar');
+        $sort_arr = explode(',', $sort_str);
+        $sql = 'update savor_mb_home  SET sort_num = CASE id
+';
+        foreach($sort_arr as $k=>$v){
+            $k = $k+1;
+            $sql .= ' WHEN '.$v.' THEN '.$k;
+        }
+        $sql .= ' END WHERE id IN ('.$sort_str.')';
+        $mbHome = new \Admin\Model\HomeModel();
+        $bool = $mbHome->execute($sql);
+        if($bool){
+            echo 'success';
+        } else{
+            echo 'fail';
+        }
+
+        /*    SET display_order = CASE id
+        WHEN 1 THEN 3
+        WHEN 2 THEN 4
+        WHEN 3 THEN 5
+    END
+WHERE id IN (1,2,3)*/
+
+    }
+
 
     public function addSort(){
         $mbHomeModel = new \Admin\Model\HomeModel();
         $artModel = new  \Admin\Model\ArticleModel();
         $catModel = new \Admin\Model\CategoModel;
         $cat_arr = $catModel->select();
-        $size   = I('numPerPage',250);//显示每页记录数
-        $this->assign('numPerPage',$size);
-        $start = I('pageNum',1);
-        $this->assign('pageNum',$start);
-        $order = I('_order','id');
+        $order = I('_order','sort_num');
         $this->assign('_order',$order);
         $sort = I('_sort','asc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
-        $start  = ( $start-1 ) * $size;
         $where = "1=1";
-        $result = $mbHomeModel->getList($where,$orders,$start,$size);
+        $result = $mbHomeModel->where($where)->order($order)->select();
+
+
         $con_id_arr = $mbHomeModel->field('content_id')->select();
         $t_size = $artModel->getTotalSize($con_id_arr);
-        $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
+        $datalist = $artModel->changeIdjName($result, $cat_arr);
         $name = I('name');
         if($name){
             //根据id取
@@ -357,7 +381,6 @@ class ArticleController extends BaseController {
         }
         $this->assign('list', $datalist);
         $this->assign('tsize', $t_size);
-        $this->assign('page',  $result['page']);
         $this->display('homesort');
     }
 
