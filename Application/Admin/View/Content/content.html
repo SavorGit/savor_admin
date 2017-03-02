@@ -28,9 +28,13 @@
                 <label>内容类型：</label>
                 <span class="input-group-btn input-group-sm">
                 <select name="content_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-	                <option value=0 >全部</option>
+	                <option  >全部</option>
 	                <volist name="content_type_arr" id="vo">
-	                  <option value="{$key}" <if condition="$key eq $content_type">selected</if>>{$vo}</option><br>
+	                  <option value="{$key}" 
+	                  <?php if($key === $content_type){ ?>
+	                  selected
+	                  <?php } ?>
+	                  >{$vo}</option><br>
 	                </volist>
               </select>
               </span>

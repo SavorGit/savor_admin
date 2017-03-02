@@ -51,8 +51,8 @@ class ContentController extends BaseController {
                     $where .=" AND type=3 and media_id>0"; 
                     break;
             }
-            $this->assign('content_type',$content_type);
         }
+        $this->assign('content_type',$content_type);
         $beg_time = I('begin_time','');
         $end_time = I('end_time','');
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
