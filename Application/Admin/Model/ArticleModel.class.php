@@ -51,6 +51,7 @@ class ArticleModel extends BaseModel
 	}//End Function
 
 	public function getOssSize($oss_path) {
+		$oss_path = 'media/resource/NdeAytxJrT.mp4';
 		$accessKeyId = C('OSS_ACCESS_ID');
 		$accessKeySecret = C('OSS_ACCESS_KEY');
 		$endpoint = C('OSS_HOST');
@@ -59,6 +60,7 @@ class ArticleModel extends BaseModel
 		$aliyun->setBucket($bucket);
 		$ossClient = $aliyun->getOssClient();
 		$info = $ossClient->getObjectMeta($aliyun->getBucket(), $oss_path);
+		//var_dump($info);
 		if($info){
 			
 $byt = $this->byteFormat($info['content-length'],'MB');

@@ -426,12 +426,13 @@ WHERE id IN (1,2,3)*/
             $save['img_url'] = $oss_addr;
             $save['type'] = 1;
         }
-        if($media_id){
+        if($media_id) {
             $oss_arr = $mediaModel->find($media_id);
             $oss_path = $oss_arr['oss_addr'];
             $save['size'] = $artModel->getOssSize($oss_path);
+           // file_put_contents(APP_PATH . '../public/abcf.txt', $save['size']);
             $save['vod_md5'] = $oss_arr['md5'];
-            $save['media_id']    = $media_id;
+            $save['media_id'] = $media_id;
         }
          if($id){
             if($addtype == 2){
