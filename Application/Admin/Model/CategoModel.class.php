@@ -59,7 +59,7 @@ class CategoModel extends BaseModel
 
 	/**
 	 * @param $res  ??????
-	 * @param $des  ??????¡À¨º
+	 * @param $des  ??????ï¿½ï¿½ï¿½ï¿½
 	 */
 
 	public function myCopyFunc($res, $des) {
@@ -68,7 +68,7 @@ class CategoModel extends BaseModel
 
 			$d_fp=fopen($des,"w+");
 			//$fres=fread($r_fp,filesize($res));
-			//¡À???¡À???
+			//ï¿½ï¿½???ï¿½ï¿½???
 			$buffer=1024;
 			$fres="";
 			while(!feof($r_fp)) {
@@ -82,7 +82,11 @@ class CategoModel extends BaseModel
 			return 0;
 		}
 	}
-
+	public function delData($id) {
+	    $delSql = "DELETE FROM `savor_mb_category` WHERE id = '{$id}'";
+	    $result = $this -> execute($delSql);
+	    return  $result;
+	}
 
 
 
