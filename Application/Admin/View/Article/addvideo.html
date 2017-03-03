@@ -141,8 +141,8 @@
               <label class=" control-label col-xs-12 col-sm-2">
                 时长：
               </label>
-                <input style="width:50px;"  alt="数字"  name="minu" type="text" value="{$vainfo['duration']/60|floor}"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
-                <input style="width:50px;"  alt="数字"  name="seco" type="text" value="{$vainfo['duration']%60}"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span>
+                <input style="width:50px;"  alt="数字"  name="minu" type="text" value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
+                <input style="width:50px;"  alt="数字"  name="seco" type="text" value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span>
                 </div>
             </div>
 
