@@ -6,6 +6,7 @@ namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
 use Admin\Model\CategoModel;
+use Admin\Model\ArticleModel;
 
 class ReleaseController extends BaseController{
 
@@ -27,9 +28,9 @@ class ReleaseController extends BaseController{
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','create_time');
+		$order = I('_order','sort_num');
 		$this->assign('_order',$order);
-		$sort = I('_sort','desc');
+		$sort = I('_sort','asc');
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
@@ -90,14 +91,8 @@ class ReleaseController extends BaseController{
 		$save                = [];
 		$save['name']        = I('post.cat_name','','trim');
 		$save['sort_num']    = I('post.sort','','intval');
-
 		$save['update_time'] = date('Y-m-d H:i:s');
-		$mediaid = I('post.media_id');
 		$mediaModel = new \Admin\Model\MediaModel();
-		//$mediaid = 11;
-		$oss_addr = $mediaModel->find($mediaid);
-		$oss_addr = $oss_addr['oss_addr'];
-		$save['img_url'] = $oss_addr;
 		if($id){
 			$res_save = $catModel->where('id='.$id)->save($save);
 			if($res_save){
@@ -117,5 +112,36 @@ class ReleaseController extends BaseController{
 			}
 		}
 	}
-
+    /**
+     * @desc 删除分类
+     */
+	public function delcat(){
+	    $category_id = I('get.id', 0, 'int');
+	    
+	    //查找是否在首页内容中引用
+	    if($category_id) {
+	        $articleModel = new ArticleModel();
+	        $article_info = $articleModel->where('category_id='.$category_id)->find();
+	        
+	        if(!empty($article_info)){
+	            $this->error('该分类下有文章不可删除!');
+	        }else{
+	            $catModel = new CategoModel();
+	            $result = $catModel->delData($category_id);
+	            if($result) {
+	                $this->output('删除成功', 'release/category',2);
+	            } else {
+	                $this->error('删除失败!');
+	            }
+	        }
+	    }else {
+	        $this->error('删除失败,缺少参数!');
+	    }
+	}
+	/**
+	 * @desc 排序
+	 */
+	public function addsort(){
+	    
+	}
 }
