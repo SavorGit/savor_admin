@@ -61,7 +61,7 @@
                 </if>
               </td>
               <td data-title="排序">{$vlist.sort_num}</td>
-              <td data-title="大小"> <if condition="$vlist.size eq ''"><if condition="$vlist.media_id gt 0">0MB<else/></if> <else />{$vlist.size}MB</if></td>
+              <td data-title="大小"> <if condition="$vlist.type eq 3"><if condition="$vlist.media_id gt 0">{$vlist.size}MB<else/></if> <else /></if></td>
               <td data-title="最后时间">{$vlist.update_time}</td>
               <td data-title="状态">
                 <if condition="$vlist['state'] eq 0">

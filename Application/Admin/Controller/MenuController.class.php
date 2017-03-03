@@ -1054,7 +1054,7 @@ class MenuController extends BaseController {
         //$list = h($list);
 
         if ($remove_arr) {
-            $res = array('error'=>1,'message'=>$remove_arr);
+            $res = array('error'=>1,'nomessage'=>$remove_arr,'message'=>$inc_arr);
 
         } else {
             $res = array('error'=>0,'message'=>$inc_arr);

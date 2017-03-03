@@ -238,15 +238,37 @@ action="{$host_name}/menu/addmen" method="post" >
 						}else{
 							//模态框显示失败
 							//alert(data.error);
-							var data = data.message;
+							var dataf = data.nomessage;
 							var html_l = '';
-							for(var i=0,l=data.length;i<l;i++) {
+							for(var i=0,l=dataf.length;i<l;i++) {
 								//alert(data[i]);
-								html_l += "<li>"+data[i]+"       资源名称不存在</li>";
+								html_l += "<li>"+dataf[i]+"       资源名称不存在</li>";
 							}
 							$("#notinclude").html(html_l);
 							//有未存在数据失败模态框
 							$("#mymodal2").modal('show');
+							var datap = data.message;
+							for(var i=0,l=datap.length;i<l;i++) {
+								for (var key in datap[i]) {
+									//alert(key);
+									if (key == 'id') {
+										var ids = datap[i][key];
+									}else if(key == 'name') {
+										var name = datap[i][key];
+									}else if(key == 'create_time') {
+										var cr_time = datap[i][key];
+									}else if(key == 'duration') {
+										var dura = datap[i][key];
+
+									}
+
+								}
+
+								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+
+								//$('#mymodal').modal('hide');
+
+							}
 
 						}
 
@@ -457,7 +479,7 @@ action="{$host_name}/menu/addmen" method="post" >
 		})
 	})
 /*获取屏幕的高度*/
- if($(window).height()>1000){
+ if($(window).height()>900){
   	$('#lefta').css({'min-height':'700px','max-height':'700px'});
   	$('.rightlist').css({'min-height':'700px','max-height':'700px'});
   }

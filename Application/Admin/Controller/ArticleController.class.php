@@ -426,6 +426,7 @@ WHERE id IN (1,2,3)*/
             $save['img_url'] = $oss_addr;
             $save['type'] = 1;
         }
+
         if($media_id) {
             $oss_arr = $mediaModel->find($media_id);
             $oss_path = $oss_arr['oss_addr'];
@@ -434,22 +435,38 @@ WHERE id IN (1,2,3)*/
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id'] = $media_id;
         }
-         if($id){
+        if($id){
             if($addtype == 2){
                 //mediaid去除，md5,
                 $save['vod_md5'] = '';
                 $save['media_id'] = '';
-            }
-            //$save['content_url'] = 'html/video/'.$id.'.html';
-            if($artModel->where('id='.$id)->save($save)){
-                //$this->showvideocontent($id, $save['tx_url']);
-                $this->output('操作成功!', 'content/getlist');
             }else{
-                $this->output('操作失败!', 'content/getlist');
+                if($addtype == 1 && $media_id==0){
+                    $m_arr = $artModel->where('id='.$id)->find();
+                    $meid = $m_arr['media_id'];
+                    if ($meid){
+
+                    }else{
+                        $this->output('失败点播不能为空!', 'article/addvideo', 3,0);
+                    }
+
+                }
+
+                if($artModel->where('id='.$id)->save($save)){
+                    //$this->showvideocontent($id, $save['tx_url']);
+                    $this->output('操作成功!', 'content/getlist');
+                }else{
+                    $this->output('操作失败!', 'content/getlist');
+                }
             }
+
         }else{
             if(!$covermedia_id) {
                 $this->output('失败封面必填!', 'article/addvideo', 3,0);
+            }
+            //点播
+            if($addtype == 1 && $media_id==0){
+                $this->output('失败点播不能为空!', 'article/addvideo', 3,0);
             }
             $ret = $artModel->where(array('title'=>$save['title']))->find();
             if($ret){
