@@ -32,7 +32,8 @@ class ContentController extends BaseController {
         //$where .= " AND state=2 ";
         $category_id = I('category_id',0,'intval');
         if($category_id) $where .=" AND category_id='$category_id'";
-        $content_type = I('content_type','','intval');
+        $content_type = I('content_type','');
+        
         if(is_numeric($content_type)){
             switch ($content_type){
                 case 0:
