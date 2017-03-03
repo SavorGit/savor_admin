@@ -1,3 +1,4 @@
+<include file="Public/script"/>
 <!--修改样式2 p元素自适应宽度 start-->
 <div class="pageContent">
   <form method="post" action="{$host_name}/menu/publishmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -47,12 +48,29 @@
     <div class="modal-footer">
 	    <div class="pull-left">
 	    	<label>
-		     	<input type="checkbox" data-check="all" data-parent=".pageContent"> 全部
+		     	<input id="qxall" type="checkbox" data-check="all" data-parent=".pageContent"> 全部
 		    </label>
 		  </div>
       <button class="btn btn-default close-m" type="button">取消</button>
-      <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+      <button  class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
       <button class="btn btn-primary" type="submit">保存</button>     
     </div>
   </form>
 </div>
+<script type="text/javascript">
+$(function(){
+	var flag = 1;
+	var fxflag = 1;
+	$("INPUT[name='hoid[]']").each( function() {
+		var cs = $("input[name='hoid[]']").attr("checked"); 
+		if(!cs){
+			flag = 0;
+			return false;
+		}
+	}); 
+	if(flag ==1){
+		$('#qxall').attr('checked',true);
+	}
+	
+})
+</script>

@@ -6,14 +6,17 @@ namespace Admin\Controller;
  */
 use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
+use Admin\Model\HomeModel;
 class ContentController extends BaseController {
-
+    var $content_type_arr;
     public function __construct() {
         parent::__construct();
+        $this->content_type_arr = array(0=>'纯文本',1=>'图文',2=>'图集',3=>'视频（非点播）',4=>'视频（点播）');
     }
 
     public function getlist(){
         $artModel = new ArticleModel();
+        $homeModel = new HomeModel();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -31,7 +34,8 @@ class ContentController extends BaseController {
         //$where .= " AND state=2 ";
         $category_id = I('category_id',0,'intval');
         if($category_id) $where .=" AND category_id='$category_id'";
-        $content_type = I('content_type','','intval');
+        $content_type = I('content_type','');
+        
         if(is_numeric($content_type)){
             switch ($content_type){
                 case 0:
@@ -50,8 +54,8 @@ class ContentController extends BaseController {
                     $where .=" AND type=3 and media_id>0"; 
                     break;
             }
-            $this->assign('content_type',$content_type);
         }
+        $this->assign('content_type',$content_type);
         $beg_time = I('begin_time','');
         $end_time = I('end_time','');
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
@@ -65,6 +69,7 @@ class ContentController extends BaseController {
         }
         $result = $artModel->getList($where,$orders,$start,$size);
 	    $result['list'] = $artModel->changeCatname($result['list']);
+	    $result['list'] = $homeModel->ishomeContent($result['list']);
 	    $catModel = new \Admin\Model\CategoModel();
 	    $where = " state=1";
     	$field = 'id,name';

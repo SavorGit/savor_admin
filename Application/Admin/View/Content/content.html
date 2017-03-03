@@ -28,9 +28,13 @@
                 <label>内容类型：</label>
                 <span class="input-group-btn input-group-sm">
                 <select name="content_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-	                <option value=0 >全部</option>
+	                <option  >全部</option>
 	                <volist name="content_type_arr" id="vo">
-	                  <option value="{$key}" <if condition="$key eq $content_type">selected</if>>{$vo}</option><br>
+	                  <option value="{$key}" 
+	                  <?php if($key === $content_type){ ?>
+	                  selected
+	                  <?php } ?>
+	                  >{$vo}</option><br>
 	                </volist>
               </select>
               </span>
@@ -129,7 +133,11 @@
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td style="display:none"><input name="ids" value="{$vlist.id}" type="checkbox"></td>
-              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="序号">{$vlist.id}
+              <if condition="$vlist.is_index eq 1">
+              <a data-tip="首页内容" class="btn btn-success btn-icon"><i class="fa fa-home"></i></a>
+              </if>
+              </td>
               <td data-title="名称">{$vlist.title}</td>
               <td data-title="名称">{$vlist.cat_name}</td>
               <td data-title="封面图片" style="display: none;"><a data-tip="预览图片" target="dialog" mask="true"
@@ -190,6 +198,7 @@
                   <a data-tip="添加至首页" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
                     <i class="fa fa-bullhorn"></i>
                   </a>
+                  
                 </div>
               </td>
             </tr>
