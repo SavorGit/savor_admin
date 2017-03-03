@@ -37,7 +37,7 @@
             <th>分类</th>
             <th>内容类型</th>
             <th>排序</th>
-            <th>容量({$tsize}M)</th>
+            <th>容量({$tsize}MB)</th>
             <th>最后时间</th>
             <th>状态</th>
             <th class="table-tool">操作</th>
@@ -61,7 +61,7 @@
                 </if>
               </td>
               <td data-title="排序">{$vlist.sort_num}</td>
-              <td data-title="大小"> <if condition="$vlist.size eq ''">0MB <else />{$vlist.size}</if></td>
+              <td data-title="大小"> <if condition="$vlist.size eq ''"><if condition="$vlist.media_id gt 0">0MB<else/></if> <else />{$vlist.size}MB</if></td>
               <td data-title="最后时间">{$vlist.update_time}</td>
               <td data-title="状态">
                 <if condition="$vlist['state'] eq 0">
@@ -76,9 +76,6 @@
 
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/article/addhome?id={$vlist.id}&acttype=2" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
                   
                    <a warn="警告" data-tip="移除" title="你确定要从首页移除吗？" target="ajaxTodo" rel="article/homemanager"
 href="{$host_name}/article/delhome?id={$vlist.id}&acttype=2"  class="btn btn-success btn-icon">

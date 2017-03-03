@@ -368,7 +368,7 @@ class HotelController extends BaseController {
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$save['flag']        = 0;
 			if($RoomModel->add($save)){
-				$this->output('操作成功!', 'hotel/manager');
+				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
@@ -425,6 +425,60 @@ class HotelController extends BaseController {
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
 		$this->display('pubmanager');
+	}
+
+
+
+	/*
+	 * 批量新增牌位
+	 */
+	public function batchposition() {
+		$hotel_id= I('hotel_id');
+		$size   = I('numPerPage',50);//显示每页记录数
+		$name = I('keywords','','trim');
+		$beg_time = I('begin_time','');
+		$end_time = I('end_time','');
+		$this->assign('numPerPage',$size);
+		$start = I('pageNum',1);
+		$this->assign('pageNum',$start);
+		$order = I('_order','id');
+		$this->assign('_order',$order);
+		$sort = I('_sort','desc');
+		$this->assign('_sort',$sort);
+		$orders = $order.' '.$sort;
+		$start  = ( $start-1 ) * $size;
+		$where = "1=1";
+		if($hotel_id)   $where .= "	AND hotel_id =  $hotel_id";
+		if($name)   $where.= "	AND name LIKE '%{$name}%'";
+		if($beg_time)   $where.=" AND create_time>='$beg_time'";
+		if($end_time)   $where.=" AND create_time<='$end_time'";
+
+		$hotelModel = new \Admin\Model\HotelModel();
+		$hotelinfo = $hotelModel->find($hotel_id);
+		$adsModel = new \Admin\Model\AdsModel();
+		$result = $adsModel->getList($where,$orders,$start,$size);
+		$datalist = $result['list'];
+		$mediaModel = new \Admin\Model\MediaModel();
+		$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+		foreach ($datalist as $k=>$v){
+			$media_id = $v['media_id'];
+			if($media_id){
+				$mediainfo = $mediaModel->getMediaInfoById($media_id);
+				$oss_addr = $mediainfo['oss_addr'];
+			}else{
+				$oss_addr = '';
+			}
+			$datalist[$k]['oss_addr'] = $oss_addr;
+			$datalist[$k]['img_url'] = $oss_host.$datalist[$k]['img_url'];
+		}
+
+		$time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
+		$this->assign('timeinfo',$time_info);
+		$this->assign('keywords',$name);
+		$this->assign('hotelinfo',$hotelinfo);
+		$this->assign('list', $datalist);
+		$this->assign('page',  $result['page']);
+		$this->display('batchposition');
 	}
 
 	/*

@@ -19,7 +19,7 @@
 		color: #333333;
 	}
 	.box_nr p img{
-		text-indent:0;
+		display:block;
 	}
 	.box_nr p{
 		font-size: 16px;
@@ -47,7 +47,7 @@
 <script>
   
     var urlResource = window.location.search.split('?');
-    // alert(window.location.search);
+    // alert(window.location.search)fffffffffffff;
     var result = urlResource[1].split('=');
     var disnone = document.getElementById('disnone');
     if (result[0] == 'location' &&result[1] == 'newRead') {
