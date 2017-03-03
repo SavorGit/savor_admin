@@ -168,13 +168,14 @@ class ArticleController extends BaseController {
             //判断表中是否有
             $res = $mbHomeModel->where('content_id='.$artid)->find();
             if( $res ){
-                $this->output('失败文章已经存在', 'content/getlist',2);
+                $this->output('失败文章已经存在', 'content/getlist',3,0);
             } else {
                 $artModel = new  \Admin\Model\ArticleModel();
                 $arr = $artModel->find($artid);
                 $state = $arr['state'];
                 if ($state != 2) {
-                    $this->output('失败审核状态不允许', 'content/getlist',2);
+                    $this->output('失败审核状态不允许', 'content/getlist',3,0);
+
                 }
                 //期刊
                 $mbperModel = new \Admin\Model\MbPeriodModel();
@@ -188,7 +189,7 @@ class ArticleController extends BaseController {
                 }else{
                     $mbperModel->add($dat);
                 }
-                $mbHomeModel = new \Admin\Model\HomeModel();
+
                 $userInfo = session('sysUserInfo');
                 $save[] = array();
                 $md5 = $arr['vod_md5'];
@@ -196,7 +197,8 @@ class ArticleController extends BaseController {
                     $save['is_demand'] = 1;
                 }
                 $save['content_id'] = $artid;
-                $save['sort_num'] = 2;
+                $max_nu = $mbHomeModel->max('sort_num');
+                $save['sort_num'] = $max_nu+1;
                 $save['creator_id'] = $userInfo['id'];
                 $save['create_time'] = date("Y-m-d H:i:s", time());
                 $save['update_time'] = $save['create_time'];
@@ -208,10 +210,12 @@ class ArticleController extends BaseController {
                 }
             }
         } else {
-            $save['sort_num'] = I('sort');
+            $max_nu = $mbHomeModel->max('sort_num');
+            $save['sort_num'] = $max_nu+1;
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
-                $this->output('操作成功!', 'article/homemanager',1);
+                $this->output('操作成功!', 'content/getlist',3);
+                die;
             }else{
                 $this->output('操作失败!', 'article/homemanager');
             }
@@ -328,27 +332,53 @@ class ArticleController extends BaseController {
         //         return $this->display('addhome');
     }
 
+    public function doSort(){
+
+        $sort_str= I('post.soar');
+        $sort_arr = explode(',', $sort_str);
+        $sql = 'update savor_mb_home  SET sort_num = CASE id
+';
+        foreach($sort_arr as $k=>$v){
+            $k = $k+1;
+            $sql .= ' WHEN '.$v.' THEN '.$k;
+        }
+        $sql .= ' END WHERE id IN ('.$sort_str.')';
+        $mbHome = new \Admin\Model\HomeModel();
+        $bool = $mbHome->execute($sql);
+        if($bool){
+            $this->output('操作成功','article/homemanager');
+
+        } else{
+            $this->output('未改顺序','content/getlist',1,0);
+        }
+
+        /*    SET display_order = CASE id
+        WHEN 1 THEN 3
+        WHEN 2 THEN 4
+        WHEN 3 THEN 5
+    END
+WHERE id IN (1,2,3)*/
+
+    }
+
 
     public function addSort(){
         $mbHomeModel = new \Admin\Model\HomeModel();
         $artModel = new  \Admin\Model\ArticleModel();
         $catModel = new \Admin\Model\CategoModel;
         $cat_arr = $catModel->select();
-        $size   = I('numPerPage',250);//显示每页记录数
-        $this->assign('numPerPage',$size);
-        $start = I('pageNum',1);
-        $this->assign('pageNum',$start);
-        $order = I('_order','id');
+        $order = I('_order','sort_num');
         $this->assign('_order',$order);
         $sort = I('_sort','asc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
-        $start  = ( $start-1 ) * $size;
         $where = "1=1";
-        $result = $mbHomeModel->getList($where,$orders,$start,$size);
+        $result = $mbHomeModel->where($where)->order($order)->select();
+
+
         $con_id_arr = $mbHomeModel->field('content_id')->select();
         $t_size = $artModel->getTotalSize($con_id_arr);
-        $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
+        $datalist = $artModel->changeIdjName($result, $cat_arr);
         $name = I('name');
         if($name){
             //根据id取
@@ -357,7 +387,6 @@ class ArticleController extends BaseController {
         }
         $this->assign('list', $datalist);
         $this->assign('tsize', $t_size);
-        $this->assign('page',  $result['page']);
         $this->display('homesort');
     }
 
@@ -397,12 +426,13 @@ class ArticleController extends BaseController {
             $save['img_url'] = $oss_addr;
             $save['type'] = 1;
         }
-        if($media_id){
+        if($media_id) {
             $oss_arr = $mediaModel->find($media_id);
             $oss_path = $oss_arr['oss_addr'];
             $save['size'] = $artModel->getOssSize($oss_path);
+           // file_put_contents(APP_PATH . '../public/abcf.txt', $save['size']);
             $save['vod_md5'] = $oss_arr['md5'];
-            $save['media_id']    = $media_id;
+            $save['media_id'] = $media_id;
         }
          if($id){
             if($addtype == 2){
@@ -436,7 +466,7 @@ class ArticleController extends BaseController {
                // $this->showvideocontent($id, $save['tx_url']);
                 $dat['content_url'] = 'content/'.$id.'.html';
                 $artModel->where('id='.$id)->save($dat);
-                $this->output('操作成功!', 'content/getlist');
+                $this->output('操作成功!', 'content/getlist',1);
             }else{
                 $this->output('操作失败!', 'content/getlist');
             }

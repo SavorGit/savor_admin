@@ -1,0 +1,224 @@
+<include file="Public/script"/>
+<style type="text/css">
+  body{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  .doms img{
+    display: inline-block;
+    margin-top: 35px;
+  }
+  .divlist{
+    padding-top: 7px;
+    clear: both;
+    width: 100%;
+    height: 23px;
+  }
+  .sleft{
+    float: left;
+  }
+  .sright{
+    float: right;
+  }
+  .active{
+    background-color: #d7d7d7;
+  }
+  .xuhao{
+    width: 82px;
+    float: left;
+  }
+  .xuhao li{
+    height: 20px;
+    line-height: 20px;
+  }
+  .shuju li{
+    height: 20px;
+    line-height: 20px;
+  }
+
+  .name_shuju{
+    display:inline-block;
+    width:73%;
+  }
+</style>
+<!--显示列表样式333331 start-->
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="{$host_name}/article/dosort" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+          <button type="submit" id="savesort" class="btn btn-primary" onclick="return savp();">保存排序</button>
+
+
+
+        <div id="left" style="margin-left:10px;width:92%;background-color: #f2f2f2;margin-top: 25px;float: left;">
+
+          <div style="width: 100%;background-color:#d7d7d7;margin-top: 15px;height: 40px;font-size: 18px;">
+            <span style="margin-left: 15px;display:inline-block;margin-top: 15px;">序号</span>
+            <span style="margin-left: 50px;display:inline-block;margin-top: 15px;">节目名称</span>
+            <span style="margin-left: 62%;display:inline-block;margin-top: 15px;">上传时间</span>
+          </div>
+          <div id="lefta" style="width: 94%;max-height:300px;min-height:300px;margin-left: 15px;overflow: auto;cursor: pointer;">
+    <input type="hidden" id="sortid" />
+              <ul class="xuhao">
+                <volist name="list" id="vlist">
+                <li>{$vlist.index}</li>
+                  </volist>
+                </ul>
+              <ul class="shuju" id="shuju">
+                <volist name="list" id="vlist">
+                  <li aid="{$vlist.id}"><span class="name_shuju">{$vlist.title}</span><span class="timees">{$vlist.update_time}</span></li>
+                </volist>
+                </ul>
+
+          </div>
+        </div>
+        <div style="height: 300px;width: 40px;float: left;margin-top: 35px;margin-left: 20px;" class="doms">
+          <img class="topz" src="../../../../Public/admin/assets/img/u3023.png"/>
+          <img class="tops" src="../../../../Public/admin/assets/img/u3029.png"/>
+          <img class="bottoms" src="../../../../Public/admin/assets/img/u3027.png"/>
+          <img class="bottomz" src="../../../../Public/admin/assets/img/u3025.png"/>
+        </div>
+<input type="hidden" name="soar" id="soar"/>
+    <input type="hidden" name="bbb" id="eeee" value="555"/>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div id="mymodal2" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">导入结果</h4>
+      </div>
+      <div class="modal-body">
+        <ul id="notinclude">
+
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<SCRIPT LANGUAGE="JavaScript">
+
+  function savp(){
+    var arr = [];
+    $("#shuju>li").each(function(){
+      var $aid = $(this).attr('aid');
+      arr.push($aid);
+    });
+    $("#soar").val(arr);
+  }
+  /*$("#savesort").click(
+          function(){
+            var arr = [];
+
+            $("#shuju>li").each(function(){
+              var $aid = $(this).attr('aid');
+              arr.push($aid);
+            });
+            $.ajax({
+              type:"POST",
+              dataType: "text",
+              url:"{$host_name}/article/dosort",
+              data:"soar="+arr,
+              success:function(data){
+                alert(data);
+                if(data == 'success'){
+                  //$("#mymodal2").modal('show');
+                  //
+                 // $(".modal .fade .in .no-transform").css('display','none');
+                  //refresh();
+                  location.href = "#content/getlist";
+                }else{
+                 // $("#mymodal2").modal('show');
+                }
+
+
+              }
+            });
+          }
+  );*/
+  function refresh(){
+   // window.location.reload();//刷新当前页面.
+
+    //或者下方刷新方法
+    //parent.location.reload();
+    // opener.location.reload()刷新父窗口对象（用于单开窗口
+    //top.location.reload()刷新最顶端对象（用于多开窗口）
+  }
+
+  $(function() {
+
+
+    var $shuju = $('.shuju>li');
+    /*选中*/
+    $('body').on('click','.shuju>li',function(){
+      if($(this).is('.active')){
+        $(this).removeClass('active')
+      }else{
+
+        $(this).addClass('active')
+      }
+    })
+
+
+    $('body').on('mousedown','.shuju>li',function(){
+      $shuju.mouseup(function(){
+        $shuju.unbind('mousemove');
+      })
+      $shuju.mousemove(function(){
+        $(this).addClass('active')
+        $shuju.mouseup(function(){
+          $shuju.unbind('mousemove');
+        })
+      })
+    })
+//置顶
+
+    $('.topz').click(function(){
+      $shuju.each(function(i){
+        if($(this).is('.active')){
+          $(this).prependTo('.shuju')
+        }
+      })
+    })
+    /*上移*/
+    $('.tops').click(function(){
+      $shuju.each(function(){
+        if($(this).is('.active')){
+          $(this).insertBefore($(this).prev())
+        }
+      })
+    })
+    /*下移*/
+    $('.bottoms').click(function(){
+
+      //var lasts = $('.divlist2').last().index()
+      /*$shuju.each(function(){
+        if($(this).is('.active')){
+          $(this).insertAfter($(this).next());
+        }
+      })*/
+      $('.shuju>.active:last').next().insertBefore($('.shuju>.active:first'));
+    })
+    /*置底*/
+    $('.bottomz').click(function(){
+      $shuju.each(function(){
+        if($(this).is('.active')){
+          $(this).appendTo('.shuju')
+        }
+      })
+    });
+  });
+</script>
