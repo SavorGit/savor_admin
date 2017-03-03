@@ -1,6 +1,6 @@
 <?php
 /**
- * 版本管理 
+ * 版本管理1111
  */
 namespace Admin\Controller;
 
@@ -29,6 +29,17 @@ class VersionController extends BaseController{
 	    $this->assign('datalist', $result['list']);
 	    $this->assign('page',  $result['page']);
 	    $this->display('client');
+	}
+
+	public function addsqlup(){
+		$id = I('get.id');
+		$deviceModel = new \Admin\Model\DeviceSqlModel();
+		if($id){
+			$vinfo = $deviceModel->find($id);
+			var_dump($vinfo);
+			$this->assign('vinfo',$vinfo);
+		}
+		return $this->display('addsqlup');
 	}
 
 	public function sqlup(){
@@ -329,6 +340,34 @@ class VersionController extends BaseController{
     	    $this->display('addversion');
 	    }
 	}
+
+	public function doAddSqlup(){
+		$deviceModel = new \Admin\Model\DeviceSqlModel();
+		$id                  = I('post.id');
+		$save                = [];
+		$v_id       = I('post.vername','','trim');
+		$save['sql_lang'] = I('post.sqls','','trim');
+		$save['device_type'] = I('post.devicetype','','trim');
+		$verModel = new \Admin\Model\VersionModel();
+		$dat = $verModel->find($v_id);
+		$save['version_code'] = $dat['version_code'];
+		$save['version_name'] = $dat['version_name'];
+		if($id){
+			$res_save = $deviceModel->where('id='.$id)->save($save);
+			if($res_save){
+				$this->output('操作成功!', 'release/category');
+			}else{
+				$this->output('操作失败!', 'release/doAddCat');
+			}
+		}else{
+			$res_save = $deviceModel->add($save);
+			if($res_save){
+				$this->output('添加语句成功!', 'version/sqlup');
+			}else{
+				$this->output('操作失败!', 'version/doAddSqlup');
+			}
+		}
+	}
 	
 	public function delVersion(){
 	    $vid = I('get.vid','0','intval');
@@ -340,6 +379,18 @@ class VersionController extends BaseController{
 	    }else{
     	    $this->output('删除失败', 'version/versionList',2);
 	    }
+	}
+
+	public function delSqlup(){
+		$vid = I('get.vid','0','intval');
+		if($vid){
+			$where = "id='$vid'";
+			$deviceModel = new \Admin\Model\DeviceSqlModel();
+			$deviceModel->where($where)->delete();
+			$this->output('删除成功', 'version/versionList',2);
+		}else{
+			$this->output('删除失败', 'version/versionList',2);
+		}
 	}
 	
 	private function upgradeList($device_type,$orders,$pagenum,$size){
@@ -390,6 +441,25 @@ class VersionController extends BaseController{
 	    $page = $result['page'];
 	    $data = array('list'=>$datalist,'page'=>$page);
 	    return $data;
+	}
+
+	public function getVname(){
+		$tid = I('post.tid',0,'intval');
+		$upgrade_name = I('get.name','client');
+		$verModel = new \Admin\Model\VersionModel();
+		$where = "device_type='$tid'";
+		$field = 'version_name,id';
+		$info = $verModel->field($field)->where($where)->select();
+
+		$res = array();
+		if ($info ) {
+
+			$res = array('error'=>0,'message'=>$info);
+		} else {
+			$res = array('error'=>1);
+		}
+		echo json_encode($res);
+
 	}
 }
 
