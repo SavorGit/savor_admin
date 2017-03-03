@@ -193,8 +193,8 @@ var uploader = new plupload.Uploader({
 			d.getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
             var prog = d.getElementsByTagName('div')[0];
 			var progBar = prog.getElementsByTagName('div')[0]
-//			progBar.style.width= 2*file.percent+'px';
-			progBar.style.width= "100%";
+            progBar.style.width= "100%";
+			progBar.style.width= 1*file.percent+'%';
 			progBar.setAttribute('aria-valuenow', file.percent);
 		},
 
