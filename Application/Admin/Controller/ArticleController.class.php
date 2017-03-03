@@ -448,16 +448,17 @@ WHERE id IN (1,2,3)*/
 
                     }else{
                         $this->output('失败点播不能为空!', 'article/addvideo', 3,0);
+                        die;
                     }
 
                 }
 
-                if($artModel->where('id='.$id)->save($save)){
-                    //$this->showvideocontent($id, $save['tx_url']);
-                    $this->output('操作成功!', 'content/getlist');
-                }else{
-                    $this->output('操作失败!', 'content/getlist');
-                }
+            }
+            if($artModel->where('id='.$id)->save($save)){
+                //$this->showvideocontent($id, $save['tx_url']);
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
             }
 
         }else{
