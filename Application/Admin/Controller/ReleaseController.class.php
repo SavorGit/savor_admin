@@ -142,6 +142,42 @@ class ReleaseController extends BaseController{
 	 * @desc 排序
 	 */
 	public function addsort(){
-	    
+	    $catModel = new CategoModel();
+	    $order = I('_order','sort_num');
+	    $this->assign('_order',$order);
+	    $sort = I('_sort','asc');
+	    $this->assign('_sort',$sort);
+	    $orders = $order.' '.$sort;
+	    $where = "1=1";
+	    $result = $catModel->where($where)->order($order)->select();
+	    $this->assign('list', $result);
+	    $this->display('homesort');
+	}
+	public function doSort(){
+	
+	    $sort_str= I('post.soar');
+	    $sort_arr = explode(',', $sort_str);
+	    $sql = 'update savor_mb_category  SET sort_num = CASE id ';
+	    foreach($sort_arr as $k=>$v){
+	        $k = $k+1;
+	        $sql .= ' WHEN '.$v.' THEN '.$k;
+	    }
+	    $sql .= ' END WHERE id IN ('.$sort_str.')';
+	    $mbHome = new \Admin\Model\CategoModel();
+	    $bool = $mbHome->execute($sql);
+	    if($bool){
+	        $this->output('操作成功','release/category');
+	
+	    } else{
+	        $this->output('未改顺序','release/category',1,0);
+	    }
+	
+	    /*    SET display_order = CASE id
+	     WHEN 1 THEN 3
+	     WHEN 2 THEN 4
+	     WHEN 3 THEN 5
+	     END
+	     WHERE id IN (1,2,3)*/
+	
 	}
 }
