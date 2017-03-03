@@ -6,6 +6,7 @@ namespace Admin\Controller;
  */
 use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
+use Admin\Model\HomeModel;
 class ContentController extends BaseController {
     var $content_type_arr;
     public function __construct() {
@@ -15,6 +16,7 @@ class ContentController extends BaseController {
 
     public function getlist(){
         $artModel = new ArticleModel();
+        $homeModel = new HomeModel();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -67,6 +69,7 @@ class ContentController extends BaseController {
         }
         $result = $artModel->getList($where,$orders,$start,$size);
 	    $result['list'] = $artModel->changeCatname($result['list']);
+	    $result['list'] = $homeModel->ishomeContent($result['list']);
 	    $catModel = new \Admin\Model\CategoModel();
 	    $where = " state=1";
     	$field = 'id,name';

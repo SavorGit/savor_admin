@@ -82,5 +82,22 @@ class HomeModel extends BaseModel{
 	    return $nums;
 	    
 	}
-
+    /**
+     * @desc 判断是否为首页内容
+     */
+	public function ishomeContent($result){
+	    $ids = $this->field('content_id')->select();
+	    foreach($ids as $v){
+	        $id_arr[] = $v['content_id'];
+	    }
+	    if(empty($id_arr)) return $result;
+	    foreach($result as $key=>$v){
+	       if(in_array($v['id'], $id_arr)){
+	           $result[$key]['is_index'] = 1;
+	       }else {
+	           $result[$key]['is_index'] = 0;
+	       }   
+	    }
+	    return $result;
+	}
 }
