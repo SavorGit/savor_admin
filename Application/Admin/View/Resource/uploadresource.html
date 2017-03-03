@@ -39,6 +39,7 @@
 			          <input type="text" class="form-control" id="media_url" value="" readonly>
 			      	 </div>
 			      </div>
+			      <if condition="$rtype eq 1">
 				 <div class="form-group row">
 			         <label class="col-xs-12 col-sm-2 control-label">
 			          资源名称:
@@ -47,6 +48,7 @@
 			          <input type="text" class="form-control" id="resource_name" name="name" minlength="2" maxlength="20" value="{$vinfo.name}" required>
 			      	 </div>
 			      </div>
+			      </if>
 			      <div class="form-group row">
 		              <label class="col-xs-12 col-sm-2 control-label">
 		                资源类型：
