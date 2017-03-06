@@ -385,7 +385,7 @@ class VersionController extends BaseController{
 		$vid = I('get.vid','0','intval');
 		if($vid){
 			$where = "id='$vid'";
-			$deviceModel = new \Admin\Model\DeviceSqlModel();
+			//$deviceModel = new \Admin\Model\DeviceSqlModel();
 			$deviceModel->where($where)->delete();
 			$this->output('删除成功', 'version/versionList',2);
 		}else{
