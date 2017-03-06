@@ -18,7 +18,7 @@ class ArticleModel extends BaseModel
 		return $list;
 	}
 
-	//É¾³ıÊı¾İ
+	//É¾ï¿½ï¿½ï¿½ï¿½ï¿½
 	public function delData($id) {
 		$delSql = "DELETE FROM `savor_mb_content` WHERE id = '{$id}'";
 		$result = $this -> execute($delSql);
@@ -179,7 +179,7 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 
 	/**
 	 * @param $res  ??????
-	 * @param $des  ??????¡À¨º
+	 * @param $des  ??????ï¿½ï¿½ï¿½ï¿½
 	 */
 
 	public function myCopyFunc($res, $des) {
@@ -188,7 +188,7 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 
 			$d_fp=fopen($des,"w+");
 			//$fres=fread($r_fp,filesize($res));
-			//¡À???¡À???
+			//ï¿½ï¿½???ï¿½ï¿½???
 			$buffer=1024;
 			$fres="";
 			while(!feof($r_fp)) {
@@ -202,8 +202,13 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 			return 0;
 		}
 	}
-
-
+    /**
+     * @desc è·å–æŸä¸ªåˆ†ç±»ä¸‹çš„æ–‡ç« æ•°é‡
+     */
+	public function getCountByCatid($category_id){
+	    $result = $this->where(array('category_id'=>$category_id))->count();
+	    return $result;
+	}
 
 
 }//End Class
