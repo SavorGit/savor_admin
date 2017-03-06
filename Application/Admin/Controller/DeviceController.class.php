@@ -145,13 +145,17 @@ class DeviceController extends BaseController{
 	 * 新增机顶盒
 	 * 
 	 */
-	public function addBox(){	
+
+	public function addBox(){
 		$room_id = I('get.room_id');
 		$roomModel = new RoomModel;
 		$temp = $roomModel->getRow('name',['id'=>$room_id]);
 		$this->assign('room_name',$temp['name']);
 		$this->assign('room_id',$room_id);
 		$vinfo['state'] = 2;
+		$vinfo['name'] = $temp['name'];
+		$vinfo['switch_time'] = 30;
+		$vinfo['volum'] = 50;
 		$this->assign('vinfo', $vinfo);
 		return $this->display('addBox');
 	}
