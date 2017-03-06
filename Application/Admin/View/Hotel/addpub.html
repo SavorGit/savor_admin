@@ -80,13 +80,17 @@
         </div>
 
         <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
+            <div class="form-inline">
 
-                时长：
-            </label>
-            <div class="col-xs-12 col-sm-10">
-                <input alt="数字"  name="duration" type="number" value="{$vainfo.duration}"  minlength="1" maxlength="30" class="form-control" required/>
+                <div class="form-group col-md-12 col-xs-12 col-sm-12" >
+                    <label class=" control-label col-xs-12 col-sm-2">
+                        时长：
+                    </label>
+                    <input style="width:50px;"  alt="数字"  name="minu" type="text" value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
+                    <input style="width:50px;"  alt="数字"  name="seco" type="text" value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span>
+                </div>
             </div>
+
         </div>
 
         <div class="form-group row">
