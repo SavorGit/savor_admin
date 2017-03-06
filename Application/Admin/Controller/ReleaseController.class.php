@@ -24,6 +24,7 @@ class ReleaseController extends BaseController{
 	 */
 	public function category(){
 		$catModel = new CategoModel;
+		$articleModel =  new ArticleModel();
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
@@ -41,6 +42,9 @@ class ReleaseController extends BaseController{
 			$where .= "	AND name LIKE '%{$name}%'";
 		}
 		$result = $catModel->getList($where,$orders,$start,$size);
+		foreach($result['list'] as $key=>$v){
+		    $result['list'][$key]['counts'] = $articleModel->getCountByCatid($v['id']);   
+		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('cate');
@@ -92,6 +96,13 @@ class ReleaseController extends BaseController{
 		$save['name']        = I('post.cat_name','','trim');
 		$save['sort_num']    = I('post.sort','','intval');
 		$save['update_time'] = date('Y-m-d H:i:s');
+		if($save['name']){
+		   $map['name'] = array('like',$save['name']);
+		   $is_have = $catModel->where($map)->find();
+		   if($is_have){
+		       $this->error('该分类名称已经存在');
+		   }
+		}
 		$mediaModel = new \Admin\Model\MediaModel();
 		if($id){
 			$res_save = $catModel->where('id='.$id)->save($save);
