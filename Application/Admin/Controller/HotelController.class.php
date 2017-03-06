@@ -533,7 +533,9 @@ class HotelController extends BaseController {
 
 		$save = [];
 		$save['description'] = I('post.descri');
-		$save['duration'] = I('post.duration');
+		$minu = I('post.minu','0','intval');
+		$seco = I('post.seco','0','intval');
+		$save['duration'] = $minu*60+$seco;
 		$save['name'] = I('post.adsname');
 		if($covermedia_id){
 			$oss_arr = $mediaModel->find($covermedia_id);
