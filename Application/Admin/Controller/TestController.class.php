@@ -10,12 +10,144 @@ class TestController extends BaseController {
     public function __construct() {
         parent::__construct();
     }
+
+    public function getarsize(){
+        $arModel = new \Admin\Model\ArticleModel();
+        $m_arr = $arModel->field('id,media_id')->where(array('type'=>3))->select();
+
+        //$m_arr = array_slice($m_arr,0,1);
+       // var_dump($m_arr);
+
+        $mediaModel = new \Admin\Model\MediaModel();
+        try{
+            foreach($m_arr as &$v){
+
+                $me_info =  $mediaModel->find($v['media_id']);
+                $oss_path = $me_info['oss_addr'];
+                $size = $arModel->getOssSize($oss_path);
+                $save['size'] = $size;
+                $bool = $arModel->where(array('id'=>$v['id']))->save($save);
+                var_dump($bool);
+               // var_dump($save);
+
+            }
+        }catch(Exception $e){
+            echo $e->getMessage();
+        }
+
+    }
+    //导出excel
+    public function exportExcel($expTitle,$expCellName,$expTableData){
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+        $filetmpname = APP_PATH.'../public/2.xls';
+        $objPHPExcel = new PHPExcel();
+        $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
+        $fileName = date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        $objPHPExcel->getActiveSheet(0)->mergeCells('A1:'.$cellName[$cellNum-1].'1');//合并单元格
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', $expTitle.'  Export time:'.date('Y-m-d H:i:s'));
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'2', $expCellName[$i][1]);
+        }
+        // Miscellaneous glyphs, UTF-8
+        for($i=0;$i<$dataNum;$i++){
+            for($j=0;$j<$cellNum;$j++){
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+3), $expTableData[$i][$expCellName[$j][0]]);
+            }
+        }
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function compare(){
+        $ma = M('a1');
+        $a1_arr = $ma->select();
+        $mb = M('a2');
+        $a2_arr = $mb->select();
+        $a1_a = array();
+        $a2_a = array();
+        foreach($a1_arr as $ak=>$av){
+            $a1_a[] = $av['tel'];
+        }
+        foreach($a2_arr as $ak=>$av){
+            $a2_a[] = $av['tel'];
+        }
+        $re_a = array_diff($a1_a,$a2_a);
+        $map['tel'] = array('in', $re_a);
+        $res = $ma->where($map)->select();
+        //写入txt文档
+        $filetmpname = APP_PATH.'../public/dao.txt';
+        $handle=fopen($filetmpname,"a+");
+        foreach($res as $rk=>$rv){
+            //$uname = $rv['username'];
+            $tel = $rv['tel'];
+            $str = "$tel\n";
+            fwrite($handle, $str);
+        }
+        fclose($handle);
+
+      //  $expTitle = 'ppepr';
+       // $this->exportExcel($expTitle,$expCellName,$expTableData)
+    }
+
+
     
     public function testList() {
         //实例化redis
 //         $redis = SavorRedis::getInstance();
 //         $redis->set($cache_key, json_encode(array()));
         $this->display('index');
+    }
+
+    public function daoru(){
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        $filetmpname = APP_PATH.'../public/2.xls';
+        $objPHPExcel = \PHPExcel_IOFactory::load($filetmpname);
+        $arrExcel = $objPHPExcel->getSheet(0)->toArray();
+        //删除不要的表头部分，我的有三行不要的，删除三次
+        array_shift($arrExcel);
+       // array_shift($arrExcel);
+       // array_shift($arrExcel);//现在可以打印下$arrExcel，就是你想要的数组啦
+      //  $arrExcel = array_slice($arrExcel,3,5);
+        //查询数据库的字段
+        $m = M('a2');
+        $fieldarr = $m->query("describe savor_a2");
+        foreach($fieldarr as $v){
+            $field[] = $v['field'];
+        }
+        array_shift($field);
+        $field = array(
+            0=>'tel',
+            1=>'username',
+        );
+        var_dump($field);
+        var_dump($arrExcel);
+        //var_dump($arrExcel);
+        foreach($arrExcel as $k=>$v){
+            if($k == 1066){
+                break;
+            }
+            $fields[] = array_combine($field,$v);//将excel的一行数据赋值给表的字段
+        }
+       // var_dump($fields);
+
+        //批量插入
+        if(!$ids = $m->addAll($fields)){
+            //$this->error("没有添加数据");
+            echo 'faile';
+        }else{
+            echo 'succes';
+        }
+       // $this->success('添加成功');
     }
     
     public function ueditior(){
