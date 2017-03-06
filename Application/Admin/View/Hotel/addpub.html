@@ -1,3 +1,29 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+    .zhezhao{
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
 <div class="pageContent">
   <form method="post" action="{$host_name}/hotel/doAddPub" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="ads_id" value="{$vainfo.id}">
@@ -26,7 +52,7 @@
             <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
                     <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                        <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
+                        <a data-target="#modal-file" href="javascript:void(0)" data-browse-file>
                             <if condition="($vainfo['oss_addr'] eq 'NULL') OR $vainfo['oss_addr'] eq ''">
                                 <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
                                 <else />
@@ -110,7 +136,29 @@
           <textarea name="descri" placeholder="请输入描述，允许为空"rows="7"cols="27">{$vainfo.description}</textarea>
         </div>
       </div>
-       <button type="submit" class="btn btn-primary" style="margin-left: 50%;">&nbsp;提交&nbsp;</button>
+
         </div>
+
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" style="margin-left: 50%;">&nbsp;提交&nbsp;</button>
+      </div>
+      <div class="zhezhao"></div>
+      <img class="big" src=""/>
   </form>
 </div>
+
+<script type="text/javascript">
+    $(function(){
+        $('#covervideo_idimg').click(function(){
+            var $a = $(this).attr('src');
+            $('.big').prop('src',$a).addClass('addbig')
+            $('.zhezhao').show(500);
+            $('.big').show(500);
+        })
+        $('.zhezhao').click(function(){
+            $('.zhezhao').hide(500);
+            $('.big').hide(500);
+        })
+
+    });
+</script>
