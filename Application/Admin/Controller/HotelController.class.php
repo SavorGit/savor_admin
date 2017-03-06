@@ -198,6 +198,7 @@ class HotelController extends BaseController {
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
+			$vinfo['state_change_reason'] = 1;
 			$this->assign('vinfo',$vinfo);
 		}
 		$this->display('add');
@@ -218,10 +219,13 @@ class HotelController extends BaseController {
 		$save['tel']                 = I('post.tel','','trim');
 		$save['level']               = I('post.level','','trim');
 		$save['iskey']               = I('post.iskey','','intval');
-		$save['install_date']        = I('post.install_date','','trim');
+		$save['install_date']        = I('post.install_date');
+		if(!($save['install_date'])){
+			$save['install_date'] = date("Y-m-d",time());
+		}
 		$save['level']               = I('post.level','','trim');
 		$save['state']               = I('post.state','','intval');
-		$save['state_change_reason'] = I('post.state_change_reason','','trim');
+		$save['state_change_reason'] = I('post.state_change_reason',0);
 		$save['remark']              = I('post.remark','','trim');
 		$save['flag']                = I('post.flag','','intval');
 		$save['update_time']         = date('Y-m-d H:i:s');
@@ -478,8 +482,65 @@ class HotelController extends BaseController {
 		$this->assign('hotelinfo',$hotelinfo);
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
-		$this->display('batchposition');
+		$this->display('batchpositioneee');
 	}
+
+
+
+	/*
+	 * 批量新增牌位
+	 */
+	public function doAddBatch() {
+		var_dump($_POST);
+		die;
+		$hotel_id= I('hotel_id');
+		$size   = I('numPerPage',50);//显示每页记录数
+		$name = I('keywords','','trim');
+		$beg_time = I('begin_time','');
+		$end_time = I('end_time','');
+		$this->assign('numPerPage',$size);
+		$start = I('pageNum',1);
+		$this->assign('pageNum',$start);
+		$order = I('_order','id');
+		$this->assign('_order',$order);
+		$sort = I('_sort','desc');
+		$this->assign('_sort',$sort);
+		$orders = $order.' '.$sort;
+		$start  = ( $start-1 ) * $size;
+		$where = "1=1";
+		if($hotel_id)   $where .= "	AND hotel_id =  $hotel_id";
+		if($name)   $where.= "	AND name LIKE '%{$name}%'";
+		if($beg_time)   $where.=" AND create_time>='$beg_time'";
+		if($end_time)   $where.=" AND create_time<='$end_time'";
+
+		$hotelModel = new \Admin\Model\HotelModel();
+		$hotelinfo = $hotelModel->find($hotel_id);
+		$adsModel = new \Admin\Model\AdsModel();
+		$result = $adsModel->getList($where,$orders,$start,$size);
+		$datalist = $result['list'];
+		$mediaModel = new \Admin\Model\MediaModel();
+		$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+		foreach ($datalist as $k=>$v){
+			$media_id = $v['media_id'];
+			if($media_id){
+				$mediainfo = $mediaModel->getMediaInfoById($media_id);
+				$oss_addr = $mediainfo['oss_addr'];
+			}else{
+				$oss_addr = '';
+			}
+			$datalist[$k]['oss_addr'] = $oss_addr;
+			$datalist[$k]['img_url'] = $oss_host.$datalist[$k]['img_url'];
+		}
+
+		$time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
+		$this->assign('timeinfo',$time_info);
+		$this->assign('keywords',$name);
+		$this->assign('hotelinfo',$hotelinfo);
+		$this->assign('list', $datalist);
+		$this->assign('page',  $result['page']);
+		$this->display('batchpositioneee');
+	}
+
 
 	/*
 	 * 显示图片
