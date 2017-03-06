@@ -52,7 +52,7 @@
             <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
                     <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                        <a data-target="#modal-file" href="javascript:void(0)" data-browse-file>
+                        <a  href="javascript:void(0)" >
                             <if condition="($vainfo['oss_addr'] eq 'NULL') OR $vainfo['oss_addr'] eq ''">
                                 <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
                                 <else />
@@ -80,7 +80,7 @@
             <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
                     <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                        <a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=1&autofill=1" data-browse-file>
+                        <a target="_blank" href="{$vainfo.videooss_addr}">
                             <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
                                 <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
                                 <else />
@@ -151,7 +151,7 @@
     $(function(){
         $('#covervideo_idimg').click(function(){
             var $a = $(this).attr('src');
-            $('.big').prop('src',$a).addClass('addbig')
+            $('.big').prop('src',$a).addClass('addbig');
             $('.zhezhao').show(500);
             $('.big').show(500);
         })
