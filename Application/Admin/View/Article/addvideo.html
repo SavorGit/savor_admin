@@ -180,7 +180,7 @@
                 来源：
               </label>
               <div class="col-xs-12 col-sm-10">
-                <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" required/>
+                <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" />
               </div>
             </div>
 
@@ -224,6 +224,20 @@
 
 
   $(function() {
+
+
+    var ue = UE.getEditor('editor',{
+
+      //关闭字数统计
+      wordCount:false,
+      //关闭elementPath
+      elementPathEnabled:false,
+    });
+
+
+
+
+
     var rval = $("#video_id").val();
     if (rval == 0) {
       $("#dianbo").css('display', 'none');

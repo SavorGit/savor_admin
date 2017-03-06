@@ -88,7 +88,7 @@
                 来源：
               </label>
               <div class="col-xs-12 col-sm-10">
-                <input name="source" type="text" value="{$vinfo.source}"  minlength="2" maxlength="30" class="form-control" required/>
+                <input name="source" type="text" value="{$vinfo.source}"  minlength="2" maxlength="30" class="form-control" />
               </div>
             </div>
 
@@ -128,6 +128,16 @@
 
 <script type="text/javascript">
   $(function() {
+
+    var ue = UE.getEditor('editor',{
+
+      //关闭字数统计
+      wordCount:false,
+      //关闭elementPath
+      elementPathEnabled:false,
+    });
+
+
     $("#yulan").click(function(){
       alert($("#ueditor_3".val()));
       $.ajax({

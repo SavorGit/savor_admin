@@ -114,6 +114,16 @@ $config['MANGER_KEY'] = array(
     'hotel' =>'酒楼节点',
     'report'=>'报表节点',
 );
+$config['STATE_REASON'] = array(
+    '1'=>'正常',
+    '2'=>'倒闭',
+    '3'=>'装修',
+    '4'=>'淘汰',
+    '5'=>'放假',
+    '6'=>'易主',
+    '7'=>'终止合作',
+    '8'=>'问题沟通中',
+);
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
     '2' => array('id'=>2, 't'=>'Iphone 5', 'w'=>'320', 'h'=>'568'),
