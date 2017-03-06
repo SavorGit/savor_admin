@@ -16,4 +16,4 @@ Mysql语句:mysql可执行语句
 增加说明：修改版本号名称字段长度
 修改时间:2017.3.6 15:51
 修改人:张英涛
-执行SQL:ALTER TABLE `savor_device_version`  MODIFY `version_name` VARCHAR(20) DEFAULT NULL COMMENT '版本名称';
+执行SQL:ALTER TABLE `savor_device_version`  MODIFY `version_name` VARCHAR(15) DEFAULT NULL COMMENT '版本名称';
