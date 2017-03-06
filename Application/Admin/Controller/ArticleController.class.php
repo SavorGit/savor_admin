@@ -454,7 +454,17 @@ WHERE id IN (1,2,3)*/
                 }
 
             }
+
             if($artModel->where('id='.$id)->save($save)){
+
+                //判断是否在首页点播中
+                $homeModel = new \Admin\Model\HomeModel();
+                $hinfo = $homeModel->where(array('content_id'=>$id))->find();
+                if ($hinfo) {
+                    $hid = $hinfo['id'];
+                    $shome['state'] = 0;
+                    $homeModel->where('id='.$hid)->save($shome);
+                }
                 //$this->showvideocontent($id, $save['tx_url']);
                 $this->output('操作成功!', 'content/getlist');
             }else{
@@ -557,8 +567,20 @@ WHERE id IN (1,2,3)*/
         }
 
         if($id){
+
+
+
          
             if($artModel->where('id='.$id)->save($save)){
+
+                //判断是否在首页点播中
+                $homeModel = new \Admin\Model\HomeModel();
+                $hinfo = $homeModel->where(array('content_id'=>$id))->find();
+                if ($hinfo) {
+                    $hid = $hinfo['id'];
+                    $shome['state'] = 0;
+                    $homeModel->where('id='.$hid)->save($shome);
+                }
             
                 $this->output('操作成功!', 'content/getlist');
             }else{
