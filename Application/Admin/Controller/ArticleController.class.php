@@ -487,7 +487,7 @@ WHERE id IN (1,2,3)*/
             $save['type'] = 3;
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
-            $uname = $userInfo['username'];
+            $uname = $userInfo['remark'];
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $id = $artModel->getLastInsID();
@@ -597,7 +597,7 @@ WHERE id IN (1,2,3)*/
             }
             $save['create_time'] = date('Y-m-d H:i:s');
             $userInfo = session('sysUserInfo');
-            $uname = $userInfo['username'];
+            $uname = $userInfo['remark'];
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
