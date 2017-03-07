@@ -36,7 +36,7 @@
 		                时长：
 		              </label>
 		              <div class="col-xs-12 col-sm-10">
-		                <input name="duration" type="text" value="{$vinfo.duration}" class="form-control" required/>
+		                <input name="duration" type="number" value="{$vinfo.duration}" class="form-control" required/>
 		              </div>
 		         </div>
 		         <div class="form-group row">
@@ -81,7 +81,9 @@
   </div>
 </div>
 <script>
-var imgs="Image files";
+	MyValidator.init();
+
+	var imgs="Image files";
 var files="files";
 var imgExt="{$file_allexts.img_ext}";
 var fileExt="{$file_allexts.file_ext}";
