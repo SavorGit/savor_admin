@@ -1,0 +1,121 @@
+@import url('m_reset.css');
+html {
+  font-size: 62.5%;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: none;
+}
+.wrap {
+  width: 70%;
+  height: 90%;
+  background: none;
+  margin: 0 auto;
+  border: 1px solid #333;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.head {
+  width: 100%;
+  height: 4rem;
+  background: #434343;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  position: relative;
+  color: #fff;
+}
+.head p {
+  font-size: 1.5rem;
+  line-height: 4rem;
+  margin-left: 0.5rem;
+}
+.head span {
+  font-size: 2.0rem;
+  position: absolute;
+  top: 0;
+  right: 1rem;
+}
+.center {
+  -webkit-box-flex: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+.center .up {
+  width: 95%;
+  height: 4rem;
+  background: none;
+  border-bottom: 1px solid #ccc;
+  margin: 0 auto;
+}
+.center .up p {
+  font-size: 1.8rem;
+  line-height: 4rem;
+}
+.center .down {
+  width: 95%;
+  height: 33rem;
+  background: none;
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+}
+.center .left {
+  width: 40%;
+  height: 100%;
+  background: none;
+  border: 1px solid #ccc;
+}
+.center .left ul li {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-flex: 1;
+  height: 2.8rem;
+  line-height: 2.8rem;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+}
+.center .left ul li p {
+  margin-left: 6rem;
+}
+.center .left ul li span {
+  position: absolute;
+  right: 1rem;
+  font-size: 2.0rem;
+}
+.center .left li:hover {
+  background: #434343;
+  color: #fff;
+}
+.center .big {
+  width: 55%;
+}
+.center .right {
+  width: 55%;
+  height: 100%;
+  background: none;
+  border: 1px solid #ccc;
+  border-left: none;
+}
+.center .right p {
+  margin-left: 2rem;
+  margin-top: 1rem;
+}
+.foot {
+  width: 100%;
+  height: 15%;
+  background: #f2f2f2;
+}
+.foot button {
+  width: 8rem;
+  height: 3rem;
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  margin: 0 auto;
+  display: block;
+  margin-top: 2rem;
+}
