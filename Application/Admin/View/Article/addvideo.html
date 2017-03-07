@@ -104,7 +104,7 @@
                         选择视频
                       </a>
                       <input type="hidden" name="media_id" id="media_id" value="">
-                      <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                      <a id="bntt" href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
                         删除 </a>
                     </div>
                   </div>
@@ -281,7 +281,12 @@
 
     );
 
-
+    $('#bntt').click(function(){
+    	$('#media_idimgname').html('');
+    	$('#media_idimg').show();
+    	$('#media_idimg').prop('src','/Public/admin/assets/img/noimage.png');
+    	$('#media_id').val("");
+    })
 
 
     $("#selectdian").click(function(){
