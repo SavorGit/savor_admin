@@ -94,6 +94,7 @@ class SyslogController extends BaseController {
         if(is_numeric($programId)) {
             $tabName = strchr($tabName, '.', true);
             $is_table = M()->query("SHOW TABLES LIKE '%savor_$tabName%'");
+            if(strstr($tabName, 'menu')) $is_table = null;
             if($is_table){
                 $progam = M("$tabName");
                 $vinfo = $progam->find($programId);
