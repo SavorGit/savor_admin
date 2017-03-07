@@ -355,8 +355,11 @@ action="{$host_name}/menu/addmen" method="post" >
 			if($(this).is('.active')){
 				var _this = $(this);
 				$('.divlist').each(function(){
+
 					if($(this).is('.active')){
-						_this.before('<div class="divlist2">'+$(this).html()+'</div>')
+						var ides = $(this).attr('id');
+						var dures = $(this).attr('dur');
+						_this.before('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
 					}
 				})
 			}
