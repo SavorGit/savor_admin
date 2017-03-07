@@ -96,15 +96,17 @@ class ReleaseController extends BaseController{
 		$save['name']        = I('post.cat_name','','trim');
 		$save['sort_num']    = I('post.sort','','intval');
 		$save['update_time'] = date('Y-m-d H:i:s');
-		if($save['name']){
-		   $map['name'] = array('like',$save['name']);
-		   $is_have = $catModel->where($map)->find();
-		   if($is_have){
-		       $this->error('该分类名称已经存在');
-		   }
-		}
+		
 		$mediaModel = new \Admin\Model\MediaModel();
 		if($id){
+		    if($save['name']){
+		        $map['name'] = array('like',$save['name']);
+		        $map['id'] = array('neq',$id);
+		        $is_have = $catModel->where($map)->find();
+		        if($is_have){
+		            $this->error('该分类名称已经存在');
+		        }
+		    }
 			$res_save = $catModel->where('id='.$id)->save($save);
 			if($res_save){
 				$this->output('操作成功!', 'release/category');
@@ -112,6 +114,13 @@ class ReleaseController extends BaseController{
 				$this->output('操作失败!', 'release/doAddCat');
 			}
 		}else{
+		    if($save['name']){
+		        $map['name'] = array('like',$save['name']);
+		        $is_have = $catModel->where($map)->find();
+		        if($is_have){
+		            $this->error('该分类名称已经存在');
+		        }
+		    }
 			$save['state']    =  0;
 			$save['create_time'] = date('Y-m-d H:i:s');
 			//刷新页面，关闭当前
