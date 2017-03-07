@@ -491,8 +491,12 @@ class HotelController extends BaseController {
 	 * 批量新增牌位
 	 */
 	public function doAddBatch() {
-		var_dump($_POST);
+		var_export($_POST);
+		$h_arr = array ( 'hval' => '{"bao_name":"v1","bao_lx":"1","box_name":"天天","bao_mac":"aa","bao_time":"3","bao_volume":"5","bao_tv":"soop","bao_size":"32","box_size":"1","box_state":"1"},{"bao_name":"v2","bao_lx":"1","box_name":"向上","bao_mac":"bb","bao_time":"3","bao_volume":"4","bao_tv":"SONY","bao_size":"32","box_size":"1","box_state":"1"}', );
+
 		die;
+
+
 		$hotel_id= I('hotel_id');
 		$size   = I('numPerPage',50);//显示每页记录数
 		$name = I('keywords','','trim');
@@ -596,7 +600,7 @@ class HotelController extends BaseController {
 		$save['description'] = I('post.descri');
 		$minu = I('post.minu','0','intval');
 		$seco = I('post.seco','0','intval');
-		$save['duration'] = $minu*60+$seco;
+		$save['duration'] = I('post.duration','0','intval');
 		$save['name'] = I('post.adsname');
 		if($covermedia_id){
 			$oss_arr = $mediaModel->find($covermedia_id);
