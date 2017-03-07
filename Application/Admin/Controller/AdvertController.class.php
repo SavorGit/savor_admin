@@ -72,7 +72,9 @@ class AdvertController extends BaseController{
 	     if(IS_POST){
 	         $adsModel = new \Admin\Model\AdsModel();
 	         $ossaddr = I('post.oss_addr','','trim');
-	         $duration = I('post.duration','');
+			 $minu = I('post.minu','0','intval');
+			 $seco = I('post.seco','0','intval');
+	         $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
@@ -118,13 +120,15 @@ class AdvertController extends BaseController{
 	     $mediaModel = new \Admin\Model\MediaModel();
 	     $adsModel = new \Admin\Model\AdsModel();
 	     if(IS_POST){
-	         $duration = I('post.duration','');
+			 $minu = I('post.minu','0','intval');
+			 $seco = I('post.seco','0','intval');
+			 $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
 	         $ads_data = array();
 	         $ads_data['name'] = $name;
-	         $ads_data['duration'] = $duration;
+			 $ads_data['duration'] = $duration;
 	         $ads_data['type'] = $adstype;
 	         if($description)  $ads_data['description'] = $description;
 	         $res_ads = $adsModel->where("id='$adsid'")->save($ads_data);

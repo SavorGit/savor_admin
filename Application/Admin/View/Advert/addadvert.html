@@ -31,14 +31,19 @@
 			          <input type="text" class="form-control" id="media_url" value="{$vinfo.oss_addr}" readonly>
 			      	 </div>
 			      </div>
-  		 		  <div class="form-group row" id="duration">
-		              <label class="col-xs-12 col-sm-2 control-label">
-		                时长：
-		              </label>
-		              <div class="col-xs-12 col-sm-10">
-		                <input name="duration" type="number" value="{$vinfo.duration}" class="form-control" required/>
-		              </div>
-		         </div>
+			  <div class="form-group row">
+				  <div class="form-inline">
+
+					  <div class="form-group col-md-12 col-xs-12 col-sm-12" >
+						  <label class=" control-label col-xs-12 col-sm-2">
+							  时长：
+						  </label>
+						  <input style="width:50px;"  alt="数字"  name="minu" type="text" value="<if condition="$vinfo.duration gt 0">{$vinfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
+						  <input style="width:50px;"  alt="数字"  name="seco" type="text" value="<if condition="$vinfo.duration gt 0">{$vinfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span>
+					  </div>
+				  </div>
+
+			  </div>
 		         <div class="form-group row">
 		              <label class="col-xs-12 col-sm-2 control-label">
 		                资源类型：
