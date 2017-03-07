@@ -190,7 +190,9 @@ class ResourceController extends BaseController{
 	         }else{
 	             $name = I('post.name','','trim');
 	             $type = I('post.type',3,'intval');
-	             $duration = I('post.duration','');
+				 $minu = I('post.minu','0','intval');
+				 $seco = I('post.seco','0','intval');
+				 $duration = $minu*60+$seco;
 	             $description = I('post.description','');
 	             $save['name'] = $name;
 	             $save['type'] = $type;

@@ -342,7 +342,9 @@ class BaseController extends Controller {
     protected function handle_resource(){
         $add_mediadata = array();
         $type = I('post.type',0,'intval');//资源类型资1视频2图片3其他
-        $duration = I('post.duration','');
+        $minu = I('post.minu','0','intval');
+        $seco = I('post.seco','0','intval');
+        $duration = $minu*60+$seco;
         $description = I('post.description','');
         $add_mediadata['name'] = I('post.name','','trim');
         $add_mediadata['oss_addr'] = I('post.oss_addr','','trim');
