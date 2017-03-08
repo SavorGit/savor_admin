@@ -176,6 +176,10 @@ var uploader = new plupload.Uploader({
 		},
 
 		FilesAdded: function(up, files) {
+            if(up.files.length>1){ // 最多上传3张图
+               alert('最多一张');
+                return false;
+            }
 			plupload.each(files, function(file) {
 				document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
 				+'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
@@ -205,12 +209,15 @@ var uploader = new plupload.Uploader({
             	document.getElementById('oss_filesize').value = file.size;
                 document.getElementById('oss_addr').value = get_uploaded_object_name(file.name);
                 document.getElementById('media_url').value = document.getElementById('oss_host').value+get_uploaded_object_name(file.name);
+
+                document.getElementById('resource_name').value = 'a'+Date.parse(new Date())/1000;
                 console && console.log(get_uploaded_object_name(file.name));
             }
             else if (info.status == 203)
             {
                 document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传到OSS成功，但是oss访问用户设置的上传回调服务器失败，失败原因是:' + info.response;
                 document.getElementById('oss_addr').value = '2';
+                document.getElementById('resource_name').value = 'a'+Date.parse(new Date())/1000;
             }
             else
             {
