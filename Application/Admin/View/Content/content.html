@@ -46,8 +46,8 @@
           <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$timeinfo.now_time}">
               <input style="margin-left: 6px;" name="begin_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
                   <span class="input-group-btn">
-                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
             </div>
 
@@ -101,6 +101,10 @@
 
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/homemanager" rel="article/homemanager"  title="首页内容管理" target="navTab" mask="true">
             <i class="fa fa-plus"></i><span>首页内容管理</span></a>
+
+
+          <a class="btn btn-success btn-sm add" href="{$host_name}/test/getarsize"  title="测试人员勿点" target="dialog" mask="true">
+            <i class="fa fa-plus"></i><span>测试人员勿点</span></a>
         </div>
       </div>
 
