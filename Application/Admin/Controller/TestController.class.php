@@ -28,9 +28,13 @@ class TestController extends BaseController {
                 $save['size'] = $size;
                 //$save['id'] = $v['id'];
                 //var_dump($save);
-                $bool = $arModel->where(array('id'=>$v['id']))->save($save);
-                var_dump($bool);
-                var_dump($v['id']);
+                if($v['id']==1787){
+                    $bool = $arModel->where(array('id'=>$v['id']))->save($save);
+                    var_dump($bool);
+                    var_dump($v['id']);
+                    break;
+                }
+
 
             }
         }catch(Exception $e){
