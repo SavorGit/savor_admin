@@ -26,11 +26,11 @@ class TestController extends BaseController {
                 $oss_path = $me_info['oss_addr'];
                 $size = $arModel->getOssSize($oss_path);
                 $save['size'] = $size;
-                $save['id'] = $v['id'];
-                var_dump($save);
-               // $bool = $arModel->where(array('id'=>$v['id']))->save($save);
-               // var_dump($bool);
-               // var_dump($save);
+                //$save['id'] = $v['id'];
+                //var_dump($save);
+                $bool = $arModel->where(array('id'=>$v['id']))->save($save);
+                var_dump($bool);
+                var_dump($v['id']);
 
             }
         }catch(Exception $e){
