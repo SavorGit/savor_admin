@@ -2,7 +2,7 @@
   <div id="dz-filecontainer">
     <div class="tab-content">
 	   	<input id="oss_host" type="hidden" value="{$oss_host}">
-		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/{$action_url}" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/{$action_url}" class="pageForm required-validate" enctype="multipart/form-data" onclick="return check();" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		   	<input id="oss_id" type="hidden" name="adsid" value="{$vinfo.id}">
 		   	<input type="hidden" name="media_id" value="{$vinfo.media_id}">
 		   	<input type="hidden" name="oss_addr" id='oss_addr' value=''>
@@ -38,8 +38,8 @@
 						  <label class=" control-label col-xs-12 col-sm-2">
 							  时长：
 						  </label>
-						  <input style="width:50px;"  alt="数字"  name="minu" min="0" max="59" type="number" value="<if condition="$vinfo.duration gt 0">{$vinfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
-						  <input style="width:50px;"  alt="数字"  name="seco" min="0" max="59" type="number" value="<if condition="$vinfo.duration gt 0">{$vinfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span>
+						  <input style="width:50px;"  alt="数字"  name="minu" id="minu"  type="number"  value="<if condition="$vinfo.duration gt 0">{$vinfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
+						  <input style="width:50px;"  alt="数字" id="seco" name="seco"  type="number"  value="<if condition="$vinfo.duration gt 0">{$vinfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span><div  class="form-control col-sm-2"  id="tishi"  style="display:none;color:red;"></div>
 					  </div>
 				  </div>
 
@@ -86,6 +86,72 @@
   </div>
 </div>
 <script>
+	//$("#tishi").hide();
+	$("#minu").blur(
+			function(){
+				var va = $(this).val();
+				if(isNaN(va)){
+					$("#tishi").css('display','black');
+					$("#tishi").html('不可为非数字');
+					return false;
+				}else{
+					if(va>59){
+						$("#tishi").css('display','block');
+						$("#tishi").html('请输入正确的时长（0-59)');
+						return false;
+					}else{
+						$("#tishi").css('display', 'none');
+						return false;
+					}
+				}
+			}
+	);
+	$("#seco").blur(
+			/*function(){
+				var va = $(this).val();
+				if(isNaN(va)){
+					$("#tishi").css('display','black');
+					$("#tishi").html('不可为非数字');
+					return false;
+				}else{
+					if(va>59){
+						$("#tishi").css('display','block');
+						$("#tishi").html('请输入正确的秒长（0-59)');
+						return false;
+					}else{
+						$("#tishi").css('display', 'none');
+						return false;
+					}
+				}
+			}*/
+	)
+
+	function check(){
+		var se = $("#seco").val();
+
+		var mi = $("#minu").val();
+		if(mi == ''){
+
+			$("#tishi").css('display','block');
+			$("#tishi").html('分不可为空');
+			return false;
+		}else if(se == ''){
+			$("#tishi").css('display','block');
+			$("#tishi").html('秒不可为空');
+			return false;
+		}else if(mi>59){
+			$("#tishi").css('display','block');
+			$("#tishi").html('请输入正确的分长（0-59)');
+			return false;
+		}else if(se>59){
+			$("#tishi").css('display','block');
+			$("#tishi").html('请输入正确的秒长（0-59)');
+			return false;
+		}else{
+			$("#tishi").css('display', 'none');
+		}
+
+	}
 
 var imgs="Image files";
 var files="files";

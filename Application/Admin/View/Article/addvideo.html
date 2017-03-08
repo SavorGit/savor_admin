@@ -1,5 +1,5 @@
 <div class="pageContent">
-  <form method="post" action="{$host_name}/article/doAddvideo" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <form id="dropbase-form" method="post" action="{$host_name}/article/doAddvideo" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)" onclick="return check();">
     <input type="hidden" id="video_id" name="id" value="{$vainfo.id}">
     <div class="pageFormContent modal-body">
       <div class="tabsContent">
@@ -138,12 +138,12 @@
             <div class="form-inline">
 
               <div class="form-group col-md-12 col-xs-12 col-sm-12" >
-              <label class=" control-label col-xs-12 col-sm-2">
-                时长：
-              </label>
-                <input style="width:50px;"  alt="数字"  name="minu" type="number" value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
-                <input style="width:50px;"  alt="数字"  name="seco" type="number" value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span>
-                </div>
+                <label class=" control-label col-xs-12 col-sm-2">
+                  时长：
+                </label>
+                <input style="width:50px;"  alt="数字"  name="minu" id="minu"  type="number"  value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']/60|floor}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">分</span>
+                <input style="width:50px;"  alt="数字" id="seco" name="seco"  type="number"  value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']%60}</if>"  class="form-control col-sm-2" /><span class="form-control col-sm-2">秒</span><div  class="form-control col-sm-2"  id="tishi"  style="display:none;color:red;"></div>
+              </div>
             </div>
 
           </div>
@@ -221,7 +221,32 @@
 </div>
 <iframe id="id_iframe" name="id_iframe" style="display:none;"></iframe>
 <script type="text/javascript">
+  function check(){
+    var se = $("#seco").val();
 
+    var mi = $("#minu").val();
+    if(mi == ''){
+
+      $("#tishi").css('display','block');
+      $("#tishi").html('分不可为空');
+      return false;
+    }else if(se == ''){
+      $("#tishi").css('display','block');
+      $("#tishi").html('秒不可为空');
+      return false;
+    }else if(mi>59){
+      $("#tishi").css('display','block');
+      $("#tishi").html('请输入正确的分长（0-59)');
+      return false;
+    }else if(se>59){
+      $("#tishi").css('display','block');
+      $("#tishi").html('请输入正确的秒长（0-59)');
+      return false;
+    }else{
+      $("#tishi").css('display', 'none');
+    }
+
+  }
 
   $(function() {
 
