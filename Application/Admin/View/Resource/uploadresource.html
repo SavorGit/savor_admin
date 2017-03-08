@@ -165,6 +165,13 @@ $("#saveImg").click(function(){
         	"description":$("#description").val(),
         },
         success:function(result){
+         // alert(resourceType);
+         // alert(hiddenType);
+       //   alert(hiddenImg);
+        //  console.log(result);
+         // alert($("#resource_name").val());
+         // $("#media_idimgname").val($("#resource_name").val());
+        //  $("#media_idimgname").html($("#resource_name").val());
           //console.log($("#resource_type").val());
             if(result.code==10000){
                 $("#"+hiddenType).val(result.data.media_id);
@@ -174,7 +181,13 @@ $("#saveImg").click(function(){
                     ueIn.execCommand('insertimage', {
                          src:result.data.path
                     });
-                  };
+                }else{
+                  if(hiddenType =='media_id'){
+                    $("#media_idimgname").val($("#resource_name").val());
+                    $("#media_idimgname").html($("#resource_name").val());
+                  }
+
+                }
                 $("#dz-filecontainer .nav-tabs .pull-right a").click();
             }else{
                $("#dz-filecontainer .nav-tabs .pull-right a").click();
