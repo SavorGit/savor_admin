@@ -147,6 +147,10 @@
 			$("#tishi").css('display','block');
 			$("#tishi").html('请输入正确的秒长（0-59)');
 			return false;
+		}else if(se==0 && mi==0){
+			$("#tishi").css('display','block');
+			$("#tishi").html('不可都为0');
+			return false;
 		}else{
 			$("#tishi").css('display', 'none');
 		}
