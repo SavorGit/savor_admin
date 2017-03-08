@@ -318,7 +318,12 @@ class ArticleController extends BaseController {
     public function delhome(){
         $id = I('get.id');
         $mbHomeModel = new \Admin\Model\HomeModel();
+        
         if($id){
+            $info = $mbHomeModel->where('id='.$id)->find();
+            if($info['state'] == 1){
+                $this->error('添加到首页内容不可删除！');
+            }
             //             $vinfo = $mbHomeModel->where(array('id'=>$id))->find();
             //             $this->assign('vinfo',$vinfo);
             $res_save=$mbHomeModel->where('id='.$id)->delete();
