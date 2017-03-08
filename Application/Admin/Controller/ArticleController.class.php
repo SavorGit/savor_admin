@@ -288,9 +288,6 @@ class ArticleController extends BaseController {
         $id = I('get.id');
         $acctype = I('get.acttype');
         if ($acctype && $id){
-
-
-
             $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $vainfo = $artModel->where('id='.$id)->find();
             if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00' || $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
@@ -306,6 +303,9 @@ class ArticleController extends BaseController {
                 $vainfo['vid_type'] = 1;
                 $vainfo['videoname'] = $mediainfo['name'];
             }
+            $this->assign('vainfo',$vainfo);
+        }else{
+            $vainfo['duration'] = 0;
             $this->assign('vainfo',$vainfo);
         }
         $where = "1=1";

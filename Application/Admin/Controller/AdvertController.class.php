@@ -108,6 +108,7 @@ class AdvertController extends BaseController{
 	         $this->get_file_exts(1);
 	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 			 $vinfo['type'] = 1;
+			 $vinfo['duration'] = 0;
 			 $this->assign('vinfo',$vinfo);
 	         $this->assign('oss_host',$oss_host);
 	         $this->assign('action_url','advert/addAdvert');
