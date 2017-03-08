@@ -40,7 +40,7 @@ class ArticleController extends BaseController {
             $mbHomeModel = new \Admin\Model\HomeModel();
             $res = $mbHomeModel->where('content_id='.$gid)->find();
             if($res) {
-                $this->output('首页有引用不可删除', 'content/getlist',1);
+                $this->error('首页有引用不可删除!');
             }
             $artModel = new ArticleModel();
             $result = $artModel -> delData($gid);
