@@ -56,7 +56,7 @@
 		              <div class="col-xs-12 col-sm-10">
 		                <volist name=":C('RESOURCE_TYPE')" id="vo">
 		                  <input class="resource_type" name="type" type="radio" id="{$key}" value="{$key}" 
-		                  <if condition="$key eq $rtype">checked</if>/>&nbsp;{$vo}
+		                  <if condition="$key eq $rtype">checked<else/>disabled</if>/>&nbsp;{$vo}
 		                  &nbsp;&nbsp;
 		                </volist>
 		              </div>
