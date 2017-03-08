@@ -12,6 +12,7 @@ class TestController extends BaseController {
     }
 
     public function getarsize(){
+        exit();
         $arModel = new \Admin\Model\ArticleModel();
         $m_arr = $arModel->field('id,media_id')->where(array('type'=>3))->select();
 
