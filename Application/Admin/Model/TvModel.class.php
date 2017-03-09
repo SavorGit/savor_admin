@@ -35,13 +35,19 @@ class TvModel extends BaseModel{
 		if(!$result || !is_array($result)){
 			return [];
 		}
-		$boxId = [];
-		foreach ($result as $value){
-			$boxId[] = $value['box_id'];
+		//$boxId = [];
+		$boxModel = new BoxModel;
+		foreach ($result as $key=> $value){
+			//$boxId[] = $value['box_id'];
+		  $rt =  $boxModel->getRow('id,name','id='.$value['box_id']);
+		  $result[$key]['box_name'] = $rt['name'];
 		}
+		
+		
+		/*
 		$filter       = [];
 		$filter['id'] = ['IN',$boxId];
-		$boxModel = new BoxModel;
+		
 		$arrBox = $boxModel->getAll('id,name',$filter);
 		foreach ($result as &$value){
 			foreach ($arrBox as  $row){
@@ -49,7 +55,7 @@ class TvModel extends BaseModel{
 					$value['box_name'] = $row['name'];
 				}
 			}
-		}
+		}*/
 		return $result;
 	}
 
