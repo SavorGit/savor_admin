@@ -74,6 +74,9 @@ class AdvertController extends BaseController{
 	         $ossaddr = I('post.oss_addr','','trim');
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
+			 if(empty($minu) && empty($seco)){
+			     $this->error('时长不能为0');
+			 }
 	         $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
