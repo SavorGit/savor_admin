@@ -156,6 +156,7 @@
             </div>
               <div class="input-group input-group-sm pull-right">
                 <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/add?acttype=0" title="新增酒店" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增酒店</a>
+                <a class="btn btn-success btn-sm add" href="{$host_name}/excel/hotelinfo" title="导出资源总表" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出酒楼资源总表</a>
               </div>
       </div>
     </div>
@@ -233,6 +234,10 @@
                   <i class="fa fa-bullhorn"></i>
                   </a>
 
+                  <a data-tip="测试批量新增版位" target="navTab" title="批量新增" rel="hotel/batchposition" href="{$host_name}/hotel/batchposition?hotel_id={$vlist.id}&name={$vlist.name}" class="btn btn-success btn-icon">
+                    <i class="fa fa-bullhorn"></i>
+                  </a>
+
                 </div>
               </td>
 
@@ -248,6 +253,12 @@
 </div>
 
   <script type="text/javascript">
+
+    $('.date-reset').click(function(){
+      $(this).parent().prev().val('')
+    });
+
+
           $(function(){
             $("#exch").change(function(){
               var valu = $(this).val();
