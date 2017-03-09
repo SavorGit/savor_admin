@@ -25,41 +25,123 @@
 		window.location.href = "/admin";
 	}
 </script>
+<style type="text/css">
+	body{
+		width: 100%;
+		height: 100%;
+		background-image:url(../../../../Public/admin/assets/img/denglu_bg.png);
+		background-size:100%;
+	}
+	.denglu_logo{
+	text-align: center;
+	margin-top: 4%;
+	}
+	.denglu_logo img{
+		width: 200px;
+	}
+	.logform{
+		text-align: center;
+		margin-top: 7%;
+	}
+	.logform p{
+		color: #ECECEC;
+		margin-bottom: 15px;
+	}
+	.login_denglu{
+		width: 300px;
+		height: 206px;
+		background-color: #ECECEC;
+		margin:0 auto;
+		border-radius:7px !important;
+		padding: 18px;
+		position: relative;
+	}
+	.name_login{
+		display:inline-block;
+		background-color: white;
+		width: 63px;
+		height: 30px;
+		border: 1px solid #D7D7D7;
+		border-right: none;
+		padding-top: 7px;
+		color: #666666;
+		text-align: center;
+		letter-spacing:6px
+	}
+	.yanimg{
+		width: 90px;
+		height: 30px;
+		display: inline-block;
+		padding-top: 7px;
+	}
+	.huan{
+		width: 40px;
+		height: 30px;
+		position: absolute;
+		bottom: 79px;
+		right: 20px;
+		
+	}
+	.huan img{
+		width: 100%;
+		height: 100%;
+	}
+	.tijiao{
+		margin-top: 8px;
+		height: 30px;
+		width: 257px;
+		border-radius: 5px !important;
+		border: none;
+		background-color: #ea7f30;
+		color: white;
+	}
+	.bottom_ming{
+		position: absolute;
+		width: 480px;
+		left: 50%;
+		margin-left: -240px;
+		bottom: 15px;
+		
+	}
+	.bottom_ming p{
+		display: inline-block;
+		color:#666666 ;
+		font-size: 13px;
+		margin-right:10px;
+	}
+</style>
 </head>
 <body class="login">
-<div class="preloading-container">
-	<div class="login-container">
-	<div class="logo fade-in-up">
-		<a href="/">
-		<img src="/Public/admin/assets/img/logo-big-white.png" alt=""/>
-		</a>
+	<div class="denglu_logo">
+		<img class="denglu_logo" src="../../../../Public/admin/assets/img/denglu_logo.png"/>
 	</div>
-	<div class="loading-text">
-		系统载入中...
-	</div>
-	<div class="content fade-in-up">
-		<form class="login-form" method="post" action="{$host_name}/login">
+		<form class="login-form logform" method="post" action="{$host_name}/login">
+	   <p>热点儿信息管理系统——用户登录</p>
 	    <if condition="$errormsg neq ''">
 	    <div class="alert alert-danger fade-in-up">
 				<button class="close" data-close="alert"></button>
 				<span>{$errormsg}</span>
 			</div>
 	    </if>
-			<div class="form-group">
-				<label class="control-label visible-ie8 visible-ie9">账号</label>
-				<input id="user" class="form-control form-control-solid  placeholder-no-fix" type="text" autocomplete="off" placeholder="账号" name="username" value="{$cookie_upwd.username}"/>
-			</div>
-			<div class="form-group">
-				<label class="control-label visible-ie8 visible-ie9">密码</label>
-				<input id="pass" class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="密码" name="password" value="{$cookie_upwd.userpwd}"/>
-			</div>
-			<div class="form-actions">
-				<button id="submit" class="btn btn-primary btn-block uppercase btn-lg">登 录</button>
-			</div>
+	   <div class="login_denglu">
+	   	<span class="name_login">账号:</span><input id="user" name="username" style="height: 30px;border: 1px solid #D7D7D7;border-left: none;width: 190px;outline: none;" type="text" value="{$cookie_upwd.username}" /><br />
+	   	<div style="width: 200px;height: 10px;"></div>
+	   	<span class="name_login">密码:</span><input id="pass" name="password" style="height: 30px;border: 1px solid #D7D7D7;border-left: none;width: 190px;outline: none;" type="password" name="password" value="{$cookie_upwd.userpwd}" />
+	   	<div style="width: 200px;height: 10px;"></div>
+	   	<span class="name_login" style="letter-spacing:2px;margin-left: -39px;">验证码:</span><input id="verify_code" name="verify_code" style="height: 30px;border: 1px solid #D7D7D7;border-left: none;width: 55px;outline: none;" type="text" />
+	   	<div class="yanimg">
+	   		<img id="verify_img" alt="点击更换" title="点击更换" src="{:U('admin/verify/verify',array())}" class="m">
+	   	</div>
+	   	<!-- <div class="huan">
+	   		<img src="../../../../Public/admin/assets/img/huanyige.png" />
+	   	</div><br /> -->
+	   	<input type="submit" class="tijiao" value="登录" /><br />
+	   	<p style="color: #666666;font-size: 12px;margin-top: 8px;text-align: right;">忘记密码？</p>
+	   </div>
 		</form>
-	</div>
-	</div>
-</div>
+		<div class="bottom_ming">
+		<p>Powered by Set Sail </p><p>Tel:15489454612 </p><p>(c) 2016—2017 Beijing G-sight lnc. </p>
+		</div>
 <!--[if lt IE 9]>
 <script src="/Public/admin/assets/js/plugins/respond.min.js"></script>
 <script src="/Public/admin/assets/js/plugins/excanvas.min.js"></script> 
@@ -74,7 +156,14 @@
 			setTimeout(function(){
 				$(".login-form").submit();
 			},400)
-		})
+		});
+		$("#verify_img").click(function() {
+			   var verifyURL = "admin/verify/verify";
+			   var time = new Date().getTime();
+			    $("#verify_img").attr({
+			       "src" : verifyURL + "/" + time
+			    });
+			 });
 	})
 </script>
 

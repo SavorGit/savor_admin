@@ -36,7 +36,7 @@
     <div id="header">
       <div class="headerNav">
         <a class="logo1" href="#"></a>
-        <a class="logo2 active" href="#"></a>
+        <a class="logo2 active" href="#">热点儿</a>
         <ul class="nav">
           <li><span><i class="icon-user"></i> {$sysuerinfo.username}</span></li>
           <li><a mask="true" target="dialog" href="{$host_name}/user/chagePwd"><i class="icon-lock"></i> <span class="hidden-xs">修改密码</span></a></li>
@@ -47,7 +47,7 @@
     </div>
     <div id="sidebar" class="active">
       <div class="heading">
-        <h2><i class="icon-layers"></i> 后台管理</h2></div>
+        
       <div class="menu-container">
         <ul class="main-menu">
           <if condition="$menuList neq ''">
@@ -59,6 +59,7 @@
       </if>
         </ul>
       </div>
+    </div>
     </div>
     <div id="container" class="active">
       <div id="navTab" class="tabsPage">
@@ -463,6 +464,13 @@
   window.onload = function(){
       loadEcharts();
   }
+  /*菜单显示和隐藏*/
+  $('.collapse').hide()
+  $('body').on('click','.main-menu>li>a',function(){
+  	$(this).next().toggle(200);
+  	$('.main-menu>li>a').css({'color':'#ffffff','border-left':'none'})
+  	$(this).css({'color':'#fe8332','border-left':'2px solid #fe8332'});
+  })
   </script>
 </body>
 

@@ -14,6 +14,20 @@ class LoginController extends BaseController {
     //用户登陆
     public function index() {
         if(IS_POST) {
+            
+            $verify_code = I('post.verify_code','','trim');
+            if(empty($verify_code)){
+                $error_msg = '验证码不能为空!';
+                $this->assign('errormsg', $error_msg);
+                $this->display('Login/index');
+                exit;
+            }
+            if(!check_verify($verify_code)){
+                $error_msg = '验证码输入错误，请重新输入!';
+                $this->assign('errormsg', $error_msg);
+                $this->display('Login/index');
+                exit;
+            }
             $lock_max = 5;
             $lock_time = 1200;
             $error_msg = '你的账户输入错误已达上限，请联系管理员。';
