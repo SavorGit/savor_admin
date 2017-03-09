@@ -374,7 +374,7 @@ class MenuController extends BaseController {
         $hotelModel = new HotelModel;
         $areaModel  = new AreaModel;
 
-        $size   = I('numPerPage',30);//显示每页记录数
+        $size   = I('numPerPage',100);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
