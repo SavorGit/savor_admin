@@ -103,7 +103,7 @@
             <i class="fa fa-plus"></i><span>首页内容管理</span></a>
 
 
-          
+
         </div>
       </div>
 
@@ -223,5 +223,9 @@
             todayBtn:  1,
             autoclose: 1,
           });
+
+          $('.date-reset').click(function(){
+            $(this).parent().prev().val('')
+          })
         })
 </script>
