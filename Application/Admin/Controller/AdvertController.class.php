@@ -75,7 +75,7 @@ class AdvertController extends BaseController{
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
 			 if(empty($minu) && empty($seco)){
-			     $this->error('时长不能为0');
+			     $this->error('请输入有效的时长');
 			 }
 	         $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');

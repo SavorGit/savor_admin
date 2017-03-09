@@ -426,7 +426,7 @@ WHERE id IN (1,2,3)*/
         $minu = I('post.minu','0','intval');
         $seco = I('post.seco','0','intval');
         if(empty($minu) && empty($seco)){
-            $this->error('时长不能为0');
+            $this->error('请输入有效的时长');
         }
         $save['duration'] = $minu*60+$seco;
         $v_type    = I('post.r1','0','intval');
