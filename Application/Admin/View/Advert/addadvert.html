@@ -127,33 +127,35 @@
 	)
 
 	function check(){
-		var se = $("#seco").val();
+		 var se = $("#seco").val();
 
-		var mi = $("#minu").val();
-		if(mi == ''){
-
-			$("#tishi").css('display','block');
-			$("#tishi").html('分不可为空');
-			return false;
-		}else if(se == ''){
-			$("#tishi").css('display','block');
-			$("#tishi").html('秒不可为空');
-			return false;
-		}else if(mi>59){
-			$("#tishi").css('display','block');
-			$("#tishi").html('请输入正确的分长（0-59)');
-			return false;
-		}else if(se>59){
-			$("#tishi").css('display','block');
-			$("#tishi").html('请输入正确的秒长（0-59)');
-			return false;
-		}else if(se==0 && mi==0){
-			$("#tishi").css('display','block');
-			$("#tishi").html('不可都为0');
-			return false;
-		}else{
-			$("#tishi").css('display', 'none');
-		}
+		    var mi = $("#minu").val();
+		    if(mi == '' || mi== 0){
+		      if(se == 0 || se ==''){
+		        $("#tishi").css('display','block');
+		        $("#tishi").html('不可都为0或空');
+		        return false;
+		      }else{
+		        $("#tishi").css('display', 'none');
+		      }
+		    }
+		    if(mi>59){
+		      $("#tishi").css('display','block');
+		      $("#tishi").html('请输入正确的分长（0-59)');
+		      return false;
+		    }
+		    if(se == ''){
+		      $("#tishi").css('display','block');
+		      $("#tishi").html('秒不可为空');
+		      return false;
+		    }
+		    if(se>59){
+		      $("#tishi").css('display','block');
+		      $("#tishi").html('请输入正确的秒长（0-59)');
+		      return false;
+		    }
+		      $("#tishi").css('display', 'none');
+		    
 
 	}
 
