@@ -2,7 +2,7 @@
 <link href="/Public/admin/assets/css/fileinput.css" rel="stylesheet" type="text/css" />
 <script src="/Public/admin/assets/js/fileinput.min.js" type="text/javascript" />
 <style type="text/css">
-	#lefta{
+	#lefta,.rightlist{
 		-webkit-touch-callout: none;
 		-webkit-user-select: none;
 		-khtml-user-select: none;
@@ -422,11 +422,54 @@ action="{$host_name}/menu/addmen" method="post" >
 	})
 	/*上移*/
 	$('.tops').click(function(){
-		$('.divlist2').each(function(){
-			if($(this).is('.active')){
-				$(this).insertBefore($(this).prev())
+		var inde = $('.rightlist>.active').length;
+    	var tts = 1;
+		if(inde==1){
+		
+		}else if(inde==2){
+			if(!$('.rightlist>.active').eq(0).next().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
 			}
-		})
+			if(!$('.rightlist>.active').eq(1).prev().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
+			}
+		}else {
+			$(".rightlist>.active").each(function(index){
+					
+				  var flg =  inde -1;
+				  
+			     if(index==0){
+					if(!$(this).next().hasClass('active')){
+						tts = 0
+					}
+				 }else if(index == flg){
+					if(!$(this).prev().hasClass('active')){
+						tts =0
+					}
+				 }else {
+					if(!$(this).next().hasClass('active')){
+						tts =0
+					}
+					
+					if(!$(this).prev().hasClass('active')){
+						tts =0 ;
+					}
+				 
+				 }
+			});
+		}
+		
+		if(tts ==0){
+			alert('一定要选取相邻的才可以移动。')
+			$('.rightlist>div').removeClass('active');
+			return false;
+		}
+		
+		$('.rightlist>.active:first').prev().insertAfter($('.rightlist>.active:last'));
 	})
 	/*复制*/
 	$('.clones').click(function(){
@@ -440,12 +483,53 @@ action="{$host_name}/menu/addmen" method="post" >
 
 	/*下移*/
 	$('.bottoms').click(function(){
-		//var lasts = $('.divlist2').last().index()
-		$('.divlist2').each(function(){
-			if($(this).is('.active')){
-				$(this).insertAfter($(this).next());
+		var inde = $('.rightlist>.active').length;
+    	var tts = 1;
+		if(inde==1){
+		
+		}else if(inde==2){
+			if(!$('.rightlist>.active').eq(0).next().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
 			}
-		})
+			if(!$('.rightlist>.active').eq(1).prev().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
+			}
+		}else {
+			$(".rightlist>.active").each(function(index){
+					
+				  var flg =  inde -1;
+				  
+			     if(index==0){
+					if(!$(this).next().hasClass('active')){
+						tts = 0
+					}
+				 }else if(index == flg){
+					if(!$(this).prev().hasClass('active')){
+						tts =0
+					}
+				 }else {
+					if(!$(this).next().hasClass('active')){
+						tts =0
+					}
+					
+					if(!$(this).prev().hasClass('active')){
+						tts =0 ;
+					}
+				 
+				 }
+			});
+		}
+		
+		if(tts ==0){
+			alert('一定要选取相邻的才可以移动。')
+			$('.rightlist>div').removeClass('active');
+			return false;
+		}
+		$('.rightlist>.active:last').next().insertBefore($('.rightlist>.active:first'));
 	})
 	/*置低*/
 	$('.bottomz').click(function(){
