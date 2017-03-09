@@ -30,15 +30,18 @@ body {
 }
 
 #header .logo2 {
-    height: 76px;
+    height: 120px;
     width: 180px;
     -webkit-transition: left 0.35s;
     transition: left 0.35s;
-    background-image: url(../img/logo1.png);
-    background-color: #499ff6;
+    background-image: url(../img/logolist.png);
+    background-color: #222222;
     background-position: center center;
     z-index: 2;
-    left: -180px
+    left: -180px;
+    line-height: 200px;
+    color: #FFFFFF;
+    text-align: center;
 }
 
 #header .logo2.active {
@@ -187,7 +190,7 @@ body {
 }
 
 #container.active {
-    left: 180px
+    left: 181px
 }
 
 @media (max-width: 767px) {
@@ -404,7 +407,7 @@ body {
 }
 
 #sidebar {
-    background: #2988e6
+    background: #222222
 }
 
 .btn-icon {
@@ -761,26 +764,26 @@ body {
 
 .main-menu>li>a {
     padding: 8px 8px;
-    border-bottom: 1px solid #57a1eb;
+    border-bottom: 1px solid #333331;
     color: #DFEFFF;
     font-weight: normal;
     cursor: pointer;
-    background: #2988e6;
+    background: #222222;
     position: relative;
-    z-index: 9
-}
+    z-index: 9;
+    margin-top: 12px;
+ }
 
 .main-menu>li>a:hover {
-    background: #3790e8
+    background: #383330
 }
-
 .main-menu li {
-    position: relative
+    position: relative;
 }
 
 .main-menu li>ul {
-    background: #176ec5;
-    border-bottom: 1px solid #57a1eb
+    background: #1d1d1d;
+    border-bottom: 1px solid #333331
 }
 
 .main-menu li>ul>li {
@@ -794,7 +797,7 @@ body {
 .main-menu li>ul>li>a:hover,
 .main-menu li>ul>li>a:focus, 
 .main-menu li>ul>li>a.active {
-    background: #135da5
+    background: #383330
 }
 .main-menu li>ul>li[disabled] a{
     opacity: 0.5;
