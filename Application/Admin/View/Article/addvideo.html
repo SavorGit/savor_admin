@@ -260,21 +260,24 @@
       }else{
         $("#tishi").css('display', 'none');
       }
-    }else if(mi>59){
+    }
+    if(mi>59){
       $("#tishi").css('display','block');
       $("#tishi").html('请输入正确的分长（0-59)');
       return false;
-    }else if(se == ''){
+    }
+    if(se == ''){
       $("#tishi").css('display','block');
       $("#tishi").html('秒不可为空');
       return false;
-    }else if(se>59){
+    }
+    if(se>59){
       $("#tishi").css('display','block');
       $("#tishi").html('请输入正确的秒长（0-59)');
       return false;
-    }else{
-      $("#tishi").css('display', 'none');
     }
+      $("#tishi").css('display', 'none');
+    
 
   }
 
