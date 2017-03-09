@@ -4370,7 +4370,7 @@ $(function(){
 			top[e] = $(this).parent().offset().top;
 	});
 	//console.log(top);
-	$("#sidebar .menu-container").scroll(function(){
+	/*$("#sidebar .menu-container").scroll(function(){
 		var t = $(this).scrollTop();
 		$(this).find("a[href^=#menu]").each(function(e,k){
 				if(t > top[e]-107-(32*e)){
@@ -4380,7 +4380,7 @@ $(function(){
 				}
 
 		})
-	})
+	})*/
 	$("#sidebar a[href^=#menu]").on("click",function(){
 		var sr = $("#sidebar .menu-container").scrollTop();
 		var i = $(this).data("index");
