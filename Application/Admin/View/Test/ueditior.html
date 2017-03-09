@@ -1,6 +1,13 @@
 <div class="pageContent">
   <form method="post" action="{$host_name}/test/ueditior" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <div class="pageFormContent modal-body">
+
+      <a class="btn btn-success btn-sm add" href="{$host_name}/test/daoru" title="导入excel" target="dialog" mask="true"><i class="fa fa-plus"></i>导入excel</a>
+
+      <a class="btn btn-success btn-sm add" href="{$host_name}/test/daochu" title="导出excel" target="dialog" mask="true"><i class="fa fa-plus"></i>导出excel</a>
+
+      <a class="btn btn-success btn-sm add" href="{$host_name}/test/compare" title="导入excel" target="dialog" mask="true"><i class="fa fa-plus"></i>比较</a>
+
       <div class="tabsContent">
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab1" data-toggle="tab"><span>基本信息</span></a></li>
