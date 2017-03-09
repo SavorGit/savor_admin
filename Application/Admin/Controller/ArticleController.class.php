@@ -263,13 +263,16 @@ class ArticleController extends BaseController {
         $id = I('request.id');
         $flag = I('request.flag');
         $save['state'] = $flag;
-        $homeInfo =  $mbHomeModel->field('content_id')->where()->find();
-        $artModel = new \Admin\Model\ArticleModel();
-        $info = $artModel->field('state')->where('id='.$homeInfo['content_id'])->find();
-        if($info['state'] !=2){
+        if($flag ==1){
+            $homeInfo =  $mbHomeModel->field('content_id')->where('id='.$id)->find();
+            $artModel = new \Admin\Model\ArticleModel();
+            $info = $artModel->field('state')->where('id='.$homeInfo['content_id'])->find();
+            if($info['state'] !=2){
             
-            $this->error('该文章未审核通过，不能上线!');
+                $this->error('该文章未审核通过，不能上线!');
+            }    
         }
+        
         if($mbHomeModel->where('id='.$id)->save($save)){
             $message = '更新成功!';
             $url = 'article/homemanager';
