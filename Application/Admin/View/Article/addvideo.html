@@ -253,7 +253,7 @@
 
     var mi = $("#minu").val();
     if(mi == '' || mi== 0){
-      if(se == 0){
+      if(se == 0 || se ==''){
         $("#tishi").css('display','block');
         $("#tishi").html('不可都为0或空');
         return false;
