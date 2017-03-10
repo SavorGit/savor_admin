@@ -70,9 +70,7 @@ class SysmenuController extends BaseController {
                 $data['menulevel']  = $menulevel;
                 $data['displayorder']= $displayorder;
                 $data['isenable']   = $isenable; 
-                $mediaMode = new \Admin\Model\MediaModel();
-                $mediaInfo = $mediaMode -> getMediaInfoById($media_id);
-                $data['ico_img'] = $mediaInfo['oss_addr'];
+                $data['media_id'] = $media_id;
                 $result = $sysMenu->addData($data, $acttype);
                 if($result) {
                     $this->output('操作成功!', 'sysmenu/sysmenuList');
@@ -93,8 +91,14 @@ class SysmenuController extends BaseController {
             
             $sysMenu = new \Admin\Model\SysmenuModel();
             $result = $sysMenu->getInfo($uid);
-            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-            $result['oss_addr'] = $oss_host.$result['ico_img'];
+            if($result['media_id']){
+                $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+                
+                $mediaModel = new \Admin\Model\MediaModel();
+                $mediaInfo = $mediaModel->getMediaInfoById($result['media_id']);
+                $result['oss_addr'] = $oss_host.$mediaInfo['oss_addr'];
+            }
+           
             $this->assign('vinfo', $result);
             $this->assign('acttype', 1);
         } else {
