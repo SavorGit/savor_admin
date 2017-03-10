@@ -73,8 +73,8 @@ class IndexController extends BaseController {
             foreach ($menu as $k => $v) {
                 
                 $mediainfo = $mediaModel->getMediaInfoById($v['media_id']);
-                $parent_s = '<li  id="'.$v['id'].'"><a href="#menu'.$k.'" data-index="'.$k.'"><img class="menulist_ico" style="height:14px;margin-right: 3px;" src="'.$mediainfo['oss_addr'].'">'.$v['modulename']
-                            .'<img src="/Public/admin/assets/img/sysmenuico/more.png" /></a><ul id="menu'
+                $parent_s = '<li  id="'.$v['id'].'"><a href="#menu'.$k.'" data-index="'.$k.'"><img class="menulist_ico" style="height:14px;margin-right: 5px;" src="'.$mediainfo['oss_addr'].'">'.$v['modulename']
+                            .'<img style="float:right;margin-right:4px;margin-top:7px" src="/Public/admin/assets/img/sysmenuico/more.png" /></a><ul id="menu'
                             .$k.'" class="collapse in"><input type="hidden" id="mo_'.$v['id'].'" value="'.$mediainfo['oss_addr'].'"  />';
                 $child = '';
                 if($v['child']) {
