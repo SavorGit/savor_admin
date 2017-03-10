@@ -56,6 +56,7 @@ class SysmenuController extends BaseController {
             $jstext      = I('post.jstext');
             $isenable    = I('post.isenable');
             $media_id    = I('post.media_id','0','intval');
+            $select_media_id    = I('post.select_media_id','0','intval');
             $sysMenu = new \Admin\Model\SysmenuModel();
             if($acttype==1){
                 $sysinfo=$sysMenu->getInfo($id);
@@ -70,7 +71,9 @@ class SysmenuController extends BaseController {
                 $data['menulevel']  = $menulevel;
                 $data['displayorder']= $displayorder;
                 $data['isenable']   = $isenable; 
-                $data['media_id'] = $media_id;
+                if($media_id) $data['media_id'] = $media_id;
+                
+                if($select_media_id) $data['select_media_id'] = $select_media_id;
                 $result = $sysMenu->addData($data, $acttype);
                 if($result) {
                     $this->output('操作成功!', 'sysmenu/sysmenuList');
@@ -97,7 +100,11 @@ class SysmenuController extends BaseController {
                 $mediaInfo = $mediaModel->getMediaInfoById($result['media_id']);
                 $result['oss_addr'] = $mediaInfo['oss_addr'];
             }
-           
+            if($result['select_media_id']){
+                $mediaModel = new \Admin\Model\MediaModel();
+                $mediaInfo = $mediaModel->getMediaInfoById($result['select_media_id']);
+                $result['select_oss_addr'] = $mediaInfo['oss_addr'];
+            }
             $this->assign('vinfo', $result);
             $this->assign('acttype', 1);
         } else {
