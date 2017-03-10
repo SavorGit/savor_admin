@@ -100,6 +100,7 @@ class MenuController extends BaseController {
 
             $userInfo = session('sysUserInfo');
             //根据session得到用户名
+
             if ($res) {
                 //插入操作日志并同时操作menu_log
                 $save['menu_id'] = $menuid;
@@ -135,10 +136,10 @@ class MenuController extends BaseController {
             $bak_ho_arr = array();
             $sql = "SELECT hotel_id FROM `savor_menu_hotel` WHERE create_time=
                 (SELECT MAX(create_time) FROM `savor_menu_hotel` WHERE menu_id={$v['id']})";
-           // echo $sql;
+
 
             $bak_hotel_id_arr = $menuHoModel->query($sql);
-            //var_dump($bak_hotel_id_arr);
+
             foreach ($bak_hotel_id_arr as $bk=>$bv){
                 $bak_ho_arr[] = $bv['hotel_id'];
             }
@@ -179,6 +180,7 @@ class MenuController extends BaseController {
                 //获取本身自有的count
                 $count_arr = $menuliModel->field('count')->where(array('id'=>$v['id']))->find();
 
+
                 //menu_id
                 //删除sav_menu_item遍历id,就是删除次id
                 //var_dump($inter,$v['id']);
@@ -203,9 +205,13 @@ class MenuController extends BaseController {
 
 
             $menuliModel->where(array('id'=>$v['id']))->save($dat);
+            //var_dump($menuliModel->getLastSql());
         }
 
-         $this->output('发布成功了!', 'menu/getlist');
+         $this->output('发布成功了!', 'menu/getlist',2);
+       // ob_end_clean();
+       // $this->redirect("content/getlist");
+        //echo "<script>location.href='http://www.baidu.com'</script>";
 
 
         //$vinfo = $hotelModel->where('id='.$id)->find();
@@ -355,6 +361,8 @@ class MenuController extends BaseController {
     }//End Function
 
     public function selectHotel(){
+
+
         $befo  = C('DB_PREFIX');
         $areaModel  = new AreaModel;
         $menliModel  = new MenuListModel();
@@ -374,7 +382,7 @@ class MenuController extends BaseController {
         $hotelModel = new HotelModel;
         $areaModel  = new AreaModel;
 
-        $size   = I('numPerPage',100);//显示每页记录数
+        $size   = I('numPerPage',3);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -485,6 +493,8 @@ class MenuController extends BaseController {
 
             $where .= "	AND id not in ({$str}) ";
             $this->assign('hopu', $addhotel);
+            $nup = 1;
+            $this->assign('meyi', 1);
 
         }
         $hot = I('hot');
@@ -504,12 +514,10 @@ class MenuController extends BaseController {
         $result = $hotelModel->getList($where,$orders,$start,$size);
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         //print_r($result);die;
-
-
         $this->assign('ext', $str);
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
-        $this->assign('list', $result['list']);
+        $this->assign('alist', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('selecthotel');
     }
@@ -588,9 +596,8 @@ class MenuController extends BaseController {
         $mItemModel = new MenuItemModel();
         $sql = "SELECT hotel_id,hotel_name,pub_time FROM `savor_menu_hotel` WHERE create_time=
                 (SELECT MAX(create_time) FROM `savor_menu_hotel` WHERE menu_id=$menu_id)";
-
         $bak_hotel_id_arr = $mItemModel->query($sql);
-       // var_dump($bak_hotel_id_arr);
+
 
         foreach ($bak_hotel_id_arr as $bk=>$bv){
             $data[] = array('hoid'=>$bv['hotel_id'],'honame'=>$bv['hotel_name'],'pub_time'=>$bv['pub_time']);
@@ -637,6 +644,7 @@ class MenuController extends BaseController {
         }
 
         $result = $mlModel->getList($where,$orders,$start,$size);
+
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
@@ -745,7 +753,7 @@ class MenuController extends BaseController {
                     //添加操作日志不在这边加
                     $this->addlog($data, $menu_id);
 
-                    $this->output('新增成功', 'menu/addmen');
+                    $this->output('新增成功', 'menu/addmen',2);
 
                 } else {
 

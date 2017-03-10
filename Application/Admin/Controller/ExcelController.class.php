@@ -42,7 +42,7 @@ class ExcelController extends Controller
         $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
         $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(15);
         $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(15);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(45);
         $objPHPExcel->getActiveSheet()->getStyle('D11')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
         // $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
         //$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
@@ -143,22 +143,5 @@ class ExcelController extends Controller
         }
         // $this->success('添加成功');
     }
-
-    public function ueditior()
-    {
-        if (IS_POST) {
-            $res_param = json_encode($_POST);
-            $this->output('操作成功!', 'test/testList');
-        } else {
-            $this->display();
-        }
-    }
-
-    public function echarts()
-    {
-        $this->display();
-    }
-
-
 
 }

@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
-<div class="pageHeader">
-  <form onsubmit="return dialogSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+<div class="pageHeader" style="overflow: hidden;height:140px;">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
     <input type="hidden" value="{$hot}" name="hot" />
     <input type="hidden" value="{$ext}" name="infp" />
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
@@ -184,13 +184,15 @@
 
         </div>
       </div>
+
+</div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="top: 140px;">
   <div id="w_list_print">
     <div class="no-more-tables">
-      <form method="post" action="{$host_name}/menu/hotelconfirm" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return dialogSearch(this);">
-
+      <form method="post" action="{$host_name}/menu/hotelconfirm" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return navTabSearch(this);">
+        <input type="hidden" value="{$meyi}" name="meyi" id="meyi" />
         <input type="hidden" value="{$hopu}" name="hopu" />
         <input name="menuid" type="hidden" value="{$menuid}">
         <input name="menuname" type="hidden" value="{$menuname}">
@@ -213,7 +215,7 @@
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-          <volist name="list" id="vlist">
+          <volist name="alist" id="vlist">
             <tr target="sid_user">
               <!-- <td class="table-checkbox">
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
@@ -252,6 +254,24 @@
   {$page}
 </div>
 <script type="text/javascript">
+
+
+  function navTabAjaxDone(json){
+   // alert(json);
+    DWZ.ajaxDone(json);
+    navTab.reloadFlag('menu/getlist');
+    //注意返回的JSON的数据结构
+    if (json.status == DWZ.statusCode.ok){
+      if (json.navTabId){
+        navTab.reload('menu/getlist');
+      }
+
+
+    }
+
+  }
+
+
   $(function(){
     $("#exch").change(function(){
       var valu = $(this).val();
