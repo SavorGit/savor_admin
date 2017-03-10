@@ -764,14 +764,15 @@ body {
 
 .main-menu>li>a {
     padding: 8px 8px;
-    border-bottom: 1px solid #333331;
     color: #DFEFFF;
     font-weight: normal;
     cursor: pointer;
     background: #222222;
     position: relative;
     z-index: 9;
-    margin-top: 12px;
+    height: 40px;
+    line-height: 25px;
+    padding-left: 15px;
  }
 
 .main-menu>li>a:hover {
@@ -783,7 +784,7 @@ body {
 
 .main-menu li>ul {
     background: #1d1d1d;
-    border-bottom: 1px solid #333331
+    border-bottom: 1px solid #333331;
 }
 
 .main-menu li>ul>li {
@@ -791,7 +792,8 @@ body {
 }
 
 .main-menu li>ul>li>a {
-    padding: 8px 10px 8px 26px
+    padding: 8px 10px 8px 31px;
+    font-size: 12px;
 }
 
 .main-menu li>ul>li>a:hover,
@@ -804,7 +806,7 @@ body {
     cursor: not-allowed
 }
 .main-menu a {
-    color: #DFEFFF;
+    color: white;
     text-decoration: none;
     display: block
 }
