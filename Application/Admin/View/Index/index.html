@@ -19,8 +19,9 @@
 
 <body scroll="no">
 <volist name="ico_arr" key="k" id="ico">
-<input type="hidden" id="{$ico.id}" value="{$ico.img_url}" />
+<input type="hidden" id="menu_{$ico.id}" value="{$ico.img_url}" />
 </volist>
+<input type="hidden" id="xlicon" value="/Public/admin/assets/img/sysmenuico/more_zhankai.png" />
   <input id="host_name" value="{$host_name}" type="hidden"/>
   <input id="site_host_name" value="{$site_host_name}" type="hidden"/>
   <div class="preloading-container loading">

@@ -8,11 +8,11 @@ class IndexController extends BaseController {
         $firstMenu = $m_sysmenu->where('menulevel=0')->select();
         $mediaModel =  new \Admin\Model\MediaModel();
         $ico_arr = array();
-        foreach($firstMenu as $v){
+        foreach($firstMenu as $key=> $v){
             if($v['select_media_id']){
                 $mediainfo = $mediaModel->getMediaInfoById($v['select_media_id']);
-                $ico_arr[]['img_url'] = $mediainfo['oss_addr']; 
-                $ico_arr[]['id'] = $v['id'];
+                $ico_arr[$key]['img_url'] = $mediainfo['oss_addr']; 
+                $ico_arr[$key]['id'] = $v['id'];
             }
         }
         $this->assign('ico_arr',$ico_arr);
@@ -73,7 +73,7 @@ class IndexController extends BaseController {
             foreach ($menu as $k => $v) {
                 
                 $mediainfo = $mediaModel->getMediaInfoById($v['media_id']);
-                $parent_s = '<li><a href="#menu'.$k.'" data-index="'.$k.'"><img class="menulist_ico" style="height:14px;margin-right: 3px;" src="'.$mediainfo['oss_addr'].'">'.$v['modulename'].'<img src="/Public/admin/assets/img/sysmenuico/more.png" /></a><ul id="menu'.$k.'" class="collapse in">';
+                $parent_s = '<li id="'.$v['id'].'"><a href="#menu'.$k.'" data-index="'.$k.'"><img class="menulist_ico" style="height:14px;margin-right: 3px;" src="'.$mediainfo['oss_addr'].'">'.$v['modulename'].'<img src="/Public/admin/assets/img/sysmenuico/more.png" /></a><ul id="menu'.$k.'" class="collapse in">';
                 $child = '';
                 if($v['child']) {
                     $menu_list = '';
