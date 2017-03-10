@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--修改样式2 p元素自适应宽度 start-->
 <div class="pageContent">
-  <form method="post" action="{$host_name}/menu/publishmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <form method="post" action="{$host_name}/menu/publishmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return validateCallback(this, navTabAjaxDone)">
     <input type="hidden" name="menuname" value="{$menuname}">
     <input type="hidden" name="menuid" value="{$menuid}">
     <div class="pageFormContent modal-body">
@@ -73,4 +73,6 @@ $(function(){
 	}
 	
 })
+
+
 </script>

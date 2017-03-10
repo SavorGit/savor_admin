@@ -1,8 +1,12 @@
 <!--修改样式2 p元素自适应宽度 start-->
-<form onsubmit="return dialogSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+<form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
 <div class="pageHeader">
 
     <button class="btn btn-success btn-sm add" type="submit" id="choosedata"><i class="fa">新加酒楼</i></button>
+
+  <a data-tip="新加酒楼" target="navTab" title="新加酒楼" rel="menu/getlist" href="{$host_name}/menu/selecthotel?addhotel2&menuname={$menuname}&menuid={$menuid}" class="btn btn-success btn-icon">
+    <i class="fa fa-bullhorn"></i>
+  </a>
 
 </div>
 <div class="pageContent">
@@ -44,3 +48,18 @@
 </div>
 
   </div></form>
+<script>
+  function navTabAjaxDone(json){
+    DWZ.ajaxDone(json);
+    navTab.reloadFlag('menu/getlist');
+    //注意返回的JSON的数据结构
+    if (json.status == DWZ.statusCode.ok){
+      if (json.navTabId){
+        navTab.reload('menu/getlist');
+      }
+
+
+    }
+
+  }
+</script>

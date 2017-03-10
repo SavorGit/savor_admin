@@ -80,8 +80,13 @@
               <td data-title="更新日期">{$vlist.update_time}</td>
               <td data-title="是否选择洒楼">
 
-                <if condition="$vlist.count eq 0"> <a data-tip="请选择酒楼" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
-                  <else/> <a data-tip="酒楼数为" class="btn btn-success " target="dialog" mask="true" href="{$host_name}/menu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_name}">{$vlist.count}</a>
+
+
+
+
+                <if condition="$vlist.count eq 0"> <a data-tip="请选择酒楼" rel="menu/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/menu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
+                  <else/> <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="menu/selecthotel"
+href="{$host_name}/menu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_name}">{$vlist.count}</a>
                 </if>
               </td>
               <td data-title="节目详情">
@@ -92,7 +97,7 @@
                   <a data-tip="日志查看" target="dialog" mask="true"
                      href="{$host_name}/menu/getlog?id={$vlist.id}&name={$vlist.menu_name}"
                      class="btn btn-success btn-icon">
-                    <i class="fa fa-anchor"></i>
+                    <i class="fa fa-search-minus"></i>
                   </a>
                 </div>
               </td>
@@ -125,3 +130,34 @@
   </div>
   {$page}
 </div>
+
+<script type="text/javascript">
+
+
+
+    /*DWZ.ajaxDone(json);
+    //注意返回的JSON的数据结构
+    if (json.statusCode == DWZ.statusCode.ok){
+      if (json.navTabId){
+        //把指定navTab页面标记为需要“重新载入”。注意navTabId不能是当前navTab页面的
+        navTab.reloadFlag(json.navTabId);
+
+      } else {
+        //重新载入当前navTab页面
+        navTabPageBreak();
+
+      }
+      if ("closeCurrent" == json.callbackType) {
+
+        setTimeout(function(){navTab.closeCurrentTab();}, 100);
+
+      } else if ("forward" == json.callbackType) {
+
+        navTab.reload(json.forwardUrl);
+
+      }
+
+    }*/
+
+
+</script>

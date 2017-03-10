@@ -18,48 +18,48 @@
             <div class='left' id='left'>
               <ul>
                 <volist name="vinfo" id="vlist">
-                <li class="tabtwo">
-                  <p>{$key}</p>
-                  <span>></span>
-                </li>
-            </volist>
+                  <li class="tabtwo">
+                    <p>{$key}</p>
+                    <span>></span>
+                  </li>
+                </volist>
               </ul>
             </div>
             <!--11-->
-            <div style="width: 100%;">	      	
-            <volist name="vinfo" id="vlist">
-            <div class='right' style="">
-              <volist name="vlist" id="vinfo">
-              <p>{$vinfo}</p>
+            <div style="width: 100%;">
+              <volist name="vinfo" id="vlist">
+                <div class='right' style="">
+                  <volist name="vlist" id="vinfo">
+                    <p>{$vinfo}</p>
+                  </volist>
+                </div>
               </volist>
-            </div>
-            </volist>
             </div>
             <!--22-->
           </div>
         </div>
 
 
-    </div>
+      </div>
     </div>
   </div>
-
-<script type="text/javascript">
-	$('.right').first().show().siblings().hide()
+</div>
+  <script type="text/javascript">
+    $('.right').first().show().siblings().hide()
     var tab = document.getElementsByClassName('tabtwo');
     var righ = document.getElementsByClassName('right');
-		var a;
-		for(a=0;a<tab.length;a++){
-			  tab[a].index=a;
-				tab[a].onclick=function(){
-					for(a=0;a<righ.length;a++)
-				{
-					righ[a].style.display='none';
-				}
-				righ[this.index].style.display='block';
-				}
-			
-		}
-</script>
+    var a;
+    for(a=0;a<tab.length;a++){
+      tab[a].index=a;
+      tab[a].onclick=function(){
+        for(a=0;a<righ.length;a++)
+        {
+          righ[a].style.display='none';
+        }
+        righ[this.index].style.display='block';
+      }
+
+    }
+  </script>
 
 

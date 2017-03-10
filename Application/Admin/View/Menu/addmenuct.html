@@ -71,14 +71,10 @@
 <!--显示列表样式1 start-->
 
 
-<form id="pagerForm" action="{$host_name}/menu/doaddmen" method="post" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+<form id="pagerForm" action="{$host_name}/menu/doaddmen" method="post" onsubmit="return validateCallback(this, naxTabAjaxDone);">
 	<div class="searchBar">
 		<div class="clearfix">
 			<!--新增节目单-->
-			<input type="hidden" name="pageNum" value="{$pageNum}"/>
-			<input type="hidden" name="numPerPage" value="{$numPerPage}"/>
-			<input type="hidden" name="_order" value="{$_order}"/>
-			<input type="hidden" name="_sort" value="{$_sort}"/>
 
 			<input type="hidden" name="id" value="{$menuid}">
 
@@ -188,6 +184,27 @@ action="{$host_name}/menu/addmen" method="post" >
 
 
 <script type="text/javascript">
+	refresh();
+	function refresh(){
+		url = location.href; //把当前页面的地址赋给变量 url
+		/*var times = url.split("?"); //分切变量 url 分隔符号为 "?"
+		if(times[1] != 1){ //如果?后的值不等于1表示没有刷新
+
+			url += "?1"; //把变量 url 的值加入 ?1
+
+			self.location.replace(url); //刷新页面
+		}*/
+		//alert(url);
+		//location.reload();
+	}
+
+	function naxTabAjaxDone(json){
+		//alert(json);
+		DWZ.ajaxDone(json);
+		//navTab.reloadFlag('menu/getlist');
+		navTab.reload('menu/getlist');
+		//return false;
+	}
 
 
 	//$('#mymodal').modal({backdrop: 'static', keyboard: false});
