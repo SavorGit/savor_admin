@@ -92,11 +92,10 @@ class SysmenuController extends BaseController {
             $sysMenu = new \Admin\Model\SysmenuModel();
             $result = $sysMenu->getInfo($uid);
             if($result['media_id']){
-                $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-                
+               
                 $mediaModel = new \Admin\Model\MediaModel();
                 $mediaInfo = $mediaModel->getMediaInfoById($result['media_id']);
-                $result['oss_addr'] = $oss_host.$mediaInfo['oss_addr'];
+                $result['oss_addr'] = $mediaInfo['oss_addr'];
             }
            
             $this->assign('vinfo', $result);
