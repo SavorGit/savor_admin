@@ -55,7 +55,7 @@ class SysmenuController extends BaseController {
             $code        = I('post.code');
             $jstext      = I('post.jstext');
             $isenable    = I('post.isenable');
-            $media_id    = I('post.media_id');
+            $media_id    = I('post.media_id','0','intval');
             $sysMenu = new \Admin\Model\SysmenuModel();
             if($acttype==1){
                 $sysinfo=$sysMenu->getInfo($id);

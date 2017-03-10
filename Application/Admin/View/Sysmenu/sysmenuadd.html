@@ -69,6 +69,7 @@
           <input type="checkbox" value="1" class="make-switch status" name="isenable" data-size="small" data-on-text="启用" data-off-text="禁用" <if condition="$vinfo.isenable neq 0 or 2" >checked</if>>
         </div>
       </div> -->
+      <if condition="$vinfo.menulevel eq 0">
        <div class="form-group row">
               <label class="col-xs-12 col-sm-2 control-label">
                 ICON图标：
@@ -96,6 +97,7 @@
                 </div>
               </div>
             </div>
+            </if>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           状态：
