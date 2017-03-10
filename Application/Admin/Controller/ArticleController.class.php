@@ -442,7 +442,7 @@ WHERE id IN (1,2,3)*/
             $oss_arr = $mediaModel->find($covermedia_id);
             $oss_addr = $oss_arr['oss_addr'];
             $save['img_url'] = $oss_addr;
-            $save['type'] = 1;
+            //$save['type'] = 1;
         }
 
         if($media_id) {
