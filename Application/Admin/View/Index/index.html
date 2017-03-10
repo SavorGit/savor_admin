@@ -22,6 +22,7 @@
 <input type="hidden" id="menu_{$ico.id}" value="{$ico.img_url}" />
 </volist>
 <input type="hidden" id="xlicon" value="/Public/admin/assets/img/sysmenuico/more_zhankai.png" />
+<input type="hidden" id="xlmricon" value="/Public/admin/assets/img/sysmenuico/more.png" />
   <input id="host_name" value="{$host_name}" type="hidden"/>
   <input id="site_host_name" value="{$site_host_name}" type="hidden"/>
   <div class="preloading-container loading">
@@ -472,9 +473,36 @@
   $('.collapse').hide()
   $('body').on('click','.main-menu>li>a',function(){
   	$(this).next().toggle(200);
+  
   	$('.main-menu>li>a').css({'color':'#ffffff','border-left':'none'})
   	$(this).css({'color':'#fe8332','border-left':'2px solid #fe8332'});
-  })
+  });
+  var xlmoren_icon = '';
+  
+  
+  $('.main-menu>li').click(function(){
+	  
+	  	var $icolistid = $(this).attr('id');  //的id
+	  	var xl_icon = $('#xlicon').val();
+	  	var xlmr_icon = $('#xlmricon').val();
+	  	var aid = '#menu_'+$icolistid;
+	  	var $inputsrc = $(aid).val();
+	  	 
+	  	$(this).children().eq(0).children().eq(0).attr('src',$inputsrc);//ico的图片地址
+	  	$(this).children().eq(0).children().eq(1).attr('src',xl_icon);
+	  	
+	  	$('.main-menu>li').each(function(){
+	  	 	var seid = $(this).attr('id');
+	  		if($icolistid !=seid){
+	  			var moren = $(this).children().eq(1).children().eq(0).attr('value');
+	  			$("#"+seid).children().eq(0).children().eq(0).attr('src',moren);
+	  			$(this).css({'color':'#ffffff','border-left':'none'});
+	  			$(this).children().eq(1).css('display','none');
+	  			$(this).children().eq(0).children().eq(1).attr('src',xlmr_icon);
+	  		}
+	  	});
+	  	
+	  })
   </script>
 </body>
 
