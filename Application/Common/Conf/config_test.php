@@ -1,9 +1,9 @@
 <?php
-$DB_MASTER_HOST = 'localhost';
-$DB_SLAVE_HOST  = 'localhost';
-$db_name = 'savoradmin';
-$db_user = 'root';
-$db_pwd = 'root';
+$DB_MASTER_HOST = '192.168.2.145';
+$DB_SLAVE_HOST  = '192.168.2.145';
+$db_name = 'cloud';
+$db_user = 'phpweb';
+$db_pwd = '123456';
 
 //redis缓存配置
 $redis['db1']['0']['host'] = '';
