@@ -68,13 +68,13 @@ class SavorRedis {
 	        if($isMaster){
 	            $this->_linkHandle['master'] = new \Redis();
 	            $ret[] = $this->_linkHandle['master']->connect($config['host'],$config['port']);
-	            //$ret[] = $this->_linkHandle['master']->auth($config['password']);
+	            $ret[] = $this->_linkHandle['master']->auth($config['password']);
 	            $this->_linkHandle['master']->select($select);
 	        }else{
 	            // 多个 Slave 连接
 	            $this->_linkHandle['slave'][$this->_sn] = new \Redis;
 	            $ret[]= $this->_linkHandle['slave'][$this->_sn]->connect($config['host'],$config['port']);
-	            //$ret[]= $this->_linkHandle['slave'][$this->_sn]->auth($config['password']);
+	            $ret[]= $this->_linkHandle['slave'][$this->_sn]->auth($config['password']);
 	            $this->_linkHandle['slave'][$this->_sn]->select($select);
 	            ++$this->_sn;
 	        }
