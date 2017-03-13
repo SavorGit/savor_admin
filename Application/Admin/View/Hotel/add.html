@@ -144,8 +144,8 @@
             </div>
         </div>
 
-        <div class="form-group row macccc" style="display:none;color:red;">
-            <label class="col-xs-12 col-sm-2 control-label">
+        <div class="form-group row macccc" style="display:none;">
+            <label style="color:red;"class="col-xs-12 col-sm-2 control-label">
 
             </label>
         </div>
@@ -281,7 +281,7 @@
                 var reg = /^[0-9A-Z]+$/;
                 var r = vp.match(reg);
                 if(ln==0){
-
+                    $('.macccc').css('display','none');
                 }else if(ln!=12){
                     $('.macccc').css('display','');
                     $('.macccc label').html('请输入12位字符');
@@ -303,6 +303,7 @@
             var reg = /^[0-9A-Z]+$/;
             var r = vp.match(reg);
             if(ln==0){
+                $('.macccc').css('display','none');
                 return true;
             }else if(ln!=12){
                 $('.macccc').css('display','');
