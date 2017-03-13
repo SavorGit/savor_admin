@@ -231,6 +231,15 @@ class HotelController extends BaseController {
 		$save['update_time']         = date('Y-m-d H:i:s');
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
+		if($save['gps']){
+		    $gps_arr = explode(',', $save['gps']);
+		    if($gps_arr[0]<0 || $gps_arr[0]>180){
+		        $this->error('请输入正确的经度');
+		    }
+		    if($gps_arr[1]<0 || $gps_arr[1]>90){
+		        $this->error('请输入正确的维度');
+		    } 
+		}
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['media_id']             = I('post.media_id','0','intval');
 		$hotelModel = new \Admin\Model\HotelModel();
