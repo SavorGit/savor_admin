@@ -140,8 +140,14 @@
                 小平台MAC地址：
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="text" class="form-control" name="mac_addr"   value="{$vinfo.mac_addr}" >
+                <input type="text" class="form-control" name="mac_addr" id="mac_addr"  value="{$vinfo.mac_addr}" >
             </div>
+        </div>
+
+        <div class="form-group row macccc" style="display:none;">
+            <label style="color:red;"class="col-xs-12 col-sm-2 control-label">
+
+            </label>
         </div>
 
 
@@ -250,7 +256,7 @@
 
     <div class="modal-footer">
       <button class="btn btn-default close-m" type="button">取消</button>
-      <button class="btn btn-primary" type="submit">保存</button>     
+      <button class="btn btn-primary" id="saveinfos" type="submit">保存</button>
     </div>
     	<div class="zhezhao"></div>
 			<img class="big" src=""/>
@@ -269,6 +275,49 @@
 		$('.zhezhao').hide(500);
 		$('.big').hide(500);
    })
+        $('#mac_addr').blur(function(){
+                var vp = $(this).val();
+                var ln = $(this).val().length;
+                var reg = /^[0-9A-Z]+$/;
+                var r = vp.match(reg);
+                if(ln==0){
+                    $('.macccc').css('display','none');
+                }else if(ln!=12){
+                    $('.macccc').css('display','');
+                    $('.macccc label').html('请输入12位字符');
+
+                }else{
+                    if(r==null) {
+                        $('.macccc').css('display', '');
+                        $('.macccc label').html('不允许输入非法字符，请输入正确字符');
+
+                    }
+                }
+
+
+        });
+
+        $('#saveinfos').click(function(){
+            var vp = $('#mac_addr').val();
+            var ln = $('#mac_addr').val().length;
+            var reg = /^[0-9A-Z]+$/;
+            var r = vp.match(reg);
+            if(ln==0){
+                $('.macccc').css('display','none');
+                return true;
+            }else if(ln!=12){
+                $('.macccc').css('display','');
+                $('.macccc label').html('请输入12位字符');
+                return false;
+            }else{
+                if(r==null) {
+                    $('.macccc').css('display', '');
+                    $('.macccc label').html('不允许输入非法字符，请输入正确字符');
+                    return false;
+                }
+            }
+        });
+
 
     });
 </script>
