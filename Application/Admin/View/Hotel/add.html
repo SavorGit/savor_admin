@@ -148,6 +148,9 @@
             <label style="color:red;"class="col-xs-12 col-sm-2 control-label">
 
             </label>
+            <div class="col-xs-12 col-sm-10">
+            
+            </div>
         </div>
 
 
@@ -243,7 +246,7 @@
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-         GPS:
+         酒楼位置坐标:
         </label>
         <div class="col-xs-12 col-sm-10">
 
@@ -298,12 +301,12 @@
                     $('.macccc').css('display','none');
                 }else if(ln!=12){
                     $('.macccc').css('display','');
-                    $('.macccc label').html('请输入12位字符');
+                    $('.macccc div').html('请输入12位字符');
 
                 }else{
                     if(r==null) {
                         $('.macccc').css('display', '');
-                        $('.macccc label').html('不允许输入非法字符，请输入正确字符');
+                        $('.macccc div').html('不允许输入非法字符，请输入正确字符');
 
                     }
                 }
@@ -321,12 +324,12 @@
                 return true;
             }else if(ln!=12){
                 $('.macccc').css('display','');
-                $('.macccc label').html('请输入12位字符');
+                $('.macccc div').html('请输入12位字符');
                 return false;
             }else{
                 if(r==null) {
                     $('.macccc').css('display', '');
-                    $('.macccc label').html('不允许输入非法字符，请输入正确字符');
+                    $('.macccc div').html('不允许输入非法字符，请输入正确字符');
                     return false;
                 }
             }
