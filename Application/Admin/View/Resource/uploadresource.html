@@ -151,11 +151,6 @@ $(".resource_type").click(function(){
 console.log(resourceType);
 //选择本地图片点击保存 
 $("#saveImg").click(function(){
-    var url = $("#media_url").val();
-    if(url == ''){
-      alert('资源url不可为空');
-      return false;
-    }
     $.ajax({
         url:$("#dropbase-form").attr("action"),
         type:"post",
