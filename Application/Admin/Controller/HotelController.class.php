@@ -232,7 +232,7 @@ class HotelController extends BaseController {
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
 		if($save['gps']){
-		    if(strstr($save['gps'], ',')){
+		    if(!strstr($save['gps'], ',')){
 		        $this->error('请输入正确的经纬度');
 		    }
 		    $gps_arr = explode(',', $save['gps']);
