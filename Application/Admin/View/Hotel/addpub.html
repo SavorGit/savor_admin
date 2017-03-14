@@ -79,8 +79,8 @@
             </label>
             <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
-                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                        <a target="_blank" href="{$vainfo.videooss_addr}">
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput" id="xuanpian">
+                        <a id="xuanpianhr" target="_blank" href="{$vainfo.videooss_addr}">
                             <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
                                 <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
                                 <else />
