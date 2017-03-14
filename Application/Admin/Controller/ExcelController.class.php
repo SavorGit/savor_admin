@@ -16,7 +16,7 @@ class ExcelController extends Controller
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
-        $fileName = $_SESSION['account'] . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
+        $fileName = '酒楼资源总表' . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
         vendor("PHPExcel.PHPExcel");
