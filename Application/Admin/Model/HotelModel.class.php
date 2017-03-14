@@ -106,5 +106,8 @@ class HotelModel extends BaseModel{
 	    $data = !empty($result)?$result[0]:array();
 	    return $data;
 	}
-
+    public function getInfo($field ='*',$where,$order,$limit){
+        $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
+        return $result;
+    }
 }
