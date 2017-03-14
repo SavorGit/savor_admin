@@ -17,3 +17,13 @@ Mysql语句:mysql可执行语句
 修改时间:2017.3.6 15:51
 修改人:张英涛
 执行SQL:ALTER TABLE `savor_device_version`  MODIFY `version_name` VARCHAR(15) DEFAULT NULL COMMENT '版本名称';
+
+
+增加说明：系统模块增加默认图与选中途
+修改时间:2017.3.14 12:40
+修改人:张英涛
+执行SQL:ALTER TABLE savor_sysmenu ADD `media_id` INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT '选中图标资源id' AFTER `modulename`;
+ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT '选中图标资源id' AFTER `media_id`;
+
+#########以上sql均已执行######
+
