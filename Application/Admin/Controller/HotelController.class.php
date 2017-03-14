@@ -243,6 +243,7 @@ class HotelController extends BaseController {
 		        $this->error('请输入正确的维度');
 		    } 
 		}
+
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['media_id']             = I('post.media_id','0','intval');
 		$hotelModel = new \Admin\Model\HotelModel();

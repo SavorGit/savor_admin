@@ -151,6 +151,20 @@ $(".resource_type").click(function(){
 console.log(resourceType);
 //选择本地图片点击保存 
 $("#saveImg").click(function(){
+    var url = $("#media_url").val();
+  var cot = $("#ossfile .progress-bar").attr('aria-valuenow');
+
+  if(url == ''){
+    if(cot != '100' && cot>0){
+      alert('资源正在上传，请稍后');
+      return false;
+    }else{
+      alert('请上传资源');
+      return false;
+    }
+  }
+
+
     $.ajax({
         url:$("#dropbase-form").attr("action"),
         type:"post",
@@ -165,14 +179,13 @@ $("#saveImg").click(function(){
         	"description":$("#description").val(),
         },
         success:function(result){
-         // alert(resourceType);
-         // alert(hiddenType);
-       //   alert(hiddenImg);
-        //  console.log(result);
+          //covervideo_id  covervideo_idimg media_id media_idimg
+          console.log(result);
          // alert($("#resource_name").val());
          // $("#media_idimgname").val($("#resource_name").val());
         //  $("#media_idimgname").html($("#resource_name").val());
           //console.log($("#resource_type").val());
+
             if(result.code==10000){
                 $("#"+hiddenType).val(result.data.media_id);
                 $("#"+hiddenImg).attr("src",result.data.path).show();
@@ -182,7 +195,9 @@ $("#saveImg").click(function(){
                          src:result.data.path
                     });
                 }else{
-                  if(hiddenType =='media_id'){
+                  if(hiddenType =='media_id' && hiddenImg == 'media_idimg'){
+                    $("#xuanpian #media_idimg").attr("src",$("#covervideo_idimg").attr("src"));
+                    $("#xuanpian #xuanpianhr").attr("href",result.data.path);
                     $("#media_idimgname").val($("#resource_name").val());
                     $("#media_idimgname").html($("#resource_name").val());
                   }
@@ -190,7 +205,9 @@ $("#saveImg").click(function(){
                 }
                 $("#dz-filecontainer .nav-tabs .pull-right a").click();
             }else{
-               $("#dz-filecontainer .nav-tabs .pull-right a").click();
+              // $("#dz-filecontainer .nav-tabs .pull-right a").click();
+              alert('资源名称已经存在请换名称');
+              return false;
             }
         },
         error:function(){
@@ -235,6 +252,7 @@ function getImageInfo($this){
   var autofill = $("#autofill").val();
   if(count==1){
     //alert($ck.val());
+    //alert($file.find(".dz-nthumb").attr("src"));
     $("#"+hiddenType).val($ck.val());
     $("#dz-filecontainer .nav-tabs .pull-right a").click();
     if($file.find(".dz-nthumb").size()>0){
@@ -251,6 +269,14 @@ function getImageInfo($this){
       if(autofill==1){
     	  var autofillname = $file.find(".dz-file").text();
     	  $("#"+hiddenImg+"name").val($.trim(autofillname));
+
+          if (hiddenImg == 'media_idimg' && hiddenType == 'media_id') {
+            var mphr = $file.attr("data-src");
+            $file.addClass("active");
+            $("#xuanpian #"+hiddenImg).show();
+            $("#xuanpian #"+hiddenImg).attr("src",$("#covervideo_idimg").attr("src"));
+            $("#xuanpian #xuanpianhr").attr("href", mphr);
+          }
       }else{
     	  $("#"+hiddenImg+"name").text($file.find(".dz-file").text()).show(); 
       }

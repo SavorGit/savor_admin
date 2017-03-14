@@ -79,8 +79,11 @@
             </label>
             <div class="col-xs-12 col-sm-10">
                 <div class="fileinput fileinput-new" data-fileinput>
-                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                        <a target="_blank" href="{$vainfo.videooss_addr}">
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput" id="xuanpian">
+                        <a id="xuanpianhr" target="_blank"
+                        <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''"> href="javascript:void(0)"
+                           <else />href="{$vainfo.videooss_addr}"></if>>
+
                             <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
                                 <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
                                 <else />
@@ -95,7 +98,7 @@
                             选择视频
                         </a>
                         <input type="hidden" name="media_id" id="media_id" value="">
-                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                        <a href="javascript:;" class="btn btn-danger" id="videoshan" data-remove-file="/Public/admin/assets/img/noimage.png">
                             删除 </a>
                     </div>
                 </div>
@@ -158,4 +161,7 @@
         })
 
     });
+    $("#videoshan").click(function(){
+        $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
+    })
 </script>
