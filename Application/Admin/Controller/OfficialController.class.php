@@ -28,7 +28,8 @@ class officialController extends Controller {
 	           $result[] = $tmp;
 	       }
 	    }
-	    echo json_encode($result);exit;
+	    //echo  json_encode($result);exit;
+	   echo  "login(".json_encode($result).")";
 	}
 	
 }
