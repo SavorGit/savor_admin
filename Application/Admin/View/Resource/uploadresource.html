@@ -154,13 +154,16 @@ $("#saveImg").click(function(){
     var url = $("#media_url").val();
   var cot = $("#ossfile .progress-bar").attr('aria-valuenow');
 
-  if(cot != '100'){
-    alert('资源正在上传上');
-    return false;
-  } else if(url == ''){
-      alert('资源url不可为空，请重新上传');
+  if(url == ''){
+    if(cot != '100' && cot>0){
+      alert('资源正在上传，请稍后');
       return false;
+    }else{
+      alert('请上传资源');
+      return false;
+    }
   }
+
 
     $.ajax({
         url:$("#dropbase-form").attr("action"),
