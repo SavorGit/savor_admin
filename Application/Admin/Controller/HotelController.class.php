@@ -252,16 +252,22 @@ class HotelController extends BaseController {
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
+		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
 		$data['server_location'] = $server_location;
-		$bool = $hotelModel->saveData($save, $hotel_id, $data);
-		if($bool){
-			$this->output('操作成功!', 'hotel/manager');
+		$table = 'savor_hotel';
+		$h_id = $hotelModel->saveData($table,$save, $hotel_id);
+		if($h_id){
+			$table = 'savor_hotel_ext';
+			$bool = $hextModel->saveData($table, $data, $h_id);
+			if($bool){
+				$this->output('操作成功!', 'hotel/manager');
+			}else{
+				$this->error('操作失败!');
+			}
 		}else{
 			$this->error('操作失败!');
 		}
-
-
 	}
 
 

@@ -112,34 +112,25 @@ class HotelModel extends BaseModel{
     }
 
 
-	public function saveData($data, $id = 0, $extdata) {
+	public function saveData($table, $data, $id = 0) {
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
-		$table = 'savor_hotel';
 		//判定key是否有没有的，如果存在则修改
 		if($id){
 			//获取创建时间
 			$bool = $this->where('id='.$id)->save($data);
 			$res = $this->find($id);
 			$data['create_time'] = $res['create_time'];
-
-			$extdata['hotel_id'] = $id;
-			$hextModel = new \Admin\Model\HotelExtModel();
-			$hextModel->saveData($extdata, $id);
-
 			$s_key = $table.'_'.$id;
 			$redis->set($s_key, json_encode($data));
+			return $id;
 		}else{
 			$data['create_time'] = date('Y-m-d H:i:s');
 			$bool = $this->add($data);
 			$insert_id = $this->getLastInsID();
-
-			$extdata['hotel_id'] = $insert_id;
-			$hextModel = new \Admin\Model\HotelExtModel();
-			$hextModel->saveData($extdata, $insert_id);
 			$s_key = $table.'_'.$insert_id;
 			$redis->set($s_key, json_encode($data));
+			return $insert_id;
 		}
-		return $bool;
 	}
 }
