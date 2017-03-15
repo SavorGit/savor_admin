@@ -18,7 +18,7 @@
 <div id="topLabel" style="background-color:black; width: 100%; height: 53px; position: fixed; top: 0px; left: 0px; z-index: 100;display:none;">
     <img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 5px; margin-left: 10px; width: 188px; height: 40px;"/>
     <div id="downLoad" style="background-color: white; border-radius: 11px; position: absolute; top: 11px; right: 35px;height: 30px;">
-        <p style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
+        <p id="dowlone" style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
         <input type="hidden" id="verrre" value="{$videourl_id}" />
     </div>
     <span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"/></span>
@@ -33,12 +33,22 @@
 </div>
 </body>
 <script>
+   var topLabel=document.getElementById("topLabel");
+    var disnone = document.getElementById('disnone');
+    var dowlone = document.getElementById('dowlone');
+    dowlone.onclick = function (){
+        window.location.href = 'http://rerdian.com/d';
+    }
+    disnone.onclick=function(){
+        topLabel.style.display='none';
+    }
+	if(location.search.indexOf('?')){
+    	topLabel.style.display="block";
+    }
     var urlResource = window.location.search.split('?');
     var result = urlResource[1].split('=');
     var tmp=document.getElementById("verrre").value;
     var cont=document.getElementById("id_video_container_"+tmp);
-    var topLabel=document.getElementById("topLabel");
-    var disnone = document.getElementById('disnone');
     if (result[0] == 'location' &&result[1] == 'newRead') {
         //当前是 阅读状态 隐藏下载条topLabel
 
@@ -49,13 +59,7 @@
         cont.style.display="";
         topLabel.style.display="";
     }
-    var button = document.getElementById('topLabel');
-    topLabel.onclick = function (){
-        window.location.href = 'http://rerdian.com/d';
-    }
-    disnone.onclick=function(){
-        topLabel.style.display='none';
-    }
+
 </script>
 </html>
 
