@@ -262,7 +262,6 @@ class ArticleController extends BaseController {
             $this->assign('name',$name);
         }
         $result = $mbHomeModel->getList($where,$orders,$start,$size);
-        var_dump($mbHomeModel->getLastSql());
         /*array_map(function($ar,$cr){
             var_dump($ar);
             var_dump($cr);
