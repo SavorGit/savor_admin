@@ -14,27 +14,32 @@
   <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.js"></script>
 </head>
 <style type="text/css">
+	
 	.box_nr p strong{
 		text-indent:0;
-		color: #333333;
-        font-size: 18px;
+		color: #222222;
+		font-size: 23px;
+		line-height: 30px;
 	}
 	.box_nr p img{
-		display:block;
+		display: block;
 	}
 	.box_nr p{
-		font-size: 16px;
-		color: #555555;
-		line-height:27px;
+		font-size: 19px;
+		color: #444444;
+		line-height:28px;
+	}
+	.box_nr p iframe{
+		width: 100%;
 	}
 </style>
 <body>
 <div id="topLabel" style="background-color: black; width: 100%; height: 53px; position: fixed; top: 0px; left: 0px; z-index: 100;">
   <img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 5px; margin-left: 10px; width: 188px; height: 40px;"/>
   <div id="downLoad" style="background-color: white; border-radius: 11px; position: absolute; top: 11px; right: 35px;height: 30px;">
-    <p style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
+    <p id="xiazai" style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
   </div>
-   <span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"/></span>
+   <span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;z-index: 100;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"/></span>
 </div>
 
   <div class="box_nr">
@@ -43,26 +48,39 @@
 
 </body>
 <script>
-  
-    var urlResource = window.location.search.split('?');
-    // alert(window.locatisdfdsfh)fffff;
-    var result = urlResource[1].split('=');
-    var disnone = document.getElementById('disnone');
-    if (result[0] == 'location' &&result[1] == 'newRead') {
-        //当前是 阅读状态 隐藏下载条topLabel
-    
-        var topLabel=document.getElementById("topLabel");
-        topLabel.style.display="none";
-        $('#contentView').css("margin-top","10px");
-    }
-    var button = document.getElementById('topLabel');
-    button.onclick = function (){
+  	var disnone = document.getElementById('disnone');
+  	var buttono = document.getElementById('xiazai');
+	var topLabel=document.getElementById("topLabel");
+    buttono.onclick = function (){
       window.location.href = 'http://rerdian.com/d';
     }
     
-    disnone.onclick=function(){
+   disnone.onclick=function(){
         topLabel.style.display='none';
+        if($('#topLabel').hide()){
+		  		$('.box_nr').css('padding-top','')
+		  	}
     }
+  	if($('#topLabel').show()){
+  		$('.box_nr').css('padding-top','40px')
+  	}else{
+  		$('.box_nr').css('padding-top','')
+  	}
+  
+    var urlResource = window.location.search.split('?');
+    // alert(window.location.search);
+    var result = urlResource[1].split('=');
+    
+    
+    if (result[0] == 'location' &&result[1] == 'newRead') {
+        //当前是 阅读状态 隐藏下载条topLabel
+    
+        topLabel.style.display="none";
+        $('#contentView').css("margin-top","10px");
+    }else{
+    	topLabel.style.display="block";
+    }
+   
 </script>
 </html>
 
