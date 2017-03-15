@@ -8,6 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Think\Model;
 class HotelController extends BaseController {
 	public function __construct() {
 		parent::__construct();
@@ -256,13 +257,17 @@ class HotelController extends BaseController {
 		$data['mac_addr'] = $mac_addr;
 		$data['server_location'] = $server_location;
 		$table = 'savor_hotel';
+		$tranDb = new Model();
+		$tranDb->startTrans();
 		$h_id = $hotelModel->saveData($table,$save, $hotel_id);
 		if($h_id){
 			$table = 'savor_hotel_ext';
 			$bool = $hextModel->saveData($table, $data, $h_id);
 			if($bool){
+				$tranDb->commit();
 				$this->output('操作成功!', 'hotel/manager');
 			}else{
+				$tranDb->rollback();
 				$this->error('操作失败!');
 			}
 		}else{
