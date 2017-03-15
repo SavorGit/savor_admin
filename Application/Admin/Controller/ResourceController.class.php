@@ -248,10 +248,11 @@ class ResourceController extends BaseController{
 	         if($media_id){
 	             if($mediaModel->where('id='.$media_id)->save($save)){
 	                 $message = '更新成功!';
-	                 $url = 'resource/resourceList';
+	                 
+	                 $this->output('更新成功!', 'resource/resourceList',2);
 	             }else{
-	                 $message = '更新失败!';
-	                 $url = 'resource/resourceList';
+	                 
+	                 $this->error('更新失败!');
 	             }
 	         }
 	         $this->output($message, $url);
