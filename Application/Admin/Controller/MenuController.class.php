@@ -531,7 +531,7 @@ class MenuController extends BaseController {
         $menu_name = I('name');
         $this->assign('menuname', $menu_name);
         $mlOpeModel = new MenuListOpeModel();
-        $list = $mlOpeModel->field('menu_content,id,insert_time')->where(array('menu_id'=>$menu_id))->order('id asc')->select();
+        $list = $mlOpeModel->field('menu_content,id,insert_time')->where(array('menu_id'=>$menu_id))->order('id desc')->select();
         $data = array();
         foreach ($list as $lk=>$lv){
             //如果是第一期不比较
