@@ -19,7 +19,7 @@
               <ul>
                 <volist name="vinfo" id="vlist">
                   <li class="tabtwo">
-                    <p>{$key}</p>
+                    <p><php>$tmp = strtotime($key); echo date('Y-m-d -  H:i:s', $tmp);</php></p>
                     <span>></span>
                   </li>
                 </volist>
