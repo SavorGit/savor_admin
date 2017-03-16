@@ -200,13 +200,13 @@ class DeviceController extends BaseController{
 		$save['box_id']    = I('post.box_id','','intval');
 		$tvModel = new TvModel;
 		if($id){
-			if($tvModel->where('id='.$id)->save($save)){
+			if($tvModel->editData($id,$save)){
 				$this->output('更新成功!', 'device/tv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
 		}else{	
-			if($tvModel->add($save)){
+			if($tvModel->addData($save)){
 				$this->output('添加成功!', 'device/tv');
 			}else{
 				 $this->output('添加失败!', 'device/doAddTv');
@@ -230,13 +230,13 @@ class DeviceController extends BaseController{
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
 		if($id){
-			if($boxModel->where('id='.$id)->save($save)){
+			if($boxModel->editData($id, $save)){
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		
 		}else{	
-			if($boxModel->add($save)){
+			if($boxModel->addData($save)){
 				$this->output('添加成功!', 'hotel/room');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');

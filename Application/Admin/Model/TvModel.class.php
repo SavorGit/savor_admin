@@ -9,8 +9,10 @@ namespace Admin\Model;
 use Common\Lib\Page;
 use Admin\Model\BaseModel;
 use Admin\Model\BoxModel;
+use Common\Lib\SavorRedis;
 
 class TvModel extends BaseModel{
+    protected $tableName  ='tv';
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)
@@ -58,5 +60,42 @@ class TvModel extends BaseModel{
 		}*/
 		return $result;
 	}
-
+	/**
+	 * @desc 添加TV信息
+	 */
+	public function addData($data){
+	    if(!empty($data)){
+	        $this->add($data);
+	        $insert_id = $this->getLastInsID();
+	        if($insert_id){
+	            $redis = SavorRedis::getInstance();
+	            $redis->select(15);
+	            $cache_key =  C('DB_PREFIX').$this->tableName.'_'.$insert_id;
+	            $redis->set($cache_key, json_encode($data));
+	            return $insert_id;
+	        }else {
+	            return false;
+	        }
+	    }else {
+	        return false;
+	    }
+	}
+	/**
+	 * @desc 编辑TV信息
+	 */
+	public function editData($id,$data){
+	    if(!empty($id)){
+	        $rt = $this->where('id='.$id)->save($data);
+	        if($rt){
+	            $redis = SavorRedis::getInstance();
+	            $redis->select(15);
+	            $cache_key =  C('DB_PREFIX').$this->tableName.'_'.$id;
+	            $redis->select($cache_key,json_encode($data));
+	        } else {
+	            return false;
+	        }
+	    }else {
+	        return false;
+	    }
+	}
 }

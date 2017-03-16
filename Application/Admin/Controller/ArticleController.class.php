@@ -223,6 +223,7 @@ class ArticleController extends BaseController {
         }
     }
 
+
     public function homemanager(){
         $mbHomeModel = new \Admin\Model\HomeModel();
         $artModel = new  \Admin\Model\ArticleModel();
@@ -239,16 +240,35 @@ class ArticleController extends BaseController {
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
-        $result = $mbHomeModel->getList($where,$orders,$start,$size);
+        $name = I('name');
         $con_id_arr = $mbHomeModel->field('content_id')->select();
+        if($name){
+            //去content表找
+            $map['title'] = array('like','%'.$name.'%');
+            $ar_id_arr = $artModel->field('id')->where($map)->select();
+            if ($ar_id_arr) {
+                $ar_arr = array_column($ar_id_arr, 'id');
+                $cr_arr = array_column($con_id_arr, 'content_id');
+                $inc_arr = array_intersect($ar_arr,$cr_arr);
+                if($inc_arr){
+                    $inc_str = implode(',', $inc_arr);
+                    $where .= " AND content_id in (".$inc_str.")";
+                } else {
+                    $where .= " AND id<0";
+                }
+            } else {
+                $where .= " AND id<0";
+            }
+            $this->assign('name',$name);
+        }
+        $result = $mbHomeModel->getList($where,$orders,$start,$size);
+        /*array_map(function($ar,$cr){
+            var_dump($ar);
+            var_dump($cr);
+        }, $ar_id_arr, $con_id_arr);*/
         $t_size = $artModel->getTotalSize($con_id_arr);
         $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
-        $name = I('name');
-        if($name){
-            //根据id取
-            $this->assign('name',$name);
-            $where .= "	AND name LIKE '%{$name}%'";
-        }
+
         $this->assign('list', $datalist);
         $this->assign('tsize', $t_size);
         $this->assign('page',  $result['page']);

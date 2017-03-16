@@ -8,6 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Think\Model;
 class HotelController extends BaseController {
 	public function __construct() {
 		parent::__construct();
@@ -232,6 +233,9 @@ class HotelController extends BaseController {
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
 		if($save['gps']){
+			if(!preg_match('/^([\d]+\.[\d]*),([\d]+\.[\d]*)$/',$save['gps'], $result)){
+				$this->error('不可输入非法字符');
+			}
 		    if(!strstr($save['gps'], ',')){
 		        $this->error('请输入正确的经纬度');
 		    }
@@ -246,37 +250,29 @@ class HotelController extends BaseController {
 
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['media_id']             = I('post.media_id','0','intval');
+		$mac_addr = I('post.mac_addr','','trim');
+		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
-		if($hotel_id){
-		    $res = $hotelModel->where('id='.$hotel_id)->save($save);
+		$hextModel = new \Admin\Model\HotelExtModel();
+		$data['mac_addr'] = $mac_addr;
+		$data['server_location'] = $server_location;
+		$table = 'savor_hotel';
+		$tranDb = new Model();
+		$tranDb->startTrans();
+		$h_id = $hotelModel->saveData($table,$save, $hotel_id);
+		if($h_id){
+			$table = 'savor_hotel_ext';
+			$bool = $hextModel->saveData($table, $data, $h_id);
+			if($bool){
+				$tranDb->commit();
+				$this->output('操作成功!', 'hotel/manager');
+			}else{
+				$tranDb->rollback();
+				$this->error('操作失败!');
+			}
 		}else{
-			$save['create_time'] = date('Y-m-d H:i:s');
-			$hotel_id = $hotelModel->add($save);
+			$this->error('操作失败!');
 		}
-		if($hotel_id){
-		    $mac_addr = I('post.mac_addr','','trim');
-			$ip_local = I('post.ip_local','','trim');
-			$ip = I('post.ip','','trim');
-			$server_location = I('post.server_location','','trim');
-		    $res_hotelext = $hotelModel->getMacaddrByHotelId($hotel_id);
-		    $model = M('hotel_ext');
-		    $data['mac_addr'] = $mac_addr;
-			$data['ip_local'] = $ip_local;
-			$data['ip'] = $ip;
-			$data['server_location'] = $server_location;
-		    if(empty($res_hotelext)){
-		        $data['hotel_id'] = $hotel_id;
-		        $model->add($data);
-		    }else{
-		        if($mac_addr!=$res_hotelext['mac_addr'] || $ip_local!=$res_hotelext['ip_local'] || $ip!=$res_hotelext['ip'] || $server_location!=$res_hotelext['server_location'] ){
-		            $model->where('id='.$res_hotelext['id'])->save($data);
-		        }
-		    }
-		    $this->output('操作成功!', 'hotel/manager');
-		}else{
-		    $this->output('操作失败!', 'hotel/add');
-		}
-
 	}
 
 
@@ -361,8 +357,8 @@ class HotelController extends BaseController {
 	/**
 	 * 保存或者更新酒店信息
 	 */
-	public function doAddRoom(){
-		$id                  = I('post.id');
+		public function doAddRoom(){
+		$id                  = I('post.id','0');
 		$save                = [];
 		$hotel_id    = I('post.hotel_id','','intval');
 		$save['hotel_id'] = $hotel_id;
@@ -372,20 +368,18 @@ class HotelController extends BaseController {
 		$save['state']       = I('post.state','','intval');
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
-		$save['flag']        = 0;
-
 		$RoomModel = new \Admin\Model\RoomModel();
+		$table = 'savor_room';
+		$bool = $RoomModel->saveData($table, $save, $id);
 		if($id){
-			if($RoomModel->where('id='.$id)->save($save)){
+			if($bool){
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
 		}else{
-			$save['create_time'] = date('Y-m-d H:i:s');
-			$save['flag']        = 0;
-			if($RoomModel->add($save)){
-				$this->output('操作成功!', 'hotel/room');
+			if($bool){
+				$this->output('操作成功!', 'hotel/manager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
