@@ -541,7 +541,7 @@ class MenuController extends BaseController {
                 foreach ($log_arr as $lav) {
                     $datp[] = '增加'.$lav['ads_name'];
                 }
-                $dat[0]['insert_time'] =date("Y-m-d|H:i:s",strtotime($dat[0]['insert_time']));
+                $dat[0]['insert_time'] =date("Y-m-d H:i:s",strtotime($dat[0]['insert_time']));
                 $data[$dat[0]['insert_time']] = $datp;
                 // //var_dump($data);
 
@@ -587,7 +587,7 @@ class MenuController extends BaseController {
                         }
                     }
                 }
-                $lv['insert_time'] = date("Y-m-d|H:i:s",strtotime($lv['insert_time']));
+                $lv['insert_time'] = date("Y-m-d H:i:s",strtotime($lv['insert_time']));
                 $data[$lv['insert_time']] = $arr_add;
             }
 
