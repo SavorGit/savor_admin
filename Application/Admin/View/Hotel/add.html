@@ -308,6 +308,8 @@
                         $('.macccc').css('display', '');
                         $('.macccc div').html('不允许输入非法字符，请输入正确字符');
 
+                    }else{
+                        $('.macccc').css('display','none');
                     }
                 }
 
@@ -331,6 +333,9 @@
                     $('.macccc').css('display', '');
                     $('.macccc div').html('不允许输入非法字符，请输入正确字符');
                     return false;
+                }else{
+                    $('.macccc').css('display','none');
+                    return true;
                 }
             }
         });

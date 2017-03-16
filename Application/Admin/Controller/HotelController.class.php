@@ -8,6 +8,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Think\Model;
 class HotelController extends BaseController {
 	public function __construct() {
 		parent::__construct();
@@ -256,13 +257,17 @@ class HotelController extends BaseController {
 		$data['mac_addr'] = $mac_addr;
 		$data['server_location'] = $server_location;
 		$table = 'savor_hotel';
+		$tranDb = new Model();
+		$tranDb->startTrans();
 		$h_id = $hotelModel->saveData($table,$save, $hotel_id);
 		if($h_id){
 			$table = 'savor_hotel_ext';
 			$bool = $hextModel->saveData($table, $data, $h_id);
 			if($bool){
+				$tranDb->commit();
 				$this->output('操作成功!', 'hotel/manager');
 			}else{
+				$tranDb->rollback();
 				$this->error('操作失败!');
 			}
 		}else{
@@ -352,8 +357,8 @@ class HotelController extends BaseController {
 	/**
 	 * 保存或者更新酒店信息
 	 */
-	public function doAddRoom(){
-		$id                  = I('post.id');
+		public function doAddRoom(){
+		$id                  = I('post.id','0');
 		$save                = [];
 		$hotel_id    = I('post.hotel_id','','intval');
 		$save['hotel_id'] = $hotel_id;
@@ -363,20 +368,18 @@ class HotelController extends BaseController {
 		$save['state']       = I('post.state','','intval');
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
-		$save['flag']        = 0;
-
 		$RoomModel = new \Admin\Model\RoomModel();
+		$table = 'savor_room';
+		$bool = $RoomModel->saveData($table, $save, $id);
 		if($id){
-			if($RoomModel->where('id='.$id)->save($save)){
+			if($bool){
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
 		}else{
-			$save['create_time'] = date('Y-m-d H:i:s');
-			$save['flag']        = 0;
-			if($RoomModel->add($save)){
-				$this->output('操作成功!', 'hotel/room');
+			if($bool){
+				$this->output('操作成功!', 'hotel/manager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
