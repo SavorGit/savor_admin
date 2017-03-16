@@ -563,6 +563,15 @@ class MenuController extends BaseController {
                 }
                 $sec = array_count_values($sec);
                 $bak = array_count_values($bak);
+                if ($sec === $bak) {
+                    unset($data[$lv['insert_time']]);
+                    continue;
+                } else{
+                    if($sec == $bak) {
+                        $data[$lv['insert_time']] = array(0=>'改变顺序');
+                        continue;
+                    }
+                }
                 $arr_add = array();
                 foreach ($sec as $sk=>$sv) {
                     if(array_key_exists($sk, $bak)) {
