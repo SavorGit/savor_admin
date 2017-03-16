@@ -526,12 +526,11 @@ class MenuController extends BaseController {
      */
     public function getlog() {
         $userInfo = session('sysUserInfo');
-
         $menu_id = I('id');
         $menu_name = I('name');
         $this->assign('menuname', $menu_name);
         $mlOpeModel = new MenuListOpeModel();
-        $list = $mlOpeModel->field('menu_content,id,insert_time')->where(array('menu_id'=>$menu_id))->order('id desc')->select();
+        $list = $mlOpeModel->field('menu_content,id,insert_time')->where(array('menu_id'=>$menu_id))->order('id asc')->select();
         $data = array();
         foreach ($list as $lk=>$lv){
             //如果是第一期不比较
@@ -542,6 +541,7 @@ class MenuController extends BaseController {
                 foreach ($log_arr as $lav) {
                     $datp[] = '增加'.$lav['ads_name'];
                 }
+                $dat[0]['insert_time'] =date("Y-m-d|H:i:s",strtotime($dat[0]['insert_time']));
                 $data[$dat[0]['insert_time']] = $datp;
                 // //var_dump($data);
 
@@ -549,8 +549,7 @@ class MenuController extends BaseController {
                 //获取上期数据
                 $bak = array();
                 $sec = array();
-                $dat = $mlOpeModel->field('menu_content,id,insert_time')->where(array('id'=>$lv['id']-1))->select();
-
+                $dat = $mlOpeModel->field('menu_content,id,insert_time')->where(array('id'=>$list[$lk-1]['id']))->select();
                 $bak_log_arr = json_decode($dat[0]['menu_content'],true);
                 foreach ($bak_log_arr as $bav) {
                     $bak[] = $bav['ads_name'];
@@ -558,33 +557,48 @@ class MenuController extends BaseController {
                 //获取这期数据
                 $dat = $mlOpeModel->field('menu_content,id,insert_time')->where(array('id'=>$lv['id']))->select();
                 $log_arr = json_decode($lv['menu_content'],true);
+                //sec为新，bak为旧
                 foreach ($log_arr as $lav) {
                     $sec[] = $lav['ads_name'];
                 }
-                // //var_dump($sec,$bak);
+                $sec = array_count_values($sec);
+                $bak = array_count_values($bak);
+                $arr_add = array();
+                foreach ($sec as $sk=>$sv) {
+                    if(array_key_exists($sk, $bak)) {
+                        //比较大小
+                        $bnum = $bak[$sk];
+                        if ($bnum>$sv) {
+                            for($i=0;$i<$bnum-$sv;$i++){
+                                $arr_add[] = '减少'.$sk;
+                            }
+                        } else if ($bnum<$sv) {
+                            for($i=0;$i<$sv-$bnum;$i++){
+                                $arr_add[] = '增加'.$sk;
+                            }
+                        } else {
+                            continue;
+                        }
 
-                //取新的有旧的没有则加
-                $arr_add = array_diff($sec, $bak);
-                foreach($arr_add as &$av){
-                    $av = '增加'.$av;
+                    } else {
+                        $num = $sv;
+                        for($i=0;$i<$num;$i++){
+                            $arr_add[] = '增加'.$sk;
+                        }
+                    }
                 }
-                //var_dump($arr_add);
-                $arr_minus = array_diff($bak, $sec);
-                foreach($arr_minus as &$av){
-                    $av = '减少'.$av;
-                }
-                //var_dump($arr_minus);
-
-                $data[$lv['insert_time']] = array_merge($arr_add, $arr_minus);
-
-
+                $lv['insert_time'] = date("Y-m-d|H:i:s",strtotime($lv['insert_time']));
+                $data[$lv['insert_time']] = $arr_add;
             }
 
         }
+
+        $mp = array();
+        foreach($data as $kt=>&$kv){
+            $mp[]  = strtotime($kt);
+        }
+        array_multisort($mp, SORT_DESC, $data);
         $this->assign('vinfo', $data);
-
-
-
         $this->display('opelog');
     }
 
