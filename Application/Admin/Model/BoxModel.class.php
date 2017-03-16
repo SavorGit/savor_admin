@@ -168,7 +168,7 @@ class BoxModel extends BaseModel{
 	            $redis = SavorRedis::getInstance();
 	            $redis->select(15);
 	            $cache_key =  C('DB_PREFIX').$this->tableName.'_'.$id;
-	            $redis->select($cache_key,json_encode($data));
+	            $redis->set($cache_key,json_encode($data));
 	        } else {
 	            return false;
 	        }

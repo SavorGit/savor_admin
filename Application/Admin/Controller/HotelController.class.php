@@ -256,13 +256,11 @@ class HotelController extends BaseController {
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
 		$data['server_location'] = $server_location;
-		$table = 'savor_hotel';
 		$tranDb = new Model();
 		$tranDb->startTrans();
-		$h_id = $hotelModel->saveData($table,$save, $hotel_id);
+		$h_id = $hotelModel->saveData($save, $hotel_id);
 		if($h_id){
-			$table = 'savor_hotel_ext';
-			$bool = $hextModel->saveData($table, $data, $h_id);
+			$bool = $hextModel->saveData($data, $h_id);
 			if($bool){
 				$tranDb->commit();
 				$this->output('操作成功!', 'hotel/manager');
@@ -369,8 +367,7 @@ class HotelController extends BaseController {
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$RoomModel = new \Admin\Model\RoomModel();
-		$table = 'savor_room';
-		$bool = $RoomModel->saveData($table, $save, $id);
+		$bool = $RoomModel->saveData($save, $id);
 		if($id){
 			if($bool){
 				$this->output('操作成功!', 'hotel/room');
@@ -385,6 +382,117 @@ class HotelController extends BaseController {
 			}
 		}
 	}
+
+
+	/*
+	 * 批量新增牌位
+	 */
+	public function batchposition() {
+		$r_arr = array(
+			1=>'包间',
+			2=>'大厅',
+			3=>'等候区',
+		);
+		$tv_arr = array(
+			1=>'ant',
+			2=>'av',
+			3=>'hdmi',
+			4=>null,
+		);
+		$b_arr = array(
+			'voloume' => 30,
+			'swtime' => 50,
+		);
+		$hotel_id= I('get.hotel_id',0);
+		$hotel_name= I('get.name','');
+		if ($hotel_id) {
+
+			$this->assign('hotelname',$hotel_name);
+			$this->assign('hotelid',$hotel_id);
+			$this->assign('rtype_list',$r_arr);
+			$this->assign('bar',$b_arr);
+			$this->assign('tvlist',$tv_arr);
+		} else {
+
+		}
+		$this->display('batchposition');
+	}
+
+
+	/*
+	 * 批量新增牌位
+	 */
+	public function doAddBatch() {
+		//var_export($_POST);
+		$hotelid = $_POST['hotelid'];
+		$h_str = $_POST['hval'];
+		$h_str =  '{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","tv_brand":"","tv_size":"","tv_source":"1","tv_state":"1"}???{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","tv_brand":"","tv_size":"","tv_source":"1","tv_state":"1"}';
+		$bat_arr = explode('???',$h_str);
+		$len = count($bat_arr);
+		$model = new Model();
+		//包间名称不可重复
+		$ba_name = array();
+		foreach ($bat_arr as $v){
+			$v = json_decode($v,true);
+			$ba_name[] = $v['bao_name'];
+		}
+		if( count($ba_name)!= count(array_unique($ba_name))) {
+			$this->error('包间名称不可重复');
+		}
+		foreach ($bat_arr as $k=>&$v) {
+
+			$model->startTrans();
+
+			$v = json_decode($v,true);
+			$save = array();
+			//添加包间
+			$save['hotel_id'] = $hotelid;
+			$save['name']        = $v['bao_name'];
+			$save['type']        = $v['bao_lx'];
+			$save['flag']        = 0;
+			$save['state']       = 1;
+			$save['update_time'] = date('Y-m-d H:i:s');
+			$save['create_time'] = date('Y-m-d H:i:s');
+			$bool = $model->table(C('DB_PREFIX').'room')->add($save);
+
+			if($bool){
+				$dat = array();
+				$dat['room_id'] = $model->table(C('DB_PREFIX').'room')->getLastInsID();
+				$dat['name'] = $v['box_name'];
+				$dat['mac'] = $v['bao_mac'];
+				$dat['switch_time'] = $v['bao_time'];
+				$dat['volum'] = $v['bao_volume'];
+				$dat['flag']        = 0;
+				$dat['state']       = 1;
+				$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
+				if ($bool) {
+					$dap = array();
+					$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
+					$dap['tv_brand'] = $v['tv_brand'];
+					$dap['tv_size'] = $v['tv_size'];
+					$dap['tv_source'] = $v['tv_source'];
+					$dap['flag'] = $v['tv_state'];
+					$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
+					if ($bool) {
+						$model->commit();
+						$this->output('添加成功了','hotel/manager');
+					} else {
+						$model->commit();
+						$this->error('失败请重新操作添加电视');
+					}
+				} else {
+					$model->commit();
+					$this->error('失败请重新操作添加机顶');
+				}
+			}else{
+				$model->commit();
+				$this->error('失败请重新操作添加包间');
+			}
+
+		}
+
+	}
+
 
 	/*
 	 * 宣传片列表
@@ -440,98 +548,10 @@ class HotelController extends BaseController {
 
 
 
-	/*
-	 * 批量新增牌位
-	 */
-	public function batchposition() {
-		$hotel_id= I('get.hotel_id',0);
-		$hotel_name= I('get.name','');
-		if ($hotel_id) {
-			$this->assign('hotelname',$hotel_name);
-			$this->assign('hotelid',$hotel_id);
-		} else {
-
-		}
-		$this->display('batchposition');
-	}
 
 
 
-	/*
-	 * 批量新增牌位
-	 */
-	public function doAddBatch() {
-		die;
-		var_export($_POST);
-		$hotelid = $_POST['hotelid'];
-		$h_str = $_POST['hval'];
-		$h_str =  '{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","bao_tv":"","bao_size":"","box_size":"1","box_state":"1"}???{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","bao_tv":"","bao_size":"","box_size":"1","box_state":"1"}';
-		$bat_arr = explode('???',$h_str);
-		$len = count($bat_arr);
-		foreach ($bat_arr as $k=>&$v) {
-			$v = json_decode($v,true);
-			$save = array();
-			//添加包间
-			$save['hotel_id'] = $hotelid;
-			$save['name']        = $v['bao_name'];
-			$save['type']        = $v['bao_lx'];
-			$save['flag']        = 0;
-			$save['state']       = 1;
-			$save['update_time'] = date('Y-m-d H:i:s');
-			$save['create_time'] = date('Y-m-d H:i:s');
-			$save['flag']        = 0;
-		}
-		var_dump($bat_arr);
-		die;
 
-
-		$hotel_id= I('hotel_id');
-		$size   = I('numPerPage',50);//显示每页记录数
-		$name = I('keywords','','trim');
-		$beg_time = I('begin_time','');
-		$end_time = I('end_time','');
-		$this->assign('numPerPage',$size);
-		$start = I('pageNum',1);
-		$this->assign('pageNum',$start);
-		$order = I('_order','id');
-		$this->assign('_order',$order);
-		$sort = I('_sort','desc');
-		$this->assign('_sort',$sort);
-		$orders = $order.' '.$sort;
-		$start  = ( $start-1 ) * $size;
-		$where = "1=1";
-		if($hotel_id)   $where .= "	AND hotel_id =  $hotel_id";
-		if($name)   $where.= "	AND name LIKE '%{$name}%'";
-		if($beg_time)   $where.=" AND create_time>='$beg_time'";
-		if($end_time)   $where.=" AND create_time<='$end_time'";
-
-		$hotelModel = new \Admin\Model\HotelModel();
-		$hotelinfo = $hotelModel->find($hotel_id);
-		$adsModel = new \Admin\Model\AdsModel();
-		$result = $adsModel->getList($where,$orders,$start,$size);
-		$datalist = $result['list'];
-		$mediaModel = new \Admin\Model\MediaModel();
-		$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-		foreach ($datalist as $k=>$v){
-			$media_id = $v['media_id'];
-			if($media_id){
-				$mediainfo = $mediaModel->getMediaInfoById($media_id);
-				$oss_addr = $mediainfo['oss_addr'];
-			}else{
-				$oss_addr = '';
-			}
-			$datalist[$k]['oss_addr'] = $oss_addr;
-			$datalist[$k]['img_url'] = $oss_host.$datalist[$k]['img_url'];
-		}
-
-		$time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
-		$this->assign('timeinfo',$time_info);
-		$this->assign('keywords',$name);
-		$this->assign('hotelinfo',$hotelinfo);
-		$this->assign('list', $datalist);
-		$this->assign('page',  $result['page']);
-		$this->display('batchpositioneee');
-	}
 
 
 	/*

@@ -10,6 +10,7 @@ use Common\Lib\Page;
 use Admin\Model\BaseModel;
 
 class HotelModel extends BaseModel{
+	protected $tableName = 'hotel';
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)
@@ -112,7 +113,7 @@ class HotelModel extends BaseModel{
     }
 
 
-	public function saveData($table, $data, $id = 0) {
+	public function saveData($data, $id = 0) {
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
 		//判定key是否有没有的，如果存在则修改
@@ -121,15 +122,15 @@ class HotelModel extends BaseModel{
 			$bool = $this->where('id='.$id)->save($data);
 			$res = $this->find($id);
 			$data['create_time'] = $res['create_time'];
-			$s_key = $table.'_'.$id;
-			$redis->set($s_key, json_encode($data));
+			$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
+			$redis->set($cache_key, json_encode($data));
 			return $id;
 		}else{
 			$data['create_time'] = date('Y-m-d H:i:s');
 			$bool = $this->add($data);
 			$insert_id = $this->getLastInsID();
-			$s_key = $table.'_'.$insert_id;
-			$redis->set($s_key, json_encode($data));
+			$cache_key = C('DB_PREFIX').$this->tableName.'_'.$insert_id;
+			$redis->set($cache_key, json_encode($data));
 			return $insert_id;
 		}
 	}

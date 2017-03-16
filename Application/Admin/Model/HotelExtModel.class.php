@@ -12,7 +12,7 @@ use Admin\Model\BaseModel;
 class HotelExtModel extends BaseModel{
 	protected $tableName='hotel_ext';
 
-	public function saveData($table,$data, $id = 0) {
+	public function saveData($data, $id = 0) {
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
 		$res = $this->where(array('hotel_id'=>$id))->find();
@@ -21,8 +21,8 @@ class HotelExtModel extends BaseModel{
 		} else {
 			$bool = $this->add($data);
 		}
-		$s_key = $table.'_'.$id;
-		$redis->set($s_key, json_encode($data));
+		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
+		$redis->set($cache_key, json_encode($data));
 		return $bool;
 	}
 }
