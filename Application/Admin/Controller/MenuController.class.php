@@ -561,8 +561,11 @@ class MenuController extends BaseController {
                 foreach ($log_arr as $lav) {
                     $sec[] = $lav['ads_name'];
                 }
+                //新的没有旧的有
+                $acn = array_diff($bak, $sec);
                 $sec = array_count_values($sec);
                 $bak = array_count_values($bak);
+                $arr_add = array();
                 if ($sec === $bak) {
                     unset($data[$lv['insert_time']]);
                     continue;
@@ -572,7 +575,13 @@ class MenuController extends BaseController {
                         continue;
                     }
                 }
-                $arr_add = array();
+                foreach($acn as $av){
+                    $nup = $bak[$av];
+                    for($i=0;$i<$nup;$i++){
+                        $arr_add[] = '减少'.$av;
+                    }
+                }
+
                 foreach ($sec as $sk=>$sv) {
                     if(array_key_exists($sk, $bak)) {
                         //比较大小
