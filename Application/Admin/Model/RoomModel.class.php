@@ -11,7 +11,7 @@ use Common\Lib\Page;
 
 class RoomModel extends BaseModel
 {
-
+	protected $tableName='room';
 	public function getList($where, $order='id desc', $start=0,$size=5)
 	{	
 		
