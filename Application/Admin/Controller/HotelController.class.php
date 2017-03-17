@@ -41,7 +41,7 @@ class HotelController extends BaseController {
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','id');
+		$order = I('_order','update_time');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
@@ -258,19 +258,51 @@ class HotelController extends BaseController {
 		$data['server_location'] = $server_location;
 		$tranDb = new Model();
 		$tranDb->startTrans();
-		$h_id = $hotelModel->saveData($save, $hotel_id);
-		if($h_id){
-			$bool = $hextModel->saveData($data, $h_id);
-			if($bool){
-				$tranDb->commit();
-				$this->output('操作成功!', 'hotel/manager');
-			}else{
-				$tranDb->rollback();
-				$this->error('操作失败!');
+		if ($hotel_id) {
+			$where =  'id='.$hotel_id;
+			$bool = $hotelModel->saveData($save, $where);
+			if( $bool ) {
+				$res = $hotelModel->getOne($hotel_id);
+				$save['create_time'] = $res['create_time'];
+				$hotelModel->saveStRedis($save, $hotel_id);
+			} else {
+				$this->error('操作失败1');
 			}
-		}else{
-			$this->error('操作失败!');
+		} else {
+			$save['create_time'] = date('Y-m-d H:i:s');
+			$bool = $hotelModel->addData($save);
+			if($bool){
+				$hotel_id = $hotelModel->getLastInsID();
+				$hotelModel->saveStRedis($save, $hotel_id);
+			} else {
+				$this->error('操作失败2');
+			}
+
 		}
+		$field = 'mac_addr,server_location';
+		$where = array('hotel_id'=>$hotel_id);
+		$res = $hextModel->getData($field, $where);
+		if ( $res ) {
+			$res = $res[0];
+			ksort($data);
+			ksort($res);
+			if(array_diff($res,$data)){
+				$bool = $hextModel->saveData($data,$where);
+			}else{
+				$bool = true;
+			}
+		}else {
+			$bool = $hextModel->addData($data);
+		}
+		if($bool){
+			$tranDb->commit();
+			$hextModel->saveStRedis($data, $hotel_id);
+			$this->output('操作成功!', 'hotel/manager');
+		} else {
+			$tranDb->rollback();
+			$this->error('操作失败3!');
+		}
+
 	}
 
 
