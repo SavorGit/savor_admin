@@ -24,6 +24,8 @@ class HotelModel extends BaseModel{
         return $data;
 	}
 
+
+
 	/**
 	 * 酒店ID转换为酒店名称
 	 * @param  array  $result [description]
@@ -112,26 +114,30 @@ class HotelModel extends BaseModel{
         return $result;
     }
 
+	public function saveData($data, $where) {
+		$bool = $this->where($where)->save($data);
+		return $bool;
+	}
 
-	public function saveData($data, $id = 0) {
+	public function addData($data) {
+		$result = $this->add($data);
+		return $result;
+	}
+
+
+	public function getOne($id){
+		if ($id) {
+			$res = $this->find($id);
+			return $res;
+		}
+
+	}
+
+	public function saveStRedis($data, $id){
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
-		//判定key是否有没有的，如果存在则修改
-		if($id){
-			//获取创建时间
-			$bool = $this->where('id='.$id)->save($data);
-			$res = $this->find($id);
-			$data['create_time'] = $res['create_time'];
-			$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
-			$redis->set($cache_key, json_encode($data));
-			return $id;
-		}else{
-			$data['create_time'] = date('Y-m-d H:i:s');
-			$bool = $this->add($data);
-			$insert_id = $this->getLastInsID();
-			$cache_key = C('DB_PREFIX').$this->tableName.'_'.$insert_id;
-			$redis->set($cache_key, json_encode($data));
-			return $insert_id;
-		}
+		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
+		$redis->set($cache_key, json_encode($data));
 	}
+
 }
