@@ -293,6 +293,7 @@ class HotelController extends BaseController {
 				$bool = true;
 			}
 		}else {
+		    $data['hotel_id'] = $hotel_id;
 			$bool = $hextModel->addData($data);
 		}
 		if($bool){
