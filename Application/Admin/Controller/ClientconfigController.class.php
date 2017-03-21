@@ -89,7 +89,7 @@ class ClientconfigController extends BaseController {
             $save['update_time'] = date("Y-m-d H:i:s");
             $res_save = $clientCModel->where('id='.$clid)->save($save);
             if($res_save){
-                $this->output('操作成功!', 'clientconfig/addclientconfig',1);
+                $this->output('操作成功!', 'Clientconfig/configdata',1);
             }else{
                 $this->error('操作失败!');
             }
@@ -104,7 +104,7 @@ class ClientconfigController extends BaseController {
             $dat['update_time'] = date("Y-m-d H:i:s");
             $res_save = $clientCModel->add($save);
             if($res_save){
-                $this->output('添加成功!', 'clientconfig/configdata',1);
+                $this->output('添加成功!', 'Clientconfig/configdata',1);
             }else{
                 $this->error('操作失败!');
             }
