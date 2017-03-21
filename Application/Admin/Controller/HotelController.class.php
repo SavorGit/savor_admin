@@ -232,6 +232,7 @@ class HotelController extends BaseController {
 		$save['update_time']         = date('Y-m-d H:i:s');
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
+		$save['hotel_box_type']      = I('post.hotel_box_type',0,'intval');
 		if($save['gps']){
 			if(!preg_match('/^([\d]+\.[\d]*),([\d]+\.[\d]*)$/',$save['gps'], $result)){
 				$this->error('不可输入非法字符');

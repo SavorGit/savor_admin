@@ -243,7 +243,19 @@
           <input type="text" class="form-control" name="remark">
         </div>
       </div>
-
+	  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         酒楼机顶盒类型：
+        </label>
+          <div class="col-xs-12 col-sm-10">
+          <select name="hotel_box_type" class="form-control bs-select" title="请选择..." required data-style="btn-success btn-sm" data-container="body">
+              <volist name=":C('hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $vinfo['hotel_box_type']">selected</if>>{$vo}</option><br>
+              </volist>
+          </select>
+              </div>
+      </div>
+	  
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
          酒楼位置坐标:

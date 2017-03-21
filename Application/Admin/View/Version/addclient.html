@@ -93,11 +93,11 @@ function changeType(val){
     	  var strMin="";
     	  var strMax="";
     	  for(var i in jsonI.min){
-    	  	strMin+="<option value='"+i+"'>"+jsonI.min[i]+"</option>";
+    	  	strMin+="<option value='"+i+"'>"+i+"("+jsonI.min[i]+")"+"</option>";
     	  };
     	  $("#version_min").html(strMin);
     	  for(var j in jsonI.max){
-    	  	strMax+="<option value='"+j+"'>"+jsonI.max[j]+"</option>";
+    	  	strMax+="<option value='"+j+"'>"+j+"("+jsonI.max[j]+")"+"</option>";
     	  };
     	  //console.log(strMin);
     	  //console.log(strMax);
@@ -109,11 +109,11 @@ function changeType(val){
     	  var strMin="";
     	  var strMax="";
     	  for(var i in jsonA.min){
-    	  	strMin+="<option value='"+i+"'>"+jsonA.min[i]+"</option>";
+    	  	strMin+="<option value='"+i+"'>"+i+"("+jsonA.min[i]+")"+"</option>";
     	  };
     	  $("#version_min").html(strMin);
     	  for(var j in jsonA.max){
-    	  	strMax+="<option value='"+j+"'>"+jsonA.max[j]+"</option>";
+    	  	strMax+="<option value='"+j+"'>"+j+"("+jsonA.max[j]+")"+"</option>";
     	  };
     	  //console.log(strMin);
     	  //console.log(strMax);

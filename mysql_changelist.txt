@@ -27,78 +27,19 @@ ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAUL
 
 #########以上sql均已执行######
 
-增加说明：添加机顶盒失联情况当年表
-修改时间:2017.3.20 16：55
-修改人:白玉涛
-执行SQL:CREATE TABLE `savor_heart_count_year` (
-  `box_id` bigint(20) DEFAULT NULL,
-  `box_mac` varchar(255) DEFAULT NULL,
-  `box_name` varchar(255) DEFAULT NULL,
-  `room_id` bigint(20) DEFAULT NULL,
-  `room_name` varchar(255) DEFAULT NULL,
-  `hotel_id` bigint(20) DEFAULT NULL,
-  `hotel_name` varchar(255) DEFAULT NULL,
-  `area_id` bigint(20) DEFAULT NULL,
-  `area_name` varchar(255) DEFAULT NULL,
-  `count` bigint(20) DEFAULT NULL,
-  `type` varchar(10) DEFAULT NULL,
-  `time` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-增加说明：添加机顶盒失联情况当月表
-修改时间:2017.3.20 16：55
-修改人:白玉涛
-执行SQL:CREATE TABLE `savor_heart_count_month` (
-  `box_id` bigint(20) DEFAULT NULL,
-  `box_mac` varchar(255) DEFAULT NULL,
-  `box_name` varchar(255) DEFAULT NULL,
-  `room_id` bigint(20) DEFAULT NULL,
-  `room_name` varchar(255) DEFAULT NULL,
-  `hotel_id` bigint(20) DEFAULT NULL,
-  `hotel_name` varchar(255) DEFAULT NULL,
-  `area_id` bigint(20) DEFAULT NULL,
-  `area_name` varchar(255) DEFAULT NULL,
-  `count` bigint(20) DEFAULT NULL,
-  `type` varchar(10) DEFAULT NULL,
-  `time` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+增加说明：酒楼增加酒楼机顶盒类型
+修改时间:2017.3.20 15:40
+修改人:张英涛
+执行SQL:ALTER TABLE `savor_hotel` ADD COLUMN `hotel_box_type` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '酒楼机顶盒类型1:一代单机版2:二代网络版3:三代5G版' AFTER `remark`;
 
-增加说明：添加机顶盒失联情况当日表
-修改时间:2017.3.20 16：55
-修改人:白玉涛
-执行SQL:CREATE TABLE `savor_heart_count_day` (
-  `box_id` bigint(20) DEFAULT NULL,
-  `box_mac` varchar(255) DEFAULT NULL,
-  `box_name` varchar(255) DEFAULT NULL,
-  `room_id` bigint(20) DEFAULT NULL,
-  `room_name` varchar(255) DEFAULT NULL,
-  `hotel_id` bigint(20) DEFAULT NULL,
-  `hotel_name` varchar(255) DEFAULT NULL,
-  `area_id` bigint(20) DEFAULT NULL,
-  `area_name` varchar(255) DEFAULT NULL,
-  `count` bigint(20) DEFAULT NULL,
-  `type` varchar(10) DEFAULT NULL,
-  `time` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+增加说明:后台增加配置切换时间和默认音量
+修改时间:2017.3.20 15:40
+修改人:张英涛
+执行SQL: ALTER TABLE `savor_sys_config` ADD COLUMN `status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启0:未开启1:开启';
 
 
-增加说明：添加机顶盒失联情况指定日期表
-修改时间:2017.3.20 16：55
-修改人:白玉涛
-执行SQL:CREATE TABLE `savor_heart_count` (
-  `box_id` bigint(20) DEFAULT NULL,
-  `box_mac` varchar(255) DEFAULT NULL,
-  `box_name` varchar(255) DEFAULT NULL,
-  `room_id` bigint(20) DEFAULT NULL,
-  `room_name` varchar(255) DEFAULT NULL,
-  `hotel_id` bigint(20) DEFAULT NULL,
-  `hotel_name` varchar(255) DEFAULT NULL,
-  `area_id` bigint(20) DEFAULT NULL,
-  `area_name` varchar(255) DEFAULT NULL,
-  `count` bigint(20) DEFAULT NULL,
-  `type` varchar(10) DEFAULT NULL,
-  `time` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 

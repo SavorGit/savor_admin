@@ -1,0 +1,45 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+ <div class="tools-group hidden-xs ">电视设置</div>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables" style="margin-top:20px;">
+      <form method="post" action="{$host_name}/sysconfig/doConfigData" id="configData" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <!-- <th class="table-checkbox">
+                <input type="checkbox" data-check="all" data-parent=".table" />
+              </th> -->
+              <td>音量：<input required placeholder="请输入数字" type="text" name="system_default_volume" value="{$info.system_default_volume}"  /></th>
+              <td>切换时间：<input required placeholder="请输入数字" type="text" name="system_switch_time" value="{$info.system_switch_time}"  /></th>
+              <td><if condition="$info['status'] eq 0">
+              <a data-tip="开启" target="ajaxTodo" href="{$host_name}/sysconfig/editstatus?status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+              <else/>
+              <a data-tip="关闭" target="ajaxTodo" href="{$host_name}/sysconfig/editstatus?status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+              </if></th>
+            	<td>
+            	
+            	
+		      
+		      <button class="btn btn-primary" type="submit">保存</button>     
+		    
+            	</td>  
+            </tr>
+            
+            
+          </thead>
+          
+          </tbody>
+        </table>
+        
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
