@@ -28,6 +28,7 @@ ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAUL
 #########以上sql均已执行######
 
 
+
 增加说明：酒楼增加酒楼机顶盒类型
 修改时间:2017.3.20 15:40
 修改人:张英涛
@@ -37,3 +38,8 @@ ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAUL
 修改时间:2017.3.20 15:40
 修改人:张英涛
 执行SQL: ALTER TABLE `savor_sys_config` ADD COLUMN `status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启0:未开启1:开启';
+
+
+
+
+

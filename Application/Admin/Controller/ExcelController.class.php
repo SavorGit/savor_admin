@@ -11,12 +11,17 @@ use Think\Controller;
 class ExcelController extends Controller
 {
 
-    public function exportExcel($expTitle, $expCellName, $expTableData)
+    public function exportExcel($expTitle, $expCellName, $expTableData,$filename)
     {
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
-        $fileName = '酒楼资源总表' . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
+        if($filename == 'hotel') {
+            $tmpname = '酒楼资源总表';
+        } else if ($filename == 'boxlostreport') {
+            $tmpname = '机顶盒失联表';
+        }
+        $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
         vendor("PHPExcel.PHPExcel");
@@ -38,15 +43,20 @@ class ExcelController extends Controller
                 $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j] . ($i + 2), $expTableData[$i][$expCellName[$j][0]]);
             }
         }
-        $objPHPExcel->getActiveSheet()->getColumnDimension()->setWidth(12);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(15);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(15);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(45);
-        $objPHPExcel->getActiveSheet()->getStyle('D11')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-        // $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
-        //$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
-        $objPHPExcel->getActiveSheet()->getStyle('D3')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        if($filename == 'hotel') {
+            $objPHPExcel->getActiveSheet()->getColumnDimension()->setWidth(12);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setWidth(15);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('P')->setWidth(15);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setWidth(45);
+            $objPHPExcel->getActiveSheet()->getStyle('D11')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            // $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            //$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getStyle('D3')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        }else if($filename == 'boxlostreport'){
+            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
+        }
         header('pragma:public');
         header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $xlsTitle . '.xls"');
         header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
@@ -59,11 +69,45 @@ class ExcelController extends Controller
      *
      * 导出Excel
      */
+
+    function expboxreportinfo(){
+        $filename = 'boxlostreport';
+        $box_arr = session('boxlostreport');
+        foreach($box_arr as &$val) {
+            if($val['type'] == 1) {
+                $val['type'] = '小平台';
+                continue;
+            }else if($val['type'] == 2){
+                $val['type'] = '机顶盒';
+                continue;
+            }
+        }
+        $xlsName = "boxreport";
+        $xlsCell = array(
+            array('box_id', '机顶盒ID'),
+            array('box_mac', '机顶盒MAC'),
+            array('box_name', '机顶盒名称'),
+            array('room_id', '包间ID'),
+            array('room_name', '包间名称'),
+            array('hotel_id', '酒楼ID'),
+            array('hotel_name', '酒楼名称'),
+            array('area_id', '区域ID'),
+            array('area_name', '区域名称'),
+            array('count', '计数'),
+            array('type', '类型'),
+            array('time', '时间'),
+        );
+
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
     function hotelinfo()
     {//导出Excel
         $boxModel = new \Admin\Model\BoxModel();
         //获取所有数据
         $box_arr = $boxModel->getExNum();
+        $filename = 'hotel';
         $xlsName = "User";
         $xlsCell = array(
             array('install_date', '安装日期'),
@@ -87,7 +131,7 @@ class ExcelController extends Controller
             array('tech_maintainer', '技术运维人'),
         );
 
-        $this->exportExcel($xlsName, $xlsCell, $box_arr);
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
 
