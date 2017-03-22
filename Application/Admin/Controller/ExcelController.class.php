@@ -20,7 +20,10 @@ class ExcelController extends Controller
             $tmpname = '酒楼资源总表';
         } else if ($filename == 'boxlostreport') {
             $tmpname = '机顶盒失联表';
+        }  else if ($filename == 'screencastreport') {
+            $tmpname = '投屏次数点播表';
         }
+
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
@@ -98,6 +101,41 @@ class ExcelController extends Controller
             array('time', '时间'),
         );
 
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+
+    /**
+     *
+     * 导出Excel
+     */
+
+    function expscreenrep(){
+        $filename = 'screencastreport';
+        $type = I('get.datetype');
+        $box_arr = session('screencastreport');
+        foreach($box_arr as &$val) {
+            if($type == 5) {
+                $va['time'] = 0;
+            }
+        }
+        $xlsName = "screencastreport";
+        $xlsCell = array(
+            array('box_id', '机顶盒ID'),
+            array('box_mac', '机顶盒MAC'),
+            array('box_name', '机顶盒名称'),
+            array('room_id', '包间ID'),
+            array('room_name', '包间名称'),
+            array('hotel_id', '酒楼ID'),
+            array('hotel_name', '酒楼名称'),
+            array('area_id', '区域ID'),
+            array('area_name', '区域名称'),
+            array('mobile_id', '手机标识'),
+            array('project_count', '投屏次数'),
+            array('demand_count', '点播次数'),
+            array('time', '时间'),
+        );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
