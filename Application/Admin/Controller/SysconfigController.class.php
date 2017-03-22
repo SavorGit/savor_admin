@@ -7,6 +7,11 @@ use Admin\Controller\BaseController;
  */
 class SysconfigController extends BaseController {
     
+     private $oss_host = '';
+	 public function __construct(){
+	     parent::__construct();
+	     $this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	 }
     /**
      * @desc 电视设置页面
      */
@@ -17,6 +22,19 @@ class SysconfigController extends BaseController {
         $info['system_default_volume'] = $volume_info['config_value'];
         $info['system_switch_time']  = $switch_time_info['config_value'];
         $info['status'] = $volume_info['status'];
+        
+        //视频投屏loading图
+        $loading_info = $m_sys_config->getOne('system_loading_image');
+        if(!empty($loading_info['config_value'])){
+            $m_media = new \Admin\Model\MediaModel();
+            $map['id'] = $loading_info['config_value'];
+            $media_info = $m_media->getWhere($map, 'oss_addr');
+            
+            $oss_addr = $this->oss_host.$media_info[0]['oss_addr'];
+            $this->assign('oss_addr',$oss_addr);
+            //getWhere
+        }
+        
         $this->assign('info',$info);
         $this->display('Sysconfig/configdata');
     }
@@ -75,5 +93,43 @@ class SysconfigController extends BaseController {
             $this->error('操作失败3!');
         }
         
+    }
+    /**
+     * @desc 修改视频投屏loading图
+     */
+    public function addinfo(){
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        //视频投屏loading图
+        $loading_info = $m_sys_config->getOne('system_loading_image');
+        
+        if(!empty($loading_info['config_value'])){
+            $m_media = new \Admin\Model\MediaModel();
+            $map['id'] = $loading_info['config_value'];
+            $media_info = $m_media->getWhere($map, 'oss_addr');
+        
+            $oss_addr = $this->oss_host.$media_info[0]['oss_addr'];
+            $this->assign('oss_addr',$oss_addr);
+            //getWhere
+        }
+        $this->display('addinfo');
+    }
+    public function doAddLoadingImg(){
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        //视频投屏loading图
+        $loading_info = $m_sys_config->getOne('system_loading_image');
+        $data = array();
+        if(empty($loading_info)){
+            $data['config_key'] = 'system_loading_image'; 
+            $data['config_value'] = I('post.media_id',0,'intval');
+            $rt = $m_sys_config->add($data);
+        }else {
+            $data['config_value'] = I('post.media_id',0,'intval');
+            $rt = $m_sys_config->editData($data, 'system_loading_image');
+        }
+        if($rt){
+            $this->output('操作成功', 'Sysconfig/configData', 1);
+        }else {
+            $this->output('操作失败', 'Sysconfig/configData', 1);
+        }
     }
 }

@@ -38,7 +38,31 @@
         </table>
         
       </form>
-
+<table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+            <tr >
+              <td>视频投屏loading图(建议1920X1080)<img src="<empty name="oss_addr">/Public/admin/assets/img/noimage.png<else />{$oss_addr}</empty>" /></td>
+              <td class="table-tool" data-title="操作">
+              <div class="tools-edit">
+              	<empty name="oss_addr" >
+                  <a data-tip="添加" target="dialog" mask="true" href="{$host_name}/sysconfig/addinfo" class="btn btn-success btn-icon">
+                  <i class="fa fa-plus"></i>
+                  </a>
+                <else />
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/sysconfig/addinfo" class="btn btn-success btn-icon">
+                  <i class="fa fa-pencil"></i>
+                  </a>
+                </empty>
+              </div>
+              </td>
+            </tr>
+            
+            
+          </thead>
+          
+          </tbody>
+        </table>
     </div>
   </div>
   {$page}
