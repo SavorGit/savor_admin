@@ -333,6 +333,8 @@ class ArticleController extends BaseController {
                 $vainfo['vid_type'] = 1;
                 $vainfo['videoname'] = $mediainfo['name'];
             }
+            //转换成html实体
+            $vainfo['title'] = htmlspecialchars($vainfo['title']);
             $this->assign('vainfo',$vainfo);
         }else{
             $vainfo['duration'] = 0;
