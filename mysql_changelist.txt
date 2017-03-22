@@ -43,3 +43,19 @@ ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAUL
 
 
 
+增加说明:客户端启动logo设置
+修改时间:2017.3.22 10：27
+修改人:白玉涛
+CREATE TABLE `savor_client_start` (
+  `id` smallint(5) NOT NULL AUTO_INCREMENT,
+  `img_id` int(11) DEFAULT '0' COMMENT '图片id',
+  `media_id` int(11) DEFAULT '0' COMMENT '视频id',
+  `name` varchar(255) DEFAULT NULL COMMENT '视频名称',
+  `ctype` smallint(5) DEFAULT '3' COMMENT '类型3ancroid 4ios',
+  `status` int(11) DEFAULT '1' COMMENT '默认状态1启动图片2启动视频',
+  `online` smallint(5) DEFAULT '1' COMMENT '0下线1上线',
+  `duration` int(12) DEFAULT NULL COMMENT '视频时长',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
