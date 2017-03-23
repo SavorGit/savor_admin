@@ -85,6 +85,12 @@ class ScreenreportController extends BaseController{
 		session('screencastreport',$result['list']);
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
+			if(empty($val['project_count'])){
+				$val['project_count'] = 0;
+			}
+			if(empty($val['demand_count'])){
+				$val['demand_count'] = 0;
+			}
 			$val['indnum'] = ++$ind;
 		}
 		$this->assign('list', $result['list']);
