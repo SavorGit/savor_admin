@@ -41,6 +41,7 @@ class ToolsController extends Controller{
         $sql = "select title,med.name,med.id  from `savor_mb_content` mbc left join `savor_media` med on mbc.media_id = med.id where med.type = 1 and (med.name='' or med.name is null) limit 40";
         $result = $aModel->query($sql);
         foreach($result as $k=>$v) {
+            $v['title'] = addslashes($v['title']);
             $sqla = "update savor_media set name = '".$v['title']."' where id = ".$v['id']." limit 1";
             $re = $aModel->execute($sqla);
             var_dump($re);
