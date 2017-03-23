@@ -113,13 +113,53 @@ class ExcelController extends Controller
 
     function expscreenrep(){
         $filename = 'screencastreport';
-        $type = I('get.datetype');
-        $box_arr = session('screencastreport');
-        foreach($box_arr as &$val) {
-            if($type == 5) {
-                $va['time'] = 0;
+        $dtype = I('get.datetype');
+        if ( $dtype == 1) {
+            $table = 'mobile_statistic_year';
+            $time = date("Y",time());
+        } else if ($dtype == 2) {
+            $table = 'mobile_statistic_month';
+            $time = date("Y-m",time());
+        } else if ($dtype == 3) {
+            $table = 'mobile_statistic_date';
+            $time = date("Y-m-d",time()-86400);
+
+        } else if ($dtype == 4) {
+            $table = 'mobile_statistic_date_all';
+            $starttime = I('start','');
+            $endtime = I('end','');
+        } else if ($dtype == 5) {
+            $table = 'mobile_statistic';
+        }
+        $screenModel =  new \Admin\Model\ScreenRpModel($table);
+        $where = '1=1 ';
+        if($dtype == 4) {
+            if($starttime){
+                $where .= "	AND time >= '{$starttime}'";
+            }
+            if($endtime){
+                $where .= "	AND time <=  '{$endtime}'";
+            }
+
+        } else {
+            if($dtype!=5) {
+                $where .= "	AND time= '{$time}' ";
             }
         }
+        $orders = '';
+        $rea = $screenModel->getAllList($where,$orders);
+        foreach ($rea['list'] as &$val) {
+            if(empty($val['project_count'])){
+                $val['project_count'] = 0;
+            }
+            if(empty($val['demand_count'])){
+                $val['demand_count'] = 0;
+            }
+            if($dtype == 5) {
+                $val['time'] = 0;
+            }
+        }
+        $box_arr = $rea['list'];
         $xlsName = "screencastreport";
         $xlsCell = array(
 
