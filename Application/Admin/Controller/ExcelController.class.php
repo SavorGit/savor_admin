@@ -122,14 +122,14 @@ class ExcelController extends Controller
         }
         $xlsName = "screencastreport";
         $xlsCell = array(
-            array('box_id', '机顶盒ID'),
+
             array('box_mac', '机顶盒MAC'),
             array('box_name', '机顶盒名称'),
-            array('room_id', '包间ID'),
+
             array('room_name', '包间名称'),
-            array('hotel_id', '酒楼ID'),
+
             array('hotel_name', '酒楼名称'),
-            array('area_id', '区域ID'),
+
             array('area_name', '区域名称'),
             array('mobile_id', '手机标识'),
             array('project_count', '投屏次数'),

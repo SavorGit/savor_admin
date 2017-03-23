@@ -42,7 +42,16 @@ class ScreenRpModel extends BaseModel
 
 	}//End Function
 
+	public function getAllList($where, $order='id desc')
+	{
 
+		$list = $this->where($where)
+			->order($order)
+			->select();
+		$data = array('list'=>$list);
+		return $data;
+
+	}//End Function
 
 	/**
 	 * [areaIdToAareName description]

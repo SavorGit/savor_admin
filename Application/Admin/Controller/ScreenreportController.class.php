@@ -82,7 +82,16 @@ class ScreenreportController extends BaseController{
 
 		}
 		$result = $screenModel->getList($where,$orders,$start,$size);
-		session('screencastreport',$result['list']);
+		$rea = $screenModel->getAllList($where,$orders);
+		foreach ($rea['list'] as &$val) {
+			if(empty($val['project_count'])){
+				$val['project_count'] = 0;
+			}
+			if(empty($val['demand_count'])){
+				$val['demand_count'] = 0;
+			}
+		}
+		session('screencastreport',$rea['list']);
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
 			if(empty($val['project_count'])){
