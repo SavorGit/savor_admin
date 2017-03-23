@@ -7,7 +7,9 @@ use Think\Controller;
  *
  */
 class ToolsController extends Controller{
-
+    public function __construct(){
+        exit;
+    }
     public function icons(){
         $icons_file = "Public/admin/assets/plugins/font-awesome/css/font-awesome.css";
         $parsed_file = file_get_contents($icons_file);
