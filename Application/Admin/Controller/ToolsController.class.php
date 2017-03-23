@@ -34,5 +34,25 @@ class ToolsController extends Controller{
     private function array_delelement($array, $element) {
         return (is_array($element)) ? array_values(array_diff($array, $element)) : array_values(array_diff($array, array($element)));
     }
+
+
+    public function changeName(){
+        $aModel = M();
+        $sql = "select title,med.name,med.id  from `savor_mb_content` mbc left join `savor_media` med on mbc.media_id = med.id where med.type = 1 and (med.name='' or med.name is null) limit 40";
+        $result = $aModel->query($sql);
+        foreach($result as $k=>$v) {
+            $sqla = "update savor_media set name = '".$v['title']."' where id = ".$v['id']." limit 1";
+            $re = $aModel->execute($sqla);
+            var_dump($re);
+            var_dump($v['id']);
+            //echo $sqla.'<hr/>';
+            //$v['title'] = $v['title'].'_'.date("md");
+           // $sqla .=  " WHEN ".$v['id']." THEN '".$v['title']." '";
+        }
+
+
+
+
+    }
     
 }
