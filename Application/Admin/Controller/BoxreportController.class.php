@@ -78,7 +78,6 @@ class BoxreportController extends BaseController{
 
 		}
 		$result = $boxreModel->getList($where,$orders,$start,$size);
-		session('boxlostreport',$result['list']);
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
 			$val['indnum'] = ++$ind;

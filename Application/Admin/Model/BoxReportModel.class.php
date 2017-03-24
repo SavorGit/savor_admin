@@ -18,6 +18,18 @@ class BoxReportModel extends BaseModel
 
 	}
 
+	public function getAllList($where, $order='id desc')
+	{
+
+		$list = $this->where($where)
+			->order($order)
+			->select();
+
+		$data = array('list'=>$list);
+		return $data;
+
+	}//End Function
+
 	public function getList($where, $order='id desc', $start=0,$size=5)
 	{
 
@@ -25,7 +37,6 @@ class BoxReportModel extends BaseModel
 			->order($order)
 			->limit($start,$size)
 			->select();
-
 
 		$count = $this->where($where)
 			->count();

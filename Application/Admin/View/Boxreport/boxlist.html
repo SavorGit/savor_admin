@@ -45,7 +45,7 @@
 
           <div class="form-group">
           <div class="input-group input-group-sm pull-right">
-            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
+            <input type="text" class="form-control" name="hotelname" value="{$hotelname}" placeholder="酒楼名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -53,7 +53,7 @@
           </div>
 
           <div class="input-group input-group-sm pull-right">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/excel/expboxreportinfo" title="导出机顶盒失联数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出机顶盒失联数据</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/excel/expboxreportinfo?datetype={$dtype}&start={$s_time}&end={$e_time}&hname={$hotelname}" title="导出机顶盒失联数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出机顶盒失联数据</a>
           </div>
 
 

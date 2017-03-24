@@ -75,7 +75,45 @@ class ExcelController extends Controller
 
     function expboxreportinfo(){
         $filename = 'boxlostreport';
-        $box_arr = session('boxlostreport');
+        $dtype = I('get.datetype');
+
+            if ( $dtype == 1) {
+                $table = 'heart_count_year';
+                $time = date("Y",time());
+            } else if ($dtype == 2) {
+                $table = 'heart_count_month';
+                $time = date("Y-m",time());
+            } else if ($dtype == 3) {
+                $table = 'heart_count_day';
+                $time = date("Y-m-d",time()-86400);
+
+            } else if ($dtype == 4) {
+                $table = 'heart_count';
+                $starttime = I('get.start','');
+                $endtime = I('get.end','');
+            }
+        $boxreModel =  new \Admin\Model\BoxReportModel($table);
+        $where = '1=1 ';
+        if($dtype == 4) {
+            if($starttime){
+                $where .= "	AND time >= '{$starttime}'";
+            }
+            if($endtime){
+                $where .= "	AND time <=  '{$endtime}'";
+            }
+
+        } else {
+
+                $where .= "	AND time= '{$time}' ";
+
+        }
+        $hname = I('get.hname','');
+        if($hname){
+            $where .= "	AND hotel_name LIKE '%{$hname}%'";
+        }
+        $orders = '';
+        $rea = $boxreModel->getAllList($where,$orders);
+        $box_arr = $rea['list'];
         foreach($box_arr as &$val) {
             if($val['type'] == 1) {
                 $val['type'] = '小平台';
@@ -145,6 +183,10 @@ class ExcelController extends Controller
             if($dtype!=5) {
                 $where .= "	AND time= '{$time}' ";
             }
+        }
+        $hname = I('get.hname','');
+        if($hname){
+            $where .= "	AND hotel_name LIKE '%{$hname}%'";
         }
         $orders = '';
         $rea = $screenModel->getAllList($where,$orders);
