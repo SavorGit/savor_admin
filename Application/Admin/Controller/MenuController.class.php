@@ -563,6 +563,7 @@ class MenuController extends BaseController {
                 }
                 //新的没有旧的有
                 $acn = array_diff($bak, $sec);
+                $acn = array_unique($acn);
                 $sec = array_count_values($sec);
                 $bak = array_count_values($bak);
                 $arr_add = array();
