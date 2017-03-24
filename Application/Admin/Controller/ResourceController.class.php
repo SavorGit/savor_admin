@@ -234,7 +234,19 @@ class ResourceController extends BaseController{
 	             $save['state'] = $flag;
 	         }else{
 	             $name = I('post.name','','trim');
+	             
 	             $type = I('post.type',3,'intval');
+	             if($type==1){//如果是视频类型
+	                 if(empty($name)){
+	                     $message = '资源名称不能为空';
+	                     $this->error($message);
+	                 }
+	                 $nass = $mediaModel->where(array('name'=>$name))->field('name')->find();
+	                 if(!empty($nass['name'])){
+	                     $message = '文件名已存在，请换一个名称';
+	                     $this->error($message);
+	                 }
+	             }
 				 $minu = I('post.minu','0','intval');
 				 $seco = I('post.seco','0','intval');
 				 $duration = $minu*60+$seco;
