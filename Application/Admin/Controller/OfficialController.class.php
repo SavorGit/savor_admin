@@ -39,6 +39,7 @@ class officialController extends Controller {
 	    $result =  array();
 	    $map['state'] = 1;
 	    $limit = "$offset,$pageSize";
+	    
 	    $list = $hotelMode->getInfo('id,name,gps,addr',$map,'',$limit);
 	    foreach($list as $keyd=>$v){
 	       $tmp = array();
@@ -53,7 +54,13 @@ class officialController extends Controller {
 	           $result[] = $tmp;
 	       }
 	    }
-	    echo "hotel(".json_encode($result).")";
+	    $where['state'] = 1;
+	    $where['gps'] = array("NEQ",'');
+	    $count = $hotelMode->getHotelCount($where);
+	    $total_page = ceil($count/$pageSize);
+	    $data['list'] = $result;
+	    $data['totalPage'] = $total_page;
+	    echo "hotel(".json_encode($data).")";
 	}
 }
 
