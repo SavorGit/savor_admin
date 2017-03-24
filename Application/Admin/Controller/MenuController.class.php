@@ -524,6 +524,9 @@ class MenuController extends BaseController {
     /*
      * 获取log日志，并进行对比
      */
+
+
+
     public function getlog() {
         $userInfo = session('sysUserInfo');
         $menu_id = I('id');
@@ -563,6 +566,7 @@ class MenuController extends BaseController {
                 }
                 //新的没有旧的有
                 $acn = array_diff($bak, $sec);
+                $acn = array_unique($acn);
                 $sec = array_count_values($sec);
                 $bak = array_count_values($bak);
                 $arr_add = array();
@@ -619,7 +623,6 @@ class MenuController extends BaseController {
         $this->assign('vinfo', $data);
         $this->display('opelog');
     }
-
     public function getHotelInfo(){
         $befo  = C('DB_PREFIX');
         $menu_id = I('menuid');
