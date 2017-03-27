@@ -38,21 +38,22 @@ class officialController extends Controller {
 	    $hotelMode = new \Admin\Model\HotelModel();
 	    $result =  array();
 	    $map['state'] = 1;
+	    $map['gps'] = array('NEQ','');
 	    $limit = "$offset,$pageSize";
 	    
 	    $list = $hotelMode->getInfo('id,name,gps,addr',$map,'',$limit);
 	    foreach($list as $keyd=>$v){
 	       $tmp = array();
-	        if(!empty($v['gps'])){
-	           $gps_arr = explode(',', $v['gps']);
-	           $tmp['id'] = $v['id'];
-	           $tmp['name'] = $v['name'];
-	           $tmp['gps'] = $v['gps'];
-	           $tmp['lng'] = $gps_arr[0];
-	           $tmp['lat'] = $gps_arr[1];
-	           $tmp['addr'] = $v['addr'];
-	           $result[] = $tmp;
-	       }
+	       
+           $gps_arr = explode(',', $v['gps']);
+           $tmp['id'] = $v['id'];
+           $tmp['name'] = $v['name'];
+           $tmp['gps'] = $v['gps'];
+           $tmp['lng'] = $gps_arr[0];
+           $tmp['lat'] = $gps_arr[1];
+           $tmp['addr'] = $v['addr'];
+           $result[] = $tmp;
+       
 	    }
 	    $where['state'] = 1;
 	    $where['gps'] = array("NEQ",'');
