@@ -61,6 +61,7 @@ class officialController extends Controller {
 	    $total_page = ceil($count/$pageSize);
 	    $data['list'] = $result;
 	    $data['totalPage'] = $total_page;
+	    $data['count'] = $count;
 	    echo "hotel(".json_encode($data).")";
 	}
 }
