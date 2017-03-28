@@ -108,6 +108,7 @@ class SysconfigController extends BaseController {
             $media_info = $m_media->getWhere($map, 'oss_addr');
         
             $oss_addr = $this->oss_host.$media_info[0]['oss_addr'];
+            $this->assign('media_id',$map['id']);
             $this->assign('oss_addr',$oss_addr);
             //getWhere
         }

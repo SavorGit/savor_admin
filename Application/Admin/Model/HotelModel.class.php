@@ -139,5 +139,8 @@ class HotelModel extends BaseModel{
 		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
 		$redis->set($cache_key, json_encode($data));
 	}
+	public function getHotelCount($where){
+	    return $this->where($where)->count();
+	}
 
 }
