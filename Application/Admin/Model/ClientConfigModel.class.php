@@ -14,7 +14,7 @@ class ClientConfigModel extends BaseModel{
 
 
 	public function delData($id) {
-		$delSql = "DELETE FROM `savor_client_start` WHERE id = '{$id}'";
+		$delSql = "DELETE FROM `savor_client_start` WHERE id = '{$id}' limit 1";
 		$result = $this -> execute($delSql);
 		return  $result;
 	}
