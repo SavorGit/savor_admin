@@ -24,6 +24,61 @@ class MenuController extends BaseController {
         parent::__construct();
     }
 
+    public function gethotelLog(){
+
+        //第一次先判断是空的
+        $mlistLogModel = new \Admin\Model\MenuListLogModel();
+        $menu_id = I('mid');
+        $menu_id = 29;
+        $menu_name = I('name');
+        $this->assign('menuname', $menu_name);
+        //获取最新flag
+       // $result = $mlistLogModel->field('max(id) id,hotel_id')->group('hotel_id')->where($arr)->select();
+        $m_hotel_arr = $mlistLogModel->field('menu_id,hotel_id_s,insert_time,flag,operator_name')->order('insert_time asc')->select();
+        $hotelModel = new \Admin\Model\HotelModel();
+       // dump($m_hotel_arr);
+        foreach ($m_hotel_arr as $v) {
+            $datp = array();
+            $hotel_id_arr = explode(',',$v['hotel_id_s']);
+            if ($v['menu_id'] == $menu_id) {
+                    foreach ($hotel_id_arr as $val){
+                        $h_arr = $hotelModel->field('name')->find($val);
+                        $hname = $h_arr['name'];
+                        $datp[] = '增加'.$hname;
+                    }
+               // dump($datp);
+                //这里再加个判断吗
+                $data[$v['insert_time']] = $datp;
+            } else {
+                $c_hotel_st = $v['flag'];
+                $c_hotel_arr = json_decode($c_hotel_st,true);
+                //dump($c_hotel_arr);
+                //var_dump($menu_id);
+                if(array_key_exists($menu_id, $c_hotel_arr)) {
+                    $bak_ho = $c_hotel_arr[$menu_id];
+                    ;
+                    $bak_ho_arr = explode(',',$bak_ho);
+
+                    $in_arr = array_intersect($bak_ho_arr, $hotel_id_arr);
+                    //dump($in_arr);
+                    foreach ($in_arr as $ik=>$inv) {
+                        $h_arr = $hotelModel->field('name')->find($inv);
+                        $hname = $h_arr['name'];
+                        $datp[] = '减少'.$hname;
+                    }
+                    //var_dump($datp);
+                    $data[$v['insert_time']] = $datp;
+                } else {
+                    continue;
+                }
+            }
+
+        }
+        $this->assign('vinfo', $data);
+        $this->display('opelog');
+
+    }
+
     public function hotelconfirm(){
 
 
@@ -87,6 +142,22 @@ class MenuController extends BaseController {
             $crt = $menuHoModel->query($sql);
             $timec = $crt[0]['time'];
         }
+        //获取发布新单前以前所有节目单对应hotelid
+        //求出所有menu_id
+        $menu_arr = $menuliModel->field('id')->select();
+        $arr_ho = array();
+        foreach ($menu_arr as $k=>$v) {
+            $sql = "SELECT hotel_id FROM `savor_menu_hotel` WHERE menu_id={$v['id']}";
+            $arr = $menuHoModel->query($sql);
+            foreach ($arr as $bk=>$bv){
+                $arr_ho[$v['id']] .= $bv['hotel_id'].',';
+            }
+            if(empty($arr_ho[$v['id']])){
+                $arr_ho[$v['id']] = '';
+            }else{
+                $arr_ho[$v['id']] = substr($arr_ho[$v['id']],0,-1);
+            }
+        }
         foreach ($com_arr as $k=>$v) {
             $data = array(
                 'create_time'=>$timec,
@@ -100,34 +171,32 @@ class MenuController extends BaseController {
 
             $userInfo = session('sysUserInfo');
             //根据session得到用户名
-
-            if ($res) {
-                //插入操作日志并同时操作menu_log
-                $save['menu_id'] = $menuid;
-                $save['hotel_id'] = $k;
-                //获得menu_id内容
-
-                $order = I('_order','id');
-                $sort = I('_sort','asc');
-                $orders = $order.' '.$sort;
-                $where = "1=1";
-                $field = "ads_name,ads_id,duration";
-                $where .= " AND menu_id={$menuid}  ";
-
-                $res = $mItemModel->getWhere($where,$orders, $field);
-                $content = json_encode($res);
-                $save['menu_content'] = $content;
-                $save['operator_id'] = $userInfo['id'];
-                $save['operator_name'] = $userInfo['username'];
-                $save['insert_time'] = $time;
-                $menuLogModel->add($save);
-            }
         }
 
+        if ($res) {
+            //插入操作日志并同时操作menu_log
+            $save['menu_id'] = $menuid;
+            $save['hotel_id_s'] = implode(',', $hotel_id_arr);
+            //获得menu_id内容
+            $order = I('_order','id');
+            $sort = I('_sort','asc');
+            $orders = $order.' '.$sort;
+            $where = "1=1";
+            $field = "ads_name,ads_id,duration";
+            $where .= " AND menu_id={$menuid}  ";
 
-
+            $res = $mItemModel->getWhere($where,$orders, $field);
+            $content = json_encode($res);
+            $save['menu_content'] = $content;
+            $save['operator_id'] = $userInfo['id'];
+            $save['operator_name'] = $userInfo['username'];
+            $save['insert_time'] = $time;
+            //存储上一次节目单的酒店字符串
+            $save['flag'] = json_encode($arr_ho);
+            $menuLogModel->add($save);
+        }
         //获得menuid数组
-        $menu_arr = $menuliModel->field('id')->select();
+
         //var_dump($menu_arr);
         $com_arr = array_flip($com_arr);
        // var_dump($com_arr);

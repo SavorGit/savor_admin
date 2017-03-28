@@ -1,3 +1,32 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+    .zhezhao{
+
+
+
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
@@ -42,7 +71,10 @@
           <thead>
           
             <tr >
-              <td>视频投屏loading图(建议1920X1080)<img src="<empty name="oss_addr">/Public/admin/assets/img/noimage.png<else />{$oss_addr}</empty>" /></td>
+              <td>视频投屏loading图(建议1920X1080)
+              <a  href="javascript:void(0)" ><img id="covervideo_idimg" src="<empty name="oss_addr">/Public/admin/assets/img/noimage.png<else />{$oss_addr}</empty>" />
+              </a>
+              </td>
               <td class="table-tool" data-title="操作">
               <div class="tools-edit">
               	<empty name="oss_addr" >
@@ -60,10 +92,34 @@
             
             
           </thead>
-          
+          <div class="zhezhao"></div>
+        <img class="big" src=""/>
           </tbody>
         </table>
     </div>
   </div>
   {$page}
 </div>
+<script type="text/javascript">
+$(function(){
+    $('#covervideo_idimg').click(function(){
+        var $a = $(this).attr('src');
+        $('.big').prop('src',$a).addClass('addbig');
+        $('.zhezhao').show(500);
+        $('.big').show(500);
+    })
+    $('.zhezhao').click(function(){
+        $('.zhezhao').hide(500);
+        $('.big').hide(500);
+    })
+
+});
+$("#videoshan").click(function(){
+    $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
+})
+   
+
+
+
+
+</script>
