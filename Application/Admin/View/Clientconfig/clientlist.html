@@ -34,85 +34,85 @@
               <th>启动图片</th>
               <th>启动视频</th>
               <th>默认启动状态</th>
-              <th>上线下线</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody data-check="list" data-parent=".table">
-            <volist name="list" id="vlist">
-            <tr target="sid_user">
-              <td data-title="名称">
-                <if condition="$vlist['ctype'] eq 3">
-                  ANDROID
-                  <else />
-                  IOS
-                </if>
-              </td>
-              <td data-title="启动图片"><a data-tip="预览" target="__blank" mask="true" href="{$vlist.img_url}" class="btn btn-success btn-icon">
-                <i class="fa fa-pencil"></i>
-              </a></td>
-              <td data-title="启动视频"><a data-tip="预览" target="__blank" mask="true" href="{$vlist.media_url}" class="btn btn-success btn-icon">
-                <i class="fa fa-pencil"></i>
-              </a></td>
+              <!-- <th>上线下线</th> -->
+               <th>操作</th>
+             </tr>
+           </thead>
+           <tbody data-check="list" data-parent=".table">
+             <volist name="list" id="vlist">
+             <tr target="sid_user">
+               <td data-title="名称">
+                 <if condition="$vlist['ctype'] eq 3">
+                   ANDROID
+                   <else />
+                   IOS
+                 </if>
+               </td>
+               <td data-title="启动图片"><a data-tip="预览" target="__blank" mask="true" href="{$vlist.img_url}" class="btn btn-success btn-icon">
+                 <i class="fa fa-pencil"></i>
+               </a></td>
+               <td data-title="启动视频"><a data-tip="预览" target="__blank" mask="true" href="{$vlist.media_url}" class="btn btn-success btn-icon">
+                 <i class="fa fa-pencil"></i>
+               </a></td>
 
-              <td data-title="默认启动状态">
-                    <input name="starten{$vlist.id}" type="radio" class="acp"  value="1" id="{$vlist.id}" <if condition="$vlist['status'] eq 1">checked</if>/>
-                启动图片
-                <input id="{$vlist.id}" name="starten{$vlist.id}" type="radio" class="acp" value="2" <if condition="$vlist['status'] eq 2">checked</if> />启动视频
+               <td data-title="默认启动状态">
+                     <input name="starten{$vlist.id}" type="radio" class="acp"  value="1" id="{$vlist.id}" <if condition="$vlist['status'] eq 1">checked</if>/>
+                 启动图片
+                 <input id="{$vlist.id}" name="starten{$vlist.id}" type="radio" class="acp" value="2" <if condition="$vlist['status'] eq 2">checked</if> />启动视频
 
-              </td>
+               </td>
+               <!-- 
+                             <td data-title="上线状态">
+                               <if condition="$vlist['online'] eq 1">
+                                 <a data-tip="已上线" target="ajaxTodo" href="{$host_name}/clientconfig/operateStatus?adsid={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                               <i class="fa fa-toggle-on"></i></span></a>
+                                 <else/>
+                                 <a data-tip="未上线" target="ajaxTodo" href="{$host_name}/clientconfig/operateStatus?adsid={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                               <i class="fa fa-toggle-off"></i></span></a>
+                               </if>
 
-              <td data-title="上线状态">
-                <if condition="$vlist['online'] eq 1">
-                  <a data-tip="已上线" target="ajaxTodo" href="{$host_name}/clientconfig/operateStatus?adsid={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
-                  <else/>
-                  <a data-tip="未上线" target="ajaxTodo" href="{$host_name}/clientconfig/operateStatus?adsid={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a>
-                </if>
+                             </td>-->
+               <td class="table-tool" data-title="操作">
+                 <div class="tools-edit">
+                   <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/clientconfig/addclientconfig?clid={$vlist.id}" class="btn btn-success btn-icon">
+                     <i class="fa fa-pencil"></i>
+                   </a>
+                 </div>
+               </td>
+             </tr>
+             </volist>
+           </tbody>
+         </table>
+       </form>
 
-              </td>
-              <td class="table-tool" data-title="操作">
-                <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/clientconfig/addclientconfig?clid={$vlist.id}" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            </volist>
-          </tbody>
-        </table>
-      </form>
+     </div>
+   </div>
+ </div>
 
-    </div>
-  </div>
-</div>
+ <script>
 
-<script>
+   $(function() {
 
-  $(function() {
-
-    $(".acp").click(function(){
-      var st_id = $(this).val();
-      var cid = $(this).attr('id');
-      $.ajax({
-        type: "POST",
-        dataType: "json",
-        url: "{$host_name}/clientconfig/changestatus",
-        data: "cid=" + st_id + "&id=" + cid,
-        success:
-                function (data) {
-                  if(data.status == 1){
-                    alert('修改状态成功');
-                  } else{
-                    alert('修改状态成功');
-                  }
-                }
-      });
-    })
+     $(".acp").click(function(){
+       var st_id = $(this).val();
+       var cid = $(this).attr('id');
+       $.ajax({
+         type: "POST",
+         dataType: "json",
+         url: "{$host_name}/clientconfig/changestatus",
+         data: "cid=" + st_id + "&id=" + cid,
+         success:
+                 function (data) {
+                   if(data.status == 1){
+                     alert('修改状态成功');
+                   } else{
+                     alert('修改状态成功');
+                   }
+                 }
+       });
+     })
 
 
 
-});
-</script>
+ });
+ </script>
