@@ -41,7 +41,7 @@ class officialController extends Controller {
 	    $map['gps'] = array('NEQ','');
 	    $limit = "$offset,$pageSize";
 	    
-	    $list = $hotelMode->getInfo('id,name,gps,addr',$map,'',$limit);
+	    $list = $hotelMode->getInfo('id,name,gps,addr,hotel_box_type',$map,'',$limit);
 	    foreach($list as $keyd=>$v){
 	       $tmp = array();
 	       
@@ -52,6 +52,15 @@ class officialController extends Controller {
            $tmp['lng'] = $gps_arr[0];
            $tmp['lat'] = $gps_arr[1];
            $tmp['addr'] = $v['addr'];
+           if(empty($v['hotel_box_type'])){
+               $tmp['is_screen'] = 0;
+           }else {
+               if($v['hotel_box_type'] ==1 || $v['hotel_box_type'] ==2){
+                   $tmp['is_screen'] = 0;
+               }else if($v['hotel_box_type'] ==3){
+                   $tmp['is_screen'] = 1;
+               }
+           }
            $result[] = $tmp;
        
 	    }
