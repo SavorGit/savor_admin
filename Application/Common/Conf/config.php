@@ -24,7 +24,8 @@ $config = array(
     'LOG_TYPE'              =>  'File', // 日志记录类型 默认为文件方式
     'LOG_LEVEL'             =>  'EMERG,ALERT,CRIT,ERR',// 允许记录的日志级别
     'LOG_EXCEPTION_RECORD'  =>  false,    // 是否记录异常信息日志
-
+    //缓存目录配置
+    'MINIFY_CACHE_PATH'=>APP_PATH.'Runtime/Cache',
     'HTML_FILE_SUFFIX' => '.html',// 默认静态文件后缀
     'HOST_NAME'=>'http://'.$_SERVER['HTTP_HOST'],
     'SITE_NAME'=> '寻味后台管理',
@@ -123,6 +124,11 @@ $config['STATE_REASON'] = array(
     '6'=>'易主',
     '7'=>'终止合作',
     '8'=>'问题沟通中',
+);
+$config['hotel_box_type'] = array(
+  '1'=>'一代单机版',
+  '2'=>'二代网络版',
+  '3'=>'三代5G版',  
 );
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),

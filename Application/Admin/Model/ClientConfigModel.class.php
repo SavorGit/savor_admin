@@ -9,8 +9,8 @@ namespace Admin\Model;
 use Common\Lib\Page;
 use Admin\Model\BaseModel;
 
-class HotelModel extends BaseModel{
-	protected $tableName = 'hotel';
+class ClientConfigModel extends BaseModel{
+	protected $tableName = 'client_start';
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)
@@ -133,14 +133,18 @@ class HotelModel extends BaseModel{
 
 	}
 
+	public function getdat($where){
+		$list = $this->where($where)
+			->select();
+		$data = array('list'=>$list);
+		return $data;
+	}
+
 	public function saveStRedis($data, $id){
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
 		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
 		$redis->set($cache_key, json_encode($data));
-	}
-	public function getHotelCount($where){
-	    return $this->where($where)->count();
 	}
 
 }

@@ -27,3 +27,35 @@ ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAUL
 
 #########以上sql均已执行######
 
+
+
+增加说明：酒楼增加酒楼机顶盒类型
+修改时间:2017.3.20 15:40
+修改人:张英涛
+执行SQL:ALTER TABLE `savor_hotel` ADD COLUMN `hotel_box_type` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '酒楼机顶盒类型1:一代单机版2:二代网络版3:三代5G版' AFTER `remark`;
+
+增加说明:后台增加配置切换时间和默认音量
+修改时间:2017.3.20 15:40
+修改人:张英涛
+执行SQL: ALTER TABLE `savor_sys_config` ADD COLUMN `status` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '是否开启0:未开启1:开启';
+
+
+
+
+
+增加说明:客户端启动logo设置
+修改时间:2017.3.22 10：27
+修改人:白玉涛
+CREATE TABLE `savor_client_start` (
+  `id` smallint(5) NOT NULL AUTO_INCREMENT,
+  `img_id` int(11) DEFAULT '0' COMMENT '图片id',
+  `media_id` int(11) DEFAULT '0' COMMENT '视频id',
+  `name` varchar(255) DEFAULT NULL COMMENT '视频名称',
+  `ctype` smallint(5) DEFAULT '3' COMMENT '类型3ancroid 4ios',
+  `status` int(11) DEFAULT '1' COMMENT '默认状态1启动图片2启动视频',
+  `online` smallint(5) DEFAULT '1' COMMENT '0下线1上线',
+  `duration` int(12) DEFAULT NULL COMMENT '视频时长',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8

@@ -31,7 +31,39 @@ class officialController extends Controller {
 	    //echo  json_encode($result);exit;
 	   echo  "login(".json_encode($result).")";
 	}
-	
+	public function getHotelByPage(){
+	    $pageSize = I('get.pageSize','12','intval');   //每页条数
+	    $pageNo  = I('get.pageNo','1','intval');       //当前页数
+	    $offset = ($pageNo-1) * $pageSize;
+	    $hotelMode = new \Admin\Model\HotelModel();
+	    $result =  array();
+	    $map['state'] = 1;
+	    $map['gps'] = array('NEQ','');
+	    $limit = "$offset,$pageSize";
+	    
+	    $list = $hotelMode->getInfo('id,name,gps,addr',$map,'',$limit);
+	    foreach($list as $keyd=>$v){
+	       $tmp = array();
+	       
+           $gps_arr = explode(',', $v['gps']);
+           $tmp['id'] = $v['id'];
+           $tmp['name'] = $v['name'];
+           $tmp['gps'] = $v['gps'];
+           $tmp['lng'] = $gps_arr[0];
+           $tmp['lat'] = $gps_arr[1];
+           $tmp['addr'] = $v['addr'];
+           $result[] = $tmp;
+       
+	    }
+	    $where['state'] = 1;
+	    $where['gps'] = array("NEQ",'');
+	    $count = $hotelMode->getHotelCount($where);
+	    $total_page = ceil($count/$pageSize);
+	    $data['list'] = $result;
+	    $data['totalPage'] = $total_page;
+	    $data['count'] = $count;
+	    echo "hotel(".json_encode($data).")";
+	}
 }
 
 ?>

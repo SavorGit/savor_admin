@@ -333,6 +333,8 @@ class ArticleController extends BaseController {
                 $vainfo['vid_type'] = 1;
                 $vainfo['videoname'] = $mediainfo['name'];
             }
+            //转换成html实体
+            $vainfo['title'] = htmlspecialchars($vainfo['title']);
             $this->assign('vainfo',$vainfo);
         }else{
             $vainfo['duration'] = 0;
@@ -557,7 +559,8 @@ WHERE id IN (1,2,3)*/
         $this->assign('vinfo',$vinfo);
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
-
+            //转换成html实体
+            $vinfo['title'] = htmlspecialchars($vinfo['title']);
             if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vinfo['bespeak_time'] = '';
             }
