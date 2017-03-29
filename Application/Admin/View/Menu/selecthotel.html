@@ -70,7 +70,7 @@
               <select name="state_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_STATE')" id="vo">
-                  <option value="{$key}" <if condition="$key eq state_k">selected</if>>{$vo}</option><br>
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
@@ -118,7 +118,7 @@
               <select name="key_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_KEY')" id="vo">
-                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
+                  <option value="{$key}" <if condition="$key eq $key_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
