@@ -87,14 +87,32 @@
             </div>
           <div class="form-group">
             <div class="input-group-sm input-group">
-              <label class="control-label" style="width:94px;">
+              <label class="control-label" style="">
                 合作维护人：
               </label>
                 <span class="input-group-btn input-group-sm">
-                <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人">
+                <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人" style="width:95px;">
             </span>
             </div>
           </div>
+
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label>
+                机顶盒类型：
+              </label>
+               <span class="input-group-btn input-group-sm">
+              <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+
           </div>
         </div>
 

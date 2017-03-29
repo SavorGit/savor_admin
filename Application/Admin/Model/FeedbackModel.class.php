@@ -24,5 +24,5 @@ class FeedbackModel extends BaseModel{
         return $data;
 	}
 
-	
+
 }

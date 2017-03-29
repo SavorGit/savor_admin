@@ -59,6 +59,12 @@ class HotelController extends BaseController {
 			$this->assign('name',$name);
 			$where .= "	AND name LIKE '%{$name}%'";
 		}
+		//机顶盒类型
+		$hbt_v = I('hbt_v');
+		if ($hbt_v) {
+			$this->assign('hbt_k',$hbt_v);
+			$where .= "	AND hotel_box_type = $hbt_v";
+		}
 		//城市
 		$area_v = I('area_v');
 		if ($area_v) {
