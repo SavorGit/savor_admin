@@ -125,6 +125,17 @@ class ClientconfigController extends BaseController {
         }
     }
 
+    public function delconfig(){
+        $gid = I('get.id', 0, 'int');
+        $csModel = new \Admin\Model\ClientConfigModel();
+        $result = $csModel -> delData($gid);
+        if($result) {
+            $this->output('删除成功', 'clientconfig/configdata',2);
+        } else {
+            $this->output('删除失败', 'content/configdata',1);
+        }
+    }
+
     /*
 	 * 修改状态
 	 */

@@ -11,6 +11,14 @@ use Admin\Model\BaseModel;
 
 class ClientConfigModel extends BaseModel{
 	protected $tableName = 'client_start';
+
+
+	public function delData($id) {
+		$delSql = "DELETE FROM `savor_client_start` WHERE id = '{$id}' limit 1";
+		$result = $this -> execute($delSql);
+		return  $result;
+	}
+
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)
