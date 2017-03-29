@@ -37,6 +37,10 @@
             </div>
 
             <div class="form-group row">
+
+
+
+
               <div class="col-xs-3 col-sm-3">
                 <div class="input-group-sm">
                   <label class="col-xs-1 col-sm-1 control-label">
@@ -47,7 +51,7 @@
               <select name="level_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_LEVEL')" id="vo">
-                  <option value="{$key}" <if condition="$key eq level_k">selected</if>>{$vo}</option><br>
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
@@ -177,7 +181,31 @@
               </div>
 
 
+
+              <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="input-group-sm input-group">
+                  <label style="width:140px;" class="col-xs-1 col-sm-1 control-label">
+                    酒楼机顶盒类型：
+                  </label>
+               <span class="input-group-btn input-group-sm">
+              <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+                </div>
+
+              </div>
+
+
             </div>
+
+
+
+
+
 
           </div>
 
