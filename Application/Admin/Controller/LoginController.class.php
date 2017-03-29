@@ -17,12 +17,16 @@ class LoginController extends BaseController {
             
             $verify_code = I('post.verify_code','','trim');
             if(empty($verify_code)){
+                $cookie_upwd = cookie('login_upwd');
+                if($cookie_upwd)$this->assign('cookie_upwd',$cookie_upwd);
                 $error_msg = '验证码不能为空!';
                 $this->assign('errormsg', $error_msg);
                 $this->display('Login/index');
                 exit;
             }
             if(!check_verify($verify_code)){
+                $cookie_upwd = cookie('login_upwd');
+                if($cookie_upwd)$this->assign('cookie_upwd',$cookie_upwd);
                 $error_msg = '验证码输入错误，请重新输入!';
                 $this->assign('errormsg', $error_msg);
                 $this->display('Login/index');
