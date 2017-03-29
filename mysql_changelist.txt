@@ -25,7 +25,7 @@ Mysql语句:mysql可执行语句
 执行SQL:ALTER TABLE savor_sysmenu ADD `media_id` INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT '选中图标资源id' AFTER `modulename`;
 ALTER TABLE savor_sysmenu ADD `select_media_id` INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT '选中图标资源id' AFTER `media_id`;
 
-#########以上sql均已执行######
+
 
 
 
@@ -59,3 +59,4 @@ CREATE TABLE `savor_client_start` (
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+#########以上sql均已执行######
