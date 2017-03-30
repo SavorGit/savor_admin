@@ -229,6 +229,7 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
+
 		if($save['mac']){
 		    if(!preg_match('/[0-9A-F]{12}/', $save['mac'])){
 		        $this->error('请输入正确的Mac地址');
@@ -239,7 +240,8 @@ class DeviceController extends BaseController{
 		        $this->error('Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间');
 		    }
 		}
-		
+
+	
 		if($id){
 			if($boxModel->editData($id, $save)){
 				$this->output('更新成功!', 'device/box');
