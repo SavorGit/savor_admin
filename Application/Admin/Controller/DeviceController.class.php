@@ -230,6 +230,9 @@ class DeviceController extends BaseController{
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
 		if($save['mac']){
+		    if(!preg_match('/[0-9A-F]{12}/', $save['mac'])){
+		        $this->error('请输入正确的Mac地址');
+		    }
 		    $where = " b.mac='".$save['mac']."' and b.flag=0";
 		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name',$where);
 		    if(!empty($isHaveMac)){

@@ -307,7 +307,7 @@
         $('#mac_addr').blur(function(){
                 var vp = $(this).val();
                 var ln = $(this).val().length;
-                var reg = /^[0-9A-Z]+$/;
+                var reg = /^[0-9A-F]+$/;
                 var r = vp.match(reg);
                 if(ln==0){
                     $('.macccc').css('display','none');
@@ -331,7 +331,7 @@
         $('#saveinfos').click(function(){
             var vp = $('#mac_addr').val();
             var ln = $('#mac_addr').val().length;
-            var reg = /^[0-9A-Z]+$/;
+            var reg = /^[0-9A-F]+$/;
             var r = vp.match(reg);
             if(ln==0){
                 $('.macccc').css('display','none');
