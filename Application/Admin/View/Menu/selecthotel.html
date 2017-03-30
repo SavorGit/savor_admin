@@ -128,18 +128,22 @@
               </div>
 
               <div class="col-xs-3 col-sm-3">
-                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
-                  <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
+                  <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$sttime}" readonly>
                   <span class="input-group-btn">
                     <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
                 </div>
+
+
+
+
               </div>
 
               <div class="col-xs-3 col-sm-3 ">
-                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
-                  <input name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+                <div class="input-group date form_date" data-date="{$vinfo.log_time}" data-ymd="true">
+                  <input name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$sendime}" readonly>
                   <span class="input-group-btn">
                     <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
@@ -320,6 +324,15 @@
         $('#exch').attr("disabled","disabled");
       }
 
+    });
+
+
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
     });
   })
 </script>

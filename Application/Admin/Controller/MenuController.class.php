@@ -466,6 +466,8 @@ class MenuController extends BaseController {
         $name = I('name');
         $beg_time = I('starttime','');
         $end_time = I('endtime','');
+        $this->assign('sttime',$beg_time);
+        $this->assign('sendime',$end_time);
         if($beg_time)   $where.=" AND install_date>='$beg_time'";
         if($end_time)   $where.=" AND install_date<='$end_time'";
         if($name)
