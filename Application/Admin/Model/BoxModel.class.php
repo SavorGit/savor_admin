@@ -177,4 +177,12 @@ class BoxModel extends BaseModel{
 	        return false;
 	    }
 	}
+	public function isHaveMac($field,$where){
+	    $sql ="select $field from savor_box as b 
+	           left join savor_room as r on b.room_id=r.id
+	           left join savor_hotel as h on r.hotel_id=h.id
+	           where ".$where;
+	    $result = $this->query($sql);
+	    return $result;
+	}
 }

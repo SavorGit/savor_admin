@@ -229,6 +229,14 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
+		if($save['mac']){
+		    $where = " b.mac='".$save['mac']."' and b.flag=0";
+		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name',$where);
+		    if(!empty($isHaveMac)){
+		        $this->error('Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间');
+		    }
+		}
+		
 		if($id){
 			if($boxModel->editData($id, $save)){
 				$this->output('更新成功!', 'device/box');
