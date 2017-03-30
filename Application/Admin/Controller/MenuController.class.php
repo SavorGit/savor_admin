@@ -781,7 +781,7 @@ class MenuController extends BaseController {
         $save['creator_name'] = $userInfo['username'];
         $save['creator_id'] = $userInfo['id'];
         $save['state']    = 0;
-        $save['menu_name'] = I('post.program');
+        $save['menu_name'] = I('post.program','','trim');
 
 
         $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
@@ -842,7 +842,7 @@ class MenuController extends BaseController {
             $save['create_time'] = date('Y-m-d H:i:s');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
-                $this->output('操作失败名字已经有!', 'menu/addmenu');
+                $this->error('操作失败名字已经有!');
             }
             $result = $mlModel->add($save);
             if ( $result ) {
@@ -1013,67 +1013,7 @@ class MenuController extends BaseController {
 
 
 
-    /*
-     * 添加节目管理
-     */
-    public function addmenu() {
-        //左边表单提交，右边表单提交，导入ajax,id修改
-        $userInfo = session('sysUserInfo');
-        $menu_name = I('get.name'.'');
-        $type = I('type');
-        if ( $type == 2 ) {
-            $menuid = I('id','0');
-            if ($menuid) {
-                $mItemModel = new MenuItemModel();
-                $order = I('_order','id');
-                $sort = I('_sort','asc');
-                $orders = $order.' '.$sort;
-                $where = "1=1";
-                $field = "ads_name,ads_id,duration,sort_num,create_time";
-                $where .= " AND menu_id={$menuid}  ";
-                $res = $mItemModel->getWhere($where,$orders, $field);
 
-                $this->assign('menuid',$menuid);
-                $this->assign('menuname',$menu_name);
-                $this->assign('list',$res);
-
-            }
-            $this->display('altermenu');
-        } else {
-            $this->display('addmenu');
-        }
-
-        /*
-        $prModel = new ProgramModel();
-
-
-        $prModel->getWhere();
-        $artModel = new ArticleModel();
-        $userInfo = session('sysUserInfo');
-        $uname = $userInfo['username'];
-        $this->assign('uname',$uname);
-
-
-        $acctype = I('get.acttype');
-
-        if ($acctype && $id)
-        {
-            $vinfo = $artModel->where('id='.$id)->find();
-            $this->assign('vinfo',$vinfo);
-
-        } else {
-
-        }
-        $where = "state=0";
-        $field = 'id,name';
-        $vinfo = $catModel->getWhere($where, $field);
-
-        $this->assign('vcainfo',$vinfo);
-
-        */
-
-
-    }
 
     /*
      * 处理excel数据
@@ -1255,6 +1195,7 @@ class MenuController extends BaseController {
             $userInfo = session('sysUserInfo');
             $menu_name = I('get.name' . '');
             $type = I('type');
+            //修改节目单
             if ($type == 2) {
                 $menuid = I('id', '0');
                 if ($menuid) {
@@ -1267,11 +1208,18 @@ class MenuController extends BaseController {
                     $where .= " AND menu_id={$menuid}  ";
                     $res = $mItemModel->getWhere($where, $orders, $field);
                     $this->assign('menuid', $menuid);
-                    $this->assign('menuname', $menu_name);
+                    //判断是新增
+                    $pct = I('pctype', '0');
                     $this->assign('list', $res);
-
+                    if($pct == 1){
+                        $this->assign('menuname', '');
+                        $this->assign('menuid', '');
+                        $this->display('copymenuct');
+                    }else{
+                        $this->assign('menuname', $menu_name);
+                        $this->display('addmenuct');
+                    }
                 }
-                $this->display('addmenuct');
             } else {
                 $this->display('addmenuct');
             }
