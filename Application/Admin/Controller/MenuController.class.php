@@ -29,7 +29,6 @@ class MenuController extends BaseController {
         //第一次先判断是空的
         $mlistLogModel = new \Admin\Model\MenuListLogModel();
         $menu_id = I('mid');
-        $menu_id = 29;
         $menu_name = I('name');
         $this->assign('menuname', $menu_name);
         //获取最新flag
