@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 use Think\Controller;
 use Common\Lib\Aliyun;
+
 /**
  * @desc 基础类，所有后台类必须继承此类
  *
@@ -13,6 +14,7 @@ class BaseController extends Controller {
         $this->handlePublicParams();
         $this->checkLogin();
         $this->getNameByIp();
+       
     }
     
     public function handlePublicParams(){
@@ -21,6 +23,7 @@ class BaseController extends Controller {
         $this->assign('imgup_path',$this->imgup_path());
         $this->assign('imgup_show',$this->imgup_show());
         $this->sysLog($actionName='', $oppreate='', $program='');
+        $this->recordLog();
     }
     
     public function host_name(){
@@ -417,5 +420,40 @@ class BaseController extends Controller {
         $oss_addr = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/'.$add_mediadata['oss_addr'];
         $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
         return $result;
+    }
+    public function recordLog(){
+        $user = session('sysUserInfo');
+        $userid = $user['id'];       //用户id
+        $username = $user['remark']; //用户昵称
+        $action =strtolower( CONTROLLER_NAME.'.'.ACTION_NAME);
+        //$m_sys_meu = 'a';
+        if(empty($user)){
+            $userName = I('post.username', '', "trim");
+            $m_sysuser = new \Admin\Model\UserModel();
+            $where = " and username='".$userName."'";
+            $result = $m_sysuser->getUser($where);
+            $userinfo = $result[0];
+            $userid = $userinfo['id'];
+            $username = $userinfo['remark'];
+        }
+        $data['userid']   = !empty($userid) ? $userid : 0 ;
+        $data['username'] = !empty($username) ? $username :'';
+        $data['action'] = CONTROLLER_NAME.'/'.ACTION_NAME;
+        $query = array_merge(array(),$_GET,$_POST);
+    
+        $notArr = array('_','pgv_pvi','login_upwd','PHPSESSID');
+        foreach($query as $key=>$v){
+            if(in_array($key, $notArr)){
+                unset($query[$key]);
+            }
+        }
+        if(!empty($query)){
+            $data['query_string'] = json_encode($query,JSON_UNESCAPED_UNICODE);
+        }else {
+            $data['query_string'] = '';
+        }
+        $data['ipaddr'] = getClientIP();
+        $m_admin_log = new \Admin\Model\AdminLogModel();
+        $m_admin_log->addInfo($data);
     }
 }

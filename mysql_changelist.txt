@@ -60,3 +60,17 @@ CREATE TABLE `savor_client_start` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
 #########以上sql均已执行######
+增加说明:增加后台日志表
+修改时间:2017.3.29 16：30
+修改人:张英涛
+
+CREATE TABLE `savor_admin_log`(
+  `id` INT(11) NOT NULL  AUTO_INCREMENT,
+  `userid` INT(11) NOT NULL DEFAULT 0 COMMENT '用户id',
+  `username` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户昵称',
+  `action` VARCHAR(25) NOT NULL DEFAULT '' COMMENT '菜单',
+  `query_string` TEXT COMMENT '操作数据',
+  `ipaddr` VARCHAR(15) NOT NULL DEFAULT '' COMMENT 'IP',
+  `addtime` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MYISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
