@@ -1,0 +1,703 @@
+<include file="Public/script"/>
+<link href="/Public/admin/assets/css/fileinput.css" rel="stylesheet" type="text/css" />
+<script src="/Public/admin/assets/js/fileinput.min.js" type="text/javascript" />
+<style type="text/css">
+	#lefta,.rightlist{
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+
+	.divlist,.divlist2{
+		padding-top: 7px;
+		clear: both;
+		width: 100%;
+		height: 23px;
+	}
+	.sleft{
+		float: left;
+	}
+	.sright{
+		float: right;
+	}
+	.active{
+		background-color: #d7d7d7;
+	}
+	.imgz{
+		position: absolute;
+		left: 49%;
+		top: 49%;
+	}
+	.delz{
+		position: absolute;
+		right:2%;
+		top: 39%;
+	}
+	.topz{
+		position: absolute;
+		right:2%;
+		top: 45%;
+
+	}
+	.tops{
+		position: absolute;
+		right:2%;
+		top: 50%;
+	}
+	.clones{
+		position: absolute;
+		right:2%;
+		top: 56%;
+	}
+	.bottoms{
+		position: absolute;
+		right:2%;
+		top: 63%;
+	}
+	.bottomz{
+		position: absolute;
+		right:2%;
+		top: 66%;
+	}
+	#checkout{
+		position: absolute;
+		right:2%;
+		top: 71%;
+	}
+</style>
+<!--显示列表样式1 start-->
+
+
+<form id="pagerForm" action="{$host_name}/menu/doaddmen" method="post" onsubmit="return validateCallback(this, naxTabAjaxDone);">
+	<div class="searchBar">
+		<div class="clearfix">
+			<!--新增节目单-->
+
+			<input type="hidden" name="id" value="">
+
+
+			<img class="imgz" src="../../../../Public/admin/assets/img/zuan.png"/>
+			<img class="delz" src="../../../../Public/admin/assets/img/u3031.png"/>
+			<img class="topz" src="../../../../Public/admin/assets/img/u3023.png"/>
+			<img class="tops" src="../../../../Public/admin/assets/img/u3029.png"/>
+			<img class="clones" src="../../../../Public/admin/assets/img/u3033.png"/>
+			<img class="bottoms" src="../../../../Public/admin/assets/img/u3027.png"/>
+			<img class="bottomz" src="../../../../Public/admin/assets/img/u3025.png"/>
+
+			<button type="button" data-toggle="modal" id="checkout" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" data-target=".bs-example-modal-sm">导入</button>
+			<!--left-->
+			<div id="left" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
+				<input type="date" id="starttime" name="starttime" style="margin: 10px;width: 230px;" placeholder="最早时间" style="margin: 10px;"/>
+				<input id="endtime" name="endtime" type="date" style="margin: 10px;width: 230px;" placeholder="最晚时间" style="margin: 10px;"/>
+				<select name="m_type"  id="m_type" style="height: 27px;">
+					<option value="0">全部</option>
+					<option value="1">节目</option>
+					<option value="2">广告</option>
+					<option value="3">宣传片</option>
+				</select>
+				<input type="text" id="searchtitle" name="searchtitle" style="width: 320px;"placeholder="名称"/>
+
+
+
+				<button id="f_search" type="button" style="margin: 10px;height: 25px;line-height: 10px;" class="btn btn-primary" data-target=".bs-example-modal-lg">查询</button>
+				<div style="width: 100%;background-color:#d7d7d7;margin-top: 15px;height: 40px;font-size: 30px;line-height: 32px;">
+					<span style="margin-left: 15px;">节目名称</span>
+					<span style="margin-left: 55%;">上传时间</span>
+				</div>
+				<div id="lefta" style="width: 94%;max-height:300px;min-height:300px;margin-left: 15px;overflow: auto;">
+
+				</div>
+			</div>
+			<!--right-->
+			<div id="right" style="margin-right:54px;width: 43%;background-color: #f2f2f2;float:right;margin-top: 35px;">
+				<span style="margin-left: 15px;margin-right: 10px;">电视节目名称</span>
+				<input type="text" style="width: 350px;margin-top: 36px;"placeholder="名称" id="program" name="program" value="{$menuname}" />
+				<div style="width: 100%;height: 30px;">
+
+				</div>
+				<div style="width: 100%;background-color:#d7d7d7;margin-top: 15px;height: 40px;font-size: 30px;line-height: 32px;">
+					<span style="margin-left: 15px;">节目名称</span>
+					<span style="margin-left: 55%;">上传时间</span>
+				</div>
+				<div class="rightlist" style="width: 94%;max-height:300px;min-height:300px;margin-left: 15px;overflow: auto;" id="righta">
+					<volist name="list" id="vlist">
+						<div id="{$vlist.ads_id}" dur="{$vlist.duration}" class="divlist2"><span class="sleft">{$vlist.ads_name}</span><span class="sright">{$vlist.create_time}</span></div>
+
+					</volist>
+					</select>
+
+				</div>
+			</div>
+			<button type="submit" id="sub" class="btn btn-primary"style="width: 100px;margin-left: 71%;">确定</button>
+			<input type="hidden" value="" name="rightid" id="rightid" />
+			<input type="hidden" value="" id="rightname" name="rightname" />
+			<input type="hidden" value="" id="rightdur" name="rightdur" />
+			<input type="hidden" value="" id="rightime" name="rightime" />
+		</div></div>
+</form>
+
+<div id="mymodal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+
+	<div class="modal-dialog modal-sm" role="document" style="width:600px;">
+		<div class="modal-content">
+			<form id="checkexcel" name="checkexcel"
+action="{$host_name}/menu/addmen" method="post" >
+				<div class="form-group">
+					<div class="form-group">
+						<input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]'>
+					</div>
+					<hr>
+					<button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">Submit</button>
+
+					<button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">cancel<tton>
+					<input  type="hidden"  name="excelpath" id="excelpath" value="">
+				</div>
+				</form>
+		</div>
+	</div>
+</div>
+
+
+<div id="mymodal2" data-target="#mymodal2" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">导入结果</h4>
+			</div>
+			<div class="modal-body">
+				<ul id="notinclude">
+
+				</ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+<script type="text/javascript">
+	refresh();
+	function refresh(){
+		url = location.href; //把当前页面的地址赋给变量 url
+		/*var times = url.split("?"); //分切变量 url 分隔符号为 "?"
+		if(times[1] != 1){ //如果?后的值不等于1表示没有刷新
+
+			url += "?1"; //把变量 url 的值加入 ?1
+
+			self.location.replace(url); //刷新页面
+		}*/
+		//alert(url);
+		//location.reload();
+	}
+
+	function naxTabAjaxDone(json){
+		//alert(json);
+		DWZ.ajaxDone(json);
+		//navTab.reloadFlag('menu/getlist');
+		navTab.reload('menu/getlist');
+		//return false;
+	}
+
+
+	//$('#mymodal').modal({backdrop: 'static', keyboard: false});
+	$("#excelsub").click(
+
+
+			//alert($("#m_type option:selected").val());
+			function(){
+				var excelpath = $("#excelpath").val();
+				var str2 = '';
+				$('.rightlist>.divlist2').each(function () {
+					var adsname = $(this).find('.sleft').html();
+					str2 += adsname + ',';
+
+				});
+
+				$.ajax({
+					type:"POST",
+					ContentType: "application/json; charset=utf-8",
+					dataType: "json",
+					url:"{$host_name}/menu/analyseexcel",
+					data:"excelpath="+excelpath+"&adsname="+str2,
+					success:function(data){
+						if(data.error==0){
+							var data = data.message;
+							for(var i=0,l=data.length;i<l;i++) {
+								for (var key in data[i]) {
+									//alert(key);
+									if (key == 'id') {
+										var ids = data[i][key];
+									}else if(key == 'name') {
+										var name = data[i][key];
+									}else if(key == 'create_time') {
+										var cr_time = data[i][key];
+									}else if(key == 'duration') {
+										var dura = data[i][key];
+
+									}
+
+								}
+
+								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+
+								//$('#mymodal').modal('hide');
+
+							}
+
+						}else{
+							//模态框显示失败
+							//alert(data.error);
+							var dataf = data.nomessage;
+							var html_l = '';
+							for(var i=0,l=dataf.length;i<l;i++) {
+								//alert(data[i]);
+								html_l += "<li>"+dataf[i]+"       资源名称不存在</li>";
+							}
+							$("#notinclude").html(html_l);
+							//有未存在数据失败模态框
+							$("#mymodal2").modal('show');
+							var datap = data.message;
+							for(var i=0,l=datap.length;i<l;i++) {
+								for (var key in datap[i]) {
+									//alert(key);
+									if (key == 'id') {
+										var ids = datap[i][key];
+									}else if(key == 'name') {
+										var name = datap[i][key];
+									}else if(key == 'create_time') {
+										var cr_time = datap[i][key];
+									}else if(key == 'duration') {
+										var dura = datap[i][key];
+
+									}
+
+								}
+
+								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+
+								//$('#mymodal').modal('hide');
+
+							}
+
+						}
+
+					}
+				});
+			}
+
+	);
+
+
+
+
+
+	$("#file-4").fileinput({
+		uploadExtraData: {kvId: '10'},
+		maxFileCount: 1,
+		allowedFileExtensions:['csv', 'xlsx'],
+
+
+
+	});
+
+	$('#file-4').on('fileselectnone', function() {
+		//alert('Huh! You selected no files.');
+	});
+
+	$('#file-4').on('filebrowse', function() {
+		//alert('File browse clicked for #file-4');
+	});
+
+	$('#file-4').on('fileloaded', function() {
+		//alert('Fileerrre for #file-4');
+	});
+
+	$('#file-4').on('filepreupload', function() {
+		//alert('proew');
+	});
+	$('#file-4').on('fileuploaded', function(event, data, previewId, index) {
+		//alert(data);
+		//alert(data.files);
+		alert('上传EXCEL成功');
+		$("#excelsub").attr("disabled",false);
+		$("#excelpath").val(data.response);
+		//var form = data.form, files = data.files, extra = data.extra,
+			//	response = data.response, reader = data.reader;
+		//console.log('File uploaded triggered');
+	});
+
+
+
+	/*-----传到右边-----------*/
+
+	$("#checkout").click(function () {
+
+	});
+
+	//reurl();
+	function reurl(){
+
+		url = location.href; //把当前页面的地址赋给变量 url
+
+		//  alert(url);
+
+		var times = url.split("!"); //分切变量 url 分隔符号为 "!"
+
+		if(times[1] != 1){ //如果?后的值不等于1表示没有刷新
+
+			url += "!1"; //把变量 url 的值加入 !1
+
+			self.location.replace(url); //刷新页面
+
+		}
+	}
+	$('body').on('click','.divlist',function(){
+		if($(this).is('.active')){
+			$(this).removeClass('active')
+		}else{
+
+			$(this).addClass('active')
+		}
+	})
+	$('.imgz').click(function(){
+		$('.divlist2').each(function(){
+			if($(this).is('.active')){
+				var _this = $(this);
+				$('.divlist').each(function(){
+
+					if($(this).is('.active')){
+						var ides = $(this).attr('id');
+						var dures = $(this).attr('dur');
+						_this.before('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+					}
+				})
+			}
+		})
+
+		/*-------------------*/
+		if($('.divlist2').is('.active')){
+			return false
+		}else{
+			$('.divlist').each(function(){
+				if($(this).is('.active')){
+					$(this).removeClass('active');
+					var ides = $(this).attr('id');
+					var dures = $(this).attr('dur');
+					$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+				}
+			})
+
+		}
+	})
+	$('body').on('click','.divlist2',function(){
+		if($(this).is('.active')){
+			$(this).removeClass('active')
+		}else{
+			$(this).addClass('active')
+		}
+	})
+
+	/*双击*/
+	$('body').on('dblclick','.divlist',function(){
+		//alert($(this).html())
+		var ides = $(this).attr('id');
+		var dures = $(this).attr('dur');
+		$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+	})
+
+
+	//$(this).find()
+	//var ides = $(this).attr('id');
+	//var dures = $(this).attr('dur');
+	//alert(ides);
+	//$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+	/*删除*/
+	$('.delz').click(function(){
+		$('.divlist2').each(function(){
+			console.log(1)
+			if($(this).is('.active')){
+				$(this).remove().parent()
+
+			}
+		})
+	})
+	/*置顶*/
+	$('.topz').click(function(){
+		$('.divlist2').each(function(){
+			if($(this).is('.active')){
+				$(this).prependTo('.rightlist')
+			}
+		})
+	})
+	/*上移*/
+	$('.tops').click(function(){
+		var inde = $('.rightlist>.active').length;
+    	var tts = 1;
+		if(inde==1){
+		
+		}else if(inde==2){
+			if(!$('.rightlist>.active').eq(0).next().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
+			}
+			if(!$('.rightlist>.active').eq(1).prev().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
+			}
+		}else {
+			$(".rightlist>.active").each(function(index){
+					
+				  var flg =  inde -1;
+				  
+			     if(index==0){
+					if(!$(this).next().hasClass('active')){
+						tts = 0
+					}
+				 }else if(index == flg){
+					if(!$(this).prev().hasClass('active')){
+						tts =0
+					}
+				 }else {
+					if(!$(this).next().hasClass('active')){
+						tts =0
+					}
+					
+					if(!$(this).prev().hasClass('active')){
+						tts =0 ;
+					}
+				 
+				 }
+			});
+		}
+		
+		if(tts ==0){
+			alert('一定要选取相邻的才可以移动。')
+			$('.rightlist>div').removeClass('active');
+			return false;
+		}
+		
+		$('.rightlist>.active:first').prev().insertAfter($('.rightlist>.active:last'));
+	})
+	/*复制*/
+	$('.clones').click(function(){
+		$('.divlist2').each(function(){
+			if($(this).is('.active')){
+				$(this).clone(true).removeClass('active').insertAfter($(this))
+			}
+		})
+	})
+
+
+	/*下移*/
+	$('.bottoms').click(function(){
+		var inde = $('.rightlist>.active').length;
+    	var tts = 1;
+		if(inde==1){
+		
+		}else if(inde==2){
+			if(!$('.rightlist>.active').eq(0).next().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
+			}
+			if(!$('.rightlist>.active').eq(1).prev().hasClass('active')){
+				alert('一定要选取相邻的才可以移动。')
+				$('.rightlist>div').removeClass('active');
+				return false;
+			}
+		}else {
+			$(".rightlist>.active").each(function(index){
+					
+				  var flg =  inde -1;
+				  
+			     if(index==0){
+					if(!$(this).next().hasClass('active')){
+						tts = 0
+					}
+				 }else if(index == flg){
+					if(!$(this).prev().hasClass('active')){
+						tts =0
+					}
+				 }else {
+					if(!$(this).next().hasClass('active')){
+						tts =0
+					}
+					
+					if(!$(this).prev().hasClass('active')){
+						tts =0 ;
+					}
+				 
+				 }
+			});
+		}
+		
+		if(tts ==0){
+			alert('一定要选取相邻的才可以移动。')
+			$('.rightlist>div').removeClass('active');
+			return false;
+		}
+		$('.rightlist>.active:last').next().insertBefore($('.rightlist>.active:first'));
+	})
+	/*置低*/
+	$('.bottomz').click(function(){
+		$('.divlist2').each(function(){
+			if($(this).is('.active')){
+				$(this).appendTo('.rightlist')
+			}
+		})
+	});
+
+	/*鼠标滑过多选*/
+	$('body').on('mousedown','.divlist',function(){
+		$('.divlist').mouseup(function(){
+			$('.divlist').unbind('mousemove');
+		})
+		$('.divlist').mousemove(function(){
+			$(this).addClass('active')
+			$('.divlist').mouseup(function(){
+				$('.divlist').unbind('mousemove');
+			})
+		})
+	})
+
+	//右
+	$('body').on('mousedown','.divlist2',function(){
+		$('.divlist2').mouseup(function(){
+			$('.divlist2').unbind('mousemove');
+		})
+		$('.divlist2').mousemove(function(){
+			$(this).addClass('active')
+			$('.divlist2').mouseup(function(){
+				$('.divlist2').unbind('mousemove');
+			})
+		})
+	})
+/*获取屏幕的高度*/
+ if($(window).height()>900){
+  	$('#lefta').css({'min-height':'700px','max-height':'700px'});
+  	$('.rightlist').css({'min-height':'700px','max-height':'700px'});
+  }
+	/*获取数据*/
+	$('#sub').click(function() {
+
+		var titl = $("#program").val();
+		if (titl == '') {
+			alert('标题不允许为空');
+			return false;
+		}
+
+		var str = '';
+		var str1 = '';
+		var str2 = '';
+		var str3 = '';
+
+		$('.rightlist>.divlist2').each(function () {
+
+			var ida = $(this).attr('id');
+			var dura = $(this).attr('dur');
+			var adsname = $(this).find('.sleft').html();
+			var cr_time = $(this).find('.sright').html();
+
+
+			str += ida + ',';
+			//alert(str);
+			str1 += dura + ',';
+
+			str2 += adsname + ',';
+
+			str3 += cr_time + ',';
+
+
+		});
+
+		document.getElementById('rightid').value = str;
+		document.getElementById('rightdur').value = str1;
+		document.getElementById('rightname').value = str2;
+		document.getElementById('rightime').value = str3;
+	});
+
+	$(function() {
+
+		$("#f_search").click(
+
+				//alert($("#m_type option:selected").val());
+				function(){
+					$.ajax({
+						type:"POST",
+						dataType: "json",
+						url:"{$host_name}/menu/get_se_left",
+						data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val(),
+						success:function(data){
+
+							//alert(data);
+							$("#lefta").empty();
+							//$("#left2").empty();
+
+
+							var strdu = '';
+							for(var i=0,l=data.length;i<l;i++) {
+								for (var key in data[i]) {
+									if (key == 'id') {
+										var ids = data[i][key];
+									}else if(key == 'name') {
+										var name = data[i][key];
+									}else if(key == 'create_time') {
+										var cr_time = data[i][key];
+									}else if(key == 'duration') {
+										var dura = data[i][key];
+
+									}
+
+								}
+
+								$("#lefta").append("<div class='divlist' id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+							}
+							//var skk = "<div class='divlist' id="+id+"></div>";
+
+						}
+					});
+				}
+
+		);
+
+
+
+	});
+
+
+	function dialogReloadNavTab(json){
+		DWZ.ajaxDone(json);
+		var tabId = $("ul.navTab-tab li.selected").attr("tabid");
+		if (json.statusCode == DWZ.statusCode.ok){
+			if (json.navTabId || tabId!=null){
+				navTab.reload(json.forwardUrl, {navTabId: json.navTabId});
+			} else if (json.rel) {
+				var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
+				var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
+				navTabPageBreak(args, json.rel);
+			}
+			if ("closeCurrent" == json.callbackType) {
+				$.pdialog.closeCurrent();
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+</script>
