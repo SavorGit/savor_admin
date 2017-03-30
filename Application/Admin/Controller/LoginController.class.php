@@ -71,7 +71,7 @@ class LoginController extends BaseController {
                     cookie('login_upwd',$mind,86400*7);
                     unset($result[0]['password']);
                     session('sysUserInfo',$result[0]);
-                    $this->sysLog('登录操作', '登录操作', '当前栏目','login');
+                    //$this->sysLog('登录操作', '登录操作', '当前栏目','login');
                     $url = $this->host_name();
                     header("location: $url");
                 }else{
@@ -99,7 +99,7 @@ class LoginController extends BaseController {
     
     //用户退出操作
     public function logout(){
-        $this->sysLog('退出操作', '退出操作', '当前栏目','logout');
+        //$this->sysLog('退出操作', '退出操作', '当前栏目','logout');
         session('sysUserInfo',null);
         session('licenseinfo',null);
         $url = $this->host_name();

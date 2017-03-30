@@ -436,8 +436,8 @@ class BaseController extends Controller {
             $userid = $userinfo['id'];
             $username = $userinfo['remark'];
         }
-        $data['userid']   = $userid;
-        $data['username'] = $username;
+        $data['userid']   = !empty($userid) ? $userid : 0 ;
+        $data['username'] = !empty($username) ? $username :'';
         $data['action'] = CONTROLLER_NAME.'/'.ACTION_NAME;
         $query = array_merge(array(),$_GET,$_POST);
     
