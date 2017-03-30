@@ -245,7 +245,6 @@ class DeviceController extends BaseController{
 				} else{
 					$this->error($str);
 				}
-		        $this->error();
 		    }
 		}
 

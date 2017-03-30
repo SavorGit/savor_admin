@@ -34,6 +34,12 @@ class RoomModel extends BaseModel
         
     }//End Function
 
+	public function saveBatdat($data, $id) {
+		$redis  =  \Common\Lib\SavorRedis::getInstance();
+		$redis->select(15);
+		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
+		$redis->set($cache_key, json_encode($data));
+	}
 
 
 	public function saveData($data, $id = 0) {

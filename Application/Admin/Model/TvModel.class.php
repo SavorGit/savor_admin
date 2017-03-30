@@ -60,6 +60,14 @@ class TvModel extends BaseModel{
 		}*/
 		return $result;
 	}
+
+	public function saveBatdat($data, $id) {
+		$redis  =  \Common\Lib\SavorRedis::getInstance();
+		$redis->select(15);
+		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
+		$redis->set($cache_key, json_encode($data));
+	}
+
 	/**
 	 * @desc 添加TV信息
 	 */
