@@ -229,6 +229,30 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
+		$hotelModel = new \Admin\Model\HotelModel();
+		$roomModel = new \Admin\Model\RoomModel();
+		//MAC地址:[机顶盒后四位] 在 [酒楼名称]-[包间名称]下，请重新输入
+		$temp = $boxModel->getRow('id,mac,room_id',['mac'=>$save['mac']]);
+		//var_dump($temp);
+		if($temp){
+			$info = $boxModel->find($temp['id']);
+			$roid = $info['room_id'];
+			$ro_arr = $roomModel->find($roid);
+			$roomname = $ro_arr['name'];
+			$h_id = $ro_arr['hotel_id'];
+			$h_arr = $hotelModel->find($h_id);
+			$hname = $h_arr['name'];
+			$str = 'MAC地址：'.substr($save['mac'],-4).'在 ['.$hname.']-['.$roomname.']下重复，请重新输入';
+			if ($id) {
+				if($temp['id'] != $id) {
+					$this->error($str);
+				}
+			} else{
+				$this->error($str);
+			}
+
+		}
+
 		if($id){
 			if($boxModel->editData($id, $save)){
 				$this->output('更新成功!', 'device/box');
