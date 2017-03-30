@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 use Think\Controller;
 use Common\Lib\Aliyun;
+
 /**
  * @desc 基础类，所有后台类必须继承此类
  *
@@ -13,7 +14,7 @@ class BaseController extends Controller {
         $this->handlePublicParams();
         $this->checkLogin();
         $this->getNameByIp();
-        $this->recordLog();
+       
     }
     
     public function handlePublicParams(){
@@ -21,7 +22,8 @@ class BaseController extends Controller {
         $this->assign('site_host_name',$this->host_name());
         $this->assign('imgup_path',$this->imgup_path());
         $this->assign('imgup_show',$this->imgup_show());
-        //$this->sysLog($actionName='', $oppreate='', $program='');
+        $this->sysLog($actionName='', $oppreate='', $program='');
+        $this->recordLog();
     }
     
     public function host_name(){
@@ -438,7 +440,7 @@ class BaseController extends Controller {
         $data['username'] = $username;
         $data['action'] = CONTROLLER_NAME.'/'.ACTION_NAME;
         $query = array_merge(array(),$_GET,$_POST);
-        
+    
         $notArr = array('_','pgv_pvi','login_upwd','PHPSESSID');
         foreach($query as $key=>$v){
             if(in_array($key, $notArr)){
