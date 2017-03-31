@@ -554,6 +554,8 @@ class HotelController extends BaseController {
 				$dat['volum'] = $v['bao_volume'];
 				$dat['flag']        = 0;
 				$dat['state']       = 1;
+				$dat['update_time'] = date('Y-m-d H:i:s');
+				$dat['create_time'] = date('Y-m-d H:i:s');
 				$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 				if ($bool) {
 					$dap = array();

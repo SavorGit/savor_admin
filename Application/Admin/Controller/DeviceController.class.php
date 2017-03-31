@@ -229,7 +229,7 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
-
+		$save['update_time'] = date('Y-m-d H:i:s');
 		if($save['mac']){
 		    if(!preg_match('/[0-9A-F]{12}/', $save['mac'])){
 		        $this->error('请输入正确的Mac地址');
@@ -254,7 +254,9 @@ class DeviceController extends BaseController{
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		
-		}else{	
+		}else{
+			$save['update_time'] = date('Y-m-d H:i:s');
+			$save['create_time'] = date('Y-m-d H:i:s');
 			if($boxModel->addData($save)){
 				$this->output('添加成功!', 'hotel/room');
 			}else{
