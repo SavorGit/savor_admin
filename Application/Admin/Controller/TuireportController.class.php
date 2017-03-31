@@ -67,6 +67,7 @@ class TuireportController extends BaseController{
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
 			$val['indnum'] = ++$ind;
+			$val['ave'] = ceil($val['dct']/$val['bct']);
 		}
 		$this->assign('listfmd', $result['list']);
 		$this->assign('pagefmd',  $result['page']);

@@ -176,12 +176,15 @@ class ExcelController extends Controller
         $field = 'sum(`box_count`) as bct,sum(`download_count`) as   dct,hotel_name,time';
         $rea = $tuiModel->getAllList($where, $field, $group, $orders);
         $box_arr = $rea['list'];
+        foreach ($box_arr as &$val) {
+            $val['ave'] = ceil($val['dct']/$val['bct']);
+        }
         $xlsName = "firstmobiledown";
         $xlsCell = array(
             array('hotel_name', '酒店名称'),
             array('bct', '机顶盒数量'),
             array('dct', '下载量次'),
-
+            array('ave', '平均下载量'),
             array('time', '时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
