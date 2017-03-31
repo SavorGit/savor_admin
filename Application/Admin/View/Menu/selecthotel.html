@@ -79,30 +79,7 @@
                 </div>
               </div>
 
-              <div class="col-xs-3 col-sm-3">
-                <div class="input-group-sm">
-                  <label class="col-xs-1 col-sm-1 control-label">
-                    包含酒楼：
-                  </label>
-
-                <span class="input-group-btn">
-              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
-                <volist name="include" id="vo">
-                  <option value="{$vo.id}"
-                  <volist name="include_k" id="kvo" key="p">
-
-                    <if condition="$kvo.p eq $vo.id">selected</if>
-                  </volist>
-                  >{$vo.menu_name}
-                  </option><br>
-
-                </volist>
-              </select>
-            </span>
-
-
-                </div>
-              </div>
+             
 
 
             </div>
@@ -151,7 +128,37 @@
                 </div>
               </div>
 
-              <div class="col-xs-3 col-sm-3">
+            
+
+
+            </div>
+
+            <div class="form-group row">
+				 <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    包含酒楼：
+                  </label>
+
+                <span class="input-group-btn">
+              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <volist name="include" id="vo">
+                  <option value="{$vo.id}"
+                  <volist name="include_k" id="kvo" key="p">
+
+                    <if condition="$kvo.p eq $vo.id">selected</if>
+                  </volist>
+                  >{$vo.menu_name}
+                  </option><br>
+
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+                <div class="col-xs-3 col-sm-3">
                 <div class="input-group-sm">
                   <label class="col-xs-1 col-sm-1 control-label">
                     排除酒楼：
@@ -168,25 +175,7 @@
 
                 </div>
               </div>
-
-
-
-            </div>
-
-            <div class="form-group row">
-
-              <div class="col-xs-3 col-sm-3 col-md-3">
-                <div class="input-group input-group-sm">
-                  <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
-                </div>
-              </div>
-
-
-
-              <div class="col-xs-3 col-sm-3 col-md-3">
+               <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="input-group-sm input-group">
                   <label style="width:140px;" class="col-xs-1 col-sm-1 control-label">
                     酒楼机顶盒类型：
@@ -202,6 +191,19 @@
                 </div>
 
               </div>
+              
+              <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="input-group input-group-sm">
+                  <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+                </div>
+              </div>
+
+
+
+             
 
 
             </div>
