@@ -516,18 +516,20 @@ class HotelController extends BaseController {
 			}
 		}
 		foreach($ba_mac as $k=>$v){
-			$where = " b.mac='".$v."' and b.flag=0";
+			$where = " b.mac='".$v."' and b.flag=0 ";
 			$isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
 			if(!empty($isHaveMac)){
 				$str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';
-					$this->error($str);
+				$this->error($str);
 			}
 		}
+
+
+
 		$bool = false;
 		//获取所有包间id
 		$room_bai = array();
 		foreach ($bat_arr as $k=>&$v) {
-
 			$model->startTrans();
 
 			$v = json_decode($v,true);
@@ -541,6 +543,7 @@ class HotelController extends BaseController {
 			$save['update_time'] = date('Y-m-d H:i:s');
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$bool = $model->table(C('DB_PREFIX').'room')->add($save);
+
 
 			if($bool){
 				$dat = array();
@@ -592,8 +595,10 @@ class HotelController extends BaseController {
 					'tv_id' => '78',
 				),
 		);*/
+
 		if($bool){
-			foreach ($room_bai as $k=>&$v) {
+			$model->commit();
+			foreach ($room_bai as $k=>$v) {
 				$rinfo = $RoomModel->find($v['room_id']);
 				$bo_info = $boxModel->find($v['box_id']);
 				$tv_info = $tvModel->find($v['tv_id']);
@@ -601,7 +606,7 @@ class HotelController extends BaseController {
 				$boxModel->saveBatdat($bo_info, $v['box_id']);
 				$tvModel->saveBatdat($tv_info, $v['tv_id']);
 			}
-			$model->commit();
+
 			$this->output('添加成功了','hotel/manager');
 		}else{
 			$model->rollback();
