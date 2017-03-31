@@ -71,7 +71,7 @@
 <!--显示列表样式1 start-->
 
 
-<form id="pagerForm" action="{$host_name}/menu/doaddmen" method="post" onsubmit="return validateCallback(this, naxTabAjaxDone);">
+<form id="pagerForm" action="{$host_name}/menu/doaddmen" method="post" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 	<div class="searchBar">
 		<div class="clearfix">
 			<!--新增节目单-->

@@ -869,8 +869,8 @@ class MenuController extends BaseController {
                     //添加操作日志不在这边加
                     $this->addlog($data, $menu_id);
 
-                    $this->output('新增成功', 'menu/addmen',2);
-
+                   // $this->output('新增成功', 'menu/addmen',2);
+                    $this->output('新增成功', 'menu/getlist');
                 } else {
 
                 }

@@ -460,8 +460,11 @@ class HotelController extends BaseController {
 			4=>null,
 		);
 		$b_arr = array(
+			'rname' => 'V1',
 			'voloume' => 30,
 			'swtime' => 50,
+			'numb' => 2,
+			'boxxname' => 'V1',
 		);
 		$hotel_id= I('get.hotel_id',0);
 		$hotel_name= I('get.name','');
@@ -483,11 +486,8 @@ class HotelController extends BaseController {
 	 * 批量新增牌位
 	 */
 	public function doAddBatch() {
-		//var_export($_POST);
-
 		$hotelid = $_POST['hotelid'];
 		$h_str = $_POST['hval'];
-		//$h_str =  '{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","tv_brand":"","tv_size":"","tv_source":"1","tv_state":"1"}???{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","tv_brand":"","tv_size":"","tv_source":"1","tv_state":"1"}';
 		$bat_arr = explode('???',$h_str);
 		$len = count($bat_arr);
 		$model = new Model();
@@ -586,21 +586,6 @@ class HotelController extends BaseController {
 				'box_id'=>$dap['box_id'],'tv_id'=>$datv['tv_id']);
 
 		}
-		/*$room_bai = array (
-			0 =>
-				array (
-					'room_id' => '85',
-					'box_id' => '75',
-					'tv_id' => '77',
-				),
-			1 =>
-				array (
-					'room_id' => '86',
-					'box_id' => '76',
-					'tv_id' => '78',
-				),
-		);*/
-
 		if($bool){
 			$model->commit();
 			foreach ($room_bai as $k=>$v) {
@@ -612,7 +597,7 @@ class HotelController extends BaseController {
 				$tvModel->saveBatdat($tv_info, $v['tv_id']);
 			}
 
-			$this->output('添加成功了','hotel/manager');
+			$this->output('添加成功了','hotel/manager',2);
 		}else{
 			$model->rollback();
 			$this->error('失败请重新操作');

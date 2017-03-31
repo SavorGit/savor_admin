@@ -33,6 +33,8 @@
 	}
 	.butseach{
 		margin-left: 15px;
+		overflow: auto;
+		height: 200px;
 	}
 	.butseach input{
 		width:84px;
@@ -55,14 +57,14 @@
 </style>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form id="pagerForm" action="{$host_name}/hotel/doAddBatch" method="post" onsubmit="return iframeCallback(this, navTabAjaxDone)">
+  <form id="pagerForm" action="{$host_name}/hotel/doAddBatch" method="post" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 	  <input type="hidden" name="hotelid" value="{$hotelid}" />
     <h1 style="text-align: center;">{$hotelname}-批量新增版位</h1>
  <div id="topseach">
 	 <div class="fen">
   <div class="form-group">
     <label for="exampleInputEmail1">包间名称</label>
-    <input type="text" id="bao_name" class="form-control" placeholder="V1">
+    <input type="text" id="bao_name" class="form-control"  value="{$bar.rname}">
   </div>
   <div class="leix">
   <label>包间类型</label>
@@ -74,19 +76,19 @@
   </div>
   <div class="form-group">
     <label>机顶盒名称</label>
-    <input id="box_name" type="text" class="form-control" placeholder="V1">
+    <input id="box_name" type="text" class="form-control" value="{$bar.boxxname}">
   </div>
   <div class="form-group">
     <label>MAC地址</label>
-    <input type="text" id="bao_mac" class="form-control" placeholder="FFXXCCSSE1">
+    <input type="text" style="width:180px;" id="bao_mac" class="form-control" placeholder="FFXXCCSSE1">
   </div>
   <div class="form-group">
     <label>切换时间</label>
-    <input type="text" id="bao_time" class="form-control" value="{$bar.swtime}">
+    <input type="text" id="bao_time" style="width:50px;" class="form-control" value="{$bar.swtime}">
   </div>
   <div class="form-group">
     <label>音量</label>
-    <input type="text" id="bao_volume" class="form-control" value="{$bar.voloume}">
+    <input type="text" style="width:50px;" id="bao_volume" class="form-control" value="{$bar.voloume}">
   </div>
   <div class="form-group">
     <label>电视品牌</label>
@@ -94,7 +96,7 @@
   </div>
   <div>
     <label for="exampleInputEmail1">尺寸</label>
-    <input type="text" id="tv_size" class="form-control" placeholder="32">
+    <input type="text" style="width:50px;" id="tv_size" class="form-control" placeholder="32">
   </div>
   <div class="leix">
   <label>型号源</label>
@@ -112,7 +114,7 @@
   </div>
   <div class="form-group" id="number">
     <label>数量</label>
-    <input type="text" class="form-control num" placeholder="3">
+    <input type="text" style="width:50px;" value="{$bar.numb}" class="form-control num">
   </div>
   <button type="button" class="btn btn-primary clickbtn">创建</button>
   <div class="xian"></div>
@@ -130,6 +132,7 @@
 
 		function getval(){
 
+
 			var arr=[];
 			var st = '';
 			var str = '';
@@ -137,7 +140,7 @@
 			$('.butseach .fen').each(function(){
 				var obj = {};
 				obj.bao_name = $(this).children().eq(0).children().eq(1).val();
-				obj.bao_lx = $(this).children().eq(1).children().eq(1).find("option:selected").text();
+				obj.bao_lx = $(this).children().eq(1).children().eq(1).find("option:selected").val();
 				obj.box_name = $(this).children().eq(2).children().eq(1).val();
 				obj.bao_mac = $(this).children().eq(3).children().eq(1).val();
 				obj.bao_time = $(this).children().eq(4).children().eq(1).val();
@@ -161,6 +164,10 @@
 			$('.clickbtn').click(function(){
 				$('.butseach').html("");
 				var $num = $('.num').val();
+				if($num==0){
+					alert('数量应大于1');
+					return false;
+				}
 				for(var i=0;i<$num;i++){
 					$('.butseach').append($('#topseach').html())
 					$('.butseach #bao_name').val($('#topseach #bao_name').val());//包间名称
