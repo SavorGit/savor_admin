@@ -74,3 +74,20 @@ CREATE TABLE `savor_admin_log`(
   `addtime` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MYISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+create_timedatetime NOT NULL创建时间
+
+增加说明：添加机顶盒更新时间 
+修改时间:2017.3.31 13:46
+修改人:白玉涛
+执行SQL: ALTER TABLE `savor_box` ADD COLUMN `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间';
+ALTER TABLE `savor_box` ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间';
+
+
+增加说明：修改酒楼日志字段
+修改时间:2017.3.31 13:46
+修改人:白玉涛
+执行SQL: ALTER TABLE `savor_menulist_log` change  `hotel_id`  `hotel_id_s` text NOT NULL DEFAULT '' COMMENT '发布酒楼id字符串';
+ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
+
+
+
