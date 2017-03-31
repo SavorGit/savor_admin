@@ -457,8 +457,11 @@ class HotelController extends BaseController {
 			4=>null,
 		);
 		$b_arr = array(
+			'rname' => 'V1',
 			'voloume' => 30,
 			'swtime' => 50,
+			'numb' => 2,
+			'boxxname' => 'V1',
 		);
 		$hotel_id= I('get.hotel_id',0);
 		$hotel_name= I('get.name','');
