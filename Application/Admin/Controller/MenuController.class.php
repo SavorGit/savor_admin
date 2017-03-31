@@ -73,6 +73,11 @@ class MenuController extends BaseController {
             }
 
         }
+
+        foreach($data as $kt=>&$kv){
+            $mp[]  = strtotime($kt);
+        }
+        array_multisort($mp, SORT_DESC, $data);
         $this->assign('vinfo', $data);
         $this->display('opelog');
 
