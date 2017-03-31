@@ -1181,12 +1181,6 @@ class MenuController extends BaseController {
             // ob_clean();
             // die;
             die;
-            $str = 'xxxxxxxxx';
-            $this->assign('xiaob', $str);
-            $this->assign('tiantian', $str);
-            $this->display('addmenuct');
-
-
 
         }
 
