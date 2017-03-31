@@ -262,7 +262,12 @@ class HotelController extends BaseController {
 		$hotelModel = new \Admin\Model\HotelModel();
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
-		$where = "he.mac_addr='".$mac_addr."' and h.state=1";
+		if($hotel_id){
+		    $where = "he.mac_addr='".$mac_addr."' and h.state=1 and he.hotel_id !=".$hotel_id;
+		}else {
+		    $where = "he.mac_addr='".$mac_addr."' and h.state=1";
+		}
+		
 		$have_mac_addr = $hextModel->isHaveMac('h.id,h.name',$where);
 		if(!empty($have_mac_addr)){
 		    $this->error('Mac地址存在于'.$have_mac_addr[0]['name'].'酒楼');

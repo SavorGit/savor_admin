@@ -234,7 +234,12 @@ class DeviceController extends BaseController{
 		    if(!preg_match('/[0-9A-F]{12}/', $save['mac'])){
 		        $this->error('请输入正确的Mac地址');
 		    }
-		    $where = " b.mac='".$save['mac']."' and b.flag=0";
+		    if($id){
+		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.id !=".$id;
+		    }else {
+		        $where = " b.mac='".$save['mac']."' and b.flag=0";
+		    }
+		    
 		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
 		    if(!empty($isHaveMac)){
 				$str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';
