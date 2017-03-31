@@ -612,7 +612,7 @@ class HotelController extends BaseController {
 				$tvModel->saveBatdat($tv_info, $v['tv_id']);
 			}
 
-			$this->output('添加成功了','hotel/manager');
+			$this->output('添加成功了','hotel/manager',1);
 		}else{
 			$model->rollback();
 			$this->error('失败请重新操作');
