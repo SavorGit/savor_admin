@@ -48,27 +48,7 @@ class ReleaseController extends BaseController{
 		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
-		//$this->display('cate');
-
-
-
-
-		// 统计结果存入日志文件--此时会创建一个日志文件，每次都会创建一个新的日志文件
-		$xhprof_data = xhprof_disable();
-
-		/*$XHPROF_ROOT = APP_PATH.'Common/Lib/xhprof';
-		var_dump($XHPROF_ROOT);
-		die;
-		include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_lib.php";
-		include_once $XHPROF_ROOT . "/xhprof_lib/utils/xhprof_runs.php";*/
-
-		/*require './framework/ThinkPHP/Library/Vendor/Xhprof/xhprof_lib/utils/xhprof_runs.php';
-		require './framework/ThinkPHP/Library/Vendor/Xhprof/xhprof_lib/utils/xhprof_lib.php';
-		//import("Vendor.Xhprof.xhprof_lib.utils.xhprof_runs");
-		$xhprofRuns = new \XHProfRuns_Default();
-		$run_id = $xhprofRuns->save_run($xhprof_data, "xhprof_foo");
-		echo '<a href="http://www.xhprof.net/index.php?run='.$run_id.'&source=xhprof_foo" target="_blank">统计</a>';*/
-		XHProf::genResult();
+		$this->display('cate');
 	}
 
 
