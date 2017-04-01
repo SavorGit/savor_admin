@@ -23,7 +23,7 @@
           <div class="form-group">
             <div class="input-group-sm input-group">
               <label class="col-xs-1 col-sm-1 control-label">
-                城市：
+                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
               </label>
 
                 <span class="input-group-btn input-group-sm">
@@ -66,25 +66,7 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <div class="input-group-sm input-group">
-              <label>
-                包含酒楼：
-              </label>
-                <span class="input-group-btn input-group-sm">
-              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
-                <volist name="include" id="vo">
-                  <option value="{$vo.id}"
-                  <volist name="include_k" id="kvo" key="p">
-                    <if condition="$kvo.p eq $vo.id">selected</if>
-                  </volist>
-                  >{$vo.menu_name}
-                  </option><br>
-                </volist>
-              </select>
-            </span>
-            </div>
-          </div>
+         
           <div class="form-group">
             <div class="input-group-sm input-group">
               <label class="control-label" style="">
@@ -95,7 +77,8 @@
             </span>
             </div>
           </div>
-
+		</div>
+		<div class="form-inline" style="margin-top:3px;">
 
           <div class="form-group">
             <div class="input-group-sm input-group">
@@ -112,13 +95,7 @@
             </span>
             </div>
           </div>
-
-        </div>
-      </div>
-
-      <div class="form-inline" style="margin-top:3px;">
-
-        <div class="form-group">
+			<div class="form-group">
           <div class="input-group-sm input-group">
             <label class="col-xs-1 col-sm-1 control-label">
               重点：
@@ -150,6 +127,30 @@
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
         </div>
+        </div>
+      </div>
+
+      <div class="form-inline" style="margin-top:3px;">
+
+         <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label>
+                包含酒楼：
+              </label>
+                <span class="input-group-btn input-group-sm">
+              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <volist name="include" id="vo">
+                  <option value="{$vo.id}"
+                  <volist name="include_k" id="kvo" key="p">
+                    <if condition="$kvo.p eq $vo.id">selected</if>
+                  </volist>
+                  >{$vo.menu_name}
+                  </option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
 
         <div class="form-group">
           <div class="input-group-sm input-group">
