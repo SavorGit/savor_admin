@@ -294,6 +294,20 @@ class ArticleController extends BaseController {
         }
         
         if($mbHomeModel->where('id='.$id)->save($save)){
+            //期刊
+            $mbperModel = new \Admin\Model\MbPeriodModel();
+            $num = $mbperModel->count();
+            $time = time();
+            $dat['period'] = date("YmdHis",$time);
+            $dat['update_time'] = date("Y-m-d H:i:s",$time);
+            if($num>0){
+                $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+                $rest = $mbperModel->execute($sql);
+            }else{
+                $mbperModel->add($dat);
+            }
+            
+            
             $message = '更新成功!';
             $url = 'article/homemanager';
         }else{
@@ -360,6 +374,20 @@ class ArticleController extends BaseController {
             //             $this->assign('vinfo',$vinfo);
             $res_save=$mbHomeModel->where('id='.$id)->delete();
             if($res_save){
+                //期刊
+                $mbperModel = new \Admin\Model\MbPeriodModel();
+                $num = $mbperModel->count();
+                $time = time();
+                $dat['period'] = date("YmdHis",$time);
+                $dat['update_time'] = date("Y-m-d H:i:s",$time);
+                if($num>0){
+                    $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+                    $rest = $mbperModel->execute($sql);
+                }else{
+                    $mbperModel->add($dat);
+                }
+                
+                
                 $this->output('操作成功!', 'article/homemanager',2);
             }else{
                 $this->output('操作失败!', 'article/homemanager');
@@ -383,6 +411,19 @@ class ArticleController extends BaseController {
         $mbHome = new \Admin\Model\HomeModel();
         $bool = $mbHome->execute($sql);
         if($bool){
+            //期刊
+            $mbperModel = new \Admin\Model\MbPeriodModel();
+            $num = $mbperModel->count();
+            $time = time();
+            $dat['period'] = date("YmdHis",$time);
+            $dat['update_time'] = date("Y-m-d H:i:s",$time);
+            if($num>0){
+                $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+                $rest = $mbperModel->execute($sql);
+            }else{
+                $mbperModel->add($dat);
+            }
+            
             $this->output('操作成功','article/homemanager');
 
         } else{
