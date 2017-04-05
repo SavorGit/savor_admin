@@ -80,7 +80,7 @@
   </div>
   <div class="form-group">
     <label>MAC地址</label>
-    <input type="text" style="width:180px;" id="bao_mac" class="form-control" placeholder="FFXXCCSSE1">
+    <input type="text" style="width:180px;" id="bao_mac" class="form-control" placeholder="{$bar.bacadd}">
   </div>
   <div class="form-group">
     <label>切换时间</label>
@@ -92,7 +92,7 @@
   </div>
   <div class="form-group">
     <label>电视品牌</label>
-    <input type="text" id="tv_brand" class="form-control" placeholder="SONY">
+    <input type="text" id="tv_brand" class="form-control" value="{$bar.tvbran}">
   </div>
   <div>
     <label for="exampleInputEmail1">尺寸</label>
@@ -201,6 +201,20 @@
 
 
 		});
+
+		function dialogAjaxDone(json){
+			//alert(json);
+			//console.log(json);
+			DWZ.ajaxDone(json);
+			if(json.status==1){
+				navTab.reload('hotel/manager');
+			}
+			//navTab.reloadFlag('menu/getlist');
+
+			//return false;
+		}
+
+
 
 	</script>
 
