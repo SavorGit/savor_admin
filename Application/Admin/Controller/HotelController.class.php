@@ -465,6 +465,8 @@ class HotelController extends BaseController {
 			'swtime' => 50,
 			'numb' => 2,
 			'boxxname' => 'V1',
+			'bacadd' => 'FFFFF',
+			'tvbran' => 'SONY'
 		);
 		$hotel_id= I('get.hotel_id',0);
 		$hotel_name= I('get.name','');
@@ -490,6 +492,9 @@ class HotelController extends BaseController {
 		$h_str = $_POST['hval'];
 		$bat_arr = explode('???',$h_str);
 		$len = count($bat_arr);
+		if( empty($bat_arr[0]) ){
+			$this->error('创建不可为空');
+		}
 		$model = new Model();
 		//包间名称不可重复
 		$ba_name = array();
