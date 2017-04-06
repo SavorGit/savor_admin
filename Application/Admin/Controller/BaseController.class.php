@@ -456,4 +456,18 @@ class BaseController extends Controller {
         $m_admin_log = new \Admin\Model\AdminLogModel();
         $m_admin_log->addInfo($data);
     }
+    public function editPeriod(){
+        //期刊
+        $mbperModel = new \Admin\Model\MbPeriodModel();
+        $num = $mbperModel->count();
+        $time = time();
+        $dat['period'] = date("YmdHis",$time);
+        $dat['update_time'] = date("Y-m-d H:i:s",$time);
+        if($num>0){
+            $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+            $rest = $mbperModel->execute($sql);
+        }else{
+            $mbperModel->add($dat);
+        }
+    }
 }
