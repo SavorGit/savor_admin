@@ -747,6 +747,18 @@ class HotelController extends BaseController {
 			$dat['update_time'] = date("Y-m-d H:i:s");
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
+			    //期刊
+			    $mbperModel = new \Admin\Model\MbPeriodModel();
+			    $num = $mbperModel->count();
+			    $time = time();
+			    $dat['period'] = date("YmdHis",$time);
+			    $dat['update_time'] = date("Y-m-d H:i:s",$time);
+			    if($num>0){
+			        $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+			        $rest = $mbperModel->execute($sql);
+			    }else{
+			        $mbperModel->add($dat);
+			    }
 				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
@@ -774,6 +786,18 @@ class HotelController extends BaseController {
 
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
+			    //期刊
+			    $mbperModel = new \Admin\Model\MbPeriodModel();
+			    $num = $mbperModel->count();
+			    $time = time();
+			    $dat['period'] = date("YmdHis",$time);
+			    $dat['update_time'] = date("Y-m-d H:i:s",$time);
+			    if($num>0){
+			        $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+			        $rest = $mbperModel->execute($sql);
+			    }else{
+			        $mbperModel->add($dat);
+			    }
 				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
@@ -799,6 +823,19 @@ class HotelController extends BaseController {
 		}
 
 		if($message){
+		    //期刊
+		    $mbperModel = new \Admin\Model\MbPeriodModel();
+		    $num = $mbperModel->count();
+		    $time = time();
+		    $dat['period'] = date("YmdHis",$time);
+		    $dat['update_time'] = date("Y-m-d H:i:s",$time);
+		    if($num>0){
+		        $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+		        $rest = $mbperModel->execute($sql);
+		    }else{
+		        $mbperModel->add($dat);
+		    }
+		    
 			$this->output($message, 'hotel/pubmanager',2);
 		}else{
 			$this->output('操作失败', 'hotel/pubmanager');
