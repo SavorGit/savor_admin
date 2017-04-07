@@ -508,7 +508,7 @@ class HotelController extends BaseController {
 		if( count($ba_name)!= count(array_unique($ba_name))) {
 			$this->error('包间名称不可重复');
 		}
-		if( count($ba_mac)!= count(array_unique($ba_mac))) {
+		if( count($ba_mac)!= count(array_unique($ba_mac)) && (!empty(array_filter($ba_mac))) ) {
 			$this->error('机顶盒MAC不可重复');
 		}
 
@@ -524,12 +524,15 @@ class HotelController extends BaseController {
 			}
 		}
 		foreach($ba_mac as $k=>$v){
-			$where = " b.mac='".$v."' and b.flag=0 ";
-			$isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
-			if(!empty($isHaveMac)){
-				$str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';
-				$this->error($str);
+			if($v != ''){
+				$where = " b.mac='".$v."' and b.flag=0 ";
+				$isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
+				if(!empty($isHaveMac)){
+					$str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';
+					$this->error($str);
+				}
 			}
+
 		}
 
 
