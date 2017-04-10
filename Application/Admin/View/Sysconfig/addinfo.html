@@ -1,6 +1,7 @@
 <!--修改样式2 p元素自适应宽度 start-->
 <div class="pageContent">
-  <form method="post" action="{$host_name}/sysconfig/doAddLoadingImg" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <form method="post" id="loadpic"
+action="{$host_name}/sysconfig/doAddLoadingImg" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     
     <div class="pageFormContent modal-body">
       
@@ -41,3 +42,39 @@
     </div>
   </form>
 </div>
+<script type="text/javascript">
+
+    /*$(function(){
+        var currentDialogId = $.pdialog.getcurrentDialogId();
+
+        alert(currentDialogId);//获取当前窗口的ID
+        var tempHref = $("#goToModify").attr("href");
+        $("#goToModify").attr("href",tempHref + "&rel="+currentDialogId);
+    });*/
+
+
+    function dialogAjaxDone(json){
+        //上一次的rel链接
+        $.pdialog.close("firstDialogId");
+      //  $.pdialog.open(url, dlgId, title);
+         //   navTab.closeCurrentTab();
+        // navTab.closeTab(json.navTabId);
+        DWZ.ajaxDone(json);
+        // alert(json);
+        jap = JSON.stringify(json);
+        console.log(jap);
+        // navTab.closeTab('clientconfig/addclientconfig');
+        // navTab.reload('clientconfig/configdata');
+        navTab.reloadFlag('Sysconfig/configData');
+        //注意返回的JSON的数据结构
+        //navTab.closeTab('abce');
+        if (json.status == DWZ.statusCode.ok){
+            if (json.navTabId){
+           // navTab.reload('clientconfig/configdatar');
+            }
+
+
+        }
+
+}
+</script>
