@@ -101,7 +101,7 @@
   </div>
   <div>
     <label for="exampleInputEmail1">尺寸</label>
-    <input type="text" style="width:50px;" id="tv_size" class="form-control" placeholder="32">
+    <input type="text" style="width:50px;" id="tv_size" class="form-control" value="{$bar.tvsizea}">
   </div>
   <div class="leix">
   <label>型号源</label>
@@ -112,7 +112,7 @@
  </select>
   </div>
   <div class="leix">
-  <label>状态</label>
+  <label>电视状态</label>
   <select id="tv_state" class="form-control">
   <option>1</option>
  </select>
@@ -191,11 +191,15 @@
 
 				}
 				$('.butseach .disnone').hide();
-				$('.butseach .clickbtn').hide();
+				$('.butseach .clickbtn').addClass('dela').html('删除');
 				$('.butseach #number').hide();
 
 			});
 
+
+			$('body').on('click','.dela',function(){
+				$(this).parent().remove()
+			})
 
 
 

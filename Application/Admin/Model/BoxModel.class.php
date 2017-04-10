@@ -186,6 +186,17 @@ class BoxModel extends BaseModel{
 	    return $result;
 	}
 
+	public function isHaveTv($field,$where){
+		//savor_tv
+		$sql ="select $field from savor_box as b
+	           left join savor_room as r on b.room_id=r.id
+	           left join savor_hotel as h on r.hotel_id=h.id
+	           left join  savor_tv as tv on tv.box_id = b.id
+	           where ".$where;
+		$result = $this->query($sql);
+		return $result;
+	}
+
 	public function saveBatdat($data, $id) {
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
