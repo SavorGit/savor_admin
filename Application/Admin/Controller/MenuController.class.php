@@ -775,7 +775,6 @@ class MenuController extends BaseController {
 
 
         $id = I('post.id','');
-        // var_dump($_POST);
 
         //添加到menu_list 表
         $mlModel = new MenuListModel();

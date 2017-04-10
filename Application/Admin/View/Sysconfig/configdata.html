@@ -35,7 +35,7 @@
 <div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables" style="margin-top:20px;">
-      <form method="post" action="{$host_name}/sysconfig/doConfigData" id="configData" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+      <form method="post" action="{$host_name}/sysconfig/doConfigData" id="configrcp" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
@@ -82,7 +82,7 @@
                   <i class="fa fa-plus"></i>
                   </a>
                 <else />
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/sysconfig/addinfo" class="btn btn-success btn-icon">
+                  <a data-tip="修改"  mask="true" target="dialog" rel="firstDialogId" href="{$host_name}/sysconfig/addinfo" class="btn btn-success btn-icon">
                   <i class="fa fa-pencil"></i>
                   </a>
                 </empty>
@@ -117,7 +117,27 @@ $(function(){
 $("#videoshan").click(function(){
     $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
 })
-   
+
+
+
+
+function dialogAjaxDone(json){
+    // alert(json);
+    jap = JSON.stringify(json);
+   // alert(jap);
+    DWZ.ajaxDone(json);
+    //navTab.reloadFlag('menu/getlist');
+    //注意返回的JSON的数据结构
+    if (json.status == DWZ.statusCode.ok){
+        if (json.navTabId){
+            navTab.reload('Sysconfig/configData');
+        }
+
+
+    }
+
+}
+
 
 
 
