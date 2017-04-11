@@ -62,7 +62,7 @@
 </style>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form id="pagerForm" action="{$host_name}/hotel/doAddBatch" method="post" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <form id="pagerForm" action="{$host_name}/hotel/doAddBatch" method="post" enctype="multipart/form-data" onsubmit="return iframeCallback(this, navTabAjaxDone)">
 	  <input type="hidden" name="hotelid" value="{$hotelid}" />
     <h1 style="text-align: center;">{$hotelname}-批量新增版位</h1>
  <div id="topseach">
@@ -85,15 +85,15 @@
   </div>
   <div class="form-group">
     <label>MAC地址</label>
-    <input type="text" style="width:180px;" id="bao_mac" class="form-control" value="{$bar.bacadd}">
+    <input type="text"  style="width:180px;" id="bao_mac" class="form-control" value="{$bar.bacadd}">
   </div>
   <div class="form-group">
     <label>切换时间</label>
-    <input type="text" id="bao_time" style="width:50px;" class="form-control" value="{$bar.swtime}">
+    <input type="number" id="bao_time" style="width:50px;" class="form-control" value="{$bar.swtime}">
   </div>
   <div class="form-group">
     <label>音量</label>
-    <input type="text" style="width:50px;" id="bao_volume" class="form-control" value="{$bar.voloume}">
+    <input type="number" style="width:50px;" id="bao_volume" class="form-control" value="{$bar.voloume}">
   </div>
   <div class="form-group">
     <label>电视品牌</label>
@@ -101,7 +101,7 @@
   </div>
   <div>
     <label for="exampleInputEmail1">尺寸</label>
-    <input type="text" style="width:50px;" id="tv_size" class="form-control" value="{$bar.tvsizea}">
+    <input type="number" style="width:50px;" id="tv_size" class="form-control" value="{$bar.tvsizea}">
   </div>
   <div class="leix">
   <label>型号源</label>
@@ -113,13 +113,16 @@
   </div>
   <div class="leix">
   <label>电视状态</label>
+
   <select id="tv_state" class="form-control">
-  <option>1</option>
+	  <foreach name="tvstate" item="vlist">
+		  <option value="{$key}">{$vlist}</option>
+	  </foreach>
  </select>
   </div>
   <div class="form-group" id="number">
     <label>数量</label>
-    <input type="text" style="width:50px;" value="{$bar.numb}" class="form-control num">
+    <input type="number" style="width:50px;" value="{$bar.numb}" class="form-control num">
   </div>
   <button type="button" class="btn btn-primary clickbtn">创建</button>
   <div class="xian"></div>
@@ -152,8 +155,8 @@
 				obj.bao_volume = $(this).children().eq(5).children().eq(1).val();
 				obj.tv_brand = $(this).children().eq(6).children().eq(1).val();
 				obj.tv_size = $(this).children().eq(7).children().eq(1).val();
-				obj.tv_source = $(this).children().eq(8).children().eq(1).find("option:selected").text();
-				obj.tv_state = $(this).children().eq(9).children().eq(1).find("option:selected").text();
+				obj.tv_source = $(this).children().eq(8).children().eq(1).find("option:selected").val();
+				obj.tv_state = $(this).children().eq(9).children().eq(1).find("option:selected").val();
 				var str = JSON.stringify(obj);
 
 				arr.push(str);
@@ -172,7 +175,12 @@
 				if($num==0){
 					alert('数量应大于1');
 					return false;
+				}else if($num>50){
+					alert('数量最大为50');
+					return false;
 				}
+
+
 				for(var i=0;i<$num;i++){
 					$('.butseach').append($('#topseach').html())
 					$('.butseach #bao_name').val($('#topseach #bao_name').val());//包间名称
@@ -199,29 +207,39 @@
 
 			$('body').on('click','.dela',function(){
 				$(this).parent().remove()
-			})
+			});
+
+		})
+
+		function navTabAjaxDone(json) {
+			jap = JSON.stringify(json);
+			console.log(jap);
+			DWZ.ajaxDone(json);
+			if (json.status == DWZ.statusCode.ok) {
+				if (json.navTabId) {
+					$(".ceshipilianxin span").html('酒楼信息');
+					navTab.reload('hotel/manager');
+				}
 
 
+			}
+		}
 
-
-
-
-
-
-
-		});
-
-		function dialogAjaxDone(json){
+		/*function dialogAjaxDone(json){
 			//alert(json);
 			//console.log(json);
+			jap = JSON.stringify(json);
+			console.log(jap);
+			//alert(jap);
 			DWZ.ajaxDone(json);
+			navTab.reloadFlag('hotel/manager');
 			if(json.status==1){
 				navTab.reload('hotel/manager');
 			}
 			//navTab.reloadFlag('menu/getlist');
 
 			//return false;
-		}
+		}*/
 
 
 
