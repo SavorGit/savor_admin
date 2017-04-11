@@ -457,15 +457,19 @@ class HotelController extends BaseController {
 			1=>'ant',
 			2=>'av',
 			3=>'hdmi',
-			4=>null,
+		);
+		$tv_stet = array(
+			1=>'正常',
+			2=>'冻结',
+			3=>'报损',
 		);
 		$b_arr = array(
 			'rname' => 'V1',
-			'voloume' => 30,
-			'swtime' => 50,
+			'voloume' => 50,
+			'swtime' => 30,
 			'numb' => 2,
 			'boxxname' => 'V1',
-			'bacadd' => 'FFFFF',
+			'bacadd' => 'FFFFFFFFF',
 			'tvbran' => 'SONY',
 			'tvsizea'=>'32',
 		);
@@ -478,6 +482,7 @@ class HotelController extends BaseController {
 			$this->assign('rtype_list',$r_arr);
 			$this->assign('bar',$b_arr);
 			$this->assign('tvlist',$tv_arr);
+			$this->assign('tvstate',$tv_stet);
 		} else {
 
 		}
@@ -498,11 +503,29 @@ class HotelController extends BaseController {
 			$this->error('创建不可为空');
 		}
 		$model = new Model();
+
 		foreach ($bat_arr as $k=>$v){
 			$v = json_decode($v,true);
-			foreach($v as $vs){
+			foreach($v as $ks=>$vs){
 				if (empty($vs)) {
 					$this->error('所有元素不可为空');
+				}else{
+					if($ks == 'bao_mac'){
+						if(strlen($vs)!=12){
+							$this->error('MAC地址应该为12位');
+						}else{
+
+							$preg = '/^[0-9A-F]+$/';
+							$prg = preg_match($preg,$vs)?true:false;
+							if(!$prg){
+
+								$this->error('mac地址字符输入范围不对，应只有数字和大写字母');
+							}
+
+
+						}
+					}
+
 				}
 			}
 		}
@@ -523,7 +546,7 @@ class HotelController extends BaseController {
 			//判断是否有该机顶盒mac地址
 			$where = " b.mac='" . $v['bao_mac'] . "' and b.flag=0 ";
 			$isHaveMac = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.id as id ', $where);
-			//var_dump($isHaveMac);
+
 			if (!empty($isHaveMac)) {
 				foreach ($isHaveMac as $ks=>$vs) {
 					$hp[$ks] = $vs['hotel_id'].','.$vs['room_name'].','.$vs['rtp'].','.$vs['bna'];
@@ -556,10 +579,13 @@ class HotelController extends BaseController {
 			$model->startTrans();
 			$where = " r.name='".$v['bao_name']."' and b.flag=0  and r.type =  ".$v['bao_lx']." and h.id = ".$hotelid;
 			$isHaveTv = $boxModel->isHaveTv(' h.name as hotel_name,r.name as room_name,r.id as rid,r.type as rtp,b.name as bna,b.id as id,b.mac as bmacc ',$where);
+
 			if (!empty($isHaveTv)) {
 				foreach ($isHaveTv as $ktv=>$vtv) {
 					$bac_hotel_rmac[$ktv] = $vtv['bmacc'];
 				}
+
+
 				if(in_array($v['bao_mac'],$bac_hotel_rmac)){
 					//只加电视
 					$mac_key = array_search($v['bao_mac'], $bac_hotel_rmac);
@@ -575,7 +601,7 @@ class HotelController extends BaseController {
 						$dap['tv_brand'] = $v['tv_brand'];
 						$dap['tv_size'] = $v['tv_size'];
 						$dap['tv_source'] = $v['tv_source'];
-						$dap['flag'] = $v['tv_state'];
+						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if($bool){
 							$ttid = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
@@ -606,7 +632,7 @@ class HotelController extends BaseController {
 						$dap['tv_brand'] = $v['tv_brand'];
 						$dap['tv_size'] = $v['tv_size'];
 						$dap['tv_source'] = $v['tv_source'];
-						$dap['flag'] = $v['tv_state'];
+						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if ($bool) {
 							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
@@ -654,7 +680,7 @@ class HotelController extends BaseController {
 						$dap['tv_brand'] = $v['tv_brand'];
 						$dap['tv_size'] = $v['tv_size'];
 						$dap['tv_source'] = $v['tv_source'];
-						$dap['flag'] = $v['tv_state'];
+						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if ($bool) {
 							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
