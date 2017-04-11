@@ -160,7 +160,7 @@ class ExcelController extends Controller
         $endtime = I('end','');
         $table = 'first_mobile_download';
         $tuiModel =  new \Admin\Model\TuiRpModel($table);
-        $where = '1=1 ';
+        $where = '1=1 and time is not null';
         if($starttime){
             $where .= "	AND time >= '{$starttime}'";
         }
@@ -171,20 +171,18 @@ class ExcelController extends Controller
         if($hname){
             $where .= "	AND hotel_name LIKE '%{$hname}%'";
         }
-        $orders = '';
-        $group =  'hotel_id';
-        $field = 'sum(`box_count`) as bct,sum(`download_count`) as   dct,hotel_name,time';
+        $orders = 'time,hotel_id';
+        //$group =  'hotel_id';
+        $field = '`download_count` as   dct,hotel_name,time';
         $rea = $tuiModel->getAllList($where, $field, $group, $orders);
         $box_arr = $rea['list'];
-        foreach ($box_arr as &$val) {
-            $val['ave'] = ceil($val['dct']/$val['bct']);
-        }
+        
         $xlsName = "firstmobiledown";
         $xlsCell = array(
             array('hotel_name', '酒店名称'),
-            array('bct', '机顶盒数量'),
+            
             array('dct', '下载量次'),
-            array('ave', '平均下载量'),
+            
             array('time', '时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
@@ -210,9 +208,9 @@ class ExcelController extends Controller
         if($hname){
             $where .= "	AND hotel_name LIKE '%{$hname}%'";
         }
-        $orders = '';
-        $group =  'hotel_name,box_name';
-        $field = 'sum(`count`) count,hotel_name,box_name,date_time';
+        $orders = ' date_time,hotel_id asc';
+        //$group =  'hotel_name,box_name';
+        $field = 'count,hotel_name,box_name,date_time';
         $rea = $tuiModel->getAllList($where, $field, $group, $orders);
         $box_arr = $rea['list'];
         $xlsName = "screencastreport";
