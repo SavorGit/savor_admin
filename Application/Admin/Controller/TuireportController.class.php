@@ -22,7 +22,7 @@ class TuireportController extends BaseController{
 		$tuiModel =  new \Admin\Model\TuiRpModel($table);
 		$size   = I('numPerPagefmd',50);//显示每页记录数
 		$start = I('pageNum',1);
-		$order = I('_orderfmd','time,hotel_id');
+		$order = I('_orderfmd','hotel_id,time');
 		$sort = I('_sortfmd','asc');
 		if(empty($size)){
 			$size = 50;
