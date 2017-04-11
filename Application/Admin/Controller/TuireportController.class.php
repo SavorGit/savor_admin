@@ -125,10 +125,12 @@ class TuireportController extends BaseController{
 		}
 		if($starttime){
 			$this->assign('s_time',$starttime);
+			$starttime = str_replace('-', '', $starttime);
 			$where .= "	AND date_time >= '{$starttime}'";
 		}
 		if($endtime){
 			$this->assign('e_time',$endtime);
+			$endtime = str_replace('-','',$endtime);
 			$where .= "	AND date_time <=  '{$endtime}'";
 		}
 		//var_dump($where,$field,$group,$orders,$start,$size);
