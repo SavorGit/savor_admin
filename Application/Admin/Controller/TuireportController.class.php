@@ -22,7 +22,7 @@ class TuireportController extends BaseController{
 		$tuiModel =  new \Admin\Model\TuiRpModel($table);
 		$size   = I('numPerPagefmd',50);//显示每页记录数
 		$start = I('pageNum',1);
-		$order = I('_orderfmd','bct');
+		$order = I('_orderfmd','time,hotel_id');
 		$sort = I('_sortfmd','asc');
 		if(empty($size)){
 			$size = 50;
@@ -31,11 +31,11 @@ class TuireportController extends BaseController{
 			$start = 1;
 		}
 		if(empty($order)){
-			$order = bct;
+			$order = "time,hotel_id";
 		}
 
 		if(empty($sort)){
-			$sort = asc;
+			$sort = "asc";
 		}
 		$this->assign('numPerPagefmd',$size);
 		$this->assign('pageNumfmd',$start);
@@ -44,21 +44,22 @@ class TuireportController extends BaseController{
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
 		$hname = I('hotelnamefmd','');
-		$where = "1=1 ";
-		if($hname){
+		$where = "1=1 and time is not null";
+		if(!empty($hname)){
 			$this->assign('hotelnamefmd',$hname);
 			$where .= "	AND hotel_name LIKE '%{$hname}%'";
 		}
-		$where = "1=1";
-		$group =  'hotel_id';
-		$field = 'sum(`box_count`) as bct,sum(`download_count`) as   dct,hotel_name,time';
+		//$group =  'hotel_id';
+		$field = '`download_count` as   dct,hotel_name,time';
 
 		if($starttime){
 			$this->assign('s_timefmd',$starttime);
+			//$starttime = str_replace('-', '', $starttime);
 			$where .= "	AND time >= '{$starttime}'";
 		}
 		if($endtime){
 			$this->assign('e_timefmd',$endtime);
+			//$endtime = str_replace('-', '', $endtime);
 			$where .= "	AND time <=  '{$endtime}'";
 		}
 
@@ -67,7 +68,7 @@ class TuireportController extends BaseController{
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
 			$val['indnum'] = ++$ind;
-			$val['ave'] = ceil($val['dct']/$val['bct']);
+			
 		}
 		$this->assign('listfmd', $result['list']);
 		$this->assign('pagefmd',  $result['page']);
@@ -93,7 +94,7 @@ class TuireportController extends BaseController{
 		$tuiModel =  new \Admin\Model\TuiRpModel($table);
 		$size   = I('numPerPage',50);//显示每页记录数
 		$start = I('pageNum',1);
-		$order = I('_order','count');
+		$order = I('_order','date_time,hotel_id');
 		$sort = I('_sort','asc');
 
 		if(empty($size)){
@@ -103,7 +104,7 @@ class TuireportController extends BaseController{
 			$start = 1;
 		}
 		if(empty($order)){
-			$order = 'count';
+			$order = 'date_time,hotel_id';
 		}
 
 		if(empty($sort)){
@@ -117,20 +118,20 @@ class TuireportController extends BaseController{
 		$start  = ( $start-1 ) * $size;
 		$where = "1=1";
 		$hname = I('hotelname','');
-		$group =  'hotel_name,box_name';
-		$field = 'sum(`count`) count,hotel_name,box_name,date_time';
+		//$group =  'hotel_name,box_name';
+		$field = 'count,hotel_name,box_name,date_time';
 		if($hname){
 			$this->assign('hotelname',$hname);
 			$where .= "	AND hotel_name LIKE '%{$hname}%'";
 		}
 		if($starttime){
 			$this->assign('s_time',$starttime);
-			$starttime = str_replace('-', '', $starttime);
+			//$starttime = str_replace('-', '', $starttime);
 			$where .= "	AND date_time >= '{$starttime}'";
 		}
 		if($endtime){
 			$this->assign('e_time',$endtime);
-			$endtime = str_replace('-','',$endtime);
+			//$endtime = str_replace('-','',$endtime);
 			$where .= "	AND date_time <=  '{$endtime}'";
 		}
 		//var_dump($where,$field,$group,$orders,$start,$size);

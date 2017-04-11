@@ -28,8 +28,8 @@ class TuiRpModel extends BaseModel
 			->limit($start,$size)
 			->select();
 		//var_dump($this->getLastSql());
-		$field = 'count(distinct '.$group.' ) ct';
-		$count_ar = $this->where($where)->field($field)
+		//$field = 'count(distinct '.$group.' ) ct';
+		$count_ar = $this->where($where)->field("count(hotel_name) as ct")
 			->find();
 		$count = $count_ar['ct'];
 		//var_dump($this->getLastSql());

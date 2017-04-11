@@ -5,8 +5,8 @@
     <input type="hidden" name="hostname" value="{$host_name}"/>
     <div class="tabsContent">
       <ul class="nav nav-tabs" id="getmy">
-        <li  class="box active"><a href="#tab1" data-toggle="tab"><span>APP包间首次互动数据</span></a></li>
-        <li class="box" ><a href="#tab2" data-toggle="tab"><span>酒楼首次打开APP数据</span></a></li>
+        <li  class="box active"><a href="#tab1" data-toggle="tab"><span>APP包间首次互动数据(互动)</span></a></li>
+        <li class="box" ><a href="#tab2" data-toggle="tab"><span>酒楼首次打开APP数据(下载)</span></a></li>
       </ul>
       <div class="tab-content">
         <div id="tab1" class="tab-pane active fade in">
@@ -23,7 +23,7 @@
               </label>
 
             </div>
-            <div class="form-group" id="timegi" style="">
+            <div class="form-group" id="timegiy" style="">
               <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
                 <input name="starttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
                         <span class="input-group-btn" style="padding:0px;margin:0px;" >
@@ -69,11 +69,11 @@
             <div class="form-group">
 
               <label style="margin-left: 3px;width:50px;" class="col-xs-1 col-sm-1 control-label col-md-2">
-                日期首：
+                日期：
               </label>
 
             </div>
-            <div class="form-group" id="timegi" style="">
+            <div class="form-group" id="timegis" style="">
               <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
                 <input name="starttimefmd" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_timefmd}" readonly>
                         <span class="input-group-btn" style="padding:0px;margin:0px;" >
@@ -160,9 +160,9 @@
           <tr id="post">
             <th>序号</th>
             <th>酒楼名称</th>
-            <th>机顶盒数量</th>
-            <th>下载量次</th>
-            <th>平均下载量</th>
+            <!-- <th>机顶盒数量</th> -->
+            <th>下载(互动)量次</th>
+            <!-- <th>平均下载量</th> -->
             <th>时间</th>
           </tr>
           </thead>
@@ -171,9 +171,9 @@
             <tr target="sid_user">
               <td data-title="序号">{$vlist.indnum}</td>
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
-              <td data-title="机顶盒数量">{$vlist.bct}</td>
-              <td data-title="下载量次">{$vlist.dct}</td><!-- <td data-title="分区">{$vlist.pt}</td> -->
-              <td data-title="平均下载量">{$vlist.ave}</td>
+              <!-- <td data-title="机顶盒数量">{$vlist.bct}</td> -->
+              <td data-title="下载(互动)量次">{$vlist.dct}</td><!-- <td data-title="分区">{$vlist.pt}</td> -->
+              <!-- <td data-title="平均下载量">{$vlist.ave}</td> -->
               <td data-title="时间">{$vlist.time} </td>
             </tr>
           </volist>
