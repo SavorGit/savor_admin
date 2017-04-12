@@ -520,7 +520,7 @@ class HotelController extends BaseController {
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 
-								$this->error('MAC具体提示填写12位，数字与字母形式');
+								$this->error('MAC具体提示填写12位，数字与字母形式且字母最大为F');
 							}
 
 
@@ -533,7 +533,7 @@ class HotelController extends BaseController {
 
 		$ba_name = array();
 		$ba_mac = array();
-		$mac_mes = '';
+		$mac_mes = array();
 		$ba_r_harr = array();
 		$bac_hotel_rarr = array();
 		$hp = array();
@@ -608,7 +608,7 @@ class HotelController extends BaseController {
 				$hpps = $hotelid;
 				//4个值完全相同同一个hotelid
 				if(in_array($hpp, $hp)){
-					$mac_mes .= '[' . $v['bao_mac'] . ']|';
+					$mac_mes[]= $v['bao_mac'];
 				}else{
 					//同一个hotelid
 					//3个值相同
@@ -768,7 +768,12 @@ class HotelController extends BaseController {
 				}
 			}
 			if($mac_mes){
-				$mac_mes = substr($mac_mes,0,-1);
+				$spt = '';
+				$mac_mes = array_unique($mac_mes);
+				foreach($mac_mes as $v){
+					$spt .= '['.$v.']|';
+				}
+				$mac_mes = substr($spt,0,-1);
 				$sps = '机顶盒('.$mac_mes.'),时间与音量已经存在，请在机顶盒管理中进行修改';
 			}else{
 				$sps = '添加成功了';
