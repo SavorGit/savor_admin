@@ -619,7 +619,7 @@ class HotelController extends BaseController {
 					//3个值相同
 					$rttp = $isHaveMac[0]['rtp'];
 					if (in_array($hpps, $hps)){
-							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].' 包间类型'.$r_arr[$rttp].' 机顶盒名称'.$isHaveMac[0]['bna'];
+							$str = $isHaveMac[0]['mac'].'机顶盒在本酒店已经存在!<br/>'.'已存在信息为:<br/>包间名称:'.$isHaveMac[0]['room_name'].'<br/>包间类型:'.$r_arr[$rttp].' <br/>机顶盒名称:'.$isHaveMac[0]['bna'];
 
 					}else{
 						$str = 'Mac地址对应机顶盒'.$v['box_name'].'存在于' . $isHaveMac[0]['hotel_name'] . '酒楼' . $isHaveMac[0]['room_name'] . '包间';
