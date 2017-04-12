@@ -512,7 +512,7 @@ class HotelController extends BaseController {
 				}else{
 					if($ks == 'bao_mac'){
 						if(strlen($vs)!=12){
-							$this->error('MAC地址应该为12位');
+							$this->error('MAC地址提示12位数字与字母组合');
 						}else{
 
 
@@ -659,8 +659,8 @@ class HotelController extends BaseController {
 						}
 
 
-					$room_bai[] = array('room_id'=>0,
-						'box_id'=>0,'tv_id'=>$ttid);
+					$room_bai[] = array('room_id'=>$isHaveTv[$mac_key]['rid'],
+						'box_id'=>$isHaveTv[$mac_key]['id'],'tv_id'=>$ttid);
 				} else {
 					//新增机顶盒与电视
 					$dat = array();
@@ -693,7 +693,7 @@ class HotelController extends BaseController {
 						$this->error('失败请重新操作添加机顶');
 					}
 
-					$room_bai[] = array('room_id'=>0,
+					$room_bai[] = array('room_id'=>$dat['room_id'],
 						'box_id'=>$dap['box_id'],'tv_id'=>$datv['tv_id']);
 
 				}
@@ -749,10 +749,8 @@ class HotelController extends BaseController {
 			}
 			$model->commit();
 		}
-		//var_dump($bool);
 		//var_dump($room_bai);
 		if($bool){
-
 			foreach ($room_bai as $k=>$v) {
 				if($v['room_id']){
 					$rinfo = $RoomModel->find($v['room_id']);
@@ -761,10 +759,12 @@ class HotelController extends BaseController {
 				if($v['box_id']){
 					$bo_info = $boxModel->find($v['box_id']);
 					$boxModel->saveBatdat($bo_info, $v['box_id']);
+
 				}
 				if($v['tv_id']){
 					$tv_info = $tvModel->find($v['tv_id']);
 					$tvModel->saveBatdat($tv_info, $v['tv_id']);
+
 				}
 			}
 			if($mac_mes){
