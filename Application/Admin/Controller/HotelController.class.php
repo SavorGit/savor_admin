@@ -608,7 +608,7 @@ class HotelController extends BaseController {
 				$hpps = $hotelid;
 				//4个值完全相同同一个hotelid
 				if(in_array($hpp, $hp)){
-					$mac_mes .= '[' . $v['bao_mac'] . ']、';
+					$mac_mes .= '[' . $v['bao_mac'] . ']|';
 				}else{
 					//同一个hotelid
 					//3个值相同
