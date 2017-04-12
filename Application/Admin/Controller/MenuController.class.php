@@ -1214,7 +1214,7 @@ class MenuController extends BaseController {
                         $this->display('copymenuct');
                     }else{
                         $this->assign('menuname', $menu_name);
-                        $this->display('addmenuct');
+                        $this->display('altermenuct');
                     }
                 }
             } else {
@@ -1277,6 +1277,10 @@ class MenuController extends BaseController {
         echo json_encode($result);
         die;
     }
+
+
+
+
 
 
 
