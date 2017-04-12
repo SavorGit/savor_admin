@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" class="pagefbai" id="pagerForm" action="{$host_name}/tuireport/rplist" method="post" >
+  <form onsubmit="return navTabSearch(this);" class="pagefbai" id="pagerForm_tg" action="{$host_name}/tuireport/rplist" method="post" >
     <input type="hidden" name="hostname" value="{$host_name}"/>
     <div class="tabsContent">
       <ul class="nav nav-tabs" id="getmy">
@@ -126,7 +126,7 @@
             <th>序号</th>
             <th>酒楼名称</th>
             <th>机顶盒名称</th>
-            <th>下载量次</th>
+            <th>下载(互动)量次</th>
             <th>时间</th>
           </tr>
           </thead>
@@ -161,7 +161,7 @@
             <th>序号</th>
             <th>酒楼名称</th>
             <!-- <th>机顶盒数量</th> -->
-            <th>下载(互动)量次</th>
+            <th>下载量次</th>
             <!-- <th>平均下载量</th> -->
             <th>时间</th>
           </tr>
@@ -257,14 +257,14 @@
     var hostname = $("input[name='hostname']").val();
     if($tab == '#tab1'){
       var haddr = hostname+'/tuireport/rplist';
-      $("#pagerForm").attr('action',haddr);
+      $("#pagerForm_tg").attr('action',haddr);
       $("#pagecontent2").hide();
       $("#pagecontent1").show();
       $("#tab2").hide();
       $("#tab1").show();
     }else if($tab == '#tab2'){
       var haddr = hostname+'/tuireport/mobile_download#tab2';
-      $("#pagerForm").attr('action',haddr);
+      $("#pagerForm_tg").attr('action',haddr);
       $("#pagecontent1").hide();
       $("#pagecontent2").show();
       $("#tab1").hide();
