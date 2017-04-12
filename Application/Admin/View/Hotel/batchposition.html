@@ -73,7 +73,7 @@
   </div>
   <div class="leix">
   <label>包间类型</label>
-  <select id="bao_lx" class="form-control">
+  <select id="bao_lx" class="form-control" style="width:100px;">
 	  <foreach name="rtype_list" item="vlist">
 		  <option value="{$key}">{$vlist}</option>
 	  </foreach>
@@ -85,7 +85,7 @@
   </div>
   <div class="form-group">
     <label>MAC地址</label>
-    <input type="text"  style="width:180px;" id="bao_mac" class="form-control" value="{$bar.bacadd}">
+    <input type="text"  style="width:160px;" id="bao_mac" class="form-control" value="{$bar.bacadd}">
   </div>
   <div class="form-group">
     <label>切换时间</label>
@@ -150,7 +150,7 @@
 				obj.bao_name = $(this).children().eq(0).children().eq(1).val();
 				obj.bao_lx = $(this).children().eq(1).children().eq(1).find("option:selected").val();
 				obj.box_name = $(this).children().eq(2).children().eq(1).val();
-				obj.bao_mac = $(this).children().eq(3).children().eq(1).val();
+				obj.bao_mac = $(this).children().eq(3).children().eq(1).val().trim();
 				obj.bao_time = $(this).children().eq(4).children().eq(1).val();
 				obj.bao_volume = $(this).children().eq(5).children().eq(1).val();
 				obj.tv_brand = $(this).children().eq(6).children().eq(1).val();
@@ -214,6 +214,7 @@
 		function navTabAjaxDone(json) {
 			jap = JSON.stringify(json);
 			console.log(jap);
+			alert(jap);
 			DWZ.ajaxDone(json);
 			if (json.status == DWZ.statusCode.ok) {
 				if (json.navTabId) {

@@ -515,11 +515,12 @@ class HotelController extends BaseController {
 							$this->error('MAC地址应该为12位');
 						}else{
 
+
 							$preg = '/^[0-9A-F]+$/';
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 
-								$this->error('mac地址字符输入范围不对，应只有数字和大写字母');
+								$this->error('MAC具体提示填写12位，数字与字母形式');
 							}
 
 
@@ -541,45 +542,97 @@ class HotelController extends BaseController {
 		$boxModel = new \Admin\Model\BoxModel();
 		$hotelModel = new \Admin\Model\HotelModel();
 		$tvModel = new \Admin\Model\TvModel();
-		foreach ($bat_arr as $k=>&$v) {
+		$dahotels = array();
+		$dahotelmac = array();
+		$dahotelmaname = array();
+		foreach ($bat_arr as $k=>$v) {
 			$v = json_decode($v, true);
+			$dahotels[$k]=$v;
+			$dahotelmac[$k] = $v['bao_mac'];
+			$dahotelmaname[$k] = $v['box_name'];
+		}
+		$dahotel = $dahotels;
+		$dahotelmaname = array_count_values($dahotelmaname);
+		//对mac地址一样进行判断
+		foreach ($dahotels as $k=>$v) {
+			$boxname = $v['box_name'];
+			$macname = $v['bao_mac'];
+			$boxstr = $v['bao_name'].','.$v['bao_lx'];
+			foreach($dahotels as $dak=>$dav){
+				if($dav['box_name'] == $boxname ){
+					$boxstp = $dav['bao_name'].','.$dav['bao_lx'];
+					if($boxstp!=$boxstr){
+						$this->error('酒楼不允许出现机顶盒重名的情况');
+					}else{
+						if($dav['bao_mac'] != $macname){
+							$this->error('包间名称包间类型机顶盒名称完全相同mac必须一致');
+						}
+					}
+				}
+			}
+			$dahotelmacc = $dahotelmac;
+			$macho = $v['bao_mac'];
+			unset($dahotelmacc[$k]);
+			$gets = array_search($macho, $dahotelmacc);
+			if(is_numeric($gets)){
+				if (preg_match("/^\d*$/", $gets)) {
+					if (($v['bao_name'] != $dahotel[$gets]['bao_name']) && ($v['bao_lx'] != $dahotel[$gets]['bao_lx']) || ($v['box_name'] != $dahotel[$gets]['box_name'])) {
+						$this->error('mac地址一样的各种项应该相同');
+					}
+				}
+			}
+
+		}
+
+		//进行数据库判断
+		foreach ($dahotels as $k=>$v) {
+
+			//判断机顶盒名称是否存在且mac地址不一样
+			$wherec = " b.name='" . $v['box_name'] ."' and h.id = ".$hotelid;
+			$isHavebox = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.mac as mac ', $wherec);
+			if (!empty($isHavebox)) {
+				if($isHavebox[0]['mac']!=$v['bao_mac']){
+					$this->error('该机顶盒名称'.$v['box_name'].'已经存在于该酒店对应mac为'.$isHavebox[0]['mac']);
+				}
+			}
 			//判断是否有该机顶盒mac地址
 			$where = " b.mac='" . $v['bao_mac'] . "' and b.flag=0 ";
-			$isHaveMac = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.id as id ', $where);
+			$isHaveMac = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.id as id,b.mac as mac ', $where);
 
 			if (!empty($isHaveMac)) {
 				foreach ($isHaveMac as $ks=>$vs) {
 					$hp[$ks] = $vs['hotel_id'].','.$vs['room_name'].','.$vs['rtp'].','.$vs['bna'];
-					$hps[$ks] = $vs['hotel_id'].$vs['room_name'].','.$vs['rtp'];
+					$hps[$ks] = $vs['hotel_id'];
 				}
 				$hpp = $hotelid.','.$v['bao_name'].','.$v['bao_lx'].','.$v['box_name'];
-				$hpps = $hotelid.$v['bao_name'].','.$v['bao_lx'];
-				//4个值完全相同
+				$hpps = $hotelid;
+				//4个值完全相同同一个hotelid
 				if(in_array($hpp, $hp)){
 					$mac_mes .= '[' . $v['bao_mac'] . ']、';
 				}else{
+					//同一个hotelid
 					//3个值相同
 					if (in_array($hpps, $hps)){
-						if($v['box_name'] != $isHaveMac[0]['bna'] ){
-							$str = '机顶盒名称'.$v['box_name'].'与mac地址'.$v['bao_mac'].'冲突正确机顶盒名称应该'.$isHaveMac[0]['bna'];
-						}
+							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].'包间类型'.$isHaveMac[0]['rtp'].'机顶盒名称'.$isHaveMac[0]['bna'];
+
 					}else{
 						$str = 'Mac地址对应机顶盒'.$v['box_name'].'存在于' . $isHaveMac[0]['hotel_name'] . '酒楼' . $isHaveMac[0]['room_name'] . '包间';
 					}
-					//echo $str;
 					$this->error($str);
 				}
 			}
 		}
+
 		$bool = false;
 		//获取所有包间id
 		$room_bai = array();
 		//var_dump($bat_arr);
-		foreach ($bat_arr as $k=>&$v) {
+
+		foreach ($bat_arr as $k=>$v) {
 			$model->startTrans();
+			$v = json_decode($v, true);
 			$where = " r.name='".$v['bao_name']."' and b.flag=0  and r.type =  ".$v['bao_lx']." and h.id = ".$hotelid;
 			$isHaveTv = $boxModel->isHaveTv(' h.name as hotel_name,r.name as room_name,r.id as rid,r.type as rtp,b.name as bna,b.id as id,b.mac as bmacc ',$where);
-
 			if (!empty($isHaveTv)) {
 				foreach ($isHaveTv as $ktv=>$vtv) {
 					$bac_hotel_rmac[$ktv] = $vtv['bmacc'];
@@ -591,11 +644,6 @@ class HotelController extends BaseController {
 					$mac_key = array_search($v['bao_mac'], $bac_hotel_rmac);
 					//找到机顶盒名称
 					$ma_name = $isHaveTv[$mac_key]['bna'];
-					if ($ma_name != $v['box_name']) {
-						$str = '机顶盒'.$ma_name.'与'.$v['box_name'].'的MAC冲突';
-						$model->rollback();
-						$this->error($str);
-					} else {
 						$dap = array();
 						$dap['box_id'] = $isHaveTv[$mac_key]['id'];
 						$dap['tv_brand'] = $v['tv_brand'];
@@ -609,7 +657,7 @@ class HotelController extends BaseController {
 							$model->rollback();
 							$this->error('失败请重新操作添加');
 						}
-					}
+
 
 					$room_bai[] = array('room_id'=>0,
 						'box_id'=>0,'tv_id'=>$ttid);
@@ -699,9 +747,12 @@ class HotelController extends BaseController {
 				$room_bai[] = array('room_id'=>$dat['room_id'],
 					'box_id'=>$dap['box_id'],'tv_id'=>$datv['tv_id']);
 			}
-		}
-		if($bool){
 			$model->commit();
+		}
+		//var_dump($bool);
+		//var_dump($room_bai);
+		if($bool){
+
 			foreach ($room_bai as $k=>$v) {
 				if($v['room_id']){
 					$rinfo = $RoomModel->find($v['room_id']);
@@ -717,14 +768,14 @@ class HotelController extends BaseController {
 				}
 			}
 			if($mac_mes){
-				$sps = '机顶盒('.$mac_mes.'),时间与音量已经存在，请在机顶盒管理中进行修改。';
+				$mac_mes = substr($mac_mes,0,-1);
+				$sps = '机顶盒('.$mac_mes.'),时间与音量已经存在，请在机顶盒管理中进行修改';
 			}else{
 				$sps = '添加成功了';
 
 			}
-			$this->output($sps,'hotel/manager',2);
+			$this->output($sps,'hotel/manager');
 		}else{
-			$model->rollback();
 			$this->error('失败请重新操作');
 		}
 
