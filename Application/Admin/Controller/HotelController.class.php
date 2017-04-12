@@ -494,6 +494,11 @@ class HotelController extends BaseController {
 	 * 批量新增牌位
 	 */
 	public function doAddBatch() {
+		$r_arr = array(
+			1=>'包间',
+			2=>'大厅',
+			3=>'等候区',
+		);
 		$hotelid = $_POST['hotelid'];
 		$h_str = $_POST['hval'];
 		$bat_arr = explode('???',$h_str);
@@ -520,7 +525,7 @@ class HotelController extends BaseController {
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 
-								$this->error('MAC具体提示填写12位，数字与字母形式');
+								$this->error('请输入正确12位的mac地址， 只允许输入数字或字母');
 							}
 
 
@@ -533,7 +538,7 @@ class HotelController extends BaseController {
 
 		$ba_name = array();
 		$ba_mac = array();
-		$mac_mes = '';
+		$mac_mes = array();
 		$ba_r_harr = array();
 		$bac_hotel_rarr = array();
 		$hp = array();
@@ -565,7 +570,7 @@ class HotelController extends BaseController {
 						$this->error('酒楼不允许出现机顶盒重名的情况');
 					}else{
 						if($dav['bao_mac'] != $macname){
-							$this->error('包间名称包间类型机顶盒名称完全相同mac必须一致');
+							$this->error('相同名称的机顶盒mac地址不一致，请重新输入');
 						}
 					}
 				}
@@ -608,12 +613,13 @@ class HotelController extends BaseController {
 				$hpps = $hotelid;
 				//4个值完全相同同一个hotelid
 				if(in_array($hpp, $hp)){
-					$mac_mes .= '[' . $v['bao_mac'] . ']|';
+					$mac_mes[]= $v['bao_mac'];
 				}else{
 					//同一个hotelid
 					//3个值相同
+					$rttp = $isHaveMac[0]['rtp'];
 					if (in_array($hpps, $hps)){
-							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].'包间类型'.$isHaveMac[0]['rtp'].'机顶盒名称'.$isHaveMac[0]['bna'];
+							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].' 包间类型'.$r_arr[$rttp].' 机顶盒名称'.$isHaveMac[0]['bna'];
 
 					}else{
 						$str = 'Mac地址对应机顶盒'.$v['box_name'].'存在于' . $isHaveMac[0]['hotel_name'] . '酒楼' . $isHaveMac[0]['room_name'] . '包间';
@@ -768,7 +774,12 @@ class HotelController extends BaseController {
 				}
 			}
 			if($mac_mes){
-				$mac_mes = substr($mac_mes,0,-1);
+				$spt = '';
+				$mac_mes = array_unique($mac_mes);
+				foreach($mac_mes as $v){
+					$spt .= '['.$v.']|';
+				}
+				$mac_mes = substr($spt,0,-1);
 				$sps = '机顶盒('.$mac_mes.'),时间与音量已经存在，请在机顶盒管理中进行修改';
 			}else{
 				$sps = '添加成功了';
