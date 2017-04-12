@@ -494,6 +494,11 @@ class HotelController extends BaseController {
 	 * 批量新增牌位
 	 */
 	public function doAddBatch() {
+		$r_arr = array(
+			1=>'包间',
+			2=>'大厅',
+			3=>'等候区',
+		);
 		$hotelid = $_POST['hotelid'];
 		$h_str = $_POST['hval'];
 		$bat_arr = explode('???',$h_str);
@@ -520,7 +525,7 @@ class HotelController extends BaseController {
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 
-								$this->error('MAC具体提示填写12位，数字与字母形式且字母最大为F');
+								$this->error('请输入正确12位的mac地址， 只允许输入数字或字母');
 							}
 
 
@@ -565,7 +570,7 @@ class HotelController extends BaseController {
 						$this->error('酒楼不允许出现机顶盒重名的情况');
 					}else{
 						if($dav['bao_mac'] != $macname){
-							$this->error('包间名称包间类型机顶盒名称完全相同mac必须一致');
+							$this->error('相同名称的机顶盒mac地址不一致，请重新输入');
 						}
 					}
 				}
@@ -612,8 +617,9 @@ class HotelController extends BaseController {
 				}else{
 					//同一个hotelid
 					//3个值相同
+					$rttp = $isHaveMac[0]['rtp'];
 					if (in_array($hpps, $hps)){
-							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].'包间类型'.$isHaveMac[0]['rtp'].'机顶盒名称'.$isHaveMac[0]['bna'];
+							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].' 包间类型'.$r_arr[$rttp].' 机顶盒名称'.$isHaveMac[0]['bna'];
 
 					}else{
 						$str = 'Mac地址对应机顶盒'.$v['box_name'].'存在于' . $isHaveMac[0]['hotel_name'] . '酒楼' . $isHaveMac[0]['room_name'] . '包间';
