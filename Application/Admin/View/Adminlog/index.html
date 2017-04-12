@@ -1,0 +1,95 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/adminlog/index" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+      
+       <div class="col-xs-12 col-sm-5 col-md-2 pull-left">
+          <div class="input-group input-group-sm">
+             <span class="input-group-btn">
+              <select name="searchUserid" class="form-control " >
+                <option value="">所有用户</option>
+                <volist name="userinfo" id="vo">
+                  <option <if condition="$vo.id eq $userid">selected</if> value="{$vo.id}">{$vo.remark} </option>
+                </volist>
+              </select>
+            </span>
+          </div>
+        </div> 
+           <div class="goods-date">
+        	<div class="form-inline">
+            	<div class="form-group">
+                    <label>操作时间：</label>
+                    <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+                         <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
+                         <span class="input-group-btn">
+                           <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                           <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+                         </span>
+                     </div>
+                 </div>
+                   <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+                     <input name="end_time" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$timeinfo.end_time}" readonly>
+                     <span class="input-group-btn">
+                       <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                       <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+                     </span>
+                     <span class="input-group-btn">
+              			<button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search">搜索</i></button>
+            		</span>
+                 </div>
+             </div>
+         </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th class="span2">序号</th>
+              <th>用户名</th>
+              <th>栏目名称</th>
+ 			  
+              <th>时间</th>
+              <th>登陆IP</th>
+              <th>登陆地区</th>
+              <th >操作数据</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="result" id="vlist">
+	            <tr target="sid_user">	            
+	              <td data-title="序号">{$vlist.id}</td>
+	              <td data-title="操作用户">{$vlist.username}</td>
+	              <td data-title="操作栏目名称">{$vlist.action}</td>
+	              <td data-title="操作时间">{$vlist.addtime}</td>
+	              <td data-title="客户端IP">{$vlist.ipaddr}</td>
+	              <td data-title="登陆地区">{$vlist.areaname}</td>
+	              <td  data-title="操作数据">{$vlist.query_string}</td>
+	            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script>
+  $(function(){
+    $(".class-filter").change(function (){
+      $(this).closest("form").submit();
+    })
+  })
+</script>

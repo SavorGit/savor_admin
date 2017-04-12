@@ -29,7 +29,6 @@ class MenuController extends BaseController {
         //第一次先判断是空的
         $mlistLogModel = new \Admin\Model\MenuListLogModel();
         $menu_id = I('mid');
-        $menu_id = 29;
         $menu_name = I('name');
         $this->assign('menuname', $menu_name);
         //获取最新flag
@@ -74,6 +73,11 @@ class MenuController extends BaseController {
             }
 
         }
+
+        foreach($data as $kt=>&$kv){
+            $mp[]  = strtotime($kt);
+        }
+        array_multisort($mp, SORT_DESC, $data);
         $this->assign('vinfo', $data);
         $this->display('opelog');
 
@@ -466,6 +470,8 @@ class MenuController extends BaseController {
         $name = I('name');
         $beg_time = I('starttime','');
         $end_time = I('endtime','');
+        $this->assign('sttime',$beg_time);
+        $this->assign('sendime',$end_time);
         if($beg_time)   $where.=" AND install_date>='$beg_time'";
         if($end_time)   $where.=" AND install_date<='$end_time'";
         if($name)
@@ -473,6 +479,12 @@ class MenuController extends BaseController {
             $this->assign('name',$name);
             $where .= "	AND name LIKE '%{$name}%' ";
         }
+        $hbt_v = I('hbt_v');
+        if ($hbt_v) {
+            $this->assign('hbt_k',$hbt_v);
+            $where .= "	AND hotel_box_type = $hbt_v";
+        }
+
         //城市
         $area_v = I('area_v');
         if ($area_v) {
@@ -763,7 +775,6 @@ class MenuController extends BaseController {
 
 
         $id = I('post.id','');
-        // var_dump($_POST);
 
         //添加到menu_list 表
         $mlModel = new MenuListModel();
@@ -773,7 +784,7 @@ class MenuController extends BaseController {
         $save['creator_name'] = $userInfo['username'];
         $save['creator_id'] = $userInfo['id'];
         $save['state']    = 0;
-        $save['menu_name'] = I('post.program');
+        $save['menu_name'] = I('post.program','','trim');
 
 
         $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
@@ -834,7 +845,7 @@ class MenuController extends BaseController {
             $save['create_time'] = date('Y-m-d H:i:s');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
-                $this->output('操作失败名字已经有!', 'menu/addmenu');
+                $this->error('操作失败名字已经有!');
             }
             $result = $mlModel->add($save);
             if ( $result ) {
@@ -857,8 +868,8 @@ class MenuController extends BaseController {
                     //添加操作日志不在这边加
                     $this->addlog($data, $menu_id);
 
-                    $this->output('新增成功', 'menu/addmen',2);
-
+                   // $this->output('新增成功', 'menu/addmen',2);
+                    $this->output('新增成功', 'menu/getlist');
                 } else {
 
                 }
@@ -1005,67 +1016,7 @@ class MenuController extends BaseController {
 
 
 
-    /*
-     * 添加节目管理
-     */
-    public function addmenu() {
-        //左边表单提交，右边表单提交，导入ajax,id修改
-        $userInfo = session('sysUserInfo');
-        $menu_name = I('get.name'.'');
-        $type = I('type');
-        if ( $type == 2 ) {
-            $menuid = I('id','0');
-            if ($menuid) {
-                $mItemModel = new MenuItemModel();
-                $order = I('_order','id');
-                $sort = I('_sort','asc');
-                $orders = $order.' '.$sort;
-                $where = "1=1";
-                $field = "ads_name,ads_id,duration,sort_num,create_time";
-                $where .= " AND menu_id={$menuid}  ";
-                $res = $mItemModel->getWhere($where,$orders, $field);
 
-                $this->assign('menuid',$menuid);
-                $this->assign('menuname',$menu_name);
-                $this->assign('list',$res);
-
-            }
-            $this->display('altermenu');
-        } else {
-            $this->display('addmenu');
-        }
-
-        /*
-        $prModel = new ProgramModel();
-
-
-        $prModel->getWhere();
-        $artModel = new ArticleModel();
-        $userInfo = session('sysUserInfo');
-        $uname = $userInfo['username'];
-        $this->assign('uname',$uname);
-
-
-        $acctype = I('get.acttype');
-
-        if ($acctype && $id)
-        {
-            $vinfo = $artModel->where('id='.$id)->find();
-            $this->assign('vinfo',$vinfo);
-
-        } else {
-
-        }
-        $where = "state=0";
-        $field = 'id,name';
-        $vinfo = $catModel->getWhere($where, $field);
-
-        $this->assign('vcainfo',$vinfo);
-
-        */
-
-
-    }
 
     /*
      * 处理excel数据
@@ -1234,12 +1185,6 @@ class MenuController extends BaseController {
             // ob_clean();
             // die;
             die;
-            $str = 'xxxxxxxxx';
-            $this->assign('xiaob', $str);
-            $this->assign('tiantian', $str);
-            $this->display('addmenuct');
-
-
 
         }
 
@@ -1247,6 +1192,7 @@ class MenuController extends BaseController {
             $userInfo = session('sysUserInfo');
             $menu_name = I('get.name' . '');
             $type = I('type');
+            //修改节目单
             if ($type == 2) {
                 $menuid = I('id', '0');
                 if ($menuid) {
@@ -1259,11 +1205,18 @@ class MenuController extends BaseController {
                     $where .= " AND menu_id={$menuid}  ";
                     $res = $mItemModel->getWhere($where, $orders, $field);
                     $this->assign('menuid', $menuid);
-                    $this->assign('menuname', $menu_name);
+                    //判断是新增
+                    $pct = I('pctype', '0');
                     $this->assign('list', $res);
-
+                    if($pct == 1){
+                        $this->assign('menuname', '');
+                        $this->assign('menuid', '');
+                        $this->display('copymenuct');
+                    }else{
+                        $this->assign('menuname', $menu_name);
+                        $this->display('altermenuct');
+                    }
                 }
-                $this->display('addmenuct');
             } else {
                 $this->display('addmenuct');
             }
@@ -1324,6 +1277,10 @@ class MenuController extends BaseController {
         echo json_encode($result);
         die;
     }
+
+
+
+
 
 
 

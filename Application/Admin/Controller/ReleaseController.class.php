@@ -7,6 +7,7 @@ namespace Admin\Controller;
 use Admin\Controller\BaseController;
 use Admin\Model\CategoModel;
 use Admin\Model\ArticleModel;
+use Common\Lib\xhprof\xhprof_lib\utils\xhprof_runs;
 
 class ReleaseController extends BaseController{
 

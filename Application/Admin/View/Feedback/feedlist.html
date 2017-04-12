@@ -1,0 +1,101 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/feedback/rplist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="form-group">
+            <h1>意见反馈</h1>
+          </div>
+        </div>
+      </div>
+      <div class="form-inline" style="margin-top:10px;">
+
+
+        <div class="form-group">
+          <div class="input-group input-group-sm" style="width: 300px">
+            <input type="text" class="form-control" name="titlename" value="{$name}" placeholder="输入关键字/问题描述/模糊搜索">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+        </div>
+
+        <div class="form-group">
+
+          <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$timeinfo.now_time}">
+              <input style="margin-left: 6px;" name="begin_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$timeinfo.now_time}" >
+
+              <input style="padding:0px;margin:0px;margin-left: 16px;"  name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$timeinfo.end_time}" readonly>
+                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:30px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>id</th>
+            <th>设备类型</th>
+            <th>设备型号</th>
+            <th>反馈日期</th>
+            <th>联系方式</th>
+            <th>问题反馈</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="id">{$vlist.id}</td>
+              <td data-title="设备类型">{$vlist.device_type}</td>
+              <td data-title="设备型号">{$vlist.device_id}</td>
+              <td data-title="反馈日期">{$vlist.create_time}</td>
+              <td data-title="联系方式">{$vlist.contact_way}</td>
+              <td data-title="问题反馈">{$vlist.suggestion}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+  <script type="text/javascript">
+        $(function(){
+          $(".form-control.date").datetimepicker({
+            minView: "month", //选择日期后，不会再跳转去选择时分秒
+            language:  'zh-CN',
+            format: 'yyyy-mm-dd',
+            todayBtn:  1,
+            autoclose: 1,
+          });
+
+          $('.date-reset').click(function(){
+            $(this).parent().prev().val('')
+          })
+        })
+</script>

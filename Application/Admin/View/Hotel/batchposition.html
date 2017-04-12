@@ -1,0 +1,248 @@
+<include file="Public/script"/>
+<style type="text/css">
+	#topseach{
+		margin-top: 25px;
+		margin-left: 15px;
+	}
+	#topseach input{
+		width:84px;
+		height:29px;
+		margin-top:7px;
+	}
+	#topseach div{
+		display: inline-block;
+	}
+	#topseach select{
+		width:85px;
+		height:29px;
+		margin-top:7px;
+		padding-top: 3px;
+	}
+	.form-group{
+		margin-right: 10px;
+	}
+	.leix{
+		margin-right: 10px;
+	}
+	.xian{
+		width:100%;
+		height: 1px;
+		background-color:#CCCCCC;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	.butseach{
+		margin-left: 15px;
+		overflow: auto;
+		height: 500px;
+	}
+	.butseach input{
+		width:84px;
+		height:29px;
+		margin-top:7px;
+	}
+	.butseach div{
+		display: inline-block;
+	}
+	.butseach select{
+		width:85px;
+		height:29px;
+		margin-top:7px;
+		padding-top: 3px;
+	}
+	.keep{
+		margin-left: 45%;
+		margin-bottom: 20px;
+	}
+	#subbtn{
+		position: fixed;
+		bottom: 25px;
+		right: 46px;
+	}
+</style>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form id="pagerForm" action="{$host_name}/hotel/doAddBatch" method="post" enctype="multipart/form-data" onsubmit="return iframeCallback(this, navTabAjaxDone)">
+	  <input type="hidden" name="hotelid" value="{$hotelid}" />
+    <h1 style="text-align: center;">{$hotelname}-批量新增版位</h1>
+ <div id="topseach">
+	 <div class="fen">
+  <div class="form-group">
+    <label for="exampleInputEmail1">包间名称</label>
+    <input type="text" id="bao_name" class="form-control"  value="{$bar.rname}">
+  </div>
+  <div class="leix">
+  <label>包间类型</label>
+  <select id="bao_lx" class="form-control" style="width:100px;">
+	  <foreach name="rtype_list" item="vlist">
+		  <option value="{$key}">{$vlist}</option>
+	  </foreach>
+ </select>
+  </div>
+  <div class="form-group">
+    <label>机顶盒名称</label>
+    <input id="box_name" type="text" class="form-control" value="{$bar.boxxname}">
+  </div>
+  <div class="form-group">
+    <label>MAC地址</label>
+    <input type="text"  style="width:160px;" id="bao_mac" class="form-control" value="{$bar.bacadd}">
+  </div>
+  <div class="form-group">
+    <label>切换时间</label>
+    <input type="number" id="bao_time" style="width:50px;" class="form-control" value="{$bar.swtime}">
+  </div>
+  <div class="form-group">
+    <label>音量</label>
+    <input type="number" style="width:50px;" id="bao_volume" class="form-control" value="{$bar.voloume}">
+  </div>
+  <div class="form-group">
+    <label>电视品牌</label>
+    <input type="text" id="tv_brand" class="form-control" value="{$bar.tvbran}">
+  </div>
+  <div>
+    <label for="exampleInputEmail1">尺寸</label>
+    <input type="number" style="width:50px;" id="tv_size" class="form-control" value="{$bar.tvsizea}">
+  </div>
+  <div class="leix">
+  <label>型号源</label>
+  <select id="tv_source" class="form-control">
+	  <foreach name="tvlist" item="vlist">
+		  <option value="{$key}">{$vlist}</option>
+	  </foreach>
+ </select>
+  </div>
+  <div class="leix">
+  <label>电视状态</label>
+
+  <select id="tv_state" class="form-control">
+	  <foreach name="tvstate" item="vlist">
+		  <option value="{$key}">{$vlist}</option>
+	  </foreach>
+ </select>
+  </div>
+  <div class="form-group" id="number">
+    <label>数量</label>
+    <input type="number" style="width:50px;" value="{$bar.numb}" class="form-control num">
+  </div>
+  <button type="button" class="btn btn-primary clickbtn">创建</button>
+  <div class="xian"></div>
+ </div></div>
+ <div class="butseach">
+ 	
+ </div>
+	  <input type="hidden" value="" name="hval" id="hval"/>
+  <button type="submit" id="subbtn" class="btn btn-primary keep" onclick="return getval();">保存</button>
+	</form>
+</div>
+
+	<script type="text/javascript">
+
+
+		function getval(){
+
+
+			var arr=[];
+			var st = '';
+			var str = '';
+
+			$('.butseach .fen').each(function(){
+				var obj = {};
+				obj.bao_name = $(this).children().eq(0).children().eq(1).val();
+				obj.bao_lx = $(this).children().eq(1).children().eq(1).find("option:selected").val();
+				obj.box_name = $(this).children().eq(2).children().eq(1).val();
+				obj.bao_mac = $(this).children().eq(3).children().eq(1).val().trim();
+				obj.bao_time = $(this).children().eq(4).children().eq(1).val();
+				obj.bao_volume = $(this).children().eq(5).children().eq(1).val();
+				obj.tv_brand = $(this).children().eq(6).children().eq(1).val();
+				obj.tv_size = $(this).children().eq(7).children().eq(1).val();
+				obj.tv_source = $(this).children().eq(8).children().eq(1).find("option:selected").val();
+				obj.tv_state = $(this).children().eq(9).children().eq(1).find("option:selected").val();
+				var str = JSON.stringify(obj);
+
+				arr.push(str);
+			})
+
+			st = arr.join('???');
+			$("#hval").val(st);
+		}
+
+		$(function(){
+
+
+			$('.clickbtn').click(function(){
+				$('.butseach').html("");
+				var $num = $('.num').val();
+				if($num==0){
+					alert('数量应大于1');
+					return false;
+				}else if($num>50){
+					alert('数量最大为50');
+					return false;
+				}
+
+
+				for(var i=0;i<$num;i++){
+					$('.butseach').append($('#topseach').html())
+					$('.butseach #bao_name').val($('#topseach #bao_name').val());//包间名称
+					$('.butseach #bao_lx').val($("#topseach #bao_lx").find("option:selected").val());//包间类型
+					$('.butseach #box_name').val($('#topseach #box_name').val());//机顶盒名称
+					$('.butseach #bao_mac').val($('#topseach #bao_mac').val());//mac地址
+					$('.butseach #bao_time').val($('#topseach #bao_time').val());//切换时间
+					$('.butseach #bao_volume').val($('#topseach #bao_volume').val());//音量
+					$('.butseach #tv_brand').val($('#topseach #tv_brand').val());//电视品牌
+					$('.butseach #tv_size').val($('#topseach #tv_size').val());//尺寸
+					$('.butseach #tv_source').val($("#topseach #tv_source").find("option:selected").val());//信号源
+					$('.butseach #tv_state').val($("#topseach #tv_state").find("option:selected").val());//状态
+
+
+
+
+				}
+				$('.butseach .disnone').hide();
+				$('.butseach .clickbtn').addClass('dela').html('删除');
+				$('.butseach #number').hide();
+
+			});
+
+
+			$('body').on('click','.dela',function(){
+				$(this).parent().remove()
+			});
+
+		})
+
+		 function navTabAjaxDone(json) {
+			jap = JSON.stringify(json);
+			console.log(jap);
+			//alert(jap);
+			DWZ.ajaxDone(json);
+			if (json.status == DWZ.statusCode.ok) {
+				if (json.navTabId) {
+					$(".ceshipilianxin span").html('酒楼信息');
+					navTab.reload('hotel/manager');
+				}
+
+
+			}
+		}
+
+		/*function dialogAjaxDone(json){
+			//alert(json);
+			//console.log(json);
+			jap = JSON.stringify(json);
+			console.log(jap);
+			//alert(jap);
+			DWZ.ajaxDone(json);
+			navTab.reloadFlag('hotel/manager');
+			if(json.status==1){
+				navTab.reload('hotel/manager');
+			}
+			//navTab.reloadFlag('menu/getlist');
+
+			//return false;
+		}*/
+
+
+
+	</script>
+

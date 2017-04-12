@@ -4,21 +4,17 @@
 
     <button class="btn btn-success btn-sm add" type="submit" id="choosedata"><i class="fa">新加酒楼</i></button>
 
-  <a data-tip="新加酒楼" target="navTab" title="新加酒楼" rel="menu/getlist" href="{$host_name}/menu/selecthotel?addhotel2&menuname={$menuname}&menuid={$menuid}" class="btn btn-success btn-icon">
+  <!-- <a  target="navTab" title="新加酒楼" rel="menu/getlist" href="{$host_name}/menu/selecthotel?addhotel2&menuname={$menuname}&menuid={$menuid}" class="btn btn-success btn-icon">
     <i class="fa fa-bullhorn"></i>
-  </a>
+  </a> -->
 
 </div>
 <div class="pageContent">
   <input type="hidden" name="addhotel" value="2">
     <input type="hidden" name="menuname" value="{$menuname}">
     <input type="hidden" name="menuid" value="{$menuid}">
-    <div class="pageFormContent modal-body">
-
-
-
-
-      <div class="no-more-tables">
+    <div id="w_list_print">
+    <div class="no-more-tables">
 
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>

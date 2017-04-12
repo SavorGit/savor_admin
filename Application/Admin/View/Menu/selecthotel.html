@@ -37,6 +37,10 @@
             </div>
 
             <div class="form-group row">
+
+
+
+
               <div class="col-xs-3 col-sm-3">
                 <div class="input-group-sm">
                   <label class="col-xs-1 col-sm-1 control-label">
@@ -47,7 +51,7 @@
               <select name="level_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_LEVEL')" id="vo">
-                  <option value="{$key}" <if condition="$key eq level_k">selected</if>>{$vo}</option><br>
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
@@ -66,7 +70,32 @@
               <select name="state_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_STATE')" id="vo">
-                  <option value="{$key}" <if condition="$key eq state_k">selected</if>>{$vo}</option><br>
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+
+
+                </div>
+              </div>
+
+             
+
+
+            </div>
+
+            <div class="form-group row">
+              <div class="col-xs-3 col-sm-3">
+                <div class="input-group-sm">
+                  <label class="col-xs-1 col-sm-1 control-label">
+                    重点：
+                  </label>
+
+                <span class="input-group-btn">
+              <select name="key_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_KEY')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $key_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>
             </span>
@@ -76,6 +105,36 @@
               </div>
 
               <div class="col-xs-3 col-sm-3">
+                <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
+                  <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$sttime}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+                </div>
+
+
+
+
+              </div>
+
+              <div class="col-xs-3 col-sm-3 ">
+                <div class="input-group date form_date" data-date="{$vinfo.log_time}" data-ymd="true">
+                  <input name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$sendime}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+                </div>
+              </div>
+
+            
+
+
+            </div>
+
+            <div class="form-group row">
+				 <div class="col-xs-3 col-sm-3">
                 <div class="input-group-sm">
                   <label class="col-xs-1 col-sm-1 control-label">
                     包含酒楼：
@@ -99,51 +158,7 @@
 
                 </div>
               </div>
-
-
-            </div>
-
-            <div class="form-group row">
-              <div class="col-xs-3 col-sm-3">
-                <div class="input-group-sm">
-                  <label class="col-xs-1 col-sm-1 control-label">
-                    重点：
-                  </label>
-
-                <span class="input-group-btn">
-              <select name="key_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                <option value=0 >全部</option>
-                <volist name=":C('HOTEL_KEY')" id="vo">
-                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
-                </volist>
-              </select>
-            </span>
-
-
-                </div>
-              </div>
-
-              <div class="col-xs-3 col-sm-3">
-                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
-                  <input name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
-                  <span class="input-group-btn">
-                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
-                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
-                  </span>
-                </div>
-              </div>
-
-              <div class="col-xs-3 col-sm-3 ">
-                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
-                  <input name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
-                  <span class="input-group-btn">
-                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
-                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
-                  </span>
-                </div>
-              </div>
-
-              <div class="col-xs-3 col-sm-3">
+                <div class="col-xs-3 col-sm-3">
                 <div class="input-group-sm">
                   <label class="col-xs-1 col-sm-1 control-label">
                     排除酒楼：
@@ -160,13 +175,23 @@
 
                 </div>
               </div>
+               <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="input-group-sm input-group">
+                  <label style="width:140px;" class="col-xs-1 col-sm-1 control-label">
+                    酒楼机顶盒类型：
+                  </label>
+               <span class="input-group-btn input-group-sm">
+              <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+                </div>
 
-
-
-            </div>
-
-            <div class="form-group row">
-
+              </div>
+              
               <div class="col-xs-3 col-sm-3 col-md-3">
                 <div class="input-group input-group-sm">
                   <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
@@ -177,7 +202,16 @@
               </div>
 
 
+
+             
+
+
             </div>
+
+
+
+
+
 
           </div>
 
@@ -292,6 +326,15 @@
         $('#exch').attr("disabled","disabled");
       }
 
+    });
+
+
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
     });
   })
 </script>

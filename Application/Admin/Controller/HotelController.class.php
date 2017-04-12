@@ -59,6 +59,12 @@ class HotelController extends BaseController {
 			$this->assign('name',$name);
 			$where .= "	AND name LIKE '%{$name}%'";
 		}
+		//机顶盒类型
+		$hbt_v = I('hbt_v');
+		if ($hbt_v) {
+			$this->assign('hbt_k',$hbt_v);
+			$where .= "	AND hotel_box_type = $hbt_v";
+		}
 		//城市
 		$area_v = I('area_v');
 		if ($area_v) {
@@ -256,6 +262,19 @@ class HotelController extends BaseController {
 		$hotelModel = new \Admin\Model\HotelModel();
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
+		if(!empty($mac_addr)){
+		    if($hotel_id){
+		        $where = "he.mac_addr='".$mac_addr."' and h.state=1 and he.hotel_id !=".$hotel_id;
+		    }else {
+		        $where = "he.mac_addr='".$mac_addr."' and h.state=1";
+		    }
+		    
+		    $have_mac_addr = $hextModel->isHaveMac('h.id,h.name',$where);
+		    if(!empty($have_mac_addr)){
+		        $this->error('Mac地址存在于'.$have_mac_addr[0]['name'].'酒楼');
+		    }
+		}
+		
 		$data['server_location'] = $server_location;
 		$tranDb = new Model();
 		$tranDb->startTrans();
@@ -401,6 +420,13 @@ class HotelController extends BaseController {
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$RoomModel = new \Admin\Model\RoomModel();
+		if(!$id){
+			//判断包间名称
+			$temp = $RoomModel->getRow('name',['hotel_id'=>$hotel_id,'name'=>$save['name']]);
+			if($temp){
+				$this->error('包间名称已经存在');
+			}
+		}
 		$bool = $RoomModel->saveData($save, $id);
 		if($id){
 			if($bool){
@@ -431,11 +457,21 @@ class HotelController extends BaseController {
 			1=>'ant',
 			2=>'av',
 			3=>'hdmi',
-			4=>null,
+		);
+		$tv_stet = array(
+			1=>'正常',
+			2=>'冻结',
+			3=>'报损',
 		);
 		$b_arr = array(
-			'voloume' => 30,
-			'swtime' => 50,
+			'rname' => 'V1',
+			'voloume' => 50,
+			'swtime' => 30,
+			'numb' => 2,
+			'boxxname' => 'V1',
+			'bacadd' => 'FFFFFFFFF',
+			'tvbran' => 'SONY',
+			'tvsizea'=>'32',
 		);
 		$hotel_id= I('get.hotel_id',0);
 		$hotel_name= I('get.name','');
@@ -446,6 +482,7 @@ class HotelController extends BaseController {
 			$this->assign('rtype_list',$r_arr);
 			$this->assign('bar',$b_arr);
 			$this->assign('tvlist',$tv_arr);
+			$this->assign('tvstate',$tv_stet);
 		} else {
 
 		}
@@ -457,72 +494,289 @@ class HotelController extends BaseController {
 	 * 批量新增牌位
 	 */
 	public function doAddBatch() {
-		//var_export($_POST);
 		$hotelid = $_POST['hotelid'];
 		$h_str = $_POST['hval'];
-		$h_str =  '{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","tv_brand":"","tv_size":"","tv_source":"1","tv_state":"1"}???{"bao_name":"v1","bao_lx":"1","box_name":"","bao_mac":"","bao_time":"","bao_volume":"","tv_brand":"","tv_size":"","tv_source":"1","tv_state":"1"}';
 		$bat_arr = explode('???',$h_str);
+		//var_dump($bat_arr);
 		$len = count($bat_arr);
+		if( empty($bat_arr[0]) ){
+			$this->error('创建不可为空');
+		}
 		$model = new Model();
-		//包间名称不可重复
-		$ba_name = array();
-		foreach ($bat_arr as $v){
+
+		foreach ($bat_arr as $k=>$v){
 			$v = json_decode($v,true);
-			$ba_name[] = $v['bao_name'];
-		}
-		if( count($ba_name)!= count(array_unique($ba_name))) {
-			$this->error('包间名称不可重复');
-		}
-		foreach ($bat_arr as $k=>&$v) {
+			foreach($v as $ks=>$vs){
+				if (empty($vs)) {
+					$this->error('所有元素不可为空');
+				}else{
+					if($ks == 'bao_mac'){
+						if(strlen($vs)!=12){
+							$this->error('MAC地址提示12位数字与字母组合');
+						}else{
 
-			$model->startTrans();
 
-			$v = json_decode($v,true);
-			$save = array();
-			//添加包间
-			$save['hotel_id'] = $hotelid;
-			$save['name']        = $v['bao_name'];
-			$save['type']        = $v['bao_lx'];
-			$save['flag']        = 0;
-			$save['state']       = 1;
-			$save['update_time'] = date('Y-m-d H:i:s');
-			$save['create_time'] = date('Y-m-d H:i:s');
-			$bool = $model->table(C('DB_PREFIX').'room')->add($save);
+							$preg = '/^[0-9A-F]+$/';
+							$prg = preg_match($preg,$vs)?true:false;
+							if(!$prg){
 
-			if($bool){
-				$dat = array();
-				$dat['room_id'] = $model->table(C('DB_PREFIX').'room')->getLastInsID();
-				$dat['name'] = $v['box_name'];
-				$dat['mac'] = $v['bao_mac'];
-				$dat['switch_time'] = $v['bao_time'];
-				$dat['volum'] = $v['bao_volume'];
-				$dat['flag']        = 0;
-				$dat['state']       = 1;
-				$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
-				if ($bool) {
-					$dap = array();
-					$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
-					$dap['tv_brand'] = $v['tv_brand'];
-					$dap['tv_size'] = $v['tv_size'];
-					$dap['tv_source'] = $v['tv_source'];
-					$dap['flag'] = $v['tv_state'];
-					$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
-					if ($bool) {
-						$model->commit();
-						$this->output('添加成功了','hotel/manager');
-					} else {
-						$model->commit();
-						$this->error('失败请重新操作添加电视');
+								$this->error('MAC具体提示填写12位，数字与字母形式');
+							}
+
+
+						}
 					}
-				} else {
-					$model->commit();
-					$this->error('失败请重新操作添加机顶');
+
 				}
-			}else{
-				$model->commit();
-				$this->error('失败请重新操作添加包间');
+			}
+		}
+
+		$ba_name = array();
+		$ba_mac = array();
+		$mac_mes = '';
+		$ba_r_harr = array();
+		$bac_hotel_rarr = array();
+		$hp = array();
+		//遍历包间名称不可重复，MAC地址不可重复
+		$RoomModel = new \Admin\Model\RoomModel();
+		$boxModel = new \Admin\Model\BoxModel();
+		$hotelModel = new \Admin\Model\HotelModel();
+		$tvModel = new \Admin\Model\TvModel();
+		$dahotels = array();
+		$dahotelmac = array();
+		$dahotelmaname = array();
+		foreach ($bat_arr as $k=>$v) {
+			$v = json_decode($v, true);
+			$dahotels[$k]=$v;
+			$dahotelmac[$k] = $v['bao_mac'];
+			$dahotelmaname[$k] = $v['box_name'];
+		}
+		$dahotel = $dahotels;
+		$dahotelmaname = array_count_values($dahotelmaname);
+		//对mac地址一样进行判断
+		foreach ($dahotels as $k=>$v) {
+			$boxname = $v['box_name'];
+			$macname = $v['bao_mac'];
+			$boxstr = $v['bao_name'].','.$v['bao_lx'];
+			foreach($dahotels as $dak=>$dav){
+				if($dav['box_name'] == $boxname ){
+					$boxstp = $dav['bao_name'].','.$dav['bao_lx'];
+					if($boxstp!=$boxstr){
+						$this->error('酒楼不允许出现机顶盒重名的情况');
+					}else{
+						if($dav['bao_mac'] != $macname){
+							$this->error('包间名称包间类型机顶盒名称完全相同mac必须一致');
+						}
+					}
+				}
+			}
+			$dahotelmacc = $dahotelmac;
+			$macho = $v['bao_mac'];
+			unset($dahotelmacc[$k]);
+			$gets = array_search($macho, $dahotelmacc);
+			if(is_numeric($gets)){
+				if (preg_match("/^\d*$/", $gets)) {
+					if (($v['bao_name'] != $dahotel[$gets]['bao_name']) && ($v['bao_lx'] != $dahotel[$gets]['bao_lx']) || ($v['box_name'] != $dahotel[$gets]['box_name'])) {
+						$this->error('一个机顶盒mac地址不允许对应多个包间');
+					}
+				}
 			}
 
+		}
+
+		//进行数据库判断
+		foreach ($dahotels as $k=>$v) {
+
+			//判断机顶盒名称是否存在且mac地址不一样
+			$wherec = " b.name='" . $v['box_name'] ."' and h.id = ".$hotelid;
+			$isHavebox = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.mac as mac ', $wherec);
+			if (!empty($isHavebox)) {
+				if($isHavebox[0]['mac']!=$v['bao_mac']){
+					$this->error('该机顶盒名称'.$v['box_name'].'已经存在于该酒店对应mac为'.$isHavebox[0]['mac']);
+				}
+			}
+			//判断是否有该机顶盒mac地址
+			$where = " b.mac='" . $v['bao_mac'] . "' and b.flag=0 ";
+			$isHaveMac = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.id as id,b.mac as mac ', $where);
+
+			if (!empty($isHaveMac)) {
+				foreach ($isHaveMac as $ks=>$vs) {
+					$hp[$ks] = $vs['hotel_id'].','.$vs['room_name'].','.$vs['rtp'].','.$vs['bna'];
+					$hps[$ks] = $vs['hotel_id'];
+				}
+				$hpp = $hotelid.','.$v['bao_name'].','.$v['bao_lx'].','.$v['box_name'];
+				$hpps = $hotelid;
+				//4个值完全相同同一个hotelid
+				if(in_array($hpp, $hp)){
+					$mac_mes .= '[' . $v['bao_mac'] . ']|';
+				}else{
+					//同一个hotelid
+					//3个值相同
+					if (in_array($hpps, $hps)){
+							$str = 'MAC地址'.$isHaveMac[0]['mac'].'在本酒店已经存在正确包间名称'.$isHaveMac[0]['room_name'].'包间类型'.$isHaveMac[0]['rtp'].'机顶盒名称'.$isHaveMac[0]['bna'];
+
+					}else{
+						$str = 'Mac地址对应机顶盒'.$v['box_name'].'存在于' . $isHaveMac[0]['hotel_name'] . '酒楼' . $isHaveMac[0]['room_name'] . '包间';
+					}
+					$this->error($str);
+				}
+			}
+		}
+
+		$bool = false;
+		//获取所有包间id
+		$room_bai = array();
+		//var_dump($bat_arr);
+
+		foreach ($bat_arr as $k=>$v) {
+			$model->startTrans();
+			$v = json_decode($v, true);
+			$where = " r.name='".$v['bao_name']."' and b.flag=0  and r.type =  ".$v['bao_lx']." and h.id = ".$hotelid;
+			$isHaveTv = $boxModel->isHaveTv(' h.name as hotel_name,r.name as room_name,r.id as rid,r.type as rtp,b.name as bna,b.id as id,b.mac as bmacc ',$where);
+			if (!empty($isHaveTv)) {
+				foreach ($isHaveTv as $ktv=>$vtv) {
+					$bac_hotel_rmac[$ktv] = $vtv['bmacc'];
+				}
+
+
+				if(in_array($v['bao_mac'],$bac_hotel_rmac)){
+					//只加电视
+					$mac_key = array_search($v['bao_mac'], $bac_hotel_rmac);
+					//找到机顶盒名称
+					$ma_name = $isHaveTv[$mac_key]['bna'];
+						$dap = array();
+						$dap['box_id'] = $isHaveTv[$mac_key]['id'];
+						$dap['tv_brand'] = $v['tv_brand'];
+						$dap['tv_size'] = $v['tv_size'];
+						$dap['tv_source'] = $v['tv_source'];
+						$dap['state'] = $v['tv_state'];
+						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
+						if($bool){
+							$ttid = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
+						} else {
+							$model->rollback();
+							$this->error('失败请重新操作添加');
+						}
+
+
+					$room_bai[] = array('room_id'=>$isHaveTv[$mac_key]['rid'],
+						'box_id'=>$isHaveTv[$mac_key]['id'],'tv_id'=>$ttid);
+				} else {
+					//新增机顶盒与电视
+					$dat = array();
+					$dat['room_id'] = $isHaveTv[0]['rid'];
+					$dat['name'] = $v['box_name'];
+					$dat['mac'] = $v['bao_mac'];
+					$dat['switch_time'] = $v['bao_time'];
+					$dat['volum'] = $v['bao_volume'];
+					$dat['flag']        = 0;
+					$dat['state']       = 1;
+					$dat['update_time'] = date('Y-m-d H:i:s');
+					$dat['create_time'] = date('Y-m-d H:i:s');
+					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
+					if ($bool) {
+						$dap = array();
+						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
+						$dap['tv_brand'] = $v['tv_brand'];
+						$dap['tv_size'] = $v['tv_size'];
+						$dap['tv_source'] = $v['tv_source'];
+						$dap['state'] = $v['tv_state'];
+						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
+						if ($bool) {
+							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
+						} else {
+							$model->rollback();
+							$this->error('失败请重新操作添加电视');
+						}
+					} else {
+						$model->rollback();
+						$this->error('失败请重新操作添加机顶');
+					}
+
+					$room_bai[] = array('room_id'=>$dat['room_id'],
+						'box_id'=>$dap['box_id'],'tv_id'=>$datv['tv_id']);
+
+				}
+			} else{
+				//添加所有
+				$save = array();
+				//添加包间
+				$save['hotel_id'] = $hotelid;
+				$save['name']        = $v['bao_name'];
+				$save['type']        = $v['bao_lx'];
+				$save['flag']        = 0;
+				$save['state']       = 1;
+				$save['update_time'] = date('Y-m-d H:i:s');
+				$save['create_time'] = date('Y-m-d H:i:s');
+				$bool = $model->table(C('DB_PREFIX').'room')
+					->add($save);
+				if($bool){
+					$dat = array();
+					$dat['room_id'] = $model->table(C('DB_PREFIX').'room')->getLastInsID();
+					$dat['name'] = $v['box_name'];
+					$dat['mac'] = $v['bao_mac'];
+					$dat['switch_time'] = $v['bao_time'];
+					$dat['volum'] = $v['bao_volume'];
+					$dat['flag']        = 0;
+					$dat['state']       = 1;
+					$dat['update_time'] = date('Y-m-d H:i:s');
+					$dat['create_time'] = date('Y-m-d H:i:s');
+					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
+					if ($bool) {
+						$dap = array();
+						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
+						$dap['tv_brand'] = $v['tv_brand'];
+						$dap['tv_size'] = $v['tv_size'];
+						$dap['tv_source'] = $v['tv_source'];
+						$dap['state'] = $v['tv_state'];
+						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
+						if ($bool) {
+							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
+						} else {
+							$model->rollback();
+							$this->error('失败请重新操作添加电视');
+						}
+					} else {
+						$model->rollback();
+						$this->error('失败请重新操作添加机顶');
+					}
+				}else{
+					$model->rollback();
+					$this->error('失败请重新操作添加包间');
+				}
+				$room_bai[] = array('room_id'=>$dat['room_id'],
+					'box_id'=>$dap['box_id'],'tv_id'=>$datv['tv_id']);
+			}
+			$model->commit();
+		}
+		//var_dump($room_bai);
+		if($bool){
+			foreach ($room_bai as $k=>$v) {
+				if($v['room_id']){
+					$rinfo = $RoomModel->find($v['room_id']);
+					$RoomModel->saveBatdat($rinfo, $v['room_id']);
+				}
+				if($v['box_id']){
+					$bo_info = $boxModel->find($v['box_id']);
+					$boxModel->saveBatdat($bo_info, $v['box_id']);
+
+				}
+				if($v['tv_id']){
+					$tv_info = $tvModel->find($v['tv_id']);
+					$tvModel->saveBatdat($tv_info, $v['tv_id']);
+
+				}
+			}
+			if($mac_mes){
+				$mac_mes = substr($mac_mes,0,-1);
+				$sps = '机顶盒('.$mac_mes.'),时间与音量已经存在，请在机顶盒管理中进行修改';
+			}else{
+				$sps = '添加成功了';
+
+			}
+			$this->output($sps,'hotel/manager');
+		}else{
+			$this->error('失败请重新操作');
 		}
 
 	}
@@ -664,6 +918,18 @@ class HotelController extends BaseController {
 			$dat['update_time'] = date("Y-m-d H:i:s");
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
+			    //期刊
+			    $mbperModel = new \Admin\Model\MbPeriodModel();
+			    $num = $mbperModel->count();
+			    $time = time();
+			    $dat['period'] = date("YmdHis",$time);
+			    $dat['update_time'] = date("Y-m-d H:i:s",$time);
+			    if($num>0){
+			        $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+			        $rest = $mbperModel->execute($sql);
+			    }else{
+			        $mbperModel->add($dat);
+			    }
 				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
@@ -691,6 +957,18 @@ class HotelController extends BaseController {
 
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
+			    //期刊
+			    $mbperModel = new \Admin\Model\MbPeriodModel();
+			    $num = $mbperModel->count();
+			    $time = time();
+			    $dat['period'] = date("YmdHis",$time);
+			    $dat['update_time'] = date("Y-m-d H:i:s",$time);
+			    if($num>0){
+			        $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+			        $rest = $mbperModel->execute($sql);
+			    }else{
+			        $mbperModel->add($dat);
+			    }
 				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
@@ -716,6 +994,19 @@ class HotelController extends BaseController {
 		}
 
 		if($message){
+		    //期刊
+		    $mbperModel = new \Admin\Model\MbPeriodModel();
+		    $num = $mbperModel->count();
+		    $time = time();
+		    $dat['period'] = date("YmdHis",$time);
+		    $dat['update_time'] = date("Y-m-d H:i:s",$time);
+		    if($num>0){
+		        $sql = "update savor_mb_period set period=".$dat['period'].",update_time='".$dat['update_time']."'";
+		        $rest = $mbperModel->execute($sql);
+		    }else{
+		        $mbperModel->add($dat);
+		    }
+		    
 			$this->output($message, 'hotel/pubmanager',2);
 		}else{
 			$this->output('操作失败', 'hotel/pubmanager');

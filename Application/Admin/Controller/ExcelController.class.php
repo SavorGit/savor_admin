@@ -22,6 +22,10 @@ class ExcelController extends Controller
             $tmpname = '机顶盒失联表';
         }  else if ($filename == 'screencastreport') {
             $tmpname = '投屏次数点播表';
+        }  else if ($filename == 'mobile_interaction_final') {
+            $tmpname = 'APP包间首次互动数据';
+        }  else if ($filename == 'first_mobile_download') {
+            $tmpname = '酒楼首次打开数据';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -148,6 +152,78 @@ class ExcelController extends Controller
      *
      * 导出Excel
      */
+
+    function expfirstmd(){
+        $filename = 'first_mobile_download';
+        $dtype = I('get.datetype');
+        $starttime = I('start','');
+        $endtime = I('end','');
+        $table = 'first_mobile_download';
+        $tuiModel =  new \Admin\Model\TuiRpModel($table);
+        $where = '1=1 and time is not null';
+        if($starttime){
+            $where .= "	AND time >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND time <=  '{$endtime}'";
+        }
+        $hname = I('get.hname','');
+        if($hname){
+            $where .= "	AND hotel_name LIKE '%{$hname}%'";
+        }
+        $orders = 'time,hotel_id';
+        //$group =  'hotel_id';
+        $field = '`download_count` as   dct,hotel_name,time';
+        $rea = $tuiModel->getAllList($where, $field, $group, $orders);
+        $box_arr = $rea['list'];
+        
+        $xlsName = "firstmobiledown";
+        $xlsCell = array(
+            array('hotel_name', '酒店名称'),
+            
+            array('dct', '下载量次'),
+            
+            array('time', '时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+
+    function expint_final(){
+        $filename = 'mobile_interaction_final';
+        $dtype = I('get.datetype');
+        $starttime = I('start','');
+        $endtime = I('end','');
+        $table = 'first_mobile_interaction_final';
+        $tuiModel =  new \Admin\Model\TuiRpModel($table);
+        $where = '1=1 ';
+        if($starttime){
+            $where .= "	AND date_time >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND date_time <=  '{$endtime}'";
+        }
+        $hname = I('get.hname','');
+        if($hname){
+            $where .= "	AND hotel_name LIKE '%{$hname}%'";
+        }
+        $orders = ' date_time,hotel_id asc';
+        //$group =  'hotel_name,box_name';
+        $field = 'count,hotel_name,box_name,date_time';
+        $rea = $tuiModel->getAllList($where, $field, $group, $orders);
+        $box_arr = $rea['list'];
+        $xlsName = "screencastreport";
+        $xlsCell = array(
+            array('hotel_name', '酒店名称'),
+            array('box_name', '机顶盒名称'),
+            array('count', '下载量次'),
+
+            array('date_time', '时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
 
     function expscreenrep(){
         ini_set ('memory_limit', '512M');

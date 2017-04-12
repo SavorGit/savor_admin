@@ -12,6 +12,16 @@
 		font-weight: 700;
 		color: red;
 	}
+	#boite input{
+		width: 15px;
+		height: 15px;
+		margin-top: 10px;
+	}
+	#boite span{
+		font-size: 17px;
+		margin-right: 13px;
+		margin-left: 6px;
+	}
 </style>
 <div class="pageContent">
   <div id="dz-filecontainer">
@@ -136,9 +146,19 @@
                 <volist name=":C('HOTEL_KEY')" id="vo">
                   <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
                 </volist>
-        	</select><br />
+        	</select><br /><br />
+
+			<span style="">酒楼机顶盒类型</span>
+			<select name="hbt_v" style="margin-left: 10px;width: 120px;">
+				<option value=0 >全部</option>
+				<volist name=":C('hotel_box_type')" id="vo">
+					<option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+				</volist>
+			</select>
+
+
         	<span style="margin-top: 10px;">维护人</span>
-        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/>
+        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/><br/><br/>
         	<input type="text" name="names" style="width: 153px;margin-left: 40px;"placeholder="输入酒楼名称查找" style="margin-left: 30px;"/>
         	<button type="button" id="searchs" class="btn btn-primary" style="margin-left: 15px;height: 26px;line-height: 14px;">查询</button>
         	<div style="margin-top: 10px;">
@@ -196,6 +216,7 @@ $('#checkfan').click(function(){
 		var state_v = $('select[name="state_v"]').val();
 		var key_v = $('select[name="key_v"]').val();
 		var main_v = $('input[name="main_v"]').val();
+		var hbt_v = $('select[name="hbt_v"]').val();
 		var names = $('input[name="names"]').val();
 		$("#area_id").val(area_v);
 		obj.area_v = area_v;
@@ -204,6 +225,7 @@ $('#checkfan').click(function(){
 		obj.key_v = key_v;
 		obj.main_v = main_v;
 		obj.names = names;
+		obj.hbt_v = hbt_v;
 		obj.ajaxversion = 1;
 		$.ajax({
 			type:"post",

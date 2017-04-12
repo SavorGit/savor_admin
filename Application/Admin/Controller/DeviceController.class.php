@@ -201,13 +201,13 @@ class DeviceController extends BaseController{
 		$tvModel = new TvModel;
 		if($id){
 			if($tvModel->editData($id,$save)){
-				$this->output('更新成功!', 'device/tv');
+				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
 		}else{	
 			if($tvModel->addData($save)){
-				$this->output('添加成功!', 'device/tv');
+				$this->output('添加成功!', 'device/box');
 			}else{
 				 $this->output('添加失败!', 'device/doAddTv');
 			}	
@@ -229,13 +229,34 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
+		$save['update_time'] = date('Y-m-d H:i:s');
+		if($save['mac']){
+		    if(!preg_match('/[0-9A-F]{12}/', $save['mac'])){
+		        $this->error('请输入正确的Mac地址');
+		    }
+		    if($id){
+		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.id !=".$id;
+		    }else {
+		        $where = " b.mac='".$save['mac']."' and b.flag=0";
+		    }
+		    
+		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
+		    if(!empty($isHaveMac)){
+				$str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';	
+				$this->error($str);
+		    }
+		}
+
+	
 		if($id){
 			if($boxModel->editData($id, $save)){
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		
-		}else{	
+		}else{
+			$save['update_time'] = date('Y-m-d H:i:s');
+			$save['create_time'] = date('Y-m-d H:i:s');
 			if($boxModel->addData($save)){
 				$this->output('添加成功!', 'hotel/room');
 			}else{

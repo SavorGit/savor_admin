@@ -67,6 +67,7 @@
             <th>是否选择洒楼</th>
             <th>节目详情</th>
             <th>操作日志</th>
+              <th>酒楼日志</th>
 
             <th class="table-tool">操作</th>
           </tr>
@@ -104,6 +105,16 @@ href="{$host_name}/menu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_na
               </td>
 
 
+                <td class="table-tool" data-title="酒楼日志">
+                    <div class="tools-edit">
+                        <a data-tip="日志查看" target="dialog" mask="true"
+                           href="{$host_name}/menu/gethotellog?mid={$vlist.id}&name={$vlist.menu_name}"
+                           class="btn btn-success btn-icon">
+                            <i class="fa fa-search-minus"></i>
+                        </a>
+                    </div>
+                </td>
+
 
 
               <td class="table-tool" data-title="操作">
@@ -112,12 +123,19 @@ href="{$host_name}/menu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_na
 
 
 
-                  <a data-tip="修改" target="navTab" title="修改节目单列表" rel="menu/getlist"
+                  <a data-tip="修改" target="dialog" title="修改节目单列表" rel="menu/getlist"
 
-                     href="{$host_name}/menu/addmen?id={$vlist.id}&type=2&name={$vlist.menu_name}"
+                     href="{$host_name}/menu/addmen?id={$vlist.id}&type=2&name={$vlist.menu_name}" rel="xiugaicai"
                      class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+
+                    <a data-tip="复制新增" target="dialog" title="复制新增节目单"  mask="true"
+
+                       href="{$host_name}/menu/addmen?id={$vlist.id}&type=2&name={$vlist.menu_name}&pctype=1"
+                       class="btn btn-success btn-icon">
+                        <i class="fa fa-copy"></i>
+                    </a>
                 </div>
 
 

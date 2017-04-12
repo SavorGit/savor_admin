@@ -102,7 +102,7 @@
 
 
 
-				<button id="f_search" type="button" style="margin: 10px;height: 25px;line-height: 10px;" class="btn btn-primary" data-target=".bs-example-modal-lg">查询</button>
+				<button id="f_searchb" type="button" style="margin: 10px;height: 25px;line-height: 10px;" class="btn btn-primary" data-target=".bs-example-modal-lg">查询</button>
 				<div style="width: 100%;background-color:#d7d7d7;margin-top: 15px;height: 40px;font-size: 30px;line-height: 32px;">
 					<span style="margin-left: 15px;">节目名称</span>
 					<span style="margin-left: 55%;">上传时间</span>
@@ -131,7 +131,7 @@
 
 				</div>
 			</div>
-			<button type="submit" id="sub" class="btn btn-primary"style="width: 100px;margin-left: 71%;">确定</button>
+			<button type="submit" id="sub" class="btn btn-primary"style="width: 100px;margin-left: 71%; margin-top: 15px;margin-bottom: 10px;">确定</button>
 			<input type="hidden" value="" name="rightid" id="rightid" />
 			<input type="hidden" value="" id="rightname" name="rightname" />
 			<input type="hidden" value="" id="rightdur" name="rightdur" />
@@ -184,21 +184,7 @@
 
 
 <script type="text/javascript">
-
-	refresh();
-	function refresh(){
-		url = location.href; //把当前页面的地址赋给变量 url
-		/*var times = url.split("?"); //分切变量 url 分隔符号为 "?"
-		 if(times[1] != 1){ //如果?后的值不等于1表示没有刷新
-
-		 url += "?1"; //把变量 url 的值加入 ?1
-
-		 self.location.replace(url); //刷新页面
-		 }*/
-		//alert(url);
-		//location.reload();
-	}
-
+	navTab.closeTab('menu/addmen');
 	function dialogAjaxDone(json){
 		//alert(json);
 		DWZ.ajaxDone(json);
@@ -503,6 +489,7 @@
 	})
 
 
+
 	/*下移*/
 	$('.bottoms').click(function(){
 		var inde = $('.rightlist>.active').length;
@@ -629,10 +616,11 @@
 		document.getElementById('rightdur').value = str1;
 		document.getElementById('rightname').value = str2;
 		document.getElementById('rightime').value = str3;
+		$.pdialog.closeCurrent();
 	});
 	var htm = '';
 
-	$('#left').on('click','#f_search',function(){
+	$('#left').on('click','#f_searchb',function(){
 
 
 
@@ -702,6 +690,8 @@
 			}
 		}
 	}
+
+
 
 
 

@@ -82,6 +82,36 @@ class officialController extends Controller {
 	    $data['count'] = $count;
 	    echo "hotel(".json_encode($data).")";
 	}
+	public function countDownload(){
+	    $data = array();
+	    $source_arr = array('office'=>1,'qrcode'=>2,'usershare'=>3,'scan'=>4);
+        $client_arr = array('android'=>1,'ios'=>2);
+	    $st = I('get.st','','trim');
+	    $clientname = I('get.clientname','','trim');
+	    $deviceid   = I('get.deviceid','','trim');
+	    if(empty($st)){//来源
+	        $data['source_type'] = 1;
+	    }else {
+	        if(!key_exists($st, $source_arr)){
+	            return false;
+	        }else {
+	            $data['source_type'] = $source_arr[$st];
+	        }
+	    }
+	    if(!empty($clientname)){
+	        $clientname = strtolower($clientname);
+	        if(key_exists($clientname, $client_arr)){
+	            $data['clientid'] = $client_arr[$clientname];
+	        }
+	    }
+	    if(!empty($deviceid)){
+	        $data['deviceid'] = $deviceid;
+	    }
+	    $data['add_time'] = date('Y-m-d H:i:s');
+	    $m_download_count = new \Admin\Model\DownloadCountModel();
+	    $m_download_count->addInfo($data);
+	    echo "download(".json_encode($data).")";
+	}
 }
 
 ?>

@@ -31,10 +31,11 @@ class ContentController extends BaseController {
         $where = "1=1";
         $name = I('titlename');
         $type = I('type',10,'intval');//10为全部
+
         //$where .= " AND state=2 ";
         $category_id = I('category_id',0,'intval');
         if($category_id) $where .=" AND category_id='$category_id'";
-        $content_type = I('content_type','');
+        $content_type = I('content_type','10','intval');
         
         if(is_numeric($content_type)){
             switch ($content_type){

@@ -1,100 +1,284 @@
-<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+	.jiulou{
+		display: inline-block;
+		border: 1px solid black;
+		height: 25px;
+		line-height: 23px;
+		margin-left: 10px;
+	}
+	.del{
+		margin-left: 11px;
+		font-size: 19px;
+		font-weight: 700;
+		color: red;
+	}
+	
+	#boite{
+		height: 320px;
+		overflow: auto;
+	}
+	#boite input{
+		width: 15px;
+		height: 15px;
+		margin-top: 10px;
+	}
+	#boite span{
+		font-size: 17px;
+		margin-right: 13px;
+		margin-left: 6px;
+	}
+
+
+</style>
 <div class="pageContent">
-  <form method="post" action="{$host_name}/device/doAddBox" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-    <input type="hidden" name="id" value="{$vinfo.id}">
-
-    <div class="pageFormContent modal-body">
-
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          包间ID:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" name="room_id" minlength="1" maxlength="20"  readonly="readonly" value="{$room_id}" required>
-        </div>
+  <div id="dz-filecontainer">
+    <div class="tab-content">
+	   	<input id="oss_host" type="hidden" value="{$oss_host}">
+	   	<input id="devicedata" type="hidden" value="{$devicedata}">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addUpgrade" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		    <input name="devicetype" type="hidden" value="2"> 
+		    <input name="name" type="hidden" value="box">
+		    <input name="area_id" id="area_id" type="hidden">
+		    <input name="hotel_id" id="hotelids" type="hidden">
+		    <div class="pageFormContent modal-body">
+            	<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+							最低版本：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<select name="version_min" class="form-control bs-select">
+							<volist name="version_vinfo.min" id="vo">
+								<option value="{$key}" >{$key}</option>
+							</volist>
+						</select>
+					</div>
+			     </div>
+            	<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+							最高版本：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<select name="version_max" class="form-control bs-select">
+							<volist name="version_vinfo.max" id="vo">
+								<option value="{$key}" >{$key}</option>
+							</volist>
+						</select>
+					</div>
+			     </div>
+            	<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+							升级版本：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<select name="version" class="form-control bs-select">
+							<volist name="version_vinfo.max" id="vo">
+								<option value="{$key}" >{$key}</option>
+							</volist>
+						</select>
+					</div>
+			     </div>
+				 <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                升级类型：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                <input name="update_type" type="hidden" value="0">
+						<input name="update_type" type="checkbox" value="1" class="make-switch status" data-size="small" data-on-text="强制更新" data-off-text="手动更新" >
+				      </div>
+		         </div>
+		         <div style="margin-left: 95px;margin-bottom: 30px;">
+		         <span>升级时间：</span>
+		      		<select name="upgrade_time_start" class="bs-select">
+						<for start='0' end='24'>
+							<option value="{$i}" >{$i}</option>
+						</for>
+					</select>
+		      	<span style="margin: 3px;">至</span>
+		      		<select name="upgrade_time_end" class="bs-select">
+						<for start='0' end='24'>
+							<option value="{$i}" >{$i}</option>
+						</for>
+					</select>
+			   </div>
+			   <div style="margin-left: 95px;margin-bottom: 30px;">
+      				<span>目标酒楼</span>
+      				<button type="button" class="btn btn-primary" style="margin-left: 20px;" data-toggle="modal" data-target="#myModal">添加酒楼</button>
+      				<p>注：如未添加酒楼，默认为全部酒楼</p>
+      			</div>
+			      <div style="margin-left: 106px;margin-bottom: 30px;height: 150px;overflow: auto;" id="jia">
+			      </div>
+		    </div>
+		    <div class="modal-footer">
+		      <button class="btn btn-default close-m" type="button">取消</button>
+		      <button class="btn btn-primary" type="submit">提交</button>     
+		    </div>
+		  </form>
       </div>
-
-
-      <if condition="!empty($room_name)">  
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          包间名称:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-           <input type="text" class="form-control" minlength="2" maxlength="20" readonly="readonly" value="{$room_name}" >
-        </div>
-      </div>
-      </if> 
-
-
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          机顶盒名称:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="name" minlength="1" maxlength="20" value="{$vinfo.name}" required>
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          mac地址:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="mac" minlength="12" maxlength="12" value="{$vinfo.mac}" required>
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-         切换时间:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control digits" name="switch_time" minlength="1" maxlength="20" value="{$vinfo.switch_time}">
-        </div>
-      </div>
-
-
-        <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-         音量:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="volum" minlength="1" maxlength="20" value="{$vinfo.volum}">
-        </div>
-      </div>
-  
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          删除状态:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-         <select name="flag" class="form-control bs-select" title="请选择..." required>
-              <option value="0" <if condition="$vinfo.flag eq 0"> selected </if>  >正常</option><br>
-              <option value="1" <if condition="$vinfo.flag eq 1"> selected </if>  >删除</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label">
-          冻结状态:
-        </label>
-        <div class="col-xs-12 col-sm-10">
-         <select name="state" class="form-control bs-select" title="请选择..." required>
-           <option value="2" <if condition="$vinfo.state eq 2"> selected </if> >冻结</option><br>
-           <option value="1" <if condition="$vinfo.state eq 1"> selected </if> >正常</option><br>
-           <option value="3" <if condition="$vinfo.state eq 3"> selected </if> >报损</option>
-          </select>
-        </div>
-      </div>
-            
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-default close-m" type="button">取消</button>
-      <button class="btn btn-primary" type="submit">保存</button>     
-    </div>
-
-  </form>
+  </div>
 </div>
+<!-----------------酒楼--------------------->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">酒楼选择</h4>
+      </div>
+      <div class="modal-body">
+        <div style="margin: 20px;">
+        	<span>城市</span>
+        	<select name="area_v" style="margin-left: 15px;width: 70px;">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" >{$vo.region_name}</option><br>
+                </volist>
+        	</select>
+        	<span style="margin-left: 15px;">级别</span>
+        	<select name="level_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_LEVEL')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select>
+        	<span style="margin-left: 15px;">状态</span>
+        	<select name="state_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_STATE')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select>
+
+
+
+
+        	<span style="margin-left: 15px;">重点</span>
+        	<select name="key_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_KEY')" id="vo">
+                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select><br /><br />
+
+			<span style="">酒楼机顶盒类型</span>
+			<select name="hbt_v" style="margin-left: 10px;width: 120px;">
+				<option value=0 >全部</option>
+				<volist name=":C('hotel_box_type')" id="vo">
+					<option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+				</volist>
+			</select>
+
+        	<span style="margin-top: 10px;">维护人</span>
+        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/><br/><br/>
+        	<input type="text" name="names" style="width: 153px;"placeholder="输入酒楼名称查找" style="margin-left: 30px;"/>
+        	<button type="button" id="searchs" class="btn btn-primary" style="margin-left: 15px;height: 26px;line-height: 14px;">查询</button>
+        	<div style="margin-top: 10px;">
+        		<input type="radio" id="checkquan"name="one" class="one" /><span>全选</span><input type="radio"name="one" class="one" id="checkfan" style="margin-left: 10px;"/><span>反选</span><br />
+        		<p style="width:100%;border: 1px solid black;margin-top: 15px;"></p>
+        		<div id="boite">
+        		</div>
+        		<div style="margin-top: 20px;">
+        	<button type="button" class="btn btn-primary"data-dismiss="modal" id="yes" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+        	<button type="button" class="btn btn-primary"data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+        			
+        		</div>
+        	</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+/*------全选-------*/
+
+	$('#checkquan').click(function(){
+		
+	if($('#checkquan').prop("checked")){
+		$(".checks").prop('checked',true)
+	}else{
+		$(".checks").removeAttr('checked');
+	}
+	})
+/*------反选----------*/
+$('#checkfan').click(function(){
+	 $(".checks").each(function(){     
+   
+     if($(this).prop("checked"))     
+   {     
+    $(this).removeAttr("checked");     
+         
+   }     
+   else    
+   {     
+    $(this).prop("checked",true);
+         
+   }     
+        
+    })  
+})
+/*----------选取---------------*/
+	$('#searchs').click(function(){
+		var obj = {};
+		var url_s = '{$host_name}'+'/hotel/manager';
+		var area_v = $('select[name="area_v"]').val();
+		var level_v = $('select[name="level_v"]').val();
+		var state_v = $('select[name="state_v"]').val();
+		var key_v = $('select[name="key_v"]').val();
+		var main_v = $('input[name="main_v"]').val();
+		var hbt_v = $('select[name="hbt_v"]').val();
+		var names = $('input[name="names"]').val();
+		$("#area_id").val(area_v);
+		obj.area_v = area_v;
+		obj.level_v = level_v;
+		obj.state_v = state_v;
+		obj.key_v = key_v;
+		obj.main_v = main_v;
+		obj.name = names;
+		obj.ajaxversion = 1;
+		obj.hbt_v = hbt_v;
+		$.ajax({
+			type:"post",
+			url:'{$host_name}'+'/hotel/manager',
+			data:obj,
+			async: true,
+			success:function(call){
+				console.log(call);
+				var cdata =eval(call);
+				var boite = document.getElementById('boite');
+				boite.innerHTML = "";
+				for(var i=0;i<cdata.length;i++){
+						var texts = cdata[i].hotel_name;
+						var tid = cdata[i].hotel_id;
+						boite.innerHTML+='<input type="checkbox"id="'+tid+'" class="checks" /><span>'+texts+'</span>';
+				}
+			}
+		});
+	})
+
+	$('#yes').click(function(){
+		var id = [];
+		var name = [];
+		$('[class="checks"]:checked').each(function(){
+			id.push($(this).attr('id'));
+			name.push($(this).next().html());
+		})
+		var hotelstr = ','+id.join(",")+',';
+		$("#hotelids").val(hotelstr);
+		var jia = document.getElementById('jia');
+		jia.innerHTML='';
+		for(var i=0;i<name.length;i++){
+			jia.innerHTML+='<a class="jiulou" id="'+id[i]+'">'+name[i]+'<span class="del">X</span>&nbsp;&nbsp;</a>'
+		}
+	})
+	//删除
+	$('body').on('click','.del',function(){
+		$(this).parent().remove();
+		var id = [];
+		$('.jiulou').each(function(){
+			id.push($(this).attr('id'));
+		})
+		var hotelstr = ','+id.join(",")+',';
+		$("#hotelids").val(hotelstr);
+	})
+</script>
