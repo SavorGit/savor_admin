@@ -577,7 +577,7 @@ class HotelController extends BaseController {
 			if(is_numeric($gets)){
 				if (preg_match("/^\d*$/", $gets)) {
 					if (($v['bao_name'] != $dahotel[$gets]['bao_name']) && ($v['bao_lx'] != $dahotel[$gets]['bao_lx']) || ($v['box_name'] != $dahotel[$gets]['box_name'])) {
-						$this->error('mac地址一样的各种项应该相同');
+						$this->error('一个机顶盒mac地址不允许对应多个包间');
 					}
 				}
 			}
