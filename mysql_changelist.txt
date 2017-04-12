@@ -59,7 +59,6 @@ CREATE TABLE `savor_client_start` (
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
-#########以上sql均已执行######
 
 增加说明:增加后台日志表
 修改时间:2017.3.29 16：30
@@ -89,4 +88,6 @@ ALTER TABLE `savor_box` ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRE
 修改人:白玉涛
 执行SQL: ALTER TABLE `savor_menulist_log` change  `hotel_id`  `hotel_id_s` text NOT NULL DEFAULT '' COMMENT '发布酒楼id字符串';
 ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
+
+#########以上sql均已执行######
 
