@@ -45,6 +45,7 @@ class ReportController extends BaseController{
 			$where .= "	AND type= '{$type}' ";
 		}
 		$result = $heartModel->getList($where,$orders,$start,$size);
+		$count = $heartModel->getCount($where);
 		$time = time();
 		$ind = $start;
 		$m_box = new \Admin\Model\BoxModel();
@@ -80,7 +81,8 @@ class ReportController extends BaseController{
 				$val['last_heart_time'] = $day.'天'.$hour.'小时';
 			}
 		}
-		$count = count($result['list']);
+		
+		
 		$objPage = new Page($count,$size);
 		$pages = $objPage->admin_page();
 		$this->assign('list', $result['list']);

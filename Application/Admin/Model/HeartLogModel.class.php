@@ -35,7 +35,10 @@ class HeartLogModel extends BaseModel
 		return $data;
 
 	}//End Function
-
+    public function getCount($where){
+        $count = $this->where($where)->count();
+        return $count;
+    }
 
 
 	/**
