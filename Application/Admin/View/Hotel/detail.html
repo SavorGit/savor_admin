@@ -1,0 +1,395 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+	.zhezhao{
+			display: none;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			background-color: black;
+			opacity: 0.7;
+			text-align: center;
+			z-index: 999;
+		}
+	.big{
+			display: none;
+		}
+	.addbig{
+		position: absolute;
+		width: 500px;
+		height: 500px;
+		top: 100px;
+		left: 26%;
+		z-index: 1000;
+	}
+</style>
+<div class="pageContent" style="height:100%;overflow: auto;">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hotel/getdetail" method="post" >
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <input type="hidden" name="_order" value="{$_order}"/>
+        <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" name="id" value="{$vinfo.id}">
+
+    <div class="pageFormContent modal-body">
+
+
+
+        <div class="form-group row" >
+        <label class="col-xs-12 col-sm-1 control-label">
+         基本信息:
+        </label>
+        <div class="col-xs-12 col-sm-offset-10 col-sm-1 col-md-pull-right">
+            <a data-tip="修改详情" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$hotelid}&acttype=1" class="btn btn-success btn-icon">
+                <i class="fa fa-search-minus"></i>
+            </a>
+        </div>
+        </div>
+
+        <div class="form-group row" >
+            <div class="col-xs-6 col-sm-4"
+                 style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">洒楼名称</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.name}</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">所在区域</label>
+                        <label for="inputEmail3" class="col-sm-2 control-label"><volist name="area" id="row">
+                             <if condition="$row['id'] eq $vinfo['area_id']">{$row['region_name']}</if>
+                        </volist></label>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">酒楼地址 </label>
+                            <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.addr} </label>
+                            </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">酒楼级别 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"> <volist name=":C('HOTEL_LEVEL')" id="vo">
+                        <if condition="$key eq $vinfo['level']">{$vo}</if>
+                    </volist> </label>
+                </div>
+
+
+            </div>
+
+            <div class="clearfix visible-xs"></div>
+            <div class="col-xs-6 col-sm-4"
+                 style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">是否重点</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><if condition="$vinfo.iskey eq 1">是<else /> 否</if></label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">安装日期</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.install_date}</label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">酒楼状态 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><if condition="$vinfo.state eq 2"> 冻结
+                        <elseif condition="$vinfo.state eq 1" />正常
+                        <elseif condition="$vinfo.state eq 3" />报损
+                        <else /></if>  </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">变更说明 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><volist name=":C('STATE_REASON')" id="vo">
+                         <if condition="$key eq $vinfo.state_change_reason">{$vo}</if>
+                    </volist> </label>
+                </div>
+
+
+            </div>
+
+            <div class="clearfix visible-xs"></div>
+            <div class="col-xs-6 col-sm-4"
+                 style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                <div class="form-group row">
+                    <div class="col-xs-12 col-sm-10">
+                        <div class="fileinput fileinput-new" data-fileinput>
+                            <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                                <a data-target="#modal-file" href="javascript:void(0)">
+                                    <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                                        <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                        <span id="media_idimgname"></span>
+                                        <else />
+                                        <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+                                    </if>
+                                    <span id="media_idimgname"></span>
+                                </a>
+                            </div>
+                            <div>
+                                <a class="btn btn-success btn-file"  href="javascript:;" data-browse-file>
+                                    酒楼LOGO
+                                </a>
+                                <input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="clearfix visible-xs"></div>
+        </div>
+
+
+
+        <div class="form-group row" >
+            <div class="col-xs-6 col-sm-4"
+                 style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">洒楼联系人</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.contractor}</label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">手机</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.mobile}</label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">座机 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.tel}</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">合作维护人 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"> {$vinfo.maintainer}</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">技术运维人 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"> {$vinfo.tech_maintainer} </label>
+                </div>
+
+
+            </div>
+
+            <div class="clearfix visible-xs"></div>
+            <div class="col-xs-6 col-sm-4"
+                 style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">机顶盒类型</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><volist name=":C('hotel_box_type')" id="vo">
+                        <if condition="$key eq $vinfo['hotel_box_type']">{$vo}</if>
+                    </volist></label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">酒楼位置坐标</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.gps}</label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">小平台存放位置 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.server_location}</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">小平台MAC地址</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.mac_addr}</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">小平台远程ID</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.mac_addr}</label>
+                </div>
+            </div>
+
+            <div class="clearfix visible-xs"></div>
+
+
+            <div class="col-xs-6 col-sm-4"
+                 style="background-color: #dedef8;
+         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">删除状态</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><if condition="$vinfo.flag eq 0"> 正常<elseif condition="$vinfo.flag eq 1" />删除<else/> </if> </label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">包间数量</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><a title="{$vinfo.name}包间列表" target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vinfo.id}">{$vinfo.room_num}</a></label>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">机顶盒数量 </label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><if condition="$vinfo.box_num gt 0">
+                        <a title="{$vinfo.name}机顶盒列表" target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vinfo.id}">{$vinfo.box_num}</a>
+                        <else />
+                        {$vinfo.box_num}
+                    </if></label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">电视数量</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label"><if condition="$vinfo.tv_num gt 0">
+                        <a title="{$vinfo.name}电视列表" target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vinfo.id}">{$vinfo.tv_num}</a>
+                        <else />
+                        {$vinfo.tv_num}
+                    </if></label>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">小平台远程ID</label>
+                    <label for="inputEmail3" class="col-sm-2 control-label">{$vinfo.mac_addr}</label>
+                </div>
+            </div>
+            <div class="clearfix visible-xs"></div>
+        </div>
+        <div class="form-group row" >
+            <label class="col-xs-12 col-sm-1 control-label">
+                版位信息:
+            </label>
+            <div class="col-xs-12 col-sm-offset-10 col-sm-1 col-md-pull-right">
+                <a data-tip="批量新增版位"  target="navTab" title="批量新增" rel="ceshipilianxin"  href="{$host_name}/hotel/batchposition?hotel_id={$vinfo.id}&name={$vinfo.name}" class="btn btn-success btn-icon">
+                    <i class="fa fa-bullhorn"></i>
+                </a>
+            </div>
+        </div>
+
+
+
+        <div id="w_list_print">
+            <div class="no-more-tables">
+                    <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                        <thead>
+                        <tr id="post">
+                            <!-- <th class="table-checkbox">
+                              <input type="checkbox" data-check="all" data-parent=".table" />
+                            </th> -->
+                            <th>ID</th>
+                            <th>包间名称</th>
+                            <th>包间位置</th>
+                            <th>机顶盒名称</th>
+                            <th>mac地址</th>
+                            <th>切换时间</th>
+                            <th>音量</th>
+                            <th>电视机品牌</th>
+                            <th>电视机尺寸</th>
+                            <th>信号源</th>
+                            <th>电视状态</th>
+                            <th class="table-tool">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody data-check="list" data-parent=".table">
+                        <volist name="list" id="vlist">
+                            <tr target="sid_user">
+                                <td data-title="序号">{$vlist.indnum}</td>
+                                <td data-title="包间名称">{$vlist.room_name}</td>
+                                <td data-title="包间位置">{$vlist.rtp}</td>
+                                <td data-title="机顶盒名称">{$vlist.bna}</td>
+                                <td data-title="mac地址">{$vlist.bmac}</td>
+                                <td data-title="切换时间">{$vlist.bstime}</td>
+
+                                <td data-title="音量">{$vlist.bvm}</td>
+                                <td data-title="电视机品牌">{$vlist.tbr}</td>
+                                <td data-title="电视机尺寸">{$vlist.tsize}</td>
+                                <td data-title="信号源">{$vlist.tsource}</td>
+
+                                <td data-title="电视状态">{$vlist.tstate}</td>
+
+                                <td class="table-tool" data-title="操作">
+                                    <div class="tools-edit">
+                                        <a data-tip="修改包间" target="dialog" mask="true" href="{$host_name}/hotel/editRoom?id={$vlist.rid}&acttype=1" class="btn btn-success btn-icon">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a data-tip="修改机顶盒" target="dialog" mask="true" href="{$host_name}/device/editBox?hotel_id={$vinfo.id}&id={$vlist.bid}&acttype=1" class="btn btn-success btn-icon">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a data-tip="修改电视" target="dialog" mask="true" href="{$host_name}/device/addTv?id={$vlist.tid}&acttype=1" class="btn btn-success btn-icon">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+
+
+
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </form>
+
+            </div>
+        </div>
+        {$page}
+
+
+
+
+    </div>
+
+
+    	<div class="zhezhao"></div>
+			<img class="big" src=""/>
+  </form>
+</div>
+<script type="text/javascript">
+    $(function(){
+	$('#media_idimg').click(function(){
+		var $a = $(this).attr('src');
+			$('.big').prop('src',$a).addClass('addbig')
+			$('.zhezhao').show(500);
+			$('.big').show(500);
+	})
+  $('.zhezhao').click(function(){
+
+		$('.zhezhao').hide(500);
+		$('.big').hide(500);
+   })
+        $('#mac_addr').blur(function(){
+                var vp = $(this).val();
+                var ln = $(this).val().length;
+                var reg = /^[0-9A-F]+$/;
+                var r = vp.match(reg);
+                if(ln==0){
+                    $('.macccc').css('display','none');
+                }else if(ln!=12){
+                    $('.macccc').css('display','');
+                    $('.macccc div').html('请输入12位字符');
+
+                }else{
+                    if(r==null) {
+                        $('.macccc').css('display', '');
+                        $('.macccc div').html('不允许输入非法字符，请输入正确字符');
+
+                    }else{
+                        $('.macccc').css('display','none');
+                    }
+                }
+
+
+        });
+
+        $('#saveinfos').click(function(){
+            var vp = $('#mac_addr').val();
+            var ln = $('#mac_addr').val().length;
+            var reg = /^[0-9A-F]+$/;
+            var r = vp.match(reg);
+            if(ln==0){
+                $('.macccc').css('display','none');
+                return true;
+            }else if(ln!=12){
+                $('.macccc').css('display','');
+                $('.macccc div').html('请输入12位字符');
+                return false;
+            }else{
+                if(r==null) {
+                    $('.macccc').css('display', '');
+                    $('.macccc div').html('不允许输入非法字符，请输入正确字符');
+                    return false;
+                }else{
+                    $('.macccc').css('display','none');
+                    return true;
+                }
+            }
+        });
+
+
+    });
+</script>

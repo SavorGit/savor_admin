@@ -27,6 +27,62 @@ class TvModel extends BaseModel{
 	}
 
 
+	public function changeTv($result=[]){
+
+		$r_arr = array(
+			1=>'包间',
+			2=>'大厅',
+			3=>'等候区',
+		);
+		$tv_arr = array(
+			1=>'ant',
+			2=>'av',
+			3=>'hdmi',
+		);
+		$tv_stet = array(
+			1=>'正常',
+			2=>'冻结',
+			3=>'报损',
+		);
+
+		if(!$result || !is_array($result)){
+			return [];
+		}
+		//$boxId = [];
+		$boxModel = new BoxModel;
+		foreach ($result as $key=> $value){
+			foreach ($r_arr as $rkey=>$rvalue){
+				if($value['rtp'] == $rkey) {
+					$result[$key]['rtp']  = $rvalue;
+				}
+			}
+			foreach ($tv_stet as $tvkey=>$tvvalue){
+				if($value['tstate'] == $tvkey) {
+					$result[$key]['tstate']  = $tvvalue;
+				}
+			}
+			foreach ($tv_arr as $tkey=>$tvalue){
+				if($value['tsource'] == $tkey) {
+					$result[$key]['tsource']  = $tvalue;
+				}
+			}
+		}
+		/*
+		$filter       = [];
+		$filter['id'] = ['IN',$boxId];
+
+		$arrBox = $boxModel->getAll('id,name',$filter);
+		foreach ($result as &$value){
+			foreach ($arrBox as  $row){
+				if($value['box_id'] == $row['id']){
+					$value['box_name'] = $row['name'];
+				}
+			}
+		}*/
+		return $result;
+	}
+
+
 
 	/**
 	 * 机顶盒ID转换为机顶盒名称
@@ -106,5 +162,30 @@ class TvModel extends BaseModel{
 	    }else {
 	        return false;
 	    }
+	}
+
+
+	public function isTvInfo($field,$where,$start,$size){
+		//savor_tv
+		$sql ="select $field from savor_tv as tv
+	           left join savor_box as b on b.id=tv.box_id
+	           left join savor_room as r on r.id=b.room_id
+	           left join savor_hotel as h on h.id=r.hotel_id
+	           where ".$where.' limit '.$start.','.$size;
+
+		$countsql ="select count('id') as num from savor_tv as tv
+	           left join savor_box as b on b.id=tv.box_id
+	           left join savor_room as r on r.id=b.room_id
+	           left join savor_hotel as h on h.id=r.hotel_id
+	           where ".$where;
+
+
+		$result = $this->query($sql);
+		$counts = $this->query($countsql);
+		$count = $counts[0]['num'];
+		$objPage = new Page($count,$size);
+		$show = $objPage->admin_page();
+		$data = array('list'=>$result,'page'=>$show);
+		return $data;
 	}
 }
