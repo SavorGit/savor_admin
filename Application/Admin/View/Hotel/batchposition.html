@@ -136,7 +136,11 @@
 </div>
 
 	<script type="text/javascript">
-
+		if(isFirefox=navigator.userAgent.indexOf("Firefox")>0){
+			$('#topseach div').css('float','left');
+			$('.clickbtn').css('margin-top','16px');
+			$('.butseach').css('float','left');
+		}
 
 		function getval(){
 
