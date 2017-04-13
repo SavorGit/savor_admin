@@ -203,4 +203,9 @@ class BoxModel extends BaseModel{
 		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
 		$redis->set($cache_key, json_encode($data));
 	}
+	public function getUsedBoxByMac($mac){
+	    $where['mac'] = $mac;
+	    $where['state'] = 1;
+	    return $this->where($where)->find();
+	}
 }
