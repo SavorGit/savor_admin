@@ -115,7 +115,7 @@
     </div>
   </form>
 </div>
-</div>
+
 <div class="pageContent" id="pagecontent1" style="margin-top:100px;">
   <div id="w_list_print">
     <div class="no-more-tables">
@@ -188,7 +188,7 @@
 
 <script type="text/javascript">
 
-  function navTabAjaxDoneab(json){
+ /*  function navTabAjaxDoneab(json){
 
     DWZ.ajaxDone(json);
     //注意返回的JSON的数据结构
@@ -249,14 +249,15 @@
         navTab.reload(json.forwardUrl);
       }
     }
-  }
+  } */
 
 
   $(".box").click(function(){
     var $tab = $(this).children("a").eq(0).attr('href');
+   
     var hostname = $("input[name='hostname']").val();
     if($tab == '#tab1'){
-      var haddr = hostname+'/tuireport/rplist';
+      var haddr = hostname+'/tuireport/rplist#tab1';
       $('#ptable #pagerForm').attr('action',haddr);
       //$("#pagerForm").attr('action',haddr);
       $("#pagecontent2").hide();
@@ -297,7 +298,7 @@
       $("#getmy li:eq(1)").attr('class','active');
       $("#pagecontent1").hide();
       $("#pagecontent2").show();
-      var haddr = hostname+'/tuireport/mobile_download';
+      var haddr = hostname+'/tuireport/mobile_download#tab2';
       $('#ptable #pagerForm').attr('action',haddr);
       //$("#pagerForm").attr('action',haddr);
       $("#tab2").prop('class','tab-pane');
