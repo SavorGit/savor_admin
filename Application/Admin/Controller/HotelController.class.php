@@ -212,6 +212,74 @@ class HotelController extends BaseController {
 	}
 
 
+	/*
+	 * 查看酒楼详情
+	 *
+	 */
+	public function getdetail(){
+
+
+		$id = I('get.id');
+		if(!$id){
+			$id = I('post.id');
+		}
+		$size   = I('numPerPage',5);//显示每页记录数
+		$this->assign('numPerPage',$size);
+		$start = I('pageNum',1);
+		$this->assign('pageNum',$start);
+		$order = I('_order','update_time');
+		$this->assign('_order',$order);
+		$sort = I('_sort','desc');
+		$this->assign('_sort',$sort);
+
+		$orders = $order.' '.$sort;
+		$start  = ( $start-1 ) * $size;
+
+		$hotelModel = new \Admin\Model\HotelModel();
+		$areaModel  = new \Admin\Model\AreaModel();
+		$tvModel = new \Admin\Model\TvModel();
+		$area = $areaModel->getAllArea();
+		$this->assign('area',$area);
+
+		$vinfo = $hotelModel->where('id='.$id)->find();
+
+
+		if(!empty($vinfo['media_id'])){
+			$mediaModel = new \Admin\Model\MediaModel();
+			$media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
+			$vinfo['oss_addr'] = $media_info['oss_addr'];
+		}
+		$res_hotelext = $hotelModel->getMacaddrByHotelId($id);
+		$vinfo['mac_addr'] = $res_hotelext['mac_addr'];
+		$vinfo['ip_local'] = $res_hotelext['ip_local'];
+		$vinfo['ip'] = $res_hotelext['ip'];
+		$vinfo['server_location'] = $res_hotelext['server_location'];
+	    $vinfo['id'] = $id;
+
+		$nums = $hotelModel->getStatisticalNumByHotelId($id);
+		$vinfo['room_num'] = $nums['room_num'];
+		$vinfo['box_num'] = $nums['box_num'];
+		$vinfo['tv_num'] = $nums['tv_num'];
+		//获取批量信息
+		$where = " h.id = ".$id;
+		$list = $tvModel->isTvInfo(' r.id as rid,b.id as bid,
+		 tv.id as tid,h.name as hotel_name,r.name as room_name,r.type as rtp,b.name as bna,b.mac as bmac,b.switch_time as bstime,b.volum as bvm,tv.tv_brand as tbr,tv.tv_size as tsize,tv_source as tsource,tv.state as tstate  ', $where,$start,$size);
+		$isHaveTv = $list['list'];
+		$page = $list['page'];
+		if(!empty($isHaveTv)){
+			$isRealTv = $tvModel->changeTv($isHaveTv);
+		}
+		$ind = $start;
+		foreach ($isRealTv as &$val) {
+			$val['indnum'] = ++$ind;
+		}
+
+		$this->assign('list',$isRealTv);
+		$this->assign('vinfo',$vinfo);
+		$this->assign('hotelid',$id);
+		$this->assign('page',$page);
+		$this->display('detail');
+	}
 	/**
 	 * 保存或者更新酒店信息
 	 */
