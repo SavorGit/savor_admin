@@ -38,12 +38,11 @@
       <form method="post" action="{$host_name}/sysconfig/doConfigData" id="configrcp" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
+          	<th colspan="3">系统设置</th>
             <tr id="post">
-              <!-- <th class="table-checkbox">
-                <input type="checkbox" data-check="all" data-parent=".table" />
-              </th> -->
-              <td>音量：<input required placeholder="请输入数字" type="text" name="system_default_volume" value="{$info.system_default_volume}"  /></th>
-              <td>切换时间：<input required placeholder="请输入数字" type="text" name="system_switch_time" value="{$info.system_switch_time}"  /></th>
+              
+              <!-- <td>音量：<input required placeholder="请输入数字" type="text" name="system_default_volume" value="{$info.system_default_volume}"  /></th> -->
+              <td>切换时间：<input required placeholder="请输入数字" type="text" name="system_switch_time" value="{$info.system_switch_time}"  /></td>
               <td><if condition="$info['status'] eq 0">
               <a data-tip="开启" target="ajaxTodo" href="{$host_name}/sysconfig/editstatus?status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-off"></i></span></a>
@@ -58,6 +57,28 @@
 		      <button class="btn btn-primary" type="submit">保存</button>     
 		    
             	</td>  
+            </tr>
+            
+            
+          </thead>
+          
+          </tbody>
+        </table>
+        
+      </form>
+      
+      <form method="post" action="{$host_name}/sysconfig/doConfigVolume" id="configvolume" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <th colspan="5">音量设置</th>
+            <tr >
+              <td>广告轮播音量：<input required placeholder="请输入数字" type="text" name="system_ad_volume" value="{$info.system_ad_volume}"  /></td>
+              <td>投屏音量：<input required placeholder="请输入数字" type="text" name="system_pro_screen_volume" value="{$info.system_pro_screen_volumne}"  /></td>
+              <td>点播音量：<input required placeholder="请输入数字" type="text" name="system_demand_video_volume" value="{$info.system_demand_video_volume}"  /></td>
+              <td>电视音量：<input required placeholder="请输入数字" type="text" name="system_tv_volume" value="{$info.system_tv_volume}"  /></td>
+              <td>  
+		      	<button class="btn btn-primary" type="submit">保存</button>     
+		      </td>  
             </tr>
             
             
