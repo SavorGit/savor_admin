@@ -245,7 +245,6 @@ class HotelController extends BaseController {
 
 		$vinfo = $hotelModel->where('id='.$id)->find();
 
-
 		if(!empty($vinfo['media_id'])){
 			$mediaModel = new \Admin\Model\MediaModel();
 			$media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
@@ -390,11 +389,7 @@ class HotelController extends BaseController {
 			$res = $res[0];
 			ksort($data);
 			ksort($res);
-			if(array_diff($res,$data)){
-				$bool = $hextModel->saveData($data,$where);
-			}else{
-				$bool = true;
-			}
+			$hextModel->saveData($data,$where);
 		}else {
 		    $data['hotel_id'] = $hotel_id;
 			$bool = $hextModel->addData($data);

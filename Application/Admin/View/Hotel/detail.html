@@ -371,8 +371,9 @@
 			<div class="div_right">
 				<ul class="ul1">
 					<li><span>酒店名称：</span><span>{$vinfo.name}</span></li>
-					<li><span>所属区域：</span><span> <if condition="$row['id'] eq $vinfo['area_id']">{$row['region_name']}</if>
-                        </volist></span></li>
+					<li><span>所属区域：</span><span><volist name="area" id="row">
+                        <if condition="$row['id'] eq $vinfo['area_id']">{$row['region_name']} </if>
+                    </volist></span></li>
 					<li><span>酒楼地址：</span><span>{$vinfo.addr}</span></li>
 					<li><span>酒楼级别：</span><span><volist name=":C('HOTEL_LEVEL')" id="vo">
                         <if condition="$key eq $vinfo['level']">{$vo}</if>
@@ -389,7 +390,7 @@
 					</span></li>
 					<li><span>变更说明：</span><span>
 						<volist name=":C('STATE_REASON')" id="vo">
-                         <if condition="$key eq $vinfo.state_change_reason">{$vo}</if>
+                         <if condition="$key eq $vinfo['state_change_reason']">{$vo}</if>
                     </volist>
 					</span></li>
 				</ul>
