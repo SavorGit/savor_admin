@@ -238,6 +238,8 @@ class HotelController extends BaseController {
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
 		$tvModel = new \Admin\Model\TvModel();
+		$menuHoModel = new \Admin\Model\MenuHotelModel();
+		$menlistModel = new \Admin\Model\MenuListModel();
 		$area = $areaModel->getAllArea();
 		$this->assign('area',$area);
 
@@ -255,6 +257,19 @@ class HotelController extends BaseController {
 		$vinfo['ip'] = $res_hotelext['ip'];
 		$vinfo['server_location'] = $res_hotelext['server_location'];
 	    $vinfo['id'] = $id;
+		$condition['hotel_id'] = $id;
+		$arr = $menuHoModel->where($condition)->order('id desc')->find();
+		$menuid = $arr['menu_id'];
+		if($menuid){
+			$men_arr = $menlistModel->find($menuid);
+			$menuname = $men_arr['menu_name'];
+			$vinfo['menu_id'] = $menuid;
+			$vinfo['menu_name'] = $menuname;
+
+		}else{
+			$vinfo['menu_id'] = '';
+			$vinfo['menu_name'] = '无';
+		}
 
 		$nums = $hotelModel->getStatisticalNumByHotelId($id);
 		$vinfo['room_num'] = $nums['room_num'];
@@ -295,6 +310,7 @@ class HotelController extends BaseController {
 		$save['level']               = I('post.level','','trim');
 		$save['iskey']               = I('post.iskey','','intval');
 		$save['install_date']        = I('post.install_date');
+		$save['remote_id']        = I('post.remote_id');
 		if(!($save['install_date'])){
 			$save['install_date'] = date("Y-m-d",time());
 		}
