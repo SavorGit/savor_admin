@@ -6,7 +6,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
-use Common\Lib\Page;
+
 class ReportController extends BaseController{
 
 	public $path = 'category/img';
@@ -45,26 +45,9 @@ class ReportController extends BaseController{
 			$where .= "	AND type= '{$type}' ";
 		}
 		$result = $heartModel->getList($where,$orders,$start,$size);
-		$count = $heartModel->getCount($where);
 		$time = time();
 		$ind = $start;
-		$m_box = new \Admin\Model\BoxModel();
-		$m_hotel = new \Admin\Model\HotelExtModel();
-		foreach ($result['list'] as $key=> &$val) {
-		    if($val['type'] ==1){ //小平台
-		        $ret = $m_hotel->isHaveMac('he.mac_addr','  he.hotel_id='.$val['hotel_id']);
-		        
-		        if($ret[0]['mac_addr'] != $val['box_mac']){
-		            unset($result['list'][$key]);
-		            continue;
-		        }
-		    }else if($val['type'] ==2){//机顶盒
-		        $ret =$m_box->getUsedBoxByMac($val['box_mac']);
-		        if(empty($ret)){
-		            unset($result['list'][$key]);
-		            continue;
-		        }
-		    }
+		foreach ($result['list'] as &$val) {
 			$val['indnum'] = ++$ind;
 			$d_time = strtotime($val['last_heart_time']);
 			$diff = $time - $d_time;
@@ -81,12 +64,9 @@ class ReportController extends BaseController{
 				$val['last_heart_time'] = $day.'天'.$hour.'小时';
 			}
 		}
-		
-		
-		$objPage = new Page($count,$size);
-		$pages = $objPage->admin_page();
+
 		$this->assign('list', $result['list']);
-		$this->assign('page',  $pages);
+		$this->assign('page',  $result['page']);
 		$this->display('heartlist');
 	}
 
