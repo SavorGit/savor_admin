@@ -443,7 +443,7 @@
 						<i class="fa fa-plus-square"></i>
 				</a>
 			</div>
-		<div id="w_list_print">
+		<div id="w_list_printdetail">
 			<div class="no-more-tables">
 				<table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
 					<thead>
@@ -574,4 +574,36 @@
 		});
 
 	});
+
+
+
+    function dialogAjaxDone(json){
+        //上一次的rel链接
+       // $.pdialog.close("firstDialogId");
+        //  $.pdialog.open(url, dlgId, title);
+        //   navTab.closeCurrentTab();
+        // navTab.closeTab(json.navTabId);
+        DWZ.ajaxDone(json);
+        // alert(json);
+        jap = JSON.stringify(json);
+        //console.log(jap);
+        //alert(jap);
+        // navTab.closeTab('clientconfig/addclientconfig');
+        // navTab.reload('clientconfig/configdata');
+        navTab.reloadFlag('Sysconfig/configData');
+        //注意返回的JSON的数据结构
+        //navTab.closeTab('abce');
+        if (json.status == DWZ.statusCode.ok){
+            if (json.navTabId == 'hotel/room' || json.navTabId == 'device/box'  || json.navTabId == 'device/tv' ){
+                $.pdialog.closeCurrent();
+                navTab.reload('hotel/getdetail','id=58&href=w_list_printdetail');
+            }
+
+
+        }
+
+    }
+
+
+
 </script>
