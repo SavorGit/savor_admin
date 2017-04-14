@@ -35,29 +35,7 @@ class HeartLogModel extends BaseModel
 		return $data;
 
 	}//End Function
-    public function getCount($where){
-        $m_box = new \Admin\Model\BoxModel();
-        $m_hotel = new \Admin\Model\HotelExtModel();
-        $list = $this->where($where)->select();
-        foreach($list as $key=>$val){
-            if($val['type'] ==1){ //小平台
-                $ret = $m_hotel->isHaveMac('he.mac_addr','  he.hotel_id='.$val['hotel_id']);
-            
-                if($ret[0]['mac_addr'] != $val['box_mac']){
-                    unset($list[$key]);
-                    continue;
-                }
-            }else if($val['type'] ==2){//机顶盒
-                $ret =$m_box->getUsedBoxByMac($val['box_mac']);
-                if(empty($ret)){
-                    unset($list[$key]);
-                    continue;
-                }
-            }
-        }      
-        $count = count($list);  
-        return $count;
-    }
+
 
 
 	/**
