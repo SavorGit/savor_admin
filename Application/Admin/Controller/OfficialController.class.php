@@ -95,7 +95,7 @@ class officialController extends Controller {
 	        if(!key_exists($st, $source_arr)){
 	            return false;
 	        }else {
-	            $data['source_type'] = $source_arr[$st];
+	            $data['source_type'] = $source_arr[$st];    //分享设备类型
 	        }
 	    }
 	    if(!empty($clientname)){
@@ -105,8 +105,9 @@ class officialController extends Controller {
 	        }
 	    }
 	    if(!empty($deviceid)){
-	        $data['deviceid'] = $deviceid;
+	        $data['deviceid'] = $deviceid;   //分享设备唯一标示
 	    }
+	    $data['dowload_device_id'] = I('get.dowload_device_id','0','intval');  //下载设备
 	    $data['add_time'] = date('Y-m-d H:i:s');
 	    $m_download_count = new \Admin\Model\DownloadCountModel();
 	    $m_download_count->addInfo($data);
