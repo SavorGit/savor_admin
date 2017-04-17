@@ -121,4 +121,33 @@ var fileExt="apk,ipa,war";
       }
     });
   });
+
+
+  function dialogAjaxDone(json){
+	  //上一次的rel链接
+
+	  //  $.pdialog.open(url, dlgId, title);
+	  //   navTab.closeCurrentTab();
+	  // navTab.closeTab(json.navTabId);
+	  DWZ.ajaxDone(json);
+	  // alert(json);
+	  //jap = JSON.stringify(json);
+	  //console.log(jap);
+	  //alert(jap);
+	  // navTab.closeTab('clientconfig/addclientconfig');
+	  // navTab.reload('clientconfig/configdata');
+	  //navTab.reloadFlag('Sysconfig/configData');
+	  //注意返回的JSON的数据结构
+	  //navTab.closeTab('abce');
+	  if (json.status == DWZ.statusCode.ok){
+		  if (json.navTabId){
+			  $.pdialog.close("versionaddnew");
+			  // navTab.reload('clientconfig/configdatar');
+		  }
+
+
+	  }
+
+  }
+
 </script>
