@@ -108,11 +108,11 @@ class SysconfigController extends BaseController {
      */
     public function doConfigVolume(){
         $data = array();
-        $data['system_ad_volume'] = I('post.system_ad_volume',0,'intval');             //广告轮播音量
+        $data['system_ad_volume'] = I('post.system_ad_volume','','trim');             //广告轮播音量
         
-        $data['system_pro_screen_volume']   = I('post.system_pro_screen_volume',0,'intval');    //投屏音量
-        $data['system_demand_video_volume'] = I('post.system_demand_video_volume',0,'intval');   //点播音量
-        $data['system_tv_volume']           = I('post.system_tv_volume',0,'intval');             //电视音量
+        $data['system_pro_screen_volume']   = I('post.system_pro_screen_volume','','trim');    //投屏音量
+        $data['system_demand_video_volume'] = I('post.system_demand_video_volume','','trim');   //点播音量
+        $data['system_tv_volume']           = I('post.system_tv_volume','','trim');             //电视音量
         
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $ret = $m_sys_config->updateInfo($data);
