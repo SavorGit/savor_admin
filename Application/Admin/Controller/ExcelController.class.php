@@ -181,7 +181,7 @@ class ExcelController extends Controller
         $xlsCell = array(
             array('hotel_name', '酒店名称'),
             
-            array('dct', '下载量次'),
+            array('dct', '首次打开（次）'),
             
             array('time', '时间'),
         );
@@ -217,7 +217,7 @@ class ExcelController extends Controller
         $xlsCell = array(
             array('hotel_name', '酒店名称'),
             array('box_name', '机顶盒名称'),
-            array('count', '下载量次'),
+            array('count', '首次连接（次）'),
 
             array('date_time', '时间'),
         );
