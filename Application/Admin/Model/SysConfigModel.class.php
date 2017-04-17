@@ -29,8 +29,8 @@ class SysConfigModel extends BaseModel{
             return false;
         }
     }
-    public function getList($were){
-        $ret = $this->where($were)->select();
+    public function getList($where){
+        $ret = $this->where($where)->select();
         return $ret;
     }
     public function updateInfo($data){

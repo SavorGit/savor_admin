@@ -19,15 +19,21 @@ class SysconfigController extends BaseController {
         $m_sys_config = new \Admin\Model\SysConfigModel();
         //$volume_info = $m_sys_config->getOne('system_default_volume');
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
-        
-        $condition['config_key'] = 'system_default_volume';
-        $condition['config_key'] = 'system_switch_time';
-        $condition['config_key'] = 'system_demand_video_volume';
-        $condition['config_key'] = 'system_tv_volume';
-        $condition['_logic'] = 'OR';
-        
-        $volume_arr = $m_sys_config->getList($condition);
-        
+       
+        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume')";
+        $volume_arr = $m_sys_config->getList($where);
+       
+        foreach($volume_arr as $key=>$v){
+            if($v['config_key']=='system_ad_volume'){
+                $info['system_ad_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_pro_screen_volume'){
+                $info['system_pro_screen_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_demand_video_volume'){
+                $info['system_demand_video_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_tv_volume'){
+                $info['system_tv_volume'] = $v['config_value'];
+            }
+        }
         //$info['system_default_volume'] = $volume_info['config_value'];
         $info['system_switch_time']  = $switch_time_info['config_value'];
         $info['status'] = $switch_time_info['status'];
@@ -87,18 +93,11 @@ class SysconfigController extends BaseController {
     public function editStatus(){
         $status = I('get.status',0,'intval');
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $tranDb = M();
-        $tranDb->startTrans();
-        $data['status'] = $status;
-        $rt = $m_sys_config->editData($data, 'system_default_volume');
-        
         $map['status'] = $status;
         $rts = $m_sys_config->editData($map, 'system_switch_time');
-        if($rt && $rts){
-            $tranDb->commit();
+        if($rts){
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
-            $tranDb->rollback();
             $this->error('操作失败!');
         }
         
