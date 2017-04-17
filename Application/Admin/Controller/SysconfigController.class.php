@@ -93,18 +93,11 @@ class SysconfigController extends BaseController {
     public function editStatus(){
         $status = I('get.status',0,'intval');
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $tranDb = M();
-        $tranDb->startTrans();
-        $data['status'] = $status;
-        $rt = $m_sys_config->editData($data, 'system_default_volume');
-        
         $map['status'] = $status;
         $rts = $m_sys_config->editData($map, 'system_switch_time');
-        if($rt && $rts){
-            $tranDb->commit();
+        if($rts){
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
-            $tranDb->rollback();
             $this->error('操作失败!');
         }
         
