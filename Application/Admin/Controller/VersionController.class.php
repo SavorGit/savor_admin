@@ -144,7 +144,7 @@ class VersionController extends BaseController{
 	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
-	            $this->output('新增升级版本失败', $navTab);
+	            $this->error('新增升级版本失败');
 	        }
 	    }else{
 	        $filed = 'version_code,version_name,device_type';
@@ -333,7 +333,7 @@ class VersionController extends BaseController{
 	        if($res_version){
 	            $this->output('新增版本成功', 'version/versionList');
 	        }else{
-	            $this->output('新增版本失败', 'version/versionList');
+	            $this->error('新增版本失败');
 	        }
 	    }else{
 	        $this->assign('oss_host',$this->oss_host);
@@ -364,7 +364,7 @@ class VersionController extends BaseController{
 			if($res_save){
 				$this->output('添加语句成功!', 'version/sqlup');
 			}else{
-				$this->output('操作失败!', 'version/doAddSqlup');
+				$this->error('操作失败!');
 			}
 		}
 	}
@@ -389,7 +389,7 @@ class VersionController extends BaseController{
 			$deviceModel->where($where)->delete();
 			$this->output('删除成功', 'version/versionList',2);
 		}else{
-			$this->output('删除失败', 'version/versionList',2);
+			$this->error('删除失败');
 		}
 	}
 	
