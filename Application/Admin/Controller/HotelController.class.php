@@ -223,7 +223,7 @@ class HotelController extends BaseController {
 		if(!$id){
 			$id = I('post.id');
 		}
-		$size   = I('numPerPage',5);//显示每页记录数
+		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
