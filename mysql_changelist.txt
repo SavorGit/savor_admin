@@ -95,6 +95,7 @@ ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COM
 修改人:白玉涛
 执行SQL: 
 alter table `savor_hotel` 
+ add column `remote_id` varchar(255) DEFAULT '' NOT NULL COMMENT '远程ID',
    add column `hotel_wifi` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi名称' after `remote_id`, 
    add column `hotel_wifi_pas` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi密码' after `hotel_wifi`
 
