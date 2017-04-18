@@ -89,9 +89,6 @@ ALTER TABLE `savor_box` ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRE
 执行SQL: ALTER TABLE `savor_menulist_log` change  `hotel_id`  `hotel_id_s` text NOT NULL DEFAULT '' COMMENT '发布酒楼id字符串';
 ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
 
-#########以上sql均已执行######
-
-
 增加说明：添加酒楼wifi及密码
 修改时间:2017.4.17 16：00
 修改人:白玉涛
@@ -100,4 +97,5 @@ alter table `savor_hotel`
  add column `remote_id` varchar(255) DEFAULT '' NOT NULL COMMENT '远程ID',
    add column `hotel_wifi` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi名称' after `remote_id`, 
    add column `hotel_wifi_pas` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi密码' after `hotel_wifi`
+#########以上sql均已执行######
 
