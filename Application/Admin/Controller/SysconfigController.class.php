@@ -162,4 +162,15 @@ class SysconfigController extends BaseController {
             $this->error('操作失败');
         }
     }
+    public function delload(){
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $data['config_value'] = '';
+        $config_key = 'system_loading_image';
+        $ret = $m_sys_config->editData($data, $config_key);
+        if($ret){
+            $this->output('删除成功', 'Sysconfig/configData',2);
+        }else {
+            $this->error('删除失败');
+        }
+    }
 }
