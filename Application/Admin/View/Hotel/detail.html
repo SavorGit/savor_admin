@@ -126,7 +126,7 @@
 	.div_bttom .ul5{
 		display: inline-block;
 		float: right;
-		margin-right: 13%;
+		margin-right: 10%;
 	}
 	.div_bttom .ul5 li {
 		margin-top: 26px;
@@ -321,6 +321,9 @@
 </form>
 </div>
 <script type="text/javascript">
+	if($(window).width()<=1366){
+		$('.pageContent').css('width','1165px')
+	}
 	$(function() {
 		$('#media_idimg').click(function() {
 			var $a = $(this).attr('src');
