@@ -238,7 +238,7 @@
         <div class="col-xs-12 col-sm-10">
             <select name="state_change_reason" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm">
                 <volist name=":C('STATE_REASON')" id="vo">
-                    <option value="{$key}" <if condition="$key eq $vinfo.state_change_reason">selected</if>>{$vo}</option><br>
+                    <option value="{$key}" <if condition="$key eq $vinfo['state_change_reason']">selected</if>>{$vo}</option><br>
                 </volist>
             </select>
         </div>
