@@ -159,7 +159,7 @@ class SysconfigController extends BaseController {
         if($rt){
             $this->output('操作成功', 'Sysconfig/configData', 1);
         }else {
-            $this->error('操作失败投屏');
+            $this->error('操作失败');
         }
     }
 }
