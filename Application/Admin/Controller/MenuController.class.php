@@ -834,9 +834,9 @@ class MenuController extends BaseController {
                 $this->addlog($data, $id, $type);
                // $this->success('新增成功', '#menu/getlist');
                 //$this->display()
-                $this->output('修改成功!', 'menu/getlist',1);
+                $this->output('修改成功!', 'menu/getlist');
             } else {
-
+                $this->error('修改失败');
             }
 
         } else {
@@ -871,10 +871,10 @@ class MenuController extends BaseController {
                    // $this->output('新增成功', 'menu/addmen',2);
                     $this->output('新增成功', 'menu/getlist');
                 } else {
-
+                    $this->error('新增失败');
                 }
             } else {
-
+                $this->error('新增失败');
             }
         }
 
@@ -885,111 +885,7 @@ class MenuController extends BaseController {
 
     }
 
-    public function doaddmenu(){
-        //表单提交即是新增和导入ajax区分以及与修改进行区分
-        $id = I('post.id','');
-        // var_dump($_POST);
-        $befo  = C('DB_PREFIX');
-        //添加到menu_list 表
-        $mlModel = new MenuListModel();
-        $mItemModel = new MenuItemModel();
-        $save                = [];
-        $userInfo = session('sysUserInfo');
-        $save['creator_name'] = $userInfo['username'];
-        $save['creator_id'] = $userInfo['id'];
-        $save['state']    = 0;
-        $save['menu_name'] = I('post.program');
-        $save['update_time'] = date('Y-m-d H:i:s');
-        $save['create_time'] = date('Y-m-d H:i:s');
 
-        $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
-        $name_arr = explode (',',substr(I('post.rightname',''),0,-1));
-        $time_arr = explode (',',substr(I('post.rightime',''),0,-1));
-        $co_arr = $id_arr;
-        $id_arr = array();
-        $dura_arr = array();
-        foreach ($co_arr as $cv) {
-            $arr = explode('|', $cv);
-            $id_arr[] = $arr[0];
-            $dura_arr[] = $arr[1];
-        }
-
-        if( $id ) {
-            //先删除menuid，后插入
-            $mItemModel->delData($id);
-            $i = 1;
-            $data = array();
-            $sql = '';
-            $value = '';
-            $sql = "INSERT INTO `".$befo."_menu_item` (`ads_id`,`ads_name`,`create_time`,`update_time`,`menu_id`,`sort_num`,`duration`) values ";
-            foreach($id_arr as $k=>$v) {
-                $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
-                    'create_time'=>$time_arr[$k],
-                );
-                $i++;
-            }
-            foreach($id_arr as $k=>$v) {
-
-                $value .= "('$v','$name_arr[$k]','$time_arr[$k]','{$save['update_time']}','$id','$i','$dura_arr[$k]'),";
-                $i++;
-            }
-            $sql .= substr($value,0,-1);
-
-            $res = $mItemModel->execute($sql);
-            $dat['update_time'] = date('Y-m-d H:i:s');
-            $mlModel->where('id='.$id)->save($dat);
-            if ($res) {
-                //添加操作日志非针对饭店
-                $type = 2;
-                $this->addlog($data, $id, $type);
-                $this->output('操作成功!', 'menu/getlist');
-            } else {
-
-            }
-
-        } else {
-            //判断名字是否存在
-            $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
-            if ($count) {
-                $this->output('操作失败名字已经有!', 'menu/addmenu');
-            }
-            $result = $mlModel->add($save);
-            if ( $result ) {
-                $menu_id = $mlModel->getLastInsID();
-                //将内容添加到savor_menu_item表
-                $data = array();
-                $i = 1;
-                foreach($id_arr as $k=>$v) {
-                    $data[] = array('ads_id'=>$v,'ads_name'=>$name_arr[$k],
-                        'create_time'=>$time_arr[$k],
-                        'update_time'=>$save['update_time'],
-                        'menu_id'=>$menu_id,'sort_num'=>$i,
-                        'duration'=>$dura_arr[$k]);
-                    $i++;
-                }
-                $res = $mItemModel->addAll($data);
-
-
-                if ($res) {
-                    //添加操作日志不在这边加
-                    $this->addlog($data, $menu_id);
-
-                    $this->output('新增成功', 'menu/addmenu');
-
-                } else {
-
-                }
-            } else {
-
-            }
-        }
-
-
-
-
-
-
-    }
 
     /*
      * 添加操作日志

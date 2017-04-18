@@ -29,4 +29,22 @@ class SysConfigModel extends BaseModel{
             return false;
         }
     }
+    public function getList($where){
+        $ret = $this->where($where)->select();
+        return $ret;
+    }
+    public function updateInfo($data){
+        if(!empty($data) && is_array($data)){
+            $where ="";
+            foreach($data as $key=>$v){
+                $where .= $space ."('$key','$v','1')";
+                $space =',';
+            }
+            $sql =" replace into `savor_sys_config` (`config_key`,`config_value`,`status`) values ".$where;
+            return $this->execute($sql);
+        }else {
+            return false;
+        }
+        
+    }
 }

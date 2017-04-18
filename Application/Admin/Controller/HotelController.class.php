@@ -223,7 +223,7 @@ class HotelController extends BaseController {
 		if(!$id){
 			$id = I('post.id');
 		}
-		$size   = I('numPerPage',5);//显示每页记录数
+		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
@@ -238,11 +238,12 @@ class HotelController extends BaseController {
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
 		$tvModel = new \Admin\Model\TvModel();
+		$menuHoModel = new \Admin\Model\MenuHotelModel();
+		$menlistModel = new \Admin\Model\MenuListModel();
 		$area = $areaModel->getAllArea();
 		$this->assign('area',$area);
 
 		$vinfo = $hotelModel->where('id='.$id)->find();
-
 
 		if(!empty($vinfo['media_id'])){
 			$mediaModel = new \Admin\Model\MediaModel();
@@ -255,6 +256,19 @@ class HotelController extends BaseController {
 		$vinfo['ip'] = $res_hotelext['ip'];
 		$vinfo['server_location'] = $res_hotelext['server_location'];
 	    $vinfo['id'] = $id;
+		$condition['hotel_id'] = $id;
+		$arr = $menuHoModel->where($condition)->order('id desc')->find();
+		$menuid = $arr['menu_id'];
+		if($menuid){
+			$men_arr = $menlistModel->find($menuid);
+			$menuname = $men_arr['menu_name'];
+			$vinfo['menu_id'] = $menuid;
+			$vinfo['menu_name'] = $menuname;
+
+		}else{
+			$vinfo['menu_id'] = '';
+			$vinfo['menu_name'] = '无';
+		}
 
 		$nums = $hotelModel->getStatisticalNumByHotelId($id);
 		$vinfo['room_num'] = $nums['room_num'];
@@ -295,6 +309,9 @@ class HotelController extends BaseController {
 		$save['level']               = I('post.level','','trim');
 		$save['iskey']               = I('post.iskey','','intval');
 		$save['install_date']        = I('post.install_date');
+		$save['remote_id']        = I('post.remote_id');
+		$save['hotel_wifi']        = I('post.hotel_wifi','','trim');
+		$save['hotel_wifi_pas']        = I('post.hotel_wifi_pas','','trim');
 		if(!($save['install_date'])){
 			$save['install_date'] = date("Y-m-d",time());
 		}
@@ -374,11 +391,7 @@ class HotelController extends BaseController {
 			$res = $res[0];
 			ksort($data);
 			ksort($res);
-			if(array_diff($res,$data)){
-				$bool = $hextModel->saveData($data,$where);
-			}else{
-				$bool = true;
-			}
+			$hextModel->saveData($data,$where);
 		}else {
 		    $data['hotel_id'] = $hotel_id;
 			$bool = $hextModel->addData($data);

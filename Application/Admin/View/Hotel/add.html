@@ -163,6 +163,15 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                远程ID：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="text" class="form-control" name="remote_id" id="remote_id"  value="{$vinfo.remote_id}" >
+            </div>
+        </div>
+
 
         <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
@@ -229,7 +238,7 @@
         <div class="col-xs-12 col-sm-10">
             <select name="state_change_reason" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm">
                 <volist name=":C('STATE_REASON')" id="vo">
-                    <option value="{$key}" <if condition="$key eq $vinfo.state_change_reason">selected</if>>{$vo}</option><br>
+                    <option value="{$key}" <if condition="$key eq $vinfo['state_change_reason']">selected</if>>{$vo}</option><br>
                 </volist>
             </select>
         </div>
@@ -279,6 +288,24 @@
           </select>
         </div>
       </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                酒楼wifi:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="text" value="{$vinfo.hotel_wifi}" class="form-control" name="hotel_wifi">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                酒楼wifi密码:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="text" value="{$vinfo.hotel_wifi_pas}" class="form-control" name="hotel_wifi_pas">
+            </div>
+        </div>
 
             
     </div>
@@ -354,4 +381,36 @@
 
 
     });
+
+
+    /*function dialogAjaxDone(json){
+        //上一次的rel链接
+
+        //  $.pdialog.open(url, dlgId, title);
+        //   navTab.closeCurrentTab();
+        // navTab.closeTab(json.navTabId);
+        DWZ.ajaxDone(json);
+        // alert(json);
+        jap = JSON.stringify(json);
+        console.log(jap);
+        var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
+        var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
+        console.log(navTab.getCurrentPanel());
+        console.log($pagerForm);
+        alert(jap);
+        // navTab.closeTab('clientconfig/addclientconfig');
+        // navTab.reload('clientconfig/configdata');
+        //navTab.reloadFlag('Sysconfig/configData');
+        //注意返回的JSON的数据结构
+        //navTab.closeTab('abce');
+        if (json.status == DWZ.statusCode.ok){
+            if (json.navTabId){
+                $.pdialog.closeCurrent();
+                // navTab.reload('clientconfig/configdatar');
+            }
+
+
+        }
+
+    }*/
 </script>

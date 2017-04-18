@@ -17,11 +17,26 @@ class SysconfigController extends BaseController {
      */
     public function configData(){
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $volume_info = $m_sys_config->getOne('system_default_volume');
+        //$volume_info = $m_sys_config->getOne('system_default_volume');
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
-        $info['system_default_volume'] = $volume_info['config_value'];
+       
+        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume')";
+        $volume_arr = $m_sys_config->getList($where);
+       
+        foreach($volume_arr as $key=>$v){
+            if($v['config_key']=='system_ad_volume'){
+                $info['system_ad_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_pro_screen_volume'){
+                $info['system_pro_screen_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_demand_video_volume'){
+                $info['system_demand_video_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_tv_volume'){
+                $info['system_tv_volume'] = $v['config_value'];
+            }
+        }
+        //$info['system_default_volume'] = $volume_info['config_value'];
         $info['system_switch_time']  = $switch_time_info['config_value'];
-        $info['status'] = $volume_info['status'];
+        $info['status'] = $switch_time_info['status'];
         
         //视频投屏loading图
         $loading_info = $m_sys_config->getOne('system_loading_image');
@@ -42,31 +57,31 @@ class SysconfigController extends BaseController {
      * @desc 修改设置
      */
     public function doConfigData(){
-        $system_default_volume = I('post.system_default_volume',0,'intval');
+        //$system_default_volume = I('post.system_default_volume',0,'intval');
         $system_switch_time = I('post.system_switch_time',0,'intval');
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $volume_info = $m_sys_config->getOne('system_default_volume'); 
+        //$volume_info = $m_sys_config->getOne('system_default_volume'); 
   
-        if(empty($volume_info)){
+        /* if(empty($volume_info)){
             $data['config_key'] = 'system_default_volume';
             $data['config_value'] = $system_default_volume;;
             $rt = $m_sys_config->add($data);
         }else {
             $data['config_value'] = $system_default_volume;
             $rt = $m_sys_config->editData($data, 'system_default_volume');
-        }
+        } */
  
-            $switch_time_info = $m_sys_config->getOne('system_switch_time');
-            if(empty($switch_time_info)){
-                $map['config_key'] = 'system_switch_time';
-                $map['config_value'] = $system_switch_time;
-                $rts = $m_sys_config->add($map);
-            }else {
-                $map['config_value'] = $system_switch_time;
-                $rts = $m_sys_config->editData($map, 'system_switch_time',2);
-            }
+        $switch_time_info = $m_sys_config->getOne('system_switch_time');
+        if(empty($switch_time_info)){
+            $map['config_key'] = 'system_switch_time';
+            $map['config_value'] = $system_switch_time;
+            $rts = $m_sys_config->add($map);
+        }else {
+            $map['config_value'] = $system_switch_time;
+            $rts = $m_sys_config->editData($map, 'system_switch_time',2);
+        }
         
-        if($rts || $rt){
+        if($rts){
             $this->output('操作成功','sysconfig/configData');
         }else {
             $this->error('操作失败');
@@ -78,22 +93,36 @@ class SysconfigController extends BaseController {
     public function editStatus(){
         $status = I('get.status',0,'intval');
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $tranDb = M();
-        $tranDb->startTrans();
-        $data['status'] = $status;
-        $rt = $m_sys_config->editData($data, 'system_default_volume');
-        
         $map['status'] = $status;
         $rts = $m_sys_config->editData($map, 'system_switch_time');
-        if($rt && $rts){
-            $tranDb->commit();
+        if($rts){
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
-            $tranDb->rollback();
-            $this->error('操作失败3!');
+            $this->error('操作失败!');
         }
         
     }
+    /**
+     * @desc 音量设置
+     */
+    public function doConfigVolume(){
+        $data = array();
+        $data['system_ad_volume'] = I('post.system_ad_volume','','trim');             //广告轮播音量
+        
+        $data['system_pro_screen_volume']   = I('post.system_pro_screen_volume','','trim');    //投屏音量
+        $data['system_demand_video_volume'] = I('post.system_demand_video_volume','','trim');   //点播音量
+        $data['system_tv_volume']           = I('post.system_tv_volume','','trim');             //电视音量
+        
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $ret = $m_sys_config->updateInfo($data);
+        
+        if($ret){
+            $this->output('操作成功!', 'sysconfig/configData',2);
+        }else {
+            $this->error('操作失败3!');
+        }
+    }
+    
     /**
      * @desc 修改视频投屏loading图
      */
@@ -130,7 +159,18 @@ class SysconfigController extends BaseController {
         if($rt){
             $this->output('操作成功', 'Sysconfig/configData', 1);
         }else {
-            $this->output('操作失败', 'Sysconfig/configData', 1);
+            $this->error('操作失败');
+        }
+    }
+    public function delload(){
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $data['config_value'] = '';
+        $config_key = 'system_loading_image';
+        $ret = $m_sys_config->editData($data, $config_key);
+        if($ret){
+            $this->output('删除成功', 'Sysconfig/configData',2);
+        }else {
+            $this->error('删除失败');
         }
     }
 }
