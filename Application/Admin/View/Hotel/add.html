@@ -383,7 +383,7 @@
     });
 
 
-    function dialogAjaxDone(json){
+    /*function dialogAjaxDone(json){
         //上一次的rel链接
 
         //  $.pdialog.open(url, dlgId, title);
@@ -391,9 +391,13 @@
         // navTab.closeTab(json.navTabId);
         DWZ.ajaxDone(json);
         // alert(json);
-        //jap = JSON.stringify(json);
-        //console.log(jap);
-        //alert(jap);
+        jap = JSON.stringify(json);
+        console.log(jap);
+        var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
+        var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
+        console.log(navTab.getCurrentPanel());
+        console.log($pagerForm);
+        alert(jap);
         // navTab.closeTab('clientconfig/addclientconfig');
         // navTab.reload('clientconfig/configdata');
         //navTab.reloadFlag('Sysconfig/configData');
@@ -401,12 +405,12 @@
         //navTab.closeTab('abce');
         if (json.status == DWZ.statusCode.ok){
             if (json.navTabId){
-                $.pdialog.close("xiugaihotel");
+                $.pdialog.closeCurrent();
                 // navTab.reload('clientconfig/configdatar');
             }
 
 
         }
 
-    }
+    }*/
 </script>

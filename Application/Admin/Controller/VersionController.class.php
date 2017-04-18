@@ -309,7 +309,7 @@ class VersionController extends BaseController{
 	            if($devicetype==4){
 	                $oss_addr = '';
 	            }else{
-    	            $this->output('文件不能为空', 'version/versionList');
+    	            $this->error('文件不能为空');
 	            }
 	        }
 	        $version_data = array('version_name'=>$version_name,'version_code'=>$version_code,'device_type'=>$devicetype);
@@ -357,7 +357,7 @@ class VersionController extends BaseController{
 			if($res_save){
 				$this->output('操作成功!', 'release/category');
 			}else{
-				$this->output('操作失败!', 'release/doAddCat');
+				$this->error('操作失败!');
 			}
 		}else{
 			$res_save = $deviceModel->add($save);
