@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
-<div class="pageHeader" id="ptable">
-  <form onsubmit="return navTabSearch(this);" class="pagefbai" id="pagerForm" action="{$host_name}/tuireport/rplist" method="post" >
+<div class="pageHeader">
+  <form class="countform" onsubmit="return navTabSearch(this);" class="pagefbai" id="pagerForm" action="{$host_name}/tuireport/rplist" method="post" >
     <input type="hidden" name="hostname" value="{$host_name}"/>
     <div class="tabsContent">
       <ul class="nav nav-tabs" id="getmy">
@@ -115,7 +115,7 @@
     </div>
   </form>
 </div>
-
+</div>
 <div class="pageContent" id="pagecontent1" style="margin-top:100px;">
   <div id="w_list_print">
     <div class="no-more-tables">
@@ -188,11 +188,7 @@
 
 <script type="text/javascript">
 
-
-
-
   /* function navTabAjaxDoneab(json){
-
 
     DWZ.ajaxDone(json);
     //注意返回的JSON的数据结构
@@ -258,20 +254,17 @@
 
   $(".box").click(function(){
     var $tab = $(this).children("a").eq(0).attr('href');
-   
     var hostname = $("input[name='hostname']").val();
     if($tab == '#tab1'){
-      var haddr = hostname+'/tuireport/rplist#tab1';
-      $('#ptable #pagerForm').attr('action',haddr);
-      //$("#pagerForm").attr('action',haddr);
+      var haddr = hostname+'/tuireport/rplist';
+      $(".countform").attr('action',haddr);
       $("#pagecontent2").hide();
       $("#pagecontent1").show();
       $("#tab2").hide();
       $("#tab1").show();
     }else if($tab == '#tab2'){
       var haddr = hostname+'/tuireport/mobile_download#tab2';
-      $('#ptable #pagerForm').attr('action',haddr);
-      //$("#pagerForm").attr('action',haddr);
+      $(".countform").attr('action',haddr);
       $("#pagecontent1").hide();
       $("#pagecontent2").show();
       $("#tab1").hide();
@@ -292,8 +285,7 @@
       $("#pagecontent1").show();
       $("#pagecontent2").hide();
       var haddr = hostname+'/tuireport/rplist';
-      $('#ptable #pagerForm').attr('action',haddr);
-      //$("#pagerForm").attr('action',haddr);
+      $(".countform").attr('action',haddr);
       $("#tab1").show();
       $("#tab2").hide();
     } else if(tip == 2){
@@ -302,9 +294,8 @@
       $("#getmy li:eq(1)").attr('class','active');
       $("#pagecontent1").hide();
       $("#pagecontent2").show();
-      var haddr = hostname+'/tuireport/mobile_download#tab2';
-      $('#ptable #pagerForm').attr('action',haddr);
-      //$("#pagerForm").attr('action',haddr);
+      var haddr = hostname+'/tuireport/mobile_download';
+      $(".countform").attr('action',haddr);
       $("#tab2").prop('class','tab-pane');
       $("#tab2").show();
       $("#tab1").hide();

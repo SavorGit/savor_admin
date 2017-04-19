@@ -387,7 +387,7 @@ class VersionController extends BaseController{
 			$where = "id='$vid'";
 			$deviceModel = new \Admin\Model\DeviceSqlModel();
 			$deviceModel->where($where)->delete();
-			$this->output('删除成功', 'version/versionList',2);
+			$this->output('删除成功', 'version/versionList',3);
 		}else{
 			$this->error('删除失败');
 		}
