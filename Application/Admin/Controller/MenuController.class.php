@@ -281,7 +281,7 @@ class MenuController extends BaseController {
             //var_dump($menuliModel->getLastSql());
         }
 
-         $this->output('发布成功了!', 'menu/getlist',2);
+         $this->output('发布成功了!', 'menu/getlist');
        // ob_end_clean();
        // $this->redirect("content/getlist");
         //echo "<script>location.href='http://www.baidu.com'</script>";
