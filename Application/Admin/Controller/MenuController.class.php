@@ -845,7 +845,7 @@ class MenuController extends BaseController {
             $save['create_time'] = date('Y-m-d H:i:s');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
-                $this->error('操作失败名字已经有!');
+                $this->error('节目单名称已存在!');
             }
             $result = $mlModel->add($save);
             if ( $result ) {
