@@ -1,6 +1,6 @@
 <!--修改样式2 p元素自适应宽度 start-->
 <style type="text/css">
-	.zhezhao {
+	/* .zhezhao_dtl {
 		display: none;
 		position: absolute;
 		top: 0;
@@ -24,7 +24,7 @@
 		top: 100px;
 		left: 26%;
 		z-index: 1000;
-	}
+	} */
 	
 	.main_top {
 		width: 98%;
@@ -316,78 +316,10 @@
 
 </div>
 
-<div class="zhezhao"></div>
-<img class="big" src="" />
 </form>
 </div>
 <script type="text/javascript">
-
 if($(window).width()<=1366){
 	$('.pageContent').css('width','1165px')
 }
-
-	$(function() {
-		$('#media_idimg').click(function() {
-			var $a = $(this).attr('src');
-			$('.big').prop('src', $a).addClass('addbig')
-			$('.zhezhao').show(500);
-			$('.big').show(500);
-		})
-		$('.zhezhao').click(function() {
-
-			$('.zhezhao').hide(500);
-			$('.big').hide(500);
-		})
-		$('#mac_addr').blur(function() {
-			var vp = $(this).val();
-			var ln = $(this).val().length;
-			var reg = /^[0-9A-F]+$/;
-			var r = vp.match(reg);
-			if(ln == 0) {
-				$('.macccc').css('display', 'none');
-			} else if(ln != 12) {
-				$('.macccc').css('display', '');
-				$('.macccc div').html('请输入12位字符');
-
-			} else {
-				if(r == null) {
-					$('.macccc').css('display', '');
-					$('.macccc div').html('不允许输入非法字符，请输入正确字符');
-
-				} else {
-					$('.macccc').css('display', 'none');
-				}
-			}
-
-		});
-
-		$('#saveinfos').click(function() {
-			var vp = $('#mac_addr').val();
-			var ln = $('#mac_addr').val().length;
-			var reg = /^[0-9A-F]+$/;
-			var r = vp.match(reg);
-			if(ln == 0) {
-				$('.macccc').css('display', 'none');
-				return true;
-			} else if(ln != 12) {
-				$('.macccc').css('display', '');
-				$('.macccc div').html('请输入12位字符');
-				return false;
-			} else {
-				if(r == null) {
-					$('.macccc').css('display', '');
-					$('.macccc div').html('不允许输入非法字符，请输入正确字符');
-					return false;
-				} else {
-					$('.macccc').css('display', 'none');
-					return true;
-				}
-			}
-		});
-
-	});
-
-
-
-
 </script>
