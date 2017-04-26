@@ -1,0 +1,102 @@
+<!--修改样式2 p元素自适应宽度 start-->
+
+<link href="/Public/admin/assets/css/jquery.treeTable.css" rel="stylesheet" type="text/css" />
+<script src="/Public/admin/assets/js/jquery.treetable.js" type="text/javascript" />
+
+<div class="pageContent">
+  <form method="post" action="{$host_name}/sysusergroup/sysusergroupAddTest" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="acttype" value="{$acttype}">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          权限分组名：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+          <p class="form-heading">允许查看模块：</p>
+
+
+
+          <div class="table-list" id="load_priv">
+            <table width="100%" cellspacing="0">
+              <thead>
+              <tr>
+                <th class="text-l cu-span" style='padding-left:30px;'><span onClick="javascript:$('input[name=menuid[]]').attr('checked', true)">全选</span>/<span onClick="javascript:$('input[name=menuid[]]').attr('checked', false)">取消</span></th>
+              </tr>
+              </thead>
+            </table>
+            <table width="100%" cellspacing="0" id="dnd-example">
+              <tbody>
+              {$categor.temp}
+              </tbody>
+            </table>
+
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+	    <div class="pull-left">
+	    	<label>
+		     	<input type="checkbox" data-check="all" data-parent=".pageContent"> 全部
+		    </label>
+		  </div>
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+    $("#dnd-example").treeTable({
+      indent: 20
+    });
+  });
+
+  function checknode(obj)
+  {
+    var chk = $("input[type='checkbox']");
+
+    var count = chk.length;
+    var num = chk.index(obj);
+    var level_top = level_bottom =  chk.eq(num).attr('level');
+    for (var i=num; i>=0; i--)
+    {
+      var le = chk.eq(i).attr('level');
+
+      if(eval(le) < eval(level_top))
+      {
+        chk.eq(i).attr("checked",'checked');
+        var level_top = level_top-1;
+      }
+    }
+    for (var j=num+1; j<count; j++)
+    {
+      var le = chk.eq(j).attr('level');
+      if(chk.eq(num).attr("checked")=='checked') {
+        if(eval(le) > eval(level_bottom)) chk.eq(j).attr("checked",'checked');
+        else if(eval(le) == eval(level_bottom)) break;
+      }
+      else {
+        if(eval(le) > eval(level_bottom)) chk.eq(j).attr("checked",false);
+        else if(eval(le) == eval(level_bottom)) break;
+      }
+
+
+    }
+  }
+</script>

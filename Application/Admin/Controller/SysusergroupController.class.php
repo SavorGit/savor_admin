@@ -160,10 +160,10 @@ class SysusergroupController extends BaseController {
         $result = $sysNode->getAllList();
         //获取权限表数据
         $priv_data = $rolePrivModel->getInfoByroleid($gid);
-        var_dump($priv_data);
-        echo '<hr/><hr/>';
+        //var_dump($priv_data);
+       // echo '<hr/><hr/>';
         foreach ($result as $n=>$t) {
-            var_dump($t);
+          //  var_dump($t);
 
             $result[$n]['cname'] = $t['name'];
             $result[$n]['checked'] = $rolePrivModel->is_checked($t,$gid,$priv_data)? ' checked' : '';
