@@ -55,7 +55,7 @@ class SysnodeController extends BaseController {
             $id          = I('post.id', '', 'int');
             $sysmenuid          = I('post.sysmenuid', '', 'int');
             $nodekey     = I('post.nodekey');
-            $modulename  = I('post.modulename');
+            $modulename  = I('post.modulename','','trim');
             $menulevel   = I('post.menulevel');
             $displayorder= I('post.displayorder');
             $code        = I('post.code');
@@ -64,8 +64,8 @@ class SysnodeController extends BaseController {
             $media_id    = I('post.media_id','0','intval');
             $select_media_id    = I('post.select_media_id','0','intval');
             $mfield      =   strtolower(I('post.mfield','','trim'));
-            $cfield      = I('post.cfield');
-            $afield      = I('post.afield');
+            $cfield      = strtolower(I('post.cfield','','trim'));
+            $afield      = strtolower(I('post.afield','','trim'));
             $nodeparm['m'] = $mfield;
             $nodeparm['c'] = $cfield;
             $nodeparm['a'] = $afield;
@@ -73,10 +73,9 @@ class SysnodeController extends BaseController {
             //三级节点只添加node表
             if ($menulevel == 2 ) {
                 //u新增
-
+                $nodeparm['menulevel'] = $menulevel;
                 $nodeparm['isenable'] = 1;
                 $nodeinfo = $sysNode->getInfo($nodeparm);
-                $nodeparm['menulevel'] = $menulevel;
                 $nodeparm['parentid'] = I('post.secid');
                 $nodeparm['displayorder'] = $displayorder;
                 $nodeparm['nodekey']= $nodekey;
