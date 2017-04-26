@@ -4,6 +4,7 @@ namespace Admin\Controller;
  * @desc 用户管理类
  *
  */
+use \Common\Lib\Tree;
 class UserController extends BaseController {
     
     public function __construct() {
@@ -175,7 +176,11 @@ class UserController extends BaseController {
     
     //修改用户权限
     public function userRank(){
+        $sysNode = new \Admin\Model\SysnodeModel();
+        $rolePrivModel = new \Admin\Model\RolePrivModel();
+        $sysusergroup = new \Admin\Model\SysusergroupModel();
         $acttype = I('acttype', 1, 'int');
+
         $uid = I('uid', 0, 'int');
         $groupId= I('groupId', 0, 'int');
         
@@ -186,30 +191,14 @@ class UserController extends BaseController {
             $data['groupId']=$groupId;
             //更新user表中的groupid的值
             $user = new \Admin\Model\UserModel();
-            $user->addData($data, $acttype);
-            
-            //获取当前选的角色的栏目
-            $groups = new \Admin\Model\SysusergroupModel();
-            $groupInfo= $groups->getInfo($groupId);
-            $groupCode=json_decode($groupInfo['code']);
-            
-            //检测当前用户是否已有记录
-            $userRank = new \Admin\Model\StaffauthModel();
-            $userInfo = $userRank->getInfo($uid);
-            $rackType = !empty($userInfo)? 1 : 0;
-            $datas['id']      = !empty($userInfo['id'])? $userInfo['id'] : '';
-            $datas['staff_id']= $uid;
-            $datas['code']    = json_encode($groupCode);
-            $datas['staff_name']='test';
-            $addRankInfo = $userRank->addData($datas, $rackType);
+            $addRankInfo = $user->addData($data, $acttype);
             if($addRankInfo){
                 $this->output('操作成功!', 'user/userList');
             }else{
-                $this->output('操作失败!', 'user/userEdit');
+                $this->error('操作失败!');
             }
         }
-        
-        //非提交处理
+
         $user = new \Admin\Model\UserModel();
         $result = $user->getUserRank($uid);
         $result['code'] =  json_decode($result['code']);
@@ -219,6 +208,36 @@ class UserController extends BaseController {
         $this->assign('groupslist',$rstGroup);
         $userrank = parent::getMenuList();
         $this->assign('userrank', $userrank);
+        $result = $user->getUserInfo($uid);
+        $gid = $result['groupid'];
+        //获取树形结构
+        $matre = new Tree();
+        $matre->icon = array('│ ','├─ ','└─ ');
+        $matre->nbsp = '&nbsp;&nbsp;&nbsp;';
+        //获取所有节点
+        $result = $sysNode->getAllList();
+        //获取权限表数据
+        $priv_data = $rolePrivModel->getInfoByroleid($gid);
+        //var_dump($result);
+        foreach ($result as $n=>$t) {
+            $result[$n]['cname'] = $t['name'];
+            $result[$n]['checked'] = $rolePrivModel->is_checked($t,$gid,$priv_data)? ' checked' : '';
+            $result[$n]['level'] = $rolePrivModel->get_level($t['id'],$result);
+            $result[$n]['parentid_node'] = ($t['parentid'])? ' class="child-of-node-'.$t['parentid'].'"' : '';
+
+        }
+
+
+        $str  = "<tr id='node-\$id' \$parentid_node>
+							<td style='padding-left:30px;'>\$spacer<input class='disabled' type='checkbox' name='menuid[]' value='\$id' level='\$level' \$checked onclick='javascript:checknode(this);'> \$cname</td>
+						</tr>";
+        $matre->init($result);
+        $categorys = $matre->get_tree(0, $str);
+        //echo $categorys;
+        $ra['temp'] = $categorys;
+        $groupList = parent::getMenuList();
+        $this->assign('categor', $ra);
+        //$this->assign('groupList', $groupList);
         $this->display('userrank');
     }
     

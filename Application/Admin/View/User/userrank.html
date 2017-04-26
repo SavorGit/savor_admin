@@ -1,4 +1,11 @@
 <!--修改样式2 p元素自适应宽度 start-->
+
+
+
+<link href="/Public/admin/assets/css/jquery.treeTable.css" rel="stylesheet" type="text/css" />
+<script src="/Public/admin/assets/js/jquery.treetable.js" type="text/javascript" />
+
+
 <div class="pageContent">
   <form method="post" action="{$host_name}/user/userRank" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone)">
     <input type="hidden" name="acttype" value="{$acttype}">
@@ -32,12 +39,20 @@
           </volist>
           </select>
           <p class="form-heading">允许查看模块：</p>
-          <div class="row sm-row" id="allow_module">
-            <volist name="userrank" id="vo" key="n">
-            <div class="col-xs-4 col-sm-3 col-md-2">
-              <input type="checkbox" name="rank[]" value="{$vo.rank}" disabled <volist name="vinfo.code" id="vos"> <if condition="$vo.rank eq $vos">checked</if></volist>>&nbsp;{$vo.title}
-            </div>
-            </volist>
+          <div class="table-list" id="load_priv">
+            <table width="100%" cellspacing="0">
+              <thead>
+              <tr>
+                <th class="text-l cu-span" style='padding-left:30px;'><span onClick="javascript:$('input[name=menuid[]]').attr('checked', true)">全选</span>/<span onClick="javascript:$('input[name=menuid[]]').attr('checked', false)">取消</span></th>
+              </tr>
+              </thead>
+            </table>
+            <table width="100%" cellspacing="0" id="dnd-example">
+              <tbody>
+              {$categor.temp}
+              </tbody>
+            </table>
+
           </div>
         </div>
       </div>
@@ -51,6 +66,13 @@
 
 <script>
 $(function(){
+  $(document).ready(function() {
+    $("#dnd-example").treeTable({
+      indent: 20
+    });
+  });
+
+
   $("#group").change(function(){
     var gid = $(this).find(":selected").attr("groupid");
     $.post("{$host_name}/user/currentRank", { gid:gid },function(data){

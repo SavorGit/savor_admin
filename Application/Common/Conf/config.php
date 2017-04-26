@@ -96,7 +96,8 @@ $config['MANGER_STATUS'] = array(
 );
 $config['MANGER_LEVEL'] = array(
     '0'=>'一级栏目',
-    '1'=>'二级栏目'
+    '1'=>'二级栏目',
+    '2'=>'三级栏目'
 );
 
 $config['MANGER_STATE'] = array(
