@@ -11,8 +11,8 @@ class BaseController extends Controller {
     
     public function __construct(){
         parent::__construct();
-        $this->handlePublicParams();
         $this->checkLogin();
+        $this->handlePublicParams();
         $this->getNameByIp();
        
     }
@@ -22,6 +22,7 @@ class BaseController extends Controller {
         $this->assign('site_host_name',$this->host_name());
         $this->assign('imgup_path',$this->imgup_path());
         $this->assign('imgup_show',$this->imgup_show());
+        $this->checkPriv();  //检查权限
         $this->sysLog($actionName='', $oppreate='', $program='');
         $this->recordLog();
     }
@@ -469,5 +470,27 @@ class BaseController extends Controller {
         }else{
             $mbperModel->add($dat);
         }
+    }
+    public function checkPriv(){
+        $userinfo = session('sysUserInfo');
+        $user_group_id = $userinfo['groupid'];
+        $free_controller = array('admin.login','admin.index');
+        $free_action = array();
+        $controller = strtolower(MODULE_NAME.'.'.CONTROLLER_NAME);
+        $action = strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+        if(in_array($controller, $free_controller)){
+            return true;
+        }
+        if(in_array($action, $free_action)){
+            return true;
+        }
+        if($user_group_id !=1 ){//非超级管理员
+            $priv_arr = $userinfo['priv'];
+            $action =strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+            if(!in_array($action, $priv_arr)){
+                
+                $this->error('没有权限操作！');
+            }
+        } 
     }
 }

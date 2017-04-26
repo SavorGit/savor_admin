@@ -147,4 +147,20 @@ class RolePrivModel extends Model{
         $version = !empty($res_version[0]['version'])?$res_version[0]['version']:'5.1';
         return $version;
     }
+    public function getMenuList($where,$order){
+        $sql ="select n.id,n.name,rp.m,rp.a,rp.c,n.menulevel,n.media_id,n.select_media_id from savor_role_priv as rp
+               left join savor_nodemenu as n on rp.nodeid=n.id 
+               where 1 ".$where.' order by '.$order;
+        $result = $this->query($sql);
+        return $result;
+    }
+    /**
+     * @desc 获取角色的三级节点权限
+     */
+    public function getPrivByGroupId($groupid){
+        $where['menulevel'] = 2;
+        $where['roleid'] = $groupid;
+        $result = $this->where($where)->select();
+        return $result;
+    }
 }
