@@ -75,9 +75,12 @@ class RolePrivModel extends Model{
      * @param int $roleid 需要检查的角色ID
      */
     public function is_checked($data,$roleid,$priv_data) {
-        $priv_arr = array('m','c','a','menulevel');
+        $priv_arr = array('m','c','a','menulevel','nodeid');
         if($data['m'] == '') return false;
         foreach($data as $key=>$value){
+            if($key == 'id'){
+                $data['nodeid'] = $value;
+            }
             if(!in_array($key,$priv_arr)) unset($data[$key]);
         }
         $data['roleid'] = $roleid;
@@ -109,8 +112,8 @@ class RolePrivModel extends Model{
     }
 
     public function get_menuinfo($menuid,$menu_info) {
-        //$menuid = intval($menuid);
-        //unset($menu_info[$menuid][id]);
+        $menuid = intval($menuid);
+        unset($menu_info[$menuid][id]);
         return $menu_info[$menuid];
     }
     
