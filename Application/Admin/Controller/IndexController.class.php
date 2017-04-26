@@ -147,7 +147,7 @@ class IndexController extends BaseController {
             
             
             foreach($first_menu as $key=>$val){
-                $where = ' and n.parentid='.$val['id'].' and n.menulevel=1 and n.isenable=1';
+                $where = ' and rp.roleid='.$groupid.' and n.parentid='.$val['id'].' and n.menulevel=1 and n.isenable=1 ';
                 $secend_menu = $m_role_priv->getMenuList($where,$order);
             
                 if(empty($secend_menu)){

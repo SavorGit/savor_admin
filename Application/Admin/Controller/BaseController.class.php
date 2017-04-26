@@ -487,9 +487,11 @@ class BaseController extends Controller {
         if($user_group_id !=1 ){//非超级管理员
             $priv_arr = $userinfo['priv'];
             $action =strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+            
             if(!in_array($action, $priv_arr)){
-                
+              
                 $this->error('没有权限操作！');
+                exit;
             }
         } 
     }
