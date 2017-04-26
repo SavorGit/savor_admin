@@ -124,7 +124,7 @@ class IndexController extends BaseController {
             $where = array();
             $where['isenable'] = 1;
             $where['menulevel'] = 0;
-            $first_menu = $m_node_menu->getWhere($where,'id,name,media_id,select_media_id,m,c,a');
+            $first_menu = $m_node_menu->getWhere($where,'id,name,media_id,select_media_id,m,c,a','displayorder asc');
             foreach($first_menu as $key=>$val){
                 $where = array();
                 $where['isenable'] = 1;
