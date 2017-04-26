@@ -197,8 +197,7 @@
     $("#sechidden").css('display','');
     $("#mopermi").css('display','none');
     $("#mopejs").css('display','none');
-    $("#defaultpic").css('display','none');
-    $("#choosemepic").css('display','none');
+
     $.ajax({
       type: 'POST',
       //设置json格式,接收返回数组。
@@ -239,6 +238,10 @@
     var nodekey = $("#nodekey").val();
     if(gid == 2){
       $("#sechidden").css('display','');
+      $("#defaultpic").css('display','none');
+      $("#choosemepic").css('display','none');
+      $("#mopermi").css('display','none');
+      $("#mopejs").css('display','none');
       $('#secid').empty();
       $.ajax({
         type: 'POST',
@@ -265,6 +268,10 @@
       })
     }else{
       $("#sechidden").css('display','none');
+      $("#defaultpic").css('display','');
+      $("#choosemepic").css('display','');
+      $("#mopermi").css('display','');
+      $("#mopejs").css('display','');
       $('#secid').empty();
       return false;
     }
