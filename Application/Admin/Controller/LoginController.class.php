@@ -70,7 +70,22 @@ class LoginController extends BaseController {
                     $mind['userpwd'] = $userpwd;
                     cookie('login_upwd',$mind,86400*7);
                     unset($result[0]['password']);
-                    session('sysUserInfo',$result[0]);
+                    
+                    
+                    $m_role_priv = new \Admin\Model\RolePrivModel();
+                    $ret = $m_role_priv->getPrivByGroupId($userinfo['groupid']);
+                    if(!empty($ret)){
+                        $priv_arr = array();
+                        $flag =0 ;
+                        foreach($ret as $key=>$v){
+                            $priv_str = $v['m'].'.'.$v['c'].'.'.$v['a'];
+                            $priv_arr[$flag] = $priv_str;
+                            $flag ++;
+                        }
+                        $userinfo['priv'] = $priv_arr; 
+                        //session('userPriv',$priv_arr);
+                    }
+                    session('sysUserInfo',$userinfo);
                     //$this->sysLog('登录操作', '登录操作', '当前栏目','login');
                     $url = $this->host_name();
                     header("location: $url");
