@@ -142,11 +142,11 @@ class SysusergroupController extends BaseController {
 
         //非提交处理
         if(1 === $acttype) {
-            $uid = I('id', 0, 'int');
-            if(!$uid) {
+            $gid = I('id', 0, 'int');
+            if(!$gid) {
                 $this->output('当前信息不存在!', 'sysusergroupList');
             }
-            $resulta = $sysusergroup->getInfo($uid);
+            $resulta = $sysusergroup->getInfo($gid);
             $this->assign('vinfo', $resulta);
             $this->assign('acttype', 1);
         } else {
@@ -159,13 +159,17 @@ class SysusergroupController extends BaseController {
         //获取所有节点
         $result = $sysNode->getAllList();
         //获取权限表数据
-        $priv_data = $rolePrivModel->getInfoByroleid($uid);
-        //var_dump($result);
+        $priv_data = $rolePrivModel->getInfoByroleid($gid);
+        var_dump($priv_data);
+        echo '<hr/><hr/>';
         foreach ($result as $n=>$t) {
+            var_dump($t);
+
             $result[$n]['cname'] = $t['name'];
-            $result[$n]['checked'] = $rolePrivModel->is_checked($t,$uid,$priv_data)? ' checked' : '';
+            $result[$n]['checked'] = $rolePrivModel->is_checked($t,$gid,$priv_data)? ' checked' : '';
             $result[$n]['level'] = $rolePrivModel->get_level($t['id'],$result);
             $result[$n]['parentid_node'] = ($t['parentid'])? ' class="child-of-node-'.$t['parentid'].'"' : '';
+            die;
 
         }
 

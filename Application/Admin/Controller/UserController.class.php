@@ -48,10 +48,14 @@ class UserController extends BaseController {
     //新增用户
     public function userAdd(){
         $acttype = I('acttype', 0, 'int');
+        $groups = new \Admin\Model\SysusergroupModel();
+        $rstGroup= $groups->getAllGroup();
+        $this->assign('groupslist',$rstGroup);
         
         //处理提交数据
         if(IS_POST) {
             //获取参数
+            $groupId= I('group', 0, 'int');
             $userId  = I('id', '', 'int');
             $remark  = I('remark');
             $username= I('username');
@@ -62,6 +66,7 @@ class UserController extends BaseController {
                 $data['id']   = $userId;
                 $data['remark']   = $remark;
                 $data['username'] = $username;
+                $data['groupId'] = $groupId;
                 $data['status'] = $status;
                 $pwdpre = C('PWDPRE');
                 $userpwd = $userpwd.$pwdpre;
@@ -98,8 +103,12 @@ class UserController extends BaseController {
     public function userEdit(){
         $acttype = I('acttype', 1, 'int');
         $uid = I('uid', 0, 'int');
+        $groups = new \Admin\Model\SysusergroupModel();
+        $rstGroup= $groups->getAllGroup();
+        $this->assign('groupslist',$rstGroup);
         if(IS_POST) {
             //获取参数
+            $groupId= I('group', 0, 'int');
             $userId  = I('id', '', 'int');
             $remark  = I('remark');
             $newuserpwd = I('newuserpwd');
@@ -108,6 +117,7 @@ class UserController extends BaseController {
                 $data['id']   = $userId;
                 $data['remark']   = $remark;
                 $data['status'] = $status;
+                $data['groupId'] = $groupId;
                 if($newuserpwd){
                     $pwdpre = C('PWDPRE');
                     $newuserpwd = $newuserpwd.$pwdpre;

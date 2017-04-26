@@ -32,7 +32,7 @@
           用户分组：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="group" id="group" class="form-control bs-select" title="请选择分组...">
+          <select disabled="disabled" name="group" id="group" class="form-control bs-select" title="请选择分组...">
           <!--<option value=0>未分组</option>-->
           <volist name="groupslist" id="vo">
             <option value="{$vo.id}" groupid="{$vo.id}" <if condition="$vinfo['gid'] eq $vo['id']">selected</if>> {$vo.name} </option>
@@ -56,10 +56,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-default close-m" type="button">取消</button>
-      <button class="btn btn-primary" type="submit">保存</button>
     </div>
   </form>
 </div>

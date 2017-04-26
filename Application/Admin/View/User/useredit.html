@@ -31,6 +31,20 @@
       </div>
 
       <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          用户分组：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="group" id="group" class="form-control bs-select" title="请选择分组...">
+            <!--<option value=0>未分组</option>-->
+            <volist name="groupslist" id="vo">
+              <option value="{$vo.id}" groupid="{$vo.id}" <if condition="$vinfo['groupid'] eq $vo['id']">selected</if>> {$vo.name} </option>
+            </volist>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label for="" class="col-xs-12 col-sm-2 control-label">
           状态
         </label>
