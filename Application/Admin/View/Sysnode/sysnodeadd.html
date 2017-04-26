@@ -23,7 +23,7 @@
           模块名：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="modulename" minlength="4" maxlength="20" value="{$vinfo.name}" required>
+          <input type="text" class="form-control" name="modulename" minlength="1" maxlength="40" value="{$vinfo.name}" required>
         </div>
       </div>
       <div class="form-group row">
@@ -59,7 +59,7 @@
           <input name="displayorder" type="text" class="form-control digits" value="{$vinfo.displayorder}" required/>
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" id="mopermi">
         <label class="col-xs-12 col-sm-2 control-label">
           模块权限：
         </label>
@@ -67,7 +67,7 @@
           <input type="text" class="form-control" name="code" id="code" value="{$vinfo.jstext}" <if condition="$acttype eq 1">readonly</if>>
         </div>
       </div>
-      <div class="form-group row">
+      <div class="form-group row" id="mopejs">
         <label class="col-xs-12 col-sm-2 control-label">
           模块JS：
         </label>
@@ -81,7 +81,7 @@
           M模块：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="mfield" id="mfield" value="{$vinfo.mfield}">
+          <input type="text" class="form-control" name="mfield" id="mfield" value="{$vinfo.mfield}" <if condition="$acttype eq 1">readonly</if>>
         </div>
       </div>
 
@@ -90,7 +90,7 @@
           控制器：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="cfield" id="cfield" value="{$vinfo.cfield}">
+          <input type="text" class="form-control" name="cfield" id="cfield" value="{$vinfo.cfield}" <if condition="$acttype eq 1">readonly</if>>
         </div>
       </div>
 
@@ -100,7 +100,7 @@
           方法：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="afield" id="afield" value="{$vinfo.afield}">
+          <input type="text" class="form-control" name="afield" id="afield" value="{$vinfo.afield}" <if condition="$acttype eq 1">readonly</if>>
         </div>
       </div>
 
@@ -114,7 +114,7 @@
         </div>
       </div> -->
       <if condition="$vinfo.menulevel eq 0">
-       <div class="form-group row">
+       <div class="form-group row" id="defaultpic">
               <label class="col-xs-12 col-sm-2 control-label">
                		 默认图标：
               </label>
@@ -142,7 +142,7 @@
               </div>
             </div>
             
-             <div class="form-group row">
+             <div class="form-group row" id="choosemepic">
               <label class="col-xs-12 col-sm-2 control-label">
                 	选中图标：
               </label>
@@ -195,6 +195,10 @@
   if(gaid == 2){
     var passid = $("#passid").val();
     $("#sechidden").css('display','');
+    $("#mopermi").css('display','none');
+    $("#mopejs").css('display','none');
+    $("#defaultpic").css('display','none');
+    $("#choosemepic").css('display','none');
     $.ajax({
       type: 'POST',
       //设置json格式,接收返回数组。
@@ -224,6 +228,10 @@
     })
   }else{
     $("#sechidden").css('display','none');
+    $("#mopermi").css('display','');
+    $("#mopejs").css('display','');
+    $("#defaultpic").css('display','');
+    $("#choosemepic").css('display','');
   }
 
   $("#menulevel").change(function() {

@@ -169,7 +169,7 @@ class SysusergroupController extends BaseController {
             $result[$n]['checked'] = $rolePrivModel->is_checked($t,$gid,$priv_data)? ' checked' : '';
             $result[$n]['level'] = $rolePrivModel->get_level($t['id'],$result);
             $result[$n]['parentid_node'] = ($t['parentid'])? ' class="child-of-node-'.$t['parentid'].'"' : '';
-            die;
+
 
         }
 
