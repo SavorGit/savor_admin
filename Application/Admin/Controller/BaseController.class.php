@@ -474,8 +474,8 @@ class BaseController extends Controller {
     public function checkPriv(){
         $userinfo = session('sysUserInfo');
         $user_group_id = $userinfo['groupid'];
-        $free_controller = array('admin.login','admin.index');
-        $free_action = array();
+        $free_controller = array('admin.login','admin.index','admin.resource');
+        
         $controller = strtolower(MODULE_NAME.'.'.CONTROLLER_NAME);
         $action = strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
         if(in_array($controller, $free_controller)){
