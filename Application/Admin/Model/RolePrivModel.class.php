@@ -101,6 +101,7 @@ class RolePrivModel extends Model{
      * @param $i
      */
     public function get_level($id,$array=array(),$i=0) {
+
         foreach($array as $n=>$value){
             if($value['id'] == $id)
             {
@@ -110,7 +111,6 @@ class RolePrivModel extends Model{
             }
         }
     }
-
     public function get_menuinfo($menuid,$menu_info) {
         $menuid = intval($menuid);
         unset($menu_info[$menuid][id]);
