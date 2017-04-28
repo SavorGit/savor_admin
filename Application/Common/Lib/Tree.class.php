@@ -105,10 +105,13 @@ class Tree {
 	*/
 	public function get_tree($myid, $str, $sid = 0, $adds = '', $str_group = ''){
 		$number=1;
+		//获取8个顶级节点
 		$child = $this->get_child($myid);
+
 		if(is_array($child)){
 		    $total = count($child);
 			foreach($child as $id=>$value){
+
 				$j=$k='';
 				if($number==$total){
 					$j .= $this->icon[2];
@@ -124,6 +127,7 @@ class Tree {
 				$nbsp = $this->nbsp;
 				$this->get_tree($id, $str, $sid, $adds.$k.$nbsp,$str_group);
 				$number++;
+
 			}
 		}
 		return $this->ret;
