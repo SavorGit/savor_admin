@@ -2,7 +2,7 @@
 <html>
 
 	<head>
-		<title>小热点</title>
+		<title>{$vinfo.title}-小热点</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta content="yes" name="apple-mobile-web-app-capable">
@@ -70,6 +70,8 @@
 		} else {
 				$('body').css('background-color', '#080808');
 				$('.contentD').css('padding-top', '28%');
+				$('.contentD').css('height', '45.7%');
+				$('.box_nr').css('margin-top','17%')
 				var $tit = $('#tit').val();
 				$('.box_nr').append('<p style="color:white;text-align:left;width:100%;margin-left:10px">' + $tit + '</p>');
 			}
