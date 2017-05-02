@@ -476,8 +476,13 @@ class BaseController extends Controller {
         $user_group_id = $userinfo['groupid'];
         $free_controller = array('admin.login','admin.index','admin.resource');
         $free_action = array();
-        $controller = strtolower(MODULE_NAME.'.'.CONTROLLER_NAME);
-        $action = strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+        $model_name      = strtolower(MODULE_NAME);
+        $controller_name = strtolower(CONTROLLER_NAME);
+        $action_name     = strtolower(ACTION_NAME);
+        //$controller = strtolower(MODULE_NAME.'.'.CONTROLLER_NAME);
+        //$action = strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+        $controller = $model_name.'.'.$controller_name;
+        $action = $model_name.'.'.$controller_name.'.'.$action_name;
         if(in_array($controller, $free_controller)){
             return true;
         }
@@ -489,9 +494,18 @@ class BaseController extends Controller {
             $action =strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
             
             if(!in_array($action, $priv_arr)){
-               //echo '<script>$.pdialog.closeCurrent();  alertMsg.error("没有权限操作！");</script>';
-                
-                $this->error('没有权限操作！');
+              
+                $m_nodemenu= new \Admin\Model\SysnodeModel();
+                $map = array();
+                $map['m'] = $model_name;
+                $map['c'] = $controller_name;
+                $map['a'] = $action_name;
+                $nodeInfo = $m_nodemenu->getInfo($map);
+                if($nodeInfo['ertype']==1){
+                    $this->error('没有权限操作！');
+                }else if($nodeInfo['ertype']==2){
+                    echo '<script>$.pdialog.closeCurrent();  alertMsg.error("没有权限操作！");</script>';
+                }
                 exit;
             }
         } 
