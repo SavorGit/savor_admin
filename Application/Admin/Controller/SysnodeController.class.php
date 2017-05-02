@@ -41,14 +41,16 @@ class SysnodeController extends BaseController {
         $this->assign('page',  $result['page']);
         $this->display('index');
     }
-    
+
     //新增用户
-    public function sysnodeadd(){
+    public function sysnodeaddbak(){
+
 
 
         $sysMenu = new \Admin\Model\SysmenuModel();
         $sysNode = new \Admin\Model\SysnodeModel();
         $acttype = I('acttype', 0, 'int');
+
         //处理提交数据
         if(IS_POST) {
             //获取参数
@@ -66,6 +68,7 @@ class SysnodeController extends BaseController {
             $mfield      =   strtolower(I('post.mfield','','trim'));
             $cfield      = strtolower(I('post.cfield','','trim'));
             $afield      = strtolower(I('post.afield','','trim'));
+            $ertype = I('ertype', 1, 'int');
             $nodeparm['m'] = $mfield;
             $nodeparm['c'] = $cfield;
             $nodeparm['a'] = $afield;
@@ -80,6 +83,7 @@ class SysnodeController extends BaseController {
                 $nodeparm['displayorder'] = $displayorder;
                 $nodeparm['nodekey']= $nodekey;
                 $nodeparm['name'] = $modulename;
+                $nodeparm['ertype'] = $ertype;
                 if( $acttype == 0) {
                     if ($nodeinfo) {
                         $this->error('不能新增相同三级节点');
@@ -102,6 +106,7 @@ class SysnodeController extends BaseController {
                     $this->output('操作失败!', 'sysmenuAdd', 2, 0);
                 }
             }
+            $ertype = 1;
 
             if($acttype == 0 ){
                 $ojt['isenable'] = 1;
@@ -134,9 +139,9 @@ class SysnodeController extends BaseController {
                 $data['modulename']= $modulename;
                 $data['menulevel']  = $menulevel;
                 $data['displayorder']= $displayorder;
-                $data['isenable']   = $isenable; 
+                $data['isenable']   = $isenable;
                 if($media_id) $data['media_id'] = $media_id;
-                
+
                 if($select_media_id) $data['select_media_id'] = $select_media_id;
 
                 if(0 === $acttype) {
@@ -156,12 +161,202 @@ class SysnodeController extends BaseController {
                 $nodeparm['displayorder'] = $displayorder;
                 $nodeparm['nodekey']= $nodekey;
                 $nodeparm['name'] = $modulename;
+                $nodeparm['ertype'] = $ertype;
                 if($media_id) $nodeparm['media_id'] = $media_id;
 
                 if($select_media_id) $nodeparm['select_media_id'] = $select_media_id;
                 if ($nodeinfo) {
                     $nid = $nodeinfo['id'];
                     $result = $sysNode->where("id={$nid}")->save($nodeparm);
+                    $result = true;
+                } else {
+                    //二级节点
+
+                    if($menulevel == 1){
+                        $pat['nodekey'] = $nodekey;
+                        $pat['parentid'] = 0;
+                        $res = $sysNode->getInfo($pat);
+                        $menulevel = $res['id'];
+                    }
+                    $nodeparm['parentid'] = $menulevel;
+                    $nodeparm['displayorder'] = $displayorder;
+                    $nodeparm['isenable'] = $isenable;
+                    $result = $sysNode->add($nodeparm);
+                }
+                if($result) {
+                    $this->output('操作成功!', 'sysnode/manager');
+                } else {
+                    $this->error('操作失败!');
+                }
+            } else {
+                $this->error('缺少必要参数!');
+            }
+        }
+
+        //非提交处理
+        if(1 === $acttype) {
+            $uid = I('id', 0, 'int');
+            $sysmenuid = I('sysmenuid', 0, 'int');
+            $result['sysmenuid'] = $sysmenuid;
+            if(!$uid) {
+                $this->error('当前信息不存在!');
+            }
+            //$result = $sysMenu->getInfo($uid);
+            $result = $sysNode->getoneInfo($uid);
+            if($result['media_id']){
+
+                $mediaModel = new \Admin\Model\MediaModel();
+                $mediaInfo = $mediaModel->getMediaInfoById($result['media_id']);
+                $result['oss_addr'] = $mediaInfo['oss_addr'];
+            }
+            if($result['select_media_id']){
+                $mediaModel = new \Admin\Model\MediaModel();
+                $mediaInfo = $mediaModel->getMediaInfoById($result['select_media_id']);
+                $result['select_oss_addr'] = $mediaInfo['oss_addr'];
+            }
+            //要改回来的
+            $result['jstext'] = $result['c'].'.'.$result['a'];
+            $result['mfield'] = MODULE_NAME;
+            $result['cfield']  = $result['c'];
+            $result['afield']  = $result['a'];
+            $this->assign('vinfo', $result);
+            $this->assign('acttype', 1);
+        } else {
+            $res['mfield'] = MODULE_NAME;
+            $res['ertype'] = 1;
+            $this->assign('vinfo',$res);
+            $this->assign('acttype', 0);
+        }
+        $this->display('sysnodeadd');
+    }
+    
+    //新增用户
+    public function sysnodeadd(){
+
+
+
+        $sysMenu = new \Admin\Model\SysmenuModel();
+        $sysNode = new \Admin\Model\SysnodeModel();
+        $acttype = I('acttype', 0, 'int');
+
+        //处理提交数据
+        if(IS_POST) {
+            //获取参数
+            $id          = I('post.id', '', 'int');
+            $nodekey     = I('post.nodekey');
+            $modulename  = I('post.modulename','','trim');
+            $menulevel   = I('post.menulevel');
+            $displayorder= I('post.displayorder');
+            $code        = I('post.code');
+            $jstext      = I('post.jstext');
+            $isenable    = I('post.isenable');
+            $media_id    = I('post.media_id','0','intval');
+            $select_media_id    = I('post.select_media_id','0','intval');
+            $mfield      =   strtolower(I('post.mfield','','trim'));
+            $cfield      = strtolower(I('post.cfield','','trim'));
+            $afield      = strtolower(I('post.afield','','trim'));
+            $ertype = I('ertype', 1, 'int');
+            $nodeparm['m'] = $mfield;
+            $nodeparm['c'] = $cfield;
+            $nodeparm['a'] = $afield;
+            $nodeparm['isenable'] = $isenable;
+            //三级节点只添加node表
+            if ($menulevel == 2 ) {
+                //u新增
+                $nodeparm['menulevel'] = $menulevel;
+                $nodeparm['isenable'] = 1;
+                $nodeinfo = $sysNode->getInfo($nodeparm);
+                $nodeparm['parentid'] = I('post.secid');
+                $nodeparm['displayorder'] = $displayorder;
+                $nodeparm['nodekey']= $nodekey;
+                $nodeparm['name'] = $modulename;
+                $nodeparm['ertype'] = $ertype;
+                if( $acttype == 0) {
+                    if ($nodeinfo) {
+                        $this->error('不能新增相同三级节点');
+                    } else {
+                        $result = $sysNode->add($nodeparm);
+
+                    }
+
+                } else {
+                    $nodeparm['isenable'] = $isenable;
+                    if ($nodeinfo) {
+                        $nid = $nodeinfo['id'];
+                        $result = $sysNode->where("id={$nid}")->save($nodeparm);
+                        $result = true;
+                    } else {
+                        $result = $sysNode->add($nodeparm);
+                    }
+                }
+                if($result) {
+                    $this->output('操作成功!', 'sysnode/manager');
+                } else {
+                    $this->output('操作失败!', 'sysmenuAdd', 2, 0);
+                }
+            }
+            $ertype = 1;
+
+            if($acttype == 0 ){
+                $ojt['isenable'] = 1;
+                $ojt['m'] = $mfield;
+                $ojt['c'] = $cfield;
+                $ojt['a'] = $afield;
+                $count = $sysNode->getCount($ojt);
+                if($count>0){
+                    $this->error('一级节点二级节点不允许添加相同已经存在且有效的mca');
+                }
+                if($menulevel == 0){
+                    $oat['nodekey'] = $nodekey;
+                    $oat['menulevel'] = 0;
+                    $oat['isenable'] = 1;
+                    $count = $sysNode->getCount($oat);
+                    if($count>0){
+                        $this->error('一级节点在不被禁止的情况下只能有一 个');
+                    }
+                }
+            }
+
+            //判断添加
+            if($modulename) {
+                /*$data['id']     = $id;
+                $data['code']   = $code;
+                $data['jstext'] = $jstext;
+                $data['nodekey']= $nodekey;
+                $data['modulename']= $modulename;
+                $data['menulevel']  = $menulevel;
+                $data['displayorder']= $displayorder;
+                $data['isenable']   = $isenable; 
+                if($media_id) $data['media_id'] = $media_id;
+                
+                if($select_media_id) $data['select_media_id'] = $select_media_id;
+
+                if(0 === $acttype) {
+                    $result = $sysMenu->add($data);
+                    $id = $sysMenu->getLastInsID();
+                } else {
+                    $data['id'] = $sysmenuid;
+                    $id = $sysmenuid;
+
+                    $res = $sysMenu->where("id={$id}")->save($data);
+                }*/
+
+                $nodeparm['menulevel'] = $menulevel;
+                $nodeparm['isenable'] = 1;
+                $nodeinfo = $sysNode->getInfo($nodeparm);
+                $nodeparm['sysmenuid'] = 8;
+                $nodeparm['isenable'] = $isenable;
+                $nodeparm['displayorder'] = $displayorder;
+                $nodeparm['nodekey']= $nodekey;
+                $nodeparm['name'] = $modulename;
+                $nodeparm['ertype'] = $ertype;
+                if($media_id) $nodeparm['media_id'] = $media_id;
+
+                if($select_media_id) $nodeparm['select_media_id'] = $select_media_id;
+                if ($nodeinfo) {
+                    $nid = $nodeinfo['id'];
+                    $result = $sysNode->where("id={$nid}")->save($nodeparm);
+                    $result = true;
                 } else {
                     //二级节点
 
@@ -216,6 +411,7 @@ class SysnodeController extends BaseController {
             $this->assign('acttype', 1);
         } else {
             $res['mfield'] = MODULE_NAME;
+            $res['ertype'] = 1;
             $this->assign('vinfo',$res);
             $this->assign('acttype', 0);
         }

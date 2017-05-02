@@ -94,4 +94,9 @@ class SysnodeModel extends Model{
         $version = !empty($res_version[0]['version'])?$res_version[0]['version']:'5.1';
         return $version;
     }
+
+    public function getCount($where){
+        $numbe = $this->where($where)->count();
+        return $numbe;
+    }
 }
