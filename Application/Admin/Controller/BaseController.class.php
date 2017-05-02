@@ -475,7 +475,7 @@ class BaseController extends Controller {
         $userinfo = session('sysUserInfo');
         $user_group_id = $userinfo['groupid'];
         $free_controller = array('admin.login','admin.index','admin.resource');
-        
+        $free_action = array();
         $controller = strtolower(MODULE_NAME.'.'.CONTROLLER_NAME);
         $action = strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
         if(in_array($controller, $free_controller)){
@@ -489,9 +489,9 @@ class BaseController extends Controller {
             $action =strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
             
             if(!in_array($action, $priv_arr)){
-                echo '<script> alertMsg.error("没有权限操作！");$.pdialog.closeCurrent(); </script>';
-                //echo '<script> $(".modal.fade").css("display","none");</script>';
-                //$this->error('没有权限操作！');
+               //echo '<script>$.pdialog.closeCurrent();  alertMsg.error("没有权限操作！");</script>';
+                
+                $this->error('没有权限操作！');
                 exit;
             }
         } 
