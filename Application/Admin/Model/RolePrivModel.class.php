@@ -51,7 +51,7 @@ class RolePrivModel extends Model{
     
     public function getInfoByroleid($code) {
         if($code){
-            $getInfoSql  = "SELECT * FROM `savor_role_priv` WHERE roleid = '{$code}'";
+            $getInfoSql  = "SELECT `roleid`, `m`,`c`,`a`,`menulevel`,`nodeid` FROM `savor_role_priv` WHERE roleid = '{$code}'";
             $result = $this->query($getInfoSql);
         }else{
             $result = array();
@@ -84,6 +84,8 @@ class RolePrivModel extends Model{
             if(!in_array($key,$priv_arr)) unset($data[$key]);
         }
         $data['roleid'] = $roleid;
+
+
         $info = in_array($data, $priv_data);
         if($info){
             return true;
