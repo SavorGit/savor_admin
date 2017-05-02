@@ -122,7 +122,7 @@ class SysusergroupController extends BaseController {
             }
             if (is_array($_POST['menuid']) && count($_POST['menuid']) > 0) {
                 $rolePrivModel->delData($roleid);
-                $menuinfo = $sysNode->field('`id`,`m`,`c`,`a`,`menulevel`')->select();
+                $menuinfo = $sysNode->field('`id`,`ertype`,`m`,`c`,`a`,`menulevel`')->select();
 
                 foreach ($menuinfo as $_v) $menu_info[$_v[id]] = $_v;
 
@@ -167,8 +167,6 @@ class SysusergroupController extends BaseController {
             $result[$n]['level'] = $rolePrivModel->get_level($t['id'],$result);
             $result[$n]['parentid_node'] = ($t['parentid'])? ' class="child-of-node-'.$t['parentid'].'"' : '';
 
-
-
         }
 
 
@@ -179,8 +177,9 @@ class SysusergroupController extends BaseController {
 
         $matre->init($result);
         $categorys = $matre->get_tree(0, $str);
+
         $ra['temp'] = $categorys;
-        $groupList = parent::getMenuList();
+
         $this->assign('categor', $ra);
         //$this->assign('groupList', $groupList);
         $this->display('sysusergroupaddtest');
