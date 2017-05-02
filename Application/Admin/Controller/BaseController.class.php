@@ -489,8 +489,9 @@ class BaseController extends Controller {
             $action =strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
             
             if(!in_array($action, $priv_arr)){
-              
-                $this->error('没有权限操作！');
+                echo '<script> alertMsg.error("没有权限操作！");$.pdialog.closeCurrent(); </script>';
+                //echo '<script> $(".modal.fade").css("display","none");</script>';
+                //$this->error('没有权限操作！');
                 exit;
             }
         } 
