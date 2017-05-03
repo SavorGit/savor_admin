@@ -26,6 +26,8 @@ class ExcelController extends Controller
             $tmpname = 'APP包间首次互动数据';
         }  else if ($filename == 'first_mobile_download') {
             $tmpname = '酒楼首次打开数据';
+        }  else if ($filename == 'downloadcount') {
+            $tmpname = '下载量报表统计';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -293,6 +295,74 @@ class ExcelController extends Controller
             array('project_count', '投屏次数'),
             array('demand_count', '点播次数'),
             array('time', '时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+
+    function expdownloadcount(){
+        $filename = 'downloadcount';
+        $dtype = I('get.datetype');
+        $downloadModel =  new \Admin\Model\DownloadRpModel();
+        $where = '1=1 ';
+        $starttime = I('start','');
+        $endtime = I('end','');
+        if($starttime){
+            $where .= "	AND add_time >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND add_time <=  '{$endtime}'";
+        }
+        $soucetype = I('get.sourcetype','');
+        if($soucetype){
+            $where .= "	AND source_type =   '{$soucetype}'";
+        }
+        $orders = '';
+        $rea = $downloadModel->getAllList($where,$orders);
+        $so_type = C('source_type');
+        $cltype = array(
+            '1'=>'android',
+            '2'=>'ios',
+        );
+        $dowload_device_typ = array(
+            '1'=>'android',
+            '2'=>'ios',
+            '3'=>'pc',
+        );
+
+        foreach ($rea['list'] as &$val) {
+            foreach($cltype as $k=>$v){
+                if($k == $val['clientid']){
+                    $val['clientid'] = $v;
+                }
+            }
+            foreach($dowload_device_typ as $k=>$v){
+                if($k == $val['dowload_device_id']){
+                    $val['dowload_device_id'] = $v;
+                }
+            }
+
+            foreach($so_type as $k=>$v){
+                if($k == $val['source_type']){
+                    $val['source_type'] = $v;
+                }
+            }
+
+        }
+        $box_arr = $rea['list'];
+        $xlsName = "downloadcountreport";
+        $xlsCell = array(
+            array('source_type', '来源'),
+            array('clientid', '手机客户端'),
+
+            array('deviceid', '设备唯一标识'),
+
+            array('dowload_device_id', '点击下载设备'),
+
+            array('hotelid', '酒楼id'),
+            array('waiterid', '服务员id'),
+            array('add_time', '添加时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
