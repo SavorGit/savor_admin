@@ -358,7 +358,7 @@ class BaseController extends Controller {
         $media_id = 0;
         $mediaModel = new \Admin\Model\MediaModel();
         if(!empty($add_mediadata['name'])){
-            $nass = $mediaModel->where(array('name'=>$add_mediadata['name'],'state'=>1))->field('name')->find();
+            $nass = $mediaModel->where(array('name'=>$add_mediadata['name']))->field('name')->find();
             if(!empty($nass['name'])){
                 $message = '文件名已存在，请换一个名称';
                 $url = 'resource/resourceList';
