@@ -88,7 +88,7 @@ ALTER TABLE `savor_box` ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRE
 修改人:白玉涛
 执行SQL: ALTER TABLE `savor_menulist_log` change  `hotel_id`  `hotel_id_s` text NOT NULL DEFAULT '' COMMENT '发布酒楼id字符串';
 ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
-#########以上sql均已执行######
+
 
 增加说明：添加酒楼wifi及密码
 修改时间:2017.4.17 16：00
@@ -98,5 +98,49 @@ alter table `savor_hotel`
  add column `remote_id` varchar(255) DEFAULT '' NOT NULL COMMENT '远程ID',
    add column `hotel_wifi` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi名称' after `remote_id`, 
    add column `hotel_wifi_pas` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi密码' after `hotel_wifi`
+#########以上sql均已执行######
 
+增加说明：添加意见反馈手机类型
+修改时间:2017.5.3 14：00
+修改人:白玉涛
+执行SQL: 
+ALTER TABLE `cloud`.`savor_mb_feedback`     ADD COLUMN `device_type` SMALLINT(3) DEFAULT '3' NOT NULL COMMENT '类型3android4ios' AFTER `create_time`;
 
+增加说明：添加节点表
+修改时间：2017.5.5 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_nodemenu` (
+  `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(40) NOT NULL DEFAULT '',
+  `nodekey` varchar(100) NOT NULL DEFAULT '' COMMENT 'config表中节点key',
+  `parentid` smallint(6) NOT NULL DEFAULT '0' COMMENT '它的父id',
+  `media_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '默认图标资源id',
+  `select_media_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '选中图标资源id',
+  `menulevel` tinyint(1) DEFAULT '0' COMMENT '菜单级别',
+  `m` char(20) NOT NULL DEFAULT '',
+  `c` char(20) NOT NULL DEFAULT '',
+  `a` char(20) NOT NULL DEFAULT '',
+  `displayorder` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `isenable` smallint(6) NOT NULL DEFAULT '1',
+  `sysmenuid` int(11) NOT NULL DEFAULT '0' COMMENT '一级和二级对应sysmenu表中id',
+  `ertype` smallint(2) NOT NULL DEFAULT '1' COMMENT '1:系统自带2.原生js',
+  PRIMARY KEY (`id`),
+  KEY `parentid` (`parentid`),
+  KEY `module` (`m`,`c`,`a`)
+) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 COMMENT='节点表';
+
+增加说明：权限表
+修改时间：2017.5.5 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_role_priv` (
+  `roleid` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `m` char(20) NOT NULL COMMENT '模块名',
+  `c` char(20) NOT NULL COMMENT '控制器名',
+  `a` char(20) NOT NULL COMMENT '方法名',
+  `nodeid` int(11) NOT NULL DEFAULT '0' COMMENT '节点id',
+  `menulevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ertype` smallint(2) NOT NULL DEFAULT '1' COMMENT '1:原生2.系统自带',
+  KEY `roleid` (`roleid`,`m`,`c`,`a`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='权限组表'
