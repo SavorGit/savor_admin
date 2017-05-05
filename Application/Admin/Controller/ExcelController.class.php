@@ -13,6 +13,8 @@ class ExcelController extends Controller
 
     public function exportExcel($expTitle, $expCellName, $expTableData,$filename)
     {
+        set_time_limit(90);
+        ini_set("memory_limit", "512M");
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
@@ -30,6 +32,8 @@ class ExcelController extends Controller
             $tmpname = '下载量报表统计';
         }  else if ($filename == 'appcreen') {
             $tmpname = 'app与大屏互动统计';
+        }  else if ($filename == 'hotelscreen') {
+            $tmpname = '酒楼大屏统计';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -415,6 +419,44 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
+
+    function exphotelscreen(){
+        $filename = 'hotelscreen';
+        $hscreenModel =  new \Admin\Model\HotelscreenRpModel();
+        $where = '1=1 ';
+        $starttime = I('start','');
+        $endtime = I('end','');
+        if($starttime){
+
+            $where .= "	AND (`play_date`) >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND (`play_date`) <=  '{$endtime}'";
+        }
+
+
+        $orders = 'id desc';
+        $rea = $hscreenModel->getAllList($where,$orders);
+        foreach($rea['list'] as &$val){
+
+
+        }
+        $box_arr = $rea['list'];
+        $xlsName = "hotelcreenreport";
+        $xlsCell = array(
+            array('area_name', '区域名称'),
+            array('hotel_name', '酒楼名称'),
+            array('room_name', '包间名称'),
+            array('mac', '机顶盒mac'),
+            array('ads_name', '广告名称'),
+            array('plc', '播放次数'),
+            array('dur', '播放时长'),
+            array('play_date', '播放日期'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
 
     function hotelinfo()
     {//导出Excel

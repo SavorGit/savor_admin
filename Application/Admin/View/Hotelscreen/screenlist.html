@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form  onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/appscreen/rplist" method="post" >
+  <form  onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hotelscreen/rplist" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -40,7 +40,7 @@
           </div>
 
           <div class="input-group input-group-sm pull-right">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/excel/expappscreen?start={$s_time}&end={$e_time}" title="导出app与大屏互动统计" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出app与大屏互动统计</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/excel/exphotelscreen?start={$s_time}&end={$e_time}" title="导出酒楼大屏" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出酒楼大屏</a>
           </div>
 
           </div>
@@ -66,15 +66,12 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <!-- <th>包间ID</th> -->
             <th>包间名称</th>
             <!-- <th>酒楼ID</th> -->
-            <th>机顶盒名称</th>
-            <!-- <th>区域ID</th> -->
             <th>机顶盒mac</th>
-            <th>手机唯一标识id</th>
-            <th>点播次数</th>
-            <th>点播时长</th>
-            <th>投屏次数</th>
-            <th>投屏时长</th>
-            <th>日期</th>
+            <!-- <th>区域ID</th> -->
+            <th>广告名称</th>
+            <th>播放次数</th>
+            <th>播放时长</th>
+            <th>播放日期</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -91,18 +88,11 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
                 {$vlist.room_name}
                </td>
               <!-- <td data-title="酒楼ID">{$vlist.hotel_id}</td> -->
-              <td data-title="机顶盒名称">
-
-                {$vlist.box_name}
-               </td>
-              <!-- <td data-title="区域ID">{$vlist.area_id}</td> -->
-              <td data-title="机顶盒mac">{$vlist.box_mac}</td>
-              <td data-title="手机唯一标识id">{$vlist.mobile_id}</td>
-              <td data-title="点播次数">{$vlist.vcount}</td>
-              <td data-title="点播时长">{$vlist.vtime}</td>
-              <td data-title="投屏次数">{$vlist.pcount}</td>
-              <td data-title="投屏时长">{$vlist.ptime}</td>
-            <td data-title="添加时间">{$vlist.addtime} </td>
+              <td data-title="机顶盒mac">{$vlist.mac}</td>
+              <td data-title="广告名称">{$vlist.ads_name}</td>
+              <td data-title="播放次数">{$vlist.plc}</td>
+              <td data-title="播放时长">{$vlist.dur}</td>
+            <td data-title="播放日期">{$vlist.play_date} </td>
             </tr>
           </volist>
           </tbody>
@@ -117,54 +107,5 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
 <script type="text/javascript">
 
 
-  /*function navTabAjaxDone(json){
-    // alert(json);
-    DWZ.ajaxDone(json);
-    alert(33333);
-    jap = JSON.stringify(json);
-    console.log(jap);
-    var idsf = $(".header form").attr('id');
-    alert(idsf);
-    DWZ.ajaxDone(json);
-    navTab.reloadFlag('menu/getlist');
-    //注意返回的JSON的数据结构
-    if (json.status == DWZ.statusCode.ok){
-      if (json.navTabId){
-        navTab.reload('menu/getlist');
-      }
-
-
-    }
-
-  }*/
-
-
-
-  function get_date(obj){
-    var data_type = $("#dty").val();
-    if(data_type == 4){
-      $("#timegi").css('display','inline-block');
-    }else{
-      $("#timegi").css('display','none');
-    }
-  }
-
-  $(function(){
-    var tip =  $("#dty").val();
-    if(tip == 4){
-      $("#timegi").css('display','inline-block');
-    }
-    /*$("#dty").click(function(){
-
-      var data_type = $(this).val();
-      alert(data_type);
-      alert('bbb');
-      if(data_type == 4){
-        $("#timegi").css('display','inline-block');
-      }else{
-        $("#timegi").css('display','none');
-      }
-    });*/
-  })
 </script>
 

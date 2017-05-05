@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
-<div class="pageHeader" rel="head">
-  <form rel="abce" onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/downloadrp/rplist" method="post" >
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/downloadrp/rplist" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
