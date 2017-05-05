@@ -83,6 +83,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <!-- <th>酒楼ID</th> -->
             <th>点击下载设备</th>
             <!-- <th>区域ID</th> -->
+            <th>酒楼名称</th>
             <th>酒楼id</th>
             <th>服务员id</th>
             <th>添加时间</th>
@@ -112,6 +113,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
                 <if condition="$vlist['dowload_device_id'] eq 3">pc</if>
                </td>
               <!-- <td data-title="区域ID">{$vlist.area_id}</td> -->
+              <td data-title="酒楼名称">{$vlist.hotelname}</td>
               <td data-title="酒楼id">{$vlist.hotelid}</td>
               <td data-title="服务员id">{$vlist.waiterid}</td>
             <td data-title="添加时间">{$vlist.add_time} </td>

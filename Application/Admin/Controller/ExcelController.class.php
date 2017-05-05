@@ -28,6 +28,8 @@ class ExcelController extends Controller
             $tmpname = '酒楼首次打开数据';
         }  else if ($filename == 'downloadcount') {
             $tmpname = '下载量报表统计';
+        }  else if ($filename == 'appcreen') {
+            $tmpname = 'app与大屏互动统计';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -363,6 +365,52 @@ class ExcelController extends Controller
             array('hotelid', '酒楼id'),
             array('waiterid', '服务员id'),
             array('add_time', '添加时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+    function expappscreen(){
+        $filename = 'appcreen';
+        $downloadModel =  new \Admin\Model\AppscreenRpModel();
+        $where = '1=1 ';
+        $starttime = I('start','');
+        $endtime = I('end','');
+        if($starttime){
+            $sttime = strtotime($starttime);
+            $where .= "	AND substring(`timestamps`,0,-3) >= '{$sttime}'";
+        }
+        if($endtime){
+            $etime = strtotime($endtime);
+            $where .= "	AND substring(`timestamps`,0,-3) <=  '{$etime}'";
+        }
+
+
+        $orders = 'timestamps desc';
+        $rea = $downloadModel->getAllList($where,$orders);
+        foreach($rea['list'] as &$val){
+            $val['addtime'] = date("Y-m-d",substr($val['timestamps'],0,-3));
+
+        }
+
+
+        $box_arr = $rea['list'];
+        $xlsName = "appcreenreport";
+        $xlsCell = array(
+            array('area_name', '区域名称'),
+            array('hotel_name', '酒楼名称'),
+
+            array('room_name', '包间名称'),
+
+            array('box_name', '机顶盒名称'),
+
+            array('box_mac', '机顶盒mac'),
+            array('mobile_id', '手机唯一标识id'),
+            array('vcount', '点播次数'),
+            array('vtime', '点播时长'),
+            array('pcount', '投屏次数'),
+            array('ptime', '投屏时长'),
+            array('addtime', '添加时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 

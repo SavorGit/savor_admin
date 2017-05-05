@@ -7,7 +7,7 @@ namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
 
-class DownloadrpController extends BaseController{
+class AppscreenController extends BaseController{
 
 	public function __construct() {
 		parent::__construct();
@@ -24,13 +24,13 @@ class DownloadrpController extends BaseController{
 
 		$starttime = I('post.starttime','');
 		$endtime = I('post.endtime','');
-		$downloadModel =  new \Admin\Model\DownloadRpModel();
+		$appscreenModel =  new \Admin\Model\AppscreenRpModel();
 		$hotelModel = new \Admin\Model\HotelModel();
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','add_time');
+		$order = I('_order','timestamps');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
@@ -40,25 +40,26 @@ class DownloadrpController extends BaseController{
 
 		$where = "1=1";
 		$hname = I('hotelname','');
-		if($source_type){
-			$where .="	AND source_type = '{$source_type}'";
+		if($hname){
+			$where .="	AND hotelname = '{$source_type}'";
 			$this->assign('sot',$source_type);
 		}
 		if($starttime){
 			$this->assign('s_time',$starttime);
-			$where .= "	AND add_time >= '{$starttime}'";
+			$sttime = strtotime($starttime);
+			$where .= "	AND substring(`timestamps`,0,-3) >= '{$starttime}'";
 		}
 		if($endtime){
+			$etime = strtotime($endtime);
 			$this->assign('e_time',$endtime);
-			$where .= "	AND add_time <=  '{$endtime}'";
+			$where .= "	AND substring(`timestamps`,0,-3) <=  '{$etime}'";
 		}
-		$result = $downloadModel->getList($where,$orders,$start,$size);
+		$result = $appscreenModel->getList($where,$orders,$start,$size);
 		$so_type = C('source_type');
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
-			$rs = $hotelModel->find($val['hotelid']);
-			$val['hotelname'] = $rs['name'];
 			$val['indnum'] = ++$ind;
+			$val['addtime'] = date("Y-m-d",substr($val['timestamps'],0,-3));
 		}
 
 		$this->assign('sce_type', $so_type);
