@@ -365,12 +365,13 @@ class BaseController extends Controller {
                 return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
             }
         }
-        
-        if(!$add_mediadata['oss_addr']){
+
+        if(!$add_mediadata['oss_addr'] ||  substr($add_mediadata['oss_addr'],0, 15) !='media/resource/' || strlen(substr($add_mediadata['oss_addr'],15)) ==0 ){
             $message = 'OSS上传失败!';
             $url = 'resource/resourceList';
             return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
         }
+
         $tempInfo = pathinfo($add_mediadata['oss_addr']);
         $surfix = $tempInfo['extension'];
         $typeinfo = C('RESOURCE_TYPEINFO');
@@ -507,6 +508,7 @@ class BaseController extends Controller {
                     echo '<script>$.pdialog.closeCurrent();  alertMsg.error("没有权限操作！");</script>';
                 }
                 exit;
+
             }
         } 
     }

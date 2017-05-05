@@ -84,7 +84,7 @@ class AdvertController extends BaseController{
 	         
              $result_media = $this->handle_resource();
              if(!$result_media['media_id']){
-                 $this->output($result_media['message'], 'advert/adsList');
+                 $this->error($result_media['message'], 'advert/adsList');
              }
              $media_id = $result_media['media_id'];
              $ads_data = array();

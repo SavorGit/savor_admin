@@ -131,6 +131,13 @@ $config['hotel_box_type'] = array(
   '2'=>'二代网络版',
   '3'=>'三代5G版',  
 );
+$config['source_type'] = array(
+    '1'=>'官网',
+    '2'=>'客户端二维码',
+    '3'=>'客户端分享',
+    '4'=>'节目',
+    '5'=>'openinstall',
+);
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
     '2' => array('id'=>2, 't'=>'Iphone 5', 'w'=>'320', 'h'=>'568'),
