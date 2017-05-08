@@ -136,7 +136,7 @@ $config['source_type'] = array(
     '2'=>'客户端二维码',
     '3'=>'客户端分享',
     '4'=>'节目',
-    '5'=>'openinstall',
+    '5'=>'服务员扫码',
 );
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
