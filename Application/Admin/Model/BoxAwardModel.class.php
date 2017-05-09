@@ -66,5 +66,5 @@ class BoxAwardModel extends BaseModel
 		return $list;
 	}
 
-	
+
 }//End Class
