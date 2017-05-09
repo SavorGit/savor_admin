@@ -40,7 +40,7 @@ class BoxawardController extends BaseController{
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','`baw`.`create_time`');
+		$order = I('_order','baw.`update_time`');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
@@ -56,12 +56,12 @@ class BoxawardController extends BaseController{
 		}
 		if($starttime){
 			$this->assign('s_time',$starttime);
-			$where .= "	AND `create_time` >= '{$starttime}'";
+			$where .= "	AND DATE_FORMAT('bcr','%Y-%m-%d') >= '{$starttime}' ";
 		}
-		if($endtime){
+		/*if($endtime){
 			$this->assign('e_time',$endtime);
-			$where .= "	AND `create_time` <=  '{$starttime}'";
-		}
+			$where .= "	AND DATE_FORMAT(baw.`create_time`,'%Y-%m-%d') <=  '{$endtime}'";
+		}*/
 		$result = $boxAwardModel->getList($where,$orders,$start,$size);
 
 		$ind = $start;
