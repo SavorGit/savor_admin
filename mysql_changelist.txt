@@ -144,3 +144,22 @@ CREATE TABLE `savor_role_priv` (
   `ertype` smallint(2) NOT NULL DEFAULT '1' COMMENT '1:原生2.系统自带',
   KEY `roleid` (`roleid`,`m`,`c`,`a`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='权限组表'
+增加说明：抽奖时间配置
+修改时间：2017.5.8 14：30
+修改人：张英涛
+执行sql:
+insert into `savor_sys_config` (`config_key`,`config_value`,`status`) values('system_award_start_time','11:00',1);
+insert into `savor_sys_config` (`config_key`,`config_value`,`status`) values('system_award_end_time','12:00',1);
+
+增加说明：中奖日志表
+修改时间：2017.5.8 14：30
+修改人：张英涛
+执行sql:CREATE TABLE `savor_awards_log`(
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`box_id` INT(11) NOT NULL DEFAULT 0 COMMENT '机顶盒id',
+	`prizeid` INT(11) NOT NULL DEFAULT 0 COMMENT '奖项id',
+	`deviceid` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '中奖手机设备id',
+	`time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '中奖时间',
+PRIMARY KEY (`id`)
+)ENGINE=MYISAM  DEFAULT CHARSET=utf8
+
