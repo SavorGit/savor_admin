@@ -34,18 +34,32 @@
           一等奖：
         </label>
         <div class="col-xs-12 col-sm-10 form-inline">
-          <span class="form-control">数量</span><input type="number" class="form-control" name="firstnum" value="{$vlist['f'][2]}"><span class="form-control">概率</span>
-          <input type="number" class="form-control" name="firstpos" value="{$vlist['f'][3]}" />
 
+          <volist name="vlist['bpr']" id="vo">
+            <if condition="$vo.prize_name eq '一等奖'">
+              <span class="form-control">数量</span><input type="number" class="form-control" name="firstnum" value="{$vo.prize_num}"><span class="form-control">概率</span>
+              <input type="number" class="form-control" name="firstpos" value="{$vo.prize_pos}" />
+              </if>
+
+          </volist>
         </div>
       </div>
+
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           二等奖：
         </label>
         <div class="col-xs-12 col-sm-10 form-inline">
-          <span class="form-control">数量</span><input type="number" class="form-control" name="secondnum" value="{$vlist['s'][2]}"><span class="form-control">概率</span> <input type="number" class="form-control" name="secondpos" value="{$vlist['s'][3]}" />
+          <volist name="vlist['bpr']" id="vo">
+
+            <if condition="$vo.prize_name eq '二等奖'">
+
+              <span class="form-control">数量</span><input type="number" class="form-control" name="secondnum" value="{$vo.prize_num}"><span class="form-control">概率</span>
+              <input type="number" class="form-control" name="secondpos" value="{$vo.prize_pos}" />
+
+            </if>
+          </volist>
         </div>
       </div>
 
@@ -55,10 +69,22 @@
           三等奖：
         </label>
         <div class="col-xs-12 col-sm-10 form-inline">
-          <span class="form-control">数量</span><input type="number" class="form-control" name="thirdnum" value="{$vlist['t'][2]}"><span class="form-control">概率</span>
-          <input type="number" class="form-control" name="thirdpos" value="{$vlist['t'][3]}" />
+          <volist name="vlist['bpr']" id="vo">
+
+            <if condition="$vo.prize_name eq '三等奖'">
+
+              <span class="form-control">数量</span><input type="number" class="form-control" name="thirdnum" value="{$vo.prize_num}"><span class="form-control">概率</span>
+              <input type="number" class="form-control" name="thirdpos" value="{$vo.prize_pos}" />
+
+            </if>
+          </volist>
         </div>
       </div>
+
+
+
+
+
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           状态：
