@@ -1,0 +1,130 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form  onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/appscreen/rplist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/boxaward/addPrize" title="新增机顶盒配置奖励" target="dialog" mask="true"><i class="fa fa-plus"></i>新增机顶盒配置奖励</a>
+          </div>
+
+        </div>
+
+        <div class="form-inline" style="margin-top:3px;">
+
+
+
+          <div class="form-group" id="timegiy" style="">
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="starttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="endtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
+                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+
+
+
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+          </div>
+
+        </div>
+
+        </div>
+      </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
+enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <!-- <th>机顶盒ID</th> -->
+            <th>机顶盒名称</th>
+            <th>机顶盒MAC</th>
+            <th>包间名称</th>
+            <!-- <th>包间ID</th> -->
+            <th>酒楼名称</th>
+            <!-- <th>酒楼ID</th> -->
+            <th>创建时间</th>
+
+            <!-- <th>区域ID</th> -->
+            <th>奖励信息</th>
+            <th>分批次时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.indnum}</td>
+              <!-- <td data-title="机顶盒ID">{$vlist.box_id}</td> -->
+              <td data-title="机顶盒名称">{$vlist.bname}</td>
+              <td data-title="机顶盒MAC">
+                {$vlist.bmac}
+                </td>
+              <!-- <td data-title="包间ID">{$vlist.room_id}</td> -->
+              <td data-title="包间名称">
+                {$vlist.rname}
+               </td>
+              <!-- <td data-title="酒楼ID">{$vlist.hotel_id}</td> -->
+              <td data-title="酒楼名称">
+
+                {$vlist.hname}
+               </td>
+              <!-- <td data-title="区域ID">{$vlist.area_id}</td> -->
+              <td data-title="创建时间">{$vlist.bcr}</td>
+
+              <td data-title="奖励信息">
+                {$vlist.bpr}
+              </td>
+              <td data-title="分批次日期">{$vlist.dat}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改详情" target="dialog" mask="true" rel="xiugaiboxaward" href="{$host_name}/boxaward/addPrize?id={$vlist.bawid}&acttype=1" class="btn btn-success btn-icon">
+
+                    <i class="fa fa-tag"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+<script type="text/javascript">
+
+
+</script>
+

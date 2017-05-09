@@ -1,0 +1,146 @@
+
+<div class="pageContent">
+  <form method="post" action="{$host_name}/boxaward/addPrize" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="acttype" value="{$acttype}">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+    <input type="hidden" id="passid" name="passid" value="{$vinfo.parentid}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select id="region_0_0" name="region1_id" onchange="setregion(0,0)"  class="form-control bs-select"  required>
+            <option name="selected" selected='selected' value="-1">请选择酒楼</option>
+            <volist name="hlist" id="vo">
+              <option value="{$vo.id}">{$vo.name}</option><br>
+            </volist>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          包间名称：
+        </label>
+        <div class="col-xs-12 col-sm-10" style="z-index:999;">
+          <select id="region_1_0" name="region2_id" onchange="setregion(1,0)"  class="form-control"  required>
+            <option name="selected" selected='selected' value="-1">包间</option>
+          </select>
+
+
+        </div>
+      </div>
+
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          机顶盒名称：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select id="region_2_0" name="region3_id"  class="form-control"  required>
+            <option name="selected" selected='selected' value="-1">机顶盒名称</option>
+          </select>
+
+
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          一等奖：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+          <span class="form-control">数量</span><input type="number" class="form-control" name="firstnum"><span class="form-control">概率</span>
+          <volist name="aw_co_list" id="vo">
+            <if condition="$vo.name eq '一等奖'"><input type="number" class="form-control" name="firstpos" value={$vo.pos}
+             ><input type="hidden" value="{$vo.id}"
+                     name="fhidden">
+            </if>
+          </volist>
+
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          二等奖：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+          <span class="form-control">数量</span><input type="number" class="form-control" name="secondnum"><span class="form-control">概率</span> <volist name="aw_co_list" id="vo">
+          <if condition="$vo.name eq '二等奖'"><input type="number" class="form-control" name="secondpos" value={$vo.pos}
+                  ><input type="hidden" value="{$vo.id}"
+                          name="shidden">
+          </if>
+        </volist>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          三等奖：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+          <span class="form-control">数量</span><input type="number" class="form-control" name="thirdnum"><span class="form-control">概率</span>
+          <volist name="aw_co_list" id="vo">
+            <if condition="$vo.name eq '二等奖'"><input type="number" class="form-control" name="thirdpos" value={$vo.pos}
+                    ><input type="hidden" value="{$vo.id}"
+                            name="thidden">
+            </if>
+          </volist>
+          <span class="form-control">概率空取默认值</span>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          状态：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="hidden" name="isenable" value="0">
+          <input type="checkbox" value="1" class="make-switch status" name="isenable" data-size="small" data-on-text="启用" data-off-text="禁用" <if condition="$vinfo.isenable eq 1" >checked</if>>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+
+
+  function setregion(num, address_id) {
+    var next = num + 1;
+    //alert(next);
+    $.ajax({
+      type: 'POST',
+      //设置json格式,接收返回数组。
+      dataType: 'json',
+      url: '{$host_name}/boxaward/getaward',
+      //ajax传递当前选项的value值,也就是当前的region_id。
+      data: 'aid=' + $('#region_' + num + '_' + address_id).val()+'&htype=' + num,
+      success: function(msg) {
+        //如果返回值不为空则执行。
+        if (msg != null) {
+          var option_str = '';
+          //循环书写下一个select中要添加的内容。并添加name标记。
+          for (var i = 0; i < msg.length; i++) {
+            option_str+='<option name="region_'+next+'"value="'+msg[i].id+'">'+msg[i].name+'</option>';
+          }
+          //删除下一个select中标记name为next的内容。
+          $("option[name='region_" + next + "']").remove();
+          //向下一个select中添加书写好的内容。
+          $('#region_' + next + '_' + address_id).append(option_str);
+        } else {
+          //如果返回值为空,则移除所有带标记的option,恢复默认选项。
+          for (var i = next; i <= 4; i++) {
+            $("option[name='region_" + i + "']").remove();
+          }
+        }
+      }
+
+    })
+  }
+</script>
