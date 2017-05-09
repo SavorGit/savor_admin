@@ -46,22 +46,17 @@ class BoxawardController extends BaseController{
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
-		$source_type = I('source_type','');
 
 		$where = "1=1";
-		$hname = I('hotelname','');
-		if($hname){
-			$where .="	AND hotelname = '{$source_type}'";
-			$this->assign('sot',$source_type);
-		}
+
 		if($starttime){
 			$this->assign('s_time',$starttime);
-			$where .= "	AND DATE_FORMAT('bcr','%Y-%m-%d') >= '{$starttime}' ";
+			$where .= "	AND   baw.`date_time` >= '{$starttime}' ";
 		}
-		/*if($endtime){
+		if($endtime){
 			$this->assign('e_time',$endtime);
-			$where .= "	AND DATE_FORMAT(baw.`create_time`,'%Y-%m-%d') <=  '{$endtime}'";
-		}*/
+			$where .= "	AND baw.`date_time` <=  '{$endtime}'";
+		}
 		$result = $boxAwardModel->getList($where,$orders,$start,$size);
 
 		$ind = $start;

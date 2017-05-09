@@ -73,9 +73,12 @@ class BoxAwardModel extends BaseModel
 	public function getList($where, $order='id desc', $start=0,$size=5){
 		$sql = "select baw.`date_time` dat,baw.`id` bawid, baw.`box_id` bid, bx.`name` bname,bx.`mac` bmac,  ro.`name` rname, ht.`name` hname,baw.`prize` bpr,baw.`flag` bflag,baw.`create_time` bcr from $this->trueTableName as `baw` left join `savor_box` bx on baw.box_id=bx.id left join `savor_room`
  ro on baw.room_id = ro.id left join `savor_hotel` ht on baw.hotel_id = ht.id where $where and bx.`state`=1 and bx.`flag`=0 and ro.`state`=1 and ro.`flag`=0 and ht.`state`=1 and ht.`flag`=0 order by $order limit $start, $size";
+
+
 		$list = $this->query($sql);
-		$count = $this->where($where)
-			->count();
+		$sqlb = "select count(*) cot from $this->trueTableName as `baw` where $where";
+		$c_arr = $this->query($sqlb);
+		$count = $c_arr[0]['cot'];
 		$objPage = new Page($count,$size);
 
 		$show = $objPage->admin_page();
