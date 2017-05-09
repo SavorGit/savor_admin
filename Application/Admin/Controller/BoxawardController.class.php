@@ -46,6 +46,11 @@ class BoxawardController extends BaseController{
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
+		$rtype = array(
+			'1'=>'包间',
+			'2'=>'大厅',
+			'3'=>'等候区',
+		);
 
 		$where = "1=1";
 
@@ -61,6 +66,14 @@ class BoxawardController extends BaseController{
 
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
+
+
+			foreach($rtype as $rk=>$rv){
+				if ($rk == $val['rtp']){
+					$val['rname'] = $val['rname'].'('.$rv.')';
+					break;
+				}
+			}
 			$val['indnum'] = ++$ind;
 			$bpize_arr = json_decode($val['bpr'],true);
 			$str = '';
@@ -320,7 +333,7 @@ class BoxawardController extends BaseController{
 			$result = $roomModel->field('`id`,`name`,`type`')->where($map)->select();
 			foreach($result as $k=>$v){
 				foreach($rtype as $rk=>$rv){
-					if ($rk == $result[$k][type]){
+					if ($rk == $result[$k]['type']){
 						$result[$k]['name'] = $result[$k]['name'].'('.$rv.')';
 						break;
 					}
