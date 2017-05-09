@@ -96,9 +96,6 @@ class BoxawardController extends BaseController{
 		if($boxid == -1){
 			$this->error('请选择机顶盒');
 		}
-		if($starttime > $date_tim){
-			$this->error('开始日期不得大于当前日期');
-		}
 		if($endtime <= $date_tim) {
 			$this->error('结束日期不得小于等于当前日期');
 		}
@@ -168,15 +165,20 @@ class BoxawardController extends BaseController{
 				//机顶盒id
 				$boxid  = I('post.region3_id',0);
 				$flag  = I('post.isenable',0);
+				$date_time  = I('post.addawardtime','');
+
+				if(!$date_time){
+					$date_time = date("Y-m-d");
+				}
 				if($hid<0 || $roomid<0 || $boxid<0){
 					$this->error('选择错误请重新选择');
 				}
 				$ap['box_id'] = $boxid;
 				$ap['flag'] = 1;
-				$ap['date_time'] = date("Y-m-d");
+				$ap['date_time'] = $date_time;
 				$count = $boxAwardModel->getCount($ap);
 				if($count){
-					$this->error('机顶盒已经存在');
+					$this->error('当前日期机顶盒已经存在');
 				}
 				$firstnum   = I('post.firstnum',0);
 				$firstpos= I('post.firstpos',0);
@@ -218,7 +220,7 @@ class BoxawardController extends BaseController{
 				$dap['flag'] = $flag;
 				$dap['create_time'] = date("Y-m-d H:i:s");
 				$dap['update_time'] = $dap['create_time'];
-				$dap['date_time'] = date("Y-m-d");
+				$dap['date_time'] = $date_time;
 
 				$result = $boxAwardModel->addData($dap, $acttype);
 				if($result) {
