@@ -52,10 +52,13 @@
               <td data-title="排序">{$vlist.sort_num}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="状态">
-                <select name="state{$vlist.id}" id="cstate" data-state="{$vlist.id}" data-style="btn-primary">
-                  <option value ="0"  <if condition="$vlist.state eq 0"> selected </if>  >关闭</option>
-                  <option value ="1"  <if condition="$vlist.state eq 1"> selected </if>  >开启</option>
-                </select>
+                <if condition="$vlist['state'] eq 0">
+              <a data-tip="关闭" target="ajaxTodo" href="{$host_name}/release/changestate?cid={$vlist.id}&state=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+              <else/>
+              <a data-tip="开启" target="ajaxTodo" href="{$host_name}/release/changestate?cid={$vlist.id}&state=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+              </if>
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
@@ -85,7 +88,7 @@
 
   $(function() {
 
-    $("select").each(function(){
+    /* $("select").each(function(){
       $(this).change(function(){
         var sta = $(this).val();
         var cid = $(this).attr('data-state');
@@ -104,7 +107,7 @@
           }
         });
       })
-    });
+    }); */
 
 
 

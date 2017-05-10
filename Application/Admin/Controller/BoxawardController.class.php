@@ -373,4 +373,48 @@ class BoxawardController extends BaseController{
 
 	}
 
+
+
+
+	/*
+	 * 修改状态
+	 */
+
+	public function changestate(){
+		$cid = I('post.cid');
+		$save = array();
+		$save['state'] = I('post.state');
+		$catModel = new CategoModel;
+		$res_save = $catModel->where('id='.$cid)->save($save);
+		if($res_save){
+			echo 1;
+		} else {
+			echo 0;
+		}
+	}
+    /**
+     * @desc 机顶盒抽奖日志
+     */
+	public function awardLogList(){
+	    $size   = I('numPerPage',50);//显示每页记录数
+	    $this->assign('numPerPage',$size);
+	    $start = I('pageNum',1);
+	    $this->assign('pageNum',$start);
+	    $order = I('_order','time');
+	    $this->assign('_order',$order);
+	    $sort = I('_sort','desc');
+	    $this->assign('_sort',$sort);
+	    $orders = $order.' '.$sort;
+	    $start  = ( $start-1 ) * $size;
+	    
+	    $where = "";
+	    
+	    $m_award_log = new \Admin\Model\AwardLogModel();
+	    $result = $m_award_log->getList($where,$orders,$start,$size);
+	    $this->assign('list', $result['list']);
+	    $this->assign('page',  $result['page']);
+	    $this->display('award_log');
+	}
+
+
 }
