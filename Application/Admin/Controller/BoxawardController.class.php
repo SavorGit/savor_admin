@@ -104,12 +104,12 @@ class BoxawardController extends BaseController{
 		if($boxid == -1){
 			$this->error('请选择机顶盒');
 		}
-		if($endtime <= $date_tim) {
+		if($endtime < $date_tim) {
 			$this->error('结束日期不得小于等于当前日期');
 		}
-		if($starttime >= $endtime){
+		/*if($starttime >= $endtime){
 			$this->error('开始日期不得大于结束日期');
-		}
+		}*/
 		//复制日期不得复制已经存在
 		$map['date_time'] = $endtime;
 		$map['box_id'] = $boxid;
