@@ -376,22 +376,7 @@ class BoxawardController extends BaseController{
 
 
 
-	/*
-	 * 修改状态
-	 */
-
-	public function changestate(){
-		$cid = I('post.cid');
-		$save = array();
-		$save['state'] = I('post.state');
-		$catModel = new CategoModel;
-		$res_save = $catModel->where('id='.$cid)->save($save);
-		if($res_save){
-			echo 1;
-		} else {
-			echo 0;
-		}
-	}
+	
     /**
      * @desc 机顶盒抽奖日志
      */
