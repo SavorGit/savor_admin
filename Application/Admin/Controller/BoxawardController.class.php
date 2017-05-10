@@ -145,7 +145,7 @@ class BoxawardController extends BaseController{
 			}
 
 		} else {
-			$this->error('该机顶想复制日期不存在');
+			$this->error('该机顶盒05-09号没有数据，请重新选择');
 		}
 	}
 
