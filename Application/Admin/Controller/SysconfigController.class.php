@@ -20,7 +20,7 @@ class SysconfigController extends BaseController {
         //$volume_info = $m_sys_config->getOne('system_default_volume');
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
        
-        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume')";
+        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_award_time')";
         $volume_arr = $m_sys_config->getList($where);
        
         foreach($volume_arr as $key=>$v){
@@ -32,9 +32,12 @@ class SysconfigController extends BaseController {
                 $info['system_demand_video_volume'] = $v['config_value'];
             }else if($v['config_key']=='system_tv_volume'){
                 $info['system_tv_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_award_time'){
+                $info['award_time'] = json_decode($v['config_value'],true);
             }
         }
-        //$info['system_default_volume'] = $volume_info['config_value'];
+        $info['mid'] = $info['award_time'][0];
+        $info['aft'] = $info['award_time'][1];
         $info['system_switch_time']  = $switch_time_info['config_value'];
         $info['status'] = $switch_time_info['status'];
         
@@ -173,4 +176,30 @@ class SysconfigController extends BaseController {
             $this->error('删除失败');
         }
     }
+
+
+    public function doConfigBanner(){
+        $data = array();
+        $mid_start = I('post.mid_start');
+        $mid_end = I('post.mid_end');
+        $after_start = I('post.after_start');
+        $after_end = I('post.after_end');
+        $arr = array(
+            0=>array('start_time'=>$mid_start,
+                'end_time'=>$mid_end),
+            1=>array('start_time'=>$after_start,
+                'end_time'=>$after_end),
+        );
+
+        $data['system_award_time'] = json_encode($arr);
+
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $ret = $m_sys_config->updateInfo($data);
+        if($ret){
+            $this->output('操作成功!', 'sysconfig/configData',2);
+        }else {
+            $this->error('操作失败3!');
+        }
+    }
+
 }

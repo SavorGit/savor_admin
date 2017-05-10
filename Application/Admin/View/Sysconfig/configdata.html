@@ -120,6 +120,30 @@
         <img class="big" src=""/>
           </tbody>
         </table>
+
+
+
+        <form method="post" action="{$host_name}/sysconfig/doConfigBanner" id="configbanner" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+            <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                <thead>
+                <th colspan="5">banner时间设置样式(11:00-13:31)</th>
+                <tr >
+                    <td>中午开始：<input  placeholder="请输入数字" type="text" name="mid_start" value="{$info['mid'][start_time]}"   /></td>
+                    <td>中午结束：<input  placeholder="请输入数字" type="text" name="mid_end" value="{$info['mid'][end_time]}"   /></td>
+                    <td>下午开始：<input  placeholder="请输入数字" type="text" name="after_start" value="{$info['aft'][start_time]}"   /></td>
+                    <td>下午结束：<input  placeholder="请输入数字" type="text" name="after_end" value="{$info['aft'][end_time]}"   /></td>
+                    <td>
+                        <button class="btn btn-primary" type="submit">保存</button>
+                    </td>
+                </tr>
+
+
+                </thead>
+
+                </tbody>
+            </table>
+
+        </form>
     </div>
   </div>
   {$page}

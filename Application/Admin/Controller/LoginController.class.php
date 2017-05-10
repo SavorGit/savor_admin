@@ -37,7 +37,9 @@ class LoginController extends BaseController {
             $error_msg = '你的账户输入错误已达上限，请联系管理员。';
             $cache_key = 'login_'.getClientIP();
             $cache_db = Cache::getInstance('db');
-            //var_dump($cache_db);
+
+
+
 
             $cache_locknum = $cache_db->get($cache_key);
             file_put_contents('/application_data/app_logs/php/savor_admin
@@ -96,6 +98,7 @@ class LoginController extends BaseController {
                         $cache_locknum = 1;
                     }
                     $cache_db->set($cache_key,$cache_locknum,$lock_time);
+
                     $lock_num = $lock_max-$cache_locknum;
                     $errormsg=$lock_num==0?$error_msg:'用户名或密码错误，请重新输入。';
                     $this->assign('errormsg',$errormsg);

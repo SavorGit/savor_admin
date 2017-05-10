@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form  onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/appscreen/rplist" method="post" >
+  <form  onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/boxaward/rplist" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -52,10 +52,65 @@
         </div>
 
         </div>
-      </div>
+
   </form>
+
+  <form  onsubmit="return iframeCallback(this, dialogAjaxDone)" id="pagerFormsfd"   action="{$host_name}/boxaward/copyaward" method="post" >
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+          <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+            复制选项：
+          </label>
+          <select id="regiona_0_0" name="regiona1_id" onchange="setregiona(0,0)"  class="form-control"  required>
+            <option name="selected" selected='selected' value="-1">请选择酒楼</option>
+            <volist name="hlist" id="vo">
+              <option value="{$vo.id}">{$vo.name}</option><br>
+            </volist>
+          </select>
+
+            <select id="regiona_1_0" name="regiona2_id" onchange="setregiona(1,0)"  class="form-control"  required>
+              <option style="width:100px;" name="selected" selected='selected' value="-1">包间</option>
+            </select>
+
+          <select id="regiona_2_0" name="regiona3_id"  class="form-control"  required>
+            <option name="selected" selected='selected' value="-1">机顶盒名称</option>
+          </select>
+
+          <div class="form-group" id="timegiyd" style="">
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="copydatestart" type="text" size="14" class="form-control date" placeholder="想复制日期" value="{$s_time}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="copydateend" type="text" size="14" class="form-control date" placeholder="复制到某一日期" value="{$e_time}" readonly>
+                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit"><i class="fa fa-copy"></i></button>
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </form>
+
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="margin-top:20px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
@@ -76,6 +131,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <!-- <th>区域ID</th> -->
             <th>奖励信息</th>
             <th>分批次时间</th>
+            <th>状态</th>
             <th>操作</th>
           </tr>
           </thead>
@@ -104,6 +160,13 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
                 {$vlist.bpr}
               </td>
               <td data-title="分批次日期">{$vlist.dat}</td>
+              <td data-title="状态">
+                <if condition="$vlist.bflag eq 1">
+                  启用
+                  <else />禁用
+                  </if>
+
+              </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改详情" target="dialog" mask="true" rel="xiugaiboxaward" href="{$host_name}/boxaward/addPrize?id={$vlist.bawid}&acttype=1" class="btn btn-success btn-icon">
@@ -126,5 +189,36 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
 <script type="text/javascript">
 
 
-</script>
+  function setregiona(num, address_id) {
+    var next = num + 1;
+    //alert(next);
+    $.ajax({
+      type: 'POST',
+      //设置json格式,接收返回数组。
+      dataType: 'json',
+      url: '{$host_name}/boxaward/getaward',
+      //ajax传递当前选项的value值,也就是当前的region_id。
+      data: 'aid=' + $('#regiona_' + num + '_' + address_id).val()+'&htype=' + num,
+      success: function(msg) {
+        //如果返回值不为空则执行。
+        if (msg != null) {
+          var option_str = '';
+          //循环书写下一个select中要添加的内容。并添加name标记。
+          for (var i = 0; i < msg.length; i++) {
+            option_str+='<option name="regiona_'+next+'"value="'+msg[i].id+'">'+msg[i].name+'</option>';
+          }
+          //删除下一个select中标记name为next的内容。
+          $("option[name='regiona_" + next + "']").remove();
+          //向下一个select中添加书写好的内容。
+          $('#regiona_' + next + '_' + address_id).append(option_str);
+        } else {
+          //如果返回值为空,则移除所有带标记的option,恢复默认选项。
+          for (var i = next; i <= 4; i++) {
+            $("option[name='regiona_" + i + "']").remove();
+          }
+        }
+      }
 
+    })
+  }
+</script>

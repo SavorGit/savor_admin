@@ -1,4 +1,8 @@
-
+<style type="text/css">
+	.leftaward{
+		float: left;
+	}
+</style>
 <div class="pageContent">
   <form method="post" action="{$host_name}/boxaward/addPrize" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="acttype" value="{$acttype}">
@@ -34,18 +38,32 @@
           一等奖：
         </label>
         <div class="col-xs-12 col-sm-10 form-inline">
-          <span class="form-control">数量</span><input type="number" class="form-control" name="firstnum" value="{$vlist['f'][2]}"><span class="form-control">概率</span>
-          <input type="number" class="form-control" name="firstpos" value="{$vlist['f'][3]}" />
 
+          <volist name="vlist['bpr']" id="vo">
+            <if condition="$vo.prize_name eq '一等奖'">
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="firstnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="firstpos" value="{$vo.prize_pos}" />
+              </if>
+
+          </volist>
         </div>
       </div>
+
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           二等奖：
         </label>
         <div class="col-xs-12 col-sm-10 form-inline">
-          <span class="form-control">数量</span><input type="number" class="form-control" name="secondnum" value="{$vlist['s'][2]}"><span class="form-control">概率</span> <input type="number" class="form-control" name="secondpos" value="{$vlist['s'][3]}" />
+          <volist name="vlist['bpr']" id="vo">
+
+            <if condition="$vo.prize_name eq '二等奖'">
+
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="secondnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="secondpos" value="{$vo.prize_pos}" />
+
+            </if>
+          </volist>
         </div>
       </div>
 
@@ -55,10 +73,29 @@
           三等奖：
         </label>
         <div class="col-xs-12 col-sm-10 form-inline">
-          <span class="form-control">数量</span><input type="number" class="form-control" name="thirdnum" value="{$vlist['t'][2]}"><span class="form-control">概率</span>
-          <input type="number" class="form-control" name="thirdpos" value="{$vlist['t'][3]}" />
+          <volist name="vlist['bpr']" id="vo">
+
+            <if condition="$vo.prize_name eq '三等奖'">
+
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="thirdnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="thirdpos" value="{$vo.prize_pos}" />
+
+            </if>
+          </volist>
         </div>
       </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          对应批次日期：
+        </label>
+        <div class="col-xs-12 col-sm-10" style="z-index:999;">
+          <input type="text" class="form-control" disabled name="edittime" value="{$vlist.dtime}">
+        </div>
+      </div>
+
+
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           状态：
@@ -69,6 +106,7 @@
         </div>
       </div>
     </div>
+
 
     <div class="modal-footer">
       <button class="btn btn-default close-m" type="button">取消</button>
