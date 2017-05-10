@@ -65,6 +65,7 @@ class BoxawardController extends BaseController{
 		$result = $boxAwardModel->getList($where,$orders,$start,$size);
 
 		$ind = $start;
+
 		foreach ($result['list'] as &$val) {
 
 
@@ -151,7 +152,7 @@ class BoxawardController extends BaseController{
 			}
 
 		} else {
-			$this->error('该机顶盒05-09号没有数据，请重新选择');
+			$this->error('该机顶盒{$starttime}没有数据，请重新选择');
 		}
 	}
 
@@ -233,9 +234,9 @@ class BoxawardController extends BaseController{
 				if($thirdpos+$secondpos+$firstpos!=100){
 					$this->error('概率和必须等于100');
 				}
-				$pr[]= array('prize_id'=>$fid,'prize_name'=>$firstposarr['name'],'prize_num'=>$firstnum,'prize_pos'=>$firstpos);
-				$pr[]= array('prize_id'=>$sid,'prize_name'=>$secondposarr['name'],'prize_num'=>$secondnum,'prize_pos'=>$secondpos);
-				$pr[]= array('prize_id'=>$tid,'prize_name'=>$thirdposarr['name'],'prize_num'=>$thirdnum,'prize_pos'=>$thirdpos);
+				$pr[]= array('prize_id'=>$fid,'prize_name'=>$firstposarr['name'],'prize_num'=>$firstnum,'prize_pos'=>$firstpos,'prize_level'=>$firstposarr['level']);
+				$pr[]= array('prize_id'=>$sid,'prize_name'=>$secondposarr['name'],'prize_num'=>$secondnum,'prize_pos'=>$secondpos,'prize_level'=>$secondposarr['level']);
+				$pr[]= array('prize_id'=>$tid,'prize_name'=>$thirdposarr['name'],'prize_num'=>$thirdnum,'prize_pos'=>$thirdpos,'prize_level'=>$thirdposarr['level']);
 				$dap['box_id'] = $boxid;
 				$dap['room_id'] = $roomid;
 				$dap['hotel_id'] = $hid;
@@ -375,22 +376,7 @@ class BoxawardController extends BaseController{
 
 
 
-	/*
-	 * 修改状态
-	 */
-
-	public function changestate(){
-		$cid = I('post.cid');
-		$save = array();
-		$save['state'] = I('post.state');
-		$catModel = new CategoModel;
-		$res_save = $catModel->where('id='.$cid)->save($save);
-		if($res_save){
-			echo 1;
-		} else {
-			echo 0;
-		}
-	}
+	
     /**
      * @desc 机顶盒抽奖日志
      */
