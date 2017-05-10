@@ -476,7 +476,7 @@ class BaseController extends Controller {
         $userinfo = session('sysUserInfo');
         $user_group_id = $userinfo['groupid'];
         $free_controller = array('admin.login','admin.index');
-        $free_action = array('admin.menu.get_se_left');
+        $free_action = array('admin.menu.get_se_left','admin.clean.cache');
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);
         $action_name     = strtolower(ACTION_NAME);
