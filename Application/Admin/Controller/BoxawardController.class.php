@@ -104,6 +104,12 @@ class BoxawardController extends BaseController{
 		if($boxid == -1){
 			$this->error('请选择机顶盒');
 		}
+		if(!$starttime){
+			$this->error('开始日期不得为空');
+		}
+		if(!$endtime){
+			$this->error('结束日期不得为空');
+		}
 		if($endtime < $date_tim) {
 			$this->error('结束日期不得小于等于当前日期');
 		}
@@ -178,8 +184,14 @@ class BoxawardController extends BaseController{
 				if(!$date_time){
 					$date_time = date("Y-m-d");
 				}
-				if($hid<0 || $roomid<0 || $boxid<0){
-					$this->error('选择错误请重新选择');
+				if($hid<0){
+					$this->error('酒楼不可为空，请重新选择');
+				}
+				if($roomid<0){
+					$this->error('包间不可为空，请重新选择');
+				}
+				if($boxid<0){
+					$this->error('机顶盒不可为空，请重新选择');
 				}
 				$ap['box_id'] = $boxid;
 				$ap['flag'] = 1;
