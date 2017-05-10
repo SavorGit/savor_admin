@@ -1,4 +1,8 @@
-
+<style type="text/css">
+	.leftaward{
+		float: left;
+	}
+</style>
 <div class="pageContent">
   <form method="post" action="{$host_name}/boxaward/addPrize" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="acttype" value="{$acttype}">
@@ -37,8 +41,8 @@
 
           <volist name="vlist['bpr']" id="vo">
             <if condition="$vo.prize_name eq '一等奖'">
-              <span class="form-control">数量</span><input type="number" class="form-control" name="firstnum" value="{$vo.prize_num}"><span class="form-control">概率</span>
-              <input type="number" class="form-control" name="firstpos" value="{$vo.prize_pos}" />
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="firstnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="firstpos" value="{$vo.prize_pos}" />
               </if>
 
           </volist>
@@ -55,8 +59,8 @@
 
             <if condition="$vo.prize_name eq '二等奖'">
 
-              <span class="form-control">数量</span><input type="number" class="form-control" name="secondnum" value="{$vo.prize_num}"><span class="form-control">概率</span>
-              <input type="number" class="form-control" name="secondpos" value="{$vo.prize_pos}" />
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="secondnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="secondpos" value="{$vo.prize_pos}" />
 
             </if>
           </volist>
@@ -73,8 +77,8 @@
 
             <if condition="$vo.prize_name eq '三等奖'">
 
-              <span class="form-control">数量</span><input type="number" class="form-control" name="thirdnum" value="{$vo.prize_num}"><span class="form-control">概率</span>
-              <input type="number" class="form-control" name="thirdpos" value="{$vo.prize_pos}" />
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="thirdnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="thirdpos" value="{$vo.prize_pos}" />
 
             </if>
           </volist>

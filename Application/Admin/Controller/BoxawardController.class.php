@@ -198,7 +198,7 @@ class BoxawardController extends BaseController{
 				$ap['date_time'] = $date_time;
 				$count = $boxAwardModel->getCount($ap);
 				if($count){
-					$this->error('当前日期机顶盒已经存在');
+					$this->error('日期若不设置默认为当前日期，而当前日期机顶盒抽奖已经设置');
 				}
 				$firstnum   = I('post.firstnum',0);
 				$firstpos= I('post.firstpos',0);
@@ -229,6 +229,9 @@ class BoxawardController extends BaseController{
 				}
 				if($thirdpos ===  ''){
 					$thirdpos = $thirdposarr['pos'];
+				}
+				if($thirdpos+$secondpos+$firstpos!=100){
+					$this->error('概率和必须等于100');
 				}
 				$pr[]= array('prize_id'=>$fid,'prize_name'=>$firstposarr['name'],'prize_num'=>$firstnum,'prize_pos'=>$firstpos);
 				$pr[]= array('prize_id'=>$sid,'prize_name'=>$secondposarr['name'],'prize_num'=>$secondnum,'prize_pos'=>$secondpos);
@@ -272,6 +275,9 @@ class BoxawardController extends BaseController{
 				$secondpos      = I('post.secondpos',0,'int');
 				$thirdnum    = I('post.thirdnum',0,'int');
 				$thirdpos    = I('post.thirdpos',0,'int');
+				if($thirdpos+$secondpos+$firstpos!=100){
+					$this->error('概率和必须等于100');
+				}
 				$drp['update_time'] = date("Y-m-d H:i:s");
 				$drp['id'] = $bawid;
 				$drp['flag'] = $flag;
