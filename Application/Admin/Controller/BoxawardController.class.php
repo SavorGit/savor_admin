@@ -290,6 +290,28 @@ class BoxawardController extends BaseController{
 			echo 0;
 		}
 	}
-
+    /**
+     * @desc 机顶盒抽奖日志
+     */
+	public function awardLogList(){
+	    $size   = I('numPerPage',50);//显示每页记录数
+	    $this->assign('numPerPage',$size);
+	    $start = I('pageNum',1);
+	    $this->assign('pageNum',$start);
+	    $order = I('_order','time');
+	    $this->assign('_order',$order);
+	    $sort = I('_sort','desc');
+	    $this->assign('_sort',$sort);
+	    $orders = $order.' '.$sort;
+	    $start  = ( $start-1 ) * $size;
+	    
+	    $where = "";
+	    
+	    $m_award_log = new \Admin\Model\AwardLogModel();
+	    $result = $m_award_log->getList($where,$orders,$start,$size);
+	    $this->assign('list', $result['list']);
+	    $this->assign('page',  $result['page']);
+	    $this->display('award_log');
+	}
 
 }
