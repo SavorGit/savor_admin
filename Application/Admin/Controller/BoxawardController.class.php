@@ -385,15 +385,23 @@ class BoxawardController extends BaseController{
 	    $this->assign('numPerPage',$size);
 	    $start = I('pageNum',1);
 	    $this->assign('pageNum',$start);
-	    $order = I('_order','time');
+	    $order = I('_order','a.`time`');
 	    $this->assign('_order',$order);
 	    $sort = I('_sort','desc');
 	    $this->assign('_sort',$sort);
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
-	    
 	    $where = "";
-	    
+		$starttime = I('starttime','');
+		$endtime = I('endtime','');
+		if($starttime){
+			$this->assign('s_time',$starttime);
+			$where .= "	AND a.`time` >= '{$starttime}'";
+		}
+		if($endtime){
+			$this->assign('e_time',$endtime);
+			$where .= "	AND `a.time` <=  '{$endtime}'";
+		}
 	    $m_award_log = new \Admin\Model\AwardLogModel();
 	    $result = $m_award_log->getList($where,$orders,$start,$size);
 	    $this->assign('list', $result['list']);
