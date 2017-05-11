@@ -184,6 +184,21 @@ class SysconfigController extends BaseController {
         $mid_end = I('post.mid_end');
         $after_start = I('post.after_start');
         $after_end = I('post.after_end');
+        $errmsc = '日期格式必须要按插件格式且时为00-23,分为00-59';
+     //   ([0-5][0-9])
+        $pattern = "/^((0[1-9]{1})|(1[0-9]{1})|(2[0-3]{1})):([0-5]{1}[0-9]{1})$/";
+        if (!preg_match ($pattern,$mid_start, $matches)){
+            $this->error($errmsc);
+        }
+        if (!preg_match ($pattern, $mid_end, $matches)){
+            $this->error($errmsc);
+        }
+        if (!preg_match ($pattern, $after_start, $matches)){
+            $this->error($errmsc);
+        }
+        if (!preg_match ($pattern, $after_end, $matches)){
+            $this->error($errmsc);
+        }
         $arr = array(
             0=>array('start_time'=>$mid_start,
                 'end_time'=>$mid_end),
