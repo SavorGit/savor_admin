@@ -130,6 +130,8 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
 
             <!-- <th>区域ID</th> -->
             <th>奖励信息</th>
+            <th>实时奖励剩余</th>
+
             <th>分批次时间</th>
             <th>状态</th>
             <th>操作</th>
@@ -157,6 +159,9 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="创建时间">{$vlist.bcr}</td>
 
               <td data-title="奖励信息">
+                {$vlist.bpr}
+              </td>
+              <td data-title="实时奖励剩余">
                 {$vlist.bpr}
               </td>
               <td data-title="分批次日期">{$vlist.dat}</td>

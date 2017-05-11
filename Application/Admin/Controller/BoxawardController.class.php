@@ -77,11 +77,18 @@ class BoxawardController extends BaseController{
 			}
 			$val['indnum'] = ++$ind;
 			$bpize_arr = json_decode($val['bpr'],true);
+			$bpize_current_arr = json_decode($val['bpcur'],true);
 			$str = '';
+			$str_current = '';
+
 			foreach($bpize_arr as $bk=>$bv){
-				$str .= "<span>{$bv['prize_name']}:</span>{$bv['prize_num']}个<span></span><span>概率:{$bv['prize_pos']}</span><br/>";
+				$str .= "<span>{$bv['prize_name']}:</span>{$bv['prize_num']}个<span></span><br/>";
+			}
+			foreach($bpize_current_arr as $bk=>$bv){
+				$str_current .= "<span>{$bv['prize_name']}:</span>{$bv['prize_num']}个<span></span><br/>";
 			}
 			$val['bpr'] = $str;
+			$val['bpcur'] = $str_current;
 		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
@@ -241,6 +248,7 @@ class BoxawardController extends BaseController{
 				$dap['room_id'] = $roomid;
 				$dap['hotel_id'] = $hid;
 				$dap['prize'] = json_encode($pr);
+				$dap['prize_current'] = json_encode($pr);
 				$dap['flag'] = $flag;
 				$dap['create_time'] = date("Y-m-d H:i:s");
 				$dap['update_time'] = $dap['create_time'];
@@ -290,6 +298,7 @@ class BoxawardController extends BaseController{
 					if($bv['prize_name'] == '一等奖'){
 						$bv['prize_num'] = $firstnum;
 						$bv['prize_pos'] = $firstpos;
+
 					}
 					if($bv['prize_name'] == '二等奖'){
 						$bv['prize_num'] = $secondnum;
@@ -301,6 +310,7 @@ class BoxawardController extends BaseController{
 					}
 				}
 				$drp['prize'] = json_encode($bpize_arr);
+				$drp['prize_current'] = json_encode($bpize_arr);
 				$res = $boxAwardModel->addData($drp, $acttype);
 				if($res) {
 					$this->output('修改成功!', 'boxaward/rplist');
@@ -308,15 +318,24 @@ class BoxawardController extends BaseController{
 					$this->output('修改失败!', 'boxaward/addprize', 2, 0);
 				}
 			}else{
+
 				$this->assign('acttype', $acttype);
 				$where .= "	AND baw.`id` =  '{$bawid}'";
 				$result = $boxAwardModel->getOneBoxAward($where);
-
+				$today_dat =date("Y-m-d");
 				foreach($result as $rk=>$val){
 					if($rk == 'bpr'){
 						$result[$rk] = json_decode($val,true);
 
 					}
+					if($rk == 'dtime'){
+						if($val<=$today_dat){
+							//$this->error('');
+							echo '<script>$.pdialog.closeCurrent();  alertMsg.error("奖项设置已经下发以及已过期无法进行修改！");</script>';
+						}
+					}
+
+
 				}
 				$this->assign('vlist', $result);
 			}
