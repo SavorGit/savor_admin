@@ -84,8 +84,8 @@ class BoxawardController extends BaseController{
 			foreach($bpize_arr as $bk=>$bv){
 				$str .= "<span>{$bv['prize_name']}:</span>{$bv['prize_num']}个<span></span><br/>";
 			}
-			foreach($bpize_current_arr as $bk=>$bv){
-				$str_current .= "<span>{$bv['prize_name']}:</span>{$bv['prize_num']}个<span></span><br/>";
+			foreach($bpize_current_arr as $bkc=>$bvc){
+				$str_current .= "<span>{$bvc['prize_name']}:</span>{$bvc['prize_num']}个<span></span><br/>";
 			}
 			$val['bpr'] = $str;
 			$val['bpcur'] = $str_current;
