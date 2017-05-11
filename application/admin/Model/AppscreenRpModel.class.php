@@ -14,7 +14,7 @@ class AppscreenRpModel extends BaseModel
 
 	public function __construct() {
 		parent::__construct();
-		$this->trueTableName = 'mobile_statistic_pro_vod_app_detail app';
+		$this->trueTableName = 'mobile_statistic_pro_vod_app_detail';
 
 	}
 
