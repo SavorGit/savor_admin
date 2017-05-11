@@ -178,6 +178,9 @@ CREATE TABLE `savor_award_config` (
   `level` tinyint(1) DEFAULT '1' COMMENT '标明几等奖',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_time`, `flag`, `level`) values('1','一等奖','30','2017-05-08 13:42:15','2017-05-08 13:42:15','1','1');
+insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_time`, `flag`, `level`) values('2','二等奖','40','2017-05-08 13:42:27','2017-05-08 13:42:27','1','2');
+insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_time`, `flag`, `level`) values('3','三等奖','30','2017-05-08 13:42:35','2017-05-08 13:42:35','1','3');
 
 
 增加说明：机顶盒奖项表
