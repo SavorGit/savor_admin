@@ -75,7 +75,7 @@ class BoxawardController extends BaseController{
 					break;
 				}
 			}
-			$val['indnum'] = ++$ind;
+			$val['indnum'] = $val['bawid'];
 			$bpize_arr = json_decode($val['bpr'],true);
 			$bpize_current_arr = json_decode($val['bpcur'],true);
 			$str = '';
@@ -150,6 +150,7 @@ class BoxawardController extends BaseController{
 				}
 
 			}
+			$map['prize_current'] = $map['prize'];
 			$acttype = 0;
 			$result = $boxAwardModel->addData($map, $acttype);
 			if($result) {
@@ -329,9 +330,13 @@ class BoxawardController extends BaseController{
 
 					}
 					if($rk == 'dtime'){
-						if($val<=$today_dat){
+						if($val==$today_dat){
 							//$this->error('');
-							echo '<script>$.pdialog.closeCurrent();  alertMsg.error("奖项设置已经下发以及已过期无法进行修改！");</script>';
+							echo '<script>$.pdialog.closeCurrent();  alertMsg.error("奖项设置今天已经下发无法进行修改！");</script>';
+						}
+						if($val<$today_dat){
+							//$this->error('');
+							echo '<script>$.pdialog.closeCurrent();  alertMsg.error("奖项设置已过期无法进行修改！");</script>';
 						}
 					}
 
