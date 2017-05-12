@@ -20,5 +20,9 @@ class AwardConfigModel extends BaseModel
 		}
 
 	}
+    public function getInfo($field ='*',$where,$order,$limit){
+	    $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
+	    return $result;
+	}
 
 }
