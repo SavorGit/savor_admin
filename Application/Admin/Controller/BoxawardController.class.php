@@ -422,6 +422,7 @@ class BoxawardController extends BaseController{
 		$hotelid = I('award_hotel_id','0','intval');
 		$roomid = I('award_room_id','0','intval');
 		$boxid = I('award_box_id','0','intval');
+		$prizeid = I('prizeid','0','intval');
 		//print_r($hotelid);
 		if($starttime){
 			$this->assign('award_s_time',$starttime);
@@ -473,6 +474,11 @@ class BoxawardController extends BaseController{
 		    }
 		    $this->assign('boxlist',$boxlist);
 		}
+		if($prizeid){
+		    $where .=" and a.prizeid=".$prizeid;
+		    $this->assign('prizeid',$prizeid);
+		}
+		
 	    $m_award_log = new \Admin\Model\AwardLogModel();
 	    $result = $m_award_log->getList($where,$orders,$start,$size);
 	    $this->assign('list', $result['list']);
@@ -483,8 +489,13 @@ class BoxawardController extends BaseController{
 	    $map['flag'] = 0;
 	    $map['state'] = 1;
 	    $hotellist = $m_hotel->getInfo('id,name', $map);
-
-	    $this->assign('hotellist',$hotellist);
+        //奖项列表
+        $map = array();
+        $map['flag']  =1;
+        $m_award_config = new \Admin\Model\AwardConfigModel();
+        $award_config = $m_award_config->getInfo('id,name',$map);
+	    $this->assign('award_config',$award_config);
+        $this->assign('hotellist',$hotellist);
 	    $this->display('award_log');
 	}
 

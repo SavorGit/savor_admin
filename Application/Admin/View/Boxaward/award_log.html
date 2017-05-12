@@ -14,27 +14,32 @@
            
           </div>
         </div>
-			<select id="award_hotel_0_0" name="award_hotel_id" onchange="setregiona(0,0)"  class="form-control"  required>
+			<select id="award_hotel_0_0" name="award_hotel_id" onchange="setregiona(0,0)"  class="form-control"  >
             <option   value="">请选择酒楼</option>
             <volist name="hotellist" id="vo">
               <option <if condition="$vo.id eq $hotelid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
             </volist>
           </select>
 
-            <select id="award_hotel_1_0" name="award_room_id" onchange="setregiona(1,0)"  class="form-control"  required>
+            <select id="award_hotel_1_0" name="award_room_id" onchange="setregiona(1,0)"  class="form-control"  >
               <option style="width:100px;"  value="">包间</option>
               <volist name="roomlist" id="vo">
               <option name="award_hotel_1" <if condition="$vo.id eq $roomid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
             </volist>
             </select>
 
-          <select id="award_hotel_2_0" name="award_box_id"  class="form-control"  required>
+          <select id="award_hotel_2_0" name="award_box_id"  class="form-control"  >
             <option  value="">机顶盒名称</option>
             <volist name="boxlist" id="vo">
               <option name="award_hotel_2" <if condition="$vo.id eq $boxid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
             </volist>
           </select>
-
+		  <select class="form-control" name="prizeid">
+		  	<option>请选择中奖奖项</option>
+		  	<volist name="award_config" id="vo">
+		  		<option <if condition="$vo.prizeid eq $prize">selected='selected' </if> value="{$vo.id}">{$vo.name}</option>
+		  	</volist>
+		  </select>	
           
             <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$award_s_time}">
           <input id="award_s_time" style="margin-left: 6px;" name="award_s_time" type="text" size="17" class="form-control date" placeholder="开始日期" value="{$award_s_time}" readonly>
