@@ -45,9 +45,9 @@ class RoomModel extends BaseModel
 	public function saveData($data, $id = 0) {
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
-		//ÅĞ¶¨keyÊÇ·ñÓĞÃ»ÓĞµÄ£¬Èç¹û´æÔÚÔòĞŞ¸Ä
+		//ï¿½Ğ¶ï¿½keyï¿½Ç·ï¿½ï¿½ï¿½Ã»ï¿½ĞµÄ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½
 		if($id){
-			//»ñÈ¡´´½¨Ê±¼ä
+			//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 			$bool = $this->where('id='.$id)->save($data);
 			$res = $this->find($id);
 			$data['create_time'] = $res['create_time'];
@@ -62,7 +62,10 @@ class RoomModel extends BaseModel
 		}
 		return $bool;
 	}
-
+	public function getInfo($field ='*',$where,$order,$limit){
+	    $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
+	    return $result;
+	}
 
 
 
