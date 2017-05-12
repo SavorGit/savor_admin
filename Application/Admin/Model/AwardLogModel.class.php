@@ -23,7 +23,11 @@ class AwardLogModel extends BaseModel
 	           .$where.' order by '.$orders.' limit '.$start.','.$size;
 	    $list = $this->query($sql);
 	    
-	    $sql = "select count(a.id) as count from savor_award_log as a where 1 ".$where;
+	    $sql = "select count(a.id) as count from savor_award_log as a
+	            left join savor_award_config as b on a.prizeid=b.id 
+	           left join savor_box c on a.mac=c.mac
+	           left join savor_room d on d.id=c.room_id
+	           left join savor_hotel e on e.id=d.hotel_id   where 1 ".$where;
 	    $ret = $this->query($sql);
 	    $count = $ret[0]['count'];
 	    $objPage = new Page($count,$size);

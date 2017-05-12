@@ -14,26 +14,45 @@
            
           </div>
         </div>
+			<select id="award_hotel_0_0" name="award_hotel_id" onchange="setregiona(0,0)"  class="form-control"  required>
+            <option   value="">请选择酒楼</option>
+            <volist name="hotellist" id="vo">
+              <option <if condition="$vo.id eq $hotelid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
+            </volist>
+          </select>
 
+            <select id="award_hotel_1_0" name="award_room_id" onchange="setregiona(1,0)"  class="form-control"  required>
+              <option style="width:100px;"  value="">包间</option>
+              <volist name="roomlist" id="vo">
+              <option name="award_hotel_1" <if condition="$vo.id eq $roomid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
+            </volist>
+            </select>
 
-          <div class="form-group" id="timegiy" style="">
-            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
-              <input name="starttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
-                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
-                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
-                  </span>
-            </div>
+          <select id="award_hotel_2_0" name="award_box_id"  class="form-control"  required>
+            <option  value="">机顶盒名称</option>
+            <volist name="boxlist" id="vo">
+              <option name="award_hotel_2" <if condition="$vo.id eq $boxid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
+            </volist>
+          </select>
 
-
-            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
-              <input name="endtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
-                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+          
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$award_s_time}">
+          <input id="award_s_time" style="margin-left: 6px;" name="award_s_time" type="text" size="17" class="form-control date" placeholder="开始日期" value="{$award_s_time}" readonly>
+                  <span class="input-group-btn">
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
-            </div>
-          </div>
+        </div>
+
+        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$award_e_time}" style="width:135px;">
+
+          <input id="award_e_time" style="width:130px;padding:0px;margin:0px;margin-left: 15px;"  name="award_e_time" type="text" size="17" class="form-control date" placeholder="结束日期" value="{$award_e_time}" readonly>
+                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+        </div>
+          
 
 
 
@@ -78,7 +97,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="酒楼名称">{$vlist.hotelname}</td>
               <td data-title="包间名称">{$vlist.roomname}</td>
               <td data-title="机顶盒名称">{$vlist.boxname}</td>
-              <td data-title="机顶盒名称"><empty name="$vlist.boxname">未中奖<else />{$vlist.prizename}</empty></td>
+              <td data-title="机顶盒名称"><empty name="vlist.prizename">未中奖<else />{$vlist.prizename}</empty></td>
               <td data-title="设备唯一标识">{$vlist.deviceid}</td>
               
             <td data-title="中奖时间">{$vlist.time} </td>
@@ -92,3 +111,68 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
   </div>
   {$page}
 </div>
+
+<script type="text/javascript">
+
+
+  function setregiona(num, address_id) {
+    var next = num + 1;
+    //alert(next);
+    $.ajax({
+      type: 'POST',
+      //设置json格式,接收返回数组。
+      dataType: 'json',
+      url: '{$host_name}/boxaward/getaward',
+      //ajax传递当前选项的value值,也就是当前的region_id。
+      data: 'aid=' + $('#award_hotel_' + num + '_' + address_id).val()+'&htype=' + num,
+      success: function(msg) {
+        //如果返回值不为空则执行。
+        if (msg != null) {
+          var option_str = '';
+          
+          //循环书写下一个select中要添加的内容。并添加name标记。
+          for (var i = 0; i < msg.length; i++) {
+            option_str+='<option name="award_hotel_'+next+'"value="'+msg[i].id+'">'+msg[i].name+'</option>';
+          }
+          //删除下一个select中标记name为next的内容。
+          if(next==1){
+        	  $("option[name='award_hotel_" + next + "']").remove();
+        	  var tt= next+1;
+        	  $("option[name='award_hotel_" + tt + "']").remove();
+          }else {
+        	  $("option[name='award_hotel_" + next + "']").remove();
+          }
+          
+          //向下一个select中添加书写好的内容。
+          $('#award_hotel_' + next + '_' + address_id).append(option_str);
+        } else {
+          //如果返回值为空,则移除所有带标记的option,恢复默认选项。
+          for (var i = next; i <= 4; i++) {
+            $("option[name='award_hotel_" + i + "']").remove();
+          }
+        }
+      }
+
+    })
+  }
+  $(function(){
+	   
+
+	    $("#award_s_time").datetimepicker({
+	      //minView: "month", //选择日期后，不会再跳转去选择时分秒
+	      minView:0,
+	      language:  'zh-CN',
+	      format: 'yyyy-mm-dd hh:ii:ss',
+	      todayBtn:  1,
+	      autoclose: 1,
+	    });
+	    $("#award_e_time").datetimepicker({
+		      //minView: "month", //选择日期后，不会再跳转去选择时分秒
+		      minView:0,
+		      language:  'zh-CN',
+		      format: 'yyyy-mm-dd hh:ii:ss',
+		      todayBtn:  1,
+		      autoclose: 1,
+		    });
+	  })
+</script>

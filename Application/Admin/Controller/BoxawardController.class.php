@@ -400,6 +400,7 @@ class BoxawardController extends BaseController{
      * @desc 机顶盒抽奖日志
      */
 	public function awardLogList(){
+	    //print_r($_POST);exit;
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
 	    $start = I('pageNum',1);
@@ -411,20 +412,74 @@ class BoxawardController extends BaseController{
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
 	    $where = "";
-		$starttime = I('starttime','');
-		$endtime = I('endtime','');
+		$starttime = I('award_s_time','');
+		$endtime = I('award_e_time','');
+		$hotelid = I('award_hotel_id','0','intval');
+		$roomid = I('award_room_id','0','intval');
+		$boxid = I('award_box_id','0','intval');
+		//print_r($hotelid);
 		if($starttime){
-			$this->assign('s_time',$starttime);
+			$this->assign('award_s_time',$starttime);
 			$where .= "	AND a.`time` >= '{$starttime}'";
 		}
 		if($endtime){
-			$this->assign('e_time',$endtime);
-			$where .= "	AND `a.time` <=  '{$endtime}'";
+			$this->assign('award_e_time',$endtime);
+			$where .= "	AND a.`time` <=  '{$endtime}'";
+		}
+		if($hotelid){
+		    $this->assign('hotelid',$hotelid);
+		    $where .=" and e.`id`=".$hotelid;
+		}
+		if($roomid){
+		    $rtype = array(
+		        '1'=>'包间',
+		        '2'=>'大厅',
+		        '3'=>'等候区',
+		    );
+		    $this->assign('roomid',$roomid);
+		    $where .=" and d.`id`=".$roomid;
+		    $m_room = new \Admin\Model\RoomModel();
+		    $map = array();
+		    $map['flag'] = 0;
+		    $map['state'] = 1;
+		    $map['hotel_id'] = $hotelid;
+		    $roomlist = $m_room->getInfo('id,name,type', $map);
+		    foreach($roomlist as $k=>$v){
+		        foreach($rtype as $rk=>$rv){
+		            if ($rk == $roomlist[$k]['type']){
+		                $roomlist[$k]['name'] = $roomlist[$k]['name'].'('.$rv.')';
+		                break;
+		            }
+		        }
+		    }
+		    $this->assign('roomlist',$roomlist);
+		}
+		if($boxid){
+		    $this->assign('boxid',$boxid);
+		    $where .=" and c.`id`=".$boxid;
+		    $m_box = new \Admin\Model\BoxModel();
+		    $map = array();
+		    $map['flag'] = 0;
+		    $map['state'] = 1;
+		    $map['room_id'] = $roomid;
+		    $boxlist = $m_box->getInfo('id,name,mac', $map);
+		    foreach($boxlist as $k=>$v){
+		        $boxlist[$k]['name'] = $boxlist[$k]['name'].'('.$boxlist[$k]['mac'].')';
+		    }
+		    $this->assign('boxlist',$boxlist);
 		}
 	    $m_award_log = new \Admin\Model\AwardLogModel();
 	    $result = $m_award_log->getList($where,$orders,$start,$size);
 	    $this->assign('list', $result['list']);
 	    $this->assign('page',  $result['page']);
+	    //酒楼列表
+	    $m_hotel = new \Admin\Model\HotelModel();
+	    $map = array();
+	    $map['flag'] = 0;
+	    $map['state'] = 1;
+	    $hotellist = $m_hotel->getInfo('id,name', $map);
+
+	    $this->assign('hotellist',$hotellist);
 	    $this->display('award_log');
 	}
 
