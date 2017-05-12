@@ -37,7 +37,7 @@
 		  <select class="form-control" name="prizeid">
 		  	<option>请选择中奖奖项</option>
 		  	<volist name="award_config" id="vo">
-		  		<option <if condition="$vo.prizeid eq $prize">selected='selected' </if> value="{$vo.id}">{$vo.name}</option>
+		  		<option <if condition="$vo.id eq $prizeid">selected='selected' </if> value="{$vo.id}">{$vo.name}</option>
 		  	</volist>
 		  </select>	
           
