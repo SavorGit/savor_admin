@@ -187,7 +187,34 @@ $(function(){
 });
 $("#videoshan").click(function(){
     $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
+});
+$('.time_elementa,.time_elementb,.time_elementc,.time_elementd').click(function(){
+    var timea = $(this).val();
+    var b = timea.split(':');
+    console.log(b)
+    $(this).next('.timepicker_wrap').find('.ti_tx').html(Trim(b[0],'g'));
+    $(this).next('.timepicker_wrap').find('.mi_tx').html(Trim(b[1],'g'));
 })
+
+function Trim(str,is_global)
+
+{
+
+    var result;
+
+    result = str.replace(/(^\s+)|(\s+$)/g,"");
+
+    if(is_global.toLowerCase()=="g")
+
+    {
+
+        result = result.replace(/\s/g,"");
+
+    }
+
+    return result;
+
+}
 
 
 
