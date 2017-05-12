@@ -188,17 +188,37 @@ class SysconfigController extends BaseController {
      //   ([0-5][0-9])
         $pattern = "/^((0[1-9]{1})|(1[0-9]{1})|(2[0-3]{1})):([0-5]{1}[0-9]{1})$/";
         if (!preg_match ($pattern,$mid_start, $matches)){
+            $mid = '中午开始时间';
             $this->error($errmsc);
         }
         if (!preg_match ($pattern, $mid_end, $matches)){
+            $mid = '中午结束时间';
             $this->error($errmsc);
         }
         if (!preg_match ($pattern, $after_start, $matches)){
+            $mid = '下午开始时间';
             $this->error($errmsc);
         }
         if (!preg_match ($pattern, $after_end, $matches)){
+            $mid = '下午结束时间';
             $this->error($errmsc);
         }
+        $m_s = str_replace(':','',$mid_start);
+        $m_e = str_replace(':','',$mid_end);
+        $a_s = str_replace(':','',$after_start);
+        $a_e = str_replace(':','',$after_end);
+        $m_s = intval($m_s);
+        $m_e = intval($m_e);
+        $a_s = intval($a_s);
+        $a_e = intval($a_e);
+        if($m_s>$m_e){
+            $this->error('中午开始时间不得大于结束时间');
+        }
+        if($a_s>$a_e){
+            $this->error('下午开始时间不得大于结束时间');
+        }
+
+
         $arr = array(
             0=>array('start_time'=>$mid_start,
                 'end_time'=>$mid_end),

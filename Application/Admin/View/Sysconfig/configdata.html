@@ -131,16 +131,16 @@
         <form method="post" action="{$host_name}/sysconfig/doConfigBanner" id="configbanner" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
             <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
                 <thead>
-                <th colspan="5">banner时间设置样式(11:00-13:31)</th>
+                <th colspan="5">设置游戏时间样式(中午{$info['mid'][start_time]}-{$info['mid'][end_time]}&nbsp;&nbsp;下午{$info['aft'][start_time]}-{$info['aft'][end_time]})</th>
                 <tr >
                     <td>
 
-                        中午开始时间：<input  placeholder="请输入数字" type="text" name="mid_start" value="{$info['mid'][start_time]}"  class="time_elementa" />
+                        中午开始时间：<input  placeholder="请输入数字" type="text" name="mid_start" value="{$info['mid'][start_time]}"  class="time_elementa" readonly/>
 
                     </td>
-                    <td>中午结束：<input  placeholder="请输入数字" type="text" name="mid_end" value="{$info['mid'][end_time]}"  class="time_elementb" /></td>
-                    <td>下午开始：<input  placeholder="请输入数字" type="text" name="after_start" value="{$info['aft'][start_time]}" class="time_elementc"  /></td>
-                    <td>下午结束：<input  placeholder="请输入数字" type="text" name="after_end" value="{$info['aft'][end_time]}" class="time_elementd"  /></td>
+                    <td>中午结束：<input  placeholder="请输入数字" type="text" name="mid_end" value="{$info['mid'][end_time]}"  class="time_elementb" readonly/></td>
+                    <td>下午开始：<input  placeholder="请输入数字" type="text" name="after_start" value="{$info['aft'][start_time]}" class="time_elementc"  readonly/></td>
+                    <td>下午结束：<input  placeholder="请输入数字" type="text" name="after_end" value="{$info['aft'][end_time]}" class="time_elementd"  readonly/></td>
                     <td>
                         <button class="btn btn-primary" type="submit">保存</button>
                     </td>
