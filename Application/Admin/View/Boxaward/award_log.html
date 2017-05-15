@@ -14,14 +14,14 @@
            
           </div>
         </div>
-			<select id="award_hotel_0_0" name="award_hotel_id" onchange="setregiona(0,0)"  class="form-control"  >
+			<select id="award_hotel_0_0" name="award_hotel_id" onchange="setregiona_log(0,0)"  class="form-control"  >
             <option   value="">请选择酒楼</option>
             <volist name="hotellist" id="vo">
               <option <if condition="$vo.id eq $hotelid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
             </volist>
           </select>
 
-            <select id="award_hotel_1_0" name="award_room_id" onchange="setregiona(1,0)"  class="form-control"  >
+            <select id="award_hotel_1_0" name="award_room_id" onchange="setregiona_log(1,0)"  class="form-control"  >
               <option style="width:100px;"  value="">包间</option>
               <volist name="roomlist" id="vo">
               <option name="award_hotel_1" <if condition="$vo.id eq $roomid">selected='selected' </if>  value="{$vo.id}">{$vo.name}</option><br>
@@ -120,7 +120,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
 <script type="text/javascript">
 
 
-  function setregiona(num, address_id) {
+  function setregiona_log(num, address_id) {
     var next = num + 1;
     //alert(next);
     $.ajax({
