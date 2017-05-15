@@ -40,7 +40,7 @@
 		  		<option <if condition="$vo.id eq $prizeid">selected='selected' </if> value="{$vo.id}">{$vo.name}</option>
 		  	</volist>
 		  </select>	
-          
+          <div class="form-inline" style="margin-top:3px;">
             <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$award_s_time}">
           <input id="award_s_time" style="margin-left: 6px;" name="award_s_time" type="text" size="17" class="form-control date" placeholder="开始日期" value="{$award_s_time}" readonly>
                   <span class="input-group-btn">
@@ -66,7 +66,7 @@
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
           </div>
-
+</div>
          
 
           </div>
@@ -77,7 +77,7 @@
       </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="top:80px;margin-top:20px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
