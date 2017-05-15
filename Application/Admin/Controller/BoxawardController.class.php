@@ -160,10 +160,9 @@ class BoxawardController extends BaseController{
 			}
 
 		} else {
-			$this->error('该机顶盒{$starttime}没有数据，请重新选择');
+			$this->error("该机顶盒{$starttime}没有数据，请重新选择");
 		}
 	}
-
 
 	/**
 	 *添加机顶盒奖励
