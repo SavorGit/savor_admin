@@ -154,14 +154,18 @@ insert into `savor_sys_config` (`config_key`,`config_value`,`status`) values('sy
 增加说明：中奖日志表
 修改时间：2017.5.8 14：30
 修改人：张英涛
-执行sql:CREATE TABLE `savor_awards_log`(
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`box_id` INT(11) NOT NULL DEFAULT 0 COMMENT '机顶盒id',
-	`prizeid` INT(11) NOT NULL DEFAULT 0 COMMENT '奖项id',
-	`deviceid` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '中奖手机设备id',
-	`time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '中奖时间',
-PRIMARY KEY (`id`)
-)ENGINE=MYISAM  DEFAULT CHARSET=utf8
+执行sql:
+CREATE TABLE `savor_award_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `box_id` int(11) NOT NULL DEFAULT '0' COMMENT '机顶盒id',
+  `mac` varchar(50) NOT NULL DEFAULT '' COMMENT '机顶盒mac',
+  `prizeid` int(11) NOT NULL DEFAULT '0' COMMENT '奖项id',
+  `device_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '客户端类型3：安卓 4：IOS',
+  `deviceid` varchar(50) NOT NULL DEFAULT '' COMMENT '中奖手机设备id',
+  `time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '中奖时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
 
 
 增加说明：奖品配置表
@@ -187,15 +191,17 @@ insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_ti
 修改时间：2017.5.9 13：30
 修改人：白玉涛
 CREATE TABLE `savor_box_award` (
-  `id` INT(5) NOT NULL AUTO_INCREMENT,
-  `box_id` INT(5) NOT NULL COMMENT '机顶盒id',
-  `room_id` INT(5) NOT NULL COMMENT '包间id',
-  `hotel_id` INT(5) NOT NULL COMMENT '酒楼id',
-  `prize` VARCHAR(500) DEFAULT NULL COMMENT '奖项json:奖品id,奖品名称,奖品数量,奖品概率',
-  `flag` TINYINT(1) DEFAULT '1' COMMENT '标示位1正常0删除',
-  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  `date_time` VARCHAR(20) NOT NULL DEFAULT  '' COMMENT '对应批次日期',
-  KEY `idx_b` (`box_id`,`create_time`),
-  PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+  `id` int(5) NOT NULL AUTO_INCREMENT,
+  `box_id` int(5) NOT NULL COMMENT '机顶盒id',
+  `room_id` int(5) NOT NULL COMMENT '包间id',
+  `hotel_id` int(5) NOT NULL COMMENT '酒楼id',
+  `prize` varchar(500) DEFAULT NULL COMMENT '奖项json:奖品id,奖品名称,奖品数量,奖品概率，奖品level',
+  `prize_current` varchar(500) DEFAULT NULL COMMENT '奖项json:奖品id,奖品名称,奖品数量,奖品概率，奖品level',
+  `flag` tinyint(1) DEFAULT '1' COMMENT '标示位1正常0删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `date_time` varchar(20) NOT NULL DEFAULT '' COMMENT '对应批次日期',
+  PRIMARY KEY (`id`),
+  KEY `idx_b` (`box_id`,`create_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
