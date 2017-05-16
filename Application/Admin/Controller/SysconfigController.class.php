@@ -186,7 +186,7 @@ class SysconfigController extends BaseController {
         $after_end = I('post.after_end');
         $errmsc = '日期格式必须要按插件格式且时为00-23,分为00-59';
      //   ([0-5][0-9])
-        $pattern = "/^((0[1-9]{1})|(1[0-9]{1})|(2[0-3]{1})):([0-5]{1}[0-9]{1})$/";
+        $pattern = "/^((0[0-9]{1})|(1[0-9]{1})|(2[0-3]{1})):([0-5]{1}[0-9]{1})$/";
         if (!preg_match ($pattern,$mid_start, $matches)){
             $mid = '中午开始时间';
             $this->error($errmsc);
