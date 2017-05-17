@@ -128,7 +128,7 @@ class UserController extends BaseController {
                 if($result) {
                     $this->output('操作成功!', 'user/userList');
                 } else {
-                    $this->output('操作失败!', 'user/userEdit');
+                    $this->error('操作失败!');
                 }
             } else {
                 $this->output('缺少必要参数!', 'user/userEdit');

@@ -217,6 +217,13 @@ class SysconfigController extends BaseController {
         if($a_s>$a_e){
             $this->error('下午开始时间不得大于结束时间');
         }
+        if($m_e>=$a_s){
+            $this->error('中午结束时间不得大于等于下午开始时间');
+        }
+        if($a_e == 0){
+            $this->error('下午结束最大时间为23:59');
+        }
+
 
 
         $arr = array(
