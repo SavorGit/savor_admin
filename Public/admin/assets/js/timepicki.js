@@ -5,7 +5,7 @@
 (function ( $ ) {
 
     $.fn.timepicki = function(options) {
-        
+       
         var defaults = {
             
         };
@@ -25,10 +25,12 @@
             var ele_next_all_child = ele_next.find("div");
             ele_next.css({ "top": ele_hei-170+"px", "left": ele_lef+"px"});
             $(document).on( "click",function(event) {
+            	
                 if(!$(event.target).is(ele_next))
                     {
                         if(!$(event.target).is(ele))
                             {
+                            	
                                 var tim = ele_next.find(".ti_tx").html();
                                 var mini = ele_next.find(".mi_tx").text();
                                 var meri = ele_next.find(".mer_tx").text();
@@ -38,10 +40,12 @@
                                 }
                                 if(!$(event.target).is(ele_next)&&!$(event.target).is(ele_next_all_child))
                                 {
-                                   ele_next.fadeOut(); 
+                                   ele_next.fadeOut();
+                                  
                                 }
                             }
                             else{
+                          
                                 set_date();
                                 ele_next.fadeIn();  
                             }
@@ -103,6 +107,7 @@
                 
             $(cur_prev).add(cur_next).on("click", function () {
                 //console.log("click");
+                
                 var cur_ele = $(this);
                 var cur_cli = null;
                 var ele_st = 0;
@@ -118,8 +123,8 @@
                     //console.log(ele_next.find("." + cur_cli + " .ti_tx"));
                     if (cur_ele.attr("class") == "next") {
                         //alert("nex");
-                        if (cur_time == 24) {
-                            ele_next.find("." + cur_cli + " .ti_tx").text("01");
+                        if (cur_time == 23) {
+                            ele_next.find("." + cur_cli + " .ti_tx").text("00");
                         } 
                         else {
                             cur_time++;
@@ -136,12 +141,12 @@
                     } 
                     else {
                         if (cur_time == 1) {
-                            ele_next.find("." + cur_cli + " .ti_tx").text(24);
+                            ele_next.find("." + cur_cli + " .ti_tx").text('00');
                         } 
                         else {
                             cur_time--;
                             if(cur_time==-1){
-                            	cur_time=24;
+                            	cur_time=23;
                             	
                             }
                             if(cur_time<10)
