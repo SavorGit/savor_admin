@@ -136,7 +136,7 @@ class officialController extends Controller {
 	public function getHotelAreaList(){
 	    $m_area = new \Admin\Model\AreaModel();
 	    $map = array();
-	    $map['id'] = array('in','1,9,236');
+	    $map['id'] = array('in','1,9,19');
 	    $arealist = $m_area->field('id as areaid,region_name')->where($map)->select();
 	    $arr = array('areaid'=>0,'region_name'=>'全国');
 	    array_push($arealist, $arr);
