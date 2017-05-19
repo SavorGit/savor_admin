@@ -203,5 +203,13 @@ CREATE TABLE `savor_box_award` (
   `date_time` varchar(20) NOT NULL DEFAULT '' COMMENT '对应批次日期',
   PRIMARY KEY (`id`),
   KEY `idx_b` (`box_id`,`create_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+alter table `cloud`.`savor_nodemenu` 
+   change `m` `m` char(20) character set utf8 collate utf8_general_ci default '' NOT NULL, 
+   change `a` `a` char(30) character set utf8 collate utf8_general_ci default '' NOT NULL;
+
+   alter table `cloud`.`savor_role_priv` 
+   change `a` `a` char(30) character set utf8 collate utf8_general_ci NOT NULL comment '方法名'
 
