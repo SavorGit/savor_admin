@@ -50,7 +50,7 @@ class DownloadrpController extends BaseController{
 		}
 		if($endtime){
 			$this->assign('e_time',$endtime);
-			$where .= "	AND add_time <=  '{$endtime}'";
+			$where .= "	AND add_time <=  '{$endtime} 23:59:59'";
 		}
 		$result = $downloadModel->getList($where,$orders,$start,$size);
 		$so_type = C('source_type');
