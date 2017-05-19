@@ -39,7 +39,7 @@ $(function(){
     }
     var iOS = /ipad|iphone|ipod/.test(navigator.userAgent.toLowerCase());
     var android = /android/.test(navigator.userAgent.toLowerCase());
-    console.log(android);
+    //console.log(android);
     if(iOS){
         $("#web-view iframe").wrap("<div class='fix-ios-ifr'></div>");
     }
