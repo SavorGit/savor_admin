@@ -37,7 +37,7 @@ class SysusergroupController extends BaseController {
         $this->display('index');
     }
     
-    //新增用户
+/*    //新增用户
     public function sysusergroupAdd(){
         $acttype = I('acttype', 0, 'int');
         
@@ -93,7 +93,7 @@ class SysusergroupController extends BaseController {
         $groupList = parent::getMenuList();
         $this->assign('groupList', $groupList);
         $this->display('sysusergroupadd');
-    }
+    }*/
 
 
 
@@ -109,6 +109,12 @@ class SysusergroupController extends BaseController {
             //新增
             $id   = I('post.id', '', 'int');
             if($acttype == 0){
+                //判断分组名是否存在
+                $name = trim($name);
+                $count = $sysusergroup->getgroupCount(array('name'=>$name));
+                if($count > 0){
+                    $this->error('用户组已经存在');
+                }
                 $userInfo = session('sysUserInfo');
                 $username = $userInfo['username'];
                 $data['userName']= $username;
@@ -119,6 +125,16 @@ class SysusergroupController extends BaseController {
             }elseif($acttype == 1){
                 //删除已经存在的
                 $roleid = $id;
+                $user_arr = $sysusergroup->getInfo($roleid);
+                $sq_name = $user_arr['name'];
+                if($sq_name != $name){
+
+                    $count = $sysusergroup->getgroupCount(array('name'=>$name));
+                    if($count > 0){
+                        $this->error('用户组名称已经存在');
+                    }
+
+                }
             }
             if (is_array($_POST['menuid']) && count($_POST['menuid']) > 0) {
                 $rolePrivModel->delData($roleid);

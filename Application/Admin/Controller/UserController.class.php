@@ -51,6 +51,7 @@ class UserController extends BaseController {
         $groups = new \Admin\Model\SysusergroupModel();
         $rstGroup= $groups->getAllGroup();
         $this->assign('groupslist',$rstGroup);
+        $user = new \Admin\Model\UserModel();
         
         //处理提交数据
         if(IS_POST) {
@@ -61,6 +62,10 @@ class UserController extends BaseController {
             $username= I('username');
             $userpwd = I('userpwd');
             $status  = I('status', 1, 'int');
+            $count = $user->getUserCount(array('username'=>$username));
+            if($count > 0){
+                $this->error('用户登录名称已经存在');
+            }
             //判断添加
             if($remark && $username && $userpwd) {
                 $data['id']   = $userId;
@@ -71,7 +76,7 @@ class UserController extends BaseController {
                 $pwdpre = C('PWDPRE');
                 $userpwd = $userpwd.$pwdpre;
                 $data['password'] = md5($userpwd);
-                $user = new \Admin\Model\UserModel();
+
                 $result = $user->addData($data, $acttype);
                 if($result) {
                     $this->output('操作成功!', 'user/userList');
