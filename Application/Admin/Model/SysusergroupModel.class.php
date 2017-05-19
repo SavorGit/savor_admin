@@ -53,4 +53,8 @@ class SysusergroupModel extends Model{
         $result = $this -> execute($delSql);
         return  $result;
     }
+
+    public function getgroupCount($where){
+        return $this->where($where)->count();
+    }
 }

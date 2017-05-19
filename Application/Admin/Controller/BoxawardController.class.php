@@ -348,6 +348,45 @@ class BoxawardController extends BaseController{
 
 	}
 
+
+
+
+	public function editPrize(){
+		$hotelModel = new \Admin\Model\HotelModel();
+		$awardConfigModel = new \Admin\Model\AwardConfigModel();
+		$boxAwardModel = new \Admin\Model\BoxAwardModel();
+		$acttype = I('acttype', 0, 'int');
+		$where = '1=1';
+		if(1 === $acttype) {
+			$bawid = I('id', 0, 'int');
+			$this->assign('acttype', $acttype);
+			$where .= "	AND baw.`id` =  '{$bawid}'";
+			$result = $boxAwardModel->getOneBoxAward($where);
+			$today_dat =date("Y-m-d");
+			foreach($result as $rk=>$val){
+				if($rk == 'bpr'){
+					$result[$rk] = json_decode($val,true);
+
+				}
+				if($rk == 'dtime'){
+					if($val==$today_dat){
+						//$this->error('');
+						echo '<script>$.pdialog.closeCurrent();  alertMsg.error("奖项设置今天已经下发无法进行修改！");</script>';
+					}
+					if($val<$today_dat){
+						//$this->error('');
+						echo '<script>$.pdialog.closeCurrent();  alertMsg.error("奖项设置已过期无法进行修改！");</script>';
+					}
+				}
+
+
+			}
+			$this->assign('vlist', $result);
+			$this->display('editaward');
+		}
+
+	}
+
 	/*
 	 * 获取奖励信息
 	 */
