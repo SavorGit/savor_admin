@@ -477,7 +477,8 @@ class BaseController extends Controller {
         $user_group_id = $userinfo['groupid'];
         $free_controller = array('admin.login','admin.index');
         $free_action = array('admin.menu.get_se_left','admin.clean.cache','admin.resource.uploadresource',
-                             'admin.resource.uploadresourcenew','admin.user.chagepwd','admin.boxaward.getaward'
+                             'admin.resource.uploadresourcenew','admin.user.chagepwd','admin.boxaward.getaward',
+                             'admin.hotel.manager_list',
         );
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);
