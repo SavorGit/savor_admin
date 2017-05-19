@@ -187,7 +187,7 @@
 	/*------全选-------*/
 	$(document).ready(function() {
 		var obj = {};
-		var url_s = '{$host_name}'+'/hotel/manager';
+		var url_s = '{$host_name}'+'/hotel/manager_list';
 		var area_v = $('select[name="area_v"]').val();
 		var level_v = $('select[name="level_v"]').val();
 		var state_v = $('select[name="state_v"]').val();
@@ -206,7 +206,7 @@
 		obj.hbt_v = hbt_v;
 		$.ajax({
 			type:"post",
-			url:'{$host_name}'+'/hotel/manager',
+			url:'{$host_name}'+'/hotel/manager_list',
 			data:obj,
 			async: true,
 			success:function(call){
@@ -252,7 +252,7 @@ $('#checkfan').click(function(){
 /*----------选取---------------*/
 	$('#searchs').click(function(){
 		var obj = {};
-		var url_s = '{$host_name}'+'/hotel/manager';
+		var url_s = '{$host_name}'+'/hotel/manager_list';
 		var area_v = $('select[name="area_v"]').val();
 		var level_v = $('select[name="level_v"]').val();
 		var state_v = $('select[name="state_v"]').val();
@@ -271,7 +271,7 @@ $('#checkfan').click(function(){
 		obj.ajaxversion = 1;
 		$.ajax({
 			type:"post",
-			url:'{$host_name}'+'/hotel/manager',
+			url:'{$host_name}'+'/hotel/manager_list',
 			data:obj,
 			async: true,
 			success:function(call){
