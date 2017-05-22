@@ -244,7 +244,7 @@ class UserController extends BaseController {
 
 
         $str  = "<tr id='node-\$id' \$parentid_node>
-							<td style='padding-left:30px;'>\$spacer<input class='disabled' type='checkbox' name='menuid[]' value='\$id' level='\$level' \$checked onclick='javascript:checknode(this);'> \$cname</td>
+							<td style='padding-left:30px;'>\$spacer<input disabled type='checkbox' name='menuid[]' value='\$id' level='\$level' \$checked onclick='javascript:checknode(this);'> \$cname</td>
 						</tr>";
         $matre->init($result);
         $categorys = $matre->get_tree(0, $str);
