@@ -847,6 +847,10 @@ class MenuController extends BaseController {
             if ($count) {
                 $this->error('节目单名称已存在!');
             }
+            $rightid_arr = I('post.rightid','');
+            if(empty($rightid_arr)){
+                $this->error('节目单列表不能为空!');
+            }
             $result = $mlModel->add($save);
             if ( $result ) {
                 $menu_id = $mlModel->getLastInsID();
