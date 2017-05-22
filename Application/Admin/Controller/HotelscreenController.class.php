@@ -30,7 +30,7 @@ class HotelscreenController extends BaseController{
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','id');
+		$order = I('_order','play_date');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
@@ -64,21 +64,7 @@ class HotelscreenController extends BaseController{
 	}
 
 
-	/**
-	 * 新增分类
-	 *
-	 */
-	public function addCate(){
-		$id = I('get.id');
-		$catModel = new CategoModel;
-		if($id){
-			$vinfo = $catModel->find($id);
-			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-			$vinfo['oss_addr'] = $image_host.$vinfo['img_url'];
-			$this->assign('vinfo',$vinfo);
-		}
-		return $this->display('addCat');
-	}
+
 
 
 	/*
