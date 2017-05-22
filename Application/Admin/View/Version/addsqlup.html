@@ -65,6 +65,7 @@
         success:function(data){
           if(data.error==0){
             var data = data.message;
+            $("#vername").empty();
             for(var i=0,l=data.length;i<l;i++) {
               for (var key in data[i]) {
                 //alert(key);
