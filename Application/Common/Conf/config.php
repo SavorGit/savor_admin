@@ -96,7 +96,8 @@ $config['MANGER_STATUS'] = array(
 );
 $config['MANGER_LEVEL'] = array(
     '0'=>'一级栏目',
-    '1'=>'二级栏目'
+    '1'=>'二级栏目',
+    '2'=>'三级栏目'
 );
 
 $config['MANGER_STATE'] = array(
@@ -105,11 +106,11 @@ $config['MANGER_STATE'] = array(
     '3'=>'审核不通过',
 );
 $config['MANGER_KEY'] = array(
-    'colum'=>'栏目节点',
+    'colum'=>'版本管理节点',
     'cms'=>'程序节点',
     'system'=>'系统节点',
     'send' =>'内容节点',
-    'version'=>'版本节点',
+    'version'=>'版本更新节点',
     'menu' =>'节目节点',
     'ad' =>'广告节点',
     'hotel' =>'酒楼节点',
@@ -129,6 +130,13 @@ $config['hotel_box_type'] = array(
   '1'=>'一代单机版',
   '2'=>'二代网络版',
   '3'=>'三代5G版',  
+);
+$config['source_type'] = array(
+    '1'=>'官网',
+    '2'=>'客户端二维码',
+    '3'=>'客户端分享',
+    '4'=>'节目',
+    '5'=>'服务员扫码',
 );
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),

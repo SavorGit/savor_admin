@@ -79,4 +79,8 @@ class UserModel extends Model{
         $result   = $this->query($checkUser);
         return $result;
     }
+
+    public function getUserCount($where){
+        return $this->where($where)->count();
+    }
 }

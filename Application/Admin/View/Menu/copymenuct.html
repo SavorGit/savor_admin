@@ -327,7 +327,8 @@ navTab.closeTab('menu/addmen');
 	/*-----传到右边-----------*/
 
 	$("#checkout").click(function () {
-
+		$('#file-4').fileinput('clear');
+		$("#excelpath").val('');
 	});
 
 	//reurl();
@@ -672,25 +673,7 @@ navTab.closeTab('menu/addmen');
 
 
 
-	function dialogReloadNavTab(json){
-		DWZ.ajaxDone(json);
-		jap = JSON.stringify(json);
-		console.log(jap);
-		alert(jap);
-		var tabId = $("ul.navTab-tab li.selected").attr("tabid");
-		if (json.statusCode == DWZ.statusCode.ok){
-			if (json.navTabId || tabId!=null){
-				navTab.reload(json.forwardUrl, {navTabId: json.navTabId});
-			} else if (json.rel) {
-				var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
-				var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
-				navTabPageBreak(args, json.rel);
-			}
-			if ("closeCurrent" == json.callbackType) {
-				$.pdialog.closeCurrent();
-			}
-		}
-	}
+
 
 
 

@@ -87,7 +87,9 @@ ALTER TABLE `savor_box` ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRE
 修改时间:2017.3.31 13:46
 修改人:白玉涛
 执行SQL: ALTER TABLE `savor_menulist_log` change  `hotel_id`  `hotel_id_s` text NOT NULL DEFAULT '' COMMENT '发布酒楼id字符串';
+
 ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
+
 增加说明：添加酒楼wifi及密码
 修改时间:2017.4.17 16：00
 修改人:白玉涛
@@ -96,5 +98,120 @@ alter table `savor_hotel`
  add column `remote_id` varchar(255) DEFAULT '' NOT NULL COMMENT '远程ID',
    add column `hotel_wifi` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi名称' after `remote_id`, 
    add column `hotel_wifi_pas` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi密码' after `hotel_wifi`
-########以上sql均已执行
+
+#########以上sql均已执行######
+
+增加说明：添加意见反馈手机类型
+修改时间:2017.5.3 14：00
+修改人:白玉涛
+执行SQL: 
+ALTER TABLE `cloud`.`savor_mb_feedback`     ADD COLUMN `device_type` SMALLINT(3) DEFAULT '3' NOT NULL COMMENT '类型3android4ios' AFTER `create_time`;
+
+增加说明：添加节点表
+修改时间：2017.5.5 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_nodemenu` (
+  `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(40) NOT NULL DEFAULT '',
+  `nodekey` varchar(100) NOT NULL DEFAULT '' COMMENT 'config表中节点key',
+  `parentid` smallint(6) NOT NULL DEFAULT '0' COMMENT '它的父id',
+  `media_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '默认图标资源id',
+  `select_media_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '选中图标资源id',
+  `menulevel` tinyint(1) DEFAULT '0' COMMENT '菜单级别',
+  `m` char(20) NOT NULL DEFAULT '',
+  `c` char(20) NOT NULL DEFAULT '',
+  `a` char(20) NOT NULL DEFAULT '',
+  `displayorder` smallint(6) unsigned NOT NULL DEFAULT '0',
+  `isenable` smallint(6) NOT NULL DEFAULT '1',
+  `sysmenuid` int(11) NOT NULL DEFAULT '0' COMMENT '一级和二级对应sysmenu表中id',
+  `ertype` smallint(2) NOT NULL DEFAULT '1' COMMENT '1:系统自带2.原生js',
+  PRIMARY KEY (`id`),
+  KEY `parentid` (`parentid`),
+  KEY `module` (`m`,`c`,`a`)
+) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 COMMENT='节点表';
+
+增加说明：权限表
+修改时间：2017.5.5 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_role_priv` (
+  `roleid` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `m` char(20) NOT NULL COMMENT '模块名',
+  `c` char(20) NOT NULL COMMENT '控制器名',
+  `a` char(20) NOT NULL COMMENT '方法名',
+  `nodeid` int(11) NOT NULL DEFAULT '0' COMMENT '节点id',
+  `menulevel` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `ertype` smallint(2) NOT NULL DEFAULT '1' COMMENT '1:原生2.系统自带',
+  KEY `roleid` (`roleid`,`m`,`c`,`a`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='权限组表'
+增加说明：抽奖时间配置
+修改时间：2017.5.8 14：30
+修改人：张英涛
+执行sql:
+insert into `savor_sys_config` (`config_key`,`config_value`,`status`) values('system_award_start_time','11:00',1);
+insert into `savor_sys_config` (`config_key`,`config_value`,`status`) values('system_award_end_time','12:00',1);
+
+增加说明：中奖日志表
+修改时间：2017.5.8 14：30
+修改人：张英涛
+执行sql:
+CREATE TABLE `savor_award_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `box_id` int(11) NOT NULL DEFAULT '0' COMMENT '机顶盒id',
+  `mac` varchar(50) NOT NULL DEFAULT '' COMMENT '机顶盒mac',
+  `prizeid` int(11) NOT NULL DEFAULT '0' COMMENT '奖项id',
+  `device_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '客户端类型3：安卓 4：IOS',
+  `deviceid` varchar(50) NOT NULL DEFAULT '' COMMENT '中奖手机设备id',
+  `time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '中奖时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+
+
+增加说明：奖品配置表
+修改时间：2017.5.9 13：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_award_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(48) DEFAULT NULL COMMENT '名称：奖品名称',
+  `pos` tinyint(4) NOT NULL COMMENT '中奖概率',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT '0' COMMENT '标示位1正常0删除',
+  `level` tinyint(1) DEFAULT '1' COMMENT '标明几等奖',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_time`, `flag`, `level`) values('1','一等奖','30','2017-05-08 13:42:15','2017-05-08 13:42:15','1','1');
+insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_time`, `flag`, `level`) values('2','二等奖','40','2017-05-08 13:42:27','2017-05-08 13:42:27','1','2');
+insert into `savor_award_config` (`id`, `name`, `pos`, `create_time`, `update_time`, `flag`, `level`) values('3','三等奖','30','2017-05-08 13:42:35','2017-05-08 13:42:35','1','3');
+
+
+增加说明：机顶盒奖项表
+修改时间：2017.5.9 13：30
+修改人：白玉涛
+CREATE TABLE `savor_box_award` (
+  `id` int(5) NOT NULL AUTO_INCREMENT,
+  `box_id` int(5) NOT NULL COMMENT '机顶盒id',
+  `room_id` int(5) NOT NULL COMMENT '包间id',
+  `hotel_id` int(5) NOT NULL COMMENT '酒楼id',
+  `prize` varchar(500) DEFAULT NULL COMMENT '奖项json:奖品id,奖品名称,奖品数量,奖品概率，奖品level',
+  `prize_current` varchar(500) DEFAULT NULL COMMENT '奖项json:奖品id,奖品名称,奖品数量,奖品概率，奖品level',
+  `flag` tinyint(1) DEFAULT '1' COMMENT '标示位1正常0删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `date_time` varchar(20) NOT NULL DEFAULT '' COMMENT '对应批次日期',
+  PRIMARY KEY (`id`),
+  KEY `idx_b` (`box_id`,`create_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+alter table `cloud`.`savor_nodemenu` 
+   change `m` `m` char(20) character set utf8 collate utf8_general_ci default '' NOT NULL, 
+   change `a` `a` char(30) character set utf8 collate utf8_general_ci default '' NOT NULL;
+
+   alter table `cloud`.`savor_role_priv` 
+   change `a` `a` char(30) character set utf8 collate utf8_general_ci NOT NULL comment '方法名'
+
 

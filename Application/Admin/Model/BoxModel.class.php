@@ -208,4 +208,8 @@ class BoxModel extends BaseModel{
 	    $where['state'] = 1;
 	    return $this->where($where)->find();
 	}
+	public function getInfo($field ='*',$where,$order,$limit){
+	    $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
+	    return $result;
+	}
 }

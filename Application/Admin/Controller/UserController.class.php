@@ -4,6 +4,7 @@ namespace Admin\Controller;
  * @desc 用户管理类
  *
  */
+use \Common\Lib\Tree;
 class UserController extends BaseController {
     
     public function __construct() {
@@ -47,25 +48,35 @@ class UserController extends BaseController {
     //新增用户
     public function userAdd(){
         $acttype = I('acttype', 0, 'int');
+        $groups = new \Admin\Model\SysusergroupModel();
+        $rstGroup= $groups->getAllGroup();
+        $this->assign('groupslist',$rstGroup);
+        $user = new \Admin\Model\UserModel();
         
         //处理提交数据
         if(IS_POST) {
             //获取参数
+            $groupId= I('group', 0, 'int');
             $userId  = I('id', '', 'int');
             $remark  = I('remark');
             $username= I('username');
             $userpwd = I('userpwd');
             $status  = I('status', 1, 'int');
+            $count = $user->getUserCount(array('username'=>$username));
+            if($count > 0){
+                $this->error('用户登录名称已经存在');
+            }
             //判断添加
             if($remark && $username && $userpwd) {
                 $data['id']   = $userId;
                 $data['remark']   = $remark;
                 $data['username'] = $username;
+                $data['groupId'] = $groupId;
                 $data['status'] = $status;
                 $pwdpre = C('PWDPRE');
                 $userpwd = $userpwd.$pwdpre;
                 $data['password'] = md5($userpwd);
-                $user = new \Admin\Model\UserModel();
+
                 $result = $user->addData($data, $acttype);
                 if($result) {
                     $this->output('操作成功!', 'user/userList');
@@ -97,8 +108,12 @@ class UserController extends BaseController {
     public function userEdit(){
         $acttype = I('acttype', 1, 'int');
         $uid = I('uid', 0, 'int');
+        $groups = new \Admin\Model\SysusergroupModel();
+        $rstGroup= $groups->getAllGroup();
+        $this->assign('groupslist',$rstGroup);
         if(IS_POST) {
             //获取参数
+            $groupId= I('group', 0, 'int');
             $userId  = I('id', '', 'int');
             $remark  = I('remark');
             $newuserpwd = I('newuserpwd');
@@ -107,6 +122,7 @@ class UserController extends BaseController {
                 $data['id']   = $userId;
                 $data['remark']   = $remark;
                 $data['status'] = $status;
+                $data['groupId'] = $groupId;
                 if($newuserpwd){
                     $pwdpre = C('PWDPRE');
                     $newuserpwd = $newuserpwd.$pwdpre;
@@ -117,7 +133,7 @@ class UserController extends BaseController {
                 if($result) {
                     $this->output('操作成功!', 'user/userList');
                 } else {
-                    $this->output('操作失败!', 'user/userEdit');
+                    $this->error('操作失败!');
                 }
             } else {
                 $this->output('缺少必要参数!', 'user/userEdit');
@@ -175,7 +191,11 @@ class UserController extends BaseController {
     
     //修改用户权限
     public function userRank(){
+        $sysNode = new \Admin\Model\SysnodeModel();
+        $rolePrivModel = new \Admin\Model\RolePrivModel();
+        $sysusergroup = new \Admin\Model\SysusergroupModel();
         $acttype = I('acttype', 1, 'int');
+
         $uid = I('uid', 0, 'int');
         $groupId= I('groupId', 0, 'int');
         
@@ -186,30 +206,14 @@ class UserController extends BaseController {
             $data['groupId']=$groupId;
             //更新user表中的groupid的值
             $user = new \Admin\Model\UserModel();
-            $user->addData($data, $acttype);
-            
-            //获取当前选的角色的栏目
-            $groups = new \Admin\Model\SysusergroupModel();
-            $groupInfo= $groups->getInfo($groupId);
-            $groupCode=json_decode($groupInfo['code']);
-            
-            //检测当前用户是否已有记录
-            $userRank = new \Admin\Model\StaffauthModel();
-            $userInfo = $userRank->getInfo($uid);
-            $rackType = !empty($userInfo)? 1 : 0;
-            $datas['id']      = !empty($userInfo['id'])? $userInfo['id'] : '';
-            $datas['staff_id']= $uid;
-            $datas['code']    = json_encode($groupCode);
-            $datas['staff_name']='test';
-            $addRankInfo = $userRank->addData($datas, $rackType);
+            $addRankInfo = $user->addData($data, $acttype);
             if($addRankInfo){
                 $this->output('操作成功!', 'user/userList');
             }else{
-                $this->output('操作失败!', 'user/userEdit');
+                $this->error('操作失败!');
             }
         }
-        
-        //非提交处理
+
         $user = new \Admin\Model\UserModel();
         $result = $user->getUserRank($uid);
         $result['code'] =  json_decode($result['code']);
@@ -219,6 +223,36 @@ class UserController extends BaseController {
         $this->assign('groupslist',$rstGroup);
         $userrank = parent::getMenuList();
         $this->assign('userrank', $userrank);
+        $result = $user->getUserInfo($uid);
+        $gid = $result['groupid'];
+        //获取树形结构
+        $matre = new Tree();
+        $matre->icon = array('│ ','├─ ','└─ ');
+        $matre->nbsp = '&nbsp;&nbsp;&nbsp;';
+        //获取所有节点
+        $result = $sysNode->getAllList();
+        //获取权限表数据
+        $priv_data = $rolePrivModel->getInfoByroleid($gid);
+        //var_dump($result);
+        foreach ($result as $n=>$t) {
+            $result[$n]['cname'] = $t['name'];
+            $result[$n]['checked'] = $rolePrivModel->is_checked($t,$gid,$priv_data)? ' checked' : '';
+            $result[$n]['level'] = $rolePrivModel->get_level($t['id'],$result);
+            $result[$n]['parentid_node'] = ($t['parentid'])? ' class="child-of-node-'.$t['parentid'].'"' : '';
+
+        }
+
+
+        $str  = "<tr id='node-\$id' \$parentid_node>
+							<td style='padding-left:30px;'>\$spacer<input disabled type='checkbox' name='menuid[]' value='\$id' level='\$level' \$checked onclick='javascript:checknode(this);'> \$cname</td>
+						</tr>";
+        $matre->init($result);
+        $categorys = $matre->get_tree(0, $str);
+        //echo $categorys;
+        $ra['temp'] = $categorys;
+        $groupList = parent::getMenuList();
+        $this->assign('categor', $ra);
+        //$this->assign('groupList', $groupList);
         $this->display('userrank');
     }
     

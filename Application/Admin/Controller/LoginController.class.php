@@ -37,7 +37,9 @@ class LoginController extends BaseController {
             $error_msg = '你的账户输入错误已达上限，请联系管理员。';
             $cache_key = 'login_'.getClientIP();
             $cache_db = Cache::getInstance('db');
-            //var_dump($cache_db);
+
+
+
 
             $cache_locknum = $cache_db->get($cache_key);
             file_put_contents('/application_data/app_logs/php/savor_admin
@@ -70,7 +72,22 @@ class LoginController extends BaseController {
                     $mind['userpwd'] = $userpwd;
                     cookie('login_upwd',$mind,86400*7);
                     unset($result[0]['password']);
-                    session('sysUserInfo',$result[0]);
+                    
+                    
+                    $m_role_priv = new \Admin\Model\RolePrivModel();
+                    $ret = $m_role_priv->getPrivByGroupId($userinfo['groupid']);
+                    if(!empty($ret)){
+                        $priv_arr = array();
+                        $flag =0 ;
+                        foreach($ret as $key=>$v){
+                            $priv_str = $v['m'].'.'.$v['c'].'.'.$v['a'];
+                            $priv_arr[$flag] = $priv_str;
+                            $flag ++;
+                        }
+                        $userinfo['priv'] = $priv_arr; 
+                        //session('userPriv',$priv_arr);
+                    }
+                    session('sysUserInfo',$userinfo);
                     //$this->sysLog('登录操作', '登录操作', '当前栏目','login');
                     $url = $this->host_name();
                     header("location: $url");
@@ -81,6 +98,7 @@ class LoginController extends BaseController {
                         $cache_locknum = 1;
                     }
                     $cache_db->set($cache_key,$cache_locknum,$lock_time);
+
                     $lock_num = $lock_max-$cache_locknum;
                     $errormsg=$lock_num==0?$error_msg:'用户名或密码错误，请重新输入。';
                     $this->assign('errormsg',$errormsg);

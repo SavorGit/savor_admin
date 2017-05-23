@@ -1,0 +1,116 @@
+<style type="text/css">
+	.leftaward{
+		float: left;
+	}
+</style>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/boxaward/addPrize" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="acttype" value="{$acttype}">
+    <input type="hidden" name="id" value="{$vlist.bawid}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" disabled name="region1_id" value="{$vlist.hname}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          包间名称：
+        </label>
+        <div class="col-xs-12 col-sm-10" style="z-index:999;">
+          <input type="text" class="form-control" disabled name="region2_id" value="{$vlist.rname}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          机顶盒名称：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+
+          <input type="text" class="form-control" disabled name="region3_id" value="{$vlist.bname}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          一等奖：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+
+          <volist name="vlist['bpr']" id="vo">
+            <if condition="$vo.prize_name eq '一等奖'">
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="firstnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="firstpos" value="{$vo.prize_pos}" />
+              </if>
+
+          </volist>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          二等奖：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+          <volist name="vlist['bpr']" id="vo">
+
+            <if condition="$vo.prize_name eq '二等奖'">
+
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="secondnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="secondpos" value="{$vo.prize_pos}" />
+
+            </if>
+          </volist>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          三等奖：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+          <volist name="vlist['bpr']" id="vo">
+
+            <if condition="$vo.prize_name eq '三等奖'">
+
+              <span class="form-control leftaward">数量</span><input type="number" class="form-control leftaward" name="thirdnum" value="{$vo.prize_num}"><span class="form-control leftaward">概率</span>
+              <input type="number" class="form-control leftaward" name="thirdpos" value="{$vo.prize_pos}" />
+
+            </if>
+          </volist>
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          对应批次日期：
+        </label>
+        <div class="col-xs-12 col-sm-10" style="z-index:999;">
+          <input type="text" class="form-control" disabled name="edittime" value="{$vlist.dtime}">
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          状态：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="hidden" name="isenable" value="0">
+          <input type="checkbox" value="1"  class="make-switch status" name="isenable" data-size="small" data-on-text="启用" data-off-text="禁用" <if condition="$vlist.bflag eq 1" >checked</if> >
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>

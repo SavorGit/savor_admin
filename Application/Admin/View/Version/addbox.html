@@ -27,7 +27,10 @@
 		margin-right: 13px;
 		margin-left: 6px;
 	}
-
+	#boite {
+		height: 500px;
+    	overflow: auto;
+	}
 
 </style>
 <div class="pageContent">
@@ -35,7 +38,7 @@
     <div class="tab-content">
 	   	<input id="oss_host" type="hidden" value="{$oss_host}">
 	   	<input id="devicedata" type="hidden" value="{$devicedata}">
-		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addUpgrade" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addUpgradeBox" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		    <input name="devicetype" type="hidden" value="2"> 
 		    <input name="name" type="hidden" value="box">
 		    <input name="area_id" id="area_id" type="hidden">
@@ -121,7 +124,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">酒楼选择</h4>
       </div>
       <div class="modal-body">
@@ -193,7 +196,7 @@
 /*------全选-------*/
 $(document).ready(function() {
 	var obj = {};
-	var url_s = '{$host_name}'+'/hotel/manager';
+	var url_s = '{$host_name}'+'/hotel/manager_list';
 	var area_v = $('select[name="area_v"]').val();
 	var level_v = $('select[name="level_v"]').val();
 	var state_v = $('select[name="state_v"]').val();
@@ -212,7 +215,7 @@ $(document).ready(function() {
 	obj.hbt_v = hbt_v;
 	$.ajax({
 		type:"post",
-		url:'{$host_name}'+'/hotel/manager',
+		url:'{$host_name}'+'/hotel/manager_list',
 		data:obj,
 		async: true,
 		success:function(call){
@@ -256,7 +259,7 @@ $('#checkfan').click(function(){
 /*----------选取---------------*/
 	$('#searchs').click(function(){
 		var obj = {};
-		var url_s = '{$host_name}'+'/hotel/manager';
+		var url_s = '{$host_name}'+'/hotel/manager_list';
 		var area_v = $('select[name="area_v"]').val();
 		var level_v = $('select[name="level_v"]').val();
 		var state_v = $('select[name="state_v"]').val();
@@ -275,7 +278,7 @@ $('#checkfan').click(function(){
 		obj.hbt_v = hbt_v;
 		$.ajax({
 			type:"post",
-			url:'{$host_name}'+'/hotel/manager',
+			url:'{$host_name}'+'/hotel/manager_list',
 			data:obj,
 			async: true,
 			success:function(call){

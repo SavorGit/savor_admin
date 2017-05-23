@@ -20,7 +20,7 @@ class SysconfigController extends BaseController {
         //$volume_info = $m_sys_config->getOne('system_default_volume');
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
        
-        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume')";
+        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_award_time')";
         $volume_arr = $m_sys_config->getList($where);
        
         foreach($volume_arr as $key=>$v){
@@ -32,9 +32,12 @@ class SysconfigController extends BaseController {
                 $info['system_demand_video_volume'] = $v['config_value'];
             }else if($v['config_key']=='system_tv_volume'){
                 $info['system_tv_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_award_time'){
+                $info['award_time'] = json_decode($v['config_value'],true);
             }
         }
-        //$info['system_default_volume'] = $volume_info['config_value'];
+        $info['mid'] = $info['award_time'][0];
+        $info['aft'] = $info['award_time'][1];
         $info['system_switch_time']  = $switch_time_info['config_value'];
         $info['status'] = $switch_time_info['status'];
         
@@ -173,4 +176,72 @@ class SysconfigController extends BaseController {
             $this->error('删除失败');
         }
     }
+
+
+    public function doConfigBanner(){
+        $data = array();
+        $mid_start = I('post.mid_start');
+        $mid_end = I('post.mid_end');
+        $after_start = I('post.after_start');
+        $after_end = I('post.after_end');
+        $errmsc = '日期格式必须要按插件格式且时为00-23,分为00-59';
+     //   ([0-5][0-9])
+        $pattern = "/^((0[0-9]{1})|(1[0-9]{1})|(2[0-3]{1})):([0-5]{1}[0-9]{1})$/";
+        if (!preg_match ($pattern,$mid_start, $matches)){
+            $mid = '中午开始时间';
+            $this->error($errmsc);
+        }
+        if (!preg_match ($pattern, $mid_end, $matches)){
+            $mid = '中午结束时间';
+            $this->error($errmsc);
+        }
+        if (!preg_match ($pattern, $after_start, $matches)){
+            $mid = '下午开始时间';
+            $this->error($errmsc);
+        }
+        if (!preg_match ($pattern, $after_end, $matches)){
+            $mid = '下午结束时间';
+            $this->error($errmsc);
+        }
+        $m_s = str_replace(':','',$mid_start);
+        $m_e = str_replace(':','',$mid_end);
+        $a_s = str_replace(':','',$after_start);
+        $a_e = str_replace(':','',$after_end);
+        $m_s = intval($m_s);
+        $m_e = intval($m_e);
+        $a_s = intval($a_s);
+        $a_e = intval($a_e);
+        if($m_s>$m_e){
+            $this->error('中午开始时间不得大于结束时间');
+        }
+        if($a_s>$a_e){
+            $this->error('下午开始时间不得大于结束时间');
+        }
+        if($m_e>=$a_s){
+            $this->error('中午结束时间不得大于等于下午开始时间');
+        }
+        if($a_e == 0){
+            $this->error('下午结束最大时间为23:59');
+        }
+
+
+
+        $arr = array(
+            0=>array('start_time'=>$mid_start,
+                'end_time'=>$mid_end),
+            1=>array('start_time'=>$after_start,
+                'end_time'=>$after_end),
+        );
+
+        $data['system_award_time'] = json_encode($arr);
+
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $ret = $m_sys_config->updateInfo($data);
+        if($ret){
+            $this->output('操作成功!', 'sysconfig/configData',2);
+        }else {
+            $this->error('操作失败3!');
+        }
+    }
+
 }

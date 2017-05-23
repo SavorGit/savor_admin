@@ -13,6 +13,8 @@ class ExcelController extends Controller
 
     public function exportExcel($expTitle, $expCellName, $expTableData,$filename)
     {
+        set_time_limit(90);
+        ini_set("memory_limit", "512M");
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
@@ -26,6 +28,12 @@ class ExcelController extends Controller
             $tmpname = 'APP包间首次互动数据';
         }  else if ($filename == 'first_mobile_download') {
             $tmpname = '酒楼首次打开数据';
+        }  else if ($filename == 'downloadcount') {
+            $tmpname = '下载量报表统计';
+        }  else if ($filename == 'appcreen') {
+            $tmpname = 'app与大屏互动统计';
+        }  else if ($filename == 'hotelscreen') {
+            $tmpname = '酒楼大屏统计';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -299,6 +307,158 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
+
+
+    function expdownloadcount(){
+        $filename = 'downloadcount';
+        $dtype = I('get.datetype');
+        $downloadModel =  new \Admin\Model\DownloadRpModel();
+        $where = '1=1 ';
+        $starttime = I('start','');
+        $endtime = I('end','');
+        if($starttime){
+            $where .= "	AND add_time >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND add_time <=  '{$endtime}'";
+        }
+        $soucetype = I('get.sourcetype','');
+        if($soucetype){
+            $where .= "	AND source_type =   '{$soucetype}'";
+        }
+        $orders = '';
+        $rea = $downloadModel->getAllList($where,$orders);
+        $so_type = C('source_type');
+        $cltype = array(
+            '1'=>'android',
+            '2'=>'ios',
+        );
+        $dowload_device_typ = array(
+            '1'=>'android',
+            '2'=>'ios',
+            '3'=>'pc',
+        );
+
+        foreach ($rea['list'] as &$val) {
+            foreach($cltype as $k=>$v){
+                if($k == $val['clientid']){
+                    $val['clientid'] = $v;
+                }
+            }
+            foreach($dowload_device_typ as $k=>$v){
+                if($k == $val['dowload_device_id']){
+                    $val['dowload_device_id'] = $v;
+                }
+            }
+
+            foreach($so_type as $k=>$v){
+                if($k == $val['source_type']){
+                    $val['source_type'] = $v;
+                }
+            }
+
+        }
+        $box_arr = $rea['list'];
+        $xlsName = "downloadcountreport";
+        $xlsCell = array(
+            array('source_type', '来源'),
+            array('clientid', '手机客户端'),
+
+            array('deviceid', '设备唯一标识'),
+
+            array('dowload_device_id', '点击下载设备'),
+
+            array('hotelid', '酒楼id'),
+            array('waiterid', '服务员id'),
+            array('add_time', '添加时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+    function expappscreen(){
+        $filename = 'appcreen';
+        $downloadModel =  new \Admin\Model\AppscreenRpModel();
+        $where = '1=1 ';
+        $starttime = I('start','');
+        $endtime = I('end','');
+        if($starttime){
+            $sttime = strtotime($starttime);
+            $where .= "	AND substring(`timestamps`,0,-3) >= '{$sttime}'";
+        }
+        if($endtime){
+            $etime = strtotime($endtime);
+            $where .= "	AND substring(`timestamps`,0,-3) <=  '{$etime}'";
+        }
+
+
+        $orders = 'timestamps desc';
+        $rea = $downloadModel->getAllList($where,$orders);
+        foreach($rea['list'] as &$val){
+            $val['addtime'] = date("Y-m-d",substr($val['timestamps'],0,-3));
+
+        }
+
+
+        $box_arr = $rea['list'];
+        $xlsName = "appcreenreport";
+        $xlsCell = array(
+            array('area_name', '区域名称'),
+            array('hotel_name', '酒楼名称'),
+
+            array('room_name', '包间名称'),
+
+            array('box_name', '机顶盒名称'),
+
+            array('box_mac', '机顶盒mac'),
+            array('mobile_id', '手机唯一标识id'),
+            array('vcount', '点播次数'),
+            array('vtime', '点播时长'),
+            array('pcount', '投屏次数'),
+            array('ptime', '投屏时长'),
+            array('addtime', '添加时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+    function exphotelscreen(){
+        $filename = 'hotelscreen';
+        $hscreenModel =  new \Admin\Model\HotelscreenRpModel();
+        $where = '1=1 ';
+        $starttime = I('start','');
+        $endtime = I('end','');
+        if($starttime){
+
+            $where .= "	AND (`play_date`) >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND (`play_date`) <=  '{$endtime}'";
+        }
+
+
+        $orders = 'id desc';
+        $rea = $hscreenModel->getAllList($where,$orders);
+        foreach($rea['list'] as &$val){
+
+
+        }
+        $box_arr = $rea['list'];
+        $xlsName = "hotelcreenreport";
+        $xlsCell = array(
+            array('area_name', '区域名称'),
+            array('hotel_name', '酒楼名称'),
+            array('room_name', '包间名称'),
+            array('mac', '机顶盒mac'),
+            array('ads_name', '广告名称'),
+            array('plc', '播放次数'),
+            array('dur', '播放时长'),
+            array('play_date', '播放日期'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
 
     function hotelinfo()
     {//导出Excel

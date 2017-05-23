@@ -1,4 +1,32 @@
 <!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+    .zhezhao_e{
+
+
+
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big_e{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
 <div class="pageContent">
   <form method="post" id="loadpic"
 action="{$host_name}/sysconfig/doAddLoadingImg" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -15,9 +43,9 @@ action="{$host_name}/sysconfig/doAddLoadingImg" class="pageForm required-validat
                   <div class="fileinput-preview thumbnail" data-trigger="fileinput">
                     <a data-target="#modal-file" href="javascript:void(0)">
                      <empty name="oss_addr">
-                        <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                        <img class="mig" id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
                         <else />
-                        <img id="media_idimg" src="{$oss_addr}" border="0" />
+                        <img class="mig" id="media_idimg" src="{$oss_addr}" border="0" />
                       </empty>
                        <span id="media_idimgname"></span>
                     </a>
@@ -41,40 +69,21 @@ action="{$host_name}/sysconfig/doAddLoadingImg" class="pageForm required-validat
       <button class="btn btn-primary" type="submit">保存</button>     
     </div>
   </form>
+  <div class="zhezhao_e"></div>
+        <img class="big_e" src=""/>
 </div>
 <script type="text/javascript">
+$(function(){
+    $('.mig').click(function(){
+        var $a = $(this).attr('src');
+        $('.big_e').prop('src',$a).addClass('addbig');
+        $('.zhezhao_e').show(500);
+        $('.big_e').show(500);
+    })
+    $('.zhezhao_e').click(function(){
+        $('.zhezhao_e').hide(500);
+        $('.big_e').hide(500);
+    })
 
-    /*$(function(){
-        var currentDialogId = $.pdialog.getcurrentDialogId();
-
-        alert(currentDialogId);//获取当前窗口的ID
-        var tempHref = $("#goToModify").attr("href");
-        $("#goToModify").attr("href",tempHref + "&rel="+currentDialogId);
-    });*/
-
-
-    /*function dialogAjaxDone(json){
-        //上一次的rel链接
-        $.pdialog.close("firstDialogId");
-      //  $.pdialog.open(url, dlgId, title);
-         //   navTab.closeCurrentTab();
-        // navTab.closeTab(json.navTabId);
-        DWZ.ajaxDone(json);
-        // alert(json);
-        jap = JSON.stringify(json);
-        console.log(jap);
-        // navTab.closeTab('clientconfig/addclientconfig');
-        // navTab.reload('clientconfig/configdata');
-        navTab.reloadFlag('Sysconfig/configData');
-        //注意返回的JSON的数据结构
-        //navTab.closeTab('abce');
-        if (json.status == DWZ.statusCode.ok){
-            if (json.navTabId){
-           // navTab.reload('clientconfig/configdatar');
-            }
-
-
-        }
-
-}*/
+});
 </script>

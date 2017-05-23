@@ -74,16 +74,20 @@ class ReleaseController extends BaseController{
 	 */
 
 	public function changestate(){
-		$cid = I('post.cid');
+		$cid = I('request.cid');
 		$save = array();
-		$save['state'] = I('post.state');
+		$save['state'] = I('request.state');
 		$catModel = new CategoModel;
 		$res_save = $catModel->where('id='.$cid)->save($save);
+		
 		if($res_save){
-			echo 1;
+		    $message = '更新成功!';
+		    $url = 'release/category';
 		} else {
-			echo 0;
+			$message = '更新失败!';
+	        $url = 'release/category';
 		}
+		$this->output($message, $url,2);
 	}
 
 	/**

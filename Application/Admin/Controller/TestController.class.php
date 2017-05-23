@@ -7,8 +7,30 @@ use Think\Controller;
  *
  */
 class TestController extends Controller {
-                             
-   
+
+    //http://www.a.com/admin/test/whoop
+    public function whoop() {
+
+        /*try {
+            $this->division(10, 0);
+        } catch(\Exception $e) {
+            echo $e->getMessage();
+        }*/
+        // 设置Whoops提供的错误和异常处理
+
+
+
+        $this->division(10, 0);
+    }
+
+    function division($dividend, $divisor) {
+        if($divisor == 0) {
+            throw new \Exception('Division by zero');
+        }
+    }
+
+
+
 
     public function getarsize(){
         exit();

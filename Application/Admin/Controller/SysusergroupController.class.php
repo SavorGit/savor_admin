@@ -4,6 +4,7 @@ namespace Admin\Controller;
  * @desc 系统菜单管理类
  *
  */
+use Common\Lib\Tree;
 class SysusergroupController extends BaseController {
     
     public function __construct() {
@@ -36,7 +37,7 @@ class SysusergroupController extends BaseController {
         $this->display('index');
     }
     
-    //新增用户
+/*    //新增用户
     public function sysusergroupAdd(){
         $acttype = I('acttype', 0, 'int');
         
@@ -64,9 +65,6 @@ class SysusergroupController extends BaseController {
                 $result = $sysusergroup->addData($data, $acttype);
                 if($result) {
                     //修改分组对应下的用户权限
-                    $m_user = new \Admin\Model\UserModel();
-                    $m_user->modifyUserRankByGroupid($id, $code);
-                    
                     $this->output('操作成功!', 'sysusergroup/sysusergroupList');
                 } else {
                     $this->output('操作失败!', 'sysusergroupAdd', 2, 0);
@@ -95,14 +93,121 @@ class SysusergroupController extends BaseController {
         $groupList = parent::getMenuList();
         $this->assign('groupList', $groupList);
         $this->display('sysusergroupadd');
+    }*/
+
+
+
+    //新增用户测试
+    public function sysusergroupAddTest(){
+        $sysNode = new \Admin\Model\SysnodeModel();
+        $rolePrivModel = new \Admin\Model\RolePrivModel();
+        $sysusergroup = new \Admin\Model\SysusergroupModel();
+        $acttype = I('acttype', 0, 'int');
+        $name = I('post.name');
+        //处理提交数据
+        if(IS_POST) {
+            //新增
+            $id   = I('post.id', '', 'int');
+            if($acttype == 0){
+                //判断分组名是否存在
+                $name = trim($name);
+                $count = $sysusergroup->getgroupCount(array('name'=>$name));
+                if($count > 0){
+                    $this->error('用户组已经存在');
+                }
+                $userInfo = session('sysUserInfo');
+                $username = $userInfo['username'];
+                $data['userName']= $username;
+                $data['createtime']= date("Y-m-d H:i:s");
+                $data['name']   = $name;
+                $result = $sysusergroup->addData($data, $acttype);
+                $roleid = $sysusergroup->getLastInsID();
+            }elseif($acttype == 1){
+                //删除已经存在的
+                $roleid = $id;
+                $user_arr = $sysusergroup->getInfo($roleid);
+                $sq_name = $user_arr['name'];
+                if($sq_name != $name){
+
+                    $count = $sysusergroup->getgroupCount(array('name'=>$name));
+                    if($count > 0){
+                        $this->error('用户组名称已经存在');
+                    }
+
+                }
+            }
+            if (is_array($_POST['menuid']) && count($_POST['menuid']) > 0) {
+                $rolePrivModel->delData($roleid);
+                $menuinfo = $sysNode->field('`id`,`ertype`,`m`,`c`,`a`,`menulevel`')->select();
+
+                foreach ($menuinfo as $_v) $menu_info[$_v[id]] = $_v;
+
+                foreach($_POST['menuid'] as $menuid){
+                    $info = array();
+                    $info = $rolePrivModel->get_menuinfo(intval($menuid),$menu_info);
+                    $info['nodeid'] = intval($menuid);
+                    $info['roleid'] = $roleid;
+                    $rolePrivModel->add($info);
+                }
+
+               $this->output('操作成功','sysusergroup/sysusergroupList');
+            }else{
+                $rolePrivModel->delData($roleid);
+            }
+        }
+
+        //非提交处理
+        if(1 === $acttype) {
+            $gid = I('id', 0, 'int');
+            if(!$gid) {
+                $this->output('当前信息不存在!', 'sysusergroupList');
+            }
+            $resulta = $sysusergroup->getInfo($gid);
+            $this->assign('vinfo', $resulta);
+            $this->assign('acttype', 1);
+        } else {
+            $this->assign('acttype', 0);
+        }
+        //获取树形结构
+        $matre = new Tree();
+        $matre->icon = array('│ ','├─ ','└─ ');
+        $matre->nbsp = '&nbsp;&nbsp;&nbsp;';
+        //获取所有节点
+        $result = $sysNode->getAllList();
+
+        //获取权限表数据
+        $priv_data = $rolePrivModel->getInfoByroleid($gid);
+        foreach ($result as $n=>$t) {
+            $result[$n]['cname'] = $t['name'];
+            $result[$n]['checked'] = $rolePrivModel->is_checked($t,$gid,$priv_data)? ' checked' : '';
+            $result[$n]['level'] = $rolePrivModel->get_level($t['id'],$result);
+            $result[$n]['parentid_node'] = ($t['parentid'])? ' class="child-of-node-'.$t['parentid'].'"' : '';
+
+        }
+
+
+        $str  = "<tr id='node-\$id' \$parentid_node>
+							<td style='padding-left:30px;'>\$spacer<input type='checkbox' name='menuid[]' value='\$id' level='\$level' \$checked onclick='javascript:checknode(this);'> \$cname</td>
+						</tr>";
+
+
+        $matre->init($result);
+        $categorys = $matre->get_tree(0, $str);
+
+        $ra['temp'] = $categorys;
+
+        $this->assign('categor', $ra);
+        //$this->assign('groupList', $groupList);
+        $this->display('sysusergroupaddtest');
     }
-    
-    
+
     //删除 记录
     public function sysusergroupDel() {
         $gid = I('get.id', 0, 'int');
         if($gid) {
             $delete    = new \Admin\Model\SysusergroupModel();
+            $rolePrivModel = new \Admin\Model\RolePrivModel();
+            $rolePrivModel->delData($gid);
             $result = $delete -> delData($gid);
             if($result) {
                 $this->output('删除成功', 'sysusergroupList',2);

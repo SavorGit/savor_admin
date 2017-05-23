@@ -8,14 +8,14 @@
     <input type="hidden" name="_sort" value="{$_sort}"/>
     <div class="searchBar">
       <div class="clearfix">
-      <div class="col-xs-12 col-sm-4 col-md-5">
+      <div class="col-xs-12 col-sm-2 col-md-2">
           <div class="tools-group">
             <a class="btn btn-success btn-sm add" href="{$host_name}/advert/addAdvert" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i>新增</a>
           </div>
         </div>
        <div class="col-xs-12 col-sm-4 col-md-2">
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="keywords" value="{$keywords}" placeholder="输入名称查找">
+            <input type="text" class="form-control" name="keywords" style="width: 150px;" value="{$keywords}" placeholder="输入名称查找">
             <span class="input-group-btn">
             	<select name="adstype" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
 					<option value="0" data-content='全部' <if condition="$adstype eq 0"> selected</if> >全部{$adstype}</option>
@@ -27,21 +27,21 @@
 				</select>
 			</span>
           </div>
-        </div> 
-           <div class="goods-date">
-        	<div class="form-inline">
-            	<div class="form-group">
-                    <label>上传时间：</label>
-                    <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
-                         <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-5" style="margin-left:100px;">
+          <div class="form-inline">
+            <div class="form-group">
+              <label>上传时间：</label>
+              <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+                <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
                          <span class="input-group-btn">
                            <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
                            <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
                          </span>
-                     </div>
-                 </div>
-                   <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
-                     <input name="end_time" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$timeinfo.end_time}" readonly>
+              </div>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+              <input name="end_time" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$timeinfo.end_time}" readonly>
                      <span class="input-group-btn">
                        <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
                        <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
@@ -49,9 +49,11 @@
                      <span class="input-group-btn">
               			<button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search">搜索</i></button>
             		</span>
-                 </div>
-             </div>
-         </div>
+            </div>
+          </div>
+          </div>
+
+
       </div>
     </div>
   </form>

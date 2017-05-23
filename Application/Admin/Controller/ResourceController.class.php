@@ -271,7 +271,7 @@ class ResourceController extends BaseController{
 	                 $this->error('更新失败!');
 	             }
 	         }
-	         $this->output($message, $url);
+	         $this->output($message, $url,2);
 	     }else{
 	         $vinfo = $mediaModel->getMediaInfoById($media_id);
 	         $this->assign('vinfo',$vinfo);

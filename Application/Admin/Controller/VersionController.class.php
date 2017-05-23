@@ -211,6 +211,301 @@ class VersionController extends BaseController{
 	        $this->display($display_html);
 	    }
 	}
+	/**
+	 * @desc 客户端发布新版
+	 */
+	public function addUpgradeClient(){
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $versionModel = new \Admin\Model\VersionModel();
+	    $name = I('name','client');
+
+	    if(IS_POST){
+	        $device_type = I('post.devicetype');//终端类型：1小平台，2机顶盒，3,4手机
+	        $add_data = array();
+	        $add_data['device_type'] = $device_type;
+	        $add_data['version_min'] = I('post.version_min');
+	        $add_data['version_max'] = I('post.version_max');
+	        $add_data['version'] = I('post.version');
+	        $add_data['update_type'] = I('post.update_type');
+	        $add_data['create_time'] = date('Y-m-d H:i:s');
+	        $add_data['state'] = 0;
+	        if($device_type==1 || $device_type==2){
+	            $upgrade_time_start = I('post.upgrade_time_start',0,'intval');
+	            $upgrade_time_end = I('post.upgrade_time_end',0,'intval');
+	            if($upgrade_time_start>$upgrade_time_end){
+	                $this->output('升级开始时间不能大于结束时间', 'version/addUpgrade', 3);
+	            }
+	            $area_id = I('post.area_id',0,'intval');
+	            $hotel_id = I('post.hotel_id','');
+	            if($area_id)   $add_data['area_id'] = $area_id;
+	            if($hotel_id)   $add_data['hotel_id'] = $hotel_id;
+	        }
+	        $res_data = $upgradeModel->add($add_data);
+	        if($res_data){
+	            $navTab = "version/$name";
+	            $this->output('新增升级版成功', $navTab);
+	        }else{
+	            $this->error('新增升级版本失败');
+	        }
+	    }else{
+	        $filed = 'version_code,version_name,device_type';
+	        $device_condition = array(
+	            'client'=>array('IN','3,4'),
+	            'box'=>2,
+	            'platform'=>1
+	        );
+	        $where = array();
+	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
+	
+	        $order = 'id desc';
+	        $datalist = $versionModel->getAllList($filed, $where, $order);
+	        $android = array();
+	        $ios = array();
+	        $version = array();
+	        foreach ($datalist as $k=>$v){
+	            $version_code = $v['version_code'];
+	            $version[$v['device_type']][$version_code] = $v['version_name'];
+	        }
+	        if($name=='client'){
+	            $android = $version[3];
+	            krsort($android);
+	            $android_max = $android;
+	            ksort($android);
+	            $android_min = $android;
+	            $android_vinfo = array(
+	                'min'=>$android_min,
+	                'max'=>$android_max
+	            );
+	            $ios = $version[4];
+	            ksort($ios);
+	            $ios_min = $ios;
+	            krsort($ios);
+	            $ios_max = $ios;
+	            $ios_vinfo = array(
+	                'min'=>$ios_min,
+	                'max'=>$ios_max
+	            );
+	            $devicedata = array('3'=>$android_vinfo,'4'=>$ios_vinfo);
+	            $devicedata = json_encode($devicedata,true);
+	            $this->assign('devicedata',$devicedata);
+	            $this->assign('android_vinfo',$android_vinfo);
+	        }else{
+	            if(isset($device_condition[$name])){
+	                $device_type =$device_condition[$name];
+	                $version = $version[$device_type];
+	                ksort($version);
+	                $version_min = $version;
+	                krsort($version);
+	                $version_max = $version;
+	                $version_vinfo = array(
+	                    'min'=>$version_min,
+	                    'max'=>$version_max,
+	                );
+	
+	                $this->assign('version_vinfo',$version_vinfo);
+	                $areaModel  = new \Admin\Model\AreaModel();
+	                $area_arr = $areaModel->getAllArea();
+	                $this->assign('area', $area_arr);
+	            }
+	        }
+	        $display_html = "add$name";
+	        $this->display($display_html);
+	    }
+	}
+	public function addUpgradeBox(){
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $versionModel = new \Admin\Model\VersionModel();
+	    $name = I('name','box');
+	    if(IS_POST){
+	        $device_type = I('post.devicetype');//终端类型：1小平台，2机顶盒，3,4手机
+	        $add_data = array();
+	        $add_data['device_type'] = $device_type;
+	        $add_data['version_min'] = I('post.version_min');
+	        $add_data['version_max'] = I('post.version_max');
+	        $add_data['version'] = I('post.version');
+	        $add_data['update_type'] = I('post.update_type');
+	        $add_data['create_time'] = date('Y-m-d H:i:s');
+	        $add_data['state'] = 0;
+	        if($device_type==1 || $device_type==2){
+	            $upgrade_time_start = I('post.upgrade_time_start',0,'intval');
+	            $upgrade_time_end = I('post.upgrade_time_end',0,'intval');
+	            if($upgrade_time_start>$upgrade_time_end){
+	                $this->output('升级开始时间不能大于结束时间', 'version/addUpgrade', 3);
+	            }
+	            $area_id = I('post.area_id',0,'intval');
+	            $hotel_id = I('post.hotel_id','');
+	            if($area_id)   $add_data['area_id'] = $area_id;
+	            if($hotel_id)   $add_data['hotel_id'] = $hotel_id;
+	        }
+	        $res_data = $upgradeModel->add($add_data);
+	        if($res_data){
+	            $navTab = "version/$name";
+	            $this->output('新增升级版成功', $navTab);
+	        }else{
+	            $this->error('新增升级版本失败');
+	        }
+	    }else{
+	        $filed = 'version_code,version_name,device_type';
+	        $device_condition = array(
+	            'client'=>array('IN','3,4'),
+	            'box'=>2,
+	            'platform'=>1
+	        );
+	        $where = array();
+	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
+	
+	        $order = 'id desc';
+	        $datalist = $versionModel->getAllList($filed, $where, $order);
+	        $android = array();
+	        $ios = array();
+	        $version = array();
+	        foreach ($datalist as $k=>$v){
+	            $version_code = $v['version_code'];
+	            $version[$v['device_type']][$version_code] = $v['version_name'];
+	        }
+	        if($name=='client'){
+	            $android = $version[3];
+	            krsort($android);
+	            $android_max = $android;
+	            ksort($android);
+	            $android_min = $android;
+	            $android_vinfo = array(
+	                'min'=>$android_min,
+	                'max'=>$android_max
+	            );
+	            $ios = $version[4];
+	            ksort($ios);
+	            $ios_min = $ios;
+	            krsort($ios);
+	            $ios_max = $ios;
+	            $ios_vinfo = array(
+	                'min'=>$ios_min,
+	                'max'=>$ios_max
+	            );
+	            $devicedata = array('3'=>$android_vinfo,'4'=>$ios_vinfo);
+	            $devicedata = json_encode($devicedata,true);
+	            $this->assign('devicedata',$devicedata);
+	            $this->assign('android_vinfo',$android_vinfo);
+	        }else{
+	            if(isset($device_condition[$name])){
+	                $device_type =$device_condition[$name];
+	                $version = $version[$device_type];
+	                ksort($version);
+	                $version_min = $version;
+	                krsort($version);
+	                $version_max = $version;
+	                $version_vinfo = array(
+	                    'min'=>$version_min,
+	                    'max'=>$version_max,
+	                );
+	
+	                $this->assign('version_vinfo',$version_vinfo);
+	                $areaModel  = new \Admin\Model\AreaModel();
+	                $area_arr = $areaModel->getAllArea();
+	                $this->assign('area', $area_arr);
+	            }
+	        }
+	        $display_html = "add$name";
+	        $this->display($display_html);
+	    }
+	}
+	public function addUpgradePlatform(){
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $versionModel = new \Admin\Model\VersionModel();
+	    $name = I('name','platform');
+	    if(IS_POST){
+	        $device_type = I('post.devicetype');//终端类型：1小平台，2机顶盒，3,4手机
+	        $add_data = array();
+	        $add_data['device_type'] = $device_type;
+	        $add_data['version_min'] = I('post.version_min');
+	        $add_data['version_max'] = I('post.version_max');
+	        $add_data['version'] = I('post.version');
+	        $add_data['update_type'] = I('post.update_type');
+	        $add_data['create_time'] = date('Y-m-d H:i:s');
+	        $add_data['state'] = 0;
+	        if($device_type==1 || $device_type==2){
+	            $upgrade_time_start = I('post.upgrade_time_start',0,'intval');
+	            $upgrade_time_end = I('post.upgrade_time_end',0,'intval');
+	            if($upgrade_time_start>$upgrade_time_end){
+	                $this->output('升级开始时间不能大于结束时间', 'version/addUpgrade', 3);
+	            }
+	            $area_id = I('post.area_id',0,'intval');
+	            $hotel_id = I('post.hotel_id','');
+	            if($area_id)   $add_data['area_id'] = $area_id;
+	            if($hotel_id)   $add_data['hotel_id'] = $hotel_id;
+	        }
+	        $res_data = $upgradeModel->add($add_data);
+	        if($res_data){
+	            $navTab = "version/$name";
+	            $this->output('新增升级版成功', $navTab);
+	        }else{
+	            $this->error('新增升级版本失败');
+	        }
+	    }else{
+	        $filed = 'version_code,version_name,device_type';
+	        $device_condition = array(
+	            'client'=>array('IN','3,4'),
+	            'box'=>2,
+	            'platform'=>1
+	        );
+	        $where = array();
+	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
+	
+	        $order = 'id desc';
+	        $datalist = $versionModel->getAllList($filed, $where, $order);
+	        $android = array();
+	        $ios = array();
+	        $version = array();
+	        foreach ($datalist as $k=>$v){
+	            $version_code = $v['version_code'];
+	            $version[$v['device_type']][$version_code] = $v['version_name'];
+	        }
+	        if($name=='client'){
+	            $android = $version[3];
+	            krsort($android);
+	            $android_max = $android;
+	            ksort($android);
+	            $android_min = $android;
+	            $android_vinfo = array(
+	                'min'=>$android_min,
+	                'max'=>$android_max
+	            );
+	            $ios = $version[4];
+	            ksort($ios);
+	            $ios_min = $ios;
+	            krsort($ios);
+	            $ios_max = $ios;
+	            $ios_vinfo = array(
+	                'min'=>$ios_min,
+	                'max'=>$ios_max
+	            );
+	            $devicedata = array('3'=>$android_vinfo,'4'=>$ios_vinfo);
+	            $devicedata = json_encode($devicedata,true);
+	            $this->assign('devicedata',$devicedata);
+	            $this->assign('android_vinfo',$android_vinfo);
+	        }else{
+	            if(isset($device_condition[$name])){
+	                $device_type =$device_condition[$name];
+	                $version = $version[$device_type];
+	                ksort($version);
+	                $version_min = $version;
+	                krsort($version);
+	                $version_max = $version;
+	                $version_vinfo = array(
+	                    'min'=>$version_min,
+	                    'max'=>$version_max,
+	                );
+	
+	                $this->assign('version_vinfo',$version_vinfo);
+	                $areaModel  = new \Admin\Model\AreaModel();
+	                $area_arr = $areaModel->getAllArea();
+	                $this->assign('area', $area_arr);
+	            }
+	        }
+	        $display_html = "add$name";
+	        $this->display($display_html);
+	    }
+	}
 	
 	public function operateStatus(){
 	    $id = I('get.id',0,'intval');
@@ -240,7 +535,174 @@ class VersionController extends BaseController{
 	    $navTab = "version/$upgrade_name";
 	    $this->output($message, $navTab, 2);
 	}
-
+	public function operateClientStatus(){
+	    $id = I('get.id',0,'intval');
+	    $state = I('get.state',0,'intval');
+	    $upgrade_name = I('get.name','client');
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $where = "id='$id'";
+	    switch ($state){
+	        case 0:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已关闭';
+	            break;
+	        case 1:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已开启';
+	            break;
+	        case 20:
+	            $upgradeModel->where($where)->delete();
+	            $message = '已删除';
+	            break;
+	        default:
+	            $message = '操作失败';
+	            break;
+	    }
+	    $navTab = "version/$upgrade_name";
+	    $this->output($message, $navTab, 2);
+	}
+	public function operateBoxStatus(){
+	    $id = I('get.id',0,'intval');
+	    $state = I('get.state',0,'intval');
+	    $upgrade_name = I('get.name','box');
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $where = "id='$id'";
+	    switch ($state){
+	        case 0:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已关闭';
+	            break;
+	        case 1:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已开启';
+	            break;
+	        case 20:
+	            $upgradeModel->where($where)->delete();
+	            $message = '已删除';
+	            break;
+	        default:
+	            $message = '操作失败';
+	            break;
+	    }
+	    $navTab = "version/$upgrade_name";
+	    $this->output($message, $navTab, 2);
+	}
+	public function operatePlatformStatus(){
+	    $id = I('get.id',0,'intval');
+	    $state = I('get.state',0,'intval');
+	    $upgrade_name = I('get.name','platfrom');
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $where = "id='$id'";
+	    switch ($state){
+	        case 0:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已关闭';
+	            break;
+	        case 1:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已开启';
+	            break;
+	        case 20:
+	            $upgradeModel->where($where)->delete();
+	            $message = '已删除';
+	            break;
+	        default:
+	            $message = '操作失败';
+	            break;
+	    }
+	    $navTab = "version/$upgrade_name";
+	    $this->output($message, $navTab, 2);
+	}
+	public function delClient(){
+	    $id = I('get.id',0,'intval');
+	    $state = I('get.state',0,'intval');
+	    $upgrade_name = I('get.name','client');
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $where = "id='$id'";
+	    switch ($state){
+	        case 0:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已关闭';
+	            break;
+	        case 1:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已开启';
+	            break;
+	        case 20:
+	            $upgradeModel->where($where)->delete();
+	            $message = '已删除';
+	            break;
+	        default:
+	            $message = '操作失败';
+	            break;
+	    }
+	    $navTab = "version/$upgrade_name";
+	    $this->output($message, $navTab, 2);
+	}
+	public function delBox(){
+	    $id = I('get.id',0,'intval');
+	    $state = I('get.state',0,'intval');
+	    $upgrade_name = I('get.name','box');
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $where = "id='$id'";
+	    switch ($state){
+	        case 0:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已关闭';
+	            break;
+	        case 1:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已开启';
+	            break;
+	        case 20:
+	            $upgradeModel->where($where)->delete();
+	            $message = '已删除';
+	            break;
+	        default:
+	            $message = '操作失败';
+	            break;
+	    }
+	    $navTab = "version/$upgrade_name";
+	    $this->output($message, $navTab, 2);
+	}
+	public function delPlatform(){
+	    $id = I('get.id',0,'intval');
+	    $state = I('get.state',0,'intval');
+	    $upgrade_name = I('get.name','platform');
+	    $upgradeModel = new \Admin\Model\UpgradeModel();
+	    $where = "id='$id'";
+	    switch ($state){
+	        case 0:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已关闭';
+	            break;
+	        case 1:
+	            $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+	            $upgradeModel->where($where)->save($data);
+	            $message = '已开启';
+	            break;
+	        case 20:
+	            $upgradeModel->where($where)->delete();
+	            $message = '已删除';
+	            break;
+	        default:
+	            $message = '操作失败';
+	            break;
+	    }
+	    $navTab = "version/$upgrade_name";
+	    $this->output($message, $navTab, 2);
+	}
 	public function hotelList(){
 	    $hnum = I('get.hnum',0,'intval');
 	    $id = I('get.id',0,'intval');

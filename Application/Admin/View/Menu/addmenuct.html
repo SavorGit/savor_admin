@@ -87,7 +87,7 @@
 			<img class="bottoms" src="../../../../Public/admin/assets/img/u3027.png"/>
 			<img class="bottomz" src="../../../../Public/admin/assets/img/u3025.png"/>
 
-			<button type="button" data-toggle="modal" id="checkout" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" data-target=".bs-example-modal-sm">导入</button>
+			<button  type="button" data-toggle="modal" id="checkout" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" >导入</button>
 			<!--left-->
 			<div id="left" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
 				<input type="date" id="starttime" name="starttime" style="margin: 10px;width: 230px;" placeholder="最早时间" style="margin: 10px;"/>
@@ -214,6 +214,7 @@
 
 			//alert($("#m_type option:selected").val());
 			function(){
+
 				var excelpath = $("#excelpath").val();
 				var str2 = '';
 				$('.rightlist>.divlist2').each(function () {
@@ -304,9 +305,6 @@
 		uploadExtraData: {kvId: '10'},
 		maxFileCount: 1,
 		allowedFileExtensions:['csv', 'xlsx'],
-
-
-
 	});
 
 	$('#file-4').on('fileselectnone', function() {
@@ -322,12 +320,15 @@
 	});
 
 	$('#file-4').on('filepreupload', function() {
-		//alert('proew');
+
+
 	});
 	$('#file-4').on('fileuploaded', function(event, data, previewId, index) {
 		//alert(data);
 		//alert(data.files);
 		alert('上传EXCEL成功');
+		//$('#file-4').fileinput('lock');
+		//$('#file-4').fileinput('clear');
 		$("#excelsub").attr("disabled",false);
 		$("#excelpath").val(data.response);
 		//var form = data.form, files = data.files, extra = data.extra,
@@ -341,6 +342,8 @@
 
 	$("#checkout").click(function () {
 
+		$('#file-4').fileinput('clear');
+		$("#excelpath").val('');
 	});
 
 	//reurl();

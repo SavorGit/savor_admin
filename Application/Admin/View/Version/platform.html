@@ -10,7 +10,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addUpgrade?name=platform" title="小平台升级" target="dialog" mask="true"><i class="fa fa-plus"></i>小平台升级</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addUpgradePlatform" title="小平台升级" target="dialog" mask="true"><i class="fa fa-plus"></i>小平台升级</a>
           </div>
         </div>
       </div>
@@ -59,13 +59,13 @@
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
 	              <if condition="$vlist['state'] eq 1">
-	              <a data-tip="已开启" target="ajaxTodo" href="{$host_name}/version/operateStatus?id={$vlist.id}&name=platform&state=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+	              <a data-tip="已开启" target="ajaxTodo" href="{$host_name}/version/operatePlatformStatus?id={$vlist.id}&name=platform&state=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
 	                <i class="fa fa-toggle-on"></i></span></a>
 	              <else/>
-	              <a data-tip="已关闭" target="ajaxTodo" href="{$host_name}/version/operateStatus?id={$vlist.id}&name=platform&state=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+	              <a data-tip="已关闭" target="ajaxTodo" href="{$host_name}/version/operatePlatformStatus?id={$vlist.id}&name=platform&state=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
 	                <i class="fa fa-toggle-off"></i></span></a>
 	              </if>
-                  <a data-tip="删除" target="ajaxTodo" href="{$host_name}/version/operateStatus?id={$vlist.id}&name=platform&state=20" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
+                  <a data-tip="删除" target="ajaxTodo" href="{$host_name}/version/delPlatform?id={$vlist.id}&name=platform&state=20" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
                 </div>

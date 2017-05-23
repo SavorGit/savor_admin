@@ -11,8 +11,8 @@ class BaseController extends Controller {
     
     public function __construct(){
         parent::__construct();
-        $this->handlePublicParams();
         $this->checkLogin();
+        $this->handlePublicParams();
         $this->getNameByIp();
        
     }
@@ -22,6 +22,7 @@ class BaseController extends Controller {
         $this->assign('site_host_name',$this->host_name());
         $this->assign('imgup_path',$this->imgup_path());
         $this->assign('imgup_show',$this->imgup_show());
+        $this->checkPriv();  //检查权限
         $this->sysLog($actionName='', $oppreate='', $program='');
         $this->recordLog();
     }
@@ -364,12 +365,13 @@ class BaseController extends Controller {
                 return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
             }
         }
-        
-        if(!$add_mediadata['oss_addr']){
+
+        if(!$add_mediadata['oss_addr'] ||  substr($add_mediadata['oss_addr'],0, 15) !='media/resource/' || strlen(substr($add_mediadata['oss_addr'],15)) ==0 ){
             $message = 'OSS上传失败!';
             $url = 'resource/resourceList';
             return  array('media_id'=>$media_id,'message'=>$message,'url'=>$url);
         }
+
         $tempInfo = pathinfo($add_mediadata['oss_addr']);
         $surfix = $tempInfo['extension'];
         $typeinfo = C('RESOURCE_TYPEINFO');
@@ -469,5 +471,48 @@ class BaseController extends Controller {
         }else{
             $mbperModel->add($dat);
         }
+    }
+    public function checkPriv(){
+        $userinfo = session('sysUserInfo');
+        $user_group_id = $userinfo['groupid'];
+        $free_controller = array('admin.login','admin.index');
+        $free_action = array('admin.menu.get_se_left','admin.clean.cache','admin.resource.uploadresource',
+                             'admin.resource.uploadresourcenew','admin.user.chagepwd','admin.boxaward.getaward',
+                             'admin.hotel.manager_list',
+        );
+        $model_name      = strtolower(MODULE_NAME);
+        $controller_name = strtolower(CONTROLLER_NAME);
+        $action_name     = strtolower(ACTION_NAME);
+        //$controller = strtolower(MODULE_NAME.'.'.CONTROLLER_NAME);
+        //$action = strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+        $controller = $model_name.'.'.$controller_name;
+        $action = $model_name.'.'.$controller_name.'.'.$action_name;
+        if(in_array($controller, $free_controller)){
+            return true;
+        }
+        if(in_array($action, $free_action)){
+            return true;
+        }
+        if($user_group_id !=1 ){//非超级管理员
+            $priv_arr = $userinfo['priv'];
+            $action =strtolower(MODULE_NAME.'.'. CONTROLLER_NAME.'.'.ACTION_NAME);
+            
+            if(!in_array($action, $priv_arr)){
+              
+                $m_nodemenu= new \Admin\Model\SysnodeModel();
+                $map = array();
+                $map['m'] = $model_name;
+                $map['c'] = $controller_name;
+                $map['a'] = $action_name;
+                $nodeInfo = $m_nodemenu->getInfo($map);
+                if($nodeInfo['ertype']==1){
+                    $this->error('没有权限操作！');
+                }else if($nodeInfo['ertype']==2){
+                    echo '<script>$.pdialog.closeCurrent();  alertMsg.error("没有权限操作！");</script>';
+                }
+                exit;
+
+            }
+        } 
     }
 }

@@ -281,7 +281,7 @@ class MenuController extends BaseController {
             //var_dump($menuliModel->getLastSql());
         }
 
-         $this->output('发布成功了!', 'menu/getlist',2);
+         $this->output('发布成功了!', 'menu/getlist');
        // ob_end_clean();
        // $this->redirect("content/getlist");
         //echo "<script>location.href='http://www.baidu.com'</script>";
@@ -845,7 +845,11 @@ class MenuController extends BaseController {
             $save['create_time'] = date('Y-m-d H:i:s');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
-                $this->error('操作失败名字已经有!');
+                $this->error('节目单名称已存在!');
+            }
+            $rightid_arr = I('post.rightid','');
+            if(empty($rightid_arr)){
+                $this->error('节目单列表不能为空!');
             }
             $result = $mlModel->add($save);
             if ( $result ) {
@@ -869,7 +873,7 @@ class MenuController extends BaseController {
                     $this->addlog($data, $menu_id);
 
                    // $this->output('新增成功', 'menu/addmen',2);
-                    $this->output('新增成功', 'menu/getlist');
+                    $this->output('新增成功', 'menu/addmen',2);
                 } else {
                     $this->error('新增失败');
                 }

@@ -1,4 +1,9 @@
 <!--修改样式2 p元素自适应宽度 start-->
+<script src="/Public/admin/assets/js/timepicki.js" type="text/javascript" />
+<link href="/Public/admin/assets/css/timepicki.css" rel="stylesheet" type="text/css" />
+
+
+
 <style type="text/css">
     .zhezhao{
 
@@ -33,7 +38,7 @@
  <div class="tools-group hidden-xs ">电视设置</div>
 </div>
 <div class="pageContent" id="pagecontent">
-  <div id="w_list_print">
+  <div id="w_list_print" style="overflow:hidden;">
     <div class="no-more-tables" style="margin-top:20px;">
       <form method="post" action="{$host_name}/sysconfig/doConfigData" id="configrcp" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
@@ -120,6 +125,34 @@
         <img class="big" src=""/>
           </tbody>
         </table>
+
+
+
+        <form method="post" action="{$host_name}/sysconfig/doConfigBanner" id="configbanner" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+            <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                <thead>
+                <th colspan="5">设置游戏时间样式(中午{$info['mid'][start_time]}-{$info['mid'][end_time]}&nbsp;&nbsp;下午{$info['aft'][start_time]}-{$info['aft'][end_time]})</th>
+                <tr >
+                    <td>
+
+                        中午开始时间：<input  placeholder="请输入数字" type="text" name="mid_start" value="{$info['mid'][start_time]}"  class="time_elementa" readonly/>
+
+                    </td>
+                    <td>中午结束：<input  placeholder="请输入数字" type="text" name="mid_end" value="{$info['mid'][end_time]}"  class="time_elementb" readonly/></td>
+                    <td>下午开始：<input  placeholder="请输入数字" type="text" name="after_start" value="{$info['aft'][start_time]}" class="time_elementc"  readonly/></td>
+                    <td>下午结束：<input  placeholder="请输入数字" type="text" name="after_end" value="{$info['aft'][end_time]}" class="time_elementd"  readonly/></td>
+                    <td>
+                        <button class="btn btn-primary" type="submit">保存</button>
+                    </td>
+                </tr>
+
+
+                </thead>
+
+                </tbody>
+            </table>
+
+        </form>
     </div>
   </div>
   {$page}
@@ -137,10 +170,51 @@ $(function(){
         $('.big').hide(500);
     })
 
+   /* $("#sysconfig_configdata_mid").datetimepicker({
+        startView:0,
+        //minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'hh:ii',
+        todayBtn:  1,
+        autoclose: 1,
+        pickerPosition:"top-left"
+    });*/
+    $(".time_elementa").timepicki();
+    $(".time_elementb").timepicki();
+    $(".time_elementc").timepicki();
+    $(".time_elementd").timepicki();
+
 });
 $("#videoshan").click(function(){
     $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
+});
+$('.time_elementa,.time_elementb,.time_elementc,.time_elementd').click(function(){
+    var timea = $(this).val();
+    var b = timea.split(':');
+    console.log(b)
+    $(this).next('.timepicker_wrap').find('.ti_tx').html(Trim(b[0],'g'));
+    $(this).next('.timepicker_wrap').find('.mi_tx').html(Trim(b[1],'g'));
 })
+
+function Trim(str,is_global)
+
+{
+
+    var result;
+
+    result = str.replace(/(^\s+)|(\s+$)/g,"");
+
+    if(is_global.toLowerCase()=="g")
+
+    {
+
+        result = result.replace(/\s/g,"");
+
+    }
+
+    return result;
+
+}
 
 
 
