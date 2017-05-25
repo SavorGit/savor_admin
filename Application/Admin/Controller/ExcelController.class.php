@@ -34,6 +34,8 @@ class ExcelController extends Controller
             $tmpname = 'app与大屏互动统计';
         }  else if ($filename == 'hotelscreen') {
             $tmpname = '酒楼大屏统计';
+        }else if($filename == "allappdownload"){
+            $tmpname = 'App下载统计总表';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -542,6 +544,94 @@ class ExcelController extends Controller
             echo 'succes';
         }
         // $this->success('添加成功');
+    }
+    public function excelAppDownload(){
+        $hotel_name = I('hotel_name','','trim');
+        $guardian   = I('guardian','','trim');  
+        $start_date = I('start_date');
+        $end_date   = I('end_date');
+        $where ='';
+        $where =" and src in('box','mob','rq')";
+        if(!empty($hotel_name)){
+            $where .=" and hotel_name like '%".$hotel_name."%'";
+        } 
+        if(!empty($guardian)){
+            $where .=" and guardian like '%".$guardian."%'";
+        }
+        if($start_date){
+            $where .=" and date_time>='".$start_date."'";
+        }
+        if($end_date){
+            $where .= " and date_time<='".$end_date."'";
+        }
+        
+        $m_app_download = new \Admin\Model\AppDownloadModel();
+        $download_list = $m_app_download->getDownloadHotel($where ,$order='date_time',$sort='desc');
+         
+        $data = array();
+        foreach($download_list as $key=>$v){
+             
+            $data[$v['hotel_id']][] = $v;
+        }
+        
+        $count = 0;
+        $list = array();
+        foreach($data as $key=>$val){
+            $list[] = $val;
+            $count ++;
+        }
+         
+       
+        $rts = array();
+        $flag = 0;
+        foreach($list as $key=>$val){
+            $rts[$flag]['hotel_id']   = $val[0]['hotel_id'];
+            $rts[$flag]['hotel_name'] = $val[0]['hotel_name'];
+            $rts[$flag]['guardian']   = $val[0]['guardian'];
+            //$rts[$flag]['end_date_time']  = $val[0]['date_time'];
+            $c_count = count($val) -1;
+            //$rts[$flag]['start_date_time'] = $val[$c_count]['date_time'];
+            $rts[$flag]['quantum'] = $val[$c_count]['date_time']."--".$val[0]['date_time'];;
+            $box = $mob = $rq = $arr = array();
+             
+            foreach($val as $k=>$v){
+                 
+                if($v['src'] =='box'){
+                    $box[]=$v['mobile_id'];
+                }else if($v['src']=='mob'){
+                    $mob[] = $v['mobile_id'];
+                }else if($v['src']=='rq'){
+                    $rq[] = $v['mobile_id'];
+                }
+            }
+            $rts[$flag]['box'] = $box;
+            $rts[$flag]['mob'] = $mob;
+            $rts[$flag]['rq']  = $rq;
+        
+             
+            $arr = array_merge($box,$mob,$rq);
+            $arr = array_unique($arr);
+            $rts[$flag]['all'] = $arr;
+            $rts[$flag]['box_num'] = count($box);
+            $rts[$flag]['mob_num'] = count($mob);
+            $rts[$flag]['rq_num']  = count($rq);
+            $rts[$flag]['all_num'] = count($arr);
+            $flag ++;
+        }  
+        
+        $filename = 'allappdownload';
+        $xlsName = "allappdownload";
+        $xlsCell = array(
+            array('quantum', '时段'),
+            array('hotel_name', '酒楼名称'),
+            array('guardian', '维护人'),
+            array('box_num', '首次投屏数量'),
+            array('rq_num', '二维码扫描下载'),
+            array('mob_num', '首次打开'),
+            array('all_num', '去重后总计'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $rts,$filename);
+        
     }
 
 }
