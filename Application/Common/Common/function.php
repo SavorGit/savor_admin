@@ -641,4 +641,14 @@ function msubstr($str, $start = 0, $length, $charset = "utf-8", $suffix = true)
     }
     return $slice;
 }
+function changeTimeType($seconds){
+    if ($seconds > 3600){
+        $hours = intval($seconds/3600);
+        $minutes = $seconds % 3600;
+        $time = $hours.":".gmstrftime('%M:%S', $minutes);
+    }else{
+        $time = gmstrftime('%H:%M:%S', $seconds);
+    }
+    return $time;
+}
 ?>
