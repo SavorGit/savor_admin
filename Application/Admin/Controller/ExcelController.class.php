@@ -638,7 +638,7 @@ class ExcelController extends Controller
         
         $start_date = I('start_date');
         $end_date   = I('end_date');
-        $username = I('username');
+        $userid = I('userid');
         $category_id = I('category_id','0','intval');
         $content_name = I('content_name','','trim');
         if($start_date && $end_date){
@@ -657,9 +657,9 @@ class ExcelController extends Controller
             $where .= " and date_time <='".$end_date."'";
         }
         $m_sysuser = new \Admin\Model\UserModel();
-        if($username){
-            $this->assign('username',$username);
-            $users = $m_sysuser->getUser(" and remark=$username",'id,username,remark');
+        if($userid){
+            $this->assign('username',$userid);
+            $users = $m_sysuser->getUser(" and id=$userid",'id,username,remark');
             $userinfo = $users[0];
             if($userinfo){
                 $where .=" and operators='".$userinfo['username']."' or operators='".$userinfo['remark']."'";
