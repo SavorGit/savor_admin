@@ -633,5 +633,110 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $rts,$filename);
         
     }
+    public function excelContAndProm(){
+        $where =' 1=1';
+        
+        $start_date = I('start_date');
+        $end_date   = I('end_date');
+        $username = I('username');
+        $category_id = I('category_id','0','intval');
+        $content_name = I('content_name','','trim');
+        if($start_date && $end_date){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        if($start_date){
+            $this->assign('start_date',$start_date);
+            $start_date = date('YmdH',strtotime($start_date));
+            $where .= " and date_time >='".$start_date."'";
+        }
+        if($end_date){
+            $this->assign('end_date',$end_date);
+            $end_date = date('YmdH',strtotime($end_date));
+            $where .= " and date_time <='".$end_date."'";
+        }
+        $m_sysuser = new \Admin\Model\UserModel();
+        if($username){
+            $this->assign('username',$username);
+            $users = $m_sysuser->getUser(" and remark=$username",'id,username,remark');
+            $userinfo = $users[0];
+            if($userinfo){
+                $where .=" and operators='".$userinfo['username']."' or operators='".$userinfo['remark']."'";
+            }
+        
+        }
+        if($category_id){
+            $this->assign('category_id',$category_id);
+            $where .=" and category_id=$category_id";
+        }
+        
+        if($content_name){
+            $this->assign('content_name',$content_name);
+            $where .=" and content_name like '%".$content_name."%'";
+        }
+        
+        $m_content_details_final = new \Admin\Model\ContDetFinalModel();
+        $list = $m_content_details_final->getAllList($where, "read_count desc ");
+        
+        $filename = 'allcontandprom';
+        $xlsName = "allcontandprom";
+        foreach($list as $key=>$v){
+            if($v['common_value']==0){
+                $list[$key]['common_value'] = '纯文本';
+            }else if($v['common_value']==1){
+                $list[$key]['common_value'] = '图文';
+            }else if($v['common_value']==2){
+                $list[$key]['common_value'] = '图集';
+            }else if($v['common_value']==3){
+                $list[$key]['common_value'] = '视频';
+            }
+            if(empty($v['read_count'])){
+                $list[$key]['read_count'] = 0;
+            }
+            if(empty($v['read_duration'])){
+                $list[$key]['read_duration'] = '0秒';
+            }else {
+                $list[$key]['read_duration'] = changeTimeType($v['read_duration']);
+            }
+            if(empty($v['demand_count'])){
+                $list[$key]['demand_count'] = 0;
+            }
+            if(empty($v['share_count'])){
+                $list[$key]['share_count'] = 0;
+            }
+            if(empty($v['pv_count'])){
+                $list[$key]['pv_count'] = 0;
+            }
+            if(empty($v['uv_count'])){
+                $list[$key]['uv_count'] = 0;
+            }
+            if(empty($v['click_count'])){
+                $list[$key]['click_count'] = 0;
+            }
+            if(empty($v['outline_count'])){
+                $list[$key]['outline_count'] = 0;
+            }
+            
+            
+        }
+        $xlsCell = array(
+            array('content_name', '文章标题'),
+            array('category_name', '分类'),
+            array('common_value', '内容类别'),
+            array('operators', '编辑'),
+            array('create_time', '创建时间'),
+            array('read_count', '阅读总次数'),
+            array('read_duration', '阅读总时长'),
+            array('demand_count', '点播总次数'),
+            array('share_count', '分享总次数'),
+            array('pv_count', 'PV'),
+            array('uv_count', 'UV'),
+            array('click_count', '点击数'),
+            array('outline_count', '外链点击数'),
+     
+        );
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+    }
 
 }
