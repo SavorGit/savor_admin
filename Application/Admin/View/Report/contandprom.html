@@ -60,12 +60,12 @@
           </div>
 		  <div class="form-group">
             <div class="input-group-sm input-group">
-              <label class="control-label" style="">
+              <label style="margin-left: 13px;" class="col-xs-1 col-sm-1 control-label">
                 	编辑：
               </label>
                 <span class="input-group-btn input-group-sm">
                 <select name="userid" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option>请选择</option>
+                <option value="">请选择</option>
                 <volist name="user_list" id="vlist">
                 <option <if condition="$vlist.id eq $userid">selected</if> value="{$vlist.id}">{$vlist.remark}</option>
                 </volist>
@@ -75,12 +75,12 @@
           </div> 
 		<div class="form-group">
             <div class="input-group-sm input-group">
-              <label class="control-label" style="">
+              <label style="margin-left: 13px;" class="col-xs-1 col-sm-1 control-label">
                 	分类：
               </label>
                 <span class="input-group-btn input-group-sm">
                 <select name="category_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option>请选择</option>
+                <option value="">请选择</option>
                 <volist name="category_list" id="vlist">
                 <option <if condition="$vlist.id eq $category_id">selected</if> value="{$vlist.id}" >{$vlist.name}</option>
                 </volist>
@@ -88,13 +88,14 @@
             </span>
             </div>
           </div> 
+          <br>
 		<div class="form-group">
-            <div class="input-group-sm input-group">
-              <label class="control-label" style="">
-                标题：
+            <div class="input-group input-group-sm">
+              <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+               文章标题：
               </label>
                 <span class="input-group-btn input-group-sm">
-                <input type="text" class="form-control" name="content_name" value="{$content_name}" placeholder="请输入内容标题" >
+                <input style="margin-left: 18px;" type="text" class="form-control" name="content_name" value="{$content_name}" placeholder="请输入内容标题" >
             </span>
             </div>
           </div> 
@@ -116,7 +117,7 @@
       </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
@@ -145,7 +146,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <volist name="list" id="vlist" key="k">
             <tr target="sid_user">
               <td data-title="序号">{$k}</td>
-              <td data-title="文章标题">{$vlist.content_name}</td>
+              <td data-title="创建时间">{$vlist.content_name}</td>
               <td data-title="分类">{$vlist.category_name}</td>
               <td data-title="内容类别">
               <if condition="$vlist.common_value eq 0">
