@@ -35,9 +35,12 @@ $config_db =  array(
 	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
 	'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
 	'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
+	'OSS_HOST_NEW'=> 'devp.oss.rerdian.com',
 	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
     //end
+    'CONTENT_HOST'=>'http://devp.admin.rerdian.com/',
 );
+
 return $config_db;
 
 

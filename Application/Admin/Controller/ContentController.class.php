@@ -71,6 +71,48 @@ class ContentController extends BaseController {
         $result = $artModel->getList($where,$orders,$start,$size);
 	    $result['list'] = $artModel->changeCatname($result['list']);
 	    $result['list'] = $homeModel->ishomeContent($result['list']);
+	    
+	    $m_media = new \Admin\Model\MediaModel();
+	    $oss_host_new = C('OSS_HOST_NEW');
+	    $content_host = C('CONTENT_HOST');
+	    foreach($result['list'] as $key=>$v){
+	        
+	        $pushdata = array();
+	        $pushdata['id'] = $v['id'];
+	        $pushdata['category'] = $v['cat_name'];
+	        $pushdata['title'] = $v['title'];
+	        //获取oss name?????????
+	        if(!empty($v['media_id'])){
+	            $m_info = $m_media->field('oss_addr')->where(array('id'=>$v['media_id']))->find();
+	            $pushdata['mediaId'] = $v['media_id'];
+	        }
+	        if(!empty($v['duration'])){
+	            $pushdata['duration'] = $v['duration'];
+	        }
+	        if(!empty($v['vod_md5'])){
+	            $pushdata['canPlay'] = 1;
+	        }
+	        
+	        if($v['type'] ==3){
+	            if(!empty($m_info['oss_addr'])){
+	                
+	                $ttp = explode('/', $m_info['oss_addr']);
+	                $pushdata['name'] = $ttp[2];
+	            }
+	        }
+	        $pushdata['type'] = $v['type'];
+	        if($v['type'] ==3 && empty($v['content'])){
+	            $pushdata['type'] = 4;
+	        }
+	        if($v['img_url']){
+	            $pushdata['imageURL'] = 'http://'.$oss_host_new.'/'.$v['img_url'];
+	        }
+	        if($v['content_url']){
+	            $pushdata['contentURL'] = $content_host.$v['content_url'];
+	        }
+	        if(!empty($v['tx_url'])) $pushdata['videoURL']   = substr($v['tx_url'],0,strpos($v['tx_url'], '.f')) ;
+	        $result['list'][$key]['pushdata'] = json_encode($pushdata); 
+	    }
 	    $catModel = new \Admin\Model\CategoModel();
 	    $where = " state=1";
     	$field = 'id,name';
