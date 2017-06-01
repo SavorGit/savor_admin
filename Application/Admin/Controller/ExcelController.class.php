@@ -320,7 +320,8 @@ class ExcelController extends Controller
             $where .= "	AND add_time >= '{$starttime}'";
         }
         if($endtime){
-            $where .= "	AND add_time <=  '{$endtime}'";
+            //$where .= "	AND add_time <=  '{$endtime}'";
+            $where .= "	AND add_time <=  '{$endtime} 23:59:59'";
         }
         $soucetype = I('get.sourcetype','');
         if($soucetype){
