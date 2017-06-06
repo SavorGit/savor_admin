@@ -111,7 +111,8 @@ class ContentController extends BaseController {
 	            $pushdata['contentURL'] = $content_host.$v['content_url'];
 	        }
 	        if(!empty($v['tx_url'])) $pushdata['videoURL']   = substr($v['tx_url'],0,strpos($v['tx_url'], '.f')) ;
-	        $result['list'][$key]['pushdata'] = json_encode($pushdata); 
+	        $result['list'][$key]['pushdata'] = json_encode($pushdata,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); 
+	        
 	    }
 	    $catModel = new \Admin\Model\CategoModel();
 	    $where = " state=1";
