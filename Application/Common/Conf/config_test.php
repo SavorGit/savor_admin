@@ -33,12 +33,13 @@ $config_db =  array(
     //OSSS上传配置
 	'OSS_ACCESS_ID'   => 'tnDh4AQqRYbV9mq8',
 	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
-	'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
-	'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
+	//'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
+	'OSS_HOST'=>'oss.littlehotspot.com',
+    'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
 	'OSS_HOST_NEW'=> 'devp.oss.rerdian.com',
 	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
     //end
-    'CONTENT_HOST'=>'http://devp.admin.rerdian.com/',
+    'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
 );
 
 return $config_db;
