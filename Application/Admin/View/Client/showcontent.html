@@ -14,6 +14,7 @@
   <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.js"></script>
 </head>
 <style type="text/css">
+
 	.box_nr p strong{
 		text-indent:0;
 		color: #222222;
@@ -38,7 +39,7 @@
 	}
 </style>
 <body>
-<div id="topLabel" style="background-color: black; width: 100%; height: 53px; position: fixed; bottom: 0px; left: 0px; z-index: 100;">
+<div id="topLabel" style="background-color: black; width: 100%; height: 53px; position: fixed; bottom: 0px; left: 0px; z-index: 100;display: none;">
   <img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 7px; margin-left: 10px; width: 188px; height: 40px;"/>
   <div id="downLoad" style="background-color: white; border-radius: 11px; position: absolute; top: 11px; right: 35px;height: 30px;">
     <p id="xiazai" style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
@@ -55,8 +56,16 @@
   	var buttono = document.getElementById('xiazai');
   	 var disnone = document.getElementById('disnone');
   	  var topLabel=document.getElementById("topLabel");
+  	  
+  	   var urla=location.search;
+  if(urla.indexOf("?")!=-1) 
+		{console.log('有参数')} 
+			else{
+				$('#topLabel').show();
+}
+	
     buttono.onclick = function (){
-      window.location.href = 'http://rerdian.com/d';
+      window.location.href = 'http://www.littlehotspot.com/d';
     }
     
     disnone.onclick=function(){
@@ -83,7 +92,14 @@
     }else{
     	topLabel.style.display="block";
     }
-   
+    
+    var urla=location.search;
+   if(urla.indexOf("?")!=-1) 
+	{console.log('有参数')} 
+	else{
+	alert(1)
+	$('#topLabel').show();
+}
 </script>
 </html>
 
