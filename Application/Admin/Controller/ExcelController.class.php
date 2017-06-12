@@ -34,6 +34,8 @@ class ExcelController extends Controller
             $tmpname = 'app与大屏互动统计';
         }  else if ($filename == 'hotelscreen') {
             $tmpname = '酒楼大屏统计';
+        }else if($filename == "allappdownload"){
+            $tmpname = 'App下载统计总表';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -320,7 +322,8 @@ class ExcelController extends Controller
             $where .= "	AND add_time >= '{$starttime}'";
         }
         if($endtime){
-            $where .= "	AND add_time <=  '{$endtime}'";
+            //$where .= "	AND add_time <=  '{$endtime}'";
+            $where .= "	AND add_time <=  '{$endtime} 23:59:59'";
         }
         $soucetype = I('get.sourcetype','');
         if($soucetype){
@@ -544,6 +547,199 @@ class ExcelController extends Controller
             echo 'succes';
         }
         // $this->success('添加成功');
+    }
+    public function excelAppDownload(){
+        $hotel_name = I('hotel_name','','trim');
+        $guardian   = I('guardian','','trim');  
+        $start_date = I('start_date');
+        $end_date   = I('end_date');
+        $where ='';
+        $where =" and src in('box','mob','rq')";
+        if(!empty($hotel_name)){
+            $where .=" and hotel_name like '%".$hotel_name."%'";
+        } 
+        if(!empty($guardian)){
+            $where .=" and guardian like '%".$guardian."%'";
+        }
+        if($start_date){
+            $where .=" and date_time>='".$start_date."'";
+        }
+        if($end_date){
+            $where .= " and date_time<='".$end_date."'";
+        }
+        
+        $m_app_download = new \Admin\Model\AppDownloadModel();
+        $download_list = $m_app_download->getDownloadHotel($where ,$order='date_time',$sort='desc');
+         
+        $data = array();
+        foreach($download_list as $key=>$v){
+             
+            $data[$v['hotel_id']][] = $v;
+        }
+        
+        $count = 0;
+        $list = array();
+        foreach($data as $key=>$val){
+            $list[] = $val;
+            $count ++;
+        }
+         
+       
+        $rts = array();
+        $flag = 0;
+        foreach($list as $key=>$val){
+            $rts[$flag]['hotel_id']   = $val[0]['hotel_id'];
+            $rts[$flag]['hotel_name'] = $val[0]['hotel_name'];
+            $rts[$flag]['guardian']   = $val[0]['guardian'];
+            //$rts[$flag]['end_date_time']  = $val[0]['date_time'];
+            $c_count = count($val) -1;
+            //$rts[$flag]['start_date_time'] = $val[$c_count]['date_time'];
+            $rts[$flag]['quantum'] = $val[$c_count]['date_time']."--".$val[0]['date_time'];;
+            $box = $mob = $rq = $arr = array();
+             
+            foreach($val as $k=>$v){
+                 
+                if($v['src'] =='box'){
+                    $box[]=$v['mobile_id'];
+                }else if($v['src']=='mob'){
+                    $mob[] = $v['mobile_id'];
+                }else if($v['src']=='rq'){
+                    $rq[] = $v['mobile_id'];
+                }
+            }
+            $rts[$flag]['box'] = $box;
+            $rts[$flag]['mob'] = $mob;
+            $rts[$flag]['rq']  = $rq;
+        
+             
+            $arr = array_merge($box,$mob,$rq);
+            $arr = array_unique($arr);
+            $rts[$flag]['all'] = $arr;
+            $rts[$flag]['box_num'] = count($box);
+            $rts[$flag]['mob_num'] = count($mob);
+            $rts[$flag]['rq_num']  = count($rq);
+            $rts[$flag]['all_num'] = count($arr);
+            $flag ++;
+        }  
+        
+        $filename = 'allappdownload';
+        $xlsName = "allappdownload";
+        $xlsCell = array(
+            array('quantum', '时段'),
+            array('hotel_name', '酒楼名称'),
+            array('guardian', '维护人'),
+            array('box_num', '首次投屏数量'),
+            array('rq_num', '二维码扫描下载'),
+            array('mob_num', '首次打开'),
+            array('all_num', '去重后总计'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $rts,$filename);
+        
+    }
+    public function excelContAndProm(){
+        $where =' 1=1';
+        
+        $start_date = I('start_date');
+        $end_date   = I('end_date');
+        $userid = I('userid');
+        $category_id = I('category_id','0','intval');
+        $content_name = I('content_name','','trim');
+        if($start_date && $end_date){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        if($start_date){
+            $this->assign('start_date',$start_date);
+            $start_date = date('YmdH',strtotime($start_date));
+            $where .= " and date_time >='".$start_date."'";
+        }
+        if($end_date){
+            $this->assign('end_date',$end_date);
+            $end_date = date('YmdH',strtotime($end_date));
+            $where .= " and date_time <='".$end_date."'";
+        }
+        $m_sysuser = new \Admin\Model\UserModel();
+        if($userid){
+            $this->assign('username',$userid);
+            $users = $m_sysuser->getUser(" and id=$userid",'id,username,remark');
+            $userinfo = $users[0];
+            if($userinfo){
+                $where .=" and operators='".$userinfo['username']."' or operators='".$userinfo['remark']."'";
+            }
+        
+        }
+        if($category_id){
+            $this->assign('category_id',$category_id);
+            $where .=" and category_id=$category_id";
+        }
+        
+        if($content_name){
+            $this->assign('content_name',$content_name);
+            $where .=" and content_name like '%".$content_name."%'";
+        }
+        
+        $m_content_details_final = new \Admin\Model\ContDetFinalModel();
+        $list = $m_content_details_final->getAllList($where, "read_count desc ");
+        
+        $filename = 'allcontandprom';
+        $xlsName = "allcontandprom";
+        foreach($list as $key=>$v){
+            if($v['common_value']==0){
+                $list[$key]['common_value'] = '纯文本';
+            }else if($v['common_value']==1){
+                $list[$key]['common_value'] = '图文';
+            }else if($v['common_value']==2){
+                $list[$key]['common_value'] = '图集';
+            }else if($v['common_value']==3){
+                $list[$key]['common_value'] = '视频';
+            }
+            if(empty($v['read_count'])){
+                $list[$key]['read_count'] = 0;
+            }
+            if(empty($v['read_duration'])){
+                $list[$key]['read_duration'] = '0秒';
+            }else {
+                $list[$key]['read_duration'] = changeTimeType($v['read_duration']);
+            }
+            if(empty($v['demand_count'])){
+                $list[$key]['demand_count'] = 0;
+            }
+            if(empty($v['share_count'])){
+                $list[$key]['share_count'] = 0;
+            }
+            if(empty($v['pv_count'])){
+                $list[$key]['pv_count'] = 0;
+            }
+            if(empty($v['uv_count'])){
+                $list[$key]['uv_count'] = 0;
+            }
+            if(empty($v['click_count'])){
+                $list[$key]['click_count'] = 0;
+            }
+            if(empty($v['outline_count'])){
+                $list[$key]['outline_count'] = 0;
+            }
+            
+            
+        }
+        $xlsCell = array(
+            array('content_name', '文章标题'),
+            array('category_name', '分类'),
+            array('common_value', '内容类别'),
+            array('operators', '编辑'),
+            array('create_time', '创建时间'),
+            array('read_count', '阅读总次数'),
+            array('read_duration', '阅读总时长'),
+            array('demand_count', '点播总次数'),
+            array('share_count', '分享总次数'),
+            array('pv_count', 'PV'),
+            array('uv_count', 'UV'),
+            array('click_count', '点击数'),
+            array('outline_count', '外链点击数'),
+     
+        );
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
     }
 
 }

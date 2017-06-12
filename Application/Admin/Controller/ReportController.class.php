@@ -142,5 +142,76 @@ class ReportController extends BaseController{
 			}
 		}
 	}
-
+    public function contAndProm(){
+        $size   = I('numPerPage',50);     //显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);          //当前页码
+        $this->assign('pageNum',$start);
+        $order = I('_order','read_count'); //排序字段
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');        //排序类型
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        $where =' 1=1';
+        
+        $start_date = I('start_date');
+        $end_date   = I('end_date');
+        $userid = I('userid');
+        $category_id = I('category_id','0','intval');
+        $content_name = I('content_name','','trim');
+        if($start_date && $end_date){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        if($start_date){
+            $this->assign('start_date',$start_date);
+            $start_date = date('YmdH',strtotime($start_date));
+            $where .= " and date_time >='".$start_date."'";
+        }
+        if($end_date){
+            $this->assign('end_date',$end_date);
+            $end_date = date('YmdH',strtotime($end_date));
+            $where .= " and date_time <='".$end_date."'";
+        }
+        $m_sysuser = new \Admin\Model\UserModel();
+        if($userid){
+            
+            $this->assign('userid',$userid);
+            $users = $m_sysuser->getUser(" and id=$userid",'id,username,remark');
+           
+            $userinfo = $users[0];
+            if($userinfo){
+                $where .=" and operators='".$userinfo['username']."' or operators='".$userinfo['remark']."'";
+            }
+            
+        }
+        if($category_id){
+            $this->assign('category_id',$category_id);
+            $where .=" and category_id=$category_id";
+        }
+        
+        if($content_name){
+            $this->assign('content_name',$content_name);
+            $where .=" and content_name like '%".$content_name."%'";
+        }
+        
+        $m_content_details_final = new \Admin\Model\ContDetFinalModel();
+        $data = $m_content_details_final->getDataList($where,$orders,$start,$size);
+        
+        //分类
+        $m_category = new \Admin\Model\CategoModel();
+        $category_list = $m_category->getWhere('state = 1', 'id,name');
+        array_unshift($category_list, array('id'=>'-1','name'=>'热点'),array('id'=>'-2','name'=>'点播'));
+        
+        //编辑
+        
+        $user_list = $m_sysuser->getUser(' and groupid=11');
+        $this->assign('user_list',$user_list);
+        $this->assign('category_list',$category_list);
+        $this->assign('list',$data['list']);
+        $this->assign('page',$data['page']);
+        $this->display('contandprom');
+    }
 }
