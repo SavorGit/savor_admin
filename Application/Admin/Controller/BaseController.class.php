@@ -504,6 +504,7 @@ class BaseController extends Controller {
                 $map['m'] = $model_name;
                 $map['c'] = $controller_name;
                 $map['a'] = $action_name;
+                $map['isenable'] = 1;
                 $nodeInfo = $m_nodemenu->getInfo($map);
                 if($nodeInfo['ertype']==1){
                     $this->error('没有权限操作！');
