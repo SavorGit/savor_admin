@@ -17,8 +17,8 @@
                 <span class="input-group-btn">
                <select name="type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                  <option value=0 >全部</option>
-                 <option value=1 >小平台</option>
-                 <option value=2 >机顶盒</option>
+                 <option <if condition="$type eq '1'">selected="selected" </if> value=1 >小平台</option>
+                 <option <if condition="$type eq '2'">selected="selected" </if> value=2 >机顶盒</option>
                </select>
           </div>
 

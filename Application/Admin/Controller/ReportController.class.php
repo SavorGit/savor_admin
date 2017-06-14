@@ -42,6 +42,7 @@ class ReportController extends BaseController{
 		}
 
 		if($type){
+		    $this->assign('type',$type);
 			$where .= "	AND type= '{$type}' ";
 		}
 		$result = $heartModel->getList($where,$orders,$start,$size);
