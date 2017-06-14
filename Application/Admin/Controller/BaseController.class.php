@@ -475,7 +475,7 @@ class BaseController extends Controller {
     public function checkPriv(){
         $userinfo = session('sysUserInfo');
         $user_group_id = $userinfo['groupid'];
-        $free_controller = array('admin.login','admin.index');
+        $free_controller = array('admin.login','admin.index','admin.uploadmgr');
         $free_action = array('admin.menu.get_se_left','admin.clean.cache','admin.resource.uploadresource',
                              'admin.resource.uploadresourcenew','admin.user.chagepwd','admin.boxaward.getaward',
                              'admin.hotel.manager_list','admin.version.getvname','admin.menu.getfile',
