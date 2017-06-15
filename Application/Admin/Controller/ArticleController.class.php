@@ -357,6 +357,10 @@ class ArticleController extends BaseController {
             $this->assign('tagaddart',$resp);
 
             $this->assign('vainfo',$vainfo);
+
+            $new = json_encode($resp);
+            $new = preg_replace('/\"/', "'", $new);
+            $this->assign('taginfod',$new);
         }else{
             $vainfo['duration'] = 0;
             $this->assign('vainfo',$vainfo);
@@ -504,6 +508,7 @@ WHERE id IN (1,2,3)*/
             $this->error('请输入有效的时长');
         }
         //处理标签
+        $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
         $tagr = json_decode ($_POST['taginfo'],true);
         $ar = array();
         //var_dump($tagr);
@@ -613,7 +618,7 @@ WHERE id IN (1,2,3)*/
 
     public function getTagInfoByArId($id){
         $tagModel = new \Admin\Model\TagModel();
-        $res = $tagModel->where('article_id='.$id)->select();
+        $res = $tagModel->where('article_id='.$id)->field('tagid,tagname')->select();
         return $res;
     }
 
@@ -621,8 +626,8 @@ WHERE id IN (1,2,3)*/
         $tagModel = new \Admin\Model\TagListModel();
         $size   = 20;//显示每页记录数
         $start = 1;
-        $order = I('_order','create_time');
-        $sort = I('_sort','desc');
+        $order = I('_order','convert(tagname using gbk)');
+        $sort = I('_sort','asc');
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
@@ -669,7 +674,11 @@ WHERE id IN (1,2,3)*/
             //获取文章id本身有的标签
             $resp = $this->getTagInfoByArId($id);
             $this->assign('tagaddart',$resp);
+            $new = json_encode($resp);
+            $new = preg_replace('/\"/', "'", $new);
+            $this->assign('taginfod',$new);
 
+            //[{"tagid":"34","tagname":"安卓"},{"tagid":"32","tagname":"ajax"},{"tagid":"33","tagname":"ios"},{"tagid":"57","tagname":"1   1"},{"tagid":"58","tagname":"1 1"},{"tagid":"45","tagname":"123"}]
 
         }
         $where = "1=1";
@@ -726,9 +735,9 @@ WHERE id IN (1,2,3)*/
             $save['img_url'] = $oss_addr;
         }
         //处理标签
+        $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
         $tagr = json_decode ($_POST['taginfo'],true);
         $ar = array();
-        //var_dump($tagr);
         foreach ($tagr as $t=>$v) {
             if(in_array($v['tagid'], $ar)){
                 $this->error('标签不可有重复');

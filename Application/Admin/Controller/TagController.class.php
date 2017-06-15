@@ -76,9 +76,13 @@ class TagController extends BaseController{
 			$is_have = $tagModel->where($save)->find();
 			if($is_have){
 				$result = array('code'=>0,'err_msg'=>'该标签名称已经存在');
-				echo json_encode($result);
-				die;
+
 			}
+			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
+				$result = array('code'=>0,'err_msg'=>'只可输入数字、字母、汉字');
+			}
+			echo json_encode($result);
+			die;
 		}
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$save['create_time'] = date('Y-m-d H:i:s');
@@ -107,6 +111,11 @@ class TagController extends BaseController{
 				if($is_have){
 					$this->error('该标签名称已经存在');
 				}
+			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
+				$this->error('操作失败，只可输入数字、字母、汉字');
+			}
+		}else{
+			$this->error('该标签不可为空');
 		}
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$save['create_time'] = date('Y-m-d H:i:s');
