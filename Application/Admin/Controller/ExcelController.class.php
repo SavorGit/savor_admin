@@ -469,6 +469,7 @@ class ExcelController extends Controller
         $filename = 'hotel';
         $xlsName = "User";
         $xlsCell = array(
+            array('id', '酒楼id'),
             array('install_date', '安装日期'),
             array('hsta', '酒店状态'),
             array('rsta', '版位状态即包间状态'),
