@@ -9,7 +9,8 @@ class AdvertController extends BaseController{
 	 private $oss_host = '';
 	 public function __construct(){
 	     parent::__construct();
-	     $this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	     //$this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	     $this->oss_host = get_oss_host();
 	 }
 	 /**
 	  * 资源列表
@@ -109,7 +110,7 @@ class AdvertController extends BaseController{
              $this->output($message, $url);
 	     }else{
 	         $this->get_file_exts(1);
-	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	         $oss_host = $this->oss_host;
 			 $vinfo['type'] = 1;
 			 $vinfo['duration'] = 0;
 			 $this->assign('vinfo',$vinfo);

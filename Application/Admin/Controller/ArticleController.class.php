@@ -10,10 +10,11 @@ use Admin\Model\ArticleModel;
 use Admin\Model\CategoModel;
 use Admin\Model\MediaModel;
 class ArticleController extends BaseController {
-    
+    private $oss_host = '';
     public  $path = 'content/img';
     public function __construct() {
         parent::__construct();
+        $this->oss_host = get_oss_host();
     }
     
     public function manager() {
@@ -76,7 +77,8 @@ class ArticleController extends BaseController {
         $this->assign('vinfo',$vinfo);
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
-            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            //$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            $oss_host = $this->oss_host;
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
             $this->assign('vinfo',$vinfo);
         }
@@ -332,7 +334,8 @@ class ArticleController extends BaseController {
         $id = I('get.id');
         $acctype = I('get.acttype');
         if ($acctype && $id){
-            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            //$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            $oss_host = $this->oss_host;
             $vainfo = $artModel->where('id='.$id)->find();
             if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00' || $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vainfo['bespeak_time'] = '';
@@ -606,7 +609,8 @@ WHERE id IN (1,2,3)*/
                 $vinfo['bespeak_time'] = '';
             }
 
-            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            //$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            $oss_host = $this->oss_host;
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
             $this->assign('vinfo',$vinfo);
         }

@@ -19,7 +19,8 @@ class AliossController extends Controller{
     public function getOssParams(){
         $id = C('OSS_ACCESS_ID');
         $key = C('OSS_ACCESS_KEY');
-        $host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST');
+        //$host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST');
+        $host = 'http://'.C('OSS_HOST_NEW');
         $callbackUrl = C('HOST_NAME').'/'.C('OSS_SYNC_CALLBACK_URL');
         $callback_param = array(
             'callbackUrl'=>$callbackUrl,
