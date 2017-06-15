@@ -12,7 +12,6 @@ use Admin\Model\MediaModel;
 class ArticleController extends BaseController {
     private $oss_host = '';
     public  $path = 'content/img';
-    private $oss_host = '';
     public function __construct() {
         parent::__construct();
         $this->oss_host = get_oss_host();
