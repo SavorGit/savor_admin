@@ -115,6 +115,7 @@ $config['MANGER_KEY'] = array(
     'ad' =>'广告节点',
     'hotel' =>'酒楼节点',
     'report'=>'报表节点',
+    'testreport'=>'测试报表节点',
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
