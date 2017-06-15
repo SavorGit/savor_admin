@@ -19,7 +19,7 @@ class ClientconfigController extends BaseController {
         $result = $clientCModel->getdat($where);
         $datalist = $result['list'];
         $mediaModel = new \Admin\Model\MediaModel();
-        $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        $oss_host = get_oss_host();
         foreach ($datalist as $k=>$v){
             $media_id = $v['media_id'];
             $imgid = $v['img_id'];
@@ -43,7 +43,7 @@ class ClientconfigController extends BaseController {
     public function addclientconfig(){
         $clid = I('get.clid',0,'intval');
         if($clid){
-            $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+            $oss_host = get_oss_host();
             $clientCModel = new \Admin\Model\ClientConfigModel();
             $vainfo = $clientCModel->find($clid);
             $media_id = $vainfo['media_id'];

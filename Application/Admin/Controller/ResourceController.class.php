@@ -62,7 +62,7 @@ class ResourceController extends BaseController{
              $this->output($result['message'], $result['url']);
 	     }else{
 	         $this->get_file_exts();
-	         $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	         $oss_host = get_oss_host();;
 	         $this->assign('oss_host',$oss_host);
 	         $this->display('addresource');
 	     }
@@ -103,7 +103,7 @@ class ResourceController extends BaseController{
 			$mediaModel = new \Admin\Model\MediaModel();
 			$result = $mediaModel->getList($where,$orders,$start,$size);
 			$this->assign('datalist', $result['list']);
-			$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			$oss_host = get_oss_host();
 			if($rtype){
 				$this->get_file_exts($rtype);
 			}else{
@@ -149,7 +149,7 @@ class ResourceController extends BaseController{
 	        $mediaModel = new \Admin\Model\MediaModel();
 	        $result = $mediaModel->getList($where,$orders,$start,$size);
 	        $this->assign('datalist', $result['list']);
-	        $oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+	        $oss_host = get_oss_host();
 	        if($rtype){
 	            $this->get_file_exts($rtype);
 	        }else{
@@ -190,7 +190,7 @@ class ResourceController extends BaseController{
 			$mediaModel = new \Admin\Model\MediaModel();
 			//$result = $mediaModel->getList($where,$orders,$start,$size);
 			$result = $mediaModel->where($where)->select();
-			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			$image_host = get_oss_host();
 			foreach ($result as $k=>$v){
 				$result[$k]['oss_addr'] = $image_host.$v['oss_addr'];
 			}

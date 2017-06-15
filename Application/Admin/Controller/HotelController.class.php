@@ -1037,7 +1037,7 @@ class HotelController extends BaseController {
 		$result = $adsModel->getList($where,$orders,$start,$size);
 		$datalist = $result['list'];
 		$mediaModel = new \Admin\Model\MediaModel();
-		$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+		$oss_host = get_oss_host();
 		foreach ($datalist as $k=>$v){
 			$media_id = $v['media_id'];
 			if($media_id){
@@ -1090,7 +1090,7 @@ class HotelController extends BaseController {
 			$this->assign('vinfo',$hoinfo);
 		}
 		if($ads_id){
-			$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			$oss_host = get_oss_host();
 			$adsModel = new \Admin\Model\AdsModel();
 			$vainfo = $adsModel->find($ads_id);
 			$vainfo['oss_addr'] = $oss_host.$vainfo['img_url'];

@@ -651,4 +651,8 @@ function changeTimeType($seconds){
     }
     return $time;
 }
+function get_oss_host(){
+    $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
+    return $oss_host;
+}
 ?>

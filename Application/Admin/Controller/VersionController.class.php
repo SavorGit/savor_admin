@@ -10,7 +10,7 @@ class VersionController extends BaseController{
     private $oss_host = '';
     public function __construct(){
         parent::__construct();
-        $this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+        $this->oss_host = get_oss_host();
     }
 
 	public function client(){

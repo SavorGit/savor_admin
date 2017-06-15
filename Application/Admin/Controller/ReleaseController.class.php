@@ -15,7 +15,7 @@ class ReleaseController extends BaseController{
 	public $oss_host = '';
 	public function __construct() {
 		parent::__construct();
-		$this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+		$this->oss_host = get_oss_host();
 	}
 
 
@@ -61,7 +61,7 @@ class ReleaseController extends BaseController{
 		$catModel = new CategoModel;
 		if($id){
 			$vinfo = $catModel->find($id);
-			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
+			$image_host = get_oss_host();
 			$vinfo['oss_addr'] = $image_host.$vinfo['img_url'];
 			$this->assign('vinfo',$vinfo);
 		}
