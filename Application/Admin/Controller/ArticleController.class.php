@@ -10,8 +10,9 @@ use Admin\Model\ArticleModel;
 use Admin\Model\CategoModel;
 use Admin\Model\MediaModel;
 class ArticleController extends BaseController {
-    private $oss_host = '';
+    
     public  $path = 'content/img';
+    private $oss_host = '';
     public function __construct() {
         parent::__construct();
         $this->oss_host = get_oss_host();
@@ -334,7 +335,6 @@ class ArticleController extends BaseController {
         $id = I('get.id');
         $acctype = I('get.acttype');
         if ($acctype && $id){
-            //$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $oss_host = $this->oss_host;
             $vainfo = $artModel->where('id='.$id)->find();
             if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00' || $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
@@ -352,6 +352,10 @@ class ArticleController extends BaseController {
             }
             //转换成html实体
             $vainfo['title'] = htmlspecialchars($vainfo['title']);
+            //获取文章id本身有的标签
+            $resp = $this->getTagInfoByArId($id);
+            $this->assign('tagaddart',$resp);
+
             $this->assign('vainfo',$vainfo);
         }else{
             $vainfo['duration'] = 0;
@@ -361,6 +365,11 @@ class ArticleController extends BaseController {
         $field = 'id,name';
         $vinfo = $catModel->getWhere($where, $field);
         $this->assign('vcainfo',$vinfo);
+
+        $pagearr = $this->getPageTag();
+        $this->assign('pageinfo',$pagearr['list']);
+        $this->assign('pagecount',$pagearr['page']);
+
         $this->display('addvideo');
     }
 
@@ -494,6 +503,21 @@ WHERE id IN (1,2,3)*/
         if(empty($minu) && empty($seco)){
             $this->error('请输入有效的时长');
         }
+        //处理标签
+        $tagr = json_decode ($_POST['taginfo'],true);
+        $ar = array();
+        //var_dump($tagr);
+        foreach ($tagr as $t=>$v) {
+            if(in_array($v['tagid'], $ar)){
+                $this->error('标签不可有重复');
+            }
+            $ar[]=$v['tagid'];
+        }
+        if(count($tagr)<3 || count($tagr)>10){
+            $this->error('标签数不符合');
+        }
+
+
         $save['duration'] = $minu*60+$seco;
         $v_type    = I('post.r1','0','intval');
         //$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
@@ -520,6 +544,7 @@ WHERE id IN (1,2,3)*/
             $save['media_id'] = $media_id;
         }
         if($id){
+            $this->changeTag($tagr, $id);
             if($addtype == 2){
                 //mediaid去除，md5,
                 $save['vod_md5'] = '';
@@ -575,6 +600,7 @@ WHERE id IN (1,2,3)*/
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $id = $artModel->getLastInsID();
+                $this->changeTag($tagr, $id);
                // $this->showvideocontent($id, $save['tx_url']);
                 $dat['content_url'] = 'content/'.$id.'.html';
                 $artModel->where('id='.$id)->save($dat);
@@ -583,6 +609,33 @@ WHERE id IN (1,2,3)*/
                 $this->output('操作失败!', 'content/getlist');
             }
         }
+    }
+
+    public function getTagInfoByArId($id){
+        $tagModel = new \Admin\Model\TagModel();
+        $res = $tagModel->where('article_id='.$id)->select();
+        return $res;
+    }
+
+    public function getPageTag(){
+        $tagModel = new \Admin\Model\TagListModel();
+        $size   = 20;//显示每页记录数
+        $start = 1;
+        $order = I('_order','create_time');
+        $sort = I('_sort','desc');
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        $where = "1=1";
+        $tagname = I('tagname','','trim');
+        if($tagname){
+            $where .= "	AND tagname LIKE '%{$tagname}%'";
+        }
+        $where .= " AND flag = 1";
+        $field = 'id,tagname';
+        $result = $tagModel->getList($where,$orders,$start,$size,$field);
+        $result['page'] = $tagModel->getPageCount($where);
+        $result['page'] = ceil($result['page']/$size);
+        return $result;
     }
 
 
@@ -609,17 +662,38 @@ WHERE id IN (1,2,3)*/
                 $vinfo['bespeak_time'] = '';
             }
 
-            //$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
             $oss_host = $this->oss_host;
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
             $this->assign('vinfo',$vinfo);
+
+            //获取文章id本身有的标签
+            $resp = $this->getTagInfoByArId($id);
+            $this->assign('tagaddart',$resp);
+
+
         }
         $where = "1=1";
         $field = 'id,name';
         $vinfo = $catModel->getWhere($where, $field);
         $this->assign('vcainfo',$vinfo);
+
+        //添加标签
+        $pagearr = $this->getPageTag();
+        $this->assign('pageinfo',$pagearr['list']);
+        $this->assign('pagecount',$pagearr['page']);
         $this->display('addart');
 
+    }
+
+    public function changeTag($dat,$id){
+        foreach ($dat as $k=>$v) {
+            $dat[$k]['article_id'] = $id;
+        }
+
+        $tagModel = new \Admin\Model\TagModel();
+        $where = 'article_id='.$id;
+        $tagModel->delWhereData($where);
+        $tagModel->addAll($dat);
     }
 
     public function doAddarticle(){
@@ -651,14 +725,23 @@ WHERE id IN (1,2,3)*/
             $oss_addr = $oss_addr['oss_addr'];
             $save['img_url'] = $oss_addr;
         }
-
+        //处理标签
+        $tagr = json_decode ($_POST['taginfo'],true);
+        $ar = array();
+        //var_dump($tagr);
+        foreach ($tagr as $t=>$v) {
+            if(in_array($v['tagid'], $ar)){
+                $this->error('标签不可有重复');
+            }
+            $ar[]=$v['tagid'];
+        }
+        if(count($tagr)<3 || count($tagr)>10){
+            $this->error('标签数不符合');
+        }
         if($id){
-
-
-
-         
+            //修改标签
+            $this->changeTag($tagr, $id);
             if($artModel->where('id='.$id)->save($save)){
-
                 //判断是否在首页点播中
                 $homeModel = new \Admin\Model\HomeModel();
                 $hinfo = $homeModel->where(array('content_id'=>$id))->find();
@@ -687,6 +770,8 @@ WHERE id IN (1,2,3)*/
             $save['operators']    = $uname;
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
+                //修改标签
+                $this->changeTag($tagr, $arid);
                 //$this->showcontent($arid);
                $dat['content_url'] = 'content/'.$arid.'.html';
                 $artModel->where('id='.$arid)->save($dat);

@@ -1,4 +1,5 @@
 <!--修改样式2 p元素自适应宽度 start-->
+<script src="../../../../Public/admin/assets/js/page.js"></script>
 <style type="text/css">
   .zhezhao{
     display: none;
@@ -23,10 +24,37 @@
     left: 26%;
     z-index: 1000;
   }
+  .nr{
+    width: 100%;
+  }
+  .xuan{
+    width: 94px;
+    height: 30px;
+    border: 1px solid black;
+    margin-left: 10px;
+    text-align: center;
+    line-height: 30px;
+    float: left;
+    margin-top: 8px;
+  }
+  .xuan .marg{
+    margin-left: 5px;
+  }
+  .quanbu_nr{
+    width: 100%;
+    margin-bottom: 20px;
+    float: left;
+  }
+  .baise{
+    background-color: white;
+  }
+  .biaolist i{display:none}
 </style>
 <div class="pageContent">
   <form id="dropbase-form" method="post" action="{$host_name}/article/doAddvideo" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)" >
     <input type="hidden" id="video_id" name="id" value="{$vainfo.id}">
+    <input type="hidden" name="taginfo" id="hid"  value=""/>
+    <input type="hidden" id="pagetotal" value="{$pagecount}">
     <div class="pageFormContent modal-body">
       <div class="tabsContent">
         <div class="tab-content">
@@ -189,7 +217,80 @@
           </div>
 
 
+          <div class="form-group row" id="biaoqian">
+            <label class="col-xs-12 col-sm-2 control-label">
+              选择标签:
+            </label>
+            <button type="button" id="tianjia" class="btn btn-primary" style="margin-left: 20px; background-color: #aed316;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModa">添加标签</button>
+            <div style="width: 100%;" class="biaolist">
 
+
+              <volist name="tagaddart" id="row">
+                <div class="xuan a" id="{$row['tagid']}">
+                  {$row['tagname']}											<i class="fa fa-close marg"></i></div>
+              </volist>
+            </div>
+            <div class="modal fade" id="myModa" style="z-index:999;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加标签</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mod_top">
+                      <div class="form-group">
+                        <button type="button" class="btn btn-primary" style="margin-left: 20px;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModaa">添加标签</button>
+                        <div class="nr">
+
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" class="soushuo" style="margin-left: 61px;height: 28px;width: 410px;"/>
+							        			<span class="input-group-btn" style="display:inline-block;">
+							              <button class="btn btn-primary" style="height: 26px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
+							            </span>
+                        <div class="quanbu_nr">
+
+
+                          <volist name="pageinfo" id="row">
+
+                            <input class="xuan baise" type="button" value="{$row['tagname']}" id="{$row['id']}" tname="{$row['tagname']}" />
+                          </volist>
+                        </div>
+                        <div id="example" style="margin-left: 113px;"></div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="yes2" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!--小-->
+            <div class="modal fade" id="myModaa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加标签</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mod_top">
+                      <div class="form-group">
+                        <input type="text" class="form-control" id="exampleInputName2" placeholder="标签名">
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="yes" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
 
 
             <div class="form-group row">
@@ -346,5 +447,183 @@
     $("#selectdian").click(function(){
       $("#meso").css('display', 'block');
     });
+
+
   });
+
+
+  $('#yes').click(function(){
+    var biaoname = $('#exampleInputName2').val();
+    if(biaoname==''){
+      alert('请添加标签名称!');
+      return false;
+    }else if(biaoname.length==1){
+      alert('输入少于2个字符，请重新输入！');
+      return false;
+    }else if(biaoname.length>=7){
+      alert('最多只能输入6个字符，请重新输入！');
+      return false;
+    }else{
+      $.ajax({
+        type:"POST",
+        url:"{$host_name}/tag/doAddAjaxTag",
+        dataType: "json",
+        data:"tagname="+biaoname,
+        async:true,
+        success:function(data){
+          console.log(data);
+          if(data.code==0){
+            alert(data.err_msg);
+            $('#exampleInputName2').val('');
+          }else{
+            console.log(data);
+            var biaohtml = '<div class="xuan">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+            $('.nr').append(biaohtml)
+            $('#exampleInputName2').val('');
+          }
+        }
+      });
+
+
+    }
+  })
+  $('.quanbu_nr').on('click','.xuan',function(){
+    //$(this).hide();
+    var biaoname = $(this).val();
+    var biaoid = $(this).prop('id');
+    $(this).prop('disabled',true);
+    /*$('.nr .xuan').each(function(i){
+
+     //console.log($('.nr .xuan').eq(i).prop('id'))
+     if(biaoid==$(this).prop('id')){
+     alert('已经添加过了')
+     $(this).last().remove();
+     }else{
+
+     var ahtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+     $('.nr').append(ahtml);
+     }
+     })*/
+    //if($('.nr .xuan').length==0){
+    var ahtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+    $('.nr').append(ahtml);
+    //}
+
+  })
+  $('.nr').on('click','.xuan .marg',function(){
+    $(this).parent().remove();
+    var biaotext = $(this).parent().text();
+    //$('.quanbu_nr .xuan').val(biaotext).prop('disabled',false);
+    $('.quanbu_nr .xuan').each(function(){
+
+      if($(this).val()==biaotext){
+        $(this).prop('disabled',false);
+      }
+    })
+  })
+
+  $('#yes2').click(function(){
+    //$('.quanbu_nr').html();
+    var arr_nr = [];
+    $('.biaolist').html('');
+    $('.biaolist').append($('.nr').html())
+    $('.biaolist').find('i').hide()
+    $('.nr .a').each(function(){
+      var obj_nr = {};
+      var aid = $(this).prop('id');
+      var aname = $.trim($(this).text());
+      obj_nr.tagid = aid;
+      obj_nr.tagname = aname;
+      arr_nr.push(obj_nr);
+    })
+    console.log(JSON.stringify(arr_nr));
+    var arr_nrs = JSON.stringify(arr_nr);
+    $('#hid').val(arr_nrs)
+  })
+
+  var options = {
+    currentPage: 1,//显示当前页数
+    totalPages: $("#pagetotal").val(),  //总页数
+    numberOfPages:5,  //显示几页
+    onPageClicked: function (event, originalEvent, type, page) {
+      //alert(page);
+      $('.quanbu_nr').html('');
+      $.ajax({
+        type:"get",
+        url:"{$host_name}/tag/getajaxpage",
+        dataType: "json",
+        data:"pageNum="+page,
+        async:true,
+        success:function(call){
+          console.log(call)
+          var calls = call.list;
+          $('#pagenum').val(call.page)
+          for(var i=0;i<calls.length;i++){
+
+            var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
+            $('.quanbu_nr').append(quanbu_nrs);
+          }
+        }
+      });
+    }
+  }
+
+  $('#example').bootstrapPaginator(options);
+
+  /*搜索*/
+  $('#sdd').click(function(){
+    $('#pagetotal').val('1');
+    var soushuo = $('.soushuo').val();
+    $('.quanbu_nr').html('');
+    console.log(soushuo)
+    $.ajax({
+      type:"post",
+      url:"{$host_name}/tag/getajaxpage",
+      dataType: "json",
+      data:"fatagname="+soushuo+"&pageNum=1",
+      async:true,
+      success:function(call){
+        console.log(call)
+        var calls = call.list;
+        for(var i=0;i<calls.length;i++){
+          var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
+          $('.quanbu_nr').append(quanbu_nrs);
+        }
+
+        var options = {
+          currentPage: 1,//显示当前页数
+          totalPages: call.page,  //总页数
+          numberOfPages:5,  //显示几页
+          onPageClicked: function (event, originalEvent, type, page) {
+            //alert(page);
+            $('.quanbu_nr').html('');
+            $.ajax({
+              type:"get",
+              url:"{$host_name}/tag/getajaxpage",
+              dataType: "json",
+              data:"pageNum="+page,
+              async:true,
+              success:function(call){
+                console.log(call)
+                var calls = call.list;
+                $('#pagenum').val(call.page)
+                for(var i=0;i<calls.length;i++){
+                  var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
+                  $('.quanbu_nr').append(quanbu_nrs);
+                }
+              }
+            });
+          }
+        }
+        $('#example').bootstrapPaginator(options);
+      }
+
+    });
+  })
+  $('#tianjia').click(function(){
+
+    $('.nr').html($('.biaolist').html())
+    $('.nr i').show();
+
+  })
 </script>
