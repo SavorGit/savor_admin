@@ -213,3 +213,35 @@ alter table `cloud`.`savor_nodemenu`
    alter table `cloud`.`savor_role_priv` 
    change `a` `a` char(30) character set utf8 collate utf8_general_ci NOT NULL comment '方法名'
 
+
+
+
+增加说明：文章对应标签表
+修改时间：2017.6.15 13：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_tag` (
+  `article_id` int(10) DEFAULT NULL,
+  `tagid` int(10) DEFAULT NULL COMMENT '标签id',
+  `tagname` varchar(48) DEFAULT NULL COMMENT '标签名称',
+  KEY `aid` (`article_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+增加说明：标签列表
+修改时间：2017.6.15 13：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_taglist` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `tagname` varchar(48) DEFAULT '' COMMENT '标签名称',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT '1' COMMENT '标示位1正常0删除',
+  `num` smallint(6) DEFAULT '0' COMMENT '拥有标签文章的数量',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tag` (`tagname`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+
+
