@@ -419,7 +419,7 @@ class BaseController extends Controller {
             $message = '添加失败!';
             $url = 'resource/resourceList';
         }
-        $oss_addr =  get_oss_host().$add_mediadata['oss_addr'];
+        $oss_addr = get_oss_host().$add_mediadata['oss_addr'];
         $result = array('media_id'=>$media_id,'oss_addr'=>$oss_addr,'message'=>$message,'url'=>$url);
         return $result;
     }

@@ -62,7 +62,7 @@ class ResourceController extends BaseController{
              $this->output($result['message'], $result['url']);
 	     }else{
 	         $this->get_file_exts();
-	         $oss_host = get_oss_host();;
+	         $oss_host = get_oss_host();
 	         $this->assign('oss_host',$oss_host);
 	         $this->display('addresource');
 	     }

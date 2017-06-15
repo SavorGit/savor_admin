@@ -110,7 +110,7 @@ class AdvertController extends BaseController{
              $this->output($message, $url);
 	     }else{
 	         $this->get_file_exts(1);
-	         $oss_host = get_oss_host();
+	         $oss_host = $this->oss_host;
 			 $vinfo['type'] = 1;
 			 $vinfo['duration'] = 0;
 			 $this->assign('vinfo',$vinfo);

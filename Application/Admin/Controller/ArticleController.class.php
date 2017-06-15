@@ -10,7 +10,7 @@ use Admin\Model\ArticleModel;
 use Admin\Model\CategoModel;
 use Admin\Model\MediaModel;
 class ArticleController extends BaseController {
-    
+    private $oss_host = '';
     public  $path = 'content/img';
     private $oss_host = '';
     public function __construct() {
