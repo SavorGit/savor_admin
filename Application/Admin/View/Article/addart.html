@@ -50,11 +50,13 @@
 		background-color: white;
 	}
 	.biaolist i{display:none}
-
+	.actives{
+		background-color: darkgray;
+	}
 </style>
 <div class="pageContent">
 	<form method="post" action="{$host_name}/article/doAddarticle" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-		<input type="hidden" name="taginfo" id="hid"  value=""/>
+		<input type="hidden" name="taginfo" id="hid"  value="{$taginfod}"/>
 		<input type="hidden" id="pagenum" />
 		<input type="hidden" id="pagetotal" value="{$pagecount}">
 		<input type="hidden" name="id" value="{$vinfo.id}">
@@ -159,7 +161,7 @@
 												</div>
 											</div>
 											<button type="button" class="btn btn-primary" data-dismiss="modal" id="yes2" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
-											<button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+											<button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;"  id="nos">取消</button>
 										</div>
 
 									</div>
@@ -167,7 +169,7 @@
 							</div>
 							
 							<!--小-->
-							<div class="modal fade" id="myModaa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+							<div class="modal fade" id="myModaa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="z-index:999;">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
 										<div class="modal-header">
@@ -339,6 +341,7 @@
 		//$(this).hide();
 		var biaoname = $(this).val();
 		var biaoid = $(this).prop('id');
+		$(this).addClass('actives');
 		$(this).prop('disabled',true);
 		/*$('.nr .xuan').each(function(i){
 			
@@ -366,6 +369,7 @@
 			
 			if($(this).val()==biaotext){
 				$(this).prop('disabled',false);
+				$(this).removeClass('actives')
 			}
 		})
 	})
@@ -395,7 +399,9 @@
         numberOfPages:5,  //显示几页
         onPageClicked: function (event, originalEvent, type, page) { 
                    //alert(page);
-             $('.quanbu_nr').html('');
+                   $('.quanbu_nr').html('');
+            
+             
 			$.ajax({
 				type:"get",
 				url:"{$host_name}/tag/getajaxpage",
@@ -411,6 +417,7 @@
 					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
 					$('.quanbu_nr').append(quanbu_nrs);
 					}
+			activer();
 				}
 			});
         }
@@ -437,7 +444,7 @@
 					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
 					$('.quanbu_nr').append(quanbu_nrs);
 					}
-					
+					activer()
 		var options = {
         currentPage: 1,//显示当前页数
         totalPages: call.page,  //总页数
@@ -459,6 +466,7 @@
 					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
 					$('.quanbu_nr').append(quanbu_nrs);
 					}
+					activer();
 				}
 			});
         }
@@ -474,4 +482,27 @@
 		$('.nr i').show();
 
 	})
+    
+    function activer(){
+    	 $('.nr .a').each(function(){
+             	var dis = $(this).prop('id');
+             	$('.quanbu_nr .xuan').each(function(){
+             		if($(this).prop('id')==dis){
+             			$(this).addClass('actives');
+             			$(this).prop('disabled',true);
+             			console.log(dis)
+             		}
+             		
+				  })
+             	
+             })
+    }
+
+	$('#nos').click(function(){
+		$('.quanbu_nr .xuan').each(function(){
+			$(this).removeClass('actives');
+
+		})
+	})
+
 </script>
