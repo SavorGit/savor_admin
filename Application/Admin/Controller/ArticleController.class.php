@@ -673,11 +673,12 @@ WHERE id IN (1,2,3)*/
 
             //获取文章id本身有的标签
             $resp = $this->getTagInfoByArId($id);
-            $this->assign('tagaddart',$resp);
-            $new = json_encode($resp);
-            $new = preg_replace('/\"/', "'", $new);
-            $this->assign('taginfod',$new);
-
+            if($resp){
+                $this->assign('tagaddart',$resp);
+                $new = json_encode($resp);
+                $new = preg_replace('/\"/', "'", $new);
+                $this->assign('taginfod',$new);
+            }
             //[{"tagid":"34","tagname":"安卓"},{"tagid":"32","tagname":"ajax"},{"tagid":"33","tagname":"ios"},{"tagid":"57","tagname":"1   1"},{"tagid":"58","tagname":"1 1"},{"tagid":"45","tagname":"123"}]
 
         }
