@@ -265,3 +265,9 @@ CREATE TABLE `savor_article_source` (
 执行sql:
 ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '文章内容来源' AFTER `source`
 
+增加说明：酒店对账单联系人以及电话
+修改时间：2017.6.16 13：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '对账单联系人' AFTER `hotel_wifi_pas`,ADD COLUMN `bill_tel` VARCHAR(12) NOT NULL COMMENT '对账单人联系电话' AFTER `bill_per`;
+
