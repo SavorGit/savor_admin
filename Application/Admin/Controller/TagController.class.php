@@ -164,13 +164,17 @@ class TagController extends BaseController{
 		$tagid = I('tagid', 0, 'int');
 		$tagname = I('tagname', '', 'trim');
 		$tagModel = new \Admin\Model\TagModel();
+		$taglistModel = new \Admin\Model\TagListModel();
 		if($tagid){
 			$where = 'tagid='.$tagid;
 			$field = 'article_id';
 			$res = $tagModel->getWhereData($where,$field);
 		}
-
 		if ($res) {
+			$taglen = count($res);
+			$dap['num'] = $taglen;
+			$where = 'id='.$tagid;
+			$taglistModel->saveData($dap,$where);
 			$where = "1=1";
 			$art_str = ' AND id in (';
 			foreach($res as $v){

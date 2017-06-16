@@ -28,7 +28,7 @@
     width: 100%;
   }
   .xuan{
-    width: 94px;
+    width: 120px;
     height: 30px;
     border: 1px solid black;
     margin-left: 10px;
@@ -580,9 +580,8 @@
       });
     }
   }
-  if($("#pagetotal").val()!=0){
-    $('#example').bootstrapPaginator(options);
-  }
+
+  $('#example').bootstrapPaginator(options);
 
   /*搜索*/
   $('#sdd').click(function(){
@@ -639,7 +638,7 @@
 
     $('.nr').html($('.biaolist').html())
     $('.nr i').show();
-
+activers();
   })
    function activer(){
     	 $('.nr .a').each(function(){
@@ -656,7 +655,20 @@
              })
     }
 
-
+function activers(){
+    	 $('.biaolist .a').each(function(){
+             	var dis = $(this).prop('id');
+             	$('.quanbu_nr .xuan').each(function(){
+             		if($(this).prop('id')==dis){
+             			$(this).addClass('actives');
+             			$(this).prop('disabled',true);
+             			console.log(dis)
+             		}
+             		
+				  })
+             	
+             })
+    }
   $('#nos').click(function(){
     $('.quanbu_nr .xuan').each(function(){
       $(this).removeClass('actives');
