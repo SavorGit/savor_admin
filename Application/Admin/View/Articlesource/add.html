@@ -1,0 +1,101 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+	.zhezhao{
+			display: none;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			background-color: black;
+			opacity: 0.7;
+			text-align: center;
+			z-index: 999;
+		}
+	.big{
+			display: none;
+		}
+	.addbig{
+		position: absolute;
+		width: 500px;
+		height: 500px;
+		top: 100px;
+		left: 26%;
+		z-index: 1000;
+	}
+</style>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/articlesource/doadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          来源名称：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="name"  value="{$vinfo.name}" required>
+        </div>
+      </div>
+       <div class="form-group row" id="defaultpic">
+              <label class="col-xs-12 col-sm-2 control-label">
+               		 封面图(必填)：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                  <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                    <a data-target="#modal-file" href="javascript:void(0)">
+                      <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                        <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                        <else />
+                        <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+                      </if>
+                       <span id="media_idimgname"></span>
+                    </a>
+                  </div>
+                  <div>
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                      选择图片
+                    </a>
+                    <input type="hidden" name="media_id" id="media_id" value="" >
+                    <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                      删除 </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+      <div class="form-group row">
+             <label class="col-xs-12 col-sm-2 control-label">
+              简介：
+             </label>
+             <div class="col-xs-12 col-sm-10">
+               <textarea name="introduction" type="textInput" class="form-control"></textarea>
+             </div>
+      </div>		
+      
+        
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+    <div class="zhezhao"></div>
+			<img class="big" src=""/>
+  </form>
+</div>
+<script>
+$(function(){
+	$('#media_idimg').click(function(){
+		var $a = $(this).attr('src');
+			$('.big').prop('src',$a).addClass('addbig')
+			$('.zhezhao').show(500);
+			$('.big').show(500);
+	})
+  $('.zhezhao').click(function(){
+
+		$('.zhezhao').hide(500);
+		$('.big').hide(500);
+   })
+   
+});
+</script>
