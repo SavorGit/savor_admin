@@ -30,7 +30,7 @@ class TagController extends BaseController{
 	 */
 	public function rplist(){
 		$tagModel = new \Admin\Model\TagListModel();
-		$size   = I('numPerPage',20);//显示每页记录数
+		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
@@ -81,6 +81,9 @@ class TagController extends BaseController{
 			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
 				$result = array('code'=>0,'err_msg'=>'只可输入数字、字母、汉字');
 			}
+			if(mb_strlen($save['tagname'])<2 || mb_strlen($save['tagname'])>15) {
+				$result = array('code'=>0,'err_msg'=>'标签长度最小为2最大为6');
+			}
 			echo json_encode($result);
 			die;
 		}
@@ -111,9 +114,12 @@ class TagController extends BaseController{
 				if($is_have){
 					$this->error('该标签名称已经存在');
 				}
-			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
-				$this->error('操作失败，只可输入数字、字母、汉字');
-			}
+				if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
+					$this->error('操作失败，只可输入数字、字母、汉字');
+				}
+				if(mb_strlen($save['tagname'])<2 || mb_strlen($save['tagname'])>15) {
+					$this->error('标签长度最小为2最大为6');
+				}
 		}else{
 			$this->error('该标签不可为空');
 		}
@@ -174,7 +180,7 @@ class TagController extends BaseController{
 			$art_str .= ')';
 			$where .= $art_str;
 			$artModel = new \Admin\Model\ArticleModel();
-			$size   = I('numPerPage',20);//显示每页记录数
+			$size   = I('numPerPage',50);//显示每页记录数
 			$this->assign('numPerPage',$size);
 			$start = I('pageNum',1);
 			$this->assign('pageNum',$start);

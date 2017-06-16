@@ -457,6 +457,18 @@ class HotelController extends BaseController {
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
 		$save['hotel_box_type']      = I('post.hotel_box_type',0,'intval');
+		$save['bill_per']				 = I('post.bill_per','','trim');
+		$save['bill_tel']				 = I('post.bill_tel','','trim');
+		if($save['bill_tel']){
+			if(!preg_match('/^1[34578]{1}\d{9}$/',$save['bill_tel'], $result)){
+				$this->error('手机号非法输入');
+			}
+		}
+		if($save['bill_per']){
+			if(  strlen($save['bill_per'])<2 ||  strlen($save['bill_per'])>10 ){
+				$this->error('联系人2至10个字符');
+			}
+		}
 		if($save['gps']){
 			if(!preg_match('/^([\d]+\.[\d]*),([\d]+\.[\d]*)$/',$save['gps'], $result)){
 				$this->error('不可输入非法字符');

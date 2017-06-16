@@ -580,8 +580,9 @@
       });
     }
   }
-
-  $('#example').bootstrapPaginator(options);
+  if($("#pagetotal").val()!=0){
+    $('#example').bootstrapPaginator(options);
+  }
 
   /*搜索*/
   $('#sdd').click(function(){

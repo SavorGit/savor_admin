@@ -97,7 +97,7 @@
 	}
 	.div_bttom {
 		width: 97%;
-		height: 250px;
+		height: 285px;
 		margin: 0 auto;
 		-moz-box-shadow: 4px 4px 16px #333333;
 		-webkit-box-shadow: 4px 4px 16px #333333;
@@ -203,13 +203,16 @@
 			<div class="div_bttom">
 				<ul class="ul3">
 					<li><span>酒楼联系人：</span><span>{$vinfo.contractor}</span></li>
-					<li><span>手机：</span><span></span>{$vinfo.mobile}</li>
+
+					<li><span>对账单联系人电话：</span><span>{$vinfo.bill_tel}</span></li>
 					<li><span>座机：</span><span></span>{$vinfo.tel}</li>
+					<li><span>手机：</span><span></span>{$vinfo.mobile}</li>
 					<li><span>合作维护人：</span><span>{$vinfo.maintainer}</span></li>
 					<li><span>技术运维人：</span><span>{$vinfo.tech_maintainer}</span></li>
 					<li><span>酒楼wifi名称：</span><span>{$vinfo.hotel_wifi}</span></li>
 				</ul>
 				<ul class="ul4">
+					<li><span>对账单联系人：</span><span>{$vinfo.bill_per}</span></li>
 					<li><span>机顶盒类型：</span><span>
 						<volist name=":C('hotel_box_type')" id="vo">
                         <if condition="$key eq $vinfo['hotel_box_type']">{$vo}</if>

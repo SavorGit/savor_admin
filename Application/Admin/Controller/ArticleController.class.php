@@ -693,7 +693,6 @@ WHERE id IN (1,2,3)*/
 
         //添加标签
         $pagearr = $this->getPageTag();
-        
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
         $article_list = $m_article_source->getAll();
