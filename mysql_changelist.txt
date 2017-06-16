@@ -243,5 +243,25 @@ CREATE TABLE `savor_taglist` (
   UNIQUE KEY `tag` (`tagname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 
+增加说明：文章内容来源
+修改时间：2017.6.16 13：30
+修改人：张英涛
+执行sql:
+CREATE TABLE `savor_article_source` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '来源名称',
+  `logo` varchar(255) NOT NULL DEFAULT '' COMMENT 'LOGO图片',
+  `introduction` text COMMENT '简介',
+  `add_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建用户id',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `edit_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '编辑用户id',
+  `edit_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文章来源表'
 
+增加说明：文章来源字段增加
+修改时间：2017.6.16 13：30
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '文章内容来源' AFTER `source`
 

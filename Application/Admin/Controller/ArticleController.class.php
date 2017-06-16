@@ -679,6 +679,12 @@ WHERE id IN (1,2,3)*/
 
         //添加标签
         $pagearr = $this->getPageTag();
+        
+        //添加来源
+        $m_article_source = new \Admin\Model\ArticleSourceModel();
+        $article_list = $m_article_source->getAll();
+       
+        $this->assign('sourcelist',$article_list);
         $this->assign('pageinfo',$pagearr['list']);
         $this->assign('pagecount',$pagearr['page']);
         $this->display('addart');
@@ -704,7 +710,8 @@ WHERE id IN (1,2,3)*/
         $save                = [];
         $save['title']        = I('post.title','','trim');
         $save['category_id']        = I('post.cate','','trim');
-        $save['source']    = I('post.source','');
+        //$save['source']    = I('post.source','');
+        $save['source_id']   = I('post.source_id');
         $save['content']    = I('post.content','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = 0;
