@@ -373,7 +373,11 @@ class ArticleController extends BaseController {
         $pagearr = $this->getPageTag();
         $this->assign('pageinfo',$pagearr['list']);
         $this->assign('pagecount',$pagearr['page']);
-
+        //添加来源
+        $m_article_source = new \Admin\Model\ArticleSourceModel();
+        $article_list = $m_article_source->getAll();
+         
+        $this->assign('sourcelist',$article_list);
         $this->display('addvideo');
     }
 
