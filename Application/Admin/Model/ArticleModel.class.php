@@ -209,6 +209,15 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 	    $result = $this->where(array('category_id'=>$category_id))->count();
 	    return $result;
 	}
-
+    /**
+     * @desc 根据来源统计文章数量
+     */
+	public function countNumBySourceId($source_id = 0){
+	    if($source_id){
+	        return $this->where('source_id='.$source_id)->count();
+	    }else {
+	        return false;
+	    }
+	}
 
 }//End Class

@@ -27,7 +27,7 @@ class ArticlesourceController extends BaseController{
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
 	    
-	    $where ="1=1";
+	    $where =" a.status=1";
 	    $name = I('name','','trim');       //搜索字段：来源名称
 	    if($name){
 	        $this->assign('name',$name);
@@ -137,6 +137,12 @@ class ArticlesourceController extends BaseController{
 	    $id = I('get.id','0','intval');
 	    if(empty($id)){
 	        $this->error('非法操作');
+	    }
+	    $m_article =  new \Admin\Model\ArticleModel();
+	    $num = $m_article->countNumBySourceId($id);
+	    
+	    if(!empty($num) && $num>0){
+	        $this->error('该标签文章有引用，不能删除!');
 	    }
 	    $m_article_source = new \Admin\Model\ArticleSourceModel();
 	    $ret = $m_article_source->deleteInfoById($id);

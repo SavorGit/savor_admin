@@ -18,7 +18,8 @@ class ArticleSourceModel extends BaseModel{
 	public function getList($where,$order='id desc ',$start=0,$size=5){
 	    $list = $this->alias('a')
 	         ->join(' savor_sysuser b on a.add_user_id=b.id')
-	         ->field('a.*,b.remark')
+	         ->join(' savor_media c on a.logo = c.id')
+	         ->field('a.*,b.remark,c.oss_addr')
 	         ->where($where)
 			 ->order($order)
 			 ->limit($start,$size)
