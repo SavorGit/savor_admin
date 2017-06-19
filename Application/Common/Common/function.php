@@ -1,4 +1,5 @@
 <?php
+use Common\Lib\Crypt3Des;
 function insert_sort($arr){
     $count = count($arr);
 	for($i=1; $i<$count; $i++){
@@ -654,5 +655,42 @@ function changeTimeType($seconds){
 function get_oss_host(){
     $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
     return $oss_host;
+}
+/**
+ * 接口请求参数加密
+ * @param str $data
+ * @return Ambigous <boolean, mixed>
+ */
+function encrypt_data($data, $key = '')
+{
+    if (empty($key)) {
+        $key = C('SECRET_KEY');
+    }
+    $crypt = new Crypt3Des($key);
+    $result = $crypt->encrypt($data);
+    return $result;
+}
+
+/**
+ * 接口返回数据解密
+ * @param str $data
+ * @return Ambigous <boolean, mixed>
+ */
+function decrypt_data($data, $dejson = true, $key = '')
+{
+    if (empty($key)) {
+        $key = C('SECRET_KEY');
+    }
+    $crypt = new Crypt3Des($key);
+    $result = $crypt->decrypt($data);
+    if ($dejson) {
+        $res_data = array();
+        if ($result) {
+            $res_data = json_decode($result, true);
+        }
+    } else {
+        $res_data = $result;
+    }
+    return $res_data;
 }
 ?>
