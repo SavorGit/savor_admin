@@ -32,6 +32,7 @@ $config = array(
     'SHOW_ERROR_MSG' =>  true, //显示错误信息
     'OSS_ADDR_PATH'=>'media/resource/',
 	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
+	'SHOW_URL_APP_KEY'=>'1562966081',
 
 );
 if(APP_DEBUG === false){
