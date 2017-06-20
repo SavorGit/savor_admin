@@ -32,7 +32,7 @@ $config = array(
     'SHOW_ERROR_MSG' =>  true, //显示错误信息
     'OSS_ADDR_PATH'=>'media/resource/',
 	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
-	'SHOW_URL_APP_KEY'=>'1562966081',
+	'SHOW_URL_APP_KEY'=>'1562966081', //短链接appkey
 
 );
 if(APP_DEBUG === false){
@@ -153,5 +153,10 @@ $config['MOBILE_TYPE'] = array(
     '9' => array('id'=>9, 't'=>'Nexus 6P', 'w'=>'435', 'h'=>'773'),
     '10' => array('id'=>10, 't'=>'Laptop MDPI', 'w'=>'1280', 'h'=>'800'),
     '11' => array('id'=>11, 't'=>'Laptop HiDPI', 'w'=>'1440', 'h'=>'900'),
+);
+$config['SMS_CONFIG'] = array(
+    'accountsid'=>'6a929755afeded257916ca68518ec1c3',
+    'token'     =>'66edd50a46c882a7f4231186c44416d8',
+    'appid'     =>'a982fdb55a2441899f2eaa64640477c0',
 );
 return $config;
