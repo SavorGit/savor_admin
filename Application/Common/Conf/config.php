@@ -164,5 +164,6 @@ $config['SMS_CONFIG'] = array(
     'accountsid'=>'6a929755afeded257916ca68518ec1c3',
     'token'     =>'66edd50a46c882a7f4231186c44416d8',
     'appid'     =>'a982fdb55a2441899f2eaa64640477c0',
+    'templateid'=>'76285',
 );
 return $config;
