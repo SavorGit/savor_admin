@@ -126,6 +126,33 @@ class SavorRedis {
         return true;
     }
 
+
+
+    public function lsize($key){
+        // 没有使用M/S
+        if(! $this->_isUseCluster){
+            return $this->getRedis()->lsize($key);
+        }
+        // 使用了 M/S
+        return $this->_getSlaveRedis()->lsize($key);
+    }
+    public function lpop($key){
+        return $this->getRedis()->lpop($key);
+    }
+    public function rpush($key,$value){
+        return $this->getRedis()->rpush($key,$value);
+    }
+    public function lpush($key,$value){
+        return $this->getRedis()->lpush($key,$value);
+    }
+    public function lgetrange($key, $start, $end){
+        // 没有使用M/S
+        if(! $this->_isUseCluster){
+            return $this->getRedis()->lgetrange($key,$start,$end);
+        }
+        // 使用了 M/S
+        return $this->_getSlaveRedis()->lgetrange($key,$start,$end);
+    }
     /**
      * 得到 Redis 原始对象可以有更多的操作
      *

@@ -32,7 +32,6 @@
             <th>创建人</th>
             <th>创建时间</th>
             <th>状态</th>
-            <th class="table-tool">操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -72,19 +71,6 @@
                   <else />
                   未审核
                 </if>
-              </td>
-
-              <td class="table-tool" data-title="操作">
-                <div class="tools-edit">
-                  <a data-tip="预览"
-
-                  href="__ROOT__/content/{$vlist.id}.html"
-
-
-                     target="_blank"  class="btn btn-success btn-icon">
-                    <i class="fa fa-eye"></i>
-                  </a>
-                </div>
               </td>
             </tr>
           </volist>

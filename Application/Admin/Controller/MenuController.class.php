@@ -390,10 +390,6 @@ class MenuController extends BaseController {
             $data []= $row;
         }
         var_dump($data);
-        die;
-        var_dump($info);
-        echo 'success';
-        die;
     }
 
     public function gethotelmanager()
