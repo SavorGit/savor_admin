@@ -215,9 +215,9 @@ class CheckaccountController extends BaseController{
 
 	public function doaddCheckAccount(){
 		$user = new \Admin\Model\UserModel();
-		$statementModel = new \Admin\Model\StatementModel();
-		$statedetailModel = new \Admin\Model\StatementDetailModel();
-		$statenoticeModel = new \Admin\Model\StatementNoticeModel();
+		$statementModel = new \Admin\Model\AccountStatementModel();
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
 		$arr = array (
 			'id' => '',
 			'fee' => '1',
@@ -353,7 +353,7 @@ class CheckaccountController extends BaseController{
 		$money = array();
 		//判断酒楼是否存在
 		$hotelModel = new \Admin\Model\HotelModel();
-		$statedetailModel = new \Admin\Model\StatementDetailModel();
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		foreach($info as $rk=>$rv) {
 			$num[] = $rv['id'];
 			$money[$rv['id']] = $rv['money'];
@@ -421,8 +421,8 @@ class CheckaccountController extends BaseController{
 		$maxcount = 8;
 		$max = $redis->lsize($rkey);
 		$data = $redis->lgetrange($rkey,0,$max);
-		$statedetailModel = new \Admin\Model\StatementDetailModel();
-		$statenoticeModel = new \Admin\Model\StatementNoticeModel();
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
 		$me_su_arr = array();
 		$me_fail_arr = array();
 		if(empty($data)){
