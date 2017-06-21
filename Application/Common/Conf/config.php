@@ -116,6 +116,7 @@ $config['MANGER_KEY'] = array(
     'hotel' =>'酒楼节点',
     'report'=>'报表节点',
     'testreport'=>'测试报表节点',
+    'checkaccount'=>'对账系统节点',
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
@@ -139,6 +140,11 @@ $config['source_type'] = array(
     '4'=>'节目',
     '5'=>'服务员扫码',
 );
+$config['fee_type'] = array(
+    '1'=>'开机费',
+    '2'=>'APP推广',
+);
+
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
     '2' => array('id'=>2, 't'=>'Iphone 5', 'w'=>'320', 'h'=>'568'),
