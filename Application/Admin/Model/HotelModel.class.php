@@ -143,4 +143,9 @@ class HotelModel extends BaseModel{
 	    return $this->where($where)->count();
 	}
 
+	public function getWhereData($where, $field='') {
+		$result = $this->where($where)->field($field)->select();
+		return  $result;
+	}
+
 }
