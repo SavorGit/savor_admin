@@ -80,8 +80,12 @@ class CheckaccountController extends BaseController{
 				$dat['check_status'] = 3;
 				$where = 'id = '.$did;
 				$statedetailModel->saveData($dat, $where);
-				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
 				//下发短信
+				$info = $statedetailModel->getWhereSql($did);
+				$this->sendPayMessage($info);
+
+				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
+
 			}else{
 				$this->error('您无权限点击');
 			}
@@ -132,6 +136,7 @@ class CheckaccountController extends BaseController{
 					if($nh == $val['state']) {
 						if($val['state'] == 1) {
 							$dat['detail_id'] = $val['detailid'];
+							$dat['f_type'] = 1;
 							$notice_arr = $statenoticeModel->getWhere($dat);
 							$nostus = $notice_arr['status'];
 							if($nostus == 1){
@@ -538,12 +543,17 @@ class CheckaccountController extends BaseController{
 	}
 
 
-	private function sendToUcPa($to,$param){
+	private function sendToUcPa($to,$param,$type=1){
 		$bool = true;
 		$ucconfig = C('SMS_CONFIG');
 		$options['accountsid'] = $ucconfig['accountsid'];
 		$options['token'] = $ucconfig['token'];
-		$templateId = $ucconfig['templateid'];
+		//确认付款通知
+		if($type == 2){
+
+		}else{
+			$templateId = $ucconfig['templateid'];
+		}
 		$ucpass= new Ucpaas($options);
 		$appId = $ucconfig['appid'];
 		$sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
@@ -574,6 +584,19 @@ class CheckaccountController extends BaseController{
 		echo $shortlink;
 		$param="$fe_start,$fe_end,$shortlink";
 		$bool = $this->sendToUcPa($tel,$param);
+		return $bool;
+	}
+
+
+	private function sendPayMessage($info){
+		//$sjson  = '{"resp":{"respCode":"000000","templateSMS":{"createDate":"20170621131304","smsId":"3bcd56624d1d60a6e5830c3886f2f31d"}}}';
+		$fe_start = $info['fee_start'];
+		$fe_end = $info['fee_end'];
+		$tel= $info['tel'];
+		$detailid = $info['id'];
+		$to = $tel;
+		$param="$fe_start,$fe_end,$shortlink";
+		$bool = $this->sendToUcPa($tel,$param, 2);
 		return $bool;
 	}
 
