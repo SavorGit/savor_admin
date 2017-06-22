@@ -13,6 +13,24 @@ class AccountStatementDetailModel extends BaseModel{
 	protected $tableName = 'account_statement_detail';
 
 
+	public function getAll($where,$order, $start=0,$size=5){
+		$sql =   "SELECT sdet.state, sht.NAME,sdet.id detailid  ,sdet.money , sdet.check_status,  sdet.hotel_id  hotelid FROM savor_account_statement_detail sdet LEFT
+  JOIN savor_hotel sht ON sht.id = sdet.hotel_id where $where order by $order limit $start, $size";
+
+		$list = $this->query($sql);
+
+		$sqlb = "SELECT count(*) cot  FROM savor_account_statement_detail sdet LEFT
+  JOIN savor_hotel sht ON sht.id = sdet.hotel_id where $where";
+		$count = $this->query($sqlb);
+		$count = $count[0]['cot'];
+		$objPage = new Page($count,$size);
+		$show = $objPage->admin_page();
+		$data = array('list'=>$list,'page'=>$show);
+
+		return $data;
+	}
+
+
     public function getInfo($field ='*',$where,$order,$limit){
         $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
         return $result;

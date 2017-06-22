@@ -13,65 +13,151 @@ use Common\Lib\Ucpaas;
 /**
  * Class CheckaccountController
  * 对账单列表
- * /SELECT * FROM savor_account_statement_detail sdet  JOIN savor_account_notice sano ON
-sdet.id = sano.detail_id  WHERE  sdet.statement_id = 2
+ * /
  * @package Admin\Controller
  */
 class CheckaccountController extends BaseController{
 
 
 	/**
-	 * @desc 下载次数统计
+	 * @desc 对账单列表
+	 *
 	 */
 	public function rplist(){
 		$starttime = I('post.starttime','');
 		$endtime = I('post.endtime','');
-		$downloadModel =  new \Admin\Model\DownloadRpModel();
-		$hotelModel = new \Admin\Model\HotelModel();
+		$stateModel =  new \Admin\Model\AccountStatementModel();
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','add_time');
+		$order = I('_order','sast.create_time');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
-		$source_type = I('source_type','');
-
+		$fee_type = C('fee_type');
 		$where = "1=1";
-		$hname = I('hotelname','');
-		if($source_type){
-			$where .="	AND source_type = '{$source_type}'";
-			$this->assign('sot',$source_type);
-		}
 		if($starttime){
 			$this->assign('s_time',$starttime);
-			$where .= "	AND add_time >= '{$starttime}'";
+			$where .= "	AND sast.create_time >= '{$starttime}'";
 		}
 		if($endtime){
 			$this->assign('e_time',$endtime);
-			$where .= "	AND add_time <=  '{$endtime} 23:59:59'";
-		}
-		$result = $downloadModel->getList($where,$orders,$start,$size);
-		$so_type = C('source_type');
-		$ind = $start;
-		foreach ($result['list'] as &$val) {
-			$rs = $hotelModel->find($val['hotelid']);
-			$val['hotelname'] = $rs['name'];
-			$val['indnum'] = ++$ind;
+			$where .= "	AND sast.create_time <=  '{$endtime}'";
 		}
 
-		$this->assign('sce_type', $so_type);
+		$result = $stateModel->getAll($where,$orders, $start=0,$size=5);
+		$ind = $start;
+		foreach ($result['list'] as &$val) {
+			$val['indnum'] = ++$ind;
+			foreach ($fee_type as $fk=>$fv){
+				if($fk == $val['cost_type']){
+					$val['cost_type'] = $fv;
+				}
+			}
+		}
+		$acd = array ( 0 => array ( 'cost_type' => '开机费', 'fee_start' => '2017-06-16', 'create_time' => '2017-06-21 16:01:04', 'stremark' => 'dsfwwerwe', 'count' => '2', 'receipt_addr' => 'tian1', 'receipt_tel' => 'tian2,010-82105147', 'receipt_head' => 'tian3', 'receipt_taxnum' => 'tian4', 'uremark' => 'Admin', 'indnum' => 1, ), );
+		//var_export($result['list']);
+
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('accountlist');
 	}
 
 
+	public function payCash(){
+		$did = I('get.detailid',0);
+		$statementid = I('get.statementid',0);
+		if($did){
+			$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+			$info = $statedetailModel->find($did);
+			$ch_staus =  $info['check_status'];
+			$state = $info['state'];
+			if($ch_staus == 2 && $state == 1){
+				//更新状态
+				$dat['check_status'] = 3;
+				$where = 'id = '.$did;
+				$statedetailModel->saveData($dat, $where);
+				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
+				//下发短信
+			}else{
+				$this->error('您无权限点击');
+			}
+		}else{
+			$this->error('传参不能为空');
+		}
+	}
+
+
+
+	public function showhotel(){
+
+		$statementid = I('statementid',0);
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
+
+		if($statementid){
+			$size   = I('numPerPage',50);//显示每页记录数
+			$this->assign('numPerPage',$size);
+			$start = I('pageNum',1);
+			$this->assign('pageNum',$start);
+			$order = I('_order','sdet.id');
+			$this->assign('_order',$order);
+			$sort = I('_sort','desc');
+			$this->assign('_sort',$sort);
+			$orders = $order.' '.$sort;
+			$start  = ( $start-1 ) * $size;
+			$where = "1=1";
+			$where .= " AND sdet.statement_id = ".$statementid;
+			$result = $statedetailModel->getAll($where,$orders, $start=0,$size=5);
+			$ind = $start;
+			$notice_state = C('NOTICE_STATAE');
+			$check_state = C('CHECK_STATAE');
+			foreach ($result['list'] as &$val){
+				$val['indnum'] = ++$ind;
+				foreach($check_state as $ch=>$cv){
+                      if($ch == $val['check_status']) {
+						  $val['ch_mes'] = $cv;
+						  if($ch == 3) {
+							  $val['cont'] = '2';
+						  }else{
+							  $val['cont'] = '确认付款完成';
+						  }
+						  break;
+					  }
+				}
+				foreach($notice_state as $nh=>$nv){
+					if($nh == $val['state']) {
+						if($val['state'] == 1) {
+							$dat['detail_id'] = $val['detailid'];
+							$notice_arr = $statenoticeModel->getWhere($dat);
+							$nostus = $notice_arr['status'];
+							if($nostus == 1){
+								$val['no_mes'] = '发送成功';
+							}else {
+								$val['no_mes'] = '发送失败';
+							}
+							break;
+						} else {
+							$val['no_mes'] = $nv;
+							break;
+						}
+					}
+				}
+
+			}
+			$this->assign('statementid', $statementid);
+			$this->assign('list', $result['list']);
+			$this->assign('page',  $result['page']);
+			$this->display('showHotel');
+		}
+	}
+
+
 	/**
-	 * 新增分类
+	 * 添加对账单信息
 	 *
 	 */
 	public function addcheckaccount(){
@@ -96,8 +182,7 @@ class CheckaccountController extends BaseController{
 		$cid = I('post.tid');
 		$accountModel = new \Admin\Model\AccountConfigModel();
 		$res_save = $accountModel->find($cid);
-		//var_dump($res_save);
-
+		$res_save['receipt_tel'] = str_replace(',','  ', $res_save['receipt_tel']);
 		if($res_save){
 			$result = array('code'=>1,'list'=>$res_save);
 		}
@@ -161,53 +246,6 @@ class CheckaccountController extends BaseController{
 		$res = array('error'=>0,'message'=>$data);
 		echo json_encode($res);
 		die;
-		$ex_arr = array();
-		$remove_arr = array();
-		$inc_arr = array();
-		foreach ($data as $rk=>$rv) {
-			foreach($rv as $sk=>$sv){
-				$ex_arr[] = $sv;
-				break;
-			}
-			$xuan_arr = array('酒楼宣传片','1酒楼片源','2酒楼片源','3酒楼片源','4酒楼片源','5酒楼片源','6酒楼片源');
-			if (in_array($sv, $xuan_arr)) {
-				$inc_arr[] = array(
-					'id'=>0,
-					'name'=>$sv,
-					'duration'=>0,
-					'create_time'=>date("Y-m-d H:i:s"),
-				);
-			}else{
-				$res = $adsModel->where(array('name'=>$sv))->find();
-
-				if ($res) {
-					//var_dump($res);
-					$inc_arr[] = array(
-						'id'=>$res['id'],
-						'name'=>$res['name'],
-						'duration'=>$res['duration'],
-						'create_time'=>$res['create_time'],
-					);
-				} else{
-					$remove_arr[] = $sv;
-				}
-			}
-
-		}
-		$list = '';
-		/*foreach ($inc_arr as $ik=>$iv) {
-            $list .= ' <div id="'.$iv['id'].'" dur="'.$iv['duration'].'" class="divlist2"><span class="sleft">'.$iv['name'].'</span><span class="sright">'.$iv['create_time'].' </span></div>';
-        }*/
-		//$list = h($list);
-
-		if ($remove_arr) {
-			$res = array('error'=>1,'nomessage'=>$remove_arr,'message'=>$inc_arr);
-
-		} else {
-			$res = array('error'=>0,'message'=>$inc_arr);
-		}
-		// ob_clean();
-		echo json_encode($res);
 	}
 
 
@@ -368,6 +406,9 @@ class CheckaccountController extends BaseController{
 			$num_true[] = $rv['id'];
 			if(empty($res[$rk]['bill_tel'])){
 				$res[$rk]['state'] = 4;
+			}
+			if($res[$rk]['money']<0){
+				$res[$rk]['state'] = 5;
 			}
 		}
 		$count = count($num_true);

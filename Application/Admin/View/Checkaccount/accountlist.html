@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/downloadrp/rplist" method="post" >
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/checkaccount/rplist" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -77,47 +77,40 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <tr id="post">
             <th>序号</th>
             <!-- <th>机顶盒ID</th> -->
-            <th>来源</th>
-            <th>手机客户端</th>
+            <th>费用类别</th>
+            <th>费用时间段</th>
             <!-- <th>包间ID</th> -->
-            <th>设备唯一标识</th>
+            <th>创建时间</th>
             <!-- <th>酒楼ID</th> -->
-            <th>点击下载设备</th>
+            <th>发票邮寄地址</th>
             <!-- <th>区域ID</th> -->
-            <th>酒楼名称</th>
-            <th>酒楼id</th>
-            <th>服务员id</th>
-            <th>添加时间</th>
+            <th>备注</th>
+            <th>酒楼</th>
+            <th>操作人 </th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="序号">{$vlist.indnum}</td>
-              <!-- <td data-title="机顶盒ID">{$vlist.box_id}</td> -->
-              <td data-title="来源"><volist name="sce_type" id="vo">
-                <if condition="$key eq $vlist['source_type']">{$vo}</if>
-              </volist></td>
-              <td data-title="手机客户端">
-                <if condition="$vlist['clientid'] eq 1">android</if>
-                <if condition="$vlist['clientid'] eq 2">ios</if>
-                </td>
-              <!-- <td data-title="包间ID">{$vlist.room_id}</td> -->
-              <td data-title="设备唯一标识">
-                {$vlist.deviceid}
+              <td data-title="费用类别">
+                {$vlist.cost_type}
                </td>
               <!-- <td data-title="酒楼ID">{$vlist.hotel_id}</td> -->
-              <td data-title="点击下载设备">
-
-                <if condition="$vlist['dowload_device_id'] eq 1">android</if>
-                <if condition="$vlist['dowload_device_id'] eq 2">ios</if>
-                <if condition="$vlist['dowload_device_id'] eq 3">pc</if>
+              <td data-title="费用时间段">
+                {$vlist.fee_start}
                </td>
               <!-- <td data-title="区域ID">{$vlist.area_id}</td> -->
-              <td data-title="酒楼名称">{$vlist.hotelname}</td>
-              <td data-title="酒楼id">{$vlist.hotelid}</td>
-              <td data-title="服务员id">{$vlist.waiterid}</td>
-            <td data-title="添加时间">{$vlist.add_time} </td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="发票邮寄地址">{$vlist.receipt_addr}</td>
+              <td data-title="备注">{$vlist.stremark}</td>
+            <td data-title="酒楼">
+
+              <a data-tip="酒楼" target="navTab" title="酒楼" rel="checkaccount/showhotel" href="{$host_name}/checkaccount/showhotel?statementid={$vlist.statementid}" class="btn btn-success btn-icon">{$vlist.count}家
+              </a>
+
+            </td>
+              <td data-title="操作人">{$vlist.uremark} </td>
             </tr>
           </volist>
           </tbody>
