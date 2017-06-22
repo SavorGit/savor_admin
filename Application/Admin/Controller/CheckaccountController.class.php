@@ -263,6 +263,12 @@ class CheckaccountController extends BaseController{
 		$fee = I('post.fee');
 		$remark= I('post.remark','','trim');
 		$hotel_acc_arr   = json_decode ($_POST['accountjson'],true);
+		if(empty($rec_addr_id)){
+			$this->error('必须选择地址');
+		}
+		if(empty($hotel_acc_arr)){
+			$this->error('EXCEL不可为空');
+		}
 		$where =' 1=1';
 		if(empty($start_date) || empty($end_date)){
 			$this->error('开始结束时间不得为空');
@@ -382,14 +388,8 @@ class CheckaccountController extends BaseController{
 				$statenoticeModel->addAll($message);
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
-				$data = array('status'=>0,'info'=>$sustr,'navTabId'=>'','url'=>'',
-					'callbackType'=>'forward','forwardUrl'=>'','confirmMsg'=>'','callback'=>'','del'=>'');
-				//$this->output($sustr,3);
-				$this->ajaxReturn($data,'');
 
-				//echo "<script>alertMsg.error($sustr);$.pdialog.closeCurrent();</script>";
-
-
+			    $this->output($sustr,3);
 			}else{
 				$this->error('添加对账单明细失败');
 			}
