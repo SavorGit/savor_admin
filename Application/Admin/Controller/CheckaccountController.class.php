@@ -47,8 +47,7 @@ class CheckaccountController extends BaseController{
 			$this->assign('e_time',$endtime);
 			$where .= "	AND sast.create_time <=  '{$endtime}'";
 		}
-
-		$result = $stateModel->getAll($where,$orders, $start=0,$size=5);
+		$result = $stateModel->getAll($where,$orders, $start,$size);
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
 			$val['indnum'] = ++$ind;
@@ -58,8 +57,6 @@ class CheckaccountController extends BaseController{
 				}
 			}
 		}
-		$acd = array ( 0 => array ( 'cost_type' => '开机费', 'fee_start' => '2017-06-16', 'create_time' => '2017-06-21 16:01:04', 'stremark' => 'dsfwwerwe', 'count' => '2', 'receipt_addr' => 'tian1', 'receipt_tel' => 'tian2,010-82105147', 'receipt_head' => 'tian3', 'receipt_taxnum' => 'tian4', 'uremark' => 'Admin', 'indnum' => 1, ), );
-		//var_export($result['list']);
 
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
@@ -400,7 +397,8 @@ class CheckaccountController extends BaseController{
 				$statenoticeModel->addAll($message);
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
-				$this->error($sustr);
+				//$this->error($sustr);
+				echo "<script>alertMsg.error($sustr);$.pdialog.closeCurrent();</script>";
 
 
 			}else{
