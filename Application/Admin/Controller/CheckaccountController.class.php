@@ -323,6 +323,7 @@ class CheckaccountController extends BaseController{
 		$sustr = '发送成功'.$succ.'家酒楼,失败'.$fail.'家.由于使用第三方平台，可能有延时<br/><br/>';
 		$sustr = $sustr.$sa;
 		//添加savor_account_statement表operator operatorid
+		$save['summary']  = $sustr;
 		$save['fee_start']  = $start_date;
 		$save['fee_end']  = $end_date;
 		$save['cost_type'] = $fee;
