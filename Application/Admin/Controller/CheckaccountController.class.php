@@ -256,21 +256,6 @@ class CheckaccountController extends BaseController{
 		$statementModel = new \Admin\Model\AccountStatementModel();
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
-		//$start_date = '2017-06-16';
-		//$end_date = '2017-06-20';
-		$arr = array (
-			'id' => '',
-			'fee' => '1',
-			'starttime' => '2017-06-20',
-			'endtime' => '2017-06-17',
-			'rec_addr' => '2',
-			'rec_tel' => '2',
-			'rec_head' => '2',
-			'rec_taxnum' => '2',
-			'accountjson' => '[{"id":7,"name":"永峰","money":18},{"id":8,"name":"茉莉餐厅","money":20333},{"id":5600,"name":"茉莉餐厅","money":20333}]',
-			'ajax' => '1',
-			'remark' => 'W3R232',
-		);
 		$date_now         = date('Y-m-d H:i:s');
 		$start_date   = I('post.starttime','');
 		$end_date   = I('post.endtime','');
@@ -397,8 +382,12 @@ class CheckaccountController extends BaseController{
 				$statenoticeModel->addAll($message);
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
-				//$this->error($sustr);
-				echo "<script>alertMsg.error($sustr);$.pdialog.closeCurrent();</script>";
+				$data = array('status'=>0,'info'=>$sustr,'navTabId'=>'','url'=>'',
+					'callbackType'=>'forward','forwardUrl'=>'','confirmMsg'=>'','callback'=>'','del'=>'');
+				//$this->output($sustr,3);
+				$this->ajaxReturn($data,'');
+
+				//echo "<script>alertMsg.error($sustr);$.pdialog.closeCurrent();</script>";
 
 
 			}else{
