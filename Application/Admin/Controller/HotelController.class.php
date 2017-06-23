@@ -465,7 +465,7 @@ class HotelController extends BaseController {
 			}
 		}
 		if($save['bill_per']){
-			if(  strlen($save['bill_per'])<2 ||  strlen($save['bill_per'])>10 ){
+			if(  mb_strlen($save['bill_per'])<2 ||  mb_strlen($save['bill_per'])>10 ){
 				$this->error('联系人2至10个字符');
 			}
 		}
