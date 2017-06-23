@@ -275,18 +275,18 @@ class CheckaccountController extends BaseController{
 		$remark= I('post.remark','','trim');
 		$hotel_acc_arr   = json_decode ($_POST['accountjson'],true);
 		if(empty($rec_addr_id)){
-			$this->error('必须选择地址');
+			$this->error('必须选择地址','notclose');
 		}
 		if(empty($hotel_acc_arr)){
-			$this->error('EXCEL不可为空');
+			$this->error('EXCEL不可为空','notclose');
 		}
 		$where =' 1=1';
 		if(empty($start_date) || empty($end_date)){
-			$this->error('开始结束时间不得为空');
+			$this->error('开始结束时间不得为空','notclose');
 		}
 		if($start_date && $end_date){
 			if($end_date<=$start_date){
-				$this->error('结束时间不能小于等于开始时间');
+				$this->error('结束时间不能小于等于开始时间','notclose');
 			}
 		}
 		//判酒楼是否已经存在以及detail表是否有
@@ -411,11 +411,11 @@ class CheckaccountController extends BaseController{
 				}
 
 			}else{
-				$this->error('添加对账单明细失败');
+				$this->error('添加对账单明细失败','notclose');
 			}
 
 		}else{
-			$this->error('添加对账单失败');
+			$this->error('添加对账单失败','notclose');
 		}
 	}
 
