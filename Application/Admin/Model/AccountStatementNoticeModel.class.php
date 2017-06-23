@@ -19,8 +19,13 @@ class AccountStatementNoticeModel extends BaseModel
 		$redis->select(15);
 		$data = array_unique($data);
 		$cache_key = C('DB_PREFIX').$this->tableName;
+
+		$max = $redis->lsize($cache_key);
+		$redisdata = $redis->lgetrange($cache_key,0,$max);
 		foreach($data as $v){
-			$redis->lpush($cache_key, $v);
+			if(!in_array($v, $redisdata)){
+				$redis->lpush($cache_key, $v);
+			}
 		}
 
 	}

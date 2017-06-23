@@ -12,7 +12,7 @@
   }
 </style>
 <div class="pageContent">
-  <form method="post" action="{$host_name}/checkaccount/doaddCheckAccount" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  <form method="post" action="{$host_name}/checkaccount/doaddCheckAccount" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneIce)">
     <input type="hidden" name="id" value="{$vinfo.id}">
 
     <div class="pageFormContent modal-body" style="z-index:10;">
@@ -33,12 +33,12 @@
               </div>
               <div class="form-group">
                 <label style="margin-right: 25px;line-height: 20px;width: 88px;">费用时间段:</label>
-                <div class="form-inline">
 
-                  <input  type="date" name="starttime" style="margin-right: 20px;border-radius: 6px !important;"/>
+
+                  <input  type="date" name="starttime" style="margin-right: 20px;border-radius: 6px !important;float:left;"/>
                   <input  type="date" name="endtime"   style="border-radius: 6px !important;"/>
 
-                </div>
+
 
               </div>
               <div class="form-group">
@@ -297,4 +297,20 @@
           }
 
   );
+
+
+  function dialogAjaxDoneIce(json){
+    DWZ.ajaxDone(json);
+    jap = JSON.stringify(json);
+
+    console.log(jap);
+    var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
+    var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
+
+    $.pdialog.closeCurrent();
+    navTab.reload('Checkaccount/rplist');
+
+
+  }
+
 </script>

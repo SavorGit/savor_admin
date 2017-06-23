@@ -363,17 +363,21 @@ class CheckaccountController extends BaseController{
 				$rd = array();
 				$rd['statement_id'] = $insertid;
 				$detail_arr = $statedetailModel->getWhereData($rd);
-				$dpr = array();
+				/*$dpr = array();
 				$message = array();
 				foreach($detail_arr as $dv){
 					$dpr[$dv['hotel_id']] = $dv['id'];
 				}
+				var_export($detail_arr);
 				$ma = array();
-				foreach($hotel_acc_info as $ha=>$hi){
+				var_export($hotel_acc_info);
+				die;*/
+
+				foreach($detail_arr as $ha=>$hi){
 					if($hi['state'] == 1){
 
-						$message[$ha]['detail_id'] = $dpr[$hi['id']];
-						$ma[] = $message[$ha]['detail_id'];
+						$message[$ha]['detail_id'] = $hi['id'];
+						$ma[] = $hi['id'];
 						$message[$ha]['status'] = 0;
 						$message[$ha]['f_type'] = 1;
 						$message[$ha]['create_time'] = $date_now;
@@ -389,8 +393,12 @@ class CheckaccountController extends BaseController{
 				$statenoticeModel->addAll($message);
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
+				if($fail == 0){
+					$this->output($sustr,'Checkaccount/rplist',1,1);
+				}else{
+					$this->output($sustr,'Checkaccount/rplist',1,0);
+				}
 
-			    $this->output($sustr,3);
 			}else{
 				$this->error('添加对账单明细失败');
 			}
@@ -486,7 +494,8 @@ class CheckaccountController extends BaseController{
 
 	public function sendToSeller(){
 
-		//http://www.a.com/index.php/checkaccount/send_message
+		//http://www.a.com/index.php/checkaccount/sendToSeller
+		//http://devp.admin.rerdian.com/index.php/checkaccount/sendToSeller
 		$redis  =  SavorRedis::getInstance();
 		$redis->select(15);
 		$rkey = 'savor_account_statement_notice';
@@ -496,6 +505,7 @@ class CheckaccountController extends BaseController{
 		$maxcount = 8;
 		$max = $redis->lsize($rkey);
 		$data = $redis->lgetrange($rkey,0,$max);
+		var_dump($data);
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
 		$me_su_arr = array();
@@ -533,6 +543,7 @@ class CheckaccountController extends BaseController{
 				}
 			}else{
 				echo '出错ID:'.$val.'<br/>';
+				$redis->lPop($rkey);
 			}
 
 		}
