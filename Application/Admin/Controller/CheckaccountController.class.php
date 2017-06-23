@@ -63,8 +63,10 @@ class CheckaccountController extends BaseController{
 		$this->display('accountlist');
 	}
 
-
-	public function payCash(){
+	/*
+	 * @desc 确认付款
+	 */
+	public function confirmPayDone(){
 		$did = I('get.detailid',0);
 		$statementid = I('get.statementid',0);
 		if($did){
@@ -83,7 +85,7 @@ class CheckaccountController extends BaseController{
 				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
 
 			}else{
-				$this->error('您无权限点击');
+				$this->error('您必须确认付款后才行');
 			}
 		}else{
 			$this->error('传参不能为空');
@@ -91,13 +93,18 @@ class CheckaccountController extends BaseController{
 	}
 
 
-
+	/*
+	 * @desc 显示对账酒楼明细
+	 */
 	public function showhotel(){
 
 		$statementid = I('statementid',0);
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
-
+		$stateModel = new \Admin\Model\AccountStatementModel();
+		$info = $stateModel->find($statementid);
+		$summary = $info['summary'];
+		$this->assign('instruction',$summary);
 		if($statementid){
 			$size   = I('numPerPage',50);//显示每页记录数
 			$this->assign('numPerPage',$size);
@@ -176,7 +183,9 @@ class CheckaccountController extends BaseController{
 
 
 
-
+	/*
+	 * @desc 获取地址配置信息
+	 */
 
 	public function getaccountinfo(){
 		$cid = I('post.tid');
@@ -249,7 +258,9 @@ class CheckaccountController extends BaseController{
 	}
 
 
-
+	/*
+	 * 处理添加对账单信息
+	 */
 
 	public function doaddCheckAccount(){
 		$user = new \Admin\Model\UserModel();
@@ -408,6 +419,9 @@ class CheckaccountController extends BaseController{
 		}
 	}
 
+	/*
+	 * 判断当前酒楼应该是何状态
+	 */
 	private function judgeHotel($info,$st,$en,$fee){
 		$num = array();
 		$money = array();
@@ -492,6 +506,9 @@ class CheckaccountController extends BaseController{
 	}
 
 
+	/*
+	 * 执行脚本文件定时发送短信
+	 */
 	public function sendToSeller(){
 
 		//http://www.a.com/index.php/checkaccount/sendToSeller
