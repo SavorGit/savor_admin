@@ -63,8 +63,10 @@ class CheckaccountController extends BaseController{
 		$this->display('accountlist');
 	}
 
-
-	public function payCash(){
+	/*
+	 * @desc 确认付款
+	 */
+	public function confirmPayDone(){
 		$did = I('get.detailid',0);
 		$statementid = I('get.statementid',0);
 		if($did){
@@ -83,7 +85,7 @@ class CheckaccountController extends BaseController{
 				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
 
 			}else{
-				$this->error('您无权限点击');
+				$this->error('您必须确认付款后才行');
 			}
 		}else{
 			$this->error('传参不能为空');
@@ -91,13 +93,18 @@ class CheckaccountController extends BaseController{
 	}
 
 
-
+	/*
+	 * @desc 显示对账酒楼明细
+	 */
 	public function showhotel(){
 
 		$statementid = I('statementid',0);
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
-
+		$stateModel = new \Admin\Model\AccountStatementModel();
+		$info = $stateModel->find($statementid);
+		$summary = $info['summary'];
+		$this->assign('instruction',$summary);
 		if($statementid){
 			$size   = I('numPerPage',50);//显示每页记录数
 			$this->assign('numPerPage',$size);
@@ -176,7 +183,9 @@ class CheckaccountController extends BaseController{
 
 
 
-
+	/*
+	 * @desc 获取地址配置信息
+	 */
 
 	public function getaccountinfo(){
 		$cid = I('post.tid');
@@ -249,7 +258,9 @@ class CheckaccountController extends BaseController{
 	}
 
 
-
+	/*
+	 * 处理添加对账单信息
+	 */
 
 	public function doaddCheckAccount(){
 		$user = new \Admin\Model\UserModel();
@@ -363,17 +374,21 @@ class CheckaccountController extends BaseController{
 				$rd = array();
 				$rd['statement_id'] = $insertid;
 				$detail_arr = $statedetailModel->getWhereData($rd);
-				$dpr = array();
+				/*$dpr = array();
 				$message = array();
 				foreach($detail_arr as $dv){
 					$dpr[$dv['hotel_id']] = $dv['id'];
 				}
+				var_export($detail_arr);
 				$ma = array();
-				foreach($hotel_acc_info as $ha=>$hi){
+				var_export($hotel_acc_info);
+				die;*/
+
+				foreach($detail_arr as $ha=>$hi){
 					if($hi['state'] == 1){
 
-						$message[$ha]['detail_id'] = $dpr[$hi['id']];
-						$ma[] = $message[$ha]['detail_id'];
+						$message[$ha]['detail_id'] = $hi['id'];
+						$ma[] = $hi['id'];
 						$message[$ha]['status'] = 0;
 						$message[$ha]['f_type'] = 1;
 						$message[$ha]['create_time'] = $date_now;
@@ -389,8 +404,12 @@ class CheckaccountController extends BaseController{
 				$statenoticeModel->addAll($message);
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
+				if($fail == 0){
+					$this->output($sustr,'Checkaccount/rplist',1,1);
+				}else{
+					$this->output($sustr,'Checkaccount/rplist',1,0);
+				}
 
-			    $this->output($sustr,3);
 			}else{
 				$this->error('添加对账单明细失败');
 			}
@@ -400,6 +419,9 @@ class CheckaccountController extends BaseController{
 		}
 	}
 
+	/*
+	 * 判断当前酒楼应该是何状态
+	 */
 	private function judgeHotel($info,$st,$en,$fee){
 		$num = array();
 		$money = array();
@@ -484,9 +506,13 @@ class CheckaccountController extends BaseController{
 	}
 
 
+	/*
+	 * 执行脚本文件定时发送短信
+	 */
 	public function sendToSeller(){
 
-		//http://www.a.com/index.php/checkaccount/send_message
+		//http://www.a.com/index.php/checkaccount/sendToSeller
+		//http://devp.admin.rerdian.com/index.php/checkaccount/sendToSeller
 		$redis  =  SavorRedis::getInstance();
 		$redis->select(15);
 		$rkey = 'savor_account_statement_notice';
@@ -496,6 +522,7 @@ class CheckaccountController extends BaseController{
 		$maxcount = 8;
 		$max = $redis->lsize($rkey);
 		$data = $redis->lgetrange($rkey,0,$max);
+		var_dump($data);
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
 		$me_su_arr = array();
@@ -533,6 +560,7 @@ class CheckaccountController extends BaseController{
 				}
 			}else{
 				echo '出错ID:'.$val.'<br/>';
+				$redis->lPop($rkey);
 			}
 
 		}

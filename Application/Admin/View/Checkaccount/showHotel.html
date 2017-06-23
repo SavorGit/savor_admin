@@ -12,6 +12,7 @@
 	      <div class="form-inline">
 		      <div class="form-group">
 		      	<h1>对账单{$statementid}酒楼列表</h1>
+                {$instruction}
 		       </div>
 	      </div>
 	      </div>
@@ -20,7 +21,7 @@
 	   </div>
 	   </form>
 </div>
-<div class="pageContent" id="pagecontent" style="top:85px">
+<div class="pageContent" id="pagecontent" style="top:130px">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -55,7 +56,7 @@
 
                   <if condition="$vlist.cont eq 2">
                     <else />
-                  <a style="width:90px;"  class="btn btn-default btn-icon" warn="警告" data-tip="" title="你确定要点击付款完成吗" target="ajaxTodo" href="{$host_name}/checkaccount/payCash?detailid={$vlist.detailid}&statementid={$statementid}" calback="navTabAjaxDone" data-original-title="付款">
+                  <a style="width:90px;"  class="btn btn-default btn-icon" warn="警告" data-tip="" title="你确定要点击付款完成吗" target="ajaxTodo" href="{$host_name}/checkaccount/confirmPayDone?detailid={$vlist.detailid}&statementid={$statementid}" calback="navTabAjaxDone" data-original-title="付款">
 				  <span>
 				   {$vlist.cont}
 				  </span>
