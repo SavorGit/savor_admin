@@ -47,8 +47,7 @@ class CheckaccountController extends BaseController{
 			$this->assign('e_time',$endtime);
 			$where .= "	AND sast.create_time <=  '{$endtime}'";
 		}
-
-		$result = $stateModel->getAll($where,$orders, $start=0,$size=5);
+		$result = $stateModel->getAll($where,$orders, $start,$size);
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
 			$val['indnum'] = ++$ind;
@@ -58,8 +57,6 @@ class CheckaccountController extends BaseController{
 				}
 			}
 		}
-		$acd = array ( 0 => array ( 'cost_type' => '开机费', 'fee_start' => '2017-06-16', 'create_time' => '2017-06-21 16:01:04', 'stremark' => 'dsfwwerwe', 'count' => '2', 'receipt_addr' => 'tian1', 'receipt_tel' => 'tian2,010-82105147', 'receipt_head' => 'tian3', 'receipt_taxnum' => 'tian4', 'uremark' => 'Admin', 'indnum' => 1, ), );
-		//var_export($result['list']);
 
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
@@ -83,7 +80,6 @@ class CheckaccountController extends BaseController{
 				//下发短信
 				$info = $statedetailModel->getWhereSql($did);
 				$this->sendPayMessage($info);
-
 				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
 
 			}else{
@@ -162,8 +158,8 @@ class CheckaccountController extends BaseController{
 
 
 	/**
-	 * 添加对账单信息
-	 *
+	 * 添加对账单信息,录入对账单
+	 * @access public
 	 */
 	public function addcheckaccount(){
 		//费用类型
@@ -171,9 +167,8 @@ class CheckaccountController extends BaseController{
 		//各种地址
 		$accountconfigModel =  new \Admin\Model\AccountConfigModel();
 		$where = ' 1=1 ';
-		$order =  'id desc';
+		$order =  'id asc';
 		$configinfo = $accountconfigModel->getAll('', $where, $order);
-		dump($configinfo);
 		$this->assign('fee_list', $fee_type);
 		$this->assign('account_config', $configinfo);
 		return $this->display('addAccount');
@@ -261,34 +256,23 @@ class CheckaccountController extends BaseController{
 		$statementModel = new \Admin\Model\AccountStatementModel();
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
-		$arr = array (
-			'id' => '',
-			'fee' => '1',
-			'starttime' => '2017-06-20',
-			'endtime' => '2017-06-17',
-			'rec_addr' => '2',
-			'rec_tel' => '2',
-			'rec_head' => '2',
-			'rec_taxnum' => '2',
-			'accountjson' => '[{"id":7,"name":"永峰","money":18},{"id":8,"name":"茉莉餐厅","money":20333},{"id":5600,"name":"茉莉餐厅","money":20333}]',
-			'ajax' => '1',
-			'remark' => 'W3R232',
-		);
-		//$_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
 		$date_now         = date('Y-m-d H:i:s');
 		$start_date   = I('post.starttime','');
 		$end_date   = I('post.endtime','');
 		$rec_addr_id   = I('post.rec_addr','');
 		$fee = I('post.fee');
 		$remark= I('post.remark','','trim');
-		$hotel_acc_arr   = json_decode (I('accountjson'),true);
-
-
-
-		$start_date = '2017-06-16';
-		$end_date = '2017-06-20';
-		$hotel_acc_arr = json_decode ($arr['accountjson'],true);
+		$hotel_acc_arr   = json_decode ($_POST['accountjson'],true);
+		if(empty($rec_addr_id)){
+			$this->error('必须选择地址');
+		}
+		if(empty($hotel_acc_arr)){
+			$this->error('EXCEL不可为空');
+		}
 		$where =' 1=1';
+		if(empty($start_date) || empty($end_date)){
+			$this->error('开始结束时间不得为空');
+		}
 		if($start_date && $end_date){
 			if($end_date<=$start_date){
 				$this->error('结束时间不能小于等于开始时间');
@@ -296,10 +280,10 @@ class CheckaccountController extends BaseController{
 		}
 		//判酒楼是否已经存在以及detail表是否有
 		$hotel_acc_info = $this->judgeHotel($hotel_acc_arr,$start_date, $end_date,$fee);
-		//var_dump($hotel_acc_info);
 		$statement_num = 0;
+		//var_dump($hotel_acc_info);
 		foreach($hotel_acc_info as $hk=>$hv){
-			if($hv['state'] == 2){
+			if($hv['state'] == 2 || $hv['state'] == 3 || $hv['state'] == 4 || $hv['state'] == 5 || $hv['state'] == 6){
 				continue;
 			}else{
 				if(!isset($hv['state'])){
@@ -308,9 +292,38 @@ class CheckaccountController extends BaseController{
 				$statement_num++;
 			}
 		}
-		var_dump($statement_num);
+		$err1 = '';
+		$err2 = '';
+		$err3 = '';
+		$err4 = '';
+		$err5 = '';
+		$succ = 0;
+		$fail = 0;
+		foreach($hotel_acc_info as $ht=>$hv){
+			if($hv['state'] == 1){
+				$succ++;
+				continue;
+			}else{
+				if($hv['state'] == 2){
+					$err1 .= "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼不存在';
+				}else if($hv['state'] == 3){
+					$err2 .= "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼已经下发';
+				}else if($hv['state'] == 4){
+					$err3 = "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼对账单人联系电话为空';
+				}else if($hv['state'] == 5){
+					$err4 = "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼下发金额为负值';
+				}else if($hv['state'] == 6){
+					$err5 = "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'EXCEL表中已经存在';
 
+				}
+				$fail++;
+			}
+		}
+		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5;
+		$sustr = '发送成功'.$succ.'家酒楼,失败'.$fail.'家.由于使用第三方平台，可能有延时<br/><br/>';
+		$sustr = $sustr.$sa;
 		//添加savor_account_statement表operator operatorid
+		$save['summary']  = $sustr;
 		$save['fee_start']  = $start_date;
 		$save['fee_end']  = $end_date;
 		$save['cost_type'] = $fee;
@@ -345,16 +358,11 @@ class CheckaccountController extends BaseController{
 
 
 			}
-			//echo '<hr/><hr/>';
-			//var_dump($datalist);
-
 			$rdetail = $statedetailModel->addAll($datalist);
 			if($rdetail){
 				$rd = array();
 				$rd['statement_id'] = $insertid;
 				$detail_arr = $statedetailModel->getWhereData($rd);
-				var_export($detail_arr);
-				var_export($hotel_acc_info);
 				$dpr = array();
 				$message = array();
 				foreach($detail_arr as $dv){
@@ -382,6 +390,7 @@ class CheckaccountController extends BaseController{
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
 
+			    $this->output($sustr,3);
 			}else{
 				$this->error('添加对账单明细失败');
 			}
@@ -397,9 +406,16 @@ class CheckaccountController extends BaseController{
 		//判断酒楼是否存在
 		$hotelModel = new \Admin\Model\HotelModel();
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$repeat_arr = array();
+		$rest = array();
 		foreach($info as $rk=>$rv) {
-			$num[] = $rv['id'];
-			$money[$rv['id']] = $rv['money'];
+			if(in_array($rv['id'], $num)){
+				$repeat_arr[$rv['id']] = $rv;
+			}else{
+				$num[] = $rv['id'];
+				$money[$rv['id']] = $rv['money'];
+				$rest[$rv['id']] = $rv;
+			}
 		}
 		$num_str = implode(',', $num);
 		$dat['id']=array('in',$num_str);
@@ -418,13 +434,26 @@ class CheckaccountController extends BaseController{
 		}
 		$count = count($num_true);
 		$ar_diff = array_diff($num, $num_true);
+		//找到状态为2即不存在
 		foreach($ar_diff as $av){
 			$res[$count]['id'] = $av;
 			$res[$count]['state'] = 2;
-			$res[$count]['name'] = '';
+			$res[$count]['name'] = $rest[$av]['name'];
+			$res[$count]['money'] = $rest[$av]['money'];
 			$res[$count]['bill_per'] = '';
 			$res[$count]['bill_tel'] = '';
 			$count++;
+		}
+		if($repeat_arr){
+			foreach($repeat_arr as $rk=>$rv){
+				$res[$count]['id'] = $rk;
+				$res[$count]['state'] = 6;
+				$res[$count]['name'] = $rv['name'];
+				$res[$count]['money'] = $rv['money'];
+				$res[$count]['bill_per'] = '';
+				$res[$count]['bill_tel'] = '';
+				$count++;
+			}
 		}
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
@@ -534,11 +563,10 @@ class CheckaccountController extends BaseController{
 	}
 
 
-	private function addAccountLog($sjson,$param){
+	private function addAccountLog($sjson,$param,$to){
 
-		$log=date("Y-m-d H:i:s")."---".$sjson."---".$param;
+		$log=date("Y-m-d H:i:s")."---".$sjson."---".$param."---".$to;
 		$path = LOG_PATH."Admin/sendmsg_".date("Y-m-d").".log";
-		var_dump($path);
 		file_put_contents($path, $log."\n",FILE_APPEND);
 	}
 
@@ -550,14 +578,14 @@ class CheckaccountController extends BaseController{
 		$options['token'] = $ucconfig['token'];
 		//确认付款通知
 		if($type == 2){
-
+			$templateId = $ucconfig['payment_templateid'];
 		}else{
-			$templateId = $ucconfig['templateid'];
+			$templateId = $ucconfig['bill_templateid'];
 		}
 		$ucpass= new Ucpaas($options);
 		$appId = $ucconfig['appid'];
 		$sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
-		$this->addAccountLog($sjson,$param);
+		$this->addAccountLog($sjson,$param,$to);
 		$sjson = json_decode($sjson,true);
 		$code = $sjson['resp']['respCode'];
 
@@ -593,9 +621,8 @@ class CheckaccountController extends BaseController{
 		$fe_start = $info['fee_start'];
 		$fe_end = $info['fee_end'];
 		$tel= $info['tel'];
-		$detailid = $info['id'];
 		$to = $tel;
-		$param="$fe_start,$fe_end,$shortlink";
+		$param="$fe_start,$fe_end";
 		$bool = $this->sendToUcPa($tel,$param, 2);
 		return $bool;
 	}

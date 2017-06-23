@@ -17,6 +17,7 @@ class AccountStatementNoticeModel extends BaseModel
 	public function saveStRedis($data, $id){
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
+		$data = array_unique($data);
 		$cache_key = C('DB_PREFIX').$this->tableName;
 		foreach($data as $v){
 			$redis->lpush($cache_key, $v);
