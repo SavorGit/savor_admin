@@ -37,4 +37,15 @@ class ContDetFinalModel extends Model
         ->select();
         return $list;
     }
+    public function getAll($where, $order='id desc'){
+        $list = $this->field("*,sum(read_count) as s_read_count,sum(read_duration) as s_read_duration,
+                              sum(demand_count) as s_demand_count, sum(share_count) as s_share_count,
+                              sum(pv_count) as s_pv_count,sum(uv_count) as s_uv_count,sum(click_count) as s_click_count,
+                              sum(outline_count) s_outline_count")
+                                      ->where($where)
+                                      ->order($order)
+                                      
+                                      ->group('content_id')->select();
+        return $list;
+    }
 }

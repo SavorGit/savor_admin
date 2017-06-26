@@ -148,7 +148,7 @@ class ReportController extends BaseController{
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);          //当前页码
         $this->assign('pageNum',$start);
-        $order = I('_order','read_count'); //排序字段
+        $order = I('_order','s_read_count'); //排序字段
         $this->assign('_order',$order);
         $sort = I('_sort','desc');        //排序类型
         $this->assign('_sort',$sort);

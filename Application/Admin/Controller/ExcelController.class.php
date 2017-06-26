@@ -638,7 +638,7 @@ class ExcelController extends Controller
     public function excelContAndProm(){
         $where =' 1=1';
         
-        $start_date = I('start_date');
+        /* $start_date = I('start_date');
         $end_date   = I('end_date');
         $userid = I('userid');
         $category_id = I('category_id','0','intval');
@@ -671,15 +671,15 @@ class ExcelController extends Controller
         if($category_id){
             $this->assign('category_id',$category_id);
             $where .=" and category_id=$category_id";
-        }
-        
+        } */
+        $content_name = I('content_name','','trim');
         if($content_name){
             $this->assign('content_name',$content_name);
             $where .=" and content_name like '%".$content_name."%'";
         }
         
         $m_content_details_final = new \Admin\Model\ContDetFinalModel();
-        $list = $m_content_details_final->getAllList($where, "read_count desc ");
+        $list = $m_content_details_final->getAll($where, "s_read_count desc ");
         
         $filename = 'allcontandprom';
         $xlsName = "allcontandprom";
@@ -693,31 +693,37 @@ class ExcelController extends Controller
             }else if($v['common_value']==3){
                 $list[$key]['common_value'] = '视频';
             }
-            if(empty($v['read_count'])){
-                $list[$key]['read_count'] = 0;
+            if(empty($v['s_read_count'])){
+                $list[$key]['s_read_count'] = 0;
             }
-            if(empty($v['read_duration'])){
-                $list[$key]['read_duration'] = '0秒';
+            if(!empty($v['s_read_duration'])){
+                $tmp = $list[$key]['s_read_duration']/ $list[$key]['s_read_count'];
+                $list[$key]['avg_read_duration'] = changeTimeType($tmp);
             }else {
-                $list[$key]['read_duration'] = changeTimeType($v['read_duration']);
+                $list[$key]['avg_read_duration'] = 0;
             }
-            if(empty($v['demand_count'])){
-                $list[$key]['demand_count'] = 0;
+            if(empty($v['s_read_duration'])){
+                $list[$key]['s_read_duration'] = '0秒';
+            }else {
+                $list[$key]['s_read_duration'] = changeTimeType($v['s_read_duration']);
             }
-            if(empty($v['share_count'])){
-                $list[$key]['share_count'] = 0;
+            if(empty($v['s_demand_count'])){
+                $list[$key]['s_demand_count'] = 0;
             }
-            if(empty($v['pv_count'])){
-                $list[$key]['pv_count'] = 0;
+            if(empty($v['s_share_count'])){
+                $list[$key]['s_share_count'] = 0;
             }
-            if(empty($v['uv_count'])){
-                $list[$key]['uv_count'] = 0;
+            if(empty($v['s_pv_count'])){
+                $list[$key]['s_pv_count'] = 0;
             }
-            if(empty($v['click_count'])){
-                $list[$key]['click_count'] = 0;
+            if(empty($v['s_uv_count'])){
+                $list[$key]['s_uv_count'] = 0;
             }
-            if(empty($v['outline_count'])){
-                $list[$key]['outline_count'] = 0;
+            if(empty($v['s_click_count'])){
+                $list[$key]['s_click_count'] = 0;
+            }
+            if(empty($v['s_outline_count'])){
+                $list[$key]['s_outline_count'] = 0;
             }
             
             
@@ -728,17 +734,61 @@ class ExcelController extends Controller
             array('common_value', '内容类别'),
             array('operators', '编辑'),
             array('create_time', '创建时间'),
-            array('read_count', '阅读总次数'),
-            array('read_duration', '阅读总时长'),
-            array('demand_count', '点播总次数'),
-            array('share_count', '分享总次数'),
-            array('pv_count', 'PV'),
-            array('uv_count', 'UV'),
-            array('click_count', '点击数'),
-            array('outline_count', '外链点击数'),
+            array('s_read_count', '阅读总次数'),
+            array('s_read_duration', '阅读总时长'),
+            array('avg_read_duration','平均阅读市场'),
+            array('s_demand_count', '点播总次数'),
+            array('s_share_count', '分享总次数'),
+            array('s_pv_count', 'PV'),
+            array('s_uv_count', 'UV'),
+            array('s_click_count', '点击数'),
+            array('s_outline_count', '外链点击数'),
      
         );
         $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+    }
+    public function importBillInfo()
+    {
+        exit(0);
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        $filetmpname = APP_PATH . '../Public/bill_info.xlsx';
+        $objPHPExcel = \PHPExcel_IOFactory::load($filetmpname);
+        $arrExcel = $objPHPExcel->getSheet(0)->toArray();
+        
+        //删除不要的表头部分，我的有三行不要的，删除三次
+        array_shift($arrExcel);
+        // array_shift($arrExcel);
+        // array_shift($arrExcel);//现在可以打印下$arrExcel，就是你想要的数组啦
+        //  $arrExcel = array_slice($arrExcel,3,5);
+        //查询数据库的字段
+        /* $m = M('a2');
+        $fieldarr = $m->query("describe savor_a2");
+        foreach ($fieldarr as $v) {
+            $field[] = $v['field'];
+        }
+        array_shift($field);
+        $field = array(
+            0 => 'tel',
+            1 => 'username',
+        );
+        var_dump($field);
+        var_dump($arrExcel);
+        //var_dump($arrExcel); */
+        $m_hotel = new \Admin\Model\HotelModel();
+        
+        foreach ($arrExcel as $k => $v) {
+            $data = $where = array();
+            $info = $m_hotel->getHotelByIds($v['0']); 
+            
+            if(!empty($info) && $v['0']>0){
+                $data['bill_per'] = $v['4'];
+                $data['bill_tel'] = $v['5'];
+                $where['id'] = $v['0'];
+                $rt = $m_hotel->saveData($data, $where);
+                //var_dump($rt);exit;
+            }
+        }
+        echo "ok";
     }
 
 }
