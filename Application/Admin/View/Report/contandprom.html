@@ -134,6 +134,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>创建时间</th>
             <th>阅读总次数</th>
             <th>阅读总时长</th>
+            <th>平均阅读总时长</th>
             <th>点播总次数</th>
             <th>分享总次数</th>
             <th>PV</th>
@@ -164,6 +165,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="创建时间">{$vlist.create_time} </td>
               <td data-title="阅读总次数"><empty name="vlist.s_read_count">0<else />{$vlist.s_read_count}</empty> </td> 
               <td data-title="阅读总时长"><empty name="vlist.s_read_duration">0秒<else />{$vlist.s_read_duration|changeTimeType}</empty> </td> 
+              <td data-title="平均阅读总时长"><empty name="vlist.s_read_duration">0秒<else /><php> $tmp = intval($vlist['s_read_duration']/$vlist['s_read_count']); echo changeTimeType($tmp);</php></empty> </td> 
               <td data-title="点播总次数"><empty name="vlist.s_demand_count">0<else />{$vlist.s_demand_count}</empty> </td> 
               <td data-title="分享总次数"><empty name="vlist.s_share_count">0<else />{$vlist.s_share_count}</empty> </td> 
               <td data-title="PV"><empty name="vlist.s_pv_count">0<else />{$vlist.s_pv_count}</empty> </td> 

@@ -21,7 +21,7 @@ class ContDetFinalModel extends Model
         
 		/* $count = $this->where($where)
 					  ->group('content_id')->limit()->count(); */
-        $sql ="SELECT content_id FROM `savor_content_details_final`  GROUP BY content_id ";
+        $sql ="SELECT content_id FROM `savor_content_details_final` where $where  GROUP BY content_id ";
         
         $ret = $this->query($sql);
         
