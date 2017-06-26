@@ -304,18 +304,17 @@
 
 
   function dialogAjaxDoneIce(json){
+	
     DWZ.ajaxDone(json);
-   // jap = JSON.stringify(json);
-   // console.log(jap);
-   // var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
-   // var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
-   // alert(jap.callback);
-   // var str2 = json.info;
-   //
     var str2 = json.info;
     if(str2.indexOf("由于使用第三方平台，可能有延时") > 0 )
     {
       $.pdialog.closeCurrent();
+    }
+ if(json.url !='notclose'){
+    	$.pdialog.closeCurrent();
+    	navTab.reload('Checkaccount/rplist');
+    	
     }
     navTab.reload('Checkaccount/rplist');
 
