@@ -232,14 +232,15 @@
 
   $('#file-4').on('filebrowse', function() {
     //alert('File browse clicked for #file-4');
+
   });
 
   $('#file-4').on('fileloaded', function() {
     //alert('Fileerrre for #file-4');
+
   });
 
   $('#file-4').on('filepreupload', function() {
-
 
   });
   $('#file-4').on('fileuploaded', function(event, data, previewId, index) {
@@ -291,6 +292,9 @@
                     //$('#mymodal').modal('hide');
                   }
 
+                }else{
+                  alert(data.message);
+                  return false;
                 }
               }
             });
@@ -301,13 +305,18 @@
 
   function dialogAjaxDoneIce(json){
     DWZ.ajaxDone(json);
-    jap = JSON.stringify(json);
-
-    console.log(jap);
-    var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
-    var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
-
-    $.pdialog.closeCurrent();
+   // jap = JSON.stringify(json);
+   // console.log(jap);
+   // var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
+   // var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
+   // alert(jap.callback);
+   // var str2 = json.info;
+   //
+    var str2 = json.info;
+    if(str2.indexOf("由于使用第三方平台，可能有延时") > 0 )
+    {
+      $.pdialog.closeCurrent();
+    }
     navTab.reload('Checkaccount/rplist');
 
 
