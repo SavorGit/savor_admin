@@ -790,6 +790,9 @@ class VersionController extends BaseController{
 	                $version_data['md5'] = md5($fileinfo);
 	            }
 	        }
+	        if(empty($version_data['md5'])){
+	            $this->error('文件md5失败!');
+	        }
 	        $versionModel = new \Admin\Model\VersionModel();
 	        $res_version = $versionModel->add($version_data);
 	        if($res_version){
