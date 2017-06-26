@@ -801,4 +801,10 @@ WHERE id IN (1,2,3)*/
             }
         }
     }
+    /**
+     * @desc 发布图集
+     */
+    public function addpictures(){
+        $this->display('addpics');
+    }
 }
