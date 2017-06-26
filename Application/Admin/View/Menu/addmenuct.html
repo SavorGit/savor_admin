@@ -440,7 +440,7 @@
 	})
 	/*置顶*/
 	$('.topz').click(function(){
-		$('.divlist2').each(function(){
+		$($('.divlist2').toArray().reverse()).each(function(){
 			if($(this).is('.active')){
 				$(this).prependTo('.rightlist')
 			}
