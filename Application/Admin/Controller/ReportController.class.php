@@ -156,7 +156,7 @@ class ReportController extends BaseController{
         $start  = ( $start-1 ) * $size;
         $where =' 1=1';
         
-        $start_date = I('start_date');
+       /*  $start_date = I('start_date');
         $end_date   = I('end_date');
         $userid = I('userid');
         $category_id = I('category_id','0','intval');
@@ -191,8 +191,9 @@ class ReportController extends BaseController{
         if($category_id){
             $this->assign('category_id',$category_id);
             $where .=" and category_id=$category_id";
-        }
-        
+        } */
+        $m_sysuser = new \Admin\Model\UserModel();
+        $content_name = I('content_name','','trim');
         if($content_name){
             $this->assign('content_name',$content_name);
             $where .=" and content_name like '%".$content_name."%'";
