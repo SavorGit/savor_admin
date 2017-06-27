@@ -745,9 +745,9 @@ class MenuController extends BaseController {
         $where = "1=1";
         $name = I('titlename');
         $beg_time = I('starttime','');
-        $end_time = I('endtime','');
-        if($beg_time)   $where.=" AND create_time>='$beg_time'";
-        if($end_time)   $where.=" AND create_time<='$end_time'";
+        $end_time = I('end_time','');
+        if($beg_time)   $where.=" AND create_time>='$beg_time 00:00:00'";
+        if($end_time)   $where.=" AND create_time<='$end_time 23:59:59'";
         if($name)
         {
             $this->assign('name',$name);
