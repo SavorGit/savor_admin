@@ -706,7 +706,7 @@ class MenuController extends BaseController {
         $menu_name = I('menuname');
         $data = array();
         $mItemModel = new MenuItemModel();
-        $sql = "SELECT hotel_id,hotel_name,pub_time FROM `savor_menu_hotel` WHERE create_time=
+        $sql = "SELECT hotel_id,sht.name hotel_name,pub_time FROM `savor_menu_hotel` smh join `savor_hotel` sht on smh.hotel_id = sht.id WHERE smh.create_time=
                 (SELECT MAX(create_time) FROM `savor_menu_hotel` WHERE menu_id=$menu_id)";
         $bak_hotel_id_arr = $mItemModel->query($sql);
 
