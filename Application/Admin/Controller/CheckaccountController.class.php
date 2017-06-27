@@ -223,7 +223,10 @@ class CheckaccountController extends BaseController{
 				->setSheetIndex(0);
 			$objPHPExcel = $objReader->load($path);
 		} else {
-			$this->output('文件格式不正确', 'importdata', 0, 0);
+			//$this->output('文件格式不正确', 'importdata', 0, 0);
+			$res = array('error'=>1,'message'=>'文件格式不正确');
+			echo json_encode($res);
+			die;
 		}
 
 		$sheet = $objPHPExcel->getSheet(0);
@@ -231,7 +234,11 @@ class CheckaccountController extends BaseController{
 		$highestRowNum = $sheet->getHighestRow();
 		$highestColumn = $sheet->getHighestColumn();
 		$highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
-		// var_dump($highestRowNum, $highestColumn, $highestColumnNum);
+		if($highestColumnNum == 2){
+			$res = array('error'=>1,'message'=>'必须为三列');
+			echo json_encode($res);
+			die;
+		}
 		//取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
 		$filed = array();
 		for ($i = 0; $i < $highestColumnNum; $i++) {
@@ -239,7 +246,11 @@ class CheckaccountController extends BaseController{
 			$cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
 			$filed[] = $cellVal;
 		}
-		// var_dump($filed);
+		if($filed[0] != 'id' || $filed[1] != 'name' || $filed[2] != 'money') {
+			$res = array('error'=>1,'message'=>'第一行对应三列必须为id,name,money');
+			echo json_encode($res);
+			die;
+		}
 
 		//开始取出数据并存入数组
 		$data = array();
@@ -275,11 +286,13 @@ class CheckaccountController extends BaseController{
 		$remark= I('post.remark','','trim');
 		$hotel_acc_arr   = json_decode ($_POST['accountjson'],true);
 		if(empty($rec_addr_id)){
-			$this->error('必须选择地址','notclose');
+
+			$this->error('请选择发票邮寄地址');
 		}
 		if(empty($hotel_acc_arr)){
-			$this->error('EXCEL不可为空','notclose');
+			$this->error('请导入酒楼金额明细EXCEL');
 		}
+		
 		$where =' 1=1';
 		if(empty($start_date) || empty($end_date)){
 			$this->error('开始结束时间不得为空','notclose');
@@ -292,9 +305,8 @@ class CheckaccountController extends BaseController{
 		//判酒楼是否已经存在以及detail表是否有
 		$hotel_acc_info = $this->judgeHotel($hotel_acc_arr,$start_date, $end_date,$fee);
 		$statement_num = 0;
-		//var_dump($hotel_acc_info);
 		foreach($hotel_acc_info as $hk=>$hv){
-			if($hv['state'] == 2 || $hv['state'] == 3 || $hv['state'] == 4 || $hv['state'] == 5 || $hv['state'] == 6){
+			if($hv['state'] == 2 || $hv['state'] == 3 || $hv['state'] == 4 || $hv['state'] == 5 || $hv['state'] == 6 ||  $hv['state'] == 7){
 				continue;
 			}else{
 				if(!isset($hv['state'])){
@@ -308,6 +320,7 @@ class CheckaccountController extends BaseController{
 		$err3 = '';
 		$err4 = '';
 		$err5 = '';
+		$err6 = '';
 		$succ = 0;
 		$fail = 0;
 		foreach($hotel_acc_info as $ht=>$hv){
@@ -316,21 +329,26 @@ class CheckaccountController extends BaseController{
 				continue;
 			}else{
 				if($hv['state'] == 2){
-					$err1 .= "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼不存在';
+					$err1 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼不存在';
 				}else if($hv['state'] == 3){
-					$err2 .= "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼已经下发';
+					$err2 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼已经下发';
 				}else if($hv['state'] == 4){
-					$err3 = "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼对账单人联系电话为空';
+					$err3 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼对账单人联系电话为空';
 				}else if($hv['state'] == 5){
-					$err4 = "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼下发金额为负值';
+					$err4 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼下发金额为负值';
 				}else if($hv['state'] == 6){
-					$err5 = "<br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'EXCEL表中已经存在';
+					$err5 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'EXCEL表中已经存在';
+
+				}else if($hv['state'] == 7){
+					$err6 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼下发金额为空值';
 
 				}
 				$fail++;
+
+
 			}
 		}
-		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5;
+		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5.$err6;
 		$sustr = '发送成功'.$succ.'家酒楼,失败'.$fail.'家.由于使用第三方平台，可能有延时<br/><br/>';
 		$sustr = $sustr.$sa;
 		//添加savor_account_statement表operator operatorid
@@ -429,10 +447,15 @@ class CheckaccountController extends BaseController{
 		$hotelModel = new \Admin\Model\HotelModel();
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
 		$repeat_arr = array();
+		//酒楼id非法的
+		$ill_hotel = array();
 		$rest = array();
+
 		foreach($info as $rk=>$rv) {
 			if(in_array($rv['id'], $num)){
 				$repeat_arr[$rv['id']] = $rv;
+			}else if(!is_int($rv['id']) || empty($rv['id'])){
+				$ill_hotel[$rv['id']] = $rv;
 			}else{
 				$num[] = $rv['id'];
 				$money[$rv['id']] = $rv['money'];
@@ -444,16 +467,24 @@ class CheckaccountController extends BaseController{
 		$dat['flag']= 0;
 		$field = 'id,name,bill_per,bill_tel';
 		$res = $hotelModel->getWhereData($dat, $field);
+
 		foreach($res as $rk=>$rv) {
 			$res[$rk]['money'] = $money[$rv['id']];
 			$num_true[] = $rv['id'];
-			if(empty($res[$rk]['bill_tel'])){
-				$res[$rk]['state'] = 4;
-			}
 			if($res[$rk]['money']<0){
 				$res[$rk]['state'] = 5;
+				continue;
+			}
+			if(!is_numeric($res[$rk]['money'])){
+				$res[$rk]['state'] = 7;
+				continue;
+			}
+			if(empty($res[$rk]['bill_tel'])){
+				$res[$rk]['state'] = 4;
+				continue;
 			}
 		}
+
 		$count = count($num_true);
 		$ar_diff = array_diff($num, $num_true);
 		//找到状态为2即不存在
@@ -477,6 +508,19 @@ class CheckaccountController extends BaseController{
 				$count++;
 			}
 		}
+
+		if($ill_hotel){
+			foreach($ill_hotel as $rk=>$rv){
+				$res[$count]['id'] = $rv['id'];
+				$res[$count]['state'] = 2;
+				$res[$count]['name'] = $rv['name'];
+				$res[$count]['money'] = $rv['money'];
+				$res[$count]['bill_per'] = '';
+				$res[$count]['bill_tel'] = '';
+				$count++;
+			}
+		}
+
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
         //fe>=st   结束值要大于给出开头值
