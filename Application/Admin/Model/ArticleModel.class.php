@@ -149,11 +149,11 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 	}
 
 	public function  changeCatname($result){
-		$catModel = new CategoModel;
+		$catModel = new HotCategoryModel();
 		$cat_arr =  $catModel->field('id,name')->select();
 		foreach ($result as &$value){
 			foreach ($cat_arr as  $row){
-				if($value['category_id'] == $row['id']){
+				if($value['hot_category_id'] == $row['id']){
 					$value['cat_name'] = $row['name'];
 				}
 			}

@@ -33,8 +33,10 @@ class ContentController extends BaseController {
         $type = I('type',10,'intval');//10为全部
 
         //$where .= " AND state=2 ";
-        $category_id = I('category_id',0,'intval');
-        if($category_id) $where .=" AND category_id='$category_id'";
+        /* $category_id = I('category_id',0,'intval');
+        if($category_id) $where .=" AND category_id='$category_id'"; */
+        $hot_category_id = I('hot_catgory_id',0,'intval');
+        if($hot_category_id) $where .=" and hot_category_id='$hot_category_id'";
         $content_type = I('content_type','10','intval');
         
         if(is_numeric($content_type)){
@@ -114,14 +116,14 @@ class ContentController extends BaseController {
 	        $result['list'][$key]['pushdata'] = json_encode($pushdata,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); 
 	        
 	    }
-	    $catModel = new \Admin\Model\CategoModel();
+	    $m_hot_category = new \Admin\Model\HotCategoryModel();
 	    $where = " state=1";
     	$field = 'id,name';
-    	$category_list = $catModel->getWhere($where, $field);
+    	$category_list = $m_hot_category->getWhere($where, $field);
     	$this->assign('vcainfo',$category_list);
 	    $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('content_type_arr',$this->content_type_arr);
-	    $this->assign('category_id',$category_id);
+	    $this->assign('hot_category_id',$hot_category_id);
 	    $this->assign('timeinfo',$time_info);
         $this->assign('ctype', $type);
         $this->assign('list', $result['list']);
