@@ -299,7 +299,7 @@ class CheckaccountController extends BaseController{
 		}
 		if($start_date && $end_date){
 			if($end_date<=$start_date){
-				$this->error('结束时间不能小于等于开始时间','notclose');
+				$this->error('结束时间应在开始时间之后','notclose');
 			}
 		}
 		//判酒楼是否已经存在以及detail表是否有
