@@ -35,6 +35,33 @@ class ArticleController extends BaseController {
         return $result;
     }
 
+
+    public function delpictures() {
+        $gid = I('get.id', 0, 'int');
+        //查找是否在首页内容中引用
+        if($gid) {
+            $mbHomeModel = new \Admin\Model\HomeModel();
+            $mbpicModel = new \Admin\Model\MbPicturesModel();
+            $res = $mbHomeModel->where('content_id='.$gid)->find();
+            if($res) {
+                $this->error('首页有引用不可删除!');
+            }
+            $artModel = new ArticleModel();
+            $result = $artModel -> delData($gid);
+            //删除mb_picutres表
+            $mbpicModel->delData();
+
+            if($result) {
+                $this->output('删除成功', 'content/getlist',2);
+            } else {
+                $this->output('删除失败', 'content/getlist',1);
+            }
+        } else {
+            $this->error('删除失败,缺少参数!');
+        }
+    }
+
+
     public function delart() {
         $gid = I('get.id', 0, 'int');
         //查找是否在首页内容中引用

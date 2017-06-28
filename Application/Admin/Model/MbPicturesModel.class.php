@@ -50,7 +50,7 @@ class MbPicturesModel extends BaseModel{
 
 
 	public function delData($id) {
-		$delSql = "DELETE FROM `savor_tag` WHERE tagid = '{$id}'";
+		$delSql = "DELETE FROM `savor_mb_pictures` WHERE contentid = '{$id}'";
 		$result = $this -> execute($delSql);
 		return  $result;
 	}
