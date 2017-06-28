@@ -191,6 +191,7 @@
                   
                   <if condition="$vlist['type'] eq 3">
                     href="{$host_name}/article/addvideo?id={$vlist.id}&acttype=3"
+                      <elseif condition="$vlist['type'] eq 2"/>href="{$host_name}/article/editpictures?id={$vlist.id}"
                     <else/>
                     href="{$host_name}/article/addarticle?id={$vlist.id}&acttype=1"
                   </if>

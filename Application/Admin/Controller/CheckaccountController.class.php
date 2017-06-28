@@ -299,7 +299,7 @@ class CheckaccountController extends BaseController{
 		}
 		if($start_date && $end_date){
 			if($end_date<=$start_date){
-				$this->error('结束时间不能小于等于开始时间','notclose');
+				$this->error('结束时间应在开始时间之后','notclose');
 			}
 		}
 		//判酒楼是否已经存在以及detail表是否有
@@ -347,7 +347,14 @@ class CheckaccountController extends BaseController{
 
 
 			}
+			if(!is_numeric($hotel_acc_info[$ht]['money'])){
+				$hotel_acc_info[$ht]['money'] = 0;
+			}
+			if(!is_numeric($hotel_acc_info[$ht]['id'])){
+				$hotel_acc_info[$ht]['id'] = 0;
+			}
 		}
+
 		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5.$err6;
 		$sustr = '发送成功'.$succ.'家酒楼,失败'.$fail.'家.由于使用第三方平台，可能有延时<br/><br/>';
 		$sustr = $sustr.$sa;
@@ -374,7 +381,7 @@ class CheckaccountController extends BaseController{
 						'hotel_id'=>!empty($hv['id'])?$hv['id']:0,
 						'check_status' =>0,
 						'statement_id' =>$insertid,
-						'money' =>!empty($hv['money'])?$hv['money']:0,
+						'money' =>!empty($hv['money'])?$hv['money']:'0.00',
 						'state'=>$hv['state'],
 						'err_msg'=>'',
 						'fee_start'=>$start_date,

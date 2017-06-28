@@ -163,6 +163,55 @@ class ResourceController extends BaseController{
 	    }
 	}
 
+
+	public function uploadMapResource(){
+		$code = 10001;
+		$data = array();
+		if(IS_POST){
+			$result = $this->handle_resource();
+			if($result['media_id']){
+				$code = 10000;
+				$data['media_id'] = $result['media_id'];
+				$data['path'] = $result['oss_addr'];
+			}
+			$res_data = array('code'=>$code,'data'=>$data);
+			echo json_encode($res_data);
+			exit;
+		}else{
+			/*
+             * 隐藏域文件规则：
+             * filed 为:media_id时
+             * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+             * <span id="media_idimgname"></span>
+             */
+			$hidden_filed = I('get.filed','media_id');
+			$rtype = I('get.rtype',0);
+			$autofill = I('get.autofill',0);
+			$where = ' flag=0';
+			if($rtype){
+				$where.=" and type='$rtype'";
+			}
+			$orders = 'id desc';
+			$start = 0;
+			$size = 50;
+			$mediaModel = new \Admin\Model\MediaModel();
+			$result = $mediaModel->getList($where,$orders,$start,$size);
+			$this->assign('datalist', $result['list']);
+			$oss_host = get_oss_host();
+			if($rtype){
+				$this->get_file_exts($rtype);
+			}else{
+				$this->get_file_exts();
+			}
+			$this->assign('autofill',$autofill);
+			$this->assign('rtype',$rtype);
+			$this->assign('hidden_filed',$hidden_filed);
+			$this->assign('oss_host',$oss_host);
+			$this->display('uploadmapresource');
+		}
+	}
+
+
 	public function searchResource(){
 		$data = array();
 			/*
