@@ -12,7 +12,7 @@
 	      <div class="form-inline">
 		      <div class="form-group">
 		      	<h1>对账单{$statementid}酒楼列表</h1>
-                {$instruction}
+
 		       </div>
 	      </div>
 	      </div>
@@ -21,7 +21,7 @@
 	   </div>
 	   </form>
 </div>
-<div class="pageContent" id="pagecontent" style="margin-top:160px">
+<div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -69,9 +69,10 @@
           </tbody>
         </table>
       </form>
-
+      {$instruction}
     </div>
   </div>
   {$page}
+
 </div>
 

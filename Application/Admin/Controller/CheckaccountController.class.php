@@ -118,7 +118,7 @@ class CheckaccountController extends BaseController{
 			$start  = ( $start-1 ) * $size;
 			$where = "1=1";
 			$where .= " AND sdet.statement_id = ".$statementid;
-			$result = $statedetailModel->getAll($where,$orders, $start=0,$size=50);
+			$result = $statedetailModel->getAll($where,$orders, $start,$size);
 			$ind = $start;
 			$notice_state = C('NOTICE_STATAE');
 			$check_state = C('CHECK_STATAE');

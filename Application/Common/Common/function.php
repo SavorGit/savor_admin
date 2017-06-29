@@ -722,4 +722,10 @@ function shortUrlAPI($type,$url){
             else
                 return $arrResponse[0]['url_long'];
 }
+function myTrim($str)
+{
+    $search = array(" ","　","\n","\r","\t");
+    $replace = array("","","","","");
+    return str_replace($search, $replace, $str);
+}
 ?>
