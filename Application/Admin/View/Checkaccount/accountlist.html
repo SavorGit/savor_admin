@@ -57,17 +57,17 @@
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
 enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
-        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc" style="table-layout: fixed;">
           <thead>
           <tr id="post">
             <th>序号</th>
             <!-- <th>机顶盒ID</th> -->
             <th>费用类别</th>
-            <th>费用时间段</th>
+            <th style="width: 17%;">费用时间段</th>
             <!-- <th>包间ID</th> -->
-            <th>创建时间</th>
+            <th style="width: 15%;">创建时间</th>
             <!-- <th>酒楼ID</th> -->
-            <th>发票邮寄地址</th>
+            <th style="width: 25%;">发票邮寄地址</th>
             <!-- <th>区域ID</th> -->
             <th>备注</th>
             <th>酒楼</th>
@@ -88,7 +88,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <!-- <td data-title="区域ID">{$vlist.area_id}</td> -->
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="发票邮寄地址">{$vlist.receipt_addr}</td>
-              <td data-title="备注">{$vlist.stremark}</td>
+              <td data-title="备注" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"title="{$vlist.stremark}">{$vlist.stremark}</td>
             <td data-title="酒楼">
 
               <a data-tip="酒楼" target="navTab" title="酒楼" rel="checkaccount/showhotel" href="{$host_name}/checkaccount/showhotel?statementid={$vlist.statementid}" class="btn btn-success btn-icon">{$vlist.count}家
