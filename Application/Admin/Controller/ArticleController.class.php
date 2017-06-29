@@ -614,7 +614,13 @@ WHERE id IN (1,2,3)*/
             $save['img_url'] = $oss_addr;
             //$save['type'] = 1;
         }
-
+        $index_media_id = I('post.index_media_id',0,'intval');
+         
+        if($index_media_id){//首页封面图
+            $oss_addr = $mediaModel->find($index_media_id);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['index_img_url'] = $oss_addr;
+        }
         if($media_id) {
             $oss_arr = $mediaModel->find($media_id);
             $oss_path = $oss_arr['oss_addr'];
@@ -623,6 +629,8 @@ WHERE id IN (1,2,3)*/
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id'] = $media_id;
         }
+        
+        
         if($id){
             $this->changeTag($tagr, $id);
             if($addtype == 2){
@@ -683,6 +691,7 @@ WHERE id IN (1,2,3)*/
                 $this->changeTag($tagr, $id);
                // $this->showvideocontent($id, $save['tx_url']);
                 $dat['content_url'] = 'content/'.$id.'.html';
+                $dat['sort_num'] = $id;
                 $artModel->where('id='.$id)->save($dat);
                 $this->output('操作成功!', 'content/getlist',1);
             }else{
@@ -825,6 +834,13 @@ WHERE id IN (1,2,3)*/
             $oss_addr = $oss_addr['oss_addr'];
             $save['img_url'] = $oss_addr;
         }
+        $index_media_id = I('post.index_media_id',0,'intval');
+         
+        if($index_media_id){//首页封面图
+            $oss_addr = $mediaModel->find($index_media_id);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['index_img_url'] = $oss_addr;
+        }
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
         $tagr = json_decode ($_POST['taginfo'],true);
@@ -874,7 +890,8 @@ WHERE id IN (1,2,3)*/
                 //修改标签
                 $this->changeTag($tagr, $arid);
                 //$this->showcontent($arid);
-               $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['sort_num'] = $arid;
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
@@ -1223,7 +1240,8 @@ WHERE id IN (1,2,3)*/
                 //修改标签
                 $this->changeTag($tagr, $arid);
                 //$this->showcontent($arid);
-                $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['content_url'] = 'special/'.$arid.'.html';
+                $dat['sort_num']    = $arid;
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
