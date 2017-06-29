@@ -310,54 +310,32 @@ class ArticleController extends BaseController {
      * @desc 分类内容排序
      */
     public function hotsortmanager(){
-        $mbHomeModel = new \Admin\Model\HomeModel();
+        var_dump($_POST);
         $artModel = new  \Admin\Model\ArticleModel();
-        $catModel = new \Admin\Model\CategoModel;
-        $cat_arr = $catModel->select();
+        $m_hot_category = new \Admin\Model\HotCategoryModel();
+        $cat_arr = $m_hot_category->select();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
         $order = I('_order','sort_num');
         $this->assign('_order',$order);
-        $sort = I('_sort','asc');
+        $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
-        $name = I('name');
-        $con_id_arr = $mbHomeModel->field('content_id')->select();
-        if($name){
-            //去content表找
-            $map['title'] = array('like','%'.$name.'%');
-            $ar_id_arr = $artModel->field('id')->where($map)->select();
-            if ($ar_id_arr) {
-                $ar_arr = array_column($ar_id_arr, 'id');
-                $cr_arr = array_column($con_id_arr, 'content_id');
-                $inc_arr = array_intersect($ar_arr,$cr_arr);
-                if($inc_arr){
-                    $inc_str = implode(',', $inc_arr);
-                    $where .= " AND content_id in (".$inc_str.")";
-                } else {
-                    $where .= " AND id<0";
-                }
-            } else {
-                $where .= " AND id<0";
-            }
-            $this->assign('name',$name);
-        }
-        $m_hot_category = new \Admin\Model\HotCategoryModel();
+        $hot_category_id = I('hot_catgory_id',1,'intval');
+        $this->assign('hot_category_id',$hot_category_id);
+        if($hot_category_id) $where .=" and hot_category_id='$hot_category_id' and state=2";
+        $result = $artModel->getList($where,$orders,$start,$size);
+        $result['list'] = $artModel->changeCatname($result['list']);
         $where = " state=1";
         $field = 'id,name';
         $category_list = $m_hot_category->getWhere($where, $field);
         $this->assign('vcainfo',$category_list);
 
-        $result = $mbHomeModel->getList($where,$orders,$start,$size);
-        $t_size = $artModel->getTotalSize($con_id_arr);
-        $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
-
-        $this->assign('list', $datalist);
-        $this->assign('tsize', $t_size);
+        $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('hotarticle');
     }
@@ -1252,6 +1230,36 @@ WHERE id IN (1,2,3)*/
                 $this->output('操作失败!', 'content/getlist');
             }
         }
+    }
+
+
+    public function addHotSort(){
+        $artModel = new  \Admin\Model\ArticleModel();
+        $catModel = new \Admin\Model\CategoModel;
+        $cat_arr = $catModel->select();
+        $size   = I('numper',1);//显示每页记录数
+        $this->assign('numper',$size);
+        $start = I('pagenu',1);
+        $this->assign('pagenu',$start);
+        $order = I('_order','sort_num');
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        $where = "1=1";
+        $hot_category_id = I('catid',1,'intval');
+        if($hot_category_id){
+            $where .= "	and hot_category_id='$hot_category_id' and state=2";
+        }
+        $result = $artModel->getList($where,$orders,$start,$size);
+
+
+     print_r($result['page']);
+        die;
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->display('hotsort');
     }
 
 }
