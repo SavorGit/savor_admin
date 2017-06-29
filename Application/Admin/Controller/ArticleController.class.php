@@ -498,6 +498,13 @@ WHERE id IN (1,2,3)*/
         $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
         $media_id = I('post.media_id','0','intval');//视频id
         $save['source']    = I('post.source','');
+        $contents = I('post.content','','strip_tags');
+        if($contents){
+            $contents = str_replace('&nbsp;', '', $contents);
+            $contents = myTrim($contents);
+            $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        }
+        
         $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = 3;
         $save['state']    = 0;
@@ -727,6 +734,13 @@ WHERE id IN (1,2,3)*/
         $save['category_id']        = I('post.cate','','trim');
         //$save['source']    = I('post.source','');
         $save['source_id']   = I('post.source_id');
+        
+        $contents = I('post.content','','strip_tags');
+        if($contents){
+            $contents = str_replace('&nbsp;', '', $contents);
+            $contents = myTrim($contents);
+            $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        }
         $save['content']    = I('post.content','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = 0;
