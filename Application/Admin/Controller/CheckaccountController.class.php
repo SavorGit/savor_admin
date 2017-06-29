@@ -119,10 +119,33 @@ class CheckaccountController extends BaseController{
 			$where = "1=1";
 			$where .= " AND sdet.statement_id = ".$statementid;
 			$result = $statedetailModel->getAll($where,$orders, $start,$size);
+			//var_export($result['list']);
 			$ind = $start;
 			$notice_state = C('NOTICE_STATAE');
 			$check_state = C('CHECK_STATAE');
 			foreach ($result['list'] as &$val){
+
+				if($val['state']!=1){
+					$dinfo = $statedetailModel->find($val['detailid']);
+					if($dinfo['hotel_id'] == 'null') {
+						$val['hotelid'] = '';
+					}else{
+						$val['hotelid'] = $dinfo['hotel_id'];
+					}
+					if($dinfo['hotel_name'] == 'null') {
+						$val['name'] = '';
+					}else{
+						$val['name'] = $dinfo['hotel_name'];
+					}
+					if($dinfo['money'] == 'null') {
+						$val['money'] = '';
+					}else{
+						$val['money'] = $dinfo['money'];
+					}
+
+
+
+				}
 				$val['indnum'] = ++$ind;
 				foreach($check_state as $ch=>$cv){
                       if($ch == $val['check_status']) {
@@ -156,6 +179,7 @@ class CheckaccountController extends BaseController{
 				}
 
 			}
+			//var_dump($result['list']);
 			$this->assign('statementid', $statementid);
 			$this->assign('list', $result['list']);
 			$this->assign('page',  $result['page']);
@@ -304,6 +328,7 @@ class CheckaccountController extends BaseController{
 		}
 		//判酒楼是否已经存在以及detail表是否有
 		$hotel_acc_info = $this->judgeHotel($hotel_acc_arr,$start_date, $end_date,$fee);
+
 		$statement_num = 0;
 		foreach($hotel_acc_info as $hk=>$hv){
 			if($hv['state'] == 2 || $hv['state'] == 3 || $hv['state'] == 4 || $hv['state'] == 5 || $hv['state'] == 6 ||  $hv['state'] == 7){
@@ -347,12 +372,7 @@ class CheckaccountController extends BaseController{
 
 
 			}
-			if(!is_numeric($hotel_acc_info[$ht]['money'])){
-				$hotel_acc_info[$ht]['money'] = 0;
-			}
-			if(!is_numeric($hotel_acc_info[$ht]['id'])){
-				$hotel_acc_info[$ht]['id'] = 0;
-			}
+
 		}
 
 		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5.$err6;
@@ -362,8 +382,9 @@ class CheckaccountController extends BaseController{
 		}else{
 			$sustr = $sustr.$sa;
 		}
+
 		//添加savor_account_statement表operator operatorid
-		$save['summary']  = $sustr;
+		$save['summary']  = '';
 		$save['fee_start']  = $start_date;
 		$save['fee_end']  = $end_date;
 		$save['cost_type'] = $fee;
@@ -381,11 +402,17 @@ class CheckaccountController extends BaseController{
 			//添加savor_account_statement_detail表
 			$datalist = array();
 			foreach ($hotel_acc_info as $hk=>$hv) {
+				if(is_null($hv['id'])){
+					$hv['id'] = 'null';
+				}
+				if(is_null($hv['money'])){
+					$hv['money'] = 'null';
+				}
 					$datalist[] = array(
-						'hotel_id'=>!empty($hv['id'])?$hv['id']:0,
+						'hotel_id'=>$hv['id'],
 						'check_status' =>0,
 						'statement_id' =>$insertid,
-						'money' =>!empty($hv['money'])?$hv['money']:'0.00',
+						'money' =>$hv['money'],
 						'state'=>$hv['state'],
 						'err_msg'=>'',
 						'fee_start'=>$start_date,
@@ -393,11 +420,11 @@ class CheckaccountController extends BaseController{
 						'cost_type' => $fee,
 						'create_time' => $date_now,
 						'update_time' => $date_now,
+						'hotel_name'=>$hv['name'],
 
 					);
-
-
 			}
+
 			$rdetail = $statedetailModel->addAll($datalist);
 			if($rdetail){
 				$rd = array();
@@ -452,6 +479,8 @@ class CheckaccountController extends BaseController{
 	 * 判断当前酒楼应该是何状态
 	 */
 	private function judgeHotel($info,$st,$en,$fee){
+
+
 		$num = array();
 		$money = array();
 		//判断酒楼是否存在
@@ -464,11 +493,11 @@ class CheckaccountController extends BaseController{
 		$emparray = array();
 		foreach($info as $rk=>$rv) {
 			if(in_array($rv['id'], $num)){
-				$repeat_arr[$rv['id']] = $rv;
+				$repeat_arr[$rk] = $rv;
 			}else if(empty($rv['id'])){
 				$emparray[$rk] = $rv;
 			} else if(!is_int($rv['id'])){
-				$ill_hotel[$rv['id']] = $rv;
+				$ill_hotel[$rk] = $rv;
 			}else{
 				$num[] = $rv['id'];
 				$money[$rv['id']] = $rv['money'];
@@ -498,6 +527,7 @@ class CheckaccountController extends BaseController{
 			}
 		}
 
+
 		$count = count($num_true);
 		$ar_diff = array_diff($num, $num_true);
 		//找到状态为2即不存在
@@ -510,9 +540,10 @@ class CheckaccountController extends BaseController{
 			$res[$count]['bill_tel'] = '';
 			$count++;
 		}
+
 		if($repeat_arr){
 			foreach($repeat_arr as $rk=>$rv){
-				$res[$count]['id'] = $rk;
+				$res[$count]['id'] = $rv['id'];
 				$res[$count]['state'] = 6;
 				$res[$count]['name'] = $rv['name'];
 				$res[$count]['money'] = $rv['money'];
@@ -544,6 +575,7 @@ class CheckaccountController extends BaseController{
 				$count++;
 			}
 		}
+
 
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
