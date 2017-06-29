@@ -648,6 +648,7 @@ WHERE id IN (1,2,3)*/
                 $this->changeTag($tagr, $id);
                // $this->showvideocontent($id, $save['tx_url']);
                 $dat['content_url'] = 'content/'.$id.'.html';
+                $dat['sort_num'] = $id;
                 $artModel->where('id='.$id)->save($dat);
                 $this->output('操作成功!', 'content/getlist',1);
             }else{
@@ -839,7 +840,8 @@ WHERE id IN (1,2,3)*/
                 //修改标签
                 $this->changeTag($tagr, $arid);
                 //$this->showcontent($arid);
-               $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['sort_num'] = $arid;
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
@@ -1188,7 +1190,8 @@ WHERE id IN (1,2,3)*/
                 //修改标签
                 $this->changeTag($tagr, $arid);
                 //$this->showcontent($arid);
-                $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['content_url'] = 'special/'.$arid.'.html';
+                $dat['sort_num']    = $arid;
                 $artModel->where('id='.$arid)->save($dat);
                 $this->output('操作成功!', 'content/getlist');
             }else{
