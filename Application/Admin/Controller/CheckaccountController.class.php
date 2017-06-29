@@ -118,7 +118,7 @@ class CheckaccountController extends BaseController{
 			$start  = ( $start-1 ) * $size;
 			$where = "1=1";
 			$where .= " AND sdet.statement_id = ".$statementid;
-			$result = $statedetailModel->getAll($where,$orders, $start=0,$size=5);
+			$result = $statedetailModel->getAll($where,$orders, $start=0,$size=50);
 			$ind = $start;
 			$notice_state = C('NOTICE_STATAE');
 			$check_state = C('CHECK_STATAE');
@@ -329,18 +329,18 @@ class CheckaccountController extends BaseController{
 				continue;
 			}else{
 				if($hv['state'] == 2){
-					$err1 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼不存在';
+					$err1 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因:该酒楼不存在';
 				}else if($hv['state'] == 3){
-					$err2 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼已经下发';
+					$err2 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因:该酒楼已经下发';
 				}else if($hv['state'] == 4){
-					$err3 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼对账单人联系电话为空';
+					$err3 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因:该酒楼对账单人联系电话为空';
 				}else if($hv['state'] == 5){
-					$err4 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼下发金额为负值';
+					$err4 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因:该酒楼下发金额为负值';
 				}else if($hv['state'] == 6){
-					$err5 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'EXCEL表中已经存在';
+					$err5 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因:该酒楼EXCEL表中已经存在';
 
 				}else if($hv['state'] == 7){
-					$err6 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因：'.$hv['name'].'酒楼下发金额为空值';
+					$err6 .= "<br/><br/>".$hv['name'].'(id:'.$hv['id'].')'.'     失败原因:该酒楼下发金额为空值';
 
 				}
 				$fail++;
@@ -457,11 +457,13 @@ class CheckaccountController extends BaseController{
 		//酒楼id非法的
 		$ill_hotel = array();
 		$rest = array();
-
+		$emparray = array();
 		foreach($info as $rk=>$rv) {
 			if(in_array($rv['id'], $num)){
 				$repeat_arr[$rv['id']] = $rv;
-			}else if(!is_int($rv['id']) || empty($rv['id'])){
+			}else if(empty($rv['id'])){
+				$emparray[$rk] = $rv;
+			} else if(!is_int($rv['id'])){
 				$ill_hotel[$rv['id']] = $rv;
 			}else{
 				$num[] = $rv['id'];
@@ -518,6 +520,17 @@ class CheckaccountController extends BaseController{
 
 		if($ill_hotel){
 			foreach($ill_hotel as $rk=>$rv){
+				$res[$count]['id'] = $rv['id'];
+				$res[$count]['state'] = 2;
+				$res[$count]['name'] = $rv['name'];
+				$res[$count]['money'] = $rv['money'];
+				$res[$count]['bill_per'] = '';
+				$res[$count]['bill_tel'] = '';
+				$count++;
+			}
+		}
+		if($emparray){
+			foreach($emparray as $rk=>$rv){
 				$res[$count]['id'] = $rv['id'];
 				$res[$count]['state'] = 2;
 				$res[$count]['name'] = $rv['name'];
