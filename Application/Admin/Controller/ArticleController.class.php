@@ -351,7 +351,7 @@ class ArticleController extends BaseController {
      * 添加视频
      */
     public function addVideo(){
-        $catModel = new CategoModel();
+        
         $artModel = new ArticleModel();
         $mediaModel = new MediaModel;
         $userInfo = session('sysUserInfo');
@@ -394,7 +394,9 @@ class ArticleController extends BaseController {
         }
         $where = "1=1";
         $field = 'id,name';
-        $vinfo = $catModel->getWhere($where, $field);
+        $m_hot_category = new \Admin\Model\HotCategoModel();
+        $vinfo = $m_hot_category->getWhere($where, $field);
+        unset($vinfo[2]);
         $this->assign('vcainfo',$vinfo);
 
         $pagearr = $this->getPageTag();
@@ -521,10 +523,10 @@ WHERE id IN (1,2,3)*/
         $id                  = I('post.id');
         $save                = [];
         $save['title']        = I('post.title','','trim');
-        $save['category_id']        = I('post.cate','','trim');
+        $save['hot_category_id']        = I('post.hot_category_id',0,'intval');
         $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
         $media_id = I('post.media_id','0','intval');//视频id
-        $save['source']    = I('post.source','');
+        $save['source_id']    = I('post.source_id',0,'intval');
         $contents = I('post.content','','strip_tags');
         if($contents){
             $contents = str_replace('&nbsp;', '', $contents);
