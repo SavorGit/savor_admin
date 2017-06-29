@@ -525,6 +525,13 @@ WHERE id IN (1,2,3)*/
         $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
         $media_id = I('post.media_id','0','intval');//视频id
         $save['source']    = I('post.source','');
+        $contents = I('post.content','','strip_tags');
+        if($contents){
+            $contents = str_replace('&nbsp;', '', $contents);
+            $contents = myTrim($contents);
+            $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        }
+        
         $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = 3;
         $save['state']    = 0;
@@ -754,13 +761,19 @@ WHERE id IN (1,2,3)*/
         $save['category_id']        = I('post.cate','','trim');
         //$save['source']    = I('post.source','');
         $save['source_id']   = I('post.source_id');
+        
+        $contents = I('post.content','','strip_tags');
+        if($contents){
+            $contents = str_replace('&nbsp;', '', $contents);
+            $contents = myTrim($contents);
+            $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        }
         $save['content']    = I('post.content','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = 0;
         $save['update_time'] = date('Y-m-d H:i:s');
         $save['bespeak_time'] = I('post.logtime','');
-        if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'
-){
+        if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'){
             $save['bespeak'] = 0;
             $save['bespeak_time'] = '1970-01-01 00:00:00';
         }else{
@@ -817,6 +830,7 @@ WHERE id IN (1,2,3)*/
             $userInfo = session('sysUserInfo');
             $uname = $userInfo['remark'];
             $save['operators']    = $uname;
+            $save['creator_id']   = $userInfo['id'];
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
                 //修改标签
@@ -959,8 +973,6 @@ WHERE id IN (1,2,3)*/
         $this->assign('vcainfo',$vinfo);
         $this->display('addpics');
     }
-
-
     /**
      * @desc 编辑图集
      */
@@ -1031,7 +1043,155 @@ WHERE id IN (1,2,3)*/
         $this->display('editpics');
 
     }
-
-
+    /**
+     * 添加专题
+     */
+    public function addSpecial(){
+    
+        $catModel = new CategoModel();
+        $artModel = new ArticleModel();
+        $userInfo = session('sysUserInfo');
+        $uname = $userInfo['username'];
+        $this->assign('uname',$uname);
+        $id = I('get.id');
+        $acctype = I('get.acttype');
+    
+        $vinfo['state'] = 0;
+        $this->assign('vinfo',$vinfo);
+        if ($acctype && $id){
+            $vinfo = $artModel->where('id='.$id)->find();
+            //转换成html实体
+            $vinfo['title'] = htmlspecialchars($vinfo['title']);
+            if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
+                $vinfo['bespeak_time'] = '';
+            }
+    
+            $oss_host = $this->oss_host;
+            $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
+            if($vinfo['index_img_url']){
+                $vinfo['index_oss_addr'] = $oss_host.$vinfo['index_img_url'];
+            }
+            $this->assign('vinfo',$vinfo);
+    
+            //获取文章id本身有的标签
+            $resp = $this->getTagInfoByArId($id);
+            if($resp){
+                $this->assign('tagaddart',$resp);
+                $new = json_encode($resp);
+                $new = preg_replace('/\"/', "'", $new);
+                $this->assign('taginfod',$new);
+            }
+           
+        }
+        
+        //添加标签
+        $pagearr = $this->getPageTag();
+        //添加来源
+        $m_article_source = new \Admin\Model\ArticleSourceModel();
+        $article_list = $m_article_source->getAll();
+         
+        $this->assign('sourcelist',$article_list);
+        $this->assign('pageinfo',$pagearr['list']);
+        $this->assign('pagecount',$pagearr['page']);
+        $this->display('addspecial');
+    
+    }
+    public function doAddSpecial(){
+    
+        $artModel = new ArticleModel();
+        $id                  = I('post.id');
+        $save                = [];
+        $save['title']        = I('post.title','','trim');
+        
+        $save['source_id']   = I('post.source_id'); 
+        
+        $contents = I('post.content','','strip_tags');
+        $contents = str_replace('&nbsp;', '', $contents);
+        $contents = myTrim($contents);
+        $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        $save['content']    = I('post.content','htmlspecialchars');
+        $save['type']    = I('post.ctype','','intval');
+        $save['state']    = 0;
+        $save['update_time'] = date('Y-m-d H:i:s');
+        $save['bespeak_time'] = I('post.logtime','');
+        if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'){
+            $save['bespeak'] = 0;
+            $save['bespeak_time'] = '1970-01-01 00:00:00';
+        }else{
+            $save['bespeak'] = 1;
+        }
+    
+        $mediaid = I('post.media_id');
+        $mediaModel = new \Admin\Model\MediaModel();
+        if($mediaid){
+            $oss_addr = $mediaModel->find($mediaid);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['img_url'] = $oss_addr;
+        }
+        $index_media_id = I('post.index_media_id',0,'intval');
+       
+        if($index_media_id){
+            $oss_addr = $mediaModel->find($index_media_id);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['index_img_url'] = $oss_addr;
+        }
+        //处理标签
+        $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
+        $tagr = json_decode ($_POST['taginfo'],true);
+        $ar = array();
+        foreach ($tagr as $t=>$v) {
+            if(in_array($v['tagid'], $ar)){
+                $this->error('标签不可有重复');
+            }
+            $ar[]=$v['tagid'];
+        }
+        if(count($tagr)<3 || count($tagr)>10){
+            $this->error('标签数不符合');
+        }
+        if($id){
+            //修改标签
+            $this->changeTag($tagr, $id);
+            if($artModel->where('id='.$id)->save($save)){
+                //判断是否在首页点播中
+                $homeModel = new \Admin\Model\HomeModel();
+                $hinfo = $homeModel->where(array('content_id'=>$id))->find();
+                if ($hinfo) {
+                    $hid = $hinfo['id'];
+                    $shome['state'] = 0;
+                    $homeModel->where('id='.$hid)->save($shome);
+                }
+    
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
+            }
+        }else{
+            if(!$mediaid){
+                $this->output('失败封面必填!', 'content/getlist',3,0);
+                die;
+            }
+            $ret = $artModel->where(array('title'=>$save['title']))->find();
+            if($ret){
+                $this->output('失败文章标题存在!', 'content/getlist',3,0);
+            }
+            $save['create_time'] = date('Y-m-d H:i:s');
+            $userInfo = session('sysUserInfo');
+            $uname = $userInfo['remark'];
+            $save['operators']    = $uname;
+            $save['creator_id']   = $userInfo['id'];
+            $save['hot_category_id'] = 3;
+            if($artModel->add($save)){
+                $arid = $artModel->getLastInsID();
+                //修改标签
+                $this->changeTag($tagr, $arid);
+                //$this->showcontent($arid);
+                $dat['content_url'] = 'content/'.$arid.'.html';
+                $artModel->where('id='.$arid)->save($dat);
+                $this->output('操作成功!', 'content/getlist');
+            }else{
+                $this->output('操作失败!', 'content/getlist');
+            }
+        }
+    }
 
 }

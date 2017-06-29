@@ -1,0 +1,169 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<title>寻味后台管理系统</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<link href="<?php echo ($site_host_name); ?>/min?b=./Public/admin/assets/plugins&f=font-awesome/css/font-awesome.min.css,simple-line-icons/css/simple-line-icons.css,bootstrap/css/bootstrap-custom.css,bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css,bootstrap-fileinput/bootstrap-fileinput.css,jquery-tags-input/jquery.tagsinput.css,bootstrap-switch/css/bootstrap-switch.min.css,bootstrap-select/bootstrap-select.min.css,footable/footable.css,dropzone/css/dropzone.css,icons-files/file.css,baidumap/searchinfowindow.min.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo ($site_host_name); ?>/min?b=./Public/admin/assets/css&f=core.css,components.css,plugins.css,style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/Public/admin/assets/css/login.css" rel="stylesheet" type="text/css"/>
+
+<link rel="shortcut icon" href="/Public/admin/assets/img/favicon.png"/>
+<link rel="apple-touch-icon" sizes="57*57" href="/Public/admin/assets/img/phoneicon.png">
+<link rel="apple-touch-icon" sizes="72*72" href="/Public/admin/assets/img/phoneicon.png">
+<link rel="apple-touch-icon" sizes="114*114" href="/Public/admin/assets/img/phoneicon.png">
+<link rel="apple-touch-icon" sizes="144*144" href="/Public/admin/assets/img/phoneicon.png">
+<script>
+	var t = document.getElementById('container');
+	if(t){
+		window.location.href = "/admin";
+	}
+</script>
+<style type="text/css">
+	body{
+		width: 100%;
+		height: 100%;
+		background-image:url(../../../../Public/admin/assets/img/denglu_bg.png);
+		background-size:100%;
+	}
+	.denglu_logo{
+	text-align: center;
+	margin-top: 4%;
+	}
+	.denglu_logo img{
+		width: 200px;
+	}
+	.logform{
+		text-align: center;
+		margin-top: 7%;
+	}
+	.logform p{
+		color: #ECECEC;
+		margin-bottom: 15px;
+	}
+	.login_denglu{
+		width: 300px;
+		height: 206px;
+		background-color: #ECECEC;
+		margin:0 auto;
+		border-radius:7px !important;
+		padding: 18px;
+		position: relative;
+	}
+	.name_login{
+		display:inline-block;
+		background-color: white;
+		width: 63px;
+		height: 30px;
+		border: 1px solid #D7D7D7;
+		border-right: none;
+		padding-top: 7px;
+		color: #666666;
+		text-align: center;
+		letter-spacing:6px
+	}
+	.yanimg{
+		width: 90px;
+		height: 30px;
+		display: inline-block;
+		padding-top: 7px;
+	}
+	.huan{
+		width: 40px;
+		height: 30px;
+		position: absolute;
+		bottom: 79px;
+		right: 20px;
+		
+	}
+	.huan img{
+		width: 100%;
+		height: 100%;
+	}
+	.tijiao{
+		margin-top: 8px;
+		height: 30px;
+		width: 257px;
+		border-radius: 5px !important;
+		border: none;
+		background-color: #ea7f30;
+		color: white;
+	}
+	.bottom_ming{
+		position: absolute;
+		width: 480px;
+		left: 50%;
+		margin-left: -240px;
+		bottom: 15px;
+		
+	}
+	.bottom_ming p{
+		display: inline-block;
+		color:#666666 ;
+		font-size: 13px;
+		margin-right:10px;
+	}
+</style>
+</head>
+<body class="login">
+	<div class="denglu_logo">
+		<img class="denglu_logo" src="../../../../Public/admin/assets/img/denglu_logo.png"/>
+	</div>
+		<form class="login-form logform" method="post" action="<?php echo ($host_name); ?>/login">
+	   <p>热点儿信息管理系统——用户登录</p>
+	    <?php if($errormsg != ''): ?><div class="alert alert-danger fade-in-up">
+				<button class="close" data-close="alert"></button>
+				<span><?php echo ($errormsg); ?></span>
+			</div><?php endif; ?>
+	   <div class="login_denglu">
+	   	<span class="name_login">账号:</span><input id="user" name="username" style="height: 30px;border: 1px solid #D7D7D7;border-left: none;width: 190px;outline: none;" type="text" value="<?php echo ($cookie_upwd["username"]); ?>" /><br />
+	   	<div style="width: 200px;height: 10px;"></div>
+	   	<span class="name_login">密码:</span><input id="pass" name="password" style="height: 30px;border: 1px solid #D7D7D7;border-left: none;width: 190px;outline: none;" type="password" name="password" value="<?php echo ($cookie_upwd["userpwd"]); ?>" />
+	   	<div style="width: 200px;height: 10px;"></div>
+	   	<span class="name_login" style="letter-spacing:2px;margin-left: -39px;">验证码:</span><input id="verify_code" name="verify_code" style="height: 30px;border: 1px solid #D7D7D7;border-left: none;width: 55px;outline: none;" type="text" />
+	   	<div class="yanimg">
+	   		<img id="verify_img" alt="点击更换" title="点击更换" src="<?php echo U('admin/verify/verify',array());?>" class="m">
+	   	</div>
+	   	<!-- <div class="huan">
+	   		<img src="../../../../Public/admin/assets/img/huanyige.png" />
+	   	</div><br /> -->
+	   	<input type="submit" class="tijiao" value="登录" /><br />
+	   	<p style="color: #666666;font-size: 12px;margin-top: 8px;text-align: right;">忘记密码？</p>
+	   </div>
+		</form>
+		<div class="bottom_ming">
+		<p>Powered by Savor Group </p><p>(c) 2016—2017 Beijing G-sight lnc. </p>
+		</div>
+<!--[if lt IE 9]>
+<script src="/Public/admin/assets/js/plugins/respond.min.js"></script>
+<script src="/Public/admin/assets/js/plugins/excanvas.min.js"></script> 
+<![endif]-->
+<script src="<?php echo ($site_host_name); ?>/min?b=./Public/admin/assets/plugins&f=jquery.min.js,jquery.cookie.min.js,jquery.validate.js,jquery.bgiframe.js"></script>
+<script src="<?php echo ($site_host_name); ?>/min?b=./Public/admin/assets/plugins&f=bootstrap/js/bootstrap.js,lazyload.js,bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js,bootstrap-select/bootstrap-select.min.js,jquery-tags-input/jquery.tagsinput.min.js,bootstrap-switch/js/bootstrap-switch.min.js,dropzone/dropzone.js"></script>
+<script>
+	$(function(){
+		$("#submit").on('click',function(e){
+			///e.preventDefault();
+			$(".preloading-container").addClass('loading');
+			setTimeout(function(){
+				$(".login-form").submit();
+			},400)
+		});
+		$("#verify_img").click(function() {
+			   var verifyURL = "/admin/verify/verify";
+			   var time = new Date().getTime();
+			    $("#verify_img").attr({
+			       "src" : verifyURL + "/" + time
+			    });
+			 });
+	})
+</script>
+
+</body>
+</html>

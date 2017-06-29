@@ -1,0 +1,66 @@
+[ 2017-06-16T19:04:34+08:00 ] 127.0.0.1 /admin/hotel/pubmanager?hotel_id=7&_=1497611056125
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0010s ]
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0010s ]
+SQL: INSERT INTO `savor_syslog` (`loginid`,`actionid`,`clientip`,`areaname`,`logtime`,`opprate`,`program`) VALUES ('1','60','127.0.0.1','本机地址,','2017-06-16 19:04:34','查看','当前栏目') [ RunTime:0.0120s ]
+SQL: INSERT INTO `savor_admin_log` (`userid`,`username`,`action`,`query_string`,`ipaddr`) VALUES ('1','Admin','Hotel/pubmanager','{\"hotel_id\":\"7\"}','127.0.0.1') [ RunTime:0.0130s ]
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 16 and defined D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 262 行.
+NOTIC: [8] Undefined variable: ip D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 265 行.
+SQL: SELECT * FROM `savor_hotel` WHERE `id` = '7' LIMIT 1   [ RunTime:0.0020s ]
+SQL: SELECT * FROM `savor_ads` WHERE ( 1=1	AND hotel_id =  7 ) ORDER BY id desc LIMIT 0,50   [ RunTime:0.0030s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `savor_ads` WHERE ( 1=1	AND hotel_id =  7 ) LIMIT 1   [ RunTime:0.0010s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '2969' LIMIT 1   [ RunTime:0.0010s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '2663' LIMIT 1   [ RunTime:0.0010s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '398' LIMIT 1   [ RunTime:0.0020s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '397' LIMIT 1   [ RunTime:0.0010s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '396' LIMIT 1   [ RunTime:0.0010s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '395' LIMIT 1   [ RunTime:0.0020s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '394' LIMIT 1   [ RunTime:0.0010s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '393' LIMIT 1   [ RunTime:0.0020s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2017-06-16T19:05:18+08:00 ] 127.0.0.1 /admin/hotel/addpub?hotel_id=7&ads_id=483&acttype=1&_=1497611056126
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+SQL: SELECT COUNT(*) as num FROM `savor_sysmenu` where menulevel='1'  order by id desc [ RunTime:0.0010s ]
+SQL: select * from `savor_sysmenu` where menulevel='1'  order by id desc limit 0,500 [ RunTime:0.0010s ]
+NOTIC: [8] Undefined variable: actionId D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 212 行.
+SQL: INSERT INTO `savor_admin_log` (`userid`,`username`,`action`,`query_string`,`ipaddr`) VALUES ('1','Admin','Hotel/addpub','{\"hotel_id\":\"7\",\"ads_id\":\"483\",\"acttype\":\"1\"}','127.0.0.1') [ RunTime:0.0130s ]
+NOTIC: [2] Missing argument 1 for Admin\Controller\BaseController::getNameByIp(), called in D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php on line 16 and defined D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 262 行.
+NOTIC: [8] Undefined variable: ip D:\phpStudy\WWW\savor_admin\Application\Admin\Controller\BaseController.class.php 第 265 行.
+SQL: SELECT * FROM `savor_hotel` WHERE ( id=7 ) LIMIT 1   [ RunTime:0.0020s ]
+SQL: SELECT * FROM `savor_ads` WHERE `id` = 483 LIMIT 1   [ RunTime:0.0020s ]
+SQL: SELECT * FROM `savor_media` WHERE `id` = '2969' LIMIT 1   [ RunTime:0.0020s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.007000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.007000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+

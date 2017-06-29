@@ -1,0 +1,238 @@
+[16-Jun-2017 14:16:43 PRC] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 4096 bytes) in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\PHPExcel\PHPExcel\Cell.php on line 550
+[16-Jun-2017 14:17:04 PRC] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 4096 bytes) in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Vendor\PHPExcel\PHPExcel\Worksheet.php on line 1218
+[16-Jun-2017 07:33:36 UTC] PHP Parse error:  syntax error, unexpected ';', expecting ')' in D:\phpStudy\WWW\savor_admin\trace.php on line 4
+[27-Jun-2017 10:50:01 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 10:50:01 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 10:50:43 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 10:50:43 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 10:51:25 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 10:51:25 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 11:00:49 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 13:58:28 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:06:24 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:10:24 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:20:57 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:54:10 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:54:10 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:54:52 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 14:54:52 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 15:21:59 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 15:46:06 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 15:57:18 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 15:57:18 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 16:07:19 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 16:07:19 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 16:25:40 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于目标计算机积极拒绝，无法连接。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(947): Think\Db\Driver->query('SELECT COUNT(*)...', false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(962): Think\Db\Driver->select(Array)
+#6 D:\phpStudy\WWW\savor_admin\framewo in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 16:25:40 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 16:32:02 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 16:36:05 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 17:28:23 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 218
+[27-Jun-2017 17:29:29 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 169
+[27-Jun-2017 17:30:56 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 17:45:53 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 17:46:36 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 17:46:36 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[27-Jun-2017 18:10:34 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:07:37 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'root', '', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D:\phpStu in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:07:37 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:08:19 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'root', '', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D:\phpStu in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:08:19 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:09:01 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'root', '', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D:\phpStu in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:09:01 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:23:37 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'admin', 'password', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6  in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:23:37 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:24:19 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'admin', 'password', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6  in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:24:19 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:52:18 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 11:52:18 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:30:55 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:33:44 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于目标计算机积极拒绝，无法连接。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D:\phpStudy\WWW\savor_admin\Applicati in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:33:44 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:37:27 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:37:27 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:43:37 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:43:37 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:44:19 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:44:19 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:46:30 PRC] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000] [2002] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+ in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php:103
+Stack trace:
+#0 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(103): PDO->__construct('mysql:dbname=cl...', 'phpweb', '123456', Array)
+#1 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(107): Think\Db\Driver->connect(Array, 1)
+#2 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1135): Think\Db\Driver->connect(Array, 1, Array)
+#3 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(1073): Think\Db\Driver->multiConnect(false)
+#4 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php(140): Think\Db\Driver->initConnect(false)
+#5 D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Model.class.php(1362): Think\Db\Driver->query('SELECT COUNT(*)...')
+#6 D in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103
+[28-Jun-2017 14:46:30 PRC] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in D:\phpStudy\WWW\savor_admin\framework\ThinkPHP\Library\Think\Db\Driver.class.php on line 103

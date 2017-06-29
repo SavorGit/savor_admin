@@ -270,6 +270,8 @@ ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 
 修改人：白玉涛
 执行sql:
 ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '对账单联系人' AFTER `hotel_wifi_pas`,ADD COLUMN `bill_tel` VARCHAR(12) NOT NULL COMMENT '对账单人联系电话' AFTER `bill_per`;
+#####以上sql均已执行#########
+
 
 增加说明：图集对应的表
 修改时间：2017.6.28 14：30
@@ -288,3 +290,33 @@ CREATE TABLE `savor_mb_pictures` (
 执行sql:
 ALTER TABLE `cloud`.`savor_admin_log`     CHANGE `action` `action` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '' NOT NULL COMMENT '菜单';
 
+增加说明：文章增加新分类字段
+修改时间：2017.6.28 11：30
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_mb_content ADD COLUMN `hot_category_id` SMALLINT(3)  NOT NULL DEFAULT 0 COMMENT '文章分类1：创富 2：生活 3：专题' AFTER `category_id`
+
+增加说明：新分类表
+修改时间：2017.6.28 11：30
+修改人：张英涛
+执行sql:
+CREATE TABLE `savor_mb_hot_category` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '分类表主键Id',
+  `name` VARCHAR(50) CHARACTER SET utf8 NOT NULL COMMENT '名称',
+  `en_name` VARCHAR(50) DEFAULT '',
+  `img_url` TEXT CHARACTER SET utf8 NOT NULL COMMENT '图片Url',
+  `sort_num` INT(2) NOT NULL COMMENT '排序',
+  `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` BIGINT(20) NOT NULL COMMENT '操作人Id',
+  `state` TINYINT(4) NOT NULL DEFAULT '0' COMMENT '状态:0未删除1删除',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+增加说明：文章表新增首页封面图、内容字数两个字段
+修改时间：2017.6.28 11：30
+修改人：张英涛
+执行sql:
+ALTER TABLE `savor_mb_content` ADD COLUMN `index_img_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '首页封面图' AFTER `img_url`
+
+ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEFAULT 0 COMMENT '内容字数'

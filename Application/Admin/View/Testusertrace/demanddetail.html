@@ -1,0 +1,43 @@
+<include file="Public/script"/>
+<div class="pageContent">
+  <div id="dz-filecontainer">
+    <div class="tab-content">
+	   
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/testusertrace/markuser" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		    
+		    <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          
+          <thead>
+          
+          <tr >
+          	<th>酒楼名称</th>
+            <th>点播次数</th>
+            <th>日期</th>
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="点播次数">{$vlist.demand_count}</td>
+              <td data-title="日期">   {$vlist.date_time}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+		    
+		    
+		    <div class="modal-footer">
+		     酒楼人员<input type="radio" value="1" name="user_type">
+		      运营人员<input type="radio" value="2" name="user_type"> 
+		      普通用户<input type="radio" value="3" name="user_type">
+		      重点用户<input type="radio" value="4" name="user_type">  
+		      <button class="btn btn-primary"  type="submit">标记用户</button>
+		      <input type="hidden" name="mobile_id" value="{$mobile_id}"> 	
+		      <button class="btn btn-primary close-m" type="button">关闭</button>
+		    </div>
+		  </form>
+      </div>
+  </div>
+</div>

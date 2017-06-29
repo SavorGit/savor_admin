@@ -17,10 +17,10 @@
               <div class="input-group-sm input-group">
                 <label>分类：</label>
                 <span class="input-group-btn input-group-sm">
-                <select name="category_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <select name="hot_catgory_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
 	                <option value=0 >全部</option>
 	                <volist name="vcainfo" id="vo">
-	                  <option value="{$vo.id}" <if condition="$vo.id eq $category_id">selected</if>>{$vo.name}</option><br>
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $hot_category_id">selected</if>>{$vo.name}</option><br>
 	                </volist>
               </select>
               </span>
@@ -102,6 +102,8 @@
 
       <div class="form-inline" style="margin-top:30px;">
         <div class="tools-group s2">
+        <a class="btn btn-success btn-sm add" href="{$host_name}/article/addSpecial"  title="发布专题" target="dialog" mask="true">
+            <i class="fa fa-plus"></i><span>发布专题</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addpictures"  title="发布图集" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>发布图集</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addarticle" title="发布文章" target="dialog" mask="true">
@@ -183,12 +185,18 @@
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true"
+                  <if condition="$vlist['hot_category_id'] eq 3">
+                  	href="{$host_name}/article/addspecial?id={$vlist.id}&acttype=3"
+                  <else />
+                  
                   <if condition="$vlist['type'] eq 3">
                     href="{$host_name}/article/addvideo?id={$vlist.id}&acttype=3"
                       <elseif condition="$vlist['type'] eq 2"/>href="{$host_name}/article/editpictures?id={$vlist.id}"
                     <else/>
                     href="{$host_name}/article/addarticle?id={$vlist.id}&acttype=1"
-                  </if> class="btn btn-success btn-icon">
+                  </if>
+                  </if>
+                   class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>
