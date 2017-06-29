@@ -579,7 +579,13 @@ WHERE id IN (1,2,3)*/
             $save['img_url'] = $oss_addr;
             //$save['type'] = 1;
         }
-
+        $index_media_id = I('post.index_media_id',0,'intval');
+         
+        if($index_media_id){//首页封面图
+            $oss_addr = $mediaModel->find($index_media_id);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['index_img_url'] = $oss_addr;
+        }
         if($media_id) {
             $oss_arr = $mediaModel->find($media_id);
             $oss_path = $oss_arr['oss_addr'];
@@ -588,6 +594,8 @@ WHERE id IN (1,2,3)*/
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id'] = $media_id;
         }
+        
+        
         if($id){
             $this->changeTag($tagr, $id);
             if($addtype == 2){
@@ -790,6 +798,13 @@ WHERE id IN (1,2,3)*/
             $oss_addr = $mediaModel->find($mediaid);
             $oss_addr = $oss_addr['oss_addr'];
             $save['img_url'] = $oss_addr;
+        }
+        $index_media_id = I('post.index_media_id',0,'intval');
+         
+        if($index_media_id){//首页封面图
+            $oss_addr = $mediaModel->find($index_media_id);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['index_img_url'] = $oss_addr;
         }
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
