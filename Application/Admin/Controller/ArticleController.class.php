@@ -938,6 +938,7 @@ WHERE id IN (1,2,3)*/
                 //修改标签
                 $this->changeTag($tagr, $arid);
                 $dat['content_url'] = 'content/'.$arid.'.html';
+                $dat['sort_num'] = $arid;
                 $artModel->where('id='.$arid)->save($dat);
                 //添加图集
                 $tuji = array();
@@ -981,7 +982,7 @@ WHERE id IN (1,2,3)*/
      */
     public function editpictures(){
 
-        $catModel = new \Admin\Model\HotCategoModel();
+        $catModel = new \Admin\Model\HotCategoryModel();
         $artModel = new \Admin\Model\ArticleModel();
         $mbpicModel = new \Admin\Model\MbPicturesModel();
         $mediaModel = new \Admin\Model\MediaModel();
