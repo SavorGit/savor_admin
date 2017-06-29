@@ -74,7 +74,7 @@ class CheckaccountController extends BaseController{
 			$info = $statedetailModel->find($did);
 			$ch_staus =  $info['check_status'];
 			$state = $info['state'];
-			if($ch_staus == 2 && $state == 1){
+			
 				//更新状态
 				$dat['check_status'] = 3;
 				$where = 'id = '.$did;
@@ -84,9 +84,7 @@ class CheckaccountController extends BaseController{
 				$this->sendPayMessage($info);
 				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
 
-			}else{
-				$this->error('您必须确认付款后才行');
-			}
+
 		}else{
 			$this->error('传参不能为空');
 		}
