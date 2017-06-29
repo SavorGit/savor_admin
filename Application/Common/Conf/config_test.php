@@ -4,24 +4,28 @@ $DB_SLAVE_HOST  = '192.168.2.145';
 $db_name = 'cloud';
 $db_user = 'phpweb';
 $db_pwd = '123456';
-
+/*$DB_MASTER_HOST = '192.168.2.127';
+$DB_SLAVE_HOST  = '192.168.2.127';
+$db_name = 'cloud';
+$db_user = 'phpweb';
+$db_pwd = '123456';*/
 //redis缓存配置
-/*$redis['db1']['0']['host'] = '192.168.2.145';
+$redis['db1']['0']['host'] = '192.168.2.145';
 $redis['db1']['0']['port'] = '6380';
 $redis['db1']['0']['password'] = '!1QAZ@2WSX';
 $redis['db1']['0']['isMaster'] = '1';
 $redis['db1']['1']['host'] = '192.168.2.145'; 
 $redis['db1']['1']['port'] = '6380';
 $redis['db1']['1']['password'] = '!1QAZ@2WSX';
-$redis['db1']['1']['isMaster'] = '0';*/
-$redis['db1']['0']['host'] = 'localhost';
+$redis['db1']['1']['isMaster'] = '0';
+/*$redis['db1']['0']['host'] = 'localhost';
 $redis['db1']['0']['port'] = '6379';
 $redis['db1']['0']['password'] = '';
 $redis['db1']['0']['isMaster'] = '1';
 $redis['db1']['1']['host'] = 'localhost';
 $redis['db1']['1']['port'] = '6379';
 $redis['db1']['1']['password'] = '';
-$redis['db1']['1']['isMaster'] = '0';
+$redis['db1']['1']['isMaster'] = '0';*/
 
 
 $config_db =  array(
