@@ -271,3 +271,20 @@ ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 
 执行sql:
 ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '对账单联系人' AFTER `hotel_wifi_pas`,ADD COLUMN `bill_tel` VARCHAR(12) NOT NULL COMMENT '对账单人联系电话' AFTER `bill_per`;
 
+增加说明：图集对应的表
+修改时间：2017.6.28 14：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_mb_pictures` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `contentid` int(12)  NOT NULL DEFAULT 0 COMMENT '关联content表id名称',
+  `detail` text CHARACTER SET utf8 NOT NULL COMMENT '详细信息json串aid:1,atext:sdkfk',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
+
+增加说明：修改savor_admin_log的字段
+修改时间：2017.6.28 14：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_admin_log`     CHANGE `action` `action` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '' NOT NULL COMMENT '菜单';
+
