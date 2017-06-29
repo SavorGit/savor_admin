@@ -702,7 +702,7 @@ class CheckaccountController extends BaseController{
 		$shortlink = C('HOST_NAME').'/admin/hotelbill/index?id='.$short;
 		$shortlink = shortUrlAPI(1, $shortlink);
 		echo $shortlink;
-		$param="$fe_start,$fe_end,$shortlink";
+		$param="$shortlink";
 		$bool = $this->sendToUcPa($tel,$param);
 		return $bool;
 	}
