@@ -70,10 +70,18 @@
 
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
-                标题：
-              </label>
+                			标题：
+              				</label>
 							<div class="col-xs-12 col-sm-10">
 								<input name="title" type="text" value="{$vinfo.title}" minlength="2" maxlength="30" class="form-control" required/>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label">
+                			副标题：
+              				</label>
+							<div class="col-xs-12 col-sm-10">
+								<input name="share_title" type="text" value="{$vinfo.share_title}" minlength="1" maxlength="60" class="form-control" required/>
 							</div>
 						</div>
 						<div class="form-group row">
@@ -215,36 +223,7 @@
 								<script id="editor" type="text/plain" class="ueditor-init" name="content" style="height: 250px; width: 100%">{$vinfo.content|html_entity_decode=###,ENT_COMPAT}</script>
 							</div>
 						</div>
-						<!--<div class="form-group row">
-              <label class="col-xs-12 col-sm-2 control-label">
-                发布时间：
-              </label>
-              <div class="col-xs-12 col-sm-10">
-                <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
-                  <input name="logtime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
-                  <span class="input-group-btn">
-                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
-                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
-                  </span>
-                </div> 
-              </div>
-            </div>-->
-
-						<div class="form-group row">
-							<label class="col-xs-12 col-sm-2 control-label">
-                来源：
-              </label>
-							<div class="col-xs-12 col-sm-10">
-								<select name="source_id" class="form-control bs-select" title="请选择..." required>
-
-									<volist name="sourcelist" id="row">
-										<option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['source_id']"> selected </if> > {$row['name']} </option>
-									</volist>
-
-								</select>
-								<!-- <input name="source" type="text" value="{$vinfo.source}" minlength="2" maxlength="30" class="form-control" /> -->
-							</div>
-						</div>
+						
 
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
