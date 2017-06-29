@@ -357,7 +357,11 @@ class CheckaccountController extends BaseController{
 
 		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5.$err6;
 		$sustr = '发送成功'.$succ.'家酒楼,失败'.$fail.'家.由于使用第三方平台，可能有延时<br/><br/>';
-		$sustr = $sustr.$sa;
+		if($fail == 0){
+			$sustr = $sustr;
+		}else{
+			$sustr = $sustr.$sa;
+		}
 		//添加savor_account_statement表operator operatorid
 		$save['summary']  = $sustr;
 		$save['fee_start']  = $start_date;
@@ -430,9 +434,9 @@ class CheckaccountController extends BaseController{
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);
 				if($fail == 0){
-					$this->output($sustr,'Checkaccount/rplist',1,1);
+					$this->outputNew($sustr,'Checkaccount/rplist',1,1);
 				}else{
-					$this->output($sustr,'Checkaccount/rplist',1,0);
+					$this->outputNew($sustr,'Checkaccount/rplist',1,0);
 				}
 
 			}else{

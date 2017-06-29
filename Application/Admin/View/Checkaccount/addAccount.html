@@ -306,11 +306,15 @@
   function dialogAjaxDoneIce(json){
 	
     DWZ.ajaxDone(json);
-    var str2 = json.info;
+    console.log(json);
+    if(json.url=='checkaccounterr'){
+      $.pdialog.closeCurrent();
+    }
+    /*var str2 = json.info;
     if(str2.indexOf("由于使用第三方平台，可能有延时") > 0 )
     {
       $.pdialog.closeCurrent();
-    }
+    }*/
     navTab.reload('Checkaccount/rplist');
 
 

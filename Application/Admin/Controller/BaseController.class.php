@@ -64,6 +64,24 @@ class BaseController extends Controller {
            'callbackType'=>$callbackType,'forwardUrl'=>'','confirmMsg'=>'','callback'=>$callback,'del'=>$del);
         $this->ajaxReturn($data,'TEXT');
     }
+
+
+    public function outputNew($message,$navTab,$type=1,$status=1,$callback="",$del){
+        switch ($type){
+            case 1://关闭
+                $callbackType = 'closeCurrent';
+                break;
+            case 2://重新载入
+                $callbackType = 'forward';
+                break;
+            default://停留在当前页
+                $callbackType = '';
+                break;
+        }
+        $data = array('status'=>$status,'info'=>$message,'navTabId'=>$navTab,'url'=>'checkaccounterr',
+            'callbackType'=>$callbackType,'forwardUrl'=>'','confirmMsg'=>'','callback'=>$callback,'del'=>$del);
+        $this->ajaxReturn($data,'TEXT');
+    }
     
     //生成缩略图
     public function getThumbSize($img, $width, $height, $prefix, $type=\Think\Image::IMAGE_THUMB_CENTER){
