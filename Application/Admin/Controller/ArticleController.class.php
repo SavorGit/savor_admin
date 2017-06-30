@@ -936,6 +936,13 @@ WHERE id IN (1,2,3)*/
             $oss_addr = $oss_addr['oss_addr'];
             $save['img_url'] = $oss_addr;
         }
+        $index_media_id = I('post.index_media_id',0,'intval');
+
+        if($index_media_id){
+            $oss_addr = $mediaModel->find($index_media_id);
+            $oss_addr = $oss_addr['oss_addr'];
+            $save['index_img_url'] = $oss_addr;
+        }
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
         $tagr = json_decode ($_POST['taginfo'],true);
@@ -1255,7 +1262,7 @@ WHERE id IN (1,2,3)*/
         $artModel = new  \Admin\Model\ArticleModel();
         $catModel = new \Admin\Model\CategoModel;
         $cat_arr = $catModel->select();
-        $size   = I('numper',1);//显示每页记录数
+        $size   = I('numper',2);//显示每页记录数
         $this->assign('numper',$size);
         $start = I('pagenu',1);
         $this->assign('pagenu',$start);
@@ -1270,11 +1277,14 @@ WHERE id IN (1,2,3)*/
         if($hot_category_id){
             $where .= "	and hot_category_id='$hot_category_id' and state=2";
         }
-        $result = $artModel->getList($where,$orders,$start,$size);
+        $result = $artModel->getdiaList($where,$orders,$start,$size);
 
+        $ind = $start;
+        foreach ($result['list'] as &$val) {
+            $val['indnum'] = ++$ind;
+        }
+        var_dump($result);
 
-     print_r($result['page']);
-        die;
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('hotsort');

@@ -41,11 +41,11 @@ class CheckaccountController extends BaseController{
 		$where = "1=1";
 		if($starttime){
 			$this->assign('s_time',$starttime);
-			$where .= "	AND sast.create_time >= '{$starttime}'";
+			$where .= "	AND date_format(sast.create_time,'%Y-%m-%d') >= '{$starttime}'";
 		}
 		if($endtime){
 			$this->assign('e_time',$endtime);
-			$where .= "	AND sast.create_time <=  '{$endtime}'";
+			$where .= "	AND date_format(sast.create_time,'%Y-%m-%d') <=  '{$endtime}'";
 		}
 		$result = $stateModel->getAll($where,$orders, $start,$size);
 		$ind = $start;
@@ -74,15 +74,20 @@ class CheckaccountController extends BaseController{
 			$info = $statedetailModel->find($did);
 			$ch_staus =  $info['check_status'];
 			$state = $info['state'];
-			
-				//更新状态
-				$dat['check_status'] = 3;
-				$where = 'id = '.$did;
-				$statedetailModel->saveData($dat, $where);
-				//下发短信
-				$info = $statedetailModel->getWhereSql($did);
-				$this->sendPayMessage($info);
-				$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid));
+					if($state==1){
+						//更新状态
+						$dat['check_status'] = 3;
+						$where = 'id = '.$did;
+						$statedetailModel->saveData($dat, $where);
+						//下发短信
+						$info = $statedetailModel->getWhereSql($did);
+						$this->sendPayMessage($info);
+						//重新载入
+						$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid),2);
+					}else{
+						$this->error('不允许');
+					}
+
 
 
 		}else{
@@ -147,11 +152,24 @@ class CheckaccountController extends BaseController{
 				$val['indnum'] = ++$ind;
 				foreach($check_state as $ch=>$cv){
                       if($ch == $val['check_status']) {
-						  $val['ch_mes'] = $cv;
-						  if($ch == 3) {
-							  $val['cont'] = '2';
+
+						  if($val['state'] !=1){
+							  if($val['state'] == 4){
+								  $val['cont'] = '确认付款完成';;
+								  $val['ch_mes'] = $cv;
+							  }else{
+								  $val['cont'] = 2;
+								  $val['ch_mes'] = '';
+							  }
+
 						  }else{
-							  $val['cont'] = '确认付款完成';
+							  $val['ch_mes'] = $cv;
+							  if($ch == 3) {
+								  $val['cont'] = '2';
+							  }else{
+								  $val['cont'] = '确认付款完成';
+							  }
+
 						  }
 						  break;
 					  }
@@ -166,7 +184,7 @@ class CheckaccountController extends BaseController{
 							if($nostus == 1){
 								$val['no_mes'] = '发送成功';
 							}else {
-								$val['no_mes'] = '发送失败';
+								$val['no_mes'] = '发送中';
 							}
 							break;
 						} else {
@@ -177,7 +195,6 @@ class CheckaccountController extends BaseController{
 				}
 
 			}
-			//var_dump($result['list']);
 			$this->assign('statementid', $statementid);
 			$this->assign('list', $result['list']);
 			$this->assign('page',  $result['page']);
@@ -329,14 +346,16 @@ class CheckaccountController extends BaseController{
 
 		$statement_num = 0;
 		foreach($hotel_acc_info as $hk=>$hv){
+			$statement_num++;
 			if($hv['state'] == 2 || $hv['state'] == 3 || $hv['state'] == 4 || $hv['state'] == 5 || $hv['state'] == 6 ||  $hv['state'] == 7){
 				continue;
 			}else{
 				if(!isset($hv['state'])){
 					$hotel_acc_info[$hk]['state'] = 1;
 				}
-				$statement_num++;
+
 			}
+
 		}
 		$err1 = '';
 		$err2 = '';
@@ -380,7 +399,6 @@ class CheckaccountController extends BaseController{
 		}else{
 			$sustr = $sustr.$sa;
 		}
-
 		//添加savor_account_statement表operator operatorid
 		$save['summary']  = '';
 		$save['fee_start']  = $start_date;
@@ -408,7 +426,7 @@ class CheckaccountController extends BaseController{
 				}
 					$datalist[] = array(
 						'hotel_id'=>$hv['id'],
-						'check_status' =>0,
+						'check_status' =>99,
 						'statement_id' =>$insertid,
 						'money' =>$hv['money'],
 						'state'=>$hv['state'],
@@ -519,10 +537,8 @@ class CheckaccountController extends BaseController{
 				$res[$rk]['state'] = 7;
 				continue;
 			}
-			if(empty($res[$rk]['bill_tel'])){
-				$res[$rk]['state'] = 4;
-				continue;
-			}
+
+
 		}
 
 
@@ -578,7 +594,7 @@ class CheckaccountController extends BaseController{
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
         //fe>=st   结束值要大于给出开头值
-		$where = ' 1=1 and cost_type='.$fee;
+		$where = ' 1=1 and state=1 and cost_type='.$fee;
 		if($st){
 			$where .= " and fee_end >='".$st."'";
 		}
@@ -597,7 +613,13 @@ class CheckaccountController extends BaseController{
 		foreach($res as $rk=>$rv) {
 
 			if ( isset($fee_time_num[$rv['id']]) &&  !isset($res[$rk]['state'])){
+
 				$res[$rk]['state'] = 3;
+
+			}else{
+				if(empty($res[$rk]['bill_tel']) && empty($res[$rk]['state'])){
+					$res[$rk]['state'] = 4;
+				}
 			}
 		}
 		return $res;
