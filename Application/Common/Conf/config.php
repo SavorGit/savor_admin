@@ -160,6 +160,7 @@ $config['CHECK_STATAE'] = array(
     '1'=>'已读',
     '2'=>'已确认',
     '3'=>'已付款',
+    '99'=>'未读',
 );
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
