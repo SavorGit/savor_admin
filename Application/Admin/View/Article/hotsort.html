@@ -1,0 +1,146 @@
+<include file="Public/script"/>
+<style type="text/css">
+  body{
+    -webkit-touch-callout: none;
+    -webkit-user-select: nonec;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  .doms img{
+    display: inline-block;
+    margin-top: 35px;
+  }
+  .divlist{
+    padding-top: 7px;
+    clear: both;
+    width: 100%;
+    height: 23px;
+  }
+  .sleft{
+    float: left;
+  }
+  .sright{
+    float: right;
+  }
+  .active{
+    background-color: #d7d7d7;
+  }
+  .xuhao{
+    width: 82px;
+    float: left;
+  }
+  .xuhao li{
+    height: 20px;
+    line-height: 20px;
+  }
+  .shuju li{
+    height: 20px;
+    line-height: 20px;
+  }
+
+  .name_shuju{
+    display:inline-block;
+    width:73%;
+  }
+</style>
+<script src="../../../../Public/admin/assets/js/jquery-ui.js" type="text/javascript" charset="utf-8"></script>
+
+<div class="pageHeader">
+  <form id="pagerForm"  method="post" action="{$host_name}/article/addHotSort" onsubmit="return dwzSearch(this,'dialog');">
+
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="pageNum" value="{$pageNum}" />
+    <button type="submit" id="savesort" class="btn btn-primary" onclick="return savp();">保存排序</button>
+    <input type="hidden" name="soar" id="soar"/>
+  </form>
+</div>
+
+<!--显示列表样式333331 start-->
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+
+
+
+
+
+
+
+
+
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <!-- <th class="table-checkbox">
+              <input type="checkbox" data-check="all" data-parent=".table" />
+            </th> -->
+            <th>目标序号</th>
+            <th>内容名称</th>
+            <th>上传时间</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user" sort="{$vlist.sort_num}" reaid="{$vlist.id}">
+              <!-- <td class="table-checkbox">
+                <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
+              </td> -->
+              <td data-title="目标序号">{$vlist.indnum}</td>
+              <td data-title="内容名称">{$vlist.title}</td>
+              <td data-title="上传时间">{$vlist.create_time}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+
+        <input type="hidden" name="bbb" id="eeee" value="555"/>
+
+    </div>
+    {$page}
+
+  </div>
+</div>
+
+
+
+<SCRIPT LANGUAGE="JavaScript">
+
+ function savp(){
+
+    $("#soar").val('tijiao');
+  }
+  /*$("#savesort").click(
+   function(){
+   var arr = [];
+
+   $("#shuju>li").each(function(){
+   var $aid = $(this).attr('aid');
+   arr.push($aid);
+   });
+   $.ajax({
+   type:"POST",
+   dataType: "text",
+   url:"{$host_name}/article/dosort",
+   data:"soar="+arr,
+   success:function(data){
+   alert(data);
+   if(data == 'success'){
+   //$("#mymodal2").modal('show');
+   //
+   // $(".modal .fade .in .no-transform").css('display','none');
+   //refresh();
+   location.href = "#content/getlist";
+   }else{
+   // $("#mymodal2").modal('show');
+   }
+
+
+   }
+   });
+   }
+   );*/
+
+
+</script>

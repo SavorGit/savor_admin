@@ -1259,13 +1259,18 @@ WHERE id IN (1,2,3)*/
 
 
     public function addHotSort(){
+        var_dump($_POST);
+        //这个是保存排序
+        if($_POST['soar'] == 'tijiao'){
+
+        }
         $artModel = new  \Admin\Model\ArticleModel();
         $catModel = new \Admin\Model\CategoModel;
         $cat_arr = $catModel->select();
-        $size   = I('numper',2);//显示每页记录数
-        $this->assign('numper',$size);
-        $start = I('pagenu',1);
-        $this->assign('pagenu',$start);
+        $size   = I('numPerPage',2);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
         $order = I('_order','sort_num');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
@@ -1283,7 +1288,7 @@ WHERE id IN (1,2,3)*/
         foreach ($result['list'] as &$val) {
             $val['indnum'] = ++$ind;
         }
-        var_dump($result);
+       // var_dump($result);
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);

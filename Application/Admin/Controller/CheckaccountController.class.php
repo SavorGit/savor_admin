@@ -455,7 +455,6 @@ class CheckaccountController extends BaseController{
 				$ma = array();
 				var_export($hotel_acc_info);
 				die;*/
-
 				foreach($detail_arr as $ha=>$hi){
 					if($hi['state'] == 1){
 
@@ -472,6 +471,7 @@ class CheckaccountController extends BaseController{
 					}
 
 				}
+
 				//添加savor_account_notice表
 				$statenoticeModel->addAll($message);
 				//添加到redis
@@ -660,15 +660,16 @@ class CheckaccountController extends BaseController{
 			if($notice_arr){
 				$count = $notice_arr['count'];
 				$noticeid = $notice_arr['noticeid'];
+				$redis->lPop($rkey);
 				if ($count >= 8 ) {
-					$redis->lPop($rkey);
 					continue;
 				} else {
 					//发送短信
+
 					$info = $statedetailModel->getWhereSql($val);
 					$m_state = $this->sendMessage($info);
+					var_dump($m_state);
 					if($m_state){
-						$redis->lPop($rkey);
 						$me_su_arr[] = $noticeid;
 						continue;
 					}else{
