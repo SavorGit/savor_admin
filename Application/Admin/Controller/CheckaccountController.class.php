@@ -594,7 +594,7 @@ class CheckaccountController extends BaseController{
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
         //fe>=st   结束值要大于给出开头值
-		$where = ' 1=1 and cost_type='.$fee;
+		$where = ' 1=1 and state=1 and cost_type='.$fee;
 		if($st){
 			$where .= " and fee_end >='".$st."'";
 		}
