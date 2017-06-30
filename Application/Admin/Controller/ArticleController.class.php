@@ -1294,5 +1294,31 @@ WHERE id IN (1,2,3)*/
         $this->assign('page',  $result['page']);
         $this->display('hotsort');
     }
-
+    /**
+     * @desc 设置专题
+     */
+    public function setSpecial(){
+        $m_sysconfig =  new \Admin\Model\SysConfigModel();
+        if(IS_POST){
+            $special_name = I('post.special_title','','trim');
+            if(!empty($special_name)){
+                $length = mb_strlen($special_name);
+                if($length<2 || $length>12){
+                    $this->error('标题限制2-12个字');
+                }
+            }
+            $data['system_special_title'] = $special_name;
+            $ret = $m_sysconfig->updateInfo($data);  
+            if($ret){
+                $this->output('保存成功', 'content/getlist', 1);
+            }else {
+                $this->error('保存失败');
+            }
+        }else{
+            $info = $m_sysconfig->getOne('system_special_title');
+           
+            $this->assign('info',$info);
+            $this->display('setspecial');
+        } 
+    }
 }
