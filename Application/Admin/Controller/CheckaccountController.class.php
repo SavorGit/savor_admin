@@ -158,7 +158,7 @@ class CheckaccountController extends BaseController{
 								  $val['cont'] = '确认付款完成';;
 								  $val['ch_mes'] = $cv;
 							  }else{
-								  $val['cont'] = '2';
+								  $val['cont'] = 2;
 								  $val['ch_mes'] = '';
 							  }
 
@@ -195,7 +195,6 @@ class CheckaccountController extends BaseController{
 				}
 
 			}
-			//var_dump($result['list']);
 			$this->assign('statementid', $statementid);
 			$this->assign('list', $result['list']);
 			$this->assign('page',  $result['page']);
@@ -618,7 +617,7 @@ class CheckaccountController extends BaseController{
 				$res[$rk]['state'] = 3;
 
 			}else{
-				if(empty($res[$rk]['bill_tel'])){
+				if(empty($res[$rk]['bill_tel']) && empty($res[$rk]['state'])){
 					$res[$rk]['state'] = 4;
 				}
 			}
