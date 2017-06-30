@@ -27,16 +27,12 @@ class HotelbillController extends Controller{
                 $this->assign('bill_not_exist',1);
             }
             //if(!empty($bill_info) && $bill_info['check_status']==0){
-            if(!empty($bill_info)){
-                if($bill_info['check_status']==99){
-                    $where = $info = array();
-                    $where['id'] = $bill_id;
-                    $info['check_status'] = 0;
-                }else {
+            if(!empty($bill_info) && $bill_info['check_status']==0){
+                
                     $where = $info = array();
                     $where['id'] = $bill_id;
                     $info['check_status'] = 1;
-                }
+                
                 
                 $ret = $m_account_statement_detail->saveData($info,$where);
             }
