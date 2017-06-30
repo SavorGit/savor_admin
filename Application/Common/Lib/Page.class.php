@@ -156,5 +156,23 @@ class Page{
         $page_html.="<div class='pages hidden-xs'><span>共{$totalCount}条</span></div><div class='pages-container' targetType='navTab' totalCount='{$totalCount}' numPerPage='{$numPerPage}' pageNumShown='8' currentPage='{$currentPage}'></div></div>";
         return $page_html;
     }
+
+
+
+    public function admin_pagedialog($on=1){
+        $totalCount = $this->totalRows;
+        $numPerPage = $this->listRows;
+        $currentPage = $this->nowPage;
+        $page_html = "<div class='panelBar bottomBar'>";
+        if($on == 1){
+            $page_html .= "<div class='pages' style='padding-right:5px'><span>显示:</span></div><ul class='pagination pull-left'><li><select class='select bs-select numPerPage' data-width='4em' onChange='dialogPageBreak({numPerPage:this.value,pageNum:1})'>";
+            foreach(C('NUMPERPAGE') as $k => $v){
+                $page_html .= "<option value='{$v}'".(($numPerPage == $v)?' selected':'').">{$v}</option>";
+            }
+            $page_html .= "</select></li></ul>";
+        }
+        $page_html.="<div class='pages hidden-xs'><span>共{$totalCount}条</span></div><div class='pages-container' targetType='dialog' totalCount='{$totalCount}' numPerPage='{$numPerPage}' pageNumShown='8' currentPage='{$currentPage}'></div></div>";
+        return $page_html;
+    }
    
 }

@@ -50,6 +50,32 @@ class ArticleModel extends BaseModel
 
 	}//End Function
 
+
+	public function getdiaList($where, $order='id desc', $start=0,$size=5)
+	{
+
+
+		$list = $this->where($where)
+			->order($order)
+			->limit($start,$size)
+			->select();
+
+
+		$count = $this->where($where)
+			->count();
+
+		$objPage = new Page($count,$size);
+
+		$show = $objPage->admin_pagedialog();
+
+
+		$data = array('list'=>$list,'page'=>$show);
+
+
+		return $data;
+
+	}//End Function
+
 	public function getOssSize($oss_path) {
 		if (empty($oss_path)) {
 			return '0';
