@@ -95,4 +95,49 @@ class SendmsgController extends Controller
             $statenoticeModel->insertDup($me_fail_str, $where);
         }
     }
+
+
+
+    private function sendMessage($info){
+        //$sjson  = '{"resp":{"respCode":"000000","templateSMS":{"createDate":"20170621131304","smsId":"3bcd56624d1d60a6e5830c3886f2f31d"}}}';
+        $fe_start = $info['fee_start'];
+        $fe_end = $info['fee_end'];
+        $tel= $info['tel'];
+        $detailid = $info['id'];
+        $to = $tel;
+        $short = encrypt_data($detailid);
+        $shortlink = C('HOST_NAME').'/admin/hotelbill/index?id='.$short;
+        $shortlink = shortUrlAPI(1, $shortlink);
+        echo $shortlink;
+        $param="$shortlink";
+        $bool = $this->sendToUcPa($tel,$param);
+        return $bool;
+    }
+
+
+    private function sendToUcPa($to,$param,$type=1){
+        $bool = true;
+        $ucconfig = C('SMS_CONFIG');
+        $options['accountsid'] = $ucconfig['accountsid'];
+        $options['token'] = $ucconfig['token'];
+        //确认付款通知
+        if($type == 2){
+            $templateId = $ucconfig['payment_templateid'];
+        }else{
+            $templateId = $ucconfig['bill_templateid'];
+        }
+        $ucpass= new Ucpaas($options);
+        $appId = $ucconfig['appid'];
+        $sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
+        $this->addAccountLog($sjson,$param,$to);
+        $sjson = json_decode($sjson,true);
+        $code = $sjson['resp']['respCode'];
+
+        if($code === '000000') {
+        }else{
+            $bool = false;
+        }
+        return $bool;
+
+    }
 }
