@@ -343,7 +343,6 @@ class CheckaccountController extends BaseController{
 		}
 		//判酒楼是否已经存在以及detail表是否有
 		$hotel_acc_info = $this->judgeHotel($hotel_acc_arr,$start_date, $end_date,$fee);
-
 		$statement_num = 0;
 		foreach($hotel_acc_info as $hk=>$hv){
 			$statement_num++;
@@ -507,17 +506,22 @@ class CheckaccountController extends BaseController{
 		$ill_hotel = array();
 		$rest = array();
 		$emparray = array();
+		$num = array();
 		foreach($info as $rk=>$rv) {
 			if(in_array($rv['id'], $num)){
 				$repeat_arr[$rk] = $rv;
+				continue;
 			}else if(empty($rv['id'])){
 				$emparray[$rk] = $rv;
+				continue;
 			} else if(!is_int($rv['id'])){
 				$ill_hotel[$rk] = $rv;
+				continue;
 			}else{
 				$num[] = $rv['id'];
 				$money[$rv['id']] = $rv['money'];
 				$rest[$rv['id']] = $rv;
+				continue;
 			}
 		}
 		$num_str = implode(',', $num);
@@ -525,7 +529,7 @@ class CheckaccountController extends BaseController{
 		$dat['flag']= 0;
 		$field = 'id,name,bill_per,bill_tel';
 		$res = $hotelModel->getWhereData($dat, $field);
-
+		$num_true = array();
 		foreach($res as $rk=>$rv) {
 			$res[$rk]['money'] = $money[$rv['id']];
 			$num_true[] = $rv['id'];
@@ -540,8 +544,6 @@ class CheckaccountController extends BaseController{
 
 
 		}
-
-
 		$count = count($num_true);
 		$ar_diff = array_diff($num, $num_true);
 		//找到状态为2即不存在
@@ -591,6 +593,7 @@ class CheckaccountController extends BaseController{
 		}
 
 
+
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
         //fe>=st   结束值要大于给出开头值
@@ -602,8 +605,10 @@ class CheckaccountController extends BaseController{
 			//$start_date = date('YmdH',strtotime($start_date));
 			$where .= " AND fee_start <='".$en."' ";
 		}
-		$num_true_str = implode(',', $num_true);
-		$where .= "and hotel_id in ($num_true_str)";
+		if($num_true){
+			$num_true_str = implode(',', $num_true);
+			$where .= "and hotel_id in ($num_true_str)";
+		}
 		$field = '`hotel_id`';
 		$rest = $statedetailModel->getWhereData($where,$field);
 		foreach($rest as $rv){
