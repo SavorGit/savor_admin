@@ -48,7 +48,6 @@ class ArticleModel extends BaseModel
 			->limit($start,$size)
 			->select();
 
-
 		$count = $this->where($where)
 			->count();
 

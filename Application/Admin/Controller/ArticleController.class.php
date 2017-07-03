@@ -310,7 +310,6 @@ class ArticleController extends BaseController {
      * @desc 分类内容排序
      */
     public function hotsortmanager(){
-        var_dump($_POST);
         $artModel = new  \Admin\Model\ArticleModel();
         $m_hot_category = new \Admin\Model\HotCategoryModel();
         $cat_arr = $m_hot_category->select();
@@ -1266,13 +1265,14 @@ WHERE id IN (1,2,3)*/
             $sort_arr = explode(',',$sort_str);
             //获取排序文章id
             $artid_arr = json_decode($_POST['artid'],true);
-            if($artid_arr == $sort_arr){
+            $org_arr = explode(',',I('post.org_str',''));
+            if($org_arr == $artid_arr){
                 //保持顺序没变
-                $this->outputNew($sustr,'Checkaccount/rplist',1,0);
+                $this->outputNew('保存排序成功','Checkaccount/rplist',2,1);
             }else{
                 $bool = $artModel->updateSortNum($artid_arr, $sort_arr);
                 if($bool){
-                    $this->outputNew($sustr,'Checkaccount/rplist',1,0);
+                    $this->outputNew('保存排序成功','Checkaccount/rplist',2,1);
                 }else{
                     $this->error('保存排序失败');
                 }
@@ -1282,7 +1282,7 @@ WHERE id IN (1,2,3)*/
         }
         $catModel = new \Admin\Model\CategoModel;
         $cat_arr = $catModel->select();
-        $size   = I('numPerPage',2);//显示每页记录数
+        $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -1304,9 +1304,12 @@ WHERE id IN (1,2,3)*/
         foreach ($result['list'] as &$val) {
             $val['indnum'] = ++$ind;
             $sort[] = $val['sort_num'];
+            $orign[] = $val['id'];
         }
         $sort = implode(',', $sort);
+        $orign = implode(',', $orign);
         $this->assign('sort_ord', $sort);
+        $this->assign('org_artid', $orign);
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('hotsort');
