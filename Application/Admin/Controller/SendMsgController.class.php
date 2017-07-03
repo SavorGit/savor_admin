@@ -140,4 +140,11 @@ class SendmsgController extends Controller
         return $bool;
 
     }
+
+    private function addAccountLog($sjson,$param,$to){
+
+        $log=date("Y-m-d H:i:s")."---".$sjson."---".$param."---".$to;
+        $path = LOG_PATH."Admin/sendmsg_".date("Y-m-d").".log";
+        file_put_contents($path, $log."\n",FILE_APPEND);
+    }
 }

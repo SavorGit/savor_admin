@@ -342,6 +342,7 @@ class CheckaccountController extends BaseController{
 		}
 		//判酒楼是否已经存在以及detail表是否有
 		$hotel_acc_info = $this->judgeHotel($hotel_acc_arr,$start_date, $end_date,$fee);
+
 		$statement_num = 0;
 		foreach($hotel_acc_info as $hk=>$hv){
 			$statement_num++;
@@ -510,7 +511,7 @@ class CheckaccountController extends BaseController{
 			if(in_array($rv['id'], $num)){
 				$info[$rk]['state'] = 6;
 				continue;
-			}else if(empty($rv['id']) || !is_int($rv['id'])){
+			}else if(empty($rv['id']) || !preg_match("/^\d*$/",$rv['id'])){
 				$info[$rk]['state'] = 2;
 				continue;
 			}else{
