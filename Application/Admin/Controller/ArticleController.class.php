@@ -333,7 +333,11 @@ class ArticleController extends BaseController {
         $field = 'id,name';
         $category_list = $m_hot_category->getWhere($where, $field);
         $this->assign('vcainfo',$category_list);
-
+        $ind = $start;
+        foreach($result['list'] as &$val){
+            $ind++;
+            $val['indnum'] = $ind;
+        }
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('hotarticle');
