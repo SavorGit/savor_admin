@@ -107,28 +107,6 @@
   </form>
 </div>
 </div>
-<!-----发送信息
-<div class="modal fade" style="z-index:999;" id="myModasm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">发送结果</h4>
-      </div>
-      <div class="modal-body">
-        <h2 style="text-align: center;font-size: 20px;margin-bottom: 35px;">发送结果</h2>
-        <p style="margin-bottom: 10px;">发送成功30家酒楼，失败2家</p>
-        <p>发送失败明细(2家)</p><br /><br /><br />
-        <div class="err_jiulou">
-          <span>花家怡园(id:30)</span><span style="margin-left: 15px;">失败原因:该酒楼不存在</span>
-        </div>
-      </div>
-      <button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 47%;height: 26px;line-height: 14px;border-radius: 5px !important;margin-bottom: 15px;" id="ok">确定</button>
-    </div>
-  </div>
-</div>
----->
-
 <div id="mymodal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 
   <div class="modal-dialog modal-sm" role="document" style="width:600px;">
@@ -137,12 +115,12 @@
             action="{$host_name}/menu/addmen" method="post" >
         <div class="form-group">
           <div class="form-group">
-            <input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]'>
+            <input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]' value='浏览'>
           </div>
           <hr>
-          <button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">Submit</button>
+          <button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">提交</button>
 
-          <button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">cancel</button>
+          <button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">取消</button>
             <input  type="hidden"  name="excelpath" id="excelpath" value="">
         </div>
       </form>
@@ -171,6 +149,15 @@
 </div><!-- /.modal -->
 
 <script type="text/javascript">
+
+
+
+
+
+
+
+
+
   $('#ok').click(function(){
 
     $('#myModa').modal('hide');
@@ -221,6 +208,7 @@
 
 
   $("#file-4").fileinput({
+    language: 'zh',
     uploadExtraData: {kvId: '10'},
     maxFileCount: 1,
     allowedFileExtensions:['csv', 'xlsx'],
@@ -278,6 +266,9 @@
                   for(var i=0,l=data.length;i<l;i++) {
                     for (var key in data[i]) {
                       //alert(key);
+                      if(data[i][key] == '#'){
+                        data[i][key] = data[i][key].replace(/\#/g, "'");
+                      }
                       if (key == 'id') {
                         var ids = data[i][key];
                       }else if(key == 'name') {
@@ -319,5 +310,9 @@
 
 
   }
+  $('.fileinput-remove').click(function(){
+    $('#mymodal').modal('hide')
+  });
+
 
 </script>

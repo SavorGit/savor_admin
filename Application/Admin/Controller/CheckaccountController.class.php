@@ -74,7 +74,7 @@ class CheckaccountController extends BaseController{
 			$info = $statedetailModel->find($did);
 			$ch_staus =  $info['check_status'];
 			$state = $info['state'];
-					if($state==1){
+					if($state==1 || $state==4){
 						//更新状态
 						$dat['check_status'] = 3;
 						$where = 'id = '.$did;
@@ -115,7 +115,7 @@ class CheckaccountController extends BaseController{
 			$this->assign('pageNum',$start);
 			$order = I('_order','sdet.id');
 			$this->assign('_order',$order);
-			$sort = I('_sort','desc');
+			$sort = I('_sort','asc');
 			$this->assign('_sort',$sort);
 			$orders = $order.' '.$sort;
 			$start  = ( $start-1 ) * $size;
@@ -130,33 +130,23 @@ class CheckaccountController extends BaseController{
 
 				if($val['state']!=1){
 					$dinfo = $statedetailModel->find($val['detailid']);
-					if($dinfo['hotel_id'] == 'null') {
-						$val['hotelid'] = '';
-					}else{
-						$val['hotelid'] = $dinfo['hotel_id'];
-					}
-					if($dinfo['hotel_name'] == 'null') {
-						$val['name'] = '';
-					}else{
-						$val['name'] = $dinfo['hotel_name'];
-					}
-					if($dinfo['money'] == 'null') {
-						$val['money'] = '';
-					}else{
-						$val['money'] = $dinfo['money'];
-					}
-
-
-
+					$val['hotelid'] = $dinfo['hotel_id'];
+					$val['name'] = $dinfo['hotel_name'];
+					$val['money'] = $dinfo['money'];
 				}
 				$val['indnum'] = ++$ind;
 				foreach($check_state as $ch=>$cv){
                       if($ch == $val['check_status']) {
-
 						  if($val['state'] !=1){
 							  if($val['state'] == 4){
-								  $val['cont'] = '确认付款完成';;
-								  $val['ch_mes'] = $cv;
+								  if( $val['check_status'] != 3){
+									  $val['cont'] = '确认付款完成';
+									  $val['ch_mes'] = '';
+								  }else{
+									  $val['cont'] = '2';
+									  $val['ch_mes'] = $cv;
+								  }
+
 							  }else{
 								  $val['cont'] = 2;
 								  $val['ch_mes'] = '';
@@ -297,7 +287,16 @@ class CheckaccountController extends BaseController{
 			$row = array();
 			for ($j = 0; $j < $highestColumnNum; $j++) {
 				$cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
-				$cellVal = $sheet->getCell($cellName)->getValue();
+				$cellVal = (string)$sheet->getCell($cellName)->getValue();
+				if($cellVal === 'null'){
+					$cellVal = '';
+				}
+				if($cellVal === '"' ||  $cellVal === "'"){
+					$cellVal = '#';
+				}
+				if($cellVal === 'null'){
+					$cellVal = '';
+				}
 				$row[$filed[$j]] = $cellVal;
 			}
 			$data [] = $row;
@@ -308,9 +307,9 @@ class CheckaccountController extends BaseController{
 	}
 
 
-	/*
-	 * 处理添加对账单信息
-	 */
+
+
+
 
 	public function doaddCheckAccount(){
 		$user = new \Admin\Model\UserModel();
@@ -391,7 +390,6 @@ class CheckaccountController extends BaseController{
 			}
 
 		}
-
 		$sa = '发送失败明细'.$err1.$err2.$err3.$err4.$err5.$err6;
 		$sustr = '发送成功'.$succ.'家酒楼,失败'.$fail.'家.由于使用第三方平台，可能有延时<br/><br/>';
 		if($fail == 0){
@@ -426,7 +424,7 @@ class CheckaccountController extends BaseController{
 				}
 					$datalist[] = array(
 						'hotel_id'=>$hv['id'],
-						'check_status' =>99,
+						'check_status' =>0,
 						'statement_id' =>$insertid,
 						'money' =>$hv['money'],
 						'state'=>$hv['state'],
@@ -507,25 +505,108 @@ class CheckaccountController extends BaseController{
 		$ill_hotel = array();
 		$rest = array();
 		$emparray = array();
+		$num = array();
+		$sort = array();
 		foreach($info as $rk=>$rv) {
 			if(in_array($rv['id'], $num)){
+				$info[$rk]['state'] = 6;
+				continue;
+			}else if(empty($rv['id']) || !preg_match("/^\d*$/",$rv['id'])){
+				$info[$rk]['state'] = 2;
+				continue;
+			}else{
+				//判断id是否存在hotel表
+				$dat['id'] = $rv['id'];
+
+				//$field = 'id,name,bill_per,bill_tel';
+				$finfo = $hotelModel->find($dat['id']);
+			//	var_dump( $finfo);
+				if($finfo){
+					$info[$rk]['bill_tel'] = $finfo['bill_tel'];
+					$num[] = $rv['id'];
+					$where = ' 1=1 and state=1 and cost_type='.$fee;
+					//判断酒楼是否下发
+					//ft<=en   开始值要小于给出结束值
+					//fe>=st   结束值要大于给出开头值
+					if($st){
+						$where .= " and fee_end >='".$st."'";
+					}
+					if($en){
+						//$start_date = date('YmdH',strtotime($start_date));
+						$where .= " AND fee_start <='".$en."' AND hotel_id = ".$rv['id'];
+					}
+					$field = '`hotel_id`';
+					$rest = $statedetailModel->getWhereData($where,$field);
+					if($rest){
+						$info[$rk]['state'] = 3;
+						$info[$rk]['name'] = $finfo['name'];
+						continue;
+					}else{
+						if(empty($info[$rk]['money']) ||  (!is_numeric($info[$rk]['money']))){
+							$info[$rk]['state'] = 7;
+							continue;
+						}else{
+							if($info[$rk]['money']<0){
+								$info[$rk]['state'] = 5;
+								continue;
+							}
+							if(empty($finfo['bill_tel'])){
+								$info[$rk]['state'] = 4;
+								continue;
+							}
+						}
+					}
+				}else{
+					$info[$rk]['state'] = 2;
+					continue;
+				}
+			}
+		}
+		return $info;
+		die;
+	}
+
+
+
+	private function judgeHotelbak($info,$st,$en,$fee){
+		$num = array();
+		$money = array();
+		//判断酒楼是否存在
+		$hotelModel = new \Admin\Model\HotelModel();
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$repeat_arr = array();
+		//酒楼id非法的
+		$ill_hotel = array();
+		$rest = array();
+		$emparray = array();
+		$num = array();
+		$sort = array();
+		foreach($info as $rk=>$rv) {
+			//$info[$rk]['sort_num'] = $rk;
+			if(in_array($rv['id'], $num)){
 				$repeat_arr[$rk] = $rv;
+				continue;
 			}else if(empty($rv['id'])){
 				$emparray[$rk] = $rv;
+				continue;
 			} else if(!is_int($rv['id'])){
 				$ill_hotel[$rk] = $rv;
+				continue;
 			}else{
 				$num[] = $rv['id'];
 				$money[$rv['id']] = $rv['money'];
+				$sort[$rv['id']] = $rk;
 				$rest[$rv['id']] = $rv;
+				continue;
 			}
 		}
+
 		$num_str = implode(',', $num);
 		$dat['id']=array('in',$num_str);
 		$dat['flag']= 0;
 		$field = 'id,name,bill_per,bill_tel';
 		$res = $hotelModel->getWhereData($dat, $field);
-
+		$num_true = array();
 		foreach($res as $rk=>$rv) {
 			$res[$rk]['money'] = $money[$rv['id']];
 			$num_true[] = $rv['id'];
@@ -540,8 +621,6 @@ class CheckaccountController extends BaseController{
 
 
 		}
-
-
 		$count = count($num_true);
 		$ar_diff = array_diff($num, $num_true);
 		//找到状态为2即不存在
@@ -591,9 +670,10 @@ class CheckaccountController extends BaseController{
 		}
 
 
+
 		//判断酒楼是否下发
 		//ft<=en   开始值要小于给出结束值
-        //fe>=st   结束值要大于给出开头值
+		//fe>=st   结束值要大于给出开头值
 		$where = ' 1=1 and state=1 and cost_type='.$fee;
 		if($st){
 			$where .= " and fee_end >='".$st."'";
@@ -602,8 +682,10 @@ class CheckaccountController extends BaseController{
 			//$start_date = date('YmdH',strtotime($start_date));
 			$where .= " AND fee_start <='".$en."' ";
 		}
-		$num_true_str = implode(',', $num_true);
-		$where .= "and hotel_id in ($num_true_str)";
+		if($num_true){
+			$num_true_str = implode(',', $num_true);
+			$where .= "and hotel_id in ($num_true_str)";
+		}
 		$field = '`hotel_id`';
 		$rest = $statedetailModel->getWhereData($where,$field);
 		foreach($rest as $rv){
@@ -625,14 +707,46 @@ class CheckaccountController extends BaseController{
 		return $res;
 	}
 
+	private function addAccountLog($sjson,$param,$to){
 
-	/*
-	 * 执行脚本文件定时发送短信
-	 */
+		$log=date("Y-m-d H:i:s")."---".$sjson."---".$param."---".$to;
+		$path = LOG_PATH."Admin/sendmsg_".date("Y-m-d").".log";
+		file_put_contents($path, $log."\n",FILE_APPEND);
+	}
+
+
+	private function sendToUcPa($to,$param,$type=1){
+		$bool = true;
+		$ucconfig = C('SMS_CONFIG');
+		$options['accountsid'] = $ucconfig['accountsid'];
+		$options['token'] = $ucconfig['token'];
+		//确认付款通知
+		if($type == 2){
+			$templateId = $ucconfig['payment_templateid'];
+		}else{
+			$templateId = $ucconfig['bill_templateid'];
+		}
+		$ucpass= new Ucpaas($options);
+		$appId = $ucconfig['appid'];
+		$sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
+		$this->addAccountLog($sjson,$param,$to);
+		$sjson = json_decode($sjson,true);
+		$code = $sjson['resp']['respCode'];
+
+		if($code === '000000') {
+		}else{
+			$bool = false;
+		}
+		return $bool;
+
+	}
+
+
+
 	public function sendToSeller(){
 
 		//http://www.a.com/index.php/checkaccount/sendToSeller
-		//http://devp.admin.rerdian.com/index.php/checkaccount/sendToSeller
+		//http://devp.admin.rerdian.com/index.php/sendmsg/sendToSeller
 		$redis  =  SavorRedis::getInstance();
 		$redis->select(15);
 		$rkey = 'savor_account_statement_notice';
@@ -665,7 +779,6 @@ class CheckaccountController extends BaseController{
 					continue;
 				} else {
 					//发送短信
-
 					$info = $statedetailModel->getWhereSql($val);
 					$m_state = $this->sendMessage($info);
 					var_dump($m_state);
@@ -709,41 +822,6 @@ class CheckaccountController extends BaseController{
 			$me_fail_str = substr($me_fail_str,0,-1);
 			$statenoticeModel->insertDup($me_fail_str, $where);
 		}
-	}
-
-
-	private function addAccountLog($sjson,$param,$to){
-
-		$log=date("Y-m-d H:i:s")."---".$sjson."---".$param."---".$to;
-		$path = LOG_PATH."Admin/sendmsg_".date("Y-m-d").".log";
-		file_put_contents($path, $log."\n",FILE_APPEND);
-	}
-
-
-	private function sendToUcPa($to,$param,$type=1){
-		$bool = true;
-		$ucconfig = C('SMS_CONFIG');
-		$options['accountsid'] = $ucconfig['accountsid'];
-		$options['token'] = $ucconfig['token'];
-		//确认付款通知
-		if($type == 2){
-			$templateId = $ucconfig['payment_templateid'];
-		}else{
-			$templateId = $ucconfig['bill_templateid'];
-		}
-		$ucpass= new Ucpaas($options);
-		$appId = $ucconfig['appid'];
-		$sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
-		$this->addAccountLog($sjson,$param,$to);
-		$sjson = json_decode($sjson,true);
-		$code = $sjson['resp']['respCode'];
-
-		if($code === '000000') {
-		}else{
-			$bool = false;
-		}
-		return $bool;
-
 	}
 
 

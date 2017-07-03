@@ -1259,12 +1259,27 @@ WHERE id IN (1,2,3)*/
 
 
     public function addHotSort(){
-        var_dump($_POST);
-        //这个是保存排序
-        if($_POST['soar'] == 'tijiao'){
-
-        }
         $artModel = new  \Admin\Model\ArticleModel();
+        if($_POST['paixu'] == 'tijiao'){
+            //获取原始序号
+            $sort_str = I('post.sort_str','');
+            $sort_arr = explode(',',$sort_str);
+            //获取排序文章id
+            $artid_arr = json_decode($_POST['artid'],true);
+            if($artid_arr == $sort_arr){
+                //保持顺序没变
+                $this->outputNew($sustr,'Checkaccount/rplist',1,0);
+            }else{
+                $bool = $artModel->updateSortNum($artid_arr, $sort_arr);
+                if($bool){
+                    $this->outputNew($sustr,'Checkaccount/rplist',1,0);
+                }else{
+                    $this->error('保存排序失败');
+                }
+
+            }
+            die;
+        }
         $catModel = new \Admin\Model\CategoModel;
         $cat_arr = $catModel->select();
         $size   = I('numPerPage',2);//显示每页记录数
@@ -1285,11 +1300,13 @@ WHERE id IN (1,2,3)*/
         $result = $artModel->getdiaList($where,$orders,$start,$size);
 
         $ind = $start;
+        $sort = array();
         foreach ($result['list'] as &$val) {
             $val['indnum'] = ++$ind;
+            $sort[] = $val['sort_num'];
         }
-       // var_dump($result);
-
+        $sort = implode(',', $sort);
+        $this->assign('sort_ord', $sort);
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
         $this->display('hotsort');
