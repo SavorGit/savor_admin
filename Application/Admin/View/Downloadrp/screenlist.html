@@ -164,6 +164,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
   }
 
   $(function(){
+    $('select').css({ "cssText": "display:none !important" });
     var tip =  $("#dty").val();
     if(tip == 4){
       $("#timegi").css('display','inline-block');
