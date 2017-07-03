@@ -137,12 +137,12 @@
             action="{$host_name}/menu/addmen" method="post" >
         <div class="form-group">
           <div class="form-group">
-            <input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]'>
+            <input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]' value='浏览'>
           </div>
           <hr>
-          <button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">Submit</button>
+          <button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">提交</button>
 
-          <button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">cancel</button>
+          <button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">取消</button>
             <input  type="hidden"  name="excelpath" id="excelpath" value="">
         </div>
       </form>
@@ -230,6 +230,7 @@
 
 
   $("#file-4").fileinput({
+    language: 'zh',
     uploadExtraData: {kvId: '10'},
     maxFileCount: 1,
     allowedFileExtensions:['csv', 'xlsx'],
@@ -287,6 +288,9 @@
                   for(var i=0,l=data.length;i<l;i++) {
                     for (var key in data[i]) {
                       //alert(key);
+                      if(data[i][key] == '#'){
+                        data[i][key] = data[i][key].replace(/\#/g, "'");
+                      }
                       if (key == 'id') {
                         var ids = data[i][key];
                       }else if(key == 'name') {

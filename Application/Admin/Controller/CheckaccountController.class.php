@@ -291,6 +291,12 @@ class CheckaccountController extends BaseController{
 				if($cellVal === 'null'){
 					$cellVal = '';
 				}
+				if($cellVal === '"' ||  $cellVal === "'"){
+					$cellVal = '#';
+				}
+				if($cellVal === 'null'){
+					$cellVal = '';
+				}
 				$row[$filed[$j]] = $cellVal;
 			}
 			$data [] = $row;
