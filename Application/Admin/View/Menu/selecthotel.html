@@ -140,8 +140,8 @@
                     包含酒楼：
                   </label>
 
-                <span class="input-group-btn">
-              <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                <span class="input-group-btn" style="display: inline-block;width: 188px;">
+              <select id="inch" name="include_v[]" style="width: 188px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
                 <volist name="include" id="vo">
                   <option value="{$vo.id}"
                   <volist name="include_k" id="kvo" key="p">
@@ -164,7 +164,7 @@
                     排除酒楼：
                   </label>
 
-                <span class="input-group-btn">
+                <span class="input-group-btn" style="display: inline-block;width: 188px;">
               <select id="exch" name="exc_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
                 <volist name="include" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $exc_k">selected</if>>{$vo.menu_name}</option><br>
