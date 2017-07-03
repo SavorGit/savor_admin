@@ -130,29 +130,13 @@ class CheckaccountController extends BaseController{
 
 				if($val['state']!=1){
 					$dinfo = $statedetailModel->find($val['detailid']);
-					if($dinfo['hotel_id'] == 'null') {
-						$val['hotelid'] = '';
-					}else{
-						$val['hotelid'] = $dinfo['hotel_id'];
-					}
-					if($dinfo['hotel_name'] == 'null') {
-						$val['name'] = '';
-					}else{
-						$val['name'] = $dinfo['hotel_name'];
-					}
-					if($dinfo['money'] == 'null') {
-						$val['money'] = '';
-					}else{
-						$val['money'] = $dinfo['money'];
-					}
-
-
-
+					$val['hotelid'] = $dinfo['hotel_id'];
+					$val['name'] = $dinfo['hotel_name'];
+					$val['money'] = $dinfo['money'];
 				}
 				$val['indnum'] = ++$ind;
 				foreach($check_state as $ch=>$cv){
                       if($ch == $val['check_status']) {
-
 						  if($val['state'] !=1){
 							  if($val['state'] == 4){
 								  if( $val['check_status'] != 3){
@@ -303,8 +287,8 @@ class CheckaccountController extends BaseController{
 			$row = array();
 			for ($j = 0; $j < $highestColumnNum; $j++) {
 				$cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
-				$cellVal = $sheet->getCell($cellName)->getValue();
-				if($cellVal == null){
+				$cellVal = (string)$sheet->getCell($cellName)->getValue();
+				if($cellVal === 'null'){
 					$cellVal = '';
 				}
 				$row[$filed[$j]] = $cellVal;
@@ -317,9 +301,9 @@ class CheckaccountController extends BaseController{
 	}
 
 
-	/*
-	 * 处理添加对账单信息
-	 */
+
+
+
 
 	public function doaddCheckAccount(){
 		$user = new \Admin\Model\UserModel();
@@ -352,7 +336,6 @@ class CheckaccountController extends BaseController{
 		}
 		//判酒楼是否已经存在以及detail表是否有
 		$hotel_acc_info = $this->judgeHotel($hotel_acc_arr,$start_date, $end_date,$fee);
-
 		$statement_num = 0;
 		foreach($hotel_acc_info as $hk=>$hv){
 			$statement_num++;
@@ -578,7 +561,144 @@ class CheckaccountController extends BaseController{
 
 
 
+	private function judgeHotelbak($info,$st,$en,$fee){
+		$num = array();
+		$money = array();
+		//判断酒楼是否存在
+		$hotelModel = new \Admin\Model\HotelModel();
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$repeat_arr = array();
+		//酒楼id非法的
+		$ill_hotel = array();
+		$rest = array();
+		$emparray = array();
+		$num = array();
+		$sort = array();
+		foreach($info as $rk=>$rv) {
+			//$info[$rk]['sort_num'] = $rk;
+			if(in_array($rv['id'], $num)){
+				$repeat_arr[$rk] = $rv;
+				continue;
+			}else if(empty($rv['id'])){
+				$emparray[$rk] = $rv;
+				continue;
+			} else if(!is_int($rv['id'])){
+				$ill_hotel[$rk] = $rv;
+				continue;
+			}else{
+				$num[] = $rv['id'];
+				$money[$rv['id']] = $rv['money'];
+				$sort[$rv['id']] = $rk;
+				$rest[$rv['id']] = $rv;
+				continue;
+			}
+		}
 
+		$num_str = implode(',', $num);
+		$dat['id']=array('in',$num_str);
+		$dat['flag']= 0;
+		$field = 'id,name,bill_per,bill_tel';
+		$res = $hotelModel->getWhereData($dat, $field);
+		$num_true = array();
+		foreach($res as $rk=>$rv) {
+			$res[$rk]['money'] = $money[$rv['id']];
+			$num_true[] = $rv['id'];
+			if($res[$rk]['money']<0){
+				$res[$rk]['state'] = 5;
+				continue;
+			}
+			if(!is_numeric($res[$rk]['money'])){
+				$res[$rk]['state'] = 7;
+				continue;
+			}
+
+
+		}
+		$count = count($num_true);
+		$ar_diff = array_diff($num, $num_true);
+		//找到状态为2即不存在
+		foreach($ar_diff as $av){
+			$res[$count]['id'] = $av;
+			$res[$count]['state'] = 2;
+			$res[$count]['name'] = $rest[$av]['name'];
+			$res[$count]['money'] = $rest[$av]['money'];
+			$res[$count]['bill_per'] = '';
+			$res[$count]['bill_tel'] = '';
+			$count++;
+		}
+
+		if($repeat_arr){
+			foreach($repeat_arr as $rk=>$rv){
+				$res[$count]['id'] = $rv['id'];
+				$res[$count]['state'] = 6;
+				$res[$count]['name'] = $rv['name'];
+				$res[$count]['money'] = $rv['money'];
+				$res[$count]['bill_per'] = '';
+				$res[$count]['bill_tel'] = '';
+				$count++;
+			}
+		}
+
+		if($ill_hotel){
+			foreach($ill_hotel as $rk=>$rv){
+				$res[$count]['id'] = $rv['id'];
+				$res[$count]['state'] = 2;
+				$res[$count]['name'] = $rv['name'];
+				$res[$count]['money'] = $rv['money'];
+				$res[$count]['bill_per'] = '';
+				$res[$count]['bill_tel'] = '';
+				$count++;
+			}
+		}
+		if($emparray){
+			foreach($emparray as $rk=>$rv){
+				$res[$count]['id'] = $rv['id'];
+				$res[$count]['state'] = 2;
+				$res[$count]['name'] = $rv['name'];
+				$res[$count]['money'] = $rv['money'];
+				$res[$count]['bill_per'] = '';
+				$res[$count]['bill_tel'] = '';
+				$count++;
+			}
+		}
+
+
+
+		//判断酒楼是否下发
+		//ft<=en   开始值要小于给出结束值
+		//fe>=st   结束值要大于给出开头值
+		$where = ' 1=1 and state=1 and cost_type='.$fee;
+		if($st){
+			$where .= " and fee_end >='".$st."'";
+		}
+		if($en){
+			//$start_date = date('YmdH',strtotime($start_date));
+			$where .= " AND fee_start <='".$en."' ";
+		}
+		if($num_true){
+			$num_true_str = implode(',', $num_true);
+			$where .= "and hotel_id in ($num_true_str)";
+		}
+		$field = '`hotel_id`';
+		$rest = $statedetailModel->getWhereData($where,$field);
+		foreach($rest as $rv){
+			$numpp = $rv['hotel_id'];
+			$fee_time_num[$numpp] = $numpp;
+		}
+		foreach($res as $rk=>$rv) {
+
+			if ( isset($fee_time_num[$rv['id']]) &&  !isset($res[$rk]['state'])){
+
+				$res[$rk]['state'] = 3;
+
+			}else{
+				if(empty($res[$rk]['bill_tel']) && empty($res[$rk]['state'])){
+					$res[$rk]['state'] = 4;
+				}
+			}
+		}
+		return $res;
+	}
 
 	private function addAccountLog($sjson,$param,$to){
 
