@@ -13,6 +13,20 @@ class ArticleModel extends BaseModel
 {
 	protected $tableName='mb_content';
 
+
+
+	public function updateSortNum($artid_arr, $sort_arr){
+		    $id_str ="";
+			foreach($artid_arr as $ak=>$av){
+				$id_str .=  ' ('.$av.','.$sort_arr[$ak].')'.',';
+			}
+		    $id_str = substr($id_str,0,-1);
+			$sql =" INSERT INTO `savor_mb_content` (`id`,`sort_num`) values $id_str ON DUPLICATE KEY UPDATE sort_num=VALUES(sort_num)";
+			return $this->execute($sql);
+
+
+	}
+
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 		return $list;
