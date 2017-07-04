@@ -320,3 +320,10 @@ CREATE TABLE `savor_mb_hot_category` (
 ALTER TABLE `savor_mb_content` ADD COLUMN `index_img_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '首页封面图' AFTER `img_url`
 
 ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEFAULT 0 COMMENT '内容字数'
+
+
+增加说明：savor_hotel添加地区是否含有酒店字段
+修改时间：2017.7.4 10：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;

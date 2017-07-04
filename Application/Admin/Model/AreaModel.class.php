@@ -18,7 +18,7 @@ class AreaModel extends Model
 	 */
 	public function getAllArea()
 	{
-		return $this->limit(20)->select();
+		return $this->limit(20)->where('is_in_hotel=1')->select();
 
 	}
 
