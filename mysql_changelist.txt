@@ -270,6 +270,13 @@ ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 
 修改人：白玉涛
 执行sql:
 ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '对账单联系人' AFTER `hotel_wifi_pas`,ADD COLUMN `bill_tel` VARCHAR(12) NOT NULL COMMENT '对账单人联系电话' AFTER `bill_per`;
+
+增加说明：savor_hotel添加地区是否含有酒店字段
+修改时间：2017.7.4 10：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;
+
 #####以上sql均已执行#########
 
 
@@ -322,8 +329,10 @@ ALTER TABLE `savor_mb_content` ADD COLUMN `index_img_url` VARCHAR(255) NOT NULL 
 ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEFAULT 0 COMMENT '内容字数'
 
 
-增加说明：savor_hotel添加地区是否含有酒店字段
-修改时间：2017.7.4 10：30
+
+
+增加说明：savor_mb_content添加tag标签顺序
+修改时间：2017.7.4 15：30
 修改人：白玉涛
 执行sql:
-ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;
+ ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`,
