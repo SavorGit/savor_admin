@@ -749,9 +749,10 @@ class ExcelController extends Controller
     }
     public function importBillInfo()
     {
-        exit(0);
+        echo 'llwlelwer';
+        die;
         vendor("PHPExcel.PHPExcel.IOFactory");
-        $filetmpname = APP_PATH . '../Public/bill_info.xlsx';
+        $filetmpname = APP_PATH . '../Public/bill.xlsx';
         $objPHPExcel = \PHPExcel_IOFactory::load($filetmpname);
         $arrExcel = $objPHPExcel->getSheet(0)->toArray();
         
@@ -779,11 +780,13 @@ class ExcelController extends Controller
         foreach ($arrExcel as $k => $v) {
             $data = $where = array();
             $info = $m_hotel->getHotelByIds($v['0']); 
-            
+
             if(!empty($info) && $v['0']>0){
                 $data['bill_per'] = $v['4'];
                 $data['bill_tel'] = $v['5'];
                 $where['id'] = $v['0'];
+                //var_dump($data);
+                //var_dump($where);
                 $rt = $m_hotel->saveData($data, $where);
                 //var_dump($rt);exit;
             }
