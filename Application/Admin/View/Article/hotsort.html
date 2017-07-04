@@ -167,7 +167,7 @@
 
     var $shuju = $('.shuju>li');
     /*选中*/
-    $('body').on('click','.shuju>li',function(){
+    $('.shuju').on('click','li',function(){
       if($(this).is('.active')){
         $(this).removeClass('active')
       }else{
@@ -177,7 +177,7 @@
     })
 
 
-    $('body').on('mousedown','.shuju>li',function(){
+    $('.shuju').on('mousedown','li',function(){
       $shuju.mouseup(function(){
         $shuju.unbind('mousemove');
       })
