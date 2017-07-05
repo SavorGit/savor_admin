@@ -54,6 +54,7 @@
     <input type="hidden" name="pageNum" value="{$pageNum}" />
     <button type="submit" id="savesort" class="btn btn-primary" onclick="return savp();">保存排序</button>
     <input type="hidden" name="sort_str" value="{$sort_ord}" />
+    <input type="hidden" name="org_str" value="{$org_artid}" />
     <input type="hidden" name="paixu" id="paixu" value=""/>
     <input type="hidden" name="artid" id="soar"/>
   </form>
@@ -99,7 +100,16 @@
 
 
 <SCRIPT LANGUAGE="JavaScript">
+  function dialogAjaxDoneIce(json) {
 
+    DWZ.ajaxDone(json);
+    console.log(json);
+    if (json.url == 'checkaccounterr') {
+      navTab.reloadFlag('article/hotsortmanager');
+      $.pdialog.closeCurrent();
+
+    }
+  }
 
 
   function savp(){
