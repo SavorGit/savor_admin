@@ -27,7 +27,7 @@ class HotelbillController extends Controller{
                 $this->assign('bill_not_exist',1);
             }
             //if(!empty($bill_info) && $bill_info['check_status']==0){
-            if(!empty($bill_info) && $bill_info['check_status']==0){
+           /*  if(!empty($bill_info) && $bill_info['check_status']==0){
                 
                     $where = $info = array();
                     $where['id'] = $bill_id;
@@ -35,7 +35,7 @@ class HotelbillController extends Controller{
                 
                 
                 $ret = $m_account_statement_detail->saveData($info,$where);
-            }
+            } */
             $bill_type_arr =  C('fee_type');
             $bill_info['cost_type'] = $bill_type_arr[$bill_info['cost_type']];
             $bill_info['receipt_tel'] = explode(',', $bill_info['receipt_tel']);
@@ -82,5 +82,25 @@ class HotelbillController extends Controller{
             exit;
         }
     }
-  
+    /**
+     * @desc 标记已读
+     */
+    public function haveRead(){
+        $id = I('post.id');
+        $bill_id = decrypt_data($id);
+        if(is_numeric($bill_id)){
+            $bill_info = array();
+            $m_account_statement_detail = new \Admin\Model\AccountStatementDetailModel();
+            $bill_info = $m_account_statement_detail->getBillDetail($bill_id);
+            if(!empty($bill_info) && $bill_info['check_status']==0){
+            
+                $where = $info = array();
+                $where['id'] = $bill_id;
+                $info['check_status'] = 1;
+            
+            
+                $ret = $m_account_statement_detail->saveData($info,$where);
+            }
+        }
+    }
 }
