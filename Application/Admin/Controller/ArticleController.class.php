@@ -596,6 +596,9 @@ WHERE id IN (1,2,3)*/
             }
             $ar[]=$v['tagid'];
         }
+        $save['sort_tag'] = implode(',',$ar);
+        sort($ar);
+        $save['order_tag'] = implode(',',$ar);
         if(count($tagr)<3 || count($tagr)>10){
             $this->error('标签数不符合');
         }
@@ -854,6 +857,9 @@ WHERE id IN (1,2,3)*/
             }
             $ar[]=$v['tagid'];
         }
+        $save['sort_tag'] = implode(',',$ar);
+        sort($ar);
+        $save['order_tag'] = implode(',',$ar);
         if(count($tagr)<3 || count($tagr)>10){
             $this->error('标签数不符合');
         }
@@ -956,6 +962,9 @@ WHERE id IN (1,2,3)*/
             }
             $ar[]=$v['tagid'];
         }
+        $save['sort_tag'] = implode(',',$ar);
+        sort($ar);
+        $save['order_tag'] = implode(',',$ar);
         if(count($tagr)<3 || count($tagr)>10){
             $this->error('标签数不符合');
         }
@@ -1210,6 +1219,9 @@ WHERE id IN (1,2,3)*/
             }
             $ar[]=$v['tagid'];
         }
+        $save['sort_tag'] = implode(',',$ar);
+        sort($ar);
+        $save['order_tag'] = implode(',',$ar);
         if(count($tagr)<3 || count($tagr)>10){
             $this->error('标签数不符合');
         }

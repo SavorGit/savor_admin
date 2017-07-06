@@ -270,7 +270,87 @@ ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 
 修改人：白玉涛
 执行sql:
 ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '对账单联系人' AFTER `hotel_wifi_pas`,ADD COLUMN `bill_tel` VARCHAR(12) NOT NULL COMMENT '对账单人联系电话' AFTER `bill_per`;
+
+增加说明：savor_hotel添加地区是否含有酒店字段
+修改时间：2017.7.4 10：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;
+
 #####以上sql均已执行#########
+增加说明：发票表
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `receipt_addr` varchar(50) NOT NULL DEFAULT '' COMMENT '发票地址',
+  `receipt_tel` varchar(50) NOT NULL DEFAULT '' COMMENT '发票收件人',
+  `receipt_head` varchar(50) NOT NULL DEFAULT '' COMMENT '发票抬头',
+  `receipt_taxnum` varchar(50) NOT NULL DEFAULT '' COMMENT '纳税人识别号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='发票表';
+insert  into `savor_account_info`(`id`,`receipt_addr`,`receipt_tel`,`receipt_head`,`receipt_taxnum`) values (1,'北京市朝阳区建外大街郎家园16号永峰写字楼6层601-603室','赵翠燕,010-64185797-8016','拉萨经济技术开发区热点信息技术有限公司北京分公司','91110105MA00BKE27L'),(2,'上海市徐汇区零陵路899号飞洲国际22K室','田耘,021-34773009','拉萨经济技术开发区热点信息技术有限公司上海分公司','91310104MA1FR71647'),(3,'广州市越秀区先烈中路75号穗丰大厦A座209室','余穗筠,020-87326025','拉萨经济技术开发区热点信息技术有限公司广州分公司','91440101MA59J47E83');
+
+增加说明：公司对账单
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_statement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fee_start` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段开始',
+  `fee_end` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段结束',
+  `cost_type` tinyint(3) unsigned DEFAULT '1' COMMENT '费用类型1开机2APP推广',
+  `receipt_addrid` smallint(5) unsigned DEFAULT '1' COMMENT '发票地址对应id',
+  `remark` text NOT NULL COMMENT '备注',
+  `operatorid` int(11) NOT NULL DEFAULT '0' COMMENT '操作人id',
+  `count` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id的数量',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `summary` text COMMENT '详细信息',
+  PRIMARY KEY (`id`),
+  KEY `ctune` (`create_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='公司对账单'
+
+增加说明：公司对账单明细
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_statement_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hotel_id` varchar(11) DEFAULT NULL COMMENT '酒楼id',
+  `check_status` tinyint(1) unsigned DEFAULT '0' COMMENT '对账状态0为未读,1为已读,2为已确认,3为已付款',
+  `statement_id` int(11) DEFAULT '0' COMMENT '对应公司对账单id',
+  `money` varchar(20) DEFAULT '' COMMENT '对账金额',
+  `state` tinyint(3) unsigned DEFAULT '1' COMMENT '插入状态1成功2酒楼不存在3费用已经下发4对账单人联系电话为空5酒楼下发金额为负值6EXCEL表中已经存在酒楼7.酒楼下发金额为空值',
+  `err_msg` varchar(50) NOT NULL DEFAULT '' COMMENT '错误原因',
+  `fee_start` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段开始',
+  `fee_end` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段结束',
+  `cost_type` tinyint(3) unsigned DEFAULT '1' COMMENT '费用类型1开机2APP推广',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `hotel_name` varchar(20) DEFAULT '' COMMENT '错误状态下酒店名称',
+  PRIMARY KEY (`id`),
+  KEY `statement` (`hotel_id`,`statement_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='公司对账单明细'
+
+
+
+增加说明：消息通知
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_statement_notice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(3) unsigned DEFAULT '1' COMMENT '发送状态1成功0失败',
+  `detail_id` int(11) DEFAULT '0' COMMENT '对应明细账单的id',
+  `f_type` tinyint(3) unsigned DEFAULT '1' COMMENT '哪种短信类型1发送录入对账单通知2确认付款完成',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息更新时间',
+  `count` int(11) NOT NULL DEFAULT '0' COMMENT '最大失败数量',
+  PRIMARY KEY (`id`),
+  KEY `hotel_id` (`detail_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息通知'
 
 
 增加说明：图集对应的表
@@ -322,8 +402,10 @@ ALTER TABLE `savor_mb_content` ADD COLUMN `index_img_url` VARCHAR(255) NOT NULL 
 ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEFAULT 0 COMMENT '内容字数'
 
 
-增加说明：savor_hotel添加地区是否含有酒店字段
-修改时间：2017.7.4 10：30
+
+
+增加说明：savor_mb_content添加tag标签顺序
+修改时间：2017.7.4 15：30
 修改人：白玉涛
 执行sql:
-ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;
+ ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`,
