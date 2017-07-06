@@ -76,15 +76,18 @@ class SendmsgController extends Controller
                 $redis->rPush($rkey, $k);
             }
         }
+
         if($me_su_arr){
             $me_su_str = 'values';
             $where = 'status = 1';
+            $len = count($me_su_arr);
             foreach($me_su_arr as $ma){
                 $me_su_str .=  ' ('.$ma.')'.',';
             }
             $me_su_str = substr($me_su_str,0,-1);
             $statenoticeModel->insertDup($me_su_str, $where);
         }
+        echo '成功发送'.$len.'条';
         if($me_fail_arr){
             $me_fail_str = 'values';
             $where = '`count` = `count` + 1';
