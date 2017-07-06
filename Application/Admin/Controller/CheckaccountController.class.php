@@ -444,15 +444,6 @@ class CheckaccountController extends BaseController{
 				$rd = array();
 				$rd['statement_id'] = $insertid;
 				$detail_arr = $statedetailModel->getWhereData($rd);
-				/*$dpr = array();
-				$message = array();
-				foreach($detail_arr as $dv){
-					$dpr[$dv['hotel_id']] = $dv['id'];
-				}
-				var_export($detail_arr);
-				$ma = array();
-				var_export($hotel_acc_info);
-				die;*/
 				foreach($detail_arr as $ha=>$hi){
 					if($hi['state'] == 1){
 
@@ -471,6 +462,7 @@ class CheckaccountController extends BaseController{
 				}
 
 				//添加savor_account_notice表
+				sort($message);
 				$statenoticeModel->addAll($message);
 				//添加到redis
 				$statenoticeModel->saveStRedis($ma);

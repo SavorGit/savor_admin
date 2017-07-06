@@ -277,7 +277,7 @@ ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '�
 执行sql:
 ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;
 
-#####以上sql均已执行#########
+
 增加说明：发票表
 修改时间：2017.7.5 11：30
 修改人：白玉涛
@@ -352,7 +352,7 @@ CREATE TABLE `savor_account_statement_notice` (
   KEY `hotel_id` (`detail_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息通知'
 
-
+#########################以上sql均已执行###########################
 增加说明：图集对应的表
 修改时间：2017.6.28 14：30
 修改人：白玉涛
