@@ -146,7 +146,7 @@ class ContentController extends BaseController {
         } else {
             $state = 2;
         }
-        $data = array('state'=>$state);
+        $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
 
         $res = $artModel->where("id='$adsid'")->save($data);
 
