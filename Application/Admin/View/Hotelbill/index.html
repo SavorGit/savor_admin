@@ -107,6 +107,7 @@ window.location.href="http://www.littlehotspot.com";
 <script type="text/javascript" >
 		
 	$(function(){
+		
 		var calculate_size = function() {
 			var BASE_FONT_SIZE = 100;
 			var docEl = document.documentElement,
@@ -132,6 +133,16 @@ window.location.href="http://www.littlehotspot.com";
 		
 		var bill_id = $('#bill_id').val();
 		var url = '/admin/hotelbill/confirmBill';
+		var readurl ='/admin/hotelbill/haveread';
+		$.ajax({
+			type:'POST',
+			url :readurl,
+			data:{id:bill_id},
+			dataType:"json",
+			success:function(data){
+				
+			}
+		});
 		$('#confirmbill').click(function(){
 			$.ajax({
 				type:'POST',
