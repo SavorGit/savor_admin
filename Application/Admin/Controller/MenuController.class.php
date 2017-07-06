@@ -780,8 +780,8 @@ class MenuController extends BaseController {
         $save['creator_name'] = $userInfo['username'];
         $save['creator_id'] = $userInfo['id'];
         $save['state']    = 0;
-        $save['menu_name'] = I('post.program','','trim');
-
+        
+       
 
         $id_arr = explode (',',substr(I('post.rightid',''),0,-1) );
         $dura_arr = explode (',',substr(I('post.rightdur',''),0,-1) );
@@ -794,13 +794,15 @@ class MenuController extends BaseController {
             //先删除menuid，后插入
             $mItemModel->delData($id);
             //更新menulist
-            $sav['update_time'] = date("Y-m-d H:i:s");
-            $mlModel->where(array('id'=>$id))->save($sav);
+            $save['update_time'] = date("Y-m-d H:i:s");
+            
+            $mlModel->where(array('id'=>$id))->save($save);
+            
             $i = 1;
             $data = array();
             $sql = '';
             $value = '';
-
+            
             if(I('post.rightname')==''){
                $res = true;
                 $data = array();
@@ -839,6 +841,7 @@ class MenuController extends BaseController {
             //判断名字是否存在
             $save['update_time'] = date('Y-m-d H:i:s');
             $save['create_time'] = date('Y-m-d H:i:s');
+            $save['menu_name'] = I('post.program','','trim');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
                 $this->error('节目单名称已存在!');
