@@ -14,6 +14,19 @@ class ArticleModel extends BaseModel
 	protected $tableName='mb_content';
 
 
+	public function getOneRow($where, $field,$order){
+		$list = $this->where($where)
+			->order($order)
+			->limit(1)
+			->field($field)->select();
+		if(empty($list)){
+			return false;
+		}else{
+			return $list[0];
+		}
+
+	}
+
 
 	public function updateSortNum($artid_arr, $sort_arr){
 		    $id_str ="";

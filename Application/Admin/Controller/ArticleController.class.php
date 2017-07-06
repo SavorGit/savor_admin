@@ -1275,17 +1275,59 @@ WHERE id IN (1,2,3)*/
 
     public function addHotSort(){
         $artModel = new  \Admin\Model\ArticleModel();
+
         if($_POST['paixu'] == 'tijiao'){
             //获取原始序号
             $sort_str = I('post.sort_str','');
             $sort_arr = explode(',',$sort_str);
             //获取排序文章id
             $artid_arr = json_decode($_POST['artid'],true);
+            $f_artid = $artid_arr[0];
+            $f_sortid = $sort_arr[0];
+            //判断第一条文章是否有封面
+            $art_info = $artModel->find($f_artid);
+
+            $index_img = $art_info['index_img_url'];
+            if(empty($index_img)){
+                $this->error('请重新排序,第一条必须有封面');
+            }
+            //获取最新一条的审核时间的artid
+            $hotcatid = I('post.hotcatid','0');
+            $field = 'id,sort_num';
+            $where = "1=1";
+            $where .=" AND state ='2' AND hot_category_id = ".$hotcatid;
+            $order = 'update_time desc';
+            $artinfo = $artModel->getOneRow($where, $field,$order);
+            if($artinfo){
+                //等于情况
+                $check_apply_id = $artinfo['id'];
+                $check_apply_sort_id = $artinfo['sort_num'];
+                if(!in_array($check_apply_id, $artid_arr)){
+                    if($check_apply_sort_id > $f_sortid){
+                        array_unshift($sort_arr, $check_apply_sort_id);
+                        //文章id
+                        unset($artid_arr[0]);
+                        array_unshift($artid_arr,$check_apply_id);
+                        array_unshift($artid_arr,$f_artid);
+                    }else if($check_apply_sort_id < $f_sortid){
+                        //该放哪放哪
+                        //如果获取最新审核文章id在文章表
+                            array_push($sort_arr, $check_apply_sort_id);
+                            rsort($sort_arr);
+                            $index = array_search($check_apply_sort_id,$sort_arr); //返回2
+                            //放到指定位置上
+                            array_splice($artid_arr,$index,0,$check_apply_id);
+
+                    }
+                }
+
+            }
             $org_arr = explode(',',I('post.org_str',''));
             if($org_arr == $artid_arr){
                 //保持顺序没变
                 $this->outputNew('保存排序成功','Checkaccount/rplist',2,1);
             }else{
+                //
                 $bool = $artModel->updateSortNum($artid_arr, $sort_arr);
                 if($bool){
                     $this->outputNew('保存排序成功','Checkaccount/rplist',2,1);
@@ -1324,6 +1366,7 @@ WHERE id IN (1,2,3)*/
         }
         $sort = implode(',', $sort);
         $orign = implode(',', $orign);
+        $this->assign('hotcatid', $hot_category_id);
         $this->assign('sort_ord', $sort);
         $this->assign('org_artid', $orign);
         $this->assign('list', $result['list']);
