@@ -42,8 +42,8 @@
             <th>内容类型</th>
             <th>排序</th>
             <th>最后时间</th>
-            <th>状态</th>
-            <th class="table-tool">操作</th>
+
+
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -65,26 +65,6 @@
               </td>
               <td data-title="排序">{$vlist.indnum}</td>
               <td data-title="最后时间">{$vlist.update_time}</td>
-              <td data-title="状态">
-                <if condition="$vlist['state'] eq 0">
-                  <a data-tip="已经下线" target="ajaxTodo" href="{$host_name}/article/changestatus?id={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a>
-                  <else/>
-                  <a data-tip="已经上线" target="ajaxTodo" href="{$host_name}/article/changestatus?id={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
-                </if>
-
-              </td>
-
-              <td class="table-tool" data-title="操作">
-                <div class="tools-edit">
-                  
-                   <a warn="警告" data-tip="移除" title="你确定要从首页移除吗？" target="ajaxTodo" rel="article/homemanager"
-href="{$host_name}/article/delhome?id={$vlist.id}&acttype=2"  class="btn btn-success btn-icon">
-                    <i class="fa fa-trash"></i>
-                  </a>
-                </div>
-              </td>
 
             </tr>
           </volist>

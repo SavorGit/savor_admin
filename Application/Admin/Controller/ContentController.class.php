@@ -146,10 +146,12 @@ class ContentController extends BaseController {
         } else {
             $state = 2;
         }
-        $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
+       $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
 
-        $res = $artModel->where("id='$adsid'")->save($data);
 
+
+
+      $res = $artModel->where("id='$adsid'")->save($data);
         if($res){
             $message = '更新审核状态成功';
         }
