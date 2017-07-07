@@ -80,10 +80,9 @@
 <SCRIPT LANGUAGE="JavaScript">
 
   $(function() {
-
+    $('select').css({ "cssText": "display:none !important" });
     $("#hotcat").change(function(){
       $("form[name='hotart']").submit();
     });
-
   });
 </script>
