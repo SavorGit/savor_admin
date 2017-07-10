@@ -538,4 +538,16 @@ class BoxawardController extends BaseController{
 	}
 
 
+	public function getAwardRecord(){
+		$dat =  date("Y-m-d");
+		$dat = '2017-07-06';
+		$m_award_log = new \Admin\Model\AwardLogModel();
+		$where = "1=1 and  a.prizeid >0 and DATE_FORMAT(a.time,'%Y-%m-%d') = '".$dat."'";
+		$orders = 'a.time  desc';
+		$result = $m_award_log->getAwardList($where,$orders);
+		$this->assign('list', $result);
+		$this->display('record_of_winning_a_prize');
+	}
+
+
 }

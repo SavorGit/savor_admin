@@ -1070,6 +1070,9 @@ WHERE id IN (1,2,3)*/
 
             $oss_host = $this->oss_host;
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
+            if($vinfo['index_img_url']){
+                $vinfo['index_oss_addr'] = $oss_host.$vinfo['index_img_url'];
+            }
             $this->assign('vinfo',$vinfo);
 
             //获取文章id本身有的标签
