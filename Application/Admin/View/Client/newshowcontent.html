@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>{$vinfo.title}-小热点</title>
+	</head>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background-color: #f6f2ed;
+			}
+		
+		.box_nr {
+			width: 93%;
+			margin: 0 auto;
+			text-align: justify;
+			margin-bottom: 0.6rem;
+			line-height: 0.57rem;
+			letter-spacing: 2px;
+		}
+		
+		.box_nr p strong {
+			width: 100%;
+			font-size: 0.5rem;
+			color: #434343;
+			margin-top: 0.4rem;
+			display: block;
+			margin-bottom: 0.5rem;
+		}
+		
+		.box_nr p {
+			font-size: 0.3rem;
+			color: #575757;
+		}
+		
+		.box_nr img {
+			width: 100%;
+		}
+		
+		.box_nr p {
+			margin-bottom: 0.4rem;
+		}
+		
+		.mioasu {
+			width: 100%;
+			margin-bottom: 0.4rem;
+			line-height: 0.5rem;
+		}
+		
+		.mioasu img {
+			width: 0.45rem;
+			height: 0.45rem;
+			float: left;
+		}
+		
+		.m1 {
+			font-size: 0.22rem;
+			color: #898886;
+			margin-left: 0.12rem;
+			float: left;
+		}
+		
+		.m2 {
+			font-size: 0.2rem;
+			color: #b2afab;
+			margin-left: 0.2rem;
+			float: left;
+		}
+		
+		.m3 {
+			font-size: 0.2rem;
+			color: #898886;
+			float: right;
+			margin-left: 0.1rem;
+		}
+		
+		.m4 {
+			font-size: 0.2rem;
+			color: #898886;
+			float: right;
+		}
+		
+		.tuijian {
+			width: 100%;
+			margin: 0 auto;
+			border-top: 8px solid #ece6de;
+		}
+		
+		.tit_tuijian {
+			font-size: 0.3rem;
+			color: #922c3e;
+			font-weight: 700;
+			display: block;
+			width: 93%;
+			margin: 0 auto;
+			height: 0.96rem;
+			line-height: 0.96rem;
+		}
+		
+		.tuijian_list {
+			width: 93%;
+			margin: 0 auto;
+			padding-bottom: 0.12rem;
+			padding-top: 0.12rem;
+			border-bottom: 1px solid #eae6e1;
+		}
+		
+		.tuijian_list img {
+			width: 2.6rem;
+			height: 1.68rem;
+			float: left;
+			margin-right: 0.2rem;
+		}
+		
+		.tuijian_list_tit {
+			font-size: 0.32rem;
+			color: #434343;
+			font-weight: 700;
+			display: block;
+			margin-bottom: 0.4rem;
+		}
+		
+		.laiyuan {
+			font-size: 0.22rem;
+			color: #8a8886;
+			display: block;
+			float: left;
+			margin-right: 0.2rem;
+		}
+		
+		.shijian {
+			font-size: 0.2rem;
+			color: #B2AFAB;
+			display: block;
+			float: left;
+			margin-top: 3px;
+		}
+	</style>
+	<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
+	<body>
+		<div class="box_nr">
+			{$vinfo.content}
+		</div>
+	</body>
+	<script type="text/javascript">
+		var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+		};
+
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}
+		var urla = location.search;
+		if(urla.indexOf("?") != -1) {
+			console.log('有参数')
+		} else {
+			$('.tuijian').show();
+		}
+		/*---------*/
+		var urlResource = window.location.search.split('?');
+		var result = urlResource[1].split('=');
+
+		if(result[0] == 'location' && result[1] == 'newRead') {
+		//当前是 阅读状态 隐藏下载条topLabel
+			$('.tuijian').hide();
+		}
+	</script>
+
+</html>
