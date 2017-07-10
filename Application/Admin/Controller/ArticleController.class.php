@@ -635,14 +635,13 @@ WHERE id IN (1,2,3)*/
             $save['vod_md5'] = $oss_arr['md5'];
             $save['media_id'] = $media_id;
         }
-        
-        
+
         if($id){
             $this->changeTag($tagr, $id);
             if($addtype == 2){
                 //mediaid去除，md5,
                 $save['vod_md5'] = '';
-                $save['media_id'] = '';
+                $save['media_id'] = 0;
             }else{
                 if($addtype == 1 && $media_id==0){
                     $m_arr = $artModel->where('id='.$id)->find();
@@ -657,9 +656,7 @@ WHERE id IN (1,2,3)*/
                 }
 
             }
-
             if($artModel->where('id='.$id)->save($save)){
-
                 //判断是否在首页点播中
                 $homeModel = new \Admin\Model\HomeModel();
                 $hinfo = $homeModel->where(array('content_id'=>$id))->find();
