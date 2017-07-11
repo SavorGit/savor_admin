@@ -101,7 +101,7 @@
       <input type="hidden" id="pagetotal" value="{$pagecount}">
       <input type="hidden" name="id" value="{$vinfo.id}">
       <input type="hidden" name="ctype" value="2">
-		<h2 style="text-align: center;margin-top: 15px;font-size: 20px;">添加图集</h2>
+		<h2 style="text-align: center;margin-top: 15px;font-size: 20px;margin-bottom: 20px;">添加图集</h2>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label" style="width: 58px;margin-left: 45px; margin-top: 10px;">
           分类:
@@ -172,59 +172,64 @@
             </div>
         </div>
 
+<div class="pic_list" style="width: 96%;margin: 0 auto;height: 360px;margin-top: 45px;overflow: auto;border: 1px solid black;margin-bottom: 20px;">
+            <div class="pis_top">
+                <span style="margin-left: 15px;">目标序号</span>
+                <span style="margin-left: 40px;">图片</span>
+                <span style="margin-left: 162px;">内容描述</span>
+            </div>
+            <div class="pic">
+                <span style="float: left;margin-left: 33px;">1</span>
+                <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>
+                    <img id="pics_map_1img" src="" border="0" />
+                </a>
+                <input type="hidden" id="pics_map_1" name="pics_map_1" />
+                <textarea name="texta_pic_1" class="texta_val"></textarea>
+                <i class="fa fa-trash dela"></i>
+            </div>
+            <div class="pic">
+                <span style="float: left;margin-left: 33px;">2</span>
+                <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_2&rtype=2" data-browse-file>
+                    <img id="pics_map_2img" src="" border="0" />
+                </a>
+                <input type="hidden" id="pics_map_2" name="pics_map_2" />
+                <textarea name="texta_pic_2" class="texta_val"></textarea>
+                <i class="fa fa-trash dela"></i>
+            </div>
+            <div class="pic">
+                <span style="float: left;margin-left: 33px;">3</span>
+                <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_3&rtype=2" data-browse-file>
+                    <img id="pics_map_3img" src="" border="0" />
+                </a>
+                <input type="hidden" id="pics_map_3" name="pics_map_3" />
+                <textarea name="texta_pic_3" class="texta_val"></textarea>
+                <i class="fa fa-trash dela"></i>
+            </div>
+            <div class="pic">
+                <span style="float: left;margin-left: 33px;">4</span>
+                <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_4&rtype=2" data-browse-file>
+                    <img id="pics_map_4img" src="" border="0" />
+                </a>
+                <input type="hidden" id="pics_map_4" name="pics_map_4" />
+                <textarea name="texta_pic_4" class="texta_val"></textarea>
+                <i class="fa fa-trash dela"></i>
+            </div>
+            <div class="pic">
+                <span style="float: left;margin-left: 33px;">5</span>
+                <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_5&rtype=2" data-browse-file>
+                    <img id="pics_map_5img" src="" border="0" />
+                </a>
+                <input type="hidden" id="pics_map_5" name="pics_map_5" />
+                <textarea name="texta_pic_5" class="texta_val"></textarea>
+                <i class="fa fa-trash dela"></i>
+            </div>
+
+            <div class="tianjia">
+                添加
+            </div>
+        </div>
 
 
-		<div class="pic_list" style="width: 96%;margin: 0 auto;height: 360px;margin-top: 45px;overflow: auto;border: 1px solid black;margin-bottom: 20px;">
-			<div class="pis_top">
-				<span style="margin-left: 15px;">目标序号</span>
-				<span style="margin-left: 40px;">图片</span>
-				<span style="margin-left: 162px;">内容描述</span>
-			</div>
-			<div class="pic">
-				<span style="float: left;margin-left: 33px;">1</span>
-				<a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>
-                  <img id="pics_map_1img" src="" border="0" />
-				</a>
-              <input type="hidden" id="pics_map_1" name="pics_map_1" />
-				<textarea name="texta_pic_1" class="texta_val"></textarea>
-			</div>
-          <div class="pic">
-            <span style="float: left;margin-left: 33px;">2</span>
-            <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_2&rtype=2" data-browse-file>
-              <img id="pics_map_2img" src="" border="0" />
-            </a>
-            <input type="hidden" id="pics_map_2" name="pics_map_2" />
-            <textarea name="texta_pic_2" class="texta_val"></textarea>
-          </div>
-          <div class="pic">
-            <span style="float: left;margin-left: 33px;">3</span>
-            <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_3&rtype=2" data-browse-file>
-              <img id="pics_map_3img" src="" border="0" />
-            </a>
-            <input type="hidden" id="pics_map_3" name="pics_map_3" />
-            <textarea name="texta_pic_3" class="texta_val"></textarea>
-          </div>
-          <div class="pic">
-            <span style="float: left;margin-left: 33px;">4</span>
-            <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_4&rtype=2" data-browse-file>
-              <img id="pics_map_4img" src="" border="0" />
-            </a>
-            <input type="hidden" id="pics_map_4" name="pics_map_4" />
-            <textarea name="texta_pic_4" class="texta_val"></textarea>
-          </div>
-          <div class="pic">
-            <span style="float: left;margin-left: 33px;">5</span>
-            <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_5&rtype=2" data-browse-file>
-              <img id="pics_map_5img" src="" border="0" />
-            </a>
-            <input type="hidden" id="pics_map_5" name="pics_map_5" />
-            <textarea name="texta_pic_5" class="texta_val"></textarea>
-          </div>
-
-			<div class="tianjia">
-				添加
-			</div>
-		</div>
 		
 		
 		<div class="form-group row" id="biaoqian">
@@ -256,7 +261,7 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        <input type="text" class="soushuo" style="margin-left: 61px;height: 28px;width: 410px;"/>
+                        <input type="text" class="soushuo" style="margin-left: 12px;height: 28px;width: 461px;"/>
 							        			<span class="input-group-btn" style="display:inline-block;">
 							              <button class="btn btn-primary" style="height: 26px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
 							            </span>
@@ -302,6 +307,9 @@
             </div>
           </div>
           <!--来源-->
+
+
+        
           <div class="form-group row">
               <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-left:36px;line-height: 30px;">
                 来源：
@@ -371,6 +379,9 @@
 		if(a == '50') {
 			alert('图集不能超过50')
 		} else {
+			if(a==undefined){
+				a=0;
+			}
 			var num = parseInt(a) + 1;
 
           var button="<input type='hidden' id='pics_map_"+num+"' name='pics_map_"+num+ "' />";
@@ -382,6 +393,13 @@
 
 	$('body').on('click', '.dela', function() {
 		$(this).parent().remove();
+		
+		var c = 1;
+		$('.pic span').each(function(){
+			var a = $(this).html(c++);
+			
+		})
+		
 	})
 	$('textarea').keydown(function() {
 		var textval = $(this).val().length;

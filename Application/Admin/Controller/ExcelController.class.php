@@ -749,10 +749,11 @@ class ExcelController extends Controller
     }
     public function importBillInfo()
     {
-        echo 'llwlelwer';
+       //http://admin.rerdian.com/admin/excel/importBillInfo
+        echo 'weeljrlwejr';
         die;
         vendor("PHPExcel.PHPExcel.IOFactory");
-        $filetmpname = APP_PATH . '../Public/bill.xlsx';
+        $filetmpname = APP_PATH . '../Public/guang.xlsx';
         $objPHPExcel = \PHPExcel_IOFactory::load($filetmpname);
         $arrExcel = $objPHPExcel->getSheet(0)->toArray();
         
