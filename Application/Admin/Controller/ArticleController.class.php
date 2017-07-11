@@ -412,6 +412,7 @@ class ArticleController extends BaseController {
                 $mediaModel = new \Admin\Model\MediaModel();
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['media_id']);
                 $vainfo['videooss_addr'] = $mediainfo['oss_addr'];
+                $vainfo['index_oss_addr'] = $oss_host.$vainfo['index_img_url'];
                 $vainfo['vid_type'] = 1;
                 $vainfo['videoname'] = $mediainfo['name'];
             }
@@ -562,7 +563,7 @@ WHERE id IN (1,2,3)*/
         $save                = [];
         $save['title']        = I('post.title','','trim');
         $save['hot_category_id']        = I('post.hot_category_id',0,'intval');
-        $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
+
         $media_id = I('post.media_id','0','intval');//视频id
         $save['source_id']    = I('post.source_id',0,'intval');
         $contents = I('post.content','','strip_tags');
@@ -614,18 +615,26 @@ WHERE id IN (1,2,3)*/
         }else{
             $save['bespeak'] = 1;
         }
-        if($covermedia_id){
-            $oss_arr = $mediaModel->find($covermedia_id);
-            $oss_addr = $oss_arr['oss_addr'];
-            $save['img_url'] = $oss_addr;
-            //$save['type'] = 1;
+        $covermedia_id = I('post.covervideo_id');//视频封面id
+        if(empty($covermedia_id)){
+            $this->output('失败封面必填!', 'content/getlist',3,0);
+            die;
+        }else{
+            if($covermedia_id>0){//首页封面图
+                $oss_addr = $mediaModel->find($covermedia_id);
+                $oss_addr = $oss_addr['oss_addr'];
+                $save['img_url'] = $oss_addr;
+            }
         }
-        $index_media_id = I('post.index_media_id',0,'intval');
-         
-        if($index_media_id){//首页封面图
-            $oss_addr = $mediaModel->find($index_media_id);
-            $oss_addr = $oss_addr['oss_addr'];
-            $save['index_img_url'] = $oss_addr;
+        $index_media_id = I('post.index_media_id');
+        if(empty($index_media_id)){
+            $save['index_img_url'] = '';
+        }else{
+            if($index_media_id>0){//首页封面图
+                $oss_addr = $mediaModel->find($index_media_id);
+                $oss_addr = $oss_addr['oss_addr'];
+                $save['index_img_url'] = $oss_addr;
+            }
         }
         if($media_id) {
             $oss_arr = $mediaModel->find($media_id);
@@ -754,9 +763,9 @@ WHERE id IN (1,2,3)*/
             if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vinfo['bespeak_time'] = '';
             }
-
             $oss_host = $this->oss_host;
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
+            $vinfo['index_oss_addr'] = $oss_host.$vinfo['index_img_url'];
             $this->assign('vinfo',$vinfo);
 
             //获取文章id本身有的标签
@@ -830,19 +839,26 @@ WHERE id IN (1,2,3)*/
             $save['bespeak'] = 1;
         }
 
-        $mediaid = I('post.media_id');
+        $mediaid = I('post.media_id','0','intval');
         $mediaModel = new \Admin\Model\MediaModel();
         if($mediaid){
             $oss_addr = $mediaModel->find($mediaid);
             $oss_addr = $oss_addr['oss_addr'];
             $save['img_url'] = $oss_addr;
+            $save['media_id'] = $mediaid;
+        }else{
+            $this->output('失败封面必填!', 'content/getlist',3,0);
+            die;
         }
-        $index_media_id = I('post.index_media_id',0,'intval');
-         
-        if($index_media_id){//首页封面图
-            $oss_addr = $mediaModel->find($index_media_id);
-            $oss_addr = $oss_addr['oss_addr'];
-            $save['index_img_url'] = $oss_addr;
+        $index_media_id = I('post.index_media_id');
+        if(empty($index_media_id)){
+            $save['index_img_url'] = '';
+        }else{
+            if($index_media_id>0){//首页封面图
+                $oss_addr = $mediaModel->find($index_media_id);
+                $oss_addr = $oss_addr['oss_addr'];
+                $save['index_img_url'] = $oss_addr;
+            }
         }
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
@@ -937,17 +953,25 @@ WHERE id IN (1,2,3)*/
 
         $mediaid = I('post.media_id');
         $mediaModel = new \Admin\Model\MediaModel();
-        if($mediaid){
-            $oss_addr = $mediaModel->find($mediaid);
-            $oss_addr = $oss_addr['oss_addr'];
-            $save['img_url'] = $oss_addr;
+        $index_media_id = I('post.index_media_id');
+        if(empty($mediaid)){
+            $this->output('失败封面必填!', 'content/getlist',3,0);
+            die;
+        }else{
+            if($mediaid>0){//首页封面图
+                $oss_addr = $mediaModel->find($mediaid);
+                $oss_addr = $oss_addr['oss_addr'];
+                $save['img_url'] = $oss_addr;
+            }
         }
-        $index_media_id = I('post.index_media_id',0,'intval');
-
-        if($index_media_id){
-            $oss_addr = $mediaModel->find($index_media_id);
-            $oss_addr = $oss_addr['oss_addr'];
-            $save['index_img_url'] = $oss_addr;
+        if(empty($index_media_id)){
+            $save['index_img_url'] = '';
+        }else{
+            if($index_media_id>0){//首页封面图
+                $oss_addr = $mediaModel->find($index_media_id);
+                $oss_addr = $oss_addr['oss_addr'];
+                $save['index_img_url'] = $oss_addr;
+            }
         }
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
@@ -1143,6 +1167,7 @@ WHERE id IN (1,2,3)*/
     
             $oss_host = $this->oss_host;
             $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
+            $vinfo['index_oss_addr'] = $oss_host.$vinfo['index_img_url'];
             if($vinfo['index_img_url']){
                 $vinfo['index_oss_addr'] = $oss_host.$vinfo['index_img_url'];
             }
@@ -1197,17 +1222,25 @@ WHERE id IN (1,2,3)*/
     
         $mediaid = I('post.media_id');
         $mediaModel = new \Admin\Model\MediaModel();
+        $mediaModel = new \Admin\Model\MediaModel();
         if($mediaid){
             $oss_addr = $mediaModel->find($mediaid);
             $oss_addr = $oss_addr['oss_addr'];
             $save['img_url'] = $oss_addr;
+            $save['media_id'] = $mediaid;
+        }else{
+            $this->output('失败封面必填!', 'content/getlist',3,0);
+            die;
         }
-        $index_media_id = I('post.index_media_id',0,'intval');
-       
-        if($index_media_id){
-            $oss_addr = $mediaModel->find($index_media_id);
-            $oss_addr = $oss_addr['oss_addr'];
-            $save['index_img_url'] = $oss_addr;
+        $index_media_id = I('post.index_media_id');
+        if(empty($index_media_id)){
+            $save['index_img_url'] = '';
+        }else{
+            if($index_media_id>0){//首页封面图
+                $oss_addr = $mediaModel->find($index_media_id);
+                $oss_addr = $oss_addr['oss_addr'];
+                $save['index_img_url'] = $oss_addr;
+            }
         }
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['taginfo']);
