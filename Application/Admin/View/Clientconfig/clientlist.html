@@ -48,18 +48,28 @@
                    IOS
                  </if>
                </td>
-               <td data-title="启动图片"><a data-tip="预览" target="__blank" mask="true" href="{$vlist.img_url}" class="btn btn-success btn-icon">
+               <td data-title="启动图片">
+               	 <notempty name="vlist.img_url">
+               	 <a data-tip="预览" target="__blank" mask="true" href="{$vlist.img_url}" class="btn btn-success btn-icon">
                  <i class="fa fa-eye"></i>
-               </a></td>
-               <td data-title="启动视频"><a data-tip="预览" target="__blank" mask="true" href="{$vlist.media_url}" class="btn btn-success btn-icon">
+                 </a>
+                 </notempty>
+               </td>
+               <td data-title="启动视频">
+                 <notempty name="vlist.media_url">
+                 <a data-tip="预览" target="__blank" mask="true" href="{$vlist.media_url}" class="btn btn-success btn-icon">
                  <i class="fa fa-eye"></i>
-               </a></td>
+                 </a>
+                 </notempty>
+               </td>
 
                <td data-title="默认启动状态">
-                     <input name="starten{$vlist.id}" type="radio" class="acp"  value="1" id="{$vlist.id}" <if condition="$vlist['status'] eq 1">checked</if>/>
-                 启动图片
-                 <input id="{$vlist.id}" name="starten{$vlist.id}" type="radio" class="acp" value="2" <if condition="$vlist['status'] eq 2">checked</if> />启动视频
-
+               		<notempty name="vlist.img_url">
+                     <input name="starten{$vlist.id}" type="radio" class="acp"  value="1" id="{$vlist.id}" <if condition="$vlist['status'] eq 1">checked</if>/>启动图片
+                    </notempty>
+                    <notempty name="vlist.media_url">
+                     <input id="{$vlist.id}" name="starten{$vlist.id}" type="radio" class="acp" value="2" <if condition="$vlist['status'] eq 2">checked</if> />启动视频
+	 				</notempty>
                </td>
                <!--
                              <td data-title="上线状态">
