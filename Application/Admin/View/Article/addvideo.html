@@ -230,7 +230,7 @@
                 <label class=" control-label col-xs-12 col-sm-2">
                   时长：
                 </label>
-                <span class="form-control col-sm-2">分</span><input style="width:50px;" min="0" max="59"  alt="数字"  name="minu" id="minu"  type="number"  value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']/60|floor}<else/></if>"  class="form-control col-sm-2" />
+                <span class="form-control col-sm-2">分</span><input style="width:50px;" min="0" max="999"  alt="数字"  name="minu" id="minu"  type="number"  value="<if condition="$vainfo.duration gt 0">{$vainfo['duration']/60|floor}<else/></if>"  class="form-control col-sm-2" />
                 
               </div>
             </div>
