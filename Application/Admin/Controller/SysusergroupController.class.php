@@ -108,6 +108,9 @@ class SysusergroupController extends BaseController {
         if(IS_POST) {
             //新增
             $id   = I('post.id', '', 'int');
+            if(empty($_POST['menuid'])){
+                $this->error('请选择权限');
+            }
             if($acttype == 0){
                 //判断分组名是否存在
                 $name = trim($name);
