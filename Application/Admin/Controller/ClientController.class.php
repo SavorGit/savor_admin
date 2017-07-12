@@ -131,6 +131,7 @@ class ClientController extends Controller {
             if($v['type'] ==3 && empty($v['content'])){
                 $result[$key]['type'] = 4;
             }
+            $result[$key]['updatetime'] = date("Y-m-d",strtotime($result[$key]['updatetime']));
         }
         return $result;
     }
