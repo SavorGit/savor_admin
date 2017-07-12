@@ -408,4 +408,6 @@ ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEF
 修改时间：2017.7.4 15：30
 修改人：白玉涛
 执行sql:
- ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`,
+ ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`;
+
+ALTER TABLE `cloud`.`savor_mb_content` ADD INDEX `index_order_tag` ( `order_tag` );

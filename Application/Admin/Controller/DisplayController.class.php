@@ -14,7 +14,8 @@ class DisplayController extends Controller
 {
     public function geteggAwardRecord(){
         $m_award_log = new \Admin\Model\AwardLogModel();
-        $where = "1=1 and  a.prizeid >0";
+        $deviceid = $_GET['deviceid'];
+        $where = "1=1 and  a.prizeid >0 and a.deviceid = '".$deviceid."'";
         $orders = 'a.time  desc';
         $result = $m_award_log->getAwardList($where,$orders);
         $this->assign('list', $result);
