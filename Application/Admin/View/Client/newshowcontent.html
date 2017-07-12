@@ -151,6 +151,21 @@
 		<div class="box_nr">
 			{$vinfo.content}
 		</div>
+
+		<div class="tuijian" style="<if condition="$sourc eq 1">display: none</if>">
+			<span class="tit_tuijian">为您推荐</span>
+
+			<volist name="list" id="vlist">
+				<div class="tuijian_list">
+					<img src="{$vlist.imageURL}" />
+					<div class="tuijian_list_right">
+						<span class="tuijian_list_tit">{$vlist.title}</span>
+						<span class="laiyuan">{$vlist.sourcename}</span></span><span class="shijian">{$vlist.createtime}</span>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+			</volist>
+		</div>
 	</body>
 	<script type="text/javascript">
 		var calculate_size = function() {
@@ -169,20 +184,7 @@
 			document.addEventListener('DOMContentLoaded', calculate_size, false);
 			calculate_size();
 		}
-		var urla = location.search;
-		if(urla.indexOf("?") != -1) {
-			console.log('有参数')
-		} else {
-			$('.tuijian').show();
-		}
-		/*---------*/
-		var urlResource = window.location.search.split('?');
-		var result = urlResource[1].split('=');
 
-		if(result[0] == 'location' && result[1] == 'newRead') {
-		//当前是 阅读状态 隐藏下载条topLabel
-			$('.tuijian').hide();
-		}
 	</script>
 
 </html>

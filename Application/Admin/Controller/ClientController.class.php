@@ -11,34 +11,141 @@ class ClientController extends Controller {
         parent::__construct();
     }
 
-    public function showcontentererr(){
-        $id = I('get.id',0,'intval');
-        if($id){
-            $articleModel = new \Admin\Model\ArticleModel();
-            $vinfo = $articleModel->where('id='.$id)->find();
-            $vinfo['content'] = html_entity_decode($vinfo['content']);
-                $tx_url = $vinfo['tx_url'];
-                $url_arr = explode('?id=', $tx_url);
-                $url_id = $url_arr['1'];
-                $play_js = "(function(){ var option ={'auto_play':'0','file_id':'$url_id','app_id':'1252891964','width':1280,'height':720,'https':1};new qcVideo.Player('id_video_container_$url_id', option ); })()";
-                $this->assign('videourl_id', $url_id);
-                $this->assign('play_js', $play_js);
-                $display_html = 'showvideocontent';
 
-        }else{
-            $vinfo = array();
-            $display_html = 'showcontent';
-        }
-        $this->assign('vinfo',$vinfo);
-        $this->display($display_html);
+    /**
+     *@desc 获取阿里云资源全路径
+     */
+    public function getOssAddr($url){
+        $oss_host = get_oss_host();
+        return  $oss_host.$url;
     }
+    /**
+     * @desc 获取内容完整URL
+     */
+    public function getContentUrl($url){
+        $content_host = get_oss_host();
+        return $content_host.$url;
+    }
+
+    public function combination($a, $m) {
+        $r = array();
+
+        $n = count($a);
+        if ($m <= 0 || $m > $n) {
+            return $r;
+        }
+
+        for ($i=0; $i<$n; $i++) {
+            $t = array($a[$i]);
+            if ($m == 1) {
+                $r[] = $t;
+            } else {
+                $b = array_slice($a, $i+1);
+                $c = $this->combination($b, $m-1);
+                foreach ($c as $v) {
+                    $r[] = array_merge($t, $v);
+                }
+            }
+        }
+
+        return $r;
+    }
+
+    public function judgeRecommendInfo($vinfo){
+        //推荐数
+        //var_dump($vinfo);
+        $mend_len = 5;
+        $articleModel = new \Admin\Model\ArticleModel();
+        //获取推荐列表
+        $order_tag = $vinfo['order_tag'];
+        // var_dump($order_tag);
+        $order_tag_arr = explode(',', $order_tag);
+        $tag_len = count($order_tag_arr);
+        if($tag_len == 0){
+            $dap = array();
+        }else{
+            $where = "1=1 and state = 2  and hot_category_id = ".$vinfo['hot_category_id']." and type = ".$vinfo['type'];
+            $field = 'id,title,order_tag';
+            $dat = array();
+            $dap = array();
+            $data = array();
+            for($i=$tag_len;$i>=1;$i--){
+                $art = $this->combination($order_tag_arr, $i);
+                foreach($art as $v){
+                    $dat[] = $v;
+                }
+
+            }
+
+            foreach($dat as $dk=>$dv) {
+                $info = $articleModel->getRecommend($where, $field, $dv);
+                foreach($info as $v){
+                    if($v['id'] == $vinfo['id']){
+                        continue;
+                    }
+                    if(!array_key_exists($v['id'], $dap)){
+                        $dap[$v['id']] = $v;
+                        $mend_len--;
+                    }
+
+                }
+                if($mend_len <=0 ){
+                    break;
+                }
+            }
+            if($mend_len <=0 ){
+                $dap = array_slice($dap, 0, 5);
+            }
+        }
+
+        return $dap;
+    }
+
+    public function changRecList($result){
+
+        $rs = array();
+        $mbpictModel = new \Admin\Model\MbPicturesModel();
+        $mediaModel  = new \Admin\Model\MediaModel();
+        //判断结果
+        foreach($result as $key=>$v){
+            foreach($v as $kk=> $vv){
+                if(empty($vv)){
+                    unset($result[$key][$kk]);
+                }
+            }
+            $result[$key]['imageURL'] = $this->getOssAddr($v['imgurl']) ;
+            if(!empty($v['index_img_url'])){
+                $result[$key]['indexImgUrl'] = $this->getOssAddr($v['index_img_url']) ;
+            }
+
+            $result[$key]['contentURL'] = $this->getContentUrl($v['contenturl']);
+            if(!empty($v['videourl'])) $result[$key]['videoURL']   = substr($v['videourl'],0,strpos($v['videourl'], '.f')) ;
+            if($v['type'] ==3){
+                if(empty($v['name'])){
+                    unset($result[$key]['name']);
+                }else{
+                    $ttp = explode('/', $v['name']);
+                    $result[$key]['name'] = $ttp[2];
+                }
+            }
+            if($v['type'] ==3 && empty($v['content'])){
+                $result[$key]['type'] = 4;
+            }
+        }
+        return $result;
+    }
+
+
+
 
 
     public function showcontent(){
         $id = I('get.id',0,'intval');
-        if($id){
-            $articleModel = new \Admin\Model\ArticleModel();
-            $vinfo = $articleModel->where('id='.$id)->find();
+        $sourceid = I('get.sourceid',0,'intval');
+        $this->assign('sourc', $sourceid);
+        $articleModel = new \Admin\Model\ArticleModel();
+        $vinfo = $articleModel->where('id='.$id)->find();
+        if($id && $vinfo){
             $catid = $vinfo['hot_category_id'];
             $vinfo['content'] = html_entity_decode($vinfo['content']);
             if ($catid == 3) {
@@ -49,7 +156,19 @@ class ClientController extends Controller {
                 }
                 $display_html = 'special';
             }else{
+                $arinfo = $this->judgeRecommendInfo($vinfo);
+                if($arinfo){
+                    foreach($arinfo as $dv){
+                        $where = 'AND mc.id = '. $dv['id'];
+                        $dap = $articleModel->getArtinfoById($where);
+                        $res[] = $dap;
+                    }
+                    $data = $this->changRecList($res);
+                }else{
+                    $data = array();
+                }
 
+                $this->assign('list', $data);
                 if($vinfo['type']==1){//图文
                     $display_html = 'newshowcontent';
                 }elseif($vinfo['type']==3){
@@ -57,7 +176,7 @@ class ClientController extends Controller {
                     $this->assign('tx_url', $tx_url);
                     $display_html = 'newshowvideocontent';
                 }else{
-                    // $display_html = 'showcontent';
+                    // 无推荐
                     $display_html = 'newshowcontent';
                 }
             }
