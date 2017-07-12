@@ -1066,6 +1066,7 @@ WHERE id IN (1,2,3)*/
         $where = "1=1";
         $field = 'id,name';
         $vinfo = $hotcatModel->getWhere($where, $field);
+        unset($vinfo[2]);
         $this->assign('vcainfo',$vinfo);
         $this->display('addpics');
     }
