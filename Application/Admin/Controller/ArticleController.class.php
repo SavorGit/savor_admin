@@ -940,8 +940,13 @@ WHERE id IN (1,2,3)*/
         $save['bespeak_time'] = I('post.logtime','');
         $picdat =  $_POST['pictuji'];
         $picdat_arr = json_decode($_POST['pictuji'], true);
-        if(count($picdat_arr)<2){
-            $this->error('图集最少2个');
+        foreach ( $picdat_arr as $pv){
+            if(empty($pv['atext'])) {
+                $this->error('图集描述不可为空');
+            }
+        }
+        if(count($picdat_arr)<5){
+            $this->error('图集最少5个');
         }
         if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'
         ){
@@ -986,8 +991,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<3 || count($tagr)>10){
-            $this->error('标签数不符合');
+        if(count($tagr)<5 || count($tagr)>10){
+            $this->error('标签数应大于0');
         }
 
         if($id){

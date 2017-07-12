@@ -8,6 +8,7 @@ namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
 use Common\Lib\Aliyun;
+use Think\Exception;
 use Think\Model;
 
 /**
@@ -76,25 +77,35 @@ class TagController extends BaseController{
 			$is_have = $tagModel->where($save)->find();
 			if($is_have){
 				$result = array('code'=>0,'err_msg'=>'该标签名称已经存在');
-
+				echo json_encode($result);
+				die;
 			}
 			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
 				$result = array('code'=>0,'err_msg'=>'只可输入数字、字母、汉字');
+				echo json_encode($result);
+				die;
 			}
 			if(mb_strlen($save['tagname'])<2 || mb_strlen($save['tagname'])>15) {
 				$result = array('code'=>0,'err_msg'=>'标签长度最小为2最大为6');
+				echo json_encode($result);
+				die;
 			}
-			echo json_encode($result);
-			die;
+
 		}
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$save['create_time'] = date('Y-m-d H:i:s');
 		//刷新页面，关闭当前
-		$res_save = $tagModel->addData($save);
-		if($res_save){
-			$result = array('code'=>1,'msg'=>'操作成功');
-		}else{
-			$result = array('code'=>0,'err_msg'=>'操作失败');
+		try{
+			$res_save = $tagModel->addData($save);
+			if($res_save){
+				$result = array('code'=>1,'msg'=>'操作成功');
+			}else{
+				$result = array('code'=>0,'err_msg'=>'操作失败');
+			}
+		}catch(\Exception $e){
+			if($e->getCode() == 23000){
+				$result = array('code'=>0,'err_msg'=>'标签已经存在');
+			}
 		}
 		echo json_encode($result);
 	}
