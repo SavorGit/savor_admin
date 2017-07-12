@@ -827,7 +827,7 @@ WHERE id IN (1,2,3)*/
             $contents = myTrim($contents);
             $save['content_word_num'] = mb_strlen($contents,'UTF8');
         }
-        $save['content']    = I('post.content','htmlspecialchars');
+        $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = 0;
         $save['update_time'] = date('Y-m-d H:i:s');
@@ -1209,7 +1209,7 @@ WHERE id IN (1,2,3)*/
         $contents = str_replace('&nbsp;', '', $contents);
         $contents = myTrim($contents);
         $save['content_word_num'] = mb_strlen($contents,'UTF8');
-        $save['content']    = I('post.content','htmlspecialchars');
+        $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = 0;
         $save['update_time'] = date('Y-m-d H:i:s');
