@@ -151,7 +151,7 @@
 	
 
 	<body>
-		<video id="video" style="width: 100%;" poster="" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
+		<video id="video" style="width: 100%;<if condition='$sourc eq 1'>display: none;</if>" poster="" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
            data-setup='{ "html5" : { "nativeTextTracks" : false } }'>
         <source src="{$tx_url}" type="video/mp4">
         <p class="vjs-no-js">  播放视频需要启用 JavaScript，推荐使用<a href="http://videojs.com/html5-video-support/" target="_blank">支持HTML5</a>的浏览器访问。</p>
@@ -160,32 +160,20 @@
 		<div class="box_nr">
 			{$vinfo.content}
 		</div>
-		<div class="tuijian" style="display: none;">
+
+		<div class="tuijian" style="<if condition="$sourc eq 1">display: none</if>">
 			<span class="tit_tuijian">为您推荐</span>
-			<div class="tuijian_list">
-				<img src="../../../../framework/ThinkPHP/Library/Think/Verify/bgs/6.jpg" />
-				<div class="tuijian_list_right">
-					<span class="tuijian_list_tit">美元对多数主要货币汇率20日上涨</span>
-					<span class="laiyuan">创业邦</span><span class="shijian">2017-5-18</span>
+
+			<volist name="list" id="vlist">
+				<div class="tuijian_list">
+					<img src="{$vlist.imageURL}" />
+					<div class="tuijian_list_right">
+						<span class="tuijian_list_tit">{$vlist.title}</span>
+						<span class="laiyuan">{$vlist.sourcename}</span></span><span class="shijian">{$vlist.updatetime}</span>
+					</div>
+					<div style="clear: both;"></div>
 				</div>
-				<div style="clear: both;"></div>
-			</div>
-			<div class="tuijian_list">
-				<img src="../../../../framework/ThinkPHP/Library/Think/Verify/bgs/6.jpg" />
-				<div class="tuijian_list_right">
-					<span class="tuijian_list_tit">美元对多数主要货币汇率20日上涨</span>
-					<span class="laiyuan">创业邦</span><span class="shijian">2017-5-18</span>
-				</div>
-				<div style="clear: both;"></div>
-			</div>
-			<div class="tuijian_list">
-				<img src="../../../../framework/ThinkPHP/Library/Think/Verify/bgs/6.jpg" />
-				<div class="tuijian_list_right">
-					<span class="tuijian_list_tit">美元对多数主要货币汇率20日上涨</span>
-					<span class="laiyuan">创业邦</span><span class="shijian">2017-5-18</span>
-				</div>
-				<div style="clear: both;"></div>
-			</div>
+			</volist>
 		</div>
 	</body>
 	<script type="text/javascript">
@@ -210,20 +198,7 @@
 			document.addEventListener('DOMContentLoaded', calculate_size, false);
 			calculate_size();
 		}
-		var urla = location.search;
-		if(urla.indexOf("?") != -1) {
-			console.log('有参数')
-		} else {
-			$('.tuijian').show();
-		}
-		/*---------*/
-		var urlResource = window.location.search.split('?');
-		var result = urlResource[1].split('=');
 
-		if(result[0] == 'location' && result[1] == 'newRead') {
-			//当前是 阅读状态 隐藏下载条topLabel
-			$('.tuijian').hide();
-		}
 		
 	</script>
 
