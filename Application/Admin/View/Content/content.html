@@ -214,6 +214,7 @@
                 </div>
 
                 <div class="tools-edit">
+                <if condition="$vlist.type neq 2">
                   <a data-tip="预览"
 
                   href="__ROOT__/content/{$vlist.id}.html"
@@ -222,6 +223,7 @@
                      target="_blank"  class="btn btn-success btn-icon">
                     <i class="fa fa-eye"></i>
                   </a>
+                  </if>
                   <a data-tip="添加至首页" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
                     <i class="fa fa-bullhorn"></i>
                   </a>

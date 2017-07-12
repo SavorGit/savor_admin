@@ -60,6 +60,11 @@ class ArticlesourceController extends BaseController{
 	        if(empty($media_id)){
 	            $this->error('封面图必填');
 	        }
+	        $m_article_source = new \Admin\Model\ArticleSourceModel();
+	        $info = $m_article_source->getWhere('id',array('name'=>$name));
+	        if(!empty($info)){
+	            $this->error('该名称已经存在');
+	        }
 	        $introduction = I('introduction');
 	        $user = session('sysUserInfo');
 	        //print_r($user);exit;
@@ -70,7 +75,7 @@ class ArticlesourceController extends BaseController{
 	        $data['add_user_id']  = $user['id']; 
 	        $data['add_time']     = date('Y-m-d H:i:s');
 	        
-	        $m_article_source = new \Admin\Model\ArticleSourceModel();
+	        
 	        $ret = $m_article_source->addInfo($data);
 	        if($ret){
 	            $this->output('新增成功', 'articlesource/index', 1);
@@ -111,6 +116,14 @@ class ArticlesourceController extends BaseController{
 	        if(empty($media_id)){
 	            $this->error('封面图必填');
 	        }
+	        $m_article_source = new \Admin\Model\ArticleSourceModel();
+	        $map= array();
+	        $map['name'] = $name;
+	        $map['id'] = array('neq',$id);
+	        $info = $m_article_source->getWhere('name',$map);
+	        if(!empty($info)){
+	            $this->error('该名称已经存在');
+	        }
 	        $introduction = I('introduction');
 	        $user = session('sysUserInfo');
 	        //print_r($user);exit;
@@ -121,7 +134,7 @@ class ArticlesourceController extends BaseController{
 	        $data['edit_user_id']  = $user['id']; 
 	        $data['edit_time']     = date('Y-m-d H:i:s');
 	        $where['id'] = $id;
-	        $m_article_source = new \Admin\Model\ArticleSourceModel();
+	        
 	        $ret = $m_article_source->updateInfo($where , $data);
 	        if($ret){
 	            $this->output('编辑成功', 'articlesource/index', '1');

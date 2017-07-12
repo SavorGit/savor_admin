@@ -74,4 +74,11 @@ class ArticleSourceModel extends BaseModel{
 	public function getAll(){
 	    return $this->where('status = 1')->select();
 	}
+	/**
+	 * @desc 获取数据
+	 */
+	public function getWhere($field = '*',$where){
+	    $result = $this->field($field)->where($where)->select();
+	    return $result;
+	}
 }
