@@ -1322,7 +1322,7 @@ WHERE id IN (1,2,3)*/
 
             $index_img = $art_info['index_img_url'];
             if(empty($index_img)){
-                $this->error('请重新排序,第一条必须有封面');
+                $this->error('首条内容必须上传首页封面图');
             }
             //获取最新一条的审核时间的artid
             $hotcatid = I('post.hotcatid','0');
