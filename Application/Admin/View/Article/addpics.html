@@ -33,9 +33,7 @@
 			text-align: center;
 			line-height: 100px;
 			color: white;
-			background-color: #78909c;
 		}
-		
 		.texta_val {
 			width: 65%;
 			height: 100px;
@@ -59,8 +57,8 @@
 			margin-left: 18px;
 		}
 		 .nr{
-    width: 100%;
-  }
+	    width: 100%;
+	  }
   .xuan{
     width: 94px;
     height: 30px;
@@ -181,7 +179,7 @@
             <div class="pic">
                 <span style="float: left;margin-left: 33px;">1</span>
                 <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>
-                    <img id="pics_map_1img" src="" border="0" />
+                    <img id="pics_map_1img" src="/Public/admin/assets/img/shangchuan.png" border="0" />
                 </a>
                 <input type="hidden" id="pics_map_1" name="pics_map_1" />
                 <textarea name="texta_pic_1" class="texta_val"></textarea>
@@ -190,7 +188,7 @@
             <div class="pic">
                 <span style="float: left;margin-left: 33px;">2</span>
                 <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_2&rtype=2" data-browse-file>
-                    <img id="pics_map_2img" src="" border="0" />
+                    <img id="pics_map_2img" src="/Public/admin/assets/img/shangchuan.png" border="0" />
                 </a>
                 <input type="hidden" id="pics_map_2" name="pics_map_2" />
                 <textarea name="texta_pic_2" class="texta_val"></textarea>
@@ -199,7 +197,7 @@
             <div class="pic">
                 <span style="float: left;margin-left: 33px;">3</span>
                 <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_3&rtype=2" data-browse-file>
-                    <img id="pics_map_3img" src="" border="0" />
+                    <img id="pics_map_3img" src="/Public/admin/assets/img/shangchuan.png" border="0" />
                 </a>
                 <input type="hidden" id="pics_map_3" name="pics_map_3" />
                 <textarea name="texta_pic_3" class="texta_val"></textarea>
@@ -208,7 +206,7 @@
             <div class="pic">
                 <span style="float: left;margin-left: 33px;">4</span>
                 <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_4&rtype=2" data-browse-file>
-                    <img id="pics_map_4img" src="" border="0" />
+                    <img id="pics_map_4img" src="/Public/admin/assets/img/shangchuan.png" border="0" />
                 </a>
                 <input type="hidden" id="pics_map_4" name="pics_map_4" />
                 <textarea name="texta_pic_4" class="texta_val"></textarea>
@@ -217,7 +215,7 @@
             <div class="pic">
                 <span style="float: left;margin-left: 33px;">5</span>
                 <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_5&rtype=2" data-browse-file>
-                    <img id="pics_map_5img" src="" border="0" />
+                    <img id="pics_map_5img" src="/Public/admin/assets/img/shangchuan.png" border="0" />
                 </a>
                 <input type="hidden" id="pics_map_5" name="pics_map_5" />
                 <textarea name="texta_pic_5" class="texta_val"></textarea>
@@ -386,7 +384,7 @@
 
           var button="<input type='hidden' id='pics_map_"+num+"' name='pics_map_"+num+ "' />";
 
-			var imghtml = '<div class="pic"><span style="float: left;margin-left: 33px;">' + num + '</span><a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_'+num+'&rtype=2" data-browse-file> <img id="pics_map_'+num+'"img"  src="" border="0" /></a>'+button+'<textarea name="texta_pic_'+num+'"  class="texta_val"></textarea><i class="fa fa-trash dela"></i></div> ';
+			var imghtml = '<div class="pic"><span style="float: left;margin-left: 33px;">' + num + '</span><a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_'+num+'&rtype=2" data-browse-file> <img id="pics_map_'+num+'img"  src="/Public/admin/assets/img/shangchuan.png" border="0" /></a>'+button+'<textarea name="texta_pic_'+num+'"  class="texta_val"></textarea><i class="fa fa-trash dela"></i></div> ';
 			$(this).before(imghtml);
 		}
 	})
@@ -620,7 +618,7 @@ function activers(){
   $('#nos').click(function(){
     $('.quanbu_nr .xuan').each(function(){
       $(this).removeClass('actives');
-
+$(this).prop('disabled',false);
     })
   })
 </script>

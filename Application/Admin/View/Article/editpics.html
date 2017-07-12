@@ -349,7 +349,7 @@
 
           var button="<input type='hidden' id='pics_map_"+num+"' name='pics_map_"+num+ "' />";
 
-			var imghtml = '<div class="pic"><span style="float: left;margin-left: 33px;">' + num + '</span><a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_'+num+'&rtype=2" data-browse-file> <img id="pics_map_'+num+'"img"  src="" border="0" /></a>'+button+'<textarea name="texta_pic_'+num+'"  class="texta_val"></textarea><i class="fa fa-trash dela"></i></div> ';
+			var imghtml = '<div class="pic"><span style="float: left;margin-left: 33px;">' + num + '</span><a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_'+num+'&rtype=2" data-browse-file> <img id="pics_map_'+num+'img"  src="/Public/admin/assets/img/shangchuan.png" border="0" /></a>'+button+'<textarea name="texta_pic_'+num+'"  class="texta_val"></textarea><i class="fa fa-trash dela"></i></div> ';
 			$(this).before(imghtml);
 		}
 	})
@@ -581,7 +581,7 @@ function activers(){
   $('#nos').click(function(){
     $('.quanbu_nr .xuan').each(function(){
       $(this).removeClass('actives');
-
+$(this).prop('disabled',false);
     })
   })
 </script>

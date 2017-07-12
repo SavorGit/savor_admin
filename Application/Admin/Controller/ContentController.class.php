@@ -138,24 +138,45 @@ class ContentController extends BaseController {
 
 
         $adsid = I('request.adsid','0','intval');
-        $artModel = new \Admin\Model\ArticleModel();
-        $message = '';
         $flag = I('request.flag');
+        $message = '';
         if(flag == 2){
             $state = 3;
         } else {
             $state = 2;
         }
-       $data = array('state'=>$state,'update_time'=>date('Y-m-d H:i:s'));
-
-
-
-
-      $res = $artModel->where("id='$adsid'")->save($data);
-        if($res){
-            $message = '更新审核状态成功';
+        $artModel = new \Admin\Model\ArticleModel();
+        $arinfo =$artModel->find($adsid);
+        $sort_num = $arinfo['sort_num'];
+        $catid = $arinfo['hot_category_id'];
+        $now_time = date('Y-m-d H:i:s');
+        $where = "1=1 and hot_category_id=$catid and state=2";
+        $max_info = $artModel->getMaxSort($where);
+        //内空最大值
+        if($max_info){
+            $max_id = $max_info['id'];
+            $max_num = $max_info['sort_num'];
         }
 
+        if($max_num < $sort_num){
+            //两个互换
+            $ainfo = array(
+                'sort_num'=>$max_num,
+                'update_time'=>$now_time,
+                'state'=>$state,
+            );
+            $binfo = array(
+                'sort_num'=>$sort_num,
+                'update_time'=>$now_time,
+                'state'=>$state,
+            );
+            $artModel->where('id = '.$adsid)->save($ainfo);
+            $artModel->where('id = '.$max_id)->save($binfo);
+        }else{
+            $data = array('state'=>$state,'update_time'=>$now_time);
+            $res = $artModel->where("id='$adsid'")->save($data);
+        }
+        $message = '更新审核状态成功';
         if($message){
             $this->output($message, 'content/getlist',2);
         }else{

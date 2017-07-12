@@ -14,6 +14,18 @@ class ArticleModel extends BaseModel
 	protected $tableName='mb_content';
 
 
+	public function getMaxSort($where){
+		$sql ="select `id`,`sort_num` from savor_mb_content where sort_num = ( select max(`sort_num`) from savor_mb_content where $where ) ";
+		$result =  $this->query($sql);
+		return $result[0];
+	}
+
+	public function getRecommend($where, $field, $sor_num){
+		$sql =" select $field from savor_mb_content where $where and  find_in_set('$sor_num', 'order_tag') ";
+		$result = $this -> query($sql);
+		return  $result;
+	}
+
 	public function getOneRow($where, $field,$order){
 		$list = $this->where($where)
 			->order($order)
