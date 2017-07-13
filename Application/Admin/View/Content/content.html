@@ -223,10 +223,13 @@
                      target="_blank"  class="btn btn-success btn-icon">
                     <i class="fa fa-eye"></i>
                   </a>
-                  
-                  <a data-tip="添加至首页" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
+                  <if condition="$vlist.type eq 3">
+                    <if condition="$vlist.media_id neq 0">
+                  <a data-tip="添加至点播内容" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
                     <i class="fa fa-bullhorn"></i>
                   </a>
+                  </if>
+                  </if>
                   
                 </div>
                 <div class="tools-edit">
