@@ -164,13 +164,10 @@ class ClientController extends Controller {
                         $dap = $articleModel->getArtinfoById($where);
                         $res[] = $dap;
                     }
-                    dump($res);
-                    die;
                     $data = $this->changRecList($res);
                 }else{
                     $data = array();
                 }
-
                 $this->assign('list', $data);
                 if($vinfo['type']==1){//图文
                     $display_html = 'newshowcontent';
