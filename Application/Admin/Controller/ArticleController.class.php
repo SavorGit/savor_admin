@@ -600,8 +600,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<3 || count($tagr)>10){
-            $this->error('标签数不符合');
+        if(count($tagr)<1 || count($tagr)>10){
+            $this->error('标签数应大于0且小于等于10');
         }
 
 
@@ -873,8 +873,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<3 || count($tagr)>10){
-            $this->error('标签数不符合');
+        if(count($tagr)<1 || count($tagr)>10){
+            $this->error('标签数应大于0且小于等于10');
         }
         if($id){
             //修改标签
@@ -991,8 +991,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<5 || count($tagr)>10){
-            $this->error('标签数应大于0');
+        if(count($tagr)<1 || count($tagr)>10){
+            $this->error('标签数应大于0且小于等于10');
         }
 
         if($id){
@@ -1261,8 +1261,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<3 || count($tagr)>10){
-            $this->error('标签数不符合');
+        if(count($tagr)<1 || count($tagr)>10){
+            $this->error('标签数应大于0且小于等于10');
         }
         if($id){
             //修改标签
@@ -1325,13 +1325,14 @@ WHERE id IN (1,2,3)*/
             $f_sortid = $sort_arr[0];
             //判断第一条文章是否有封面
             $art_info = $artModel->find($f_artid);
-
+            $hotcatid = I('post.hotcatid','0');
             $index_img = $art_info['index_img_url'];
-            if(empty($index_img) && $art_info['type']!=3){
-                $this->error('首条内容必须上传首页封面图');
+            if($hotcatid != 3){
+                if(empty($index_img) && $art_info['type']!=3){
+                    $this->error('首条内容必须上传首页封面图');
+                }
             }
             //获取最新一条的审核时间的artid
-            $hotcatid = I('post.hotcatid','0');
             $field = 'id,sort_num';
             $where = "1=1";
             $where .=" AND state ='2' AND hot_category_id = ".$hotcatid;
