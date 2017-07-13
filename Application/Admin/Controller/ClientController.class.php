@@ -23,7 +23,7 @@ class ClientController extends Controller {
      * @desc 获取内容完整URL
      */
     public function getContentUrl($url){
-        $content_host = get_oss_host();
+        $content_host = C('CONTENT_HOST');
         return $content_host.$url;
     }
 
@@ -164,6 +164,8 @@ class ClientController extends Controller {
                         $dap = $articleModel->getArtinfoById($where);
                         $res[] = $dap;
                     }
+                    dump($res);
+                    die;
                     $data = $this->changRecList($res);
                 }else{
                     $data = array();
