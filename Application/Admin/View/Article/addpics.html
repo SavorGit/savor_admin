@@ -426,9 +426,9 @@
     }else if(biaoname.length==1){
       alert('输入少于2个字符，请重新输入！');
       return false;
-    }else if(biaoname.length>=7){
-      alert('最多只能输入6个字符，请重新输入！');
-      return false;
+    }else if(biaoname.length>15){
+        alert('最多只能输入15个字符，请重新输入！');
+        return false;
     }else{
       $.ajax({
         type:"POST",
@@ -443,7 +443,7 @@
             $('#exampleInputName2').val('');
           }else{
             console.log(data);
-              var biaohtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+              var biaohtml = '<div class="xuan a" id="'+data.aid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
             $('.nr').append(biaohtml)
             $('#exampleInputName2').val('');
           }
@@ -506,7 +506,12 @@
     })
     console.log(JSON.stringify(arr_nr));
     var arr_nrs = JSON.stringify(arr_nr);
-    $('#hid').val(arr_nrs)
+    $('#hid').val(arr_nrs);
+  $("#savepicmap").prop('disabled','');
+  $("#savepicmap").removeClass('disabled');
+
+
+
   })
 
   var options = {

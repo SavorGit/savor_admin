@@ -63,7 +63,8 @@
 </style>
 <div class="pageContent">
 	<form method="post" action="{$host_name}/article/doAddarticle" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-		<input type="hidden" name="taginfo" id="hid"  value="{$taginfod}"/>
+		<input type="hidden" name="taginfo" id="hid"  value="{$taginfod}" />
+		<input type="hidden" id="tttt" value="12" required/>
 		<input type="hidden" id="pagenum" />
 		<input type="hidden" id="pagetotal" value="{$pagecount}">
 		<input type="hidden" name="id" value="{$vinfo.id}">
@@ -286,8 +287,8 @@
 		</div>
 
 		<div class="modal-footer">
-			<button class="btn btn-default close-m" type="button">取消</button>
-			<button class="btn btn-primary" type="submit">保存</button>
+			<button  class="btn btn-default close-m" type="button">取消</button>
+			<button id="addartbutton" class="btn btn-primary" type="submit">保存</button>
 		</div>
 		<div class="zhezhao"></div>
 		<img class="big" src="" />
@@ -344,8 +345,8 @@
 		}else if(biaoname.length==1){
 			alert('输入少于2个字符，请重新输入！');
 			return false;
-		}else if(biaoname.length>=7){
-			alert('最多只能输入6个字符，请重新输入！');
+		}else if(biaoname.length>15){
+			alert('最多只能输入15个字符，请重新输入！');
 			return false;
 		}else{
 			$.ajax({
@@ -425,6 +426,8 @@
 		console.log(JSON.stringify(arr_nr));
 		var arr_nrs = JSON.stringify(arr_nr);
 		$('#hid').val(arr_nrs)
+		$("#addartbutton").prop('disabled','');
+		$("#addartbutton").removeClass('disabled');
 	})
 	
 	 var options = {

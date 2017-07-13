@@ -222,7 +222,7 @@
 
 		<div class="modal-footer">
 			<button class="btn btn-default close-m" type="button">取消</button>
-			<button class="btn btn-primary" type="submit">保存</button>
+			<button id="addartbutton" class="btn btn-primary" type="submit">保存</button>
 		</div>
 		<div class="zhezhao"></div>
 		<img class="big" src="" />
@@ -279,8 +279,8 @@
 		}else if(biaoname.length==1){
 			alert('输入少于2个字符，请重新输入！');
 			return false;
-		}else if(biaoname.length>=7){
-			alert('最多只能输入6个字符，请重新输入！');
+		}else if(biaoname.length>15){
+			alert('最多只能输入15个字符，请重新输入！');
 			return false;
 		}else{
 			$.ajax({
@@ -296,7 +296,7 @@
 						$('#exampleInputName2').val('');
 					}else{
 						console.log(data);
-						var biaohtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+						var biaohtml = '<div class="xuan a" id="'+data.aid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
 						$('.nr').append(biaohtml)
 						$('#exampleInputName2').val('');
 					}
@@ -359,7 +359,9 @@
 		})
 		console.log(JSON.stringify(arr_nr));
 		var arr_nrs = JSON.stringify(arr_nr);
-		$('#hid').val(arr_nrs)
+		$('#hid').val(arr_nrs);
+		$("#addartbutton").prop('disabled','');
+		$("#addartbutton").removeClass('disabled');
 	})
 	
 	 var options = {
