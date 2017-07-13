@@ -145,6 +145,8 @@ class ClientController extends Controller {
         $sourceid = I('get.sourceid',0,'intval');
         $this->assign('sourc', $sourceid);
         $articleModel = new \Admin\Model\ArticleModel();
+        $mbpictModel = new \Admin\Model\MbPicturesModel();
+        $mediaModel  = new \Admin\Model\MediaModel();
         $vinfo = $articleModel->where('id='.$id)->find();
         if($id && $vinfo){
             $catid = $vinfo['hot_category_id'];
@@ -176,8 +178,23 @@ class ClientController extends Controller {
                     $this->assign('tx_url', $tx_url);
                     $display_html = 'newshowvideocontent';
                 }else{
-                    // 无推荐
-                    $display_html = 'newshowcontent';
+                    // 图集
+                    $m_article_source = new \Admin\Model\ArticleSourceModel();
+                    $loginfo = $m_article_source->find($vinfo['source_id']);
+                    $media_info = $mediaModel->getMediaInfoById($loginfo['logo']);
+                    $loginfo['oss_addr'] = $media_info['oss_addr'];
+
+                    $info =  $mbpictModel->where('contentid='.$id)->find();
+                    $detail_arr = json_decode($info['detail'], true);
+
+                     foreach($detail_arr as $dk=> $dr){
+                         $media_info = $mediaModel->getMediaInfoById($dr['aid']);
+                         $detail_arr[$dk]['pic_url'] =$media_info['oss_addr'];
+
+                     }
+                    $this->assign('detaillist', $detail_arr);
+                    $this->assign('linfo', $loginfo);
+                    $display_html = 'newstuji';
                 }
             }
         }else{
