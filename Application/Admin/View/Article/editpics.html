@@ -230,7 +230,7 @@
                     <div class="mod_top">
                       <div class="form-group">
                         <button type="button" class="btn btn-primary" style="margin-left: 20px;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModaa">添加标签</button>
-                        <div class="nr">
+                        <div class="nr" style="height:auto;">
 
                         </div>
                       </div>
@@ -404,7 +404,7 @@
             $('#exampleInputName2').val('');
           }else{
             console.log(data);
-            var biaohtml = '<div class="xuan">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+            var biaohtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
             $('.nr').append(biaohtml)
             $('#exampleInputName2').val('');
           }

@@ -98,7 +98,8 @@ class TagController extends BaseController{
 		try{
 			$res_save = $tagModel->addData($save);
 			if($res_save){
-				$result = array('code'=>1,'msg'=>'操作成功');
+				$lasid = $tagModel->getLastInsID();
+				$result = array('code'=>1,'msg'=>'操作成功','aid'=>$lasid);
 			}else{
 				$result = array('code'=>0,'err_msg'=>'操作失败');
 			}

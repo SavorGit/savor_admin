@@ -600,8 +600,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<1 || count($tagr)>10){
-            $this->error('标签数应大于0且小于等于10');
+        if(count($tagr)<1){
+            $this->error('标签数应大于0');
         }
 
 
@@ -873,8 +873,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<1 || count($tagr)>10){
-            $this->error('标签数应大于0且小于等于10');
+        if(count($tagr)<1){
+            $this->error('标签数应大于0');
         }
         if($id){
             //修改标签
@@ -991,8 +991,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<1 || count($tagr)>10){
-            $this->error('标签数应大于0且小于等于10');
+        if(count($tagr)<1){
+            $this->error('标签数应大于0');
         }
 
         if($id){
@@ -1261,8 +1261,8 @@ WHERE id IN (1,2,3)*/
         $save['sort_tag'] = implode(',',$ar);
         sort($ar);
         $save['order_tag'] = implode(',',$ar);
-        if(count($tagr)<1 || count($tagr)>10){
-            $this->error('标签数应大于0且小于等于10');
+        if(count($tagr)<1){
+            $this->error('标签数应大于0');
         }
         if($id){
             //修改标签
