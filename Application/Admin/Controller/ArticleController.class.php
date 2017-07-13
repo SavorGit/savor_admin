@@ -1327,7 +1327,7 @@ WHERE id IN (1,2,3)*/
             $art_info = $artModel->find($f_artid);
 
             $index_img = $art_info['index_img_url'];
-            if(empty($index_img)){
+            if(empty($index_img) && $art_info['type']!=3){
                 $this->error('首条内容必须上传首页封面图');
             }
             //获取最新一条的审核时间的artid

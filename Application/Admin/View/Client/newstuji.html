@@ -1,28 +1,21 @@
 <!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-		<title>{$vinfo.title}-小热点</title>
+		<title></title>
 	</head>
-	<link href="http://vjs.zencdn.net/6.2.0/video-js.css" rel="stylesheet">
-	<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="http://vjs.zencdn.net/6.2.0/video.js"></script>
 	<style type="text/css">
-		* {
+		*{
 			margin: 0;
 			padding: 0;
 		}
-		
-		html,
-		body {
+		html,body{
 			width: 100%;
 			height: 100%;
 			background-color: #f6f2ed;
 		}
-		
-		.box_nr {
+		.zt{
 			width: 93%;
 			margin: 0 auto;
 			text-align: justify;
@@ -30,8 +23,7 @@
 			line-height: 0.57rem;
 			letter-spacing: 2px;
 		}
-		
-		.box_nr p strong {
+		.zt h2{
 			width: 100%;
 			font-size: 0.5rem;
 			color: #434343;
@@ -39,20 +31,16 @@
 			display: block;
 			margin-bottom: 0.5rem;
 		}
-		
-		.box_nr p {
+		.nr_list{
+			width: 100%;
+		}
+		.nr_list img{
+			width: 100%;
+		}
+		.nr_list p{
 			font-size: 0.3rem;
 			color: #575757;
 		}
-		
-		.box_nr img {
-			width: 100%;
-		}
-		
-		.box_nr p {
-			margin-bottom: 0.4rem;
-		}
-		
 		.mioasu {
 			width: 100%;
 			margin-bottom: 0.4rem;
@@ -91,7 +79,6 @@
 			color: #898886;
 			float: right;
 		}
-		
 		.tuijian {
 			width: 100%;
 			margin: 0 auto;
@@ -148,43 +135,28 @@
 			margin-top: 3px;
 		}
 	</style>
-	
-
 	<body>
-		<video id="video" style="width: 100%;<if condition='$sourc eq 1'>display: none;</if>" poster="" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
-           data-setup='{ "html5" : { "nativeTextTracks" : false } }'>
-        <source src="{$tx_url}" type="video/mp4">
-        <p class="vjs-no-js">  播放视频需要启用 JavaScript，推荐使用<a href="http://videojs.com/html5-video-support/" target="_blank">支持HTML5</a>的浏览器访问。</p>
-    </video>
-    <div id="output"></div>
-		<div class="box_nr">
-			{$vinfo.content}
-		</div>
-
-		<div class="tuijian" style="<if condition="$sourc eq 1">display: none</if>">
-			<span class="tit_tuijian">为您推荐</span>
-
-			<volist name="list" id="vlist">
-				<div class="tuijian_list">
-					<img src="{$vlist.imageURL}" />
-					<div class="tuijian_list_right">
-						<span class="tuijian_list_tit"><a href="{$vlist.contentURL}">{$vlist.title}</a></span>
-						<span class="laiyuan">{$vlist.sourcename}</span></span><span class="shijian">{$vlist.updatetime}</span>
-					</div>
-					<div style="clear: both;"></div>
+		<div class="zt">
+			<h2>{$vinfo.title}</h2>
+			<div class="mioasu">
+				<img src="{$linfo.oss_addr}" />
+				<span class="m1">{$linfo.name}</span><span class="m2">{$vinfo.update_time}</span>
+				<div style="clear: both;"></div>
+			</div>
+			<volist name="detaillist" id="vlist">
+				<div class="nr_list">
+					<img src="{$vlist.pic_url}"/>
+					<p>{$vlist.atext}</p>
 				</div>
 			</volist>
+			
 		</div>
 	</body>
-	<script type="text/javascript">
-
-		var player = videojs('video',{loop:true},function(){
-	 	//videoPlayer.poster();
-
-	 });
-
-		var calculate_size = function() {
+</html>
+<script type="text/javascript">
+	var calculate_size = function() {
 			var BASE_FONT_SIZE = 100;
+
 			var docEl = document.documentElement,
 				clientWidth = docEl.clientWidth;
 			if(!clientWidth) return;
@@ -198,8 +170,4 @@
 			document.addEventListener('DOMContentLoaded', calculate_size, false);
 			calculate_size();
 		}
-
-		
-	</script>
-
-</html>
+</script>
