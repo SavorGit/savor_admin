@@ -1295,7 +1295,7 @@ WHERE id IN (1,2,3)*/
             $uname = $userInfo['remark'];
             $save['operators']    = $uname;
             $save['creator_id']   = $userInfo['id'];
-            $save['hot_category_id'] = 3;
+            $save['hot_category_id'] = 103;
             if($artModel->add($save)){
                 $arid = $artModel->getLastInsID();
                 //修改标签
