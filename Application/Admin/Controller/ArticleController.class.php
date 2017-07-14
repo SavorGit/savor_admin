@@ -431,7 +431,7 @@ class ArticleController extends BaseController {
             $vainfo['duration'] = 0;
             $this->assign('vainfo',$vainfo);
         }
-        $where = "1=1";
+        $where = "1=1 and state=1";
         $field = 'id,name';
         $m_hot_category = new \Admin\Model\HotCategoModel();
         $vinfo = $m_hot_category->getWhere($where, $field);
@@ -779,7 +779,7 @@ WHERE id IN (1,2,3)*/
             //[{"tagid":"34","tagname":"安卓"},{"tagid":"32","tagname":"ajax"},{"tagid":"33","tagname":"ios"},{"tagid":"57","tagname":"1   1"},{"tagid":"58","tagname":"1 1"},{"tagid":"45","tagname":"123"}]
 
         }
-        $where = "1=1";
+        $where = "1=1 and state=1";
         $field = 'id,name';
         $m_hot_category = new \Admin\Model\HotCategoModel();
         $vinfo = $m_hot_category->getWhere($where, $field);
