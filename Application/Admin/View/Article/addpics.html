@@ -412,10 +412,16 @@
 	$('textarea').keydown(function() {
 		var textval = $(this).val().length;
 		if(textval >= 60) {
-			$(this).val($(this).val().substring(0, 60));
+			$(this).val($(this).val().substring(0, 59));
 		}
 	})
-	
+	$('textarea').keyup(function() {
+		var textval = $(this).val().length;
+		if(textval >= 60) {
+			alert ('您已超出60个字');
+			$(this).val($(this).val().substring(0, 59));
+		}
+	})
 	
 /*标签*/
  $('#yes').click(function(){
