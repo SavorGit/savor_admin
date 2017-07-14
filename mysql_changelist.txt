@@ -393,6 +393,11 @@ CREATE TABLE `savor_mb_hot_category` (
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
 
+#将savor_mb_category 里的数据导入到savor_mb_hot_category表里
+然后增加创富生活专题三个分类 id分别为101、102 、103
+
+
+
 增加说明：文章表新增首页封面图、内容字数两个字段
 修改时间：2017.6.28 11：30
 修改人：张英涛
@@ -411,3 +416,5 @@ ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEF
  ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`;
 
 ALTER TABLE `cloud`.`savor_mb_content` ADD INDEX `index_order_tag` ( `order_tag` );
+
+
