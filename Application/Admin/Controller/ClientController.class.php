@@ -141,8 +141,9 @@ class ClientController extends Controller {
 
 
     public function showcontent(){
+
         $id = I('get.id',0,'intval');
-        $sourceid = I('get.sourceid',0,'intval');
+        $sourceid = I('get.location','');
         $this->assign('sourc', $sourceid);
         $articleModel = new \Admin\Model\ArticleModel();
         $mbpictModel = new \Admin\Model\MbPicturesModel();
@@ -151,6 +152,7 @@ class ClientController extends Controller {
         if($id && $vinfo){
             $catid = $vinfo['hot_category_id'];
             $vinfo['content'] = html_entity_decode($vinfo['content']);
+
             if ($catid == 3) {
                 $oss_host = get_oss_host();
                 $vinfo['img_url'] = $oss_host.$vinfo['img_url'];
@@ -158,6 +160,7 @@ class ClientController extends Controller {
                     $vinfo['index_img_url'] = $oss_host.$vinfo['index_img_url'];
                 }
                 $display_html = 'special';
+
             }else{
                 $arinfo = $this->judgeRecommendInfo($vinfo);
                 if($arinfo){
@@ -170,6 +173,7 @@ class ClientController extends Controller {
                 }else{
                     $data = array();
                 }
+
                 $this->assign('list', $data);
                 if($vinfo['type']==1){//图文
                     $display_html = 'newshowcontent';

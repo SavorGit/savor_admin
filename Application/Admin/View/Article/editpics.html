@@ -327,6 +327,11 @@
 </html>
 <script type="text/javascript">
 
+
+  $(".pic").click(function(){
+    $("#savepicmap").prop('disabled','');
+    $("#savepicmap").removeClass('disabled');
+  })
   $("#savepicmap").click(function() {
    // alert(111);
     var arr_nr = [];
