@@ -11,7 +11,7 @@ class ContentController extends BaseController {
     var $content_type_arr;
     public function __construct() {
         parent::__construct();
-        $this->content_type_arr = array(0=>'纯文本',1=>'图文',2=>'图集',3=>'视频（非点播）',4=>'视频（点播）');
+        $this->content_type_arr = array(1=>'图文',2=>'图集',3=>'视频（非点播）',4=>'视频（点播）');
     }
 
     public function getlist(){
