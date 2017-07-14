@@ -1068,7 +1068,7 @@ WHERE id IN (1,2,3)*/
 
 
         $hotcatModel = new \Admin\Model\HotCategoModel();
-        $where = "1=1";
+        $where = "1=1 and state=1";
         $field = 'id,name';
         $vinfo = $hotcatModel->getWhere($where, $field);
         unset($vinfo[2]);
@@ -1131,7 +1131,7 @@ WHERE id IN (1,2,3)*/
             $this->assign('detailinfo',$detail_info);
 
         }
-        $where = "1=1";
+        $where = "1=1 and state=1";
         $field = 'id,name';
         $vinfo = $catModel->getWhere($where, $field);
         $this->assign('vcainfo',$vinfo);
