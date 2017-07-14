@@ -324,7 +324,7 @@ class ArticleController extends BaseController {
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
-        $hot_category_id = I('hot_catgory_id',1,'intval');
+        $hot_category_id = I('hot_catgory_id',101,'intval');
         $this->assign('hot_category_id',$hot_category_id);
         if($hot_category_id) $where .=" and hot_category_id='$hot_category_id' and state=2";
         $result = $artModel->getList($where,$orders,$start,$size);
