@@ -61,7 +61,7 @@ class ClientController extends Controller {
         // var_dump($order_tag);
         $order_tag_arr = explode(',', $order_tag);
         $tag_len = count($order_tag_arr);
-        if($tag_len == 0){
+        if($tag_len == 0 || empty($order_tag)){
             $dap = array();
         }else{
             $where = "1=1 and state = 2  and hot_category_id = ".$vinfo['hot_category_id']." and type = ".$vinfo['type'];
@@ -172,6 +172,7 @@ class ClientController extends Controller {
                     $data = $this->changRecList($res);
                 }else{
                     $data = array();
+                    $this->assign('sourc', 'newRead');
                 }
 
                 $this->assign('list', $data);

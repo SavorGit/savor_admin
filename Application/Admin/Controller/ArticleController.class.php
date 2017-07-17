@@ -257,7 +257,7 @@ class ArticleController extends BaseController {
     public function homemanager(){
         $mbHomeModel = new \Admin\Model\HomeModel();
         $artModel = new  \Admin\Model\ArticleModel();
-        $catModel = new \Admin\Model\CategoModel;
+        $catModel = new \Admin\Model\HotCategoModel;
         $cat_arr = $catModel->select();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -296,6 +296,7 @@ class ArticleController extends BaseController {
             var_dump($ar);
             var_dump($cr);
         }, $ar_id_arr, $con_id_arr);*/
+
         $t_size = $artModel->getTotalSize($con_id_arr);
         $datalist = $artModel->changeIdjName($result['list'], $cat_arr);
 
