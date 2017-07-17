@@ -17,7 +17,7 @@ class SendmsgController extends Controller
 */
     public function sendToSeller(){
 
-        //http://www.a.com/index.php/checkaccount/sendToSeller
+        //http://www.a.com/index.php/sendmsg/sendToSeller
         //http://devp.admin.rerdian.com/index.php/sendmsg/sendToSeller
         $redis  =  SavorRedis::getInstance();
         $redis->select(15);
@@ -28,7 +28,6 @@ class SendmsgController extends Controller
         $maxcount = 8;
         $max = $redis->lsize($rkey);
         $data = $redis->lgetrange($rkey,0,$max);
-        var_dump($data);
         $statedetailModel = new \Admin\Model\AccountStatementDetailModel();
         $statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
         $me_su_arr = array();
@@ -53,7 +52,6 @@ class SendmsgController extends Controller
                     //发送短信
                     $info = $statedetailModel->getWhereSql($val);
                     $m_state = $this->sendMessage($info);
-                    var_dump($m_state);
                     if($m_state){
                         $me_su_arr[] = $noticeid;
                         continue;
@@ -113,12 +111,13 @@ class SendmsgController extends Controller
         $shortlink = shortUrlAPI(1, $shortlink);
         echo $shortlink;
         $param="$shortlink";
-        $bool = $this->sendToUcPa($tel,$param);
+        $bool = $this->sendToUcPa($info,$param);
         return $bool;
     }
 
 
-    private function sendToUcPa($to,$param,$type=1){
+    private function sendToUcPa($info,$param,$type=1){
+        $to = $info['tel'];
         $bool = true;
         $ucconfig = C('SMS_CONFIG');
         $options['accountsid'] = $ucconfig['accountsid'];
@@ -132,7 +131,7 @@ class SendmsgController extends Controller
         $ucpass= new Ucpaas($options);
         $appId = $ucconfig['appid'];
         $sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
-        $this->addAccountLog($sjson,$param,$to);
+
         $sjson = json_decode($sjson,true);
         $code = $sjson['resp']['respCode'];
 
@@ -140,8 +139,27 @@ class SendmsgController extends Controller
         }else{
             $bool = false;
         }
+      //  $this->addAccountLog($sjson,$param,$to);
+        $this->addTelLog($sjson, $param, $info,$type, $bool);
         return $bool;
 
+    }
+
+    private function addTelLog($sjson, $param, $info, $type, $bool){
+        $now = date("Y-m-d H:i:s");
+        $save = array();
+        $accountMsgModel = new \Admin\Model\AccountMsgLogModel();
+        $save['status'] = ($bool==true)?1:0;
+        $save['type'] = $type;
+        $save['detail_id'] = $info['id'];
+        $save['hotel_id'] = $info['hotelid'];
+        $save['create_time'] = $now;
+        $save['update_time'] = $now;
+        $save['url'] = $param;
+        $save['smsId'] = $sjson['resp']['templateSMS']['smsId'];
+        $save['tel'] = $info['tel'];
+        $save['resp_code'] = $sjson['resp']['respCode'];
+        $accountMsgModel->addData($save);
     }
 
     private function addAccountLog($sjson,$param,$to){
