@@ -419,4 +419,16 @@ ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEF
 
 ALTER TABLE `cloud`.`savor_mb_content` ADD INDEX `index_order_tag` ( `order_tag` );
 
+增加说明：savor_account_info添加邮箱字段
+修改时间：2017.7.18 10：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_account_info`     ADD COLUMN `receipt_email` VARCHAR(50) DEFAULT '' NULL COMMENT '邮箱地址' AFTER `receipt_taxnum`,    CHANGE `receipt_taxnum` `receipt_taxnum` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '纳税人识别号';
+
+
+UPDATE `cloud`.`savor_account_info` SET `receipt_email`='zhao.cuiyan@savor.cn' WHERE `id`='1';
+UPDATE `cloud`.`savor_account_info` SET `receipt_email`='tian.yun@savor.cn' WHERE `id`='2';
+
+UPDATE `cloud`.`savor_account_info` SET `receipt_email`='yu.suijun@savor.cn' WHERE `id`='3';
+
 

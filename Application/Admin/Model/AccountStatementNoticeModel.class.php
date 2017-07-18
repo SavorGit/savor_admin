@@ -38,6 +38,11 @@ class AccountStatementNoticeModel extends BaseModel
 		 $this->execute($sql);
 	}
 
+	public function saveData($data, $where) {
+		$bool = $this->where($where)->save($data);
+		return $bool;
+	}
+
 
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();

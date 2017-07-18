@@ -68,7 +68,7 @@ class AccountStatementDetailModel extends BaseModel{
 		$where = ' where 1=1 ';
 		$where .= ' AND  sdet.id = '.$detailid;
 
-		$sql =" select sdet.fee_start,sdet.fee_end, sdet.id, sht.bill_tel tel, sht.id hotelid from savor_account_statement_detail  sdet join savor_hotel sht on sdet.hotel_id = sht.id $where limit 1";
+		$sql =" select sdet.fee_start,sdet.fee_end, sdet.id, sht.bill_tel tel, sht.id hotelid,sdet.state state,sdet.check_status from savor_account_statement_detail  sdet join savor_hotel sht on sdet.hotel_id = sht.id $where limit 1";
 		$result = $this->query($sql);
 		return $result[0];
 	}

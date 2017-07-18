@@ -72,6 +72,16 @@
                   </volist>
                 </select>
               </div>
+
+              <div class="form-group">
+                <label style="margin-right: 25px;line-height: 20px;width: 88px;">发票邮箱:</label>
+                <select name="rec_email" id="rec_email" style="width: 160px;border-radius: 6px !important;margin-right: 10px;">
+                  <option value="0">邮箱地址</option>
+                  <volist name="account_config" id="row">
+                    <option value="{$row['id']}"> {$row['receipt_email']} </option>
+                  </volist>
+                </select>
+              </div>
               <h3 style="margin-bottom: 15px;font-size: 15px;">酒楼明细</h3>
               <button type="button" class="btn btn-primary" data-toggle="modal" id="checkout" aria-pressed="false" autocomplete="off" style="border-radius: 5px !important;" data-target=".bs-example-modal-sm"  class="btn btn-primary btn-xs">
                 导入酒楼金额明细
@@ -169,6 +179,7 @@
       $('#rec_tel').empty();
       $('#rec_head').empty();
       $('#rec_taxnum').empty();
+      $('#rec_email').empty();
       $.ajax({
         type: 'POST',
         //设置json格式,接收返回数组。
@@ -184,9 +195,11 @@
             var option_str1 = '<option value="'+minfo.id+'">'+minfo.receipt_tel+'</option>';
             var option_str2 = '<option value="'+minfo.id+'">'+minfo.receipt_head+'</option>';
             var option_str3 = '<option value="'+minfo.id+'">'+minfo.receipt_taxnum+'</option>';
+            var option_str4 = '<option value="'+minfo.id+'">'+minfo.receipt_email+'</option>';
             $('#rec_tel').append(option_str1);
             $('#rec_head').append(option_str2);
             $('#rec_taxnum').append(option_str3);
+            $('#rec_email').append(option_str4);
           } else {
 
           }

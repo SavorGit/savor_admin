@@ -15,8 +15,8 @@ class AccountMsgLogModel extends BaseModel{
 
 
 
-	public function saveData($data, $where) {
-		$bool = $this->where($where)->save($data);
+	public function addData($data) {
+		$bool = $this->add($data);
 		return $bool;
 	}
 
