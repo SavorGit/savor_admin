@@ -85,16 +85,28 @@ class CheckaccountController extends BaseController{
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
 		$info = $statedetailModel->getWhereSql($did);
 		if($info['state'] == 1){
-			if($info['check_status'] == 0 || $info['check_status'] == 1) {
+			if($info['check_status'] == 0 || $info['check_status'] == 1 || $info['check_status'] == 2) {
 				//获取notice表更新时间
 				$field = 'count,id noticeid, f_type ftype, update_time';
 				$dat['detail_id'] = $did;
+				$dat['f_type'] = 1;
 				$notice_arr = $statenoticeModel->getWhere($dat, $field);
 
 				$notice_id = $notice_arr['noticeid'];
 				$notice_uptime = strtotime($notice_arr['update_time']);
 				$count = $notice_arr['count'];
 				//一份钟
+				//考虑第一次的情况,获取redis
+				$redis  =  SavorRedis::getInstance();
+				$redis->select(15);
+				$rkey = 'savor_account_statement_notice';
+				$max = $redis->lsize($rkey);
+				$data = $redis->lgetrange($rkey,0,$max);
+				if(in_array($did, $data)){
+					$this->error('计划任务未执行不允许点击');
+				}
+
+
 				if($now-$notice_uptime<30){
 					$this->error('一小时内不允许重复发送');
 				}
@@ -789,8 +801,10 @@ class CheckaccountController extends BaseController{
 		}else{
 			$bool = false;
 		}
-		//  $this->addAccountLog($sjson,$param,$to);
-		$this->addTelLog($sjson, $param, $info,$type, $bool);
+		if($type == 1){
+			$this->addTelLog($sjson, $param, $info,$type, $bool);
+		}
+
 		return $bool;
 
 	}
