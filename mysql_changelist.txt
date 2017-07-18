@@ -376,6 +376,8 @@ ALTER TABLE `cloud`.`savor_admin_log`     CHANGE `action` `action` VARCHAR(50) C
 执行sql:
 ALTER TABLE savor_mb_content ADD COLUMN `hot_category_id` SMALLINT(3)  NOT NULL DEFAULT 0 COMMENT '文章分类1：创富 2：生活 3：专题' AFTER `category_id`
 
+UPDATE savor_mb_content SET hot_category_id=101 WHERE category_id IN(63,85)
+UPDATE savor_mb_content SET hot_category_id=102 WHERE category_id IN(68,67,66,76,83,74,78,82,64,81,79,84,75,70,80,71,65,87,88)
 增加说明：新分类表
 修改时间：2017.6.28 11：30
 修改人：张英涛
