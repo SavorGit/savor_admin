@@ -36,6 +36,8 @@ class ExcelController extends Controller
             $tmpname = '酒楼大屏统计';
         }else if($filename == "allappdownload"){
             $tmpname = 'App下载统计总表';
+        }else if($filename == "hotelbillinfo"){
+            $tmpname = '对账单酒楼信息联系表';
         }
 
         $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
@@ -793,6 +795,59 @@ class ExcelController extends Controller
             }
         }
         echo "ok";
+    }
+
+    public function exphotelbillinfo(){
+        $statementid = I('statementid',0);
+        $statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+        $statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
+        $filename = 'hotelbillinfo';
+        $xlsName = "billinfo";
+        $where = "1=1";
+        $where .= " AND sdet.statement_id = ".$statementid;
+        $orders = 'sdet.id asc';
+        $result = $statedetailModel->getAll($where,$orders, 0,999);
+        $notice_state = C('NOTICE_STATAE');
+        $check_state = C('CHECK_STATAE');
+        foreach ($result['list'] as &$val){
+
+            if($val['state']!=1){
+                $dinfo = $statedetailModel->find($val['detailid']);
+                $val['name'] = $dinfo['hotel_name'];
+                $val['money'] = $dinfo['money'];
+                foreach($notice_state as $nh=>$nv){
+                    if($nh == $val['state']) {
+                        $val['state'] = $nv;
+                    }
+                }
+            }else{
+                $dat['detail_id'] = $val['detailid'];
+                $dat['f_type'] = 1;
+                $notice_arr = $statenoticeModel->getWhere($dat);
+                $nostus = $notice_arr['status'];
+                if($nostus == 1){
+                    $val['state'] = '发送成功';
+                }else {
+                    $val['state'] = '发送中';
+                }
+            }
+            foreach($check_state as $ch=>$cv){
+                if($ch == $val['check_status']) {
+                    $val['check_status'] = $cv;
+                }
+            }
+
+        }
+
+        $xlsCell = array(
+            array('hotelid', '酒楼id'),
+            array('name', '酒楼名称'),
+            array('money', '金额'),
+            array('state', '通知状态'),
+            array('check_status', '对账状态'),
+        );
+
+        $this->exportExcel($xlsName, $xlsCell, $result['list'],$filename);
     }
 
 }

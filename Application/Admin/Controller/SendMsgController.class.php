@@ -37,6 +37,7 @@ class SendmsgController extends Controller
             die;
         }
         //http://www.a.com/showMesLink/1be79d87c7f8360f
+        var_dump($data);
         foreach ($data as $val){
             //获取短信发送最大值数量
             $field = 'count,id noticeid, f_type ftype';
