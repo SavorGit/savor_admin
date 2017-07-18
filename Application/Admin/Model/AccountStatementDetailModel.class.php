@@ -77,7 +77,7 @@ class AccountStatementDetailModel extends BaseModel{
 	         ->join(' savor_account_statement b on a.statement_id=b.id')
 	         ->join(' savor_hotel c on a.hotel_id = c.id')
 	         ->join(' savor_account_info d on b.receipt_addrid = d.id')
-	         ->field('a.check_status,c.name as hotel_name,a.money,b.cost_type,b.fee_start,
+	         ->field('a.check_status,b.remark remark,c.name as hotel_name,a.money,b.cost_type,b.fee_start,
 	                  b.fee_end,d.receipt_addr,d.receipt_tel,d.receipt_head,d.receipt_taxnum')
 	         ->where('a.id='.$id)
 	         ->find();

@@ -98,7 +98,9 @@ window.location.href="http://www.littlehotspot.com";
 			<p>纳税人识别号：<span>{$bill_info['receipt_taxnum']}</span></p>
 		</div>
 		
-		<p style="margin-top: 0.15rem;font-size: 0.26rem;color: #e94945;width: 90%;margin: 0 auto;margin-bottom: 0.1rem;text-align: left;">请将发票寄回后进行确认，小热点收到发票后第一时间进行汇款.</p>
+		<p style="margin-top: 0.15rem;font-size: 0.26rem;color: #e94945;width: 90%;margin: 0 auto;margin-bottom: 0.1rem;text-align: left;">
+			<if condition="$bill_info['remark'] eq ''"><else />提示:{$bill_info['remark']}<br/><br/>  </if>
+			请将发票寄回后进行确认，小热点收到发票后第一时间进行汇款.</p>
 		<input type="hidden" id="bill_id" value="{$bill_id}" >
 		<button <if condition="$bill_info.check_status eq '0' or $bill_info.check_status eq '1'"> class="btn" <else />class="btn_two"</if> id="confirmbill"></button>
 		<p class="shuo">说明：如有任何疑问请及时联系小热点工作人员进行沟通</p>

@@ -39,8 +39,6 @@ class HotelbillController extends Controller{
             $bill_type_arr =  C('fee_type');
             $bill_info['cost_type'] = $bill_type_arr[$bill_info['cost_type']];
             $bill_info['receipt_tel'] = explode(',', $bill_info['receipt_tel']);
-            //print_r($bill_info);exit;
-            
             $this->assign('bill_id',$id);
             $this->assign('bill_info',$bill_info);
         }
