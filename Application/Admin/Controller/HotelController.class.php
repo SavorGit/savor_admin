@@ -445,6 +445,9 @@ class HotelController extends BaseController {
 		$save['remote_id']        = I('post.remote_id');
 		$save['hotel_wifi']        = I('post.hotel_wifi','','trim');
 		$save['hotel_wifi_pas']        = I('post.hotel_wifi_pas','','trim');
+		$save['collection_company']        = I('post.collection_company','','trim');
+		$save['bank_account']        = I('post.bank_account','','trim');
+		$save['bank_name']        = I('post.bank_name','','trim');
 		if(!($save['install_date'])){
 			$save['install_date'] = date("Y-m-d",time());
 		}
