@@ -12,11 +12,19 @@ use Admin\Model\BaseModel;
 class AccountMsgLogModel extends BaseModel{
 	protected $tableName = 'account_msg_log';
 
+	public function getOne($map = array(),$order){
+		if(!empty($map)){
+			$result = $this->where($map)
+				->order($order)
+				->limit(0,1)
+				->find();
+			return $result;
+		}
+	}
 
 
-
-	public function saveData($data, $where) {
-		$bool = $this->where($where)->save($data);
+	public function addData($data) {
+		$bool = $this->add($data);
 		return $bool;
 	}
 

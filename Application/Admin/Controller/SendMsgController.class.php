@@ -16,7 +16,7 @@ class SendmsgController extends Controller
 * 执行脚本文件定时发送短信
 */
     public function sendToSeller(){
-
+         //需要对notice表判断如果status=1放弃
         //http://www.a.com/index.php/sendmsg/sendToSeller
         //http://devp.admin.rerdian.com/index.php/sendmsg/sendToSeller
         $redis  =  SavorRedis::getInstance();
@@ -37,6 +37,7 @@ class SendmsgController extends Controller
             die;
         }
         //http://www.a.com/showMesLink/1be79d87c7f8360f
+        var_dump($data);
         foreach ($data as $val){
             //获取短信发送最大值数量
             $field = 'count,id noticeid, f_type ftype';
@@ -46,7 +47,8 @@ class SendmsgController extends Controller
                 $count = $notice_arr['count'];
                 $noticeid = $notice_arr['noticeid'];
                 $redis->lPop($rkey);
-                if ($count >= 8 ) {
+                //获取状态值
+                if ($notice_arr['status'] == 1 || $count >= 8 ) {
                     continue;
                 } else {
                     //发送短信
@@ -76,8 +78,9 @@ class SendmsgController extends Controller
         }
 
         if($me_su_arr){
+            $time = date("Y-m-d H:i:s");
             $me_su_str = 'values';
-            $where = 'status = 1';
+            $where = "status = 1,update_time = '".$time."'";
             $len = count($me_su_arr);
             foreach($me_su_arr as $ma){
                 $me_su_str .=  ' ('.$ma.')'.',';
@@ -88,7 +91,7 @@ class SendmsgController extends Controller
         echo '成功发送'.$len.'条';
         if($me_fail_arr){
             $me_fail_str = 'values';
-            $where = '`count` = `count` + 1';
+            $where = '`count` = `count` + 1,`update_time`="'.$time.'"';
             foreach($me_fail_arr as $ma){
                 $me_fail_str .=  ' ('.$ma.')'.',';
             }

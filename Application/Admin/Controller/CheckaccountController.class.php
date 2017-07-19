@@ -63,27 +63,117 @@ class CheckaccountController extends BaseController{
 		$this->display('accountlist');
 	}
 
+	private function sendMessage($info){
+		//$sjson  = '{"resp":{"respCode":"000000","templateSMS":{"createDate":"20170621131304","smsId":"3bcd56624d1d60a6e5830c3886f2f31d"}}}';
+		$fe_start = $info['fee_start'];
+		$fe_end = $info['fee_end'];
+		$tel= $info['tel'];
+		$detailid = $info['id'];
+		$short = encrypt_data($detailid);
+		$shortlink = C('HOST_NAME').'/admin/hotelbill/index?id='.$short;
+		$shortlink = shortUrlAPI(1, $shortlink);
+
+		$param="$shortlink";
+		$bool = $this->sendToUcPa($info,$param);
+		return $bool;
+	}
+
+	public function resendMsg(){
+		$did = I('get.detailid',0);
+		$now = time();
+		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$accountLogModel = new \Admin\Model\AccountMsgLogModel();
+		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
+		$info = $statedetailModel->getWhereSql($did);
+		if($info['state'] == 1){
+			if($info['check_status'] == 0 || $info['check_status'] == 1 || $info['check_status'] == 2) {
+				//获取notice表更新时间
+				$field = 'count,id noticeid, f_type ftype, update_time';
+				$dat['detail_id'] = $did;
+				$dat['f_type'] = 1;
+				$notice_arr = $statenoticeModel->getWhere($dat, $field);
+
+				$notice_id = $notice_arr['noticeid'];
+				$notice_uptime = strtotime($notice_arr['update_time']);
+				$count = $notice_arr['count'];
+				//一份钟
+				//考虑第一次的情况,获取redis
+				$redis  =  SavorRedis::getInstance();
+				$redis->select(15);
+				$rkey = 'savor_account_statement_notice';
+				$max = $redis->lsize($rkey);
+				$data = $redis->lgetrange($rkey,0,$max);
+				if(in_array($did, $data)){
+					$this->error('计划任务未执行不允许点击');
+				}
+				$map['detail_id'] = $did;
+				$order = 'id desc';
+				$loginfo =	$accountLogModel->getOne($map, $order);
+				$log_uptime = strtotime($loginfo['update_time']);
+				if($now-$log_uptime<30){
+					$this->error('一小时内不允许重复发送');
+				}
+				if( $count >= 8 ){
+					$this->error('发送失败超过最大限制');
+				}
+				//发送短信
+				//清空原有notice状态
+				$dap['status'] = 0;
+				$where = "id = ".$notice_id;
+				$statenoticeModel->saveData($dap,$where);
+				$m_state = $this->sendMessage($info);
+				if($m_state){
+					//更新notice状态
+					$dap['status'] = 1;
+					$dap['update_time'] = date("Y-m-d H:i:s",$now);
+					$statenoticeModel->saveData($dap,$where);
+					$this->output('发送短信成功', U('checkaccount/showHotel?statementid='.$did),2);
+				}else{
+					$dap['update_time'] = date("Y-m-d H:i:s",$now);
+					$dap['count'] = $count+1;
+					$statenoticeModel->saveData($dap,$where);
+				}
+
+			}else{
+				$this->error('状态不允许');
+			}
+		}else{
+			$this->error('无发送权限');
+		}
+	}
+
 	/*
 	 * @desc 确认付款
 	 */
 	public function confirmPayDone(){
 		$did = I('get.detailid',0);
 		$statementid = I('get.statementid',0);
+		$now = time();
 		if($did){
 			$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+			$accountLogModel = new \Admin\Model\AccountMsgLogModel();
 			$info = $statedetailModel->find($did);
 			$ch_staus =  $info['check_status'];
 			$state = $info['state'];
-					if($state==1 || $state==4){
-						//更新状态
-						$dat['check_status'] = 3;
-						$where = 'id = '.$did;
-						$statedetailModel->saveData($dat, $where);
-						//下发短信
-						$info = $statedetailModel->getWhereSql($did);
-						$this->sendPayMessage($info);
-						//重新载入
-						$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid),2);
+					if($state==1){
+						//根据log判定
+						$map['detail_id'] = $info['id'];
+						$order = 'id desc';
+					   $loginfo =	$accountLogModel->getOne($map, $order);
+						$log_uptime = strtotime($loginfo['update_time']);
+						if($now-$log_uptime<300){
+							$this->error('由于第三方短信运营商规则，五分钟之内不允许重复下发短信，请稍后再试');
+						}else{
+							//更新状态
+							$dat['check_status'] = 3;
+							$where = 'id = '.$did;
+							$statedetailModel->saveData($dat, $where);
+							//下发短信
+							$info = $statedetailModel->getWhereSql($did);
+							$this->sendPayMessage($info);
+							//重新载入
+							$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid),2);
+						}
 					}else{
 						$this->error('不允许');
 					}
@@ -699,15 +789,11 @@ class CheckaccountController extends BaseController{
 		return $res;
 	}
 
-	private function addAccountLog($sjson,$param,$to){
-
-		$log=date("Y-m-d H:i:s")."---".$sjson."---".$param."---".$to;
-		$path = LOG_PATH."Admin/sendmsg_".date("Y-m-d").".log";
-		file_put_contents($path, $log."\n",FILE_APPEND);
-	}
 
 
-	private function sendToUcPa($to,$param,$type=1){
+
+	private function sendToUcPa($info,$param,$type=1){
+		$to = $info['tel'];
 		$bool = true;
 		$ucconfig = C('SMS_CONFIG');
 		$options['accountsid'] = $ucconfig['accountsid'];
@@ -721,7 +807,7 @@ class CheckaccountController extends BaseController{
 		$ucpass= new Ucpaas($options);
 		$appId = $ucconfig['appid'];
 		$sjson = $ucpass->templateSMS($appId,$to,$templateId,$param);
-		$this->addAccountLog($sjson,$param,$to);
+
 		$sjson = json_decode($sjson,true);
 		$code = $sjson['resp']['respCode'];
 
@@ -729,110 +815,36 @@ class CheckaccountController extends BaseController{
 		}else{
 			$bool = false;
 		}
+		if($type == 1){
+			$this->addTelLog($sjson, $param, $info,$type, $bool);
+		}else{
+			$this->addTelLog($sjson, $param, $info,$type, $bool);
+		}
+
 		return $bool;
 
 	}
 
 
-
-	public function sendToSeller(){
-
-		//http://www.a.com/index.php/checkaccount/sendToSeller
-		//http://devp.admin.rerdian.com/index.php/sendmsg/sendToSeller
-		$redis  =  SavorRedis::getInstance();
-		$redis->select(15);
-		$rkey = 'savor_account_statement_notice';
-		$roll_back_arr = array();
-		$suca = array();
-		$count = 0;
-		$maxcount = 8;
-		$max = $redis->lsize($rkey);
-		$data = $redis->lgetrange($rkey,0,$max);
-		var_dump($data);
-		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
-		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
-		$me_su_arr = array();
-		$me_fail_arr = array();
-		if(empty($data)){
-			echo '数组为空'."\n";
-			die;
-		}
-		//http://www.a.com/showMesLink/1be79d87c7f8360f
-		foreach ($data as $val){
-			//获取短信发送最大值数量
-			$field = 'count,id noticeid, f_type ftype';
-			$dat['detail_id'] = $val;
-			$notice_arr = $statenoticeModel->getWhere($dat, $field);
-			if($notice_arr){
-				$count = $notice_arr['count'];
-				$noticeid = $notice_arr['noticeid'];
-				$redis->lPop($rkey);
-				if ($count >= 8 ) {
-					continue;
-				} else {
-					//发送短信
-					$info = $statedetailModel->getWhereSql($val);
-					$m_state = $this->sendMessage($info);
-					var_dump($m_state);
-					if($m_state){
-						$me_su_arr[] = $noticeid;
-						continue;
-					}else{
-						$roll_back_arr[] = $val;
-						$me_fail_arr[] = $noticeid;
-						continue;
-					}
-
-				}
-			}else{
-				echo '出错ID:'.$val.'<br/>';
-				$redis->lPop($rkey);
-			}
-
-		}
-		if($roll_back_arr){
-			//更新count字段
-			foreach($roll_back_arr as $k){
-				$redis->rPush($rkey, $k);
-			}
-		}
-		if($me_su_arr){
-			$me_su_str = 'values';
-			$where = 'status = 1';
-			foreach($me_su_arr as $ma){
-				$me_su_str .=  ' ('.$ma.')'.',';
-			}
-			$me_su_str = substr($me_su_str,0,-1);
-			$statenoticeModel->insertDup($me_su_str, $where);
-		}
-		if($me_fail_arr){
-			$me_fail_str = 'values';
-			$where = '`count` = `count` + 1';
-			foreach($me_fail_arr as $ma){
-				$me_fail_str .=  ' ('.$ma.')'.',';
-			}
-			$me_fail_str = substr($me_fail_str,0,-1);
-			$statenoticeModel->insertDup($me_fail_str, $where);
-		}
+	private function addTelLog($sjson, $param, $info, $type, $bool){
+		$now = date("Y-m-d H:i:s");
+		$save = array();
+		$accountMsgModel = new \Admin\Model\AccountMsgLogModel();
+		$save['status'] = ($bool==true)?1:0;
+		$save['type'] = $type;
+		$save['detail_id'] = $info['id'];
+		$save['hotel_id'] = $info['hotelid'];
+		$save['create_time'] = $now;
+		$save['update_time'] = $now;
+		$save['url'] = $param;
+		$save['smsId'] = $sjson['resp']['templateSMS']['smsId'];
+		$save['tel'] = $info['tel'];
+		$save['resp_code'] = $sjson['resp']['respCode'];
+		$accountMsgModel->addData($save);
 	}
 
 
 
-	private function sendMessage($info){
-		//$sjson  = '{"resp":{"respCode":"000000","templateSMS":{"createDate":"20170621131304","smsId":"3bcd56624d1d60a6e5830c3886f2f31d"}}}';
-		$fe_start = $info['fee_start'];
-		$fe_end = $info['fee_end'];
-		$tel= $info['tel'];
-		$detailid = $info['id'];
-		$to = $tel;
-		$short = encrypt_data($detailid);
-		$shortlink = C('HOST_NAME').'/admin/hotelbill/index?id='.$short;
-		$shortlink = shortUrlAPI(1, $shortlink);
-		echo $shortlink;
-		$param="$shortlink";
-		$bool = $this->sendToUcPa($tel,$param);
-		return $bool;
-	}
 
 
 	private function sendPayMessage($info){
@@ -842,7 +854,7 @@ class CheckaccountController extends BaseController{
 		$tel= $info['tel'];
 		$to = $tel;
 		$param="$fe_start,$fe_end";
-		$bool = $this->sendToUcPa($tel,$param, 2);
+		$bool = $this->sendToUcPa($info,$param, 2);
 		return $bool;
 	}
 
