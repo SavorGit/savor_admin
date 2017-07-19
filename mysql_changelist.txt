@@ -428,7 +428,37 @@ ALTER TABLE `cloud`.`savor_account_info`     ADD COLUMN `receipt_email` VARCHAR(
 
 UPDATE `cloud`.`savor_account_info` SET `receipt_email`='zhao.cuiyan@savor.cn' WHERE `id`='1';
 UPDATE `cloud`.`savor_account_info` SET `receipt_email`='tian.yun@savor.cn' WHERE `id`='2';
-
 UPDATE `cloud`.`savor_account_info` SET `receipt_email`='yu.suijun@savor.cn' WHERE `id`='3';
+
+增加说明：savor_hotel添加收款公司名称，银行账号，开户行名称账号
+修改时间：2017.7.18 10：30
+修改人：白玉涛
+执行sql: ALTER TABLE `cloud`.`savor_hotel`     ADD COLUMN `collection_company` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '收款公司名称' AFTER `bill_tel`,     ADD COLUMN `bank_account` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '银行账号' AFTER `collection_company`,     ADD COLUMN `bank_name` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '开户行名称' AFTER `bank_account`;
+
+
+
+
+
+增加说明：savor_account_msg_log
+修改时间：2017.7.18 10：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_msg_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(3) unsigned DEFAULT '1' COMMENT '发送状态1成功0失败',
+  `type` tinyint(3) unsigned DEFAULT '1' COMMENT '付款模板类型1billid 2paymentid',
+  `detail_id` int(11) DEFAULT '0' COMMENT '对应明细账单的id',
+  `hotel_id` int(11) DEFAULT '0' COMMENT '对应酒店id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息更新时间',
+  `url` varchar(50) NOT NULL DEFAULT '' COMMENT 'url地址',
+  `smsId` varchar(50) DEFAULT '' COMMENT 'SMSid',
+  `tel` varchar(13) DEFAULT '' COMMENT '电话号',
+  `resp_code` varchar(50) DEFAULT '' COMMENT '返回状态码',
+  `msg_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '默认1为营销类短信',
+  PRIMARY KEY (`id`),
+  KEY `hotel_id` (`detail_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='电话发送短信通知LOG'
+
 
 

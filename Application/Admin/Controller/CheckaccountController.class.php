@@ -82,6 +82,7 @@ class CheckaccountController extends BaseController{
 		$did = I('get.detailid',0);
 		$now = time();
 		$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+		$accountLogModel = new \Admin\Model\AccountMsgLogModel();
 		$statenoticeModel = new \Admin\Model\AccountStatementNoticeModel();
 		$info = $statedetailModel->getWhereSql($did);
 		if($info['state'] == 1){
@@ -105,9 +106,11 @@ class CheckaccountController extends BaseController{
 				if(in_array($did, $data)){
 					$this->error('计划任务未执行不允许点击');
 				}
-
-
-				if($now-$notice_uptime<30){
+				$map['detail_id'] = $did;
+				$order = 'id desc';
+				$loginfo =	$accountLogModel->getOne($map, $order);
+				$log_uptime = strtotime($loginfo['update_time']);
+				if($now-$log_uptime<30){
 					$this->error('一小时内不允许重复发送');
 				}
 				if( $count >= 8 ){
@@ -145,21 +148,32 @@ class CheckaccountController extends BaseController{
 	public function confirmPayDone(){
 		$did = I('get.detailid',0);
 		$statementid = I('get.statementid',0);
+		$now = time();
 		if($did){
 			$statedetailModel = new \Admin\Model\AccountStatementDetailModel();
+			$accountLogModel = new \Admin\Model\AccountMsgLogModel();
 			$info = $statedetailModel->find($did);
 			$ch_staus =  $info['check_status'];
 			$state = $info['state'];
-					if($state==1 || $state==4){
-						//更新状态
-						$dat['check_status'] = 3;
-						$where = 'id = '.$did;
-						$statedetailModel->saveData($dat, $where);
-						//下发短信
-						$info = $statedetailModel->getWhereSql($did);
-						$this->sendPayMessage($info);
-						//重新载入
-						$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid),2);
+					if($state==1){
+						//根据log判定
+						$map['detail_id'] = $info['id'];
+						$order = 'id desc';
+					   $loginfo =	$accountLogModel->getOne($map, $order);
+						$log_uptime = strtotime($loginfo['update_time']);
+						if($now-$log_uptime<300){
+							$this->error('由于第三方短信运营商规则，五分钟之内不允许重复下发短信，请稍后再试');
+						}else{
+							//更新状态
+							$dat['check_status'] = 3;
+							$where = 'id = '.$did;
+							$statedetailModel->saveData($dat, $where);
+							//下发短信
+							$info = $statedetailModel->getWhereSql($did);
+							$this->sendPayMessage($info);
+							//重新载入
+							$this->output('确认付款成功!', U('checkaccount/showHotel?statementid='.$statementid),2);
+						}
 					}else{
 						$this->error('不允许');
 					}
@@ -802,6 +816,8 @@ class CheckaccountController extends BaseController{
 			$bool = false;
 		}
 		if($type == 1){
+			$this->addTelLog($sjson, $param, $info,$type, $bool);
+		}else{
 			$this->addTelLog($sjson, $param, $info,$type, $bool);
 		}
 
