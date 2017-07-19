@@ -152,7 +152,14 @@ class ClientController extends Controller {
         if($id && $vinfo){
             $catid = $vinfo['hot_category_id'];
             $vinfo['content'] = html_entity_decode($vinfo['content']);
+            $vinfo['minu_time'] = round($vinfo['content_word_num']/600, 1);
 
+            $m_article_source = new \Admin\Model\ArticleSourceModel();
+            $loginfo = $m_article_source->find($vinfo['source_id']);
+            $media_info = $mediaModel->getMediaInfoById($loginfo['logo']);
+            $loginfo['oss_addr'] = $media_info['oss_addr'];
+
+            $this->assign('linfo', $loginfo);
             if ($catid == 3) {
                 $oss_host = get_oss_host();
                 $vinfo['img_url'] = $oss_host.$vinfo['img_url'];
@@ -184,10 +191,7 @@ class ClientController extends Controller {
                     $display_html = 'newshowvideocontent';
                 }else{
                     // 图集
-                    $m_article_source = new \Admin\Model\ArticleSourceModel();
-                    $loginfo = $m_article_source->find($vinfo['source_id']);
-                    $media_info = $mediaModel->getMediaInfoById($loginfo['logo']);
-                    $loginfo['oss_addr'] = $media_info['oss_addr'];
+
 
                     $info =  $mbpictModel->where('contentid='.$id)->find();
                     $detail_arr = json_decode($info['detail'], true);
@@ -198,7 +202,6 @@ class ClientController extends Controller {
 
                      }
                     $this->assign('detaillist', $detail_arr);
-                    $this->assign('linfo', $loginfo);
                     $display_html = 'newstuji';
                 }
             }

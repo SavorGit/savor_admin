@@ -149,6 +149,15 @@
 
 	<body>
 		<div class="box_nr">
+			<p>
+				<strong>{$vinfo.title}</strong>
+			</p>
+			<div class="mioasu">
+				<img src="{$linfo.oss_addr}"/>
+				<span class="m1">{$linfo.name}</span><span class="m2">{$vinfo.update_time}</span>
+				<span class="m3">阅读需要{$vinfo.minu_time}分钟({$vinfo.content_word_num}字)</span>
+				<div style="clear: both;"></div>
+			</div>
 			{$vinfo.content}
 		</div>
 
