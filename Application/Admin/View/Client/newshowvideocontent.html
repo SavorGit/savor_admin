@@ -151,7 +151,8 @@
 	
 
 	<body>
-		<video id="video" style="width: 100%;<if condition="$sourc eq 'newRead'">display: none;</if>" poster="" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
+
+		<video id="video" style="width: 100%;<if condition =" $sourc eq 'newRead'">display: none;</if>"  poster="" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
            data-setup='{ "html5" : { "nativeTextTracks" : false } }'>
         <source src="{$tx_url}" type="video/mp4">
         <p class="vjs-no-js">  播放视频需要启用 JavaScript，推荐使用<a href="http://videojs.com/html5-video-support/" target="_blank">支持HTML5</a>的浏览器访问。</p>
@@ -171,7 +172,7 @@
 		</div>
 
 		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
-			<span class="tit_tuijian">为您推荐</span>
+			<span class="tit_tuijian"><notempty name="list">为您推荐</notempty></span>
 
 			<volist name="list" id="vlist">
 				<div class="tuijian_list">

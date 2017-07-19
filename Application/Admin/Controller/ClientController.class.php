@@ -143,8 +143,8 @@ class ClientController extends Controller {
     public function showcontent(){
 
         $id = I('get.id',0,'intval');
-        $sourceid = I('get.location','');
-        $this->assign('sourc', $sourceid);
+        $sourcename = I('get.location','');
+        $this->assign('sourc', $sourcename);
         $articleModel = new \Admin\Model\ArticleModel();
         $mbpictModel = new \Admin\Model\MbPicturesModel();
         $mediaModel  = new \Admin\Model\MediaModel();
@@ -152,7 +152,12 @@ class ClientController extends Controller {
         if($id && $vinfo){
             $catid = $vinfo['hot_category_id'];
             $vinfo['content'] = html_entity_decode($vinfo['content']);
-            $vinfo['minu_time'] = round($vinfo['content_word_num']/600, 1);
+            $vinfo['minu_time'] = round($vinfo['content_word_num']/600);
+            if($vinfo['minu_time']<1){
+                $vinfo['minu_time'] = 1;
+            }
+
+            $vinfo['update_time'] = date("Y-m-d",strtotime($vinfo['update_time']));
 
             $m_article_source = new \Admin\Model\ArticleSourceModel();
             $loginfo = $m_article_source->find($vinfo['source_id']);
@@ -160,7 +165,7 @@ class ClientController extends Controller {
             $loginfo['oss_addr'] = $media_info['oss_addr'];
 
             $this->assign('linfo', $loginfo);
-            if ($catid == 3) {
+            if ($catid == 103) {
                 $oss_host = get_oss_host();
                 $vinfo['img_url'] = $oss_host.$vinfo['img_url'];
                 if($vinfo['index_img_url']){
@@ -179,7 +184,6 @@ class ClientController extends Controller {
                     $data = $this->changRecList($res);
                 }else{
                     $data = array();
-                    $this->assign('sourc', 'newRead');
                 }
 
                 $this->assign('list', $data);
