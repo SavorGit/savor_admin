@@ -69,6 +69,17 @@
 		.box_nr p {
 			margin-bottom: 0.4rem;
 		}
+		.mioasu {
+			width: 100%;
+			margin-bottom: 0.4rem;
+			line-height: 0.5rem;
+		}
+		.m3 {
+			font-size: 0.2rem;
+			color: #898886;
+			float: left;
+			margin-left: 0.25rem;
+		}
 		
 	</style>
 	<body>
@@ -83,6 +94,13 @@
 "/>
 				</div>
 				<div class="box_nr">
+					<p>
+						<strong>{$vinfo.title}</strong>
+					</p>
+					<div class="mioasu">
+						<span class="m3">{$vinfo.update_time}</span>
+						<div style="clear: both;"></div>
+					</div>
 					{$vinfo.content}
 				</div>
 			</div>
