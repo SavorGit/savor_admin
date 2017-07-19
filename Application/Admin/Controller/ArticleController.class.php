@@ -403,6 +403,14 @@ class ArticleController extends BaseController {
         if ($acctype && $id){
             $oss_host = $this->oss_host;
             $vainfo = $artModel->where('id='.$id)->find();
+            $max_nu = $artModel->max('sort_num');
+            $ar_sort_num = $vinfo['sort_num'];
+            if ($ar_sort_num == $max_nu) {
+                echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
+            };
+
+
+
             if ($vainfo['bespeak_time'] == '1970-01-01 00:00:00' || $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vainfo['bespeak_time'] = '';
             }
@@ -758,7 +766,14 @@ WHERE id IN (1,2,3)*/
         $vinfo['state'] = 0;
         $this->assign('vinfo',$vinfo);
         if ($acctype && $id){
+
+            //获取最大sort_num
+            $max_nu = $artModel->max('sort_num');
             $vinfo = $artModel->where('id='.$id)->find();
+            $ar_sort_num = $vinfo['sort_num'];
+            if ($ar_sort_num == $max_nu) {
+                echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
+            };
             //转换成html实体
             $vinfo['title'] = htmlspecialchars($vinfo['title']);
             if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
@@ -1094,6 +1109,14 @@ WHERE id IN (1,2,3)*/
         if ($id){
             $vinfo = $artModel->where('id='.$id)->find();
             //转换成html实体
+            $max_nu = $artModel->max('sort_num');
+            $ar_sort_num = $vinfo['sort_num'];
+            if ($ar_sort_num == $max_nu) {
+                echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
+            };
+
+
+
             $vinfo['title'] = htmlspecialchars($vinfo['title']);
             if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vinfo['bespeak_time'] = '';
@@ -1167,6 +1190,13 @@ WHERE id IN (1,2,3)*/
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
             //转换成html实体
+            $max_nu = $artModel->max('sort_num');
+            $ar_sort_num = $vinfo['sort_num'];
+            if ($ar_sort_num == $max_nu) {
+                echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
+            };
+
+
             $vinfo['title'] = htmlspecialchars($vinfo['title']);
             if ($vinfo['bespeak_time'] == '1970-01-01 00:00:00' ||  $vinfo['bespeak_time'] == '0000-00-00 00:00:00') {
                 $vinfo['bespeak_time'] = '';
