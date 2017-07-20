@@ -367,14 +367,22 @@
 		}
 	})
 
-	$('body').on('click', '.dela', function() {
-		$(this).parent().remove();
-		var c = 1;
-		$('.pic span').each(function(){
-			var a = $(this).html(c++);
-			
-		})
-	})
+  $('body').on('click', '.dela', function() {
+    $(this).parent().remove();
+
+    var c = 1;
+    $('.pic span').each(function(){
+      var a = $(this).html(c++);
+      var b = $(this).html();
+      $(this).siblings('a').prop('href','http://www.a.com/admin/resource/uploadMapResource?filed=pics_map_'+b+'&rtype=2')
+      $(this).siblings('a').find('img').prop('id','pics_map_'+b+'img');
+      $(this).siblings('input').prop('id','pics_map_'+b+'');
+      $(this).siblings('input').prop('name','pics_map_'+b+'');
+      $(this).siblings('textarea').prop('name','texta_pic_'+b+'');
+
+    })
+
+  })
 	$('textarea').keydown(function() {
 		var textval = $(this).val().length;
 		if(textval >= 60) {

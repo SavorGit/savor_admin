@@ -90,33 +90,7 @@ class ArticleController extends BaseController {
         echo $img;
     }
 
-    /**
-     * 添加文章
-     */
-    public function addAaddrticle(){
-        $catModel = new CategoModel();
-        $artModel = new ArticleModel();
-        $userInfo = session('sysUserInfo');
-        $uname = $userInfo['username'];
-        $this->assign('uname',$uname);
-        $id = I('get.id');
-        $acctype = I('get.acttype');
-        $vinfo['state'] = 0;
-        $this->assign('vinfo',$vinfo);
-        if ($acctype && $id){
-            $vinfo = $artModel->where('id='.$id)->find();
-            //$oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-            $oss_host = $this->oss_host;
-            $vinfo['oss_addr'] = $oss_host.$vinfo['img_url'];
-            $this->assign('vinfo',$vinfo);
-        }
-        $where = "1=1";
-        $field = 'id,name';
-        $vinfo = $catModel->getWhere($where, $field);
-        $this->assign('vcainfo',$vinfo);
-        $this->display('addart');
 
-    }
     
     /*
      * 显示并生成H5页面地址
@@ -403,7 +377,8 @@ class ArticleController extends BaseController {
         if ($acctype && $id){
             $oss_host = $this->oss_host;
             $vainfo = $artModel->where('id='.$id)->find();
-            $max_nu = $artModel->max('sort_num');
+            $caid = $vinfo['hot_category_id'];
+            $max_nu = $artModel->where('hot_category_id='.$caid)->max('sort_num');
             $ar_sort_num = $vinfo['sort_num'];
             if ($ar_sort_num == $max_nu) {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
@@ -770,9 +745,11 @@ WHERE id IN (1,2,3)*/
         if ($acctype && $id){
 
             //获取最大sort_num
-            $max_nu = $artModel->max('sort_num');
+
             $vinfo = $artModel->where('id='.$id)->find();
             $ar_sort_num = $vinfo['sort_num'];
+            $caid = $vinfo['hot_category_id'];
+            $max_nu = $artModel->where('hot_category_id='.$caid)->max('sort_num');
             if ($ar_sort_num == $max_nu) {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
             };
@@ -1113,8 +1090,10 @@ WHERE id IN (1,2,3)*/
         if ($id){
             $vinfo = $artModel->where('id='.$id)->find();
             //转换成html实体
-            $max_nu = $artModel->max('sort_num');
+            $caid = $vinfo['hot_category_id'];
+            $max_nu = $artModel->where('hot_category_id='.$caid)->max('sort_num');
             $ar_sort_num = $vinfo['sort_num'];
+
             if ($ar_sort_num == $max_nu) {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
             };
@@ -1194,8 +1173,10 @@ WHERE id IN (1,2,3)*/
         if ($acctype && $id){
             $vinfo = $artModel->where('id='.$id)->find();
             //转换成html实体
-            $max_nu = $artModel->max('sort_num');
+            $caid = $vinfo['hot_category_id'];
+            $max_nu =  $artModel->where('hot_category_id='.$caid)->max('sort_num');
             $ar_sort_num = $vinfo['sort_num'];
+
             if ($ar_sort_num == $max_nu) {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
             };
