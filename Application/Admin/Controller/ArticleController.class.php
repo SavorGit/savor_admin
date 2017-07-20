@@ -576,7 +576,9 @@ WHERE id IN (1,2,3)*/
         $media_id = I('post.media_id','0','intval');//视频id
         $save['source_id']    = I('post.source_id',0,'intval');
         $contents = I('post.content','','strip_tags');
-        if($contents){
+        if(empty($contents)){
+            $save['content_word_num'] = 0;
+        }else{
             $contents = str_replace('&nbsp;', '', $contents);
             $contents = myTrim($contents);
             $save['content_word_num'] = mb_strlen($contents,'UTF8');
@@ -838,7 +840,9 @@ WHERE id IN (1,2,3)*/
         $save['source_id']   = I('post.source_id');
         
         $contents = I('post.content','','strip_tags');
-        if($contents){
+        if(empty($contents)){
+            $save['content_word_num'] = 0;
+        }else{
             $contents = str_replace('&nbsp;', '', $contents);
             $contents = myTrim($contents);
             $save['content_word_num'] = mb_strlen($contents,'UTF8');
@@ -1242,9 +1246,13 @@ WHERE id IN (1,2,3)*/
         $save['share_title']    = I('post.share_title','','trim');
        
         $contents = I('post.content','','strip_tags');
-        $contents = str_replace('&nbsp;', '', $contents);
-        $contents = myTrim($contents);
-        $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        if(empty($contents)){
+            $save['content_word_num'] = 0;
+        }else{
+            $contents = str_replace('&nbsp;', '', $contents);
+            $contents = myTrim($contents);
+            $save['content_word_num'] = mb_strlen($contents,'UTF8');
+        }
         $save['content']    = I('post.content','','htmlspecialchars');
         $save['type']    = I('post.ctype','','intval');
         $save['state']    = 0;
