@@ -146,33 +146,39 @@ window.location.href="http://www.littlehotspot.com";
 			}
 		});
 		$('#confirmbill').click(function(){
-			if(confirm("确认点击发票寄回按钮吗"))
-
-			{
-				$.ajax({
-					type:'POST',
-					url :url,
-					data:{id:bill_id},
-					dataType:"json",
-					success:function(data){
-						if(data.status==1){
-							//alert('OK');
-							$('#confirmbill').attr('class','btn_two');
-						}else if(date.status=2){
-							alert('该账单不存在');
-						}else if(data.status==3){
-							alert('该账单不存在');
-						}else if(data.status==4){
-							alert('发票寄回确认失败');
-						}else {
-							alert('网络异常，请重新确认');
-						}
-					}
-				});
-
-			}else{
+			var chk = "<?php echo $bill_info['check_status']; ?>";
+			if(chk==2){
 				return false;
+			}else{
+				if(confirm("确认点击发票寄回按钮吗"))
+
+				{
+					$.ajax({
+						type:'POST',
+						url :url,
+						data:{id:bill_id},
+						dataType:"json",
+						success:function(data){
+							if(data.status==1){
+								//alert('OK');
+								$('#confirmbill').attr('class','btn_two');
+							}else if(date.status=2){
+								alert('该账单不存在');
+							}else if(data.status==3){
+								alert('该账单不存在');
+							}else if(data.status==4){
+								alert('发票寄回确认失败');
+							}else {
+								alert('网络异常，请重新确认');
+							}
+						}
+					});
+
+				}else{
+					return false;
+				}
 			}
+
 
 		});
 
