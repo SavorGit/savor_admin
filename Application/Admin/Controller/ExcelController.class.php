@@ -822,6 +822,7 @@ class ExcelController extends Controller
                         $val['state'] = $nv;
                     }
                 }
+                $val['check_status'] = '';
             }else{
                 $dat['detail_id'] = $val['detailid'];
                 $dat['f_type'] = 1;
@@ -832,12 +833,13 @@ class ExcelController extends Controller
                 }else {
                     $val['state'] = '发送中';
                 }
-            }
-            foreach($check_state as $ch=>$cv){
-                if($ch == $val['check_status']) {
-                    $val['check_status'] = $cv;
+                foreach($check_state as $ch=>$cv){
+                    if($ch == $val['check_status']) {
+                        $val['check_status'] = $cv;
+                    }
                 }
             }
+
 
         }
 

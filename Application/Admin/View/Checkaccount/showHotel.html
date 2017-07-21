@@ -60,11 +60,15 @@
 				   {$vlist.cont}
 				  </span>
 				  </a>
-                    <a style="width:90px;margin-left:10px;"  class="btn btn-default btn-icon" warn="警告" data-tip="" title="你确定要重新发送吗" target="ajaxTodo" href="{$host_name}/checkaccount/resendMsg?detailid={$vlist.detailid}&statementid={$statementid}" calback="navTabAjaxDone" data-original-title="付款">
+
+
+                    <if condition="$vlist.check_status NEQ 2"> <a style="width:90px;margin-left:10px;"  class="btn btn-default btn-icon" warn="警告" data-tip="" title="你确定要重新发送吗" target="ajaxTodo" href="{$host_name}/checkaccount/resendMsg?detailid={$vlist.detailid}&statementid={$statementid}" calback="navTabAjaxDone" data-original-title="付款">
 				  <span>
 				   重新发送
 				  </span>
-                    </a>
+                    </a></if>
+
+
                   </if>
                 </div>
               </td>

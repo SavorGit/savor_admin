@@ -421,6 +421,10 @@ class ArticleController extends BaseController {
         $vinfo = $m_hot_category->getWhere($where, $field);
         unset($vinfo[2]);
         $this->assign('vcainfo',$vinfo);
+        //老分类
+        $m_old_category = new \Admin\Model\CategoModel();
+        $voldinfo = $m_old_category->getWhere($where, $field);
+        $this->assign('voldinfo',$voldinfo);
 
         $pagearr = $this->getPageTag();
         $this->assign('pageinfo',$pagearr['list']);
@@ -547,7 +551,8 @@ WHERE id IN (1,2,3)*/
         $save                = [];
         $save['title']        = I('post.title','','trim');
         $save['hot_category_id']        = I('post.hot_category_id',0,'intval');
-
+        //老分类
+        $save['category_id']        = I('post.old_category_id',0,'intval');
         $media_id = I('post.media_id','0','intval');//视频id
         $save['source_id']    = I('post.source_id',0,'intval');
         $contents = I('post.content','','strip_tags');
@@ -779,7 +784,11 @@ WHERE id IN (1,2,3)*/
         $vinfo = $m_hot_category->getWhere($where, $field);
         unset($vinfo[2]);
         $this->assign('vcainfo',$vinfo);
+        //老分类
+        $m_old_category = new \Admin\Model\CategoModel();
+        $voldinfo = $m_old_category->getWhere($where, $field);
 
+        $this->assign('voldinfo',$voldinfo);
         //添加标签
         $pagearr = $this->getPageTag();
         //添加来源
@@ -814,7 +823,8 @@ WHERE id IN (1,2,3)*/
         $save['hot_category_id']        = I('post.hot_category_id',0,'intval');
         //$save['source']    = I('post.source','');
         $save['source_id']   = I('post.source_id');
-        
+        //老分类
+        $save['category_id']        = I('post.old_category_id',0,'intval');
         $contents = I('post.content','','strip_tags');
         if(empty($contents)){
             $save['content_word_num'] = 0;

@@ -230,10 +230,17 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 	public function  changeCatname($result){
 		$catModel = new HotCategoryModel();
 		$cat_arr =  $catModel->field('id,name')->select();
+		$oldcatModel = new CategoModel();
+		$oldcat_arr =  $oldcatModel->field('id,name')->select();
 		foreach ($result as &$value){
 			foreach ($cat_arr as  $row){
 				if($value['hot_category_id'] == $row['id']){
 					$value['cat_name'] = $row['name'];
+				}
+			}
+			foreach ($oldcat_arr as  $row){
+				if($value['category_id'] == $row['id']){
+					$value['old_cat_name'] = $row['name'];
 				}
 			}
 		}

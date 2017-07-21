@@ -141,6 +141,7 @@
             <th>序号</th>
             <th>名称</th>
             <th>分类</th>
+              <th>老的分类</th>
             <th style="display: none;">>封面图片</th>
             <th>内容类型</th>
             <th>创建人</th>
@@ -159,7 +160,8 @@
               </if>
               </td>
               <td data-title="名称">{$vlist.title}</td>
-              <td data-title="名称">{$vlist.cat_name}</td>
+              <td data-title="分类">{$vlist.cat_name}</td>
+                <td data-title="老的分类">{$vlist.old_cat_name}</td>
               <td data-title="封面图片" style="display: none;"><a data-tip="预览图片" target="dialog" mask="true"
                                        href="{$host_name}/article/showpic?pic={$vlist.img_url}"   class="btn btn-success btn-icon">
                 <i class="icon-list"></i>
