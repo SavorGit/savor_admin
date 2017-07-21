@@ -197,6 +197,7 @@
               </a>
               <input type="hidden" id="{$row['pic_num']}" name="{$row['pic_num']}" value="{$row['aid']}" />
               <textarea name="{$row['tex_num']}" class="texta_val" value="">{$row['atext']}</textarea>
+              <i class="fa fa-trash dela"></i>
             </div>
           </volist>
 
@@ -327,11 +328,12 @@
 </html>
 <script type="text/javascript">
 
+ $(".pic_list").on("click",".imga",function(){
+   $("#savepicmap").prop('disabled','');
+   $("#savepicmap").removeClass('disabled');
 
-  $(".pic").click(function(){
-    $("#savepicmap").prop('disabled','');
-    $("#savepicmap").removeClass('disabled');
-  })
+ });
+
   $("#savepicmap").click(function() {
    // alert(111);
     var arr_nr = [];
@@ -382,15 +384,23 @@
     })
 
   })
-	$('textarea').keydown(function() {
-		var textval = $(this).val().length;
-		if(textval >= 60) {
-			$(this).val($(this).val().substring(0, 60));
-		}
-	})
-	
-	
-/*标签*/
+ $('textarea').keydown(function() {
+   var textval = $(this).val().length;
+   if(textval >= 60) {
+     $(this).val($(this).val().substring(0, 59));
+   }
+ })
+ $('textarea').keyup(function() {
+   var textval = $(this).val().length;
+   if(textval >= 60) {
+     alert ('您已超出60个字');
+     $(this).val($(this).val().substring(0, 59));
+   }
+ })
+
+
+
+ /*标签*/
  $('#yes').click(function(){
     var biaoname = $('#exampleInputName2').val();
     if(biaoname==''){
