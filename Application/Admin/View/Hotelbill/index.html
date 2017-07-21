@@ -102,6 +102,7 @@ window.location.href="http://www.littlehotspot.com";
 			<if condition="$bill_info['remark'] eq ''"><else />提示:{$bill_info['remark']}<br/><br/>  </if>
 			请将发票寄回后进行确认，小热点收到发票后第一时间进行汇款.</p>
 		<input type="hidden" id="bill_id" value="{$bill_id}" >
+		<input type="hidden" id="mybill" value="" >
 		<button <if condition="$bill_info.check_status eq '0' or $bill_info.check_status eq '1'"> class="btn" <else />class="btn_two"</if> id="confirmbill"></button>
 		<p class="shuo">说明：如有任何疑问请及时联系小热点工作人员进行沟通</p>
 	</body>
@@ -150,32 +151,35 @@ window.location.href="http://www.littlehotspot.com";
 			if(chk==2){
 				return false;
 			}else{
-				if(confirm("确认点击发票寄回按钮吗"))
-
-				{
-					$.ajax({
-						type:'POST',
-						url :url,
-						data:{id:bill_id},
-						dataType:"json",
-						success:function(data){
-							if(data.status==1){
-								//alert('OK');
-								$('#confirmbill').attr('class','btn_two');
-							}else if(date.status=2){
-								alert('该账单不存在');
-							}else if(data.status==3){
-								alert('该账单不存在');
-							}else if(data.status==4){
-								alert('发票寄回确认失败');
-							}else {
-								alert('网络异常，请重新确认');
-							}
-						}
-					});
-
-				}else{
+				var mygate = $("#mybill").val();
+				if(mygate == 8){
 					return false;
+				}else{
+					if(confirm("确认点击发票寄回按钮吗")){
+						$('#confirmbill').attr('class','btn_two');
+						$.ajax({
+							type:'POST',
+							url :url,
+							data:{id:bill_id},
+							dataType:"json",
+							success:function(data){
+								if(data.status==1){
+									$("#mybill").val(8);
+
+								}else if(date.status=2){
+									alert('该账单不存在');
+								}else if(data.status==3){
+									alert('该账单不存在');
+								}else if(data.status==4){
+									alert('发票寄回确认失败');
+								}else {
+									alert('网络异常，请重新确认');
+								}
+							}
+						});
+					}else{
+						return false;
+					}
 				}
 			}
 

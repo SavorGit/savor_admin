@@ -448,6 +448,10 @@ class HotelController extends BaseController {
 		$save['collection_company']        = I('post.collection_company','','trim');
 		$save['bank_account']        = I('post.bank_account','','trim');
 		$save['bank_name']        = I('post.bank_name','','trim');
+		if(mb_strlen($save['collection_company'])>50 || mb_strlen($save['bank_account'])>50 || mb_strlen($save['bank_name'])>50){
+			$this->error('收款公司名称，银行账号以及开户行名称最多50个字');
+		}
+
 		if(!($save['install_date'])){
 			$save['install_date'] = date("Y-m-d",time());
 		}
