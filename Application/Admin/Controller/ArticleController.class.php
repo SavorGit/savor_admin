@@ -377,9 +377,9 @@ class ArticleController extends BaseController {
         if ($acctype && $id){
             $oss_host = $this->oss_host;
             $vainfo = $artModel->where('id='.$id)->find();
-            $caid = $vinfo['hot_category_id'];
-            $max_nu = $artModel->where('hot_category_id='.$caid)->max('sort_num');
-            $ar_sort_num = $vinfo['sort_num'];
+            $caid = $vainfo['hot_category_id'];
+            $max_nu = $artModel->where('hot_category_id='.$caid.' and state=2')->max('sort_num');
+            $ar_sort_num = $vainfo['sort_num'];
             if ($ar_sort_num == $max_nu) {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
             };
@@ -740,16 +740,15 @@ WHERE id IN (1,2,3)*/
         $id = I('get.id');
         $acctype = I('get.acttype');
 
-        $vinfo['state'] = 0;
-        $this->assign('vinfo',$vinfo);
+
         if ($acctype && $id){
 
             //获取最大sort_num
-
+            $vinfo['state'] = 0;
             $vinfo = $artModel->where('id='.$id)->find();
             $ar_sort_num = $vinfo['sort_num'];
             $caid = $vinfo['hot_category_id'];
-            $max_nu = $artModel->where('hot_category_id='.$caid)->max('sort_num');
+            $max_nu = $artModel->where('hot_category_id='.$caid.' and state=2')->max('sort_num');
             if ($ar_sort_num == $max_nu) {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("当前内容已经置顶，不允许被修改");</script>';
             };
@@ -1091,7 +1090,7 @@ WHERE id IN (1,2,3)*/
             $vinfo = $artModel->where('id='.$id)->find();
             //转换成html实体
             $caid = $vinfo['hot_category_id'];
-            $max_nu = $artModel->where('hot_category_id='.$caid)->max('sort_num');
+            $max_nu = $artModel->where('hot_category_id='.$caid.' and state=2')->max('sort_num');
             $ar_sort_num = $vinfo['sort_num'];
 
             if ($ar_sort_num == $max_nu) {
@@ -1174,7 +1173,7 @@ WHERE id IN (1,2,3)*/
             $vinfo = $artModel->where('id='.$id)->find();
             //转换成html实体
             $caid = $vinfo['hot_category_id'];
-            $max_nu =  $artModel->where('hot_category_id='.$caid)->max('sort_num');
+            $max_nu = $artModel->where('hot_category_id='.$caid.' and state=2')->max('sort_num');
             $ar_sort_num = $vinfo['sort_num'];
 
             if ($ar_sort_num == $max_nu) {

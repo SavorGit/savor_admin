@@ -75,6 +75,8 @@ class ExcelController extends Controller
         }else if($filename == 'boxlostreport'){
             $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
             $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
+        }else if($filename == 'hotelbillinfo'){
+            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(40);
         }
         header('pragma:public');
         header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $xlsTitle . '.xls"');
