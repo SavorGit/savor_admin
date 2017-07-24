@@ -46,6 +46,7 @@ class SendmsgController extends Controller
             if($notice_arr){
                 $count = $notice_arr['count'];
                 $noticeid = $notice_arr['noticeid'];
+                sleep(60);
                 $redis->lPop($rkey);
                 //获取状态值
                 if ($notice_arr['status'] == 1 || $count >= 8 ) {
@@ -68,6 +69,7 @@ class SendmsgController extends Controller
                 echo '出错ID:'.$val.'<br/>';
                 $redis->lPop($rkey);
             }
+
 
         }
         if($roll_back_arr){

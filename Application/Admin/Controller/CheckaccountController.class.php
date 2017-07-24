@@ -110,7 +110,7 @@ class CheckaccountController extends BaseController{
 				$order = 'id desc';
 				$loginfo =	$accountLogModel->getOne($map, $order);
 				$log_uptime = strtotime($loginfo['update_time']);
-				if($now-$log_uptime<80){
+				if($now-$log_uptime<3600){
 					$this->error('一小时内不允许重复发送');
 				}
 				if( $count >= 8 ){
