@@ -46,7 +46,6 @@ class SendmsgController extends Controller
             if($notice_arr){
                 $count = $notice_arr['count'];
                 $noticeid = $notice_arr['noticeid'];
-                sleep(60);
                 $redis->lPop($rkey);
                 //获取状态值
                 if ($notice_arr['status'] == 1 || $count >= 8 ) {
@@ -55,6 +54,7 @@ class SendmsgController extends Controller
                     //发送短信
                     $info = $statedetailModel->getWhereSql($val);
                     $m_state = $this->sendMessage($info);
+                    sleep(60);
                     if($m_state){
                         $me_su_arr[] = $noticeid;
                         continue;
