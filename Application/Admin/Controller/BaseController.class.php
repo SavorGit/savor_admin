@@ -427,7 +427,8 @@ class BaseController extends Controller {
         $user = session('sysUserInfo');
         $add_mediadata['surfix'] = $surfix;
         $add_mediadata['create_time'] = date('Y-m-d H:i:s');
-        $add_mediadata['creator'] = $user['username'];
+        //$add_mediadata['creator'] = $user['username'];
+        $add_mediadata['creator'] = $user['remark'];
         $add_mediadata['type'] = $type;
         $media_id = $mediaModel->add($add_mediadata);
         if($media_id){
