@@ -148,7 +148,11 @@ class ClientController extends Controller {
         $articleModel = new \Admin\Model\ArticleModel();
         $mbpictModel = new \Admin\Model\MbPicturesModel();
         $mediaModel  = new \Admin\Model\MediaModel();
-        $vinfo = $articleModel->where('id='.$id)->find();
+        $vinfo = $articleModel->where('id='.$id.' and state =2')->find();
+        if(empty($vinfo)){
+            $this->display('null');
+            exit;
+        }
         if($id && $vinfo){
             $catid = $vinfo['hot_category_id'];
             $vinfo['content'] = html_entity_decode($vinfo['content']);

@@ -950,6 +950,10 @@ WHERE id IN (1,2,3)*/
             if(empty($pv['atext'])) {
                 $this->error('图集描述不可为空');
             }
+            if(mb_strlen($pv['atext'])>60) {
+                $this->error('内容最多为60字');
+            }
+
         }
         if(count($picdat_arr)<5){
             $this->error('图集最少5个');
