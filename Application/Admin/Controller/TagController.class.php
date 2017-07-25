@@ -86,7 +86,7 @@ class TagController extends BaseController{
 				die;
 			}
 			if(mb_strlen($save['tagname'])<2 || mb_strlen($save['tagname'])>15) {
-				$result = array('code'=>0,'err_msg'=>'标签长度最小为2最大为6');
+				$result = array('code'=>0,'err_msg'=>'标签长度最小为2最大为15');
 				echo json_encode($result);
 				die;
 			}

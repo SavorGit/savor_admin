@@ -19,10 +19,10 @@ class ArticlesourceController extends BaseController{
 	    $size   = I('numPerPage',50);      //显示每页记录数
 	    $this->assign('numPerPage',$size);
 	    $start = I('pageNum',1);           //当前页数
-	    $this->assign('pageNum',$start); 
-	    $order = I('_order','add_time');   //排序字段
+	    $this->assign('pageNum',$start);
+		$order = I('_order',' convert(a.`name` using gbk) ');
 	    $this->assign('_order',$order);
-	    $sort = I('_sort','desc');         //排序类型
+	    $sort = I('_sort','asc');         //排序类型
 	    $this->assign('_sort',$sort);
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
