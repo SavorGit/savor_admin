@@ -80,7 +80,7 @@ class TagController extends BaseController{
 				echo json_encode($result);
 				die;
 			}
-			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
+			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9(\s* )]+$/u',$save['tagname'], $result)){
 				$result = array('code'=>0,'err_msg'=>'只可输入数字、字母、汉字');
 				echo json_encode($result);
 				die;
@@ -126,7 +126,7 @@ class TagController extends BaseController{
 				if($is_have){
 					$this->error('该标签名称已经存在');
 				}
-				if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9]+$/u',$save['tagname'], $result)){
+			if(!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9(\s* )]+$/u',$save['tagname'], $result)){
 					$this->error('操作失败，只可输入数字、字母、汉字');
 				}
 				if(mb_strlen($save['tagname'])<2 || mb_strlen($save['tagname'])>15) {

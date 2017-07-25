@@ -435,8 +435,7 @@ class ArticleController extends BaseController {
         $this->assign('pagecount',$pagearr['page']);
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
-        $article_list = $m_article_source->getAll();
-         
+        $article_list = $m_article_source->order('convert(`name` using gbk) asc')->getAll();
         $this->assign('sourcelist',$article_list);
         $this->display('addvideo');
     }
@@ -801,7 +800,7 @@ WHERE id IN (1,2,3)*/
         $pagearr = $this->getPageTag();
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
-        $article_list = $m_article_source->getAll();
+        $article_list = $m_article_source->order('convert(`name` using gbk) asc')->getAll();
        
         $this->assign('sourcelist',$article_list);
         $this->assign('pageinfo',$pagearr['list']);
@@ -1080,8 +1079,7 @@ WHERE id IN (1,2,3)*/
 
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
-        $article_list = $m_article_source->getAll();
-
+        $article_list = $m_article_source->order('convert(`name` using gbk) asc')->getAll();
         $this->assign('sourcelist',$article_list);
 
 
