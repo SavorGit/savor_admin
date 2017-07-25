@@ -12,6 +12,14 @@ use Common\Lib\Page;
 class AwardLogModel extends BaseModel
 {
 	protected $tableName='award_log';
+
+
+	public function getAwardList($where,$orders){
+		$sql ="select a.* ,b.name as prizename,e.name as hotelname from savor_award_log as a left join savor_award_config as b on a.prizeid=b.id  left join savor_box c on a.mac=c.mac left join savor_room d on d.id=c.room_id  left join savor_hotel e on e.id=d.hotel_id where "
+			.$where.' order by '.$orders;
+		$list = $this->query($sql);
+		return $list;
+	}
 	
 	public function getList($where,$orders,$start,$size){
 	    $sql ="select a.* ,b.name as prizename,c.name as boxname,d.name as roomname,e.name as hotelname

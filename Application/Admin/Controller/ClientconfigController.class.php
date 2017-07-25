@@ -53,6 +53,7 @@ class ClientconfigController extends BaseController {
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['media_id']);
                 $vainfo['videooss_addr'] = $mediainfo['oss_addr'];
             }
+
             if($vainfo['img_id']){
                 $mediaModel = new \Admin\Model\MediaModel();
                 $mediainfo = $mediaModel->getMediaInfoById($vainfo['img_id']);
@@ -75,15 +76,25 @@ class ClientconfigController extends BaseController {
         $save['ctype'] = I('post.clienttype','0','intval');
         //判断是否有记录该类型
         $covermedia_id = I('post.covervideo_id','0','intval');//视频封面id
-        $media_id = I('post.media_id','0','intval');//视频i
+
         $save['duration'] = I('post.duration','0','intval');
         $save['name'] = I('post.adsname');
 
-        if($covermedia_id){
-            $save['img_id'] = $covermedia_id;
+        $covermedia_id = I('post.covervideo_id');//视频封面id
+        $media_id = I('post.media_id');//视频i
+        if(empty($covermedia_id)){
+            $save['img_id'] = 0;
+        }else{
+            if($covermedia_id>0){//首页封面图
+                $save['img_id'] = $covermedia_id;
+            }
         }
-        if($media_id){
-            $save['media_id']    = $media_id;
+        if(empty($media_id)){
+            $save['media_id'] = 0;
+        }else{
+            if($media_id>0){//首页封面图
+                $save['media_id'] = $media_id;
+            }
         }
         if($clid){
             $save['update_time'] = date("Y-m-d H:i:s");

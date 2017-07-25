@@ -1,0 +1,86 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/checkaccount/showHotel" method="post" >
+    <input type="hidden" name="statementid" value="{$statementid}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+	      <div class="form-inline">
+            <label>对账单酒楼列表{$statementid}</label>
+            <a class="btn btn-success btn-sm add pull-right" href="{$host_name}/excel/exphotelbillinfo?statementid={$statementid}" title="导出对账单酒楼信息" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出对账单酒楼信息</a>
+
+	      </div>
+	      </div>
+
+
+	   </div>
+	   </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <!-- <th class="table-checkbox">
+                <input type="checkbox" data-check="all" data-parent=".table" />
+              </th> -->
+              <th>酒楼id</th>
+              <th>酒楼名称</th>
+              <th>金额</th>
+              <th>通知状态</th>
+              <th>对账状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <!-- <td class="table-checkbox">
+                <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
+              </td> -->
+              <td data-title="酒楼id">{$vlist.hotelid}</td>
+              <td data-title="酒楼名称">{$vlist.name}</td>
+              <td data-title="金额">{$vlist.money}</td>
+              <td data-title="通知状态">{$vlist.no_mes}</td>
+              <td data-title="对账状态">{$vlist.ch_mes}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+
+
+                  <if condition="$vlist.cont eq 2">
+                    <else />
+                  <a style="width:90px;"  class="btn btn-default btn-icon" warn="警告" data-tip="" title="你确定要点击付款完成吗" target="ajaxTodo" href="{$host_name}/checkaccount/confirmPayDone?detailid={$vlist.detailid}&statementid={$statementid}" calback="navTabAjaxDone" data-original-title="付款">
+				  <span>
+				   {$vlist.cont}
+				  </span>
+				  </a>
+
+
+                    <if condition="$vlist.check_status NEQ 2"> <a style="width:90px;margin-left:10px;"  class="btn btn-default btn-icon" warn="警告" data-tip="" title="你确定要重新发送吗" target="ajaxTodo" href="{$host_name}/checkaccount/resendMsg?detailid={$vlist.detailid}&statementid={$statementid}" calback="navTabAjaxDone" data-original-title="付款">
+				  <span>
+				   重新发送
+				  </span>
+                    </a></if>
+
+
+                  </if>
+                </div>
+              </td>
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+      {$instruction}
+    </div>
+  </div>
+  {$page}
+
+</div>
+

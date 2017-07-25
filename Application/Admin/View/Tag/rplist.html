@@ -1,0 +1,69 @@
+<include file="Public/script"/>
+<style type="text/css">
+  .xuan{
+    width: 245px;
+    height: 30px;
+    border: 1px solid black;
+    margin: 20px;
+    text-align: center;
+    line-height: 30px;
+    float: left;
+  }
+  .xuan i{
+  	float: right;
+  	margin-right: 5px;
+  	line-height: 26px;
+  }
+  .marg{
+    margin-left: 5px;
+  }
+  
+  .mod_top{
+    width: 100%;
+  }
+  .nr{
+    width: 100%;
+    height: 300px;
+  }
+</style>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/tag/rplist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+
+
+
+
+      <a class="btn btn-success btn-sm add" href="{$host_name}/tag/addtag" title="添加标签" target="dialog" mask="true"><i class="fa fa-plus"></i>添加标签</a>
+
+      <input type="text" style="margin-left: 100px;height: 28px;" name="tagname"/>
+        			<span class="input-group-btn" style="display:inline-block;">
+              <button class="btn btn-primary" style="height: 26px;line-height: 2px; background-color: #aed316;" type="submit"><i class="fa fa-search"></i></button>
+            </span>
+      <!--<button type="button" class="btn btn-primary del_active" style="margin-left: 96px; background-color: #aed316;height: 25px;line-height: 12px;">选中删除</button>-->
+
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="quanbu">
+      <volist name="datalist" id="vlist">
+        <div class="xuan">
+
+
+          <a  target="navTab" title="标签文章列表" rel="tag/articleTagList" href="{$host_name}/tag/articleTagList?tagid={$vlist.id}&tagname={$vlist.tagname}">
+            {$vlist.tagname} <i style="display: none;" class="fa fa-bullhorn"></i>
+          </a>
+
+
+          <a warn="警告" data-tip="" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/tag/deltag?tagid={$vlist.id}">
+          <i class="fa fa-trash"></i>
+        </a>
+        </div>
+      </volist>
+    </div></div> {$page}</div>

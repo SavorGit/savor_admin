@@ -64,6 +64,24 @@ class BaseController extends Controller {
            'callbackType'=>$callbackType,'forwardUrl'=>'','confirmMsg'=>'','callback'=>$callback,'del'=>$del);
         $this->ajaxReturn($data,'TEXT');
     }
+
+
+    public function outputNew($message,$navTab,$type=1,$status=1,$callback="",$del){
+        switch ($type){
+            case 1://关闭
+                $callbackType = 'closeCurrent';
+                break;
+            case 2://重新载入
+                $callbackType = 'forward';
+                break;
+            default://停留在当前页
+                $callbackType = '';
+                break;
+        }
+        $data = array('status'=>$status,'info'=>$message,'navTabId'=>$navTab,'url'=>'checkaccounterr',
+            'callbackType'=>$callbackType,'forwardUrl'=>'','confirmMsg'=>'','callback'=>$callback,'del'=>$del);
+        $this->ajaxReturn($data,'TEXT');
+    }
     
     //生成缩略图
     public function getThumbSize($img, $width, $height, $prefix, $type=\Think\Image::IMAGE_THUMB_CENTER){
@@ -409,7 +427,8 @@ class BaseController extends Controller {
         $user = session('sysUserInfo');
         $add_mediadata['surfix'] = $surfix;
         $add_mediadata['create_time'] = date('Y-m-d H:i:s');
-        $add_mediadata['creator'] = $user['username'];
+        //$add_mediadata['creator'] = $user['username'];
+        $add_mediadata['creator'] = $user['remark'];
         $add_mediadata['type'] = $type;
         $media_id = $mediaModel->add($add_mediadata);
         if($media_id){
@@ -479,7 +498,7 @@ class BaseController extends Controller {
         $free_action = array('admin.menu.get_se_left','admin.clean.cache','admin.resource.uploadresource',
                              'admin.resource.uploadresourcenew','admin.user.chagepwd','admin.boxaward.getaward',
                              'admin.hotel.manager_list','admin.version.getvname','admin.menu.getfile',
-                             'admin.menu.analyseexcel'
+                             'admin.menu.analyseexcel','admin.checkaccount.getaccountinfo','admin.checkaccount.analyseexcel','admin.checkaccount.confirmpaydone'
         );
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);

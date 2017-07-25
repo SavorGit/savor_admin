@@ -9,14 +9,14 @@
     <div class="searchBar">
       <div class="clearfix">
         <div class="form-inline" style="margin-top:3px;">
-        <div class="form-group">
+       <!--  <div class="form-group">
           <div class="input-group input-group-sm">
             <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
               来源筛选：
             </label>
                 
           </div>
-        </div>
+        </div> -->
 		<!-- <div class="form-group">
             <div class="input-group-sm input-group">
               <label class="control-label" style="">
@@ -38,7 +38,7 @@
             </div>
           </div> -->
 
-          <div class="form-group"  >
+         <!--  <div class="form-group"  >
            
 			<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}" style="width:135px;">
 
@@ -87,8 +87,8 @@
                 </select>
             </span>
             </div>
-          </div> 
-          <br>
+          </div>  
+          <br>-->
 		<div class="form-group">
             <div class="input-group input-group-sm">
               <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
@@ -134,6 +134,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>创建时间</th>
             <th>阅读总次数</th>
             <th>阅读总时长</th>
+            <th>平均阅读总时长</th>
             <th>点播总次数</th>
             <th>分享总次数</th>
             <th>PV</th>
@@ -145,7 +146,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist" key="k">
             <tr target="sid_user">
-              <td data-title="序号">{$k}</td>
+              <td data-title="序号">{$vlist.content_id}</td>
               <td data-title="创建时间">{$vlist.content_name}</td>
               <td data-title="分类">{$vlist.category_name}</td>
               <td data-title="内容类别">
@@ -162,14 +163,15 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               
               <td data-title="编辑">{$vlist.operators} </td>
               <td data-title="创建时间">{$vlist.create_time} </td>
-              <td data-title="阅读总次数"><empty name="vlist.read_count">0<else />{$vlist.read_count}</empty> </td> 
-              <td data-title="阅读总时长"><empty name="vlist.read_duration">0秒<else />{$vlist.read_duration|changeTimeType}</empty> </td> 
-              <td data-title="点播总次数"><empty name="vlist.demand_count">0<else />{$vlist.demand_count}</empty> </td> 
-              <td data-title="分享总次数"><empty name="vlist.share_count">0<else />{$vlist.share_count}</empty> </td> 
-              <td data-title="PV"><empty name="vlist.pv_count">0<else />{$vlist.pv_count}</empty> </td> 
-              <td data-title="UV"><empty name="vlist.uv_count">0<else />{$vlist.uv_count}</empty> </td> 
-              <td data-title="点击数"><empty name="vlist.click_count">0<else />{$vlist.click_count}</empty> </td> 
-              <td data-title="外链点击数"><empty name="vlist.outline_count">0<else />{$vlist.outline_count}</empty> </td> 
+              <td data-title="阅读总次数"><empty name="vlist.s_read_count">0<else />{$vlist.s_read_count}</empty> </td> 
+              <td data-title="阅读总时长"><empty name="vlist.s_read_duration">0秒<else />{$vlist.s_read_duration|changeTimeType}</empty> </td> 
+              <td data-title="平均阅读总时长"><empty name="vlist.s_read_duration">0秒<else /><php> $tmp = intval($vlist['s_read_duration']/$vlist['s_read_count']); echo changeTimeType($tmp);</php></empty> </td> 
+              <td data-title="点播总次数"><empty name="vlist.s_demand_count">0<else />{$vlist.s_demand_count}</empty> </td> 
+              <td data-title="分享总次数"><empty name="vlist.s_share_count">0<else />{$vlist.s_share_count}</empty> </td> 
+              <td data-title="PV"><empty name="vlist.s_pv_count">0<else />{$vlist.s_pv_count}</empty> </td> 
+              <td data-title="UV"><empty name="vlist.s_uv_count">0<else />{$vlist.s_uv_count}</empty> </td> 
+              <td data-title="点击数"><empty name="vlist.s_click_count">0<else />{$vlist.s_click_count}</empty> </td> 
+              <td data-title="外链点击数"><empty name="vlist.s_outline_count">0<else />{$vlist.s_outline_count}</empty> </td> 
               
             </tr>
           </volist>

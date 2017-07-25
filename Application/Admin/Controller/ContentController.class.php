@@ -11,7 +11,7 @@ class ContentController extends BaseController {
     var $content_type_arr;
     public function __construct() {
         parent::__construct();
-        $this->content_type_arr = array(0=>'纯文本',1=>'图文',2=>'图集',3=>'视频（非点播）',4=>'视频（点播）');
+        $this->content_type_arr = array(1=>'图文',2=>'图集',3=>'视频（非点播）',4=>'视频（点播）');
     }
 
     public function getlist(){
@@ -33,8 +33,10 @@ class ContentController extends BaseController {
         $type = I('type',10,'intval');//10为全部
 
         //$where .= " AND state=2 ";
-        $category_id = I('category_id',0,'intval');
-        if($category_id) $where .=" AND category_id='$category_id'";
+        /* $category_id = I('category_id',0,'intval');
+        if($category_id) $where .=" AND category_id='$category_id'"; */
+        $hot_category_id = I('hot_catgory_id',0,'intval');
+        if($hot_category_id) $where .=" and hot_category_id='$hot_category_id'";
         $content_type = I('content_type','10','intval');
         
         if(is_numeric($content_type)){
@@ -114,14 +116,14 @@ class ContentController extends BaseController {
 	        $result['list'][$key]['pushdata'] = json_encode($pushdata,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); 
 	        
 	    }
-	    $catModel = new \Admin\Model\CategoModel();
+	    $m_hot_category = new \Admin\Model\HotCategoryModel();
 	    $where = " state=1";
     	$field = 'id,name';
-    	$category_list = $catModel->getWhere($where, $field);
+    	$category_list = $m_hot_category->getWhere($where, $field);
     	$this->assign('vcainfo',$category_list);
 	    $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('content_type_arr',$this->content_type_arr);
-	    $this->assign('category_id',$category_id);
+	    $this->assign('hot_category_id',$hot_category_id);
 	    $this->assign('timeinfo',$time_info);
         $this->assign('ctype', $type);
         $this->assign('list', $result['list']);
@@ -136,22 +138,45 @@ class ContentController extends BaseController {
 
 
         $adsid = I('request.adsid','0','intval');
-        $artModel = new \Admin\Model\ArticleModel();
-        $message = '';
         $flag = I('request.flag');
+        $message = '';
         if(flag == 2){
             $state = 3;
         } else {
             $state = 2;
         }
-        $data = array('state'=>$state);
-
-        $res = $artModel->where("id='$adsid'")->save($data);
-
-        if($res){
-            $message = '更新审核状态成功';
+        $artModel = new \Admin\Model\ArticleModel();
+        $arinfo =$artModel->find($adsid);
+        $sort_num = $arinfo['sort_num'];
+        $catid = $arinfo['hot_category_id'];
+        $now_time = date('Y-m-d H:i:s');
+        $where = "1=1 and hot_category_id=$catid and state=2";
+        $max_info = $artModel->getMaxSort($where);
+        //内空最大值
+        if($max_info){
+            $max_id = $max_info['id'];
+            $max_num = $max_info['sort_num'];
         }
 
+        if($max_num < $sort_num){
+            //两个互换
+            $ainfo = array(
+                'sort_num'=>$max_num,
+                'update_time'=>$now_time,
+                'state'=>$state,
+            );
+            $binfo = array(
+                'sort_num'=>$sort_num,
+                'update_time'=>$now_time,
+                'state'=>$state,
+            );
+            $artModel->where('id = '.$adsid)->save($ainfo);
+            $artModel->where('id = '.$max_id)->save($binfo);
+        }else{
+            $data = array('state'=>$state,'update_time'=>$now_time);
+            $res = $artModel->where("id='$adsid'")->save($data);
+        }
+        $message = '更新审核状态成功';
         if($message){
             $this->output($message, 'content/getlist',2);
         }else{

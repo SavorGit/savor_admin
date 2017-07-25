@@ -1,0 +1,106 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/report/heart" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              查询筛选：
+            </label>
+                <span class="input-group-btn">
+               <select name="type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <option <if condition="$type eq '1'">selected="selected" </if> value=1 >小平台</option>
+                 <option <if condition="$type eq '2'">selected="selected" </if> value=2 >机顶盒</option>
+               </select>
+          </div>
+
+          </div>
+          <div class="form-group">
+          <div class="input-group input-group-sm pull-right">
+            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          </div>
+
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>机顶盒ID</th>
+            <th>MAC地址</th>
+            <th>包间ID</th>
+            <th>包间名称</th>
+            <th>酒楼ID</th>
+            <th>酒楼名称</th>
+            <th>区域ID</th>
+            <th>区域名称</th>
+            <th>最后一次心跳距离现在时间</th>
+            <th>类型</th>
+          <!--   <th>分区</th> -->
+            <th>酒楼外网IP</th>
+            <th>内网IP</th>
+            <th>广告期号</th>
+            <th>点播期号</th>
+            <th>APK版本号</th>
+            <th>WAR版本号</th>
+            <th>LOGO期号</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.indnum}</td>
+              <td data-title="机顶盒ID">{$vlist.box_id}</td>
+              <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+              <td data-title="包间ID">{$vlist.room_id}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="酒楼ID">{$vlist.hotel_id}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="区域ID">{$vlist.area_id}</td>
+              <td data-title="区域名称">{$vlist.area_name}</td>
+              <td data-title="心跳距离现在时间">{$vlist.last_heart_time}</td>
+              <td data-title="类型">
+                <if condition="$vlist.type eq 1"> 小平台
+                  <elseif condition="$vlist.type eq 2"/>机顶盒
+                  <else/>错误
+                </if>
+              </td>
+              <!-- <td data-title="分区">{$vlist.pt}</td> -->
+              <td data-title="酒楼外网IP">{$vlist.hotel_ip}</th>
+            <td data-title="小平台IP">{$vlist.small_ip}</th>
+            <td data-title="广告期号">{$vlist.ads_period}</th>
+            <td data-title="点播期号">{$vlist.demand_period}</th>
+            <td data-title="APK版本号">{$vlist.apk_version}</th>
+            <td data-title="WAR版本号">{$vlist.war_version}</th>
+            <td data-title="LOGO期号">{$vlist.logo_period}</th>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

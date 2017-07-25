@@ -1,0 +1,52 @@
+<!--修改样式2 p元素自适应宽度 start-->
+
+<div class="pageContent">
+	<form method="post" action="{$host_name}/article/setSpecial" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		
+		<div class="pageFormContent modal-body">
+			<div class="tabsContent">
+				<div class="tab-content">
+					<div id="tab1" class="tab-pane active fade in">
+
+						
+
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label">
+                			标题：
+              				</label>
+							<div class="col-xs-12 col-sm-10">
+								<input name="special_title" type="text" value="{$info.config_value}"  maxlength="12" class="form-control" />
+								
+							</div>
+							
+						</div>
+						
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label">
+                			
+              				</label>
+							<div class="col-xs-12 col-sm-10">
+								<p>说明：如果设置名称为空，则客户端首页展示“专题”，限制2-12个字</p>
+								
+							</div>
+							
+						</div>
+						    </div>
+			     </div>
+			 </div>
+						
+						
+
+		</div>
+
+				
+			
+
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+		
+	</form>
+</div>
+

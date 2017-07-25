@@ -215,3 +215,252 @@ alter table `cloud`.`savor_nodemenu`
    change `a` `a` char(30) character set utf8 collate utf8_general_ci NOT NULL comment '方法名'
 
 
+
+
+
+增加说明：文章对应标签表
+修改时间：2017.6.15 13：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_tag` (
+  `article_id` int(10) DEFAULT NULL,
+  `tagid` int(10) DEFAULT NULL COMMENT '标签id',
+  `tagname` varchar(48) DEFAULT NULL COMMENT '标签名称',
+  KEY `aid` (`article_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+
+增加说明：标签列表
+修改时间：2017.6.15 13：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_taglist` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `tagname` varchar(48) DEFAULT '' COMMENT '标签名称',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `flag` tinyint(1) DEFAULT '1' COMMENT '标示位1正常0删除',
+  `num` smallint(6) DEFAULT '0' COMMENT '拥有标签文章的数量',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tag` (`tagname`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+增加说明：文章内容来源
+修改时间：2017.6.16 13：30
+修改人：张英涛
+执行sql:
+CREATE TABLE `savor_article_source` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '来源名称',
+  `logo` varchar(255) NOT NULL DEFAULT '' COMMENT 'LOGO图片',
+  `introduction` text COMMENT '简介',
+  `add_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建用户id',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `edit_user_id` int(11) NOT NULL DEFAULT '0' COMMENT '编辑用户id',
+  `edit_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='文章来源表'
+
+增加说明：文章来源字段增加
+修改时间：2017.6.16 13：30
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_mb_content ADD COLUMN `source_id` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '文章内容来源' AFTER `source`
+
+增加说明：酒店对账单联系人以及电话
+修改时间：2017.6.16 13：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `savor_hotel` ADD COLUMN `bill_per` VARCHAR(20) NOT NULL COMMENT '对账单联系人' AFTER `hotel_wifi_pas`,ADD COLUMN `bill_tel` VARCHAR(12) NOT NULL COMMENT '对账单人联系电话' AFTER `bill_per`;
+
+增加说明：savor_hotel添加地区是否含有酒店字段
+修改时间：2017.7.4 10：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_area_info`     ADD COLUMN `is_in_hotel` TINYINT(1) DEFAULT '0' NOT NULL COMMENT '是否含有酒楼' AFTER `is_valid`;
+
+
+增加说明：发票表
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_info` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `receipt_addr` varchar(50) NOT NULL DEFAULT '' COMMENT '发票地址',
+  `receipt_tel` varchar(50) NOT NULL DEFAULT '' COMMENT '发票收件人',
+  `receipt_head` varchar(50) NOT NULL DEFAULT '' COMMENT '发票抬头',
+  `receipt_taxnum` varchar(50) NOT NULL DEFAULT '' COMMENT '纳税人识别号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='发票表';
+insert  into `savor_account_info`(`id`,`receipt_addr`,`receipt_tel`,`receipt_head`,`receipt_taxnum`) values (1,'北京市朝阳区建外大街郎家园16号永峰写字楼6层601-603室','赵翠燕,010-64185797-8016','拉萨经济技术开发区热点信息技术有限公司北京分公司','91110105MA00BKE27L'),(2,'上海市徐汇区零陵路899号飞洲国际22K室','田耘,021-34773009','拉萨经济技术开发区热点信息技术有限公司上海分公司','91310104MA1FR71647'),(3,'广州市越秀区先烈中路75号穗丰大厦A座209室','余穗筠,020-87326025','拉萨经济技术开发区热点信息技术有限公司广州分公司','91440101MA59J47E83');
+
+增加说明：公司对账单
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_statement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fee_start` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段开始',
+  `fee_end` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段结束',
+  `cost_type` tinyint(3) unsigned DEFAULT '1' COMMENT '费用类型1开机2APP推广',
+  `receipt_addrid` smallint(5) unsigned DEFAULT '1' COMMENT '发票地址对应id',
+  `remark` text NOT NULL COMMENT '备注',
+  `operatorid` int(11) NOT NULL DEFAULT '0' COMMENT '操作人id',
+  `count` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id的数量',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `summary` text COMMENT '详细信息',
+  PRIMARY KEY (`id`),
+  KEY `ctune` (`create_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='公司对账单'
+
+增加说明：公司对账单明细
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_statement_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hotel_id` varchar(11) DEFAULT NULL COMMENT '酒楼id',
+  `check_status` tinyint(1) unsigned DEFAULT '0' COMMENT '对账状态0为未读,1为已读,2为已确认,3为已付款',
+  `statement_id` int(11) DEFAULT '0' COMMENT '对应公司对账单id',
+  `money` varchar(20) DEFAULT '' COMMENT '对账金额',
+  `state` tinyint(3) unsigned DEFAULT '1' COMMENT '插入状态1成功2酒楼不存在3费用已经下发4对账单人联系电话为空5酒楼下发金额为负值6EXCEL表中已经存在酒楼7.酒楼下发金额为空值',
+  `err_msg` varchar(50) NOT NULL DEFAULT '' COMMENT '错误原因',
+  `fee_start` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段开始',
+  `fee_end` varchar(20) NOT NULL DEFAULT '' COMMENT '费用时间段结束',
+  `cost_type` tinyint(3) unsigned DEFAULT '1' COMMENT '费用类型1开机2APP推广',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `hotel_name` varchar(20) DEFAULT '' COMMENT '错误状态下酒店名称',
+  PRIMARY KEY (`id`),
+  KEY `statement` (`hotel_id`,`statement_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='公司对账单明细'
+
+
+
+增加说明：消息通知
+修改时间：2017.7.5 11：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_statement_notice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(3) unsigned DEFAULT '1' COMMENT '发送状态1成功0失败',
+  `detail_id` int(11) DEFAULT '0' COMMENT '对应明细账单的id',
+  `f_type` tinyint(3) unsigned DEFAULT '1' COMMENT '哪种短信类型1发送录入对账单通知2确认付款完成',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息更新时间',
+  `count` int(11) NOT NULL DEFAULT '0' COMMENT '最大失败数量',
+  PRIMARY KEY (`id`),
+  KEY `hotel_id` (`detail_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息通知'
+
+#########################以上sql均已执行###########################
+增加说明：图集对应的表
+修改时间：2017.6.28 14：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_mb_pictures` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `contentid` int(12)  NOT NULL DEFAULT 0 COMMENT '关联content表id名称',
+  `detail` text CHARACTER SET utf8 NOT NULL COMMENT '详细信息json串aid:1,atext:sdkfk',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
+
+增加说明：修改savor_admin_log的字段
+修改时间：2017.6.28 14：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_admin_log`     CHANGE `action` `action` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '' NOT NULL COMMENT '菜单';
+
+增加说明：文章增加新分类字段
+修改时间：2017.6.28 11：30
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_mb_content ADD COLUMN `hot_category_id` SMALLINT(3)  NOT NULL DEFAULT 0 COMMENT '文章分类1：创富 2：生活 3：专题' AFTER `category_id`
+
+UPDATE savor_mb_content SET hot_category_id=101 WHERE category_id IN(63,85)
+UPDATE savor_mb_content SET hot_category_id=102 WHERE category_id IN(68,67,66,76,83,74,78,82,64,81,79,84,75,70,80,71,65,87,88)
+增加说明：新分类表
+修改时间：2017.6.28 11：30
+修改人：张英涛
+执行sql:
+CREATE TABLE `savor_mb_hot_category` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '分类表主键Id',
+  `name` VARCHAR(50) CHARACTER SET utf8 NOT NULL COMMENT '名称',
+  `en_name` VARCHAR(50) DEFAULT '',
+  `img_url` TEXT CHARACTER SET utf8 NOT NULL COMMENT '图片Url',
+  `sort_num` INT(2) NOT NULL COMMENT '排序',
+  `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` BIGINT(20) NOT NULL COMMENT '操作人Id',
+  `state` TINYINT(4) NOT NULL DEFAULT '0' COMMENT '状态:0未删除1删除',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1
+
+#将savor_mb_category 里的数据导入到savor_mb_hot_category表里
+然后增加创富生活专题三个分类 id分别为101、102 、103
+
+
+
+增加说明：文章表新增首页封面图、内容字数两个字段
+修改时间：2017.6.28 11：30
+修改人：张英涛
+执行sql:
+ALTER TABLE `savor_mb_content` ADD COLUMN `index_img_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '首页封面图' AFTER `img_url`
+
+ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEFAULT 0 COMMENT '内容字数'
+
+
+
+
+增加说明：savor_mb_content添加tag标签顺序
+修改时间：2017.7.4 15：30
+修改人：白玉涛
+执行sql:
+ ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`;
+
+ALTER TABLE `cloud`.`savor_mb_content` ADD INDEX `index_order_tag` ( `order_tag` );
+
+增加说明：savor_account_info添加邮箱字段
+修改时间：2017.7.18 10：30
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_account_info`     ADD COLUMN `receipt_email` VARCHAR(50) DEFAULT '' NULL COMMENT '邮箱地址' AFTER `receipt_taxnum`,    CHANGE `receipt_taxnum` `receipt_taxnum` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '纳税人识别号';
+
+
+UPDATE `cloud`.`savor_account_info` SET `receipt_email`='zhao.cuiyan@savor.cn' WHERE `id`='1';
+UPDATE `cloud`.`savor_account_info` SET `receipt_email`='tian.yun@savor.cn' WHERE `id`='2';
+UPDATE `cloud`.`savor_account_info` SET `receipt_email`='yu.suijun@savor.cn' WHERE `id`='3';
+
+增加说明：savor_hotel添加收款公司名称，银行账号，开户行名称账号
+修改时间：2017.7.18 10：30
+修改人：白玉涛
+执行sql: ALTER TABLE `cloud`.`savor_hotel`     ADD COLUMN `collection_company` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '收款公司名称' AFTER `bill_tel`,     ADD COLUMN `bank_account` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '银行账号' AFTER `collection_company`,     ADD COLUMN `bank_name` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '开户行名称' AFTER `bank_account`;
+
+
+
+
+
+增加说明：savor_account_msg_log
+修改时间：2017.7.18 10：30
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_account_msg_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(3) unsigned DEFAULT '1' COMMENT '发送状态1成功0失败',
+  `type` tinyint(3) unsigned DEFAULT '1' COMMENT '付款模板类型1billid 2paymentid',
+  `detail_id` int(11) DEFAULT '0' COMMENT '对应明细账单的id',
+  `hotel_id` int(11) DEFAULT '0' COMMENT '对应酒店id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '消息更新时间',
+  `url` varchar(50) NOT NULL DEFAULT '' COMMENT 'url地址',
+  `smsId` varchar(50) DEFAULT '' COMMENT 'SMSid',
+  `tel` varchar(13) DEFAULT '' COMMENT '电话号',
+  `resp_code` varchar(50) DEFAULT '' COMMENT '返回状态码',
+  `msg_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '默认1为营销类短信',
+  PRIMARY KEY (`id`),
+  KEY `hotel_id` (`detail_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='电话发送短信通知LOG'
+
+
+

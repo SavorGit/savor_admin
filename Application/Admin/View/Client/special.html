@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>{$vinfo.title}-小热点</title>
+	</head>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background-color: #f6f2ed;
+		}
+		.top_img{
+			width: 100%;
+			height: 4.84rem;
+			display: block;
+		}
+		.cen_text{
+			width: 100%;
+			height: 100%;
+		}
+		.text_left{
+			width: 13%;
+			height: 100%;
+			position: relative;
+		}
+		.text_left img{
+			width: 0.78rem;
+			height: 0.86rem;
+			vertical-align:top;
+			position: absolute;
+			top: 0;
+		}
+		.box_nr {
+			width: 82%;
+			margin: 0 auto;
+			text-align: justify;
+			margin-bottom: 0.6rem;
+			display: inline-block;
+			margin-left: 13%;
+			line-height: 0.57rem;
+			letter-spacing: 5px;
+		}
+		
+		.box_nr p strong {
+			width: 100%;
+			font-size: 0.5rem;
+			color: #434343;
+			margin-top: 0.4rem;
+			display: block;
+			margin-bottom: 0.3rem;
+		}
+		
+		.box_nr p {
+			font-size: 0.3rem;
+			color: #575757;
+		}
+		
+		.box_nr img {
+			width: 100%;
+		}
+		
+		.box_nr p {
+			margin-bottom: 0.3rem;
+		}
+		.mioasu {
+			width: 100%;
+			margin-bottom: 0.4rem;
+			line-height: 0.5rem;
+		}
+		.m3 {
+			font-size: 0.2rem;
+			color: #b2afad;
+			float: left;
+			letter-spacing: 0px;
+		}
+		
+	</style>
+	<body>
+		<div class="zt">
+			<div>
+				
+			<img class="top_img" src="{$vinfo.img_url}"/>
+			</div>
+			<div class="cen_text">
+				<div class="text_left">
+					<img src="../../../../Public/admin/assets/img/text_left_img.png
+"/>
+				</div>
+				<div class="box_nr">
+					<p>
+						<strong>{$vinfo.title}</strong>
+					</p>
+					<div class="mioasu">
+						<span class="m3">{$vinfo.update_time}</span>
+						<div style="clear: both;"></div>
+					</div>
+					{$vinfo.content}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+		};
+
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}
+</script>

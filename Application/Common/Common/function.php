@@ -1,4 +1,5 @@
 <?php
+use Common\Lib\Crypt3Des;
 function insert_sort($arr){
     $count = count($arr);
 	for($i=1; $i<$count; $i++){
@@ -654,5 +655,77 @@ function changeTimeType($seconds){
 function get_oss_host(){
     $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
     return $oss_host;
+}
+/**
+ * 接口请求参数加密
+ * @param str $data
+ * @return Ambigous <boolean, mixed>
+ */
+function encrypt_data($data, $key = '')
+{
+    if (empty($key)) {
+        $key = C('SECRET_KEY');
+    }
+    $crypt = new Crypt3Des($key);
+    $result = $crypt->encrypt($data);
+    return $result;
+}
+
+/**
+ * 接口返回数据解密
+ * @param str $data
+ * @return Ambigous <boolean, mixed>
+ */
+function decrypt_data($data, $dejson = true, $key = '')
+{
+    if (empty($key)) {
+        $key = C('SECRET_KEY');
+    }
+    $crypt = new Crypt3Des($key);
+    $result = $crypt->decrypt($data);
+    if ($dejson) {
+        $res_data = array();
+        if ($result) {
+            $res_data = json_decode($result, true);
+        }
+    } else {
+        $res_data = $result;
+    }
+    return $res_data;
+}
+/**
+ * @author: vfhky 20130304 20:10
+ * @description: PHP调用新浪短网址API接口
+ *    * @param string $type: 非零整数代表长网址转短网址,0表示短网址转长网址
+ */
+function shortUrlAPI($type,$url){
+    /* 这是我申请的APPKEY，大家可以测试使用 */
+    $key = C('SHOW_URL_APP_KEY');
+    //'1562966081';
+    if($type)
+        $baseurl = 'http://api.t.sina.com.cn/short_url/shorten.json?source='.$key.'&url_long='.$url;
+    else
+        $baseurl = 'http://api.t.sina.com.cn/short_url/expand.json?source='.$key.'&url_short='.$url;
+    /* $ch=curl_init();
+     curl_setopt($ch, CURLOPT_URL,$baseurl);
+     curl_setopt($ch, CURLOPT_HEADER, 0);
+     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+     $strRes=curl_exec($ch);
+     curl_close($ch);  */
+     $strRes = file_get_contents($baseurl);
+    $arrResponse=json_decode($strRes,true);
+    if (isset($arrResponse->error) || !isset($arrResponse[0]['url_long']) || $arrResponse[0]['url_long'] == '')
+        return 0;
+            if($type)
+                return $arrResponse[0]['url_short'];
+            else
+                return $arrResponse[0]['url_long'];
+}
+function myTrim($str)
+{
+    $search = array(" ","　","\n","\r","\t");
+    $replace = array("","","","","");
+    return str_replace($search, $replace, $str);
 }
 ?>

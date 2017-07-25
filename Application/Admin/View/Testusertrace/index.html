@@ -1,0 +1,135 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/testusertrace/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              查询筛选：
+            </label>
+                <span class="input-group-btn">
+              <!--  <select name="type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <option value=1 >小平台</option>
+                 <option value=2 >机顶盒</option>
+               </select> -->
+          </div>
+
+          </div>
+          <div class="form-group" >
+              <div class="input-group input-group-sm date form_datetime" data-date="{$dwonload_time}" data-ymd="true">
+                <input name="download_time" type="text" size="14" class="form-control date" placeholder="首次下载时间" value="{$download_time}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+              </div>
+          </div>
+          <div class="form-group">
+          <div class="input-group input-group-sm pull-right">
+            <input size="50" type="text" class="form-control" name="mobile_id" value="{$mobile_id}" placeholder="手机设备号">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          </div>
+          
+
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr >
+            <th>手机标识</th>
+            <th>设备类型</th>
+            <th>设备型号</th>
+            <!-- <th>设备token</th> -->
+            <th>首次下载时间</th>
+            <th>首次投屏时间</th>
+            <th>首次点播时间</th>
+            <th>数据来源</th>
+            <th>查看</th>
+            <th>是否标记</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="手机标识">{$vlist.mobile_id}</td>
+              <td data-title="设备类型">{$vlist.device_type}</td>
+              <td data-title="设备型号">{$vlist.device_model}</td>
+              <!-- <td data-title="设备token">{$vlist.device_token}</td> -->
+              <td data-title="首次下载时间">{$vlist.download_time}</td>
+              <td data-title="首次投屏时间">{$vlist.projection_time}</td>
+              <td data-title="首次点播时间">{$vlist.demand_time}</td>
+              <td data-title="下载来源">
+              <if condition="$vlist.download_src eq '101'">
+              		机顶盒日志
+              <elseif condition="$vlist.download_src eq '102'" />
+              		手机日志
+              <elseif condition="$vlist.download_src eq '5'" />
+              		二维码扫描
+              </if>
+              
+              
+              </td>
+              <!-- <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="投屏明细" target="dialog" mask="true" href="{$host_name}/usertrace/projectiondetail?mobile_id={$vlist.mobile_id}" rel="hotel/detail" title="{$vlist.name}酒楼详情"class="btn btn-success btn-icon">
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+                  <a data-tip="点播明细" target="dialog" data-placement="left" mask="true"  href="{$host_name}/usertrace/demanddetail?mobile_id={$vlist.mobile_id}" class="btn btn-success btn-icon">
+
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+                  <a data-tip="阅读明细" target="dialog" mask="true" href="{$host_name}/usertrace/readdetail?mobile_id={$vlist.mobile_id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+
+                </div>
+              </td> -->
+               <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="投屏点播明细" target="dialog" mask="true" href="{$host_name}/usertrace/detail?mobile_id={$vlist.mobile_id}" rel="usertrace/projectiondetail"  class="btn btn-success btn-icon" >
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+                 
+                  <a data-tip="阅读明细" target="dialog" mask="true" href="{$host_name}/usertrace/readdetail?mobile_id={$vlist.mobile_id}" rel="usertrace/projectiondetail"  class="btn btn-success btn-icon" >
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+                </div>
+
+               
+              </td>
+              <td>
+              
+              	{$vlist.user_type}
+              
+              </td>
+              
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

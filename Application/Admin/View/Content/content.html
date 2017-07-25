@@ -17,10 +17,10 @@
               <div class="input-group-sm input-group">
                 <label>分类：</label>
                 <span class="input-group-btn input-group-sm">
-                <select name="category_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <select name="hot_catgory_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
 	                <option value=0 >全部</option>
 	                <volist name="vcainfo" id="vo">
-	                  <option value="{$vo.id}" <if condition="$vo.id eq $category_id">selected</if>>{$vo.name}</option><br>
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $hot_category_id">selected</if>>{$vo.name}</option><br>
 	                </volist>
               </select>
               </span>
@@ -102,14 +102,23 @@
 
       <div class="form-inline" style="margin-top:30px;">
         <div class="tools-group s2">
+
+        <a class="btn btn-success btn-sm add" href="{$host_name}/article/setSpecial"  title="设置专题" target="dialog" mask="true">
+            <i class="fa fa-plus"></i><span>设置专题</span></a>
+
+            <a class="btn btn-success btn-sm add" href="{$host_name}/article/hotsortmanager" rel="article/hotsortmanager"  title="分类内容排序" target="navTab" mask="true">
+                <i class="fa fa-plus"></i><span>分类内容排序</span></a>
+
+        <a class="btn btn-success btn-sm add" href="{$host_name}/article/addSpecial"  title="发布专题" target="dialog" mask="true">
+            <i class="fa fa-plus"></i><span>发布专题</span></a>
+          <a class="btn btn-success btn-sm add" href="{$host_name}/article/addpictures"  title="发布图集" target="dialog" mask="true">
+            <i class="fa fa-plus"></i><span>发布图集</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addarticle" title="发布文章" target="dialog" mask="true">
             <i class="fa fa-sign-in"></i><span>发布文章</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addvideo"  title="发布视频" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>发布视频</span></a>
-
-          <a class="btn btn-success btn-sm add" href="{$host_name}/article/homemanager" rel="article/homemanager"  title="首页内容管理" target="navTab" mask="true">
-            <i class="fa fa-plus"></i><span>首页内容管理</span></a>
-
+          <a class="btn btn-success btn-sm add" href="{$host_name}/article/homemanager" rel="article/homemanager"  title="点播内容管理" target="navTab" mask="true">
+            <i class="fa fa-plus"></i><span>点播内容管理</span></a>
 
 
         </div>
@@ -132,6 +141,7 @@
             <th>序号</th>
             <th>名称</th>
             <th>分类</th>
+              <th>老的分类</th>
             <th style="display: none;">>封面图片</th>
             <th>内容类型</th>
             <th>创建人</th>
@@ -150,7 +160,8 @@
               </if>
               </td>
               <td data-title="名称">{$vlist.title}</td>
-              <td data-title="名称">{$vlist.cat_name}</td>
+              <td data-title="分类">{$vlist.cat_name}</td>
+                <td data-title="老的分类">{$vlist.old_cat_name}</td>
               <td data-title="封面图片" style="display: none;"><a data-tip="预览图片" target="dialog" mask="true"
                                        href="{$host_name}/article/showpic?pic={$vlist.img_url}"   class="btn btn-success btn-icon">
                 <i class="icon-list"></i>
@@ -182,11 +193,18 @@
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true"
+                  <if condition="$vlist['hot_category_id'] eq 103">
+                  	href="{$host_name}/article/addspecial?id={$vlist.id}&acttype=3"
+                  <else />
+                  
                   <if condition="$vlist['type'] eq 3">
                     href="{$host_name}/article/addvideo?id={$vlist.id}&acttype=3"
+                      <elseif condition="$vlist['type'] eq 2"/>href="{$host_name}/article/editpictures?id={$vlist.id}"
                     <else/>
                     href="{$host_name}/article/addarticle?id={$vlist.id}&acttype=1"
-                  </if> class="btn btn-success btn-icon">
+                  </if>
+                  </if>
+                   class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>
@@ -198,6 +216,7 @@
                 </div>
 
                 <div class="tools-edit">
+                
                   <a data-tip="预览"
 
                   href="__ROOT__/content/{$vlist.id}.html"
@@ -206,9 +225,13 @@
                      target="_blank"  class="btn btn-success btn-icon">
                     <i class="fa fa-eye"></i>
                   </a>
-                  <a data-tip="添加至首页" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
+                  <if condition="$vlist.type eq 3">
+                    <if condition="$vlist.media_id neq 0">
+                  <a data-tip="添加至点播内容" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/article/doaddhome?artid={$vlist.id}&acttype=1"    class="btn btn-success btn-icon">
                     <i class="fa fa-bullhorn"></i>
                   </a>
+                  </if>
+                  </if>
                   
                 </div>
                 <div class="tools-edit">
@@ -247,6 +270,7 @@
 <script src="Public/admin/assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript">
         $(function(){
+            $('select').css({ "cssText": "display:none !important" });
           $(".form-control.date").datetimepicker({
             minView: "month", //选择日期后，不会再跳转去选择时分秒
             language:  'zh-CN',

@@ -8054,7 +8054,7 @@ UE.Editor.defaultOptions = function(editor){
         autoClearEmptyNode: true,
         fullscreen: false,
         readonly: false,
-        zIndex: 999,
+        zIndex: 998,
         imagePopup: true,
         enterTag: 'p',
         customDomain: false,
@@ -10792,7 +10792,7 @@ UE.plugins['autotypeset'] = function(){
  */
 
 UE.plugin.register('autosubmit',function(){
-    return {
+   /* return {
         shortcutkey:{
             "autosubmit":"ctrl+13" //手动提交
         },
@@ -10811,7 +10811,7 @@ UE.plugin.register('autosubmit',function(){
                 }
             }
         }
-    }
+    }*/
 });
 
 // plugins/background.js

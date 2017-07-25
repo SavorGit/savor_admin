@@ -31,6 +31,8 @@ $config = array(
     'SITE_NAME'=> '寻味后台管理',
     'SHOW_ERROR_MSG' =>  true, //显示错误信息
     'OSS_ADDR_PATH'=>'media/resource/',
+	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
+	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
 
 );
 if(APP_DEBUG === false){
@@ -115,6 +117,8 @@ $config['MANGER_KEY'] = array(
     'ad' =>'广告节点',
     'hotel' =>'酒楼节点',
     'report'=>'报表节点',
+    'testreport'=>'测试报表节点',
+    'checkaccount'=>'对账系统节点',
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
@@ -138,6 +142,26 @@ $config['source_type'] = array(
     '4'=>'节目',
     '5'=>'服务员扫码',
 );
+$config['fee_type'] = array(
+    '1'=>'开机费',
+    '2'=>'APP推广',
+);
+$config['NOTICE_STATAE'] = array(
+    '1'=>'',
+    '2'=>'发送失败(酒楼不存在)',
+    '3'=>'发送失败(酒楼费用已经下发)',
+    '4'=>'发送失败(对账单联系人电话为空)',
+    '5'=>'发送失败(酒楼下发金额为负值)',
+    '6'=>'发送失败(EXCEL表中已经存在酒楼)',
+    '7'=>'发送失败(酒楼下发金额为空值)',
+);
+$config['CHECK_STATAE'] = array(
+    '0'=>'未读',
+    '1'=>'已读',
+    '2'=>'已确认',
+    '3'=>'已付款',
+    '99'=>'未读',
+);
 $config['MOBILE_TYPE'] = array(
     '1' => array('id'=>1, 't'=>'Iphone 4', 'w'=>'320', 'h'=>'480'),
     '2' => array('id'=>2, 't'=>'Iphone 5', 'w'=>'320', 'h'=>'568'),
@@ -150,5 +174,12 @@ $config['MOBILE_TYPE'] = array(
     '9' => array('id'=>9, 't'=>'Nexus 6P', 'w'=>'435', 'h'=>'773'),
     '10' => array('id'=>10, 't'=>'Laptop MDPI', 'w'=>'1280', 'h'=>'800'),
     '11' => array('id'=>11, 't'=>'Laptop HiDPI', 'w'=>'1440', 'h'=>'900'),
+);
+$config['SMS_CONFIG'] = array(
+    'accountsid'=>'6a929755afeded257916ca68518ec1c3',
+    'token'     =>'66edd50a46c882a7f4231186c44416d8',
+    'appid'     =>'a982fdb55a2441899f2eaa64640477c0',
+    'bill_templateid'=>'76285',
+    'payment_templateid'=>'78145',
 );
 return $config;

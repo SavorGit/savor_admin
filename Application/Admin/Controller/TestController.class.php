@@ -242,16 +242,16 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
         $this->display('index');
     }
 
-    public function daoru(){
+    public function daorubak(){
         vendor("PHPExcel.PHPExcel.IOFactory");
         $filetmpname = APP_PATH.'../public/2.xls';
         $objPHPExcel = \PHPExcel_IOFactory::load($filetmpname);
         $arrExcel = $objPHPExcel->getSheet(0)->toArray();
         //删除不要的表头部分，我的有三行不要的，删除三次
         array_shift($arrExcel);
-       // array_shift($arrExcel);
-       // array_shift($arrExcel);//现在可以打印下$arrExcel，就是你想要的数组啦
-      //  $arrExcel = array_slice($arrExcel,3,5);
+        // array_shift($arrExcel);
+        // array_shift($arrExcel);//现在可以打印下$arrExcel，就是你想要的数组啦
+        //  $arrExcel = array_slice($arrExcel,3,5);
         //查询数据库的字段
         $m = M('a2');
         $fieldarr = $m->query("describe savor_a2");
@@ -272,10 +272,87 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
             }
             $fields[] = array_combine($field,$v);//将excel的一行数据赋值给表的字段
         }
-       // var_dump($fields);
+        // var_dump($fields);
 
         //批量插入
         if(!$ids = $m->addAll($fields)){
+            //$this->error("没有添加数据");
+            echo 'faile';
+        }else{
+            echo 'succes';
+        }
+        // $this->success('添加成功');
+    }
+
+    public function daoru(){
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        $filetmpname = APP_PATH.'../public/little.xlsx';
+        $objPHPExcel = \PHPExcel_IOFactory::load($filetmpname);
+        $arrExceld = $objPHPExcel->getSheet(0)->toArray();
+        var_export(array_slice($arrExceld,0,3));
+
+        //$arrExceld = array_slice($arrExceld,0,3);
+        $tmp = array();
+        foreach($arrExceld as $k=>$v){
+            $ard = trim($arrExceld[$k][0]);
+            if(mb_strlen($ard)<2 || mb_strlen($ard)>15){
+                continue;
+            }else{
+                if(in_array($ard,$tmp)) {
+                    unset($arrExceld[$k]);
+                    continue;
+                }else{
+                    $tmp[] = $ard;
+                    $arrExcel[$k]['tagname'] = $ard;
+                    $arrExcel[$k]['create_time'] = date("Y-m-d H:i:s");
+                    $arrExcel[$k]['create_time'] = date("Y-m-d H:i:s");
+                    $arrExcel[$k]['update_time'] = date("Y-m-d H:i:s");
+                    $arrExcel[$k]['flag'] = 1;
+                    $arrExcel[$k]['num'] = 0;
+                }
+
+            }
+
+        }
+
+        dump($arrExcel);
+
+
+        //删除不要的表头部分，我的有三行不要的，删除三次
+       // array_shift($arrExcel);
+       // array_shift($arrExcel);
+       // array_shift($arrExcel);//现在可以打印下$arrExcel，就是你想要的数组啦
+      //  $arrExcel = array_slice($arrExcel,3,5);
+        //查询数据库的字段
+        $m = M('taglist');
+        $fieldarr = $m->query("describe savor_taglist");
+
+       // $req = $m->query("truncate savor_taglist");
+
+        foreach($fieldarr as $v){
+            $field[] = $v['field'];
+        }
+        array_shift($field);
+        var_dump($field);
+
+        $field = array(
+            0=>'tagname',
+            1=>'create_time',
+            2=>'update_time',
+            3=>'flag',
+            4=>'num',
+        );
+        //var_dump($arrExcel);
+        /*foreach($arrExcel as $k=>$v){
+            if($k == 1066){
+                break;
+            }
+            $fields[] = array_combine($field,$v);//将excel的一行数据赋值给表的字段
+        }*/
+       // var_dump($fields);
+
+        //批量插入
+        if(!$ids = $m->addAll($arrExcel)){
             //$this->error("没有添加数据");
             echo 'faile';
         }else{

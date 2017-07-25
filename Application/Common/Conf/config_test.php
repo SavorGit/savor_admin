@@ -31,12 +31,12 @@ $config_db =  array(
  	'REDIS_CONFIG' => $redis,
     
     //OSSS上传配置
-	'OSS_ACCESS_ID'   => 'tnDh4AQqRYbV9mq8',
-	'OSS_ACCESS_KEY'  => 'sv8aZCKEJhQ0nwKHj8uEnw3ADwcM24',
-	//'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
-	'OSS_HOST'=>'devp.oss.littlehotspot.com',
+	'OSS_ACCESS_ID'   => 'LTAITjXOpRHKflOX',
+	'OSS_ACCESS_KEY'  => 'Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt',
+	'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
+	//'OSS_HOST'=>'devp.oss.littlehotspot.com',
     'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
-	'OSS_HOST_NEW'=> 'devp.oss.rerdian.com',
+	'OSS_HOST_NEW'=> 'devp.oss.littlehotspot.com',
 	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',

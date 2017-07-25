@@ -13,6 +13,60 @@ class ArticleModel extends BaseModel
 {
 	protected $tableName='mb_content';
 
+
+	public function getRecommend($where, $field, $sor_arr){
+
+		foreach($sor_arr as $kv){
+			$set_str .= " AND find_in_set($kv, order_tag)";
+		}
+		$sql =" select $field from savor_mb_content where $where and order_tag !='' $set_str ";
+		$result = $this -> query($sql);
+		return  $result;
+	}
+
+
+	public function getArtinfoById($where){
+		$sql = "  select mc.order_tag,mc.id artid,m.oss_addr as name,mcat.name as category,mc.index_img_url,mc.title,mc.duration,mc.img_url as imgurl,mc.content_url as contenturl,mc.tx_url as videourl,mc.share_title as shareTitle,
+	           mc.share_content as shareContent,mc.type,mc.content,mc.media_id as mediaId,mc.update_time as updatetime,mc.source as sourceName  from  savor_mb_content mc  left join savor_media m on mc.media_id = m.id left  join savor_mb_hot_category as mcat on mc.hot_category_id = mcat.id where 1=1 $where";
+		$result = $this->query($sql);
+		return $result[0];
+	}
+
+
+	public function getMaxSort($where){
+		$sql ="select `id`,`sort_num` from savor_mb_content where sort_num = ( select max(`sort_num`) from savor_mb_content where $where ) ";
+		$result =  $this->query($sql);
+		return $result[0];
+	}
+
+
+
+	public function getOneRow($where, $field,$order){
+		$list = $this->where($where)
+			->order($order)
+			->limit(1)
+			->field($field)->select();
+		if(empty($list)){
+			return false;
+		}else{
+			return $list[0];
+		}
+
+	}
+
+
+	public function updateSortNum($artid_arr, $sort_arr){
+		    $id_str ="";
+			foreach($artid_arr as $ak=>$av){
+				$id_str .=  ' ('.$av.','.$sort_arr[$ak].')'.',';
+			}
+		    $id_str = substr($id_str,0,-1);
+			$sql =" INSERT INTO `savor_mb_content` (`id`,`sort_num`) values $id_str ON DUPLICATE KEY UPDATE sort_num=VALUES(sort_num)";
+			return $this->execute($sql);
+
+
+	}
+
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 		return $list;
@@ -34,13 +88,38 @@ class ArticleModel extends BaseModel
 			->limit($start,$size)
 			->select();
 
-
 		$count = $this->where($where)
 			->count();
 
 		$objPage = new Page($count,$size);
 
 		$show = $objPage->admin_page();
+
+
+		$data = array('list'=>$list,'page'=>$show);
+
+
+		return $data;
+
+	}//End Function
+
+
+	public function getdiaList($where, $order='id desc', $start=0,$size=5)
+	{
+
+
+		$list = $this->where($where)
+			->order($order)
+			->limit($start,$size)
+			->select();
+
+
+		$count = $this->where($where)
+			->count();
+
+		$objPage = new Page($count,$size);
+
+		$show = $objPage->admin_pagedialog();
 
 
 		$data = array('list'=>$list,'page'=>$show);
@@ -128,7 +207,7 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 			$contentid = $value['content_id'];
 			$info = $this->find($contentid);
 			$value['media_id'] = $info['media_id'];
-			$value['category_id'] = $info['category_id'];
+			$value['category_id'] = $info['hot_category_id'];
 			$value['operators'] = $info['operators'];
 			$value['title'] = $info['title'];
 			$value['type'] = $info['type'];
@@ -149,12 +228,19 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 	}
 
 	public function  changeCatname($result){
-		$catModel = new CategoModel;
+		$catModel = new HotCategoryModel();
 		$cat_arr =  $catModel->field('id,name')->select();
+		$oldcatModel = new CategoModel();
+		$oldcat_arr =  $oldcatModel->field('id,name')->select();
 		foreach ($result as &$value){
 			foreach ($cat_arr as  $row){
-				if($value['category_id'] == $row['id']){
+				if($value['hot_category_id'] == $row['id']){
 					$value['cat_name'] = $row['name'];
+				}
+			}
+			foreach ($oldcat_arr as  $row){
+				if($value['category_id'] == $row['id']){
+					$value['old_cat_name'] = $row['name'];
 				}
 			}
 		}
@@ -209,6 +295,15 @@ $byt = $this->byteFormat($info['content-length'],'MB');
 	    $result = $this->where(array('category_id'=>$category_id))->count();
 	    return $result;
 	}
-
+    /**
+     * @desc 根据来源统计文章数量
+     */
+	public function countNumBySourceId($source_id = 0){
+	    if($source_id){
+	        return $this->where('source_id='.$source_id)->count();
+	    }else {
+	        return false;
+	    }
+	}
 
 }//End Class

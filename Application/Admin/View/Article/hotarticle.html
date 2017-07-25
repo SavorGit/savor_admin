@@ -1,0 +1,88 @@
+<include file="Public/script"/>
+<!--显示列表样式333331 start-->
+<div class="pageHeader">
+  <form name="hotart" onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/article/hotsortmanager" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-3 col-md-2">
+          <div class="input-group input-group-sm">
+             <span class="input-group-btn input-group-sm">
+                <select id="hotcat" name="hot_catgory_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                  <volist name="vcainfo" id="vo">
+                    <option value="{$vo.id}" <if condition="$vo.id eq $hot_category_id">selected</if>>{$vo.name}</option><br>
+                  </volist>
+                </select>
+              </span>
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/article/addHotSort?catid={$hot_category_id}" title="排序" target="dialog" mask="true"><i class="fa fa-plus"></i> 排序</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>文章id</th>
+            <th>文章标题</th>
+            <th>分类</th>
+            <th>内容类型</th>
+            <th>排序</th>
+            <th>最后时间</th>
+
+
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="标题">{$vlist.title}</td>
+              <td data-title="分类">{$vlist.cat_name}</td>
+              <td data-title="内容类型">
+                <if condition="$vlist.type eq 1"> 图文
+                  <elseif condition="$vlist.type eq 2"/>图集
+                  <elseif condition="$vlist.type eq 3"/>
+                  <if condition="$vlist.media_id eq 0">
+                    视频（非点播）
+                    <else/> 视频（点播）
+                  </if>
+                  <else/> 纯文本
+                </if>
+              </td>
+              <td data-title="排序">{$vlist.indnum}</td>
+              <td data-title="最后时间">{$vlist.update_time}</td>
+
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+  $(function() {
+    $('select').css({ "cssText": "display:none !important" });
+    $("#hotcat").change(function(){
+      $("form[name='hotart']").submit();
+    });
+  });
+</script>

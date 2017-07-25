@@ -57,7 +57,7 @@ class UserController extends BaseController {
         if(IS_POST) {
             //获取参数
             $groupId= I('group', 0, 'int');
-            $userId  = I('id', '', 'int');
+            $userId  = I('id', 0, 'int');
             $remark  = I('remark');
             $username= I('username');
             $userpwd = I('userpwd');
