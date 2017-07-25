@@ -30,6 +30,7 @@ class ContentController extends BaseController {
 
         $where = "1=1";
         $name = I('titlename');
+        $nickname = I('nickname');
         $type = I('type',10,'intval');//10为全部
 
         //$where .= " AND state=2 ";
@@ -67,10 +68,25 @@ class ContentController extends BaseController {
             $this->assign('name',$name);
             $where .= "	AND title LIKE '%{$name}%'";
         }
+        if($nickname){
+            $this->assign('nickname',$nickname);
+            $where .= "	AND ( operators = '{$nickname}'";
+            $user  = new \Admin\Model\UserModel();
+            $dat['username'] = $nickname;
+            $userinfo = $user->where($dat)->find();
+
+            if($userinfo){
+                $userid = $userinfo['id'];
+                $where .= "	or creator_id = $userid ) ";
+            }else{
+                $where .= "	) ";
+            }
+        }
         if($type!=10){
             $where .= "	AND type='$type'";
         }
         $result = $artModel->getList($where,$orders,$start,$size);
+
 	    $result['list'] = $artModel->changeCatname($result['list']);
 	    $result['list'] = $homeModel->ishomeContent($result['list']);
 	    

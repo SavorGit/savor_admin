@@ -435,8 +435,7 @@ class ArticleController extends BaseController {
         $this->assign('pagecount',$pagearr['page']);
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
-        $article_list = $m_article_source->getAll();
-         
+        $article_list = $m_article_source->order('convert(`name` using gbk) asc')->getAll();
         $this->assign('sourcelist',$article_list);
         $this->display('addvideo');
     }
@@ -612,8 +611,8 @@ WHERE id IN (1,2,3)*/
         }
         $covermedia_id = I('post.covervideo_id');//视频封面id
         if(empty($covermedia_id)){
-            $this->output('失败封面必填!', 'content/getlist',3,0);
-            die;
+            /*$this->output('失败封面必填!', 'content/getlist',3,0);
+            die;*/
         }else{
             if($covermedia_id>0){//首页封面图
                 $oss_addr = $mediaModel->find($covermedia_id);
@@ -801,7 +800,7 @@ WHERE id IN (1,2,3)*/
         $pagearr = $this->getPageTag();
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
-        $article_list = $m_article_source->getAll();
+        $article_list = $m_article_source->order('convert(`name` using gbk) asc')->getAll();
        
         $this->assign('sourcelist',$article_list);
         $this->assign('pageinfo',$pagearr['list']);
@@ -861,8 +860,8 @@ WHERE id IN (1,2,3)*/
             $save['img_url'] = $oss_addr;
             $save['media_id'] = $mediaid;
         }else{
-            $this->output('失败封面必填!', 'content/getlist',3,0);
-            die;
+            /*$this->output('失败封面必填!', 'content/getlist',3,0);
+            die;*/
         }
         $index_media_id = I('post.index_media_id');
         if(empty($index_media_id)){
@@ -1080,8 +1079,7 @@ WHERE id IN (1,2,3)*/
 
         //添加来源
         $m_article_source = new \Admin\Model\ArticleSourceModel();
-        $article_list = $m_article_source->getAll();
-
+        $article_list = $m_article_source->order('convert(`name` using gbk) asc')->getAll();
         $this->assign('sourcelist',$article_list);
 
 

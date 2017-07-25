@@ -122,6 +122,7 @@
                       <span id="covervideo_idimgname"></span>
                     </a>
                   </div>
+                  <span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议图片尺寸比例为宽:1242px,高:802px,最小宽:750px,高484px</span></div>
                   <div>
                     <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
                       选择封面
@@ -149,6 +150,7 @@
 			                       <span id="select_media_idimgname"></span>
 			                    </a>
 			                  </div>
+                              <span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议头条封面尺寸比例为宽:1142px,高:844px,最小宽:690px,高510px</span></div>
 			                  <div>
 			                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResourceNew?filed=select_media_id&rtype=2" data-browse-file>
 			                      选择图片
@@ -340,6 +342,21 @@
             </div>
           </div>
 
+          <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+              来源：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+              <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
+              <select name="source_id" class="form-control bs-select" title="请选择..." required>
+
+                <volist name="sourcelist" id="row">
+                  <option value="{$row['id']}" <if condition="$row['id'] eq $vainfo['source_id']"> selected </if> > {$row['name']} </option>
+                </volist>
+
+              </select>
+            </div>
+          </div>
 
             <div class="form-group row">
               <label class="col-xs-12 col-sm-2 control-label">
@@ -364,21 +381,7 @@
               </div>
             </div>-->
 
-            <div class="form-group row">
-              <label class="col-xs-12 col-sm-2 control-label">
-                来源：
-              </label>
-              <div class="col-xs-12 col-sm-10">
-                <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
-              	<select name="source_id" class="form-control bs-select" title="请选择..." required>
 
-					<volist name="sourcelist" id="row">
-						<option value="{$row['id']}" <if condition="$row['id'] eq $vainfo['source_id']"> selected </if> > {$row['name']} </option>
-					</volist>
-
-				</select>
-              </div>
-            </div>
 
 
 
