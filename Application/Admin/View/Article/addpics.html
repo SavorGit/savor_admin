@@ -182,12 +182,29 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-left:36px;line-height: 30px;">
+            来源：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
+            <select name="source_id" class="form-control bs-select" title="请选择..." required>
+
+                <volist name="sourcelist" id="row">
+                    <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['source_id']"> selected </if> > {$row['name']} </option>
+                </volist>
+
+            </select>
+        </div>
+    </div>
+
     <div class="pic_list" style="width: 96%;margin: 0 auto;height: 360px;margin-top: 45px;overflow: auto;border: 1px solid black;margin-bottom: 20px;">
         <div class="pis_top">
             <span style="margin-left: 15px;">目标序号</span>
             <span style="margin-left: 40px;">图片</span>
             <span style="margin-left: 162px;">内容描述</span>
         </div>
+        <div><span class="form-group row" style="display: block;margin-top: 15px;margin-bottom: 15px;margin-left: 25px;font-size: 12px;">提示:建议图集尺寸比例为宽:1142px,高:844px,最小宽:690px,高510px</span></div>
         <div class="pic">
             <span style="float: left;margin-left: 33px;">1</span>
             <a class="imga" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>
@@ -320,21 +337,7 @@
 
 
 
-    <div class="form-group row">
-        <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-left:36px;line-height: 30px;">
-            来源：
-        </label>
-        <div class="col-xs-12 col-sm-10">
-            <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
-            <select name="source_id" class="form-control bs-select" title="请选择..." required>
 
-                <volist name="sourcelist" id="row">
-                    <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['source_id']"> selected </if> > {$row['name']} </option>
-                </volist>
-
-            </select>
-        </div>
-    </div>
     <!--预约发布-->
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-left:36px;line-height: 30px;">

@@ -346,6 +346,22 @@
 
           <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
+              来源：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+              <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
+              <select name="source_id" class="form-control bs-select" title="请选择..." required>
+
+                <volist name="sourcelist" id="row">
+                  <option value="{$row['id']}" <if condition="$row['id'] eq $vainfo['source_id']"> selected </if> > {$row['name']} </option>
+                </volist>
+
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
               内容：
             </label>
             <div class="col-xs-12 col-sm-10">
@@ -367,21 +383,7 @@
             </div>
           </div>-->
 
-          <div class="form-group row">
-            <label class="col-xs-12 col-sm-2 control-label">
-              来源：
-            </label>
-            <div class="col-xs-12 col-sm-10">
-              <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
-              <select name="source_id" class="form-control bs-select" title="请选择..." required>
 
-                <volist name="sourcelist" id="row">
-                  <option value="{$row['id']}" <if condition="$row['id'] eq $vainfo['source_id']"> selected </if> > {$row['name']} </option>
-                </volist>
-
-              </select>
-            </div>
-          </div>
 
 
 
