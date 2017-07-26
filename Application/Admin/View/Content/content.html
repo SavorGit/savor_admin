@@ -41,6 +41,21 @@
               </span>
               </div>
         </div>
+          <div class="form-group">
+              <div class="input-group-sm input-group">
+                  <label>用户昵称：</label>
+                <span class="input-group-btn input-group-sm">
+                <select name="nickname" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                    <option value="0">全部</option>
+                    <volist name="user_list_arr" id="row">
+                        <option value="{$row['id']}"
+                        <if condition="$row['id'] eq $nckid">selected</if>
+                        >{$row['remark']}</option><br>
+                    </volist>
+                </select>
+              </span>
+              </div>
+          </div>
          <div class="form-group">
 
           <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$timeinfo.now_time}">
@@ -95,15 +110,9 @@
 
         </div>
 
-          <div class="form-group" style="margin-left:350px;">
-              <div class="input-group input-group-sm">
-                  <input type="text" class="form-control" name="nickname" value="{$nickname}" placeholder="输入用户昵称或者登录名称查找">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
-              </div>
 
-          </div>
+
+
           </div>
       </div>
 

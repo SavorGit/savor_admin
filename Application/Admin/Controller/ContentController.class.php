@@ -30,7 +30,7 @@ class ContentController extends BaseController {
 
         $where = "1=1";
         $name = I('titlename');
-        $nickname = I('nickname');
+        $nickid = I('nickname');
         $type = I('type',10,'intval');//10为全部
 
         //$where .= " AND state=2 ";
@@ -68,18 +68,16 @@ class ContentController extends BaseController {
             $this->assign('name',$name);
             $where .= "	AND title LIKE '%{$name}%'";
         }
-        if($nickname){
-            $this->assign('nickname',$nickname);
-            $where .= "	AND ( operators = '{$nickname}'";
+        if($nickid){
+            $this->assign('nckid',$nickid);
             $user  = new \Admin\Model\UserModel();
-            $dat['username'] = $nickname;
+            $dat['id'] = $nickid;
             $userinfo = $user->where($dat)->find();
-
             if($userinfo){
-                $userid = $userinfo['id'];
-                $where .= "	or creator_id = $userid ) ";
-            }else{
-                $where .= "	) ";
+                $usermark = $userinfo['remark'];
+                $where .= "	AND ( operators = '{$usermark}'";
+                $where .= "	or creator_id = $nickid ) ";
+
             }
         }
         if($type!=10){
@@ -136,6 +134,22 @@ class ContentController extends BaseController {
 	    $where = " state=1";
     	$field = 'id,name';
     	$category_list = $m_hot_category->getWhere($where, $field);
+
+        //获取内容部组所有
+        $groupModel = new \Admin\Model\SysusergroupModel();
+        $userModel  = new \Admin\Model\UserModel();
+        $map['name'] = array('like','%内容部%');
+        $field='id';
+        $group_list = $groupModel->where($map)->field($field)->select();
+        foreach($group_list as $v){
+            $g[] = $v['id'];
+        }
+        array_unique($g);
+        $g = implode(',', $g);
+        $us['groupId']  = array('in',$g);
+        $field = 'id,username,remark';
+        $user_array_list = $userModel->where($us)->field($field)->select();
+        $this->assign('user_list_arr',$user_array_list);
     	$this->assign('vcainfo',$category_list);
 	    $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('content_type_arr',$this->content_type_arr);

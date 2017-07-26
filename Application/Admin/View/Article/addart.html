@@ -16,7 +16,7 @@
 	.big {
 		display: none;
 	}
-	
+
 	.addbig {
 		position: absolute;
 		width: 500px;
@@ -76,8 +76,8 @@
 
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
-                分类:
-              </label>
+								分类:
+							</label>
 							<div class="col-xs-12 col-sm-10">
 								<select name="hot_category_id" class="form-control bs-select" title="请选择..." required>
 
@@ -105,16 +105,16 @@
 						</div>
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
-                标题：
-              </label>
+								标题：
+							</label>
 							<div class="col-xs-12 col-sm-10">
 								<input name="title" type="text" value="{$vinfo.title}" minlength="1" maxlength="40" class="form-control" required/>
 							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
-                封面图片：
-              </label>
+								封面图片：
+							</label>
 							<div class="col-xs-12 col-sm-10">
 								<div class="fileinput fileinput-new" data-fileinput>
 									<div class="fileinput-preview thumbnail" data-trigger="fileinput">
@@ -127,11 +127,8 @@
 											<span id="media_idimgname"></span>
 										</a>
 									</div>
-	<span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议图片尺寸比例为宽:1242px,高:802px,最小宽:750px,高484px</span>
-
-</div>
-
 									<div>
+										<span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议图片尺寸比例为宽:1242px,高:802px,,最小宽750px 高484px</span>
 										<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
 											选择图片
 										</a>
@@ -143,38 +140,37 @@
 							</div>
 						</div>
 						<div class="form-group row" id="choosemepic">
-			              <label class="col-xs-12 col-sm-2 control-label">
-			                	上传首页封面(非必填)：
-			              </label>
-			              <div class="col-xs-12 col-sm-10">
-			                <div class="fileinput fileinput-new" data-fileinput>
-			                  <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-			                    <a data-target="#modal-file" href="javascript:void(0)">
-			                      <if condition="($vinfo['index_img_url'] eq 'NULL') OR $vinfo['index_img_url'] eq ''">
-			                        <img id="select_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
-			                        <else />
-			                        <img id="select_media_idimg" src="{$vinfo.index_oss_addr}" border="0" />
-			                      </if>
-			                       <span id="select_media_idimgname"></span>
-			                    </a>
-			                  </div>
-								<span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议头条封面尺寸比例为宽:1142px,高:844px,最小宽:690px,高510px</span>
-</div>
-			                  <div>
-			                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResourceNew?filed=select_media_id&rtype=2" data-browse-file>
-			                      选择图片
-			                    </a>
-			                    <input type="hidden" name="index_media_id" id="select_media_id" value="{$vinfo.index_oss_addr}">
-			                    <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
-			                      删除 </a>
-			                  </div>
-			                </div>
-			              </div>
-			            </div>
+							<label class="col-xs-12 col-sm-2 control-label">
+								上传首页封面(非必填)：
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<div class="fileinput fileinput-new" data-fileinput>
+									<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+										<a data-target="#modal-file" href="javascript:void(0)">
+											<if condition="($vinfo['index_img_url'] eq 'NULL') OR $vinfo['index_img_url'] eq ''">
+												<img id="select_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+												<else />
+												<img id="select_media_idimg" src="{$vinfo.index_oss_addr}" border="0" />
+											</if>
+											<span id="select_media_idimgname"></span>
+										</a>
+									</div>
+									<div>
+										<span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议图片尺寸比例为宽:1142px,高:844px,最小宽690px 高510px</span>
+										<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResourceNew?filed=select_media_id&rtype=2" data-browse-file>
+											选择图片
+										</a>
+										<input type="hidden" name="index_media_id" id="select_media_id" value="{$vinfo.index_oss_addr}">
+										<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+											删除 </a>
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="form-group row" id="biaoqian">
 							<label class="col-xs-12 col-sm-2 control-label">
-              选择标签:
-              </label>
+								选择标签:
+							</label>
 							<button type="button" id="tianjia" class="btn btn-primary" style="margin-left: 20px; background-color: #aed316;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModa">添加标签</button>
 							<div style="width: 100%;" class="biaolist">
 
@@ -196,7 +192,7 @@
 												<div class="form-group">
 													<button type="button" class="btn btn-primary" style="margin-left: 20px;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModaa">添加标签</button>
 													<div class="nr" style="height:auto;">
-														
+
 													</div>
 												</div>
 												<div class="form-group">
@@ -204,15 +200,15 @@
 							        			<span class="input-group-btn" style="display:inline-block;">
 							              <button class="btn btn-primary" style="height: 26px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
 							            </span>
-							            <div class="quanbu_nr">
+													<div class="quanbu_nr">
 
 
-											<volist name="pageinfo" id="row">
-												
-												<input class="xuan baise" type="button" value="{$row['tagname']}" id="{$row['id']}" tname="{$row['tagname']}" />
-											</volist>
-							            </div>
-							            <div id="example" style="margin-left: 113px;"></div>
+														<volist name="pageinfo" id="row">
+
+															<input class="xuan baise" type="button" value="{$row['tagname']}" id="{$row['id']}" tname="{$row['tagname']}" />
+														</volist>
+													</div>
+													<div id="example" style="margin-left: 113px;"></div>
 												</div>
 											</div>
 											<button type="button" class="btn btn-primary" data-dismiss="modal" id="yes2" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
@@ -222,7 +218,7 @@
 									</div>
 								</div>
 							</div>
-							
+
 							<!--小-->
 							<div class="modal fade" id="myModaa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="z-index:999;">
 								<div class="modal-dialog" role="document">
@@ -265,8 +261,8 @@
 						<div class="form-group row">
 
 							<label class="col-xs-12 col-sm-2 control-label">
-                内容:
-              </label>
+								内容:
+							</label>
 							<div class="col-xs-12 col-sm-10">
 								<script id="editor" type="text/plain" class="ueditor-init" name="content" style="height: 250px; width: 100%">{$vinfo.content|html_entity_decode=###,ENT_COMPAT}</script>
 							</div>
@@ -290,8 +286,8 @@
 
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
-                预约发布：
-              </label>
+								预约发布：
+							</label>
 							<div class="col-xs-12 col-sm-10">
 								<div class="input-group date form_datetime" data-date="{$vinfo.bespeak_time}">
 									<input name="logtime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.bespeak_time}" readonly>
@@ -320,9 +316,9 @@
 
 <script type="text/javascript">
 	$(function() {
-	   //alert(222);	
+		//alert(222);
 
-		
+
 		$('#edui1').css('z-index', '9')
 
 		$('#media_idimg').click(function() {
@@ -359,8 +355,8 @@
 			});
 		});
 	});
-	
-		$('#yes').click(function(){
+
+	$('#yes').click(function(){
 		var biaoname = $('#exampleInputName2').val();
 		if(biaoname==''){
 			alert('请添加标签名称!');
@@ -391,47 +387,47 @@
 					}
 				}
 			});
-			
+
 
 		}
 	})
-		$('.quanbu_nr').on('click','.xuan',function(){
+	$('.quanbu_nr').on('click','.xuan',function(){
 		//$(this).hide();
 		var biaoname = $(this).val();
 		var biaoid = $(this).prop('id');
 		$(this).addClass('actives');
 		$(this).prop('disabled',true);
 		/*$('.nr .xuan').each(function(i){
-			
-			//console.log($('.nr .xuan').eq(i).prop('id'))
-			if(biaoid==$(this).prop('id')){
-				alert('已经添加过了')
-				$(this).last().remove();
-			}else{
-				
-				var ahtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
-				$('.nr').append(ahtml);
-			}
-		})*/
+
+		 //console.log($('.nr .xuan').eq(i).prop('id'))
+		 if(biaoid==$(this).prop('id')){
+		 alert('已经添加过了')
+		 $(this).last().remove();
+		 }else{
+
+		 var ahtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+		 $('.nr').append(ahtml);
+		 }
+		 })*/
 		//if($('.nr .xuan').length==0){
-			var ahtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
-			$('.nr').append(ahtml);
+		var ahtml = '<div class="xuan a" id="'+biaoid+'">'+biaoname+'<i class="fa fa-close marg"></i></div>';
+		$('.nr').append(ahtml);
 		//}
-		
+
 	})
 	$('.nr').on('click','.xuan .marg',function(){
 		$(this).parent().remove();
 		var biaotext = $(this).parent().text();
 		//$('.quanbu_nr .xuan').val(biaotext).prop('disabled',false);
 		$('.quanbu_nr .xuan').each(function(){
-			
+
 			if($(this).val()==biaotext){
 				$(this).prop('disabled',false);
 				$(this).removeClass('actives')
 			}
 		})
 	})
-	
+
 	$('#yes2').click(function(){
 		//$('.quanbu_nr').html();
 		var arr_nr = [];
@@ -452,66 +448,16 @@
 		$("#addartbutton").prop('disabled','');
 		$("#addartbutton").removeClass('disabled');
 	})
-	
-	 var options = {
-        currentPage: 1,//显示当前页数
-        totalPages: $("#pagetotal").val(),  //总页数
-        numberOfPages:5,  //显示几页
-        onPageClicked: function (event, originalEvent, type, page) { 
-                   //alert(page);
-                   $('.quanbu_nr').html('');
-            
-             
-			$.ajax({
-				type:"get",
-				url:"{$host_name}/tag/getajaxpage",
-				dataType: "json",
-				data:"pageNum="+page,
-				async:true,
-				success:function(call){
-					console.log(call)
-					var calls = call.list;
-					$('#pagenum').val(call.page)
-					for(var i=0;i<calls.length;i++){
-					
-					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
-					$('.quanbu_nr').append(quanbu_nrs);
-					}
-			activer();
-				}
-			});
-        }
-	 }
 
-        $('#example').bootstrapPaginator(options);
-        
-        /*搜索*/
-        $('#sdd').click(function(){
-        	$('#pagetotal').val('1');
-        	var soushuo = $('.soushuo').val();
-        	$('.quanbu_nr').html('');
-        	console.log(soushuo)
-        	$.ajax({
-        		type:"post",
-        		url:"{$host_name}/tag/getajaxpage",
-        		dataType: "json",
-        		data:"fatagname="+soushuo+"&pageNum=1",
-        		async:true,
-        		success:function(call){
-        			console.log(call)
-        			var calls = call.list;
-        			for(var i=0;i<calls.length;i++){	
-					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
-					$('.quanbu_nr').append(quanbu_nrs);
-					}
-					activer()
-		var options = {
-        currentPage: 1,//显示当前页数
-        totalPages: call.page,  //总页数
-        numberOfPages:5,  //显示几页
-        onPageClicked: function (event, originalEvent, type, page) { 
-                   //alert(page);
-             $('.quanbu_nr').html('');
+	var options = {
+		currentPage: 1,//显示当前页数
+		totalPages: $("#pagetotal").val(),  //总页数
+		numberOfPages:5,  //显示几页
+		onPageClicked: function (event, originalEvent, type, page) {
+			//alert(page);
+			$('.quanbu_nr').html('');
+
+
 			$.ajax({
 				type:"get",
 				url:"{$host_name}/tag/getajaxpage",
@@ -523,54 +469,104 @@
 					var calls = call.list;
 					$('#pagenum').val(call.page)
 					for(var i=0;i<calls.length;i++){
-					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
-					$('.quanbu_nr').append(quanbu_nrs);
+
+						var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
+						$('.quanbu_nr').append(quanbu_nrs);
 					}
 					activer();
 				}
 			});
-        }
-	 }
-		$('#example').bootstrapPaginator(options);
-        		}
-        		
-        	});
-        })
-    $('#tianjia').click(function(){
-    	
-    	$('.nr').html($('.biaolist').html())
+		}
+	}
+
+	$('#example').bootstrapPaginator(options);
+
+	/*搜索*/
+	$('#sdd').click(function(){
+		$('#pagetotal').val('1');
+		var soushuo = $('.soushuo').val();
+		$('.quanbu_nr').html('');
+		console.log(soushuo)
+		$.ajax({
+			type:"post",
+			url:"{$host_name}/tag/getajaxpage",
+			dataType: "json",
+			data:"fatagname="+soushuo+"&pageNum=1",
+			async:true,
+			success:function(call){
+				console.log(call)
+				var calls = call.list;
+				for(var i=0;i<calls.length;i++){
+					var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
+					$('.quanbu_nr').append(quanbu_nrs);
+				}
+				activer()
+				var options = {
+					currentPage: 1,//显示当前页数
+					totalPages: call.page,  //总页数
+					numberOfPages:5,  //显示几页
+					onPageClicked: function (event, originalEvent, type, page) {
+						//alert(page);
+						$('.quanbu_nr').html('');
+						$.ajax({
+							type:"get",
+							url:"{$host_name}/tag/getajaxpage",
+							dataType: "json",
+							data:"pageNum="+page,
+							async:true,
+							success:function(call){
+								console.log(call)
+								var calls = call.list;
+								$('#pagenum').val(call.page)
+								for(var i=0;i<calls.length;i++){
+									var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
+									$('.quanbu_nr').append(quanbu_nrs);
+								}
+								activer();
+							}
+						});
+					}
+				}
+				$('#example').bootstrapPaginator(options);
+			}
+
+		});
+	})
+	$('#tianjia').click(function(){
+
+		$('.nr').html($('.biaolist').html())
 		$('.nr i').show();
 		activers();
 	})
-    
-    function activer(){
-    	 $('.nr .a').each(function(){
-             	var dis = $(this).prop('id');
-             	$('.quanbu_nr .xuan').each(function(){
-             		if($(this).prop('id')==dis){
-             			$(this).addClass('actives');
-             			$(this).prop('disabled',true);
-             			console.log(dis)
-             		}
-             		
-				  })
-             	
-             })
-    }
-function activers(){
-    	 $('.biaolist .a').each(function(){
-             	var dis = $(this).prop('id');
-             	$('.quanbu_nr .xuan').each(function(){
-             		if($(this).prop('id')==dis){
-             			$(this).addClass('actives');
-             			$(this).prop('disabled',true);
-             			console.log(dis)
-             		}
-             		
-				  })
-             	
-             })
-    }
+
+	function activer(){
+		$('.nr .a').each(function(){
+			var dis = $(this).prop('id');
+			$('.quanbu_nr .xuan').each(function(){
+				if($(this).prop('id')==dis){
+					$(this).addClass('actives');
+					$(this).prop('disabled',true);
+					console.log(dis)
+				}
+
+			})
+
+		})
+	}
+	function activers(){
+		$('.biaolist .a').each(function(){
+			var dis = $(this).prop('id');
+			$('.quanbu_nr .xuan').each(function(){
+				if($(this).prop('id')==dis){
+					$(this).addClass('actives');
+					$(this).prop('disabled',true);
+					console.log(dis)
+				}
+
+			})
+
+		})
+	}
 
 	$('#nos').click(function(){
 		$('.quanbu_nr .xuan').each(function(){

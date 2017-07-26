@@ -127,6 +127,9 @@ class CheckaccountController extends BaseController{
 					$dap['status'] = 1;
 					$dap['update_time'] = date("Y-m-d H:i:s",$now);
 					$statenoticeModel->saveData($dap,$where);
+					$wherea = 'id = '.$did;
+					$detail['check_status'] = 0;
+					$statedetailModel->saveData($detail,$wherea);
 					$this->output('发送短信成功', U('checkaccount/showHotel?statementid='.$did),2);
 				}else{
 					$dap['update_time'] = date("Y-m-d H:i:s",$now);
