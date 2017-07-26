@@ -477,8 +477,7 @@ class ExcelController extends Controller
         $xlsCell = array(
             array('id', '酒楼id'),
             array('install_date', '安装日期'),
-            array('hsta', '酒店状态'),
-            array('rsta', '版位状态即包间状态'),
+            array('tsta', '电视状态'),
             array('mac', '机顶盒mac地址'),
             array('rname', '包间名称'),
             array('rtype', '包间类型'),
