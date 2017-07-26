@@ -528,57 +528,65 @@
 
     $('#example').bootstrapPaginator(options);
 
-    /*搜索*/
-    $('#sdd').click(function(){
+    $('#sdd').click(function() {
         $('#pagetotal').val('1');
         var soushuo = $('.soushuo').val();
         $('.quanbu_nr').html('');
         console.log(soushuo)
         $.ajax({
-            type:"post",
-            url:"{$host_name}/tag/getajaxpage",
+            type: "post",
+            url: "{$host_name}/tag/getajaxpage",
             dataType: "json",
-            data:"fatagname="+soushuo+"&pageNum=1",
-            async:true,
-            success:function(call){
+            data: "fatagname=" + soushuo + "&pageNum=1",
+            async: true,
+            success: function(call) {
                 console.log(call)
                 var calls = call.list;
-                for(var i=0;i<calls.length;i++){
-                    var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
-                    $('.quanbu_nr').append(quanbu_nrs);
-                }
-                activer();
-                var options = {
-                    currentPage: 1,//显示当前页数
-                    totalPages: call.page,  //总页数
-                    numberOfPages:5,  //显示几页
-                    onPageClicked: function (event, originalEvent, type, page) {
-                        //alert(page);
-                        $('.quanbu_nr').html('');
-                        $.ajax({
-                            type:"get",
-                            url:"{$host_name}/tag/getajaxpage",
-                            dataType: "json",
-                            data:"pageNum="+page,
-                            async:true,
-                            success:function(call){
-                                console.log(call)
-                                var calls = call.list;
-                                $('#pagenum').val(call.page)
-                                for(var i=0;i<calls.length;i++){
-                                    var quanbu_nrs = '<input class="xuan baise" type="button" value="'+calls[i].tagname+'" id="'+calls[i].id+'" tname="'+calls[i].tagname+'" />';
-                                    $('.quanbu_nr').append(quanbu_nrs);
-                                }
-                                activer();
-                            }
-                        });
-                    }
-                }
-                $('#example').bootstrapPaginator(options);
-            }
+                if(calls != '') {
 
+                    for(var i = 0; i < calls.length; i++) {
+                        var quanbu_nrs = '<input class="xuan baise" type="button" value="' + calls[i].tagname + '" id="' + calls[i].id + '" tname="' + calls[i].tagname + '" />';
+                        $('.quanbu_nr').append(quanbu_nrs);
+                    }
+
+                    activer()
+                    var options = {
+                        currentPage: 1, //显示当前页数
+                        totalPages: call.page, //总页数
+                        numberOfPages: 5, //显示几页
+                        onPageClicked: function(event, originalEvent, type, page) {
+                            //alert(page);
+                            $('.quanbu_nr').html('');
+                            $.ajax({
+                                type: "get",
+                                url: "{$host_name}/tag/getajaxpage",
+                                dataType: "json",
+                                data: "pageNum=" + page,
+                                async: true,
+                                success: function(call) {
+                                    //console.log(call)
+                                    var calls = call.list;
+                                    $('#pagenum').val(call.page)
+                                    for(var i = 0; i < calls.length; i++) {
+                                        var quanbu_nrs = '<input class="xuan baise" type="button" value="' + calls[i].tagname + '" id="' + calls[i].id + '" tname="' + calls[i].tagname + '" />';
+                                        $('.quanbu_nr').append(quanbu_nrs);
+                                    }
+                                    activer();
+                                }
+                            });
+                        }
+                    }
+                    $('#example').bootstrapPaginator(options);
+                    $('#example').show()
+                }else{
+                    $('#example').hide()
+                }
+            }
         });
     })
+
+
+
     $('#tianjia').click(function(){
 
         $('.nr').html($('.biaolist').html())
