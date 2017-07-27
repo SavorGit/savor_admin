@@ -363,12 +363,14 @@ CREATE TABLE `savor_mb_pictures` (
   `detail` text CHARACTER SET utf8 NOT NULL COMMENT '详细信息json串aid:1,atext:sdkfk',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8;
+执行结果：已执行
 
 增加说明：修改savor_admin_log的字段
 修改时间：2017.6.28 14：30
 修改人：白玉涛
 执行sql:
 ALTER TABLE `cloud`.`savor_admin_log`     CHANGE `action` `action` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '' NOT NULL COMMENT '菜单';
+执行结果：已执行
 
 增加说明：文章增加新分类字段
 修改时间：2017.6.28 11：30
@@ -378,6 +380,8 @@ ALTER TABLE savor_mb_content ADD COLUMN `hot_category_id` SMALLINT(3)  NOT NULL 
 
 UPDATE savor_mb_content SET hot_category_id=101 WHERE category_id IN(63,85)
 UPDATE savor_mb_content SET hot_category_id=102 WHERE category_id IN(68,67,66,76,83,74,78,82,64,81,79,84,75,70,80,71,65,87,88)
+执行结果：已执行
+
 增加说明：新分类表
 修改时间：2017.6.28 11：30
 修改人：张英涛
@@ -397,8 +401,7 @@ CREATE TABLE `savor_mb_hot_category` (
 
 #将savor_mb_category 里的数据导入到savor_mb_hot_category表里
 然后增加创富生活专题三个分类 id分别为101、102 、103
-
-
+执行结果：已执行
 
 增加说明：文章表新增首页封面图、内容字数两个字段
 修改时间：2017.6.28 11：30
@@ -407,9 +410,7 @@ CREATE TABLE `savor_mb_hot_category` (
 ALTER TABLE `savor_mb_content` ADD COLUMN `index_img_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '首页封面图' AFTER `img_url`
 
 ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEFAULT 0 COMMENT '内容字数'
-
-
-
+执行结果：已执行
 
 增加说明：savor_mb_content添加tag标签顺序
 修改时间：2017.7.4 15：30
@@ -418,6 +419,7 @@ ALTER TABLE `savor_mb_content` ADD COLUMN `content_word_num` INT(6) NOT NULL DEF
  ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `sort_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '插入顺序tag' AFTER `content_word_num`,     ADD COLUMN `order_tag` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '小到大排序tag' AFTER `sort_tag`;
 
 ALTER TABLE `cloud`.`savor_mb_content` ADD INDEX `index_order_tag` ( `order_tag` );
+执行结果：已执行
 
 增加说明：savor_account_info添加邮箱字段
 修改时间：2017.7.18 10：30
@@ -429,12 +431,13 @@ ALTER TABLE `cloud`.`savor_account_info`     ADD COLUMN `receipt_email` VARCHAR(
 UPDATE `cloud`.`savor_account_info` SET `receipt_email`='zhao.cuiyan@savor.cn' WHERE `id`='1';
 UPDATE `cloud`.`savor_account_info` SET `receipt_email`='tian.yun@savor.cn' WHERE `id`='2';
 UPDATE `cloud`.`savor_account_info` SET `receipt_email`='yu.suijun@savor.cn' WHERE `id`='3';
+执行结果：已执行
 
 增加说明：savor_hotel添加收款公司名称，银行账号，开户行名称账号
 修改时间：2017.7.18 10：30
 修改人：白玉涛
 执行sql: ALTER TABLE `cloud`.`savor_hotel`     ADD COLUMN `collection_company` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '收款公司名称' AFTER `bill_tel`,     ADD COLUMN `bank_account` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '银行账号' AFTER `collection_company`,     ADD COLUMN `bank_name` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '开户行名称' AFTER `bank_account`;
-
+执行结果：已执行
 
 
 
@@ -459,6 +462,6 @@ CREATE TABLE `savor_account_msg_log` (
   PRIMARY KEY (`id`),
   KEY `hotel_id` (`detail_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='电话发送短信通知LOG'
-
+执行结果：已执行
 
 
