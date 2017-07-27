@@ -137,12 +137,13 @@ class ClientController extends Controller {
     }
 
 
-
-
-
-    public function showcontent(){
+    public function showcontentyouyuan(){
 
         $id = I('get.id',0,'intval');
+        $app_version = I('get.app','');
+        if($app_version == 'inner'){
+
+        }
         $sourcename = I('get.location','');
         $this->assign('sourc', $sourcename);
         $articleModel = new \Admin\Model\ArticleModel();
@@ -204,11 +205,11 @@ class ClientController extends Controller {
                     $info =  $mbpictModel->where('contentid='.$id)->find();
                     $detail_arr = json_decode($info['detail'], true);
 
-                     foreach($detail_arr as $dk=> $dr){
-                         $media_info = $mediaModel->getMediaInfoById($dr['aid']);
-                         $detail_arr[$dk]['pic_url'] =$media_info['oss_addr'];
+                    foreach($detail_arr as $dk=> $dr){
+                        $media_info = $mediaModel->getMediaInfoById($dr['aid']);
+                        $detail_arr[$dk]['pic_url'] =$media_info['oss_addr'];
 
-                     }
+                    }
                     $this->assign('detaillist', $detail_arr);
                     $display_html = 'newstuji';
                 }
@@ -216,6 +217,113 @@ class ClientController extends Controller {
         }else{
             $vinfo = array();
             $display_html = 'newshowcontent';
+        }
+        $this->assign('vinfo',$vinfo);
+        $this->display($display_html);
+    }
+
+
+    public function showcontent(){
+
+        $id = I('get.id',0,'intval');
+        $app_version = I('get.app','');
+        if($app_version == 'inner'){
+            $sourcename = I('get.location','');
+            $this->assign('sourc', $sourcename);
+            $articleModel = new \Admin\Model\ArticleModel();
+            $mbpictModel = new \Admin\Model\MbPicturesModel();
+            $mediaModel  = new \Admin\Model\MediaModel();
+            $vinfo = $articleModel->where('id='.$id.' and state =2')->find();
+            if(empty($vinfo)){
+                $this->display('null');
+                exit;
+            }
+            if($id && $vinfo){
+                $catid = $vinfo['hot_category_id'];
+                $vinfo['content'] = html_entity_decode($vinfo['content']);
+                $vinfo['minu_time'] = round($vinfo['content_word_num']/600);
+                if($vinfo['minu_time']<1){
+                    $vinfo['minu_time'] = 1;
+                }
+
+                $vinfo['update_time'] = date("Y-m-d",strtotime($vinfo['update_time']));
+
+                $m_article_source = new \Admin\Model\ArticleSourceModel();
+                $loginfo = $m_article_source->find($vinfo['source_id']);
+                $media_info = $mediaModel->getMediaInfoById($loginfo['logo']);
+                $loginfo['oss_addr'] = $media_info['oss_addr'];
+
+                $this->assign('linfo', $loginfo);
+                if ($catid == 103) {
+                    $oss_host = get_oss_host();
+                    $vinfo['img_url'] = $oss_host.$vinfo['img_url'];
+                    if($vinfo['index_img_url']){
+                        $vinfo['index_img_url'] = $oss_host.$vinfo['index_img_url'];
+                    }
+                    $display_html = 'special';
+
+                }else{
+                    $arinfo = $this->judgeRecommendInfo($vinfo);
+                    if($arinfo){
+                        foreach($arinfo as $dv){
+                            $where = 'AND mc.id = '. $dv['id'];
+                            $dap = $articleModel->getArtinfoById($where);
+                            $res[] = $dap;
+                        }
+                        $data = $this->changRecList($res);
+                    }else{
+                        $data = array();
+                    }
+
+                    $this->assign('list', $data);
+                    if($vinfo['type']==1){//图文
+                        $display_html = 'newshowcontent';
+                    }elseif($vinfo['type']==3){
+                        $tx_url = $vinfo['tx_url'];
+                        $this->assign('tx_url', $tx_url);
+                        $display_html = 'newshowvideocontent';
+                    }else{
+                        // 图集
+
+
+                        $info =  $mbpictModel->where('contentid='.$id)->find();
+                        $detail_arr = json_decode($info['detail'], true);
+
+                        foreach($detail_arr as $dk=> $dr){
+                            $media_info = $mediaModel->getMediaInfoById($dr['aid']);
+                            $detail_arr[$dk]['pic_url'] =$media_info['oss_addr'];
+
+                        }
+                        $this->assign('detaillist', $detail_arr);
+                        $display_html = 'newstuji';
+                    }
+                }
+            }else{
+                $vinfo = array();
+                $display_html = 'newshowcontent';
+            }
+        }else{
+            if($id){
+                $articleModel = new \Admin\Model\ArticleModel();
+                $vinfo = $articleModel->where('id='.$id)->find();
+                $vinfo['content'] = html_entity_decode($vinfo['content']);
+                if($vinfo['type']==1){//图文
+                    $display_html = 'showcontent';
+                }elseif($vinfo['type']==3){
+                    $tx_url = $vinfo['tx_url'];
+                    $url_arr = explode('?id=', $tx_url);
+                    $url_id = $url_arr['1'];
+                    $play_js = "(function(){ var option ={'auto_play':'0','file_id':'$url_id','app_id':'1252891964','width':1280,'height':720,'https':1};new qcVideo.Player('id_video_container_$url_id', option ); })()";
+                    $this->assign('videourl_id', $url_id);
+                    $this->assign('play_js', $play_js);
+                    $display_html = 'showvideocontent';
+                }else{
+                    $display_html = 'showcontent';
+                }
+            }else{
+                $vinfo = array();
+                $display_html = 'showcontent';
+            }
         }
         $this->assign('vinfo',$vinfo);
         $this->display($display_html);
