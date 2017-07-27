@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>{$vinfo.title}-小热点</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta content="yes" name="apple-mobile-web-app-capable">
+		<meta content="black" name="apple-mobile-web-app-status-bar-style">
+		<meta content="telephone=no" name="format-detection">
+		<meta http-equiv="Expires" CONTENT="-1">
+		<meta http-equiv="Cache-Control" CONTENT="no-cache">
+		<meta http-equiv="Pragma" CONTENT="no-cache">
+		<meta name="x5-orientation" content="portrait">
+		<meta name="screen-orientation" content="portrait">
+		<link href="/Public/admin/assets/css/stylecontent.css" rel="stylesheet">
+		<link href="/Public/admin/assets/css/weixin.css" rel="stylesheet">
+
+	</head>
+<style type="text/css">
+	body,html{
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+	}
+	.box_nr{
+		margin: 12px;
+		text-align: justify;
+		margin-bottom: 15px;
+	}
+	.viewport{
+		width: 100%;
+		height: 100%;
+	}
+	.box_nr img{
+		width:100%;
+	}
+</style>
+	<body>
+		<div id="topLabel" style="background-color:#202020; width: 100%; height:53px; position: fixed; bottom: 0px; left: 0px; z-index: 100;display: none;border-top:1px solid #444 ;">
+			<img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 7px; margin-left: 10px; width: 188px; height: 40px;" />
+			<div id="downLoad" style="background-color: white; border-radius: 6px; position: absolute; top: 11px; right: 35px;height: 30px;">
+				<p id="dowlone" style="color:#f46619; width: 80px; height: 40px; margin-top: 5px; text-align: center;font-size: 15px;"> 立即下载 </p>
+				<input type="hidden" id="verrre" value="{$videourl_id}" />
+			</div>
+			<span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"/></span>
+		</div>
+		<div id='contentView' class="viewport">
+			<div id="id_video_container_{$videourl_id}" class="contentD" style="width:100%;"></div>
+			<script src="/Public/admin/assets/js/h5connect.js" charset="utf-8"></script>
+			<script type="text/javascript">{$play_js}</script>
+			<div class="box_nr">
+				{$vinfo.content}
+			</div>
+			<input type="hidden" value="{$vinfo.title}" id="tit" />
+		</div>
+	</body>
+
+</html>
+<script type="text/javascript" src="/Public/admin/assets/plugins/jquery.min.js"></script>
+<script type="text/javascript">
+	window.onload=function(){
+		$('#trump_main_unique_1').css('width','100%');
+		$('#trump_main_unique_1').css('height','209px');
+		$('.trump-control-bottom-flow').hide();
+		$('video').addClass('addvs');
+		$('.addvs').after('<div id="output"></div>');
+		
+	}
+		if($('.box_nr p').length > 0) {
+			
+				$('.box_nr').css('padding-bottom', '53px')
+			
+		} else {
+				$('body').css('background-color', '#080808');
+				$('.contentD').css('padding-top', '28%');
+				$('.contentD').css('height', '45.7%');
+				$('.box_nr').css('margin-top','17%');
+				$('.box_nr').css('height','auto');
+				var $tit = $('#tit').val();
+				$('.box_nr').append('<p style="color:white;text-align:left;width:100%;margin-left:10px">' + $tit + '</p>');
+				
+				window.addEventListener("orientationchange", function() {
+				// Announce the new orientation number
+				var mql = window.matchMedia("(orientation: portrait)");
+				// 如果有匹配，则我们处于垂直视角
+				if(mql.matches) {  
+				// 直立方向
+				$('.contentD').css('padding-top', '17%');
+				} else {  
+				//水平方向
+				$('.contentD').css('padding-top', '16%');
+				}  
+				}, false);	
+			}
+		
+
+
+
+	var topLabel = document.getElementById("topLabel");
+	var disnone = document.getElementById('disnone');
+	var dowlone = document.getElementById('dowlone');
+
+	dowlone.onclick = function() {
+		window.location.href = 'http://rerdian.com/d';
+	}
+	disnone.onclick = function() {
+		topLabel.style.display = 'none';
+		if($('#topLabel').hide()) {
+			$('.box_nr').css('padding-bottom', '')
+		}
+	}
+
+	var urlResource = window.location.search.split('?');
+	var result = urlResource[1].split('=');
+	var tmp = document.getElementById("verrre").value;
+	var cont = document.getElementById("id_video_container_" + tmp);
+	if(result[0] == 'location' && result[1] == 'newRead') {
+		//当前是 阅读状态 隐藏下载条topLabel
+		cont.style.display = "none";
+		$('#topLabel').hide();
+		
+	} else {
+		cont.style.display = "";
+		topLabel.style.display = "";
+	}
+</script>

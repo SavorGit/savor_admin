@@ -182,5 +182,6 @@ $config['SMS_CONFIG'] = array(
     'bill_templateid'=>'76285',
     'payment_templateid'=>'78145',
     'vcode_templateid'=>'107496',
+    'notice_templateid'=>'107928',
 );
 return $config;
