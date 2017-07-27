@@ -1375,7 +1375,7 @@ WHERE id IN (1,2,3)*/
             $hotcatid = I('post.hotcatid','0');
             $index_img = $art_info['index_img_url'];
             if($hotcatid != 103){
-                if(empty($index_img) && $art_info['type']!=3){
+                if(empty($index_img) ){
                     $this->error('首条内容必须上传首页封面图');
                 }
             }
