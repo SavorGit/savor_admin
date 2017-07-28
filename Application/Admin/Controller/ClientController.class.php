@@ -118,7 +118,7 @@ class ClientController extends Controller {
                 $result[$key]['indexImgUrl'] = $this->getOssAddr($v['index_img_url']) ;
             }
 
-            $result[$key]['contentURL'] = $this->getContentUrl($v['contenturl']);
+            $result[$key]['contentURL'] = $this->getContentUrl($v['contenturl']).'?app=inner';
             if(!empty($v['videourl'])) $result[$key]['videoURL']   = substr($v['videourl'],0,strpos($v['videourl'], '.f')) ;
             if($v['type'] ==3){
                 if(empty($v['name'])){
