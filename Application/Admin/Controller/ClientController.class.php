@@ -224,10 +224,12 @@ class ClientController extends Controller {
 
 
     public function showcontent(){
-
+        $host_name = C('HOST_NAME').'/admin';
+        $this->assign('hostnamed',$host_name);
         $id = I('get.id',0,'intval');
         $app_version = I('get.app','');
         if($app_version == 'inner'){
+            //newread证明在客户端
             $sourcename = I('get.location','');
             $this->assign('sourc', $sourcename);
             $articleModel = new \Admin\Model\ArticleModel();
