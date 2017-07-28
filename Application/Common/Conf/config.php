@@ -28,6 +28,7 @@ $config = array(
     'MINIFY_CACHE_PATH'=>APP_PATH.'Runtime/Cache',
     'HTML_FILE_SUFFIX' => '.html',// 默认静态文件后缀
     'HOST_NAME'=>'http://'.$_SERVER['HTTP_HOST'],
+    'HTTPS_HOST_NAME'=>'https://'.$_SERVER['HTTP_HOST'],
     'SITE_NAME'=> '寻味后台管理',
     'SHOW_ERROR_MSG' =>  true, //显示错误信息
     'OSS_ADDR_PATH'=>'media/resource/',
