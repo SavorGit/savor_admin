@@ -220,6 +220,18 @@
 			document.addEventListener('DOMContentLoaded', calculate_size, false);
 			calculate_size();
 		}
+		$('#disnone').click(function(){
+			$('#topLabel').hide();
+			$('#ya').css('bottom','0.1rem')
+		});
+		var disnones = $('#topLabel').css('display');
+		if(disnones=='block'){
+			$('.tuijian').css('margin-bottom','53px');
+			$('#ya').css('bottom','55px')
+			if($('#ya')){
+				$('.box_nr').css('margin-bottom','1.95rem')
+			}
+		}
 		var sit = $("#hostnamenewc").val();
 
 		sita = sit+"/activitydetail/isSoldOut";
@@ -230,15 +242,15 @@
 			console.log(da)
 			$.ajax({
 				type:"post",
-				url:sita,
+				url:"/activitydetail/isSoldOut",
 				data:da,
-				dataType:json,
+				dataType:"json",
 				async:true,
 				success:function(call){
 					console.log(call)
 					var status = call.status;
 					if(status==1){
-						window.location.href=sitush
+						window.location.href="/activitydetail/toothwash"
 					}else{
 						tankuang(100,call.msg)
 					}
