@@ -108,7 +108,18 @@
 			<div class="nr_list">
 				<volist name="list" id="vlist">
 					<div class="nr">
-						<span class="nr-time">{$vlist.time}</span>
+						<span class="nr-time">
+						<php>
+						$now_year = date('Y');
+						$award_year = date('Y',strtotime($vlist['time'])) ;
+						if($now_year == $award_year){
+							echo date('m-d H:i',strtotime($vlist['time']));
+						}else {
+							echo date('Y-m-d H:i',strtotime($vlist['time']));
+						}
+						
+						</php>
+						</span>
 						<span class="nr_jiang">{$vlist.prizename}</span>
 						<span class="nr_cant">{$vlist.hotelname}</span>
 						<div style="clear: both;"></div>
