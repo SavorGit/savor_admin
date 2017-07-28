@@ -557,11 +557,14 @@
                         onPageClicked: function(event, originalEvent, type, page) {
                             //alert(page);
                             $('.quanbu_nr').html('');
+                            var opage = {};
+                            opage.pageNum = page;
+                            opage.fatagname = soushuo;
                             $.ajax({
                                 type: "get",
                                 url: "{$host_name}/tag/getajaxpage",
                                 dataType: "json",
-                                data: "pageNum=" + page,
+                                data: opage,
                                 async: true,
                                 success: function(call) {
                                     //console.log(call)
