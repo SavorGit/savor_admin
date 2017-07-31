@@ -225,7 +225,12 @@
 			document.addEventListener('DOMContentLoaded', calculate_size, false);
 			calculate_size();
 		}
-
+		$('a').click(function(){
+			var hrefs = $(this).attr('href');
+			if(hrefs!=''){
+			$(this).prop('href',""+hrefs+"?location=newRead&app=inner");
+			}
+		})
 		
 	</script>
 

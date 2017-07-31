@@ -232,6 +232,12 @@
 			$('#topLabel').hide();
 			$('#ya').css('bottom','0.1rem')
 		});
+		$('a').click(function(){
+			var hrefs = $(this).attr('href');
+			if(hrefs!=''){
+			$(this).prop('href',""+hrefs+"?location=newRead&app=inner");
+			}
+		})
 		var disnones = $('#topLabel').css('display');
 		if(disnones=='block'){
 			$('.tuijian').css('margin-bottom','53px');
@@ -247,7 +253,7 @@
 		$('#ya').click(function(){
 			var da = {}
 			da.id=1;
-			console.log(da)
+			
 			$.ajax({
 				type:"post",
 				url:"/activitydetail/isSoldOut",
