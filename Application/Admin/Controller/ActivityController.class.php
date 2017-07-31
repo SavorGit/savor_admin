@@ -97,7 +97,81 @@ class ActivityController extends BaseController{
             $this->error('非法操作');
         }
     }
+    /**
+     * @desc 添加活动
+     */
+    public function edit(){
+        
+        $id = I('get.id','','intval');
+        $m_activity_config = new \Admin\Model\ActivityConfigModel();
+        $vinfo = $m_activity_config->getInfo('*', array('id'=>$id));
+        if(empty($vinfo)){
+            $this->error('活动不存在');
+        }
+        $this->assign('id',$id);
+        $this->assign('vinfo',$vinfo);
+        $this->display('edit');
+    }
+    /**
+     * @desc 提交活动信息
+     */
+    public function doedit(){
+        if(IS_POST){
+            $id = I('post.id','0','intval');
+            $name = I('post.name','','trim');
+            if(empty($name)){
+                $this->error('活动名称不能未空');
+            }
+            $media_id = I('post.media_id','0','intval');
+            $oss_info = array();
+            $data = array();
+            if(!empty($media_id)){
+                $m_media = new \Admin\Model\MediaModel();
+                $oss_info = $m_media->getMediaInfoById($media_id);
+            }
+            $start_time = I('post.start_time');
+            $end_time   = I('post.end_time');
+            if(!empty($start_time) && empty($end_time)){
+                $this->error('请填写活动结束时间');
+            }
+            if(empty($start_time) && !empty($end_time)){
+                $this->error('请填写活动开始时间');
+            }
+            if(!empty($start_time) && !empty($end_time)){
+                $startstr = strtotime($start_time);
+                $endstr   = strtotime($end_time);
+                if($startstr>$endstr){
+                    $this->error('活动开始时间不能大于结束时间');
+                }
+                $data['start_time'] = $start_time;
+                $data['end_time']   = $end_time;
+            }
     
+            $goods_nums =  I('post.goods_nums','');
+            if(is_numeric($goods_nums)){
+                $data['goods_nums'] = $goods_nums;
+            }
+            $data['name'] = $name;
+            if(!empty($oss_info)){
+                $data['img_url'] = $oss_info['oss_addr'];
+            }
+            $userInfo = session('sysUserInfo');
+            $data['operator_id'] = $userInfo['id'];
+            $m_activity_config =  new \Admin\Model\ActivityConfigModel();
+            $info = $m_activity_config->getInfo('id', array('id'=>$id));
+            if(empty($info)){
+                $this->error('该活动不存在');
+            }
+            $ret = $m_activity_config->editInfo(array('id'=>$id),$data);
+            if($ret){
+                $this->output('修改成功', 'activity/index', 1);
+            }else {
+                $this->error('修改失败');
+            }
+        }else {
+            $this->error('非法操作');
+        }
+    }
     /**
      * @desc 佳美体验卡活动
      */

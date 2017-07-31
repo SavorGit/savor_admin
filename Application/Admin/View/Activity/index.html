@@ -87,7 +87,10 @@
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  
+                   <a data-tip="修改详情" target="dialog" data-placement="left" mask="true" rel="xiugaihotel" href="{$host_name}/activity/edit?id={$vlist.id}" class="btn btn-success btn-icon">
+
+                    <i class="fa fa-tag"></i>
+                  </a>
                    <a warn="警告" data-tip="移除" title="你确定删除该活动吗？" target="ajaxTodo" rel="activity/index"
 href="{$host_name}/activity/delactivity?id={$vlist.id}"  class="btn btn-success btn-icon">
                     <i class="fa fa-trash"></i>
