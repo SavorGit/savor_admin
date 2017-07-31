@@ -281,6 +281,9 @@ class ClientController extends Controller {
                     if($vinfo['type']==1){//图文
                         $display_html = 'newshowcontent';
                     }elseif($vinfo['type']==3){
+                        $oss_host = get_oss_host();
+                        $img_url = $oss_host.$vinfo['img_url'];
+                        $this->assign('img_url',$img_url);
                         $tx_url = $vinfo['tx_url'];
                         $this->assign('tx_url', $tx_url);
                         $display_html = 'newshowvideocontent';
@@ -316,6 +319,11 @@ class ClientController extends Controller {
                     $url_arr = explode('?id=', $tx_url);
                     $url_id = $url_arr['1'];
                     $play_js = "(function(){ var option ={'auto_play':'0','file_id':'$url_id','app_id':'1252891964','width':1280,'height':720,'https':1};new qcVideo.Player('id_video_container_$url_id', option ); })()";
+                    $oss_host = get_oss_host();
+                    $img_url = $oss_host.$vinfo['img_url'];
+                    $this->assign('img_url',$img_url);
+                    $this->assign('tx_url',$tx_url);
+                    
                     $this->assign('videourl_id', $url_id);
                     $this->assign('play_js', $play_js);
                     $display_html = 'showvideocontent';

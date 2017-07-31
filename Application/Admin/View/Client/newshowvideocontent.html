@@ -29,10 +29,18 @@
 			line-height: 0.57rem;
 			letter-spacing: 2px;
 		}
-		
+		.box_nr p span{
+			width: 100%;
+			font-size: 0.44rem;
+			color: #434343;
+			margin-top: 0.4rem;
+			display: block;
+			font-family:"PingFangSC-Medium";
+			font-weight: 700;
+		}
 		.box_nr p strong {
 			width: 100%;
-			font-size: 0.5rem;
+			font-size: 0.34rem;
 			color: #434343;
 			margin-top: 0.4rem;
 			display: block;
@@ -158,7 +166,7 @@
 
 	<body>
 
-		<video id="video" style="width: 100%;<if condition =" $sourc eq 'newRead'">display: none;</if>"  poster="" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
+		<video id="video" style="width: 100%;<if condition =" $sourc eq 'newRead'">display: none;</if>"  poster="{$img_url}" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
            data-setup='{ "html5" : { "nativeTextTracks" : false } }'>
         <source src="{$tx_url}" type="video/mp4">
         <p class="vjs-no-js">  播放视频需要启用 JavaScript，推荐使用<a href="http://videojs.com/html5-video-support/" target="_blank">支持HTML5</a>的浏览器访问。</p>
@@ -166,7 +174,7 @@
     <div id="output"></div>
 		<div class="box_nr">
 			<p>
-				<strong>{$vinfo.title}</strong>
+				<span>{$vinfo.title}</span>
 			</p>
 			<div class="mioasu">
 				<img src="{$linfo.oss_addr}"/>
