@@ -125,10 +125,10 @@ class ExcelController extends Controller
         //小平台
         if($type == 1){
             $field = 'hex.mac_addr mac, h.name, hex.hotel_id';
-            $xlsName = date("Y-m-d H:i:sa",$time).$arname.' '.' 小平台心跳情况';
+            $xlsName = date("Y-m-d H:i:s",$time).$arname.' '.' 小平台心跳情况';
         }else{
             $field = 'b.mac, h.id hotel_id, h.name,h.hotel_box_type,h.remark,h.maintainer ';
-            $xlsName = date("Y-m-d H:i:sa",$time).$arname.' 机顶盒心跳情况';
+            $xlsName = date("Y-m-d H:i:s",$time).$arname.' 机顶盒心跳情况';
         }
         if ($main_v) {
             $where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
