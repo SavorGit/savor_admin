@@ -1438,12 +1438,11 @@ WHERE id IN (1,2,3)*/
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
-        $hot_category_id = I('catid',1,'intval');
+        $hot_category_id = I('hotcatid',1,'intval');
         if($hot_category_id){
             $where .= "	and hot_category_id='$hot_category_id' and state=2";
         }
         $result = $artModel->getdiaList($where,$orders,$start,$size);
-
         $ind = $start;
         $sort = array();
         foreach ($result['list'] as &$val) {

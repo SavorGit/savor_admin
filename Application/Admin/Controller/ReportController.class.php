@@ -23,11 +23,12 @@ class ReportController extends BaseController{
 	public function heart(){
 
 		$heartModel = new \Admin\Model\HeartLogModel();
+		$areaModel  = new \Admin\Model\AreaModel();
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','last_heart_time');
+		$order = I('_order',' shlog.last_heart_time ');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
@@ -36,19 +37,45 @@ class ReportController extends BaseController{
 		$where = "1=1";
 		$name = I('name');
 		$type = I('type');
+		//城市
+		$area_arr = $areaModel->getAllArea();
+		$this->assign('area', $area_arr);
+		//酒店名称
+		$where = ' 1=1 ';
 		if($name){
 			$this->assign('name',$name);
-			$where .= "	AND hotel_name LIKE '%{$name}%'";
+			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
 		}
-
+		//城市
+		$area_v = I('area_v');
+		if ($area_v) {
+			$this->assign('area_k',$area_v);
+			$where .= "	AND shlog.area_id = $area_v ";
+		}
+		//查询类型
 		if($type){
 		    $this->assign('type',$type);
-			$where .= "	AND type= '{$type}' ";
+			$where .= "	AND shlog.type= {$type} ";
 		}
+		//合作维护人
+		$main_v = I('main_v');
+		if ($main_v) {
+			$this->assign('main_k',$main_v);
+			$where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
+		}
+		//机顶盒类型
+		$hbt_v = I('hbt_v');
+		if ($hbt_v) {
+			$this->assign('hbt_k',$hbt_v);
+			$where .= "	AND sht.hotel_box_type = $hbt_v";
+		}
+
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
 		$ind = $start;
 		foreach ($result['list'] as &$val) {
+
+
 			$val['indnum'] = ++$ind;
 			$d_time = strtotime($val['last_heart_time']);
 			$diff = $time - $d_time;
@@ -63,6 +90,17 @@ class ReportController extends BaseController{
 				$day = floor($diff/86400);
 				$hour = floor($diff%86400/3600);
 				$val['last_heart_time'] = $day.'天'.$hour.'小时';
+			}
+
+			foreach (C('DEVICE_TYPE') as  $key=>$kv){
+				if($val['type'] == $key){
+					$val['type'] = $kv;
+				}
+			}
+			foreach (C('heart_hotel_box_type') as  $key=>$kv){
+				if($val['hotel_box_type'] == $key){
+					$val['hotel_box_type'] = $kv;
+				}
 			}
 		}
 
