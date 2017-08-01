@@ -23,23 +23,74 @@
           </div>
 
           </div>
+
           <div class="form-group">
-          <div class="input-group input-group-sm pull-right">
-            <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                维护人：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="维护人" style="width:95px;">
+            </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                城&nbsp;&nbsp;&nbsp;市：
+              </label>
+
+                <span class="input-group-btn input-group-sm">
+              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+
+          <div class="form-inline" style="margin-top:10px;">
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label>
+                设备类型：
+              </label>
+               <span class="input-group-btn input-group-sm">
+              <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 >全部</option>
+                <volist name=":C('heart_hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+
+            <div class="form-group" style="margin-left:50px;">
+              <div class="input-group input-group-sm pull-right">
+                <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
-          </div>
-          </div>
+              </div>
+            </div>
 
-        </div>
+            <div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/expheartlost" title="导出心跳数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出心跳数据(必选小平台或机顶盒)</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div>
 
+
+          </div>
         </div>
       </div>
     </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -47,8 +98,11 @@
           <thead>
           <tr id="post">
             <th>序号</th>
+            <th>所属种类</th>
             <th>机顶盒ID</th>
             <th>MAC地址</th>
+            <th>设备类型</th>
+            <th>维护人</th>
             <th>包间ID</th>
             <th>包间名称</th>
             <th>酒楼ID</th>
@@ -71,8 +125,11 @@
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="序号">{$vlist.indnum}</td>
+              <td data-title="所属种类">{$vlist.type}</td>
               <td data-title="机顶盒ID">{$vlist.box_id}</td>
               <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+              <td data-title="设备类型">{$vlist.hotel_box_type}</td>
+              <td data-title="维护人">{$vlist.maintainer}</td>
               <td data-title="包间ID">{$vlist.room_id}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="酒楼ID">{$vlist.hotel_id}</td>
@@ -107,5 +164,25 @@
 <script type="text/javascript">
   $(function(){
     $('select').css({ "cssText": "display:none !important" });
+  })
+  $("#exportheartlistlog").click(function(){
+    var typ = $('select[name="type"]').val();
+    if(typ == 0){
+      alert('查询筛选必填');
+      return false;
+    }
+    var arv = $('select[name="area_v"]').val();
+    if(arv == 0){
+      alert('城市必填');
+      return false;
+    }
+    var hre = $("#xiaohref").val();
+    var mav = $('input[name="main_v"]').val();
+    var hbv = $('select[name="hbt_v"]').val();
+    var nav = $('input[name="name"]').val();
+    var hrp = hre+"?type="+typ+"&main_v="+mav+"&area_v="+arv+"&hbt_v="+hbv+"&name="+nav;
+   // return false;
+    console.log(hrp);
+    $(this).attr("href",hrp);
   })
 </script>

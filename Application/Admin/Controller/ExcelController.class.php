@@ -40,7 +40,11 @@ class ExcelController extends Controller
             $tmpname = '对账单酒楼信息联系表';
         }
 
-        $fileName = $tmpname . date('_YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
+        if($filename == "heartlostinfo"){
+            $fileName = $expTitle;
+        }else{
+            $fileName = $tmpname . date('_YmdHis');//or $xlsTitle
+        }
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
         vendor("PHPExcel.PHPExcel");
@@ -86,6 +90,310 @@ class ExcelController extends Controller
         exit;
     }
 
+    /**
+     *
+     * 导出心跳相关数据
+     */
+
+    function expheartlost(){
+
+        /*
+        删除状态的正常证明正常
+机：
+
+导出所有涉及酒店而不根据心跳
+然后与心跳表  对比
+导出
+导出所有涉及酒店
+然后与心跳表  对比*/
+        //获取限定条件下的mac
+        $time = time();
+        $yestime = time()-86400;
+        $heartModel = new \Admin\Model\HeartLogModel();
+        $areaModel  = new \Admin\Model\AreaModel();
+        $hotel  = new \Admin\Model\HotelModel();
+        $hotel_box_type = C('heart_hotel_box_type');
+        $filename = 'boxlostreport';
+        $type = I('get.type');
+        $main_v = I('get.main_v');
+        $hbt_v = I('get.hbt_v');
+        $name = I('get.name');
+        $area_v = I('get.area_v');
+        $areainfo = $areaModel->find($area_v);
+        $arname = $areainfo['region_name'];
+        $where = ' 1=1 and sht.state = 1 and sht.flag = 0 ';
+        //小平台
+        if($type == 1){
+            $field = 'hex.mac_addr mac, h.name, hex.hotel_id';
+            $xlsName = date("Y-m-d H:i:sa",$time).$arname.' '.' 小平台心跳情况';
+        }else{
+            $field = 'b.mac, h.id hotel_id, h.name,h.hotel_box_type,h.remark,h.maintainer ';
+            $xlsName = date("Y-m-d H:i:sa",$time).$arname.' 机顶盒心跳情况';
+        }
+        if ($main_v) {
+            $where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
+        }
+        if ($hbt_v) {
+            $where .= "	AND sht.hotel_box_type = $hbt_v";
+        }else{
+            $where .= "	AND (sht.hotel_box_type = 2 or sht.hotel_box_type = 3)";
+        }
+        if ($area_v) {
+            $where .= "	AND sht.area_id = $area_v ";
+        }
+        if($name){
+            $where .= "	AND sht.name LIKE '%{$name}%' ";
+        }
+        $hboxlist = $heartModel->getAllBox($where,$field,$type);
+        $hfield = 'hl.hotel_id,hl.box_mac mac,hl.last_heart_time lt';
+        $hearList  = $heartModel->getWhereData($hfield,$type);
+        if ($hboxlist) {
+            if($type == 1){
+
+                //获取心跳mac地址小平台
+                //由于hotel_id不重复所以可以直接使用函数
+                //做一个排重
+                if ($hearList) {
+                    $tmp = array();
+                    foreach($hearList as $hk=>$hv){
+                        if(in_array($hv['hotel_id'], $tmp)){
+                            unset($hearList[$hk]);
+                        }else{
+                            $tmp[] = $hv['hotel_id'];
+                        }
+                        continue;
+                    }
+                    $h_arr = array_column($hearList, 'hotel_id');
+                    $hearList = array_combine($h_arr, $hearList);
+                    //flag 1:正常24以内2.24以外3.7天以外
+                    foreach($hboxlist as $hk =>$hbv){
+                        $hid = $hbv['hotel_id'];
+                        if(array_key_exists($hid, $hearList)){
+                            //计算时长
+                            // dump($hid);
+                            $l_time = strtotime($hearList[$hid]['lt']);
+                            $hboxlist[$hk]['htime'] = $l_time;
+                            $ftime = $time-$l_time;
+                            //测试进行修改86400
+                            if($ftime<86400){
+                                $hboxlist[$hk]['flag'] = '1';
+                                $hboxlist[$hk]['bflag'] = '0';
+                                $hboxlist[$hk]['lost_time'] = '正常';
+                                $hboxlist[$hk]['rate'] = '0';
+                            }else{
+                                $hboxlist[$hk]['flag'] = '0';
+                                $hboxlist[$hk]['bflag'] = '1';
+                                $hboxlist[$hk]['lost_time'] = $this->sec2Time($ftime);
+                                $hboxlist[$hk]['rate'] = '100%';
+                            }
+                        }else{
+
+                            $hboxlist[$hk]['flag'] = '0';
+                            $hboxlist[$hk]['bflag'] = '1';
+                            $hboxlist[$hk]['htime'] = '1893456000';
+                            $hboxlist[$hk]['lost_time'] = '七天以上';
+                            $hboxlist[$hk]['rate'] = '100%';
+                        }
+                        $hboxlist[$hk]['total'] = 1;
+                    }
+                    $order_arr = array();
+                    $order_arr_h = array();
+                    foreach($hboxlist as $hval) {
+                        $order_arr[] = $hval['htime'];
+                        $order_arr_h[] = $hval['hotel_id'];
+
+                    }
+                    $arp = array();
+                    $flag =0;
+                    $bflag = 0;
+                    $total = 0;
+                    foreach($hboxlist as $hval) {
+                        $flag += $hval['flag'];
+                        $total += $hval['total'];
+                        $bflag += $hval['bflag'];
+
+                    }
+                    $arp['name'] = '所有酒楼';
+                    $arp['flag'] = $flag;
+                    $arp['bflag'] = $bflag;
+                    $arp['total'] = $total;
+                    $arp['rate'] = round($bflag/$total*100).'%';
+                    $arp['lost_time'] = '';
+                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_DESC, $hboxlist);
+                    array_unshift($hboxlist, $arp);
+                }else{
+                    $hboxlist = array();
+                }
+                $xlsCell = array(
+                    array('name', '酒楼名称'),
+                    array('flag', '正常'),
+                    array('bflag', '异常'),
+                    array('total', '总计'),
+                    array('rate', '异常率'),
+                    array('lost_time', '失联时长'),
+                );
+            }else{
+
+                //同样做排重
+                $new_arr_heart = array();
+                $heart_all = array();
+                $nsp = array();
+                if ($hearList) {
+                    $tmp = array();
+                    foreach($hearList as $hk=>$hv){
+                        if(in_array($hv['mac'], $tmp)){
+                            unset($hearList[$hk]);
+                        }else{
+                            $tmp[] = $hv['mac'];
+                        }
+                        continue;
+                    }
+                    foreach($hearList as $hv){
+                        $new_arr_heart[$hv['hotel_id']][] = $hv;
+                    }
+                    foreach($hboxlist as $hbv){
+                        $heart_all[$hbv['hotel_id']][] = $hbv;
+                    }
+                    $nsp = array();
+                    foreach ($heart_all as $hea=>$hev){
+                        $aflag = 0;
+                        $bflag = 0;
+                        $total = 0;
+                        if(array_key_exists($hea, $new_arr_heart)){
+                            //再运算
+                            $orign = $hev;
+                            $comp_arr = $new_arr_heart[$hea];
+                            $orign_mac  = array_column($orign, 'mac');
+                            $comp_mac = array_column($comp_arr, 'mac');
+
+                            $len = count(array_diff($orign_mac, $comp_mac));
+                            $co_ar_len = count($comp_arr);
+                            $bflag = $len;
+                            //获取心跳中不超过一天的,得到正常值
+                            $aflag = $this->filtertime($comp_arr, $time);
+                            //心跳
+                            $fail_count = $bflag + $co_ar_len - $aflag;
+                            $total = count($orign);
+                            $nsp[$hea]['flag'] = $aflag;
+                            $nsp[$hea]['bflag'] = $fail_count;
+                            $nsp[$hea]['total'] = $total;
+                            $nsp[$hea]['rate'] = round($fail_count/$total*100);
+                        }else{
+                            //根本不存在
+                            $nsp[$hea]['flag'] = 0;
+                            $nsp[$hea]['bflag'] = count($hev);
+                            $nsp[$hea]['total'] = $nsp[$hea]['bflag'];
+                            $nsp[$hea]['rate'] = '100';
+                        }
+                        $nsp[$hea]['maintainer'] = $hev[0]['maintainer'];
+                        $nsp[$hea]['name'] = $hev[0]['name'];
+                        $nsp[$hea]['hotel_box_type'] = $hev[0]['hotel_box_type'];
+                        $nsp[$hea]['remark'] = $hev[0]['remark'];
+                        $nsp[$hea]['hotelid'] = $hea;
+                    }
+                    $flag = 0;
+                    $bflag = 0;
+                    $total = 0;
+                    $order_arr = array();
+                    $order_arr_h = array();
+                    foreach($nsp as $nval) {
+                        $flag += $nval['flag'];
+                        $total += $nval['total'];
+                        $bflag += $nval['bflag'];
+
+                    }
+                    foreach($nsp as $hval) {
+                        $order_arr[] = $hval['rate'];
+                        $order_arr_h[] = $hval['hotelid'];
+                    }
+                    $arp = array();
+                    $arp['name'] = '所有酒楼';
+                    $arp['flag'] = $flag;
+                    $arp['bflag'] = $bflag;
+                    $arp['total'] = $total;
+                    $arp['rate'] = round($bflag/$total*100);
+                    $arp['maintainer'] = '无';
+                    $arp['hotel_box_type'] = '二代或者三代';
+                    $arp['remark'] = '无';
+                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_DESC, $nsp);
+                    array_unshift($nsp, $arp);
+                    foreach($nsp as $nk=>$nv){
+                        foreach($hotel_box_type as $hk=>$hv){
+                            if($hk == $nv['hotel_box_type']){
+                                $nsp[$nk]['hotel_box_type'] = $hv;
+                            }
+                        }
+                        $nsp[$nk]['rate'] = $nsp[$nk]['rate'] .'%';
+
+
+                    }
+                    $xlsCell = array(
+                        array('name', '酒楼名称'),
+                        array('hotel_box_type', '机顶盒类型'),
+                        array('flag', '正常'),
+                        array('bflag', '异常'),
+                        array('total', '总计'),
+                        array('rate', '异常率'),
+                        array('maintainer', '维护人'),
+                        array('remark', '备注')
+                    );
+                    $hboxlist = $nsp;
+                }else{
+                    $hboxlist = array();
+                }
+            }
+        }else{
+            $hboxlist = array();
+        }
+        $filename = 'heartlostinfo';
+        $this->exportExcel($xlsName, $xlsCell, $hboxlist,$filename);
+
+    }
+
+    public function filtertime($comp_arr, $time){
+       $rs =  array_filter($comp_arr, function ($val) use($time) {
+            if ( $time-strtotime($val['lt']) < 86400) {
+                    return true;
+            }else{
+                return false;
+            }
+        });
+        //得到正常值
+       $count = count($rs);
+        return $count;
+    }
+
+    public function sec2Time($time){
+        if(is_numeric($time)){
+            $value = array(
+                "years" => 0, "days" => 0, "hours" => 0,
+                "minutes" => 0, "seconds" => 0,
+            );
+            if($time >= 31556926){
+                $value["years"] = floor($time/31556926);
+                $time = ($time%31556926);
+            }
+            if($time >= 86400){
+                $value["days"] = floor($time/86400);
+                $time = ($time%86400);
+            }
+            if($time >= 3600){
+                $value["hours"] = floor($time/3600);
+                $time = ($time%3600);
+            }
+            if($time >= 60){
+                $value["minutes"] = floor($time/60);
+                $time = ($time%60);
+            }
+            $value["seconds"] = floor($time);
+            //return (array) $value;
+            $t=$value["years"] ."年". $value["days"] ."天"." ". $value["hours"] ."小时". $value["minutes"] ."分".$value["seconds"]."秒";
+            Return $t;
+
+        }else{
+            return (bool) FALSE;
+        }
+    }
     /**
      *
      * 导出Excel
