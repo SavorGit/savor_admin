@@ -248,7 +248,7 @@ class ClientController extends Controller {
                     $vinfo['minu_time'] = 1;
                 }
 
-                $vinfo['update_time'] = date("Y-m-d",strtotime($vinfo['update_time']));
+                $vinfo['update_time'] = date("Y-m-d",strtotime($vinfo['create_time']));
 
                 $m_article_source = new \Admin\Model\ArticleSourceModel();
                 $loginfo = $m_article_source->find($vinfo['source_id']);
