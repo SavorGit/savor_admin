@@ -1,0 +1,278 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+body,html{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	bottom: 0px;
+	background-color: #f6f3ee;
+
+}
+input[type="button"], input[type="submit"], input[type="reset"] {
+
+-webkit-appearance: none;
+
+}
+.content{
+	width: 100%;
+}
+.top-img{
+	width: 100%;
+	height: 2.5rem;
+	background-color: #ece5dd;
+	padding-top: 0.05rem;
+	border: 1px solid #e0dad3;
+}
+.top-img img{
+	width: 95%;
+	height: 2.2rem;
+	display: block;
+	margin: 0 auto;
+	margin-top: 0.15rem;
+}
+.for{
+	width: 87%;
+	margin: 0 auto;
+	margin-top: 0.34rem;
+}
+.for h2{
+	text-align: center;
+	font-size: 0.32rem;
+	color: #434343;
+}
+.group{
+	width: 100%;
+	height: 1.2rem;
+}
+.sp-name{
+	font-size: 0.3rem;
+	color: #000;
+}
+.sp-name img{
+	width: 0.16rem;
+	height: 0.16rem;
+	margin-right: 0.1rem;
+}
+
+.text-name{
+	width: 4.8rem;
+	height: 0.64rem;
+	border: 1px solid #ddd7d0;
+	background-color: #ece6de;
+	border-radius: 3px;
+}
+
+.sp-tel{
+	font-size: 0.3rem;
+	color: #000;
+	letter-spacing:6px;
+}
+.sp-tel img{
+	width: 0.16rem;
+	height: 0.16rem;
+	margin-right: 0.1rem;
+}
+.null-tel{
+	font-size: 0.24rem;
+	color: #df4747;
+	display: inherit;
+    margin-left: 1.5rem;
+    margin-top: 0.05rem;
+}
+.text-yz{
+	width: 2.5rem;
+	height: 0.64rem;
+	border: 1px solid #ddd7d0;
+	background-color: #ece6de;
+	border-radius: 3px;
+}
+.yzm{
+	width: 2rem;
+	height: 0.7rem;
+	border: 1px solid #ddd7d0;
+	background-color: #ece6de;
+	border-radius: 3px;
+	color: #c33b48;
+	font-size: 0.3rem;
+}
+.pay-group{
+	font-size: 0.26rem;
+	color: #C33B48;
+	display: inline-block;
+}
+.dian{
+	width: 0.22rem;
+	height: 0.22rem;
+}
+.sp-2{
+	margin-left: 0.32rem;
+}
+.sp-pay{
+	font-size: 0.3rem;
+	color: #000;
+	letter-spacing:9px;
+	margin-left: 0.2rem;
+}
+.sp-der{
+	float: left;
+}
+.tear{
+	float: left;
+	margin-left: 0.3rem;
+	width: 4.8rem;
+	height: 1.8rem;
+	border: 1px solid #ddd7d0;
+	background-color: #ece6de;
+	border-radius: 3px;
+}
+.btn{
+	width: 2.2rem;
+	height: 0.72rem;
+	margin: 0 auto;
+	margin-top: 0.5rem;
+	margin-left: 35%;
+	background-color: #922c3e;
+	border-radius:6px ;
+	border: none;
+	color: white;
+}
+.tt{
+	font-size: 0.28rem;
+	color: #575757;
+	text-align: center;
+	margin-top: 0.3rem;
+}
+/*弹层*/
+.zhez{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	background-color: black;
+	opacity: 0.6;
+}
+.shuoming{
+	width: 92%;
+	position: fixed;
+	top: 10%;
+	left: 4%;
+	background-color: white;
+	margin-top:10%;
+	border-radius: 5px;
+}
+.shuoming img{
+	width: 0.86rem;
+	height: 0.86rem;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.shuoming h2{
+	font-size: 0.32rem;
+	color: #932c3f;
+	text-align: center;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+.nr{
+	width: 91%;
+	margin: 0 auto;
+	margin-bottom: 0.5rem;
+}
+.shuoming p{
+	text-align: justify;
+	font-size: 0.30rem;
+	color: #575757;
+	margin-bottom: 0.15rem;
+	line-height: 0.5rem;
+}
+.ok{
+	width: 6.1rem;
+	height: 4.6rem;
+    margin: auto;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background-color: #f6f2ed;
+    border-radius: 5px;
+	
+}
+.ok img{
+	width: 0.78rem;
+	height: 0.63rem;
+	margin-top: 0.54rem;
+	margin-left: 45%;
+	margin-bottom: 0.15rem;
+}
+.p1{
+	font-size: 0.32rem;
+	color: #434343;
+	text-align: center;
+	display: block;
+	margin-bottom: 0.4rem;
+}
+.p2{
+	font-size: 0.28rem;
+	color: #575757;
+	text-align: center;
+	display: block;
+	margin-bottom: 0.1rem;
+}
+.btn_z{
+	width: 3.2rem;
+	height: 0.72rem;
+	background-color: #922C3E;
+	margin: 0 auto;
+	color: #F6F2ED;
+	font-size: 0.32rem;
+	border: none;
+	border-radius: 10px;
+	display: block;
+}
+.num-yzm{
+	width: 4.86rem;
+	height: 3.7rem;
+	margin: auto;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background-color: #f6f2ed;
+    border-radius: 5px;
+}
+.num-img{
+	width: 1.7rem;
+    height: 0.7rem;
+    margin: 0 auto;
+    display: block;
+    margin-top: 0.15rem;
+    margin-left: 1.8rem;
+}
+.qx{
+	width: 1.4rem;
+	height: 0.72rem;
+	background-color: #f6f2ed;
+	border: 1px solid #932C3F;
+	color: #932c3f;
+	border-radius:5px ;
+	margin-left: 17%;
+	
+}
+.qd{
+	width: 1.4rem;
+	height: 0.72rem;
+	background-color: #922C3E;
+	border: 1px solid #932C3F;
+	color: white;
+	border-radius:5px;
+	margin-left: 0.4rem;
+}
+/*--------*/
+.dis_1s{
+	width: 1.5rem;
+	height: 0.8rem;
+	position: absolute;
+	margin: auto;
+	top: 0; left: 0; bottom: 0; right: 0;
+	background-color: black;
+	opacity: 0.6;
+}

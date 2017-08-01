@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 		<title></title>
 	</head>
+	<script src="/Public/admin/assets/plugins/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<style type="text/css">
 		*{
 			margin: 0;
@@ -138,6 +139,13 @@
 		}
 	</style>
 	<body>
+		<div id="topLabel" style="background-color: black;width: 100%;height: 53px;position: fixed;bottom: 0px;left: 0px;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
+			<img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 7px; margin-left: 10px; width: 188px; height: 40px;">
+			<div id="downLoad" style="background-color: #ff3e38;border-radius: 5px;position: absolute;top: 13px;right: 35px;height: 30px;">
+				<p id="xiazai" style="color: white;width: 45px;height: 65px;margin-top: 5px;text-align: center;font-size: 15px;">下载</p>
+			</div>
+			<span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;z-index: 100;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"></span>
+		</div>
 		<div class="zt">
 			<h2>{$vinfo.title}</h2>
 			<div class="mioasu">
@@ -171,4 +179,21 @@
 			document.addEventListener('DOMContentLoaded', calculate_size, false);
 			calculate_size();
 		}
+		$('#disnone').click(function(){
+			$('#topLabel').hide();
+		});
+		
+		var disnones = $('#topLabel').css('display');
+		if(disnones=='block'){
+			$('.tuijian').css('margin-bottom','53px');
+		}
+		$('a').click(function(){
+			var hrefs = $(this).attr('href');
+			if(hrefs!=''){
+			$(this).prop('href',""+hrefs+"?location=newRead&app=inner");
+			}
+		})
+		$('#xiazai').click(function(){
+			 window.location.href = 'http://www.littlehotspot.com/d';
+		})
 </script>

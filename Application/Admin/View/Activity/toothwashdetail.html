@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/css/activity/index.css" />
+		<script src="/Public/admin/assets/plugins/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<div class="content">
+			<div class="top-img">
+				<img src="/Public/admin/assets/img/toothwash/banner@3x.png" />
+			</div>
+			<form action="" class="for" method="post">
+				<h2>预定体验卡</h2>
+				<div class="group">
+					<span class="sp-name"><img src="/Public/admin/assets/img/toothwash/bitian@3x.png" />收货人</span>
+					<input type="text" class="text-name vala" id="txt-name" name="apply_name" />
+					<span class="null-tel" style="display: none;">请填写收货人姓名</span>
+				</div>
+				<div class="group">
+					<span class="sp-tel"><img src="/Public/admin/assets/img/toothwash/bitian@3x.png" />电话</span>
+					<input type="text" class="text-name vala" id="tel" name="mobil" />
+					<span class="null-tel" style="display: none;">请填写手机号</span>
+				</div>
+				<div class="group">
+					<span class="sp-name"><img src="/Public/admin/assets/img/toothwash/bitian@3x.png" />验证码</span>
+					<input type="text" class="text-yz vala" name="verify_code" id="verify_code" />
+					<input type="button" class="yzm" value="获取验证码" />
+					<span class="null-tel" style="display: none;">请填写验证码</span>
+				</div>
+				<div class="group">
+					<span class="sp-pay">付款</span>
+					<img src="/Public/admin/assets/img/toothwash/xuanzhong@3x.png" class="dian" />
+					<div class="pay-group">
+						<span class="sp-1">货到付款</span>
+						<span class="sp-2">59￥</span>
+					</div>
+				</div>
+				<div class="group" style="margin-top: 0.2rem;">
+					<span class="sp-pay sp-der">地址</span>
+					<textarea class="tear" name="address" id="address"></textarea>
+					<span class="null-address" style="display: none;">地址长度为0-100字</span>
+					
+					<div style="clear: both;"></div>
+				</div>
+				<input type="button" class="btn" value="提交" />
+				<p class="tt">下单后，工作人员会跟您联系确认，请耐心等待。</p>
+				<input type="hidden" id="activity_id" value="{$id}" />
+			</form>
+		</div>
+		<div class="zhez" style="display:none;"></div> <!--遮罩层-->
+		<div class="shuoming" style="display: none;"> <!--说明-->
+			<img src="/Public/admin/assets/img/toothwash/xyk_guangbi@3x.png"/>
+			<h2>购卡使用说明</h2>
+			<div class="nr">
+				<p>
+					1、凭卡号可免费在北京地区佳美口腔门店洁牙一次（本卡价值3600元，含口腔颌面检查、口腔内科检查、口腔内窥镜检查、口内CT扫描、超声波洁牙、喷砂及抛光一次（含一次性口腔器械盒），并建立有效期长达20年的贵宾口腔健康档案，赠：佳美口腔牙膏一只40g、牙线一盒50m）
+				</p>
+				<p>2、使用前请拨打电话预约：400-650-9970</p>
+				<p>3、持本卡贵宾即成为佳美口腔终身会员，享受佳美VIP会员待遇</p>
+				<p>4、本卡不能与佳美口腔其他优惠活动共享</p>
+				<p>5、持本卡拥有就诊优先权，限本人使用</p>
+				<p>6、最终解释权归属佳美口腔所有</p>
+			</div>
+		</div>
+		<!--预定成功-->
+		<div id="apply_ok" class="ok" style="display: none;">
+			<img src="/Public/admin/assets/img/toothwash/ydcg@3x.png"/>
+			<span class="p1">恭喜您预定成功</span>
+			<span class="p2">工作人员会及时联系您核实信息</span>
+			<span class="p2" style="margin-bottom: 0.4rem;">请注意接听电话</span>
+			<button class="btn_z">我知道了</button>
+		</div>
+		<!--验证码-->
+		<div class="num-yzm" style="display: none;">
+			<div class="group" style="height:2.05rem">
+				<span class="sp-name" style="margin-left: 0.3rem;"><img src="/Public/admin/assets/img/toothwash/bitian@3x.png" />验证码</span>
+				<input type="text" id='piccode' class="text-name" style="width: 2.6rem;"/>
+				<img src="{:U('admin/verify/verify',array())}" id="verify_img" alt="点击更换" title="点击更换" class="num-img"/>
+			</div>
+			<input type="button"  class="qx" value="取消"/><input type="button" id="confimcode" class="qd" value="确定"/>
+		</div>
+		<!--预定失败-->
+		<!--<div class="dis_1s"></div>
+		<p class="dis_1s_p">预定失败</p>-->
+
+	</body>      
+	<script src="/Public/admin/assets/js/toothwash.js" type="text/javascript" charset="utf-8"></script> 
+
+</html>

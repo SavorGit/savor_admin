@@ -1,0 +1,107 @@
+<include file="Public/script"/>
+
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/activity/toothwash" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+      </div>
+      <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+
+   <div class="form-inline" style="margin-top:3px;">
+
+          <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              查询筛选：
+            </label>
+                
+          </div>
+
+          </div>  
+			
+
+        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
+          <input style="margin-left: 6px;" name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+        </div>
+
+        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}" style="width:135px;">
+
+          <input style="width:73px;padding:0px;margin:0px;margin-left: 15px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+        </div>
+        </div>
+      </div>
+
+
+        
+
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control" name="name" value="{$mobile}" placeholder="手机号">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" ><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+        <div class="input-group input-group-sm pull-right">
+          <a class="btn btn-success btn-sm add" href="{$host_name}/excel/excelToothwash" title="导出下单数据" target="dialog" mask="true"><i class="fa fa-plus"></i> 导出下单数据</a>
+          
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            
+            <th>ID</th>
+            <th>下单时间</th>
+            <th>收货人</th>
+            <th>电话</th>
+            <th>收获地址</th>
+           
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="ID">{$vlist.id}</td>
+              <td data-title="下单时间">{$vlist.add_time}</td>
+              <td data-title="收获人">{$vlist.receiver}</td>
+              <td data-title="电话">{$vlist.mobile}</td>
+              <td data-title="收获地址">{$vlist.address}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+</script>
+
