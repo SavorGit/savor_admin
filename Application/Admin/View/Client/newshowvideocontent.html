@@ -163,6 +163,7 @@
 			float: left;
 			margin-top: 3px;
 		}
+		
 	</style>
 	
 
@@ -217,7 +218,14 @@
 	 	//videoPlayer.poster();
 
 	 });
-
+		$('.vjs-big-play-button').css(
+			 	{
+			 		'width':'1.5em',
+			 		'border-radius':'100%',
+			 		'margin-left':'-0.75em',
+			 		'ling-height':'1.4em'
+			 	}
+			 )
 		var calculate_size = function() {
 			var BASE_FONT_SIZE = 100;
 			var docEl = document.documentElement,
