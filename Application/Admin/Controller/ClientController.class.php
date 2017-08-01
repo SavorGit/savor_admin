@@ -309,6 +309,7 @@ class ClientController extends Controller {
             }
         }else{
             if($id){
+
                 $articleModel = new \Admin\Model\ArticleModel();
                 $vinfo = $articleModel->where('id='.$id)->find();
                 $vinfo['content'] = html_entity_decode($vinfo['content']);

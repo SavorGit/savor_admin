@@ -19,7 +19,7 @@ class ArticleModel extends BaseModel
 		foreach($sor_arr as $kv){
 			$set_str .= " AND find_in_set($kv, order_tag)";
 		}
-		$sql =" select $field from savor_mb_content where $where and order_tag !='' $set_str order by savor_mb_content.update_time desc";
+		$sql =" select $field from savor_mb_content where $where and order_tag !='' $set_str order by savor_mb_content.create_time desc";
 		$result = $this -> query($sql);
 		return  $result;
 	}
@@ -27,7 +27,7 @@ class ArticleModel extends BaseModel
 
 	public function getArtinfoById($where){
 		$sql = "  select mc.order_tag,mc.id artid,m.oss_addr as name,mcat.name as category,mc.index_img_url,mc.title,mc.duration,mc.img_url as imgurl,mc.content_url as contenturl,mc.tx_url as videourl,mc.share_title as shareTitle,
-	           mc.share_content as shareContent,mc.type,mc.content,mc.media_id as mediaId,mc.update_time as updatetime,mc.source as sourceName  from  savor_mb_content mc  left join savor_media m on mc.media_id = m.id left  join savor_mb_hot_category as mcat on mc.hot_category_id = mcat.id where 1=1 $where";
+	           mc.share_content as shareContent,mc.type,mc.content,mc.media_id as mediaId,mc.create_time as updatetime,mc.source as sourceName  from  savor_mb_content mc  left join savor_media m on mc.media_id = m.id left  join savor_mb_hot_category as mcat on mc.hot_category_id = mcat.id where 1=1 $where";
 		$result = $this->query($sql);
 		return $result[0];
 	}
