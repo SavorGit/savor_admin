@@ -17,13 +17,10 @@ class HeartLogModel extends BaseModel
 
 		//Сƽ̨
 		if($type == 1) {
-			$sql = "SELECT $field FROM savor_heart_log hl INNER JOIN
-			(SELECT hotel_id, MAX(last_heart_time) AS ltime FROM savor_heart_log  WHERE TYPE = 1 GROUP BY hotel_id) b
- ON hl.hotel_id =  b.hotel_id AND hl.last_heart_time = b.ltime  where hl.type = 1 ORDER BY hl.last_heart_time DESC";
+			$sql = "SELECT $field FROM savor_heart_log  WHERE TYPE = 1  GROUP BY hotel_id ORDER BY lt DESC";
 		}else{
-			$sql = "SELECT $field FROM savor_heart_log hl INNER JOIN
-			(SELECT box_mac, MAX(last_heart_time) AS ltime FROM savor_heart_log  WHERE TYPE = 2 GROUP BY box_mac) b
- ON hl.box_mac =  b.box_mac AND hl.last_heart_time = b.ltime  where hl.type = 2 ORDER BY hl.last_heart_time DESC";
+
+			$sql = "SELECT $field FROM savor_heart_log  WHERE TYPE = 2  GROUP BY box_mac ORDER BY lt DESC";
 		}
 
 		$result = $this->query($sql);
@@ -33,14 +30,14 @@ class HeartLogModel extends BaseModel
 
 	public function getAllBox($where,  $field, $tp){
 		if($tp == 1){
-			$sql = "select $field from savor_hotel_ext as hex
-left join savor_hotel as h on hex.hotel_id=h.id
-where h.id in (select id from savor_hotel sht where $where)";
+			$sql = " select $field from savor_hotel_ext as hex
+			left join savor_hotel as h on hex.hotel_id=h.id
+            where h.id in (select id from savor_hotel sht 			where $where)";
 		}else{
-			$sql = "select $field from savor_box as b
-left join savor_room as r on b.room_id=r.id
-left join savor_hotel as h on r.hotel_id=h.id
-where h.id in (select id from savor_hotel sht where $where) and ( b.state = 1 and b.flag = 0)";
+			$sql = "  select $field from savor_box as b
+			left join savor_room as r on b.room_id=r.id
+			left join savor_hotel as h on r.hotel_id=h.id
+			where h.id in (select id from savor_hotel sht where 			$where) and ( b.state = 1 and b.flag = 0)";
 		}
 		$list = $this->query($sql);
 		return $list;
@@ -53,7 +50,12 @@ where h.id in (select id from savor_hotel sht where $where) and ( b.state = 1 an
 
 		$list = $this->alias('shlog')
 			->join(' savor_hotel sht on sht.id = shlog.hotel_id', 'LEFT')
-			->field('shlog.area_name,shlog.area_id,shlog.type,shlog.last_heart_time,shlog.box_id,shlog.box_mac,shlog.room_id,shlog.room_name,shlog.hotel_id,shlog.hotel_ip,shlog.small_ip,shlog.ads_period,shlog.demand_period,shlog.apk_version,shlog.war_version,shlog.logo_period,shlog.hotel_name,sht.maintainer,sht.hotel_box_type'
+			->field('shlog.area_name,shlog.area_id,shlog.type,
+			shlog.last_heart_time,shlog.box_id,shlog.box_mac,shlog.room_id,
+			shlog.room_name,shlog.hotel_id,shlog.hotel_ip,shlog.small_ip,
+			shlog.ads_period,shlog.demand_period,shlog.apk_version,
+			shlog.war_version,shlog.logo_period,shlog.hotel_name,
+			sht.maintainer,sht.hotel_box_type'
 	              )
 			->where($where)
 			->order($order)
