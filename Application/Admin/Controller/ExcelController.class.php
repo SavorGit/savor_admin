@@ -95,25 +95,17 @@ class ExcelController extends Controller
      * 导出心跳相关数据
      */
 
-    function expheartlost(){
-
+    public function expheartlost(){
         /*
-        删除状态的正常证明正常
-机：
-
-导出所有涉及酒店而不根据心跳
-然后与心跳表  对比
-导出
-导出所有涉及酒店
-然后与心跳表  对比*/
-        //获取限定条件下的mac
+        导出所有涉及酒店而不根据心跳
+        然后与心跳表  对比
+        导出
+        导出所有涉及酒店
+        然后与心跳表  对比*/
         $time = time();
-        $yestime = time()-86400;
         $heartModel = new \Admin\Model\HeartLogModel();
         $areaModel  = new \Admin\Model\AreaModel();
-        $hotel  = new \Admin\Model\HotelModel();
-        $hotel_box_type = C('heart_hotel_box_type');
-        $filename = 'boxlostreport';
+        $hotel_box_type_arr = C('heart_hotel_box_type');
         $type = I('get.type');
         $main_v = I('get.main_v');
         $hbt_v = I('get.hbt_v');
@@ -145,7 +137,7 @@ class ExcelController extends Controller
             $where .= "	AND sht.name LIKE '%{$name}%' ";
         }
         $hboxlist = $heartModel->getAllBox($where,$field,$type);
-        $hfield = 'hl.hotel_id,hl.box_mac mac,hl.last_heart_time lt';
+        $hfield = 'hotel_id,box_mac mac,max(`last_heart_time`) AS lt';
         $hearList  = $heartModel->getWhereData($hfield,$type);
         if ($hboxlist) {
             if($type == 1){
@@ -318,7 +310,7 @@ class ExcelController extends Controller
                     array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_DESC, $nsp);
                     array_unshift($nsp, $arp);
                     foreach($nsp as $nk=>$nv){
-                        foreach($hotel_box_type as $hk=>$hv){
+                        foreach($hotel_box_type_arr as $hk=>$hv){
                             if($hk == $nv['hotel_box_type']){
                                 $nsp[$nk]['hotel_box_type'] = $hv;
                             }
@@ -351,24 +343,25 @@ class ExcelController extends Controller
     }
 
     public function filtertime($comp_arr, $time){
-       $rs =  array_filter($comp_arr, function ($val) use($time) {
-            if ( $time-strtotime($val['lt']) < 86400) {
-                    return true;
-            }else{
-                return false;
-            }
-        });
+        $rs =  array_filter($comp_arr, function ($val)
+                use($time) {
+                            if ( $time-strtotime($val['lt']) < 86400) {
+                                    return true;
+                            }else{
+                                return false;
+                            }
+                });
         //得到正常值
        $count = count($rs);
         return $count;
     }
 
     public function sec2Time($time){
-        if(is_numeric($time)){
-            $value = array(
-                "years" => 0, "days" => 0, "hours" => 0,
-                "minutes" => 0, "seconds" => 0,
-            );
+            if(is_numeric($time)){
+                $value = array(
+                    "years" => 0, "days" => 0, "hours" => 0,
+                    "minutes" => 0, "seconds" => 0,
+                );
             if($time >= 31556926){
                 $value["years"] = floor($time/31556926);
                 $time = ($time%31556926);

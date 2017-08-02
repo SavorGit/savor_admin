@@ -470,7 +470,20 @@ CREATE TABLE `savor_account_msg_log` (
 修改时间：2017.8.1 9：40
 修改人：张英涛
 执行sql:
-CREATE TABLE `savor_activity_config` (  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '活动名称',  `img_url` varchar(255) NOT NULL DEFAULT '' COMMENT '封面图',  `start_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '活动开始时间',  `end_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '活动结束时间',  `goods_nums` int(11) DEFAULT NULL COMMENT '商品名称',  `page_views` int(11) NOT NULL DEFAULT '0' COMMENT '活动PV',  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',  `edit_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',  `operator_id` int(11) NOT NULL DEFAULT '0' COMMENT '操作人',  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '活动状态 0:未上线 1：已上线 2:删除',  PRIMARY KEY (`id`)) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+CREATE TABLE `savor_activity_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '活动名称',
+  `img_url` varchar(255) NOT NULL DEFAULT '' COMMENT '封面图',
+  `start_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '活动开始时间',
+  `end_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '活动结束时间',
+  `goods_nums` int(11) DEFAULT NULL COMMENT '商品名称',
+  `page_views` int(11) NOT NULL DEFAULT '0' COMMENT '活动PV',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  `edit_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `operator_id` int(11) NOT NULL DEFAULT '0' COMMENT '操作人',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '活动状态 0:未上线 1：已上线 2:删除',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 
 执行结果：已执行
 
@@ -478,6 +491,21 @@ CREATE TABLE `savor_activity_config` (  `id` int(11) NOT NULL AUTO_INCREMENT CO
 修改时间：2017.8.1 9：40
 修改人：张英涛
 执行sql:
-CREATE TABLE `savor_activity_data` (  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',  `activity_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动id',  `receiver` varchar(20) NOT NULL DEFAULT '' COMMENT '收货人',  `mobile` varchar(11) NOT NULL DEFAULT '' COMMENT '手机号码',  `address` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',  PRIMARY KEY (`id`)) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+CREATE TABLE `savor_activity_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `activity_id` int(11) NOT NULL DEFAULT '0' COMMENT '活动id',
+  `receiver` varchar(20) NOT NULL DEFAULT '' COMMENT '收货人',
+  `mobile` varchar(11) NOT NULL DEFAULT '' COMMENT '手机号码',
+  `address` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 
 执行结果：已执行
+
+增加说明：心跳报表添加索引
+修改时间：2017.8.1 18：00
+修改人：白玉涛
+执行sql:
+ALTER TABLE `savor_heart_log` ADD INDEX `htype` (`type`);
