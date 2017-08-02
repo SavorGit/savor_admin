@@ -89,7 +89,7 @@ class ActivityController extends BaseController{
             $m_activity_config =  new \Admin\Model\ActivityConfigModel();
             $ret = $m_activity_config->addInfo($data);
             if($ret){
-                $this->output('新增成功', 'activity/index', 2);
+                $this->output('新增成功', 'activity/index', 1);
             }else {
                 $this->error('新增失败');
             }
