@@ -205,6 +205,11 @@ class ActivityController extends BaseController{
             $where .= " and a.add_time<='$end_time 23:59:59'";
             $this->assign('end_time',$end_time);
         }
+        if(!empty($start_time) && !empty($end_time)){
+            if($end_time<$start_time){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
         $m_activity_data = new \Admin\Model\ActivityDataModel();
         $field = "a.id,a.add_time,a.receiver,a.mobile,a.address";
         $list = $m_activity_data->getList($field,$where , $orders, $start ,$size);

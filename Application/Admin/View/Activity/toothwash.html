@@ -96,6 +96,9 @@
   {$page}
 </div>
 <script type="text/javascript">
+	$('.date-reset').click(function(){
+    	$(this).parent().prev().val('')
+  	});
     $(".form-control.date").datetimepicker({
       minView: "month", //选择日期后，不会再跳转去选择时分秒
       language:  'zh-CN',
