@@ -206,7 +206,7 @@ class ActivityController extends BaseController{
         }
         $m_activity_data = new \Admin\Model\ActivityDataModel();
         $field = "a.id,a.add_time,a.receiver,a.mobile,a.address";
-        $list = $m_activity_data->getList($field,$where , $order, $start ,$size);
+        $list = $m_activity_data->getList($field,$where , $orders, $start ,$size);
         
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
