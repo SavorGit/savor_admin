@@ -271,4 +271,15 @@ class ActivityController extends BaseController{
             $this->error('删除失败','activity/index');
         }   
     } 
+    /**
+     * @desc 显示洗牙卡代码
+     */
+    public function viewCode(){
+        $code = '<div style="width:100%;height:1.35rem"></div>
+<div id="ya" style="width: 93%; height: 1.35rem; position: fixed; bottom: 0.1rem; text-align: center;">
+    <img src="http://oss.littlehotspot.com/media/resource/ZRrcsMwSKm.png"class="loaded"/>
+</div>';
+        $this->assign('code',$code);
+        $this->display('viewcode');
+    }
 }
