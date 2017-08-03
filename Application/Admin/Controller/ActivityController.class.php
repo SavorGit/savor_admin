@@ -25,9 +25,10 @@ class ActivityController extends BaseController{
         $where = ' a.status!=2';
         $name = I('post.name','','trim');
         if($name){
-            $where = " and name like'$name'";
+            $where .= " and a.name like '%$name%'";
             $this->assign('name',$name);
         }
+
         $m_activity_config =  new \Admin\Model\ActivityConfigModel(); 
         $result = $m_activity_config->getList('a.*,b.remark',$where,$order,$start,$size);
         //print_r($result);exit;
