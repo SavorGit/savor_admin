@@ -26,7 +26,7 @@
 			
 
         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
-          <input style="margin-left: 6px;" name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+          <input style="margin-left: 6px;" name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}" readonly>
                   <span class="input-group-btn">
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -35,7 +35,7 @@
 
         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}" style="width:135px;">
 
-          <input style="width:73px;padding:0px;margin:0px;margin-left: 15px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+          <input style="width:73px;padding:0px;margin:0px;margin-left: 15px;"  name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}" readonly>
                   <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -48,7 +48,7 @@
         
 
         <div class="input-group input-group-sm">
-          <input type="text" class="form-control" name="name" value="{$mobile}" placeholder="手机号">
+          <input type="text" class="form-control" name="mobile" value="{$mobile}" placeholder="手机号">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" ><i class="fa fa-search"></i></button>
             </span>

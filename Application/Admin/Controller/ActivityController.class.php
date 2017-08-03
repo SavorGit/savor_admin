@@ -187,21 +187,22 @@ class ActivityController extends BaseController{
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         
-        $where = '';
+        $where = '1';
         
         $mobile =  I('post.mobile','','trim');
         if($mobile){
-            $where = " and mobile ='$mobile'";
+            $where .= " and a.mobile ='$mobile'";
             $this->assign('mobile',$mobile);
         }
         $start_time = I('post.start_time','');
         if($start_time){
-            $where = " and a.add_time>='$start_time'";
+            
+            $where .= " and a.add_time>='$start_time 00:00:00'";
             $this->assign('start_time',$start_time);
         }
         $end_time   = I('post.end_time','');
         if($end_time){
-            $where = " and a.add_time<='$end_time'";
+            $where .= " and a.add_time<='$end_time 23:59:59'";
             $this->assign('end_time',$end_time);
         }
         $m_activity_data = new \Admin\Model\ActivityDataModel();
