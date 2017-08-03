@@ -38,7 +38,7 @@ class ExcelController extends Controller
             $tmpname = 'App下载统计总表';
         }else if($filename == "hotelbillinfo"){
             $tmpname = '对账单酒楼信息联系表';
-        }else if($filename = 'toothwash'){
+        }else if($filename == 'toothwash'){
             $tmpname = '洗牙卡订单';
         }
 
