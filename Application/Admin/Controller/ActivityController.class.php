@@ -25,9 +25,10 @@ class ActivityController extends BaseController{
         $where = ' a.status!=2';
         $name = I('post.name','','trim');
         if($name){
-            $where = " and name like'$name'";
+            $where .= " and a.name like '%$name%'";
             $this->assign('name',$name);
         }
+
         $m_activity_config =  new \Admin\Model\ActivityConfigModel(); 
         $result = $m_activity_config->getList('a.*,b.remark',$where,$order,$start,$size);
         //print_r($result);exit;
@@ -89,7 +90,7 @@ class ActivityController extends BaseController{
             $m_activity_config =  new \Admin\Model\ActivityConfigModel();
             $ret = $m_activity_config->addInfo($data);
             if($ret){
-                $this->output('新增成功', 'activity/index', 2);
+                $this->output('新增成功', 'activity/index', 1);
             }else {
                 $this->error('新增失败');
             }
@@ -187,26 +188,32 @@ class ActivityController extends BaseController{
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         
-        $where = '';
+        $where = '1';
         
         $mobile =  I('post.mobile','','trim');
         if($mobile){
-            $where = " and mobile ='$mobile'";
+            $where .= " and a.mobile ='$mobile'";
             $this->assign('mobile',$mobile);
         }
         $start_time = I('post.start_time','');
         if($start_time){
-            $where = " and a.add_time>='$start_time'";
+            
+            $where .= " and a.add_time>='$start_time 00:00:00'";
             $this->assign('start_time',$start_time);
         }
         $end_time   = I('post.end_time','');
         if($end_time){
-            $where = " and a.add_time<='$end_time'";
+            $where .= " and a.add_time<='$end_time 23:59:59'";
             $this->assign('end_time',$end_time);
+        }
+        if(!empty($start_time) && !empty($end_time)){
+            if($end_time<$start_time){
+                $this->error('结束时间不能小于开始时间');
+            }
         }
         $m_activity_data = new \Admin\Model\ActivityDataModel();
         $field = "a.id,a.add_time,a.receiver,a.mobile,a.address";
-        $list = $m_activity_data->getList($field,$where , $order, $start ,$size);
+        $list = $m_activity_data->getList($field,$where , $orders, $start ,$size);
         
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
@@ -264,4 +271,15 @@ class ActivityController extends BaseController{
             $this->error('删除失败','activity/index');
         }   
     } 
+    /**
+     * @desc 显示洗牙卡代码
+     */
+    public function viewCode(){
+        $code = '<div style="width:100%;height:1.35rem"></div>
+<div id="ya" style="width: 93%; height: 1.35rem; position: fixed; bottom: 0.1rem; text-align: center;">
+    <img src="http://oss.littlehotspot.com/media/resource/ZRrcsMwSKm.png"class="loaded"/>
+</div>';
+        $this->assign('code',$code);
+        $this->display('viewcode');
+    }
 }

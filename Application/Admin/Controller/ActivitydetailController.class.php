@@ -160,6 +160,23 @@ class ActivitydetailController extends Controller {
     public function getMobileCode(){
         $mobile =  I('post.mobile','','trim');
         $activity_id = I('post.activity_id','0','intval');
+        $m_account_sms_log =  new \Admin\Model\AccountMsgLogModel();
+        $gztime = date('Y-m-d H:i:s',strtotime('-1 Minute'));
+       
+        $where = array();
+        $where['status'] =1;
+        $where['type'] = 3;
+        $where['msg_type'] =2;
+        $where['tel'] = $mobile;
+        $where['create_time'] = array('gt',$gztime);
+        $isSend = $m_account_sms_log->getOne($where);
+        if(!empty($isSend)){
+            $map['status'] = 111;
+            $map['extent'] = 200;
+            $map['msg'] = '一分钟内请勿重复获取验证码';
+            echo json_encode($map);
+            exit;
+        }
         if(empty($activity_id)){
             $map['status'] = 104;
             $map['extent'] = 100;
@@ -192,10 +209,37 @@ class ActivitydetailController extends Controller {
             exit;
         }
         
+        if(empty($activity_info)){
+            $map['status'] = 201;
+            $map['extent'] = 100;
+            $map['msg']    = '该活动已下线';
+            echo json_encode($map);
+            exit;
+        }
+        $now_time = time();
+        $start_time = strtotime($activity_info['start_time']);
+        $end_time   = strtotime($activity_info['end_time']) ;
+        if($now_time<$start_time){
+            $map['status'] = 203;
+            $map['extent'] = 100;
+            $map['msg'] = '该活动还未开始';
+            echo json_encode($map);
+            exit;
+        }
+        if($now_time>$end_time){
+            $map['status'] = 204;
+            $map['extent'] = 100;
+            $map['msg'] = '该活动已结束';
+            echo json_encode($map);
+            exit;
+        }
+       
+        
+        
         $m_activity_data = new \Admin\Model\ActivityDataModel();
         $allData = $m_activity_data->countData(array('activity_id'=>$activity_id));
         if($allData>=$activity_info['goods_nums']){
-            $map['status'] = 204;
+            $map['status'] = 205;
             $map['extent'] = 100;
             $map['msg'] = '商品已售完';
             echo json_encode($map);
@@ -258,6 +302,23 @@ class ActivitydetailController extends Controller {
         $pic_code = I('post.pic_code','','trim');
         $mobile   = I('post.mobile','','trim');
         $activity_id = I('post.activity_id','0','intval');
+        
+        $m_account_sms_log =  new \Admin\Model\AccountMsgLogModel();
+        $gztime = date('Y-m-d H:i:s',strtotime('-1 Minute'));
+        $where = array();
+        $where['status'] =1;
+        $where['type'] = 3;
+        $where['msg_type'] =2;
+        $where['tel'] = $mobile;
+        $where['create_time'] = array('gt',$gztime);
+        $isSend = $m_account_sms_log->getOne($where);
+        if(!empty($isSend)){
+            $map['status'] = 111;
+            $map['extent'] = 200;
+            $map['msg'] = '一分钟内请勿重复获取验证码';
+            echo json_encode($map);
+            exit;
+        }
         if(empty($activity_id)){
             $map['status'] = 103;
             $map['extent'] = 100;
@@ -295,6 +356,25 @@ class ActivitydetailController extends Controller {
             echo json_encode($map);
             exit;
         }
+       
+        $now_time = time();
+        $start_time = strtotime($activity_info['start_time']);
+        $end_time   = strtotime($activity_info['end_time']) ;
+        if($now_time<$start_time){
+            $map['status'] = 205;
+            $map['extent'] = 100;
+            $map['msg'] = '该活动还未开始';
+            echo json_encode($map);
+            exit;
+        }
+        if($now_time>$end_time){
+            $map['status'] = 206;
+            $map['extent'] = 100;
+            $map['msg'] = '该活动已结束';
+            echo json_encode($map);
+            exit;
+        }
+       
         
         $m_activity_data = new \Admin\Model\ActivityDataModel();
         $allData = $m_activity_data->countData(array('activity_id'=>$activity_id));
@@ -367,6 +447,17 @@ class ActivitydetailController extends Controller {
         $sjson = json_decode($sjson,true);
         $code = $sjson['resp']['respCode'];
         if($code === '000000') {
+            $data = array();
+            $data['type'] = 3;
+            $data['status'] = 1;
+            $data['create_time'] = date('Y-m-d H:i:s');
+            $data['update_time'] = date('Y-m-d H:i:s');
+            $data['url'] = $param;
+            $data['tel'] = $to;
+            $data['resp_code'] = $code;
+            $data['msg_type'] = 2;
+            $m_account_sms_log =  new \Admin\Model\AccountMsgLogModel();
+            $m_account_sms_log->addData($data);
             return true;
         }else{
             return false;
