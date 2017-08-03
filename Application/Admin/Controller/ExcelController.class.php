@@ -38,6 +38,8 @@ class ExcelController extends Controller
             $tmpname = 'App下载统计总表';
         }else if($filename == "hotelbillinfo"){
             $tmpname = '对账单酒楼信息联系表';
+        }else if($filename = 'toothwash'){
+            $tmpname = '洗牙卡订单';
         }
 
         if($filename == "heartlostinfo"){
@@ -1153,5 +1155,18 @@ class ExcelController extends Controller
 
         $this->exportExcel($xlsName, $xlsCell, $result['list'],$filename);
     }
-
+    public function excelToothwash(){
+        $m_activity_data = new \Admin\Model\ActivityDataModel();
+        $infos = $m_activity_data->getInfo('*','',' add_time desc','',2);
+        $xlsCell = array(
+            array('id', 'id'),
+            array('receiver', '收货人'),
+            array('mobile', '电话'),
+            array('address', '收货地址'),
+            array('add_time', '下单时间'),
+        );
+        $xlsName = '洗牙卡订单';
+        $filename = 'toothwash';
+        $this->exportExcel($xlsName, $xlsCell, $infos,$filename);
+    }
 }
