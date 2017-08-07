@@ -508,4 +508,4 @@ CREATE TABLE `savor_activity_data` (
 修改时间：2017.8.1 18：00
 修改人：白玉涛
 执行sql:
-ALTER TABLE `savor_heart_log` ADD INDEX `htype` (`type`);
+ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`);

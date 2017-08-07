@@ -36,7 +36,7 @@ class ReportController extends BaseController{
 		$start  = ( $start-1 ) * $size;
 		$where = "1=1";
 		$name = I('name');
-		$type = I('type');
+		$type = I('baotype');
 		//城市
 		$area_arr = $areaModel->getAllArea();
 		$this->assign('area', $area_arr);
@@ -47,14 +47,14 @@ class ReportController extends BaseController{
 			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
 		}
 		//城市
-		$area_v = I('area_v');
+		$area_v = I('area_bv');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
 			$where .= "	AND shlog.area_id = $area_v ";
 		}
 		//查询类型
 		if($type){
-		    $this->assign('type',$type);
+		    $this->assign('typea',$type);
 			$where .= "	AND shlog.type= {$type} ";
 		}
 		//合作维护人
@@ -103,7 +103,6 @@ class ReportController extends BaseController{
 				}
 			}
 		}
-
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('heartlist');

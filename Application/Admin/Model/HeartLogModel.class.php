@@ -39,6 +39,8 @@ class HeartLogModel extends BaseModel
 			left join savor_hotel as h on r.hotel_id=h.id
 			where h.id in (select id from savor_hotel sht where 			$where) and ( b.state = 1 and b.flag = 0)";
 		}
+
+
 		$list = $this->query($sql);
 		return $list;
 
