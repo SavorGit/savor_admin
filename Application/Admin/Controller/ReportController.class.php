@@ -35,7 +35,7 @@ class ReportController extends BaseController{
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
 		$where = "1=1";
-		$name = I('name');
+		$name = I('he_name');
 		$type = I('baotype');
 		//城市
 		$area_arr = $areaModel->getAllArea();
@@ -47,7 +47,7 @@ class ReportController extends BaseController{
 			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
 		}
 		//城市
-		$area_v = I('area_bv');
+		$area_v = I('he_area_bv');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
 			$where .= "	AND shlog.area_id = $area_v ";
@@ -58,13 +58,13 @@ class ReportController extends BaseController{
 			$where .= "	AND shlog.type= {$type} ";
 		}
 		//合作维护人
-		$main_v = I('main_v');
+		$main_v = I('he_main_v');
 		if ($main_v) {
 			$this->assign('main_k',$main_v);
 			$where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
 		}
 		//机顶盒类型
-		$hbt_v = I('hbt_v');
+		$hbt_v = I('he_hbt_v');
 		if ($hbt_v) {
 			$this->assign('hbt_k',$hbt_v);
 			$where .= "	AND sht.hotel_box_type = $hbt_v";
@@ -109,77 +109,7 @@ class ReportController extends BaseController{
 	}
 
 
-	/**
-	 * 新增分类
-	 *
-	 */
-	public function addCate(){
-		$id = I('get.id');
-		$catModel = new CategoModel;
-		if($id){
-			$vinfo = $catModel->find($id);
-			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-			$vinfo['oss_addr'] = $image_host.$vinfo['img_url'];
-			$this->assign('vinfo',$vinfo);
-		}
-		return $this->display('addCat');
-	}
 
-
-	/*
-	 * 修改状态
-	 */
-
-	public function changestate(){
-		$cid = I('post.cid');
-		$save = array();
-		$save['state'] = I('post.state');
-		$catModel = new CategoModel;
-		$res_save = $catModel->where('id='.$cid)->save($save);
-		if($res_save){
-			echo 1;
-		} else {
-			echo 0;
-		}
-	}
-
-	/**
-	 * 保存或者更新分类信息
-	 * @return [type] [description]
-	 */
-	public function doAddCat(){
-		$catModel = new CategoModel;
-		$id                  = I('post.id');
-		$save                = [];
-		$save['name']        = I('post.cat_name','','trim');
-		$save['sort_num']    = I('post.sort','','intval');
-
-		$save['update_time'] = date('Y-m-d H:i:s');
-		$mediaid = I('post.media_id');
-		$mediaModel = new \Admin\Model\MediaModel();
-		//$mediaid = 11;
-		$oss_addr = $mediaModel->find($mediaid);
-		$oss_addr = $oss_addr['oss_addr'];
-		$save['img_url'] = $oss_addr;
-		if($id){
-			$res_save = $catModel->where('id='.$id)->save($save);
-			if($res_save){
-				$this->output('操作成功!', 'release/category');
-			}else{
-				$this->output('操作失败!', 'release/doAddCat');
-			}
-		}else{
-			$save['state']    =  0;
-			$save['create_time'] = date('Y-m-d H:i:s');
-			//刷新页面，关闭当前
-			$res_save = $catModel->add($save);
-			if($res_save){
-			    $this->output('添加分类成功!', 'release/category');
-			}else{
-				$this->output('操作失败!', 'release/doAddCat');
-			}
-		}
-	}
     public function contAndProm(){
         $size   = I('numPerPage',50);     //显示每页记录数
         $this->assign('numPerPage',$size);
