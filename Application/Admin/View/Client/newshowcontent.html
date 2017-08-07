@@ -252,6 +252,15 @@
 		sita = sit+"/activitydetail/isSoldOut";
 		sitush = sit+"/activitydetail/toothwash";
 		$('#ya').click(function(){
+			var cUrl;
+			var url = window.location.href;
+			if(url.indexOf("sourceid") >= 0 ) { 
+				var sNum = getQueryString("sourceid")
+				cUrl = "&sourceid="+sNum;
+			}else{
+				cUrl="";
+			}
+			
 			var da = {}
 			da.id=1;
 			
@@ -265,7 +274,7 @@
 					console.log(call)
 					var status = call.status;
 					if(status==1){
-						window.location.href="/activitydetail/toothwash"
+						window.location.href="/activitydetail/toothwash?pure=1"+cUrl
 					}else{
 						tankuang(100,call.msg)
 					}
@@ -288,6 +297,11 @@
 		$('#xiazai').click(function(){
 			 window.location.href = 'http://www.littlehotspot.com/d';
 		})
+		function getQueryString(name) { 
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+		var r = window.location.search.substr(1).match(reg); 
+		if (r != null) return unescape(r[2]); return null; 
+		} 
 	</script>
 
 </html>
