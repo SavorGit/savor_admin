@@ -74,7 +74,7 @@
             <th>收货人</th>
             <th>电话</th>
             <th>收货地址</th>
-           
+           <th>下单来源</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -85,6 +85,7 @@
               <td data-title="收获人">{$vlist.receiver}</td>
               <td data-title="电话">{$vlist.mobile}</td>
               <td data-title="收货地址">{$vlist.address}</td>
+              <td data-title="收货地址">{$activity_source_arr[$vlist[sourceid]]}</td>
             </tr>
           </volist>
           </tbody>

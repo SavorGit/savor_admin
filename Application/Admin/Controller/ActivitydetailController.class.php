@@ -17,8 +17,11 @@ class ActivitydetailController extends Controller {
         $this->vcode_max_send_num = 3;       //手机验证码最多发送3次出现图形验证码
     }
     public function  toothWash(){
-      
         $id = 1;
+        $sourceid = I('get.sourceid','0','intval');
+        if(!empty($sourceid)){
+            $this->assign('sourceid',$sourceid);
+        }
         $this->assign('id',$id);
         $this->display('Activity/toothwashdetail');
     }
@@ -34,6 +37,7 @@ class ActivitydetailController extends Controller {
             $verify_code=  I('post.verify_code','','trim');  //手机验证码
             $address    =  I('post.address','','trim');      //收货地址
             $activity_id = I('post.activity_id','0','intval');  //活动id
+            $sourceid   =  I('post.sourceid','0','intval');   //来源
             if(empty($apply_name)){
                 $map['status'] = 101;
                 $map['extent'] = 110;
@@ -110,13 +114,6 @@ class ActivitydetailController extends Controller {
                 echo json_encode($map);
                 exit;
             }
-            
-            $data = array();
-            $data['receiver'] = $apply_name;
-            $data['mobile'] = $mobile;
-            $data['address'] = $address;
-            $data['activity_id'] = $activity_id;
-            
             $m_activity_data = new \Admin\Model\ActivityDataModel();
             $info = $m_activity_data->getInfo('id',array('mobile'=>$mobile));
             if(!empty($info)){
@@ -125,6 +122,27 @@ class ActivitydetailController extends Controller {
                 $map['msg']    ='同一手机号只能下单一次';
                 echo json_encode($map);
                 exit;
+            }
+            $data = array();
+            $data['receiver'] = $apply_name;
+            $data['mobile'] = $mobile;
+            $data['address'] = $address;
+            $data['activity_id'] = $activity_id;
+            
+            if(empty($sourceid)){
+                $is_wx = checkWxbrowser();
+                if($is_wx==0){//app打开
+                    $data['sourceid'] = 1;
+                }else if($is_wx ==1){//微信分享
+                    $data['sourceid'] = 3;
+                }
+            }
+            
+            if(!empty($sourceid) && is_numeric($sourceid)){
+                $activity_source_arr =  C('ACTIVITY_SOURCE_ARR');
+                if(key_exists($sourceid, $activity_source_arr)){
+                    $data['sourceid'] = $sourceid;
+                }
             }
             $ret = $m_activity_data->addInfo($data);
             if($ret){

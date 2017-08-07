@@ -141,6 +141,7 @@ $('.btn').click(function(event) {
 	var verify_code = $('#verify_code').val();
 	var address    = $('#address').val();
 	var activity_id= $('#activity_id').val();
+	var sourceid = $('#sourceid').val();
 	//console.log(btn_num)
 	/*$('.vala').each(function() {
 		if($(this).val() == '') {
@@ -183,7 +184,7 @@ $('.btn').click(function(event) {
 	$.ajax({
 		type:'post',
 		url :'/admin/Activitydetail/doapply',
-		data:{'apply_name':apply_name,'mobile':mobile,'verify_code':verify_code,'address':address,'activity_id':activity_id},
+		data:{'apply_name':apply_name,'mobile':mobile,'verify_code':verify_code,'address':address,'activity_id':activity_id,'sourceid':sourceid},
 		dataType: "json",
 		success:function(data){
 			if(data.status !=1){

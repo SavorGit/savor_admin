@@ -189,4 +189,10 @@ $config['SMS_CONFIG'] = array(
     'vcode_templateid'=>'107496',
     'notice_templateid'=>'107928',
 );
+$config['ACTIVITY_SOURCE_ARR'] = array(
+    '1'=>'App',
+    '2'=>'App推送',  
+    '3'=>'微信客户端',
+    '4'=>'微信公众号',
+);
 return $config;
