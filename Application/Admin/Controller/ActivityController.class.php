@@ -212,9 +212,10 @@ class ActivityController extends BaseController{
             }
         }
         $m_activity_data = new \Admin\Model\ActivityDataModel();
-        $field = "a.id,a.add_time,a.receiver,a.mobile,a.address";
+        $field = "a.id,a.add_time,a.receiver,a.mobile,a.address,a.sourceid";
         $list = $m_activity_data->getList($field,$where , $orders, $start ,$size);
-        
+        $activity_source_arr = C('ACTIVITY_SOURCE_ARR');
+        $this->assign('activity_source_arr',$activity_source_arr);
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
         $this->display('toothwash');
