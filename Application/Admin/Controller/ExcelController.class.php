@@ -44,9 +44,11 @@ class ExcelController extends Controller
 
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
+            $acp = 3;
         }else{
             $fileName = $tmpname . date('_YmdHis');//or $xlsTitle
         }
+
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
         vendor("PHPExcel.PHPExcel");
@@ -83,6 +85,15 @@ class ExcelController extends Controller
             $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
         }else if($filename == 'hotelbillinfo'){
             $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(40);
+        }else if($filename == "heartlostinfo"){
+            $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
         }
         header('pragma:public');
         header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $xlsTitle . '.xls"');
@@ -118,12 +129,14 @@ class ExcelController extends Controller
         $where = ' 1=1 and sht.state = 1 and sht.flag = 0 ';
         //小平台
         if($type == 1){
-            $field = 'hex.mac_addr mac, h.name, hex.hotel_id';
-            $xlsName = date("Y-m-d H:i:s",$time).$arname.' '.' 小平台心跳情况';
+            $field = 'hex.mac_addr mac,h.hotel_box_type, h.name, hex.hotel_id';
+            $xlsName = date("Ymd Hi",$time).$arname.' '.' 小平台心跳情况';
         }else{
             $field = 'b.mac, h.id hotel_id, h.name,h.hotel_box_type,h.remark,h.maintainer ';
-            $xlsName = date("Y-m-d H:i:s",$time).$arname.' 机顶盒心跳情况';
+            $xlsName = date("Ymd Hi",$time).$arname.' 机顶盒心跳情况';
+
         }
+
         if ($main_v) {
             $where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
         }
@@ -166,14 +179,20 @@ class ExcelController extends Controller
                             //计算时长
                             // dump($hid);
                             $l_time = strtotime($hearList[$hid]['lt']);
-                            $hboxlist[$hk]['htime'] = $l_time;
                             $ftime = $time-$l_time;
+                            $hboxlist[$hk]['htime'] = $ftime;
                             //测试进行修改86400
                             if($ftime<86400){
                                 $hboxlist[$hk]['flag'] = '1';
                                 $hboxlist[$hk]['bflag'] = '0';
                                 $hboxlist[$hk]['lost_time'] = '正常';
                                 $hboxlist[$hk]['rate'] = '0';
+                            }else if($ftime>604800){
+                                $hboxlist[$hk]['flag'] = '0';
+                                $hboxlist[$hk]['bflag'] = '1';
+                                $hboxlist[$hk]['lost_time'] = '七天以上';
+                                $hboxlist[$hk]['htime'] = '1893455000';
+                                $hboxlist[$hk]['rate'] = '100%';
                             }else{
                                 $hboxlist[$hk]['flag'] = '0';
                                 $hboxlist[$hk]['bflag'] = '1';
@@ -201,33 +220,72 @@ class ExcelController extends Controller
                     $flag =0;
                     $bflag = 0;
                     $total = 0;
-                    foreach($hboxlist as $hval) {
+                    foreach($hboxlist as $hkk=>$hval) {
                         $flag += $hval['flag'];
                         $total += $hval['total'];
                         $bflag += $hval['bflag'];
+                        foreach($hotel_box_type_arr as $hk=>$hv){
+                            if($hk == $hval['hotel_box_type']){
+                                $hboxlist[$hkk]['hotel_box_type'] = $hv;
+                            }
+                        }
 
                     }
-                    $arp['name'] = '所有酒楼';
+                    $ce_len = count($hboxlist);
+                    $arp['name'] = '总计'.$ce_len.'家酒楼';
+                    $arp['hotel_box_type'] = '';
                     $arp['flag'] = $flag;
                     $arp['bflag'] = $bflag;
                     $arp['total'] = $total;
                     $arp['rate'] = round($bflag/$total*100).'%';
                     $arp['lost_time'] = '';
-                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_DESC, $hboxlist);
+                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_ASC, $hboxlist);
                     array_unshift($hboxlist, $arp);
                 }else{
-                    $hboxlist = array();
+                    foreach($hboxlist as $hk =>$hbv){
+                        $hboxlist[$hk]['flag'] = '0';
+                        $hboxlist[$hk]['bflag'] = '1';
+                        $hboxlist[$hk]['htime'] = '1893456000';
+                        $hboxlist[$hk]['lost_time'] = '七天以上';
+                        $hboxlist[$hk]['rate'] = '100%';
+                        $hboxlist[$hk]['total'] = 1;
+                    }
+                    $arp = array();
+                    $flag =0;
+                    $bflag = 0;
+                    $total = 0;
+                    foreach($hboxlist as $hkk=>$hval) {
+                        $flag += $hval['flag'];
+                        $total += $hval['total'];
+                        $bflag += $hval['bflag'];
+                        foreach($hotel_box_type_arr as $hk=>$hv){
+                            if($hk == $hval['hotel_box_type']){
+                                $hboxlist[$hkk]['hotel_box_type'] = $hv;
+                            }
+                        }
+
+                    }
+                    $ce_len = count($hboxlist);
+                    $arp['name'] = '总计'.$ce_len.'家酒楼';
+                    $arp['hotel_box_type'] = '';
+                    $arp['flag'] = $flag;
+                    $arp['bflag'] = $bflag;
+                    $arp['total'] = $total;
+                    $arp['rate'] = round($bflag/$total*100).'%';
+                    $arp['lost_time'] = '';
+                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_ASC, $hboxlist);
+                    array_unshift($hboxlist, $arp);
                 }
                 $xlsCell = array(
                     array('name', '酒楼名称'),
+                    array('hotel_box_type', '小平台类型'),
                     array('flag', '正常'),
                     array('bflag', '异常'),
                     array('total', '总计'),
-                    array('rate', '异常率'),
+                    array('rate', '异常率(%)'),
                     array('lost_time', '失联时长'),
                 );
             }else{
-
                 //同样做排重
                 $new_arr_heart = array();
                 $heart_all = array();
@@ -300,16 +358,17 @@ class ExcelController extends Controller
                         $order_arr[] = $hval['rate'];
                         $order_arr_h[] = $hval['hotelid'];
                     }
+                    $ca_len = count($nsp);
                     $arp = array();
-                    $arp['name'] = '所有酒楼';
+                    $arp['name'] = '总计'.$ca_len.'家酒楼';
                     $arp['flag'] = $flag;
                     $arp['bflag'] = $bflag;
                     $arp['total'] = $total;
                     $arp['rate'] = round($bflag/$total*100);
-                    $arp['maintainer'] = '无';
-                    $arp['hotel_box_type'] = '二代或者三代';
-                    $arp['remark'] = '无';
-                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_DESC, $nsp);
+                    $arp['maintainer'] = '';
+                    $arp['hotel_box_type'] = '';
+                    $arp['remark'] = '';
+                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_ASC, $nsp);
                     array_unshift($nsp, $arp);
                     foreach($nsp as $nk=>$nv){
                         foreach($hotel_box_type_arr as $hk=>$hv){
@@ -321,24 +380,124 @@ class ExcelController extends Controller
 
 
                     }
-                    $xlsCell = array(
-                        array('name', '酒楼名称'),
-                        array('hotel_box_type', '机顶盒类型'),
-                        array('flag', '正常'),
-                        array('bflag', '异常'),
-                        array('total', '总计'),
-                        array('rate', '异常率'),
-                        array('maintainer', '维护人'),
-                        array('remark', '备注')
-                    );
+
                     $hboxlist = $nsp;
                 }else{
-                    $hboxlist = array();
+                    foreach($hboxlist as $hbv){
+                        $heart_all[$hbv['hotel_id']][] = $hbv;
+                    }
+                    $nsp = array();
+                    foreach ($heart_all as $hea=>$hev) {
+                        $aflag = 0;
+                        $bflag = 0;
+                        $total = 0;
+                        //根本不存在
+                        $nsp[$hea]['flag'] = 0;
+                        $nsp[$hea]['bflag'] = count($hev);
+                        $nsp[$hea]['total'] = $nsp[$hea]['bflag'];
+                        $nsp[$hea]['rate'] = '100';
+
+                        $nsp[$hea]['maintainer'] = $hev[0]['maintainer'];
+                        $nsp[$hea]['name'] = $hev[0]['name'];
+                        $nsp[$hea]['hotel_box_type'] = $hev[0]['hotel_box_type'];
+                        $nsp[$hea]['remark'] = $hev[0]['remark'];
+                        $nsp[$hea]['hotelid'] = $hea;
+                    }
+                    $flag = 0;
+                    $bflag = 0;
+                    $total = 0;
+                    $order_arr = array();
+                    $order_arr_h = array();
+                    foreach($nsp as $nval) {
+                        $flag += $nval['flag'];
+                        $total += $nval['total'];
+                        $bflag += $nval['bflag'];
+
+                    }
+                    foreach($nsp as $hval) {
+                        $order_arr[] = $hval['rate'];
+                        $order_arr_h[] = $hval['hotelid'];
+                    }
+                    $ca_len = count($nsp);
+                    $arp = array();
+                    $arp['name'] = '总计'.$ca_len.'家酒楼';
+                    $arp['flag'] = $flag;
+                    $arp['bflag'] = $bflag;
+                    $arp['total'] = $total;
+                    $arp['rate'] = round($bflag/$total*100);
+                    $arp['maintainer'] = '';
+                    $arp['hotel_box_type'] = '';
+                    $arp['remark'] = '';
+                    array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_ASC, $nsp);
+                    array_unshift($nsp, $arp);
+                    foreach($nsp as $nk=>$nv){
+                        foreach($hotel_box_type_arr as $hk=>$hv){
+                            if($hk == $nv['hotel_box_type']){
+                                $nsp[$nk]['hotel_box_type'] = $hv;
+                            }
+                        }
+                        $nsp[$nk]['rate'] = $nsp[$nk]['rate'] .'%';
+
+
+                    }
+                    $hboxlist = $nsp;
                 }
+                $xlsCell = array(
+                    array('name', '酒楼名称'),
+                    array('maintainer', '维护人'),
+                    array('hotel_box_type', '机顶盒类型'),
+                    array('flag', '正常'),
+                    array('bflag', '异常'),
+                    array('total', '总计'),
+                    array('rate', '异常率(%)'),
+                    array('remark', '酒楼备注')
+                );
             }
         }else{
             $hboxlist = array();
         }
+        if(empty($hboxlist)){
+            if($type == 1){
+                $xlsCell = array(
+                    array('name', '酒楼名称'),
+                    array('hotel_box_type', '小平台类型'),
+                    array('flag', '正常'),
+                    array('bflag', '异常'),
+                    array('total', '总计'),
+                    array('rate', '异常率(%)'),
+                    array('lost_time', '失联时长'),
+                );
+                $hboxlist[0]['name'] = '总计0家酒楼';
+                $hboxlist[0]['flag'] = '';
+                $hboxlist[0]['bflag'] = '';
+                $hboxlist[0]['total'] = '';
+                $hboxlist[0]['rate'] = '';
+                $hboxlist[0]['hotel_box_type'] = '';
+                $hboxlist[0]['lost_time'] = '';
+
+            }else{
+                $xlsCell = array(
+                    array('name', '酒楼名称'),
+                    array('maintainer', '维护人'),
+                    array('hotel_box_type', '机顶盒类型'),
+                    array('flag', '正常'),
+                    array('bflag', '异常'),
+                    array('total', '总计'),
+                    array('rate', '异常率(%)'),
+                    array('remark', '酒楼备注')
+                );
+                $hboxlist[0]['name'] = '总计0家酒楼';
+                $hboxlist[0]['flag'] = '';
+                $hboxlist[0]['bflag'] = '';
+                $hboxlist[0]['total'] = '';
+                $hboxlist[0]['rate'] = '';
+                $hboxlist[0]['maintainer'] = '';
+                $hboxlist[0]['hotel_box_type'] = '';
+                $hboxlist[0]['remark'] = '';
+            }
+
+        }
+
         $filename = 'heartlostinfo';
         $this->exportExcel($xlsName, $xlsCell, $hboxlist,$filename);
 
@@ -361,13 +520,10 @@ class ExcelController extends Controller
     public function sec2Time($time){
             if(is_numeric($time)){
                 $value = array(
-                    "years" => 0, "days" => 0, "hours" => 0,
+                    "days" => 0, "hours" => 0,
                     "minutes" => 0, "seconds" => 0,
                 );
-            if($time >= 31556926){
-                $value["years"] = floor($time/31556926);
-                $time = ($time%31556926);
-            }
+
             if($time >= 86400){
                 $value["days"] = floor($time/86400);
                 $time = ($time%86400);
@@ -382,7 +538,7 @@ class ExcelController extends Controller
             }
             $value["seconds"] = floor($time);
             //return (array) $value;
-            $t=$value["years"] ."年". $value["days"] ."天"." ". $value["hours"] ."小时". $value["minutes"] ."分".$value["seconds"]."秒";
+            $t= $value["days"] ."天"." ". $value["hours"] ."小时". $value["minutes"] ."分";
             Return $t;
 
         }else{
