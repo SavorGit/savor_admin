@@ -1322,7 +1322,12 @@ class ExcelController extends Controller
             array('mobile', '电话'),
             array('address', '收货地址'),
             array('add_time', '下单时间'),
+            array('sourceid','来源')
         );
+        $activity_source_arr = C('ACTIVITY_SOURCE_ARR');
+        foreach($infos as $key=>$v){
+            $infos[$key]['sourceid'] = $activity_source_arr[$v['sourceid']];
+        }
         $xlsName = '洗牙卡订单';
         $filename = 'toothwash';
         $this->exportExcel($xlsName, $xlsCell, $infos,$filename);
