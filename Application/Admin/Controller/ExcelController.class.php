@@ -367,7 +367,7 @@ class ExcelController extends Controller
                     $arp['rate'] = round($bflag/$total*100);
                     $arp['maintainer'] = '';
                     $arp['hotel_box_type'] = '';
-                    $arp['remark'] = '无';
+                    $arp['remark'] = '';
                     array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_ASC, $nsp);
                     array_unshift($nsp, $arp);
                     foreach($nsp as $nk=>$nv){
@@ -427,7 +427,7 @@ class ExcelController extends Controller
                     $arp['rate'] = round($bflag/$total*100);
                     $arp['maintainer'] = '';
                     $arp['hotel_box_type'] = '';
-                    $arp['remark'] = '无';
+                    $arp['remark'] = '';
                     array_multisort($order_arr,SORT_DESC,$order_arr_h,SORT_ASC, $nsp);
                     array_unshift($nsp, $arp);
                     foreach($nsp as $nk=>$nv){
