@@ -30,7 +30,7 @@
                 维护人：
               </label>
                 <span class="input-group-btn input-group-sm">
-                <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="维护人" style="width:95px;">
+                <input type="text" class="form-control" name="he_main_v" value="{$main_k}" placeholder="维护人" style="width:95px;">
             </span>
             </div>
           </div>
@@ -42,7 +42,7 @@
               </label>
 
                 <span class="input-group-btn input-group-sm">
-              <select name="area_bv" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+              <select name="he_area_bv" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
                 <option value=0 >所有城市</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
@@ -59,7 +59,7 @@
                 设备类型：
               </label>
                <span class="input-group-btn input-group-sm">
-              <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+              <select name="he_hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
                 <volist name=":C('heart_hotel_box_type')" id="vo">
                   <option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
@@ -71,7 +71,7 @@
 
             <div class="form-group" style="margin-left:50px;">
               <div class="input-group input-group-sm pull-right">
-                <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒楼名称">
+                <input type="text" class="form-control" name="he_name" value="{$name}" placeholder="酒楼名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -158,21 +158,22 @@
     $('select').css({ "cssText": "display:none !important" });
   })
   $("#exportheartlistlog").click(function(){
+
     var typ = $('select[name="baotype"]').val();
     console.log(typ);
     if(typ == 0){
       alert('报表类型必填');
       return false;
     }
-    var arv = $('select[name="area_bv"]').val();
+    var arv = $('select[name="he_area_bv"]').val();
     if(arv == 0){
       alert('城市必填');
       return false;
     }
     var hre = $("#xiaohref").val();
-    var mav = $('input[name="main_v"]').val();
-    var hbv = $('select[name="hbt_v"]').val();
-    var nav = $('input[name="name"]').val();
+    var mav = $('input[name="he_main_v"]').val();
+    var hbv = $('select[name="he_hbt_v"]').val();
+    var nav = $('input[name="he_name"]').val();
     var hrp = hre+"?type="+typ+"&main_v="+mav+"&area_v="+arv+"&hbt_v="+hbv+"&name="+nav;
     $(this).attr("href",hrp);
   })
