@@ -255,9 +255,10 @@
 			var cUrl;
 			var url = window.location.href;
 			if(url.indexOf("sourceid") >= 0 ) { 
-			
+				var sNum = getQueryString("sourceid")
+				cUrl = "&sourceid="+sNum;
 			}else{
-				cUrl = "&sourceid=2"
+				cUrl="";
 			}
 			
 			var da = {}
@@ -296,6 +297,11 @@
 		$('#xiazai').click(function(){
 			 window.location.href = 'http://www.littlehotspot.com/d';
 		})
+		function getQueryString(name) { 
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+		var r = window.location.search.substr(1).match(reg); 
+		if (r != null) return unescape(r[2]); return null; 
+		} 
 	</script>
 
 </html>
