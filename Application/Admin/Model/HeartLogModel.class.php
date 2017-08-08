@@ -28,6 +28,17 @@ class HeartLogModel extends BaseModel
 	}
 
 
+	public function getBoxNum($hid){
+		$sql = "  select b.mac from savor_box as b
+			left join savor_room as r on b.room_id=r.id
+			left join savor_hotel as h on r.hotel_id=h.id
+			where h.id = $hid";
+
+		$list = $this->query($sql);
+		$len  = count($list);
+		return $len;
+	}
+
 	public function getAllBox($where,  $field, $tp){
 		if($tp == 1){
 			$sql = " select $field from savor_hotel_ext as hex
