@@ -152,7 +152,12 @@ class ExcelController extends Controller
             $where .= "	AND sht.name LIKE '%{$name}%' ";
         }
         $hboxlist = $heartModel->getAllBox($where,$field,$type);
-        $hfield = 'hotel_id,box_mac mac,max(`last_heart_time`) AS lt';
+        if($type == 1){
+            $hfield = 'hotel_id,box_mac mac,max(`last_heart_time`) AS lt';
+        }else{
+            $hfield = 'hotel_id,sb.state bstate,sb.flag  boflag,box_mac mac,max(`last_heart_time`) AS lt';
+        }
+
         $hearList  = $heartModel->getWhereData($hfield,$type);
         if ($hboxlist) {
             if($type == 1){
@@ -165,7 +170,10 @@ class ExcelController extends Controller
                     foreach($hearList as $hk=>$hv){
                         if(in_array($hv['hotel_id'], $tmp)){
                             unset($hearList[$hk]);
-                        }else{
+                        }else if(empty($hv['mac'])){
+                            unset($hearList[$hk]);
+                        }
+                        else{
                             $tmp[] = $hv['hotel_id'];
                         }
                         continue;
@@ -295,7 +303,9 @@ class ExcelController extends Controller
                     foreach($hearList as $hk=>$hv){
                         if(in_array($hv['mac'], $tmp)){
                             unset($hearList[$hk]);
-                        }else{
+                        }else if($hv['bstate'] != 1 || $hv['boflag'] != 0) {
+                            unset($hearList[$hk]);
+                        } else {
                             $tmp[] = $hv['mac'];
                         }
                         continue;
@@ -497,6 +507,12 @@ class ExcelController extends Controller
             }
 
         }
+        foreach($hboxlist as $hkk=>$hv){
+            if(strstr ($hv['name'],'永峰') || strstr ($hv['name'],'茶室')){
+                unset($hboxlist[$hkk]);
+            }
+        }
+        $hboxlist = array_values($hboxlist);
 
         $filename = 'heartlostinfo';
         $this->exportExcel($xlsName, $xlsCell, $hboxlist,$filename);

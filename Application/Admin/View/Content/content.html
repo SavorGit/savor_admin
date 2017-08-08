@@ -238,8 +238,12 @@
                 
                   <a data-tip="预览"
 
-                  href="__ROOT__/content/{$vlist.id}.html"
-
+                  href="
+                  <if condition="$vlist['hot_category_id'] eq 103">
+                  __ROOT__/special/{$vlist.id}.html?app=inner"
+				  <else />
+				  __ROOT__/content/{$vlist.id}.html?app=inner"
+				  </if>	
 
                      target="_blank"  class="btn btn-success btn-icon">
                     <i class="fa fa-eye"></i>
