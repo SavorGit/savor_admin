@@ -512,7 +512,7 @@ class ExcelController extends Controller
                 unset($hboxlist[$hkk]);
             }
         }
-
+        $hboxlist = array_values($hboxlist);
 
         $filename = 'heartlostinfo';
         $this->exportExcel($xlsName, $xlsCell, $hboxlist,$filename);
