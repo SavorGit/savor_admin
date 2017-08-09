@@ -153,6 +153,15 @@ class ExcelController extends Controller
         }
         $hboxlist = $heartModel->getAllBox($where,$field,$type);
         if($type == 1){
+            //获取机顶盒数
+            foreach ($hboxlist as $rk=>$rv) {
+                $number = $heartModel->getBoxNum($rv['hotel_id']);
+                if($number==0){
+                    unset($hboxlist[$rk]);
+                }
+            }
+        }
+        if($type == 1){
             $hfield = 'hotel_id,box_mac mac,max(`last_heart_time`) AS lt';
         }else{
             $hfield = 'hotel_id,sb.state bstate,sb.flag  boflag,box_mac mac,max(`last_heart_time`) AS lt';
@@ -509,11 +518,40 @@ class ExcelController extends Controller
         }
         foreach($hboxlist as $hkk=>$hv){
             if(strstr ($hv['name'],'永峰') || strstr ($hv['name'],'茶室')){
+
+                //小平台
+                if($type == 1) {
+                    if ($hv['lost_time'] == '正常'){
+                        $hboxlist[0]['flag'] = $hboxlist[0]['flag']- 1;
+                    }else{
+                        $hboxlist[0]['bflag'] = $hboxlist[0]['bflag']- 1;
+                    }
+                    $hboxlist[0]['total'] = $hboxlist[0]['total']- 1;
+                }else{
+                    $hboxlist[0]['bflag'] = $hboxlist[0]['bflag']- $hv['bflag'];
+                    $hboxlist[0]['total'] = $hboxlist[0]['total']- $hv['total'];
+                    $hboxlist[0]['flag'] = $hboxlist[0]['flag']- $hv['flag'];
+                }
                 unset($hboxlist[$hkk]);
+            }else{
+                if($type == 1) {
+
+                }
             }
         }
-        $hboxlist = array_values($hboxlist);
 
+
+        $len = count($hboxlist) - 1;
+        $hboxlist[0]['name'] = '总计'.$len.'家酒楼';
+        $hboxlist[0]['rate'] = round($hboxlist[0]['bflag']/$hboxlist[0]['total']*100).'%';
+
+        $hboxlist = array_values($hboxlist);
+        if (count($hboxlist) == 1) {
+            $hboxlist[0]['rate'] = '';
+            $hboxlist[0]['flag'] = '';
+            $hboxlist[0]['bflag'] = '';
+            $hboxlist[0]['total'] = '';
+        }
         $filename = 'heartlostinfo';
         $this->exportExcel($xlsName, $xlsCell, $hboxlist,$filename);
 
