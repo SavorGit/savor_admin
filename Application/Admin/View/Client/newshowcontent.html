@@ -196,7 +196,7 @@
 			</div>
 			{$vinfo.content}
 		</div>
-
+		<notempty name="list">
 		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
 			<span class="tit_tuijian"><notempty name="list">为您推荐</notempty></span>
 
@@ -212,6 +212,7 @@
 			</volist>
 		</div>
 
+		</notempty>
 
 	<input type="hidden" value="<?php echo $appid; ?>" id="appid"/>
 	<input type="hidden" value="<?php echo time(); ?>" id="timestamp"/>

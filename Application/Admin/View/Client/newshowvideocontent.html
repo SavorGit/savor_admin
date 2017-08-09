@@ -197,7 +197,7 @@
 			</div>
 			{$vinfo.content}
 		</div>
-
+		<notempty name="list">
 		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
 			<span class="tit_tuijian"><notempty name="list">为您推荐</notempty></span>
 
@@ -212,6 +212,7 @@
 				</div>
 			</volist>
 		</div>
+		</notempty>
 		<input type="hidden" value="<?php echo $appid; ?>" id="appid"/>
 		<input type="hidden" value="<?php echo time(); ?>" id="timestamp"/>
 		<input type="hidden" value="<?php echo $noncestr; ?>" id="noncestr"/>
@@ -221,6 +222,9 @@
 		<input type="hidden" value="<?php echo  $share_title; ?>" id="share_title"/>
 		<input type="hidden" value="<?php echo $share_desc;  ?>" id="share_desc"/>
 		<input type="hidden" value="<?php echo $shareimg; ?>" id="share_img"/>
+
+
+
 	</body>
 	<script type="text/javascript" src="__PUBLIC__/admin/assets/js/weicontent.js"></script>
 	<script type="text/javascript">
