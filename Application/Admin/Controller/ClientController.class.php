@@ -317,6 +317,26 @@ class ClientController extends Controller {
                 $vinfo['content'] = html_entity_decode($vinfo['content']);
                 if($vinfo['type']==1){//图文
                     $display_html = 'showcontent';
+                }else if($vinfo['type']==2){
+                    $mediaModel  = new \Admin\Model\MediaModel();
+                    $mbpictModel = new \Admin\Model\MbPicturesModel();
+                    $m_article_source = new \Admin\Model\ArticleSourceModel();
+                    $loginfo = $m_article_source->find($vinfo['source_id']);
+                    $media_info = $mediaModel->getMediaInfoById($loginfo['logo']);
+                    $loginfo['oss_addr'] = $media_info['oss_addr'];
+                    
+                    $this->assign('linfo', $loginfo);
+                    
+                    $info =  $mbpictModel->where('contentid='.$id)->find();
+                    $detail_arr = json_decode($info['detail'], true);
+                    
+                    foreach($detail_arr as $dk=> $dr){
+                        $media_info = $mediaModel->getMediaInfoById($dr['aid']);
+                        $detail_arr[$dk]['pic_url'] =$media_info['oss_addr'];
+                    
+                    }
+                    $this->assign('detaillist', $detail_arr);
+                    $display_html = 'newstuji';
                 }elseif($vinfo['type']==3){
                     $tx_url = $vinfo['tx_url'];
                     $url_arr = explode('?id=', $tx_url);
