@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Controller;
 use Think\Controller;
+use Common\Lib\Weixin_api;
 /**
  * @desc 客户端页面
  *
@@ -224,10 +225,12 @@ class ClientController extends Controller {
 
 
     public function showcontent(){
+
         $host_name = C('HTTPS_HOST_NAME').'/admin';
         $this->assign('hostnamed',$host_name);
         $id = I('get.id',0,'intval');
         $app_version = I('get.app','');
+        $oss_host = get_oss_host();
         if($app_version == 'inner'){
             //newread证明在客户端
             $sourcename = I('get.location','');
@@ -257,7 +260,7 @@ class ClientController extends Controller {
 
                 $this->assign('linfo', $loginfo);
                 if ($catid == 103) {
-                    $oss_host = get_oss_host();
+
                     $vinfo['img_url'] = $oss_host.$vinfo['img_url'];
                     if($vinfo['index_img_url']){
                         $vinfo['index_img_url'] = $oss_host.$vinfo['index_img_url'];
@@ -356,6 +359,34 @@ class ClientController extends Controller {
                 $display_html = 'showcontent';
             }
         }
+        $wpi = new Weixin_api();
+        $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
+
+
+        $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_100_100.jpg';
+
+        $share_title = $vinfo['title'];
+        if(empty($vinfo['content'])){
+            $share_desc = '小热点，陪伴你创造财富，享受生活。';
+        }else{
+            $cot = html_entity_decode($vinfo['content']);
+            $cot = strip_tags($cot);
+            $share_desc = mb_substr($cot,0,50);
+        }
+
+        $share_config = $wpi->showShareConfig($share_url, $share_title,$share_desc,$share_url,$share_url);
+        extract($share_config);
+        $appid = $share_config['appid'];
+        $noncestr = $share_config['noncestr'];
+        $signature = $share_config['signature'];
+         $this->assign('noncestr', $noncestr);
+         $this->assign('signature', $signature);
+        $this->assign('appid', $appid);
+        $this->assign('share_title', $share_title);
+        $this->assign('share_desc', $share_desc);
+        $this->assign('shareimg', $shareimg);
+        $this->assign('share_link', $share_url);
         $this->assign('vinfo',$vinfo);
         $this->display($display_html);
     }
