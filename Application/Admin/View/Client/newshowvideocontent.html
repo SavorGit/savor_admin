@@ -196,7 +196,7 @@
 			</div>
 			{$vinfo.content}
 		</div>
-
+		<notempty name="list">
 		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
 			<span class="tit_tuijian"><notempty name="list">为您推荐</notempty></span>
 
@@ -211,6 +211,7 @@
 				</div>
 			</volist>
 		</div>
+		</notempty>
 	</body>
 	<script type="text/javascript">
 
