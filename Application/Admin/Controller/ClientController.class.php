@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Controller;
 use Think\Controller;
+use Common\Lib\Weixin_api;
 /**
  * @desc 客户端页面
  *
@@ -224,6 +225,7 @@ class ClientController extends Controller {
 
 
     public function showcontent(){
+
         $host_name = C('HTTPS_HOST_NAME').'/admin';
         $this->assign('hostnamed',$host_name);
         $id = I('get.id',0,'intval');
@@ -336,6 +338,24 @@ class ClientController extends Controller {
                 $display_html = 'showcontent';
             }
         }
+        $wpi = new Weixin_api();
+        $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
+        $share_title = $vinfo['title'];
+        $share_desc = 'lwerller';
+        $share_config = $wpi->showShareConfig($share_url, $share_title,$share_desc,$share_url,$share_url);
+        extract($share_config);
+        $appid = $share_config['appid'];
+        $noncestr = $share_config['noncestr'];
+        $signature = $share_config['signature'];
+        $shareimg = 'http://devp.oss.littlehotspot.com/media/resource/FiYQhbZcNa.png';
+         $this->assign('noncestr', $noncestr);
+         $this->assign('signature', $signature);
+        $this->assign('appid', $appid);
+        $this->assign('share_title', $share_title);
+        $this->assign('share_desc', $share_desc);
+        $this->assign('shareimg', $shareimg);
+        $this->assign('share_link', $share_url);
         $this->assign('vinfo',$vinfo);
         $this->display($display_html);
     }
