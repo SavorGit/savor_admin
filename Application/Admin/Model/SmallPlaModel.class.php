@@ -1,0 +1,35 @@
+<?php
+/**
+ *@author zhang.yingtao
+ * @desc app下载统计
+ * 
+ */
+namespace Admin\Model;
+
+use Admin\Model\BaseModel;
+use Common\Lib\Page;
+class SmallPlaModel extends BaseModel
+{
+	protected $tableName='small_platform';
+
+	public function getWarnAll($where){
+		$sql = "SELECT sht.name hname , spl.hotel_ip,spl.area_id,spl.small_ip,spl.state,spl.remark,spl.remark1,spl.create_time FROM  savor_hotel sht  JOIN savor_small_platform spl ON spl.hotel_id=sht.id WHERE $where";
+		$list = $this->query($sql);
+		return $list;
+	}
+
+	public function getWarnInfo($where, $order='id desc', $start=0,$size=5){
+		$sql = "SELECT sht.name hname , spl.hotel_ip,spl.area_id,spl.small_ip,spl.state,spl.remark,spl.remark1,spl.create_time FROM  savor_hotel sht  JOIN savor_small_platform spl ON spl.hotel_id=sht.id WHERE $where  order by $order limit $start, $size";
+		//echo $sql;
+		$list = $this->query($sql);
+		$sqlb = "SELECT count(*) num FROM  savor_hotel sht  JOIN savor_small_platform spl ON spl.hotel_id=sht.id WHERE $where";
+		$count_arr = $this->query($sqlb);
+		$count = $count_arr[0]['num'];
+		$objPage = new Page($count,$size);
+		$show = $objPage->admin_page();
+		$data = array('list'=>$list,'page'=>$show);
+		return $data;
+	}
+
+
+}
