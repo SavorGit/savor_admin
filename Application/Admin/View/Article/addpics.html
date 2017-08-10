@@ -6,6 +6,29 @@
     <title>Insert title here</title>
 </head>
 <style type="text/css">
+	.zhezhao{
+	    display: none;
+	    position: absolute;
+	    top: 0;
+	    bottom: 0;
+	    right: 0;
+	    left: 0;
+	    background-color: black;
+	    opacity: 0.7;
+	    text-align: center;
+	    z-index: 999;
+	  }
+	  .big{
+	    display: none;
+	  }
+	  .addbig{
+	    position: absolute;
+	    width: 500px;
+	    height: 500px;
+	    top: 100px;
+	    left: 26%;
+	    z-index: 1000;
+	  }
     .pic {
         margin-bottom: 20px;
     }
@@ -363,12 +386,39 @@
         <button id="savepicmap" class="btn btn-primary" type="submit">保存</button>
     </div>
     <input type="hidden" name="pictuji" id="pictuji"  value=""/>
+    <div class="zhezhao"></div>
+	<img class="big" src="" />
 </form>
 </body>
 
 </html>
 <script type="text/javascript">
+	$('#media_idimg').click(function(){
+	    var media_id = $('#media_id').val();
+	    if(media_id !='' ){
+	  	  var $a = $(this).attr('src');
+	        $('.big').prop('src',$a).addClass('addbig')
+	        $('.zhezhao').show(500);
+	        $('.big').show(500); 
+	    }
+	    
+	});
+	$('#select_media_idimg').click(function(){
+	    var select_media_id = $('#select_media_id').val();
+	    if(select_media_id !='' ){
+	  	  var $a = $(this).attr('src');
+	        $('.big').prop('src',$a).addClass('addbig')
+	        $('.zhezhao').show(500);
+	        $('.big').show(500); 
+	    }
+	    
+	});
+	
+	$('.zhezhao').click(function(){
 
+	      $('.zhezhao').hide(500);
+	      $('.big').hide(500);
+	});
     $("#savepicmap").click(function() {
         // alert(111);
         var arr_nr = [];

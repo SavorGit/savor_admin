@@ -110,7 +110,6 @@
 		.tuijian {
 			width: 100%;
 			margin: 0 auto;
-			border-top: 8px solid #ece6de;
 		}
 		
 		.tit_tuijian {
@@ -274,12 +273,20 @@
 		}
 		$('#disnone').click(function(){
 			$('#topLabel').hide();
-			$('#ya').css('bottom','0.1rem')
+			$('.more').css('margin-bottom','18px');
+			$('.tuijian').css('margin-bottom','10px')
 		});
 		
 		var disnones = $('#topLabel').css('display');
 		if(disnones=='block'){
 			$('.tuijian').css('margin-bottom','53px');
+			
+		}
+		var tuijians = $('.tuijian').css('display');
+		if(tuijians=='block'||$('div').is('.tuijian')){
+			
+		}else{
+			$('.more').css('margin-bottom','53px')
 			
 		}
 		$('a').click(function(){

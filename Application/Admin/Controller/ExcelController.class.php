@@ -40,6 +40,8 @@ class ExcelController extends Controller
             $tmpname = '对账单酒楼信息联系表';
         }else if($filename == 'toothwash'){
             $tmpname = '洗牙卡订单';
+        }else if($filename == 'contentads'){
+            $tmpname = '内容与广告统计';
         }
 
         if($filename == "heartlostinfo"){
@@ -94,6 +96,10 @@ class ExcelController extends Controller
             $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
             $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
             $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+        }else if($filename == "contentads"){
+            $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+            $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
         }
         header('pragma:public');
         header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $xlsTitle . '.xls"');
@@ -101,6 +107,140 @@ class ExcelController extends Controller
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
         exit;
+    }
+    /**
+     *
+     * 导出内容与广告相关数据
+     */
+    public function expcontentads(){
+
+        $starttime = I('post.starttime','');
+        $endtime = I('post.endtime','');
+        $adsname = I('adsname');
+        $hidden_adsid = I('hadsid','',0);
+        $yesday =  date("Y-m-d",strtotime("-1 day"));
+        $tmp_box_tv = array();
+        //$hidden_adsid = 98;//429
+        $adsname = '刺客信条';
+        $starttime = '2017-08-02';
+        $endtime = '2017-08-08';
+        $hidden_adsid = 98;
+        $where = "1=1";
+        if ( $adsname ) {
+            $adModel = new \Admin\Model\AdsModel();
+            $ads_info = $adModel->find($hidden_adsid);
+            if(empty($ads_info)){
+                $tmp_box_tv = array();
+            }else{
+                //判断是否在节目单中发布过
+                $ads_media_id = $ads_info['media_id'];
+                $mItemModel = new \Admin\Model\MenuItemModel();
+                $field = "distinct(`menu_id`)";
+                $where .= " AND ads_id={$hidden_adsid}  ";
+                $order = 'menu_id asc';
+                $menu_arr = $mItemModel->getWhere($where,$order, $field);
+                    //判断是否在酒店发布过
+                    $where = "1=1";
+                    foreach($menu_arr as $ma){
+                        $menu_id_str .= $ma['menu_id'].',';
+                    }
+                    $menu_id_str = substr($menu_id_str,0,-1);
+                    $where .= " AND menu_id in ( ".$menu_id_str.')';
+                    $mhotelModel = new \Admin\Model\MenuHotelModel();
+                    $hotelModel = new \Admin\Model\HotelModel();
+                    $field = "distinct(`hotel_id`)";
+                    $order = 'hotel_id asc';
+                    $hotel_id_arr = $mhotelModel->getWhere($where, $order, $field);
+                    //根据hotelid得出box
+                    $where = '1=1';
+                    foreach($hotel_id_arr as $ha){
+                        $hotel_id_str .= $ha['hotel_id'].',';
+                    }
+                    $hotel_id_str = substr($hotel_id_str,0,-1);
+                    $where .= " AND sht.id in ( ".$hotel_id_str.')';
+                    $field = 'sht.id hotelid,sht.name,room.id
+                              rid,room.name rname, box.mac,sari
+                              .region_name cname';
+                    $box_info = $hotelModel->getBoxMacByHid($field, $where);
+
+                    $field = 'sum(play_count) plc,
+                    sum(play_time) plt,mac,group_concat(`play_date`) pld';
+                    $starttime = date("Ymd", strtotime($starttime));
+                    $endtime = date("Ymd", strtotime($endtime));
+                    $where = '1=1';
+                    $mestaModel = new \Admin\Model\MediaStaModel();
+                    $where .= " AND media_id = ".$ads_media_id;
+                    $where .= "	AND play_date >= '{$starttime}'";
+                    $where .= "	AND play_date <= '{$endtime} '";
+                    $group = 'mac';
+                    $me_sta_arr = $mestaModel->getWhere($where, $field, $group);
+                    //二维数组合并
+                    $mp = array_column($me_sta_arr, 'mac');
+                    $me_sta_arr = array_combine($mp, $me_sta_arr);
+                    //var_dump($mestaModel->getLastSql());
+                    //dump($box_info);
+                    //dump($me_sta_arr);
+                    //获取电视数量
+                    //进行比较
+                    foreach ($box_info as $bk=>$bv) {
+                        $map_mac = $bv['mac'];
+                        //先判断是否存在
+                        if(array_key_exists($map_mac, $tmp_box_tv)) {
+                            $tmp_box_tv[$map_mac]['tv_count'] +=1;
+                            continue;
+                        }else {
+                            if(array_key_exists($map_mac, $me_sta_arr)) {
+                                $mv = $me_sta_arr[$map_mac];
+                                $day_arr = explode(',',$mv['pld']);
+                                $day_arr = array_unique($day_arr);
+                                $day_str = implode(',', $day_arr);
+                                $day_len = count($day_arr);
+                                $tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
+                                $tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
+                                $tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
+                                $tmp_box_tv[$map_mac]['play_count'] = $mv['plc'];
+                                $tmp_box_tv[$map_mac]['play_time'] = $mv['plt'];
+                                $tmp_box_tv[$map_mac]['play_days'] = $day_len;
+                                $tmp_box_tv[$map_mac]['publication'] = $day_str;
+                                $tmp_box_tv[$map_mac]['tv_count'] = 1;
+                                $tmp_box_tv[$map_mac]['mac'] = $map_mac;
+                            }else{
+                                $tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
+                                $tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
+                                $tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
+                                $tmp_box_tv[$map_mac]['play_count'] = '';
+                                $tmp_box_tv[$map_mac]['play_time'] = '';
+                                $tmp_box_tv[$map_mac]['play_days'] = '';
+                                $tmp_box_tv[$map_mac]['publication'] = '';
+                                $tmp_box_tv[$map_mac]['tv_count'] = 1;
+                                $tmp_box_tv[$map_mac]['mac'] = $map_mac;
+                            }
+                            unset($me_sta_arr[$map_mac]);
+                        }
+
+                    }
+                    $tmp_box_tv = array_values($tmp_box_tv);
+                }
+
+            //需要将传过来name与隐藏域进行对比再次确定它传过来的值是正确的
+            //判断是否是广告列表中
+        }else{
+            $tmp_box_tv = array();
+        }
+        $xlsCell = array(
+            array('cityname', '地区'),
+            array('hotel_name', '酒楼名称'),
+            array('rname', '包间名称'),
+            array('mac', '机顶盒名称'),
+            array('tv_count', '电视数量'),
+            array('play_count', '播出次数'),
+            array('play_time', '播出时长'),
+            array('play_days', '播出天数'),
+            array('publication', '上刊日期')
+        );
+        $xlsName = 'contentads';
+        $filename = 'contentads';
+        $this->exportExcel($xlsName, $xlsCell, $tmp_box_tv,$filename);
     }
 
     /**
@@ -152,6 +292,7 @@ class ExcelController extends Controller
             $where .= "	AND sht.name LIKE '%{$name}%' ";
         }
         $hboxlist = $heartModel->getAllBox($where,$field,$type);
+        //file_put_contents(APP_PATH.'/Runtime/Logs/Admin/1527.txt',$heartModel->getLastSql().PHP_EOL,FILE_APPEND);
         if($type == 1){
             //获取机顶盒数
             foreach ($hboxlist as $rk=>$rv) {
@@ -161,6 +302,7 @@ class ExcelController extends Controller
                 }
             }
         }
+
         if($type == 1){
             $hfield = 'hotel_id,box_mac mac,max(`last_heart_time`) AS lt';
         }else{
@@ -168,6 +310,7 @@ class ExcelController extends Controller
         }
 
         $hearList  = $heartModel->getWhereData($hfield,$type);
+        //file_put_contents(APP_PATH.'/Runtime/Logs/Admin/1527.txt',$heartModel->getLastSql().PHP_EOL,FILE_APPEND);
         if ($hboxlist) {
             if($type == 1){
 
@@ -190,6 +333,7 @@ class ExcelController extends Controller
                     $h_arr = array_column($hearList, 'hotel_id');
                     $hearList = array_combine($h_arr, $hearList);
                     //flag 1:正常24以内2.24以外3.7天以外
+                    //$hp = var_export($hearList,true);
                     foreach($hboxlist as $hk =>$hbv){
                         $hid = $hbv['hotel_id'];
                         if(array_key_exists($hid, $hearList)){
@@ -233,6 +377,7 @@ class ExcelController extends Controller
                         $order_arr_h[] = $hval['hotel_id'];
 
                     }
+
                     $arp = array();
                     $flag =0;
                     $bflag = 0;
@@ -309,6 +454,8 @@ class ExcelController extends Controller
                 $nsp = array();
                 if ($hearList) {
                     $tmp = array();
+                   // $hearListpp = var_export($hearList, true);
+                   //  file_put_contents(APP_PATH.'/Runtime/Logs/Admin/1527.txt',$hearListpp.PHP_EOL,FILE_APPEND);
                     foreach($hearList as $hk=>$hv){
                         if(in_array($hv['mac'], $tmp)){
                             unset($hearList[$hk]);

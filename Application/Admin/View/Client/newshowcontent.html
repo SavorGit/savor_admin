@@ -115,7 +115,6 @@
 		.tuijian {
 			width: 100%;
 			margin: 0 auto;
-			border-top: 8px solid #ece6de;
 		}
 		
 		.tit_tuijian {
@@ -149,7 +148,6 @@
 			color: #434343;
 			font-weight: 700;
 			display: block;
-			margin-bottom: 0.4rem;
 		}
 		
 		.tuijian_list_tit a {
@@ -262,11 +260,13 @@
 		}
 		if($('div').is('#ya')){
 			$('#topLabel').hide();
-			$('.tuijian').css('padding-bottom','53px');
+			$('.tuijian').css('padding-bottom','1.35rem');
+			$('.more').css('margin-bottom','1.35rem');
 		}
 		$('#disnone').click(function(){
 			$('#topLabel').hide();
-			$('#ya').css('bottom','0.1rem');
+			$('.more').css('margin-bottom','18px');
+			$('.tuijian').css('padding-bottom','10px')
 		});
 		$('a').click(function(){
 			var hrefs = $(this).attr('href');
@@ -277,8 +277,16 @@
 		var disnones = $('#topLabel').css('display');
 		if(disnones=='block'){
 			$('.tuijian').css('padding-bottom','53px');
-			$('#ya').css('bottom','55px');	
+		}
+		var tuijians = $('.tuijian').css('display');
+		if(tuijians=='block'||$('div').is('.tuijian')){
 			
+		}else{
+			$('.more').css('margin-bottom','53px')
+		}
+		if(tuijians=='block'&&$('div').is('#ya')){
+			$('.more').css('margin','0');
+			$('p').last().css('margin-bottom','0');
 		}
 		var sit = $("#hostnamenewc").val();
 
