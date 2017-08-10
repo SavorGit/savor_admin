@@ -1,0 +1,277 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/admin/assets/css/horsey.css"/>
+
+
+<style type="text/css">
+  body {
+    font-family: Helvetica;
+    font-size: 11px;
+    color: #000;
+  }
+
+  h3 {
+    margin: 0px;
+    padding: 0px;
+  }
+*{
+		margin: 0;
+		padding: 0;
+	}
+	ul,li{
+		list-style: none;
+	}
+	a{
+		color: black;
+		text-decoration: none;
+	}
+	#datalist{
+  position: absolute;
+  left: 36.3%;
+  top: 42px;
+  border: #eee 1px solid;
+  min-width: 200px;
+  text-align: left;
+  z-index: 9;
+  background-color: white;
+}
+#datalist li{
+	height: 25px;
+	line-height: 25px;
+}
+#datalist li a{
+	text-decoration: none;
+}
+.inputDel{
+	display: inline-block;
+	width: 30px;
+	text-align: center;
+	height: 30px;
+	line-height: 30px;
+}
+</style>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/contentads/listall" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" class="strid" name="hadsid" value="{$hidden_adsid}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+
+
+          <div class="form-group" id="timegiy" style="">
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="starttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="endtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
+                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-left:50px;">
+            <div class="input-group input-group-sm pull-right">
+              <input type="text" id="keysearch" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="内容名称"><span class="inputDel" style="display: none;">X</span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+            </div>
+
+          </div>
+          <div class="form-inline" style="margin-top:10px;">
+
+
+
+
+            <div class="input-group input-group-sm pull-right">
+              <a id="exportcontentads" class="btn btn-success btn-sm add" href="javascript:void(0)"  title="导出内容与广告统计" target="_blank" mask="true"  onclick="clickcontentads(this)"><i class="fa fa-plus"></i> 导出内容与广告统计</a>
+              <input type="hidden" id="contentxiaohref" value="{$host_name}/excel/expcontentads"/>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>地区</th>
+            <th>酒楼名称</th>
+            <th>包间名称</th>
+            <th>机顶盒名称</th>
+            <th>电视数量</th>
+            <th>播出次数</th>
+            <th>播出时长</th>
+            <th>播出天数</th>
+            <th>上刊日期</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$key+1}</td>
+              <td data-title="地区">{$vlist.cityname}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.rname}</td>
+              <td data-title="机顶盒名称">{$vlist.mac}</td>
+              <td data-title="电视数量">{$vlist.tv_count}</td>
+              <td data-title="播出次数">{$vlist.play_count}</td>
+              <td data-title="播出时长">{$vlist.play_time}</td>
+              <td data-title="播出天数">{$vlist.play_days}</td>
+              <td data-title="上刊日期">{$vlist.publication}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>
+<ul id="datalist"></ul>
+<script type="text/javascript">
+	var contentdata = [];
+    var contentaid = [];
+    var cot = 8;
+
+    $.ajaxSettings.global=false;
+
+    var ele_key = document.getElementById("keysearch");
+ele_key.onkeyup = function (e) {
+
+  var val = this.value;
+  $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "{$host_name}/contentads/getads_ajax",
+        data: "adsname=" + val+"",
+        success: function(datap) {
+          //console.log(datap);
+          contentdata = [];
+          contentaid = [];
+          if(datap.length >0) {
+            for(var i=0,l=datap.length;i<l;i++) {
+              for (var key in datap[i]) {
+                  if(key == 'name') {
+                    contentdata[i] = datap[i][key]
+                  }
+                  if(key == 'id') {
+                    contentaid[i] = datap[i][key]
+                  }
+              }
+            }
+            //console.log(contentaid);
+           // console.log(contentdata);
+           //$('.tishi').val(contentdata);
+             //获取输入框里匹配的数据
+  var srdata = [];
+  var srid = [];
+  /*var tishis = $('.tishi').val();
+  contentdata = tishis.split(",");
+  console.log(contentdata);*/
+  for (var i = 0; i < contentdata.length; i++) {
+   // console.log(contentdata[i].indexOf(val))
+    if (val.trim().length > 0 && contentdata[i].indexOf(val) > -1) {
+       srdata.push(contentdata[i]);
+       srid.push(contentaid[i]);
+    }
+  }
+ 
+ //获取到的数据准备追加显示, 前期要做的事情: 清空数据,然后显示数据列表,如果获取到的数据为空,则不显示
+  var ele_datalist = document.getElementById("datalist");
+  ele_datalist.style.visibility = "visible";
+  ele_datalist.innerHTML = "";
+ 
+  if (srdata.length == 0) {
+    ele_datalist.style.visibility = "hidden";
+  }
+ 
+  //将搜索到的数据追加到显示数据列表, 然后每一行加入点击事件, 点击后将数据放入搜索框内, 数据列表隐藏
+  var self = this;
+  
+  for (var i = 0; i < srdata.length; i++) {
+    var ele_li = document.createElement("li");
+    var ele_a = document.createElement("a");
+    ele_a.setAttribute("href", "javascript:;");
+    ele_a.setAttribute('id',srid[i])
+    ele_a.textContent = srdata[i];
+    ele_a.onclick = function () {
+    	//alert(this.textContent)
+       //self.value = this.textContent;
+       $('#keysearch').val(this.textContent)
+      ele_datalist.style.visibility = "hidden";
+    }
+     ele_li.appendChild(ele_a);
+    ele_datalist.appendChild(ele_li);
+  }
+          }
+       
+        }
+      });
+ }
+	
+	 $('body').on("click","li a",function(){
+     $('.strid').val($(this).prop('id'));
+     $('#keysearch').val($(this).html())
+
+    // $('#keysearch').prop('disabled',true)
+     $('.inputDel').show();
+     // alert($('#keysearch').val())
+    })
+	$('.inputDel').click(function(){
+		$('#keysearch').prop('disabled',false);
+		$('#keysearch').val('');
+		$('.strid').val('');
+		$(this).hide();
+	})
+  $(function(){
+    $('select').css({ "cssText": "display:none !important" });
+  })
+
+
+    function clickcontentads(obj){
+      var hiddenaid = $(".strid").val();
+      var title = $('#keysearch').val();
+      var st = $('input[name="starttime"]').val();
+      var end = $('input[name="endtime"]').val();
+      var hre = $("#contentxiaohref").val();
+      var hrp = hre+"?hadsid="+hiddenaid+"&adsname="+title+"&starttime="+st+"&endtime="+end;
+      $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "{$host_name}/contentads/getExpState",
+        data: "adsname=" + title + "&start=" + st + "&end=" + end + "&hadsid=" + hiddenaid + "",
+        success: function (datap) {
+          if(datap.code == 0){
+            alert(datap.msg);
+            return true;
+          }else{
+            window.open(hrp,"_top");
+
+
+           // window.location.href= hrp;
+          }
+        }
+      });
+    }
+
+</script>

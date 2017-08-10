@@ -148,4 +148,18 @@ class HotelModel extends BaseModel{
 		return  $result;
 	}
 
+
+
+	public function getBoxMacByHid($field, $where){
+		$list = $this->alias('sht')
+			->join('savor_room room on sht.id = room.hotel_id')
+			->join('savor_box box on room.id = box.room_id')
+			->join(' join savor_area_info sari on sari.id = sht.area_id')
+			->join('savor_tv tv on tv.box_id = box.id')
+			->field($field)
+			->where($where)
+			->select();
+		return $list;
+	}
+
 }

@@ -9,21 +9,16 @@ namespace Admin\Model;
 use Admin\Model\BaseModel;
 use Common\Lib\Page;
 
-class AdsModel extends BaseModel
+class MediaStaModel extends BaseModel
 {
-	protected $tableName='ads';
+	protected $tableName='medias_sta';
 
-	public function getWhere($where, $field){
-		$list = $this->where($where)->field($field)->select();
+	public function getWhere($where, $field,$group=''){
+		$list = $this->where($where)
+			->field($field)
+			->group($group)
+			->select();
 		return $list;
-	}
-
-
-
-	public function delData($id) {
-		$delSql = "DELETE FROM `savor_mb_content` WHERE id = '{$id}'";
-		$result = $this -> execute($delSql);
-		return  $result;
 	}
 
 	public function getList($where, $order='id desc', $start=0,$size=5){
