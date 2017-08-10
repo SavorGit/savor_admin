@@ -20,7 +20,7 @@ class HeartLogModel extends BaseModel
 			$sql = "SELECT $field FROM savor_heart_log  WHERE TYPE = 1  GROUP BY hotel_id ORDER BY lt DESC";
 		}else{
 
-			$sql = "SELECT $field FROM savor_heart_log join savor_box sb on sb.mac = savor_heart_log.box_mac WHERE TYPE = 2  GROUP BY savor_heart_log.box_mac ORDER BY lt DESC";
+			$sql = "SELECT $field FROM savor_heart_log join savor_box sb on sb.mac = savor_heart_log.box_mac WHERE TYPE = 2 and sb.state=1 and sb.flag=0 GROUP BY savor_heart_log.box_mac ORDER BY lt DESC";
 		}
 
 		$result = $this->query($sql);
