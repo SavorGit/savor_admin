@@ -322,11 +322,26 @@
 		$('#edui1').css('z-index', '9')
 
 		$('#media_idimg').click(function() {
-			var $a = $(this).attr('src');
-			$('.big').prop('src', $a).addClass('addbig')
-			$('.zhezhao').show(500);
-			$('.big').show(500);
+			var media_id = $('#media_id').val();
+			if(media_id !='' ){
+				var $a = $(this).attr('src');
+				$('.big').prop('src', $a).addClass('addbig')
+				$('.zhezhao').show(500);
+				$('.big').show(500);
+			}
+			
 		});
+		
+		$('#select_media_idimg').click(function() {
+			var select_media_id = $('#select_media_id').val();
+			if(select_media_id !='' ){
+				var $a = $(this).attr('src');
+				$('.big').prop('src', $a).addClass('addbig')
+				$('.zhezhao').show(500);
+				$('.big').show(500);
+			}
+		});
+		
 		$('.zhezhao').click(function() {
 
 			$('.zhezhao').hide(500);

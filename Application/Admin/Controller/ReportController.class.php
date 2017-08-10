@@ -183,4 +183,59 @@ class ReportController extends BaseController{
         $this->assign('page',$data['page']);
         $this->display('contandprom');
     }
+    public function smallPlatWarn(){
+        $areaModel  = new \Admin\Model\AreaModel();
+        $area_arr = $areaModel->getAllArea();
+        $this->assign('area', $area_arr);
+    
+        $size   = I('numPerPage',50);     //显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);          //当前页码
+        $this->assign('pageNum',$start);
+        $order = I('_order','spl.create_time'); //排序字段
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');        //排序类型
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start_date = I('start_date');    //搜索条件 开始日期
+        $where =" 1=1 ";
+        $hotel_name = I('hotel_name','','trim');
+        $area_v = I('area_v');
+        $start  = ( $start-1 ) * $size;
+        if(!empty($hotel_name)){
+            $where .=" and sht.name like '%".$hotel_name."%'";
+            $this->assign('hotel_name',$hotel_name);
+        }
+        if ($area_v) {
+            $this->assign('area_k',$area_v);
+            $where .= "	AND spl.area_id = $area_v";
+        }
+    
+        if($start_date){
+            $where .=" and spl.create_time>='".$start_date." 00:00:00'";
+            $this->assign('start_date',$start_date);
+        }
+        $end_date   = I('end_date');     //搜索条件  结束日期
+        if($end_date){
+            $where .= " and spl.create_time<='".$end_date." 23:59:59'";
+            $this->assign('end_date',$end_date);
+        }
+        if(!empty($start_date) && !empty($end_date)){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        $smWarn = new \Admin\Model\SmallPlaModel();
+        $result = $smWarn->getWarnInfo($where,$orders,$start,$size);
+        $result['list'] = $areaModel->areaIdToAareName($result['list']);
+        $ind = $start;
+        $small_warn = C('small_warn');
+        foreach ($result['list'] as &$val) {
+            $val['indnum'] = ++$ind;
+            $val['state'] = $small_warn[$val['state']];
+        }
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->display('smallpla');
+    }
 }
