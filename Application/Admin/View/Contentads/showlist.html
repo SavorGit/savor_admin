@@ -85,7 +85,7 @@
 
           <div class="form-group" style="margin-left:50px;">
             <div class="input-group input-group-sm pull-right">
-              <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="内容名称"><span class="inputDel" style="display: none;">X</span>
+              <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="内容名称"><span class="inputDel" <notempty name="contentast"> <else /> style="display: none;" </notempty> >X</span>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -244,7 +244,7 @@ ele_key.onkeyup = function (e) {
      $('#keysearch').val($(this).html());
 			$('.sachHtml').val($(this).html());
 			
-     //$('#keysearch').prop('disabled',true)
+     $('#keysearch').prop('disabled',true)
      $('.inputDel').show();
       //alert($('#keysearch').val())
     })
