@@ -93,7 +93,7 @@ class ContentadsController extends BaseController{
 				$result = array('code'=>0,'msg'=>'开始时间必须小于等于结束时间');
 			}
 		}else{
-			$result = array('code'=>0,'msg'=>'请输入广告名称');
+			$result = array('code'=>0,'msg'=>'请选择内容');
 		}
 		echo json_encode($result);
 	}
@@ -291,7 +291,7 @@ class ContentadsController extends BaseController{
 			}
 		}else{
 			if(IS_POST){
-				$this->error('请输入广告内容');
+				$this->error('请选择内容');
 			}else{
 				$result = $this->emptyData($size);
 			}
