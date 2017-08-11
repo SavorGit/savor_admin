@@ -41,7 +41,7 @@ class ContentadsController extends BaseController{
 		$hidden_adsid = I('post.hadsid','',0);
 		if($adsname){
 			if(empty($starttime) || empty($endtime)){
-				$result = array('code'=>0,'msg'=>'时间选择不允许为空');
+				$result = array('code'=>0,'msg'=>'请选择开始时间与结束时间');
 				echo json_encode($result);
 				die;
 			}
@@ -50,7 +50,7 @@ class ContentadsController extends BaseController{
 					$result = array('code'=>0,'msg'=>'时间筛选范围有误');
 				}else{
 					if(!$hidden_adsid){
-						$result = array('code'=>0,'msg'=>'请选择内容');
+						$result = array('code'=>0,'msg'=>'请输入后选择内容与广告');
 					}else{
 						$adModel = new \Admin\Model\AdsModel();
 						$ads_info = $adModel->find($hidden_adsid);
@@ -83,7 +83,7 @@ class ContentadsController extends BaseController{
 								}
 
 							}else{
-								$result = array('code'=>0,'msg'=>'当前选择内容未在节目单发布过');
+								$result = array('code'=>0,'msg'=>'该内容没有发布过，请重新选择');
 							}
 						}
 					}
@@ -137,7 +137,7 @@ class ContentadsController extends BaseController{
 			$this->assign('hidden_adsid', $hidden_adsid);
 			//判断时间
 			if(empty($starttime) || empty($endtime)){
-				$this->error('时间选择不允许为空');
+				$this->error('请选择开始时间与结束时间');
 			}
 			if($starttime <= $endtime) {
 				if ( $endtime > $yesday){
@@ -156,7 +156,7 @@ class ContentadsController extends BaseController{
 				$this->error('广告名称必须存在于广告列表中');
 			}else{
 				if(!$hidden_adsid){
-					$this->error('请选择内容');
+					$this->error('请输入后选择内容与广告');
 				}
 				if(empty($ads_info)){
 					$result = $this->emptyData($size);
@@ -284,7 +284,7 @@ class ContentadsController extends BaseController{
 						}
 
 					}else{
-						$this->error('当前选择内容未在节目单发布过');
+						$this->error('该内容没有发布过，请重新选择');
 					}
 
 				}
