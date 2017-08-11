@@ -133,6 +133,7 @@ class ContentadsController extends BaseController{
 		$yesday =  date("Y-m-d",strtotime("-1 day"));
 		if ( $adsname ) {
 			$this->assign('adsname', $adsname);
+			$this->assign('contentast', $adsname);
 			$this->assign('hidden_adsid', $hidden_adsid);
 			//判断时间
 			if(empty($starttime) || empty($endtime)){
