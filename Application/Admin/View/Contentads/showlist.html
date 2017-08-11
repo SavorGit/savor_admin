@@ -23,7 +23,7 @@
 		color: black;
 		text-decoration: none;
 	}
-	#datalist{
+#datalist{
   position: absolute;
   left: 36.3%;
   top: 42px;
@@ -32,6 +32,8 @@
   text-align: left;
   z-index: 9;
   background-color: white;
+  border-bottom: none;
+  border-top: none;
 }
 #datalist li{
 	height: 25px;
@@ -83,7 +85,7 @@
 
           <div class="form-group" style="margin-left:50px;">
             <div class="input-group input-group-sm pull-right">
-              <input type="text" id="keysearch" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="内容名称"><span class="inputDel" style="display: none;">X</span>
+              <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="内容名称"><span class="inputDel" style="display: none;">X</span>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -154,6 +156,9 @@
 </div>
 <ul id="datalist"></ul>
 <script type="text/javascript">
+	var ass = $('#keysearch').offset().left
+	var aaa = $('#sidebar').width();
+	$('#datalist').css('left',ass-aaa)
 	var contentdata = [];
     var contentaid = [];
 
@@ -234,7 +239,7 @@ ele_key.onkeyup = function (e) {
       });
  }
 	
-	 $('body').on("click","li a",function(){
+	$('#datalist').on("click","li a",function(){
      $('.strid').val($(this).prop('id'));
      $('#keysearch').val($(this).html());
 			$('.sachHtml').val($(this).html());
@@ -247,7 +252,7 @@ ele_key.onkeyup = function (e) {
 		$('#keysearch').prop('disabled',false);
 		$('#keysearch').val('');
 		$('.strid').val('');
-		$(this).hide();
+		$('.inputDel').hide();
 	})
   $(function(){
     $('select').css({ "cssText": "display:none !important" });
