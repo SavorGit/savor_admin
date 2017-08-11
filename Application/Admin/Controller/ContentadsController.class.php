@@ -41,16 +41,16 @@ class ContentadsController extends BaseController{
 		$hidden_adsid = I('post.hadsid','',0);
 		if($adsname){
 			if(empty($starttime) || empty($endtime)){
-				$result = array('code'=>0,'msg'=>'时间选择不允许为空');
+				$result = array('code'=>0,'msg'=>'请选择开始时间与结束时间');
 				echo json_encode($result);
 				die;
 			}
 			if($starttime <= $endtime) {
 				if ( $endtime > $yesday){
-					$result = array('code'=>0,'msg'=>'时间不允许选择大于昨天的日期');
+					$result = array('code'=>0,'msg'=>'时间筛选范围有误');
 				}else{
 					if(!$hidden_adsid){
-						$result = array('code'=>0,'msg'=>'请选择内容');
+						$result = array('code'=>0,'msg'=>'请输入后选择内容与广告');
 					}else{
 						$adModel = new \Admin\Model\AdsModel();
 						$ads_info = $adModel->find($hidden_adsid);
@@ -83,7 +83,7 @@ class ContentadsController extends BaseController{
 								}
 
 							}else{
-								$result = array('code'=>0,'msg'=>'当前选择内容未在节目单发布过');
+								$result = array('code'=>0,'msg'=>'该内容没有发布过，请重新选择');
 							}
 						}
 					}
@@ -93,7 +93,7 @@ class ContentadsController extends BaseController{
 				$result = array('code'=>0,'msg'=>'开始时间必须小于等于结束时间');
 			}
 		}else{
-			$result = array('code'=>0,'msg'=>'请输入广告名称');
+			$result = array('code'=>0,'msg'=>'请选择内容');
 		}
 		echo json_encode($result);
 	}
@@ -116,14 +116,14 @@ class ContentadsController extends BaseController{
 	 * @return [type] [description]
 	 */
 	public function listAll(){
-		$starttime = I('post.starttime','');
-		$endtime = I('post.endtime','');
+		$starttime = I('post.adsstarttime','');
+		$endtime = I('post.adsendtime','');
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
 		$order = I('_order',' shlog.last_heart_time ');
-		$adsname = I('he_name');
+		$adsname = I('contentast');
 		$hidden_adsid = I('hadsid','',0);
 		$where = "1=1";
 		//$hidden_adsid = 98;//429
@@ -133,14 +133,15 @@ class ContentadsController extends BaseController{
 		$yesday =  date("Y-m-d",strtotime("-1 day"));
 		if ( $adsname ) {
 			$this->assign('adsname', $adsname);
+			$this->assign('contentast', $adsname);
 			$this->assign('hidden_adsid', $hidden_adsid);
 			//判断时间
 			if(empty($starttime) || empty($endtime)){
-				$this->error('时间选择不允许为空');
+				$this->error('请选择开始时间与结束时间');
 			}
 			if($starttime <= $endtime) {
 				if ( $endtime > $yesday){
-					$this->error('时间不允许选择大于昨天的日期');
+					$this->error('时间筛选范围有误');
 				}
 				$this->assign('s_time',$starttime);
 				$this->assign('e_time',$endtime);
@@ -155,7 +156,7 @@ class ContentadsController extends BaseController{
 				$this->error('广告名称必须存在于广告列表中');
 			}else{
 				if(!$hidden_adsid){
-					$this->error('请选择内容');
+					$this->error('请输入后选择内容与广告');
 				}
 				if(empty($ads_info)){
 					$result = $this->emptyData($size);
@@ -215,6 +216,8 @@ class ContentadsController extends BaseController{
 							$group = 'mac';
 							$me_sta_arr = $mestaModel->getWhere($where, $field, $group);
 							//二维数组合并
+							//var_dump($mestaModel->getLastSql());
+							//die;
 							$mp = array_column($me_sta_arr, 'mac');
 							$me_sta_arr = array_combine($mp, $me_sta_arr);
 							//var_dump($mestaModel->getLastSql());
@@ -222,7 +225,6 @@ class ContentadsController extends BaseController{
 							//dump($me_sta_arr);
 							//获取电视数量
 							//进行比较
-
 							$tmp_box_tv = array();
 							foreach ($box_info as $bk=>$bv) {
 								$map_mac = $bv['mac'];
@@ -282,13 +284,18 @@ class ContentadsController extends BaseController{
 						}
 
 					}else{
-						$this->error('当前选择内容未在节目单发布过');
+						$this->error('该内容没有发布过，请重新选择');
 					}
 
 				}
 			}
 		}else{
-			$result = $this->emptyData($size);
+			if(IS_POST){
+				$this->error('请选择内容');
+			}else{
+				$result = $this->emptyData($size);
+			}
+
 		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
