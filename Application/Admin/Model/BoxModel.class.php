@@ -15,7 +15,7 @@ class BoxModel extends BaseModel{
     protected $tableName  ='box';
 	public function getExNum(){
 		$tvModel = new \Admin\Model\TvModel();
-		$t_arr = $tvModel->field('id')->select();
+		$t_arr = $tvModel->where(array('flag'=>0,'state'=>1))->field('id')->select();
 		$t_str = '';
 		foreach ($t_arr as $t=>$v) {
 			$t_str .= $v['id'].',';
