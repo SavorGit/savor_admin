@@ -1,0 +1,299 @@
+<?php
+/**
+ *@author hongwei
+ * @desc 心跳显示列表
+ */
+namespace Admin\Controller;
+
+use Admin\Controller\BaseController;
+use Common\Lib\Page;
+
+class ContentadsController extends BaseController{
+
+	public $oss_host = '';
+	public function __construct() {
+		parent::__construct();
+	}
+
+	/**
+	 * getads
+	 * @return [json] 返回ajax广告数据
+	 */
+	public function getads_ajax(){
+		$searchtitle = I('adsname','');
+		$where = "1=1";
+		$where .= " AND type in(2,1)";
+		$field = "id,name,media_id";
+		if ($searchtitle) {
+			$where .= "	AND name LIKE '%{$searchtitle}%'";
+		}
+		$adModel = new \Admin\Model\AdsModel();
+		$result = $adModel->getWhere($where, $field);
+		echo json_encode($result);
+		die;
+	}
+
+	public function getExpState(){
+		$adsname = I('post.adsname','');
+		$starttime = I('post.start');
+		$endtime = I('post.end');
+		$yesday =  date("Y-m-d",strtotime("-1 day"));
+		$hidden_adsid = I('post.hadsid','',0);
+		if($adsname){
+			if(empty($starttime) || empty($endtime)){
+				$result = array('code'=>0,'msg'=>'时间选择不允许为空');
+				echo json_encode($result);
+				die;
+			}
+			if($starttime <= $endtime) {
+				if ( $endtime > $yesday){
+					$result = array('code'=>0,'msg'=>'时间不允许选择大于昨天的日期');
+				}else{
+					if(!$hidden_adsid){
+						$result = array('code'=>0,'msg'=>'请选择内容');
+					}else{
+						$adModel = new \Admin\Model\AdsModel();
+						$ads_info = $adModel->find($hidden_adsid);
+						if ($ads_info['name'] != $adsname) {
+							$result = array('code'=>0,'msg'=>'广告名称必须存在于广告列表中');
+						}else{
+							$where = ' 1=1 ';
+							$ads_media_id = $ads_info['media_id'];
+							$mItemModel = new \Admin\Model\MenuItemModel();
+							$field = "distinct(`menu_id`)";
+							$where .= " AND ads_id={$hidden_adsid}  ";
+							$order = 'menu_id asc';
+							$menu_arr = $mItemModel->getWhere($where,$order, $field);
+							if($menu_arr){
+								$where = "1=1";
+								foreach($menu_arr as $ma){
+									$menu_id_str .= $ma['menu_id'].',';
+								}
+								$menu_id_str = substr($menu_id_str,0,-1);
+								$where .= " AND menu_id in ( ".$menu_id_str.')';
+								$mhotelModel = new \Admin\Model\MenuHotelModel();
+								$hotelModel = new \Admin\Model\HotelModel();
+								$field = "distinct(`hotel_id`)";
+								$order = 'hotel_id asc';
+								$hotel_id_arr = $mhotelModel->getWhere($where, $order, $field);
+								if($hotel_id_arr){
+									$result = array('code'=>1);
+								}else{
+									$result = array('code'=>0,'msg'=>'当前选择内容未在酒店发布过');
+								}
+
+							}else{
+								$result = array('code'=>0,'msg'=>'当前选择内容未在节目单发布过');
+							}
+						}
+					}
+				}
+
+			}else{
+				$result = array('code'=>0,'msg'=>'开始时间必须小于等于结束时间');
+			}
+		}else{
+			$result = array('code'=>0,'msg'=>'请输入广告名称');
+		}
+		echo json_encode($result);
+	}
+
+
+	public function emptyData($size){
+		$result['list'] = array();
+		$count = 0;
+		$objPage = new Page($count,$size);
+		$show = $objPage->admin_page();
+		$result['page'] = $show;
+		return $result;
+	}
+
+
+
+
+	/**
+	 * 所有数据
+	 * @return [type] [description]
+	 */
+	public function listAll(){
+		$starttime = I('post.starttime','');
+		$endtime = I('post.endtime','');
+		$size   = I('numPerPage',50);//显示每页记录数
+		$this->assign('numPerPage',$size);
+		$start = I('pageNum',1);
+		$this->assign('pageNum',$start);
+		$order = I('_order',' shlog.last_heart_time ');
+		$adsname = I('he_name');
+		$hidden_adsid = I('hadsid','',0);
+		$where = "1=1";
+		//$hidden_adsid = 98;//429
+		//$adsname = '刺客信条';
+		//$starttime = '2017-08-02';
+		//$endtime = '2017-08-08';
+		$yesday =  date("Y-m-d",strtotime("-1 day"));
+		if ( $adsname ) {
+			$this->assign('adsname', $adsname);
+			$this->assign('hidden_adsid', $hidden_adsid);
+			//判断时间
+			if(empty($starttime) || empty($endtime)){
+				$this->error('时间选择不允许为空');
+			}
+			if($starttime <= $endtime) {
+				if ( $endtime > $yesday){
+					$this->error('时间不允许选择大于昨天的日期');
+				}
+				$this->assign('s_time',$starttime);
+				$this->assign('e_time',$endtime);
+
+			}else{
+				$this->error('开始时间必须小于等于结束时间');
+			}
+
+			$adModel = new \Admin\Model\AdsModel();
+			$ads_info = $adModel->find($hidden_adsid);
+			if ($ads_info['name'] != $adsname) {
+				$this->error('广告名称必须存在于广告列表中');
+			}else{
+				if(!$hidden_adsid){
+					$this->error('请选择内容');
+				}
+				if(empty($ads_info)){
+					$result = $this->emptyData($size);
+				}else{
+					//判断是否在节目单中发布过
+					$ads_media_id = $ads_info['media_id'];
+					$mItemModel = new \Admin\Model\MenuItemModel();
+					$field = "distinct(`menu_id`)";
+					$where .= " AND ads_id={$hidden_adsid}  ";
+					$order = 'menu_id asc';
+					$menu_arr = $mItemModel->getWhere($where,$order, $field);
+					if($menu_arr){
+						//判断是否在酒店发布过
+						$where = "1=1";
+						//迭代替换，$v当前迭代元素值，$result 上一次迭代产生值
+						$menu_id_str = array_reduce($menu_arr,
+							function($result, $v){
+								return $result.','.$v['menu_id'];
+							}
+						);
+						$menu_id_str = substr($menu_id_str,1);
+						$where .= " AND menu_id in ( ".$menu_id_str.')';
+						$mhotelModel = new \Admin\Model\MenuHotelModel();
+						$hotelModel = new \Admin\Model\HotelModel();
+						$field = "distinct(`hotel_id`)";
+						$order = 'hotel_id asc';
+						$hotel_id_arr = $mhotelModel->getWhere($where, $order, $field);
+						//var_dump($hotel_id_arr);
+						if($hotel_id_arr){
+							//根据hotelid得出box
+							$where = '1=1';
+							$hotel_id_str =  array_reduce($hotel_id_arr ,
+								function($result , $v){
+									Return $result.','.$v['hotel_id'];
+								}
+							);
+							$hotel_id_str = substr($hotel_id_str,1);
+							$where .= " AND sht.id in ( ".$hotel_id_str.')';
+							$field = 'sht.id hotelid,sht.name,room.id
+							          rid,room.name rname, box.mac,sari
+							          .region_name cname';
+							$box_info = $hotelModel->getBoxMacByHid($field, $where);
+							//var_dump($hotelModel->getLastSql());
+							//dump($box_info);
+
+
+							//求出在规定时间内满足的机顶盒
+							$field = 'sum(play_count) plc,
+							sum(play_time) plt,mac,group_concat(`play_date`) pld';
+							$starttime = date("Ymd", strtotime($starttime));
+							$endtime = date("Ymd", strtotime($endtime));
+							$where = '1=1';
+							$mestaModel = new \Admin\Model\MediaStaModel();
+							$where .= " AND media_id = ".$ads_media_id;
+							$where .= "	AND play_date >= '{$starttime}'";
+							$where .= "	AND play_date <= '{$endtime} '";
+							$group = 'mac';
+							$me_sta_arr = $mestaModel->getWhere($where, $field, $group);
+							//二维数组合并
+							$mp = array_column($me_sta_arr, 'mac');
+							$me_sta_arr = array_combine($mp, $me_sta_arr);
+							//var_dump($mestaModel->getLastSql());
+							//dump($box_info);
+							//dump($me_sta_arr);
+							//获取电视数量
+							//进行比较
+
+							$tmp_box_tv = array();
+							foreach ($box_info as $bk=>$bv) {
+								$map_mac = $bv['mac'];
+								//先判断是否存在
+								if(array_key_exists($map_mac, $tmp_box_tv)) {
+									$tmp_box_tv[$map_mac]['tv_count'] +=1;
+									continue;
+								}else {
+									if(array_key_exists($map_mac, $me_sta_arr)) {
+										$mv = $me_sta_arr[$map_mac];
+										$day_arr = explode(',',$mv['pld']);
+										$day_arr = array_unique($day_arr);
+										$day_str = implode(',', $day_arr);
+										$day_len = count($day_arr);
+										$tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
+										$tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
+										$tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
+										$tmp_box_tv[$map_mac]['play_count'] = $mv['plc'];
+										$tmp_box_tv[$map_mac]['play_time'] = $mv['plt'];
+										$tmp_box_tv[$map_mac]['play_days'] = $day_len;
+										$tmp_box_tv[$map_mac]['publication'] = $day_str;
+										$tmp_box_tv[$map_mac]['tv_count'] = 1;
+
+										$tmp_box_tv[$map_mac]['mac'] = $map_mac;
+									}else{
+										$tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
+										$tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
+										$tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
+										$tmp_box_tv[$map_mac]['play_count'] = '';
+										$tmp_box_tv[$map_mac]['play_time'] = '';
+										$tmp_box_tv[$map_mac]['play_days'] = '';
+										$tmp_box_tv[$map_mac]['publication'] = '';
+										$tmp_box_tv[$map_mac]['tv_count'] = 1;
+										$tmp_box_tv[$map_mac]['mac'] = $map_mac;
+									}
+									unset($me_sta_arr[$map_mac]);
+								}
+
+							}
+							$tmp_box_tv = array_values($tmp_box_tv);
+							//var_export($tmp_box_tv);
+							if($tmp_box_tv){
+								$limit = ($start-1)*$size;
+								$tmp_box_tvt = array_slice($tmp_box_tv, $limit , $size,true);
+								$result['list']  = $tmp_box_tvt;
+								$totals=count($tmp_box_tv);
+								$objPage = new Page($totals,$size);
+								$result['page']  = $objPage->admin_page();
+							}else{
+								$result = $this->emptyData($size);
+							}
+
+
+
+						}else{
+							$this->error('当前选择内容未在酒店发布过');
+						}
+
+					}else{
+						$this->error('当前选择内容未在节目单发布过');
+					}
+
+				}
+			}
+		}else{
+			$result = $this->emptyData($size);
+		}
+		$this->assign('list', $result['list']);
+		$this->assign('page',  $result['page']);
+		$this->display('showlist');
+	}
+
+
+}

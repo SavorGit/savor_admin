@@ -114,17 +114,17 @@ class ExcelController extends Controller
      */
     public function expcontentads(){
 
-        $starttime = I('post.starttime','');
-        $endtime = I('post.endtime','');
+        $starttime = I('starttime','');
+        $endtime = I('endtime','');
         $adsname = I('adsname');
-        $hidden_adsid = I('hadsid','',0);
+        $hidden_adsid = I('hadsid');
         $yesday =  date("Y-m-d",strtotime("-1 day"));
         $tmp_box_tv = array();
         //$hidden_adsid = 98;//429
-        $adsname = '刺客信条';
-        $starttime = '2017-08-02';
-        $endtime = '2017-08-08';
-        $hidden_adsid = 98;
+       // $adsname = '刺客信条';
+        //$starttime = '2017-08-02';
+        //$endtime = '2017-08-08';
+      //  $hidden_adsid = 98;
         $where = "1=1";
         if ( $adsname ) {
             $adModel = new \Admin\Model\AdsModel();
