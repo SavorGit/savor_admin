@@ -56,6 +56,7 @@
     <input type="hidden" name="_order" value="{$_order}"/>
     <input type="hidden" name="_sort" value="{$_sort}"/>
     <input type="hidden" class="strid" name="hadsid" value="{$hidden_adsid}"/>
+    <input type="hidden" value="" id="contenseid" name="contentast" class="sachHtml" />
     <div class="searchBar">
       <div class="clearfix">
         <div class="form-inline" style="margin-top:3px;">
@@ -63,7 +64,7 @@
 
           <div class="form-group" id="timegiy" style="">
             <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
-              <input name="starttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
+              <input name="adsstarttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
                         <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
@@ -72,7 +73,7 @@
 
 
             <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
-              <input name="endtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
+              <input name="adsendtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
                      <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -89,15 +90,19 @@
             </div>
 
           </div>
+
+
+          <div class="input-group input-group-sm pull-right">
+            <a id="exportcontentads" class="btn btn-success btn-sm add" href="javascript:void(0)"  title="导出内容与广告统计" target="_blank" mask="true"  onclick="clickcontentads(this)"><i class="fa fa-plus"></i> 导出内容与广告统计</a>
+            <input type="hidden" id="contentxiaohref" value="{$host_name}/excel/expcontentads"/>
+          </div>
+
           <div class="form-inline" style="margin-top:10px;">
 
 
 
 
-            <div class="input-group input-group-sm pull-right">
-              <a id="exportcontentads" class="btn btn-success btn-sm add" href="javascript:void(0)"  title="导出内容与广告统计" target="_blank" mask="true"  onclick="clickcontentads(this)"><i class="fa fa-plus"></i> 导出内容与广告统计</a>
-              <input type="hidden" id="contentxiaohref" value="{$host_name}/excel/expcontentads"/>
-            </div>
+
 
 
           </div>
@@ -151,7 +156,7 @@
 <script type="text/javascript">
 	var contentdata = [];
     var contentaid = [];
-    var cot = 8;
+
 
     $.ajaxSettings.global=false;
 
@@ -231,11 +236,12 @@ ele_key.onkeyup = function (e) {
 	
 	 $('body').on("click","li a",function(){
      $('.strid').val($(this).prop('id'));
-     $('#keysearch').val($(this).html())
-
-    // $('#keysearch').prop('disabled',true)
+     $('#keysearch').val($(this).html());
+			$('.sachHtml').val($(this).html());
+			
+     //$('#keysearch').prop('disabled',true)
      $('.inputDel').show();
-     // alert($('#keysearch').val())
+      //alert($('#keysearch').val())
     })
 	$('.inputDel').click(function(){
 		$('#keysearch').prop('disabled',false);
@@ -250,9 +256,9 @@ ele_key.onkeyup = function (e) {
 
     function clickcontentads(obj){
       var hiddenaid = $(".strid").val();
-      var title = $('#keysearch').val();
-      var st = $('input[name="starttime"]').val();
-      var end = $('input[name="endtime"]').val();
+      var title = $('#contenseid').val();
+      var st = $('input[name="adsstarttime"]').val();
+      var end = $('input[name="adsendtime"]').val();
       var hre = $("#contentxiaohref").val();
       var hrp = hre+"?hadsid="+hiddenaid+"&adsname="+title+"&starttime="+st+"&endtime="+end;
       $.ajax({
@@ -266,9 +272,6 @@ ele_key.onkeyup = function (e) {
             return true;
           }else{
             window.open(hrp,"_top");
-
-
-           // window.location.href= hrp;
           }
         }
       });

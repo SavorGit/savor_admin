@@ -47,7 +47,7 @@ class ContentadsController extends BaseController{
 			}
 			if($starttime <= $endtime) {
 				if ( $endtime > $yesday){
-					$result = array('code'=>0,'msg'=>'时间不允许选择大于昨天的日期');
+					$result = array('code'=>0,'msg'=>'时间筛选范围有误');
 				}else{
 					if(!$hidden_adsid){
 						$result = array('code'=>0,'msg'=>'请选择内容');
@@ -116,14 +116,14 @@ class ContentadsController extends BaseController{
 	 * @return [type] [description]
 	 */
 	public function listAll(){
-		$starttime = I('post.starttime','');
-		$endtime = I('post.endtime','');
+		$starttime = I('post.adsstarttime','');
+		$endtime = I('post.adsendtime','');
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
 		$order = I('_order',' shlog.last_heart_time ');
-		$adsname = I('he_name');
+		$adsname = I('contentast');
 		$hidden_adsid = I('hadsid','',0);
 		$where = "1=1";
 		//$hidden_adsid = 98;//429
@@ -140,7 +140,7 @@ class ContentadsController extends BaseController{
 			}
 			if($starttime <= $endtime) {
 				if ( $endtime > $yesday){
-					$this->error('时间不允许选择大于昨天的日期');
+					$this->error('时间筛选范围有误');
 				}
 				$this->assign('s_time',$starttime);
 				$this->assign('e_time',$endtime);
@@ -215,6 +215,8 @@ class ContentadsController extends BaseController{
 							$group = 'mac';
 							$me_sta_arr = $mestaModel->getWhere($where, $field, $group);
 							//二维数组合并
+							//var_dump($mestaModel->getLastSql());
+							//die;
 							$mp = array_column($me_sta_arr, 'mac');
 							$me_sta_arr = array_combine($mp, $me_sta_arr);
 							//var_dump($mestaModel->getLastSql());
@@ -222,7 +224,6 @@ class ContentadsController extends BaseController{
 							//dump($me_sta_arr);
 							//获取电视数量
 							//进行比较
-
 							$tmp_box_tv = array();
 							foreach ($box_info as $bk=>$bv) {
 								$map_mac = $bv['mac'];
@@ -288,7 +289,12 @@ class ContentadsController extends BaseController{
 				}
 			}
 		}else{
-			$result = $this->emptyData($size);
+			if(IS_POST){
+				$this->error('请输入广告内容');
+			}else{
+				$result = $this->emptyData($size);
+			}
+
 		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
