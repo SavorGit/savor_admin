@@ -261,9 +261,9 @@
 		if($('div').is('#ya')){
 			$('#topLabel').hide();
 			$('.tuijian').css('padding-bottom','1.35rem');
-			//$('.more').css('padding-bottom','1.35rem');
 			$('.more').css('margin-bottom','0');
 			$('.box_nr').css('padding-bottom','1.35rem');
+			
 		}
 		$('#disnone').click(function(){
 			$('#topLabel').hide();
@@ -282,16 +282,21 @@
 		}
 		var tuijians = $('.tuijian').css('display');
 		if(tuijians=='block'||$('div').is('.tuijian')){
-			
+			$('.box_nr').css('padding-bottom','0.3rem')
 		}else{
-			$('.more').css('margin-bottom','53px')
+			//$('.more').css('margin-bottom','53px')
 		}
 		if(tuijians=='block'&&$('div').is('#ya')){
 			$('.more').css('margin','0');
 			$('p').last().css('margin-bottom','0');
 		}
 		var sit = $("#hostnamenewc").val();
-
+		var urls = window.location.href;
+		if(urls.indexOf("location") >= 0 ) { 
+				
+			}else{
+				$('#ya').prev().hide()
+			}
 		sita = sit+"/activitydetail/isSoldOut";
 		sitush = sit+"/activitydetail/toothwash";
 		$('#ya').click(function(){
