@@ -7,11 +7,15 @@ use Common\Lib\Weixin_api;
  *
  */
 class ClientController extends Controller {
-
+    private $picRecommondNums;      //图集推荐条数
+    private $imgTextRecommondNums;  //图文推荐条数
+    private $videoRecommondNums;     //视频推荐条数
     public function __construct() {
         parent::__construct();
+        $this->picRecommondNums    = 3;
+        $this->imgTextRecommondNums= 3;
+        $this->videoRecommondNums  = 3;
     }
-
 
     /**
      *@desc 获取阿里云资源全路径
@@ -54,18 +58,23 @@ class ClientController extends Controller {
 
     public function judgeRecommendInfo($vinfo){
         //推荐数
-        //var_dump($vinfo);
-        $mend_len = 5;
+        if($vinfo['type']==0 || $vinfo['type'] ==1){//纯文本、图文
+            $mend_len = $this->imgTextRecommondNums;
+        }else if($vinfo['type']==2){//图集
+            $mend_len = $this->picRecommondNums;
+        }else if($vinfo['type']==3){//视频
+            $mend_len = $this->videoRecommondNums;
+        }
         $articleModel = new \Admin\Model\ArticleModel();
         //获取推荐列表
         $order_tag = $vinfo['order_tag'];
-        // var_dump($order_tag);
         $order_tag_arr = explode(',', $order_tag);
         $tag_len = count($order_tag_arr);
+        //根据相同的文章类型的标签获取推荐 开始
         if($tag_len == 0 || empty($order_tag)){
             $dap = array();
         }else{
-            $where = "1=1 and state = 2  and hot_category_id = ".$vinfo['hot_category_id']." and type = ".$vinfo['type'];
+            $where = "1=1 and state = 2   and type = ".$vinfo['type'];
             $field = 'id,title,order_tag';
             $dat = array();
             $dap = array();
@@ -77,7 +86,7 @@ class ClientController extends Controller {
                 }
 
             }
-
+            $nums = 0;
             foreach($dat as $dk=>$dv) {
                 $info = $articleModel->getRecommend($where, $field, $dv);
                 foreach($info as $v){
@@ -86,19 +95,54 @@ class ClientController extends Controller {
                     }
                     if(!array_key_exists($v['id'], $dap)){
                         $dap[$v['id']] = $v;
-                        $mend_len--;
                     }
-
                 }
-                if($mend_len <=0 ){
+                $nums = count($dap);
+                if($nums>=$mend_len){
                     break;
                 }
             }
-            if($mend_len <=0 ){
-                $dap = array_slice($dap, 0, 5);
+            
+        }
+        //根据相同的文章类型的标签获取推荐 结束
+        //其他全分类查找推荐 开始
+        if($nums<$mend_len){
+            if($tag_len){//如果该文章有标签
+                $where = "1=1 and state = 2  and hot_category_id in(101,102)";
+                $field = 'id,title,order_tag';
+        
+                foreach($dat as $dk=>$dv) {
+                    $info = $articleModel->getRecommend($where, $field, $dv);
+                    foreach($info as $v){
+                        if($v['id'] == $vinfo['id']){
+                            continue;
+                        }
+                        if(!array_key_exists($v['id'], $dap)){
+                            $dap[$v['id']] = $v;
+                        }
+                    }
+                    $nums = count($dap);
+                    if($nums>=$mend_len){
+                        break;
+                    }
+                }
             }
         }
-
+        //其他全分类查找推荐 结束
+        //获取最新最新内容开始
+        if($nums<$mend_len){
+            $info = $articleModel->getWhere('','id,title,order_tag',' create_time desc','limit 0,10');
+            foreach($info as $v){
+                if($v['id'] == $vinfo['id']){
+                    continue;
+                }
+                if(!array_key_exists($v['id'], $dap)){
+                    $dap[$v['id']] = $v;
+                }
+            }
+        }
+        //获取最新最新内容 结束
+        $dap = array_slice($dap, 0, $mend_len);
         return $dap;
     }
 
@@ -238,8 +282,64 @@ class ClientController extends Controller {
             $articleModel = new \Admin\Model\ArticleModel();
             $mbpictModel = new \Admin\Model\MbPicturesModel();
             $mediaModel  = new \Admin\Model\MediaModel();
-            $vinfo = $articleModel->where('id='.$id.' and state =2')->find();
+            $preview = I('get.preview','0','intval');
+            if($preview ==1){
+                $where = 'id='.$id;
+            }else {
+                $where = 'id='.$id.' and state =2';
+            }
+            $vinfo = $articleModel->where($where)->find();
             if(empty($vinfo)){
+                $vinfo = $articleModel->where('id='.$id)->find();
+                if($vinfo['hot_category_id']!=103){
+                    if(empty($vinfo)){
+                        //获取最新最新内容开始
+                        //推荐数
+                        if($vinfo['type']==0 || $vinfo['type'] ==1){//纯文本、图文
+                            $mend_len = $this->imgTextRecommondNums;
+                        }else if($vinfo['type']==2){//图集
+                            $mend_len = $this->picRecommondNums;
+                        }else if($vinfo['type']==3){//视频
+                            $mend_len = $this->videoRecommondNums;
+                        }
+                        $articleModel = new \Admin\Model\ArticleModel();
+                        $info = $articleModel->getWhere('','id,title,order_tag',' create_time desc','limit 0,'.$mend_len);
+                        $dap = array();
+                        foreach($info as $v){
+                            if($v['id'] == $vinfo['id']){
+                                continue;
+                            }
+                            if(!array_key_exists($v['id'], $dap)){
+                                $dap[$v['id']] = $v;
+                            }
+                        }
+                        $arinfo = $dap;
+                        if($arinfo){
+                            foreach($arinfo as $dv){
+                                $where = 'AND mc.id = '. $dv['id'];
+                                $dap = $articleModel->getArtinfoById($where);
+                                $res[] = $dap;
+                            }
+                            $data = $this->changRecList($res);
+                        }else{
+                            $data = array();
+                        }
+                        $this->assign('list',$data);
+                    }else {
+                        $arinfo = $this->judgeRecommendInfo($vinfo);
+                        if($arinfo){
+                            foreach($arinfo as $dv){
+                                $where = 'AND mc.id = '. $dv['id'];
+                                $dap = $articleModel->getArtinfoById($where);
+                                $res[] = $dap;
+                            }
+                            $data = $this->changRecList($res);
+                        }else{
+                            $data = array();
+                        }
+                        $this->assign('list',$data);
+                    } 
+                }
                 $this->display('null');
                 exit;
             }
