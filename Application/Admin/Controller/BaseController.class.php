@@ -498,7 +498,9 @@ class BaseController extends Controller {
         $free_action = array('admin.menu.get_se_left','admin.clean.cache','admin.resource.uploadresource',
                              'admin.resource.uploadresourcenew','admin.user.chagepwd','admin.boxaward.getaward',
                              'admin.hotel.manager_list','admin.version.getvname','admin.menu.getfile',
-                             'admin.menu.analyseexcel','admin.checkaccount.getaccountinfo','admin.checkaccount.analyseexcel','admin.checkaccount.confirmpaydone','admin.tag.getajaxpage','admin.tag.doaddajaxtag','admin.resource.uploadmapresource'
+                             'admin.menu.analyseexcel','admin.checkaccount.getaccountinfo','admin.checkaccount.analyseexcel',
+                             'admin.checkaccount.confirmpaydone','admin.tag.getajaxpage','admin.tag.doaddajaxtag',
+                             'admin.resource.uploadmapresource,admin.contentads.getads_ajax'
         );
 
         $model_name      = strtolower(MODULE_NAME);
