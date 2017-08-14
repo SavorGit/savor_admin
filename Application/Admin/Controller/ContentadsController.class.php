@@ -55,7 +55,7 @@ class ContentadsController extends BaseController{
 						$adModel = new \Admin\Model\AdsModel();
 						$ads_info = $adModel->find($hidden_adsid);
 						if ($ads_info['name'] != $adsname) {
-							$result = array('code'=>0,'msg'=>'广告名称必须存在于广告列表中');
+							$result = array('code'=>0,'msg'=>'请输入后选择内容与广告');
 						}else{
 							$where = ' 1=1 ';
 							$ads_media_id = $ads_info['media_id'];
@@ -79,7 +79,7 @@ class ContentadsController extends BaseController{
 								if($hotel_id_arr){
 									$result = array('code'=>1);
 								}else{
-									$result = array('code'=>0,'msg'=>'当前选择内容未在酒店发布过');
+									$result = array('code'=>0,'msg'=>'该内容没有发布过，请重新选择');
 								}
 
 							}else{
@@ -93,7 +93,7 @@ class ContentadsController extends BaseController{
 				$result = array('code'=>0,'msg'=>'开始时间必须小于等于结束时间');
 			}
 		}else{
-			$result = array('code'=>0,'msg'=>'请选择内容');
+			$result = array('code'=>0,'msg'=>'请输入后选择内容与广告');
 		}
 		echo json_encode($result);
 	}
@@ -116,8 +116,8 @@ class ContentadsController extends BaseController{
 	 * @return [type] [description]
 	 */
 	public function listAll(){
-		$starttime = I('post.adsstarttime','');
-		$endtime = I('post.adsendtime','');
+		$starttime = I('adsstarttime','');
+		$endtime = I('adsendtime','');
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
@@ -153,7 +153,7 @@ class ContentadsController extends BaseController{
 			$adModel = new \Admin\Model\AdsModel();
 			$ads_info = $adModel->find($hidden_adsid);
 			if ($ads_info['name'] != $adsname) {
-				$this->error('广告名称必须存在于广告列表中');
+				$this->error('请输入后选择内容与广告');
 			}else{
 				if(!$hidden_adsid){
 					$this->error('请输入后选择内容与广告');
@@ -196,7 +196,7 @@ class ContentadsController extends BaseController{
 							$hotel_id_str = substr($hotel_id_str,1);
 							$where .= " AND sht.id in ( ".$hotel_id_str.')';
 							$field = 'sht.id hotelid,sht.name,room.id
-							          rid,room.name rname, box.mac,sari
+							          rid,room.name rname,box.name box_name, box.mac,sari
 							          .region_name cname';
 							$box_info = $hotelModel->getBoxMacByHid($field, $where);
 							//var_dump($hotelModel->getLastSql());
@@ -249,6 +249,7 @@ class ContentadsController extends BaseController{
 										$tmp_box_tv[$map_mac]['tv_count'] = 1;
 
 										$tmp_box_tv[$map_mac]['mac'] = $map_mac;
+										$tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
 									}else{
 										$tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
 										$tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
@@ -259,6 +260,7 @@ class ContentadsController extends BaseController{
 										$tmp_box_tv[$map_mac]['publication'] = '';
 										$tmp_box_tv[$map_mac]['tv_count'] = 1;
 										$tmp_box_tv[$map_mac]['mac'] = $map_mac;
+										$tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
 									}
 									unset($me_sta_arr[$map_mac]);
 								}
@@ -280,7 +282,7 @@ class ContentadsController extends BaseController{
 
 
 						}else{
-							$this->error('当前选择内容未在酒店发布过');
+							$this->error('该内容没有发布过，请重新选择');
 						}
 
 					}else{
@@ -291,7 +293,7 @@ class ContentadsController extends BaseController{
 			}
 		}else{
 			if(IS_POST){
-				$this->error('请选择内容');
+				$this->error('请输入后选择内容与广告');
 			}else{
 				$result = $this->emptyData($size);
 			}
