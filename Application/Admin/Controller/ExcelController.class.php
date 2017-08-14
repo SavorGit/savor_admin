@@ -159,7 +159,7 @@ class ExcelController extends Controller
                     $hotel_id_str = substr($hotel_id_str,0,-1);
                     $where .= " AND sht.id in ( ".$hotel_id_str.')';
                     $field = 'sht.id hotelid,sht.name,room.id
-                              rid,room.name rname, box.mac,sari
+                              rid,room.name rname,box.name box_name, box.mac,sari
                               .region_name cname';
                     $box_info = $hotelModel->getBoxMacByHid($field, $where);
 
@@ -204,6 +204,7 @@ class ExcelController extends Controller
                                 $tmp_box_tv[$map_mac]['publication'] = $day_str;
                                 $tmp_box_tv[$map_mac]['tv_count'] = 1;
                                 $tmp_box_tv[$map_mac]['mac'] = $map_mac;
+                                $tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
                             }else{
                                 $tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
                                 $tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
@@ -214,6 +215,7 @@ class ExcelController extends Controller
                                 $tmp_box_tv[$map_mac]['publication'] = '';
                                 $tmp_box_tv[$map_mac]['tv_count'] = 1;
                                 $tmp_box_tv[$map_mac]['mac'] = $map_mac;
+                                $tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
                             }
                             unset($me_sta_arr[$map_mac]);
                         }
@@ -231,7 +233,8 @@ class ExcelController extends Controller
             array('cityname', '地区'),
             array('hotel_name', '酒楼名称'),
             array('rname', '包间名称'),
-            array('mac', '机顶盒名称'),
+            array('box_name','机顶盒名称'),
+            array('mac', 'mac'),
             array('tv_count', '电视数量'),
             array('play_count', '播出次数'),
             array('play_time', '播出时长'),

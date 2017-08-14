@@ -23,21 +23,24 @@
 		color: black;
 		text-decoration: none;
 	}
-#datalist{
-  position: absolute;
-  left: 36.3%;
-  top: 42px;
-  border: #eee 1px solid;
-  min-width: 200px;
-  text-align: left;
-  z-index: 9;
-  background-color: white;
-  border-bottom: none;
-  border-top: none;
-}
+#datalist {
+		max-height: 400px;
+		overflow: auto;
+		position: absolute;
+		top: 42px;
+		border: #eee 1px solid;
+		min-width: 200px;
+		text-align: left;
+		z-index: 9;
+		background-color: white;
+		border-bottom: none;
+		border-top: none;
+	}
 #datalist li{
 	height: 25px;
 	line-height: 25px;
+	white-space : nowrap ;
+	
 }
 #datalist li a{
 	text-decoration: none;
@@ -85,7 +88,7 @@
 
           <div class="form-group" style="margin-left:50px;">
             <div class="input-group input-group-sm pull-right">
-              <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="内容名称"><span class="inputDel" <notempty name="contentast"> <else /> style="display: none;" </notempty> >X</span>
+              <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="广告节目名称模糊搜索"><span class="inputDel" <notempty name="contentast"> <else /> style="display: none;" </notempty> >X</span>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -125,6 +128,7 @@
             <th>酒楼名称</th>
             <th>包间名称</th>
             <th>机顶盒名称</th>
+            <th>mac地址</th>
             <th>电视数量</th>
             <th>播出次数</th>
             <th>播出时长</th>
@@ -139,7 +143,8 @@
               <td data-title="地区">{$vlist.cityname}</td>
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.rname}</td>
-              <td data-title="机顶盒名称">{$vlist.mac}</td>
+              <td data-title="机顶盒名称">{$vlist.box_name}</td>
+              <td data-title="mac地址">{$vlist.mac}</td>
               <td data-title="电视数量">{$vlist.tv_count}</td>
               <td data-title="播出次数">{$vlist.play_count}</td>
               <td data-title="播出时长">{$vlist.play_time}</td>
