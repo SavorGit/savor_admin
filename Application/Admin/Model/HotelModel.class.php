@@ -148,6 +148,11 @@ class HotelModel extends BaseModel{
 		return  $result;
 	}
 
+	public function getWhereorderData($where, $field='', $order='') {
+		$result = $this->where($where)->field($field)->order($order)->select();
+		return  $result;
+	}
+
 
 
 	public function getBoxMacByHid($field, $where){
