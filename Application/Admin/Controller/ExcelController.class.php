@@ -284,7 +284,7 @@ class ExcelController extends Controller
                 $where .= " and hotel_box_type in (2,3) ";
                 $hotel_id_arr = $hotelModel->getWhereorderData($where,  $field, $order);
                 //根据hotelid得出box
-                $where = '1=1';
+                $where = '1=1 and box.state = 1 and box.flag = 0 ';
                 $hotel_id_str =  array_reduce($hotel_id_arr ,
                     function($result , $v){
                         Return $result.','.$v['hotel_id'];
@@ -328,6 +328,7 @@ class ExcelController extends Controller
                             $mv['pld'] = preg_replace('/(\s)*/','', $mv['pld']);
                             $day_arr = explode(',',$mv['pld']);
                             $day_arr = array_unique($day_arr);
+                            sort($day_arr);
                             $day_str = implode(',', $day_arr);
                             $day_len = count($day_arr);
                             $tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
@@ -351,11 +352,23 @@ class ExcelController extends Controller
                             $tmp_box_tv[$map_mac]['tv_count'] = 1;
                             $tmp_box_tv[$map_mac]['mac'] = $map_mac;
                             $tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
+                            $tmp_box_tv[$map_mac]['hotel_id'] = $bv['hotelid'];
                         }
                         unset($me_sta_arr[$map_mac]);
                     }
 
                 }
+                $tmp_box_tv = array_reduce($tmp_box_tv, function($result, $item){
+                    $result[$item['hotel_id']][] = $item;
+                    return $result;
+                });
+                ksort($tmp_box_tv);
+                $tmp_box_tv = array_reduce($tmp_box_tv, function($result, $item){
+                    foreach($item as $k=>$vp){
+                        $result[$vp['mac']] = $vp;
+                    }
+                    return $result;
+                });
                 $tmp_box_tv = array_values($tmp_box_tv);
             }
 
