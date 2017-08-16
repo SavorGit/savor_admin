@@ -1,0 +1,193 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/report/heartAllLog" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+          		<input style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                <span class="input-group-btn">
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 	</div>
+
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
+
+          		<input    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                <span class="input-group-btn"  >
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+        	</div>
+        </div>
+        
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              设备类型：
+            </label>
+                <span class="input-group-btn">
+               <select name="type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <option <if condition="$type eq '1'">selected="selected" </if> value=1 >小平台</option>
+                 <option <if condition="$type eq '2'">selected="selected" </if> value=2 >机顶盒</option>
+               </select>
+          </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                城&nbsp;&nbsp;&nbsp;市：
+              </label>
+                <span class="input-group-btn input-group-sm">
+              <select name="areaid" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $areaid">selected</if>>{$vo.region_name}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+         
+			<div class="form-group">
+				<div class="input-group input-group-sm pull-right">
+				<input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="酒楼名称">
+				</div>
+			</div>
+            <div class="form-group" >
+	              <div class="input-group input-group-sm pull-right">
+	                
+		            <input type="text" class="form-control" name="mac" value="{$mac}" placeholder="mac地址">
+		            <span class="input-group-btn">
+		              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+		            </span>
+	              </div>
+            </div>
+            
+          <!--   <div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/expheartlost" title="导出心跳数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出心跳数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div> -->
+          
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>所属种类</th>
+            <th>区域ID</th>
+            <th>区域名称</th>
+            <th>酒楼ID</th>
+            <th>酒楼名称</th>
+            <th>包间ID</th>
+            <th>包间名称</th>
+            <th>机顶盒ID</th>
+            <th>MAC地址</th> 
+            <th>日期</th>
+            <th>0点</th>
+            <th>1点</th>
+            <th>2点</th>
+            <th>3点</th>
+            <th>4点</th>
+            <th>5点</th>
+            <th>6点</th>
+            <th>7点</th>
+            <th>8点</th>
+            <th>9点</th>
+            <th>10点</th>
+            <th>11点</th>
+            <th>12点</th>
+            <th>13点</th>
+            <th>14点</th>
+            <th>15点</th>
+            <th>16点</th>
+            <th>17点</th>
+            <th>18点</th>
+            <th>19点</th>
+            <th>20点</th>
+            <th>21点</th>
+            <th>22点</th>
+            <th>23点</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="所属种类">{$device_type_arr[$vlist[type]]}</td>
+              <td data-title="区域ID">{$vlist.area_id}</td>
+              <td data-title="区域名称">{$vlist.area_name}</td>
+              <td data-title="酒楼ID">{$vlist.hotel_id}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间ID">{$vlist.room_id}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒ID">{$vlist.box_id}</td>
+              <td data-title="机顶盒MAC">{$vlist.mac}</td>
+			  <td data-title="上报日期">{$vlist.date}</td>
+			  <td data-title="0点">{$vlist.hour0}</td>
+			  <td data-title="1点">{$vlist.hour1}</td>
+			  <td data-title="2点">{$vlist.hour2}</td>
+			  <td data-title="3点">{$vlist.hour3}</td>
+			  <td data-title="4点">{$vlist.hour4}</td>
+			  <td data-title="5点">{$vlist.hour5}</td>
+			  <td data-title="6点">{$vlist.hour6}</td>
+			  <td data-title="7点">{$vlist.hour7}</td>
+			  <td data-title="8点">{$vlist.hour8}</td>
+			  <td data-title="9点">{$vlist.hour9}</td>
+			  <td data-title="10点">{$vlist.hour10}</td>
+			  <td data-title="11点">{$vlist.hour11}</td>
+			  <td data-title="12点">{$vlist.hour12}</td>
+			  <td data-title="13点">{$vlist.hour13}</td>
+			  <td data-title="14点">{$vlist.hour14}</td>
+			  <td data-title="15点">{$vlist.hour15}</td>
+			  <td data-title="16点">{$vlist.hour16}</td>
+			  <td data-title="17点">{$vlist.hour17}</td>
+			  <td data-title="18点">{$vlist.hour18}</td>
+			  <td data-title="19点">{$vlist.hour19}</td>
+			  <td data-title="20点">{$vlist.hour20}</td>
+			  <td data-title="21点">{$vlist.hour21}</td>
+			  <td data-title="22点">{$vlist.hour22}</td>
+			  <td data-title="23点">{$vlist.hour23}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    
+
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+</script>

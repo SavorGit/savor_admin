@@ -238,4 +238,70 @@ class ReportController extends BaseController{
         $this->assign('page',  $result['page']);
         $this->display('smallpla');
     }
+    /**
+     * @desc 查看心跳上报历史数据
+     */
+    public function heartAllLog(){
+        $size       = I('numPerPage',50);     //显示每页记录数
+        $start      = I('pageNum',1);         //当前页码
+        $order      = I('_order','id'); //排序字段        
+        $sort       = I('_sort','desc');      //排序类型
+        $orders     = $order.' '.$sort;
+        $start = ($start-1)* $size;
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$start);
+        $this->assign('_order',$order);
+        $this->assign('_sort',$sort);
+        $where =" 1=1 ";
+        
+        $start_date = I('start_date');        // 开始日期
+        $end_date   = I('end_date');          // 结束日期
+        $type       = I('type');              //设备类型
+        $areaid     = I('areaid');            //城市id
+        $hotel_name = I('hotel_name','','trim'); //酒楼名称
+        $mac        = I('mac','','trim');     //mac地址
+        
+        if(!empty($start_date) && !empty($end_date)){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        if(!empty($start_date)){
+            $sql_start_date = str_replace('-', '', $start_date);
+            $where .= " and date>={$sql_start_date}";
+            $this->assign('start_date',$start_date);
+        }
+        if(!empty($end_date)){
+            $sql_end_date = str_replace('-', '', $end_date);
+            $where .=" and date<={$sql_end_date}";
+            $this->assign('end_date',$end_date);
+        }
+        if(!empty($type)){
+            $where .=" and type ={$type}";
+            $this->assign('type',$type);
+        }
+        if(!empty($areaid)){
+            $where .= " and area_id = {$areaid}";
+            $this->assign('areaid',$areaid);
+        }
+        if(!empty($hotel_name)){
+            $where .=" and hotel_name like '%{$hotel_name}%'";
+            $this->assign('hotel_name',$hotel_name);
+        }
+        if(!empty($mac)){
+            $where .=" and mac like '%{$mac}%'";
+            $this->assign('mac',$mac);
+        }
+        $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
+        $result = $m_heart_all_log->getlist('*',$where,$orders,$start,$size);
+        $device_type_arr = C('DEVICE_TYPE');
+        //城市
+        $m_area_info = new \Admin\Model\AreaModel();
+        $area_arr = $m_area_info->getAllArea();
+        $this->assign('area', $area_arr);
+        $this->assign('device_type_arr',$device_type_arr);
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->display('heartalllog');
+    }
 }
