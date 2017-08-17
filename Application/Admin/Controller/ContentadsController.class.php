@@ -406,7 +406,6 @@ class ContentadsController extends BaseController{
 					$where .= " and name not like '%永峰%' ";
 					$where .= " and hotel_box_type in (2,3) ";
 					$hotel_id_arr = $hotelModel->getWhereorderData($where,  $field, $order);
-						//var_dump($hotel_id_arr);
 						if($hotel_id_arr){
 							//根据hotelid得出box
 							$where = '1=1 and box.state = 1 and box.flag = 0 ';
@@ -421,9 +420,6 @@ class ContentadsController extends BaseController{
 							          rid,room.name rname,box.name box_name, box.mac,sari
 							          .region_name cname';
 							$box_info = $hotelModel->getBoxMacByHid($field, $where);
-							file_put_contents(APP_PATH.'/Runtime/Logs/Admin/1527.txt',var_export($box_info, true).PHP_EOL,FILE_APPEND);
-
-
 							//求出在规定时间内满足的机顶盒
 							$field = 'sum(play_count) plc,
 							sum(play_time) plt,mac,group_concat(`play_date`) pld';
@@ -441,9 +437,6 @@ class ContentadsController extends BaseController{
 							//die;
 							$mp = array_column($me_sta_arr, 'mac');
 							$me_sta_arr = array_combine($mp, $me_sta_arr);
-							//var_dump($mestaModel->getLastSql());
-							//dump($box_info);
-							//dump($me_sta_arr);
 							//获取电视数量
 							//进行比较
 							$tmp_box_tv = array();
@@ -527,6 +520,8 @@ class ContentadsController extends BaseController{
 			}
 
 		}
+
+		xdebug_stop_trace();
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('showlist');
