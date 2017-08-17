@@ -178,18 +178,32 @@
 			font-size: 0.3rem;
 			color: #922C3E;
 			text-decoration: none;
+			display: block;
+    		line-height: 0.72rem;
+		}
+		.more .shou{
+			width: 0.36rem;
+			height: 0.3rem;
+			margin-left: 0.1rem;
+			margin-right: 0.1rem;
+			vertical-align: middle;
+		}
+		.more .zhi{
+			width: 0.19rem;
+			height: 0.21rem;
+			margin-left: 0.12rem;
 		}
 	</style>
 	
 
 	<body>
-		<div id="topLabel" style="background-color: black;width: 100%;height: 53px;position: fixed;bottom: 0px;left: 0px;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
-		<img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 7px; margin-left: 10px; width: 188px; height: 40px;">
-		<div id="downLoad" style="background-color: #ff3e38;border-radius: 5px;position: absolute;top: 13px;right: 35px;height: 30px;">
-			<p id="xiazai" style="color: white;width: 45px;height: 65px;margin-top: 5px;text-align: center;font-size: 15px;">下载</p>
+		<div id="topLabel" style="background-color: #932c3f;width: 93%;height: 53px;border-radius:6px ;position: fixed;bottom: 5px;left: 3.5%;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
+		<img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-bottom: 2px; margin-left: 10px; width: 160px; height: 33px;">
+		<div id="downLoad" style="background-color: #f6f3ee;border-radius: 2px;position: absolute;top: 11px;right: 37px;height: 33px;">
+			<p id="xiazai" style="color:#932c3f;width: 66px;height: 65px;margin-top: 6px;text-align: center;font-size: 15px;font-size: 13px;line-height: 23px;">立即打开</p>
 		</div>
 		<span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;z-index: 100;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"></span>
-		</div>
+	</div>
 		<video id="video" style="width: 100%;<if condition =" $sourc eq 'newRead'">display: none;</if>"  poster="{$img_url}" class="video-js vjs-default-skin vjs-fluid vjs-big-play-centered" width="375" height="200" controls preload="none"
            data-setup='{ "html5" : { "nativeTextTracks" : false } }'>
         <source src="{$tx_url}" type="video/mp4">
@@ -210,7 +224,7 @@
 				<div style="clear: both;"></div>
 			</div>
 			{$vinfo.content}
-			<div class="more" style="<if condition="$sourc eq 'newRead'">display: none</if>"><a href="http://www.littlehotspot.com/d">下载小热点，查看更多精彩内容 >></a></div>
+			<div class="more" style="<if condition="$sourc eq 'newRead'">display: none</if>"><a href="http://www.littlehotspot.com/d">打开<img class="shou" src="../../../../Public/admin/assets/img/shoushi@3x.png">只给富人看的小热点<img class="zhi" src="../../../../Public/admin/assets/img/more@3x.png"></a></div>
 		</div>
 		<notempty name="list">
 		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
