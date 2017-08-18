@@ -74,7 +74,7 @@ class ClientController extends Controller {
         if($tag_len == 0 || empty($order_tag)){
             $dap = array();
         }else{
-            $where = "1=1 and state = 2   and type = ".$vinfo['type'];
+            $where = "1=1 and state = 2 and (hot_category_id = 101 or hot_category_id = 102 )  and type = ".$vinfo['type'];
             $field = 'id,title,order_tag';
             $dat = array();
             $dap = array();
@@ -89,6 +89,7 @@ class ClientController extends Controller {
             $nums = 0;
             foreach($dat as $dk=>$dv) {
                 $info = $articleModel->getRecommend($where, $field, $dv);
+               // var_dump($articleModel->getLastSql());
                 foreach($info as $v){
                     if($v['id'] == $vinfo['id']){
                         continue;
@@ -131,7 +132,7 @@ class ClientController extends Controller {
         //其他全分类查找推荐 结束
         //获取最新最新内容开始
         if($nums<$mend_len){
-            $info = $articleModel->getWhere('','id,title,order_tag',' create_time desc','limit 0,10');
+            $info = $articleModel->getWhere('hot_category_id != 103 ','id,title,order_tag',' create_time desc','limit 0,10');
             foreach($info as $v){
                 if($v['id'] == $vinfo['id']){
                     continue;
