@@ -101,6 +101,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>备注</th>
             <th>处理备注</th>
             <th>创建时间</th>
+            <th class="table-tool">操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -115,6 +116,15 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="备注">{$vlist.remark} </td>
               <td data-title="处理备注">{$vlist.remark1} </td>
               <td data-title="创建时间">{$vlist.create_time} </td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改状态" target="dialog" mask="true"
+                    href="{$host_name}/report/editSmallwarn?smaid={$vlist.smallid}"
+                  class="btn btn-success btn-icon">
+                  <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
             </tr>
           </volist>
           </tbody>

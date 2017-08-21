@@ -20,15 +20,18 @@ class SmallPlaModel extends BaseModel
 
 
 	public function getWarnInfo($where, $order='id desc', $start=0,$size=5){
-		$sql = "SELECT sht.name hname , spl.hotel_ip,spl.area_id,spl.small_ip,spl.state,spl.remark,spl.remark1,spl.create_time
-        FROM (SELECT max(`id`) spid, hotel_id FROM savor_small_platform
-        group by  hotel_id) spm join savor_small_platform spl  on spm.hotel_id = spl.hotel_id and
-        spm.spid =  spl.id JOIN savor_hotel sht
-        ON spm.hotel_id=sht.id WHERE $where order by $order limit $start, $size";
+		$sql = "SELECT spl.id smallid, sht.name hname, spl.hotel_ip, ";
+		$sql .= " spl.area_id,spl.small_ip,spl.state,spl.remark,spl.remark1, ";
+		$sql .= " spl.create_time FROM (SELECT max(`id`) spid, hotel_id ";
+		$sql .= " FROM savor_small_platform group by  hotel_id) spm join ";
+		$sql .= " savor_small_platform spl  on spm.hotel_id = spl.hotel_id ";
+		$sql .= " and spm.spid =  spl.id JOIN savor_hotel sht ON ";
+		$sql .= " spm.hotel_id=sht.id WHERE $where order by $order limit $start, $size";
 
 		$list = $this->query($sql);
-		$sqlb = "SELECT hotel_id FROM savor_small_platform spl JOIN savor_hotel sht  ON spl.hotel_id=sht.id WHERE $where
-        group by  spl.hotel_id";
+		$sqlb = " SELECT hotel_id FROM savor_small_platform spl ";
+		$sqlb .= " JOIN savor_hotel sht  ON spl.hotel_id=sht.id WHERE ";
+		$sqlb .= " $where group by  spl.hotel_id ";
 		$count_arr = $this->query($sqlb);
 		$count = count($count_arr);
 		$objPage = new Page($count,$size);

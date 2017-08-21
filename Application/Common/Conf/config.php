@@ -195,4 +195,8 @@ $config['ACTIVITY_SOURCE_ARR'] = array(
     '3'=>'微信客户端',
     '4'=>'微信公众号',
 );
+$config['SMALL_WARN'] = array(
+    '1'=>'未处理',
+    '2'=>'已处理',
+);
 return $config;
