@@ -127,7 +127,9 @@
 			height: 0.96rem;
 			line-height: 0.96rem;
 		}
-		
+		.tuijian a{
+			
+		}
 		.tuijian_list {
 			width: 93%;
 			margin: 0 auto;
@@ -162,7 +164,6 @@
 			float: left;
 			margin-right: 0.2rem;
 		}
-		
 		.shijian {
 			font-size: 0.2rem;
 			color: #B2AFAB;
@@ -184,15 +185,29 @@
 			font-size: 0.3rem;
 			color: #922C3E;
 			text-decoration: none;
+			display: block;
+    		line-height: 0.72rem;
+		}
+		.more .shou{
+			width: 0.36rem;
+			height: 0.3rem;
+			margin-left: 0.1rem;
+			margin-right: 0.1rem;
+			vertical-align: middle;
+		}
+		.more .zhi{
+			width: 0.19rem;
+			height: 0.21rem;
+			margin-left: 0.12rem;
 		}
 	</style>
 
 	<body>
 	<input type="hidden" id="hostnamenewc" value="{$hostnamed}" />
-	<div id="topLabel" style="background-color: black;width: 100%;height: 53px;position: fixed;bottom: 0px;left: 0px;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
-		<img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-top: 7px; margin-left: 10px; width: 188px; height: 40px;">
-		<div id="downLoad" style="background-color: #ff3e38;border-radius: 5px;position: absolute;top: 13px;right: 35px;height: 30px;">
-			<p id="xiazai" style="color: white;width: 45px;height: 65px;margin-top: 5px;text-align: center;font-size: 15px;">下载</p>
+	<div id="topLabel" style="background-color: #932c3f;width: 93%;height: 53px;border-radius:6px ;position: fixed;bottom: 5px;left: 3.5%;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
+		<img src="../../../../Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-bottom: 2px; margin-left: 10px; width: 160px; height: 33px;">
+		<div id="downLoad" style="background-color: #f6f3ee;border-radius: 2px;position: absolute;top: 11px;right: 37px;height: 33px;">
+			<p id="xiazai" style="color:#932c3f;width: 66px;height: 65px;margin-top: 6px;text-align: center;font-size: 15px;font-size: 13px;line-height: 23px;">立即打开</p>
 		</div>
 		<span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;z-index: 100;"><img style="width: 15px;margin-top: 5px;" src="../../../../Public/admin/assets/img/guanbi.png"></span>
 	</div>
@@ -209,16 +224,16 @@
 				<div style="clear: both;"></div>
 			</div>
 			{$vinfo.content}
-			
-			<div class="more" style="<if condition="$sourc eq 'newRead'">display: none</if>"><a href="http://www.littlehotspot.com/d">下载小热点，查看更多精彩内容 >></a></div>
+			<div class="more" style="<if condition="$sourc eq 'newRead'">display: none</if>"><a href="http://www.littlehotspot.com/d">打开<img class="shou" src="../../../../Public/admin/assets/img/shoushi@3x.png">只给富人看的小热点<img class="zhi" src="../../../../Public/admin/assets/img/more@3x.png"></a></div>
 		</div>
-		<notempty name="list">
+	<notempty name="list">
 		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
 			<span class="tit_tuijian"><notempty name="list">为您推荐</notempty></span>
-
 			<volist name="list" id="vlist">
 				<div class="tuijian_list">
+				<a href="{$vlist.contentURL}">
 					<img src="{$vlist.imageURL}" />
+				</a>
 					<div class="tuijian_list_right">
 						<span class="tuijian_list_tit"><a href="{$vlist.contentURL}">{$vlist.title}</a></span>
 						<span class="laiyuan">{$vlist.sourcename}</span></span><span class="shijian">{$vlist.updatetime}</span>
@@ -227,9 +242,7 @@
 				</div>
 			</volist>
 		</div>
-
-		</notempty>
-
+	</notempty>
 	<input type="hidden" value="<?php echo $appid; ?>" id="appid"/>
 	<input type="hidden" value="<?php echo time(); ?>" id="timestamp"/>
 	<input type="hidden" value="<?php echo $noncestr; ?>" id="noncestr"/>
@@ -244,13 +257,11 @@
 	<script type="text/javascript">
 		var calculate_size = function() {
 			var BASE_FONT_SIZE = 100;
-
 			var docEl = document.documentElement,
 				clientWidth = docEl.clientWidth;
 			if(!clientWidth) return;
 			docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
 		};
-
 		// Abort if browser does not support addEventListener
 		if(document.addEventListener) {
 			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
@@ -263,12 +274,11 @@
 			$('.tuijian').css('padding-bottom','1.35rem');
 			$('.more').css('margin-bottom','0');
 			$('.box_nr').css('padding-bottom','1.35rem');
-			
-		}
+			}
 		$('#disnone').click(function(){
 			$('#topLabel').hide();
 			$('.more').css('margin-bottom','18px');
-			$('.tuijian').css('padding-bottom','10px')
+			$('.tuijian').css('padding-bottom','10px');
 		});
 		$('a').click(function(){
 			var hrefs = $(this).attr('href');
@@ -282,8 +292,9 @@
 		}
 		var tuijians = $('.tuijian').css('display');
 		if(tuijians=='block'||$('div').is('.tuijian')){
-			$('.box_nr').css('padding-bottom','0.3rem')
+			//$('.box_nr').css('padding-bottom','0.3rem')
 		}else{
+			$('.box_nr').css('padding-bottom','53px');
 			//$('.more').css('margin-bottom','53px')
 		}
 		if(tuijians=='block'&&$('div').is('#ya')){
@@ -293,9 +304,9 @@
 		var sit = $("#hostnamenewc").val();
 		var urls = window.location.href;
 		if(urls.indexOf("location") >= 0 ) { 
-				
+			
 			}else{
-				$('#ya').prev().hide()
+				$('#ya').prev().hide();
 			}
 		sita = sit+"/activitydetail/isSoldOut";
 		sitush = sit+"/activitydetail/toothwash";
@@ -303,15 +314,13 @@
 			var cUrl;
 			var url = window.location.href;
 			if(url.indexOf("sourceid") >= 0 ) { 
-				var sNum = getQueryString("sourceid")
+				var sNum = getQueryString("sourceid");
 				cUrl = "&sourceid="+sNum;
 			}else{
 				cUrl="";
 			}
-			
 			var da = {}
 			da.id=1;
-			
 			$.ajax({
 				type:"post",
 				url:"/activitydetail/isSoldOut",
@@ -319,37 +328,34 @@
 				dataType:"json",
 				async:true,
 				success:function(call){
-					console.log(call)
+					console.log(call);
 					var status = call.status;
 					if(status==1){
-						window.location.href="/activitydetail/toothwash?pure=1"+cUrl
+					window.location.href="/activitydetail/toothwash?pure=1"+cUrl;
 					}else{
-						tankuang(100,call.msg)
+					tankuang(100,call.msg);
 					}
 				}
 			});
 		})
-
 		/*提示框*/
 		function tankuang(pWidth,content) {
 			$("#msg").remove();
 			var html = '<div id="msg" style="position:fixed;top:50%;width:100%;height:0.8rem;line-height:0.8rem;margin-top:-15px;"><p style="background:#000;opacity:0.8;width:' + pWidth + 'px;color:#fff;text-align:center;padding:10px 10px;margin:0 auto;font-size:12px;border-radius:4px;">' + content + '</p></div>'
 			$("body").append(html);
 			var t = setTimeout(next, 2000);
-
 			function next() {
 				$("#msg").remove();
-
 			}
 		}
 		$('#xiazai').click(function(){
 			 window.location.href = 'http://www.littlehotspot.com/d';
 		})
-		function getQueryString(name) { 
-		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
-		var r = window.location.search.substr(1).match(reg); 
-		if (r != null) return unescape(r[2]); return null; 
-		} 
+		function getQueryString(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) return unescape(r[2]); return null;
+		}
+		
 	</script>
-
 </html>
