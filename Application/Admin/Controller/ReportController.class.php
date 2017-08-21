@@ -6,6 +6,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Think\Exception;
 
 class ReportController extends BaseController{
 
@@ -14,6 +15,68 @@ class ReportController extends BaseController{
 	public function __construct() {
 		parent::__construct();
 	}
+
+
+
+    /**
+     * @Purpose
+     * 处理小平台报警
+     * @Access public
+     * @Method Name:doAddSmall
+     * @Http POST
+     * @Param int $smallid 小平台日志唯一id
+     * @return mixed
+     */
+    public function doAddSmall(){
+
+        $smWarn = new \Admin\Model\SmallPlaModel();
+        $id                  = I('post.id');
+        $save                = [];
+        $save['state']        = I('post.smallconfig',0,'intval');
+        $save['remark1']    = I('post.small_mark','','trim');
+        $save['update_time'] = date('Y-m-d H:i:s');
+        if($id){
+            if($smWarn->where('id='.$id)->save($save)){
+                $this->output('操作成功!', 'report/smallplatwarn');
+            }else{
+                $this->output('操作失败!', 'report/smallplatwarn');
+            }
+        }else{
+
+                $this->output('操作失败!', 'report/smallplatwarn');
+
+        }
+    }
+
+
+    /**
+     * @Purpose
+     * 编辑小平台报警
+     * @Access public
+     * @Method Name:editSmallwarn
+     * @Http GET
+     * @Param int $smallid 小平台日志唯一id
+     * @return mixed
+     */
+    public function editSmallwarn(){
+        $smWarn = new \Admin\Model\SmallPlaModel();
+        $id = I('get.smaid', 0, 'intval');
+        $small_warn_arr = C('SMALL_WARN');
+        try{
+            if (is_int($id)) {
+                $vinfo = $smWarn->where('id='.$id)->find();
+                $this->assign('vinfo',$vinfo);
+                $this->assign('smallwarnid',$id);
+                $this->assign('smallwarndat',$small_warn_arr);
+            } else {
+               throw new Exception('必须是整数');
+            }
+        }catch (Exception $e) {
+            $this->error($e->getMessage());
+        }
+
+        $this->display('editsmall');
+    }
 
 
 	/**
@@ -229,7 +292,7 @@ class ReportController extends BaseController{
         $result = $smWarn->getWarnInfo($where,$orders,$start,$size);
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         $ind = $start;
-        $small_warn = C('small_warn');
+        $small_warn = C('SMALL_WARN');
         foreach ($result['list'] as &$val) {
             $val['indnum'] = ++$ind;
             $val['state'] = $small_warn[$val['state']];
