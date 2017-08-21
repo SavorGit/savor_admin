@@ -521,7 +521,6 @@ class ContentadsController extends BaseController{
 
 		}
 
-		xdebug_stop_trace();
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('showlist');
