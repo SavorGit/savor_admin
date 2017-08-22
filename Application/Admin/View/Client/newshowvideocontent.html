@@ -143,11 +143,15 @@
 			color: #434343;
 			font-weight: 700;
 			display: block;
-			margin-bottom: 0.4rem;
+			height: 1.1rem;
 		}
-		.tuijian_list_tit a{
+		.tuijian_list_tit a {
 			color: #434343;
-			text-decoration:none;
+			text-decoration: none;
+			display: -webkit-box;
+		    -webkit-box-orient: vertical;
+		    -webkit-line-clamp: 2;
+		    overflow: hidden;
 		}
 		.laiyuan {
 			font-size: 0.22rem;
@@ -232,7 +236,9 @@
 
 			<volist name="list" id="vlist">
 				<div class="tuijian_list">
+					<a href="{$vlist.contentURL}">
 					<img src="{$vlist.imageURL}" />
+					</a>
 					<div class="tuijian_list_right">
 						<span class="tuijian_list_tit"><a href="{$vlist.contentURL}">{$vlist.title}</a></span>
 						<span class="laiyuan">{$vlist.sourcename}</span></span><span class="shijian">{$vlist.updatetime}</span>
