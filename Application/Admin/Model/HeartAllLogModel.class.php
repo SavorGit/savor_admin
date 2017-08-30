@@ -22,4 +22,25 @@ class HeartAllLogModel extends BaseModel
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;  
 	}
+	public function getOne($mac,$type,$date){
+	    $where = array();
+	    $where['mac'] = $mac;
+	    $where['type']= $type;
+	    $where['date']= $date;
+	    $info = $this->where($where)->find();
+	    return $info;
+	}
+	public function addInfo($data){
+	    if(!empty($data)){
+	        $ret = $this->add($data);
+	    }else{
+	        $ret = false;
+	    }
+	    return $ret;
+	}
+	public function updateInfo($mac,$type,$date,$filed){
+	    $sql ="update savor_heart_all_log set `$filed` = `$filed`+1
+	    where `date`={$date} and  `mac`='{$mac}' and `type`={$type}";
+	    return $this->execute($sql);
+	}
 }
