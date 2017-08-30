@@ -42,6 +42,8 @@ class ExcelController extends Controller
             $tmpname = '洗牙卡订单';
         }else if($filename == 'contentads'){
             $tmpname = '内容与广告统计';
+        }else if($filename =='hotelBv'){
+            $tmpname = '酒楼信息';
         }
 
         if($filename == "heartlostinfo"){
@@ -1683,5 +1685,69 @@ class ExcelController extends Controller
         $xlsName = '洗牙卡订单';
         $filename = 'toothwash';
         $this->exportExcel($xlsName, $xlsCell, $infos,$filename);
+    }
+    public function excelHotelBv(){
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_area_info = new \Admin\Model\AreaModel();
+        $where =array();
+        $where['hotel_box_type'] = 3;
+        $where['state'] = 1;
+        $where['flag']  = 0;
+        
+        $info = $m_hotel->getWhereData($where,'id,name,area_id,addr');
+        foreach($info as $key=>$v){
+            $area_info = $m_area_info->field('region_name')->where('id='.$v['area_id'])->find();
+            $info[$key]['region_name'] = $area_info['region_name'];
+            $sql ="select count(1) as num from savor_tv as tv
+                   left join savor_box as box  on tv.box_id=box.id
+                   left join savor_room as room on box.room_id= room.id
+                   left join savor_hotel as hotel on room.hotel_id= hotel.id 
+                   where hotel.id=".$v['id'] .' and tv.state=1 and tv.flag =0';
+            $rets = M()->query($sql);
+            $info[$key]['tv_count'] = $rets[0]['num'];
+        }
+        $xlsCell = array(
+            array('id', 'id'),
+            array('region_name', '城市'),
+            array('name','酒楼名称'),
+            array('addr', '酒楼地址'),
+            array('tv_count', '电视数量'),
+           
+        );
+        $xlsName = '酒楼信息以及版位数量';
+        $filename = 'hotelBv';
+        $this->exportExcel($xlsName, $xlsCell, $info,$filename);
+    }
+    public function excelHotelBox(){
+        $sql ="select hotel.id as hotel_id,box.id box_id,area.region_name, hotel.name,hotel.addr,box.mac from savor_box box
+               left join savor_room room on room.id=box.room_id
+               left join  savor_hotel hotel on hotel.id=room.hotel_id
+               left join savor_area_info area on area.id=hotel.area_id
+               where hotel.state and hotel.flag =0 and box.state=1 and box.flag=0 and hotel.hotel_box_type in(2,3) and hotel.id !=7 and hotel.id!=53 order by hotel.id asc";
+        
+        $info = M()->query($sql);
+        $tmp = array();
+        foreach($info as $key=>$v){
+            
+            $sql ="select count(1) as num from savor_tv as tv
+                   left join savor_box as box  on tv.box_id=box.id
+                   where box.id=".$v['box_id'] .' and tv.state=1 and tv.flag =0';
+            $rets = M()->query($sql);
+            $info[$key]['tv_count'] = $rets[0]['num'];
+            
+        }
+        $xlsCell = array(
+            
+            array('region_name', '城市'),
+            array('name','酒楼名称'),
+            array('addr', '酒楼地址'),
+            array('mac','机顶盒mac'),
+            array('tv_count', '电视数量'),
+             
+        );
+        $xlsName = '酒楼信息以及版位数量';
+        $filename = 'hotelBv';
+        $this->exportExcel($xlsName, $xlsCell, $info,$filename);
+        
     }
 }
