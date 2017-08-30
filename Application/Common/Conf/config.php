@@ -34,6 +34,7 @@ $config = array(
     'OSS_ADDR_PATH'=>'media/resource/',
 	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
+	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
 
 );
 if(APP_DEBUG === false){
@@ -199,9 +200,21 @@ $config['SMALL_WARN'] = array(
     '1'=>'未处理',
     '2'=>'已处理',
 );
+
 $config['SP_GR_STATE'] = array(
     '0'=>'未发布',
     '1'=>'已发布',
     '2'=>'已删除',
 );
+
+$config['WX_DYH_CONFIG'] = array(
+    'appid'=>'wxb19f976865ae9404',
+    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
+);
+$config['WX_FWH_CONFIG'] = array(
+    'appid'=>'wxb19f976865ae9404',
+    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',  
+);
+
+
 return $config;
