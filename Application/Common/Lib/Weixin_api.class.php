@@ -13,8 +13,11 @@ class Weixin_api {
 	private $url_getticket = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
 
 	public function __construct(){
-		$this->appid = 'wxb19f976865ae9404';
-		$this->appsecret = '977d15e1ce3c342c123ae6f30bcfeb48';
+	    $wx_config = C('WX_FWH_CONFIG');
+	    $this->appid = $wx_config['appid'];
+	    $this->appsecret = $wx_config['appsecret'];
+		//$this->appid = 'wxb19f976865ae9404';
+		//$this->appsecret = '977d15e1ce3c342c123ae6f30bcfeb48';
 		//$this->cacheprefix = C('CACHE_PREFIX').'activity';
 	}
 
@@ -55,7 +58,7 @@ class Weixin_api {
 	 * @return Ambigous <mixed, string>
 	 */
 	private function getWxJsTicket(){
-		$key_ticket = 'jkcentv_wxjsticket';
+		$key_ticket = 'savor_wxjsticket';
 		$redis = SavorRedis::getInstance();
 		$redis->select(15);
 		$ticket = $redis->get($key_ticket);
@@ -79,7 +82,7 @@ class Weixin_api {
 	 * @return Ambigous <mixed, string>
 	 */
 	private function getWxAccessToken(){
-		$key_token = 'jkcentv_wxtoken';
+		$key_token = 'savor_wxtoken';
 		$redis = SavorRedis::getInstance();
 		$redis->select(15);
 		$token = $redis->get($key_token);
@@ -117,14 +120,23 @@ class Weixin_api {
 		
 		$result = json_decode($re,true);
 		if(!is_array($result) || isset($result['errcode'])){
-			if(!empty($jumUrl)){
-    				header("Location: $jumUrl"); 
-    				exit;
-    			}else {
-    				header("Location: $url");
-    				exit;
-    			}
-    		}
-    		return $result;
+	       if(!empty($jumUrl)){
+    	       header("Location: $jumUrl"); 
+    		   exit;
+    	   }else {
+    		   header("Location: $url");
+    		   exit;
+    	   }
     	}
+    	return $result;
+    }
+    public function getWxUserInfo($access_token ,$openid){
+        $url = $this->url_get_userinfo."?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
+        $re = file_get_contents($url);
+        $result = json_decode($re,true);
+        if(!is_array($result) || isset($result['errcode'])){
+            header("Location: $url");
+        }
+        return $result;
+    }
 }
