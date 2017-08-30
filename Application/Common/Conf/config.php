@@ -199,4 +199,9 @@ $config['SMALL_WARN'] = array(
     '1'=>'未处理',
     '2'=>'已处理',
 );
+$config['SP_GR_STATE'] = array(
+    '0'=>'未发布',
+    '1'=>'已发布',
+    '2'=>'已删除',
+);
 return $config;
