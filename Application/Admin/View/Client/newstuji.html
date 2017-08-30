@@ -50,7 +50,6 @@
 			margin-bottom: 0.1rem;
 			line-height: 0.5rem;
 			letter-spacing: 0px;
-
 		}
 		
 		.mioasu img {
@@ -89,7 +88,6 @@
 		.tuijian {
 			width: 100%;
 			margin: 0 auto;
-			
 		}
 		
 		.tit_tuijian {
@@ -123,8 +121,7 @@
 			color: #434343;
 			font-weight: 700;
 			display: block;
-			margin-bottom: 0.4rem;
-		}
+			}
 		
 		.laiyuan {
 			font-size: 0.22rem;
@@ -225,13 +222,20 @@
 			float: left;
 			margin-right: 0.2rem;
 		}
-		
 		.shijian {
 			font-size: 0.2rem;
 			color: #B2AFAB;
 			display: block;
 			float: left;
 			margin-top: 3px;
+		}
+		.nr_list img{
+			margin-bottom: 0.3rem;
+		}
+		.nr_list p{
+			margin-bottom: 0.3rem;
+			font-family: "PingFangSC-Light";
+   			line-height: 0.5rem;
 		}
 	</style>
 	<body>
@@ -308,7 +312,7 @@
 		$('#disnone').click(function(){
 			$('#topLabel').hide();
 			$('.zt').css('padding-bottom','0');
-			$('.tuijian').css('padding-bottom','10px')
+			$('.tuijian').css('padding-bottom','10px');
 		});
 		
 		var topLabel = $('#topLabel').css('display');
@@ -319,8 +323,7 @@
 		if(tuijians=='block'||$('div').is('.tuijian')){
 			
 		}else{
-			$('.more').css('margin-bottom','53px')
-			
+			$('.more').css('margin-bottom','53px');
 		}
 		$('a').click(function(){
 			var hrefs = $(this).attr('href');

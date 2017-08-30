@@ -508,6 +508,7 @@ CREATE TABLE `savor_activity_data` (
 执行sql:
 ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`);
 
+<<<<<<< HEAD
 
 
 增加说明：文章表添加样式字段
@@ -552,5 +553,26 @@ CREATE TABLE `savor_special_relation` (
   KEY `sg` (`sgid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='专题组对应关系表'
 
+=======
+增加说明：微信查看文章授权登录记录
+修改时间：2017.8.28 14：00
+修改人：张英涛
+执行sql:
+CREATE TABLE `savor_content_wx_auth` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(50) NOT NULL DEFAULT '' COMMENT '微信openid',
+  `nickname` varchar(255) NOT NULL DEFAULT '' COMMENT '微信昵称',
+  `sex` varchar(5) NOT NULL DEFAULT '' COMMENT '性别',
+  `country` varchar(50) NOT NULL DEFAULT '' COMMENT '国家',
+  `province` varchar(50) NOT NULL DEFAULT '' COMMENT '省份',
+  `city` varchar(50) NOT NULL DEFAULT '' COMMENT '城市',
+  `contentid` int(11) NOT NULL DEFAULT '0' COMMENT '文章id',
+  `ip_addr` varchar(15) NOT NULL DEFAULT '' COMMENT 'ip',
+  `long` varchar(15) NOT NULL DEFAULT '' COMMENT '经度',
+  `lat` varchar(15) NOT NULL DEFAULT '' COMMENT '维度',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
+>>>>>>> 8f3dbca2aa8d046fe4536ac05fc4b49ffae89275
 
 

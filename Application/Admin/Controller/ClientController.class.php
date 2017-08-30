@@ -346,6 +346,12 @@ class ClientController extends Controller {
                 exit;
             }
             if($id && $vinfo){
+                $is_wx = checkWxbrowser();
+                if($is_wx){
+                    $url = $this->getContentUrl($vinfo['content_url']).'?app=inner';
+                    
+                    $this->wxAuthorLog($url);
+                }
                 $catid = $vinfo['hot_category_id'];
                 $vinfo['content'] = html_entity_decode($vinfo['content']);
                 $vinfo['minu_time'] = round($vinfo['content_word_num']/600);
@@ -491,5 +497,50 @@ class ClientController extends Controller {
         $this->assign('share_link', $share_url);
         $this->assign('vinfo',$vinfo);
         $this->display($display_html);
+    }
+    /**
+     * @desc 微信授权
+     */
+    public function wxAuthorLog($url,$contentid){
+        //$url = 'http://devp.admin.littlehotspot.com/content/2785.html?app=inner';
+        $m_weixin_api = new \Common\Lib\Weixin_api();
+        //微信授权登录开始
+        $state = I('state','','trim') ? I('state','','trim') : 'wxsq001';
+        $code = I('code');
+        $issq = I('issq','0','intval');
+        $iswx = checkWxbrowser();
+        if($iswx==1 && !empty($issq)){   
+            $redirect_url = $url;
+            //$jumpUrl = 'http://jk.centv.cn/index.php?m=wxapi&c=index&a=index&scope=1&redirect_url='.$redirect_url;
+            $host_name = C('CONTENT_HOST');
+            $jumpUrl = $host_name.'admin/wxapply/index?scope=1&redirect_url='.$redirect_url;
+            if (!$code || $state!='wxsq001') {
+                header("Location:".$jumpUrl);
+                exit;
+            }
+            $result = $m_weixin_api->getWxOpenid($code,$jumpUrl);
+            $openid = $result['openid'];
+            $access_token = $m_weixin_api->getWxAccessToken();
+            $wxUserinfo = $m_weixin_api->getWxUserInfo($access_token,$openid);
+            
+            $wxUserinfo['nickname'] = base64_encode($wxUserinfo['nickname']);
+            $map =  array();
+            $map['openid'] = $wxUserinfo['openid'];
+            $map['nickname'] = $wxUserinfo['nickname'];
+            $map['sex']      = $wxUserinfo['sex'];
+            $map['country']  = $wxUserinfo['country'];
+            $map['province'] = $wxUserinfo['province'];
+            $map['city']     = $wxUserinfo['city'];
+            $map['contentid']= $contentid;
+            $map['create_time'] = date('Y-m-d H:i:s'); 
+            
+            $ip = get_client_ip(); 
+            $map['ip_addr'] = $ip;
+            $geoArr = getgeoByip($ip);
+            $map['long'] = $geoArr['x'];
+            $map['lat'] = $geoArr['y'];
+            $m_content_wx_auth =  new \Admin\Model\ContentWxAuthModel(); 
+            $m_content_wx_auth->addInfo($map);
+        }
     }
 }

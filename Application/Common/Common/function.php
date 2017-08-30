@@ -728,4 +728,18 @@ function myTrim($str)
     $replace = array("","","","","");
     return str_replace($search, $replace, $str);
 }
+function getgeoByip($ip){
+    $ak = C('BAIDU_GEO_KEY');
+    $url = "http://api.map.baidu.com/location/ip?ak=".$ak."&coor=bd09ll&ip=".$ip;
+    $result = file_get_contents($url);
+    $re = json_decode($result,true);
+    if($re && $re['status'] == 0){
+        $geoArr = $re['content']['point'];
+    }else {
+        $geoArr['x'] = '';
+        $geoArr['y'] = '';
+    }
+    return $geoArr;
+
+}
 ?>
