@@ -132,7 +132,7 @@ class ClientController extends Controller {
         //其他全分类查找推荐 结束
         //获取最新最新内容开始
         if($nums<$mend_len){
-            $info = $articleModel->getWhere('hot_category_id != 103 ','id,title,order_tag',' create_time desc','limit 0,10');
+            $info = $articleModel->getWhere('hot_category_id != 103 and state=2 ','id,title,order_tag',' create_time desc','limit 0,10');
             foreach($info as $v){
                 if($v['id'] == $vinfo['id']){
                     continue;
@@ -340,6 +340,8 @@ class ClientController extends Controller {
                         }
                         $this->assign('list',$data);
                     } 
+                } else {
+
                 }
                 $this->display('null');
                 exit;
@@ -366,7 +368,7 @@ class ClientController extends Controller {
                     if($vinfo['index_img_url']){
                         $vinfo['index_img_url'] = $oss_host.$vinfo['index_img_url'];
                     }
-                    $display_html = 'special';
+                    $display_html = 'newshowcontent';
 
                 }else{
                     $arinfo = $this->judgeRecommendInfo($vinfo);

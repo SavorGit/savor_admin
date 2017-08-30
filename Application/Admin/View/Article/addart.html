@@ -168,6 +168,23 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label">
+								样式：
+							</label>
+							<div class="col-xs-12 col-sm-10" style="margin-top:10px;">
+								<label class="radio-inline">
+									<input type="radio" name="img_style" id="optionsRadios3" value="1"
+									<if condition="($vinfo['img_style'] eq 1)"> checked</if> > 小图样式
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="img_style" id="optionsRadios3" <if condition="($vinfo['img_style'] eq 2)"> checked</if>  value="2"> 大图样式
+								</label>
+							</div>
+						</div>
+
+
 						<div class="form-group row" id="biaoqian">
 							<label class="col-xs-12 col-sm-2 control-label">
 								选择标签:
