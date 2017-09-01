@@ -500,6 +500,7 @@ class SpecialgroupController extends BaseController {
             'title'=>$speca_arr_info[0]['sptitle'],
             'oss_addr'=>$oss_host.$speca_arr_info[0]['spimg'],
             'desc'=>$speca_arr_info[0]['spdesc'],
+            'media_id' =>888,
         );
         if ($speca_arr_info) {
             foreach ($speca_arr_info as $spk=>$spv) {
