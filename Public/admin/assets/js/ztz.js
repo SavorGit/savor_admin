@@ -73,6 +73,8 @@ $('body').off('click').on('click','.dz-check span,#savemapImg',function(){
 	if(on_off==2){
 		adddiv(_this,imgHtml);
 		_this.parent().next().attr('leix','spid');
+	}else{
+		_this.parent().next().html(imgHtml+'<img class="zt_bianji" src="../../../../Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="../../../../Public/admin/assets/img/zt_shanc.png"/>')
 	}
 
 })
@@ -130,12 +132,12 @@ $('#qb_save').click(function(){
 	var arr = [];
 	var zt_gropu_nridnex = $('.zt_gropu_nr').length;
 	if(zt_gropu_nridnex<1){
-		alert('专题组的数量不得少于5个')
+		alert('专题组的数量不得少于5个');
 	}else{
 		$('.zt_gropu_nr').each(function(){
 			var asss = $(this).find('a').children('input').val();
 			if($(this).attr('leix')=='spid'){
-				$(this).attr('data-call',asss)
+				$(this).attr('data-call',asss);
 			}
 			var obj = {};
 			var oData = $(this).attr('data-call');
@@ -190,7 +192,6 @@ $('body').on('click','.zt_del',function(){
 		$(this).parent().prev().remove()
 		$(this).parent().remove();
 	}
-
 })
 /*------------------专题简介字数-----------------------*/
 $('#zt_jianjie').keyup(function() {
@@ -200,13 +201,31 @@ $('#zt_jianjie').keyup(function() {
 		$(this).val($(this).val().substring(0, 199));
 	}
 })
-document.onkeypress=function(){
-	if(event.keyCode==13){
-		return false;
-	}
+ document.onkeypress=function(){
+    if(event.keyCode==13){
+   return false;
 }
+  }
+ /*预览封面图*/
+$('#media_idimg').click(function(){
+	    var media_id = $('#media_id').val();
+	    if(media_id !='' ){
+	  	  var $a = $(this).attr('src');
+	        $('.big').prop('src',$a).addClass('addbig');
+	        $('.big').css({'max-width':'500px'})
+	        $('.zhezhao').show();
+	        $('.big').show(); 
+	    }
+	    
+	});
+$('.zhezhao').click(function(){
+
+      $('.zhezhao').hide(500);
+      $('.big').hide(500);
+});
+/*添加节点*/
 var numsa = 2
-function adddiv(jd_this,nr){//添加节点
+function adddiv(jd_this,nr){
 	var nums = numsa++
 	//var zt_gropu_nridnex = $('.zt_gropu_nr').length;
 	var aHtml = '<div class="zt_gropu_nr" >'+nr+'<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"/></div><div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" btnnums = "'+(nums)+'" class="btn btn-default btn-wz" data-target="#modal-file" href="'+host_name+'/resource/uploadMapResource?filed=pics_map_'+(nums)+'&rtype=2" data-browse-file>添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>'
