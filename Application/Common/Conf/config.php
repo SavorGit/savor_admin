@@ -212,8 +212,8 @@ $config['WX_DYH_CONFIG'] = array(
     'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
 );
 $config['WX_FWH_CONFIG'] = array(
-    'appid'=>'wxb19f976865ae9404',
-    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',  
+    'appid'=>'wx7036d73746ff1a14',
+    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',  
 );
 
 

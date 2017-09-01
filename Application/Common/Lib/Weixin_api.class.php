@@ -11,6 +11,7 @@ class Weixin_api {
 	private $url_oauth_token = 'https://api.weixin.qq.com/sns/oauth2/access_token';
 	private $url_access_token = 'https://api.weixin.qq.com/cgi-bin/token';
 	private $url_getticket = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
+	private $url_get_userinfo = 'https://api.weixin.qq.com/sns/userinfo';
 
 	public function __construct(){
 	    $wx_config = C('WX_FWH_CONFIG');
@@ -81,7 +82,7 @@ class Weixin_api {
 	 * 微信token
 	 * @return Ambigous <mixed, string>
 	 */
-	private function getWxAccessToken(){
+	public function getWxAccessToken(){
 		$key_token = 'savor_wxtoken';
 		$redis = SavorRedis::getInstance();
 		$redis->select(15);
@@ -91,7 +92,16 @@ class Weixin_api {
 			$appid = $this->appid;
 			$appsecret = $this->appsecret;
 			$url = $this->url_access_token."?grant_type=client_credential&appid=$appid&secret=$appsecret";
-			$re = file_get_contents($url);
+			
+			$ch = curl_init();
+    		curl_setopt($ch, CURLOPT_URL,$url);
+    
+    		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    		curl_setopt($ch, CURLOPT_HEADER, 0);
+    		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    		$re = curl_exec($ch);
+
+		    curl_close($ch);
 			$result = json_decode($re,true);
 			if(isset($result['access_token'])){
 				$redis->set($key_token,$result['access_token'],3600);
@@ -105,19 +115,16 @@ class Weixin_api {
     		$appsecret = $this->appsecret;
     		$url = $this->url_oauth_token."?appid=$appid&secret=$appsecret&code=$code&grant_type=authorization_code";
     		
-    		$re =  file_get_contents($url);
-		/*$ch = curl_init();
+    		//$re =  file_get_contents($url);
+		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL,$url);
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		$output = curl_exec($ch);
+		$re = curl_exec($ch);
 
 		curl_close($ch);
-		var_dump($output):;exit;
-		*/
-		
 		$result = json_decode($re,true);
 		if(!is_array($result) || isset($result['errcode'])){
 	       if(!empty($jumUrl)){
@@ -132,7 +139,15 @@ class Weixin_api {
     }
     public function getWxUserInfo($access_token ,$openid){
         $url = $this->url_get_userinfo."?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
-        $re = file_get_contents($url);
+        $ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL,$url);
+
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		$re = curl_exec($ch);
+
+		curl_close($ch);
         $result = json_decode($re,true);
         if(!is_array($result) || isset($result['errcode'])){
             header("Location: $url");

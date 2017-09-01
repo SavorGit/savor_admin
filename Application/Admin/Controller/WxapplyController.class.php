@@ -17,7 +17,8 @@ class WxapplyController extends Controller {
      */
     public function index(){
         $appid = $this->dyh_config['appid'];
-        $uri = I('redirect_url','','urlencode');
+        $uri = I('redirect_url','','urldecode');
+        $uri = urlencode($uri);
         $scope = I('scope','','intval');
         $state = 'wxsq001';
         if($scope){
@@ -25,7 +26,6 @@ class WxapplyController extends Controller {
         }else {
             $wx_url = $this->url_oauth."?appid=$appid&redirect_uri=$uri&response_type=code&scope=snsapi_base&state=$state#wechat_redirect";
         }
-       
         header("Location: $wx_url");
         exit;
     }
