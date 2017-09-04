@@ -196,9 +196,9 @@ $('body').on('click','.zt_del',function(){
 /*------------------专题简介字数-----------------------*/
 $('#zt_jianjie').keyup(function() {
 	var textval = $(this).val().length;
-	if(textval >= 200) {
+	if(textval >= 201) {
 		alert ('您已超出200个字');
-		$(this).val($(this).val().substring(0, 199));
+		$(this).val($(this).val().substring(0, 200));
 	}
 })
  document.onkeypress=function(){
