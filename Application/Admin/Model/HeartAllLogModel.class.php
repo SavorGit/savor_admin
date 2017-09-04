@@ -24,9 +24,9 @@ class HeartAllLogModel extends BaseModel
 	}
 	public function getOne($mac,$type,$date){
 	    $where = array();
+	    $where['date']= $date;
 	    $where['mac'] = $mac;
 	    $where['type']= $type;
-	    $where['date']= $date;
 	    $info = $this->where($where)->find();
 	    return $info;
 	}

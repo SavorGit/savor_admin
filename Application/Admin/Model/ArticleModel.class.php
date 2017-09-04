@@ -15,11 +15,11 @@ class ArticleModel extends BaseModel
 
 
 	public function getRecommend($where, $field, $sor_arr){
-
+	    $now_date = date('Y-m-d H:i:s',time());
 		foreach($sor_arr as $kv){
 			$set_str .= " AND find_in_set($kv, order_tag)";
 		}
-		$sql =" select $field from savor_mb_content where $where and order_tag !='' $set_str order by savor_mb_content.create_time desc";
+		$sql =" select $field from savor_mb_content where $where and order_tag !='' $set_str and bespeak_time<'".$now_date."'  order by savor_mb_content.create_time desc";
 		$result = $this -> query($sql);
 		return  $result;
 	}

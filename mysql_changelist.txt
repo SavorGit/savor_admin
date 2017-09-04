@@ -510,6 +510,52 @@ CREATE TABLE `savor_activity_data` (
 执行sql:
 ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`);
 
+<<<<<<< HEAD
+
+
+增加说明：文章表添加样式字段
+修改时间：2017.8.30 9：00
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `img_style` TINYINT(1) DEFAULT '1' NOT NULL COMMENT '图样式1小图2大图' AFTER `order_tag`;
+
+
+增加说明：添加专题组表
+修改时间：2017.8.30 9：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_special_group` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '专题组名称',
+  `title` varchar(50) NOT NULL DEFAULT '' COMMENT '标题',
+  `img_url` varchar(200) NOT NULL DEFAULT '' COMMENT '图片Url',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '操作人Id',
+  `state` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态:0未发布1发布2删除',
+  `desc` text NOT NULL COMMENT '简介',
+  PRIMARY KEY (`id`),
+  KEY `sgroup` (`state`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='专题组'
+
+
+增加说明：添加专题组对应关系表
+修改时间：2017.8.30 9：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_special_relation` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `sgid` int(10) NOT NULL DEFAULT '0' COMMENT '专题组id',
+  `sgtype` tinyint(2) NOT NULL DEFAULT '0' COMMENT '1.文字2.文章3.图片4.小标题',
+  `stext` text NOT NULL COMMENT '文字',
+  `sarticleid` int(10) NOT NULL DEFAULT '0' COMMENT '文章id',
+  `spictureid` int(10) NOT NULL DEFAULT '0' COMMENT '图片mediaid',
+  `stitle` varchar(230) NOT NULL DEFAULT '' COMMENT '小标题',
+  PRIMARY KEY (`id`),
+  KEY `sg` (`sgid`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='专题组对应关系表'
+
+=======
 增加说明：微信查看文章授权登录记录
 修改时间：2017.8.28 14：00
 修改人：张英涛
@@ -529,5 +575,6 @@ CREATE TABLE `savor_content_wx_auth` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8
+>>>>>>> 8f3dbca2aa8d046fe4536ac05fc4b49ffae89275
 
 

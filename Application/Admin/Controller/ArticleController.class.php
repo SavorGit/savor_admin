@@ -793,7 +793,7 @@ WHERE id IN (1,2,3)*/
         $field = 'id,name';
         $m_hot_category = new \Admin\Model\HotCategoModel();
         $vinfo = $m_hot_category->getWhere($where, $field);
-        unset($vinfo[2]);
+        //unset($vinfo[2]);
         $this->assign('vcainfo',$vinfo);
         //老分类
         $m_old_category = new \Admin\Model\CategoModel();
@@ -832,6 +832,7 @@ WHERE id IN (1,2,3)*/
         $save                = [];
         $save['title']        = I('post.title','','trim');
         $save['hot_category_id']        = I('post.hot_category_id',0,'intval');
+        $save['img_style']        = I('post.img_style',0,'intval');
         //$save['source']    = I('post.source','');
         $save['source_id']   = I('post.source_id');
         //老分类

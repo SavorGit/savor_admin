@@ -72,13 +72,13 @@ class HandleheartlogController extends Controller
                         $where['type']= $info['clientid'];
                         $where['date']= $date;
                         $ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}");
-                        //$ret = $m_heart_all_log->where($where)->setInc("hour{$hour}",1);
+                       
                     }else if($info['clientid'] ==2){
                         $where['mac'] = $info['mac'];
                         $where['type']= $info['clientid'];
                         $where['date']= $date;
                         $ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}");
-                        //$ret = $m_heart_all_log->where($where)->setInc("hour{$hour}",1);
+                        
                     }
                 }
                 if($ret){

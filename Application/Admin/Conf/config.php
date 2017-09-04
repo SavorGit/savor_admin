@@ -3,6 +3,7 @@
 $route_rules = array(
     '/^content\/(\d{0,10})$/'=>'Client/showcontent?id=:1',
     '/^special\/(\d{0,10})$/'=>'Client/showcontent?id=:1',
+    '/^specialgroup\/(\d{0,10})$/'=>'Specialgroup/showsp?id=:1',
 );
 $config = array(
     'VAR_PAGE'=>'pageNum',

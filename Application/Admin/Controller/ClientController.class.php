@@ -132,8 +132,8 @@ class ClientController extends Controller {
         //其他全分类查找推荐 结束
         //获取最新最新内容开始
         if($nums<$mend_len){
-            $info = $articleModel->getWhere('hot_category_id != 103 and state=2','id,title,order_tag',' create_time desc','limit 0,10');
-            foreach($info as $v){
+            $now_date = date('Y-m-d H:i:s',time());
+            $info = $articleModel->getWhere("hot_category_id != 103 and state =2 and bespeak_time<='".$now_date."'",'id,title,order_tag',' create_time desc','limit 0,10');            foreach($info as $v){
                 if($v['id'] == $vinfo['id']){
                     continue;
                 }
@@ -340,6 +340,8 @@ class ClientController extends Controller {
                         }
                         $this->assign('list',$data);
                     } 
+                } else {
+
                 }
                 $this->display('null');
                 exit;
@@ -347,9 +349,15 @@ class ClientController extends Controller {
             if($id && $vinfo){
                 $is_wx = checkWxbrowser();
                 if($is_wx){
-                    $url = $this->getContentUrl($vinfo['content_url']).'?app=inner';
+                    $issq =  I('issq',0,'intval');
                     
-                    $this->wxAuthorLog($url);
+                    $url = $this->getContentUrl($vinfo['content_url']).'?app=inner';
+                    if(!empty($issq)){
+                        $url .='&issq=1';
+                        $this->wxAuthorLog($url,$vinfo['id']);
+                    }
+                    
+                    
                 }
                 $catid = $vinfo['hot_category_id'];
                 $vinfo['content'] = html_entity_decode($vinfo['content']);
@@ -372,7 +380,7 @@ class ClientController extends Controller {
                     if($vinfo['index_img_url']){
                         $vinfo['index_img_url'] = $oss_host.$vinfo['index_img_url'];
                     }
-                    $display_html = 'special';
+                    $display_html = 'newshowcontent';
 
                 }else{
                     $arinfo = $this->judgeRecommendInfo($vinfo);
@@ -501,26 +509,26 @@ class ClientController extends Controller {
      * @desc 微信授权
      */
     public function wxAuthorLog($url,$contentid){
+        
         //$url = 'http://devp.admin.littlehotspot.com/content/2785.html?app=inner';
         $m_weixin_api = new \Common\Lib\Weixin_api();
         //微信授权登录开始
-        $state = I('state','','trim') ? I('state','','trim') : 'wxsq001';
+        $state = I('state','wxsq001','trim') ;
         $code = I('code');
-        $issq = I('issq','0','intval');
+        //$issq = I('issq',1,'intval');
         $iswx = checkWxbrowser();
-        if($iswx==1 && !empty($issq)){   
-            $redirect_url = $url;
-            //$jumpUrl = 'http://jk.centv.cn/index.php?m=wxapi&c=index&a=index&scope=1&redirect_url='.$redirect_url;
+        if($iswx==1){ 
+            $redirect_url = urlencode($url);
+            
             $host_name = C('CONTENT_HOST');
             $jumpUrl = $host_name.'admin/wxapply/index?scope=1&redirect_url='.$redirect_url;
             if (!$code || $state!='wxsq001') {
                 header("Location:".$jumpUrl);
                 exit;
             }
-            $result = $m_weixin_api->getWxOpenid($code,$jumpUrl);
+            $result = $m_weixin_api->getWxOpenid($code,$url);
             $openid = $result['openid'];
-            $access_token = $m_weixin_api->getWxAccessToken();
-            $wxUserinfo = $m_weixin_api->getWxUserInfo($access_token,$openid);
+            $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
             
             $wxUserinfo['nickname'] = base64_encode($wxUserinfo['nickname']);
             $map =  array();
@@ -542,4 +550,5 @@ class ClientController extends Controller {
             $m_content_wx_auth->addInfo($map);
         }
     }
+    
 }
