@@ -80,6 +80,7 @@
 .wz_yangshi img {
 	width: 132px;
 	float: left;
+	height: 108px;
 }
 
 .wz_yangshi p {
@@ -114,6 +115,7 @@
 		display: none;
 	}
 </style>
+
 <div class="pageContent">
 <form method="post" action="{$host_name}/specialgroup/doeditSpecialGroup" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 	<input type="hidden" id="honame" value="{$host_name}">
@@ -198,18 +200,18 @@
 		<volist name="srinfo" id="vlist">
 			<if condition="$vlist.sgtype eq 1">
 				<div class="zt_gropu_nr" leix="scontent" data-call="{$vlist.stext}">{$vlist.stext}<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
-				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="http://www.a.com/admin/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
 				<elseif condition="$vlist.sgtype eq 2"/>
 				<div class="zt_gropu_nr" leix="sarticle" data-call="{$vlist.sarticleid}"><div class="wz_yangshi"><img src="{$vlist.mimg}"><p>{$vlist.mtitle}</p></div><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
-				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="http://www.a.com/admin/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
 				<elseif condition="$vlist.sgtype eq 3"/>
 				<div class="zt_gropu_nr" leix="spid"><a class="imga"  href="#" data-browse-file=""><img class="zt_tjpic" id="pics_map_{$picnum}img" src="{$vlist.simg}" border="0"><input class="picas" type="hidden" value="3100" id="pics_map_{$picnum}" name="pics_map_{$picnum}"></a><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
-				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="http://www.a.com/admin/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
 
 
 				<elseif condition="$vlist.sgtype eq 4"/>
-				<div class="zt_gropu_nr" leix="stitle" data-call="{$vlist.stitle}">{$vlist.stitle}<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
-				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="http://www.a.com/admin/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<div class="zt_gropu_nr" leix="stitle" data-call="{$vlist.stitle}"><p style="font-weight: 700;color:#922C3E;">{$vlist.stitle}</p><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
 				<else/>
 			</if>
 			<?php
