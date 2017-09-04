@@ -788,6 +788,9 @@ WHERE id IN (1,2,3)*/
             }
             //[{"tagid":"34","tagname":"安卓"},{"tagid":"32","tagname":"ajax"},{"tagid":"33","tagname":"ios"},{"tagid":"57","tagname":"1   1"},{"tagid":"58","tagname":"1 1"},{"tagid":"45","tagname":"123"}]
 
+        } else {
+            $vinfo['img_style'] = 1;
+            $this->assign('vinfo',$vinfo);
         }
         $where = "1=1 and state=1";
         $field = 'id,name';
