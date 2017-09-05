@@ -21,7 +21,7 @@ $('.zt-group').on('click','.btn-wz',function(){
 $('#wz_save').click(function(){
 	var mode_textare = $('#mode_textare').val();
 	if(mode_textare !=''){
-		if(mode_textare.length<200){
+		if(mode_textare.length<=200){
 			$('#tjwz').modal('hide');
 			if(on_off==1){
 				_this.parent().next().html(mode_textare+'<img class="zt_bianji" src="../../../../Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="../../../../Public/admin/assets/img/zt_shanc.png"/>')
@@ -33,19 +33,18 @@ $('#wz_save').click(function(){
 				_this.parent().next().attr('data-call',mode_textare);
 			}
 		}else{
-			alert('字数已经超出200字')
+			alert('字数已经超出200字');
 		}
 	}else{
-		alert('请填写内容！')
+		alert('请填写内容！');
 	}
 })
 /*-------------------------添加小标题----------------------------------*/
-
 $('#bt_save').click(function(){
 	var bt_textare = $('#bt_textare').val();
 	var bt_textares = '<p style="font-weight: 700;color:#922C3E;">'+bt_textare+'</p>';
 	if(bt_textare !=''){
-		if(bt_textare.length<100){
+		if(bt_textare.length<=100){
 			$('#tjxbt').modal('hide');
 			if(on_off==1){
 				_this.parent().next().html('<p style="font-weight: 700;color:#922C3E;">'+bt_textare+'</p><img class="zt_bianji" src="../../../../Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="../../../../Public/admin/assets/img/zt_shanc.png"/>');
@@ -57,31 +56,31 @@ $('#bt_save').click(function(){
 				_this.parent().next().attr('data-call',bt_textare);
 			}
 		}else{
-			alert('字数已经超过100字')
+			alert('字数已经超过100字');
 		}
 	}else{
 		alert('请填写内容！')
 	}
 })
-
 /*-------------------------------添加图片--------------------------*/
-
 $('body').off('click').on('click','.dz-check span,#savemapImg',function(){
 	var ssaa = _this.attr('btnnums');
 	var zt_gropu_nridnex = $('.zt_gropu_nr').length;
 	var imgHtml = '<a class="imga"  href="#" data-browse-file=""><img class="zt_tjpic" id="pics_map_'+ssaa+'img" src="" border="0"><input class="picas" type="hidden" value="" id="pics_map_'+ssaa+'" name="pics_map_'+ssaa+'"></a>'
-	if(on_off==2){
-		adddiv(_this,imgHtml);
-		_this.parent().next().attr('leix','spid');
-	}else{
-		_this.parent().next().html(imgHtml+'<img class="zt_bianji" src="../../../../Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="../../../../Public/admin/assets/img/zt_shanc.png"/>')
-	}
-
+		/*if($('#media_idimg').attr('src')!='/Public/admin/assets/img/noimage.png'){
+			alert(1)
+		}*/
+		if(on_off==2){
+			adddiv(_this,imgHtml);
+			_this.parent().next().attr('leix','spid');
+		}else{
+			_this.parent().next().html(imgHtml+'<img class="zt_bianji" src="../../../../Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="../../../../Public/admin/assets/img/zt_shanc.png"/>')
+		}
 })
 /*初始化文章*/
 $('body').on('click','.btn-wz',function(){
 	$('#search_val').val('');
-	$('#search_wz ul').html('')
+	$('#search_wz ul').html('');
 })
 /*文章搜索*/
 $('#search_btn').click(function(){
@@ -100,9 +99,7 @@ $('#search_btn').click(function(){
 				$('#search_wz ul').append(wz_html);
 			}
 		}
-
 	});
-
 })
 /*选中*/
 $('#search_wz').on('click','li',function(){
@@ -158,7 +155,6 @@ $("#editspecialgrrr").on("click",".btn .btn-default",function(){
 	$("#qb_save").prop('disabled','');
 	$("#qb_save").removeClass('disabled');
 	//alert('werwewer');
-
 });
 
 /*编辑*/
@@ -196,9 +192,9 @@ $('body').on('click','.zt_del',function(){
 /*------------------专题简介字数-----------------------*/
 $('#zt_jianjie').keyup(function() {
 	var textval = $(this).val().length;
-	if(textval >= 200) {
+	if(textval >= 201) {
 		alert ('您已超出200个字');
-		$(this).val($(this).val().substring(0, 199));
+		$(this).val($(this).val().substring(0, 200));
 	}
 })
  document.onkeypress=function(){
@@ -212,14 +208,13 @@ $('#media_idimg').click(function(){
 	    if(media_id !='' ){
 	  	  var $a = $(this).attr('src');
 	        $('.big').prop('src',$a).addClass('addbig');
-	        $('.big').css({'max-width':'500px'})
+	        $('.big').css({'max-width':'500px'});
 	        $('.zhezhao').show();
 	        $('.big').show(); 
 	    }
 	    
 	});
 $('.zhezhao').click(function(){
-
       $('.zhezhao').hide(500);
       $('.big').hide(500);
 });

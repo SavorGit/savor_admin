@@ -357,6 +357,20 @@ class ReportController extends BaseController{
         }
         $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
         $result = $m_heart_all_log->getlist('*',$where,$orders,$start,$size);
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_box   = new \Admin\Model\BoxModel();
+        
+        foreach($result['list'] as $key=>$v){
+            
+            if($v['type']==1){
+                $hotel_ext_info = $m_hotel->getHotelInfoByMac($v['mac']);
+                $result['list'][$key]['tag'] = $hotel_ext_info['tag'];
+            }else if($v['type']==2){
+                
+                $temp = $m_box->getInfo('tag'," mac='".$v['mac']."'",'');
+                $result['list'][$key]['tag'] = $temp[0]['tag'];
+            }
+        }
         $device_type_arr = C('DEVICE_TYPE');
         //城市
         $m_area_info = new \Admin\Model\AreaModel();
