@@ -3,7 +3,7 @@ namespace Admin\Controller;
 
 /**
  *@desc 专题组控制器,对专题组添加或者修改
- * @Package Name: SpecialgroupControllers
+ * @Package Name: SpecialgroupController
  *
  * @author      白玉涛
  * @version     3.0.1
@@ -61,6 +61,11 @@ class SpecialgroupController extends BaseController {
         $sgid = I('request.sgid','0','intval');
         $spModel = new \Admin\Model\SpecialGroupModel();
         $now_time = date('Y-m-d H:i:s');
+        $spinfo = $spModel->find($sgid);
+        if($spinfo['state'] == 1) {
+            $message = '已发布的内容不可删除';
+            $this->error($message);
+        }
         $binfo = array(
             'update_time'=>$now_time,
             'state'=>2,
@@ -126,7 +131,7 @@ class SpecialgroupController extends BaseController {
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','sg.create_time');
+        $order = I('_order','sg.update_time');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
@@ -182,7 +187,7 @@ class SpecialgroupController extends BaseController {
         }
 
         if ($save['title']) {
-            if ( mb_strlen($save['title']) >= 50) {
+            if ( mb_strlen($save['title']) > 50) {
                 $errmsg = '标题字符限制为50';
                 $this->error($errmsg);
             }
@@ -193,12 +198,12 @@ class SpecialgroupController extends BaseController {
 
 
         if ($save['desc']) {
-            if ( mb_strlen($save['desc']) >= 200) {
+            if ( mb_strlen($save['desc']) > 200) {
                 $errmsg = '描述字符限制为200';
                 $this->error($errmsg);
             }
         } else {
-            $errmsg = '描述不可为空';
+            $errmsg = '专题简介未填';
             $this->error($errmsg);
         }
 

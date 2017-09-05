@@ -49,7 +49,7 @@
               <td data-title="专题组名称">{$vlist.name}
 
                 <if condition="$vlist.is_index eq 1">
-                  <a data-tip="首次通过" class="btn btn-success btn-icon"><i class="fa fa-home"></i></a>
+                  <a data-tip="首页专题" class="btn btn-success btn-icon"><i class="fa fa-home"></i></a>
                 </if>
               </td>
               <td data-title="创建时间">{$vlist.create_time}</td>
@@ -85,7 +85,7 @@
                   <a data-tip="预览"
 
                      href="
-                  {$host_name}/Specialgroup/showsp?id={$vlist.id}"
+                  {$host_name}/SpecialgroupShow/showsp?id={$vlist.id}"
 
                   target="_blank"  class="btn btn-success btn-icon">
                   <i class="fa fa-eye"></i>
