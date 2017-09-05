@@ -227,6 +227,7 @@ class DeviceController extends BaseController{
 		$save['state']       = I('post.state','','intval');
 		$save['switch_time'] = I('post.switch_time','','trim');
 		$save['volum']       = I('post.volum','','trim');
+		$save['tag']         = I('post.tag','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$boxModel = new BoxModel;
 		$save['update_time'] = date('Y-m-d H:i:s');
