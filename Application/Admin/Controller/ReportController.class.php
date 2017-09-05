@@ -136,7 +136,9 @@ class ReportController extends BaseController{
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
 		$ind = $start;
-		foreach ($result['list'] as &$val) {
+		$m_hotel = new \Admin\Model\HotelModel();
+		$m_box   = new \Admin\Model\BoxModel();
+		foreach ($result['list'] as $key=> &$val) {
 
 
 			$val['indnum'] = ++$ind;
@@ -154,7 +156,15 @@ class ReportController extends BaseController{
 				$hour = floor($diff%86400/3600);
 				$val['last_heart_time'] = $day.'天'.$hour.'小时';
 			}
-
+			if($val['type']==1){
+			    
+			    $hotel_ext_info = $m_hotel->getHotelInfoByMac($val['box_mac']);
+			    $val['tag'] = $hotel_ext_info['tag'];
+			}else if($val['type']==2){
+			    
+			    $temp = $m_box->getInfo('tag'," mac='".$val['box_mac']."'",'');
+			    $val['tag'] = $temp[0]['tag'];
+			}
 			foreach (C('DEVICE_TYPE') as  $key=>$kv){
 				if($val['type'] == $key){
 					$val['type'] = $kv;
@@ -165,6 +175,8 @@ class ReportController extends BaseController{
 					$val['hotel_box_type'] = $kv;
 				}
 			}
+			
+			
 		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
