@@ -335,6 +335,7 @@ class HotelController extends BaseController {
 			$vinfo['ip_local'] = $res_hotelext['ip_local'];
 			$vinfo['ip'] = $res_hotelext['ip'];
 			$vinfo['server_location'] = $res_hotelext['server_location'];
+			$vinfo['tag'] = $res_hotelext['tag'];
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -513,6 +514,7 @@ class HotelController extends BaseController {
 		}
 		
 		$data['server_location'] = $server_location;
+		$data['tag']             = I('post.tag','','trim');
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
