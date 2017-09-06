@@ -116,7 +116,7 @@
 			专题名称：
 		</label>
 		<div class="col-xs-12 col-sm-10">
-			<input name="ztname" type="text" minlength="1" maxlength="40" class="form-control textInput" required/>
+			<input name="ztname" autocomplete="off" type="text" minlength="1" maxlength="40" class="form-control textInput" required/>
 		</div>
 	</div>
 	<div class="form-group row">
@@ -134,7 +134,7 @@
 			专题标题：
 		</label>
 		<div class="col-xs-12 col-sm-10">
-			<input name="zttitle" id="zt_biaoti" type="text" minlength="1" maxlength="40" class="form-control textInput" required/>
+			<input name="zttitle" autocomplete="off" id="zt_biaoti" type="text" minlength="1" maxlength="50" class="form-control textInput" required/>
 		</div>
 	</div>
 	<div class="form-group row">
@@ -179,7 +179,7 @@
 		<div class="zt-btn_group" id="zt_1">
 			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button>
 			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button>
-			<button type="button" btnnums="1" class="btn btn-default btn-wz" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>添加图片</button>
+			<button type="button" btnnums="1" id="num_bj" class="btn btn-default btn-wz tianimg" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>添加图片</button>
 			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button>
 		</div>
 	</div>
@@ -247,6 +247,71 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
         <button type="button" class="btn btn-primary" id="bt_save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--编辑文字、文章、小标题-->
+<!--编辑文字-->
+<div class="modal fade" id="bjwz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加文字</h4>
+      </div>
+      <div class="modal-body" style="height: 200px;">
+        <textarea placeholder="请输入文字，限制200字" class="form-control textInput" id="mode_textare" style="height: 107px;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_wz_save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--编辑文章-->
+<div class="modal fade" id="bjwzh" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加文章</h4>
+      </div>
+      <div class="modal-body" style="height: 300px;">
+        <div class="input-group">
+            <input type="text" class="form-control textInput" id="search_val" value="" placeholder="输入内容名称查找">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button" id="search_btn" value="搜索">搜索</button>
+            </span>
+          </div>
+          <div class="form-group row" id="search_wz">
+          	<ul></ul>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_wz_bc">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--编辑小标题-->
+<div class="modal fade" id="bjxbt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加小标题</h4>
+      </div>
+      <div class="modal-body" style="height: 200px;">
+        <textarea placeholder="请输入文字，限制100字" class="form-control textInput" id="bt_textare" style="height: 107px;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_bt_save">保存</button>
       </div>
     </div>
   </div>

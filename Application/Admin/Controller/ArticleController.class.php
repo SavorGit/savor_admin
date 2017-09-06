@@ -66,6 +66,16 @@ class ArticleController extends BaseController {
         $gid = I('get.id', 0, 'int');
         //查找是否在首页内容中引用
         if($gid) {
+
+            //判断是否在专题组中文章
+            $spRelation = new \Admin\Model\SpecialGroupRelationModel();
+            $fields = 'sgr.name';
+            $map['sgrp.sarticleid'] = $gid;
+            $map['_string'] = 'sgr.state=0 or sgr.state=1';
+            $res = $spRelation->judgeArtRelation($fields, $map);
+            if($res) {
+                $this->error('已用于'.$res['name'].'专题组，解除关联后才可删除');
+            }
             $mbHomeModel = new \Admin\Model\HomeModel();
             $res = $mbHomeModel->where('content_id='.$gid)->find();
             if($res) {

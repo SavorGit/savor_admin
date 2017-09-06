@@ -86,5 +86,16 @@ class SpecialGroupRelationModel extends BaseModel{
 		return $bool;
 	}
 
+	public function judgeArtRelation($fields, $map){
+
+		$data = $this->alias('sgrp')
+			->field($fields)
+			->join('savor_special_group sgr ON sgrp.sgid =
+					 sgr.id')
+			->where($map)
+			->find();
+		return $data;
+	}
+
 
 }
