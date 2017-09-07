@@ -10,6 +10,7 @@ namespace Admin\Controller;
  * @copyright www.baidu.com
  */
 use Think\Controller;
+use Common\Lib\Weixin_api;
 
 class SpecialgroupShowController extends Controller {
 
@@ -61,6 +62,34 @@ class SpecialgroupShowController extends Controller {
         } else {
             $speca_arr_info = array();
         }
+
+        $wpi = new Weixin_api();
+        $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_100_100.jpg';
+        $share_title = $speca_arr_info[0]['name'];
+        if(empty($speca_arr_info[0]['name'])){
+            $share_desc = '小热点，陪伴你创造财富，享受生活。';
+        }else{
+            $cot = html_entity_decode($speca_arr_info[0]['sptitle']);
+            $cot = strip_tags($cot);
+            $share_desc = mb_substr($cot,0,50);
+        }
+        
+
+        $share_config = $wpi->showShareConfig($share_url, $share_title,$share_desc,$share_url,$share_url);
+        extract($share_config);
+        $appid = $share_config['appid'];
+        $noncestr = $share_config['noncestr'];
+        $signature = $share_config['signature'];
+        $this->assign('noncestr', $noncestr);
+        $this->assign('signature', $signature);
+        $this->assign('appid', $appid);
+        $this->assign('share_title', $share_title);
+        $this->assign('share_desc', $share_desc);
+        $this->assign('shareimg', $shareimg);
+        $this->assign('share_link', $share_url);
+
+
 
         $this->assign('srinfo', $speca_arr_info);
         $this->assign('vinfo', $spinfo);
