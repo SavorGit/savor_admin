@@ -120,8 +120,23 @@ class HeartLogModel extends BaseModel
 
 		return $result;
 
-	}//End Function
-
+	}
+	public function getOnlineHotel($where,$fields = '*'){
+	    $result = $this->field($fields)->where($where)->group('hotel_id')->select();
+	    /* echo $this->getLastSql();
+	     echo "<br>"; */
+	    return $result;
+	}
+	
+	public function getInfo($fileds,$where,$order){
+	    $data = $this->field($fileds)->where($where)->order($order)->find();
+	    return $data;
+	
+	}
+	public function getHotelHeartBox($where,$fields = '*',$group=''){
+	    $result = $this->field($fields)->where($where)->group($group)->select();
+	    return $result;
+	}
 
 
 

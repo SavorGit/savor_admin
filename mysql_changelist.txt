@@ -508,7 +508,6 @@ CREATE TABLE `savor_activity_data` (
 执行sql:
 ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`);
 
-<<<<<<< HEAD
 
 
 增加说明：文章表添加样式字段
@@ -553,10 +552,10 @@ CREATE TABLE `savor_special_relation` (
   KEY `sg` (`sgid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='专题组对应关系表'
 
-=======
 增加说明：微信查看文章授权登录记录
 修改时间：2017.8.28 14：00
 修改人：张英涛
+执行结果：测试、正式已执行
 执行sql:
 CREATE TABLE `savor_content_wx_auth` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -573,6 +572,35 @@ CREATE TABLE `savor_content_wx_auth` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8
->>>>>>> 8f3dbca2aa8d046fe4536ac05fc4b49ffae89275
+
+增加说明：活动添加短信配置字段/活动没人限制购买数量/订单表添加购买商品id/更新洗牙卡活动的短信模版id
+修改时间：2017.9.7 15：00
+修改人：张英涛
+执行结果:
+执行sql:
+ALTER TABLE `savor_activity_config` ADD COLUMN `template_id` INT(11) NOT NULL DEFAULT 0 COMMENT '下单成功发送短信id' AFTER `page_views`;
+ALTER TABLE `savor_activity_config` ADD COLUMN `person_order_num`  INT(11) NOT NULL DEFAULT 1 COMMENT '每人购买数量' AFTER `page_views`;
+ALTER TABLE `savor_activity_data` ADD COLUMN `goods_id` INT(11) NOT NULL DEFAULT 0 COMMENT '购买商品id' AFTER `activity_id`;
+UPDATE `savor_activity_config` SET template_id=107928 WHERE id=1;
+
+增加说明：增加活动商品表
+修改时间：2017.9.7 15：00
+修改人：张英涛
+执行结果：
+执行sql:
+CREATE TABLE `savor_activity_goods` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `activity_id` INT(11) NOT NULL DEFAULT 0 COMMENT '活动id',
+    `goods_name` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+    `goods_img_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '商品图片',
+    `goods_nums` INT(11) NOT NULL DEFAULT 0 COMMENT '商品数量',
+    `add_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+    `edit_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `operator_id` INT(11) NOT NULL DEFAULT '0' COMMENT '操作人',
+    `status` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '商品状态1:正常0删除',
+     PRIMARY KEY (`id`)
+) ENGINE=MYISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+
 
 
