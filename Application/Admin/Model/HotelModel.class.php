@@ -178,4 +178,8 @@ class HotelModel extends BaseModel{
 	        return false;
 	    }
 	}
+	public function getHotelList($where,$order,$limit,$fields = '*'){
+	    $data = $this->field($fields)->where($where)->order($order)->limit($limit)->select();
+	    return $data;
+	}
 }

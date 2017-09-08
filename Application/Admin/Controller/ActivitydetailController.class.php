@@ -531,4 +531,173 @@ class ActivitydetailController extends Controller {
         exit;
         
     }
+    
+    //*********以上代码为定制活动洗牙卡**********************//  
+    //*********以下代码为活动统一下单代码********************//
+    public function index(){
+        $id = I('id',0,'intval');
+        $sourceid = I('get.sourceid','0','intval');
+        if(!empty($sourceid)){
+            $this->assign('sourceid',$sourceid);
+        }
+        
+        $this->assign('id',$id);
+        $this->display('Activity/activity'.$id);
+    }
+    /**
+     * @desc 获取手机手机验证码
+     */
+    public function getActMobileCode(){
+        $mobile =  I('post.mobile','','trim');             //手机号码
+        $activity_id = I('post.activity_id','0','intval'); //活动id
+        $goods_id = I('post.goods_id',0,'intval');         //商品id
+        $m_account_sms_log =  new \Admin\Model\AccountMsgLogModel();
+        $gztime = date('Y-m-d H:i:s',strtotime('-1 Minute'));
+       
+        //是否重复发送短信
+        
+        if(empty($activity_id)){
+            $map['status'] = 104;
+            $map['extent'] = 100;
+            $map['msg'] = '活动不存在';
+            echo json_encode($map);
+            exit;
+        }
+        $map = array();
+        if(empty($mobile)){
+            $map['status'] = 101;
+            $map['extent'] = 100;
+            $map['msg'] = '请填写手机号';
+            echo json_encode($map);
+            exit;
+        }
+        if(!preg_match('/^1[34578]\d{9}$/', $mobile)){
+                $map['status'] = 103;
+                $map['extent'] = 100;
+                $map['msg'] = '请填写正确手机号';
+                echo json_encode($map);
+                exit;
+        }
+        $m_activity_config = new \Admin\Model\ActivityConfigModel();
+        $activity_info = $m_activity_config->getInfo('id,start_time,end_time,goods_nums,person_order_num',array('id'=>$activity_id,'status'=>1));
+        if(empty($activity_info)){
+            $map['status'] = 202;
+            $map['extent'] = 100;
+            $map['msg']    = '该活动不存在';
+            echo json_encode($map);
+            exit;
+        }
+        
+        $now_time = time();
+        $start_time = strtotime($activity_info['start_time']);
+        $end_time   = strtotime($activity_info['end_time']) ;
+        if($now_time<$start_time){
+            $map['status'] = 203;
+            $map['extent'] = 100;
+            $map['msg'] = '该活动还未开始';
+            echo json_encode($map);
+            exit;
+        }
+        if($now_time>$end_time){
+            $map['status'] = 204;
+            $map['extent'] = 100;
+            $map['msg'] = '该活动已结束';
+            echo json_encode($map);
+            exit;
+        }
+        $m_activity_data = new \Admin\Model\ActivityDataModel();
+        $allData = $m_activity_data->countData(array('activity_id'=>$activity_id));
+        if($allData>=$activity_info['goods_nums']){
+            $map['status'] = 205;
+            $map['extent'] = 100;
+            $map['msg'] = '商品已售完';
+            echo json_encode($map);
+            exit;
+        }
+        if(!empty($goods_id)){
+            $m_activity_goods = new \Admin\Model\ActivityGoodsModel();
+            $allGoodsData = $m_activity_data->countData(array('activity_id'=>$activity_id,'goods_id'=>$goods_id));
+            $goods_info = $m_activity_goods->getOne(array('id'=>$goods_id));
+            if($allGoodsData>=$goods_info['goods_nums']){
+                $map['status'] = 205;
+                $map['extent'] = 100;
+                $map['msg'] = '商品已售完';
+                echo json_encode($map);
+                exit;
+            }
+            
+        }
+        $person_order_num = $activity_info['person_order_num'];   //每个人最大购买量
+        if(!empty($person_order_num)){
+            if($allGoodsData>$person_order_num){
+                $map['status'] = 206;
+                $map['extent'] = 100;
+                $map['msg'] = '已到达最大购买量';
+                echo json_encode($map);
+                exit;
+            }
+        }
+
+        $code_array = array('0','1','2','3','4','5','6','7','8','9');
+        $verify_code = array_rand($code_array,4);
+        $verify_code = implode('', $verify_code);
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+		$redis->select(1);
+		
+		$vcode_cache_key = 'tooth_vcode_'.$mobile;
+		$redis->set($vcode_cache_key, $verify_code,$this->vcode_valid_time);    //手机验证码有效时间为5分钟
+		$vcode_num_cache_key = 'tooth_vcode_num';
+		$send_nums = session($vcode_num_cache_key);
+		
+		if($send_nums>=$this->vcode_max_send_num){
+		    $map['status'] = 201;
+		    $map['extent'] = 150;
+		    $map['msg']    ='验证码发送次数已经超过三次';
+		    echo json_encode($map);
+		    exit;
+		}
+		//发送短信
+		$info['tel'] = $mobile;
+		$param = $verify_code.','.$this->vcode_valid_time/60;
+		$ret = $this->sendToUcPa($info, $param);
+        if($ret){
+            $vcode_num = session($vcode_num_cache_key);
+            
+            $vcode_num = intval($vcode_num) +1;
+            session($vcode_num_cache_key,$vcode_num);
+            //$redis->set($vcode_num_cache_key, $vcode_num,$this->vcode_max_send_time); //发送短信次数+1
+            $map['status'] = 1;
+            $map['extent'] = 100;
+            $map['msg']  = '验证码发送成功';
+            echo json_encode($map);
+            exit;
+        }else {
+            $map['status'] = 301;
+            $map['extent'] = 100;
+            $map['msg'] = '验证码发送失败';
+            echo json_encode($map);
+            exit;
+        }
+    }
+    
+    /**
+     * @desc 是否重复发送短信
+     */
+    private function isRepeatSend($params = array()){
+        /* $where = array();
+        $where['status'] =1;       //发送成功状态的短信
+        $where['type'] = 3;        //短信模版类型
+        $where['msg_type'] =2;     //1：营销类短信 2：验证码短信
+        $where['tel'] = $mobile;
+        $where['create_time'] = array('gt',$gztime); */
+        
+        $isSend = $m_account_sms_log->getOne($where);
+        if(!empty($isSend)){
+            $map['status'] = 111;
+            $map['extent'] = 200;
+            $map['msg'] = '一分钟内请勿重复获取验证码';
+            echo json_encode($map);
+            exit;
+        }
+    }
 }

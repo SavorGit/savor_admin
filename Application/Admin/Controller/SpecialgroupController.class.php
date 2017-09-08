@@ -12,6 +12,8 @@ namespace Admin\Controller;
 use Admin\Controller\BaseController;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
+
+
 class SpecialgroupController extends BaseController {
 
     private $oss_host = '';
@@ -36,6 +38,8 @@ class SpecialgroupController extends BaseController {
             $field = 'id,title name,img_url';
             $map['title'] = array('like','%'.$sname.'%');
             $map['state'] = 2;
+            $map['_string'] = '((bespeak=1 or bespeak=2) and
+            bespeak_time<NOW()) or bespeak=0 or bespeak=null';
             $result = $artModel->getWhere($map, $field);
             $oss_host = $this->oss_host;
             foreach($result as $sk=>$sv) {
@@ -131,11 +135,12 @@ class SpecialgroupController extends BaseController {
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','sg.update_time');
+        $order = I('_order','sg.create_time');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
+        $orderas = 'sg.update_time desc';
         $start  = ( $start-1 ) * $size;
         $where = "1=1 and sg.state != 2";
         $name = I('sgroupname');
@@ -145,6 +150,7 @@ class SpecialgroupController extends BaseController {
         }
         $join = 1;
         $result = $spgModel->getList($join, $where, $orders,$start,$size);
+        $resulta = $spgModel->getList($join, $where, $orderas,$start,$size);
         $sg_state = C('SP_GR_STATE');
         array_walk($result['list'], function(&$v, $k)use($sg_state){
             $st_num = $v['state'];
@@ -153,8 +159,14 @@ class SpecialgroupController extends BaseController {
             }
         });
         $is_home = array();
-        foreach($result['list'] as $rs=>$rv) {
+        foreach($resulta['list'] as $rs=>$rv) {
             if($rv['state'] == 1) {
+                $spid = $rv['id'];
+                break;
+            }
+        }
+        foreach($result['list'] as $rs=>$rv) {
+            if($rv['id'] == $spid) {
                 $result['list'][$rs]['is_index'] = 1;
                 break;
             }
@@ -340,6 +352,7 @@ class SpecialgroupController extends BaseController {
 
         } else {
             //更新
+
             $spcar['name'] = $save['name'];
             $spcar['state'] = array('neq',2);
             $save['update_time'] = date('Y-m-d H:i:s');
@@ -435,51 +448,8 @@ class SpecialgroupController extends BaseController {
     public function addSpecialGroup(){
         $this->display('addspecialgroup');
     }
-    /*
-     * @desc 显示h5页面
-     * @method editSpecialGroup
-     * @access public
-     * @http NULL
-     * @return void
-     */
-    public function showsp(){
-        $sourcename = I('get.location','');
-        $this->assign('sourc', $sourcename);
-        $spgroupModel = new \Admin\Model\SpecialGroupModel();
-        $id = I('get.id');
-        $field = "sg.NAME,sg.title sptitle, sg.img_url spimg,sg.desc        spdesc,sr.sgtype,sr.stext,sr.sarticleid,sr.spictureid,
-        sr.stitle,sm.oss_addr simg,smc.title mtitle,smc.img_url mimg,
-        smc.id marticle,smc.content_url mcurl,smc.create_time ";
-        $where =  " 1=1 and sg.id = $id";
-        $speca_arr_info = $spgroupModel->fetchDataBySql($field, $where);
-        $oss_host = $this->oss_host;
-        $spinfo = array(
-            'sgid'=>$id,
-            'name'=>$speca_arr_info[0]['name'],
-            'title'=>$speca_arr_info[0]['sptitle'],
-            'oss_addr'=>$oss_host.$speca_arr_info[0]['spimg'],
-            'desc'=>$speca_arr_info[0]['spdesc'],
-        );
-        if ($speca_arr_info) {
-            foreach ($speca_arr_info as $spk=>$spv) {
-                if($spv['sgtype'] == 3) {
-                    $speca_arr_info[$spk]['simg'] = $oss_host.$spv['simg'];
-                }else if($spv['sgtype'] == 2){
-                    $speca_arr_info[$spk]['mimg'] = $oss_host.$spv['mimg'];
-                    $speca_arr_info[$spk]['mcurl'] = $this->host_name().'/'.$spv['mcurl'];
-                    $speca_arr_info[$spk]['create_time'] = date("Y-m-d", strtotime($spv['create_time']));
-                }
-            }
 
-        } else {
-            $speca_arr_info = array();
-        }
 
-        $this->assign('srinfo', $speca_arr_info);
-        $this->assign('vinfo', $spinfo);
-        $this->display('new_special');
-
-    }
 
 
 
@@ -505,7 +475,7 @@ class SpecialgroupController extends BaseController {
             'title'=>$speca_arr_info[0]['sptitle'],
             'oss_addr'=>$oss_host.$speca_arr_info[0]['spimg'],
             'desc'=>$speca_arr_info[0]['spdesc'],
-            'media_id' =>888,
+           // 'media_id' =>888,
         );
         if ($speca_arr_info) {
             foreach ($speca_arr_info as $spk=>$spv) {
@@ -519,6 +489,7 @@ class SpecialgroupController extends BaseController {
         } else {
             $speca_arr_info = array();
         }
+
         $this->assign('srinfo', $speca_arr_info);
         $this->assign('vinfo', $spinfo);
         $this->display('editspecialgroup');

@@ -215,6 +215,14 @@ $config['WX_FWH_CONFIG'] = array(
     'appid'=>'wx7036d73746ff1a14',
     'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',  
 );
-
+$config['UMENT_API_CONFIG'] = array(
+     'API_URL'=>'http://msg.umeng.com/api/send',
+     'opclient'=>array(
+         'AppKey'=>'59acb7f0f29d98425d000cfa',
+         'App_Master_Secret'=>'75h0agzaqlibje6t2rtph4uuuocjyfse',
+         'ios_AppKey'=>'59b1260a734be41803000022',
+         'ios_App_Master_Secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
+     ),
+);
 
 return $config;
