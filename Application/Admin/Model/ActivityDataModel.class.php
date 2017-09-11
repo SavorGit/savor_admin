@@ -16,11 +16,13 @@ class ActivityDataModel extends BaseModel
 	 */
 	public function getList($field="*",$where,$order,$start,$size){
 	    $list = $this->alias('a')
+	                 ->join('savor_activity_goods b on b.id = a.goods_id','left')
 	                 ->field($field)
 	                 ->where($where)
 					 ->order($order)
 					 ->limit($start,$size)
 					 ->select();
+	    
 		$count = $this->alias('a')
 		              ->where($where)
 					  ->count();
@@ -48,10 +50,30 @@ class ActivityDataModel extends BaseModel
 	    return $ret;
 	}
 	/**
-	 * @desc 统计数据
+	 * @desc 统计订单个数数据
 	 */
 	public function countData($where){
 	    $count = $this->where($where)->count();
 	    return $count;
+	}
+	/**
+	 * @desc 统计每人购买商品数量
+	 */
+	public function sumOrderGoodsNums($where,$field){
+	    $count = $this->where($where)->sum($field);
+	    return $count;
+	}
+	/**
+	 * @desc 获取订单详情数据
+	 */
+	public function getAllInfo($fields,$where,$order,$limit){
+	    $data = $this->alias('a')
+	         ->join('savor_activity_config b on a.activity_id = b.id','left')
+	         ->join('savor_activity_goods c on a.goods_id = c.id','left')
+	         ->field($fields)
+             ->order($order)
+             ->limit($limit)
+             ->select();
+	    return $data;	         
 	}
 }
