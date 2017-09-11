@@ -67,7 +67,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	border: 1px solid #ddd7d0;
 	background-color: #f7f7f7;
 	border-radius: 3px;
-	margin-left: 0.44rem;
+	margin-left: 0.48rem;
 }
 
 .sp-tel{
@@ -256,6 +256,8 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	height: 1.14rem;
 	background-color: #f0f0f0;
 	margin-bottom: 0.48rem;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
 }
 .ok-top img{
 	width: 0.42rem;
