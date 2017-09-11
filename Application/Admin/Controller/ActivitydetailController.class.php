@@ -880,6 +880,11 @@ class ActivitydetailController extends Controller {
                 //发送短信
                 $info['tel'] = $mobile;
                 $param = $activity_info['name'];
+                if($goods_id){
+                    $m_activity_goods = new \Admin\Model\ActivityGoodsModel();
+                    $tmps = $m_activity_goods->getOne('goods_name',array('id'=>$goods_id));
+                    $param .=$tmps['goods_name'];
+                }
                 $ret = $this->sendActToUcPa($info, $param,2);
                 $map['status'] = 1;
                 $map['extent'] = 100;
