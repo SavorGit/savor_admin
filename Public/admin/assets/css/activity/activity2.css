@@ -40,7 +40,8 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	position: relative;
 }
 .for h2{
-	margin-left: 0.2rem;
+	margin-top: 0.25rem;
+	margin-left: 0.4rem;
 	font-size: 0.32rem;
 	color: #222;
 }
@@ -51,7 +52,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 .sp-name{
 	font-size: 0.3rem;
 	color: #000;
-	margin-left: 0.2rem;
+	margin-left: 0.4rem;
 	margin-top: 0.15rem;
 }
 .sp-name img{
@@ -66,14 +67,15 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	border: 1px solid #ddd7d0;
 	background-color: #f7f7f7;
 	border-radius: 3px;
-	margin-left: 0.48rem;
+	margin-left: 0.44rem;
 }
 
 .sp-tel{
 	font-size: 0.3rem;
 	color: #000;
 	letter-spacing:0.36rem;
-	margin-left: 0.2rem;
+	margin-left: 0.4rem;
+	margin-top: 0.15rem;
 }
 .sp-tel img{
 	width: 0.16rem;
@@ -101,7 +103,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	border: 1px solid #ddd7d0;
 	background-color: #fff;
 	border-radius: 3px;
-	color: #c3c3c3;
+	color: #434343;
 	font-size: 0.3rem;
 	margin-left: 0.3rem;
 }
@@ -362,7 +364,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	opacity: 0.6;
 }
 .active{
-	border: 2px solid #e87676;
+	border: 2px solid #db2424;
 }
 .xiadan{
 	width: 88%;
@@ -384,6 +386,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	top: 0.6rem;
 	font-size: 0.3rem;
 	letter-spacing:0;
+	margin-left: 0.4rem;
 }
 #xinhao img{
 	width: 0.16rem;
@@ -391,7 +394,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
     margin-right: 0.1rem;
 }
 #shul{
-	margin-left: 0.2rem;
+	margin-left: 0.4rem;
 	margin-top: 0.14rem;
 	letter-spacing: 0.36rem;
 }
@@ -415,7 +418,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	height: 0.64rem;
 	position: absolute;
 	right:0 ;
-	top: -0.24rem;
+	top: -0.22rem;
 }
 .bai_zhezhao{
 	width: 100%;
