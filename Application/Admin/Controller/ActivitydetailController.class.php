@@ -981,7 +981,7 @@ class ActivitydetailController extends Controller {
                  return json_encode($map); 
              }
              
-             $remain_goods_nums = $activity_info['goods_nums'] = $allData;
+             $remain_goods_nums = $activity_info['goods_nums'] - $allData;
              if($order_goods_nums > $remain_goods_nums){
                  $map['status'] = 207;
                  $map['extent'] = 150;
