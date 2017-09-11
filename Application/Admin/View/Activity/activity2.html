@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title></title>
+		<!--<link rel="stylesheet" type="text/css" href="/Public/admin/assets/css/activity/index.css" />-->
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/css/activity/activity2.css"/>
+		
+	</head>
+
+	<body>
+		<input type="hidden" id="conwith" />
+		<div class="top-img">
+		<img src="/Public/admin/assets/img/activity/activity2/banner1.jpg" />
+		</div>
+		<div class="content">
+			<form action="" class="for" method="post">
+				<img class="xia" src="/Public/admin/assets/img/activity/activity2/chanpinjieshao.png"/>
+				<h2 class="btn_shou">填写订单详情(货到付款)</h2>
+				<div class="group" style="height: 1.8rem;position: relative;">
+					<span class="sp-pay" id="xinhao" style=""><img src="/Public/admin/assets/img/activity/activity2/bitian@3x.png" />手机型号</span>
+					
+					<div class="pay-group">
+						<input type="hidden" name="goods_id" id="goods_id" value='{$info[0][id]}' />
+						<input type="hidden" id ="goods_name" value="{$info[0][goods_name]}" />
+						<input type="hidden" id="goods_price" value="{$info[0][goods_price]|intval}" />
+						<span class="sp-2 active" dt='{$info[0][id]}' gn='{$info[0][goods_name]}' gp='{$info[0][goods_price]|intval}' ><img src="/Public/admin/assets/img/activity/activity2/dfb_weixuan.png"/></span>
+						<span style="margin-left: 0.28rem;" class="sp-1 " dt='{$info[1][id]}' gn='{$info[1][goods_name]}' gp='{$info[1][goods_price]|intval}' ><img src="/Public/admin/assets/img/activity/activity2/zxb_weixuan.png"/></span>
+					</div>
+
+				</div>
+				<div class="group">
+				<span class="sp-pay sp-der" id="shul"><img src="/Public/admin/assets/img/activity/activity2/bitian@3x.png" />数量</span>
+				<div class="num_z">
+					<span class="jian">-</span><span class="shuzi" style="font-size: 0.3rem;color: black;">1</span><span class="jia">+</span>
+				</div>
+				</div>
+				<div class="group" style="">
+					<!--<span class="sp-name"><img src="/Public/admin/assets//Public/admin/assets/img/activity/activity2/toothwash/bitian@3x.png" />收货人</span>-->
+					<span class="sp-name sp-der"><img src="/Public/admin/assets/img/activity/activity2/bitian@3x.png" />付款人</span>
+
+					<input type="text" class="text-name vala sp-der" id="txt-name" name="apply_name" />
+				
+				</div>
+				<div class="group">
+					<span class="sp-tel sp-der"><img src="/Public/admin/assets/img/activity/activity2/bitian@3x.png" />电话</span>
+					<input style="margin-left: 0.04rem;" type="text" class="text-name vala sp-der" id="tel" name="mobil" />
+					
+				</div>
+				<div class="group">
+					<span class="sp-name sp-der"><img src="/Public/admin/assets/img/activity/activity2/bitian@3x.png" />验证码</span>
+					<input type="text" class="text-yz vala sp-der" name="verify_code" id="verify_code" />
+					<input type="button" class="yzm sp-der" value="获取验证码" />
+					
+				</div>
+				
+				
+				<div class="group" style="margin-top: 0.2rem;">
+					<span class="sp-pay sp-der" style="margin-left: 0.5rem;">地址</span>
+					<textarea class="tear" name="address" id="address"></textarea>
+					<span class="null-address" style="display: none;">地址长度为0-100字</span>
+					
+					<div style="clear: both;"></div>
+				</div>
+				<input type="button" class="btn" value="提交" />
+				<input type="hidden" id="activity_id" value="{$id}" />
+				<input type='hidden' id="sourceid" value="{$sourceid}" />
+			</form>
+			<div style="clear: both;"></div>
+		</div>
+		<div class="bj">
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/01_01.jpg"/>
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/001.jpg"/>
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/002.jpg" />
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/003.jpg"/>
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/004.jpg"/>
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/005.jpg"/>
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/006.jpg"/>
+			<img class="lazy" src="/Public/admin/assets/img/activity/activity2/007.jpg"/>
+		</div>
+		<div class="zhez" style="display:none;"></div> <!--遮罩层-->
+		<!--预定成功-->
+		<div id="apply_ok" class="ok" style="display:none;">
+			<div class="ok-top">
+			<img src="/Public/admin/assets/img/activity/activity2/ydcg@3x.png"/><span>下单成功</span>
+			</div>
+			<p class="wa_one">工作人员会及时联系您核实订单信息，请注意接听电话。</p>
+			<div class="dingdan_ins">
+				<ul class="dingdan_ul">
+					<li>订单信息</li>
+					<li>付款人:<span style="margin-left: 0.1rem;margin-right: 3px;" class="dingdan_name">刘洋</span>先生/女士</li>
+					<li>电话:<span style="margin-left: 0.4rem;" class="dingdan_phone">13522089390</span></li>
+					<li>型号:<span style="margin-left: 0.4rem;" class="dingdan_phname">尊享版</span>(<span class="dingdan_phyuan">15321</span>)</li>
+				</ul>
+			</div>
+			<button class="btn_z">我知道了</button>
+		</div>
+		<!--验证码-->
+		<div class="num-yzm" style="display: none;">
+			<div class="group" style="height:2.05rem">
+				<span class="sp-name" style="margin-left: 0.3rem;"><img src="/Public/admin/assets/img/toothwash/bitian@3x.png" />验证码</span>
+				<input type="text" id='piccode' class="text-name" style="width: 2.6rem;margin-left:0"/>
+				<img src="{:U('admin/verify/verify',array())}" id="verify_img" alt="点击更换" title="点击更换" class="num-img"/>
+			</div>
+			<input type="button"  class="qx" value="取消"/><input type="button" id="confimcode" class="qd" value="确定"/>
+		</div>
+		<!--预定失败-->
+		<!--<div class="dis_1s"></div>
+		<p class="dis_1s_p">预定失败</p>-->
+<div class="bai_zhezhao"></div>
+<input type="hidden" id="order_max_num" value="10" >
+<input type="button" class="xiadan" value="立即购买"/>
+<include file="Public:wx_share" />
+	</body>      
+</html>
+<!--<script src="/Public/admin/assets/plugins/jquery.min.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="/Public/admin/assets/plugins/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/Public/admin/assets/js/lazyload.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="/Public/admin/assets/js/toothwash.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="/Public/admin/assets/js/activity2.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	 $(".bj .lazy").lazyload();
+</script>

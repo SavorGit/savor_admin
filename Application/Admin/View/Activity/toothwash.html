@@ -74,6 +74,8 @@
             <th>收货人</th>
             <th>电话</th>
             <th>收货地址</th>
+            <th>商品名称</th>
+            <th>购买数量</th>
            <th>下单来源</th>
           </tr>
           </thead>
@@ -85,6 +87,8 @@
               <td data-title="收获人">{$vlist.receiver}</td>
               <td data-title="电话">{$vlist.mobile}</td>
               <td data-title="收货地址">{$vlist.address}</td>
+              <td data-title="商品名称">{$vlist.goods_name}</td>
+              <td data-title="购买数量">{$vlist.goods_nums}</td>
               <td data-title="收货地址">{$activity_source_arr[$vlist[sourceid]]}</td>
             </tr>
           </volist>

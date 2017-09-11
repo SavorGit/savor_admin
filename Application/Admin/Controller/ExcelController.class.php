@@ -39,7 +39,7 @@ class ExcelController extends Controller
         }else if($filename == "hotelbillinfo"){
             $tmpname = '对账单酒楼信息联系表';
         }else if($filename == 'toothwash'){
-            $tmpname = '洗牙卡订单';
+            $tmpname = '活动订单';
         }else if($filename == 'contentads'){
             $tmpname = '内容与广告统计';
         }else if($filename =='hotelBv'){
@@ -1710,12 +1710,17 @@ class ExcelController extends Controller
     }
     public function excelToothwash(){
         $m_activity_data = new \Admin\Model\ActivityDataModel();
-        $infos = $m_activity_data->getInfo('*','',' add_time desc','',2);
+        //$infos = $m_activity_data->getInfo('*','',' add_time desc','',2);
+        $infos = $m_activity_data->getAllInfo('a.*,b.name as act_name,c.goods_name,c.goods_price','','add_time desc');
         $xlsCell = array(
             array('id', 'id'),
             array('receiver', '收货人'),
             array('mobile', '电话'),
             array('address', '收货地址'),
+            array('act_name','活动名称'),
+            array('goods_name','商品名称',''),
+            array('goods_nums','购买数量'),
+            array('goods_price','商品单价'),
             array('add_time', '下单时间'),
             array('sourceid','来源')
         );
@@ -1723,7 +1728,7 @@ class ExcelController extends Controller
         foreach($infos as $key=>$v){
             $infos[$key]['sourceid'] = $activity_source_arr[$v['sourceid']];
         }
-        $xlsName = '洗牙卡订单';
+        $xlsName = '活动订单';
         $filename = 'toothwash';
         $this->exportExcel($xlsName, $xlsCell, $infos,$filename);
     }
