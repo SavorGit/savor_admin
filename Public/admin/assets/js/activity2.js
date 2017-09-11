@@ -50,7 +50,7 @@ $('input[type=text]').blur(function() {
 $('.pay-group span').click(function(){//点击选中
 	$(this).addClass('active').siblings().removeClass('active');
 	var goods_id = $(this).attr("dt");
-	var goods_name = $(this).attr("gn");
+	var goods_name = $(this).attr("ga");
 	var goods_price = $(this).attr("gp");
 	$('#goods_name').val(goods_name);
 	$('#goods_price').val(goods_price);
@@ -80,11 +80,6 @@ $('input[type=text]').focus(function() {
 //var numa = 1;
 var flag  = 1;
 $('.yzm').click(function() {
-	
-	/*if(numa>3){
-		$('.zhez').show();
-		$('.num-yzm').show();
-	}*/
 	$('#piccode').val('');
 	$("#verify_img").click();
 	$('#verify_code').val('');
@@ -218,6 +213,7 @@ $('.btn').click(function(event) {
 				$('.dingdan_phone').html($('#tel').val());
 				$('.dingdan_phname').html($('#goods_name').val());
 				$('.dingdan_phyuan').html($('#goods_price').val());
+				$('.dingdan_bu').html($('.shuzi').html());
 				$('.zhez').show();
 				$('body').css('overflow','hidden');
 				$('#apply_ok').show();
