@@ -500,7 +500,7 @@ class BaseController extends Controller {
                              'admin.hotel.manager_list','admin.version.getvname','admin.menu.getfile',
                              'admin.menu.analyseexcel','admin.checkaccount.getaccountinfo','admin.checkaccount.analyseexcel',
                              'admin.checkaccount.confirmpaydone','admin.tag.getajaxpage','admin.tag.doaddajaxtag',
-                             'admin.resource.uploadmapresource','admin.contentads.getads_ajax','admin.contentads.getexpstate'
+                             'admin.resource.uploadmapresource','admin.contentads.getads_ajax','admin.contentads.getexpstate','admin.specialgroup.getarticlebyname'
         );
 
         $model_name      = strtolower(MODULE_NAME);
