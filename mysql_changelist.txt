@@ -576,7 +576,7 @@ CREATE TABLE `savor_content_wx_auth` (
 增加说明：活动添加短信配置字段/活动没人限制购买数量/订单表添加购买商品id/更新洗牙卡活动的短信模版id
 修改时间：2017.9.7 15：00
 修改人：张英涛
-执行结果:
+执行结果:已执行
 执行sql:
 ALTER TABLE `savor_activity_config` ADD COLUMN `template_id` INT(11) NOT NULL DEFAULT 0 COMMENT '下单成功发送短信id' AFTER `page_views`;
 ALTER TABLE `savor_activity_config` ADD COLUMN `person_order_num`  INT(11) NOT NULL DEFAULT 1 COMMENT '每人购买数量' AFTER `page_views`;
@@ -586,7 +586,7 @@ UPDATE `savor_activity_config` SET template_id=107928 WHERE id=1;
 增加说明：增加活动商品表
 修改时间：2017.9.7 15：00
 修改人：张英涛
-执行结果：
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_activity_goods` (
     `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',

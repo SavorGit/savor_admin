@@ -12,14 +12,10 @@
       </div>
       <div class="col-xs-12 col-sm-1 col-md-1">
 	          <div class="tools-group">
-	            <a class="btn btn-success btn-sm add" href="{$host_name}/activity/add" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i>新增</a>
+	            <a class="btn btn-success btn-sm add" href="{$host_name}/activitygoods/add" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i>新增</a>
 	          </div>
         	</div>
-      <div class="col-xs-12 col-sm-1 col-md-1">
-	          <div class="tools-group">
-	            <a class="btn btn-success btn-sm add" href="{$host_name}/activity/viewcode" title="洗牙卡代码" target="dialog" mask="true"><i class="fa fa-plus"></i>洗牙卡代码</a>
-	          </div>
-        	</div>
+      
       <div class="form-inline" style="margin-top:3px;">
         <div class="form-group">
 
@@ -37,7 +33,7 @@
         </div>
       </div>
         <div class="input-group input-group-sm">
-          <input type="text" class="form-control" name="name" value="{$name}" placeholder="活动名称">
+          <input type="text" class="form-control" name="name" value="{$name}" placeholder="商品名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" ><i class="fa fa-search"></i></button>
             </span>
@@ -56,16 +52,16 @@
           <tr id="post">
             
             <th>ID</th>
-            <th>活动名称</th>
-            <th>活动封面图</th>
-            <th>开始时间</th>
-            <th>结束时间</th>
-            <th>商品/奖品数量</th>
-            <th>每人最大购买数</th>
+            <th>所属活动</th>
+            <th>商品名称</th>
+            <th>商品封面图</th>
+    		<th>商品单价(单位:￥)</th>
+            <th>商品数量</th>
+            
             <th>创建时间</th>
             <th>更新时间</th>
             <th>操作人</th>
-            <th>状态</th>
+            
             <th>操作</th>
           </tr>
           </thead>
@@ -73,33 +69,24 @@
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="ID">{$vlist.id}</td>
-              <td data-title="活动名称">{$vlist.name}</td>
-              <td data-title="活动封面图">{$vlist.img_url}</td>
-              <td data-title="开始时间">{$vlist.start_time}</td>
-              <td data-title="结束时间">{$vlist.end_time}</td>
-              <td data-title="商品/奖品数量">{$vlist.goods_nums}</td>
-              <td data-title="每人最大购买数">{$vlist.person_order_num}</td>
+              <td data-title="所属活动">{$vlist.activity_name}</td>
+              <td data-title="商品名称">{$vlist.goods_name}</td>
+              <td data-title="商品封面图">{$vlist.goods_img_url}</td>
+              <td data-title="商品单价">{$vlist.goods_price}</td>
+              <td data-title="商品数量">{$vlist.goods_nums}</td>
+              
               <td data-title="创建时间">{$vlist.add_time}</td>
               <td data-title="更新时间">{$vlist.edit_time}</td>
               <td data-title="操作人">{$vlist.remark}</td>
-              <td data-title="状态">
-                <if condition="$vlist['status'] eq 0">
-                  <a data-tip="已经下线" target="ajaxTodo" href="{$host_name}/activity/changestatus?id={$vlist.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a>
-                  <elseif condition="$vlist['status'] eq 1"/>
-                  <a data-tip="已经上线" target="ajaxTodo" href="{$host_name}/activity/changestatus?id={$vlist.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
-                </if>
-
-              </td>
+              
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                   <a data-tip="修改详情" target="dialog" data-placement="left" mask="true" rel="xiugaihotel" href="{$host_name}/activity/edit?id={$vlist.id}" class="btn btn-success btn-icon">
+                   <a data-tip="修改详情" target="dialog" data-placement="left" mask="true" rel="xiugaihotel" href="{$host_name}/activitygoods/edit?id={$vlist.id}" class="btn btn-success btn-icon">
 
                     <i class="fa fa-tag"></i>
                   </a>
-                   <a warn="警告" data-tip="移除" title="你确定删除该活动吗？" target="ajaxTodo" rel="activity/index"
-href="{$host_name}/activity/delactivity?id={$vlist.id}"  class="btn btn-success btn-icon">
+                   <a warn="警告" data-tip="移除" title="你确定删除该活动吗？" target="ajaxTodo" rel="activitygoods/index"
+href="{$host_name}/activitygoods/delete?id={$vlist.id}"  class="btn btn-success btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
                   
