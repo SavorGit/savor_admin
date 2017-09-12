@@ -52,11 +52,12 @@
           <tr id="post">
             
             <th>ID</th>
+            <th>所属活动</th>
             <th>商品名称</th>
             <th>商品封面图</th>
     		<th>商品单价(单位:￥)</th>
             <th>商品数量</th>
-            <th>所属活动</th>
+            
             <th>创建时间</th>
             <th>更新时间</th>
             <th>操作人</th>
@@ -68,11 +69,12 @@
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="ID">{$vlist.id}</td>
-              <td data-title="活动名称">{$vlist.goods_name}</td>
-              <td data-title="活动封面图">{$vlist.goods_img_url}</td>
+              <td data-title="所属活动">{$vlist.activity_name}</td>
+              <td data-title="商品名称">{$vlist.goods_name}</td>
+              <td data-title="商品封面图">{$vlist.goods_img_url}</td>
               <td data-title="商品单价">{$vlist.goods_price}</td>
               <td data-title="商品数量">{$vlist.goods_nums}</td>
-              <td data-title="所属活动">{$vlist.activity_name}</td>
+              
               <td data-title="创建时间">{$vlist.add_time}</td>
               <td data-title="更新时间">{$vlist.edit_time}</td>
               <td data-title="操作人">{$vlist.remark}</td>
