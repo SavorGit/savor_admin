@@ -50,7 +50,7 @@ $('input[type=text]').blur(function() {
 $('.pay-group span').click(function(){//点击选中
 	$(this).addClass('active').siblings().removeClass('active');
 	var goods_id = $(this).attr("dt");
-	var goods_name = $(this).attr("ga");
+	var goods_name = $(this).attr("gn");
 	var goods_price = $(this).attr("gp");
 	$('#goods_name').val(goods_name);
 	$('#goods_price').val(goods_price);
