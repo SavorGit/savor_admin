@@ -66,11 +66,11 @@ class SpecialgroupShowController extends Controller {
         $wpi = new Weixin_api();
         $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_100_100.jpg';
-        $share_title = $speca_arr_info[0]['name'];
-        if(empty($speca_arr_info[0]['name'])){
+        $share_title = $speca_arr_info[0]['sptitle'];
+        if(empty($speca_arr_info[0]['spdesc'])){
             $share_desc = '小热点，陪伴你创造财富，享受生活。';
         }else{
-            $cot = html_entity_decode($speca_arr_info[0]['sptitle']);
+            $cot = html_entity_decode($speca_arr_info[0]['spdesc']);
             $cot = strip_tags($cot);
             $share_desc = mb_substr($cot,0,50);
         }

@@ -44,6 +44,8 @@ class ExcelController extends Controller
             $tmpname = '内容与广告统计';
         }else if($filename =='hotelBv'){
             $tmpname = '酒楼信息';
+        }else if($filename =='contentlink'){
+            $tmpname = '内容链接明细';
         }
 
         if($filename == "heartlostinfo"){
@@ -1797,5 +1799,86 @@ class ExcelController extends Controller
         $filename = 'hotelBv';
         $this->exportExcel($xlsName, $xlsCell, $info,$filename);
         
+    }
+
+
+    public function  expcontentlink() {
+        $starttime = I('adsstarttime','');
+        $endtime = I('adsendtime','');
+        $url = I('url');
+
+        $where = '1=1 ';
+        if(empty($starttime) || empty($endtime)){
+            echo "<script>alert('请选择开始时间与结束时间');</script>";
+           die;
+        }
+        if($starttime <= $endtime) {
+            $stt = strtotime($starttime);
+            $ste = strtotime($endtime);
+            $where.=" AND LEFT(TIMESTAMP,10)>='$stt'";
+            $where.=" AND LEFT(TIMESTAMP,10)<='$ste'";
+
+        }else{
+            echo "<script>alert('开始时间必须小于等于结束时间');</script>";
+            die;
+        }
+        if ( $url ) {
+            $cid_arr =  explode('?', $url);
+            $cid_str = $cid_arr[0];
+            preg_match("/.*content\/(.*).html.*/", $cid_str,$mathes);
+            $contenid = $mathes[1];
+            $cid_str_2 = htmlspecialchars_decode($cid_arr[1]);
+
+            parse_str($cid_str_2, $ch_arr);
+            if($contenid) {
+                $where.=" AND content_id=$contenid ";
+            }
+            if($ch_arr) {
+                foreach ($ch_arr as $ck=>$cv) {
+                    if($ck == 'app') {
+
+                    } else {
+                        $where.=" AND $ck= '".$cv."' ";
+                    }
+
+                }
+            }
+        }
+        $field = '*';
+        $clinkModel = new \Admin\Model\ContentLinkModel();
+        $result = $clinkModel->fetchDataWhere($where, $order='id desc', $field,2);
+        $dat = $result;
+        $is_wei = array(
+            '0' => '否',
+            '1' => '是'
+        );
+        $is_shou = array(
+            '0' => '否',
+            '1' => '是'
+        );
+
+        foreach($dat as $rk=>$rv) {
+            $w = $dat[$rk]['is_wx'];
+            $sq = $dat[$rk]['is_sq'];
+            $dat[$rk]['is_wx'] = $is_wei[$w];
+            $dat[$rk]['is_sq'] = $is_wei[$sq];
+            $ctime = substr($dat[$rk]['timestamp'],0 , -3);
+            $dat[$rk]['vtime'] = date("Y-m-d H:i:s", $ctime);
+        }
+
+
+        $xlsCell = array(
+            array('content_id', '文章id'),
+            array('vtime', '访问日期'),
+            array('device_type','设备类型'),
+            array('is_wx', '是否为微信打开'),
+            array('ip','IP'),
+            array('net_type', '网络类型'),
+            array('is_sq', '是否授权'),
+        );
+        $xlsName = '内容链接明细';
+        $filename = 'contentlink';
+        $this->exportExcel($xlsName, $xlsCell, $dat,$filename);
+
     }
 }

@@ -482,13 +482,18 @@ class ClientController extends Controller {
         $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_100_100.jpg';
 
         $share_title = $vinfo['title'];
-        if(empty($vinfo['content'])){
-            $share_desc = '小热点，陪伴你创造财富，享受生活。';
-        }else{
-            $cot = html_entity_decode($vinfo['content']);
-            $cot = strip_tags($cot);
-            $share_desc = mb_substr($cot,0,50);
+        if($vinfo['type'] == 1) {
+            if(empty($vinfo['content'])){
+                $share_desc = '小热点，陪伴你创造财富，享受生活。';
+            }else{
+                $cot = html_entity_decode($vinfo['content']);
+                $cot = strip_tags($cot);
+                $share_desc = mb_substr($cot,0,50);
+            }
+        } elseif($vinfo['type'] == 2 || $vinfo['type'] == 3) {
+            $share_desc = '热点聚焦，投其所好';
         }
+
 
         $share_config = $wpi->showShareConfig($share_url, $share_title,$share_desc,$share_url,$share_url);
         extract($share_config);

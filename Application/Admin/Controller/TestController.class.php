@@ -9,6 +9,16 @@ use Think\Controller;
 class TestController extends Controller {
 
     //http://www.a.com/admin/test/whoop
+
+    public function getShortUrl() {
+        $shortlink = C('HOST_NAME').'/admin/activitydetail/index?id=2&hide=1';
+        echo $shortlink.'<hr/>';
+       // die;
+        $shortlink = urlencode($shortlink);
+        $shortlina = shortUrlAPI(1, $shortlink);
+        echo $shortlina;
+    }
+
     public function whoop() {
 
         /*try {
