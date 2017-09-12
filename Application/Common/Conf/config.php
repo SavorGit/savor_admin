@@ -224,5 +224,8 @@ $config['UMENT_API_CONFIG'] = array(
          'ios_App_Master_Secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
      ),
 );
-
+$config['USER_GRP_CONFIG'] = array(
+    '0'=>'无',
+    '1'=>'运维组',
+);
 return $config;
