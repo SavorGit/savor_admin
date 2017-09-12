@@ -825,10 +825,40 @@ class ActivitydetailController extends Controller {
             $redis->select(1);
             $cache_key = 'tooth_vcode_'.$mobile;
             $cache_verify_code = $redis->get($cache_key);
+            
+            if(empty($cache_verify_code)){
+                
+                $m_account_msg_log = new \Admin\Model\AccountMsgLogModel();
+                
+                $info = $m_account_msg_log->getOne(array('tel'=>$mobile,'msg_type'=>2,'resp_code'=>'000000'),' id desc');
+                if(empty($info)){
+                    $map['status'] = 105;
+                    $map['extent'] = 110;
+                    $map['msg']    = '手机验证码不正确';
+                    echo json_encode($map);
+                    exit;
+                }else {
+                    $codeArr = explode(',', $info['url']);
+                    $code = $codeArr[0];
+                    if($code == $verify_code){
+                        $map['status'] = 107;
+                        $map['extent'] = 110;
+                        $map['msg']    = '手机验证码已过期';
+                        echo json_encode($map);
+                        exit;
+                    }else {
+                        $map['status'] = 105;
+                        $map['extent'] = 110;
+                        $map['msg']    = '手机验证码不正确';
+                        echo json_encode($map);
+                        exit;
+                    }
+                }  
+            }
             if($verify_code != $cache_verify_code){
                 $map['status'] = 105;
-                $map['extent'] = 150;
-                $map['msg']    = '手机验证码不正确或已过期';
+                $map['extent'] = 110;
+                $map['msg']    = '手机验证码不正确';
                 echo json_encode($map);
                 exit;
             } 
