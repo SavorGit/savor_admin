@@ -323,6 +323,7 @@ function tankuang(pWidth, content) {
 $('.xia').click(function(){
 	$('.content').css({
 		position:'fixed',
+		top:'2.4rem'
 	})
 	$('.xia').hide();
 	$('.bj').show();
