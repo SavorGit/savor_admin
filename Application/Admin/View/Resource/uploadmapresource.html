@@ -1,4 +1,11 @@
 <div class="pageContent">
+	<style type="text/css">
+		#ossfile div p
+		{
+			overflow: hidden;
+			text-overflow:ellipsis;
+		}
+	</style>
   <div id="dz-filecontainer">
     <ul style="margin-bottom:10px;" class="nav nav-tabs">
       <li class="active"><a href="#dropbase" data-toggle="tab"><span>选择本地内容</span></a></li>
@@ -18,7 +25,7 @@
 		    <div class="pageFormContent modal-body">
 		    	<div class="form-group row">
 			        <div class="col-xs-12 col-sm-12">
-			        	<div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+			        	<div id="ossfile" style="text-overflow:ellipsis">你的浏览器不支持flash,Silverlight或者HTML5！</div>
 			        </div>
 		       </div>
 		        
@@ -151,8 +158,22 @@ $(".resource_type").click(function(){
 //alert(hiddenType);
 //alert(hiddenImg);
 console.log(resourceType);
+
 //选择本地图片点击保存 
 $("#savemapImg").click(function(){
+	var url = $("#media_url").val();
+  var cot = $("#ossfile .progress-bar").attr('aria-valuenow');
+
+  if(url == ''){
+    if(cot<100){
+      alert('资源正在上传，请稍后');
+      return false;
+    }else{
+      alert('请上传资源');
+      return false;
+    }
+    }
+	
     $.ajax({
         url:$("#dropbase-form").attr("action"),
         type:"post",
