@@ -46,6 +46,8 @@ class ExcelController extends Controller
             $tmpname = '酒楼信息';
         }else if($filename =='contentlink'){
             $tmpname = '内容链接明细';
+        }else if($filename =='expcontentwxauth'){
+            $tmpname = '文章微信授权日志';
         }
 
         if($filename == "heartlostinfo"){
@@ -1878,5 +1880,64 @@ class ExcelController extends Controller
         $filename = 'contentlink';
         $this->exportExcel($xlsName, $xlsCell, $dat,$filename);
 
+    }
+    public function expcontentwxauth(){
+        $start_date = I('get.start_date');
+        $end_date   = I('get.end_date');
+        $contentid   = I('get.contentid');
+        
+        
+        if(!empty($start_date)){
+	        $where .= " and a.create_time>='".$start_date." 00:00:00'";
+	    }
+	    if(!empty($end_date)){
+	        $where .=" and a.create_time<='".$end_date." 23:59:59'";
+	        
+	    }
+	    if(!empty($contentid)){
+	        $where .=" and a.contentid=$contentid";
+	       
+	    }
+	    $m_content_wx_auth = new \Admin\Model\ContentWxAuthModel();
+	    $data = $m_content_wx_auth->getInfo("a.*,b.title ,c.name catname",$where,' a.create_time desc ','',2);
+	    
+	     foreach($data as $key=>$v){
+	         if(!empty($v['nickname'])){
+	             $data[$key]['nickname'] = base64_decode(trim($v['nickname']));
+	         }
+	        //$data[$key]['nickname'] = base64_decode($v['nickname']);
+	         switch ($v['sex']){
+	            case 0:
+	                $data[$key]['sex'] = '';
+	            break;
+	            case 1:
+	                $data[$key]['sex'] = '男';
+	            break;
+	            case 2:
+	                $data[$key]['sex'] = '女';
+	            break;
+	        } 
+	    } 
+	 
+	    $xlsCell = array(
+	        array('id', '日志id'),
+	        array('openid', 'openid'),
+	        array('nickname','昵称'),
+	        array('sex', '性别'),
+	        array('country','国家'),
+	        array('province', '省份'),
+	        array('city', '城市'),
+	        array('contentid', '文章id'),
+	        array('title', '文章标题'),
+	        array('catname', '文章分类'),
+	        array('ip_addr', 'IP'),
+	        array('long', '经度'),
+	        array('lat', '维度'),
+	        array('create_time', '访问时间'),
+	        
+	    );
+	    $xlsName = '文章微信授权明细';
+	    $filename = 'expcontentwxauth';
+	    $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
 }
