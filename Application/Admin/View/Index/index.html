@@ -471,10 +471,10 @@
   }
   /*菜单显示和隐藏*/
   $('.collapse').hide()
-  $('body').on('click','.main-menu>li>a',function(){
+  $('.menu-container').on('click','.main-menu>li>a',function(){
   	$(this).next().toggle(200);
   
-  	$('.main-menu>li>a').css({'color':'#ffffff','border-left':'none'})
+  	$('.main-menu>li>a').css({'color':'#ffffff','border-left':'none'});
   	$(this).css({'color':'#fe8332','border-left':'2px solid #fe8332'});
   });
   var xlmoren_icon = '';
