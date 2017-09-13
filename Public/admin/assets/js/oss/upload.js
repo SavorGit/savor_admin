@@ -181,7 +181,7 @@ var uploader = new plupload.Uploader({
                 return false;
             }
 			plupload.each(files, function(file) {
-				document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ')<b></b>'
+				document.getElementById('ossfile').innerHTML += '<div id="' + file.id + '"><p>' + file.name + '</p>(' + plupload.formatSize(file.size) + ')<b></b>'
 				+'<div class="progress"><div class="progress-bar" style="width: 0%"></div></div>'
 				+'</div>';
 			});

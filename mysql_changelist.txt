@@ -515,6 +515,7 @@ ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`)
 增加说明：文章表添加样式字段
 修改时间：2017.8.30 9：00
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `img_style` TINYINT(1) DEFAULT '1' NOT NULL COMMENT '图样式1小图2大图' AFTER `order_tag`;
 
@@ -522,6 +523,7 @@ ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `img_style` TINYINT(1) DEF
 增加说明：添加专题组表
 修改时间：2017.8.30 9：00
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_special_group` (
   `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
@@ -541,6 +543,7 @@ CREATE TABLE `savor_special_group` (
 增加说明：添加专题组对应关系表
 修改时间：2017.8.30 9：00
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_special_relation` (
   `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
