@@ -261,7 +261,7 @@ class CrontabController extends Controller
         $post_body = json_encode($params);
         $sign = md5($method,$url,$post_body,$app_master_secret);
         return $sign;
-    } */
+    } 
     public function test(){
         $umengApi = new UmengApi();
         $android_params = array();
@@ -289,7 +289,7 @@ class CrontabController extends Controller
         $ext_arr['error_id'] = 1;
         
         $res = $umengApi->umeng_api_ios($ios_params,$ext_arr);
-         */
+         
     }
     public function testIos(){
         $umengApi = new UmengApi();
@@ -320,6 +320,6 @@ class CrontabController extends Controller
          $ext_arr['error_id'] = 1;
     
          $res = $umengApi->umeng_api_ios($ios_params,$ext_arr);
-        */
-    }
+       
+    }*/
 }
