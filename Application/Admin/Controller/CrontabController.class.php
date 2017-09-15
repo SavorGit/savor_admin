@@ -43,7 +43,8 @@ class CrontabController extends Controller
             $small_plat_status = 1;
             $crr_box_not_normal_num = 0;
             $box_last_report_time = $tmp_time = date('Y-m-d H:i:s');
-    
+            $box_heart_not_report = 0;
+            
             $where = '';
             $where .=" 1 and hotel_id=".$v['id']." and type=1";
             $where .="  and last_heart_time>='".$start_time."'";
@@ -79,6 +80,8 @@ class CrontabController extends Controller
                         if($crr_box_report_time<$box_last_report_time){
                             $box_last_report_time = $crr_box_report_time;
                         }
+                    }else {
+                        $box_heart_not_report = 1;
                     }
                     $box_last_report_time = date('Y-m-d H:i:s',$box_last_report_time);
                 }
@@ -115,6 +118,8 @@ class CrontabController extends Controller
                         if($crr_box_report_time<$box_last_report_time){
                             $box_last_report_time = $crr_box_report_time;
                         }
+                    }else {
+                        $box_heart_not_report = 1;
                     }
                     $box_last_report_time = date('Y-m-d H:i:s',$box_last_report_time);
                 }
@@ -138,7 +143,7 @@ class CrontabController extends Controller
                 $result[$key]['small_plat_report_time'] = '';
             }
             $result[$key]['not_normal_box_num'] = $crr_box_not_normal_num;
-            if($box_last_report_time == $tmp_time){
+            if($box_last_report_time == $tmp_time || $box_heart_not_report==1){
                 $box_last_report_time = '';
             }
             $result[$key]['box_report_time'] = $box_last_report_time;
