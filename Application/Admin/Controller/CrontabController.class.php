@@ -25,7 +25,7 @@ class CrontabController extends Controller
         $where = array();
     
         $where['state'] = 1;
-        $where['falg'] = 0;
+        $where['flag'] = 0;
         $where['hotel_box_type'] = array('in','2,3');
         $hotel_list = $m_hotel->getHotelList($where,'','','id');
     
