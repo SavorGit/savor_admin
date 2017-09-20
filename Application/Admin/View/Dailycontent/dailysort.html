@@ -51,10 +51,7 @@
     <div class="no-more-tables">
       <form method="post" action="{$host_name}/dailycontent/doSort" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 
-
-
-
-          <button type="submit" id="savesort" class="btn btn-primary" onclick="return savp();">保存排序</button>
+          <button type="submit" id="savesort" class="btn btn-primary" onclick="return savp();"  style="width: 106px;">发布</button>
 
 
 
@@ -87,11 +84,20 @@
           <img class="bottomz" src="../../../../Public/admin/assets/img/u3025.png"/>
         </div>
 
-        <div class="form-group row">
-          <label class="col-xs-12 col-sm-2 control-label">
+       
+
+
+<input type="hidden" name="dailysoar" id="dailysoar"/>
+    <input type="hidden" name="bbb" id="eeee" value="555"/>
+      </form>
+
+    </div>
+  </div>
+ <div class="form-group row">
+          <label class="col-xs-12 col-sm-2 control-label" style="margin-left: 32px;margin-top: 20px;width: 75px;">
             预约发布：
           </label>
-          <div class="col-xs-12 col-sm-10">
+          <div class="col-xs-12 col-sm-10" style="margin-top: 12px;">
             <div class="input-group date form_datetime" data-date="{$vinfo.bespeak_time}">
               <input name="subdailytime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.bespeak_time}" readonly>
 									<span class="input-group-btn">
@@ -101,16 +107,7 @@
             </div>
           </div>
         </div>
-
-
-<input type="hidden" name="dailysoar" id="dailysoar"/>
-    <input type="hidden" name="bbb" id="eeee" value="555"/>
-      </form>
-
-    </div>
-  </div>
 </div>
-
 <div id="mymodal2" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -146,7 +143,7 @@
 
     var $shuju = $('.shuju>li');
     /*选中*/
-    $('body').on('click','.shuju>li',function(){
+    $('#lefta').on('click','.shuju>li',function(){
       if($(this).is('.active')){
         $(this).removeClass('active')
       }else{
@@ -156,7 +153,7 @@
     })
 
 
-    $('body').on('mousedown','.shuju>li',function(){
+    $('#lefta').on('mousedown','.shuju>li',function(){
       $shuju.mouseup(function(){
         $shuju.unbind('mousemove');
       })
