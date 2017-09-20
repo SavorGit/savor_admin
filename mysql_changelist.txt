@@ -605,5 +605,82 @@ CREATE TABLE `savor_activity_goods` (
 ) ENGINE=MYISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 
 
+增加说明：sysuser表修改字段值
+修改时间：2017.9.12 15：00
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_sysuser`     CHANGE `mebId` `mebId` INT(11) DEFAULT '0' NOT NULL COMMENT '用户所属组默认0,1为运维组 ';
+
+
+增加说明：添加每日知享列表
+修改时间：2017.9.18 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_daily_content` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `title` VARCHAR(60) NOT NULL DEFAULT '' COMMENT '标题',
+  `media_id` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '图片id',
+  `keyword` VARCHAR(10) NOT NULL DEFAULT '' COMMENT '关键词',
+  `desc` VARCHAR(220) DEFAULT '' COMMENT '简介即浓缩内容',
+  `source_id` TINYINT(3) NOT NULL DEFAULT '0' COMMENT '文章内容来源',
+  `sort_tag` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '插入顺序tag',
+  `order_tag` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '小到大排序tag',
+  `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '操作人Id',
+  `state` TINYINT(4) NOT NULL DEFAULT '0' COMMENT '状态:0未发布1发布2删除',
+  PRIMARY KEY (`id`),
+  KEY `sgroup` (`state`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='每日内容列表';
+
+
+增加说明：添加每日知享关系表
+修改时间：2017.9.18 15：00
+修改人：白玉涛
+执行sql:
+DROP TABLE IF EXISTS `savor_daily_relation`;
+CREATE TABLE `savor_daily_relation` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `dailyid` INT(10) NOT NULL DEFAULT '0' COMMENT '文章id',
+  `dailytype` TINYINT(2) NOT NULL DEFAULT '0' COMMENT '1.文字3.图片',
+  `stext` TEXT  COMMENT '文字',
+  `spictureid` INT(10) NOT NULL DEFAULT '0' COMMENT '图片mediaid',
+  PRIMARY KEY (`id`),
+  KEY `sg` (`dailyid`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='每日内容文章对应表';
+
+
+增加说明：添加每日知享home表对应共同表
+修改时间：2017.9.18 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_daily_lk` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT 'home表lkid',
+  `creator_id` INT(12) NOT NULL COMMENT '操作人Id',
+  `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `bespeak` VARCHAR(50) DEFAULT 0 COMMENT '是否预约字段   未预约为0，已预约为1',
+  `bespeak_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '预约时间 格式 (yyyy-MM-dd HH:mm)',
+  `homestate` TINYINT(2) NOT NULL DEFAULT '1' COMMENT '0是下线1是上线',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+增加说明：添加每日知享排序列表
+修改时间：2017.9.18 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_daily_home` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '',
+   `lkid` INT(12) NOT NULL COMMENT 'daily_lk表主键',
+  `dailyid` INT(12) NOT NULL COMMENT '内容列表主键id',
+  `sort_num` INT(2) NOT NULL COMMENT '排序',
+  PRIMARY KEY (`id`),
+  KEY `index_contentId` (`dailyid`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+
+
+
+
 
 

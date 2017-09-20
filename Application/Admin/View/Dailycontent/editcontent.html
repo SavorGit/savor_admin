@@ -1,0 +1,392 @@
+<style type="text/css">.zt-group {
+	min-height: 100px;
+	max-height: 600px;
+	overflow: auto;
+	border: 1px solid #827e7e;
+	width: 87%;
+	margin-left: 35px;
+}
+
+.form-group-title {
+	width: 100%;
+	height: 30px;
+	background-color: #878787;
+	line-height: 30px;
+	color: white;
+	padding-left: 10px;
+}
+
+.zt-group .btn-default {
+	background-color: #93b313;
+	margin-left: 10px;
+	color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.zt_gropu_nr {
+	width: 94%;
+	height: 152px;
+	border: 1px dashed black;
+	margin: 10px;
+	box-sizing: border-box;
+	border: 14px solid #eee;
+	border-right: 80px solid #eee;
+	position: relative;
+	padding: 10px;
+}
+
+.zt_gropu_nr .zt_tjpic {
+	width: 100px;
+	height: 80px;
+}
+
+.zt_gropu_nr .zt_bianji {
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	right: -48px;
+	top: 23px;
+}
+
+.zt_gropu_nr .zt_del {
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	top: 74px;
+	right: -48px;
+}
+
+#search_wz {
+	width: 100%;
+	height: 171px;
+	margin-left: 1px;
+	margin-top: 10px;
+	overflow: auto;
+	border: 1px solid #bbbbbb;
+}
+
+#search_wz li {
+	height: 30px;
+	line-height: 30px;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.active_li {
+	background-color: #878787;
+}
+
+.wz_yangshi img {
+	width: 132px;
+	float: left;
+	height: 108px;
+}
+
+.wz_yangshi p {
+	width: 160px;
+	margin-top: 10px;
+	font-weight: 700;
+	float: left;
+	margin-left: 10px;
+}
+.addbig {
+		margin: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1000;
+	}
+	.zhezhao {
+		display: none;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		background-color: black;
+		opacity: 0.7;
+		text-align: center;
+		z-index: 999;
+	}
+	.big {
+		display: none;
+	}
+	/*标签*/
+	 .nr{
+        width: 100%;
+    }
+    .xuan{
+        width: 178px;
+        height: 30px;
+        border: 1px solid black;
+        margin-left: 10px;
+        text-align: center;
+        line-height: 30px;
+        float: left;
+        margin-top: 8px;
+    }
+    .fa{
+        display: inline;
+    }
+    .imga:hover{
+        border: none;
+    }
+
+
+    .xuan .marg{
+        margin-left: 5px;
+    }
+    .quanbu_nr{
+        width: 100%;
+        margin-bottom: 20px;
+        float: left;
+    }
+    .baise{
+        background-color: white;
+    }
+    .biaolist i{display:none}
+    .actives{
+        background-color: darkgray;
+    }
+    .fooet{
+        width: 100%;
+        margin-bottom: 20px;
+        margin-top: 35px;
+        margin-left: 43%;
+    }
+</style>
+<script src="__PUBLIC__/admin/assets/js/page.js"></script>
+<div class="pageContent">
+<form method="post" action="{$host_name}/dailycontent/doeditContent" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+	<input type="hidden" id="honame" value="{$host_name}">
+	<input type="hidden" name="sgmethod" value="2" />
+	<input type="hidden" name="id" value="{$vinfo.sgid}">
+	<input type="hidden" name="dailyre" id="dailyre"  value="{$taginfod}"/>
+	<input type="hidden" id="savedaily" name="savedaily" value="" />
+	<input type="hidden" id="pagetotal" value="{$pagecount}">
+	<div class="form-group row" style="margin-top: 30px;margin-left: 35px;">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+			标题：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<input name="dailytitle" autocomplete="off" type="text" value="{$vinfo.title}"  minlength="1" maxlength="50" class="form-control textInput" required/>
+		</div>
+	</div>
+
+	
+	<div class="form-group row">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 58px;margin-left: 51px;">
+		封面图：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<div class="fileinput fileinput-new" data-fileinput>
+				<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+					<a data-target="#modal-file" href="javascript:void(0)">
+						<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+							<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" width='88px' height='68px' />
+							<else />
+							<img id="media_idimg" src="{$vinfo.oss_addr}" border="0" width='88' height='68' />
+						</if>
+						<span id="media_idimgname"></span>
+					</a>
+				</div>
+				<div>
+					<span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议图片尺寸比例为宽:1242px,高:802px,,最小宽750px 高484px</span>
+					<a class="btn btn-success btn-file" id="fengmian" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+						选择图片
+					</a>
+					<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}">
+					<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+						删除
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row" style="margin-left: 35px;">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+			关键词：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<input name="keyword" autocomplete="off"   value="{$vinfo.keyword}" type="text" minlength="1" maxlength="6" class="form-control textInput" required/>
+		</div>
+	</div>
+	<div class="form-group row" style="margin-top: 30px;margin-left: 35px;">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+				浓缩内容:
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<textarea name="daily-desc" class="form-control textInput"  minlength="1" maxlength="200" style="height: 125px;" >{$vinfo.desc} </textarea>
+		</div>
+	</div>
+	<div class="form-group zt-group" id="editspecialgrrr">
+		<p class="form-group-title">原文内容</p>
+		<div class="zt-btn_group" id="zt_1">
+			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button>
+		
+			<button type="button" btnnums="1" class="btn btn-default btn-wz tianimg" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>添加图片</button>
+			
+		</div>
+
+		<?php $num = 2; ?>
+		<?php $picnum = 1; ?>
+		<volist name="srinfo" id="vlist">
+			<if condition="$vlist.dailytype eq 1">
+				<div class="zt_gropu_nr" leix="scontent" data-call="{$vlist.stext}">{$vlist.stext}<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz tianimg" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button></div>
+				<elseif condition="$vlist.dailytype eq 3"/>
+				<div class="zt_gropu_nr" leix="spid"><button type="button" btnnums="{$num}" style="display:none" id="bj_imgbtn" class="btn btn-default btn-wz" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&rtype=2" data-browse-file>添加图片</button><a class="imga"  href="#" data-browse-file=""><img class="zt_tjpic" id="pics_map_{$picnum}img" src="{$vlist.simg}" border="0"><input class="picas" type="hidden" value="{$vlist.spictureid}" id="pics_map_{$picnum}" name="pics_map_{$picnum}"></a><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz tianimg" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button></div>
+				<else/>
+			</if>
+			<?php
+			$num++;
+			$picnum++;
+
+			?>
+		</volist>
+	</div>
+	<!--标签-->
+	<div class="form-group row" id="biaoqian">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-left:48px ;margin-top:5px;">
+			选择标签:
+		</label>
+		<button type="button" id="tianjia" class="btn btn-primary" style="margin-left: 20px; background-color: #aed316;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModa">添加标签</button>
+		<div style="width: 84%;margin-left: 113px;" class="biaolist">
+
+
+			<volist name="tagaddart" id="row">
+				<div class="xuan a" id="{$row['tagid']}">
+					{$row['tagname']}											<i class="fa fa-close marg"></i></div>
+			</volist>
+		</div>
+		<div class="modal fade" style="z-index:999;" id="myModa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">添加标签</h4>
+					</div>
+					<div class="modal-body">
+						<div class="mod_top">
+							<div class="form-group">
+								<button type="button" class="btn btn-primary" style="margin-left: 20px;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModaa">添加标签</button>
+								<div class="nr" style="height:auto;">
+
+								</div>
+							</div>
+							<div class="form-group">
+								<input type="text" class="soushuo" style="margin-left: 12px;height: 28px;width: 505px;"/>
+							        			<span class="input-group-btn" style="display:inline-block;">
+							              <button class="btn btn-primary" style="height: 26px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
+							            </span>
+								<div class="quanbu_nr">
+
+
+									<volist name="pageinfo" id="row">
+
+										<input class="xuan baise" type="button" value="{$row['tagname']}" id="{$row['id']}" tname="{$row['tagname']}" />
+									</volist>
+								</div>
+								<div id="example" style="margin-left: 113px;"></div>
+							</div>
+						</div>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" id="yes2" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;"  id="nos">取消</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!--小-->
+		<div class="modal fade" id="myModaa" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="z-index:999;">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">添加标签</h4>
+					</div>
+					<div class="modal-body">
+						<div class="mod_top">
+							<div class="form-group">
+								<input type="text" class="form-control" id="exampleInputName2" placeholder="标签名">
+							</div>
+						</div>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" id="yes" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	 <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-left:51px;line-height: 30px;">
+            来源：
+        </label>
+        <div class="col-xs-12 col-sm-10" style="width: 80%;">
+            <!-- <input name="source" type="text" value="{$vainfo.source}"  minlength="2" maxlength="30" class="form-control" /> -->
+            <select name="source_id" class="form-control bs-select" title="请选择..." required>
+
+                <volist name="sourcelist" id="row">
+                    <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['source_id']"> selected </if> > {$row['name']} </option>
+                </volist>
+
+            </select>
+        </div>
+    </div>
+	<!-------------------------->
+	<div class="form-group row"style="margin-top: 60px;">
+		<button type="submit" class="btn btn-primary" style="margin-left: 43%;margin-right: " id="qb_save">保存</button>
+
+		<button type="button" class="btn btn-default close-m">取消</button>
+	</div>
+	<!--添加文字-->
+	<div class="modal fade" id="tjwz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">添加文字</h4>
+				</div>
+				<div class="modal-body" style="height: 200px;">
+					<textarea placeholder="请输入文字，限制200字" class="form-control textInput" id="mode_textare" style="height: 107px;"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="wz_save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!--编辑文字、文章、小标题-->
+<!--编辑文字-->
+<div class="modal fade" id="bjwz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加文字</h4>
+      </div>
+      <div class="modal-body" style="height: 200px;">
+        <textarea placeholder="请输入文字，限制200字" class="form-control textInput" id="mode_textare" style="height: 107px;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_wz_save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</form>
+	</div>
+	<div class="zhezhao"></div>
+	<img class="big" src="" />
+<script src="__PUBLIC__/admin/assets/js/Dailycontent.js" type="text/javascript" charset="utf-8"></script>

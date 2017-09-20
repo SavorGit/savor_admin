@@ -121,6 +121,7 @@ $config['MANGER_KEY'] = array(
     'report'=>'报表节点',
     'testreport'=>'测试报表节点',
     'checkaccount'=>'对账系统节点',
+    'dailycontent'=>'每日知享节点',
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
