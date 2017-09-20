@@ -1,3 +1,4 @@
+//111111111
 var on_off,_this,_this2;
 var numa = 1;
 var bjimg = 1;
