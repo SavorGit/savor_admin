@@ -89,10 +89,9 @@ class DailycontentshowController extends Controller {
         $this->assign('share_link', $share_url);
 
 
-
         $this->assign('srinfo', $speca_arr_info);
         $this->assign('vinfo', $spinfo);
-        $this->display('new_special');
+        $this->display('new_daily');
 
     }
 

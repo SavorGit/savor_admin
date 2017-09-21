@@ -1,4 +1,3 @@
-//111111111
 var on_off,_this,_this2;
 var numa = 1;
 var bjimg = 1;
@@ -57,7 +56,7 @@ $('#qb_save').click(function(){
 	var arr = [];
 	var zt_gropu_nridnex = $('.zt_gropu_nr').length;
 	if(zt_gropu_nridnex<1){
-		alert('专题组的数量不得少于1个');
+		//alert('内容的行数不得少于1行');
 	}else{
 		$('.zt_gropu_nr').each(function(){
 			var asss = $(this).find('a').children('input').val();
