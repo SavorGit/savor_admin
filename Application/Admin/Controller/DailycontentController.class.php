@@ -20,6 +20,7 @@ class DailycontentController extends BaseController {
     public function __construct() {
         parent::__construct();
         $this->oss_host = get_oss_host();
+        $this->lnum = 10;
     }
 
 
@@ -65,9 +66,10 @@ class DailycontentController extends BaseController {
         $save['bespeak_time'] = I('post.subdailytime','');
         $sort_str= I('post.dailysoar');
         $sort_arr = explode(',', $sort_str);
-        if (count($sort_arr) != 10) {
-            $this->error('内容不满足10条');
+        if (count($sort_arr) != $this->lnum) {
+            $this->error('内容不满足'.$this->lnum.'条');
         }
+
         //判断该日期是否发布过
         if($save['bespeak_time'] == '' || $save['bespeak_time']=='0000-00-00 00:00:00'){
             $save['bespeak'] = 0;
@@ -79,10 +81,11 @@ class DailycontentController extends BaseController {
             }
             $save['bespeak'] = 1;
         }
+
         $dat_time = date("Y-m-d", strtotime
         ($save['bespeak_time']));
         $dailylkModel = new \Admin\Model\DailyLkModel();
-        $where = '1=1 and DATE_FORMAT(`create_time`,"%Y-%m-%d")
+        $where = '1=1 and DATE_FORMAT(`bespeak_time`,"%Y-%m-%d")
          ="'.$dat_time.'"';
         $number = $dailylkModel->getCount($where, $field='*');
         if ( $number > 0) {
@@ -133,7 +136,7 @@ class DailycontentController extends BaseController {
         $orders = $order.' '.$sort;
         $where = "1=1 and state=0";
         $field = "id, title,DATE_FORMAT(`create_time`,'%Y-%m-%d') ctime";
-        $limit = 10;
+        $limit = $this->lnum;
         $result = $dcontentModel->getWhere($where, $field, $orders, $limit);
         $index = 1;
         foreach($result as &$value) {
@@ -218,11 +221,7 @@ class DailycontentController extends BaseController {
             }
         });
         $retp = $result['list'];
-        $index = $start+1;
-        foreach($retp as &$value) {
-            $value['index'] = $index;
-            $index++;
-        }
+
 
         $this->assign('list', $retp);
         $this->assign('page',  $result['page']);

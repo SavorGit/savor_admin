@@ -17,7 +17,7 @@
         </div>
         <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="serachdaily" value="{$dailyname}" placeholder="内容查找">
+            <input type="text" class="form-control" name="serachdaily" value="{$dailyname}" placeholder="输入内容名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -46,7 +46,7 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td data-title="ID">{$vlist.index}</td>
+              <td data-title="ID">{$vlist.id}</td>
               <td data-title="名称">{$vlist.title}
 
                 <if condition="$vlist.is_index eq 1">
@@ -67,12 +67,16 @@
                   <i class="fa fa-pencil"></i>
                   </a>
                 </div>
+                <if condition="$vlist['pub'] eq '已发布'">
+                  <div class="tools-edit" style="width:26px;"></div>
+                  <else/>
+                  <div class="tools-edit">
+                    <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/dailycontent/delcontent?sgid={$vlist.id}&flag=3"  class="btn btn-success btn-icon">
+                      <i class="fa fa-trash"></i>
+                    </a>
+                  </div>
+                </if>
 
-                <div class="tools-edit">
-                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/dailycontent/delcontent?sgid={$vlist.id}&flag=3"  class="btn btn-success btn-icon">
-                    <i class="fa fa-trash"></i>
-                  </a>
-                </div>
 
                 <div class="tools-edit">
 
