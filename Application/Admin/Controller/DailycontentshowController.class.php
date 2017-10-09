@@ -40,6 +40,7 @@ class DailycontentshowController extends Controller {
         .spictureid,sm.oss_addr simg,sas.name sourcename,dlk.bespeak_time ";
         $where =  " 1=1 and sg.id = $id ";
         $speca_arr_info = $dcontentModel->fetchDataBySql($field, $where);
+
         if( !(empty($speca_arr_info[0]['bespeak_time'])) ) {
             $speca_arr_info[0]['create_time'] =
                 $speca_arr_info[0]['bespeak_time'];
@@ -70,12 +71,12 @@ class DailycontentshowController extends Controller {
         }
         $wpi = new Weixin_api();
         $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-        $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_100_100.jpg';
-        $share_title = $speca_arr_info[0]['sptitle'];
-        if(empty($speca_arr_info[0]['spdesc'])){
+        $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_120_120.png';
+        $share_title = '每日知享 - '.$speca_arr_info[0]['title'];
+        if(empty($speca_arr_info[0]['desc'])){
             $share_desc = '小热点，陪伴你创造财富，享受生活。';
         }else{
-            $cot = html_entity_decode($speca_arr_info[0]['spdesc']);
+            $cot = html_entity_decode($speca_arr_info[0]['desc']);
             $cot = strip_tags($cot);
             $share_desc = mb_substr($cot,0,50);
         }
