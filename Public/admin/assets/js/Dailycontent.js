@@ -149,9 +149,9 @@ $('body').off('click').on('click','.dz-check span,#savemapImg',function(){
 	$("#qb_save").prop('disabled','');
 	$("#qb_save").removeClass('disabled');
 	/*var nums = numsa++;*/
-	var ssaa = _this.attr('btnnums');
 	var zt_btn_groupidnex = $('.zt-btn_group').length;//按钮
 	var zt_gropu_nridnex = $('.zt_gropu_nr').length;//内容
+
 	console.log(zt_gropu_nridnex);
 	var bj_imgbtn_html = '<button type="button" btnnums="'+(zt_gropu_nridnex+2)+'" style="display:none" id="bj_imgbtn" class="btn btn-default btn-wz" data-target="#modal-file" href="'+host_name+'/resource/uploadMapResource?filed=pics_map_'+(zt_gropu_nridnex+2)+'&rtype=2" data-browse-file>添加图片</button>';
 	if(bjimg==2){
@@ -166,6 +166,7 @@ $('body').off('click').on('click','.dz-check span,#savemapImg',function(){
 		//_this2.next().next().remove();
 		//_this2.next().remove();
 	}else if(bjimg==3){
+		var ssaa = _this.attr('btnnums');
 		var imgHtml = ''+bj_imgbtn_html+'<a class="imga"  href="#" data-browse-file=""><img class="zt_tjpic" id="pics_map_'+ssaa+'img" src="" border="0"><input class="picas" type="hidden" value="" id="pics_map_'+ssaa+'" name="pics_map_'+ssaa+'"></a>'
 		var aHtml = '<div class="zt_gropu_nr" >'+imgHtml+'<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"/></div><div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" btnnums = "'+(zt_gropu_nridnex+2)+'" class="btn btn-default btn-wz tianimg" data-target="#modal-file" href="'+host_name+'/resource/uploadMapResource?filed=pics_map_'+(zt_gropu_nridnex+2)+'&rtype=2" data-browse-file>添加图片</button></div>'
 		var ajd = _this.parent();
@@ -205,9 +206,10 @@ $('.zhezhao').click(function(){
 /*添加节点*/
 var numsa = 2
 function adddiv(jd_this,nr){
+	var zt_gropu_nridnex = $('.zt_gropu_nr').length;
 	var nums = numsa++
 	//var zt_gropu_nridnex = $('.zt_gropu_nr').length;
-	var aHtml = '<div class="zt_gropu_nr" >'+nr+'<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"/></div><div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" btnnums = "'+(nums)+'" class="btn btn-default btn-wz tianimg" data-target="#modal-file" href="'+host_name+'/resource/uploadMapResource?filed=pics_map_'+(nums)+'&rtype=2" data-browse-file>添加图片</button></div>'
+	var aHtml = '<div class="zt_gropu_nr" >'+nr+'<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"/></div><div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" btnnums = "'+(zt_gropu_nridnex+2)+'" class="btn btn-default btn-wz tianimg" data-target="#modal-file" href="'+host_name+'/resource/uploadMapResource?filed=pics_map_'+(zt_gropu_nridnex+2)+'&rtype=2" data-browse-file>添加图片</button></div>'
 	var ajd = jd_this.parent();
 	ajd.after(aHtml);
 	//aHtml.insertAfter(ajd);
