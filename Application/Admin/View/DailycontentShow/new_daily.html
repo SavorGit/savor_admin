@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-		<title>{$vinfo.name}-每日知享</title>
+		<title>{$vinfo.name}-小热点</title>
 	</head>
 	<script src="__PUBLIC__/admin/assets/plugins/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -159,10 +159,14 @@
 	</style>
 	<body>
 		<!--下载条-->
-		<div id="topLabel" style="background-color: #932c3f;width: 93%;height: 53px;border-radius:6px ;position: fixed;bottom: 5px;left: 3.5%;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
-		<img src="/Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-bottom: 2px; margin-left: 10px; width: 160px; height: 33px;">
-		<div id="downLoad" style="background-color: #f6f3ee;border-radius: 2px;position: absolute;top: 11px;right: 37px;height: 33px;">
-			<p id="xiazai" style="color:#932c3f;width: 66px;height: 65px;margin-top: 6px;text-align: center;font-size: 15px;font-size: 13px;line-height: 23px;">立即打开</p>
+		<div id="topLabel" style="background-color: #222;width: 100%;height: 53px;position: fixed;bottom: 0px;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
+		<img src="/Public/admin/assets/img/h5_logo_zhi@3x.png" name="myself" style="margin-top: 9px;margin-right: 11px; margin-left: 10px; width: 38px; height: 38px;float: left;">
+		<div class="wenan" style="height: 40px;margin-top: 12px;">
+			<span style="display: block;font-size: 14px;color: #F5F5F5;">每日知享</span>
+			<span style="display: block;font-size: 12px;color: #999;">每日十条内容,知世界,享生活</span>
+		</div>
+		<div id="downLoad" style="background-color: #f6f3ee;border-radius: 4px;position: absolute;top: 12px;right: 40px;height: 31px;background-color: #f8f6f1;">
+			<p id="xiazai" style="color:#1b1c20;width: 66px;height: 31px;margin-top: 6px;text-align: center;font-size: 13px;line-height: 22px;font-weight: 800;">立即打开</p>
 		</div>
 		<span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;z-index: 100;"><img style="width: 15px;margin-top: 5px;" src="/Public/admin/assets/img/guanbi.png"></span>
 		</div>
@@ -176,7 +180,7 @@
 					<span class="big_tit">{$vinfo.title}</span>
 				</p>
 				<div class="laiyuan">
-					<span>选自：</span>
+					<span>选自:</span>
 					<span>{$vinfo.sourcename}</span>
 					<span style="margin-left: 3px;">{$vinfo.create_time}</span>
 				</div>
