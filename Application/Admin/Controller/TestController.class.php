@@ -11,12 +11,20 @@ class TestController extends Controller {
     //http://www.a.com/admin/test/whoop
 
     public function getShortUrl() {
-        $shortlink = C('HOST_NAME').'/admin/activitydetail/index?id=2&hide=1';
-        echo $shortlink.'<hr/>';
-       // die;
-        $shortlink = urlencode($shortlink);
-        $shortlina = shortUrlAPI(1, $shortlink);
-        echo $shortlina;
+
+        $shortlink = array(
+            '0'=>C('CONTENT_HOST').'content/4118.html?app=inner&channel=bigscpro&issq=1',
+            '1'=>C('CONTENT_HOST').'content/3311.html?app=inner&channel=bigscpro&issq=1',
+        );
+        var_dump($shortlink);
+        foreach($shortlink as $r=>$v) {
+            $shortlink[$r] = urlencode($v);
+        }
+        var_dump($shortlink);
+        foreach($shortlink as $v) {
+            $shortlina[] = shortUrlAPI(1, $v);
+        }
+        var_export($shortlina);
     }
 
     public function whoop() {

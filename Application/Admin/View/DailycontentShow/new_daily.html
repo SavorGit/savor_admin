@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>{$vinfo.name}-每日知享</title>
+	</head>
+	<script src="__PUBLIC__/admin/assets/plugins/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body,html{
+			width: 100%;
+			height: 100%;
+			background-color: #f8f6f1;
+			margin: 0 auto;
+		}
+		.top_img{
+			width: 100%;
+			height: 4.84rem;
+			display: block;
+		}
+		.cen_text{
+			width: 90%;
+			height: 100%;
+			margin: 0 auto;
+			margin-top: 0.32rem;
+		}
+		.big_tit{
+			width: 100%;
+			font-size: 0.38rem;
+			color: #222;
+			display: block;
+			font-family:"PingFangSC-Medium";
+			font-weight: 700;
+			margin-bottom: 0.4rem;
+		}
+		.wz{
+			font-family: "PingFangSC-Light";
+			font-size: 0.32rem;
+			color: #444;
+			margin-bottom: 0.5rem;
+			letter-spacing: 1px;
+			line-height: 0.47rem;
+			text-align:justify;
+
+		}
+		.sm_bt{
+			font-size: 0.32rem;
+			color: #922C3E;
+			font-family:"PingFangSC-Regular";
+			margin-bottom: 0.4rem;
+			display: block;
+			width: 100%;
+			font-weight: 700;
+		}
+		.tuijian {
+			width: 100%;
+			margin: 0 auto;
+		}
+		
+		.tit_tuijian {
+			font-size: 0.3rem;
+			color: #922c3e;
+			font-weight: 700;
+			display: block;
+			width: 93%;
+			margin: 0 auto;
+			height: 0.96rem;
+			line-height: 0.96rem;
+		}
+		.tuijian a{
+			
+		}
+		.tuijian_list {
+			width: 100%;
+			margin: 0 auto;
+			padding-bottom: 0.12rem;
+			padding-top: 0.12rem;
+			background-color: #eee8e0;
+			margin-bottom: 0.2rem;
+		}
+		
+		.tuijian_list img {
+			width: 2.6rem;
+			height: 1.68rem;
+			float: left;
+			margin-right: 0.2rem;
+			margin-left: 0.1rem;
+		}
+		
+		.tuijian_list_tit {
+			font-size: 0.32rem;
+			color: #434343;
+			font-weight: 700;
+			display: block;
+			height: 1.1rem;
+		}
+		
+		.tuijian_list_tit a {
+			color: #434343;
+			text-decoration: none;
+			display: -webkit-box;
+		    -webkit-box-orient: vertical;
+		    -webkit-line-clamp: 2;
+		    overflow: hidden;
+		}
+		.shijian {
+			font-size: 0.2rem;
+			color: #B2AFAB;
+			display: block;
+			float: left;
+			margin-top: 3px;
+		}
+		.zt-pic{
+			width: 100%;
+			margin-bottom: 0.3rem;
+		}
+		/*.more{
+			width: 95%;
+			height: 0.72rem;
+			margin: 0 auto;
+			text-align: center;
+			background-color: #ede6dd;
+			line-height: 0.2rem;
+			margin-top: 0.6rem;
+			border-radius:5px ;
+			letter-spacing: 1px;
+			margin-bottom: 0.2rem;
+		}
+		.more a{
+			font-size: 0.3rem;
+			color: #922C3E;
+			text-decoration: none;
+			display: block;
+    		line-height: 0.72rem;
+		}
+		.more .shou{
+			width: 0.36rem;
+			height: 0.3rem;
+			margin-left: 0.1rem;
+			margin-right: 0.1rem;
+			vertical-align: middle;
+		}
+		.more .zhi{
+			width: 0.19rem;
+			height: 0.21rem;
+			margin-left: 0.12rem;
+		}*/
+		.laiyuan{
+			width: 100%;
+			color: #999999;
+			font-size: 0.24rem;
+			margin-bottom: 0.5rem;
+		}
+	</style>
+	<body>
+		<!--下载条-->
+		<div id="topLabel" style="background-color: #932c3f;width: 93%;height: 53px;border-radius:6px ;position: fixed;bottom: 5px;left: 3.5%;z-index: 100;<if condition="$sourc eq 'newRead'">display: none;</if>">
+		<img src="/Public/admin/assets/img/xiazai@3x.png" name="myself" style="margin-bottom: 2px; margin-left: 10px; width: 160px; height: 33px;">
+		<div id="downLoad" style="background-color: #f6f3ee;border-radius: 2px;position: absolute;top: 11px;right: 37px;height: 33px;">
+			<p id="xiazai" style="color:#932c3f;width: 66px;height: 65px;margin-top: 6px;text-align: center;font-size: 15px;font-size: 13px;line-height: 23px;">立即打开</p>
+		</div>
+		<span id="disnone" style="position: absolute;right: 7px;top: 2px;color: white;font-size:17px;z-index: 100;"><img style="width: 15px;margin-top: 5px;" src="/Public/admin/assets/img/guanbi.png"></span>
+		</div>
+		<div class="zt">
+			<div id="">
+				<img src="{$vinfo.oss_addr}" class="top_img" />
+			</div>
+			<div class="cen_text">
+				<!--标题-->
+				<p>
+					<span class="big_tit">{$vinfo.title}</span>
+				</p>
+				<div class="laiyuan">
+					<span>选自：</span>
+					<span>{$vinfo.sourcename}</span>
+					<span style="margin-left: 3px;">{$vinfo.create_time}</span>
+				</div>
+				<!--专题简介
+				<p class="wz">
+					{$vinfo.desc}
+				</p>-->
+				<volist name="srinfo" id="vlist">
+					<if condition="$vlist.dailytype eq 1">
+						<!--文字-->
+						<p class="wz">
+							{$vlist.stext}
+						</p>
+						<elseif condition="$vlist.dailytype eq 3"/>
+						<!----图片---->
+						<img class="zt-pic" src="{$vlist.simg}"/>
+
+						<else/>
+					</if>
+					</volist>
+			</div>
+			<!--<div class="more" style="<if condition="$sourc eq 'newRead'">display: none</if>"><a href="http://www.littlehotspot.com/d">打开<img class="shou" src="/Public/admin/assets/img/shoushi@3x.png">只给富人看的小热点<img class="zhi" src="/Public/admin/assets/img/more@3x.png"></a></div>-->
+		</div>
+
+
+
+		<input type="hidden" value="<?php echo $appid; ?>" id="appid"/>
+		<input type="hidden" value="<?php echo time(); ?>" id="timestamp"/>
+		<input type="hidden" value="<?php echo $noncestr; ?>" id="noncestr"/>
+		<input type="hidden" value="<?php echo $signature; ?>" id="signature"/>
+		<input type="hidden" value="<?php echo $share_link; ?>" id="share_link"/>
+		<input type="hidden" value="<?php echo $share_link; ?>" id="jump_link"/>
+		<input type="hidden" value="<?php echo  $share_title; ?>" id="share_title"/>
+		<input type="hidden" value="<?php echo $share_desc;  ?>" id="share_desc"/>
+		<input type="hidden" value="<?php echo $shareimg; ?>" id="share_img"/>
+	</body>
+	<script type="text/javascript" src="__PUBLIC__/admin/assets/js/weicontent.js"></script>
+	<script type="text/javascript">
+		var dom_width = document.body.clientWidth;
+		var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+			/*if(dom_width>=900){
+				$('body').css('width','320px');
+				$('html').css('font-size','42.667px')
+			}*/
+		};
+
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}
+		$('#disnone').click(function(){
+			$('#topLabel').hide();
+			$('.zt').css('padding-bottom','10px')
+		});
+		
+		var disnones = $('#topLabel').css('display');
+		if(disnones=='block'){
+			$('.zt').css('padding-bottom','53px');
+		}
+		$('a').click(function(){
+			var hrefs = $(this).attr('href');
+			if(hrefs!=''){
+			$(this).prop('href',""+hrefs+"?app=inner");
+			}
+		})
+		$('#xiazai').click(function(){
+			 window.location.href = 'http://www.littlehotspot.com/d';
+		})
+	</script>
+</html>

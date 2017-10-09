@@ -4,6 +4,7 @@ $route_rules = array(
     '/^content\/(\d{0,10})$/'=>'Client/showcontent?id=:1',
     '/^special\/(\d{0,10})$/'=>'Client/showcontent?id=:1',
     '/^specialgroupshow\/(\d{0,10})$/'=>'specialgroupshow/showsp?id=:1',
+    '/^dailycontentshow\/(\d{0,10})$/'=>'Dailycontentshow/showday?id=:1',
 );
 $config = array(
     'VAR_PAGE'=>'pageNum',

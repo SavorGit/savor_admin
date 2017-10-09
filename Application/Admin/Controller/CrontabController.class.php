@@ -54,7 +54,7 @@ class CrontabController extends Controller
                 $flag = 0;
                 //$normal_hotel_num +=1;
                 $where = '';
-                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state=1 and a.flag =0';
+                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
                 $box_list = $m_box->getListInfo( 'a.id, a.mac',$where);
                 foreach($box_list as $ks=>$vs){
                     $where = '';
@@ -94,7 +94,7 @@ class CrontabController extends Controller
                 $small_plat_status = 0;
                 $flag = 0;
                 $where = '';
-                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state=1 and a.flag =0';
+                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
                 $box_list = $m_box->getListInfo( 'a.id, a.mac',$where);
                 foreach($box_list as $ks=>$vs){
                     $where = '';
@@ -327,4 +327,45 @@ class CrontabController extends Controller
          $res = $umengApi->umeng_api_ios($ios_params,$ext_arr);
        
     }*/
+    /**
+     * @desc 随机生成广告的位置
+     */
+    public function recordAdsLocation(){
+        $base_location_arr = array(1,2,3,4,5,6,7,8,9,10);
+        //获取未执行插入位置的广告
+        $m_pub_ads = new \Admin\Model\PubAdsModel(); 
+        $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+        $pub_ads_list = $m_pub_ads->getEmptyLocationList();
+        
+        foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
+            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);
+            
+            foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
+                $all_have_location_arr = array();
+                //取出该机顶盒所有未填写位置的列表
+                $all_empty_location_info = $m_pub_ads_box->getEmptyLocation($val['id'],$v['box_id']);
+                if(!empty($all_empty_location_info)){
+                    //取出该机顶盒在该广告起止时间内所有的位置
+                    $all_have_location_info = $m_pub_ads_box->getLocationList($val['id'],$v['box_id'],$val['start_date'],$val['end_date']);
+                    foreach($all_have_location_info as $hl){
+                        $all_have_location_arr[] = $hl['location_id'];
+                    }
+                    $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
+                    if(!empty($diff_location_arr)){
+                        $count = count($all_empty_location_info);
+                        $now_location_arr = array_rand($diff_location_arr,$count);
+                        
+                        foreach($all_empty_location_info as $ek=>$ev){
+                            $where['id'] = $ev['id'];
+                            $data['location_id'] = $diff_location_arr[$now_location_arr[$ek]];
+                            $data['update_time'] = date('Y-m-d H:i:s');
+                            $m_pub_ads_box->updateInfo($where,$data);
+                        } 
+                    }  
+                }
+            }
+            $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
+        }
+        echo "OK";
+    }
 }

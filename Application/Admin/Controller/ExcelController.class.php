@@ -1817,38 +1817,25 @@ class ExcelController extends Controller
         if($starttime <= $endtime) {
             $stt = strtotime($starttime);
             $ste = strtotime($endtime);
-            $where.=" AND LEFT(TIMESTAMP,10)>='$stt'";
-            $where.=" AND LEFT(TIMESTAMP,10)<='$ste'";
+            if($stt == $ste) {
+                $ste = $stt+86399;
+            } else {
+                $ste = $ste+86399;
+            }
+            $where.=" AND TIMESTAMP/1000>='$stt'";
+            $where.=" AND TIMESTAMP/1000<='$ste'";
 
         }else{
             echo "<script>alert('开始时间必须小于等于结束时间');</script>";
             die;
         }
         if ( $url ) {
-            $cid_arr =  explode('?', $url);
-            $cid_str = $cid_arr[0];
-            preg_match("/.*content\/(.*).html.*/", $cid_str,$mathes);
-            $contenid = $mathes[1];
-            $cid_str_2 = htmlspecialchars_decode($cid_arr[1]);
-
-            parse_str($cid_str_2, $ch_arr);
-            if($contenid) {
-                $where.=" AND content_id=$contenid ";
-            }
-            if($ch_arr) {
-                foreach ($ch_arr as $ck=>$cv) {
-                    if($ck == 'app') {
-
-                    } else {
-                        $where.=" AND $ck= '".$cv."' ";
-                    }
-
-                }
-            }
+            $url = htmlspecialchars_decode('/'.$url);
+            $where.=" AND request_url = '$url'";
         }
         $field = '*';
         $clinkModel = new \Admin\Model\ContentLinkModel();
-        $result = $clinkModel->fetchDataWhere($where, $order='id desc', $field,2);
+        $result = $clinkModel->fetchDataWhere($where, $order='timestamp desc', $field,2);
         $dat = $result;
         $is_wei = array(
             '0' => '否',
