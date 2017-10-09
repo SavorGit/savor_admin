@@ -37,9 +37,15 @@ class DailycontentshowController extends Controller {
         $id = I('get.id');
         $field = "sg.title title,sg.create_time, sg.media_id mediaid,sg.keyword
         ,sg.desc,sg.source_id,sg.order_tag tag,sr.dailytype,sr.stext,sr
-        .spictureid,sm.oss_addr simg,sas.name sourcename ";
+        .spictureid,sm.oss_addr simg,sas.name sourcename,dlk.bespeak_time ";
         $where =  " 1=1 and sg.id = $id ";
         $speca_arr_info = $dcontentModel->fetchDataBySql($field, $where);
+        if( !(empty($speca_arr_info[0]['bespeak_time'])) ) {
+            $speca_arr_info[0]['create_time'] =
+                $speca_arr_info[0]['bespeak_time'];
+
+        }
+
         $oss_host = $this->oss_host;
         $m_media = new \Admin\Model\MediaModel();
         $marr = $m_media->getMediaInfoById($speca_arr_info[0]['mediaid']);

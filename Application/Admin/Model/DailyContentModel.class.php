@@ -62,7 +62,7 @@ class DailyContentModel extends BaseModel
         sg left JOIN savor_daily_relation sr ON sg.id = sr.dailyid
         LEFT JOIN savor_media sm ON sm.id = sr.spictureid
         left join savor_article_source sas on sas.id = sg.source_id
-         WHERE $where ";
+         left join savor_daily_home dhome on dhome.dailyid = sg.id left join savor_daily_lk dlk on dlk.id = dhome.lkid WHERE $where ";
 		$res = $this->query($sql);
 		if($res) {
 			return $res;
