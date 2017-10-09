@@ -615,6 +615,7 @@ ALTER TABLE `cloud`.`savor_sysuser`     CHANGE `mebId` `mebId` INT(11) DEFAULT '
 增加说明：添加每日知享列表
 修改时间：2017.9.18 15：00
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_daily_content` (
   `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
@@ -638,6 +639,7 @@ CREATE TABLE `savor_daily_content` (
 修改时间：2017.9.18 15：00
 修改人：白玉涛
 执行sql:
+执行结果：已执行
 DROP TABLE IF EXISTS `savor_daily_relation`;
 CREATE TABLE `savor_daily_relation` (
   `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
@@ -653,6 +655,7 @@ CREATE TABLE `savor_daily_relation` (
 增加说明：添加每日知享home表对应共同表
 修改时间：2017.9.18 15：00
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_daily_lk` (
   `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT 'home表lkid',
@@ -668,6 +671,7 @@ CREATE TABLE `savor_daily_lk` (
 增加说明：添加每日知享排序列表
 修改时间：2017.9.18 15：00
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_daily_home` (
   `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '',
@@ -676,6 +680,7 @@ CREATE TABLE `savor_daily_home` (
   `sort_num` INT(2) NOT NULL COMMENT '排序',
   PRIMARY KEY (`id`),
   KEY `index_contentId` (`dailyid`)
+<<<<<<< HEAD
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
@@ -773,6 +778,23 @@ CREATE TABLE `savor_pub_ads` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告投放表';
 
 
+=======
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+增加说明：添加每日知享排序列表
+修改时间：2017.9.18 15：00
+修改人：张英涛
+执行结果：已执行
+执行sql:
+CREATE TABLE `savor_daily_collection` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `dailyid` int(11) NOT NULL DEFAULT '0' COMMENT '文章id',
+  `device_id` varchar(50) NOT NULL DEFAULT '' COMMENT '设备号',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `state` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0未收藏1收藏',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=139 DEFAULT CHARSET=utf8 COMMENT='知享收藏表'
+>>>>>>> 3f830d206d791fdb6c21145eda9dab95b5e02ef7
 
 
 
