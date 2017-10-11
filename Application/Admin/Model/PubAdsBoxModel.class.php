@@ -12,7 +12,13 @@ use Common\Lib\Page;
 class PubAdsBoxModel extends BaseModel
 {
 	protected $tableName='pub_ads_box';
-
+	public function getBoxArrByPubAdsId($pub_ads_id){
+	    $fields = 'box_id';
+	    $where = array('pub_ads_id'=>$pub_ads_id);
+	    $group = ' box_id';
+	    $data = $this->field($fields)->where($where)->group($group)->select();
+	    return $data;
+	}
 	public function getBoxPlayTimes($where, $field) {
 		$list = $this->alias('ads')
 					 ->where($where)
@@ -78,7 +84,7 @@ class PubAdsBoxModel extends BaseModel
 
 	}
 
-	//�������޸�
+	//�������޸�
 	public function addData($data, $acttype) {
 		if(0 === $acttype) {
 			$result = $this->add($data);
@@ -91,7 +97,7 @@ class PubAdsBoxModel extends BaseModel
 
 
 	/**
-	 * @desc 取出该机顶盒所有未填写位置的列�?
+	 * @desc 取出该机顶盒所有未填写位置的列�?
 	 */
 	public function getEmptyLocation($pub_ads_id,$box_id){
 	    $fields = 'id';
