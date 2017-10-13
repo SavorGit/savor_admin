@@ -359,9 +359,7 @@ class DailycontentController extends BaseController {
         if (count($sp_relation_arr)<1) {
             $this->error('原文内容至少有1条');
         }
-        if (count($sp_relation_arr)>1000) {
-            $this->error('原文内容最多1000条');
-        }
+
 
         $oss_host = $this->oss_host;
         $m_media = new \Admin\Model\MediaModel();

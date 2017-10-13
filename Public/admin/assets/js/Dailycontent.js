@@ -28,7 +28,7 @@ $('.zt-group').on('click','.tianimg',function(){
 $('#tjwz #wz_save').click(function(){
 	var mode_textare = $('#mode_textare').val();
 	if(mode_textare !=''){
-		if(mode_textare.length<=200){
+		if(mode_textare.length<=1000){
 			$('#tjwz').modal('hide');
 			
 				adddiv(_this,mode_textare);
@@ -36,7 +36,7 @@ $('#tjwz #wz_save').click(function(){
 				_this.parent().next().attr('data-call',mode_textare);
 			
 		}else{
-			alert('字数已经超出200字');
+			alert('字数已经超出1000字');
 		}
 	}else{
 		alert('请填写内容！');
@@ -126,14 +126,14 @@ $('.zt-group').on('click','.zt_del',function(){
 $('#bjwz #bj_wz_save').click(function(){
 	var mode_textare = $('#bjwz #mode_textare').val();
 	if(mode_textare !=''){
-		if(mode_textare.length<=200){
+		if(mode_textare.length<=1000){
 			$('#bjwz').modal('hide');
 				_this2.html(mode_textare+'<img class="zt_bianji" src="../../../../Public/admin/assets/img/zt_bianji.png"/><img class="zt_del" src="../../../../Public/admin/assets/img/zt_shanc.png"/>')
 				_this2.attr('leix','scontent');
 				_this2.attr('data-call',mode_textare);
 			
 		}else{
-			alert('字数已经超出200字');
+			alert('字数已经超出1000字');
 		}
 	}else{
 		alert('请填写内容！');
