@@ -122,6 +122,9 @@ $config['MANGER_KEY'] = array(
     'testreport'=>'测试报表节点',
     'checkaccount'=>'对账系统节点',
     'dailycontent'=>'每日知享节点',
+    'newmenu'=>'新节目节点',
+    'advdelivery'=>'广告投放节点',
+	'option'=>'运维客户端',
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
@@ -225,6 +228,23 @@ $config['UMENT_API_CONFIG'] = array(
          'ios_AppKey'=>'59b1260a734be41803000022',
          'ios_App_Master_Secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
      ),
+);
+$config['ADV_VIDEO'] = array(
+    'name' => array(
+        '0' => '酒楼宣传片',
+        '1' => '酒楼片源',
+    ),
+    'num' => '6',
+);
+$config['ADVE_OCCU'] = array(
+    'name' => '广告位',
+    'num' => '10',
+);
+$config['TOU_STATE'] = array(
+    '0'=>'全部',
+    '1'=>'未投放',
+    '3'=>'投放完毕',
+    '2'=>'投放中',
 );
 $config['USER_GRP_CONFIG'] = array(
     '0'=>'无',
