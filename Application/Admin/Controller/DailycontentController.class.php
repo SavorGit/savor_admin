@@ -360,6 +360,7 @@ class DailycontentController extends BaseController {
             $this->error('原文内容至少有1条');
         }
 
+
         $oss_host = $this->oss_host;
         $m_media = new \Admin\Model\MediaModel();
         $marr = $m_media->getMediaInfoById($save['media_id']);
