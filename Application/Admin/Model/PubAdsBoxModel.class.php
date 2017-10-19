@@ -129,13 +129,7 @@ class PubAdsBoxModel extends BaseModel
 	}
 
 
-	public function getBoxArrByPubAdsId($pub_ads_id){
-		$fields = 'box_id';
-		$where = array('pub_ads_id'=>$pub_ads_id);
-		$group = ' box_id';
-		$data = $this->field($fields)->where($where)->group($group)->select();
-		return $data;
-	}
+
 }//End Class
 
 
