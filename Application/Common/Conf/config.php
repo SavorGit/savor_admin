@@ -122,9 +122,12 @@ $config['MANGER_KEY'] = array(
     'testreport'=>'测试报表节点',
     'checkaccount'=>'对账系统节点',
     'dailycontent'=>'每日知享节点',
+
     'newmenu'=>'新节目节点',
     'advdelivery'=>'广告投放节点',
 	'option'=>'运维客户端',
+    'installoffer'=>'网络设备报价',
+
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
@@ -249,5 +252,14 @@ $config['TOU_STATE'] = array(
 $config['USER_GRP_CONFIG'] = array(
     '0'=>'无',
     '1'=>'运维组',
+);
+$config['INSTALL_OFFER_CONFIG'] = array(
+    '1'=>array('name'=>'智能网关','specifit'=>'R1000+'),
+    '1'=>array('name'=>'POE交换机','specifit'=>''),
+    '1'=>array(''),
+    '1'=>array(''),
+    '1'=>array(''),
+    '1'=>array(''),
+    '1'=>array(''),
 );
 return $config;
