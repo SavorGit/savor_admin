@@ -11,7 +11,7 @@
 	}
 </style>
 <body>
-
+<div id="selopt" style="display: none;"></div>
 	<div class="pageContent" id="pagecontent">
 	 <div id="w_list_print">
 <div class="no-more-tables">
@@ -59,14 +59,14 @@
    			<td>AC</td>
    			<td>—</td>
    			<td>安装，调试，升级，配置</td>
-   			<td><input class="nums_B numsb1" name="message[1][nums]" type="text"></td>
+   			<td><input class="nums_B numsb1" value="0" name="message[1][nums]" type="text"></td>
    			<td></td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[0][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[1][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[1][market_price]" value="{$list[0][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			<td>设备配置，升级难度大，必需项。</td>
-   			<td><input type="text"  class="our_price_B" name="message[1][our_price]" disabled></td>
+   			<td><input type="text" value="0" class="our_price_B" name="message[1][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -75,14 +75,14 @@
    			<td>POE交换机</td>
    			<td>—</td>
    			<td>安装，调试，升级，配置</td>
-   			<td><input class="nums_B numsb2" name="message[2][nums]" type="text"></td>
+   			<td><input class="nums_B numsb2" value="0" name="message[2][nums]" type="text"></td>
    			<td></td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[1][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[2][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[2][market_price]" value="{$list[1][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			<td>设备配置，升级难度大，必需项。</td>
-   			<td><input type="text"  class="our_price_B" name="message[2][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[2][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -91,14 +91,14 @@
    			<td>AP</td>
    			<td>—</td>
    			<td>安装，调试，升级，配置</td>
-   			<td><input class="nums_B numsb" name="message[3][nums]" type="text"></td>
+   			<td><input class="nums_B numsb" value="0" name="message[3][nums]" type="text"></td>
    			<td></td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[2][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[3][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[3][market_price]" value="{$list[2][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			<td>设备配置，升级难度大，必需项。</td>
-   			<td><input type="text"  class="our_price_B" name="message[3][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[3][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -108,15 +108,15 @@
    			<td>网线</td>
    			<td>超五类</td>
    			<td>超五类</td>
-   			<td><input class="nums_B" name="message[4][nums]" type="text"></td>
+   			<td><input class="nums_B" value="0" name="message[4][nums]" type="text"></td>
    			<td>箱</td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[3][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[4][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[4][market_price]" value="{$list[3][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			<td rowspan="6">辅材打包价格</td>
    			
-   			<td><input type="text"  class="our_price_B" name="message[4][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[4][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -125,14 +125,14 @@
    			<td>4K高清数据线</td>
    			<td>加粗高流量型</td>
    			<td>高清数据线</td>
-   			<td><input class="nums_B" name="message[5][nums]" type="text"></td>
+   			<td><input class="nums_B" value="0" name="message[5][nums]" type="text"></td>
    			<td>根</td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[4][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[5][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[5][market_price]" value="{$list[4][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			
-   			<td><input type="text"  class="our_price_B" name="message[5][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[5][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -141,14 +141,14 @@
    			<td>超五类跳线</td>
    			<td>国标</td>
    			<td>高清线</td>
-   			<td><input class="nums_B" name="message[6][nums]" type="text"></td>
+   			<td><input class="nums_B" value="0" name="message[6][nums]" type="text"></td>
    			<td>根</td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[5][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[6][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[6][market_price]" value="{$list[5][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			
-   			<td><input type="text"  class="our_price_B" name="message[6][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[6][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -159,14 +159,14 @@
    			<td>胶带，水晶头，扎
 			带，编码条，软管，
 			线盒等辅料</td>
-   			<td><input class="nums_B" name="message[7][nums]" type="text"></td>
+   			<td><input class="nums_B" value="0" name="message[7][nums]" type="text"></td>
    			<td></td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[6][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[7][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[7][market_price]" value="{$list[6][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			
-   			<td><input type="text"  class="our_price_B" name="message[7][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[7][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -175,13 +175,13 @@
    			<td>金属线卡</td>
    			<td>标准</td>
    			<td>--</td>
-   			<td><input class="nums_B" name="message[8][nums]" type="text"></td>
+   			<td><input class="nums_B" value="0" name="message[8][nums]" type="text"></td>
    			<td>包</td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[7][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[8][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[8][market_price]" value="{$list[7][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
-   			<td><input type="text"  class="our_price_B" name="message[8][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[8][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -190,14 +190,14 @@
    			<td>强电插板</td>
    			<td></td>
    			<td>--</td>
-   			<td><input class="nums_B" name="message[9][nums]" type="text"></td>
+   			<td><input class="nums_B" value="0" name="message[9][nums]" type="text"></td>
    			<td>个</td>
-   			<td><input class="cost_nums_B" type="text"></td>
+   			<td><input class="cost_nums_B" value="{$list[8][cost_price]}" type="text"></td>
    			<td><input class="cost_B" value="0" type="text"></td>
-   			<td><input class="market_price_B" name="message[9][market_price]" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[9][market_price]" value="{$list[8][market_price]}" type="text"></td>
    			<td class="all_market_price_B">0</td>
    			
-   			<td><input type="text"  class="our_price_B" name="message[9][our_price]" disabled></td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[9][our_price]"></td>
    			<td></td>
    			<td><input type="text" value="100" class="explain_B">%</td>
    		</tr>
@@ -217,7 +217,7 @@
    			<td colspan="4">----------</td>
    			<td id="group_cost_price">0</td>
    			<td></td>
-   			<td></td>
+   			<td class="all_ab_bazaar">0</td>
    			<td></td>
    			<td class="group_our_price">0</td>
    			<td></td>
@@ -231,12 +231,12 @@
    			<td>备注：设备质保期为一年。过时甲方自行承担，乙方负责维护安装，配置，更新止正常运行</td>
    			<td></td>
    			<td></td>
-   			<td>1</td>
+   			<td><input type="text" value="1" name="hardware[1][nums]"></td>
    			<td>年</td>
-   			<td><input name="hardware[1][nums]" type="text"></td>
-   			<td><input name="hardware[1][market_price]" id="cb_num1" value="0" type="text"></td>
-   			<td></td>
-   			<td></td>
+   			<td><input type="text" value="{$info[0][cost_price]}"></td>
+   			<td><input id="cb_num1" value="0" type="text"></td>
+   			<td><input type="text" value="0"></td>
+   			<td><input type="text" value="{$info[0][market_price]}" class="d_shic"  name="hardware[1][market_price]"></td>
    			<td>为了保障设备长期，
 			高效运行。故硬件维护
 			保养费用为必备项。为
@@ -253,12 +253,12 @@
    			<td>云端管理共享</td>
    			<td>甲乙双方</td>
    			<td>设备升级，重启，维护，后台软件系统更新。增强设备速率。</td>
-   			<td><input name="softwart[1][nums]" type="text"></td>
-   			<td><input type="text"></td>
-   			<td><input type="text"></td>
-   			<td><input name="softwart[1][market_price]" id="cb_num2" value="0" type="text"></td>
-   			<td></td>
-   			<td></td>
+   			<td><input name="softwart[1][nums]" type="text" value="1"></td>
+   			<td>12</td>
+   			<td><input type="text" value="{$info[1][cost_price]}"></td>
+   			<td><input id="cb_num2" value="0" type="text"></td>
+   			<td><input value="0" type="text"></td>
+   			<td><input type="text" value="{$info[1][market_price]}" class="e_shic" name="softwart[1][market_price]"></td>
    			<td>延长设备使用年限，保障设备高效运行。为合理费用项。</td>
    			<td><input class="serve2" value="0" name="softwart[1][our_price]" type="text"></td>
    			
@@ -268,7 +268,7 @@
    			<td colspan="4">C+D+E=</td>
    			<td id="allxm">0</td>
    			<td></td>
-   			<td></td>
+   			<td class="abde_shic">0</td>
    			<td></td>
    			<td class="allm">0</td>
    		</tr>

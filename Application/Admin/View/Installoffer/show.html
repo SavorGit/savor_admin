@@ -7,19 +7,34 @@
 
 </head>
 <style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	html,body{
+		font-size: 9px;
+	}
+	.table-bordered > thead>tr>th{
+		border: 1px solid #2c2828;
+		margin: 0;
+		padding: 0;
+		text-align: center;
+	}
 .table-bordered > tbody > tr > td{
 	border: 1px solid #2c2828;
+	margin: 0;
+	padding: 0;
 }
 </style>
 <body>
 
-  <h2 align="center" style="margin:0 auto">网络设备维护改造工程报价清单</h2>
+  <h5 align="center" style="margin:0 auto">网络设备维护改造工程报价清单</h5>
    <div class="pageContent" id="pagecontent">
 	 <div id="w_list_print">
-<div class="no-more-tables">
-	<table class="table table-bordered" targetType="navTab" style="overflow: auto;height: 100%;">
+<div class="no-more-tables table-responsive">
+	<table class="table table-bordered table-condensed" targetType="navTab" style="overflow: auto;height: 100%;">
 	<thead>
-		<tr>
+		<tr style="background-color: #6c75e0;">
 		<th>序号</th>
 		<th>设备名称</th>
 		<th>规格型号</th>
@@ -33,7 +48,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr style="background-color: #77e470;">
 			<td colspan="11">一、网络改造工程</td>
 		</tr>
 		<tr>
@@ -55,7 +70,7 @@
 		</volist>
 		
 		<tr>
-			<td colspan="6">小计</td>
+			<td colspan="6" style="text-align: right;">小计</td>
 			<td></td>
 			<td>{$equip_market_total}</td>
 			<td></td>
@@ -168,19 +183,19 @@
 			<td>{$installList[8][our_price]}</td>
 		</tr>
 		<tr>
-			<td colspan="6">小计</td>
+			<td colspan="6" style="text-align: right;">小计</td>
 			<td></td>
 			<td>{$install_market_price_total}</td>
 			<td></td>
 			<td>{$install_our_price_total}</td>
 		</tr>
 		<tr>
-			<td colspan="6">总计</td>
-			<td colspan="3">A+B=</td>
+			<td colspan="6" style="text-align: right;">总计</td>
+			<td colspan="3" style="text-align: right;">A+B=</td>
 			<td><?php echo $install_our_price_total+$equip_our_price_total; ?></td>
 		</tr>
 		<tr>
-			<td colspan="11">二、服务与维护（不在折扣报价范围内）</td>
+			<td colspan="11" style="background-color: #77e470;">二、服务与维护（不在折扣报价范围内）</td>
 		</tr>
 		<tr>
 			<td colspan="11">C.硬件费用标准 附表2</td>
@@ -215,7 +230,7 @@
 			<td>延长设备使用年限，保障设备高效运行。为合理费用项。</td>
 			<td>{$softwareList[0][our_price]}</td>
 		</tr>
-		<tr>
+		<tr style="background-color: #6c75e0;">
 			<td colspan="2">项目总实际费用</td>
 			<td colspan="6">C+D=</td>
 			<td></td>
@@ -224,21 +239,20 @@
 	</tbody>
 	</table>
 	<p>备注说明：</p> 
-<p>设备安装，调试，配置，系统管理，升级更新，到正常运行，需专业技术团队完成。故我公司规定为统一安装，统一调试，统一管理方案。</p>
-<p>1.我公司承诺担负网络改造50%费用（一半）。</p>
-<p>2.明确设备归属权问题。</p>
-<p>3.我公司自行使用设备，其不在报价表内。</p>
-<p>4.合同期内，终止合作，我公司有权拆回设备，如酒楼承担相应费用。我公司不予拆回，并承诺保证后期设备正常进行及技术衔接。</p>
-<br />
-
-<p>我们为客户做到了什么？</p>
-<p>1.增加网络信号覆盖点。</p>
-<p>2.实现信号无缝链接。</p>
-<p>3.增强网络信号稳定性。</p>
-<p>4.在同市场中为酒楼节省50%开支。</p>
-<p>5.低于市场价格50%，得到设备归属权。</p>
-<p>6.实现了设备的远程云管理，延长了设备的使用时限，发挥设备最高，最佳利用率。</p>
-<p>7.设备管理系统，细则化。</p>
+<p>设备安装，调试，配置，系统管理，升级更新，到正常运行，需专业技术团队完成。故我公司规定为统一安装，统一调试，统一管理方案。
+1.我公司承诺担负网络改造费用（一半）。
+2.明确设备归属权问题。
+3.我公司自行使用设备，其不在报价表内。
+4.合同期内，终止合作，我公司有权拆回设备，如酒楼承担相应费用。我公司不予拆回，并承诺保证后期设备正常进行及技术衔接。</p>
+<p>
+我们为客户做到了什么？
+1.实现信号无缝链接。
+2.增强网络信号稳定性。
+3.在同市场中为酒楼节省50%开支。
+4.低于市场价格，得到设备归属权。
+5.实现了设备的远程云管理，延长了设备的使用时限，发挥设备最高，最佳利用率。
+6.设备管理系统，细则化。
+</p>
 </div>
 </div>
    </div>

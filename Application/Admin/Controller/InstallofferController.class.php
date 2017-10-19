@@ -28,6 +28,20 @@ class InstallofferController extends BaseController{
         $this->display('index');
     }
     public function add(){
+        $m_offer_device_params = new \Admin\Model\OfferDeviceModel();
+        $where = array();
+        $where['a.device_group'] =2;
+        $where['a.state']  = 1;
+        $order = 'a.id asc';
+        $list = $m_offer_device_params->getDeviceList('a.id,b.cost_price,b.market_price',$where,$order);
+        $this->assign('list',$list);
+        
+        $where = array();
+        $where['a.device_group'] =3;
+        $where['a.state']  = 1;
+        $order = 'a.id asc';
+        $info = $m_offer_device_params->getDeviceList('a.id,b.cost_price,b.market_price',$where,$order);
+        $this->assign('info',$info);
         $this->display('add');
     }
     public function doadd(){
@@ -110,7 +124,7 @@ class InstallofferController extends BaseController{
     }
     public function getAllDevice(){
         $m_offer_device = new \Admin\Model\OfferDeviceModel();
-        $list = $m_offer_device->getAllDevice();
+        $list = $m_offer_device->getAllDevice($device_group=1);
         echo json_encode($list);
         exit;
     }

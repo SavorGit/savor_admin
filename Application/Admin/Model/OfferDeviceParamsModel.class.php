@@ -17,7 +17,7 @@ class OfferDeviceParamsModel extends BaseModel{
         return $data;
     }
     public function getStandardInfo($id){
-        $info = $this->field('params')->where('id='.$id)->find();
+        $info = $this->field('params,cost_price,market_price')->where('id='.$id)->find();
         return $info;
     }
 }
