@@ -1,0 +1,156 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<script src="/Public/admin/assets/js/timepicki.js" type="text/javascript" />
+<link href="/Public/admin/assets/css/timepicki.css" rel="stylesheet" type="text/css" />
+
+
+
+<style type="text/css">
+    .zhezhao{
+
+
+
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+ <div class="tools-group hidden-xs ">每日设置</div>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print" style="overflow:hidden;">
+    <div class="no-more-tables" style="margin-top:20px;">
+      <form method="post" action="{$host_name}/dailyconfig/doConfigData"  class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+                <td>
+                    缓存设置
+                </td>
+                <!-- <td>音量：<input required placeholder="请输入数字" type="text" name="system_default_volume" value="{$info.system_default_volume}"  /></th> -->
+              <td><if condition="$info['status'] eq 0">
+              <a style="width:50px;" data-tip="开启" target="ajaxTodo" href="{$host_name}/dailyconfig/editstatus?status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+              <else/>
+              <a data-tip="关闭" target="ajaxTodo" href="{$host_name}/dailyconfig/editstatus?status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+              </if></th>
+
+            </tr>
+            
+            
+          </thead>
+          
+          </tbody>
+        </table>
+        
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+$(function(){
+    $('#covervideo_idimg').click(function(){
+        var $a = $(this).attr('src');
+        $('.big').prop('src',$a).addClass('addbig');
+        $('.zhezhao').show(500);
+        $('.big').show(500);
+    })
+    $('.zhezhao').click(function(){
+        $('.zhezhao').hide(500);
+        $('.big').hide(500);
+    })
+
+   /* $("#sysconfig_configdata_mid").datetimepicker({
+        startView:0,
+        //minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'hh:ii',
+        todayBtn:  1,
+        autoclose: 1,
+        pickerPosition:"top-left"
+    });*/
+    $(".time_elementa").timepicki();
+    $(".time_elementb").timepicki();
+    $(".time_elementc").timepicki();
+    $(".time_elementd").timepicki();
+
+});
+$("#videoshan").click(function(){
+    $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
+});
+$('.time_elementa,.time_elementb,.time_elementc,.time_elementd').click(function(){
+    var timea = $(this).val();
+    var b = timea.split(':');
+    console.log(b)
+    $(this).next('.timepicker_wrap').find('.ti_tx').html(Trim(b[0],'g'));
+    $(this).next('.timepicker_wrap').find('.mi_tx').html(Trim(b[1],'g'));
+})
+
+function Trim(str,is_global)
+
+{
+
+    var result;
+
+    result = str.replace(/(^\s+)|(\s+$)/g,"");
+
+    if(is_global.toLowerCase()=="g")
+
+    {
+
+        result = result.replace(/\s/g,"");
+
+    }
+
+    return result;
+
+}
+
+
+
+
+/* function dialogAjaxDone(json){
+    // alert(json);
+    jap = JSON.stringify(json);
+   // alert(jap);
+    DWZ.ajaxDone(json);
+    //navTab.reloadFlag('menu/getlist');
+    //注意返回的JSON的数据结构
+    if (json.status == DWZ.statusCode.ok){
+        if (json.navTabId){
+            navTab.reload('Sysconfig/configData');
+        }
+
+
+    }
+
+} */
+
+
+
+
+
+</script>

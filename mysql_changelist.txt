@@ -623,7 +623,7 @@ CREATE TABLE `savor_daily_content` (
   `media_id` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '图片id',
   `keyword` VARCHAR(10) NOT NULL DEFAULT '' COMMENT '关键词',
   `desc` VARCHAR(220) DEFAULT '' COMMENT '简介即浓缩内容',
-  `source_id` TINYINT(3) NOT NULL DEFAULT '0' COMMENT '文章内容来源',
+  `source_id` SMALLINT(3) NOT NULL DEFAULT '0' COMMENT '文章内容来源',
   `sort_tag` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '插入顺序tag',
   `order_tag` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '小到大排序tag',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -680,7 +680,6 @@ CREATE TABLE `savor_daily_home` (
   `sort_num` INT(2) NOT NULL COMMENT '排序',
   PRIMARY KEY (`id`),
   KEY `index_contentId` (`dailyid`)
-<<<<<<< HEAD
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
@@ -793,8 +792,53 @@ CREATE TABLE `savor_daily_collection` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   `state` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态:0未收藏1收藏',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=139 DEFAULT CHARSET=utf8 COMMENT='知享收藏表'
->>>>>>> 3f830d206d791fdb6c21145eda9dab95b5e02ef7
+) ENGINE=MyISAM AUTO_INCREMENT=139 DEFAULT CHARSET=utf8 COMMENT='知享收藏表';
+
+
+
+增加说明：添加每日知享表内容属性字段
+修改时间：2017.10.16 15：00
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_daily_content`     ADD COLUMN `artpro` VARCHAR(10) DEFAULT '' NOT NULL COMMENT '内容属性' AFTER `state`;
+
+
+增加说明：添加每日知享微信分享对应文章表
+修改时间：2017.10.16 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_daily_share_weixin` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `sourceid` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '分享来源微信号',
+  `openid` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '微信号',
+  `artid` INT(12) NOT NULL DEFAULT '0' COMMENT '文章id',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `state` TINYINT(2) NOT NULL DEFAULT '1' COMMENT '状态:0删除1正常',
+  PRIMARY KEY (`id`),
+  KEY `idx_devic` (`openid`,`state`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='每日知享微信分享表';
+
+
+
+增加说明：添加每日知享登录用户表
+修改时间：2017.10.16 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_daily_user` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `device_id` varchar(25) NOT NULL DEFAULT '' COMMENT '设备号',
+  `openid` varchar(25) NOT NULL DEFAULT '' COMMENT '微信号',
+  `tel` varchar(12) NOT NULL DEFAULT '' COMMENT '手机号',
+  `mtype` varchar(5) NOT NULL DEFAULT '' COMMENT '手机类型',
+  `celltype` varchar(20) NOT NULL DEFAULT '' COMMENT '手机具体型号',
+  `ptype` tinyint(2) NOT NULL DEFAULT '4' COMMENT '人群类型',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `state` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态:0删除1正常',
+  PRIMARY KEY (`id`),
+  KEY `idx_devic` (`openid`,`state`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='每日知享用户表'
 
 
 
