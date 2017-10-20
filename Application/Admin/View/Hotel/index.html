@@ -203,6 +203,7 @@
             <th>机顶盒数量</th>
             <th>电视数量</th>
             <th>节目单</th>
+            <th>新节目单</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -241,6 +242,11 @@
                 </if>
               </td>
               <td data-title="节目单"> <if condition="$vlist.menu_id GT 0">  <a title="{$vlist.name}节目单列表" target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a><else />无</if></td>
+
+              <td data-title="新节目单"> <if condition="$vlist.promenu_id GT 0">  <a title="{$vlist.name}节目单列表" target="dialog" rel="device/tv" href="{$host_name}/programmenu/getdetail?id={$vlist.promenu_id}&name={$vlist.promenu_name}">{$vlist.promenu_name}</a><else />无</if></td>
+
+
+
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="查看详情" target="navTab" mask="true" href="{$host_name}/hotel/getdetail?id={$vlist.id}&acttype=1" rel="hotel/detail" title="{$vlist.name}酒楼详情"class="btn btn-success btn-icon">

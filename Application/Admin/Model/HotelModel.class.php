@@ -154,6 +154,30 @@ class HotelModel extends BaseModel{
 	}
 
 
+	public function getHotelidByArea($where, $field='', $order='') {
+		$result = $this->alias('sht')
+			->where($where)
+			->field($field)
+			->order($order)
+			->join('savor_area_info sari on sari.id = sht.area_id')
+			->select();
+		return  $result;
+	}
+
+
+	public function getBoxOrderMacByHid($field, $where, $order){
+		$list = $this->alias('sht')
+			->join('savor_room room on sht.id = room.hotel_id')
+			->join('savor_box box on room.id = box.room_id')
+			->join(' join savor_area_info sari on sari.id = sht.area_id')
+			->join('savor_tv tv on tv.box_id = box.id')
+			->order($order)
+			->field($field)
+			->where($where)
+			->select();
+		return $list;
+	}
+
 
 	public function getBoxMacByHid($field, $where){
 		$list = $this->alias('sht')
