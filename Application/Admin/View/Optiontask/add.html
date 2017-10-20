@@ -13,7 +13,30 @@
           <input type="text" class="form-control" name="publisher" minlength="2" maxlength="50" value="{$vinfo.publisher}" required>
         </div>
       </div> 
-      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          地区(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+          <select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_area_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq 4"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_area_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['task_area']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           紧急度(酒楼合作部填写):

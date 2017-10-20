@@ -91,6 +91,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <thead>
           <tr id="post">
             <th>序号</th>
+            <th>地区</th>
             <th>紧急度</th>
             <th>当前状态</th>
             <th>更新时间</th>
@@ -115,6 +116,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
+              <td data-title="地区">{$vlist.area}</td>
               <td data-title="紧急度">{$task_emerge_arr[$vlist[task_emerge]]}</td>
               <td data-title="当前状态">{$task_state_arr[$vlist[state]]}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
