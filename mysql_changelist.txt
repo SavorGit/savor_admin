@@ -842,6 +842,15 @@ CREATE TABLE `savor_daily_user` (
 
 
 
+增加说明：修改每日知享添加作者和内容表
+修改时间：2017.10.16 15：00
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_daily_lk`     ADD COLUMN `dailyauthor` VARCHAR(10) DEFAULT '' NOT NULL COMMENT '作者' AFTER `homestate`,     ADD COLUMN `dailyart` VARCHAR(150) DEFAULT '' NULL COMMENT '内容' AFTER `dailyauthor`;
+/*[13:56:39][   0 ms]*/ SHOW FULL TABLES FROM `cloud` WHERE table_type = 'BASE TABLE';
+
+
+
 
 
 
