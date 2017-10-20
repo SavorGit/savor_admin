@@ -84,7 +84,6 @@ class PubAdsBoxModel extends BaseModel
 
 	}
 
-	//�������޸�
 	public function addData($data, $acttype) {
 		if(0 === $acttype) {
 			$result = $this->add($data);
@@ -126,6 +125,11 @@ class PubAdsBoxModel extends BaseModel
 	    $ret = $this->where($where)->save($data);
 	    return $ret;
 	}
+
+
+
+
+
 }//End Class
 
 

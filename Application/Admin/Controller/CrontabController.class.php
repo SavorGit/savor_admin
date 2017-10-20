@@ -331,7 +331,6 @@ class CrontabController extends Controller
      * @desc 随机生成广告的位置
      */
     public function recordAdsLocation(){
-        
         $base_location_arr = array(1,2,3,4,5,6,7,8,9,10);
         //获取未执行插入位置的广告
         $m_pub_ads = new \Admin\Model\PubAdsModel(); 
@@ -347,8 +346,7 @@ class CrontabController extends Controller
                 $all_empty_location_info = $m_pub_ads_box->getEmptyLocation($val['id'],$v['box_id']);
                 if(!empty($all_empty_location_info)){
                     //取出该机顶盒在该广告起止时间内所有的位置
-                    $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
-                    
+                    $all_have_location_info = $m_pub_ads_box->getLocationList($val['id'],$v['box_id'],$val['start_date'],$val['end_date']);
                     foreach($all_have_location_info as $hl){
                         $all_have_location_arr[] = $hl['location_id'];
                     }
