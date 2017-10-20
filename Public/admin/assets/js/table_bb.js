@@ -52,6 +52,7 @@ $('#tbod').on('change','.xinhao',function(){
 		success:function(call){
 			console.log(call)
 			if(call!=''){
+				//alert(call.cost_price)
 				_this.parent().parent().find('.params').html(call.params)
 				_this.parent().parent().find('.cost_nums').val(call.cost_price) //成本 价
 				_this.parent().parent().find('.market_price').val(call.market_price) //市场价
@@ -145,8 +146,8 @@ $('#tbod').on('keyup','.nums',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#tbod').on('keyup','.market_price',function(){
 	var nums = $(this).parent().parent().find('.nums').val();
@@ -176,8 +177,8 @@ $('#tbod').on('keyup','.market_price',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#tbod').on('keyup','.explain',function(){
 	var our_price  =  $(this).parent().parent().find('.all_market_price').html()*$(this).val()/100
@@ -195,8 +196,8 @@ $('#tbod').on('keyup','.explain',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 })
 //$('#tbod').on('keyup','.')
 $('#tbod').on('keyup','.cost',function(){
@@ -285,8 +286,8 @@ $('#tbod').on('keyup','.nums_B',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 	/*奖金*/
 	
 	if($('.numsb').val()>=6){
@@ -336,8 +337,8 @@ $('#tbod').on('keyup','.market_price_B',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#tbod').on('keyup','.explain_B',function(){
 	var our_price  =  $(this).parent().parent().find('.all_market_price_B').html()*$(this).val()/100;
@@ -367,8 +368,8 @@ $('#tbod').on('keyup','.explain_B',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 	
 })
 $('#tbod').on('keyup','.cost_B',function(){
@@ -413,16 +414,16 @@ $('.serve1').keyup(function(){
 	$('.allm').html(serve1)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 })
 $('.serve2').keyup(function(){
 	var serve1 = parseInt($(this).val())+parseInt($('.serve1').val());
 	$('.allm').html(serve1)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(z_our_price)
-	$('#shuidian').html(z_our_price)
+	$('#z_our_price').html(parseInt(z_our_price))
+	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#cb_num1').keyup(function(){
 	var allcost_total= parseInt($('#cost_total').html())+parseInt($('#cost_total_B').html());
@@ -437,8 +438,8 @@ $('#cb_num2').keyup(function(){
 setInterval(function(){
 	var zbj =parseInt($('.group_our_price').html());
 	var zcb = parseInt($('#group_cost_price').html());
-	var slr = zbj-zcb-$('#z_our_price').html()-parseInt($('#shuidian').html())-parseInt($('#many').html())-parseInt($('#tc').html());	
-	$('#lirun').html(zcb);
+	var slr = parseInt($('.group_our_price').html())-parseInt($('#group_cost_price').html())-parseInt($('#z_our_price').html())-parseInt($('#shuidian').html())-parseInt($('#many').html())-parseInt($('#tc').html());	
+	$('#lirun').html(parseInt(slr));
 	var all_ab_bazaar =  parseInt($('#market_price_total').html())+parseInt($('#market_price_total_B').html())
 	$('.all_ab_bazaar').html(all_ab_bazaar)
 	var cde_sc = parseInt($('.all_ab_bazaar').html())+parseInt($('.d_shic').val())+parseInt($('.e_shic').val());
@@ -449,7 +450,7 @@ setInterval(function(){
 setInterval(function(){
 	var zbj =parseInt($('.group_our_price').html());
 	var zcb = parseInt($('#group_cost_price').html());
-	var slr2 = (zbj-zcb-$('#z_our_price').html()-$('#shuidian').html()-$('#many').html()-$('#tc').html())/zcb;
+	var slr2 = (zbj-zcb-$('#z_our_price').html()-$('#shuidian').html()-$('#many').html()-$('#tc').html())/zbj;
 	var slr2s = parseInt(slr2*100)
 	$('#lirunl').html(slr2s+'%');
 },200)

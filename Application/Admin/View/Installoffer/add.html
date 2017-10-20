@@ -18,9 +18,14 @@
 <div class="form-group ">
    			<span colspan="13" align="center"><button class="addition">添加</button>A.网络设备</span>
    		</div>
+   	
 	<form  action="{$host_name}/installoffer/doadd" method="post" onsubmit="return validateCallback(this, dialogAjaxDone);">
+	<div class="form-group ">
+   			<span colspan="13" align="center">酒楼名称：<input type="text" name="hotel_name" value=""></span>
+   		</div>
 	<table class="table table-bordered" targetType="navTab" style="overflow: auto;height: 100%;">
    	<thead>
+   		
    		<tr>
 			<th>序号</th>
 			<th>设备名称</th>

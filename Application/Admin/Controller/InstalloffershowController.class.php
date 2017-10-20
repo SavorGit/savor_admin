@@ -12,7 +12,9 @@ class InstalloffershowController extends Controller{
     
     public function index(){
         $id = I('get.id');
-        
+        $m_offer_result = new \Admin\Model\OfferResultModel();
+        $result_info = $m_offer_result->where('id='.$id)->find();
+        $this->assign('hotel_name',$result_info['hotel_name']);
         $m_offer_device = new \Admin\Model\OfferResultDetailModel();
         
         //获取设备信息

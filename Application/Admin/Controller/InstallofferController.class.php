@@ -7,7 +7,9 @@
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
 class InstallofferController extends BaseController{
-    
+    public function __construct() {
+        parent::__construct();
+    }
     public function index(){
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -51,7 +53,8 @@ class InstallofferController extends BaseController{
         $now = date('Y-m-d H:i:s');
         $userInfo = session('sysUserInfo');
         $loginId = $userInfo['id'];
-        $result_arr = array('name'=>"网络设备报价",'create_time'=>$now,'update_time'=>$now,'creator_id'=>$loginId);
+        $hotel_name = I('post.hotel_name');
+        $result_arr = array('name'=>"网络设备报价",'hotel_name'=>$hotel_name,'create_time'=>$now,'update_time'=>$now,'creator_id'=>$loginId);
         $ret = $m_offer_result->addInfo($result_arr);
         if($ret){
             
