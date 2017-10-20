@@ -1,0 +1,143 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/report/smallplatwarn" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <!-- <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              来源筛选：
+            </label>
+                
+          </div>
+        </div>
+		<div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                酒楼名称：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称" >
+            </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                城&nbsp;&nbsp;市：
+              </label>
+
+                <span class="input-group-btn input-group-sm">
+              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+
+          <div class="form-group"  >
+            <div class="input-group input-group-sm date form_datetime" data-date="" >
+              <input name="start_date" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+
+            <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true">
+              <input name="end_date" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+
+
+
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div> -->
+
+       
+          
+          </div>
+        </div>
+        </div>
+      </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
+enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>紧急度</th>
+            <th>当前状态</th>
+            <th>更新时间</th>
+            <th>计划完成时间</th>
+            <th>发布人</th>
+            <th>指派人</th>
+            <th>执行人</th>
+            <th>任务类型</th>
+            <th>设备基础制作情况</th>
+            <th>信息录入情况</th>
+            <th>酒楼名称</th>
+            <th>酒楼地址</th>
+            <th>酒楼联系人</th>
+            <th>酒楼联系人电话</th>
+            <th>版位数量</th>
+            <th>事件说明</th>
+            
+           
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="紧急度">{$task_emerge_arr[$vlist[task_emerge]]}</td>
+              <td data-title="当前状态">{$task_state_arr[$vlist[state]]}</td>
+              <td data-title="更新时间">{$vlist.update_time}</td>
+              <td data-title="计划完成时间">{$vlist.palan_finish_time|substr=###,0,10}</td>
+              <td data-title="发布人">{$vlist.publisher}</td>
+              <td data-title="指派人">{$vlist.designater} </td>
+              <td data-title="执行人">{$vlist.performer} </td>
+              <td data-title="任务类型">{$vlist.task_type} </td>
+              <td data-title="软件安装情况">{$install_state_arr[$vlist[install_state]]} </td>
+              <td data-title="信息录入情况">{$install_state_arr[$vlist[insert_state]]} </td>
+              <td data-title="酒楼名称">{$vlist.hotel_name} </td>
+              <td data-title="酒楼地址">{$vlist.hotel_address} </td>
+              <td data-title="酒楼联系人">{$vlist.hotel_linkman} </td>
+              <td data-title="酒楼联系人电话">{$vlist.hotel_linkman_tel} </td>
+              <td data-title="版位数量">{$vlist.tv_nums} </td>
+              <td data-title="事件说明">{$vlist.desc} </td>
+              
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+
