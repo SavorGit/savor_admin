@@ -1,0 +1,198 @@
+<style type="text/css">
+	#tops {
+		height: 40px;
+		background-color: #c7c7c7;
+	}
+	
+	.biaoti {
+		float: left;
+		margin-top: 13px;
+		margin-left: 36px;
+	}
+	
+	.jiuloushu {
+		float: right;
+		margin-top: 13px;
+		margin-right: 36px;
+	}
+	
+	.tianjiabw {
+		width: 150px;
+		height: 90px;
+		border: 1px dashed black;
+		margin-left: 31px;
+		text-align: center;
+		line-height: 90px;
+		cursor: pointer;
+	}
+	
+	.cityId {
+		margin-left: 10px;
+		width: 174px;
+		height: 33px;
+	}
+	
+	#serch-name {
+		width: 174px;
+		height: 33px;
+	}
+	
+	.select-position {
+		width: 100%;
+		float: left;
+	}
+	
+	.select-position-top {
+		width: 100%;
+		height: 30px;
+		background-color: #bdbdbd;
+		line-height: 30px;
+		padding-left: 10px;
+	}
+	
+	.position-list {
+		height: 377px;
+		overflow: auto;
+	}
+	
+	.position-one {
+		margin: 10px;
+		cursor: pointer;
+	}
+	
+	.xuanz-right {
+		width: 24%;
+		height: 504px;
+		float: right;
+		background-color: #78909c;
+		position: relative;
+	}
+	
+	.xuanz-right-top {
+		height: 30px;
+		width: 100%;
+		color: white;
+		line-height: 30px;
+		padding-left: 6px;
+	}
+	
+	.acitve-position-lists {
+		width: 90%;
+		margin-left: 15px;
+		padding-top: 10px;
+	}
+	
+	.acitve-position-jname {
+		display: inline-block;
+		min-width: 85px;
+		max-width: 185px;
+		margin-bottom: 10px;
+	}
+	
+	.acitve-position-del {
+		color: white;
+		font-size: 20px;
+		cursor: pointer;
+		margin-left: 10px;
+	}
+	
+	.xuanz-right-bottom {
+		width: 100%;
+		position: absolute;
+		bottom: 0px;
+	}
+	
+	.ban_list {
+		margin-top: 20px;
+		margin-left: 13px;
+	}
+	
+	.jiu_names {
+		margin-bottom: 10px;
+	}
+	
+	.jiu_names span {
+		font-weight: 700;
+		font-size: 20px;
+	}
+	
+	.ban_a {
+		display: inline-block;
+		width: 123px;
+		height: 26px;
+	}
+</style>
+<div class="pageContent">
+	<div id="dz-filecontainer">
+		<div class="tab-content">
+			<input id="oss_host" type="hidden" value="{$oss_host}">
+			<form id="dropbase-form" method="post" name=theform action="{$host_name}/{$action_url}" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+				<input id="oss_id" type="hidden" name="adsid" value="{$vinfo.id}">
+				<input type="hidden" name="media_id" value="{$vinfo.media_id}">
+				<input type="hidden" name="oss_addr" id='oss_addr' value=''>
+				<input type="hidden" name="oss_filesize" id='oss_filesize' value=''>
+				<div class="pageFormContent modal-body">
+
+					<div class="form-group row" id="newsp" style="margin-top: 40px;margin-left: 17px;">
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+					广告名称：
+				</label>
+							<label class="col-xs-12 col-sm-2 control-label" style="width: auto;">{$vinfo.adname}</label>
+
+						</div>
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+					广告时长：
+				</label>
+							<label class="col-xs-12 col-sm-2 control-label" style="width: auto;">{$vinfo.duration}秒</label>
+						</div>
+						<div class="form-group row">
+							<label class="col-xs-12 col-sm-2 control-label" style="width: 43px;">
+								URL：
+							</label>
+							<label class="col-xs-12 col-sm-2 control-label" style="width: auto;">{$vinfo.oss_addr}</label>
+						</div>
+					</div>
+
+					<div class="form-group row" style="margin-top: 20px;background-color:#c7c7c7;padding-top: 13px;">
+						<label class="col-xs-12 control-label" style="text-align: left;margin-bottom: 14px;margin-left: 35px;">投放方式</label>
+						<div class="form-group row" style="margin-top: 33px;">
+							<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: -10px;margin-left: 35px;">
+					播放时段：
+				</label>
+							<div class="input-group input-group-sm" style="float: left;padding: 0;">
+								<span class="str_time">{$vinfo.start_date}-</span>
+							</div>
+
+							<div class="input-group input-group-sm"  style="float: left;padding: 0;">
+							 <span class="end_time">{$vinfo.end_date}</span>
+							</div>
+							<label style="float: left;margin-left: 55px;">播放次数：{$vinfo.play_times}次</label>
+							
+						</div>
+					</div>
+
+				<div class="form-group row" style="margin-top: 20px;border: 1px solid #999;height: 280px;padding-bottom: 15px;overflow: auto;">
+			<div class="form-group row" id="tops">
+				<span class="biaoti">选择版位</span>
+				<span class="jiuloushu">
+				已选<span>{$hottotal}</span>家酒楼的<span>{$boxtotal}</span>个版位
+				</span>
+			</div>
+			<div class="ban_list">
+				<volist name="pos_ar" id="row">
+					<div class="jiu_names"><span id="15">{$row[0]['hname']}</span></div>
+					<div class="ban_names">
+						<volist name="row" id="rowas">
+							<div class="ban_a" id="">{$rowas['bname']}</div>
+							</volist>
+					</div>
+				</volist>
+			</div>
+		</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
