@@ -251,7 +251,7 @@ class DeviceController extends BaseController{
 	
 		if($id){
 			if($boxModel->editData($id, $save)){
-				$this->output('更新成功!', 'device/box');
+				$this->output('更新成功!', 'device/abceditbox');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		
