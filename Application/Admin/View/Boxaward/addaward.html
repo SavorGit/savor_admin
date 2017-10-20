@@ -159,4 +159,31 @@
 
     })
   }
+
+
+
+  function dialogAjaxDone(json) {
+    console.log(json);
+    DWZ.ajaxDone(json);
+    if(json.navTabId == 'boxaward/rplistlist') {
+      //navTab.closeDialog('device/editbox');
+      //$.pdialog.closeCurrent();
+      //var dialog = navTab.getCurrentPanel();
+      //console.log(dialog);
+      //$.pdialog.close('device/abceditbox');
+      // $.pdialog.reload('hotel/manager');
+
+      var dialog = $.pdialog.getCurrent();
+      //机顶盒数量里面的页面的修改是dialog，而rel就是它传的id
+      $.pdialog.close('boxaradrplist');
+      //$.pdialog.reload(dialog.data("url"));
+      console.log(dialog.data("url"));
+      //获取当前dialog的id
+      console.log($(dialog).data("id"));
+      //因为它是navtab的所以这样用
+      navTab.reload('boxaward/rplist');
+
+      //   $.pdialog.reload(dialog.data("url"));
+
+    }
 </script>
