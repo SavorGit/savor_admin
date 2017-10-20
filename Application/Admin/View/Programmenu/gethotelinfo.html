@@ -1,0 +1,61 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+<div class="pageHeader">
+
+
+
+  <!-- <a  target="navTab" title="新加酒楼" rel="menu/getlist" href="{$host_name}/menu/selecthotel?addhotel2&menuname={$menuname}&menuid={$menuid}" class="btn btn-success btn-icon">
+    <i class="fa fa-bullhorn"></i>
+  </a> -->
+
+</div>
+<div class="pageContent">
+  <input type="hidden" name="addhotel" value="2">
+    <input type="hidden" name="menuname" value="{$menuname}">
+    <input type="hidden" name="menuid" value="{$menuid}">
+    <div id="w_list_print">
+    <div class="no-more-tables">
+
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>酒店名称</th>
+            <th>发布时间</th>
+
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="vinfo" id="vo">
+            <tr target="sid_user">
+              <input type="hidden" value="{$vo.hoid}" name="inf[]" />
+              <td data-title="酒店名称">{$vo.honame}</td>
+              <td data-title="预约发布时间">{$vo.pub_time}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+
+      </div>
+
+    <div class="modal-footer">
+
+    </div>
+
+</div>
+
+  </div></form>
+<script>
+ /* function navTabAjaxDone(json){
+    DWZ.ajaxDone(json);
+    navTab.reloadFlag('menu/getlist');
+    //注意返回的JSON的数据结构
+    if (json.status == DWZ.statusCode.ok){
+      if (json.navTabId){
+        navTab.reload('menu/getlist');
+      }
+
+
+    }
+
+  }*/
+</script>

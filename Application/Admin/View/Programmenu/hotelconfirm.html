@@ -1,0 +1,78 @@
+<include file="Public/script"/>
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_name}/programmenu/publishmenu" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return validateCallback(this, navTabAjaxDone)">
+    <input type="hidden" name="menuname" value="{$menuname}">
+    <input type="hidden" name="menuid" value="{$menuid}">
+    <div class="pageFormContent modal-body">
+      <div class="form-group row">
+
+        <div class="col-xs-12 col-sm-10">
+
+          <p class="form-heading">酒楼信息确认：</p>
+          <div class="row sm-row" data-check="list" data-parent=".pageContent">
+            <volist name="vinfo" id="vo" key="n">
+            <div class="col-xs-4 col-sm-3 col-md-2">
+              <input type="hidden" name="hoty" value="{$hoty}" />
+              <label>
+
+
+                  <input type="checkbox" name="hoid[]" value="{$vo.hoid}" checked />&nbsp;{$vo.honame}
+                <input type="hidden" name="honame[]" value="{$vo.honame}" />
+
+
+              </label>
+            </div>
+              </volist>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          预约发布：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <div class="input-group date form_datetime" data-date="{$vinfo.log_time}">
+            <input name="logtime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+          </div>
+        </div>
+      </div>
+
+        </div>
+
+    <div class="modal-footer">
+	    <div class="pull-left">
+	    	<label>
+		     	<input id="qxall" type="checkbox" data-check="all" data-parent=".pageContent"> 全部
+		    </label>
+		  </div>
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button  class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+$(function(){
+	var flag = 1;
+	var fxflag = 1;
+	$("INPUT[name='hoid[]']").each( function() {
+		var cs = $("input[name='hoid[]']").attr("checked"); 
+		if(!cs){
+			flag = 0;
+			return false;
+		}
+	}); 
+	if(flag ==1){
+		$('#qxall').attr('checked',true);
+	}
+	
+})
+
+
+</script>
