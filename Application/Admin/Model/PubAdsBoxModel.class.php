@@ -106,13 +106,14 @@ class PubAdsBoxModel extends BaseModel
 	    $data = $this->field($fields)->where($where)->order($order)->select();
 	    return $data;
 	}
-	public function getLocationList($box_id,$start_date,$end_date){
+	public function getLocationList($pub_ads_id, $box_id,$start_date,$end_date){
 	    /* $where  = '  a.pub_ads_id='.$pub_ads_id
 	              .' and a.box_id='.$box_id
 	              ." and ((b.start_date>='".$start_date."' and b.start_date<='".$end_date."')
 	                       or (b.start_date<='".$start_date."' and b.end_date>='".$end_date."')
 	                       or (b.end_date>='".$start_date."' and b.end_date<='".$end_date."'))"; */
-	    $where = ' a.box_id='.$box_id
+	    $where = '  a.pub_ads_id='.$pub_ads_id.
+			 ' and  a.box_id='.$box_id
 	              ." and '".$end_date."'>=b.start_date and '".$start_date."'<=b.end_date and a.location_id!=0";
 	    $data = $this->alias('a')
 	         ->field('a.location_id')
