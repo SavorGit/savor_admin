@@ -22,7 +22,7 @@
           <select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
               
              <volist name="task_area_arr" key="k" id="row">
-                 <option value="{$k}" <if condition="$k eq 4"> selected </if> > {$row} </option>
+                 <option value="{$k}" <if condition="$k eq '北京'"> selected </if> > {$row} </option>
              </volist>
 
           </select>

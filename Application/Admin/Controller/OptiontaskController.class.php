@@ -45,6 +45,7 @@ class OptiontaskController extends BaseController {
 	    $this->assign('task_state_arr',$this->task_state_arr);
 	    $this->assign('install_state_arr',$this->install_state_arr);
 	    $this->assign('task_type_arr',$this->task_type_arr);
+	    $this->assign('task_area_arr',$this->task_area_arr);
 	    $this->assign('task_emerge_arr',$this->task_emerge_arr);
 	    
 	    $this->display('index');
