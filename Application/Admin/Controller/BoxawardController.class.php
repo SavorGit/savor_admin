@@ -256,7 +256,7 @@ class BoxawardController extends BaseController{
 
 				$result = $boxAwardModel->addData($dap, $acttype);
 				if($result) {
-					$this->output('操作成功!', 'boxaward/rplist');
+					$this->output('操作成功!', 'boxaward/rplistlist');
 				} else {
 					$this->output('操作失败!', 'boxaward/addprize', 2, 0);
 				}
