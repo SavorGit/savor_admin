@@ -64,10 +64,22 @@ class DailycontentController extends BaseController {
         $save['update_time'] = $now_date;
         $save['create_time'] = $now_date;
         $save['bespeak_time'] = I('post.subdailytime','');
+        $save['dailyauthor'] = I('post.dailyauthor','', 'trim');
+        $save['dailyart'] = I('post.dailyart','', 'trim');
         $sort_str= I('post.dailysoar');
         $sort_arr = explode(',', $sort_str);
         if (count($sort_arr) != $this->lnum) {
             $this->error('内容不满足'.$this->lnum.'条');
+        }
+        if ( mb_strlen($save['dailyauthor']) >=1 && mb_strlen($save['dailyauthor'])<= 10) {
+
+        } else {
+            $this->error('作者限制1-10个字');
+        }
+        if ( mb_strlen($save['dailyart']) >=1 && mb_strlen($save['dailyart'])< 100) {
+
+        } else {
+            $this->error('内容限制100字以内');
         }
 
         //判断该日期是否发布过
@@ -81,6 +93,7 @@ class DailycontentController extends BaseController {
             }
             $save['bespeak'] = 1;
         }
+
 
         $dat_time = date("Y-m-d", strtotime
         ($save['bespeak_time']));
