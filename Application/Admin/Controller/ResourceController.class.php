@@ -87,7 +87,7 @@ class ResourceController extends BaseController{
 				$res_data = array('code'=>$code,'msg'=>'广告名称40字以内');
 				echo json_encode($res_data);
 				exit;
-			}else if( $seco < 1 || !(is_int($seco) || $seco>3600)) {
+			}else if( $seco < 1 || !(is_int($seco)) || $seco>3600) {
 				$res_data = array('code'=>$code,'msg'=>'只可输入1-3600的数字');
 				echo json_encode($res_data);
 				exit;
