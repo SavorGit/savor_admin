@@ -77,12 +77,25 @@
           </div>
  <div class="form-group"  >
             <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true" >
-              <input name="plan_finish_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$palan_finish_time}" readonly>
+              <input name="plan_finish_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$plan_finish_time}" readonly>
                         <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
                   </span>
             </div>
+ </div>
+<div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              执行人：
+            </label>
+                <span class="input-group-btn">
+               <select name="personid" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="">请选择</option>
+                 <volist name="task_person_arr" key="k" id="row">
+                 	 
+                	 <option value="{$k}" <if condition="$k eq $personid"> selected </if> > {$row} </option>
+             	</volist>
+               </select>
  </div>
  <div class="input-group">
             <span class="input-group-btn">
@@ -120,7 +133,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>酒楼联系人</th>
             <th>酒楼联系人电话</th>
             <th>版位数量</th>
-            <th>事件说明</th>
+            <th >事件说明</th>
             <th>故障说明</th>
             <th class="table-tool">操作</th>
           </tr>
@@ -136,7 +149,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="计划完成时间">{$vlist.palan_finish_time|substr=###,0,10}</td>
               <td data-title="发布人">{$vlist.publisher}</td>
               <td data-title="指派人">{$vlist.designater} </td>
-              <td data-title="执行人">{$vlist.performer} </td>
+              <td data-title="执行人">{$vlist[performer]} </td>
               <td data-title="任务类型">{$task_type_arr[$vlist[task_type]]} </td>
               <td data-title="软件安装情况">{$install_state_arr[$vlist[install_state]]} </td>
               <td data-title="信息录入情况">{$install_state_arr[$vlist[insert_state]]} </td>
@@ -145,7 +158,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="酒楼联系人">{$vlist.hotel_linkman} </td>
               <td data-title="酒楼联系人电话">{$vlist.hotel_linkman_tel} </td>
               <td data-title="版位数量">{$vlist.tv_nums} </td>
-              <td data-title="事件说明" style="width:200px;overflow:hidden;text-overflow:ellipsis">{$vlist.desc} </td>
+              <td  data-title="事件说明" >{$vlist.desc} </td>
               <td data-title="故障说明">{$vlist.info} </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
