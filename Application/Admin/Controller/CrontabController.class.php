@@ -346,7 +346,7 @@ class CrontabController extends Controller
                 $all_empty_location_info = $m_pub_ads_box->getEmptyLocation($val['id'],$v['box_id']);
                 if(!empty($all_empty_location_info)){
                     //取出该机顶盒在该广告起止时间内所有的位置
-                    $all_have_location_info = $m_pub_ads_box->getLocationList($val['id'],$v['box_id'],$val['start_date'],$val['end_date']);
+                    $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
                     foreach($all_have_location_info as $hl){
                         $all_have_location_arr[] = $hl['location_id'];
                     }
