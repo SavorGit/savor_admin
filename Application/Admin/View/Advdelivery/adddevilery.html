@@ -333,7 +333,7 @@
 	function dialogAjaxDone(json) {
 		console.log(json);
 		DWZ.ajaxDone(json);
-		if(json.navTabId == 'Advdelivery/adddevilery') {
+		if(json.navTabId == 'advdelivery/getadvdeliverylist') {
 			navTab.closeTab('Advdelivery/adddevilery');
 			navTab.reload('Advdelivery/getlist');
 		}

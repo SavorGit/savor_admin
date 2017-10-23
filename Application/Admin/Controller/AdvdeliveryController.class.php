@@ -36,7 +36,9 @@ class AdvdeliveryController extends BaseController {
         $save['update_time'] = $now_date;
         $save['creator_id'] = $userInfo['id'];
         $save['state'] = 0;
-
+        $oneday_count = 3600 * 24;  //一天有多少秒
+        //明天
+        $save['end_date'] = date("Y-m-d H:i:s", strtotime($save['end_date']) + $oneday_count-1);
         $pubadsModel = new \Admin\Model\PubAdsModel();
         //插入pub_ads表
 
@@ -70,7 +72,7 @@ class AdvdeliveryController extends BaseController {
             $res = $pubadsBoxModel->addAll($data);
             if($res) {
                 $pubadsModel->commit();
-                $this->output('添加成功','advdelivery/getlist',2);
+                $this->output('添加成功','advdelivery/getadvdeliverylist',2);
             }else {
                 $pubadsModel->rollback();
                 $this->error('添加失败');
@@ -238,13 +240,13 @@ class AdvdeliveryController extends BaseController {
             echo json_encode($res);
             die;
         }
-        if($start_time >= $end_time) {
+        if($start_time > $end_time) {
             $msg = '投放开始时间必须小于结束时间';
             $res = array('code'=>0,'msg'=>$msg);
             echo json_encode($res);
             die;
         }
-        if($start_time <= $now_date) {
+        if($start_time < $now_date) {
             $msg = '投放开始时间必须大于今天';
             $res = array('code'=>0,'msg'=>$msg);
             echo json_encode($res);
