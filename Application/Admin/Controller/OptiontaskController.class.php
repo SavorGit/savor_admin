@@ -14,7 +14,7 @@ class OptiontaskController extends BaseController {
     private $task_area_arr;
 	public function __construct() {
 		parent::__construct();
-		$this->install_state_arr = array('1'=>'待完成','2'=>'已完成');
+		$this->install_state_arr = array('1'=>'待完成','2'=>'已完成','3'=>'不需要');
 	    $this->task_state_arr = array('1'=>'新任务','2'=>'执行中','3'=>'排队等待','4'=>'已完成');	
 	    $this->task_type_arr = array('1'=>'网络检测','2'=>'安装机顶盒','3'=>'安装网络+机顶盒','4'=>'报修网络版','5'=>'报修单机版','6'=>'单机版特殊更新','7'=>'内网改造报价');
 	    $this->task_emerge_arr = array('1'=>'火烧眉毛','2'=>'急','3'=>'一般');
@@ -30,6 +30,7 @@ class OptiontaskController extends BaseController {
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
 		$order = I('_order','update_time');
+		$palan_finish_time = I('plan_finish_time');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
@@ -38,9 +39,15 @@ class OptiontaskController extends BaseController {
 		
 		$where['state'] = array('in','1,2,3');
 		$where['flag'] = 0;
+		if($palan_finish_time){
+		  $where=" 1 and palan_finish_time>='$palan_finish_time 00:00:00' and palan_finish_time<='$palan_finish_time 23:59:59'";
+		  
+		  $this->assign('palan_finish_time',$palan_finish_time);
+		}
 		$m_option_task = new \Admin\Model\OptiontaskModel();
 		$list= $m_option_task->getList($where,$orders,$start,$size);
 	    $this->assign('list',$list['list']);
+	    
 	    $this->assign('page',$list['page']);
 	    $this->assign('task_state_arr',$this->task_state_arr);
 	    $this->assign('install_state_arr',$this->install_state_arr);
