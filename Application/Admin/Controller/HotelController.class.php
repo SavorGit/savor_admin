@@ -771,7 +771,7 @@ class HotelController extends BaseController {
 						}else{
 
 
-							$preg = '/^[0-9A-F]+$/';
+							$preg = '/^[0-9A-Z]+$/';
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 
