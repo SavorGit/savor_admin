@@ -187,9 +187,10 @@ class AdvdeliveryController extends BaseController {
         $where_pr = ' UNIX_TIMESTAMP(`pub_time`) < '.$now_time;
         $fieldpr="hotel_id";
         $group = 'hotel_id';
+        $order= 'pub_time desc';
         $promenuModel = new \Admin\Model\ProgramMenuHotelModel();
         $pr_hotel_arr =  $promenuModel->getWhere($where_pr,
-        $order='', $fieldpr,$group);
+        $order, $fieldpr,$group);
         if ($pr_hotel_arr) {
             $h_arr = array_column($pr_hotel_arr, 'hotel_id');
             $h_str = implode(',', array_unique($h_arr));

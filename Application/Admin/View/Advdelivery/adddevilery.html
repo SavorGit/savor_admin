@@ -322,7 +322,6 @@
 	<!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-<script src="__PUBLIC__/admin/assets/js/advertising.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 	$("#q_fb").click(function() {
 		$("#bctk").modal("hide");
@@ -336,7 +335,10 @@
 		if(json.navTabId == 'advdelivery/getadvdeliverylist') {
 			navTab.closeTab('Advdelivery/adddevilery');
 			navTab.reload('Advdelivery/getlist');
+			$( "div" ).removeClass( "modal-backdrop fade in" );
 		}
 	}
 	
 </script>
+
+<script src="/Public/admin/assets/js/advertising.js" type="text/javascript" charset="utf-8"></script>
