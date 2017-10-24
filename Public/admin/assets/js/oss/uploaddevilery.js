@@ -177,7 +177,7 @@ var uploader = new plupload.Uploader({
 
 		FilesAdded: function(up, files) {
             if(up.files.length>1){ // 最多上传3张图
-               alert('最多一张');
+               alert('最多一部视频');
                 return false;
             }
 			plupload.each(files, function(file) {

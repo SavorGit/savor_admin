@@ -729,7 +729,7 @@ class ProgrammenuController extends BaseController {
         $adModel = new AdsModel();
         $result = array();
         if ($m_type == 0) {
-            $where .= "	AND (`type`) in (1,2) ";
+            $where .= "	AND (`type`) = 2 ";
             $result = $adModel->getWhere($where, $field);
             //获取宣传片
             $result = $this->getAdsAcccounce($result);

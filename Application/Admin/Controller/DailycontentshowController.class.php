@@ -105,6 +105,83 @@ class DailycontentshowController extends Controller {
     }
 
 
+    public function shareapp(){
+        $m_weixin_api = new \Common\Lib\Weixin_api();
+        $is_wx = checkWxbrowser();
+        if($is_wx){
+            //不是自己openid
+            $oid = session('appopenid');
+            $code = I('code', '');
+            $openid = I('openid', '');
+            $url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
+            if($oid == $openid) {
+                //最终值得到
+                //有对应关系
+                $share_url = 'http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            } else {
+                if(empty($code)) {
+                    $host_name = C('CONTENT_HOST');
+                    $redirect_url = urlencode($url);
+                    $jumpUrl = $host_name.'admin/wxapply/index?redirect_url='.$redirect_url;
+                    header("Location:".$jumpUrl);
+                } else {
+                    $sourcepenid = $openid;
+                    $result = $m_weixin_api->getWxOpenid($code,$url);
+                    $openid = $result['openid'];
+                    $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
+                    var_dump($wxUserinfo);
+                    var_dump($sourcepenid == $openid);
+                    if($sourcepenid == $openid) {
+                        $url = $this->getContentUrl().'?';
+                        $url .='openid='.$openid;
+                        session('appopenid',$openid);
+                        header("Location:".$url);
+                    }else {
+                        $map = array();
+                        $url = $this->getContentUrl();
+                        $url .='?openid='.$openid;
+                        $share_weiModel = new \Admin\Model\DailyShareWeixinModel();
+                        $map['sourceid'] = $sourcepenid;
+                        $map['openid'] = $openid;
+                        $map['sharetype'] = 2;
+                        //先判断有无
+                        $rs = $share_weiModel->getOne($map);
+                        if ($rs) {
+
+                        }else {
+                            $share_weiModel->addData($map);
+                        }
+                        session('appopenid',$openid);
+                        header("Location:".$url);
+                    }
+                }
+            }
+
+
+
+
+
+        }
+        $wpi = new Weixin_api();
+        $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_120_120.png';
+        $share_title = '每日知享app';
+        $share_desc = '每日知享app，陪伴你创造财富，享受生活。';
+        $share_config = $wpi->showShareConfig($share_url, $share_title,$share_desc,$share_url,$share_url);
+        extract($share_config);
+        $appid = $share_config['appid'];
+        $noncestr = $share_config['noncestr'];
+        $signature = $share_config['signature'];
+        $this->assign('noncestr', $noncestr);
+        $this->assign('signature', $signature);
+        $this->assign('appid', $appid);
+        $this->assign('share_title', $share_title);
+        $this->assign('share_desc', $share_desc);
+        $this->assign('shareimg', $shareimg);
+        $this->assign('share_link', $share_url);
+        $this->display('shareweixin');
+
+    }
+
 
 
 

@@ -1,8 +1,6 @@
 $('.ban_list').html('');//初始化
 var honame = $('#honame').val();
 $('.tianjiabw').click(function(){
-	$('.position-list').html('');
-	$('.position-list-group').html('')
 	//alert($('.dval').val())
 	var tsnull = 1;
 	$('.dval').each(function(){
@@ -25,6 +23,7 @@ $('.tianjiabw').click(function(){
 
 $('.select-position').on('click','.position-ones-name',function(){
 	var _this = $(this).parent();
+	var __this = $(this);
 	var isnull = $(this).parent().next().html()
 	var ho_id = $(this).parent().find('input').prop('id');
 	var kai_time = $('.dval').eq(0).val();
@@ -53,6 +52,24 @@ $('.select-position').on('click','.position-ones-name',function(){
 						_this.next().append(no_html);
 					}
 				}
+				var vbczhi = eval($('#bczhi').val())
+	if($('#bczhi').val()!=''){
+		for(var z=0;z<vbczhi.length;z++){
+			if(vbczhi[z].namejiu==__this.html()){
+				var v = vbczhi[z].banid
+				var for_position_two = _this.next().find('input')
+					for_position_two.each(function(){
+						var _this_ = $(this)
+						$.each(v,function(index,value){
+							if(_this_.prop('id')==value){
+								_this_.prop('checked',true)
+							}
+						})
+					})
+					
+				}
+			}
+		}
 			}else{
 					alert(calls.msg)
 				}
@@ -62,6 +79,11 @@ $('.select-position').on('click','.position-ones-name',function(){
 	}else{
 		$(this).parent().next().toggle()
 	}
+	
+
+	
+	
+	//setTimeout("settimefun()",500)
 })
 
 /*全选*/

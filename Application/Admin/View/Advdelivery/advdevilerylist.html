@@ -18,7 +18,7 @@
               <div class="input-group-sm input-group">
                 <label>投放状态：</label>
                 <span class="input-group-btn input-group-sm">
-                <select name="tou_state" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <select name="tou_state" style="width: 20px;display: none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                   <volist name="to_ar" id="vo">
                     <option value="{$key}"
                     <if condition="$key eq $to_state">selected</if>
