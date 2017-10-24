@@ -338,13 +338,15 @@ class CrontabController extends Controller
         $pub_ads_list = $m_pub_ads->getEmptyLocationList();
         
         foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
-            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);
+            
+            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到盒子
             
             foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
+                
                 $all_have_location_arr = array();
                 //取出该机顶盒所有未填写位置的列表
                 $all_empty_location_info = $m_pub_ads_box->getEmptyLocation('id',$val['id'],$v['box_id']);
-               
+                
                 if(!empty($all_empty_location_info)){
                     //取出该机顶盒在该广告起止时间内所有的位置
                     $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
@@ -352,22 +354,27 @@ class CrontabController extends Controller
                     foreach($all_have_location_info as $hl){
                         $all_have_location_arr[] = $hl['location_id'];
                     }
-                    $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
                     
+                    $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
+                    //如果还有未分配的位置
+                    //print_r($diff_location_arr);exit;
                     if(!empty($diff_location_arr)){
+                        //把未分配得位置负值给location_id =0 的记录
                         $count = count($all_empty_location_info);
-                        
+                        //$count = 1;
                         if($count==1){
                             $rand_key = array_rand($diff_location_arr,$count);
                            
-                            $now_location_arr = array($diff_location_arr[$rand_key]);
+                            $now_location_arr = array($rand_key);
                         }else {
                             $now_location_arr = array_rand($diff_location_arr,$count);
                         }
-                      
+                        //print_r($diff_location_arr);exit;
+                        //print_r($now_location_arr);exit;
+                        //print_r($all_empty_location_info);exit;
                         foreach($all_empty_location_info as $ek=>$ev){
                             $where['id'] = $ev['id'];
-                            $data['location_id'] = $now_location_arr[$ek];
+                            $data['location_id'] = $diff_location_arr[$now_location_arr[$ek]];
                             $data['update_time'] = date('Y-m-d H:i:s');
                             $m_pub_ads_box->updateInfo($where,$data);
                         } 
@@ -375,6 +382,7 @@ class CrontabController extends Controller
                 }
             }
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
+        
         }
         echo "OK";
     }
