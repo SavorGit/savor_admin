@@ -19,7 +19,7 @@ class CrontabController extends Controller
     
         //正常酒楼 、异常酒楼
         $end_time = date('Y-m-d H:i:s',strtotime('-10 minutes'));
-        $start_time = date('Y-m-d H:i:s',strtotime('-15 hours'));
+        $start_time = date('Y-m-d H:i:s',strtotime('-72 hours'));
         $m_heart_log = new \Admin\Model\HeartLogModel();
         $m_box = new \Admin\Model\BoxModel();
         $where = array();
@@ -158,8 +158,8 @@ class CrontabController extends Controller
         $id = $m_hotel_error_report->addInfo($data);
         if($id){
             $ticker = '截止到'.date('m-d H点').','.$data['not_normal_hotel_num'].'家酒楼异常,其中'
-                      .$data['not_normal_smallplat_num'].'个小平台失联超过15小时,'
-                      .$data['not_normal_box_num'].'个机顶盒失联超过15小时';
+                      .$data['not_normal_smallplat_num'].'个小平台失联超过72小时,'
+                      .$data['not_normal_box_num'].'个机顶盒失联超过72小时';
             $title = '小热点异常报告';
             $desc  = '小热点异常报告';
             $m_hotel_error_report_detail = new \Admin\Model\HotelErrorReportDetailModel();
