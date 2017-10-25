@@ -1,5 +1,10 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
+<style type="text/css">
+	table>thead>tr>th{
+		width: 71px;
+	}
+</style>
 <div class="pageHeader">
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/optiontask/index" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
@@ -113,15 +118,15 @@
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
 enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
-        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+        <table class="table table-bordered table-striped" style="table-layout:fixed;" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
             <th>序号</th>
             <th>地区</th>
             <th>紧急度</th>
             <th>当前状态</th>
-            <th>更新时间</th>
-            <th>计划完成时间</th>
+            <th style="width: 200px;">更新时间</th>
+            <th style="width: 150px;">计划完成时间</th>
             <th>发布人</th>
             <th>指派人</th>
             <th>执行人</th>
@@ -129,12 +134,12 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>设备基础制作情况</th>
             <th>信息录入情况</th>
             <th>酒楼名称</th>
-            <th>酒楼地址</th>
+            <th style="width: 150px;">酒楼地址</th>
             <th>酒楼联系人</th>
-            <th>酒楼联系人电话</th>
+            <th style="width: 120px;">酒楼联系人电话</th>
             <th>版位数量</th>
-            <th >事件说明</th>
-            <th>故障说明</th>
+            <th style="width: 150px;">事件说明</th>
+            <th style="width: 150px;">故障说明</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -145,11 +150,11 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="地区">{$task_area_arr[$vlist[task_area]]}</td>
               <td data-title="紧急度">{$task_emerge_arr[$vlist[task_emerge]]}</td>
               <td data-title="当前状态">{$task_state_arr[$vlist[state]]}</td>
-              <td data-title="更新时间">{$vlist.update_time}</td>
+              <td style="color: orange;font-weight: 700;" data-title="更新时间">{$vlist.update_time}</td>
               <td data-title="计划完成时间">{$vlist.palan_finish_time|substr=###,0,10}</td>
               <td data-title="发布人">{$vlist.publisher}</td>
               <td data-title="指派人">{$vlist.designater} </td>
-              <td data-title="执行人">{$vlist[performer]} </td>
+              <td style="color: red;font-weight: 700;" data-title="执行人">{$vlist[performer]} </td>
               <td data-title="任务类型">{$task_type_arr[$vlist[task_type]]} </td>
               <td data-title="软件安装情况">{$install_state_arr[$vlist[install_state]]} </td>
               <td data-title="信息录入情况">{$install_state_arr[$vlist[insert_state]]} </td>
@@ -158,8 +163,8 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="酒楼联系人">{$vlist.hotel_linkman} </td>
               <td data-title="酒楼联系人电话">{$vlist.hotel_linkman_tel} </td>
               <td data-title="版位数量">{$vlist.tv_nums} </td>
-              <td  data-title="事件说明" >{$vlist.desc} </td>
-              <td data-title="故障说明">{$vlist.info} </td>
+              <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{$vlist.desc}" data-title="事件说明" >{$vlist.desc} </td>
+              <td style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{$vlist.info}" data-title="故障说明">{$vlist.info} </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改状态" target="dialog" mask="true"
