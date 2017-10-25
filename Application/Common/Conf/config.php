@@ -262,4 +262,19 @@ $config['INSTALL_OFFER_CONFIG'] = array(
     '1'=>array(''),
     '1'=>array(''),
 );
+
+
+$config['HOTEL_DAMAGE_CONFIG'] = array(
+    '1'=>'电源适配器',
+    '2'=>'SD卡',
+    '3'=>'HDMI线',
+    '4'=>'信号源错误',
+    '5'=>'5G路由器',
+    '6'=>'遥控器',
+    '7'=>'红外遥控头',
+    '8'=>'机顶盒',
+    '9'=>'小平台',
+    '10'=>'酒楼WIFI',
+    '11'=>'酒楼电视机',
+);
 return $config;
