@@ -115,6 +115,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>机顶盒名称</th>
               <th>解决状态</th>
               <th>错误类型</th>
+              <th>备注</th>
 
           </tr>
           </thead>
@@ -130,6 +131,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td style="color: orange;font-weight: 700;" data-title="机顶盒名称">{$vlist.mac_name}</td>
               <td data-title="解决状态">{$vlist.state}</td>
               <td data-title="错误类型">{$vlist.repair_error}</td>
+                <td data-title="错误类型">{$vlist.remark}</td>
             </tr>
           </volist>
           </tbody>
