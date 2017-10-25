@@ -81,7 +81,7 @@
                <select name="userinfo" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value="0">所有人</option>
                  <volist name="user_arr" id="vo">
-                	 <option value="{$vo.uid}" <if condition="$vo.id eq $useride"> selected </if> > {$vo.remark} </option>
+                	 <option value="{$vo.uid}" <if condition="$vo.uid eq $useride"> selected </if> > {$vo.remark} </option>
              	</volist>
 
                </select>
