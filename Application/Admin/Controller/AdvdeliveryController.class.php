@@ -87,6 +87,20 @@ class AdvdeliveryController extends BaseController {
 
     }
 
+    public function  assoc_unique($arr, $key)
+    {
+        $rAr = array();
+        for ($i = 0; $i<count($arr); $i++)
+        {
+            if (!isset($rAr[$arr[$i][$key]]))
+            {
+            $rAr[$arr[$i][$key]] = $arr[$i];
+            }
+        }
+        return $rAr;
+    }
+
+
     public function getAllBox($hotel_id) {
         $where = '1=1 and sht.id='.$hotel_id.' and sht.state=1 and
         sht.flag=0
@@ -97,6 +111,7 @@ class AdvdeliveryController extends BaseController {
         $field = 'box.id bid,box.name bname';
         $order = ' box.id asc ';
         $box_arr = $hotelModel->getBoxOrderMacByHid($field, $where, $order);
+        $box_arr =  $this->assoc_unique($box_arr,'bid');
         return $box_arr;
     }
 
@@ -259,7 +274,6 @@ class AdvdeliveryController extends BaseController {
             'play_times'=>$play_times,
         );
         $box_arr = $this->getAllBox($hotel_id);
-
         if ($box_arr) {
             foreach ($box_arr as $bk=> $bv) {
                 //获取是否有效

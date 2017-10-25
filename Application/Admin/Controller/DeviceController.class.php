@@ -201,7 +201,7 @@ class DeviceController extends BaseController{
 		$tvModel = new TvModel;
 		if($id){
 			if($tvModel->editData($id,$save)){
-				$this->output('更新成功!', 'device/tv');
+				$this->output('更新成功!', 'device/updatetv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
