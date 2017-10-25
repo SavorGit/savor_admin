@@ -253,14 +253,18 @@ $config['USER_GRP_CONFIG'] = array(
     '0'=>'无',
     '1'=>'运维组',
 );
-$config['INSTALL_OFFER_CONFIG'] = array(
-    '1'=>array('name'=>'智能网关','specifit'=>'R1000+'),
-    '1'=>array('name'=>'POE交换机','specifit'=>''),
-    '1'=>array(''),
-    '1'=>array(''),
-    '1'=>array(''),
-    '1'=>array(''),
-    '1'=>array(''),
+
+$config['OPTION_USER_ROLE_ARR']  = ARRAY(
+     '1'=>'发布者', 
+     '2'=>'指派者',
+     '3'=>'执行者',
+     '4'=>'查看',
+);
+$config['OPTION_USER_SKILL_ARR'] = array(
+    '1'=>'信息检测',
+    '2'=>'网络改造',
+    '3'=>'安装验收',
+    '4'=>'维修',
 );
 
 
@@ -276,5 +280,6 @@ $config['HOTEL_DAMAGE_CONFIG'] = array(
     '9'=>'小平台',
     '10'=>'酒楼WIFI',
     '11'=>'酒楼电视机',
+	'12'=>'未开机',
 );
 return $config;

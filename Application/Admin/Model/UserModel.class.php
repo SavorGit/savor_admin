@@ -83,4 +83,14 @@ class UserModel extends Model{
     public function getUserCount($where){
         return $this->where($where)->count();
     }
+    public function getGourpList($fields,$where,$order,$limit){
+        $data = $this->alias('a')
+             ->join('savor_sysusergroup b on a.groupId= b.id','left')
+             ->field($fields)
+             ->where($where)
+             ->order($order)
+             ->limit($limit)
+             ->select();
+        return $data;
+    }
 }
