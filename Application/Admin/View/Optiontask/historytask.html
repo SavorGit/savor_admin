@@ -119,7 +119,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="发布人">{$vlist.publisher}</td>
               <td data-title="指派人">{$vlist.designater} </td>
               <td data-title="执行人">{$vlist.performer} </td>
-              <td data-title="任务类型">{$vlist.task_type} </td>
+              <td data-title="任务类型">{$task_type_arr[$vlist[task_type]]} </td>
               <td data-title="软件安装情况">{$install_state_arr[$vlist[install_state]]} </td>
               <td data-title="信息录入情况">{$install_state_arr[$vlist[insert_state]]} </td>
               <td data-title="酒楼名称">{$vlist.hotel_name} </td>

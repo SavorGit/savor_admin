@@ -12,6 +12,7 @@ class OptiontaskController extends BaseController {
     private $task_type_arr;
     private $task_emerge_arr;
     private $task_area_arr;
+    private $plan_finish_time;
     private $task_person_arr;
 	public function __construct() {
 		parent::__construct();
@@ -20,7 +21,7 @@ class OptiontaskController extends BaseController {
 	    $this->task_type_arr = array('1'=>'网络检测','2'=>'安装机顶盒','3'=>'安装网络+机顶盒','4'=>'报修网络版','5'=>'报修单机版','6'=>'单机版特殊更新','7'=>'内网改造报价');
 	    $this->task_emerge_arr = array('1'=>'火烧眉毛','2'=>'急','3'=>'一般');
 	    $this->task_area_arr = array('1'=>'广州','2'=>'上海','3'=>'深圳','4'=>'北京');
-	    $this->task_person_arr = array('1'=>'苏苏','2'=>'张磊','3'=>'成通','4'=>'黄勇','5'=>'刘朝伟','6'=>'罗浩','7'=>'邱志宇','8'=>'施华杰','9'=>'朱毅','10'=>'张文宇','11'=>'王卫华','12'=>'李丛','13'=>'任伟','14'=>'郑伟');
+	    $this->task_person_arr = array('1'=>'苏苏','2'=>'张磊','3'=>'成通','4'=>'黄勇','5'=>'刘朝伟','6'=>'罗浩','7'=>'邱志宇','8'=>'施华杰','9'=>'朱毅','10'=>'张文宇','11'=>'王卫华','12'=>'李丛','13'=>'任伟','14'=>'郑伟','15'=>'冯颖亮');
 	}
 	/**
 	 * @desc 任务列表
@@ -32,7 +33,7 @@ class OptiontaskController extends BaseController {
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
 		$order = I('_order','update_time');
-		$palan_finish_time = I('plan_finish_time');
+		$plan_finish_time = I('plan_finish_time');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$personid = I('personid');
@@ -43,10 +44,10 @@ class OptiontaskController extends BaseController {
 		/* $where['state'] = array('in','1,2,3');
 		$where['flag'] = 0; */
 		$where= ' 1 and state in(1,2,3) and flag=0';
-		if($palan_finish_time){
-		  $where.="  and palan_finish_time>='$palan_finish_time 00:00:00' and palan_finish_time<='$palan_finish_time 23:59:59'";
+		if($plan_finish_time){
+		  $where.="  and palan_finish_time>='$plan_finish_time 00:00:00' and palan_finish_time<='$plan_finish_time 23:59:59'";
 		  
-		  $this->assign('palan_finish_time',$palan_finish_time);
+		  $this->assign('palan_finish_time',$plan_finish_time);
 		}
 		if($personid){
 		    $where.=" and FIND_IN_SET($personid,performer) ";
@@ -68,6 +69,7 @@ class OptiontaskController extends BaseController {
 	    $this->assign('list',$list['list']);
 	    
 	    $this->assign('page',$list['page']);
+	    $this->assign('plan_finish_time',$plan_finish_time);
 	    $this->assign('task_state_arr',$this->task_state_arr);
 	    $this->assign('install_state_arr',$this->install_state_arr);
 	    $this->assign('task_type_arr',$this->task_type_arr);
@@ -162,6 +164,19 @@ class OptiontaskController extends BaseController {
 	    $where['flag'] = 0;
 	    $m_option_task = new \Admin\Model\OptiontaskModel();
 	    $list= $m_option_task->getList($where,$orders,$start,$size);
+	    
+	    
+	    foreach($list['list'] as $key=>$v){
+	        $performer_str = '';
+	        $space = '';
+	        $performer = explode(',', $v['performer']);
+	        foreach($performer as $pv){
+	            $performer_str .= $space .$this->task_person_arr[$pv];
+	            $space = ',';
+	        }
+	        $list['list'][$key]['performer'] = $performer_str;
+	    }
+	    
 	    $this->assign('list',$list['list']);
 	    $this->assign('page',$list['page']);
 	    $this->assign('task_state_arr',$this->task_state_arr);
