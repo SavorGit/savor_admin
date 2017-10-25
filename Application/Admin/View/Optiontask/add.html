@@ -90,7 +90,6 @@
           </select>
           <else />
           	<select name="performer[]" class="form-control bs-select class-filter" data-style="btn-success btn-sm" title="请选择..." data-container="body" multiple="multiple" data-size="20" >
-              
              <volist name="task_person_arr" key="k" id="row">
                  <option value="{$k}" <php> if(in_array($k,$performer_arr)){</php>selected <php>}</php> > {$row} </option>
              </volist>
