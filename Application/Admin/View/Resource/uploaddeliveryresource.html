@@ -409,6 +409,31 @@ accessid = ''
 					}
                     $("#marketid").val(result.data.media_id);
 					$("#dz-filecontainer .nav-tabs .pull-right a").click();
+					/*---------------------------------------*/
+					var media_url = $('#media_url').val();  //视频地址
+					var resource_name = $('#resource_name').val();  //视频名称
+					var seco = $('#seco').val();  //视频时长
+					$('#sp_name').html(resource_name);
+					$('#sp_url').html(media_url);
+					if(seco<60){
+						
+						$('#sp_time').html(seco+'秒')
+					}else if(seco>=60){
+						var fen = parseInt(seco/60);
+						var miaos = seco-60*fen;
+						if(miaos==0){
+							$('#sp_time').html(fen+'分钟00秒');
+						}else{
+							$('#sp_time').html(fen+'分钟'+miaos+'秒');
+						}
+					}
+					if($('#marketid').val()!=''){
+						
+						$('#newsp').show()
+						$('#sp').hide();
+					}else if($('#marketid').val()==''){
+						alert('视频保存失败，请重新上传。')
+					}
 				} else {
 					// $("#dz-filecontainer .nav-tabs .pull-right a").click();
 					alert(result.msg);
@@ -419,25 +444,7 @@ accessid = ''
 				$("#dz-filecontainer .nav-tabs .pull-right a").click();
 			}
 		})
-		var media_url = $('#media_url').val();  //视频地址
-	var resource_name = $('#resource_name').val();  //视频名称
-	var seco = $('#seco').val();  //视频时长
-	$('#sp_name').html(resource_name);
-	$('#sp_url').html(media_url);
-	if(seco<60){
 		
-		$('#sp_time').html(seco+'秒')
-	}else if(seco>=60){
-		var fen = parseInt(seco/60);
-		var miaos = seco-60*fen;
-		if(miaos==0){
-			$('#sp_time').html(fen+'分钟00秒');
-		}else{
-			$('#sp_time').html(fen+'分钟'+miaos+'秒');
-		}
-	}
-	$('#newsp').show()
-	$('#sp').hide();
 	})
 
 	//查找数据
