@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<style type="text/css">
+	.entirety{
+	width: 350px;
+    height: 333px;
+    border: 1px solid black;
+    margin: 0 auto;
+    margin-top: 10%;
+    margin-bottom: 50px;
+	}
+	.entirety h1{
+		text-align: center;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	.xian{
+		width: 80%;
+		height: 1px;
+		background-color: black;
+		margin: 0 auto;
+		margin-bottom: 10px;
+	}
+	.inp{
+		width: 70%;
+		
+		margin: 0 auto;
+	}
+	.compellation{
+		width: 80%;
+	    height: 29px;
+	    margin-top: 10px;
+	    margin-bottom: 10px;
+	    margin-left: 7%;
+	}
+	.position{
+		width: 80%;
+	    height: 29px;
+	    margin-left: 7%;
+	    margin-bottom: 10px;
+	}
+	.kuai{
+		width: 85%;
+		margin: 10px auto;
+		
+	}
+	.kuai span{
+		display: inline-block;
+	    width: 94px;
+	    height: 25px;
+	    text-align: center;
+	    line-height: 25px;
+	    margin-bottom: 10px;
+	    color: white;
+	    background-color: #b9b2b2;
+	}
+	#is_install{
+		margin-left: 7%;
+	}
+	.kuai .active{
+	    background-color: #3f51b5;
+	}
+</style>
+<body>
+<!-- <div class="form-group">
+    <div class="input-group-sm input-group">
+      <label>
+        包含酒楼：
+      </label>
+        <span class="input-group-btn input-group-sm">
+      <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+       <option value="asd">1</option>
+       <option value="22">1</option>
+       <option value="54">1</option>
+       <option>1</option>
+       <option>1</option>
+       <option>1</option>
+       <option>1</option>
+      </select>
+    </span>
+    </div>
+  </div>-->
+  <div class="entirety">
+  	<h1>账号设置</h1>
+  	<div class="xian"></div>
+  	<div class="inp">
+  		<!-- <input type="text" class="compellation" placeholder="姓名" /> -->
+  		<div class="input-group-sm input-group">
+  		 <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
+        账号：
+      </label>
+      <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
+  		<select style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+  			<option>请选择账号</option>
+  			<php>
+  				foreach($userlist as $key=>$v){
+  			</php>
+  			
+  				<option value="" disabled="disabled">{$key}</option>
+  				<php> foreach($v as $vv){</php>
+  				<option value="{$vv[id]}">{$vv[remark]}</option>
+  				<php>}</php>
+  			<php>
+  				}
+  			</php>
+  		</select>
+  		</span>
+  		</div>
+  		<div class="input-group-sm input-group" style="margin-top:5px;">
+  		 <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
+        角色：
+      </label>
+  		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
+  		<select  name="" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+  			<option value="">请选择</option>
+  			<php>foreach($option_user_role_arr as $key=>$v){</php>
+  				<option value="{$key}">{$v}</option>
+  			<php>}</php>
+  		</select>
+  		</span>
+  		</div>
+  		<div class="kuai">
+  			<php>foreach($option_user_skill_arr as $key=>$v){</php>
+  				<span id="skill_{$key}">{$v}<input name="skill_{$key}" value="" type="hidden"></span>
+  			<php>}</php>
+  			<!-- <span id="1">信息检测<input type="hidden"></span>
+  			<span id="2">网络改造 <input type="hidden"></span>
+  			<span id="3">安装验收 <input type="hidden"></span>
+  			<span id="4">维修 <input type="hidden"></span> -->
+  		</div>
+  		
+  		<div class="form-group" style="display:none">
+  		<input type="checkbox" id="is_install" /><label for="is_install" style="vertical-align: text-top;margin-left: 10px;margin-bottom: 10px;">带队安装</label>
+  		</div>
+  		<div class="form-group">
+    <div class="input-group-sm input-group" style="margin-top:5px;">
+      <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
+        所属城市：
+      </label>
+        <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
+      <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+       <volist name="areaList" id="list">
+           <option value="{$list.id}">{$list.region_name}</option>
+       </volist>
+      </select>
+    </span>
+    </div>
+  </div>
+  <button type="submit"  class="btn btn-primary"style="width: 100px;margin-left: 30%;">确定</button>
+  	</div>
+  </div>
+  
+</body>
+</html>
+<script type="text/javascript">
+	$('.position').change(function(){
+		$('.kuai').show();
+		$(this).next().find('span').prop('class','')
+	})
+	$('.kuai span').click(function(){
+		if($(this).is('.active')){
+			$(this).removeClass('active')
+			$(this).find('input').val('')
+		}else{
+			$(this).addClass('active');
+			$(this).find('input').val($(this).prop('id'))
+		}
+		
+	})
+</script>
