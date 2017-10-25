@@ -97,6 +97,7 @@ class OptiontaskController extends BaseController {
 	        unset($data['ajax']);
 	        $performer = implode(',', $data['performer']);
 	        $data['performer'] = $performer; 
+	        $data['update_time'] = date('Y-m-d H:i:s');
 	        $m_option_task = new \Admin\Model\OptiontaskModel();
 	        $ret = $m_option_task->where('id='.$id)->save($data);
 	        if($ret){
