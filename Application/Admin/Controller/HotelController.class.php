@@ -161,6 +161,9 @@ class HotelController extends BaseController {
 			$hotel_id = $datalist[$k]['id'];
 			$condition['hotel_id'] = $hotel_id;
 			$arr = $menuHoModel->where($condition)->order('id desc')->find();
+			$promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
+			$new_menu_arr = $promenuHoModel->where($condition)->order('id desc')->find();
+			$promenuid = $new_menu_arr['menu_id'];
 			$menuid = $arr['menu_id'];
 			if($menuid){
 				$men_arr = $menlistModel->find($menuid);
@@ -171,6 +174,18 @@ class HotelController extends BaseController {
 			}else{
 				$datalist[$k]['menu_id'] = '';
 				$datalist[$k]['menu_name'] = '无';
+			}
+
+			if($promenuid){
+				$promenulistModel = new \Admin\Model\ProgramMenuListModel();
+				$promen_arr = $promenulistModel->find($promenuid);
+				$promenuname = $promen_arr['menu_name'];
+				$datalist[$k]['promenu_id'] = $promenuid;
+				$datalist[$k]['promenu_name'] = $promenuname;
+
+			}else{
+				$datalist[$k]['promenu_id'] = '';
+				$datalist[$k]['promenu_name'] = '无';
 			}
 
 		}
@@ -756,7 +771,7 @@ class HotelController extends BaseController {
 						}else{
 
 
-							$preg = '/^[0-9A-F]+$/';
+							$preg = '/^[0-9A-Z]+$/';
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 

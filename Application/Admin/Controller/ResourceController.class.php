@@ -67,8 +67,103 @@ class ResourceController extends BaseController{
 	         $this->display('addresource');
 	     }
 	 }
-	 
 
+
+
+
+	public function uploadAdvdeliveryResource(){
+		$code = 10001;
+		$data = array();
+		if(IS_POST){
+			//获取文件大小
+			$ad_name = I('post.name','','trim');
+			$seco = I('post.seco','0','intval');
+			$fsize = I('post.oss_filesize','0','intval');
+			if ($fsize > 52428800) {
+				$res_data = array('code'=>$code,'msg'=>'上传视频不可大于50M');
+				echo json_encode($res_data);
+				exit;
+			}else if( mb_strlen($ad_name) >= 40) {
+				$res_data = array('code'=>$code,'msg'=>'广告名称40字以内');
+				echo json_encode($res_data);
+				exit;
+			}else if( $seco < 1 || !(is_int($seco)) || $seco>3600) {
+				$res_data = array('code'=>$code,'msg'=>'只可输入1-3600的数字');
+				echo json_encode($res_data);
+				exit;
+			}
+			$result = $this->handle_resource();
+			if($result['media_id']){
+				//判断广告名称是否存在
+				$adsModel = new \Admin\Model\AdsModel();
+				$nass = $adsModel->where(array('name'=>$ad_name))->field('name')->find();
+				if(!empty($nass['name'])){
+					$message = '资源名称已经存在请换名称';
+					$res_data = array('code'=>$code,'msg'=>$message);
+					echo json_encode($res_data);
+					exit;
+				}
+
+
+				$code = 10000;
+				$data['media_id'] = $result['media_id'];
+				$data['path'] = $result['oss_addr'];
+				//添加到ads表
+
+				$map['media_id'] = $result['media_id'];
+				$map['name'] = $ad_name;
+				$map['duration'] = $seco;
+				$map['type'] = 1;
+				$map['create_time'] = date("Y-m-d H:i:s");
+				$map['state'] = 1;
+				$map['creator_name'] = '';
+				$userInfo = session('sysUserInfo');
+				$map['creator_id'] = $userInfo['id'];
+				$adsModel->add($map);
+				$data['media_id'] = $adsModel->getLastInsID();
+			}
+			if($code != 10000) {
+				$res_data = array('code'=>$code,'msg'=>'资源名称已经存在请换名称');
+				echo json_encode($res_data);
+				exit;
+			}else {
+				$res_data = array('code'=>$code,'data'=>$data);
+			}
+			echo json_encode($res_data);
+			exit;
+		}else{
+			/*
+             * 隐藏域文件规则：
+             * filed 为:media_id时
+             * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+             * <span id="media_idimgname"></span>
+             */
+			$hidden_filed = I('get.filed','media_id');
+			$rtype = I('get.rtype',0);
+			$autofill = I('get.autofill',0);
+			$where = ' flag=0';
+			if($rtype){
+				$where.=" and type='$rtype'";
+			}
+			$orders = 'id desc';
+			$start = 0;
+			$size = 50;
+			$mediaModel = new \Admin\Model\MediaModel();
+			$result = $mediaModel->getList($where,$orders,$start,$size);
+			$this->assign('datalist', $result['list']);
+			$oss_host = get_oss_host();
+			if($rtype){
+				$this->get_file_exts($rtype);
+			}else{
+				$this->get_file_exts();
+			}
+			$this->assign('autofill',$autofill);
+			$this->assign('rtype',$rtype);
+			$this->assign('hidden_filed',$hidden_filed);
+			$this->assign('oss_host',$oss_host);
+			$this->display('uploaddeliveryresource');
+		}
+	}
 
 	public function uploadResource(){
 		$code = 10001;

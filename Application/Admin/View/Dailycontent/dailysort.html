@@ -52,9 +52,9 @@
 <div class="pageContent" id="pagecontent">
     <div id="w_list_print">
         <div class="no-more-tables">
-            <form method="post" action="{$host_name}/dailycontent/doSort" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+            <form method="post" action="{$host_name}/dailycontent/doSort" id="del-form"  class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 
-                <button type="submit" id="savesort" class="btn btn-primary" onclick="return savp();"  style="width: 106px;">发布</button>
+                <button type="button" id="savesort" class="btn btn-primary" data-toggle="modal" href="#twobc" onclick="return savp();"  style="width: 106px;">发布</button>
 
 
 
@@ -108,6 +108,27 @@
                         </div>
                     </div>
                 </div>
+                	<!--第二次保存-->
+				<div class="modal fade" id="twobc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="myModalLabel">添加文字</h4>
+			      </div>
+			      <div class="modal-body" style="height: 250px;">
+			        <textarea placeholder="内容:100字以内" minlength="1" maxlength="100" class="form-control textInput" id="mode_textare" style="height: 107px;margin-bottom: 15px;" name="dailyart"></textarea>
+			      	<input name="dailyauthor" autocomplete="off" placeholder="作者:1-10个字"  type="text" minlength="1" maxlength="10" class="form-control textInput" />
+			      </div>
+
+
+                    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			        <button type="submit" class="btn btn-primary">保存</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
             </form>
         </div>
     </div>
@@ -147,7 +168,7 @@
 
         var $shuju = $('.shuju>li');
         if($shuju.length!=10){
-            $('#savesort').prop('disabled','disabled')
+           // $('#savesort').prop('disabled','disabled')
         }
         /*选中*/
         $('#lefta').on('click','.shuju>li',function(){

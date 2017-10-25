@@ -201,7 +201,7 @@ class DeviceController extends BaseController{
 		$tvModel = new TvModel;
 		if($id){
 			if($tvModel->editData($id,$save)){
-				$this->output('更新成功!', 'device/tv');
+				$this->output('更新成功!', 'device/updatetv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
@@ -232,7 +232,7 @@ class DeviceController extends BaseController{
 		$boxModel = new BoxModel;
 		$save['update_time'] = date('Y-m-d H:i:s');
 		if($save['mac']){
-		    if(!preg_match('/[0-9A-F]{12}/', $save['mac'])){
+		    if(!preg_match('/[0-9A-Z]{12}/', $save['mac'])){
 		        $this->error('请输入正确的Mac地址');
 		    }
 		    if($id){

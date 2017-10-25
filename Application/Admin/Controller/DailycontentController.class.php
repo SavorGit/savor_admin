@@ -64,10 +64,22 @@ class DailycontentController extends BaseController {
         $save['update_time'] = $now_date;
         $save['create_time'] = $now_date;
         $save['bespeak_time'] = I('post.subdailytime','');
+        $save['dailyauthor'] = I('post.dailyauthor','', 'trim');
+        $save['dailyart'] = I('post.dailyart','', 'trim');
         $sort_str= I('post.dailysoar');
         $sort_arr = explode(',', $sort_str);
         if (count($sort_arr) != $this->lnum) {
             $this->error('内容不满足'.$this->lnum.'条');
+        }
+        if ( mb_strlen($save['dailyauthor']) >=1 && mb_strlen($save['dailyauthor'])<= 10) {
+
+        } else {
+            $this->error('作者限制1-10个字');
+        }
+        if ( mb_strlen($save['dailyart']) >=1 && mb_strlen($save['dailyart'])< 100) {
+
+        } else {
+            $this->error('内容限制100字以内');
         }
 
         //判断该日期是否发布过
@@ -81,6 +93,7 @@ class DailycontentController extends BaseController {
             }
             $save['bespeak'] = 1;
         }
+
 
         $dat_time = date("Y-m-d", strtotime
         ($save['bespeak_time']));
@@ -220,9 +233,16 @@ class DailycontentController extends BaseController {
                 $v['bespeak_time'] = '无';
             }
         });
+
+
+        foreach($result['list'] as $key=>$v){
+
+            $pushdata = array();
+            $pushdata['id'] = $v['id'];
+            $result['list'][$key]['pushdata'] = json_encode($pushdata,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+
+        }
         $retp = $result['list'];
-
-
         $this->assign('list', $retp);
         $this->assign('page',  $result['page']);
         $this->display('dailylist');
@@ -259,6 +279,13 @@ class DailycontentController extends BaseController {
             $errmsg = '关键词不可为空';
             $this->error($errmsg);
         }
+        if ( mb_strlen($save['artpro'], 'utf-8') >= 1 && mb_strlen($save['artpro'], 'utf-8') <= 4) {
+
+        } else {
+            $errmsg = '属性名称字数不符';
+            $this->error($errmsg);
+        }
+
 
         if ($save['desc']) {
             if ( mb_strlen($save['desc']) > 200) {
@@ -322,7 +349,7 @@ class DailycontentController extends BaseController {
 
 
     /**
-     * @desc 处理专题组添加与编辑的处理过程
+     * @desc 处理每日知享添加与编辑的处理过程
      * @method processGroup
      * @access public
      * @http NULL
@@ -337,6 +364,7 @@ class DailycontentController extends BaseController {
         $save['desc']        = I('post.daily-desc','','trim');
         $save['source_id'] = I('post.source_id','','trim');
         $save['media_id'] = I('post.media_id','0','intval');
+        $save['artpro'] = I('post.artpro', '', 'trim');
         // $save['desc'] = htmlspecialchars(strip_tags($save['desc']));
         //处理标签
         $_POST['taginfo'] = preg_replace("/\'/", '"', $_POST['dailyre']);
@@ -437,7 +465,7 @@ class DailycontentController extends BaseController {
                     $resp = $this->processRelation( $sgid, $sp_relation_arr);
                     if ($resp) {
                         $dcontentModel->commit();
-                        $this->output('更新成功!', 'dailycontent/rplist');
+                        $this->output('更新成功!', 'dailycontent/rplist', 1);
                     } else {
                         $dcontentModel->rollback();
                         $this->error('更新失败');
@@ -548,7 +576,7 @@ class DailycontentController extends BaseController {
         $id = I('get.id');
         $field = "sg.title title, sg.media_id mediaid,sg.keyword
         ,sg.desc,sg.source_id,sg.order_tag tag,sr.dailytype,sr.stext,sr
-        .spictureid,sm.oss_addr simg ";
+        .spictureid,sm.oss_addr simg,sg.artpro ";
         $where =  " 1=1 and sg.id = $id ";
         $dcontent_arr = $dcontentModel->fetchDataBySql($field,
             $where);
@@ -559,6 +587,7 @@ class DailycontentController extends BaseController {
             'sgid'=>$id,
             'title'=>$dcontent_arr[0]['title'],
             'keyword'=>$dcontent_arr[0]['keyword'],
+            'artpro'=>$dcontent_arr[0]['artpro'],
             'desc'=>$dcontent_arr[0]['desc'],
             'media_id' =>$dcontent_arr[0]['mediaid'],
             'source_id'=>$dcontent_arr[0]['source_id'],
@@ -595,6 +624,8 @@ class DailycontentController extends BaseController {
         }
 
 
+
+
         $this->assign('sourcelist',$article_list);
         $this->assign('pageinfo',$pagearr['list']);
         $this->assign('pagecount',$pagearr['page']);
@@ -611,5 +642,8 @@ class DailycontentController extends BaseController {
         $res = $tagModel->where($map)->field('id tagid,tagname')->select();
         return $res;
     }
+
+
+
 
 }

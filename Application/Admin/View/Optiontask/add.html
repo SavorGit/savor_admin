@@ -13,7 +13,30 @@
           <input type="text" class="form-control" name="publisher" minlength="2" maxlength="50" value="{$vinfo.publisher}" required>
         </div>
       </div> 
-      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          地区(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+          <select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_area_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq '北京'"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_area_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['task_area']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           紧急度(酒楼合作部填写):
@@ -48,14 +71,35 @@
         </div>
       </div>
       
+    
+      
+      
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           执行人(郑伟填写):
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="performer" minlength="2"  value="{$vinfo.performer}" >
+        <empty name="id">
+        
+          <select name="performer[]" class="form-control bs-select class-filter" data-style="btn-success btn-sm" title="请选择..." data-container="body" multiple="multiple"  data-size="20" >
+              <option value="">请选择</option>
+             <volist name="task_person_arr" key="k" id="row">
+                 <option value="{$k}"  > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="performer[]" class="form-control bs-select class-filter" data-style="btn-success btn-sm" title="请选择..." data-container="body" multiple="multiple" data-size="20" >
+             <volist name="task_person_arr" key="k" id="row">
+                 <option value="{$k}" <php> if(in_array($k,$performer_arr)){</php>selected <php>}</php> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
         </div>
-      </div>
+      </div> 
+      
+      
 	  <!-- <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           任务类型:
@@ -144,10 +188,6 @@
         </div>
       </div>
       
-      
-      
-      
-      
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           酒楼名称(酒楼合作部填写):
@@ -201,7 +241,14 @@
           <input type="text" class="form-control" name="desc" minlength="2"  value="{$vinfo.desc}" >
         </div>
       </div>
-      
+       <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          故障说明(执行人填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="info" minlength="2"  value="{$vinfo.info}" >
+        </div>
+      </div>
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 计划完成日期(郑伟填写):

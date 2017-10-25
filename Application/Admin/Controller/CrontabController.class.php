@@ -19,7 +19,7 @@ class CrontabController extends Controller
     
         //正常酒楼 、异常酒楼
         $end_time = date('Y-m-d H:i:s',strtotime('-10 minutes'));
-        $start_time = date('Y-m-d H:i:s',strtotime('-15 hours'));
+        $start_time = date('Y-m-d H:i:s',strtotime('-72 hours'));
         $m_heart_log = new \Admin\Model\HeartLogModel();
         $m_box = new \Admin\Model\BoxModel();
         $where = array();
@@ -158,8 +158,8 @@ class CrontabController extends Controller
         $id = $m_hotel_error_report->addInfo($data);
         if($id){
             $ticker = '截止到'.date('m-d H点').','.$data['not_normal_hotel_num'].'家酒楼异常,其中'
-                      .$data['not_normal_smallplat_num'].'个小平台失联超过15小时,'
-                      .$data['not_normal_box_num'].'个机顶盒失联超过15小时';
+                      .$data['not_normal_smallplat_num'].'个小平台失联超过72小时,'
+                      .$data['not_normal_box_num'].'个机顶盒失联超过72小时';
             $title = '小热点异常报告';
             $desc  = '小热点异常报告';
             $m_hotel_error_report_detail = new \Admin\Model\HotelErrorReportDetailModel();
@@ -338,23 +338,40 @@ class CrontabController extends Controller
         $pub_ads_list = $m_pub_ads->getEmptyLocationList();
         
         foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
-            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);
+            
+            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到盒子
             
             foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
+                
                 $all_have_location_arr = array();
                 //取出该机顶盒所有未填写位置的列表
-                $all_empty_location_info = $m_pub_ads_box->getEmptyLocation($val['id'],$v['box_id']);
+                $all_empty_location_info = $m_pub_ads_box->getEmptyLocation('id',$val['id'],$v['box_id']);
+                
                 if(!empty($all_empty_location_info)){
                     //取出该机顶盒在该广告起止时间内所有的位置
-                    $all_have_location_info = $m_pub_ads_box->getLocationList($val['id'],$v['box_id'],$val['start_date'],$val['end_date']);
+                    $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
+                    
                     foreach($all_have_location_info as $hl){
                         $all_have_location_arr[] = $hl['location_id'];
                     }
+                    
                     $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
+                    //如果还有未分配的位置
+                    //print_r($diff_location_arr);exit;
                     if(!empty($diff_location_arr)){
+                        //把未分配得位置负值给location_id =0 的记录
                         $count = count($all_empty_location_info);
-                        $now_location_arr = array_rand($diff_location_arr,$count);
-                        
+                        //$count = 1;
+                        if($count==1){
+                            $rand_key = array_rand($diff_location_arr,$count);
+                           
+                            $now_location_arr = array($rand_key);
+                        }else {
+                            $now_location_arr = array_rand($diff_location_arr,$count);
+                        }
+                        //print_r($diff_location_arr);exit;
+                        //print_r($now_location_arr);exit;
+                        //print_r($all_empty_location_info);exit;
                         foreach($all_empty_location_info as $ek=>$ev){
                             $where['id'] = $ev['id'];
                             $data['location_id'] = $diff_location_arr[$now_location_arr[$ek]];
@@ -365,6 +382,7 @@ class CrontabController extends Controller
                 }
             }
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
+        
         }
         echo "OK";
     }

@@ -89,6 +89,15 @@
                   <i class="fa fa-eye"></i>
                   </a>
                 </div>
+
+                <div class="tools-edit">
+
+                  <a id="ins_{$vlist.id}"  class="btn btn-success btn-icon cpush"  data-clipboard-text='{$vlist.pushdata}'  title="复制推送内容" mask="true"  data-original-title="复制推送内容">
+
+                    <i  class="fa fa-copy"></i>
+                  </a>
+                </div>
+
               </td>
 
             </tr>
@@ -96,13 +105,45 @@
           </tbody>
         </table>
       </form>
-
+      <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content" style="width: 357px;height: 160px;">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">提示</h4>
+            </div>
+            <div class="modal-body">
+              <p class="tishi">复制成功&hellip;</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
     </div>
   </div>
   {$page}
 </div>
-
+<script src="Public/admin/assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
 <SCRIPT LANGUAGE="JavaScript">
 
+  $('.tools-edit').on("click",".cpush",function(){
+    var co;
+    var ids = $(this).prop("id");
+    var clipboard = new Clipboard('#'+ids);
+    clipboard.on('success', function(e) {
+      //alert('复制成功');
+      $('#myModal').modal('show')
 
+
+    });
+
+    clipboard.on('error', function(e) {
+      $('.tishi').html('复制失败');
+      $('#myModal').modal('show');
+
+    });
+
+  });
 </script>

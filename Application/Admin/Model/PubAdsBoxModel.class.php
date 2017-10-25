@@ -96,8 +96,7 @@ class PubAdsBoxModel extends BaseModel
 
 
 	
-	public function getEmptyLocation($pub_ads_id,$box_id){
-	    $fields = 'id';
+	public function getEmptyLocation($fields,$pub_ads_id,$box_id){
 	    $where = array();
 	    $where['pub_ads_id'] = $pub_ads_id;
 	    $where['box_id']     = $box_id;
@@ -112,7 +111,7 @@ class PubAdsBoxModel extends BaseModel
 	              ." and ((b.start_date>='".$start_date."' and b.start_date<='".$end_date."')
 	                       or (b.start_date<='".$start_date."' and b.end_date>='".$end_date."')
 	                       or (b.end_date>='".$start_date."' and b.end_date<='".$end_date."'))"; */
-	    $where = ' a.box_id='.$box_id
+	    $where = 'a.box_id='.$box_id
 	              ." and '".$end_date."'>=b.start_date and '".$start_date."'<=b.end_date and a.location_id!=0";
 	    $data = $this->alias('a')
 	         ->field('a.location_id')
