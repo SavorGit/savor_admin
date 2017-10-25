@@ -265,7 +265,7 @@ $config['OPTION_USER_SKILL_ARR'] = array(
     '2'=>'网络改造',
     '3'=>'安装验收',
     '4'=>'维修',
-
+);
 
 
 $config['HOTEL_DAMAGE_CONFIG'] = array(
