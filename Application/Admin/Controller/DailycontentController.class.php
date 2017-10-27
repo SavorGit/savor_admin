@@ -219,7 +219,7 @@ class DailycontentController extends BaseController {
             $this->assign('dailyname', $name);
             $where .= " and dc.title like '%".$name."%' ";
         }
-        $field = 'dc.id,dc.title,dc.creator_id,su.remark,dc.create_time,dc
+        $field = 'dc.id,dc.title,dc.media_id,dc.desc,dc.creator_id,su.remark,dc.create_time,dc
         .state,lk.bespeak_time';
         $result = $dcontentModel->getList($field, $where, $orders,$start,$size);
 
@@ -234,13 +234,21 @@ class DailycontentController extends BaseController {
             }
         });
 
-
+        $m_media = new \Admin\Model\MediaModel();
+        
         foreach($result['list'] as $key=>$v){
 
             $pushdata = array();
-            $pushdata['id'] = $v['id'];
+            $pushdata['dailyid'] = $v['id'];
+            $pushdata['title']   = $v['title'];
+            $pushdata['desc']    = $v['desc'];
+            $oss_path = $m_media->getMediaInfoById($v['media_id']);
+            
+            $pushdata['imgUrl']  =$oss_path['oss_addr'];
+            $pushdata['share_url'] = C('HOST_NAME').'/dailycontentshow/showday?id='.$v['id'];
+            
             $result['list'][$key]['pushdata'] = json_encode($pushdata,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
-
+            
         }
         $retp = $result['list'];
         $this->assign('list', $retp);
