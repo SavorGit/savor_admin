@@ -12,7 +12,7 @@ class RepairBoxUserModel extends BaseModel
 {
 	protected $tableName='repair_box_user';
 
-	
+
 
 	public function getRepairDetail($field, $where, $order, $start, $size) {
 		//上拉
