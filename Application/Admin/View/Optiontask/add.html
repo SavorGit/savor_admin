@@ -123,9 +123,8 @@
           </select>
           <else />
           	<select name="task_type" class="form-control bs-select" title="请选择..." data-size="20" required>
-
-             <volist name="task_type_arrde" key="k" id="row">
-                 <option value="{$k}" <if condition="$k eq $vinfo['task_type']"> selected </if> > {$row} </option>
+             <volist name="task_type_arrde" id="row">
+                 <option value="{$key}" <if condition="$key eq $vinfo['task_type']"> selected </if> > {$row} </option>
              </volist>
 
           </select>

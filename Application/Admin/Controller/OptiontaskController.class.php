@@ -21,7 +21,7 @@ class OptiontaskController extends BaseController {
 		$this->install_state_arr = array('1'=>'待完成','2'=>'已完成','3'=>'不需要');
 	    $this->task_state_arr = array('1'=>'新任务','2'=>'执行中','3'=>'排队等待','4'=>'已完成');	
 	    
-	    $this->task_type_arr = array('5'=>'报修单机版','6'=>'单机版特殊更新','1'=>'网络信息采集及报价','8'=>'网络施工改造','2'=>'安装机顶盒','3'=>'安装网络+机顶盒','4'=>'报修网络版');
+	    $this->task_type_arr = array('5'=>'报修单机版','6'=>'单机版特殊更新','1'=>'网络信息采集及报价','8'=>'网络施工改造','2'=>'安装机顶盒','3'=>'安装网络+机顶盒','4'=>'报修网络版','9'=>'设备拆回');
 	    $this->task_emerge_arr = array('1'=>'火烧眉毛','2'=>'急','3'=>'一般');
 	    $this->task_area_arr = array('1'=>'广州','2'=>'上海','3'=>'深圳','4'=>'北京');
 	    $this->task_person_arr = array('1'=>'苏苏','2'=>'张磊','3'=>'成通','4'=>'黄勇','5'=>'刘朝伟','6'=>'罗浩','7'=>'邱志宇','8'=>'施华杰','9'=>'朱毅','10'=>'张文宇','11'=>'王卫华','12'=>'李丛','13'=>'任伟','14'=>'郑伟','15'=>'冯颖亮','16'=>'外包');
@@ -304,7 +304,6 @@ class OptiontaskController extends BaseController {
 	    $this->assign('performer_arr',$performer_arr);
 	    $this->assign('vinfo',$list);
 	    $this->assign('install_state_arr',$this->install_state_arr);
-
 	    $this->assign('task_state_arr',$this->task_state_arr);
 	    $this->assign('task_type_arrde',$this->task_type_arr);
 	    $this->assign('task_emerge_arr',$this->task_emerge_arr);
