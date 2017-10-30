@@ -287,7 +287,7 @@ class DailycontentController extends BaseController {
             $errmsg = '关键词不可为空';
             $this->error($errmsg);
         }
-        if ( mb_strlen($save['artpro'], 'utf-8') >= 1 && mb_strlen($save['artpro'], 'utf-8') <= 4) {
+        if ( mb_strlen($save['artpro'], 'utf-8') >= 1 && mb_strlen($save['artpro'], 'utf-8') <= 5) {
 
         } else {
             $errmsg = '属性名称字数不符';
