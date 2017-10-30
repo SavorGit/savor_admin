@@ -26,11 +26,52 @@ class OptiontaskController extends BaseController {
 	    $this->task_area_arr = array('1'=>'广州','2'=>'上海','3'=>'深圳','4'=>'北京');
 	    $this->task_person_arr = array('1'=>'苏苏','2'=>'张磊','3'=>'成通','4'=>'黄勇','5'=>'刘朝伟','6'=>'罗浩','7'=>'邱志宇','8'=>'施华杰','9'=>'朱毅','10'=>'张文宇','11'=>'王卫华','12'=>'李丛','13'=>'任伟','14'=>'郑伟','15'=>'冯颖亮');
 		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S');
-		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S','2'=>'');
+		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S','2'=>'Ap0h2sGR8i9Q2uQvA_-RKQupNMi9yI3xV4pMjv3xmDo7');
+		$this->person_device_iostoken = array('1'=>'bede4b5d51c2f5dca3ec7ddfa19f54c23fb91d485da0ef880fed0b880fffde4d','2'=>'34e426055514d99da6803ed309da1b3d983035299dbae7e01c0e8f3ea99c324a');
 
 	}
 
-	public function testduo_sb(){
+	public function testduo_iossa(){
+		$obj = new UmengNotice();
+		$type = 'listcast';
+		$list = $obj->umeng_ios($type);
+		//设置属于哪个app
+		$config_parm = 'opclient';
+		//设置app打开后选项
+		$after_a = C('AFTER_APP');
+		$list->setParam($config_parm);
+		$pam['device_tokens'] = implode("," ,$this->person_device_iostoken);
+		$pam['time'] = time();
+		$pam['alert'] = '龙的少林寺';
+		$pam['badge'] = '龙的少林寺';
+		$pam['sound'] = '龙独孤九剑';
+		$pam['production_mode'] = 'false';
+		$pam['customm'] = array(1=>'我是天谁');
+		$list->sendIOSListcast($pam);
+
+	}
+
+	public function testdan_iossa(){
+		$obj = new UmengNotice();
+		$type = 'unicast';
+		$unicast = $obj->umeng_ios($type);
+		//设置属于哪个app
+		$config_parm = 'opclient';
+		//设置app打开后选项
+		$after_a = C('AFTER_APP');
+		$unicast->setParam($config_parm);
+		$pam['device_tokens'] = $this->person_device_iostoken[1];
+		$pam['time'] = time();
+		$pam['alert'] = '少林寺';
+		$pam['badge'] = '天龙八部';
+		$pam['sound'] = '独孤九剑';
+		$pam['production_mode'] = 'false';
+		$pam['customm'] = array(1=>'我是谁');
+		$unicast->sendIOSUnicast($pam);
+
+	}
+
+	public function testduo_androidsb(){
 		$obj = new UmengNotice();
 		$type = 'listcast';
 		$listcast = $obj->umeng_android($type);
@@ -51,7 +92,7 @@ class OptiontaskController extends BaseController {
 	}
 
 
-	public function testduo_sa(){
+	public function testdan_androidsa(){
 		$obj = new UmengNotice();
 		$type = 'unicast';
 		$unicast = $obj->umeng_android($type);
@@ -72,6 +113,59 @@ class OptiontaskController extends BaseController {
 		$unicast->sendAndroidUnicast($pam);
 
 	}
+
+
+	/**
+	 * sendandroid
+	 * @param $config_parm //设置属于哪个app如运维等
+	 * @param $type//哪种广播类型 unicast,'listcast'
+	 * @param $pam//所需要字段
+     */
+    public function sendandroid($config_parm,$type, $pam ){
+		$obj = new UmengNotice();
+		switch($type) {
+			case 'unicast':
+				$unicast = $obj->umeng_android($type);
+				$unicast->setParam($config_parm);
+				$unicast->sendAndroidUnicast($pam);
+				break;
+			case 'listcast':
+				$unicast = $obj->umeng_android($type);
+				$unicast->setParam($config_parm);
+				$unicast->sendAndroidListcast($pam);
+				break;
+
+		}
+
+	}
+
+
+
+
+	/**
+	 * sendios
+	 * @param $config_parm //设置属于哪个app如运维等
+	 * @param $type//哪种广播类型 unicast,'listcast'
+	 * @param $pam//所需要字段
+	 */
+	public function sendios($config_parm,$type, $pam ){
+		$obj = new UmengNotice();
+		switch($type) {
+			case 'unicast':
+				$unicast = $obj->umeng_ios($type);
+				$unicast->setParam($config_parm);
+				$unicast->sendIOSUnicast($pam);
+				break;
+			case 'listcast':
+				$unicast = $obj->umeng_ios($type);
+				$unicast->setParam($config_parm);
+				$unicast->sendIOSListcast($pam);
+				break;
+
+		}
+
+	}
+
 
 	public function test(){
 		//发送单人任务
