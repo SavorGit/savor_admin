@@ -229,4 +229,20 @@
             })
         });
     });
+
+
+    function dialogAjaxDone(json) {
+        console.log(json);
+        DWZ.ajaxDone(json);
+        if(json.navTabId == 'dailycontent/dailysortdailysort') {
+            console.log('welrlwer');
+           // navTab.closeTab('Advdelivery/adddevilery');
+           // $.pdialog.closeCurrent();
+            $("#twobc").modal("hide");
+            $.pdialog.close('dailycontent/addsortaddsort');
+            navTab.reload('dailycontent/rplist');
+            $( "div" ).removeClass( "modal-backdrop fade in" );
+
+        }
+    }
 </script>

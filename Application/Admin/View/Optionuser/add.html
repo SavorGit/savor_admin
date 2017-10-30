@@ -125,7 +125,7 @@
   		</div>
   		<div class="kuai">
   			<php>foreach($option_user_skill_arr as $key=>$v){</php>
-  				<span id="skill_{$key}">{$v}<input name="skill_{$key}" value="" type="hidden"></span>
+  				<span id="{$key}">{$v}<input name="skill_{$key}" value="" type="hidden"></span>
   			<php>}</php>
   			<!-- <span id="1">信息检测<input type="hidden"></span>
   			<span id="2">网络改造 <input type="hidden"></span>
@@ -133,7 +133,7 @@
   			<span id="4">维修 <input type="hidden"></span> -->
   		</div>
   		
-  		<div class="form-group" style="display:none">
+  		<div class="form-group" id="teaminstall" style="display:none">
   		<input type="checkbox" id="is_install" /><label for="is_install" style="vertical-align: text-top;margin-left: 10px;margin-bottom: 10px;">带队安装</label>
   		</div>
   		<div class="form-group">
@@ -162,12 +162,20 @@
 		$(this).next().find('span').prop('class','')
 	})
 	$('.kuai span').click(function(){
+		var skill_id = $(this).prop('id');
 		if($(this).is('.active')){
 			$(this).removeClass('active')
 			$(this).find('input').val('')
+			if(skill_id ==3){
+				$('#teaminstall').hide();
+			}
 		}else{
 			$(this).addClass('active');
 			$(this).find('input').val($(this).prop('id'))
+			
+			if(skill_id ==3){
+				$('#teaminstall').show();
+			}
 		}
 		
 	})

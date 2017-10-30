@@ -32,7 +32,7 @@ class DailycontentshowController extends Controller {
      * @http NULL
      * @return void
      */
-    public function showday(){
+    public function showday1(){
         $sourcename = I('get.location','');
         $this->assign('sourc', $sourcename);
         $dcontentModel = new \Admin\Model\DailyContentModel();
@@ -129,8 +129,6 @@ class DailycontentshowController extends Controller {
                     $result = $m_weixin_api->getWxOpenid($code,$url);
                     $openid = $result['openid'];
                     $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
-                    var_dump($wxUserinfo);
-                    var_dump($sourcepenid == $openid);
                     if($sourcepenid == $openid) {
                         $url = $this->getContentUrl().'?';
                         $url .='openid='.$openid;
@@ -185,7 +183,7 @@ class DailycontentshowController extends Controller {
 
 
 
-    public function showopen(){
+    public function showday(){
         //http://admin.littlehotspot.com/admin/dailycontentshow/showday?id=60
         $sourcename = I('get.location','');
         $this->assign('sourc', $sourcename);
@@ -243,13 +241,12 @@ class DailycontentshowController extends Controller {
                 } else {
 
                     $url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
-                    var_dump($url);
+
                     if(!empty($code)) {
-                        var_dump($oid);
 
                         $sourcepenid = $openid;
                         $result = $m_weixin_api->getWxOpenid($code,$url);
-                        var_dump($sourcepenid);
+
                         $openid = $result['openid'];
                         $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
                         var_dump($wxUserinfo);
@@ -350,99 +347,6 @@ class DailycontentshowController extends Controller {
     }
 
 
-
-    /**
-     * @desc 微信授权
-     */
-    public function wxAuthorLog($url,$contentid, $type){
-
-        $redirect_url = urlencode($url);
-        $host_name = C('CONTENT_HOST');
-        $jumpUrl = $host_name.'admin/wxapply/index?scope=0&redirect_url='.$redirect_url;
-        header("Location:".$jumpUrl);
-        exit;
-        //$url = 'http://admin.littlehotspot.com/index.php/admin/dailycontentshow/showopen?id=60';
-        $m_weixin_api = new \Common\Lib\Weixin_api();
-        //微信授权登录开始
-        $state = I('state','wxsq001','trim') ;
-        if($iswx==1){
-
-            $host_name = C('CONTENT_HOST');
-            $openid = I('openid');
-            if (!$code || $state!='wxsq001') {
-
-                if($openid) {
-                    $url .= '&type=2';
-                } else {
-                    //标明是第一次自己打开的网页
-                    $url .= '&type=1';
-                }
-                $redirect_url = urlencode($url);
-                $jumpUrl = $host_name.'admin/wxapply/index?scope=0&redirect_url='.$redirect_url;
-                header("Location:".$jumpUrl);
-                exit;
-            }else {
-
-                if($openid) {
-                    //来源者openid
-                    $type = I('type');
-                    $sourcepenid = $openid;
-                    $result = $m_weixin_api->getWxOpenid($code,$url);
-
-
-                    $openid = $result['openid'];
-                    //获取自身openid，如果相等则直接出来如果
-                    if($sourcepenid == $openid) {
-                        $url = $this->getContentUrl().'?id='.$contentid;
-                        $url .='&openid='.$openid.'&type=1';
-                        return array('code'=>0,'mul'=>$url);
-                    }else {
-                        $url = $this->getContentUrl().'?id='.$contentid;
-                        $url .='&openid='.$openid.'&type=1';
-                        return array('code'=>0,'mul'=>$url);
-                    }
-                }else {
-                    $result = $m_weixin_api->getWxOpenid($code,$url);
-                    $openid = $result['openid'];
-                    $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
-                    $url = $this->getContentUrl().'?id='.$contentid;
-                    $url .='&issq=1&openid='.$openid.'&type=1';
-                    $redirect_url = urlencode($url);
-                    $host_name = C('CONTENT_HOST');
-                    $jumpUrl = $host_name.'admin/wxapply/index?scope=1&redirect_url='.$redirect_url;
-                    header("Location:".$jumpUrl);
-                    exit;
-                }
-            }
-
-
-
-            $result = $m_weixin_api->getWxOpenid($code,$url);
-            $openid = $result['openid'];
-            $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
-
-            $wxUserinfo['nickname'] = base64_encode($wxUserinfo['nickname']);
-            var_dump($wxUserinfo);
-            die;
-            $map =  array();
-            $map['openid'] = $wxUserinfo['openid'];
-            $map['nickname'] = $wxUserinfo['nickname'];
-            $map['sex']      = $wxUserinfo['sex'];
-            $map['country']  = $wxUserinfo['country'];
-            $map['province'] = $wxUserinfo['province'];
-            $map['city']     = $wxUserinfo['city'];
-            $map['contentid']= $contentid;
-            $map['create_time'] = date('Y-m-d H:i:s');
-
-            $ip = get_client_ip();
-            $map['ip_addr'] = $ip;
-            $geoArr = getgeoByip($ip);
-            $map['long'] = $geoArr['x'];
-            $map['lat'] = $geoArr['y'];
-            $m_content_wx_auth =  new \Admin\Model\ContentWxAuthModel();
-            $m_content_wx_auth->addInfo($map);
-        }
-    }
 
 
 }
