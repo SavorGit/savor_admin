@@ -85,8 +85,8 @@
 
 
 
-                <if condition="$vlist.hotel_num eq 0"> <a data-tip="请选择酒楼" rel="menu/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/programmenu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
-                  <else/> <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="menu/selecthotel"
+                <if condition="$vlist.hotel_num eq 0"> <a data-tip="请选择酒楼" rel="programmenu/selecthotelselect" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/programmenu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
+                  <else/> <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="programmenu/selecthotelselect"
 href="{$host_name}/programmenu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_name}">{$vlist.hotel_num}</a>
                 </if>
               </td>
