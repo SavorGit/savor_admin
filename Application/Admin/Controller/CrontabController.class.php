@@ -378,7 +378,10 @@ class CrontabController extends Controller
                             $where['id'] = $ev['id'];
                             $data['location_id'] = $diff_location_arr[$now_location_arr[$ek]];
                             $data['update_time'] = date('Y-m-d H:i:s');
-                            $m_pub_ads_box->updateInfo($where,$data);
+                            if(!empty($data['location_id'])){
+                                $m_pub_ads_box->updateInfo($where,$data);
+                            }
+                            
                         } 
                     }  
                 }
