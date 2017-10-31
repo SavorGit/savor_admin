@@ -54,7 +54,8 @@ class CrontabController extends Controller
                 $flag = 0;
                 //$normal_hotel_num +=1;
                 $where = '';
-                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
+                //$where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
+                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state 1 and a.flag=0  and  room.flag=0 and room.state =1';
                 $box_list = $m_box->getListInfo( 'a.id, a.mac',$where);
                 foreach($box_list as $ks=>$vs){
                     $where = '';
@@ -94,7 +95,8 @@ class CrontabController extends Controller
                 $small_plat_status = 0;
                 $flag = 0;
                 $where = '';
-                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
+                //$where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
+                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state =1 and a.flag=0  and  room.flag=0 and room.state =1';
                 $box_list = $m_box->getListInfo( 'a.id, a.mac',$where);
                 foreach($box_list as $ks=>$vs){
                     $where = '';
@@ -376,7 +378,10 @@ class CrontabController extends Controller
                             $where['id'] = $ev['id'];
                             $data['location_id'] = $diff_location_arr[$now_location_arr[$ek]];
                             $data['update_time'] = date('Y-m-d H:i:s');
-                            $m_pub_ads_box->updateInfo($where,$data);
+                            if(!empty($data['location_id'])){
+                                $m_pub_ads_box->updateInfo($where,$data);
+                            }
+                            
                         } 
                     }  
                 }
