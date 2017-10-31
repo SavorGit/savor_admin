@@ -146,7 +146,8 @@ $('#tbod').on('keyup','.nums',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#tbod').on('keyup','.market_price',function(){
@@ -177,7 +178,8 @@ $('#tbod').on('keyup','.market_price',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#tbod').on('keyup','.explain',function(){
@@ -196,7 +198,8 @@ $('#tbod').on('keyup','.explain',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 })
 //$('#tbod').on('keyup','.')
@@ -286,7 +289,8 @@ $('#tbod').on('keyup','.nums_B',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 	/*奖金*/
 	
@@ -337,7 +341,8 @@ $('#tbod').on('keyup','.market_price_B',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#tbod').on('keyup','.explain_B',function(){
@@ -368,7 +373,8 @@ $('#tbod').on('keyup','.explain_B',function(){
 	$('.group_our_price').html(allour_price)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 	
 })
@@ -414,7 +420,8 @@ $('.serve1').keyup(function(){
 	$('.allm').html(serve1)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 })
 $('.serve2').keyup(function(){
@@ -422,7 +429,8 @@ $('.serve2').keyup(function(){
 	$('.allm').html(serve1)
 	/*总报价*/
 	var z_our_price = parseInt($('.group_our_price').html())*0.05;
-	$('#z_our_price').html(parseInt(z_our_price))
+	var z_our_price2 = parseInt($('.group_our_price').html())*0.0334;
+	$('#z_our_price').html(parseInt(z_our_price2))
 	$('#shuidian').html(parseInt(z_our_price))
 })
 $('#cb_num1').keyup(function(){
@@ -436,6 +444,8 @@ $('#cb_num2').keyup(function(){
 	$('#allxm').html(allcost_total+allcost_totals);
 })
 setInterval(function(){
+	$('#many2').html($('#many').html())
+	$('#tc2').html($('#tc').html())
 	var zbj =parseInt($('.group_our_price').html());
 	var zcb = parseInt($('#group_cost_price').html());
 	var slr = parseInt($('.group_our_price').html())-parseInt($('#group_cost_price').html())-parseInt($('#z_our_price').html())-parseInt($('#shuidian').html())-parseInt($('#many').html())-parseInt($('#tc').html());	
@@ -446,6 +456,8 @@ setInterval(function(){
 	$('.abde_shic').html(cde_sc);
 	var allabde = zbj+parseInt($('.serve1').val())+parseInt($('.serve2').val());
 	$('.allm').html(allabde);
+	var l_orr = parseInt($('#z_our_price').html())+parseInt($('#shuidian').html())+parseInt($('#many2').html())+parseInt($('#tc2').html());
+	$('#z_orr').html(l_orr)
 },200)
 setInterval(function(){
 	var zbj =parseInt($('.group_our_price').html());
