@@ -515,7 +515,7 @@ class HotelController extends BaseController {
 		$hotelModel = new \Admin\Model\HotelModel();
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
-		if(!empty($mac_addr)){
+		if(!empty($mac_addr) && $mac_addr !='000000000000'){
 		    if($hotel_id){
 		        $where = "he.mac_addr='".$mac_addr."' and h.state=1 and he.hotel_id !=".$hotel_id;
 		    }else {

@@ -46,6 +46,7 @@ class ProgrammenuController extends BaseController {
     }
 
     public function publishMenu(){
+
         $putime = I('logtime');
         if($putime == '') {
             $putime = date("Y-m-d H:i:s");
@@ -55,7 +56,11 @@ class ProgrammenuController extends BaseController {
         $now_date = date("Y-m-d H:i:s");
         $menuid = I('post.menuid');
         $menuname = I('post.menuname');
-        $hotel_id_arr = I('post.hoid');
+        $hotel_id_arr = I('post.pubhotelhotel');
+        if($hotel_id_arr == '') {
+            $this->error('酒楼选择不可为空');
+        }
+        $hotel_id_arr = explode(',', $hotel_id_arr);
         $hotelModel = new HotelModel;
         $menuHoModel = new \Admin\Model\ProgramMenuHotelModel();
         $menuliModel = new \Admin\Model\ProgramMenuListModel();
@@ -98,7 +103,7 @@ class ProgrammenuController extends BaseController {
                $res =  $menuliModel->addData($dat,1);
                 if($res) {
                     $menuHoModel->commit();
-                    $this->output('发布成功了!', 'programmenu/getlist');
+                    $this->output('发布成功了!', 'programmenu/getlistgetlist');
                 } else {
                     $menuHoModel->rollback();
                     $this->error('发布失败了!');
