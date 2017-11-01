@@ -682,7 +682,14 @@
 	})
 
 
-
+	function dialogAjaxDone(json){
+		console.log(json);
+		DWZ.ajaxDone(json);
+		if(json.navTabId == 'menu/getlistgetlistgetlist') {
+			navTab.closeTab('menu/addmen');
+			navTab.reload('programmenu/getlist');
+		}
+	}
 
 
 
