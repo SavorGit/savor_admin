@@ -129,8 +129,10 @@ href="{$host_name}/programmenu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.
         console.log(json);
         DWZ.ajaxDone(json);
         if(json.navTabId == 'programmenu/copynew') {
-            $.pdialog.closeCurrent();
+            //$.pdialog.closeCurrent();
+            navTab.closeCurrentTab();
             navTab.reload('menu/getlist');
+            //navTab.openTab('menu/getlist');
         }
     }
 

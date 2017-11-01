@@ -111,6 +111,9 @@ class ProgrammenuController extends BaseController {
             $putime = $putime.':00';
         }
         $now_date = date("Y-m-d H:i:s");
+        if($now_date > $putime) {
+            $this->error('预约发布时间不可小于当前时间');
+        }
         $menuid = I('post.menuid');
         $menuname = I('post.menuname');
         $hotel_id_arr = I('post.pubhotelhotel');
