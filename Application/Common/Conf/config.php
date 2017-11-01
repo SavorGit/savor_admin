@@ -232,6 +232,25 @@ $config['UMENT_API_CONFIG'] = array(
          'ios_App_Master_Secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
      ),
 );
+
+
+$config['UMENBAI_API_CONFIG'] = array(
+    'API_URL'=>'http://msg.umeng.com/api/send',
+    'opclient'=>array(
+        'android_appkey'=>'59acb7f0f29d98425d000cfa',
+        'android_master_secret'=>'75h0agzaqlibje6t2rtph4uuuocjyfse',
+        'ios_appkey'=>'59b1260a734be41803000022',
+        'ios_master_secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
+    ),
+);
+//推送通知的后续行为必填值
+$config['AFTER_APP'] = array(
+    0=>"go_app",
+    1=>"go_url",
+    2=>"go_activity",
+    3=>"go_custom",
+);
+
 $config['ADV_VIDEO'] = array(
     'name' => array(
         '0' => '酒楼宣传片',

@@ -132,16 +132,18 @@ class AdvdeliveryController extends BaseController {
         $ocu_len = count($ocu_arr);
         //var_export($ocu_len);
         //取广告位数组
-        $lid_arr = array_column($ocu_arr, 'lid');
+       // $lid_arr = count(array_column($ocu_arr, 'lid')0;
         //var_export($lid_arr);
-        $l_arr = array();
+        /*$l_arr = array();
         foreach($lid_arr as $lv) {
             if($lv != 0) {
                 $l_arr[] = $lv;
             }
-        }
-        $lc = array_unique($l_arr);
-        $lid_len = count($lc);
+        }*/
+       // $lc = array_unique($l_arr);
+        $lid_len = $ocu_len;
+      /* var_dump('------'.$box_id.'-'.$adv_promote_num.'_'.$lid_len.'_'.$p_tiems.'----');
+        echo "\r\n";*/
         $bool = false;
         if ($type == 1) {
             if (empty($ocu_arr)) {
