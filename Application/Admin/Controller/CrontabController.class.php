@@ -55,7 +55,7 @@ class CrontabController extends Controller
                 //$normal_hotel_num +=1;
                 $where = '';
                 //$where .=" 1 and room.hotel_id=".$v['id'].' and a.state !=2 and a.flag=0  and  room.flag=0 and room.state !=2';
-                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state 1 and a.flag=0  and  room.flag=0 and room.state =1';
+                $where .=" 1 and room.hotel_id=".$v['id'].' and a.state=1 and a.flag=0  and  room.flag=0 and room.state =1';
                 $box_list = $m_box->getListInfo( 'a.id, a.mac',$where);
                 foreach($box_list as $ks=>$vs){
                     $where = '';

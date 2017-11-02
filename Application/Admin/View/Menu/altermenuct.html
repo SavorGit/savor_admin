@@ -89,7 +89,7 @@
 
 			<button type="button" data-toggle="modal" id="checkout" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" data-target=".bs-example-modal-sm">导入</button>
 			<!--left-->
-			<div id="left" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
+			<div id="left_aler" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
 				<input type="date" id="starttime" name="starttime" style="margin: 10px;width: 230px;" placeholder="最早时间" style="margin: 10px;"/>
 				<input id="endtime" name="endtime" type="date" style="margin: 10px;width: 230px;" placeholder="最晚时间" style="margin: 10px;"/>
 				<select name="m_type"  id="m_type" style="height: 27px;">
@@ -185,6 +185,7 @@
 
 <script type="text/javascript">
 navTab.closeTab('menu/addmen');
+navTab.closeTab('programmenu/addnewmenu');
 	/*
 	function dialogAjaxDone(json){
 		//alert(json);
@@ -610,7 +611,7 @@ navTab.closeTab('menu/addmen');
 	});
 	var htm = '';
 
-	$('#left').on('click','#f_searcha',function(){
+	$('#left_aler').on('click','#f_searcha',function(){
 
 
 
