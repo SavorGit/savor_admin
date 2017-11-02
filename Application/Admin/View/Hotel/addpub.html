@@ -167,4 +167,13 @@
     $("#videoshan").click(function(){
         $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
     })
+
+    function dialogAjaxDone(json) {
+        console.log(json);
+        DWZ.ajaxDone(json);
+        if(json.navTabId == 'hotel/doAddPubtype1') {
+           $.pdialog.close('hotel/xuanchuanxiugai');
+            navTab.reload('hotel/pubmanager');
+        }
+    }
 </script>
