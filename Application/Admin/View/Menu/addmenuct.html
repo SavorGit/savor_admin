@@ -89,7 +89,7 @@
 
 			<button  type="button" data-toggle="modal" id="checkout" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" >导入</button>
 			<!--left-->
-			<div id="left" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
+			<div id="lefts" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
 				<input type="date" id="starttime" name="starttime" style="margin: 10px;width: 230px;" placeholder="最早时间" style="margin: 10px;"/>
 				<input id="endtime" name="endtime" type="date" style="margin: 10px;width: 230px;" placeholder="最晚时间" style="margin: 10px;"/>
 				<select name="m_type"  id="m_type" style="height: 27px;">
@@ -102,7 +102,7 @@
 
 
 
-				<button id="f_search" type="button" style="margin: 10px;height: 25px;line-height: 10px;" class="btn btn-primary" data-target=".bs-example-modal-lg">查询</button>
+				<button id="f_searchold" type="button" style="margin: 10px;height: 25px;line-height: 10px;" class="btn btn-primary" data-target=".bs-example-modal-lg">查询</button>
 				<div style="width: 100%;background-color:#d7d7d7;margin-top: 15px;height: 40px;font-size: 30px;line-height: 32px;">
 					<span style="margin-left: 15px;">节目名称</span>
 					<span style="margin-left: 55%;">上传时间</span>
@@ -184,20 +184,6 @@
 
 
 <script type="text/javascript">
-
-	refresh();
-	function refresh(){
-		url = location.href; //把当前页面的地址赋给变量 url
-		/*var times = url.split("?"); //分切变量 url 分隔符号为 "?"
-		 if(times[1] != 1){ //如果?后的值不等于1表示没有刷新
-
-		 url += "?1"; //把变量 url 的值加入 ?1
-
-		 self.location.replace(url); //刷新页面
-		 }*/
-		//alert(url);
-		//location.reload();
-	}
 
 	/*function dialogAjaxDone(json){
 		//alert(json);
@@ -635,8 +621,7 @@
 	});
 	var htm = '';
 
-	$('#left').on('click','#f_search',function(){
-
+	$('#lefts').on('click','#f_searchold',function(){
 
 
 		$.ajax({
@@ -687,9 +672,14 @@
 		DWZ.ajaxDone(json);
 		if(json.navTabId == 'menu/getlistgetlistgetlist') {
 			navTab.closeTab('menu/addmen');
-			navTab.reload('programmenu/getlist');
+			navTab.reload('menu/getlist');
 		}
 	}
+	//navTab.openTab('menu/addmen');
+	navTab.closeTab('programmenu/addnewmenu');
+	//$( "div" ).removeClass( "modal-backdrop fade in" );
+	//navTab.reload('menu/addmen');
+
 
 
 

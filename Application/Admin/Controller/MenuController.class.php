@@ -107,7 +107,6 @@ class MenuController extends BaseController {
     public function publishMenu(){
         //隐患要把数组都改成checked
         $be_prefix  = C('DB_PREFIX');
-
         $hoty = I('post.hoty');
         $putime = I('logtime');
         if($putime == '') {
@@ -281,7 +280,7 @@ class MenuController extends BaseController {
             //var_dump($menuliModel->getLastSql());
         }
 
-         $this->output('发布成功了!', 'menu/getlist');
+         $this->output('发布成功了!', 'menu/publish');
        // ob_end_clean();
        // $this->redirect("content/getlist");
         //echo "<script>location.href='http://www.baidu.com'</script>";
@@ -832,7 +831,7 @@ class MenuController extends BaseController {
                 $this->addlog($data, $id, $type);
                // $this->success('新增成功', '#menu/getlist');
                 //$this->display()
-                $this->output('修改成功!', 'menu/getlist');
+                $this->output('修改成功!', 'menu/getlistgetlistgetlist');
             } else {
                 $this->error('修改失败');
             }
