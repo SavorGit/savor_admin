@@ -13,6 +13,11 @@ class ProgramMenuListModel extends BaseModel
 {
 	protected $tableName='programmenu_list';
 
+	public function getOne($field,$where){
+		$data = $this->field($field)->where($where)->find();
+		return $data;
+	}
+
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 		return $list;

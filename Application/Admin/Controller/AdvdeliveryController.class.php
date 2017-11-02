@@ -127,38 +127,34 @@ class AdvdeliveryController extends BaseController {
         $p_tiems = $save['play_times'];
         //被占用的数组
         $ocu_arr = $pubadsModel->getBoxPlayTimes($map, $field);
-        //var_export($ocu_arr);
         $adv_promote_num_arr = C('ADVE_OCCU');
         $adv_promote_num = $adv_promote_num_arr['num'];
         $ocu_len = count($ocu_arr);
         //var_export($ocu_len);
         //取广告位数组
-        $lid_arr = array_column($ocu_arr, 'lid');
+       // $lid_arr = count(array_column($ocu_arr, 'lid')0;
         //var_export($lid_arr);
-        $l_arr = array();
+        /*$l_arr = array();
         foreach($lid_arr as $lv) {
             if($lv != 0) {
                 $l_arr[] = $lv;
             }
-        }
-        $lc = array_unique($l_arr);
-        $lid_len = count($lc);
-       /* var_export($lid_len);
-        var_export($ocu_len);*/
-        if ($lid_len != count($l_arr)) {
-            //脚本写入有误
-           return 'wrongworng';
-        }
+        }*/
+       // $lc = array_unique($l_arr);
+        $lid_len = $ocu_len;
+      /* var_dump('------'.$box_id.'-'.$adv_promote_num.'_'.$lid_len.'_'.$p_tiems.'----');
+        echo "\r\n";*/
         $bool = false;
         if ($type == 1) {
             if (empty($ocu_arr)) {
                 $bool = true;
             } else {
-                $l_len = $adv_promote_num-$ocu_len-$p_tiems;
+
+                $l_len = $adv_promote_num-$lid_len-$p_tiems;
                 if($l_len>=0) {
                     $bool = true;
                 }else {
-
+                    return false;
                 }
             }
             return $bool;
@@ -270,7 +266,7 @@ class AdvdeliveryController extends BaseController {
         }
         $dat = array (
             'start_time'=>$start_time,
-            'end_time'=>$end_time,
+            'end_time'=>$end_time.' 23:59:59',
             'play_times'=>$play_times,
         );
         $box_arr = $this->getAllBox($hotel_id);
@@ -279,7 +275,6 @@ class AdvdeliveryController extends BaseController {
                 //获取是否有效
                 $res = $this->getBoxCondition($bv['bid'], $dat,
                     $type=1);
-
                 if( !($res) ) {
                     $box_arr[$bk]['btype'] = 0;
                 } else {

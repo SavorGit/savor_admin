@@ -855,7 +855,33 @@ CREATE TABLE `savor_daily_user` (
 ALTER TABLE `cloud`.`savor_daily_lk`     ADD COLUMN `dailyauthor` VARCHAR(50) DEFAULT '' NOT NULL COMMENT '作者' AFTER `homestate`,     ADD COLUMN `dailyart` VARCHAR(150) DEFAULT '' NULL COMMENT '内容' AFTER `dailyauthor`;
 /*[13:56:39][   0 ms]*/ SHOW FULL TABLES FROM `cloud` WHERE table_type = 'BASE TABLE';
 
+增加说明：修改任务列表引擎类型
+修改时间：2017.10.16 15：00
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_option_task`  Engine=InnoDB auto_increment=1 comment='运维任务表' row_format=dynamic charset=utf8 collate=utf8_general_ci;
 
+
+增加说明：添加任务外包表
+修改时间：2017.10.16 15：00
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_subcontract` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `bid` varchar(21) NOT NULL DEFAULT '' COMMENT '机顶盒ID',
+  `remark` text COMMENT '备注',
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `repair_type` varchar(250) NOT NULL DEFAULT '' COMMENT '损坏类型1,2,3',
+  `repair_img` varchar(250) NOT NULL DEFAULT '' COMMENT '损坏图片urla,b,c',
+  `gps` varchar(50) NOT NULL DEFAULT '' COMMENT 'lat,lng纬经度',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态标识：0正常，1删除',
+  `srtype` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态标识：1签到，2报修',
+  `datetime` int(11) NOT NULL DEFAULT '0' COMMENT '按天格式创建日期',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `NewIndex1` (`datetime`,`hotel_id`,`bid`)
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8
 
 
 

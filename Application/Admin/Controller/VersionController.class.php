@@ -141,7 +141,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "version/$name";
+	            $navTab = "versionversion/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');
@@ -242,7 +242,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "version/$name";
+	            $navTab = "versionversion/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');
@@ -339,7 +339,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "version/$name";
+	            $navTab = "versionversion/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');

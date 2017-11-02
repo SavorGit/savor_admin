@@ -872,7 +872,7 @@ class MenuController extends BaseController {
                     $this->addlog($data, $menu_id);
 
                    // $this->output('新增成功', 'menu/addmen',2);
-                    $this->output('新增成功', 'menu/addmen',2);
+                    $this->output('新增成功', 'menu/getlistgetlistgetlist',2);
                 } else {
                     $this->error('新增失败');
                 }
