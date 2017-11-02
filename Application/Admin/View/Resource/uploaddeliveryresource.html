@@ -429,8 +429,8 @@ accessid = ''
 					}
 					if($('#marketid').val()!=''){
 						
-						$('#sp').hide();
-						$('#newsp').show()
+						$('#sp').css('display','none')
+						$('#newsp').css('display','block')
 					}else if($('#marketid').val()==''){
 						alert('视频保存失败，请重新上传。')
 					}
