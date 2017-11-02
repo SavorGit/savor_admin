@@ -701,8 +701,9 @@ CREATE TABLE `savor_programmenu_list` (
   `menu_num` varchar(20) DEFAULT NULL COMMENT '节目单唯一标识',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_name` (`menu_name`),
-  KEY `idx_mneu` (`menu_name`,`create_time`,`update_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='节目单表'
+  KEY `idx_mneu` (`menu_name`,`create_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='新节目单表'
+
 
 
 
@@ -713,16 +714,16 @@ CREATE TABLE `savor_programmenu_list` (
 CREATE TABLE `savor_programmenu_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_id` int(10) DEFAULT NULL COMMENT '对应的节目单id',
-  `sort_num` smallint(4) DEFAULT NULL COMMENT '节目具体内容的排序号 其中1是最大',
-  `ads_name` varchar(48) DEFAULT NULL COMMENT '广告名称',
   `ads_id` bigint(20) DEFAULT NULL COMMENT '广告id',
-  `type` tinyint(4) DEFAULT '0' COMMENT '1广告位2节目3宣传片',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `ads_name` varchar(48) DEFAULT NULL COMMENT '广告名称',
+  `location_id` tinyint(2) DEFAULT '0' COMMENT '广告位id',
+  `sort_num` smallint(4) DEFAULT NULL COMMENT '节目具体内容的排序号 其中1是最大',
   `duration` int(12) DEFAULT '0' COMMENT '过期时间',
+  `type` tinyint(4) DEFAULT '0' COMMENT '1广告位2节目3宣传片',
   PRIMARY KEY (`id`),
-  KEY `idx_mneu_item` (`menu_id`,`create_time`,`update_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='节目单详细对应表'
+  KEY `idx_mneu_item` (`menu_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='节目单详细对应表'
+
 
 
 
@@ -736,12 +737,12 @@ CREATE TABLE `savor_programmenu_hotel` (
   `hotel_id` int(11) DEFAULT NULL,
   `menu_id` int(11) DEFAULT '0' COMMENT '节目单id',
   `operator_id` int(10) NOT NULL DEFAULT '0',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  `pub_time` datetime DEFAULT NULL COMMENT '发布预约时间',
-  `down_state` int(2) DEFAULT '0' COMMENT '下载状态机顶盒会用',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `pub_time` datetime NOT NULL COMMENT '发布预约时间',
+  `down_state` tinyint(1) NOT NULL DEFAULT '0' COMMENT '下载状态',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='新节目单对应酒楼表'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='新节目单对应酒楼表'
 
 
 增加说明：添加广告投放对应多个机顶盒关系表
