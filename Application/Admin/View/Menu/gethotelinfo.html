@@ -19,6 +19,7 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
+          	<th>酒楼ID</th>
             <th>酒店名称</th>
             <th>发布时间</th>
 
@@ -28,6 +29,7 @@
           <volist name="vinfo" id="vo">
             <tr target="sid_user">
               <input type="hidden" value="{$vo.hoid}" name="inf[]" />
+              <td data-title="酒店ID">{$vo.hoid}</td>
               <td data-title="酒店名称">{$vo.honame}</td>
               <td data-title="预约发布时间">{$vo.pub_time}</td>
             </tr>
