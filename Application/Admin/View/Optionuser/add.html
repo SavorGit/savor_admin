@@ -157,4 +157,23 @@
 		}
 		
 	})
+	
+	
+	
+	$('.entirety').on('change','#inch',function(){
+		var this_val =  $(this).val();
+		//alert(this_val.indexOf('asd'))
+		if(this_val.indexOf('9999')==0){
+			$('.inner li').each(function(){
+				$(this).removeClass('selected');
+				if($(this).attr('data-original-index')==0){
+					//$('.btn-success').attr('title','全国')
+					//$('.pull-left').html('全国');
+					$('#inch').prev().find('.pull-left').html('全国')
+					$('#inch').val('9999')
+					$(this).addClass('selected')
+				}
+			})
+		}
+	})
 </script>
