@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
+
 <style type="text/css">
 	.entirety{
 	width: 350px;
@@ -65,26 +60,10 @@
 	    background-color: #3f51b5;
 	}
 </style>
-<body>
-<!-- <div class="form-group">
-    <div class="input-group-sm input-group">
-      <label>
-        包含酒楼：
-      </label>
-        <span class="input-group-btn input-group-sm">
-      <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
-       <option value="asd">1</option>
-       <option value="22">1</option>
-       <option value="54">1</option>
-       <option>1</option>
-       <option>1</option>
-       <option>1</option>
-       <option>1</option>
-      </select>
-    </span>
-    </div>
-  </div>-->
+
+  <div class="pageContent">
   <div class="entirety">
+  	<form method="post" action="{$host_name}/optionuser/doadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
   	<h1>账号设置</h1>
   	<div class="xian"></div>
   	<div class="inp">
@@ -94,7 +73,7 @@
         账号：
       </label>
       <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+  		<select name="user_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
   			<option>请选择账号</option>
   			<php>
   				foreach($userlist as $key=>$v){
@@ -115,7 +94,7 @@
         角色：
       </label>
   		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select  name="" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+  		<select  name="role_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
   			<option value="">请选择</option>
   			<php>foreach($option_user_role_arr as $key=>$v){</php>
   				<option value="{$key}">{$v}</option>
@@ -125,7 +104,7 @@
   		</div>
   		<div class="kuai">
   			<php>foreach($option_user_skill_arr as $key=>$v){</php>
-  				<span id="{$key}">{$v}<input name="skill_{$key}" value="" type="hidden"></span>
+  				<span id="{$key}">{$v}<input name="skill[]" value="" type="hidden"></span>
   			<php>}</php>
   			<!-- <span id="1">信息检测<input type="hidden"></span>
   			<span id="2">网络改造 <input type="hidden"></span>
@@ -134,7 +113,7 @@
   		</div>
   		
   		<div class="form-group" id="teaminstall" style="display:none">
-  		<input type="checkbox" id="is_install" /><label for="is_install" style="vertical-align: text-top;margin-left: 10px;margin-bottom: 10px;">带队安装</label>
+  		<input name="is_lead_install" value=1 type="checkbox" id="is_install" /><label for="is_install" style="vertical-align: text-top;margin-left: 10px;margin-bottom: 10px;">带队安装</label>
   		</div>
   		<div class="form-group">
     <div class="input-group-sm input-group" style="margin-top:5px;">
@@ -142,7 +121,7 @@
         所属城市：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-      <select id="inch" name="include_v[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" required>
        <volist name="areaList" id="list">
            <option value="{$list.id}">{$list.region_name}</option>
        </volist>
@@ -152,10 +131,9 @@
   </div>
   <button type="submit"  class="btn btn-primary"style="width: 100px;margin-left: 30%;">确定</button>
   	</div>
+ </form>
   </div>
-  
-</body>
-</html>
+</div>
 <script type="text/javascript">
 	$('.position').change(function(){
 		$('.kuai').show();
