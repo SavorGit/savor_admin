@@ -1191,7 +1191,7 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('操作成功!', 'hotel/pubmanager');
+				$this->output('操作成功!', 'hotel/doAddPubtype1');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
@@ -1230,7 +1230,7 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('添加宣传片成功!', 'hotel/pubmanager');
+				$this->output('添加宣传片成功!', 'hotel/doAddPubtype1');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
