@@ -123,7 +123,7 @@ class ResourceController extends BaseController{
 				$data['media_id'] = $adsModel->getLastInsID();
 			}
 			if($code != 10000) {
-				$res_data = array('code'=>$code,'msg'=>'资源名称已经存在请换名称');
+				$res_data = array('code'=>$code,'msg'=>'广告上传失败请重新上传');
 				echo json_encode($res_data);
 				exit;
 			}else {
