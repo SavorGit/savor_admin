@@ -92,17 +92,17 @@ class ResourceController extends BaseController{
 				echo json_encode($res_data);
 				exit;
 			}
+			//判断广告名称是否存在
+			$adsModel = new \Admin\Model\AdsModel();
+			$nass = $adsModel->where(array('name'=>$ad_name))->field('name')->find();
+			if(!empty($nass['name'])){
+				$message = '资源名称已经存在请换名称';
+				$res_data = array('code'=>$code,'msg'=>$message);
+				echo json_encode($res_data);
+				exit;
+			}
 			$result = $this->handle_resource();
 			if($result['media_id']){
-				//判断广告名称是否存在
-				$adsModel = new \Admin\Model\AdsModel();
-				$nass = $adsModel->where(array('name'=>$ad_name))->field('name')->find();
-				if(!empty($nass['name'])){
-					$message = '资源名称已经存在请换名称';
-					$res_data = array('code'=>$code,'msg'=>$message);
-					echo json_encode($res_data);
-					exit;
-				}
 
 
 				$code = 10000;
@@ -123,7 +123,7 @@ class ResourceController extends BaseController{
 				$data['media_id'] = $adsModel->getLastInsID();
 			}
 			if($code != 10000) {
-				$res_data = array('code'=>$code,'msg'=>'广告上传失败请重新上传');
+				$res_data = array('code'=>$code,'msg'=>$result['message']);
 				echo json_encode($res_data);
 				exit;
 			}else {
