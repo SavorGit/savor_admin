@@ -13,6 +13,16 @@ class ProgramMenuItemModel extends BaseModel
 {
 	protected $tableName='programmenu_item';
 
+	public function getAdInfoByAid($where, $order, $field) {
+		$list = $this->alias('a')
+					 ->where($where)
+			         ->join(' LEFT JOIN savor_ads ads on ads.id = a.ads_id')
+					 ->order($order)
+			         ->field($field)
+			         ->select();
+		return $list;
+	}
+
 
 	public function getWhere($where, $order, $field){
 

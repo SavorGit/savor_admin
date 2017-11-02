@@ -25,6 +25,63 @@ class ProgrammenuController extends BaseController {
     }
 
 
+    public function copynew() {
+        $menuid = I('get.menuid', 0, 'int');
+        $promenuliModel = new \Admin\Model\ProgramMenuListModel();
+        $now_date = date('Y-m-d H:i:s');
+        $field = 'creator_id, creator_name, menu_name';
+        $map['id'] = $menuid;
+        $info = $promenuliModel->getOne($field, $map);
+        $info['state']    = 0;
+        $info['update_time'] = $now_date;
+        $info['create_time'] = $now_date;
+        $info['count']    = 0;
+        $old['menu_name'] = $info['menu_name'];
+
+        $menulistModel = new \Admin\Model\MenuListModel();
+        //先添加旧节目单
+        //判断节目单名称是否存在
+        $count_arr  = $menulistModel->getWhere($old, '*');
+        if(!empty($count_arr)) {
+            $info['menu_name'] = $info['menu_name'].'_'.time();
+        }
+        $res = $menulistModel->add($info);
+        if($res) {
+            //获取节目单信息
+            $new_menu_id = $menulistModel->getLastInsID();
+            $promItemModel = new \Admin\Model\ProgramMenuItemModel();
+            $order = I('_order','a.id');
+            $sort = I('_sort','asc');
+            $orders = $order.' '.$sort;
+            $where = "1=1";
+            $field = "a.ads_name,a.ads_id,a.duration,a.sort_num,
+            ads.create_time";
+            $where .= " AND menu_id=$menuid  ";
+            $menu_item_arr = $promItemModel->getAdInfoByAid($where,$orders, $field);
+            foreach ($menu_item_arr as $rk=>$rv) {
+                $menu_item_arr[$rk]['update_time'] = $now_date;
+                $menu_item_arr[$rk]['menu_id'] = $new_menu_id;
+                if(empty($menu_item_arr[$rk]['create_time'])) {
+                    $menu_item_arr[$rk]['create_time'] = $now_date;
+                }
+            }
+            /*var_export($menu_item_arr);
+            die;*/
+            $menuItemModel = new \Admin\Model\MenuItemModel();
+            $ret = $menuItemModel->addAll($menu_item_arr);
+            if($ret) {
+                $this->output('复制到老节目单成功', 'programmenu/copynew',2);
+            } else {
+                $this->error('复制失败了请重新复制');
+            }
+
+        } else {
+            $this->error('复制失败请重新复制');
+        }
+
+    }
+
+
 
     public function hotelconfirm(){
         $menu_id = I('menuid');
@@ -54,6 +111,9 @@ class ProgrammenuController extends BaseController {
             $putime = $putime.':00';
         }
         $now_date = date("Y-m-d H:i:s");
+        if($now_date > $putime) {
+            $this->error('预约发布时间不可小于当前时间');
+        }
         $menuid = I('post.menuid');
         $menuname = I('post.menuname');
         $hotel_id_arr = I('post.pubhotelhotel');
