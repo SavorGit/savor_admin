@@ -349,7 +349,7 @@
 
 		}
 	}
-	$('#lefta').on('click','.divlist',function(){
+	$('#lefts').on('click','.divlist',function(){
 		if($(this).is('.active')){
 			$(this).removeClass('active')
 		}else{
@@ -552,7 +552,7 @@
 	});
 
 	/*鼠标滑过多选*/
-	$('#lefta').on('mousedown','.divlist',function(){
+	$('#lefts').on('mousedown','.divlist',function(){
 		$('.divlist').mouseup(function(){
 			$('.divlist').unbind('mousemove');
 		})
