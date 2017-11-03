@@ -627,7 +627,7 @@ class ProgrammenuController extends BaseController {
             $row = array();
             for ($j = 0; $j < $highestColumnNum; $j++) {
                 $cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
-                $cellVal = $sheet->getCell($cellName)->getValue();
+                $cellVal = (string)$sheet->getCell($cellName)->getValue();
                 if ( !empty($cellVal) && stristr($cellName, 'A') ) {
                     $row[] = $cellVal;
                 }
@@ -656,16 +656,22 @@ class ProgrammenuController extends BaseController {
                 );
             }else{
                 $res = $adsModel->where(array('name'=>$rv[0]))->find();
-                if ($res) {
-                    $inc_arr[] = array(
-                        'id'=>$res['id'],
-                        'name'=>$res['name'],
-                        'duration'=>$res['duration'],
-                        'create_time'=>$res['create_time'],
-                    );
-                } else{
+                if($res['type'] == 1) {
                     $remove_arr[] = $rv[0];
+                } else {
+                    if ($res) {
+                        $inc_arr[] = array(
+                            'id'=>$res['id'],
+                            'name'=>$res['name'],
+                            'duration'=>$res['duration'],
+                            'create_time'=>$res['create_time'],
+                        );
+                    }
+                    else{
+                        $remove_arr[] = $rv[0];
+                    }
                 }
+
             }
 
         }
