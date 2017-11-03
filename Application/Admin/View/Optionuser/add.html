@@ -2,11 +2,11 @@
 <style type="text/css">
 	.entirety{
 	width: 350px;
-    height: 333px;
     border: 1px solid black;
     margin: 0 auto;
     margin-top: 10%;
     margin-bottom: 50px;
+    padding-bottom: 20px;
 	}
 	.entirety h1{
 		text-align: center;
@@ -41,7 +41,7 @@
 	.kuai{
 		width: 85%;
 		margin: 10px auto;
-		
+		display: none;
 	}
 	.kuai span{
 		display: inline-block;
@@ -73,7 +73,7 @@
         账号：
       </label>
       <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select name="user_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+  		<select name="user_id" style="width: 20px" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" required>
   			<option>请选择账号</option>
   			<php>
   				foreach($userlist as $key=>$v){
@@ -94,7 +94,7 @@
         角色：
       </label>
   		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select  name="role_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+  		<select  name="role_id" style="width: 20px" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" required>
   			<option value="">请选择</option>
   			<php>foreach($option_user_role_arr as $key=>$v){</php>
   				<option value="{$key}">{$v}</option>
@@ -135,8 +135,12 @@
   </div>
 </div>
 <script type="text/javascript">
-	$('.position').change(function(){
-		$('.kuai').show();
+	$('.positions').change(function(){
+		if($(this).val()==3){		
+			$('.kuai').show();
+		}else{
+			$('.kuai').hide();
+		}
 		$(this).next().find('span').prop('class','')
 	})
 	$('.kuai span').click(function(){
@@ -144,14 +148,14 @@
 		if($(this).is('.active')){
 			$(this).removeClass('active')
 			$(this).find('input').val('')
-			if(skill_id ==3){
+			if(skill_id ==6){
 				$('#teaminstall').hide();
 			}
 		}else{
 			$(this).addClass('active');
 			$(this).find('input').val($(this).prop('id'))
 			
-			if(skill_id ==3){
+			if(skill_id ==6){
 				$('#teaminstall').show();
 			}
 		}
@@ -162,12 +166,12 @@
 	
 	$('.entirety').on('change','#inch',function(){
 		var this_val =  $(this).val();
-		//alert(this_val.indexOf('asd'))
+		//alert(this_val)
 		if(this_val.indexOf('9999')==0){
 			$('.inner li').each(function(){
 				$(this).removeClass('selected');
 				if($(this).attr('data-original-index')==0){
-					//$('.btn-success').attr('title','全国')
+					$('.btn-success').attr('title','全国')
 					//$('.pull-left').html('全国');
 					$('#inch').prev().find('.pull-left').html('全国')
 					$('#inch').val('9999')

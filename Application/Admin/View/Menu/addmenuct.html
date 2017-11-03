@@ -349,7 +349,7 @@
 
 		}
 	}
-	$('#lefta').on('click','.divlist',function(){
+	$('#lefts').on('click','.divlist',function(){
 		if($(this).is('.active')){
 			$(this).removeClass('active')
 		}else{
@@ -400,7 +400,7 @@
 	});
 
 	/*双击*/
-	$('#lefta').on('dblclick','.divlist',function(){
+	$('#lefts').on('dblclick','.divlist',function(){
 		var ides = $(this).attr('id');
 		var dures = $(this).attr('dur');
 		$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
@@ -552,7 +552,7 @@
 	});
 
 	/*鼠标滑过多选*/
-	$('#lefta').on('mousedown','.divlist',function(){
+	$('#lefts').on('mousedown','.divlist',function(){
 		$('.divlist').mouseup(function(){
 			$('.divlist').unbind('mousemove');
 		})
