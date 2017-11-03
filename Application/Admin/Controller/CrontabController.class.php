@@ -151,10 +151,17 @@ class CrontabController extends Controller
             $result[$key]['box_report_time'] = $box_last_report_time;
             $result[$key]['create_time'] = date('Y-m-d H:i:s');
         }
-    
+        $m_hote_ext = new \Admin\Model\HotelExtModel();
+        $map = array();
+        $map['mac_addr'] = '000000000000';
+        
+        
+        $counts = $m_hote_ext->where($map)->count();
+        
+        
         $data['hotel_all_num']            = $hotel_all_num;               //酒楼总数
         $data['not_normal_hotel_num']     = $not_normal_hotel_num;        //异常酒楼
-        $data['not_normal_smallplat_num'] = $not_normal_small_plat_num;   //异常小平台
+        $data['not_normal_smallplat_num'] = $not_normal_small_plat_num -$counts;   //异常小平台
         $data['not_normal_box_num']       = $not_normal_box_num;          //异常机顶盒
         $m_hotel_error_report = new \Admin\Model\HotelErrorReportModel();
         $id = $m_hotel_error_report->addInfo($data);
