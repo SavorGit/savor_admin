@@ -116,9 +116,15 @@
         <empty name="id">
           <select name="task_type" class="form-control bs-select" title="请选择..." data-size="20" required>
               
-             <volist name="task_type_arr" key="k" id="row">
-                 <option value="{$k}" <if condition="$k eq 1"> selected </if> > {$row} </option>
-             </volist>
+             
+             <php>
+             	 foreach($task_type_arr as $key=>$v){
+             </php>
+                 <option value="{$key}" <if condition="$key eq 5"> selected </if> > {$v} </option>
+             <php>
+             }
+             </php>
+             
 
           </select>
           <else />
