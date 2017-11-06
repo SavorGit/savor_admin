@@ -172,7 +172,9 @@
         console.log(json);
         DWZ.ajaxDone(json);
         if(json.navTabId == 'hotel/doAddPubtype1') {
-           $.pdialog.close('hotel/xuanchuanxiugai');
+           // alert($.pdialog._current);
+          // $.pdialog.close('hotel/xuanchuanxiugai');
+            $.pdialog.closeCurrent();
             navTab.reload('hotel/pubmanager');
         }
     }
