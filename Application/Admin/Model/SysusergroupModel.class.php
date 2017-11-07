@@ -57,4 +57,16 @@ class SysusergroupModel extends Model{
     public function getgroupCount($where){
         return $this->where($where)->count();
     }
+
+
+    public function getOpeprv($where,$field){
+
+
+        $list = $this->alias('sgr')
+            ->where($where)
+            ->field($field)
+            ->join('savor_sysuser su on su.groupId=sgr.id')
+            ->select();
+        return $list;
+    }
 }

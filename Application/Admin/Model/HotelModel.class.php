@@ -148,4 +148,62 @@ class HotelModel extends BaseModel{
 		return  $result;
 	}
 
+	public function getWhereorderData($where, $field='', $order='') {
+		$result = $this->where($where)->field($field)->order($order)->select();
+		return  $result;
+	}
+
+
+	public function getHotelidByArea($where, $field='', $order='') {
+		$result = $this->alias('sht')
+			->where($where)
+			->field($field)
+			->order($order)
+			->join('savor_area_info sari on sari.id = sht.area_id')
+			->select();
+		return  $result;
+	}
+
+
+	public function getBoxOrderMacByHid($field, $where, $order){
+		$list = $this->alias('sht')
+			->join('savor_room room on sht.id = room.hotel_id')
+			->join('savor_box box on room.id = box.room_id')
+			->join(' join savor_area_info sari on sari.id = sht.area_id')
+			->join('savor_tv tv on tv.box_id = box.id')
+			->order($order)
+			->field($field)
+			->where($where)
+			->select();
+		return $list;
+	}
+
+
+	public function getBoxMacByHid($field, $where){
+		$list = $this->alias('sht')
+			->join('savor_room room on sht.id = room.hotel_id')
+			->join('savor_box box on room.id = box.room_id')
+			->join(' join savor_area_info sari on sari.id = sht.area_id')
+			->join('savor_tv tv on tv.box_id = box.id')
+			->field($field)
+			->where($where)
+			->select();
+		return $list;
+	}
+	public function getHotelInfoByMac($mac){
+	    $sql ="select he.tag, he.mac_addr,h.name as hotel_name,a.id as area_id,a.region_name as area_name
+               from savor_hotel as h
+               left join savor_hotel_ext as he on h.id=he.hotel_id
+               left join savor_area_info as a on h.area_id =a.id where h.flag=0 and he.mac_addr='".$mac."'";
+	    $result =  $this->query($sql);
+	    if($result){
+	        return $result[0];
+	    }else {
+	        return false;
+	    }
+	}
+	public function getHotelList($where,$order,$limit,$fields = '*'){
+	    $data = $this->field($fields)->where($where)->order($order)->limit($limit)->select();
+	    return $data;
+	}
 }

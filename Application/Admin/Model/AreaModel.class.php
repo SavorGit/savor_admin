@@ -55,7 +55,11 @@ class AreaModel extends Model
 
 	}//End Function
 
-
+    public function getHotelAreaList(){
+        $where['is_in_hotel'] = 1;
+        $data = $this->field('id,region_name')->where($where)->select();
+        return $data;
+    }
 
 
 }//End Class

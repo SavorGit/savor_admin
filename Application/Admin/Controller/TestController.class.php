@@ -9,6 +9,74 @@ use Think\Controller;
 class TestController extends Controller {
 
     //http://www.a.com/admin/test/whoop
+   //http://admin.littlehotspot.com/content/4305.html?app=inner&preview=1
+    //http://admin.rerdian.com:80/test/testweixin?id=4305.html&app=inner&issq=1&code=001YLDEd1UlmWu0qJiGd1RRnEd1YLDEB&state=wxsq001
+    public function testweixin(){
+        var_dump('http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]);
+        $is_wx = checkWxbrowser();
+        if($is_wx){
+            $issq =  I('issq',0,'intval');
+            $url = "http://admin.littlehotspot.com/test/testweixin?id=4305.html&app=inner";
+            if(!empty($issq)){
+                $url .='&issq=1';
+                $id = 4305;
+                $this->wxAuthorLog($url, $id);
+            }
+            echo 'wlerlwer';
+
+
+        }
+    }
+
+
+    public function wxAuthorLog($url,$contentid){
+
+        //$url = 'http://devp.admin.littlehotspot.com/content/2785.html?app=inner';
+        var_dump($url);
+        $m_weixin_api = new \Common\Lib\Weixin_api();
+        //微信授权登录开始
+        $state = I('state','wxsq001','trim') ;
+        $code = I('code');
+        //$issq = I('issq',1,'intval');
+        $iswx = checkWxbrowser();
+
+        if($iswx==1){
+            $redirect_url = urlencode($url);
+
+            $host_name = C('CONTENT_HOST');
+            $jumpUrl = $host_name.'admin/wxapply/index?scope=1&redirect_url='.$redirect_url;
+            if (!$code || $state!='wxsq001') {
+                header("Location:".$jumpUrl);
+                exit;
+            }
+            $result = $m_weixin_api->getWxOpenid($code,$url);
+            $openid = $result['openid'];
+            $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
+            $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            var_dump($share_url);
+            var_dump($wxUserinfo);
+DIE;
+            $wxUserinfo['nickname'] = base64_encode($wxUserinfo['nickname']);
+        }
+    }
+
+    public function getShortUrl() {
+
+        $shortlink = array(
+            '0'=>C('CONTENT_HOST').'content/4118.html?app=inner&channel=bigscpro&issq=1',
+            '1'=>C('CONTENT_HOST').'content/3311.html?app=inner&channel=bigscpro&issq=1',
+        );
+        var_dump($shortlink);
+        foreach($shortlink as $r=>$v) {
+            $shortlink[$r] = urlencode($v);
+        }
+        var_dump($shortlink);
+        foreach($shortlink as $v) {
+            $shortlina[] = shortUrlAPI(1, $v);
+        }
+        var_export($shortlina);
+    }
+
     public function whoop() {
 
         /*try {

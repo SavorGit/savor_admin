@@ -1,16 +1,21 @@
 <?php
 namespace Admin\Controller;
 use Think\Controller;
+use Common\Lib\Weixin_api;
 /**
  * @desc 客户端页面
  *
  */
 class ClientController extends Controller {
-
+    private $picRecommondNums;      //图集推荐条数
+    private $imgTextRecommondNums;  //图文推荐条数
+    private $videoRecommondNums;     //视频推荐条数
     public function __construct() {
         parent::__construct();
+        $this->picRecommondNums    = 3;
+        $this->imgTextRecommondNums= 3;
+        $this->videoRecommondNums  = 3;
     }
-
 
     /**
      *@desc 获取阿里云资源全路径
@@ -53,18 +58,23 @@ class ClientController extends Controller {
 
     public function judgeRecommendInfo($vinfo){
         //推荐数
-        //var_dump($vinfo);
-        $mend_len = 5;
+        if($vinfo['type']==0 || $vinfo['type'] ==1){//纯文本、图文
+            $mend_len = $this->imgTextRecommondNums;
+        }else if($vinfo['type']==2){//图集
+            $mend_len = $this->picRecommondNums;
+        }else if($vinfo['type']==3){//视频
+            $mend_len = $this->videoRecommondNums;
+        }
         $articleModel = new \Admin\Model\ArticleModel();
         //获取推荐列表
         $order_tag = $vinfo['order_tag'];
-        // var_dump($order_tag);
         $order_tag_arr = explode(',', $order_tag);
         $tag_len = count($order_tag_arr);
+        //根据相同的文章类型的标签获取推荐 开始
         if($tag_len == 0 || empty($order_tag)){
             $dap = array();
         }else{
-            $where = "1=1 and state = 2  and hot_category_id = ".$vinfo['hot_category_id']." and type = ".$vinfo['type'];
+            $where = "1=1 and state = 2 and (hot_category_id = 101 or hot_category_id = 102 )  and type = ".$vinfo['type'];
             $field = 'id,title,order_tag';
             $dat = array();
             $dap = array();
@@ -76,28 +86,64 @@ class ClientController extends Controller {
                 }
 
             }
-
+            $nums = 0;
             foreach($dat as $dk=>$dv) {
                 $info = $articleModel->getRecommend($where, $field, $dv);
+               // var_dump($articleModel->getLastSql());
                 foreach($info as $v){
                     if($v['id'] == $vinfo['id']){
                         continue;
                     }
                     if(!array_key_exists($v['id'], $dap)){
                         $dap[$v['id']] = $v;
-                        $mend_len--;
                     }
-
                 }
-                if($mend_len <=0 ){
+                $nums = count($dap);
+                if($nums>=$mend_len){
                     break;
                 }
             }
-            if($mend_len <=0 ){
-                $dap = array_slice($dap, 0, 5);
+            
+        }
+        //根据相同的文章类型的标签获取推荐 结束
+        //其他全分类查找推荐 开始
+        if($nums<$mend_len){
+            if($tag_len){//如果该文章有标签
+                $where = "1=1 and state = 2  and hot_category_id in(101,102)";
+                $field = 'id,title,order_tag';
+        
+                foreach($dat as $dk=>$dv) {
+                    $info = $articleModel->getRecommend($where, $field, $dv);
+                    foreach($info as $v){
+                        if($v['id'] == $vinfo['id']){
+                            continue;
+                        }
+                        if(!array_key_exists($v['id'], $dap)){
+                            $dap[$v['id']] = $v;
+                        }
+                    }
+                    $nums = count($dap);
+                    if($nums>=$mend_len){
+                        break;
+                    }
+                }
             }
         }
-
+        //其他全分类查找推荐 结束
+        //获取最新最新内容开始
+        if($nums<$mend_len){
+            $now_date = date('Y-m-d H:i:s',time());
+            $info = $articleModel->getWhere("hot_category_id != 103 and state =2 and bespeak_time<='".$now_date."'",'id,title,order_tag',' create_time desc','limit 0,10');            foreach($info as $v){
+                if($v['id'] == $vinfo['id']){
+                    continue;
+                }
+                if(!array_key_exists($v['id'], $dap)){
+                    $dap[$v['id']] = $v;
+                }
+            }
+        }
+        //获取最新最新内容 结束
+        $dap = array_slice($dap, 0, $mend_len);
         return $dap;
     }
 
@@ -224,10 +270,12 @@ class ClientController extends Controller {
 
 
     public function showcontent(){
+
         $host_name = C('HTTPS_HOST_NAME').'/admin';
         $this->assign('hostnamed',$host_name);
         $id = I('get.id',0,'intval');
         $app_version = I('get.app','');
+        $oss_host = get_oss_host();
         if($app_version == 'inner'){
             //newread证明在客户端
             $sourcename = I('get.location','');
@@ -235,12 +283,82 @@ class ClientController extends Controller {
             $articleModel = new \Admin\Model\ArticleModel();
             $mbpictModel = new \Admin\Model\MbPicturesModel();
             $mediaModel  = new \Admin\Model\MediaModel();
-            $vinfo = $articleModel->where('id='.$id.' and state =2')->find();
+            $preview = I('get.preview','0','intval');
+            if($preview ==1){
+                $where = 'id='.$id;
+            }else {
+                $where = 'id='.$id.' and state =2';
+            }
+            $vinfo = $articleModel->where($where)->find();
             if(empty($vinfo)){
+                $vinfo = $articleModel->where('id='.$id)->find();
+                if($vinfo['hot_category_id']!=103){
+                    if(empty($vinfo)){
+                        //获取最新最新内容开始
+                        //推荐数
+                        if($vinfo['type']==0 || $vinfo['type'] ==1){//纯文本、图文
+                            $mend_len = $this->imgTextRecommondNums;
+                        }else if($vinfo['type']==2){//图集
+                            $mend_len = $this->picRecommondNums;
+                        }else if($vinfo['type']==3){//视频
+                            $mend_len = $this->videoRecommondNums;
+                        }
+                        $articleModel = new \Admin\Model\ArticleModel();
+                        $info = $articleModel->getWhere(' state =2','id,title,order_tag',' create_time desc','limit 0,'.$mend_len);
+                        $dap = array();
+                        foreach($info as $v){
+                            if($v['id'] == $vinfo['id']){
+                                continue;
+                            }
+                            if(!array_key_exists($v['id'], $dap)){
+                                $dap[$v['id']] = $v;
+                            }
+                        }
+                        $arinfo = $dap;
+                        if($arinfo){
+                            foreach($arinfo as $dv){
+                                $where = 'AND mc.id = '. $dv['id'];
+                                $dap = $articleModel->getArtinfoById($where);
+                                $res[] = $dap;
+                            }
+                            $data = $this->changRecList($res);
+                        }else{
+                            $data = array();
+                        }
+                        $this->assign('list',$data);
+                    }else {
+                        $arinfo = $this->judgeRecommendInfo($vinfo);
+                        if($arinfo){
+                            foreach($arinfo as $dv){
+                                $where = 'AND mc.id = '. $dv['id'];
+                                $dap = $articleModel->getArtinfoById($where);
+                                $res[] = $dap;
+                            }
+                            $data = $this->changRecList($res);
+                        }else{
+                            $data = array();
+                        }
+                        $this->assign('list',$data);
+                    } 
+                } else {
+
+                }
                 $this->display('null');
                 exit;
             }
             if($id && $vinfo){
+                $is_wx = checkWxbrowser();
+                if($is_wx){
+                    $issq =  I('issq',0,'intval');
+                    
+                    $url = $this->getContentUrl($vinfo['content_url']).'?app=inner';
+                    if(!empty($issq)){
+                        $url .='&issq=1';
+                        $this->wxAuthorLog($url,$vinfo['id']);
+                    }
+                    
+                    
+                }
                 $catid = $vinfo['hot_category_id'];
                 $vinfo['content'] = html_entity_decode($vinfo['content']);
                 $vinfo['minu_time'] = round($vinfo['content_word_num']/600);
@@ -257,12 +375,12 @@ class ClientController extends Controller {
 
                 $this->assign('linfo', $loginfo);
                 if ($catid == 103) {
-                    $oss_host = get_oss_host();
+
                     $vinfo['img_url'] = $oss_host.$vinfo['img_url'];
                     if($vinfo['index_img_url']){
                         $vinfo['index_img_url'] = $oss_host.$vinfo['index_img_url'];
                     }
-                    $display_html = 'special';
+                    $display_html = 'newshowcontent';
 
                 }else{
                     $arinfo = $this->judgeRecommendInfo($vinfo);
@@ -315,6 +433,26 @@ class ClientController extends Controller {
                 $vinfo['content'] = html_entity_decode($vinfo['content']);
                 if($vinfo['type']==1){//图文
                     $display_html = 'showcontent';
+                }else if($vinfo['type']==2){
+                    $mediaModel  = new \Admin\Model\MediaModel();
+                    $mbpictModel = new \Admin\Model\MbPicturesModel();
+                    $m_article_source = new \Admin\Model\ArticleSourceModel();
+                    $loginfo = $m_article_source->find($vinfo['source_id']);
+                    $media_info = $mediaModel->getMediaInfoById($loginfo['logo']);
+                    $loginfo['oss_addr'] = $media_info['oss_addr'];
+                    
+                    $this->assign('linfo', $loginfo);
+                    
+                    $info =  $mbpictModel->where('contentid='.$id)->find();
+                    $detail_arr = json_decode($info['detail'], true);
+                    
+                    foreach($detail_arr as $dk=> $dr){
+                        $media_info = $mediaModel->getMediaInfoById($dr['aid']);
+                        $detail_arr[$dk]['pic_url'] =$media_info['oss_addr'];
+                    
+                    }
+                    $this->assign('detaillist', $detail_arr);
+                    $display_html = 'newstuji';
                 }elseif($vinfo['type']==3){
                     $tx_url = $vinfo['tx_url'];
                     $url_arr = explode('?id=', $tx_url);
@@ -336,7 +474,86 @@ class ClientController extends Controller {
                 $display_html = 'showcontent';
             }
         }
+        $wpi = new Weixin_api();
+        $share_url ='http://' .$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+
+
+
+        $shareimg = 'http://'.$_SERVER['HTTP_HOST'].'/Public/admin/assets/img/logo_100_100.jpg';
+
+        $share_title = $vinfo['title'];
+        if($vinfo['type'] == 1) {
+            if(empty($vinfo['content'])){
+                $share_desc = '小热点，陪伴你创造财富，享受生活。';
+            }else{
+                $cot = html_entity_decode($vinfo['content']);
+                $cot = strip_tags($cot);
+                $share_desc = mb_substr($cot,0,50);
+            }
+        } elseif($vinfo['type'] == 2 || $vinfo['type'] == 3) {
+            $share_desc = '热点聚焦，投其所好';
+        }
+
+
+        $share_config = $wpi->showShareConfig($share_url, $share_title,$share_desc,$share_url,$share_url);
+        extract($share_config);
+        $appid = $share_config['appid'];
+        $noncestr = $share_config['noncestr'];
+        $signature = $share_config['signature'];
+         $this->assign('noncestr', $noncestr);
+         $this->assign('signature', $signature);
+        $this->assign('appid', $appid);
+        $this->assign('share_title', $share_title);
+        $this->assign('share_desc', $share_desc);
+        $this->assign('shareimg', $shareimg);
+        $this->assign('share_link', $share_url);
         $this->assign('vinfo',$vinfo);
         $this->display($display_html);
     }
+    /**
+     * @desc 微信授权
+     */
+    public function wxAuthorLog($url,$contentid){
+        
+        //$url = 'http://devp.admin.littlehotspot.com/content/2785.html?app=inner';
+        $m_weixin_api = new \Common\Lib\Weixin_api();
+        //微信授权登录开始
+        $state = I('state','wxsq001','trim') ;
+        $code = I('code');
+        //$issq = I('issq',1,'intval');
+        $iswx = checkWxbrowser();
+        if($iswx==1){ 
+            $redirect_url = urlencode($url);
+            
+            $host_name = C('CONTENT_HOST');
+            $jumpUrl = $host_name.'admin/wxapply/index?scope=1&redirect_url='.$redirect_url;
+            if (!$code || $state!='wxsq001') {
+                header("Location:".$jumpUrl);
+                exit;
+            }
+            $result = $m_weixin_api->getWxOpenid($code,$url);
+            $openid = $result['openid'];
+            $wxUserinfo = $m_weixin_api->getWxUserInfo($result['access_token'],$openid);
+            
+            $wxUserinfo['nickname'] = base64_encode($wxUserinfo['nickname']);
+            $map =  array();
+            $map['openid'] = $wxUserinfo['openid'];
+            $map['nickname'] = $wxUserinfo['nickname'];
+            $map['sex']      = $wxUserinfo['sex'];
+            $map['country']  = $wxUserinfo['country'];
+            $map['province'] = $wxUserinfo['province'];
+            $map['city']     = $wxUserinfo['city'];
+            $map['contentid']= $contentid;
+            $map['create_time'] = date('Y-m-d H:i:s'); 
+            
+            $ip = get_client_ip(); 
+            $map['ip_addr'] = $ip;
+            $geoArr = getgeoByip($ip);
+            $map['long'] = $geoArr['x'];
+            $map['lat'] = $geoArr['y'];
+            $m_content_wx_auth =  new \Admin\Model\ContentWxAuthModel(); 
+            $m_content_wx_auth->addInfo($map);
+        }
+    }
+    
 }

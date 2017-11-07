@@ -6,6 +6,30 @@
     <title>Insert title here</title>
 </head>
 <style type="text/css">
+	.zhezhao{
+	    display: none;
+	    position: absolute;
+	    top: 0;
+	    bottom: 0;
+	    right: 0;
+	    left: 0;
+	    background-color: black;
+	    opacity: 0.7;
+	    text-align: center;
+	    z-index: 999;
+	  }
+	  .big{
+	    display: none;
+	  }
+	  .addbig{
+	   margin: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1000;
+	  }
     .pic {
         margin-bottom: 20px;
     }
@@ -230,7 +254,7 @@
             选择标签:
         </label>
         <button type="button" id="tianjia" class="btn btn-primary" style="margin-left: 20px; background-color: #aed316;height: 25px;line-height: 12px;" data-toggle="modal" data-target="#myModa">添加标签</button>
-        <div style="width: 100%;" class="biaolist">
+        <div style="width: 84%;margin-left: 170px;" class="biaolist">
 
 
             <volist name="tagaddart" id="row">
@@ -254,7 +278,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="soushuo" style="margin-left: 12px;height: 28px;width: 461px;"/>
+                                <input type="text" class="soushuo" style="margin-left: 12px;height: 28px;width: 505px;"/>
 							        			<span class="input-group-btn" style="display:inline-block;">
 							              <button class="btn btn-primary" style="height: 26px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
 							            </span>
@@ -326,12 +350,40 @@
         <button id="savepicmap" class="btn btn-primary" type="submit">保存</button>
     </div>
     <input type="hidden" name="pictuji" id="pictuji"  value=""/>
+    <div class="zhezhao"></div>
+	<img class="big" src="" />
 </form>
 </body>
 
 </html>
 <script type="text/javascript">
-
+	$('#media_idimg').click(function(){
+	    var media_id = $('#media_id').val();
+	    if(media_id !='' ){
+	  	  var $a = $(this).attr('src');
+	        $('.big').prop('src',$a).addClass('addbig');
+	        $('.big').css({'max-width':'500px'})
+	        $('.zhezhao').show();
+	        $('.big').show(); 
+	    }
+	    
+	});
+	$('#select_media_idimg').click(function(){
+	    var select_media_id = $('#select_media_id').val();
+	    if(select_media_id !='' ){
+	  	  var $a = $(this).attr('src');
+	        $('.big').prop('src',$a).addClass('addbig')
+	        $('.zhezhao').show();
+	        $('.big').show(); 
+	    }
+	    
+	});
+	
+	$('.zhezhao').click(function(){
+	
+	      $('.zhezhao').hide(500);
+	      $('.big').hide(500);
+	});
     $(".pic_list").on("click",".imga",function(){
         $("#savepicmap").prop('disabled','');
         $("#savepicmap").removeClass('disabled');

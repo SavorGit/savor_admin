@@ -20,13 +20,24 @@ class HeartLogModel extends BaseModel
 			$sql = "SELECT $field FROM savor_heart_log  WHERE TYPE = 1  GROUP BY hotel_id ORDER BY lt DESC";
 		}else{
 
-			$sql = "SELECT $field FROM savor_heart_log  WHERE TYPE = 2  GROUP BY box_mac ORDER BY lt DESC";
+			$sql = "SELECT $field FROM savor_heart_log join savor_box sb on sb.mac = savor_heart_log.box_mac WHERE TYPE = 2 and sb.state=1 and sb.flag=0 GROUP BY savor_heart_log.box_mac ORDER BY lt DESC";
 		}
 
 		$result = $this->query($sql);
 		return  $result;
 	}
 
+
+	public function getBoxNum($hid){
+		$sql = "  select b.mac from savor_box as b
+			left join savor_room as r on b.room_id=r.id
+			left join savor_hotel as h on r.hotel_id=h.id
+			where h.id = $hid";
+
+		$list = $this->query($sql);
+		$len  = count($list);
+		return $len;
+	}
 
 	public function getAllBox($where,  $field, $tp){
 		if($tp == 1){
@@ -109,8 +120,23 @@ class HeartLogModel extends BaseModel
 
 		return $result;
 
-	}//End Function
-
+	}
+	public function getOnlineHotel($where,$fields = '*'){
+	    $result = $this->field($fields)->where($where)->group('hotel_id')->select();
+	    /* echo $this->getLastSql();
+	     echo "<br>"; */
+	    return $result;
+	}
+	
+	public function getInfo($fileds,$where,$order){
+	    $data = $this->field($fileds)->where($where)->order($order)->find();
+	    return $data;
+	
+	}
+	public function getHotelHeartBox($where,$fields = '*',$group=''){
+	    $result = $this->field($fields)->where($where)->group($group)->select();
+	    return $result;
+	}
 
 
 

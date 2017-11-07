@@ -34,6 +34,7 @@ $config = array(
     'OSS_ADDR_PATH'=>'media/resource/',
 	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
+	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
 
 );
 if(APP_DEBUG === false){
@@ -120,6 +121,13 @@ $config['MANGER_KEY'] = array(
     'report'=>'报表节点',
     'testreport'=>'测试报表节点',
     'checkaccount'=>'对账系统节点',
+    'dailycontent'=>'每日知享节点',
+
+    'newmenu'=>'新节目节点',
+    'advdelivery'=>'广告投放节点',
+	'option'=>'运维客户端',
+    'installoffer'=>'网络设备报价',
+
 );
 $config['STATE_REASON'] = array(
     '1'=>'正常',
@@ -187,6 +195,111 @@ $config['SMS_CONFIG'] = array(
     'bill_templateid'=>'76285',
     'payment_templateid'=>'78145',
     'vcode_templateid'=>'107496',
-    'notice_templateid'=>'107928',
+    //'notice_templateid'=>'107928',
+    'notice_templateid'=>'146776',
+);
+$config['ACTIVITY_SOURCE_ARR'] = array(
+    '1'=>'App',
+    '2'=>'App推送',  
+    '3'=>'微信客户端',
+    '4'=>'微信公众号',
+);
+$config['SMALL_WARN'] = array(
+    '1'=>'未处理',
+    '2'=>'已处理',
+);
+
+$config['SP_GR_STATE'] = array(
+    '0'=>'未发布',
+    '1'=>'已发布',
+    '2'=>'已删除',
+);
+
+$config['WX_DYH_CONFIG'] = array(
+    'appid'=>'wxb19f976865ae9404',
+    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
+);
+$config['WX_FWH_CONFIG'] = array(
+    'appid'=>'wx7036d73746ff1a14',
+    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',  
+);
+$config['UMENT_API_CONFIG'] = array(
+     'API_URL'=>'http://msg.umeng.com/api/send',
+     'opclient'=>array(
+         'AppKey'=>'59acb7f0f29d98425d000cfa',
+         'App_Master_Secret'=>'75h0agzaqlibje6t2rtph4uuuocjyfse',
+         'ios_AppKey'=>'59b1260a734be41803000022',
+         'ios_App_Master_Secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
+     ),
+);
+
+
+$config['UMENBAI_API_CONFIG'] = array(
+    'API_URL'=>'http://msg.umeng.com/api/send',
+    'opclient'=>array(
+        'android_appkey'=>'59acb7f0f29d98425d000cfa',
+        'android_master_secret'=>'75h0agzaqlibje6t2rtph4uuuocjyfse',
+        'ios_appkey'=>'59b1260a734be41803000022',
+        'ios_master_secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
+    ),
+);
+//推送通知的后续行为必填值
+$config['AFTER_APP'] = array(
+    0=>"go_app",
+    1=>"go_url",
+    2=>"go_activity",
+    3=>"go_custom",
+);
+
+$config['ADV_VIDEO'] = array(
+    'name' => array(
+        '0' => '酒楼宣传片',
+        '1' => '酒楼片源',
+    ),
+    'num' => '6',
+);
+$config['ADVE_OCCU'] = array(
+    'name' => '广告位',
+    'num' => '10',
+);
+$config['TOU_STATE'] = array(
+    '0'=>'全部',
+    '1'=>'未投放',
+    '3'=>'投放完毕',
+    '2'=>'投放中',
+);
+$config['USER_GRP_CONFIG'] = array(
+    '0'=>'无',
+    '1'=>'运维组',
+);
+
+$config['OPTION_USER_ROLE_ARR']  = ARRAY(
+     '1'=>'发布者', 
+     '2'=>'指派者',
+     '3'=>'执行者',
+     '4'=>'查看',
+);
+$config['OPTION_USER_SKILL_ARR'] = array(
+    '3'=>'信息检测',
+    '4'=>'网络改造',
+    '6'=>'安装验收',
+    '7'=>'维修',
+);
+
+
+$config['HOTEL_DAMAGE_CONFIG'] = array(
+    '1'=>'电源适配器',
+    '2'=>'SD卡',
+    '3'=>'HDMI线',
+    '4'=>'信号源错误',
+    '5'=>'5G路由器',
+    '6'=>'遥控器',
+    '7'=>'红外遥控头',
+    '8'=>'机顶盒',
+    '9'=>'小平台',
+    '10'=>'酒楼WIFI',
+    '11'=>'酒楼电视机',
+	'12'=>'未开机',
+    '13'=>'其它',
 );
 return $config;

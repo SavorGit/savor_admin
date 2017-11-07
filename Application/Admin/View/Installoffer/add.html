@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<style type="text/css">
+	table input{
+		width: 50px;
+		border: ;
+	}
+</style>
+<body>
+<div id="selopt" style="display: none;"></div>
+	<div class="pageContent" id="pagecontent">
+	 <div id="w_list_print">
+<div class="no-more-tables">
+<div class="form-group ">
+   			<span colspan="13" align="center"><button class="addition">添加</button>A.网络设备</span>
+   		</div>
+   	
+	<form  action="{$host_name}/installoffer/doadd" method="post" onsubmit="return validateCallback(this, dialogAjaxDone);">
+	<div class="form-group ">
+   			<span colspan="13" align="center">酒楼名称：<input type="text" name="hotel_name" value=""></span>
+   		</div>
+	<table class="table table-bordered" targetType="navTab" style="overflow: auto;height: 100%;">
+   	<thead>
+   		
+   		<tr>
+			<th>序号</th>
+			<th>设备名称</th>
+			<th>规格型号</th>
+			<th>配置参数</th>
+			<th>数量</th>
+			<th>单位</th>
+			<th>成本价(元)</th>
+			<th>成本计算</th>
+			<th>市场价</th>
+			<th>市场总价</th>
+			<th>项目描述</th>
+			<th>我方报价</th>
+			<th>操作</th>
+			<th>说明</th>
+   		</tr>
+   	</thead>
+   	
+   	<tbody align="center" id="tbod">
+   		
+   		
+   		<tr class="tina_xj">
+   			<td colspan="3">小计</td>
+   			<td colspan="4">----------</td>
+   			<td id="cost_total">0</td>
+   			<td></td>
+   			<td id="market_price_total">0</td>
+   			<td></td>
+   			<td id="our_price_total">0</td>
+   			<td></td>
+   			<td></td>
+   		</tr>
+   		<tr><td colspan="13" align="center">B.材料、安装、匹配、调试</td></tr>
+   		<tr>
+   			<td>1</td>
+   			<td>AC</td>
+   			<td>—</td>
+   			<td>安装，调试，升级，配置</td>
+   			<td><input class="nums_B numsb1" value="0" name="message[1][nums]" type="text"></td>
+   			<td></td>
+   			<td><input class="cost_nums_B" value="{$list[0][cost_price]}" type="text"></td>
+   			<td><input class="cost_B" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[1][market_price]" value="{$list[0][market_price]}" type="text"></td>
+   			<td class="all_market_price_B">0</td>
+   			<td>设备配置，升级难度大，必需项。</td>
+   			<td><input type="text" value="0" class="our_price_B" name="message[1][our_price]"></td>
+   			<td></td>
+   			<td><input type="text" value="100" class="explain_B">%</td>
+   		</tr>
+   		<tr>
+   			<td>2</td>
+   			<td>POE交换机</td>
+   			<td>—</td>
+   			<td>安装，调试，升级，配置</td>
+   			<td><input class="nums_B numsb2" value="0" name="message[2][nums]" type="text"></td>
+   			<td></td>
+   			<td><input class="cost_nums_B" value="{$list[1][cost_price]}" type="text"></td>
+   			<td><input class="cost_B" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[2][market_price]" value="{$list[1][market_price]}" type="text"></td>
+   			<td class="all_market_price_B">0</td>
+   			<td>设备配置，升级难度大，必需项。</td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[2][our_price]"></td>
+   			<td></td>
+   			<td><input type="text" value="100" class="explain_B">%</td>
+   		</tr>
+   		<tr>
+   			<td>3</td>
+   			<td>AP</td>
+   			<td>—</td>
+   			<td>安装，调试，升级，配置</td>
+   			<td><input class="nums_B numsb" value="0" name="message[3][nums]" type="text"></td>
+   			<td></td>
+   			<td><input class="cost_nums_B" value="{$list[2][cost_price]}" type="text"></td>
+   			<td><input class="cost_B" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[3][market_price]" value="{$list[2][market_price]}" type="text"></td>
+   			<td class="all_market_price_B">0</td>
+   			<td>设备配置，升级难度大，必需项。</td>
+   			<td><input type="text" value="0"  class="our_price_B" name="message[3][our_price]"></td>
+   			<td></td>
+   			<td><input type="text" value="100" class="explain_B">%</td>
+   		</tr>
+   		
+   		<tr>
+   			<td>4</td>
+   			<td>辅料打包</td>
+   			<td></td>
+   			<td></td>
+   			<td><input class="nums_B" value="0" name="message[4][nums]" type="text"></td>
+   			<td>个</td>
+   			<td><input class="cost_nums_B" value="{$list[3][cost_price]}" type="text"></td>
+   			<td><input class="cost_B" value="0" type="text"></td>
+   			<td><input class="market_price_B" name="message[4][market_price]" value="{$list[3][market_price]}" type="text"></td>
+   			<td class="all_market_price_B">0</td>
+   			<td rowspan="6">辅材打包价格</td>
+   			
+   			<td><input type="text" value="0"  class="our_price_B" name="message[4][our_price]"></td>
+   			<td></td>
+   			<td><input type="text" value="100" class="explain_B">%</td>
+   		</tr>
+   		
+   		<tr>
+   			<td colspan="3">小计</td>
+   			<td colspan="4">----------</td>
+   			<td id="cost_total_B">0</td>
+   			<td></td>
+   			<td id="market_price_total_B">0</td>
+   			<td></td>
+   			<td id="our_price_total_B">0</td>
+   			<td></td>
+   		</tr>
+   		<tr>
+   			<td colspan="3">总费用</td>
+   			<td colspan="4">----------</td>
+   			<td id="group_cost_price">0</td>
+   			<td></td>
+   			<td class="all_ab_bazaar">0</td>
+   			<td></td>
+   			<td class="group_our_price">0</td>
+   			<td></td>
+   		</tr>
+   		<tr>
+   			<td colspan="13">服 务 与 维 护（不在折扣报价范围内） 硬件费用标准</td>
+   		</tr>
+   		<tr>
+   			<td>D</td>
+   			<td>备注：设备质保期为一年。过时甲方自行承担，乙方负责维护安装，配置，更新止正常运行</td>
+   			<td></td>
+   			<td></td>
+   			<td><input type="text" value="1" name="hardware[1][nums]"></td>
+   			<td>年</td>
+   			<td><input type="text" value="{$info[0][cost_price]}"></td>
+   			<td><input id="cb_num1" value="0" type="text"></td>
+   			<td><input type="text" value="0"></td>
+   			<td><input type="text" value="{$info[0][market_price]}" class="d_shic"  name="hardware[1][market_price]"></td>
+   			<td>为了保障设备长期，
+			高效运行。故硬件维护
+			保养费用为必备项。为
+			合理费用项。</td>
+   			<td><input name="hardware[1][our_price]" class="serve1" value="0" type="text"></td>
+ 
+   			<td rowspan="4">每年固定收取</td>
+   		</tr>
+   		<tr>
+   			<td colspan="12">软 件 费 用 标 准 （如客户需求云端服务可买断）</td>
+   		</tr>
+   		<tr>
+   			<td>E</td>
+   			<td>云端管理共享</td>
+   			<td>甲乙双方</td>
+   			<td>设备升级，重启，维护，后台软件系统更新。增强设备速率。</td>
+   			<td><input name="softwart[1][nums]" type="text" value="1"></td>
+   			<td>12</td>
+   			<td><input type="text" value="{$info[1][cost_price]}"></td>
+   			<td><input id="cb_num2" value="0" type="text"></td>
+   			<td><input value="0" type="text"></td>
+   			<td><input type="text" value="{$info[1][market_price]}" class="e_shic" name="softwart[1][market_price]"></td>
+   			<td>延长设备使用年限，保障设备高效运行。为合理费用项。</td>
+   			<td><input class="serve2" value="0" name="softwart[1][our_price]" type="text"></td>
+   			<td></td>
+   		</tr>
+   		<tr>
+   			<td colspan="3">项目总实际费用</td>
+   			<td colspan="4">C+D+E=</td>
+   			<td id="allxm">0</td>
+   			<td></td>
+   			<td class="abde_shic">0</td>
+   			<td></td>
+   			<td class="allm">0</td>
+   			<td></td>
+   		</tr>
+   	</tbody>
+   </table>
+   <p style="margin-bottom: 20px;">注说明： 设备安装，调试，配置，系统管理，升级更新，到正常运行，需专业技术团队完成。故我公司
+规定为统一安装，统一调试，统一管理方案。1我公司承诺担负网络改造50%费用（一半）。2明确设备归属权
+问题。3我公司自行使用设备，其不在报价表内。4合同期内，终止合作，我公司有权拆回设备，如酒楼承担相
+应费用。我公司不予拆回，并承诺保证后期设备正常进行及技术衔接。
+我们为客户做到了什么？1增加网络信号覆盖点。2实现信号无缝链接。3增强网络信号稳定性。4在同市场中为
+酒楼节省50%开支。5低于市场价格50%，得到设备归属权。6实现了设备的远程云管理，延长了设备的使用时
+限，发挥设备最高，最佳利用率。7设备管理系统，细则化。</p>
+<table class="table table-bordered" targetType="navTab">
+	<thead>
+		<tr>
+			<th>序号</th>
+			<th>项目名称</th>
+			<th>费率</th>
+			<th>总计</th>
+			<th>剩余利润</th>
+			<th>利润率</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+		<td>1</td>
+		<td>税点</td>
+		<td>3.34%</td>
+		<td id="z_our_price">0</td>
+		<td id="lirun" rowspan="5">0</td>
+		<td id="lirunl" rowspan="5">0</td>
+		</tr>
+		<tr>
+		<td>2</td>
+		<td>业务提成</td>
+		<td>5%</td>
+		<td id="shuidian">0</td>
+		</tr>
+		<tr>
+		<td>3</td>
+		<td>业务人员奖金</td>
+		<td id="many">0</td>
+		<td id="many2">0</td>
+		</tr>
+		<tr>
+		<td>4</td>
+		<td>安装人员提成</td>
+		<td id="tc">0</td>
+		<td id="tc2">0</td>
+		</tr>
+		<tr>
+			<td colspan="3">支出总计</td>
+			<td id="z_orr">0</td>
+		</tr>
+	</tbody>
+</table>
+<button type="submit"  class="btn btn-primary"style="width: 100px;margin-left: 71%;">确定</button>
+
+</form>
+</div>
+</div>
+</div>
+
+
+</body>
+<script src="../../../../Public/admin/assets/js/table_bb.js" type="text/javascript" charset="utf-8"></script>
+</html>

@@ -52,7 +52,14 @@
           <input type="text" class="form-control" name="volum" minlength="1" maxlength="20" value="{$vinfo.volum}">
         </div>
       </div>
-  
+  		<div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         标签:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="tag" minlength="1" maxlength="255" value="{$vinfo.tag}">
+        </div>
+      </div>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           删除状态:
@@ -87,3 +94,35 @@
 
   </form>
 </div>
+
+
+
+<script type="text/javascript">
+  function dialogAjaxDone(json) {
+    console.log(json);
+    DWZ.ajaxDone(json);
+    if(json.navTabId == 'device/abceditbox') {
+      //navTab.closeDialog('device/editbox');
+      //$.pdialog.closeCurrent();
+      //var dialog = navTab.getCurrentPanel();
+      //console.log(dialog);
+      //$.pdialog.close('device/abceditbox');
+      // $.pdialog.reload('hotel/manager');
+
+      var dialog = $.pdialog.getCurrent();
+      //机顶盒数量里面的页面的修改是dialog，而rel就是它传的id
+      $.pdialog.close('device/editbox');
+      //$.pdialog.reload(dialog.data("url"));
+      console.log(dialog.data("url"));
+      //获取当前dialog的id
+      console.log($(dialog).data("id"));
+      //因为它是navtab的所以这样用
+      navTab.reload('device/box');
+
+        //   $.pdialog.reload(dialog.data("url"));
+
+    }
+  }
+
+</script>
+

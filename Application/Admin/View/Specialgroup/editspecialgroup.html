@@ -1,0 +1,358 @@
+<style type="text/css">.zt-group {
+	min-height: 100px;
+	max-height: 600px;
+	overflow: auto;
+	border: 1px solid #827e7e;
+	width: 87%;
+	margin-left: 35px;
+}
+
+.form-group-title {
+	width: 100%;
+	height: 30px;
+	background-color: #878787;
+	line-height: 30px;
+	color: white;
+	padding-left: 10px;
+}
+
+.zt-group .btn-default {
+	background-color: #93b313;
+	margin-left: 10px;
+	color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.zt_gropu_nr {
+	width: 94%;
+	height: 152px;
+	border: 1px dashed black;
+	margin: 10px;
+	box-sizing: border-box;
+	border: 14px solid #eee;
+	border-right: 80px solid #eee;
+	position: relative;
+	padding: 10px;
+}
+
+.zt_gropu_nr .zt_tjpic {
+	width: 100px;
+	height: 80px;
+}
+
+.zt_gropu_nr .zt_bianji {
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	right: -48px;
+	top: 23px;
+}
+
+.zt_gropu_nr .zt_del {
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	top: 74px;
+	right: -48px;
+}
+
+#search_wz {
+	width: 100%;
+	height: 171px;
+	margin-left: 1px;
+	margin-top: 10px;
+	overflow: auto;
+	border: 1px solid #bbbbbb;
+}
+
+#search_wz li {
+	height: 30px;
+	line-height: 30px;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.active_li {
+	background-color: #878787;
+}
+
+.wz_yangshi img {
+	width: 132px;
+	float: left;
+	height: 108px;
+}
+
+.wz_yangshi p {
+	width: 160px;
+	margin-top: 10px;
+	font-weight: 700;
+	float: left;
+	margin-left: 10px;
+}
+.addbig {
+		margin: auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1000;
+	}
+	.zhezhao {
+		display: none;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		background-color: black;
+		opacity: 0.7;
+		text-align: center;
+		z-index: 999;
+	}
+	.big {
+		display: none;
+	}
+</style>
+
+<div class="pageContent">
+<form method="post" action="{$host_name}/specialgroup/doeditSpecialGroup" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+	<input type="hidden" id="honame" value="{$host_name}">
+	<input type="hidden" name="sgmethod" value="2" />
+	<input type="hidden" name="id" value="{$vinfo.sgid}">
+	<input type="hidden" id="savespgroup" name="addspgroup" value="" />
+	<div class="form-group row" style="margin-top: 30px;margin-left: 35px;">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+			专题名称：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<input name="ztname" autocomplete="off" type="text" value="{$vinfo.name}"  minlength="1" maxlength="40" class="form-control textInput" required/>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label class="col-xs-12 col-sm-2 control-label">
+
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<p>汉字限制2-6个字，字母限制2-12个字。由于目前实现方式没有区分汉字与字母，所以需要内容控制</p>
+
+		</div>
+
+	</div>
+	<div class="form-group row" style="margin-top: 30px;margin-left: 35px;">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+			专题标题：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<input name="zttitle" autocomplete="off"  id="zt_biaoti" value="{$vinfo.title}" type="text" minlength="1" maxlength="50" class="form-control textInput" required/>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 58px;margin-left: 62px;">
+		封面图：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<div class="fileinput fileinput-new" data-fileinput>
+				<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+					<a data-target="#modal-file" href="javascript:void(0)">
+						<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+							<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" width='88px' height='68px' />
+							<else />
+							<img id="media_idimg" src="{$vinfo.oss_addr}" border="0" width='88' height='68' />
+						</if>
+						<span id="media_idimgname"></span>
+					</a>
+				</div>
+				<div>
+					<span class="form-group row" style="display: block;margin-top: 5px;margin-bottom: 5px;margin-left: 1px;font-size: 12px;">提示:建议图片尺寸比例为宽:1242px,高:802px,,最小宽750px 高484px</span>
+					<a class="btn btn-success btn-file" id="fengmian" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+						选择图片
+					</a>
+					<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}">
+					<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+						删除
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="form-group row" style="margin-top: 30px;margin-left: 35px;">
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+				专题简介:
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<textarea name="zt-synopsis" class="form-control textInput" id="zt_jianjie" style="height: 125px;" >{$vinfo.desc} </textarea>
+		</div>
+	</div>
+	<div class="form-group zt-group" id="editspecialgrrr">
+		<p class="form-group-title">专题组内容</p>
+		<div class="zt-btn_group" id="zt_1">
+			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button>
+			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button>
+			<button type="button" btnnums="1" class="btn btn-default btn-wz tianimg" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_1&rtype=2" data-browse-file>添加图片</button>
+			<button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button>
+		</div>
+
+		<?php $num = 2; ?>
+		<?php $picnum = 1; ?>
+		<volist name="srinfo" id="vlist">
+			<if condition="$vlist.sgtype eq 1">
+				<div class="zt_gropu_nr" leix="scontent" data-call="{$vlist.stext}">{$vlist.stext}<img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz tianimg" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<elseif condition="$vlist.sgtype eq 2"/>
+				<div class="zt_gropu_nr" leix="sarticle" data-call="{$vlist.sarticleid}"><div class="wz_yangshi"><img src="{$vlist.mimg}"><p>{$vlist.mtitle}</p></div><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz tianimg" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<elseif condition="$vlist.sgtype eq 3"/>
+				<div class="zt_gropu_nr" leix="spid"><button type="button" btnnums="{$num}" style="display:none" id="bj_imgbtn" class="btn btn-default btn-wz" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&rtype=2" data-browse-file>添加图片</button><a class="imga"  href="#" data-browse-file=""><img class="zt_tjpic" id="pics_map_{$picnum}img" src="{$vlist.simg}" border="0"><input class="picas" type="hidden" value="{$vlist.spictureid}" id="pics_map_{$picnum}" name="pics_map_{$picnum}"></a><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz tianimg" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+
+
+				<elseif condition="$vlist.sgtype eq 4"/>
+				<div class="zt_gropu_nr" leix="stitle" data-call="{$vlist.stitle}"><p style="font-weight: 700;color:#922C3E;">{$vlist.stitle}</p><img class="zt_bianji" src="/Public/admin/assets/img/zt_bianji.png"><img class="zt_del" src="/Public/admin/assets/img/zt_shanc.png"></div>
+				<div class="zt-btn_group"><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwz">添加文字</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjwzh">添加文章</button><button type="button" class="btn btn-default btn-wz tianimg" btnnums="{$num}" data-target="#modal-file" href="{$host_name}/resource/uploadMapResource?filed=pics_map_{$num}&amp;rtype=2" data-browse-file="">添加图片</button><button type="button" class="btn btn-default btn-wz" data-toggle="modal" href="#tjxbt">添加小标题</button></div>
+				<else/>
+			</if>
+			<?php
+			$num++;
+			$picnum++;
+
+			?>
+		</volist>
+	</div>
+	<div class="form-group row"style="margin-top: 60px;">
+		<button type="submit" class="btn btn-primary" style="margin-left: 43%;margin-right: " id="qb_save">保存</button>
+
+		<button type="button" class="btn btn-default close-m">取消</button>
+	</div>
+	<!--添加文字-->
+	<div class="modal fade" id="tjwz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">添加文字</h4>
+				</div>
+				<div class="modal-body" style="height: 200px;">
+					<textarea placeholder="请输入文字，限制200字" class="form-control textInput" id="mode_textare" style="height: 107px;"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="wz_save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--添加文章-->
+	<div class="modal fade" id="tjwzh" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">添加文章</h4>
+				</div>
+				<div class="modal-body" style="height: 300px;">
+					<div class="input-group">
+						<input type="text" class="form-control textInput" id="search_val" value="" placeholder="输入内容名称查找">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button" id="search_btn" value="搜索">搜索</button>
+            </span>
+					</div>
+					<div class="form-group row" id="search_wz">
+						<ul></ul>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="wz_bc">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--添加小标题-->
+	<div class="modal fade" id="tjxbt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">添加小标题</h4>
+				</div>
+				<div class="modal-body" style="height: 200px;">
+					<textarea placeholder="请输入文字，限制100字" class="form-control textInput" id="bt_textare" style="height: 107px;"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="bt_save">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--编辑文字、文章、小标题-->
+<!--编辑文字-->
+<div class="modal fade" id="bjwz" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加文字</h4>
+      </div>
+      <div class="modal-body" style="height: 200px;">
+        <textarea placeholder="请输入文字，限制200字" class="form-control textInput" id="mode_textare" style="height: 107px;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_wz_save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--编辑文章-->
+<div class="modal fade" id="bjwzh" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加文章</h4>
+      </div>
+      <div class="modal-body" style="height: 300px;">
+        <div class="input-group">
+            <input type="text" class="form-control textInput" id="search_val" value="" placeholder="输入内容名称查找">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button" id="search_btn" value="搜索">搜索</button>
+            </span>
+          </div>
+          <div class="form-group row" id="search_wz">
+          	<ul></ul>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_wz_bc">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--编辑小标题-->
+<div class="modal fade" id="bjxbt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加小标题</h4>
+      </div>
+      <div class="modal-body" style="height: 200px;">
+        <textarea placeholder="请输入文字，限制100字" class="form-control textInput" id="bt_textare" style="height: 107px;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="bj_bt_save">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+	</div>
+	<div class="zhezhao"></div>
+	<img class="big" src="" />
+<script src="../../../../Public/admin/assets/js/ztz.js" type="text/javascript" charset="utf-8"></script>

@@ -1,0 +1,322 @@
+
+<div class="pageContent">
+  <form method="post" action="{$host_name}/optiontask/doAdd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+
+    <div class="pageFormContent modal-body">
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          发布人(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="publisher" minlength="2" maxlength="50" value="{$vinfo.publisher}" required>
+        </div>
+      </div> 
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          地区(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+          <select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_area_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq '北京'"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="task_area" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_area_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['task_area']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          紧急度(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+          <select name="task_emerge" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_emerge_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq 3"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="task_emerge" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_emerge_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['task_emerge']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div>
+         
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          指派人(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="designater" minlength="2"  value="<empty name="$vinfo.designater">郑伟<else/>{$vinfo.designater}</empty>" >
+        </div>
+      </div>
+      
+    
+      
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          执行人(郑伟填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+        
+          <select name="performer[]" class="form-control bs-select class-filter" data-style="btn-success btn-sm" title="请选择..." data-container="body" multiple="multiple"  data-size="20" >
+              <option value="">请选择</option>
+             <volist name="task_person_arr" key="k" id="row">
+                 <option value="{$k}"  > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="performer[]" class="form-control bs-select class-filter" data-style="btn-success btn-sm" title="请选择..." data-container="body" multiple="multiple" data-size="20" >
+             <volist name="task_person_arr" key="k" id="row">
+                 <option value="{$k}" <php> if(in_array($k,$performer_arr)){</php>selected <php>}</php> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div> 
+      
+      
+	  <!-- <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          任务类型:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="task_type" minlength="2"  value="{$vinfo.task_type}" >
+        </div>
+      </div> -->
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          任务类型(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+          <select name="task_type" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             
+             <php>
+             	 foreach($task_type_arr as $key=>$v){
+             </php>
+                 <option value="{$key}" <if condition="$key eq 5"> selected </if> > {$v} </option>
+             <php>
+             }
+             </php>
+             
+
+          </select>
+          <else />
+          	<select name="task_type" class="form-control bs-select" title="请选择..." data-size="20" required>
+             <volist name="task_type_arrde" id="row">
+                 <option value="{$key}" <if condition="$key eq $vinfo['task_type']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div>  
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          数据信息录入情况(李丛填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        
+        <empty name='id'>
+          <select name="insert_state" class="form-control bs-select" title="请选择..." data-size="20" >
+              
+             <volist name="install_state_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq 1"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="insert_state" class="form-control bs-select" title="请选择..." data-size="20" >
+              
+             <volist name="install_state_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['install_state']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+         
+        </div>
+      </div>
+      
+      
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          设备基础制作情况(任伟填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        
+        <empty name='id'>
+          <select name="install_state" class="form-control bs-select" title="请选择..." data-size="20" >
+              
+             <volist name="install_state_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq 1"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="install_state" class="form-control bs-select" title="请选择..." data-size="20" >
+              
+             <volist name="install_state_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['install_state']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+         
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼名称(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="hotel_name" minlength="2"  value="{$vinfo.hotel_name}" required>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼地址(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="hotel_address" minlength="2"  value="{$vinfo.hotel_address}" required>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼联系人(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="hotel_linkman" minlength="2"  value="{$vinfo.hotel_linkman}" required>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼联系人电话(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="hotel_linkman_tel" minlength="2"  value="{$vinfo.hotel_linkman_tel}" required>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          版位数量(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="tv_nums" minlength="1"  value="{$vinfo.tv_nums}" >
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          事件说明(酒楼合作部填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="desc" minlength="2"  value="{$vinfo.desc}" >
+        </div>
+      </div>
+       <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          故障说明(执行人填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="info" minlength="2"  value="{$vinfo.info}" >
+        </div>
+      </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                计划完成日期(郑伟填写):
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="input-group date form_datetime" data-date="{$vinfo.install_date}" data-ymd="true">
+                    <input id="plan_finish_time" name="palan_finish_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.palan_finish_time}"  readonly >
+                  <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+                </div>
+            </div>
+        </div> 
+        
+        
+        <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          任务状态(郑伟填写):
+        </label>
+        <div class="col-xs-12 col-sm-10">
+        <empty name="id">
+          <select name="state" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_state_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq 1"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          <else />
+          	<select name="state" class="form-control bs-select" title="请选择..." data-size="20" required>
+              
+             <volist name="task_state_arr" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['state']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+          </empty>
+        </div>
+      </div>     
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" id="saveinfos" type="submit">保存</button>
+    </div>
+    	
+  </form>
+</div>
+<script type="text/javascript">
+   
+$(function(){
+	   
+
+    $("#plan_finish_time").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      //minView:0,
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+   
+  })
+
+</script>

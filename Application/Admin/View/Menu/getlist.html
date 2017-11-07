@@ -86,7 +86,7 @@
 
 
 
-                <if condition="$vlist.count eq 0"> <a data-tip="请选择酒楼" rel="menu/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/menu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
+                <if condition="$vlist.count eq 0"> <a data-tip="请选择酒楼" rel="menu/selecthotelselect" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/menu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
                   <else/> <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="menu/selecthotel"
 href="{$host_name}/menu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_name}">{$vlist.count}</a>
                 </if>

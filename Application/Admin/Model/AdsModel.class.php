@@ -18,6 +18,8 @@ class AdsModel extends BaseModel
 		return $list;
 	}
 
+
+
 	public function delData($id) {
 		$delSql = "DELETE FROM `savor_mb_content` WHERE id = '{$id}'";
 		$result = $this -> execute($delSql);
@@ -37,36 +39,8 @@ class AdsModel extends BaseModel
 		return $data;
 	}
 
-	public function getImgRes($path, $old_img) {
-		$arr = explode('.', $old_img);
-		$img_type = $arr[1];
-		$pic = date('Y-m-d').'a_pics'.time().'.'.$img_type;
-		$new_img = $path.'/'.$pic;
-		$old_img = SITE_TP_PATH.$old_img;
-		$res = $this->myCopyFunc($old_img, $new_img);
-		if ( $res == 1 ) {
-			return array('res'=>1,'pic'=>$pic);
-		} else {
-			return array('res'=>0);
-		}
-	}
 
-	public function myCopyFunc($res, $des) {
-		if(file_exists($res)) {
-			$r_fp=fopen($res,"r");
-			$d_fp=fopen($des,"w+");
-			$buffer=1024;
-			$fres="";
-			while(!feof($r_fp)) {
-				$fres=fread($r_fp,$buffer);
-				fwrite($d_fp,$fres);
-			}
-			fclose($r_fp);
-			fclose($d_fp);
-			return 1;
-		} else {
-			return 0;
-		}
-	}
+
+
 
 }

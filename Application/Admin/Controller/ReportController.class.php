@@ -6,6 +6,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
+use Think\Exception;
 
 class ReportController extends BaseController{
 
@@ -14,6 +15,68 @@ class ReportController extends BaseController{
 	public function __construct() {
 		parent::__construct();
 	}
+
+
+
+    /**
+     * @Purpose
+     * 处理小平台报警
+     * @Access public
+     * @Method Name:doAddSmall
+     * @Http POST
+     * @Param int $smallid 小平台日志唯一id
+     * @return mixed
+     */
+    public function doAddSmall(){
+
+        $smWarn = new \Admin\Model\SmallPlaModel();
+        $id                  = I('post.id');
+        $save                = [];
+        $save['state']        = I('post.smallconfig',0,'intval');
+        $save['remark1']    = I('post.small_mark','','trim');
+        $save['update_time'] = date('Y-m-d H:i:s');
+        if($id){
+            if($smWarn->where('id='.$id)->save($save)){
+                $this->output('操作成功!', 'report/smallplatwarn');
+            }else{
+                $this->output('操作失败!', 'report/smallplatwarn');
+            }
+        }else{
+
+                $this->output('操作失败!', 'report/smallplatwarn');
+
+        }
+    }
+
+
+    /**
+     * @Purpose
+     * 编辑小平台报警
+     * @Access public
+     * @Method Name:editSmallwarn
+     * @Http GET
+     * @Param int $smallid 小平台日志唯一id
+     * @return mixed
+     */
+    public function editSmallwarn(){
+        $smWarn = new \Admin\Model\SmallPlaModel();
+        $id = I('get.smaid', 0, 'intval');
+        $small_warn_arr = C('SMALL_WARN');
+        try{
+            if (is_int($id)) {
+                $vinfo = $smWarn->where('id='.$id)->find();
+                $this->assign('vinfo',$vinfo);
+                $this->assign('smallwarnid',$id);
+                $this->assign('smallwarndat',$small_warn_arr);
+            } else {
+               throw new Exception('必须是整数');
+            }
+        }catch (Exception $e) {
+            $this->error($e->getMessage());
+        }
+
+        $this->display('editsmall');
+    }
 
 
 	/**
@@ -35,8 +98,8 @@ class ReportController extends BaseController{
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
 		$where = "1=1";
-		$name = I('name');
-		$type = I('type');
+		$name = I('he_name');
+		$type = I('baotype');
 		//城市
 		$area_arr = $areaModel->getAllArea();
 		$this->assign('area', $area_arr);
@@ -47,24 +110,24 @@ class ReportController extends BaseController{
 			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
 		}
 		//城市
-		$area_v = I('area_v');
+		$area_v = I('he_area_bv');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
 			$where .= "	AND shlog.area_id = $area_v ";
 		}
 		//查询类型
 		if($type){
-		    $this->assign('type',$type);
+		    $this->assign('typea',$type);
 			$where .= "	AND shlog.type= {$type} ";
 		}
 		//合作维护人
-		$main_v = I('main_v');
+		$main_v = I('he_main_v');
 		if ($main_v) {
 			$this->assign('main_k',$main_v);
 			$where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
 		}
 		//机顶盒类型
-		$hbt_v = I('hbt_v');
+		$hbt_v = I('he_hbt_v');
 		if ($hbt_v) {
 			$this->assign('hbt_k',$hbt_v);
 			$where .= "	AND sht.hotel_box_type = $hbt_v";
@@ -73,7 +136,9 @@ class ReportController extends BaseController{
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
 		$ind = $start;
-		foreach ($result['list'] as &$val) {
+		$m_hotel = new \Admin\Model\HotelModel();
+		$m_box   = new \Admin\Model\BoxModel();
+		foreach ($result['list'] as $key=> &$val) {
 
 
 			$val['indnum'] = ++$ind;
@@ -91,7 +156,15 @@ class ReportController extends BaseController{
 				$hour = floor($diff%86400/3600);
 				$val['last_heart_time'] = $day.'天'.$hour.'小时';
 			}
-
+			if($val['type']==1){
+			    
+			    $hotel_ext_info = $m_hotel->getHotelInfoByMac($val['box_mac']);
+			    $val['tag'] = $hotel_ext_info['tag'];
+			}else if($val['type']==2){
+			    
+			    $temp = $m_box->getInfo('tag'," mac='".$val['box_mac']."'",'');
+			    $val['tag'] = $temp[0]['tag'];
+			}
 			foreach (C('DEVICE_TYPE') as  $key=>$kv){
 				if($val['type'] == $key){
 					$val['type'] = $kv;
@@ -102,85 +175,16 @@ class ReportController extends BaseController{
 					$val['hotel_box_type'] = $kv;
 				}
 			}
+			
+			
 		}
-
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('heartlist');
 	}
 
 
-	/**
-	 * 新增分类
-	 *
-	 */
-	public function addCate(){
-		$id = I('get.id');
-		$catModel = new CategoModel;
-		if($id){
-			$vinfo = $catModel->find($id);
-			$image_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
-			$vinfo['oss_addr'] = $image_host.$vinfo['img_url'];
-			$this->assign('vinfo',$vinfo);
-		}
-		return $this->display('addCat');
-	}
 
-
-	/*
-	 * 修改状态
-	 */
-
-	public function changestate(){
-		$cid = I('post.cid');
-		$save = array();
-		$save['state'] = I('post.state');
-		$catModel = new CategoModel;
-		$res_save = $catModel->where('id='.$cid)->save($save);
-		if($res_save){
-			echo 1;
-		} else {
-			echo 0;
-		}
-	}
-
-	/**
-	 * 保存或者更新分类信息
-	 * @return [type] [description]
-	 */
-	public function doAddCat(){
-		$catModel = new CategoModel;
-		$id                  = I('post.id');
-		$save                = [];
-		$save['name']        = I('post.cat_name','','trim');
-		$save['sort_num']    = I('post.sort','','intval');
-
-		$save['update_time'] = date('Y-m-d H:i:s');
-		$mediaid = I('post.media_id');
-		$mediaModel = new \Admin\Model\MediaModel();
-		//$mediaid = 11;
-		$oss_addr = $mediaModel->find($mediaid);
-		$oss_addr = $oss_addr['oss_addr'];
-		$save['img_url'] = $oss_addr;
-		if($id){
-			$res_save = $catModel->where('id='.$id)->save($save);
-			if($res_save){
-				$this->output('操作成功!', 'release/category');
-			}else{
-				$this->output('操作失败!', 'release/doAddCat');
-			}
-		}else{
-			$save['state']    =  0;
-			$save['create_time'] = date('Y-m-d H:i:s');
-			//刷新页面，关闭当前
-			$res_save = $catModel->add($save);
-			if($res_save){
-			    $this->output('添加分类成功!', 'release/category');
-			}else{
-				$this->output('操作失败!', 'release/doAddCat');
-			}
-		}
-	}
     public function contAndProm(){
         $size   = I('numPerPage',50);     //显示每页记录数
         $this->assign('numPerPage',$size);
@@ -253,5 +257,140 @@ class ReportController extends BaseController{
         $this->assign('list',$data['list']);
         $this->assign('page',$data['page']);
         $this->display('contandprom');
+    }
+    public function smallPlatWarn(){
+        $areaModel  = new \Admin\Model\AreaModel();
+        $area_arr = $areaModel->getAllArea();
+        $this->assign('area', $area_arr);
+    
+        $size   = I('numPerPage',50);     //显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);          //当前页码
+        $this->assign('pageNum',$start);
+        $order = I('_order','spl.create_time'); //排序字段
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');        //排序类型
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start_date = I('start_date');    //搜索条件 开始日期
+        $where =" 1=1 ";
+        $hotel_name = I('hotel_name','','trim');
+        $area_v = I('area_v');
+        $start  = ( $start-1 ) * $size;
+        if(!empty($hotel_name)){
+            $where .=" and sht.name like '%".$hotel_name."%'";
+            $this->assign('hotel_name',$hotel_name);
+        }
+        if ($area_v) {
+            $this->assign('area_k',$area_v);
+            $where .= "	AND spl.area_id = $area_v";
+        }
+    
+        if($start_date){
+            $where .=" and spl.create_time>='".$start_date." 00:00:00'";
+            $this->assign('start_date',$start_date);
+        }
+        $end_date   = I('end_date');     //搜索条件  结束日期
+        if($end_date){
+            $where .= " and spl.create_time<='".$end_date." 23:59:59'";
+            $this->assign('end_date',$end_date);
+        }
+        if(!empty($start_date) && !empty($end_date)){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        $smWarn = new \Admin\Model\SmallPlaModel();
+        $result = $smWarn->getWarnInfo($where,$orders,$start,$size);
+        $result['list'] = $areaModel->areaIdToAareName($result['list']);
+        $ind = $start;
+        $small_warn = C('SMALL_WARN');
+        foreach ($result['list'] as &$val) {
+            $val['indnum'] = ++$ind;
+            $val['state'] = $small_warn[$val['state']];
+        }
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->display('smallpla');
+    }
+    /**
+     * @desc 查看心跳上报历史数据
+     */
+    public function heartAllLog(){
+        $size       = I('numPerPage',50);     //显示每页记录数
+        $start      = I('pageNum',1);         //当前页码
+        $order      = I('_order','id'); //排序字段        
+        $sort       = I('_sort','desc');      //排序类型
+        $orders     = $order.' '.$sort;
+        $start = ($start-1)* $size;
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$start);
+        $this->assign('_order',$order);
+        $this->assign('_sort',$sort);
+        $where =" 1=1 ";
+        
+        $start_date = I('start_date');        // 开始日期
+        $end_date   = I('end_date');          // 结束日期
+        $type       = I('type');              //设备类型
+        $areaid     = I('areaid');            //城市id
+        $hotel_name = I('hotel_name','','trim'); //酒楼名称
+        $mac        = I('mac','','trim');     //mac地址
+        
+        if(!empty($start_date) && !empty($end_date)){
+            if($end_date<$start_date){
+                $this->error('结束时间不能小于开始时间');
+            }
+        }
+        if(!empty($start_date)){
+            $sql_start_date = str_replace('-', '', $start_date);
+            $where .= " and date>={$sql_start_date}";
+            $this->assign('start_date',$start_date);
+        }
+        if(!empty($end_date)){
+            $sql_end_date = str_replace('-', '', $end_date);
+            $where .=" and date<={$sql_end_date}";
+            $this->assign('end_date',$end_date);
+        }
+        if(!empty($type)){
+            $where .=" and type ={$type}";
+            $this->assign('type',$type);
+        }
+        if(!empty($areaid)){
+            $where .= " and area_id = {$areaid}";
+            $this->assign('areaid',$areaid);
+        }
+        if(!empty($hotel_name)){
+            $where .=" and hotel_name like '%{$hotel_name}%'";
+            $this->assign('hotel_name',$hotel_name);
+        }
+        if(!empty($mac)){
+            $where .=" and mac like '%{$mac}%'";
+            $this->assign('mac',$mac);
+        }
+        $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
+        $result = $m_heart_all_log->getlist('*',$where,$orders,$start,$size);
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_box   = new \Admin\Model\BoxModel();
+        
+        foreach($result['list'] as $key=>$v){
+            
+            if($v['type']==1){
+                $hotel_ext_info = $m_hotel->getHotelInfoByMac($v['mac']);
+                $result['list'][$key]['tag'] = $hotel_ext_info['tag'];
+            }else if($v['type']==2){
+                
+                $temp = $m_box->getInfo('tag'," mac='".$v['mac']."'",'');
+                $result['list'][$key]['tag'] = $temp[0]['tag'];
+            }
+        }
+        $device_type_arr = C('DEVICE_TYPE');
+        //城市
+        $m_area_info = new \Admin\Model\AreaModel();
+        $area_arr = $m_area_info->getAllArea();
+        $this->assign('area', $area_arr);
+        $this->assign('device_type_arr',$device_type_arr);
+        $this->assign('list', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->display('heartalllog');
     }
 }

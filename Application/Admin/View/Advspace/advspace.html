@@ -1,0 +1,66 @@
+<style type="text/css">
+	.entirety{
+		width: 100%;
+		height: auto;
+	}
+	.case{
+		width: 100%;
+		height: 30px;
+		background-color: black;
+		color: white;
+		line-height: 30px;
+		padding-left: 2%;
+	}
+	.case_details{
+		width: 100%;
+		height: 60px;
+		padding-left: 3%;
+	}
+	.one{
+		margin-top: 23px;
+	    width: 147px;
+	    float: left;
+	    margin-left: 6%;
+	}
+	.advertising_list{
+		width: 100%;
+	}
+	.two{
+		margin-top: 23px;
+	    width: 185px;
+	    float: left;
+	    margin-left: 9%;
+	}
+</style>
+<div class="entirety">
+	<div class="case">
+		版位情况
+	</div>
+	<div class="case_details">
+		<div class="one">
+			<span style="color: #a2a8ab;font-size: 15px;">版位总数量</span>
+			<span style="margin-left: 10px;">{$all_box_len}个</span>
+		</div>
+		<div class="one">
+			<span style="color: #a2a8ab;font-size: 15px;">正常版位数量</span>
+			<span style="margin-left: 10px;">{$normal_box_len}个</span>
+		</div>
+		<div class="one">
+			<span style="color: #a2a8ab;font-size: 15px;">已用版位数量</span>
+			<span style="margin-left: 10px;">{$tmp_use_box_len}个</span>
+		</div>
+		<div class="one">
+			<span style="color: #a2a8ab;font-size: 15px;">空闲版位数量</span>
+			<span style="margin-left: 10px;">{$tmp_use_box_space}个</span>
+		</div>
+	</div>
+	<div class="case advertising">
+		广告情况
+	</div>
+	<div class="advertising_list">
+		<div class="two">
+			<span style="color: #a2a8ab;font-size: 15px;">平均时长</span>
+			<span style="margin-left: 10px;">{$aver_time}分钟/节目循环</span>
+		</div>
+	</div>
+</div>

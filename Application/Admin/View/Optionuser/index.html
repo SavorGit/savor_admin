@@ -1,0 +1,154 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/optiontask/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <!-- <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              来源筛选：
+            </label>
+                
+          </div>
+        </div>
+		<div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                酒楼名称：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称" >
+            </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                城&nbsp;&nbsp;市：
+              </label>
+
+                <span class="input-group-btn input-group-sm">
+              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                <option value=0 >所有城市</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div>
+
+          <div class="form-group"  >
+            <div class="input-group input-group-sm date form_datetime" data-date="" >
+              <input name="start_date" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+
+            <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true">
+              <input name="end_date" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+
+
+
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div> -->
+
+       
+          <div class="input-group input-group-sm pull-left">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/optionuser/add" title="添加账号" target="dialog" mask="true"><i class="fa fa-plus"></i> 添加账号</a>
+          </div>
+ <div class="form-group"  >
+            <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true" >
+              <input name="plan_finish_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$palan_finish_time}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+ </div>
+ <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+</div>
+          </div>
+        </div>
+        </div>
+      </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
+enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>角色</th>
+            <th>用户</th>
+            <th>技能信息</th>
+            <th>是否带队安装</th>
+            <th>所属城市</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="地区">{$vlist.role_name}</td>
+              <td data-title="紧急度">{$vlist.username}</td>
+              <td data-title="当前状态">{$vlist.skill_str}</td>
+              <td data-title="更新时间">{$vlist.is_lead_install}</td>
+              <td data-title="计划完成时间">{$vlist.manage_city_str}</td>
+              <td data-title="发布人">{$vlist.create_time}</td>
+              <td data-title="故障说明">{$vlist.update_time} </td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改状态" target="dialog" mask="true"
+                    href="{$host_name}/optionuser/edit?id={$vlist.id}"
+                  class="btn btn-success btn-icon">
+                  <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+                
+                <div class="tools-edit">
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/optionuser/delete?id={$vlist.id}"  class="btn btn-success btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+

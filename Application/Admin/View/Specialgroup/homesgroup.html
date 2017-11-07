@@ -1,0 +1,135 @@
+<include file="Public/script"/>
+<!--显示列表样式333331 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/specialgroup/homemanager" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+
+            <a class="btn btn-success btn-sm add" href="{$host_name}/specialgroup/addSpecialGroup"  title="发布专题组" target="dialog" mask="true"> <i class="fa fa-plus"></i><span>发布专题组</span></a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="sgroupname" value="{$sgname}" placeholder="专题组查找">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>ID</th>
+            <th>专题组名称</th>
+            <th>创建时间</th>
+            <th>发布时间</th>
+            <th>发布状态</th>
+            <th>创建人</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="ID">{$vlist.id}</td>
+              <td data-title="专题组名称">{$vlist.name}
+
+                <if condition="$vlist.is_index eq 1">
+                  <a data-tip="首页专题" class="btn btn-success btn-icon"><i class="fa fa-home"></i></a>
+                </if>
+              </td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="发布时间">{$vlist.update_time}</td>
+              <td data-title="发布状态" style="text-align:center;">
+                <if condition="$vlist['state'] eq 0">
+                  <a style="width:60px;" data-tip="未发布" target="ajaxTodo" href="{$host_name}/specialgroup/operateStatus?sgid={$vlist.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                  <else/>
+                  <a style="width:60px;" data-tip="已发布" target="ajaxTodo"  href="{$host_name}/specialgroup/operateStatus?sgid={$vlist.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                </if>
+
+              </td>
+              <td data-title="操作人">{$vlist.username}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true"
+                    href="{$host_name}/specialgroup/editSpecialGroup?id={$vlist.id}"
+                  class="btn btn-success btn-icon">
+                  <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+
+                <div class="tools-edit">
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/specialgroup/delspgroup?sgid={$vlist.id}&flag=3"  class="btn btn-success btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
+
+                <div class="tools-edit">
+
+                  <a data-tip="预览"
+
+                     href="
+                  {$host_name}/SpecialgroupShow/showsp?id={$vlist.id}"
+
+                  target="_blank"  class="btn btn-success btn-icon">
+                  <i class="fa fa-eye"></i>
+                  </a>
+                </div>
+              </td>
+
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+  $(function() {
+
+    $("select").each(function(){
+      $(this).change(function(){
+        var sta = $(this).val();
+        var cid = $(this).attr('data-state');
+        $.ajax({
+          type:"POST",
+          dataType: "json",
+          url:"{$host_name}/release/changestate",
+          data:"state="+sta+"&cid="+cid,
+          success:function(data){
+            if(data == 1) {
+              alert('修改成功');
+            } else {
+              alert('修改失败');
+            }
+
+          }
+        });
+      })
+    });
+
+
+
+  });
+</script>

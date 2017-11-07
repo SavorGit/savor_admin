@@ -117,17 +117,18 @@
       </div>
 
 
-      <div class="form-inline" >
+      <div class="form-inline" style="margin-top: 2px;">
         <div class="tools-group s2">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/specialgroup/homemanager" rel="specicalgroup/homemanager"  title="专题组管理" target="navTab" mask="true">
+                <i class="fa fa-plus"></i><span>专题组管理</span></a>
 
-        <a class="btn btn-success btn-sm add" href="{$host_name}/article/setSpecial"  title="设置专题" target="dialog" mask="true">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/article/setSpecial"  title="设置专题" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>设置专题</span></a>
 
             <a class="btn btn-success btn-sm add" href="{$host_name}/article/hotsortmanager" rel="article/hotsortmanager"  title="分类内容排序" target="navTab" mask="true">
                 <i class="fa fa-plus"></i><span>分类内容排序</span></a>
 
-        <a class="btn btn-success btn-sm add" href="{$host_name}/article/addSpecial"  title="发布专题" target="dialog" mask="true">
-            <i class="fa fa-plus"></i><span>发布专题</span></a>
+
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addpictures"  title="发布图集" target="dialog" mask="true">
             <i class="fa fa-plus"></i><span>发布图集</span></a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/article/addarticle" title="发布文章" target="dialog" mask="true">
@@ -212,17 +213,14 @@
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true"
-                  <if condition="$vlist['hot_category_id'] eq 103">
-                  	href="{$host_name}/article/addspecial?id={$vlist.id}&acttype=3"
-                  <else />
-                  
+
                   <if condition="$vlist['type'] eq 3">
                     href="{$host_name}/article/addvideo?id={$vlist.id}&acttype=3"
                       <elseif condition="$vlist['type'] eq 2"/>href="{$host_name}/article/editpictures?id={$vlist.id}"
                     <else/>
                     href="{$host_name}/article/addarticle?id={$vlist.id}&acttype=1"
                   </if>
-                  </if>
+
                    class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
@@ -238,7 +236,7 @@
                 
                   <a data-tip="预览"
 
-                  href="__ROOT__/content/{$vlist.id}.html"
+                  href="__ROOT__/content/{$vlist.id}.html?app=inner&preview=1"
 
 
                      target="_blank"  class="btn btn-success btn-icon">

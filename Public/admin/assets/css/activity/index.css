@@ -10,6 +10,11 @@ body,html{
 	background-color: #f6f3ee;
 
 }
+input,textarea{
+			padding-left: 5px;
+			-webkit-appearance: none;
+}
+
 input[type="button"], input[type="submit"], input[type="reset"] {
 
 -webkit-appearance: none;
@@ -127,16 +132,18 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	background-color: #ece6de;
 	border-radius: 3px;
 }
-.btn{
-	width: 2.2rem;
-	height: 0.72rem;
-	margin: 0 auto;
-	margin-top: 0.5rem;
-	margin-left: 35%;
-	background-color: #922c3e;
-	border-radius:6px ;
-	border: none;
-	color: white;
+.btn {
+    width: 2.2rem;
+    height: 0.72rem;
+    margin: 0 auto;
+    margin-top: 0.5rem;
+    margin-left: 35%;
+    background-color: #922c3e;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    font-size: 0.32rem;
+    text-align: center;
 }
 .tt{
 	font-size: 0.28rem;

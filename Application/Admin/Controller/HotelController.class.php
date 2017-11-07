@@ -161,6 +161,9 @@ class HotelController extends BaseController {
 			$hotel_id = $datalist[$k]['id'];
 			$condition['hotel_id'] = $hotel_id;
 			$arr = $menuHoModel->where($condition)->order('id desc')->find();
+			$promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
+			$new_menu_arr = $promenuHoModel->where($condition)->order('id desc')->find();
+			$promenuid = $new_menu_arr['menu_id'];
 			$menuid = $arr['menu_id'];
 			if($menuid){
 				$men_arr = $menlistModel->find($menuid);
@@ -171,6 +174,18 @@ class HotelController extends BaseController {
 			}else{
 				$datalist[$k]['menu_id'] = '';
 				$datalist[$k]['menu_name'] = '无';
+			}
+
+			if($promenuid){
+				$promenulistModel = new \Admin\Model\ProgramMenuListModel();
+				$promen_arr = $promenulistModel->find($promenuid);
+				$promenuname = $promen_arr['menu_name'];
+				$datalist[$k]['promenu_id'] = $promenuid;
+				$datalist[$k]['promenu_name'] = $promenuname;
+
+			}else{
+				$datalist[$k]['promenu_id'] = '';
+				$datalist[$k]['promenu_name'] = '无';
 			}
 
 		}
@@ -335,6 +350,7 @@ class HotelController extends BaseController {
 			$vinfo['ip_local'] = $res_hotelext['ip_local'];
 			$vinfo['ip'] = $res_hotelext['ip'];
 			$vinfo['server_location'] = $res_hotelext['server_location'];
+			$vinfo['tag'] = $res_hotelext['tag'];
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -499,7 +515,7 @@ class HotelController extends BaseController {
 		$hotelModel = new \Admin\Model\HotelModel();
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
-		if(!empty($mac_addr)){
+		if(!empty($mac_addr) && $mac_addr !='000000000000'){
 		    if($hotel_id){
 		        $where = "he.mac_addr='".$mac_addr."' and h.state=1 and he.hotel_id !=".$hotel_id;
 		    }else {
@@ -513,6 +529,7 @@ class HotelController extends BaseController {
 		}
 		
 		$data['server_location'] = $server_location;
+		$data['tag']             = I('post.tag','','trim');
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
@@ -551,7 +568,7 @@ class HotelController extends BaseController {
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			$this->output('操作成功!', 'hotel/manager');
+			$this->output('操作成功!', 'hotel/doaddsuccess');
 		} else {
 			$tranDb->rollback();
 			$this->error('操作失败3!');
@@ -754,7 +771,7 @@ class HotelController extends BaseController {
 						}else{
 
 
-							$preg = '/^[0-9A-F]+$/';
+							$preg = '/^[0-9A-Z]+$/';
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
 
@@ -1174,7 +1191,7 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('操作成功!', 'hotel/pubmanager');
+				$this->output('操作成功!', 'hotel/doAddPubtype1');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
@@ -1213,7 +1230,7 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('添加宣传片成功!', 'hotel/pubmanager');
+				$this->output('添加宣传片成功!', 'hotel/doAddPubtype1');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}

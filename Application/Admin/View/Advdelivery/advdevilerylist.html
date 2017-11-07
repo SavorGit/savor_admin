@@ -1,0 +1,100 @@
+<include file="Public/script"/>
+<!--显示列表样式333331 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/advdelivery/getlist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+
+        <div class="goods-date">
+          <div class="form-inline">
+            <div class="form-group">
+              <a class="btn btn-success btn-sm add" href="{$host_name}/Advdelivery/adddevilery" rel="Advdelivery/adddevilery" title="新增投放" target="navTab" mask="true"> <i class="fa fa-plus"></i><span>新增投放</span></a>
+
+              <div class="input-group-sm input-group">
+                <label>投放状态：</label>
+                <span class="input-group-btn input-group-sm">
+                <select name="tou_state" style="width: 20px;display: none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                  <volist name="to_ar" id="vo">
+                    <option value="{$key}"
+                    <if condition="$key eq $to_state">selected</if>
+                    >{$vo}</option><br>
+                  </volist>
+                </select>
+              </span>
+              </div>
+
+            </div>
+
+            <div class="col-xs-10 col-sm-5 col-md-4 pull-right">
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" name="serachads" value="{$adsname}" placeholder="请输入广告名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>ID</th>
+            <th>广告名称</th>
+            <th>状态</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="ID">{$vlist.id}</td>
+              <td data-title="名称">{$vlist.name}
+
+              </td>
+
+              <td data-title="状态" style="text-align:center;">
+                {$vlist['state']}
+              </td>
+              <td class="table-tool" data-title="操作">
+
+                <div class="tools-edit">
+
+                  <a data-tip="预览"
+
+                     href="
+                  {$host_name}/advdelivery/showdelivery?deliveryid={$vlist.id}" rel="Advdelivery/showdelivery" title="广告预览" target="navTab"
+
+                  class="btn btn-success btn-icon">
+                  <i class="fa fa-eye"></i>
+                  </a>
+                </div>
+              </td>
+
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+
+

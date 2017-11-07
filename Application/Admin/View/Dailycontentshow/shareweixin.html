@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>每日知享下载</title>
+	</head>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html,body{
+			width: 100%;
+			height: 100%;
+			background-color: #f5f5f5;
+			overflow: hidden;
+		}
+		.logo{
+			width: 1.5rem;
+			margin: 0 auto;
+			margin-top: 1.8rem;
+		}
+		.logo img{
+			width: 1.08rem;
+			height: 1.08rem;
+			margin-left: 0.13rem;
+		}
+		.logo p{
+			font-size: 0.34rem;
+			color: #454545;
+		}
+		.cen_img{
+		 width: 4.74rem;
+		 margin: 0 auto;
+		 margin-top: 0.9rem;
+		}
+		.cen_img img{
+			width: 100%;
+			height:100%;
+		}
+		.bott_img{
+			font-size: 0.32rem;
+			width: 2.9rem;
+			margin: 0 auto;
+			margin-top: 33%;
+		}
+		.bott_img div{
+			width: 2.88rem;
+			height: 0.84rem;
+			border: 2px solid #000000;
+			border-radius: 10px;
+			line-height: 0.84rem;
+		}
+		.bott_img img{
+			width: 0.26rem;
+			height: 0.33rem;
+			margin-left: 0.35rem;
+			margin-right:0.05rem ;
+		}
+		.zhez{
+			width: 100%;
+			height: 100%;
+			background-color: #000000;
+			opacity: 0.7;
+			position: fixed;
+			top: 0;
+			z-index: 1;
+			display: none;
+		}
+		.zhi{
+			width: 4.48rem;
+			height: 2.75rem;
+			position: absolute;
+			top: 10%;
+			left: 30%;
+			z-index: 3;
+			display: none;
+		}
+	</style>
+	<body onload="isWeiXin()">
+		<div class="logo">
+			<img src="/Public/admin/assets/img/shareapp/h5_logo_zhi@3x.png"/>
+			<p>每日知享</p>
+		</div>
+		<div class="cen_img">
+		<img src="/Public/admin/assets/img/shareapp/zi@3x.png"/>
+		</div>
+		<div class="bott_img">
+			<div class="ios_don" id="iosdons">
+				<img src="/Public/admin/assets/img/shareapp/images_2.png"/><span>iphone</span><span style="margin-left: 0.28rem;">下载</span>
+			</div>
+			<div class="Android_don" id="Androiddon" style="margin-top: 0.4rem;">
+				<img src="/Public/admin/assets/img/shareapp/images_4.png"/><span>android</span><span style="margin-left: 0.15rem;">下载</span>
+			</div>
+		</div>
+		<div class="zhez" id="zhezs"></div>
+		<img class="zhi" id="zhis" src="/Public/admin/assets/img/shareapp/images_5.png"/>
+
+		<input type="hidden" value="<?php echo $appid; ?>" id="appid"/>
+		<input type="hidden" value="<?php echo time(); ?>" id="timestamp"/>
+		<input type="hidden" value="<?php echo $noncestr; ?>" id="noncestr"/>
+		<input type="hidden" value="<?php echo $signature; ?>" id="signature"/>
+		<input type="hidden" value="<?php echo $share_link; ?>" id="share_link"/>
+		<input type="hidden" value="<?php echo $share_link; ?>" id="jump_link"/>
+		<input type="hidden" value="<?php echo  $share_title; ?>" id="share_title"/>
+		<input type="hidden" value="<?php echo $share_desc;  ?>" id="share_desc"/>
+		<input type="hidden" value="<?php echo $shareimg; ?>" id="share_img"/>
+
+
+
+	</body>
+	<script type="text/javascript" src="__PUBLIC__/admin/assets/js/weicontent.js"></script>
+</html>
+<script type="text/javascript">
+	var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+		};
+
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}
+		var iosdons = document.getElementById('iosdons');
+		iosdons.onclick=function(){
+			window.location = 'http://itunes.apple.com/cn/app/id1284095616';
+		}
+		var Androiddon = document.getElementById('Androiddon');
+		Androiddon.onclick=function(){
+			window.location = 'http://admin.littlehotspot.com/download/knowenjoy/app-le-release_10_1_rerdian_sign.apk';
+		}
+		function isWeiXin() {
+		//判断微信
+		var ua = window.navigator.userAgent.toLowerCase();
+		var u = navigator.userAgent;
+		var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端 
+		var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端 
+		if(ua.match(/MicroMessenger/i) == 'micromessenger') {
+			//如果是安卓提示用户浏览器打开
+			if(isAndroid == true) {
+				var zhe1 = document.getElementById('zhezs')
+				var zhe2 = document.getElementById('zhis')
+				zhe1.style.display = "block";
+				zhe2.style.display = "block";
+
+			} else {
+				//如果是苹果直接进入专用下载页面
+				if(isiOS == true) {
+					var ua = navigator.userAgent.toLowerCase(); //获取判断用的对象
+
+					window.location = 'http://itunes.apple.com/cn/app/id1284095616';
+				}
+			}
+		} else {
+			if(isAndroid == true) {
+
+				//安卓用户用浏览器打开直接提示apk下载
+				/*document.getElementById('box').style.visibility = "visible";*/
+				window.location = 'http://admin.littlehotspot.com/download/knowenjoy/app-le-release_10_1_rerdian_sign.apk';
+			} else {
+				if(isiOS == true) {
+
+					window.location = 'http://itunes.apple.com/cn/app/id1284095616';
+				}
+			}
+		}
+		if((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
+
+		} else {
+			
+
+		}
+
+	}
+</script>

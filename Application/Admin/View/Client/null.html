@@ -5,7 +5,7 @@
 		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
 		<title></title>
 	</head>
-	<style type="text/css">
+<style type="text/css">
 		*{
 			margin: 0;
 			padding: 0;
@@ -16,13 +16,17 @@
 			background-color: #f6f3ee;
 		}
 		.zt{
-		  margin: auto;
-		  position: absolute;
-		  top: 0; left: 0; bottom: 0; right: 0;
-		  height: 2rem;
-		  width: 2rem;
-		  
+		    margin: auto;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    bottom: 0;
+		    right: 0;
+		    width: 2rem;
+		    height: 9rem;
 		}
+		  
+		
 		.zt img{
 			width:1.65rem;
 			height: 1.38rem;
@@ -32,12 +36,89 @@
 			font-size: 0.25rem;
 			color: #928f8a;
 		}
+		.tuijian {
+			width: 100%;
+		    margin: 0 auto;
+		    position: absolute;
+		    bottom: 0px;
+		}
+		
+		.tit_tuijian {
+			font-size: 0.3rem;
+			color: #922c3e;
+			font-weight: 700;
+			display: block;
+			width: 93%;
+			margin: 0 auto;
+			height: 0.96rem;
+			line-height: 0.96rem;
+		}
+		
+		.tuijian_list {
+			width: 93%;
+			margin: 0 auto;
+			padding-bottom: 0.12rem;
+			padding-top: 0.12rem;
+			border-bottom: 1px solid #eae6e1;
+		}
+		
+		.tuijian_list img {
+			width: 2.6rem;
+			height: 1.68rem;
+			float: left;
+			margin-right: 0.2rem;
+		}
+		
+		.tuijian_list_tit {
+			font-size: 0.32rem;
+			color: #434343;
+			font-weight: 700;
+			display: block;
+		}
+		
+		.tuijian_list_tit a {
+			color: #434343;
+			text-decoration: none;
+		}
+		
+		.laiyuan {
+			font-size: 0.22rem;
+			color: #8a8886;
+			display: block;
+			float: left;
+			margin-right: 0.2rem;
+		}
+		
+		.shijians {
+			font-size: 0.2rem;
+			color: #B2AFAB;
+			display: block;
+			float: left;
+			margin-top: 3px;
+		}
 	</style>
 	<body>
 		<div class="zt">
 			<img src="__PUBLIC__/admin/assets/img/kong_wenzhang@3x.png"/>
 			<p>该内容找不到了</p>
 		</div>
+		<notempty name="list">
+		<div class="tuijian" style="<if condition="$sourc eq 'newRead'">display: none</if>">
+			<span class="tit_tuijian"><notempty name="list">为您推荐</notempty></span>
+
+			<volist name="list" id="vlist">
+				<div class="tuijian_list">
+					<img src="{$vlist.imageURL}" />
+					<div class="tuijian_list_right">
+						<span class="tuijian_list_tit"><a href="{$vlist.contentURL}">{$vlist.title}</a></span>
+						<span class="laiyuan">{$vlist.sourcename}</span></span><span class="shijians">{$vlist.updatetime}</span>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+			</volist>
+		</div>
+
+		</notempty>
 	</body>
 </html>
 <script type="text/javascript">
@@ -57,4 +138,11 @@
              document.addEventListener('DOMContentLoaded', calculate_size, false);
              calculate_size();
          }
+         var tuijians = $('.tuijian').css('display');
+		if(tuijians=='block'||$('div').is('.tuijian')){
+			
+		}else{
+			//$('.more').css('margin-bottom','53px')
+			$('.zt').css('width','2rem')
+		}
 </script>

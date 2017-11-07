@@ -1,0 +1,58 @@
+<input type="hidden" value="{$share_config.appid}" id="appid"/>
+<input type="hidden" value="{$share_config.timestamp}" id="timestamp"/>
+<input type="hidden" value="{$share_config.noncestr}" id="noncestr"/>
+<input type="hidden" value="{$share_config.signature}" id="signature"/>
+<input type="hidden" value="{$share_config.share_link}" id="link"/>
+<input type="hidden" value="{$share_config.jump_link}" id="jump_link"/>
+<input type="hidden" value="{$share_config.share_title}" id="title"/>
+<input type="hidden" value="{$share_config.share_desc}" id="desc"/>
+<input type="hidden" value="{$share_config.shareimg}" id="imgurl"/>
+<!--<script type="text/javascript" src="{$static_url}/weixin/public/js/jquery.min-1-11-1.js"></script>-->
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+function $id(id){ return document.getElementById(id); }
+wx.config({
+    debug: false,
+    appId: $id("appid").value,
+    timestamp: $id("timestamp").value,
+    nonceStr: $id("noncestr").value,
+    signature: $id("signature").value,
+    jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","checkJsApi"]
+}),
+wx.ready(function(){
+    wx.checkJsApi({
+        jsApiList: ["onMenuShareTimeline"],
+        success: function(){}
+    }),
+    wx.onMenuShareTimeline({
+        title: $id("title").value,
+        link: $id("link").value,
+        imgUrl: $id("imgurl").value,
+        trigger: function(){},
+        success: function(){
+        	if($id("jump_link").value){
+        		window.location.href = $id("jump_link").value;
+        	}
+        },
+        cancel: function(){},
+        fail: function(){}
+    }),
+    wx.onMenuShareAppMessage({
+        title: $id("title").value,
+        desc: $id("desc").value,
+        link: $id("link").value,
+        imgUrl: $id("imgurl").value,
+        trigger: function(){},
+        success: function(){
+        	if($id("jump_link").value){
+        		window.location.href = $id("jump_link").value;
+        	}
+        },
+        cancel: function(){},
+        fail: function(){}
+    })
+}),
+wx.error(function(){
+    
+});
+</script>

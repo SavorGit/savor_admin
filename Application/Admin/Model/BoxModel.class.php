@@ -15,14 +15,23 @@ class BoxModel extends BaseModel{
     protected $tableName  ='box';
 	public function getExNum(){
 		$tvModel = new \Admin\Model\TvModel();
-		$t_arr = $tvModel->field('id')->select();
+		//$t_arr = $tvModel->where(array('flag'=>0,'state'=>1))->field('id')->select();
+		$t_arr = $tvModel->where('(flag=0 and state!=3)')->field('id')->select();
 		$t_str = '';
 		foreach ($t_arr as $t=>$v) {
 			$t_str .= $v['id'].',';
 		}
 		$t_str = substr($t_str,0,-1);
 		$Model = new \Think\Model();
-	 $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,tv.state tsta, box.mac mac, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz, tv.tv_source, hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor, hotel.mobile, hotel.tel, hotel.iskey, hotel.maintainer, hotel.tech_maintainer from savor_tv as tv left join savor_box as box on tv.box_id = box.id left join savor_room as room on box.room_id = room.id left join savor_hotel as hotel on room.hotel_id = hotel.id where tv.id in ('.$t_str.')';
+	 $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,tv.state tsta,box.state boxstate,
+	         box.mac mac, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz, 
+	         tv.tv_source, hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor, 
+	         hotel.mobile, hotel.tel, hotel.iskey, hotel.maintainer, hotel.tech_maintainer 
+	         from savor_tv as tv 
+	         left join savor_box as box on tv.box_id = box.id 
+	         left join savor_room as room on box.room_id = room.id 
+	         left join savor_hotel as hotel on room.hotel_id = hotel.id 
+	         where tv.id in ('.$t_str.')';
 		$volist = $Model->query($sql);
 
 	 $res = $this->changeInfoName($volist);
@@ -67,6 +76,9 @@ class BoxModel extends BaseModel{
 				}
 				if($value['tsta'] == $k){
 					$value['tsta'] = $v;
+				}
+				if($value['boxstate'] == $k){
+				    $value['boxstate'] = $v;
 				}
 			}
 			foreach ($r_arr as  $k=>$v){
@@ -214,5 +226,33 @@ class BoxModel extends BaseModel{
 	public function getInfo($field ='*',$where,$order,$limit){
 	    $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
 	    return $result;
+	}
+	public function getHotelInfoByBoxMac($mac){
+	    if($mac){
+	        $sql ="select b.id as box_id,b.name as box_name,b.room_id,r.name as room_name, h.id as hotel_id,
+                   h.name as hotel_name,a.id as area_id, a.region_name as area_name
+                   from savor_box as b
+                   left join savor_room as r on b.room_id=r.id
+                   left join savor_hotel as h on r.hotel_id=h.id
+                   left join savor_area_info as a on h.area_id=a.id
+                   where b.flag=0 and  b.mac='".$mac."' limit 1";
+	        $result = $this->query($sql);
+	        if($result){
+	            return $result[0];
+	        }else {
+	            return false;
+	        }
+	    }
+	}
+	public function getListInfo($fields ,$where, $order,$limit){
+	    $data = $this->alias('a')
+	    ->join('savor_room as room on a.room_id = room.id ')
+	    ->field($fields)
+	    ->where($where)
+	    ->order($order)
+	    ->limit($limit)
+	    ->select();
+	    return $data;
+	
 	}
 }
