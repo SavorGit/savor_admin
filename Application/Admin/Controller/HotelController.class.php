@@ -568,7 +568,7 @@ class HotelController extends BaseController {
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			$this->output('操作成功!', 'hotel/manager');
+			$this->output('操作成功!', 'hotel/doaddsuccess');
 		} else {
 			$tranDb->rollback();
 			$this->error('操作失败3!');

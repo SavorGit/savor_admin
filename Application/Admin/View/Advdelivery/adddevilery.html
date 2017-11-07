@@ -377,6 +377,7 @@ $('.select-position').on('click','.position-ones-name',function(){
 	var kai_time = $('.dval').eq(0).val();
 	var jie_time = $('.dval').eq(1).val();
 	var pl_time = $('#cishu').val();
+	
 	if(isnull==''){
 		$.ajax({
 		type:"post",
@@ -391,15 +392,22 @@ $('.select-position').on('click','.position-ones-name',function(){
 				if(call==''){
 					alert('当前酒楼无版位！')
 				}
+				//alert(call.length)
+				
+				var a_this_click = 0;
+				//__this.attr('nnum',call.length)
 				for(var i=0;i<call.length;i++){
 					if(call[i].btype==1){
 						var bw_html = '<div style="width:242px;height:30px;display: inline-block;"><input type="checkbox" style="margin-left: 25px;" class="position-twos" id="'+call[i].bid+'"/><label style="margin-left: 10px;" for="'+call[i].bid+'">'+call[i].bname+'</label></div>';
 						_this.next().append(bw_html);
+						a_this_click+=1
 					}else if(call[i].btype==0){
 						var no_html = '<div style="width:242px;height:30px;display: inline-block;"><label style="margin-left: 28px;color:red;" for="'+call[i].bid+'">'+call[i].bname+'</label></div>';
 						_this.next().append(no_html);
 					}
 				}
+			
+				_this.next().attr('nnum',a_this_click)
 				var vbczhi = eval($('#newarr').val())
 	if($('#bczhi').val()!=''){
 		for(var z=0;z<vbczhi.length;z++){
@@ -448,6 +456,24 @@ $('.select-position').on('click','.position-ones',function(){
 			$(this).parents().next().find('input').prop('checked',false);
 		}
 	}
+})
+$('.select-position').on('click','.position-two>div',function(){
+	$(this).parent().prev().find('input').prop('checked',false);
+	var thispos = $(this)
+	var true_a = 0;
+	$(this).parent().find('div').each(function(){
+		
+		var a_chec = $(this).find('input').prop('checked');
+		console.log(a_chec)
+		if(a_chec==true){
+			true_a+=1;
+			
+			if(true_a==thispos.parent().attr('nnum')){
+				
+				thispos.parent().prev().find('input').prop('checked',true);
+			}
+		}
+	})
 })
 /*返回已经被选中的酒楼名称和版位数量*/
 	
@@ -525,6 +551,7 @@ $('#xuanzhe_btn').click(function(){
 			$('.banweishu').html(asdd);
 			
 		}else if($('.acitve-position-lists').html()!=''){
+			var num_swa = 1;
 			for(var i=0;i<arr.length;i++){
 				//var new_arrhiend = '{banid:"'+arr[i].banid2+'",jiuid:"'+arr[i].jiuid2+'",jiunum:"'+arr[i].jiunum2+'",namejiu:"'+arr[i].namejiu+'"}';
 				var new_arrhiend = {
@@ -539,6 +566,7 @@ $('#xuanzhe_btn').click(function(){
 				
 				$('.position-list-group').each(function(){
 					var this_jiuname_s = $(this).attr('jiuname_s');
+					//alert(this_jiuname_s)
 					if(arr[i].namejiu==this_jiuname_s){
 						$(this).remove();
 					}
@@ -549,9 +577,41 @@ $('#xuanzhe_btn').click(function(){
 				
 			}
 			
-			$('.jiuloushuliang').html($('.position-list-group').length);
+			
 			var asdd = 0;
 			var bczhi_vals = [];
+			$('.position-list-group').each(function(){
+				var this_jiuname_s = $(this).attr('jiuname_s');
+					//alert(this_jiuname_s)
+					
+					var num_swa=0;
+					$('.position-one').each(function(){
+						var position_one_html = $(this).find('label').html();
+						
+						if(this_jiuname_s==position_one_html){
+							
+							$(this).next().find('div').each(function(){
+								
+								var twos_this = $(this).find('input').prop('checked');
+								if(twos_this==false){
+									num_swa+=1
+									//alert(num_swa)
+									if(num_swa==$(this).parent().attr('nnum'))
+									//alert(position_one_html)
+									$('.position-list-group').each(function(){
+										if($(this).attr('jiuname_s')==position_one_html){
+											$(this).remove();
+											
+										}
+									})
+								}
+							})
+						}
+					})
+					
+				
+			})
+			$('.jiuloushuliang').html($('.position-list-group').length);
 			$('.position-list-group').each(function(){
 				var bweinum = parseInt($(this).attr('bweinum'));
 				asdd+=bweinum;
@@ -696,7 +756,7 @@ $('#sdd').click(function(){
 			if(calls.code==1){
 				var call = calls.data;
 				for(var i=0;i<call.length;i++){
-				var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div class="position-two"></div>';
+				var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div nnum="" class="position-two"></div>';
 				$('.position-list').append(jiu_name);
 				}
 				
