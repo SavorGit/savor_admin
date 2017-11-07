@@ -16,12 +16,12 @@ class AccountStatementModel extends BaseModel{
 		$sql =   "SELECT sast.id statementid,sast.cost_type,sast.fee_start,sast.fee_end,sast.create_time,sast.remark stremark,sast.count count,sainfo.receipt_addr,
   sainfo.receipt_tel,sainfo.receipt_head,sainfo.receipt_taxnum,suser.remark uremark
    FROM savor_account_statement sast join  savor_account_info  sainfo ON
-sast.receipt_addrid = sainfo.id join  savor_sysuser suser on  sast.operatorid = suser.id where $where order by $order limit $start, $size";
+sast.receipt_addrid = sainfo.id left join  savor_sysuser suser on  sast.operatorid = suser.id where $where order by $order limit $start, $size";
 		$list = $this->query($sql);
 
 		$sqlb = "SELECT count(*) cot
    FROM savor_account_statement sast join  savor_account_info  sainfo ON
-sast.receipt_addrid = sainfo.id join  savor_sysuser suser on  sast.operatorid = suser.id where $where";
+sast.receipt_addrid = sainfo.id left join  savor_sysuser suser on  sast.operatorid = suser.id where $where";
 		$count = $this->query($sqlb);
 		$count = $count[0]['cot'];
 		$objPage = new Page($count,$size);

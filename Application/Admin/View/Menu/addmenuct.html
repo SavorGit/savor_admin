@@ -62,7 +62,7 @@
 		right:2%;
 		top: 66%;
 	}
-	#checkout{
+	#checkouts{
 		position: absolute;
 		right:2%;
 		top: 71%;
@@ -87,7 +87,7 @@
 			<img class="bottoms" src="../../../../Public/admin/assets/img/u3027.png"/>
 			<img class="bottomz" src="../../../../Public/admin/assets/img/u3025.png"/>
 
-			<button  type="button" data-toggle="modal" id="checkout" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" >导入</button>
+			<button  type="button" data-toggle="modal" id="checkouts" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" >导入</button>
 			<!--left-->
 			<div id="lefts" style="margin-left: 29px;width: 46%;background-color: #f2f2f2;display: inline-block;margin-top: 35px;">
 				<input type="date" id="starttime" name="starttime" style="margin: 10px;width: 230px;" placeholder="最早时间" style="margin: 10px;"/>
@@ -131,7 +131,7 @@
 
 				</div>
 			</div>
-			<button type="submit" id="sub" class="btn btn-primary"style="width: 100px;margin-left: 71%;">确定</button>
+			<button type="submit" id="subs" class="btn btn-primary"style="width: 100px;margin-left: 71%;">确定</button>
 			<input type="hidden" value="" name="rightid" id="rightid" />
 			<input type="hidden" value="" id="rightname" name="rightname" />
 			<input type="hidden" value="" id="rightdur" name="rightdur" />
@@ -147,10 +147,10 @@
 				  action="{$host_name}/menu/addmen" method="post" >
 				<div class="form-group">
 					<div class="form-group">
-						<input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]'>
+						<input id="file-4s" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]'>
 					</div>
 					<hr>
-					<button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">Submit</button>
+					<button name="excelsub" class="btn btn-primary" type="button" id="excelsubs" data-dismiss="modal" disabled="disabled">Submit</button>
 
 					<button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">cancel<tton>
 						<input  type="hidden"  name="excelpath" id="excelpath" value="">
@@ -180,9 +180,6 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
-
-
 <script type="text/javascript">
 
 	/*function dialogAjaxDone(json){
@@ -195,7 +192,7 @@
 */
 
 	//$('#mymodal').modal({backdrop: 'static', keyboard: false});
-	$("#excelsub").click(
+	$("#excelsubs").click(
 
 
 			//alert($("#m_type option:selected").val());
@@ -283,39 +280,35 @@
 
 	);
 
-
-
-
-
-	$("#file-4").fileinput({
+	$("#file-4s").fileinput({
 		uploadExtraData: {kvId: '10'},
 		maxFileCount: 1,
 		allowedFileExtensions:['csv', 'xlsx'],
 	});
 
-	$('#file-4').on('fileselectnone', function() {
+	$('#file-4s').on('fileselectnone', function() {
 		//alert('Huh! You selected no files.');
 	});
 
-	$('#file-4').on('filebrowse', function() {
+	$('#file-4s').on('filebrowse', function() {
 		//alert('File browse clicked for #file-4');
 	});
 
-	$('#file-4').on('fileloaded', function() {
+	$('#file-4s').on('fileloaded', function() {
 		//alert('Fileerrre for #file-4');
 	});
 
-	$('#file-4').on('filepreupload', function() {
+	$('#file-4s').on('filepreupload', function() {
 
 
 	});
-	$('#file-4').on('fileuploaded', function(event, data, previewId, index) {
+	$('#file-4s').on('fileuploaded', function(event, data, previewId, index) {
 		//alert(data);
 		//alert(data.files);
 		alert('上传EXCEL成功');
 		//$('#file-4').fileinput('lock');
 		//$('#file-4').fileinput('clear');
-		$("#excelsub").attr("disabled",false);
+		$("#excelsubs").attr("disabled",false);
 		$("#excelpath").val(data.response);
 		//var form = data.form, files = data.files, extra = data.extra,
 		//	response = data.response, reader = data.reader;
@@ -326,7 +319,7 @@
 
 	/*-----传到右边-----------*/
 
-	$("#checkout").click(function () {
+	$("#checkouts").click(function () {
 
 		$('#file-4').fileinput('clear');
 		$("#excelpath").val('');
@@ -582,7 +575,7 @@
 		$('.rightlist').css({'min-height':'700px','max-height':'700px'});
 	}
 	/*获取数据*/
-	$('#sub').click(function() {
+	$('#subs').click(function() {
 
 		var titl = $("#program").val();
 		if (titl == '') {
