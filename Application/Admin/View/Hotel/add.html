@@ -468,4 +468,13 @@
         }
 
     }*/
+    function dialogAjaxDone(json){
+        DWZ.ajaxDone(json);
+        if(json.navTabId == 'hotel/doaddsuccess') {
+            // alert($.pdialog._current);
+            // $.pdialog.close('hotel/xuanchuanxiugai');
+            $.pdialog.closeCurrent();
+            navTab.reload('hotel/manager');
+        }
+    }
 </script>
