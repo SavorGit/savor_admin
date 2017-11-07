@@ -200,7 +200,6 @@
 					str2 += adsname + ',';
 
 				});
-
 				$.ajax({
 					type:"POST",
 					ContentType: "application/json; charset=utf-8",
@@ -208,7 +207,7 @@
 					url:"{$host_name}/programmenu/analyseExcel",
 					data:"excelpath="+excelpath+"&adsname="+str2,
 					success:function(data){
-						//console.log(data)
+						console.log(data)
 						if(data.error==0){
 							var data = data.message;
 							
@@ -223,17 +222,16 @@
 										var cr_time = data[i][key];
 									}else if(key == 'duration') {
 										var dura = data[i][key];
-
+									}else if(key == 'type'){
+										var typees = deta[i][key];
 									}
 
-								}
-
-								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+								$("#righta").append("<div type="+typees+" id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
 
 								//$('#mymodal').modal('hide');
 
 							}
-
+						}
 						}else{
 							//模态框显示失败
 							//alert(data.error);
@@ -259,11 +257,13 @@
 									}else if(key == 'duration') {
 										var dura = datap[i][key];
 
+									}else if(key == 'type'){
+										var typees = datap[i][key];
 									}
 
 								}
 
-								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+								$("#righta").append("<div type="+datap[i].type+" id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
 
 								//$('#mymodal').modal('hide');
 

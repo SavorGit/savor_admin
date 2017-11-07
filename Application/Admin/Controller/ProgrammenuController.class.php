@@ -642,9 +642,10 @@ class ProgrammenuController extends BaseController {
         $result = array();
         $result = $this->getAdsAcccounce($result);
         //获取广告占位符
-        $result = $this->getAdsOccup($result);
+        $result_adsoc = $this->getAdsOccup($result);
         //取出name列
         $xuan_arr = array_column($result, 'name');
+        $adsoc_arr = array_column($result_adsoc, 'name');
         $now_date = date("Y-m-d H:i:s");
         foreach ($data as $rk=>$rv) {
             if (in_array($rv[0], $xuan_arr)) {
@@ -653,6 +654,14 @@ class ProgrammenuController extends BaseController {
                     'name'=>$rv[0],
                     'duration'=>0,
                     'create_time'=>$now_date,
+                );
+            }elseif (in_array($rv[0], $adsoc_arr)) {
+                $inc_arr[] = array(
+                    'id'=>0,
+                    'name'=>$rv[0],
+                    'duration'=>0,
+                    'create_time'=>$now_date,
+                    'type'=>'33',
                 );
             }else{
                 $res = $adsModel->where(array('name'=>$rv[0]))->find();
