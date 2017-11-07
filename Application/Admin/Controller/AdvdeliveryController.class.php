@@ -105,12 +105,13 @@ class AdvdeliveryController extends BaseController {
         $where = '1=1 and sht.id='.$hotel_id.' and sht.state=1 and
         sht.flag=0
         and sht.hotel_box_type in (2,3) and room.state=1
-        and room.flag=0 and box.flag=0 and box.state=1 and
-        tv.flag=0 and tv.state=1 ';
+        and room.flag=0 and box.flag=0 and box.state=1';
         $hotelModel = new \Admin\Model\HotelModel();
         $field = 'box.id bid,box.name bname';
         $order = ' box.id asc ';
         $box_arr = $hotelModel->getBoxOrderMacByHid($field, $where, $order);
+       // $rs = $hotelModel->getLastSql();
+       // file_put_contents(LOG_PATH.'baiyutao.log',$rs.PHP_EOL,  FILE_APPEND);
         $box_arr =  $this->assoc_unique($box_arr,'bid');
         return $box_arr;
     }
@@ -259,7 +260,7 @@ class AdvdeliveryController extends BaseController {
             die;
         }
         if($start_time < $now_date) {
-            $msg = '投放开始时间必须大于今天';
+            $msg = '投放开始时间必须大于等于今天';
             $res = array('code'=>0,'msg'=>$msg);
             echo json_encode($res);
             die;
@@ -270,6 +271,9 @@ class AdvdeliveryController extends BaseController {
             'play_times'=>$play_times,
         );
         $box_arr = $this->getAllBox($hotel_id);
+
+        //file_put_contents(LOG_PATH.'baiyutao.log', json_encode($box_arr).PHP_EOL,  FILE_APPEND);
+
         if ($box_arr) {
             foreach ($box_arr as $bk=> $bv) {
                 //获取是否有效
