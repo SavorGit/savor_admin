@@ -282,7 +282,7 @@ $config['OPTION_USER_ROLE_ARR']  = ARRAY(
 $config['OPTION_USER_SKILL_ARR'] = array(
     '1'=>'信息检测',
     '8'=>'网络改造',
-    '3'=>'安装验收',
+    '2'=>'安装验收',
     '4'=>'维修',
 );
 
