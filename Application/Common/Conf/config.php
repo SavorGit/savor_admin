@@ -280,10 +280,10 @@ $config['OPTION_USER_ROLE_ARR']  = ARRAY(
      '4'=>'查看',
 );
 $config['OPTION_USER_SKILL_ARR'] = array(
-    '3'=>'信息检测',
-    '4'=>'网络改造',
-    '6'=>'安装验收',
-    '7'=>'维修',
+    '1'=>'信息检测',
+    '8'=>'网络改造',
+    '2'=>'安装验收',
+    '4'=>'维修',
 );
 
 
@@ -302,4 +302,5 @@ $config['HOTEL_DAMAGE_CONFIG'] = array(
 	'12'=>'未开机',
     '13'=>'其它',
 );
+$config['HEART_LOG_SAVE_DAYS'] = 30;
 return $config;

@@ -401,4 +401,16 @@ class CrontabController extends Controller
         }
         echo "OK";
     }
+    /**
+     * @desc 清理心跳历史数据
+     */
+    public function clearHeartLog(){
+        $save_days = C('HEART_LOG_SAVE_DAYS');
+        
+        $node_date = date('Y-m-d H:i:s',strtotime("-$save_days days"));
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $where =" last_heart_time<'".$node_date."'";
+        $m_heart_log->where($where)->delete();
+        
+    }
 }
