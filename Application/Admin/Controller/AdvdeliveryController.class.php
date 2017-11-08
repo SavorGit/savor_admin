@@ -18,7 +18,6 @@ class AdvdeliveryController extends BaseController {
     public function __construct() {
         parent::__construct();
         $this->oss_host = get_oss_host();
-        $this->lnum = 10;
     }
 
     public function  doAddAdvBox() {
