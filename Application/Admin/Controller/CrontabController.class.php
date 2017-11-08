@@ -411,6 +411,7 @@ class CrontabController extends Controller
         $m_heart_log = new \Admin\Model\HeartLogModel();
         $where =" last_heart_time<'".$node_date."'";
         $m_heart_log->where($where)->delete();
-        
+        echo '清除完毕';
+        exit;
     }
 }
