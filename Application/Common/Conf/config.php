@@ -302,4 +302,5 @@ $config['HOTEL_DAMAGE_CONFIG'] = array(
 	'12'=>'未开机',
     '13'=>'其它',
 );
+$config['HEART_LOG_SAVE_DAYS'] = 30;
 return $config;
