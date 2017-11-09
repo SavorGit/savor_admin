@@ -202,6 +202,9 @@ class OptiontaskController extends BaseController {
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$personid = I('personid');
+		$publisher = I('publisher');
+		$task_type = I('task_type');
+		
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
@@ -219,6 +222,15 @@ class OptiontaskController extends BaseController {
 		    
 		    $this->assign('personid',$personid);
 		}
+		if($publisher){
+		    $where .=" and publisher like '%$publisher%'";
+		    $this->assign('publisher',$publisher);
+		}
+		if($task_type){
+		    $where .=" and task_type=$task_type";
+		    $this->assign('task_type',$task_type);
+		}
+		
 		$m_option_task = new \Admin\Model\OptiontaskModel();
 		$list= $m_option_task->getList($where,$orders,$start,$size);
 		foreach($list['list'] as $key=>$v){
@@ -334,9 +346,22 @@ class OptiontaskController extends BaseController {
 	    $this->assign('_sort',$sort);
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
+	    $publisher = I('publisher');
+	    $task_type = I('task_type');
+	    
+	    
+	    
 	    
 	    $where['state'] = array('in','4');
 	    $where['flag'] = 0;
+	    if($publisher){
+	        $where['publisher'] = array('like',"%$publisher%");
+	        $this->assign('publisher',$publisher);
+	    }
+	    if($task_type){
+	        $where['task_type'] = $task_type;
+	        $this->assign('task_type',$task_type);
+	    }
 	    $m_option_task = new \Admin\Model\OptiontaskModel();
 	    $list= $m_option_task->getList($where,$orders,$start,$size);
 	    
