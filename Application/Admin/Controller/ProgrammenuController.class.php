@@ -330,14 +330,11 @@ class ProgrammenuController extends BaseController {
         }
         //城市
         $userinfo = session('sysUserInfo');
-        $gid = $userinfo['groupid'];
-        $usergrp = new \Admin\Model\SysusergroupModel();
-        $p_user_arr = $usergrp->getInfo($gid);
-        $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 ||
-            $p_user_arr['area_city'] == 9999) {
+        $pcity = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 ||
+            $userinfo['area_city'] == 9999) {
             $pawhere = '1=1';
-            $this->assign('pusera', $p_user_arr);
+            $this->assign('pusera', $userinfo);
         }else {
             $where .= "	AND area_id in ($pcity)";
             $pawhere = '1=1 and area_id = '.$pcity;
@@ -454,12 +451,9 @@ smlist.menu_name';
         }
         $prhoModel = new \Admin\Model\ProgramMenuHotelModel();
         $userinfo = session('sysUserInfo');
-        $gid = $userinfo['groupid'];
-        $usergrp = new \Admin\Model\SysusergroupModel();
-        $p_user_arr = $usergrp->getInfo($gid);
-        $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 ||
-            $p_user_arr['area_city'] == 9999) {
+        $pcity = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 ||
+            $userinfo['area_city'] == 9999){
             $pawhere = '1=1';
             $result = $mlModel->getList($where,$orders,$start,$size);
         } else {
@@ -478,8 +472,6 @@ smlist.menu_name';
                 $result = $mlModel->getList($where,$orders,$start,$size);
             }
         }
-
-        $result = $mlModel->getList($where,$orders,$start,$size);
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);

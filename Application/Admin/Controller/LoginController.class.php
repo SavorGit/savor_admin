@@ -42,8 +42,8 @@ class LoginController extends BaseController {
 
 
             $cache_locknum = $cache_db->get($cache_key);
-            file_put_contents('/application_data/app_logs/php/savor_admin
-/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);
+            /*file_put_contents('/application_data/app_logs/php/savor_admin
+/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);*/
             if(!empty($cache_locknum) && $cache_locknum==$lock_max){
                 $this->assign('errormsg', $error_msg);
                 $this->display('Login/index');
@@ -76,6 +76,12 @@ class LoginController extends BaseController {
                     
                     $m_role_priv = new \Admin\Model\RolePrivModel();
                     $ret = $m_role_priv->getPrivByGroupId($userinfo['groupid']);
+
+                    $gid = $userinfo['groupid'];
+                    $usergrp = new \Admin\Model\SysusergroupModel
+                    ();
+                    $p_user_arr = $usergrp->getInfo($gid);
+                    $userinfo['area_city'] = $p_user_arr['area_city'];
                     if(!empty($ret)){
                         $priv_arr = array();
                         $flag =0 ;

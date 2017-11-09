@@ -17,7 +17,7 @@
         <div class="form-group row" style="z-index: 99999">
 
           <div class="form-group row">
-            <div class="col-xs-3 col-sm-3" <if condition="($pusera.id eq 1) or ($pusera.area_city eq 9999)"> <else /> style='display:none'</if> >
+            <div class="col-xs-3 col-sm-3" <if condition="($pusera.groupid eq 1) or ($pusera.area_city eq 9999)"> <else /> style='display:none'</if> >
               <div class="input-group-sm">
                 <label class="col-xs-1 col-sm-1 control-label">
                   城市：
@@ -254,7 +254,7 @@
               <!-- <td class="table-checkbox">
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
-              <td><input name="ids[]" value="{$vlist.id}|{$vlist.name}" type="checkbox">
+              <td><input name="ids[]"  value="{$vlist.id}|{$vlist.name}" type="checkbox">
 
               </td>
 

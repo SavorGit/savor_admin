@@ -88,21 +88,27 @@ class MenuController extends BaseController {
 
     public function hotelconfirm(){
 
-
         $menu_id = I('menuid');
         $menu_name = I('menuname');
-        //2是新增
-        $hoty = I('hopu');
-        $ids = I('ids');
-        $data = array();
-        $arr = array();
-        foreach($ids as $k=>$v){
-            $arr = explode('|', $v);
-            $data[] = array('hoid'=>$arr[0],'honame'=>$arr[1]);
+
+
+        $key = 'select_hotel_key';
+        $h_id_arr = session($key);
+        $h_id_arr = array_keys($h_id_arr);
+        session($key,null);
+        $where['id'] = array('in', $h_id_arr);
+        if($h_id_arr) {
+            $hotelModel = new \Admin\Model\HotelModel();
+            $field = 'name honame, id hoid';
+            $h_info = $hotelModel->getInfo($field, $where);
+        }else{
+            $h_info = array();
         }
+
+        $hoty = I('hopu');
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
-        $this->assign('vinfo', $data);
+        $this->assign('vinfo', $h_info);
         $this->assign('hoty', $hoty);
         $this->display('hotelconfirm');
     }
@@ -483,14 +489,11 @@ class MenuController extends BaseController {
 
         //城市
         $userinfo = session('sysUserInfo');
-        $gid = $userinfo['groupid'];
-        $usergrp = new \Admin\Model\SysusergroupModel();
-        $p_user_arr = $usergrp->getInfo($gid);
-        $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 ||
-            $p_user_arr['area_city'] == 9999) {
+        $pcity = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 ||
+            $userinfo['area_city'] == 9999) {
             $pawhere = '1=1';
-            $this->assign('pusera', $p_user_arr);
+            $this->assign('pusera', $userinfo);
         }else {
             $where .= "	AND area_id in ($pcity)";
             $pawhere = '1=1 and area_id = '.$pcity;
@@ -745,6 +748,20 @@ smlist.menu_name';
         $this->display('gethotelinfo');
     }
 
+    public function getsessionHotel(){
+        $get_hotel_arr = json_decode($_POST['seshot'], true);
+        $type = $get_hotel_arr[0]['type'];
+        $hid = $get_hotel_arr[0]['id'];
+        $key = 'select_hotel_key';
+        $h_arr = empty(session($key))?array():session($key);
+        if($type == 1){
+            $h_arr[$hid] = 1;
+        } else {
+            unset($h_arr[$hid]);
+        }
+        session($key, $h_arr);
+    }
+
     public function manager() {
         //实例化redis
         //         $redis = SavorRedis::getInstance();
@@ -754,6 +771,8 @@ smlist.menu_name';
 
     public function getlist(){
 
+        $key = 'select_hotel_key';
+        session($key,null);
         $mlModel = new MenuListModel();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -782,12 +801,9 @@ smlist.menu_name';
 
         $menuHoModel = new \Admin\Model\MenuHotelModel();
         $userinfo = session('sysUserInfo');
-        $gid = $userinfo['groupid'];
-        $usergrp = new \Admin\Model\SysusergroupModel();
-        $p_user_arr = $usergrp->getInfo($gid);
-        $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 ||
-            $p_user_arr['area_city'] == 9999) {
+        $pcity = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 ||
+            $userinfo['area_city'] == 9999){
             $pawhere = '1=1';
             $result = $mlModel->getList($where,$orders,$start,$size);
         }else {
