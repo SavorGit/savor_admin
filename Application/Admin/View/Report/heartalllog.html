@@ -41,14 +41,14 @@
                </select>
           </div>
           </div>
-          <div class="form-group">
+          <div class="form-group" <if condition="($pusera.id eq 1) or ($pusera.area_city eq 9999)"> <else /> style='display:none'</if> >
             <div class="input-group-sm input-group">
               <label class="col-xs-1 col-sm-1 control-label">
                 城&nbsp;&nbsp;&nbsp;市：
               </label>
                 <span class="input-group-btn input-group-sm">
               <select name="areaid" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option value=0 >所有城市</option>
+                <option value=9999 >全国</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $areaid">selected</if>>{$vo.region_name}</option><br>
                 </volist>

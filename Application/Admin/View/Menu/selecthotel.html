@@ -17,7 +17,7 @@
         <div class="form-group row" style="z-index: 99999">
 
           <div class="form-group row">
-            <div class="col-xs-3 col-sm-3">
+            <div class="col-xs-3 col-sm-3" <if condition="($pusera.id eq 1) or ($pusera.area_city eq 9999)"> <else /> style='display:none'</if> >
               <div class="input-group-sm">
                 <label class="col-xs-1 col-sm-1 control-label">
                   城市：
@@ -25,7 +25,7 @@
 
                 <span class="input-group-btn">
               <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option value=0 >所有城市</option>
+                <option value=9999 >全国</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
                 </volist>

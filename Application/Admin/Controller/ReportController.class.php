@@ -132,6 +132,21 @@ class ReportController extends BaseController{
 			$this->assign('hbt_k',$hbt_v);
 			$where .= "	AND sht.hotel_box_type = $hbt_v";
 		}
+        //城市
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        if($p_user_arr['id'] == 1 ||
+            $p_user_arr['area_city'] == 9999) {
+            $this->assign('hightest', 9999);
+            $this->assign('pusera', $p_user_arr);
+        }else {
+            $where .= "	AND shlog.area_id in ($pcity)";
+            $this->assign('hightest', $pcity);
+        }
 
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
@@ -366,6 +381,20 @@ class ReportController extends BaseController{
         if(!empty($mac)){
             $where .=" and mac like '%{$mac}%'";
             $this->assign('mac',$mac);
+        }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        if($p_user_arr['id'] == 1 ||
+            $p_user_arr['area_city'] == 9999) {
+
+            $this->assign('pusera', $p_user_arr);
+        }else {
+            $where .= "	AND area_id in ($pcity)";
         }
         $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
         $result = $m_heart_all_log->getlist('*',$where,$orders,$start,$size);

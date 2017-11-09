@@ -29,9 +29,7 @@ class HotelController extends BaseController {
 		$area_arr = $areaModel->getAllArea();
 
 		$this->assign('area', $area_arr);
-		//包含酒楼
-		$men_arr = $menliModel->select();
-		$this->assign('include', $men_arr);
+
 		/*//合作维护人
 		$per_arr = $hotelModel->distinct(true)->field('area_id')->select();
 		$per_ho_arr = $areaModel->areaIdToAareName($per_arr);
@@ -66,10 +64,34 @@ class HotelController extends BaseController {
 			$where .= "	AND hotel_box_type = $hbt_v";
 		}
 		//城市
+		$userinfo = session('sysUserInfo');
+		$gid = $userinfo['groupid'];
+
+		$usergrp = new \Admin\Model\SysusergroupModel();
+		$p_user_arr = $usergrp->getInfo($gid);
+		$pcity = $p_user_arr['area_city'];
+		if($p_user_arr['id'] == 1 ||
+			$p_user_arr['area_city'] == 9999) {
+			$pawhere = '1=1';
+			$this->assign('pusera', $p_user_arr);
+		}else {
+			$where .= "	AND area_id in ($pcity)";
+			$pawhere = '1=1 and area_id = '.$pcity;
+		}
+		//包含酒楼
+		$pafield = 'DISTINCT smh.menu_id id,
+smlist.menu_name';
+		$men_arr = $menuHoModel->getPrvMenu($pafield, $pawhere);
+		//获取包含有该地区酒楼
+		$this->assign('include', $men_arr);
+		//城市
 		$area_v = I('area_v');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
-			$where .= "	AND area_id = $area_v";
+			if($area_v == 9999){
+			}else{
+				$where .= "	AND area_id = $area_v";
+			}
 		}
 		//级别
 		$level_v = I('level_v');
@@ -112,6 +134,7 @@ class HotelController extends BaseController {
 			}
 			$bak_ho_arr = array_unique($bak_ho_arr);
 			$bak_ho_str = implode(',', $bak_ho_arr);
+			var_export($bak_ho_str);
 			if($bak_ho_str){
 				$where .= "	AND id  in ($bak_ho_str)";
 			}else{
@@ -150,6 +173,7 @@ class HotelController extends BaseController {
 		}else{
 		    $result = $hotelModel->getList($where,$orders,$start,$size);
 		}
+
 		$datalist = $areaModel->areaIdToAareName($result['list']);
 		foreach ($datalist as $k=>$v){
 			$conditon = array();
