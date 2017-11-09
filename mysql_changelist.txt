@@ -883,5 +883,13 @@ CREATE TABLE `savor_subcontract` (
 ) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8
 
 
+增加说明：系统用户组表添加城市选项
+修改时间：2017.11.9
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_sysusergroup`
+   add column `area_city` varchar(50) DEFAULT '9999' NULL COMMENT '地区id1,2,3,4' ;
+
+
 
 
