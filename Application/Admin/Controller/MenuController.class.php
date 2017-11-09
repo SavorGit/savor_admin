@@ -18,6 +18,9 @@ use Admin\Model\MenuItemModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
 use Admin\Model\MenuListOpeModel;
+use Common\Lib\Page;
+
+
 class MenuController extends BaseController {
 
     public function __construct() {
@@ -440,9 +443,6 @@ class MenuController extends BaseController {
         $this->assign('area', $area_arr);
 
         $men_arr = $menliModel->select();
-
-
-
         $this->assign('include', $men_arr);
 
         $menu_id = I('menuid');
@@ -480,11 +480,36 @@ class MenuController extends BaseController {
             $where .= "	AND hotel_box_type = $hbt_v";
         }
 
+
+        //城市
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        if($p_user_arr['id'] == 1 ||
+            $p_user_arr['area_city'] == 9999) {
+            $pawhere = '1=1';
+            $this->assign('pusera', $p_user_arr);
+        }else {
+            $where .= "	AND area_id in ($pcity)";
+            $pawhere = '1=1 and area_id = '.$pcity;
+        }
+        //包含酒楼
+        $menuHoModel = new \Admin\Model\MenuHotelModel();
+        $pafield = 'DISTINCT smh.menu_id id,
+smlist.menu_name';
+        $men_arr = $menuHoModel->getPrvMenu($pafield, $pawhere);
+        //获取包含有该地区酒楼
+        $this->assign('include', $men_arr);
         //城市
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            $where .= "	AND area_id = $area_v";
+            if($area_v == 9999){
+            }else{
+                $where .= "	AND area_id = $area_v";
+            }
         }
         //级别
         $level_v = I('level_v');
@@ -754,8 +779,33 @@ class MenuController extends BaseController {
 
         }
 
-        $result = $mlModel->getList($where,$orders,$start,$size);
 
+        $menuHoModel = new \Admin\Model\MenuHotelModel();
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        if($p_user_arr['id'] == 1 ||
+            $p_user_arr['area_city'] == 9999) {
+            $pawhere = '1=1';
+            $result = $mlModel->getList($where,$orders,$start,$size);
+        }else {
+            $pawhere = '1=1 and area_id = '.$pcity;
+            //包含酒楼
+            $pafield = 'DISTINCT smh.menu_id id';
+            $men_arr = $menuHoModel->getPrvMenu($pafield, $pawhere);
+            if($men_arr){
+                $men_id_arr = array_column($men_arr, 'id');
+                $menu_id_str = implode(',', $men_id_arr);
+                $where .= " and( id in ($menu_id_str) ";
+                $where .= " or `count`= 0 )";
+                $result = $mlModel->getList($where,$orders,$start,$size);
+            }else{
+                $where .= " and `count`= 0 ";
+                $result = $mlModel->getList($where,$orders,$start,$size);
+            }
+        }
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);

@@ -259,6 +259,8 @@ class ProgrammenuController extends BaseController {
     }//End Function
 
     public function selectHotel(){
+
+
         $areaModel  = new AreaModel;
         $menliModel  = new \Admin\Model\ProgramMenuListModel();
         //城市
@@ -266,8 +268,6 @@ class ProgrammenuController extends BaseController {
 
         $this->assign('area', $area_arr);
 
-        $men_arr = $menliModel->select();
-        $this->assign('include', $men_arr);
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         $hotelModel = new HotelModel;
@@ -305,7 +305,10 @@ class ProgrammenuController extends BaseController {
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            $where .= "	AND area_id = $area_v";
+            if($area_v == 9999){
+            }else{
+                $where .= "	AND area_id = $area_v";
+            }
         }
         //级别
         $level_v = I('level_v');
@@ -325,6 +328,29 @@ class ProgrammenuController extends BaseController {
             $this->assign('key_k',$key_v);
             $where .= "	AND iskey = $key_v";
         }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        if($p_user_arr['id'] == 1 ||
+            $p_user_arr['area_city'] == 9999) {
+            $pawhere = '1=1';
+            $this->assign('pusera', $p_user_arr);
+        }else {
+            $where .= "	AND area_id in ($pcity)";
+            $pawhere = '1=1 and area_id = '.$pcity;
+        }
+
+        $prHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $pafield = 'DISTINCT smh.menu_id id,
+smlist.menu_name';
+        $men_arr = $prHoModel->getPrvMenu($pafield, $pawhere);
+
+        //获取包含有该地区酒楼
+        $this->assign('include', $men_arr);
+
         //包含
         $include_v = I('include_v');
         //获取节目单对应hotelid
@@ -332,8 +358,7 @@ class ProgrammenuController extends BaseController {
             //取部分包含节目单
             $bak_ho_arr = array();
             foreach ($include_v as $iv) {
-                $sql = "SELECT hotel_id FROM `savor_programmenu_hotel` WHERE create_time=
-                (SELECT MAX(create_time) FROM `savor_programmenu_hotel` WHERE menu_id={$iv})";
+                $sql = "SELECT hotel_id FROM `savor_programmenu_hotel`  WHERE menu_id={$iv}";
                 $bak_hotel_id_arr = $menliModel->query($sql);
                 foreach ($bak_hotel_id_arr as $bk=>$bv){
                     $bak_ho_arr[] = $bv['hotel_id'];
@@ -352,8 +377,7 @@ class ProgrammenuController extends BaseController {
             if ($exc_v) {
                 $bak_ho_arr_p = array();
                 foreach ($exc_v as $iv) {
-                    $sql = "SELECT hotel_id FROM `savor_programmenu_hotel` WHERE create_time=
-                (SELECT MAX(create_time) FROM  `savor_programmenu_hotel` WHERE menu_id={$iv})";
+                    $sql = "SELECT hotel_id FROM `savor_programmenu_hotel` WHERE menu_id={$iv}";
                     $bak_hotel_id_arr = $menliModel->query($sql);
                     foreach ($bak_hotel_id_arr as $bk=>$bv){
                         $bak_ho_arr_p[] = $bv['hotel_id'];
@@ -369,45 +393,11 @@ class ProgrammenuController extends BaseController {
             }
         }
 
-        $type = I('type');
-        //新增酒楼判断
-        $addhotel = I('addhotel');
-        if($addhotel == 2) {
-            $ex_arr = I('inf');
-            //从gethotelinfo新增转过来
-            $acp = $addhotel;
-            $this->assign('hot', $acp);
-            $this->assign('addhotel', $acp);
-            $str = '';
-            foreach($ex_arr as $ek=>$ev){
-                $str .= $ev.',';
-            }
-            $str = substr($str, 0,-1);
-
-            $where .= "	AND id not in ({$str}) ";
-            $this->assign('hopu', $addhotel);
-            $nup = 1;
-            $this->assign('meyi', 1);
-
-        }
-        $hot = I('hot');
-
-
-        if($hot == 2){
-            $str = I('infp');
-            $where .= "	AND id not in ({$str}) ";
-            $this->assign('hopu', $hot);
-            $this->assign('hot', $hot);
-            $this->assign('addhotel', $hot);
-
-        }
-
-
-
         $result = $hotelModel->getList($where,$orders,$start,$size);
+
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         //print_r($result);die;
-        $this->assign('ext', $str);
+
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
         $this->assign('alist', $result['list']);
@@ -462,9 +452,34 @@ class ProgrammenuController extends BaseController {
             $where .= "	AND menu_name LIKE '%{$name}%' ";
 
         }
+        $prhoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        if($p_user_arr['id'] == 1 ||
+            $p_user_arr['area_city'] == 9999) {
+            $pawhere = '1=1';
+            $result = $mlModel->getList($where,$orders,$start,$size);
+        } else {
+            $pawhere = '1=1 and area_id = '.$pcity;
+            //包含酒楼
+            $pafield = 'DISTINCT smh.menu_id id';
+            $men_arr = $prhoModel->getPrvMenu($pafield, $pawhere);
+            if($men_arr){
+                $men_id_arr = array_column($men_arr, 'id');
+                $menu_id_str = implode(',', $men_id_arr);
+                $where .= " and( id in ($menu_id_str) ";
+                $where .= " or `hotel_num`= 0 )";
+                $result = $mlModel->getList($where,$orders,$start,$size);
+            }else{
+                $where .= " and `hotel_num`= 0 ";
+                $result = $mlModel->getList($where,$orders,$start,$size);
+            }
+        }
 
         $result = $mlModel->getList($where,$orders,$start,$size);
-
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);

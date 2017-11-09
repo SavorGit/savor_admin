@@ -70,8 +70,39 @@
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
           </div> -->
-
-       
+			<div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                                         发布人：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="publisher" value="{$publisher}" placeholder="请输入发布人姓名" >
+            </span>
+            </div>
+          </div>
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+                                         任务类型：
+            </label>
+                <span class="input-group-btn">
+               <select name="task_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="">请选择</option>
+                 <php>
+                	foreach($task_type_arr as $k=>$row){
+                </php>
+                
+                 	 
+                	 <option value="{$k}" <if condition="$k eq $task_type"> selected </if> > {$row} </option>
+             	<php>
+             		}
+             	</php>
+               </select>
+ </div>
+        <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+		</div>
           
           </div>
         </div>

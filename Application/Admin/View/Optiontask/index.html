@@ -80,6 +80,37 @@
           <div class="input-group input-group-sm pull-left">
             <a class="btn btn-success btn-sm add" href="{$host_name}/optiontask/add" title="发布任务" target="dialog" mask="true"><i class="fa fa-plus"></i> 发布任务</a>
           </div>
+          
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                                         发布人：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="publisher" value="{$publisher}" placeholder="请输入发布人姓名" >
+            </span>
+            </div>
+          </div>
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+                                         任务类型：
+            </label>
+                <span class="input-group-btn">
+               <select name="task_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="">请选择</option>
+                <php>
+                	foreach($task_type_arr as $k=>$row){
+                </php>
+                
+                 	 
+                	 <option value="{$k}" <if condition="$k eq $task_type"> selected </if> > {$row} </option>
+             	<php>
+             		}
+             	</php>
+               </select>
+ </div>
+          
+          
  <div class="form-group"  >
             <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true" >
               <input name="plan_finish_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$plan_finish_time}" readonly>

@@ -105,6 +105,11 @@ class SysusergroupController extends BaseController {
         $acttype = I('acttype', 0, 'int');
         $name = I('post.name');
         //处理提交数据
+        $manage_city = I('post.manage_city');
+        foreach($manage_city as $key=>$v){
+            $manage_city_str .= $separator . $v;
+            $separator         = ',';
+        }
         if(IS_POST) {
             //新增
             $id   = I('post.id', '', 'int');
@@ -123,6 +128,7 @@ class SysusergroupController extends BaseController {
                 $data['userName']= $username;
                 $data['createtime']= date("Y-m-d H:i:s");
                 $data['name']   = $name;
+                $data['area_city'] = $manage_city_str;
                 $result = $sysusergroup->addData($data, $acttype);
                 $roleid = $sysusergroup->getLastInsID();
             }elseif($acttype == 1){
@@ -137,11 +143,15 @@ class SysusergroupController extends BaseController {
                         $this->error('用户组名称已经存在');
                     }
 
+                }else{
+                    $dat['area_city'] = $manage_city_str;
+                    $dat['id'] = $user_arr['id'];
+                    $sysusergroup->addData($dat, 1);
                 }
             }
             if (is_array($_POST['menuid']) && count($_POST['menuid']) > 0) {
                 $rolePrivModel->delData($roleid);
-                $menuinfo = $sysNode->field('`id`,`ertype`,`m`,`c`,`a`,`menulevel`')->select();
+                $menuinfo = $sysNode->field('`id`,`ertype`,`m`,`c`,`a`,`menulevel`')->where('isenable=1')->select();
 
                 foreach ($menuinfo as $_v) $menu_info[$_v[id]] = $_v;
 
@@ -198,6 +208,16 @@ class SysusergroupController extends BaseController {
         $categorys = $matre->get_tree(0, $str);
 
         $ra['temp'] = $categorys;
+
+        //获取省份
+
+        $m_area_info = new \Admin\Model\AreaModel();
+        $areaList = $m_area_info->getHotelAreaList();
+
+        $nationwide = array('id'=>9999,'region_name'=>'全国');
+        array_unshift($areaList, $nationwide);
+
+        $this->assign('areaList',$areaList);
 
         $this->assign('categor', $ra);
         //$this->assign('groupList', $groupList);
