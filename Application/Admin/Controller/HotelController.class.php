@@ -66,8 +66,7 @@ class HotelController extends BaseController {
 		//城市
 		$userinfo = session('sysUserInfo');
 		$pcity = $userinfo['area_city'];
-		if($userinfo['groupid'] == 1 ||
-			$userinfo['area_city'] == 9999) {
+		if($userinfo['groupid'] == 1 || $userinfo['area_city'] == 9999) {
 			$pawhere = '1=1';
 			$this->assign('pusera', $userinfo);
 		}else {

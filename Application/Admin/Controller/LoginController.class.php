@@ -53,8 +53,10 @@ class LoginController extends BaseController {
             $userpwd  = I('post.password', '', "trim");
             if($userName && $userpwd) {
                 $user = new \Admin\Model\UserModel();
-                $where = " and username='".$userName."'";
-                $result = $user->getUser($where);
+                $where = "1 and a.username='".$userName."'";
+                //$result = $user->getUser($where);
+                $fields = " a.*,b.area_city";
+                $result = $user->getGourpList($fields,$where);
                 if(empty($result)){
                     $this->assign('errormsg', '用户名或密码错误，请重新输入。');
                     $this->display('Login/index');
@@ -76,12 +78,6 @@ class LoginController extends BaseController {
                     
                     $m_role_priv = new \Admin\Model\RolePrivModel();
                     $ret = $m_role_priv->getPrivByGroupId($userinfo['groupid']);
-
-                    $gid = $userinfo['groupid'];
-                    $usergrp = new \Admin\Model\SysusergroupModel
-                    ();
-                    $p_user_arr = $usergrp->getInfo($gid);
-                    $userinfo['area_city'] = $p_user_arr['area_city'];
                     if(!empty($ret)){
                         $priv_arr = array();
                         $flag =0 ;
