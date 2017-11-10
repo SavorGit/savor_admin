@@ -110,11 +110,11 @@ class ReportController extends BaseController{
 			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
 		}
 		//城市
-		$area_v = I('he_area_bv');
+		/* $area_v = I('he_area_bv');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
 			$where .= "	AND shlog.area_id = $area_v ";
-		}
+		} */
 		//查询类型
 		if($type){
 		    $this->assign('typea',$type);
