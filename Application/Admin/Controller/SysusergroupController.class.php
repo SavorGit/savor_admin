@@ -163,7 +163,7 @@ class SysusergroupController extends BaseController {
                     $rolePrivModel->add($info);
                 }
 
-               $this->output('操作成功','sysusergroup/sysusergroupList');
+               $this->output('操作成功','sysusergroup/sysusergroupAddTest');
             }else{
                 $rolePrivModel->delData($roleid);
             }
