@@ -68,7 +68,6 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
-            <th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
             <th>序号</th>
             <th>名称</th>
             <th>创建日期</th>
@@ -84,7 +83,6 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td><input name="ids" value="{$vlist.id}" type="checkbox"></td>
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="名称">{$vlist.menu_name}</td>
               <td data-title="创建日期">{$vlist.create_time}</td>
