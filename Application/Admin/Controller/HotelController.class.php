@@ -360,7 +360,19 @@ smlist.menu_name';
 		$id = I('get.id');
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
-		$area = $areaModel->getAllArea();
+		
+		
+		$userinfo = session('sysUserInfo');
+		$pcity = $userinfo['area_city'];
+		if($userinfo['groupid'] ==1 || empty($pcity)){
+		    $area = $areaModel->getAllArea();
+		}else {
+		    $where = array();
+		    $where['is_in_hotel'] = 1;
+		    $where['id'] = $pcity;
+		    $area = $areaModel->getWhere('id,region_name',$where);
+		}
+		
 		$this->assign('area',$area);
 		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();
