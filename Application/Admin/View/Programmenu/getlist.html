@@ -29,6 +29,12 @@
                      </span>
               </div>
 
+                <div class="form-group">
+                    <div class="input-group-sm input-group">
+                        <a class="btn btn-success btn-sm add" href="{$host_name}/programmenu/addnewmen" title="添加新节目单" target="dialog" mask="true"><i class="fa fa-plus"></i> 添加新节目单</a>
+                    </div>
+                </div>
+
               <div class="col-xs-4 col-sm-4 col-md-4 pull-right">
                 <div class="input-group input-group-sm">
                   <input type="text" class="form-control" name="titlename" value="{$name}" placeholder="输入名称查找">
@@ -125,15 +131,5 @@ href="{$host_name}/programmenu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.
   {$page}
 </div>
 <script type="text/javascript">
-    function dialogAjaxProgram(json){
-        console.log(json);
-        DWZ.ajaxDone(json);
-        if(json.navTabId == 'programmenu/copynew') {
-            //$.pdialog.closeCurrent();
-            navTab.closeCurrentTab();
-            navTab.reload('menu/getlist');
-            //navTab.openTab('menu/getlist');
-        }
-    }
 
 </script>

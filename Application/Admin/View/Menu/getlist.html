@@ -19,6 +19,7 @@
                            <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
                            <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
                          </span>
+
                 </div>
               </div>
               <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
@@ -30,15 +31,23 @@
               </div>
 
               <div class="col-xs-4 col-sm-4 col-md-4 pull-right">
-                <div class="input-group input-group-sm">
+
+
+                  <div class="input-group input-group-sm">
                   <input type="text" class="form-control" name="titlename" value="{$name}" placeholder="输入名称查找">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
                 </div>
               </div>
+                <div class="form-group">
+                    <div class="input-group-sm input-group">
+                        <a class="btn btn-success btn-sm add" href="{$host_name}/menu/addmen" title="添加节目单" target="dialog" mask="true"><i class="fa fa-plus"></i> 添加节目单</a>
+                    </div>
+                </div>
 
             </div>
+
           </div>
 
         </div>

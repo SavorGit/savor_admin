@@ -214,7 +214,7 @@ class SysusergroupController extends BaseController {
         $m_area_info = new \Admin\Model\AreaModel();
         $areaList = $m_area_info->getHotelAreaList();
 
-        $nationwide = array('id'=>9999,'region_name'=>'全国');
+        $nationwide = array('id'=>0,'region_name'=>'全国');
         array_unshift($areaList, $nationwide);
 
         $this->assign('areaList',$areaList);
