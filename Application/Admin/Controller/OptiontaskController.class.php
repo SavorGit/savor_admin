@@ -208,7 +208,8 @@ class OptiontaskController extends BaseController {
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
-		
+		$offsets = $start+1;
+		$this->assign('offsets',$offsets);
 		/* $where['state'] = array('in','1,2,3');
 		$where['flag'] = 0; */
 		$where= ' 1 and state in(1,2,3) and flag=0';
@@ -349,7 +350,8 @@ class OptiontaskController extends BaseController {
 	    $publisher = I('publisher');
 	    $task_type = I('task_type');
 	    
-	    
+	    $offsets = $start+1;
+	    $this->assign('offsets',$offsets);
 	    
 	    
 	    $where['state'] = array('in','4');

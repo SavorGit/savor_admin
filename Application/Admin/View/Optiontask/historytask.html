@@ -142,7 +142,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="序号">{$offsets}</td>
               <td data-title="紧急度">{$task_emerge_arr[$vlist[task_emerge]]}</td>
               <td data-title="当前状态">{$task_state_arr[$vlist[state]]}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
@@ -161,6 +161,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="事件说明">{$vlist.desc} </td>
               <td data-title="事件说明">{$vlist.info} </td>
             </tr>
+            <php>$offsets++;</php>
           </volist>
           </tbody>
         </table>
