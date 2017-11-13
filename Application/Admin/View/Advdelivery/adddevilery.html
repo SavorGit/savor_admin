@@ -243,6 +243,8 @@
 			</div>
 			<div class="modal-body" style="height: 520px;">
 				<div style="margin-bottom: 30px;width: 75%;height: 43px;float: left;">
+					
+					<if condition="$is_city_search eq 1"> 
 					<div class="form-group row" style="margin-left: 15px;width: 240px;float: left;">
 			       	<label>城市</label>
 			       	<select name="" class="cityId">
@@ -252,6 +254,9 @@
 						</volist>
 			       	</select>
 			       </div>
+			       <else />
+			       <input type="hidden" value='0' class="cityId">
+			       </if>
 					
 					<!--<select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
 						<option value=0>所有城市</option>

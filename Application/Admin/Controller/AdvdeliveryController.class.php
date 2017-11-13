@@ -194,6 +194,20 @@ class AdvdeliveryController extends BaseController {
             $this->assign('name',$hotel_name);
             $where .= "	AND name LIKE '%{$hotel_name}%'";
         }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+        
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $pawhere = '1=1';
+            
+            $this->assign('pusera', $userinfo);
+        }else {
+            
+            $where .= "	AND sht.area_id in ($pcity)";
+        }
+        
+        
         //获取节目单对应最大id还没写且在预约时间内<今天
         $where_pr = ' UNIX_TIMESTAMP(`pub_time`) < '.$now_time;
         $fieldpr="hotel_id";
@@ -419,7 +433,18 @@ class AdvdeliveryController extends BaseController {
         //城市
         $areaModel  = new \Admin\Model\AreaModel();
         $area_arr = $areaModel->getAllArea();
-
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+        $is_city_search = 0;
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $pawhere = '1=1';
+            $is_city_search = 1;
+            $this->assign('is_city_search',$is_city_search);
+        }else {
+            $this->assign('is_city_search',$is_city_search); 
+        }
+        
         $this->assign('areainfo', $area_arr);
 
         $this->display('adddevilery');
