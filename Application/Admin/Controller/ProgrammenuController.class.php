@@ -452,8 +452,7 @@ smlist.menu_name';
         $prhoModel = new \Admin\Model\ProgramMenuHotelModel();
         $userinfo = session('sysUserInfo');
         $pcity = $userinfo['area_city'];
-        if($userinfo['groupid'] == 1 ||
-            $userinfo['area_city'] == 9999){
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])){
             $pawhere = '1=1';
             $result = $mlModel->getList($where,$orders,$start,$size);
         } else {

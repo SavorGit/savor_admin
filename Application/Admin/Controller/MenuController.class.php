@@ -490,8 +490,7 @@ class MenuController extends BaseController {
         //城市
         $userinfo = session('sysUserInfo');
         $pcity = $userinfo['area_city'];
-        if($userinfo['groupid'] == 1 ||
-            $userinfo['area_city'] == 9999) {
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
             $pawhere = '1=1';
             $this->assign('pusera', $userinfo);
         }else {
@@ -509,8 +508,8 @@ smlist.menu_name';
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            if($area_v == 9999){
-            }else{
+            if(empty($area_v)){
+            
                 $where .= "	AND area_id = $area_v";
             }
         }

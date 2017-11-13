@@ -35,7 +35,7 @@
             </span>
             </div>
           </div>
-		<if condition="($pusera.groupid eq 1) or ($pusera.area_city eq 9999)"> 
+		<if condition="($pusera.groupid eq 1) or ($pusera.area_city eq 0"> 
          <div class="form-group"  >
             <div class="input-group-sm input-group">
               <label class="col-xs-1 col-sm-1 control-label">
@@ -44,7 +44,7 @@
 
                 <span class="input-group-btn input-group-sm">
               <select name="he_area_bv" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option value=9999>全国</option>
+                <option value=0>全国</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
                 </volist>
