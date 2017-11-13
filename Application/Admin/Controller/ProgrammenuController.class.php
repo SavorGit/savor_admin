@@ -580,7 +580,7 @@ smlist.menu_name';
                 $res = $mItemModel->addAll($data);
                 if ($res) {
                     $mlModel->commit();
-                    $this->output('新增成功', 'programmenu/getlist',2);
+                    $this->output('新增成功', 'programmenu/getlist');
                 } else {
                     $mlModel->rollback();
                     $this->error('新增失败');
