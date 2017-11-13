@@ -753,14 +753,14 @@ smlist.menu_name';
 
     public function getsessionHotel(){
         $get_hotel_arr = json_decode($_POST['seshot'], true);
-        $type = $get_hotel_arr[0]['type'];
-        $hid = $get_hotel_arr[0]['id'];
         $key = 'select_hotel_key';
         $h_arr = empty(session($key))?array():session($key);
-        if($type == 1){
-            $h_arr[$hid] = 1;
-        } else {
-            unset($h_arr[$hid]);
+        foreach($get_hotel_arr as $tp=>$tv) {
+            if($tv['type'] == 1) {
+                $h_arr[$tv['id']] = 1;
+            } else {
+                unset($h_arr[$tv['id']]);
+            }
         }
         session($key, $h_arr);
     }
