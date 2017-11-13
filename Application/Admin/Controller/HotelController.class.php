@@ -66,10 +66,15 @@ class HotelController extends BaseController {
 		//城市
 		$userinfo = session('sysUserInfo');
 		$pcity = $userinfo['area_city'];
-		if($userinfo['groupid'] == 1 || $userinfo['area_city'] == 9999) {
+		$is_city_search = 0;
+		if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
 			$pawhere = '1=1';
+			$is_city_search = 1;
+			$this->assign('is_city_search',$is_city_search);
 			$this->assign('pusera', $userinfo);
 		}else {
+		   
+		    $this->assign('is_city_search',$is_city_search);
 			$where .= "	AND area_id in ($pcity)";
 			$pawhere = '1=1 and area_id = '.$pcity;
 		}
@@ -83,8 +88,8 @@ smlist.menu_name';
 		$area_v = I('area_v');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
-			if($area_v == 9999){
-			}else{
+			if(!empty($area_v) ){
+			
 				$where .= "	AND area_id = $area_v";
 			}
 		}

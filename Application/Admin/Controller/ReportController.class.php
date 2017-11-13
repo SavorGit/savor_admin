@@ -112,7 +112,7 @@ class ReportController extends BaseController{
 		//城市
 		 $area_v = I('he_area_bv');
 		if ($area_v) {
-		    if($area_v !=9999){
+		    if(empty($area_v) ){
 		        $where .= "	AND shlog.area_id = $area_v ";
 		    }
 			$this->assign('area_k',$area_v);
@@ -137,8 +137,8 @@ class ReportController extends BaseController{
         //城市
         $userinfo = session('sysUserInfo');
         
-        if($userinfo['groupid'] == 1 || $userinfo['area_city'] == 9999) {
-            $this->assign('hightest', 9999);
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])  ) {
+            $this->assign('hightest', 0);
             $this->assign('pusera', $userinfo);
         }else {
             $where .= "	AND shlog.area_id in ($userinfo[area_city])";
@@ -368,9 +368,7 @@ class ReportController extends BaseController{
             $this->assign('type',$type);
         }
         if(!empty($areaid)){
-            if($areaid!=9999){
-                $where .= " and area_id = {$areaid}";
-            }
+            $where .= " and area_id = {$areaid}";
             $this->assign('areaid',$areaid);
         }
         if(!empty($hotel_name)){
@@ -388,7 +386,7 @@ class ReportController extends BaseController{
         $usergrp = new \Admin\Model\SysusergroupModel();
         $p_user_arr = $usergrp->getInfo($gid);
         $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 || $p_user_arr['area_city'] == 9999) {
+        if($p_user_arr['id'] == 1 || empty($p_user_arr['area_city'])  ) {
 
             $this->assign('pusera', $p_user_arr);
         }else {
