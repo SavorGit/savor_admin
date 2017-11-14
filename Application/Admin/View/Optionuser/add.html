@@ -148,14 +148,14 @@
 		if($(this).is('.active')){
 			$(this).removeClass('active')
 			$(this).find('input').val('')
-			if(skill_id ==6){
+			if(skill_id ==2){
 				$('#teaminstall').hide();
 			}
 		}else{
 			$(this).addClass('active');
 			$(this).find('input').val($(this).prop('id'))
 			
-			if(skill_id ==6){
+			if(skill_id ==2){
 				$('#teaminstall').show();
 			}
 		}
