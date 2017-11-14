@@ -65,16 +65,16 @@ class HotelController extends BaseController {
 		}
 		//城市
 		$userinfo = session('sysUserInfo');
-		$gid = $userinfo['groupid'];
-
-		$usergrp = new \Admin\Model\SysusergroupModel();
-		$p_user_arr = $usergrp->getInfo($gid);
-		$pcity = $p_user_arr['area_city'];
-		if($p_user_arr['id'] == 1 ||
-			$p_user_arr['area_city'] == 9999) {
+		$pcity = $userinfo['area_city'];
+		$is_city_search = 0;
+		if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
 			$pawhere = '1=1';
-			$this->assign('pusera', $p_user_arr);
+			$is_city_search = 1;
+			$this->assign('is_city_search',$is_city_search);
+			$this->assign('pusera', $userinfo);
 		}else {
+		   
+		    $this->assign('is_city_search',$is_city_search);
 			$where .= "	AND area_id in ($pcity)";
 			$pawhere = '1=1 and area_id = '.$pcity;
 		}
@@ -88,8 +88,8 @@ smlist.menu_name';
 		$area_v = I('area_v');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
-			if($area_v == 9999){
-			}else{
+			if(!empty($area_v) ){
+			
 				$where .= "	AND area_id = $area_v";
 			}
 		}
@@ -360,7 +360,19 @@ smlist.menu_name';
 		$id = I('get.id');
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
-		$area = $areaModel->getAllArea();
+		
+		
+		$userinfo = session('sysUserInfo');
+		$pcity = $userinfo['area_city'];
+		if($userinfo['groupid'] ==1 || empty($pcity)){
+		    $area = $areaModel->getAllArea();
+		}else {
+		    $where = array();
+		    $where['is_in_hotel'] = 1;
+		    $where['id'] = $pcity;
+		    $area = $areaModel->getWhere('id,region_name',$where);
+		}
+		
 		$this->assign('area',$area);
 		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();

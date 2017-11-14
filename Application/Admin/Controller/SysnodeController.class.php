@@ -426,11 +426,11 @@ class SysnodeController extends BaseController {
         $where = "1=1 AND nodekey = '{$nodekey}'";
 
         $wherea = $where;
-        $where .= " AND parentid = 0";
+        $where .= " AND parentid = 0 and isenable=1";
         $result = $sysNode->getWhere($where, $field);
 
         $aid = $result[0]['id'];
-        $wherea .= " AND parentid = $aid";
+        $wherea .= " AND parentid = $aid and isenable=1";
         $result = $sysNode->getWhere($wherea, $field);
         //var_dump($result);
         echo json_encode($result);

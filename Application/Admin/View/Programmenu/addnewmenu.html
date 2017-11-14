@@ -71,7 +71,7 @@
 <!--显示列表样式1 start-->
 
 
-<form id="pagerFormaddmenuct" action="{$host_name}/programmenu/doaddnewMenu" method="post" onsubmit="return validateCallback(this, dialogAjaxDone);">
+<form id="pagerFormaddmenuct" action="{$host_name}/programmenu/doaddnewMenu" method="post" onsubmit="return iframeCallback(this, dialogAjaxDone);">
 	<div class="searchBar">
 		<div class="clearfix">
 			<!--新增节目单-->
@@ -701,16 +701,6 @@
 
 
 	})
-
-	navTab.closeTab('menu/addmen');
-	function dialogAjaxDone(json){
-		console.log(json);
-		DWZ.ajaxDone(json);
-		if(json.navTabId == 'programmenu/getlist') {
-			navTab.closeTab('programmenu/addnewmenu');
-			navTab.reload('programmenu/getlist');
-		}
-	}
 
 
 

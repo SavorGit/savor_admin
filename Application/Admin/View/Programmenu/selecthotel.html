@@ -15,9 +15,9 @@
     <div class="searchBar">
       <div class="clearfix">
         <div class="form-group row" style="z-index: 99999">
-
+		<if condition="$is_city_search eq 1"> 
           <div class="form-group row">
-            <div class="col-xs-3 col-sm-3" <if condition="($pusera.id eq 1) or ($pusera.area_city eq 9999)"> <else /> style='display:none'</if> >
+            <div class="col-xs-3 col-sm-3"  >
               <div class="input-group-sm">
                 <label class="col-xs-1 col-sm-1 control-label">
                   城市：
@@ -25,7 +25,7 @@
 
                 <span class="input-group-btn">
               <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option value=9999 >全国</option>
+                <option value=0 >全国</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
                 </volist>
@@ -35,7 +35,7 @@
 
               </div>
             </div>
-
+			</if>	
             <div class="form-group row">
 
 
@@ -254,7 +254,7 @@
               <!-- <td class="table-checkbox">
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
-              <td><input name="ids[]" value="{$vlist.id}|{$vlist.name}" type="checkbox">
+              <td><input name="ids[]"  value="{$vlist.id}|{$vlist.name}" type="checkbox">
 
               </td>
 

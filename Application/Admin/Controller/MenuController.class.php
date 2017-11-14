@@ -88,21 +88,27 @@ class MenuController extends BaseController {
 
     public function hotelconfirm(){
 
-
         $menu_id = I('menuid');
         $menu_name = I('menuname');
-        //2是新增
-        $hoty = I('hopu');
-        $ids = I('ids');
-        $data = array();
-        $arr = array();
-        foreach($ids as $k=>$v){
-            $arr = explode('|', $v);
-            $data[] = array('hoid'=>$arr[0],'honame'=>$arr[1]);
+
+
+        $key = 'select_hotel_key';
+        $h_id_arr = session($key);
+        $h_id_arr = array_keys($h_id_arr);
+        session($key,null);
+        $where['id'] = array('in', $h_id_arr);
+        if($h_id_arr) {
+            $hotelModel = new \Admin\Model\HotelModel();
+            $field = 'name honame, id hoid';
+            $h_info = $hotelModel->getInfo($field, $where);
+        }else{
+            $h_info = array();
         }
+
+        $hoty = I('hopu');
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
-        $this->assign('vinfo', $data);
+        $this->assign('vinfo', $h_info);
         $this->assign('hoty', $hoty);
         $this->display('hotelconfirm');
     }
@@ -483,15 +489,15 @@ class MenuController extends BaseController {
 
         //城市
         $userinfo = session('sysUserInfo');
-        $gid = $userinfo['groupid'];
-        $usergrp = new \Admin\Model\SysusergroupModel();
-        $p_user_arr = $usergrp->getInfo($gid);
-        $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 ||
-            $p_user_arr['area_city'] == 9999) {
+        $pcity = $userinfo['area_city'];
+        $is_city_search = 0;
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
             $pawhere = '1=1';
-            $this->assign('pusera', $p_user_arr);
+            $is_city_search = 1;
+            $this->assign('is_city_search',$is_city_search);
+            $this->assign('pusera', $userinfo);
         }else {
+            $this->assign('is_city_search',$is_city_search);
             $where .= "	AND area_id in ($pcity)";
             $pawhere = '1=1 and area_id = '.$pcity;
         }
@@ -506,8 +512,8 @@ smlist.menu_name';
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            if($area_v == 9999){
-            }else{
+            if(empty($area_v)){
+            
                 $where .= "	AND area_id = $area_v";
             }
         }
@@ -745,6 +751,20 @@ smlist.menu_name';
         $this->display('gethotelinfo');
     }
 
+    public function getsessionHotel(){
+        $get_hotel_arr = json_decode($_POST['seshot'], true);
+        $key = 'select_hotel_key';
+        $h_arr = empty(session($key))?array():session($key);
+        foreach($get_hotel_arr as $tp=>$tv) {
+            if($tv['type'] == 1) {
+                $h_arr[$tv['id']] = 1;
+            } else {
+                unset($h_arr[$tv['id']]);
+            }
+        }
+        session($key, $h_arr);
+    }
+
     public function manager() {
         //实例化redis
         //         $redis = SavorRedis::getInstance();
@@ -754,6 +774,8 @@ smlist.menu_name';
 
     public function getlist(){
 
+        $key = 'select_hotel_key';
+        session($key,null);
         $mlModel = new MenuListModel();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -782,13 +804,10 @@ smlist.menu_name';
 
         $menuHoModel = new \Admin\Model\MenuHotelModel();
         $userinfo = session('sysUserInfo');
-        $gid = $userinfo['groupid'];
-        $usergrp = new \Admin\Model\SysusergroupModel();
-        $p_user_arr = $usergrp->getInfo($gid);
-        $pcity = $p_user_arr['area_city'];
-        if($p_user_arr['id'] == 1 ||
-            $p_user_arr['area_city'] == 9999) {
+        $pcity = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city']) ){
             $pawhere = '1=1';
+            
             $result = $mlModel->getList($where,$orders,$start,$size);
         }else {
             $pawhere = '1=1 and area_id = '.$pcity;
@@ -921,7 +940,7 @@ smlist.menu_name';
                     $this->addlog($data, $menu_id);
 
                    // $this->output('新增成功', 'menu/addmen',2);
-                    $this->output('新增成功', 'menu/getlistgetlistgetlist',2);
+                    $this->output('新增成功', 'menu/getlist');
                 } else {
                     $this->error('新增失败');
                 }

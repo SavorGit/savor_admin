@@ -17,7 +17,8 @@
         <div class="form-group row" style="z-index: 99999">
 
           <div class="form-group row">
-            <div class="col-xs-3 col-sm-3" <if condition="($pusera.id eq 1) or ($pusera.area_city eq 9999)"> <else /> style='display:none'</if> >
+          	<if condition="$is_city_search eq 1">  
+            <div class="col-xs-3 col-sm-3" >
               <div class="input-group-sm">
                 <label class="col-xs-1 col-sm-1 control-label">
                   城市：
@@ -31,11 +32,9 @@
                 </volist>
               </select>
             </span>
-
-
               </div>
             </div>
-
+			</if>
             <div class="form-group row">
 
 
@@ -230,14 +229,14 @@
         <input type="hidden" value="{$hopu}" name="hopu" />
         <input name="menuid" type="hidden" value="{$menuid}">
         <input name="menuname" type="hidden" value="{$menuname}">
-
-        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+				<input type="hidden" name="checktrue" id="checktrue" value="" />
+        <table class="table table-bordered table-striped" id="hote_tab" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
             <!-- <th class="table-checkbox">
               <input type="checkbox" data-check="all" data-parent=".table" />
             </th> -->
-            <th width="22"><input type="checkbox" data-check="all" data-parent=".pageContent"> 全选</th>
+            <th width="22"><input type="checkbox" id="hote_qx" data-check="all" data-parent=".pageContent"> 全选</th>
             <th>酒店ID</th>
             <th>酒店名称</th>
 
@@ -248,7 +247,7 @@
 
           </tr>
           </thead>
-          <tbody data-check="list" data-parent=".table">
+          <tbody class="tabbody" data-check="list" data-parent=".table">
           <volist name="alist" id="vlist">
             <tr target="sid_user">
               <!-- <td class="table-checkbox">
@@ -288,8 +287,64 @@
   {$page}
 </div>
 <script type="text/javascript">
-
-
+	$('#hote_tab').on('change','#hote_qx',function(){
+	if($(this).prop('checked')==true){
+				var arr = [];
+				$('.tabbody>tr').each(function(){
+					var obj = {};
+					$(this).find('input').prop('checked',true)
+					var this_id = $(this).find('td').eq(1).html();
+					obj.id=this_id;
+					obj.type=1;
+					arr.push(obj);
+				})
+				//$('#checktrue').val(arr)
+				console.log(arr)
+				ajaxsele(JSON.stringify(arr))
+			}else{
+				var arr = [];
+				$('.tabbody>tr').each(function(){
+					var obj = {};
+					$(this).find('input').prop('checked',false)
+					var this_id = $(this).find('td').eq(1).html();
+					obj.id=this_id;
+					obj.type=2;
+					arr.push(obj);
+				})
+				//$('#checktrue').val(arr)
+				console.log(arr)
+				ajaxsele(JSON.stringify(arr))
+			}
+			
+		})
+	
+	$('table').on('change','tbody>tr>td>input',function(){
+			var next_chek = $(this).parent().next().html();
+			var arr = [];
+			var obj = {};
+			if($(this).prop('checked')==true){
+				obj.id=next_chek;
+				obj.type=1;
+				arr.push(obj);
+			}else{
+				obj.id=next_chek;
+				obj.type=2;
+				arr.push(obj);
+			}
+			ajaxsele(JSON.stringify(arr))
+		})
+   function ajaxsele(datas){
+   	$.ajax({
+   		type:"post",
+   		url:"/menu/getsessionHotel",
+   		async:true,
+   		data:"seshot="+datas,
+   		dataType:"json",
+   		success:function(call){
+   			console.log(call)
+   		}
+   	});
+   }
   /*function navTabAjaxDone(json){
    // alert(json);
     DWZ.ajaxDone(json);
