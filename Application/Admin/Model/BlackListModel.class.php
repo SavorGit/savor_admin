@@ -32,7 +32,7 @@ class BlackListModel extends Model
 	    $where = array();
 	    $where = array();
         $where =" create_time >='".$yestoday_start."' and create_time<='".$yestoday_end."'"; */
-	    $nums = $this->where($where)->count();
+	    $nums = $this->where()->count();
 	    return $nums;
 	}
 }
