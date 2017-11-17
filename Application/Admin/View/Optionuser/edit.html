@@ -74,7 +74,7 @@
         账号：
       </label>
       <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select name="user_id" style="width: 20px" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" >
+  		<select name="user_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" >
   			<option>请选择账号</option>
   			<php>
   				foreach($userlist as $key=>$v){
@@ -82,7 +82,7 @@
   			
   				<option value="" disabled="disabled">{$key}</option>
   				<php> foreach($v as $vv){</php>
-  				<option value="{$vv[id]}" selected="selected" disabled="disabled">{$vv[remark]}</option>
+  				<option value="{$vv[id]}" selected="selected" >{$vv[remark]}</option>
   				<php>}</php>
   			<php>
   				}
@@ -95,7 +95,7 @@
         角色：
       </label>
   		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select disabled="disabled"   name="role_id" style="width: 20px" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" >
+  		<select   name="role_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" >
   			<option value="">请选择</option>
   			<php>foreach($option_user_role_arr as $key=>$v){</php>
   				<option <if condition="$info.role_id eq $key"> selected="selected" </if> value="{$key}">{$v}</option>
@@ -103,17 +103,17 @@
   		</select>
   		</span>
   		</div>
-  		<if condition="$info[role_id] eq 3">
-  		<div class="kuai">
+  		
+  		<div class="kuai"<if condition="$info[role_id] eq 3">style="display:block"<else /> style="display:none" </if>>
   			<php>foreach($option_user_skill_arr as $key=>$v){</php>
-  				<span <php> if(in_array($key,$skill_info_arr)){</php>class="active" <php>}</php> id="{$key}">{$v}<input name="skill[]" value="" type="hidden"></span>
+  				<span <php> if(in_array($key,$skill_info_arr)){</php>class="active" <php>}</php> id="{$key}">{$v}<input name="skill[]"  <php> if(in_array($key,$skill_info_arr)){</php>value="{$key}"<php>}else{</php> value=""<php>}</php> type="hidden"></span>
   			<php>}</php>
   			<!-- <span id="1">信息检测<input type="hidden"></span>
   			<span id="2">网络改造 <input type="hidden"></span>
   			<span id="3">安装验收 <input type="hidden"></span>
   			<span id="4">维修 <input type="hidden"></span> -->
   		</div>
-  		</if>
+  		
   		
   		<div class="form-group" id="teaminstall"  
   		<php>
@@ -138,7 +138,7 @@
         所属城市：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+      <select id="inch" name="manage_city[]" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
        <volist name="areaList" id="list">
            <option  <php> if(in_array($list[id],$manage_city_arr)){</php>selected <php>}</php>  value="{$list.id}">{$list.region_name}</option>
        </volist>
@@ -153,7 +153,7 @@
         所属城市：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body"  >
+      <select  name="manage_city_one" style="width: 20px;display:none !important;" class="form-control bs-select"  data-container="body"  >
        <volist name="city_area_list" id="list">
            <option  <php> if(in_array($list[id],$manage_city_arr)){</php>selected <php>}</php>  value="{$list.id}">{$list.region_name}</option>
        </volist>
@@ -170,7 +170,8 @@
 </div>
 <script type="text/javascript">
 	$('.positions').change(function(){
-		if($(this).val()==3){		
+		if($(this).val()==3){	
+			//alert('aaa');
 			$('.kuai').show();
 		}else{
 			$('.kuai').hide();

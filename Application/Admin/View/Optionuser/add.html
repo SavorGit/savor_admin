@@ -73,7 +73,7 @@
         账号：
       </label>
       <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select name="user_id" style="width: 20px" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" required>
+  		<select name="user_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" required>
   			<option>请选择账号</option>
   			<php>
   				foreach($userlist as $key=>$v){
@@ -94,7 +94,7 @@
         角色：
       </label>
   		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select  name="role_id" style="width: 20px" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" required>
+  		<select  name="role_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" required>
   			<option value="">请选择</option>
   			<php>foreach($option_user_role_arr as $key=>$v){</php>
   				<option value="{$key}">{$v}</option>
@@ -121,7 +121,7 @@
         所属城市：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+      <select id="inch" name="manage_city[]" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
        <volist name="areaList" id="list">
            <option value="{$list.id}">{$list.region_name}</option>
        </volist>
@@ -136,7 +136,7 @@
         所属城市：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body"  >
+      <select id="inch" name="manage_city" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body"  >
        <volist name="city_area_list" id="list">
            <option value="{$list.id}">{$list.region_name}</option>
        </volist>
