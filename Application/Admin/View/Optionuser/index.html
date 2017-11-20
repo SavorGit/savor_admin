@@ -76,7 +76,7 @@
             <a class="btn btn-success btn-sm add" href="{$host_name}/optionuser/add" title="添加账号" target="dialog" mask="true"><i class="fa fa-plus"></i> 添加账号</a>
           </div>
  <div class="form-group"  >
-            <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true" >
+            <!-- <div class="input-group input-group-sm date form_datetime" data-date="" data-ymd="true" >
               <input name="plan_finish_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$palan_finish_time}" readonly>
                         <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
@@ -87,7 +87,7 @@
  <div class="input-group">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
+            </span> -->
 </div>
           </div>
         </div>
@@ -105,7 +105,8 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <tr id="post">
             <th>序号</th>
             <th>角色</th>
-            <th>用户</th>
+            <th>用户id</th>
+            <th>用户昵称</th>
             <th>技能信息</th>
             <th>是否带队安装</th>
             <th>所属城市</th>
@@ -118,13 +119,20 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
-              <td data-title="地区">{$vlist.role_name}</td>
-              <td data-title="紧急度">{$vlist.username}</td>
-              <td data-title="当前状态">{$vlist.skill_str}</td>
-              <td data-title="更新时间">{$vlist.is_lead_install}</td>
-              <td data-title="计划完成时间">{$vlist.manage_city_str}</td>
-              <td data-title="发布人">{$vlist.create_time}</td>
-              <td data-title="故障说明">{$vlist.update_time} </td>
+              <td data-title="角色名称">{$vlist.role_name}</td>
+              <td data-title="用户id">{$vlist.user_id}</td>
+              <td data-title="用户昵称">{$vlist.username}</td>
+              <td data-title="技能信息">{$vlist.skill_str}</td>
+              <td data-title="是否带队安装">
+              <if condition="$vlist.is_lead_install eq 1">
+              	是
+              <else />
+              	否
+              </if>
+              </td>
+              <td data-title="所属城市">{$vlist.manage_city_str}</td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="更新时间">{$vlist.update_time} </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改状态" target="dialog" mask="true"
