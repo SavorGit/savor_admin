@@ -343,7 +343,9 @@ class CrontabController extends Controller
      * @desc 随机生成广告的位置
      */
     public function recordAdsLocation(){
-        $base_location_arr = array(1,2,3,4,5,6,7,8,9,10);
+        $adv_promote_num_arr = C('ADVE_OCCU');
+        $adv_promote_num = $adv_promote_num_arr['num'];
+        $base_location_arr = range(1, $adv_promote_num);
         //获取未执行插入位置的广告
         $m_pub_ads = new \Admin\Model\PubAdsModel(); 
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
@@ -440,12 +442,12 @@ class CrontabController extends Controller
                 'play_times'=>$pb['play_times'],
             );
            $pub_hotel_list = $pub_ads_hotel->getAdsHotelId($pb['id']);
-            var_dump($pub_hotel_list);
+           // var_dump($pub_hotel_list);
             if ( !empty($pub_hotel_list) ) {
                 foreach($pub_hotel_list as $pc=>$pd) {
                     //获取当前酒店所有机顶盒
                     $box_arr = $this->getAllBox($pd['hotel_id']);
-                    var_dump($box_arr);
+                   // var_dump($box_arr);
                     if (!empty($box_arr)) {
                         //筛选出可以用的机顶盒
                         $map = array();

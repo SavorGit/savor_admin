@@ -236,7 +236,7 @@
             <!-- <th class="table-checkbox">
               <input type="checkbox" data-check="all" data-parent=".table" />
             </th> -->
-            <th width="22"><input type="checkbox" id="hote_qx" data-check="all" data-parent=".pageContent"> 全选</th>
+            <th width="22"><input type="checkbox" class="qx_hoddd" id="hote_qx" data-check="all" data-parent=".pageContent"> 全选</th>
             <th>酒店ID</th>
             <th>酒店名称</th>
 
@@ -277,7 +277,7 @@
         </table>
         <div class="row">
 
-          <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+          <button class="btn btn-success" id="fanx" type="button" data-check="invert" data-parent=".pageContent">反选</button>
           <button class="btn btn-success btn-sm add" type="submit" >发布节目</button>
         </div>
       </form>
@@ -317,7 +317,22 @@
 			}
 			
 		})
-	
+	$('#fanx').click(function(){
+		$('.qx_hoddd').prop('checked',false)
+		var arr = [];
+				$('.tabbody>tr').each(function(){
+					if($(this).find('input').prop('checked')==true){
+						var obj = {};
+						var this_id = $(this).find('td').eq(1).html();
+						obj.id=this_id;
+						obj.type=2;
+						arr.push(obj);
+					}
+				})
+				//$('#checktrue').val(arr)
+				console.log(arr)
+				ajaxsele(JSON.stringify(arr))
+	})
 	$('table').on('change','tbody>tr>td>input',function(){
 			var next_chek = $(this).parent().next().html();
 			var arr = [];

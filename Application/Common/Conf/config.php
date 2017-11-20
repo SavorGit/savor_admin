@@ -260,7 +260,7 @@ $config['ADV_VIDEO'] = array(
 );
 $config['ADVE_OCCU'] = array(
     'name' => '广告位',
-    'num' => '10',
+    'num' => '50',
 );
 $config['TOU_STATE'] = array(
     '0'=>'全部',
