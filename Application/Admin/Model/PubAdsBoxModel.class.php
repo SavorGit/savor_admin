@@ -12,6 +12,23 @@ use Common\Lib\Page;
 class PubAdsBoxModel extends BaseModel
 {
 	protected $tableName='pub_ads_box';
+
+	public function getBoxInfoBySize($field, $where,$order='id desc',$group, $start, $size) {
+		$list = $this->alias('adbox')
+			->field($field)
+			->where($where)
+			->join('savor_box box on box.id = adbox.box_id', 'left')
+			->join('savor_room room on room.id = box.room_id', 'left')
+			->join('savor_hotel sht on sht.id = room.hotel_id', 'left')
+			->group($group)
+			->order($order)
+			->limit($start,$size)
+			->select();
+
+		$data = array('list'=>$list);
+		return $data;
+
+	}
 	public function getBoxArrByPubAdsId($pub_ads_id){
 	    $fields = 'box_id';
 	    $where = array('pub_ads_id'=>$pub_ads_id);

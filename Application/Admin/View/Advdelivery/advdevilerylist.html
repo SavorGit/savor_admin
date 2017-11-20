@@ -74,14 +74,25 @@
 
                 <div class="tools-edit">
 
-                  <a data-tip="预览"
+                  <if condition="$vlist.type eq 2">
+                    <a data-tip="预览" href="{$host_name}/advdelivery/showadverjiulou?deliveryid={$vlist.id}"
+                       rel="Advdelivery/showadverjiulou" title="广告预览" target="navTab"
+                       class="btn btn-success btn-icon">
+                      <i class="fa fa-eye"></i>
+                    </a>
 
-                     href="
-                  {$host_name}/advdelivery/showdelivery?deliveryid={$vlist.id}" rel="Advdelivery/showdelivery" title="广告预览" target="navTab"
+                    <a data-tip="查看明细" target="navTab" data-placement="left" mask="true" rel="Advdeliveryshowdetail" href="{$host_name}/advdelivery/showdetail?deliveryid={$vlist.id}" class="btn btn-success btn-icon" title="查看明细">
+                      <i class="fa fa-heart-o"></i>
+                    </a>
 
-                  class="btn btn-success btn-icon">
-                  <i class="fa fa-eye"></i>
-                  </a>
+                    <else/>
+                    <a data-tip="预览" href="{$host_name}/advdelivery/showdelivery?deliveryid={$vlist.id}"
+                    rel="Advdelivery/showdelivery" title="广告预览" target="navTab"
+                    class="btn btn-success btn-icon">
+                    <i class="fa fa-eye"></i>
+                    </a>
+                    </if>
+
                 </div>
               </td>
 

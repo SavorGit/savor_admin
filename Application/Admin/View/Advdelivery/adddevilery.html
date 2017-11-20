@@ -78,15 +78,22 @@
 	
 	.acitve-position-lists {
 		width: 90%;
-		margin-left: 15px;
-		padding-top: 10px;
+	    margin-left: 15px;
+	    padding-top: 10px;
+	    height: 77%;
+	    overflow: auto;
+	    font-size: 12px;
 	}
-	
+	.position-list-group{
+		margin-bottom: 10px;
+	}
 	.acitve-position-jname {
 		display: inline-block;
-		min-width: 85px;
-		max-width: 185px;
-		margin-bottom: 10px;
+	    min-width: 85px;
+	    max-width: 162px;
+	    overflow: hidden;
+	    white-space: nowrap;
+	    text-overflow: ellipsis;
 	}
 	
 	.acitve-position-del {
@@ -138,8 +145,9 @@
 	<input type="hidden" id="pagetotal" value="{$pagecount}">
 	<input type="hidden" id="honame" value="{$host_name}">
 	<input type="hidden" id="bczhi" />
+	<!--<input type="hidden" name="hbarr" id="hba" />-->
 	<input type="hidden" name="hbarr" id="hbars" />
-	<input type="hidden" id="newarr" />
+	<input type="hidden" name="screenadv_type" id="scree_type" value="2"/>
 	<div class="form-group row">
 		<input type="hidden" name="marketid" id="marketid" value="" />
 		<div class="form-group row" id="sp" style="margin-top: 40px;margin-left: 17px;display: ;">
@@ -211,7 +219,10 @@
 				</select>
 			</div>
 		</div>
-
+		<div class="form-group row" style="margin-left: 20px;">
+			<input class="mokuai" name="rad" checked="true" type="radio" id="rad_jiulou"/><label for="rad_jiulou">选择酒楼</label>
+			<input class="mokuai" name="rad" style="margin-left: 15px;" type="radio" id="rad_banw"/><label for="rad_banw">选择版位</label>
+		</div>
 		<div class="form-group row" style="margin-top: 20px;border: 1px solid #999;height: 280px;padding-bottom: 15px;overflow: auto;">
 			<div class="form-group row" id="tops">
 				<span class="biaoti">选择版位</span>
@@ -272,8 +283,11 @@
 					    </span>
 					</div>
 					<div class="select-position">
-						<div class="select-position-top">
+						<div class="select-position-top" style="display: none;">
 							筛选版位
+						</div>
+						<div class="select-position-top">
+							<input style="vertical-align: middle;margin: 0;" type="checkbox" id="box_qx"/><label style="vertical-align: middle;margin-left: 6px;" for="box_qx">全选</label>
 						</div>
 						<div class="position-list">
 
@@ -340,7 +354,7 @@
 		DWZ.ajaxDone(json);
 		if(json.navTabId == 'advdelivery/getadvdeliverylist') {
 			navTab.closeTab('Advdelivery/adddevilery');
-			navTab.reload('Advdelivery/getlist');
+			navTab.reload('advdelivery/getlist');
 			$( "div" ).removeClass( "modal-backdrop fade in" );
 		}
 	}
@@ -356,7 +370,6 @@ $('.tianjiabw').click(function(){
 	var tsnull = 1;
 	$('.dval').each(function(){
 		if($(this).val()==''||$('#cishu').val()==''){
-			//alert(1)
 			tsnull = 2;
 		}else if($('#marketid').val()==''){
 			tsnull =3;
@@ -369,16 +382,29 @@ $('.tianjiabw').click(function(){
 	}else if(tsnull==1){
 	boiteName()
 	$('#modal').modal('show');
+		if($('#rad_jiulou').prop('checked')==false){
+			$('.select-position-top').eq(0).show();
+			$('.select-position-top').eq(1).hide();
+			$('.xuanz-right-top').html('已选版位');
+			
+		}else{
+			$('.select-position-top').eq(0).hide();
+			$('.select-position-top').eq(1).show();
+			$('.xuanz-right-top').html('已选酒楼');
+			
+		}
 	}
 
 	
 })
 
-$('.select-position').on('click','.position-ones-name',function(){
-	var _this = $(this).parent();
-	var __this = $(this);
-	var isnull = $(this).parent().next().html()
-	var ho_id = $(this).parent().find('input').prop('id');
+$('.select-position').on('click','.position-one',function(){
+	if($('#rad_jiulou').prop('checked')==false){
+	
+	var _this = $(this);
+	var __this = $(this).find('label');
+	var isnull = $(this).next().html()
+	var ho_id = $(this).find('input').prop('id');
 	var kai_time = $('.dval').eq(0).val();
 	var jie_time = $('.dval').eq(1).val();
 	var pl_time = $('#cishu').val();
@@ -396,8 +422,8 @@ $('.select-position').on('click','.position-ones-name',function(){
 				var call = calls.data;
 				if(call==''){
 					alert('当前酒楼无版位！')
+					_this.find('input').prop('checked',false)
 				}
-				//alert(call.length)
 				
 				var a_this_click = 0;
 				//__this.attr('nnum',call.length)
@@ -406,12 +432,17 @@ $('.select-position').on('click','.position-ones-name',function(){
 						var bw_html = '<div style="width:242px;height:30px;display: inline-block;"><input type="checkbox" style="margin-left: 25px;" class="position-twos" id="'+call[i].bid+'"/><label style="margin-left: 10px;" for="'+call[i].bid+'">'+call[i].bname+'</label></div>';
 						_this.next().append(bw_html);
 						a_this_click+=1
+						
 					}else if(call[i].btype==0){
 						var no_html = '<div style="width:242px;height:30px;display: inline-block;"><label style="margin-left: 28px;color:red;" for="'+call[i].bid+'">'+call[i].bname+'</label></div>';
 						_this.next().append(no_html);
 					}
 				}
-			
+				if(_this.find('input').prop('checked')==true){
+					_this.next().find('div').each(function(){
+						$(this).find('input').prop('checked',true)
+					})
+				}
 				_this.next().attr('nnum',a_this_click)
 				var vbczhi = eval($('#newarr').val())
 	if($('#bczhi').val()!=''){
@@ -438,22 +469,19 @@ $('.select-position').on('click','.position-ones-name',function(){
 	});
 	
 	}else{
-		$(this).parent().next().toggle()
+		$(this).next().toggle()
 	}
 	
 
 	
-	
+}
 	//setTimeout("settimefun()",500)
 })
 
 /*全选*/
 $('.select-position').on('click','.position-ones',function(){
 	var isnull = $(this).parent().next().html()
-	if(isnull==''){
-		$(this).prop('checked',false);
-		alert('当前酒楼的版位加载出来，才可以全选！')
-	}else{
+	if(isnull!=''){
 		var check_position = $(this).prop('checked');
 		if(check_position==true){
 			$(this).parents().next().find('input').prop('checked',true);
@@ -483,6 +511,7 @@ $('.select-position').on('click','.position-two>div',function(){
 /*返回已经被选中的酒楼名称和版位数量*/
 	
 $('#xuanzhe_btn').click(function(){ 
+	if($('#rad_jiulou').prop('checked')==false){
 		//var a = $('.position-ones,.position-twos').attr('checked');
 		var arr = [];
 		var arr2 = [];
@@ -518,7 +547,6 @@ $('#xuanzhe_btn').click(function(){
 				obj.jiuid2 = a_id;
 				obj.banid2 = arrid;
 				obj.jiunum2 = arr3;
-				//alert(a+'+'+b)
 				arr.push(obj)
 				arr2.push(obj2)
 			}
@@ -571,7 +599,6 @@ $('#xuanzhe_btn').click(function(){
 				
 				$('.position-list-group').each(function(){
 					var this_jiuname_s = $(this).attr('jiuname_s');
-					//alert(this_jiuname_s)
 					if(arr[i].namejiu==this_jiuname_s){
 						$(this).remove();
 					}
@@ -587,7 +614,6 @@ $('#xuanzhe_btn').click(function(){
 			var bczhi_vals = [];
 			$('.position-list-group').each(function(){
 				var this_jiuname_s = $(this).attr('jiuname_s');
-					//alert(this_jiuname_s)
 					
 					var num_swa=0;
 					$('.position-one').each(function(){
@@ -600,9 +626,7 @@ $('#xuanzhe_btn').click(function(){
 								var twos_this = $(this).find('input').prop('checked');
 								if(twos_this==false){
 									num_swa+=1
-									//alert(num_swa)
 									if(num_swa==$(this).parent().attr('nnum'))
-									//alert(position_one_html)
 									$('.position-list-group').each(function(){
 										if($(this).attr('jiuname_s')==position_one_html){
 											$(this).remove();
@@ -627,10 +651,67 @@ $('#xuanzhe_btn').click(function(){
 			$('#newarr').val(JSON.stringify(bczhi_vals));
 			$('.banweishu').html(asdd);
 		}
+		}else{
+			//酒楼模式
+			if ($('.acitve-position-lists').html()=='') {
+				var arr_null = [];
+				$('.position-one').each(function(){
+					if($(this).find('input').prop('checked')==true){
+						let jiulou_name = `
+						<div id=${$(this).find('label').prop('id')} class='position-list-group'>
+						<span class='acitve-position-jname'>${$(this).find('label').html()}</span>
+						<span class="acitve-position-del">x</span>
+						</div>
+						`
+						$('.acitve-position-lists').append(jiulou_name);
+						arr_null.push($(this).find('label').prop('id'))
+					}
+				})
+				console.log(arr_null)
+				addAjaxBoxNum(JSON.stringify(arr_null))
+				$('.jiuloushuliang').html($('.position-list-group').length)
+			}else{
+				
+				$('.position-one').each(function(){
+					if($(this).find('input').prop('checked')==true){
+						var this_name = $(this).find('label').html();
+						var _thiss = $(this);
+						$('.position-list-group').each(function(){
+							if($(this).find('.acitve-position-jname').html()==this_name){
+								$(this).remove();
+							}
+						})
+						var jiulou_name = `
+								<div id=${_thiss.find('label').prop('id')} class='position-list-group'>
+								<span class='acitve-position-jname'>${_thiss.find('label').html()}</span>
+								<span class="acitve-position-del">x</span>
+								</div>
+								`
+						$('.acitve-position-lists').append(jiulou_name);
+					}else{
+						var this_name = $(this).find('label').html();
+						var _thiss = $(this);
+						$('.position-list-group').each(function(){
+							if($(this).find('.acitve-position-jname').html()==this_name){
+								$(this).remove();
+							}
+						})
+						
+					}
+				})
+				var arr_null = [];
+				$('.position-list-group').each(function(){
+					arr_null.push($(this).prop('id'))
+				})
+				addAjaxBoxNum(JSON.stringify(arr_null))
+				$('.jiuloushuliang').html($('.position-list-group').length)
+			}
+		}
 	})
-
+//"<div bweinum='"+arr[i].jiunum+"' val='"+new_arrhiends+"' jiuname_s='"+arr[i].namejiu+"' class='position-list-group'><span class='acitve-position-jname'>"+arr[i].namejiu+"</span><span class='acitve-position-num' >"+arr[i].jiunum+"个</span><span class='acitve-position-del' jiuname = '"+arr[i].namejiu+"'>X</span></div>"
 /*删除*/
 $('.acitve-position-lists').on('click','.acitve-position-del',function(){
+	if($('#rad_jiulou').prop('checked')==false){
 		var a = $(this).attr('jiuname');
 		$(".position-ones-name:contains('"+a+"')").parent().find('input').prop('checked',false);
 		$(".position-ones-name:contains('"+a+"')").parent().next().find('input').prop('checked',false);
@@ -646,10 +727,26 @@ $('.acitve-position-lists').on('click','.acitve-position-del',function(){
 		var xsa = $(this).parent().find('.acitve-position-num').html();
 		var asdddd = parseInt(xsa)
 		$('.banweishu').html($('.banweishu').html()-asdddd);
+	}else{
+		let this_del_html = $(this).parent().find('.acitve-position-jname').html();
+		$('.position-one').each(function(){
+			if($(this).find('label').html()==this_del_html){
+				$(this).find('input').prop('checked',false)
+			}
+		})
+		$(this).parent().remove();
+		var arr_null = [];
+		$('.position-list-group').each(function(){
+			arr_null.push($(this).prop('id'))
+		})
+		addAjaxBoxNum(JSON.stringify(arr_null))
+		$('.jiuloushuliang').html($('.position-list-group').length)
+	}
 	})
 
 /*版位保存*/
 $('#bw_bc').click(function(){
+	if($('#rad_jiulou').prop('checked')==false){
 	$('.ban_list').html('')
 	var acitve_position_lists = $('.acitve-position-lists').html();
 	if(acitve_position_lists==''){
@@ -686,6 +783,25 @@ $('#bw_bc').click(function(){
 			}*/
 		}
 	}
+	}else{
+		if($('.acitve-position-lists').html()==''){
+			alert('请选择酒楼')
+		}else{
+			$('.ban_list').html('')
+			$('.position-list-group').each(function(){
+				let jiulou_name = `
+				<div class="jiu_names">
+				<span id=${$(this).prop('id')}>${$(this).find('span').eq(0).html()}</span>
+				</div>
+				`
+				$('.ban_list').append(jiulou_name);
+				
+			})
+			$('.jiuloushu').find('span').eq(0).html($('.jiuloushuliang').html())
+			$('.jiuloushu').find('span').eq(1).html($('.banweishu').html())
+			$('#modal').modal('hide');
+		}
+	}
 })
 /*整体保存*/
 $('#qb_save').click(function(){
@@ -705,7 +821,7 @@ $('#qb_save').click(function(){
 		arr.push(obj)
 	})
 	var arrstr = JSON.stringify(arr);
-	$('#hbars').val(arrstr)
+	$('#hbars').val(arrstr);
 	$('.vid_names').html($('#sp_name').html())
 	$('.str_time').html($('.dval').eq(0).val())
 	$('.end_time').html($('.dval').eq(1).val())
@@ -716,6 +832,7 @@ $('#qb_save').click(function(){
 	if($('.ban_list').html()!=''&& sp_isid!='none'){
 		$('#bctk').modal('show');
 	}else{
+		//$('#bctk').modal('show');
 		alert('请补全信息!')
 	}
 	//console.log(arr)
@@ -764,7 +881,18 @@ $('#sdd').click(function(){
 				var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div nnum="" class="position-two"></div>';
 				$('.position-list').append(jiu_name);
 				}
-				
+				if($('#rad_jiulou').prop('checked')==true){
+				if($('.acitve-position-lists').html()!=''){
+				$('.position-list-group').each(function(){
+					var _this_ = $(this).find('.acitve-position-jname').html();
+					$('.position-one').each(function(){
+						if($(this).find('label').html()==_this_){
+							$(this).find('input').prop('checked',true)
+						}
+					})
+				})
+			}
+				}
 			}else{
 				alert(calls.msg)
 			}
@@ -802,13 +930,63 @@ function boiteName(){  //酒楼名称
 				var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div class="position-two"></div>';
 				$('.position-list').append(jiu_name);
 				}
-				
+				if($('#rad_jiulou').prop('checked')==true){
+				if($('.acitve-position-lists').html()!=''){
+				$('.position-list-group').each(function(){
+					var _this_ = $(this).find('.acitve-position-jname').html();
+					$('.position-one').each(function(){
+						if($(this).find('label').html()==_this_){
+							$(this).find('input').prop('checked',true)
+						}
+					})
+				})
+			}
+				}
 			}else{
-				alert(calls.msg)
+				//alert(calls.msg)
 			}
 		}
 	});
 }
+$('#box_qx').change(function(){  //酒楼状态下全选
+	if($(this).prop('checked')==true){
+		$('.position-one').each(function(){
+			$(this).find('input').prop('checked',true)
+		})
+	}else{
+		$('.position-one').each(function(){
+			$(this).find('input').prop('checked',false)
+		})
+	}
+})
+$('.mokuai').change(function(){ //改变状态初始化
+	$('.ban_list').html('');
+	$('.acitve-position-lists').html('');
+	$('.jiuloushuliang').html('0');
+	$('.banweishu').html('0');
+	$('.jiuloushu').find('span').eq(0).html('0')
+	$('.jiuloushu').find('span').eq(1).html('0');
+	$('#box_qx').prop('checked',false);
+	if($(this).prop('id')=='rad_jiulou'){
+		$('#scree_type').val('2')
+	}else{
+		$('#scree_type').val('1')
+	}
+})
 
-
+function addAjaxBoxNum(datas){ //获取版位数量
+	$.ajax({
+		type:"post",
+		url:honame+"/advdelivery/getcheckadsHotel",
+		data:"devilerychds="+datas,
+		async:true,
+		dataType:"json",
+		success:function(call){
+			console.log(call);
+			
+				$('.banweishu').html(parseInt(call.num))
+			
+		}
+	});
+}
 </script>

@@ -302,5 +302,14 @@ $config['HOTEL_DAMAGE_CONFIG'] = array(
 	'12'=>'未开机',
     '13'=>'其它',
 );
+$config['PUB_ADS_HOTEL_ERROR'] = array(
+    '1'=>'剩余广告位不足',
+    '2'=>'酒楼冻结',
+    '3'=>'酒楼报损',
+    '4'=>'包间冻结',
+    '5'=>'包间报损',
+    '6'=>'机顶盒冻结',
+    '7'=>'机顶盒报损'
+);
 $config['HEART_LOG_SAVE_DAYS'] = 30;
 return $config;
