@@ -152,7 +152,7 @@ class SinglemenuController extends BaseController{
         
         
         $id = I('get.id',0,'intval');
-        $where = '';
+        $where['single_menu_id'] = $id;
         $orders = ' id asc';
         $m_single_menu_item = new \Admin\Model\SingleMenuItemModel();
         $list =$m_single_menu_item->getlist($where,$orders);
