@@ -232,7 +232,7 @@ class OptiontaskController extends BaseController {
 		    $this->assign('task_type',$task_type);
 		}
 		
-		$m_option_task = new \Admin\Model\OptiontaskModel();
+		$m_option_task = new \Admin\Model\OptiontaskoldModel();
 		$list= $m_option_task->getList($where,$orders,$start,$size);
 		foreach($list['list'] as $key=>$v){
 		    $performer_str = '';
@@ -285,7 +285,7 @@ class OptiontaskController extends BaseController {
 
 	        $data['performer'] = $performer; 
 	        $data['update_time'] = date('Y-m-d H:i:s');
-	        $m_option_task = new \Admin\Model\OptiontaskModel();
+	        $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	        $ret = $m_option_task->where('id='.$id)->save($data);
 	        if($ret){
 	            $this->output('修改成功', 'optiontask/index', 1);
@@ -297,7 +297,7 @@ class OptiontaskController extends BaseController {
 	        unset($data['ajax']);
 	        $data['performer'] = $performer;
 	        //print_r($data);exit;
-	        $m_option_task = new \Admin\Model\OptiontaskModel();
+	        $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	        $ret = $m_option_task->add($data);
 	        if($ret){
 	            $this->output('发布成功', 'optiontask/index', 1);
@@ -308,7 +308,7 @@ class OptiontaskController extends BaseController {
 	    
 	}
 	public function edit(){
-	     $m_option_task = new \Admin\Model\OptiontaskModel();
+	     $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $id = I('get.id',0,'intval');
 	    $list = $m_option_task->where('id='.$id)->find();
 	    $performer = $list['performer'];
@@ -327,7 +327,7 @@ class OptiontaskController extends BaseController {
 	}
 	public function delete(){
 	    $id = I('get.id');
-	    $m_option_task = new \Admin\Model\OptiontaskModel();
+	    $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $data['flag'] = 1;
 	    $ret = $m_option_task->where('id='.$id)->save($data);
 	    if($ret){
@@ -364,7 +364,7 @@ class OptiontaskController extends BaseController {
 	        $where['task_type'] = $task_type;
 	        $this->assign('task_type',$task_type);
 	    }
-	    $m_option_task = new \Admin\Model\OptiontaskModel();
+	    $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $list= $m_option_task->getList($where,$orders,$start,$size);
 	    
 	    
