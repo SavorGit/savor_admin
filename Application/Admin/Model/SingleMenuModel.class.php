@@ -20,7 +20,8 @@ class SingleMenuModel extends BaseModel
 					  ->order($order)
 					  ->limit($start,$size)
 					  ->select();
-		$count = $this->where($where)
+		$count = $this->alias('a')
+		              ->where($where)
 					  ->count();
 		$objPage = new Page($count,$size);		  
 		$show = $objPage->admin_page();

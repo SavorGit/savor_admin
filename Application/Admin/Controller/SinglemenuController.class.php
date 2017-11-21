@@ -27,7 +27,7 @@ class SinglemenuController extends BaseController{
         $where .= " and DATE_FORMAT(`create_time`,'%Y-%m-%d') = '".$yestoday."'";
         $black_list = new \Admin\Model\BlackListModel(); */
 		$m_single_menu = new \Admin\Model\SingleMenuModel();
-		$where = '';
+		$where = ' a.flag=0';
 		$fields = 'a.*,user.remark as username';
         $list= $m_single_menu->getList($fields,$where,$orders,$start,$size);
         //print_r($list);exit;
@@ -68,7 +68,7 @@ class SinglemenuController extends BaseController{
     }
     
     public function add(){
-        $this->display('report/addsinglemenu');
+        $this->display('Report/addsinglemenu');
     }
     public function doadd(){
         
@@ -158,5 +158,18 @@ class SinglemenuController extends BaseController{
         $list =$m_single_menu_item->getlist($where,$orders);
         $this->assign('list',$list);
         $this->display('Report/sinmedetail');
+    }
+    public function delete(){
+        $id = I('get.id',0,'intval');
+        $where['id'] = $id;
+        $m_single_menu = new \Admin\Model\SingleMenuModel();
+        $data['flag'] = 1;
+        $ret = $m_single_menu->where($where)->save($data);
+        
+        if($ret){
+            $this->output('删除成功', 'singlemenu/index', 2);
+        }else {
+            $this->error('删除失败');
+        }
     }
 }
