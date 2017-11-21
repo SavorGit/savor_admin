@@ -343,7 +343,9 @@ class CrontabController extends Controller
      * @desc 随机生成广告的位置
      */
     public function recordAdsLocation(){
-        $base_location_arr = array(1,2,3,4,5,6,7,8,9,10);
+        $adv_promote_num_arr = C('ADVE_OCCU');
+        $adv_promote_num = $adv_promote_num_arr['num'];
+        $base_location_arr = range(1, $adv_promote_num);
         //获取未执行插入位置的广告
         $m_pub_ads = new \Admin\Model\PubAdsModel(); 
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
@@ -401,6 +403,145 @@ class CrontabController extends Controller
         }
         echo "OK";
     }
+
+
+    public function getAllBox($hotel_id) {
+        $where = ' ( 1=1 and sht.id='.$hotel_id.' and
+        sht.flag=0
+        and sht.hotel_box_type in (2,3) and room.flag=0 and box.flag=0)';
+        $hotelModel = new \Admin\Model\HotelModel();
+        $field = ' box.id bid,box.name bname,box.state bstate,room.id
+        rid,room.name rname,room.state rstate,sht.id hid,sht.name
+        hname,sht.state hstate ';
+        $order = '';
+        $box_arr = $hotelModel->getBoxOrderMacByHid($field, $where, $order);
+        // $rs = $hotelModel->getLastSql();
+        // file_put_contents(LOG_PATH.'baiyutao.log',$rs.PHP_EOL,  FILE_APPEND);
+        $box_arr = assoc_unique($box_arr,'bid');
+        return $box_arr;
+    }
+
+
+    /**
+     * @desc 酒店所有机顶盒数据并插入pub_ads_box
+     */
+    public function recordAllboxByhotel(){
+        //获取所有未执行广告id
+        $now_date = date("Y-m-d H:i:s");
+        $pub_adsModel = new \Admin\Model\PubAdsModel();
+        $pub_adsboxModel = new \Admin\Model\PubAdsBoxModel();
+        $pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
+        $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
+        $field = 'id, start_date, end_date, play_times';
+        $where['state'] = 3;
+        $pub_ads_list = $pub_adsModel->getWhere($where, $field);
+        foreach($pub_ads_list as $pa=>$pb) {
+            $dat = array (
+                'start_time'=>$pb['start_date'],
+                'end_time'=>$pb['end_date'].' 23:59:59',
+                'play_times'=>$pb['play_times'],
+            );
+           $pub_hotel_list = $pub_ads_hotel->getAdsHotelId($pb['id']);
+           // var_dump($pub_hotel_list);
+            if ( !empty($pub_hotel_list) ) {
+                foreach($pub_hotel_list as $pc=>$pd) {
+                    //获取当前酒店所有机顶盒
+                    $box_arr = $this->getAllBox($pd['hotel_id']);
+                   // var_dump($box_arr);
+                    if (!empty($box_arr)) {
+                        //筛选出可以用的机顶盒
+                        $map = array();
+                        foreach ($box_arr as $bk=> $bv) {
+                            $tmpbox = array();
+                            $tmpbox = array(
+                                'bid'=>$bv['bid'],
+                                'bname'=>$bv['bname'],
+                                'rid'=>$bv['rid'],
+                                'rname'=>$bv['rname'],
+                                'hid'=>$bv['hid'],
+                                'hname'=>$bv['hname'],
+                                'pub_ads_id'=>  $pb['id'],
+                            );
+                            if($bv['hstate'] == 2) {
+                                $tmpbox['error_type'] = 2;
+                                $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                continue;
+                            } elseif($bv['hstate'] == 3) {
+                                $tmpbox['error_type'] = 3;
+                                $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                continue;
+                            } elseif($bv['rstate'] == 2) {
+                                $tmpbox['error_type'] = 4;
+                                $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                continue;
+                            } elseif($bv['rstate'] == 3) {
+                                $tmpbox['error_type'] = 5;
+                                $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                continue;
+                            } elseif($bv['bstate'] == 2) {
+                                $tmpbox['error_type'] = 6;
+                                $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                continue;
+                            } elseif($bv['bstate'] == 3) {
+                                $tmpbox['error_type'] = 7;
+                                $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                continue;
+                            } else {
+                                $map['_string'] = "('".$dat['start_time'] ."'
+                            <=ads.end_date and '".$dat['end_time']."' >=
+                            ads.start_date )";
+                                $map['ads_box.box_id'] = $bv['bid'];
+                                $map['ads.state'] = array('neq', 2);
+                                $mfield = 'ads_box.location_id as lid';
+                                //被占用的数组
+                                $ocu_arr = $pub_adsModel->getBoxPlayTimes($map,
+                                    $mfield);
+                                $ocu_len = count($ocu_arr);
+                                $bool = false;
+                                if( empty($ocu_arr) ) {
+                                    $bool = true;
+                                } else {
+                                    $adv_promote_num_arr = C('ADVE_OCCU');
+                                    $adv_promote_num = $adv_promote_num_arr['num'];
+                                    $l_len = $adv_promote_num-$ocu_len-$dat['play_times'];
+                                    if($l_len>=0) {
+                                        //次数足
+                                        $bool = true;
+                                    }else {
+                                        $bool = false;
+                                    }
+                                }
+                                if ( $bool ) {
+                                    $box_hotel_arr = array();
+                                    for($i=0; $i<$dat['play_times']; $i++){
+                                        $box_hotel_arr[] = array(
+                                            'box_id'=>$bv['bid'],
+                                            'pub_ads_id'=>$pb['id'],
+                                            'location_id'=>0,
+                                            'create_time'=>$now_date,
+                                            'update_time'=>$now_date,
+                                            'down_state'=>0,
+                                        );
+                                    }
+                                    $tmp_res = $pub_adsboxModel->addAll($box_hotel_arr);
+                                } else {
+                                    $tmpbox['error_type'] = 1;
+                                    $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //修改状态值为0
+            $pub_adsModel->updateInfo(array('id'=>$pb['id']),array('state'=>0,'update_time'=>$now_date));
+        }
+        echo 'ok选择酒楼处理完成 ';
+    }
+
+
+
     /**
      * @desc 清理心跳历史数据
      */

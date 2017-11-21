@@ -776,4 +776,18 @@ function getFirstCharter($str){
     if($asc>=-11055&&$asc<=-10247) return 'Z';
     return null;
 }
+
+//二维数组去重
+function  assoc_unique($arr, $key)
+{
+    $rAr = array();
+    for ($i = 0; $i<count($arr); $i++)
+    {
+        if (!isset($rAr[$arr[$i][$key]]))
+        {
+            $rAr[$arr[$i][$key]] = $arr[$i];
+        }
+    }
+    return $rAr;
+}
 ?>
