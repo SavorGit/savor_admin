@@ -172,7 +172,7 @@ class OptionuserController extends BaseController{
                 $data['manage_city'] = $manage_city_str;
             }
             $data['oprator_id']  = $oprator_id;
-            print_r($data);exit;
+
             $ret = $m_opser_role->addInfo($data);
             if($ret){
                 $this->output('新增成功', 'optionuser/index', 1);
