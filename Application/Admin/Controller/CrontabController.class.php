@@ -12,22 +12,24 @@ class CrontabController extends Controller
     public function report(){
         //酒楼总数
         $m_hotel = new \Admin\Model\HotelModel();
-        $where = array();
-        $where['state'] = 1;
-        $where['hotel_box_type'] = array('in','2,3');
-        $hotel_all_num = $m_hotel->getHotelCount($where);
+        $where = '';
+        /* $where['state'] = 1;
+        $where['hotel_box_type'] = array('in','2,3'); */
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $hotel_all_num = $m_hotel->getHotelCountNums($where);
     
         //正常酒楼 、异常酒楼
         $end_time = date('Y-m-d H:i:s',strtotime('-10 minutes'));
         $start_time = date('Y-m-d H:i:s',strtotime('-72 hours'));
         $m_heart_log = new \Admin\Model\HeartLogModel();
         $m_box = new \Admin\Model\BoxModel();
-        $where = array();
+        $where = '';
     
-        $where['state'] = 1;
+        /* $where['state'] = 1;
         $where['flag'] = 0;
-        $where['hotel_box_type'] = array('in','2,3');
-        $hotel_list = $m_hotel->getHotelList($where,'','','id');
+        $where['hotel_box_type'] = array('in','2,3'); */
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
     
         $normal_hotel_num = 0;
         $not_normal_hotel_num = 0;
@@ -151,12 +153,13 @@ class CrontabController extends Controller
             $result[$key]['box_report_time'] = $box_last_report_time;
             $result[$key]['create_time'] = date('Y-m-d H:i:s');
         }
-        $m_hote_ext = new \Admin\Model\HotelExtModel();
+        /* $m_hote_ext = new \Admin\Model\HotelExtModel();
         $map = array();
         $map['mac_addr'] = '000000000000';
         
         
-        $counts = $m_hote_ext->where($map)->count();
+        $counts = $m_hote_ext->where($map)->count(); */
+        $counts = 0;
         
         //机顶盒黑名单
         $m_black_list = new \Admin\Model\BlackListModel();
