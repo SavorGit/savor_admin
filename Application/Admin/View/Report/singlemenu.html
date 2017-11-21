@@ -1,0 +1,64 @@
+
+<div class="pageHeader" style="overflow: hidden;height: 50px;">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/blacklist/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        	<!-- <button  type="button" data-toggle="modal" id="checkouts" class="btn btn-primary btn-xs" data-target=".bs-example-modal-sm" >导入单机版节目单</button>
+
+        -->
+        	<div class="input-group input-group-sm pull-left">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/singlemenu/add" title="上传单机版节目单" target="dialog" mask="true"><i class="fa fa-plus"></i> 上传单机版节目单</a>
+          </div>
+          
+          </div>
+        </div>
+        </div>
+      </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="top: 48px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
+enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>节目单文件名称</th>
+            <th>创建人</th>
+           
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="节目单文件名称">{$vlist.name}</td>
+              
+              <td data-title="创建人">{$vlist.username}</td>
+              <td data-title="记录创建时间">{$vlist.create_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="查看详情" target="dialog"  href="{$host_name}/singlemenu/detail?id={$vlist.id}" rel="singlemenu/detail" title="节目单详情"class="btn btn-success btn-icon">
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
