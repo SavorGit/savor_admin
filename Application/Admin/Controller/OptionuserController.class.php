@@ -127,7 +127,7 @@ class OptionuserController extends BaseController{
             $skill_info = I('post.skill');            //技能
             
             $m_opser_role = new \Admin\Model\OpuserroleModel();
-            $role_info = $m_opser_role->getList('id',array('user_id'=>$user_id));
+            $role_info = $m_opser_role->getList('id',array('user_id'=>$user_id,'state'=>1));
             if(!empty($role_info)){
                 $this->error('该账号已经设置过运维端账号！');
             }
@@ -163,8 +163,11 @@ class OptionuserController extends BaseController{
             $data = array();
             $data['user_id']    = $user_id;
             $data['role_id']    = $role_id;
-            $data['skill_info'] = $skill_info_str;
-            $data['is_lead_install'] = $is_lead_install;
+            if($role_id ==3){
+                $data['skill_info'] = $skill_info_str;
+                $data['is_lead_install'] = $is_lead_install;
+            }
+            
             
             if($role_id ==1 || $role_id ==3){
                 $data['manage_city'] = $manage_city_one;
@@ -210,8 +213,11 @@ class OptionuserController extends BaseController{
             $map['id'] = $id;
             $data['user_id']    = $user_id;
             $data['role_id']    = $role_id;
-            $data['skill_info'] = $skill_info_str;
-            $data['is_lead_install'] = $is_lead_install;
+            if($role_id ==3){
+                $data['skill_info'] = $skill_info_str;
+                $data['is_lead_install'] = $is_lead_install;
+            }
+            
             
             if($role_id ==1 || $role_id ==3){
                 $data['manage_city'] = $manage_city_one;

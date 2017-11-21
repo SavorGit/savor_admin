@@ -183,6 +183,12 @@
 			$('#all_city_list').show();
 			$('#city_list').hide();
 		}
+		var installs =  $('#2').val();
+		if($(this).val()==3 && installs !=''){
+			$('#teaminstall').show();
+		}else {
+			$('#teaminstall').hide();
+		}
 		$(this).next().find('span').prop('class','')
 	})
 	$('.kuai span').click(function(){
