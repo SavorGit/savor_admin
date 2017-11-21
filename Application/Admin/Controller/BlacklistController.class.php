@@ -23,8 +23,8 @@ class BlacklistController extends BaseController{
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         $yestoday = date("Y-m-d", strtotime("-1 day"));
-        $where = '1=1';
-        $where .= " and DATE_FORMAT(`create_time`,'%Y-%m-%d') = '".$yestoday."'";
+        $where = '';
+       // $where .= " and DATE_FORMAT(`create_time`,'%Y-%m-%d') = '".$yestoday."'";
         $black_list = new \Admin\Model\BlackListModel();
 		$list= $black_list->getList($where,$orders,$start,$size);
 		$m_box= new \Admin\Model\BoxModel();
