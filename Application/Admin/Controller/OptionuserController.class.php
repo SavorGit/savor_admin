@@ -139,7 +139,15 @@ class OptionuserController extends BaseController{
                 }
             }
             $is_lead_install = I('post.is_lead_install',0,'intval');  //是否带队安装
+            /* if($role_id ==1 || $role_id==3){
+                $manage_city = I('post.manage_city_one');
+            }else {
+                $manage_city = I('post.manage_city');
+            }
+            
+             */
             $manage_city = I('post.manage_city');
+            $manage_city_one = I('post.manage_city_one');
             foreach($manage_city as $key=>$v){
                 $manage_city_str .= $separator . $v;
                 $separator         = ',';    
@@ -157,9 +165,14 @@ class OptionuserController extends BaseController{
             $data['role_id']    = $role_id;
             $data['skill_info'] = $skill_info_str;
             $data['is_lead_install'] = $is_lead_install;
-            $data['manage_city'] = $manage_city_str;
-            $data['oprator_id']  = $oprator_id;
             
+            if($role_id ==1 || $role_id ==3){
+                $data['manage_city'] = $manage_city_one;
+            }else {
+                $data['manage_city'] = $manage_city_str;
+            }
+            $data['oprator_id']  = $oprator_id;
+            print_r($data);exit;
             $ret = $m_opser_role->addInfo($data);
             if($ret){
                 $this->output('新增成功', 'optionuser/index', 1);
