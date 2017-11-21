@@ -309,7 +309,8 @@ $config['PUB_ADS_HOTEL_ERROR'] = array(
     '4'=>'包间冻结',
     '5'=>'包间报损',
     '6'=>'机顶盒冻结',
-    '7'=>'机顶盒报损'
+    '7'=>'机顶盒报损',
+    '8'=>'包间机顶盒为空',
 );
 $config['HEART_LOG_SAVE_DAYS'] = 30;
 return $config;

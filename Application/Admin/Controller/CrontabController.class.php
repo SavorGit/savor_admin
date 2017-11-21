@@ -442,7 +442,7 @@ class CrontabController extends Controller
                 'play_times'=>$pb['play_times'],
             );
            $pub_hotel_list = $pub_ads_hotel->getAdsHotelId($pb['id']);
-           // var_dump($pub_hotel_list);
+         
             if ( !empty($pub_hotel_list) ) {
                 foreach($pub_hotel_list as $pc=>$pd) {
                     //获取当前酒店所有机顶盒
@@ -531,6 +531,19 @@ class CrontabController extends Controller
                                 }
                             }
                         }
+                    } else {
+                        $tmpbox = array(
+                            'bid'=>0,
+                            'bname'=>'',
+                            'rid'=>0,
+                            'rname'=>'',
+                            'hid'=>$pd['hotel_id'],
+                            'hname'=>'',
+                            'pub_ads_id'=>  $pb['id'],
+                        );
+                        $tmpbox['error_type'] = 8;
+
+                        $tmp_res = $pub_ads_box_error->addData($tmpbox);
                     }
                 }
             }
