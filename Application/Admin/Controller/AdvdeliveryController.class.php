@@ -433,7 +433,7 @@ class AdvdeliveryController extends BaseController {
             $this->assign('to_state', $tou_state);
         }
 
-        $field = 'ads.name,pads.id,pads.start_date,pads.end_date, pads.type type';
+        $field = 'ads.name,pads.id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $result = $pubadsModel->getList($field, $where, $orders,$start,$size);
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);
@@ -452,6 +452,13 @@ class AdvdeliveryController extends BaseController {
                 $v['state'] = '投放完毕';
             }
 
+            if($v['stap'] == 3) {
+                $v['stap'] = '广告发布中';
+            } elseif($v['stap'] == 0){
+                $v['stap'] = '广告发布完毕';
+            } elseif($v['stap'] == 1){
+                $v['stap'] = '广告可以投放';
+            }
 
         });
 
@@ -527,7 +534,7 @@ class AdvdeliveryController extends BaseController {
             $this->error('广告正在发布中');
         }
         $this->assign('pubadsid', $adsid);
-        $size   = I('numPerPage',2);//显示每页记录数
+        $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -639,11 +646,11 @@ class AdvdeliveryController extends BaseController {
         foreach($result['list'] as &$rv) {
             $rv['ind'] = $ind;
             if($rv['error_type'] == 0) {
-                $rv['error_msg'] = $rv['hname'].$rv['rname'] .$rv['bname']
-                    .'的'.$rv['bid'].'发送成功';
+                $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname']
+                    .'发送成功';
             }else{
-                $rv['error_msg'] = $rv['hname'].$rv['rname'] .$rv['bname']
-                    .'的'.$rv['bid'].$error_state[$rv['error_type']];
+                $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname'].'  '
+                    .$error_state[$rv['error_type']];
             }
             $ind++;
         }

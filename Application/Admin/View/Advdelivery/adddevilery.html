@@ -146,6 +146,7 @@
 	<input type="hidden" id="honame" value="{$host_name}">
 	<input type="hidden" id="bczhi" />
 	<!--<input type="hidden" name="hbarr" id="hba" />-->
+	<input type="hidden" id="newarr" value=""/>
 	<input type="hidden" name="hbarr" id="hbars" />
 	<input type="hidden" name="screenadv_type" id="scree_type" value="2"/>
 	<div class="form-group row">
@@ -446,6 +447,7 @@ $('.select-position').on('click','.position-one',function(){
 				_this.next().attr('nnum',a_this_click)
 				var vbczhi = eval($('#newarr').val())
 	if($('#bczhi').val()!=''){
+		console.log(vbczhi)
 		for(var z=0;z<vbczhi.length;z++){
 			if(vbczhi[z].namejiu==__this.html()){
 				var v = vbczhi[z].banid
@@ -487,6 +489,20 @@ $('.select-position').on('click','.position-ones',function(){
 			$(this).parents().next().find('input').prop('checked',true);
 		}else if(check_position==false){
 			$(this).parents().next().find('input').prop('checked',false);
+		}
+	}else{
+		if($(this).prop('checked')==false){
+			$('#box_qx').prop('checked',false)
+		}else{
+			var true_che = 0;
+			$('.position-one').each(function(){
+				if($(this).find('input').prop('checked')==true){
+					true_che+=1;
+				}
+			})
+			if($('.position-one').length==true_che){
+				$('#box_qx').prop('checked',true)
+			}
 		}
 	}
 })
@@ -703,8 +719,12 @@ $('#xuanzhe_btn').click(function(){
 				$('.position-list-group').each(function(){
 					arr_null.push($(this).prop('id'))
 				})
+				if(arr_null==''){
+					$('.banweishu').html('0')
+				}
 				addAjaxBoxNum(JSON.stringify(arr_null))
 				$('.jiuloushuliang').html($('.position-list-group').length)
+				
 			}
 		}
 	})
@@ -740,6 +760,7 @@ $('.acitve-position-lists').on('click','.acitve-position-del',function(){
 			arr_null.push($(this).prop('id'))
 		})
 		addAjaxBoxNum(JSON.stringify(arr_null))
+		
 		$('.jiuloushuliang').html($('.position-list-group').length)
 	}
 	})
@@ -985,6 +1006,9 @@ function addAjaxBoxNum(datas){ //获取版位数量
 			console.log(call);
 			
 				$('.banweishu').html(parseInt(call.num))
+				if($('.jiuloushuliang').html()=='0'){
+					$('.banweishu').html('0')
+				}
 			
 		}
 	});
