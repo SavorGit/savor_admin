@@ -551,14 +551,22 @@ class AdvdeliveryController extends BaseController {
             $where = 'adhotel.pub_ads_id='.$adsid.' and  sht.flag=0 and
          box.flag=0 and  room.flag=0 ';
             $field = 'COUNT(DISTINCT box.id) total';
+           // $field = 'box.id bid';
             $pub_ads_hotel_Model = new \Admin\Model\PubAdsHotelModel();
             $group = '';
             $total_arr = $pub_ads_hotel_Model->getCurrentBox($field, $where,         $group);
+
+
             $count = $total_arr[0]['total'];
+            //机顶盒为空的情况
+            $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
+            $field = 'count(*) ct';
+            $where = ' 1=1 and bid = 0 and pub_ads_id='.$adsid;
+            $group = '';
+            $box_empty_count = $pub_ads_box_error->getWhere($where, $field, $group);
+            $count = $box_empty_count[0]['ct'] + $count;
             $objPage = new Page($count,$size);
             $show = $objPage->admin_page();
-
-            $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
             $where = '1=1 and pub_ads_id='.$adsid;
             $not_normal_arr = $pub_ads_box_error->getList($where, $order,
                 $start, $size);
@@ -613,10 +621,15 @@ class AdvdeliveryController extends BaseController {
             $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
             $normal_box_arr = $pub_ads_box_Model->getBoxInfoBySize
             ($field, $where, $order,$group, $start, $size);
+            //var_dump($pub_ads_box_Model->getLastSql());
+
             if(empty($normal_box_arr['list'])) {
                 $count = 0;
             } else {
-                $count = $normal_box_arr['list'][0]['boxnum'];
+                $field = " count(DISTINCT box_id) as bnum";
+                $where = '1=1 and pub_ads_id='.$adsid;
+                $count = $pub_ads_box_Model->getWhere($where, $field);
+                $count = $count[0]['bnum'];
             }
 
             $objPage = new Page($count,$size);
@@ -649,8 +662,16 @@ class AdvdeliveryController extends BaseController {
                 $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname']
                     .'发送成功';
             }else{
-                $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname'].'  '
-                    .$error_state[$rv['error_type']];
+                if($rv['error_type'] == 8) {
+                    //获取酒楼信息
+                    $hotelModel = new \Admin\Model\HotelModel();
+                    $hotel_info = $hotelModel->getOne($rv['hid']);
+                    $rv['error_msg'] = '酒楼：'.$hotel_info['name'].' '.$error_state[$rv['error_type']];
+                } else{
+                    $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname'].'  '
+                        .$error_state[$rv['error_type']];
+                }
+
             }
             $ind++;
         }
@@ -700,14 +721,23 @@ class AdvdeliveryController extends BaseController {
         //求出失败对应版位数
         $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
         $field = 'hid hotel_id, count(distinct bid) boxnum';
-        $where = '1=1 and pub_ads_id='.$adsid;
+        $where = ' 1=1 and bid <>0 and pub_ads_id='.$adsid;
         $group = 'hid';
         $not_normal_arr = $pub_ads_box_error->getWhere($where, $field,
             $group);
         $not_box_arr = array_column($not_normal_arr,'boxnum');
         $not_hotel_arr = array_column($not_normal_arr,'hotel_id');
         $not_hotel_arr = array_unique($not_hotel_arr);
-        $hotel_arr = array_merge($normal_hotel_arr, $not_hotel_arr);
+        //求出机顶盒为空的情况
+        $field = 'hid';
+        $where = ' 1=1 and bid = 0 and pub_ads_id='.$adsid;
+        $group = '';
+        $box_empty_arr = $pub_ads_box_error->getWhere($where, $field,
+            $group);
+        $box_empty_arr = array_column($box_empty_arr,'hid');
+        $box_empty_arr = array_unique($box_empty_arr);
+        $not_hotel_arr = array_merge($not_hotel_arr,$box_empty_arr);
+        $hotel_arr = array_merge($not_hotel_arr,$normal_hotel_arr);
         $hotel_arr = array_unique($hotel_arr);
         $hotel_num = count($hotel_arr);
         $not_box_num = array_sum($not_box_arr);
