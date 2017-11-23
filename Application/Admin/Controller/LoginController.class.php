@@ -53,7 +53,7 @@ class LoginController extends BaseController {
             $userpwd  = I('post.password', '', "trim");
             if($userName && $userpwd) {
                 $user = new \Admin\Model\UserModel();
-                $where = "1 and a.username='".$userName."'";
+                $where = "1 a.status = 1 and a.username='".$userName."'";
                 //$result = $user->getUser($where);
                 $fields = " a.*,b.area_city";
                 $result = $user->getGourpList($fields,$where);
