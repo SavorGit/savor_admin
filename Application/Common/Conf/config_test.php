@@ -1,6 +1,6 @@
 <?php
-$DB_MASTER_HOST = '192.168.2.145';
-$DB_SLAVE_HOST  = '192.168.2.145';
+$DB_MASTER_HOST = '172.16.1.116';
+$DB_SLAVE_HOST  = '172.16.1.116';
 $db_name = 'cloud';
 $db_user = 'phpweb';
 $db_pwd = '123456';
