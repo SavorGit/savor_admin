@@ -71,7 +71,7 @@ class OptionuserController extends BaseController{
         $fields = 'a.id,a.remark'; 
         $where  = array();
         $where['a.status'] = 1;
-        $where['b.name'] = '酒楼运维';
+        $where['b.name'] = array('like','酒楼运维%');
         $order = 'a.id asc';
         $limit = '';
         

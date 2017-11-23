@@ -113,7 +113,7 @@ class TouruserController extends BaseController {
 		$box_detail = $box_info['list'];
 		$box_detail = $this->changeRepairDetail($box_detail);
 		$sysusergroup  = new \Admin\Model\SysusergroupModel();
-		$map['sgr.name'] = '酒楼运维';
+		$map['sgr.name'] = array('like','酒楼运维%');
 		$map['su.status'] = '1';
 		$field = 'su.id uid,su.remark';
 		$userarr =  $sysusergroup->getOpeprv($map, $field);
