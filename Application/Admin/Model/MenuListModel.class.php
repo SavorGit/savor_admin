@@ -24,7 +24,7 @@ class MenuListModel extends BaseModel
 
 	}
 
-	//É¾³ýÊý¾Ý
+	//É¾ï¿½ï¿½ï¿½ï¿½ï¿½
 	public function delData($id) {
 		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";
 		$result = $this -> execute($delSql);
@@ -35,14 +35,20 @@ class MenuListModel extends BaseModel
 	{
 
 
-		$list = $this->where($where)
-			->order($order)
-			->limit($start,$size)
-			->select();
+		$list = $this->alias('a')
+		            ->join('savor_sysuser as sysuser on a.creator_id=sysuser.id','left')
+		            ->join('savor_sysusergroup as sysgroup on sysuser.groupId=sysgroup.id','left')
+		            ->where($where)
+			        ->order($order)
+			        ->limit($start,$size)
+			        ->select();
 
 
-		$count = $this->where($where)
-			->count();
+		$count = $this->alias('a')
+		              ->join('savor_sysuser as sysuser on a.creator_id=sysuser.id','left')
+		              ->join('savor_sysusergroup as sysgroup on sysuser.groupId=sysgroup.id','left')
+		              ->where($where)
+			          ->count();
 
 		$objPage = new Page($count,$size);
 
@@ -73,7 +79,7 @@ class MenuListModel extends BaseModel
 
 	/**
 	 * @param $res  ??????
-	 * @param $des  ??????¡À¨º
+	 * @param $des  ??????ï¿½ï¿½ï¿½ï¿½
 	 */
 
 	public function myCopyFunc($res, $des) {
@@ -82,7 +88,7 @@ class MenuListModel extends BaseModel
 
 			$d_fp=fopen($des,"w+");
 			//$fres=fread($r_fp,filesize($res));
-			//¡À???¡À???
+			//ï¿½ï¿½???ï¿½ï¿½???
 			$buffer=1024;
 			$fres="";
 			while(!feof($r_fp)) {
