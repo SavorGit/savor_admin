@@ -36,6 +36,7 @@ class MenuListModel extends BaseModel
 
 
 		$list = $this->alias('a')
+		             ->field('a.*')
 		            ->join('savor_sysuser as sysuser on a.creator_id=sysuser.id','left')
 		            ->join('savor_sysusergroup as sysgroup on sysuser.groupId=sysgroup.id','left')
 		            ->where($where)
