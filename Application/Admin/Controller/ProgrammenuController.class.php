@@ -444,36 +444,21 @@ smlist.menu_name';
         $name = I('titlename');
         $beg_time = I('starttime','');
         $end_time = I('end_time','');
-        if($beg_time)   $where.=" AND create_time>='$beg_time 00:00:00'";
-        if($end_time)   $where.=" AND create_time<='$end_time 23:59:59'";
+        if($beg_time)   $where.=" AND a.create_time>='$beg_time 00:00:00'";
+        if($end_time)   $where.=" AND a.create_time<='$end_time 23:59:59'";
         if($name)
         {
             $this->assign('name',$name);
-            $where .= "	AND menu_name LIKE '%{$name}%' ";
+            $where .= "	AND a.menu_name LIKE '%{$name}%' ";
 
         }
-        $prhoModel = new \Admin\Model\ProgramMenuHotelModel();
         $userinfo = session('sysUserInfo');
-        $pcity = $userinfo['area_city'];
-        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])){
-            $pawhere = '1=1';
-            $result = $mlModel->getList($where,$orders,$start,$size);
-        } else {
-            $pawhere = '1=1 and area_id = '.$pcity;
-            //包含酒楼
-            $pafield = 'DISTINCT smh.menu_id id';
-            $men_arr = $prhoModel->getPrvMenu($pafield, $pawhere);
-            if($men_arr){
-                $men_id_arr = array_column($men_arr, 'id');
-                $menu_id_str = implode(',', $men_id_arr);
-                $where .= " and( id in ($menu_id_str) ";
-                $where .= " or `hotel_num`= 0 )";
-                $result = $mlModel->getList($where,$orders,$start,$size);
-            }else{
-                $where .= " and `hotel_num`= 0 ";
-                $result = $mlModel->getList($where,$orders,$start,$size);
-            }
+        $area_city = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city']) ){
+        }else{
+            $where .= " and sysgroup.area_city=$area_city";
         }
+        $result = $mlModel->getList($where,$orders,$start,$size);
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
