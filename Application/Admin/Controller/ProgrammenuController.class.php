@@ -722,9 +722,17 @@ smlist.menu_name';
                 $field = "spi.ads_name,spi.ads_id,spi.duration,spi.sort_num,sads.create_time";
                 $where .= " AND spi.menu_id={$menuid}  ";
                 $res = $mItemModel->getCopyMenuInfo($where, $order, $field);
-                array_walk($res, function(&$v, $k) {
+
+                //获取广告占位符
+                $result_adsoc = $this->getAdsOccup();
+                $adsoc_arr = array_column($result_adsoc, 'name');
+                $adsoc_arr = array_flip($adsoc_arr);
+                array_walk($res, function(&$v, $k)use($adsoc_arr) {
                    if(empty($v['create_time'])) {
                        $v['create_time'] = '无';
+                   }
+                   if(array_key_exists($v['ads_name'], $adsoc_arr)) {
+                       $v['type'] = 33;
                    }
                 });
                 $this->assign('menuid', $menuid);
