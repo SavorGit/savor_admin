@@ -86,18 +86,7 @@ $("#hotlconfirmbai").click(function(){
           $("#pubhotelhotel").val(chk_pushhotel);
 });
 
-function navTabAjaxDone(json){
-  console.log(json);
-  DWZ.ajaxDone(json);
-  //navTab.reloadFlag('menu/getlist');
-  //注意返回的JSON的数据结构
-  if(json.navTabId == 'programmenu/getlistgetlist') {
-    navTab.closeTab('programmenu/selecthotelselect');
-    navTab.reload('programmenu/getlist');
-    $( "div" ).removeClass( "modal-backdrop fade in" );
-  }
 
-}
 
 
 </script>

@@ -163,7 +163,7 @@ class ProgrammenuController extends BaseController {
                $res =  $menuliModel->addData($dat,1);
                 if($res) {
                     $menuHoModel->commit();
-                    $this->output('发布成功了!', 'programmenu/getlistgetlist');
+                    $this->output('发布成功了!', 'programmenu/getlist');
                 } else {
                     $menuHoModel->rollback();
                     $this->error('发布失败了!');
