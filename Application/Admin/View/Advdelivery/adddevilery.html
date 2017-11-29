@@ -239,7 +239,7 @@
 		</div>
 </form>
 <!--选择版位-->
-<div class="modal fade bs-example-modal-lg" id="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<div class="modal fade bs-example-modal-lg" id="modales" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -343,15 +343,6 @@
 
 	})
 
-	function dialogAjaxDone(json) {
-		console.log(json);
-		DWZ.ajaxDone(json);
-		if(json.navTabId == 'advdelivery/getadvdeliverylist') {
-			navTab.closeTab('Advdelivery/adddevilery');
-			navTab.reload('advdelivery/getlist');
-			$( "div" ).removeClass( "modal-backdrop fade in" );
-		}
-	}
 	
 </script>
 
@@ -375,7 +366,7 @@ $('.tianjiabw').click(function(){
 		alert('请添加视频')
 	}else if(tsnull==1){
 	boiteName()
-	$('#modal').modal('show');
+	$('#modales').modal('show');
 		if($('#rad_jiulou').prop('checked')==false){
 			$('.select-position-top').eq(0).show();
 			$('.select-position-top').eq(1).hide();
@@ -786,7 +777,7 @@ $('#bw_bc').click(function(){
 			var aaa = '<div class="ban_a" id="'+bczhi_vals[i].banid[j]+'">'+bczhi_vals[i].jiunum[j]+'</div>'
 				$('.ban_names').eq(i).append(aaa)
 			}
-			$('#modal').modal('hide')
+			$('#modales').modal('hide')
 			$('.jiuloushu span').eq(0).html($('.jiuloushuliang').html())
 			$('.jiuloushu span').eq(1).html($('.banweishu').html())
 			/*var bczhi_bid = bczhi_vals[i].banid;
@@ -813,7 +804,7 @@ $('#bw_bc').click(function(){
 			})
 			$('.jiuloushu').find('span').eq(0).html($('.jiuloushuliang').html())
 			$('.jiuloushu').find('span').eq(1).html($('.banweishu').html())
-			$('#modal').modal('hide');
+			$('#modales').modal('hide');
 		}
 	}
 })

@@ -438,36 +438,7 @@
     });
 
 
-    /*function dialogAjaxDone(json){
-        //上一次的rel链接
 
-        //  $.pdialog.open(url, dlgId, title);
-        //   navTab.closeCurrentTab();
-        // navTab.closeTab(json.navTabId);
-        DWZ.ajaxDone(json);
-        // alert(json);
-        jap = JSON.stringify(json);
-        console.log(jap);
-        var $pagerForm = $("#pagerForm", navTab.getCurrentPanel());
-        var args = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
-        console.log(navTab.getCurrentPanel());
-        console.log($pagerForm);
-        alert(jap);
-        // navTab.closeTab('clientconfig/addclientconfig');
-        // navTab.reload('clientconfig/configdata');
-        //navTab.reloadFlag('Sysconfig/configData');
-        //注意返回的JSON的数据结构
-        //navTab.closeTab('abce');
-        if (json.status == DWZ.statusCode.ok){
-            if (json.navTabId){
-                $.pdialog.closeCurrent();
-                // navTab.reload('clientconfig/configdatar');
-            }
-
-
-        }
-
-    }*/
     function dialogAjaxDone(json){
         DWZ.ajaxDone(json);
         if(json.navTabId == 'hotel/doaddsuccess') {

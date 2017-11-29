@@ -72,7 +72,7 @@ class AdvdeliveryController extends BaseController {
                 $res = $pub_ads_hotelModel->addAll($datp);
                 if($res) {
                     $pubadsModel->commit();
-                    $this->output('添加成功','advdelivery/getadvdeliverylist');
+                    $this->output('添加成功','advdelivery/getlist');
                 }else {
                     $pubadsModel->rollback();
                     $this->error('添加失败');
@@ -107,7 +107,7 @@ class AdvdeliveryController extends BaseController {
                 $res = $pubadsBoxModel->addAll($data);
                 if($res) {
                     $pubadsModel->commit();
-                    $this->output('添加成功','advdelivery/getadvdeliverylist');
+                    $this->output('添加成功','advdelivery/getlist');
                 }else {
                     $pubadsModel->rollback();
                     $this->error('添加失败');
