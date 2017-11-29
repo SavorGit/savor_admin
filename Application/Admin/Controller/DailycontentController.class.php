@@ -128,7 +128,7 @@ class DailycontentController extends BaseController {
             }
             if ($resp) {
                 $dailylkModel->commit();
-                $this->output('添加成功!', 'dailycontent/dailysortdailysort');
+                $this->output('添加成功!', 'dailycontent/rplist');
             } else {
                 $dailylkModel->rollback();
                 $this->error('添加失败');
