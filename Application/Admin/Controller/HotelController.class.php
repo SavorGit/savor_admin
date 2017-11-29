@@ -1241,7 +1241,7 @@ smlist.menu_name';
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('操作成功!', 'hotel/doAddPubtype1');
+				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
