@@ -130,14 +130,5 @@ function changeType(val){
   });
 
 
-function dialogAjaxDone(json) {
-	console.log(json);
-	DWZ.ajaxDone(json);
-	if(json.navTabId == 'versionversion/client') {
-		//navTab.closeTab('versionaddsqlup');
-		$.pdialog.close('versionaddUpgradeClient');
-		navTab.reload('version/client');
-		//$( "div" ).removeClass( "modal-backdrop fade in" );
-	}
-}
+
 </script>
