@@ -1430,12 +1430,12 @@ WHERE id IN (1,2,3)*/
             $org_arr = explode(',',I('post.org_str',''));
             if($org_arr == $artid_arr){
                 //保持顺序没变
-                $this->outputNew('保存排序成功','Checkaccount/rplist',2,1);
+                $this->outputNew('保存排序成功','article/hotsortmanager');
             }else{
                 //
                 $bool = $artModel->updateSortNum($artid_arr, $sort_arr);
                 if($bool){
-                    $this->outputNew('保存排序成功','Checkaccount/rplist',2,1);
+                    $this->output('保存排序成功','article/hotsortmanager');
                 }else{
                     $this->error('保存排序失败');
                 }
