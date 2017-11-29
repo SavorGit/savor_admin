@@ -27,7 +27,7 @@
 <div class="pageContent">
   <form method="post" action="{$host_name}/hotel/doAdd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="id" value="{$vinfo.id}">
-
+      <input type="hidden" name="navtp" value="{$navtp}">
     <div class="pageFormContent modal-body">
 
       <div class="form-group row">
@@ -439,13 +439,5 @@
 
 
 
-    function dialogAjaxDone(json){
-        DWZ.ajaxDone(json);
-        if(json.navTabId == 'hotel/doaddsuccess') {
-            // alert($.pdialog._current);
-            // $.pdialog.close('hotel/xuanchuanxiugai');
-            $.pdialog.closeCurrent();
-            navTab.reload('hotel/manager');
-        }
-    }
+    
 </script>
