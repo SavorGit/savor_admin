@@ -435,31 +435,78 @@ class AdvdeliveryController extends BaseController {
 
         $field = 'ads.name,pads.id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $result = $pubadsModel->getList($field, $where, $orders,$start,$size);
+       // var_export($result);
+
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);
             $v['start_date'] = strtotime( $v['start_date'] );
             $v['end_date'] = strtotime( $v['end_date'] );
+            if( 1 == $v['type'] ) {
+                $v['pub'] = '按版位发布';
+                if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
 
-            if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
-
-                $v['tp'] = 2;
-                $v['state'] = '投放中';
-            } else if ($now_date < $v['start_date'] ) {
-                $v['tp'] = 1;
-                $v['state'] = '未到投放时间';
-            } else {
-                $v['tp'] = 3;
-                $v['state'] = '投放完毕';
+                    $v['tp'] = 2;
+                    $v['state'] = '投放中';
+                } else if ($now_date < $v['start_date'] ) {
+                    $v['tp'] = 1;
+                    $v['state'] = '未到投放时间';
+                } else {
+                    $v['tp'] = 3;
+                    $v['state'] = '投放完毕';
+                }
+                $v['stap'] = '';
             }
+            if( 2 == $v['type']) {
+                $v['pub'] = '按酒楼发布';
+                if($v['stap'] == 3) {
+                    $v['stap'] = '版位计算中';
+                    $v['state'] = '';
+                }elseif($v['stap'] == 0){
+                    //判断是否有一个成功的
+                    $where = '1=1 and pub_ads_id='.$v['id'];
+                    $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
+                    $count = $pub_ads_box_Model->getDataCount($where);
+                    if($count>0) {
+                        $v['stap'] = '可投放';
+                        if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
 
-            if($v['stap'] == 3) {
-                $v['stap'] = '广告发布中';
-            } elseif($v['stap'] == 0){
-                $v['stap'] = '广告发布完毕';
-            } elseif($v['stap'] == 1){
-                $v['stap'] = '广告可以投放';
+                            $v['tp'] = 2;
+                            $v['state'] = '投放中';
+                        } else if ($now_date < $v['start_date'] ) {
+                            $v['tp'] = 1;
+                            $v['state'] = '未到投放时间';
+                        } else {
+                            $v['tp'] = 3;
+                            $v['state'] = '投放完毕';
+                        }
+                    } else {
+                        $v['stap'] = '不可投放';
+                        $v['state'] = '';
+                    }
+                }elseif($v['stap'] == 1){
+                    //判断是否有一个成功的
+                    $where = '1=1 and pub_ads_id='.$v['id'];
+                    $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
+                    $count = $pub_ads_box_Model->getDataCount($where);
+                    if($count>0) {
+                        $v['stap'] = '可投放';
+                        if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
+
+                            $v['tp'] = 2;
+                            $v['state'] = '投放中';
+                        } else if ($now_date < $v['start_date'] ) {
+                            $v['tp'] = 1;
+                            $v['state'] = '未到投放时间';
+                        } else {
+                            $v['tp'] = 3;
+                            $v['state'] = '投放完毕';
+                        }
+                    } else {
+                        $v['stap'] = '不可投放';
+                        $v['state'] = '';
+                    }
+                }
             }
-
         });
 
         if($tou_state != 0) {
@@ -513,7 +560,11 @@ class AdvdeliveryController extends BaseController {
         }
         
         $this->assign('areainfo', $area_arr);
-
+        $adv_tou_num = C('ADVE_OCCU')['num'];
+        for($i=1;$i<=$adv_tou_num;$i++) {
+            $touci_arr[$i] = $i.'次';
+        }
+        $this->assign('touci_arr', $touci_arr);
         $this->display('adddevilery');
     }
 

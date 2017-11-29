@@ -207,16 +207,9 @@
 				<label style="float: left;margin-top: 8px;">播放次数</label>
 				<select name="play_times" id="cishu" style="float: left;width: 170px;height: 30px;margin-left: 11px;">
 					<option value="">请选择</option>
-					<option value="1">1次</option>
-					<option value="2">2次</option>
-					<option value="3">3次</option>
-					<option value="4">4次</option>
-					<option value="5">5次</option>
-					<option value="6">6次</option>
-					<option value="7">7次</option>
-					<option value="8">8次</option>
-					<option value="9">9次</option>
-					<option value="10">10次</option>
+					<volist name="touci_arr" id="vot">
+						<option value="{$key}">{$vot}</option>
+					</volist>
 				</select>
 			</div>
 		</div>

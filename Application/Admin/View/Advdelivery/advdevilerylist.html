@@ -55,8 +55,9 @@
           <tr id="post">
             <th>ID</th>
             <th>广告名称</th>
-            <th>投放进程</th>
+            <th>按类型发布</th>
             <th>发布状态</th>
+            <th>投放进程</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -67,13 +68,18 @@
               <td data-title="名称">{$vlist.name}
 
               </td>
+              <td data-title="按类型发布">{$vlist.pub}
 
-              <td data-title="状态" style="text-align:center;">
-                {$vlist['state']}
               </td>
+
               <td data-title="发布状态" style="text-align:center;">
                 {$vlist['stap']}
               </td>
+
+              <td data-title="投放进程" style="text-align:center;">
+                {$vlist['state']}
+              </td>
+
               <td class="table-tool" data-title="操作">
 
                 <div class="tools-edit">
