@@ -160,7 +160,7 @@ class SysconfigController extends BaseController {
             $rt = $m_sys_config->editData($data, 'system_loading_image');
         }
         if($rt){
-            $this->output('操作成功', 'Sysconfig/configvideo', 1);
+            $this->output('操作成功', 'Sysconfig/configData');
         }else {
             $this->error('操作失败');
         }
