@@ -240,6 +240,7 @@ $config['ZHI_XIANG_CONFIG'] = array(
     'key_ticket'=>'savor_wx_zhixiang_jsticket',
     'key_token'=>'savor_wx_zhixiang_token',
     'cardapi_ticket'=>'savor_wx_zhixiang_cardapiticket',
+    'token'=>'savor',
 );
 
 $config['UMENT_API_CONFIG'] = array(
