@@ -141,7 +141,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "versionversion/$name";
+	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');
@@ -242,7 +242,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "versionversion/$name";
+	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');
@@ -339,7 +339,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "versionversion/$name";
+	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');
@@ -436,7 +436,7 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $navTab = "versionversion/$name";
+	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{
 	            $this->error('新增升级版本失败');
@@ -827,7 +827,7 @@ class VersionController extends BaseController{
 		}else{
 			$res_save = $deviceModel->add($save);
 			if($res_save){
-				$this->output('添加语句成功!', 'version/sqlupsuccess');
+				$this->output('添加语句成功!', 'version/sqlup');
 			}else{
 				$this->error('操作失败!');
 			}

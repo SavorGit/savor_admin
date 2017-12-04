@@ -72,7 +72,7 @@ class AdvdeliveryController extends BaseController {
                 $res = $pub_ads_hotelModel->addAll($datp);
                 if($res) {
                     $pubadsModel->commit();
-                    $this->output('添加成功','advdelivery/getadvdeliverylist');
+                    $this->output('添加成功','advdelivery/getlist');
                 }else {
                     $pubadsModel->rollback();
                     $this->error('添加失败');
@@ -107,7 +107,7 @@ class AdvdeliveryController extends BaseController {
                 $res = $pubadsBoxModel->addAll($data);
                 if($res) {
                     $pubadsModel->commit();
-                    $this->output('添加成功','advdelivery/getadvdeliverylist');
+                    $this->output('添加成功','advdelivery/getlist');
                 }else {
                     $pubadsModel->rollback();
                     $this->error('添加失败');
@@ -435,31 +435,78 @@ class AdvdeliveryController extends BaseController {
 
         $field = 'ads.name,pads.id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $result = $pubadsModel->getList($field, $where, $orders,$start,$size);
+       // var_export($result);
+
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);
             $v['start_date'] = strtotime( $v['start_date'] );
             $v['end_date'] = strtotime( $v['end_date'] );
+            if( 1 == $v['type'] ) {
+                $v['pub'] = '按版位发布';
+                if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
 
-            if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
-
-                $v['tp'] = 2;
-                $v['state'] = '投放中';
-            } else if ($now_date < $v['start_date'] ) {
-                $v['tp'] = 1;
-                $v['state'] = '未到投放时间';
-            } else {
-                $v['tp'] = 3;
-                $v['state'] = '投放完毕';
+                    $v['tp'] = 2;
+                    $v['state'] = '投放中';
+                } else if ($now_date < $v['start_date'] ) {
+                    $v['tp'] = 1;
+                    $v['state'] = '未到投放时间';
+                } else {
+                    $v['tp'] = 3;
+                    $v['state'] = '投放完毕';
+                }
+                $v['stap'] = '';
             }
+            if( 2 == $v['type']) {
+                $v['pub'] = '按酒楼发布';
+                if($v['stap'] == 3) {
+                    $v['stap'] = '版位计算中';
+                    $v['state'] = '';
+                }elseif($v['stap'] == 0){
+                    //判断是否有一个成功的
+                    $where = '1=1 and pub_ads_id='.$v['id'];
+                    $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
+                    $count = $pub_ads_box_Model->getDataCount($where);
+                    if($count>0) {
+                        $v['stap'] = '可投放';
+                        if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
 
-            if($v['stap'] == 3) {
-                $v['stap'] = '广告发布中';
-            } elseif($v['stap'] == 0){
-                $v['stap'] = '广告发布完毕';
-            } elseif($v['stap'] == 1){
-                $v['stap'] = '广告可以投放';
+                            $v['tp'] = 2;
+                            $v['state'] = '投放中';
+                        } else if ($now_date < $v['start_date'] ) {
+                            $v['tp'] = 1;
+                            $v['state'] = '未到投放时间';
+                        } else {
+                            $v['tp'] = 3;
+                            $v['state'] = '投放完毕';
+                        }
+                    } else {
+                        $v['stap'] = '不可投放';
+                        $v['state'] = '';
+                    }
+                }elseif($v['stap'] == 1){
+                    //判断是否有一个成功的
+                    $where = '1=1 and pub_ads_id='.$v['id'];
+                    $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
+                    $count = $pub_ads_box_Model->getDataCount($where);
+                    if($count>0) {
+                        $v['stap'] = '可投放';
+                        if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
+
+                            $v['tp'] = 2;
+                            $v['state'] = '投放中';
+                        } else if ($now_date < $v['start_date'] ) {
+                            $v['tp'] = 1;
+                            $v['state'] = '未到投放时间';
+                        } else {
+                            $v['tp'] = 3;
+                            $v['state'] = '投放完毕';
+                        }
+                    } else {
+                        $v['stap'] = '不可投放';
+                        $v['state'] = '';
+                    }
+                }
             }
-
         });
 
         if($tou_state != 0) {
@@ -513,7 +560,11 @@ class AdvdeliveryController extends BaseController {
         }
         
         $this->assign('areainfo', $area_arr);
-
+        $adv_tou_num = C('ADVE_OCCU')['num'];
+        for($i=1;$i<=$adv_tou_num;$i++) {
+            $touci_arr[$i] = $i.'次';
+        }
+        $this->assign('touci_arr', $touci_arr);
         $this->display('adddevilery');
     }
 
@@ -551,14 +602,22 @@ class AdvdeliveryController extends BaseController {
             $where = 'adhotel.pub_ads_id='.$adsid.' and  sht.flag=0 and
          box.flag=0 and  room.flag=0 ';
             $field = 'COUNT(DISTINCT box.id) total';
+           // $field = 'box.id bid';
             $pub_ads_hotel_Model = new \Admin\Model\PubAdsHotelModel();
             $group = '';
             $total_arr = $pub_ads_hotel_Model->getCurrentBox($field, $where,         $group);
+
+
             $count = $total_arr[0]['total'];
+            //机顶盒为空的情况
+            $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
+            $field = 'count(*) ct';
+            $where = ' 1=1 and bid = 0 and pub_ads_id='.$adsid;
+            $group = '';
+            $box_empty_count = $pub_ads_box_error->getWhere($where, $field, $group);
+            $count = $box_empty_count[0]['ct'] + $count;
             $objPage = new Page($count,$size);
             $show = $objPage->admin_page();
-
-            $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
             $where = '1=1 and pub_ads_id='.$adsid;
             $not_normal_arr = $pub_ads_box_error->getList($where, $order,
                 $start, $size);
@@ -613,10 +672,15 @@ class AdvdeliveryController extends BaseController {
             $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
             $normal_box_arr = $pub_ads_box_Model->getBoxInfoBySize
             ($field, $where, $order,$group, $start, $size);
+            //var_dump($pub_ads_box_Model->getLastSql());
+
             if(empty($normal_box_arr['list'])) {
                 $count = 0;
             } else {
-                $count = $normal_box_arr['list'][0]['boxnum'];
+                $field = " count(DISTINCT box_id) as bnum";
+                $where = '1=1 and pub_ads_id='.$adsid;
+                $count = $pub_ads_box_Model->getWhere($where, $field);
+                $count = $count[0]['bnum'];
             }
 
             $objPage = new Page($count,$size);
@@ -649,8 +713,16 @@ class AdvdeliveryController extends BaseController {
                 $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname']
                     .'发送成功';
             }else{
-                $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname'].'  '
-                    .$error_state[$rv['error_type']];
+                if($rv['error_type'] == 8) {
+                    //获取酒楼信息
+                    $hotelModel = new \Admin\Model\HotelModel();
+                    $hotel_info = $hotelModel->getOne($rv['hid']);
+                    $rv['error_msg'] = '酒楼：'.$hotel_info['name'].' '.$error_state[$rv['error_type']];
+                } else{
+                    $rv['error_msg'] = '酒楼：'.$rv['hname'].' 包间：'.$rv['rname'] .' 机顶盒：'.$rv['bname'].'  '
+                        .$error_state[$rv['error_type']];
+                }
+
             }
             $ind++;
         }
@@ -700,14 +772,23 @@ class AdvdeliveryController extends BaseController {
         //求出失败对应版位数
         $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
         $field = 'hid hotel_id, count(distinct bid) boxnum';
-        $where = '1=1 and pub_ads_id='.$adsid;
+        $where = ' 1=1 and bid <>0 and pub_ads_id='.$adsid;
         $group = 'hid';
         $not_normal_arr = $pub_ads_box_error->getWhere($where, $field,
             $group);
         $not_box_arr = array_column($not_normal_arr,'boxnum');
         $not_hotel_arr = array_column($not_normal_arr,'hotel_id');
         $not_hotel_arr = array_unique($not_hotel_arr);
-        $hotel_arr = array_merge($normal_hotel_arr, $not_hotel_arr);
+        //求出机顶盒为空的情况
+        $field = 'hid';
+        $where = ' 1=1 and bid = 0 and pub_ads_id='.$adsid;
+        $group = '';
+        $box_empty_arr = $pub_ads_box_error->getWhere($where, $field,
+            $group);
+        $box_empty_arr = array_column($box_empty_arr,'hid');
+        $box_empty_arr = array_unique($box_empty_arr);
+        $not_hotel_arr = array_merge($not_hotel_arr,$box_empty_arr);
+        $hotel_arr = array_merge($not_hotel_arr,$normal_hotel_arr);
         $hotel_arr = array_unique($hotel_arr);
         $hotel_num = count($hotel_arr);
         $not_box_num = array_sum($not_box_arr);

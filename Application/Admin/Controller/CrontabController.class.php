@@ -418,6 +418,7 @@ class CrontabController extends Controller
         hname,sht.state hstate ';
         $order = '';
         $box_arr = $hotelModel->getBoxOrderMacByHid($field, $where, $order);
+        
         // $rs = $hotelModel->getLastSql();
         // file_put_contents(LOG_PATH.'baiyutao.log',$rs.PHP_EOL,  FILE_APPEND);
         $box_arr = assoc_unique($box_arr,'bid');
@@ -450,6 +451,7 @@ class CrontabController extends Controller
                 foreach($pub_hotel_list as $pc=>$pd) {
                     //获取当前酒店所有机顶盒
                     $box_arr = $this->getAllBox($pd['hotel_id']);
+                    //var_dump($box_arr);
                    // var_dump($box_arr);
                     if (!empty($box_arr)) {
                         //筛选出可以用的机顶盒
@@ -535,7 +537,7 @@ class CrontabController extends Controller
                             }
                         }
                     } else {
-                        $tmpbox = array(
+                        $tpp_b = array(
                             'bid'=>0,
                             'bname'=>'',
                             'rid'=>0,
@@ -544,9 +546,9 @@ class CrontabController extends Controller
                             'hname'=>'',
                             'pub_ads_id'=>  $pb['id'],
                         );
-                        $tmpbox['error_type'] = 8;
+                        $tpp_b['error_type'] = 8;
 
-                        $tmp_res = $pub_ads_box_error->addData($tmpbox);
+                        $tmp_res = $pub_ads_box_error->addData($tpp_b);
                     }
                 }
             }

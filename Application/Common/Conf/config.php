@@ -221,8 +221,28 @@ $config['WX_DYH_CONFIG'] = array(
 );
 $config['WX_FWH_CONFIG'] = array(
     'appid'=>'wx7036d73746ff1a14',
-    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',  
+    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',
+    'key_ticket'=>'savor_wx_xiaorefu_jsticket',
+    'key_token'=>'savor_wx_xiaorefu_token',
 );
+
+$config['XIAO_REDIAN_DING'] = array(
+    'appid'=>'wxb19f976865ae9404',
+    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
+    'key_ticket'=>'savor_wx_xiaore_jsticket',
+    'key_token'=>'savor_wx_xiaore_token',
+);
+
+
+$config['ZHI_XIANG_CONFIG'] = array(
+    'appid'=>'wx75025eb1e60df2cf',
+    'appsecret'=>'32427ebb0caae2d9e76747fed56e2071',
+    'key_ticket'=>'savor_wx_zhixiang_jsticket',
+    'key_token'=>'savor_wx_zhixiang_token',
+    'cardapi_ticket'=>'savor_wx_zhixiang_cardapiticket',
+    'token'=>'savor',
+);
+
 $config['UMENT_API_CONFIG'] = array(
      'API_URL'=>'http://msg.umeng.com/api/send',
      'opclient'=>array(

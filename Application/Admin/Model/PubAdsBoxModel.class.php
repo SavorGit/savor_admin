@@ -75,6 +75,13 @@ class PubAdsBoxModel extends BaseModel
 		return $list;
 	}
 
+	public function getDataCount($where){
+		$count = $this->where($where)
+			->count();
+		return $count;
+
+	}
+
 
 	public function getList($where, $order='id desc', $start=0,$size=5)
 	{

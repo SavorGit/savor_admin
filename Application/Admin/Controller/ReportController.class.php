@@ -37,7 +37,7 @@ class ReportController extends BaseController{
         $save['update_time'] = date('Y-m-d H:i:s');
         if($id){
             if($smWarn->where('id='.$id)->save($save)){
-                $this->output('操作成功!', 'report/doeditsmallplatwarn');
+                $this->output('操作成功!', 'report/smallplatwarn');
             }else{
                 $this->output('操作失败!', 'report/smallplatwarn');
             }

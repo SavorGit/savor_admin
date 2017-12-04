@@ -315,14 +315,5 @@ $('#checkfan').click(function(){
 	})
 
 
-	function dialogAjaxDone(json) {
-		console.log(json);
-		DWZ.ajaxDone(json);
-		if(json.navTabId == 'versionversion/platform') {
-			//navTab.closeTab('versionaddsqlup');
-			$.pdialog.close('versionaddUpgradePlatform');
-			navTab.reload('version/platform');
-			//$( "div" ).removeClass( "modal-backdrop fade in" );
-		}
-	}
+
 </script>

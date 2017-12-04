@@ -48,7 +48,7 @@
 
 
 <div class="pageHeader">
-  <form id="pagerForm"  method="post" action="{$host_name}/article/addHotSort"   onsubmit="return iframeCallback(this, dialogAjaxDoneIce)">
+  <form id="pagerForm"  method="post" action="{$host_name}/article/addHotSort"   onsubmit="return iframeCallback(this, dialogAjaxDone)">
 
     <input type="hidden" name="numPerPage" value="{$numPerPage}" />
     <input type="hidden" name="pageNum" value="{$pageNum}" />
@@ -102,16 +102,7 @@
 
 
 <SCRIPT LANGUAGE="JavaScript">
-  function dialogAjaxDoneIce(json) {
 
-    DWZ.ajaxDone(json);
-    console.log(json);
-    if (json.url == 'checkaccounterr') {
-      navTab.reloadFlag('article/hotsortmanager');
-      $.pdialog.closeCurrent();
-
-    }
-  }
 
 
   function savp(){
