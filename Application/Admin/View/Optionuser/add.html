@@ -122,8 +122,8 @@
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
       <select id="inch" name="manage_city[]" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
-       <volist name="areaList" id="list">
-           <option value="{$list.id}">{$list.region_name}</option>
+       <volist name="areaList" key="k" id="list">
+           <option <if condition="$list.id eq 9999">selected="selected" </if> value="{$list.id}">{$list.region_name}</option>
        </volist>
       </select>
     </span>
@@ -137,8 +137,8 @@
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
       <select id="inch" name="manage_city_one" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body"  >
-       <volist name="city_area_list" id="list">
-           <option value="{$list.id}">{$list.region_name}</option>
+       <volist name="city_area_list" key="k" id="list">
+           <option <if condition="$list.id eq 1">selected="selected" </if> value="{$list.id}">{$list.region_name}</option>
        </volist>
       </select>
     </span>
