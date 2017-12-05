@@ -1194,6 +1194,7 @@ smlist.menu_name';
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+		//$this->output('操作成功!', 'hotel/pubmanager');
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
@@ -1280,7 +1281,7 @@ smlist.menu_name';
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('添加宣传片成功!', 'hotel/doAddPubtype1');
+				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
