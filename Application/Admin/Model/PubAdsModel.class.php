@@ -13,13 +13,15 @@ class PubAdsModel extends BaseModel
 {
 	protected $tableName='pub_ads';
 
-	public function getBoxPlayTimes($where, $field) {
+	public function getBoxPlayTimes($where, $field, $group) {
 		$list = $this->alias('ads')
 					 ->where($where)
 					 ->join('savor_pub_ads_box ads_box ON ads.id
 					 = ads_box.pub_ads_id')
 			         ->field($field)
+					 ->group($group)
 			         ->select();
+		//print_r($this->getLastSql());
 		return $list;
 	}
 
