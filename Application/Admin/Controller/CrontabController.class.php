@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 use Common\Lib\UmengApi;
 use Think\Controller;
+use Common\Lib\SimFile;
 
 /**
  * @desc 定时任务
@@ -9,6 +10,9 @@ use Think\Controller;
  */
 class CrontabController extends Controller
 {
+    public $copy_j = array();
+
+
     public function report(){
         //酒楼总数
         $m_hotel = new \Admin\Model\HotelModel();
@@ -442,7 +446,7 @@ class CrontabController extends Controller
         foreach($pub_ads_list as $pa=>$pb) {
             $dat = array (
                 'start_time'=>$pb['start_date'],
-                'end_time'=>$pb['end_date'].' 23:59:59',
+                'end_time'=>$pb['end_date'],
                 'play_times'=>$pb['play_times'],
             );
            $pub_hotel_list = $pub_ads_hotel->getAdsHotelId($pb['id']);
@@ -455,7 +459,6 @@ class CrontabController extends Controller
                    // var_dump($box_arr);
                     if (!empty($box_arr)) {
                         //筛选出可以用的机顶盒
-                        $map = array();
                         foreach ($box_arr as $bk=> $bv) {
                             $tmpbox = array();
                             $tmpbox = array(
@@ -492,23 +495,44 @@ class CrontabController extends Controller
                                 $tmp_res = $pub_ads_box_error->addData($tmpbox);
                                 continue;
                             } else {
-                                $map['_string'] = "('".$dat['start_time'] ."'
-                            <=ads.end_date and '".$dat['end_time']."' >=
-                            ads.start_date )";
+                                $map = array();
+                                $map['_string'] = " ( ads.`end_date` >= '".$dat['start_time']."' and ads.`start_date` <= '".$dat['end_time']."' ) ";
                                 $map['ads_box.box_id'] = $bv['bid'];
                                 $map['ads.state'] = array('neq', 2);
-                                $mfield = 'ads_box.location_id as lid';
-                                //被占用的数组
-                                $ocu_arr = $pub_adsModel->getBoxPlayTimes($map,
-                                    $mfield);
-                                $ocu_len = count($ocu_arr);
+                                $field = 'COUNT(ads_box.location_id) AS lcount,ads.id,ads.start_date st,ads.end_date se';
+                                $p_tiems = $dat['play_times'];
+                                $group = 'ads.start_date,ads.end_date';
+                                $ocu_arr = $pub_adsModel->getBoxPlayTimes($map, $field, $group);
                                 $bool = false;
                                 if( empty($ocu_arr) ) {
                                     $bool = true;
                                 } else {
+
                                     $adv_promote_num_arr = C('ADVE_OCCU');
                                     $adv_promote_num = $adv_promote_num_arr['num'];
-                                    $l_len = $adv_promote_num-$ocu_len-$dat['play_times'];
+                                    //判断单个日期的所占用广告数
+                                    $start = strtotime($dat['start_time']);
+                                    $end = strtotime($dat['end_time']);
+                                    $datearr = array();
+                                    while($start <= $end){
+                                        $datearr[] = date('Y-m-d',$end);//得到dataarr的日期数组。
+                                        $end = $end - 86400;
+                                    }
+
+                                    $sum = array();
+                                    foreach($datearr as $dk=>$dv) {
+                                        $sum[$dv] = 0;
+                                        foreach($ocu_arr as $ov) {
+                                            if(strtotime($dv) >= strtotime($ov['st'])
+                                                && strtotime($dv) <= strtotime($ov['se'])
+                                            ) {
+                                                $sum[$dv] = $sum[$dv] + $ov['lcount'];
+                                            }
+                                        }
+                                    }
+                                    //求出数组最大值
+                                    $max = max($sum);
+                                    $l_len = $adv_promote_num-$max-$dat['play_times'];
                                     if($l_len>=0) {
                                         //次数足
                                         $bool = true;
@@ -572,5 +596,347 @@ class CrontabController extends Controller
         $m_heart_log->where($where)->delete();
         echo '清除完毕';
         exit;
+    }
+
+    public function generateDir() {
+        //获取需要执行的列表
+        $pub_path     = '';
+        $map          = array();
+        $savor_path   = '';
+        $gendir       = '';
+        $single_list  = array();
+        $pub_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public';
+        $pub_path = $pub_path.DIRECTORY_SEPARATOR;
+        $signle_Model = new \Admin\Model\SingleDriveListModel();
+        $map['state'] = 0;
+        $field='hotel_id_str, gendir';
+        $single_list = $signle_Model->getWhere($map, $field);
+        $smfileModel = new SimFile();
+        if ($single_list) {
+            foreach ($single_list as $sk=>$sv) {
+                $this->copy_j = array();
+                $gendir = $sv['gendir'];
+                $po_th = $pub_path.$gendir;
+                $savor_path = $po_th.DIRECTORY_SEPARATOR.'savor';
+                if ( $smfileModel->create_dir($savor_path) ) {
+                    echo '创建目录'.$savor_path.'成功'.PHP_EOL;
+                    $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
+                    foreach ( $hotel_id_arr as $hv) {
+                        $hotel_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
+                        if ( $smfileModel->create_dir($hotel_path) ) {
+                            echo '创建目录'.$hotel_path.'成功'.PHP_EOL;
+                            $adv_path = $hotel_path.DIRECTORY_SEPARATOR.'adv';
+                            if ( $smfileModel->create_dir($adv_path) ) {
+                                echo '创建目录'.$adv_path.'成功'.PHP_EOL;
+                                //创建json文件
+                                $play_file = $hotel_path.DIRECTORY_SEPARATOR.'play_list.json';
+                                if ( $smfileModel->create_file($play_file, true) ) {
+                                    $info = '';
+                                    echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
+                                    //获取酒楼对应节目单
+                                    $info = $this->getHotelMedia($hv);
+                                    if ( !empty($info) ) {
+                                        if ( 0 == $info['jtype'] ) {
+                                            //复制文件
+                                            $oldpath = '';
+                                            $old_hotel_id = $info['hotel_id'];
+                                            $oldpath = $savor_path.DIRECTORY_SEPARATOR.$old_hotel_id;
+                                            $old_playfile = $oldpath.DIRECTORY_SEPARATOR.'play_list.json';
+                                            if ( $smfileModel->handle_file($old_playfile,
+                                                $play_file, 'copy', true)) {
+                                                echo '源文件'.$old_playfile.'复制到'.$play_file.'成功'.PHP_EOL;
+                                            } else {
+                                                echo '源文件'.$old_playfile.'复制到'.$play_file.'失败'.PHP_EOL;
+                                            }
+                                        } else {
+                                            $smfileModel->write_file($play_file, $info['res']);
+                                            $this->copy_j[$hv] = $info['menuid'];
+                                        }
+                                    }
+
+                                } else {
+                                    echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
+                                }
+                            } else {
+                                echo '创建目录'.$adv_path.'失败'.PHP_EOL;
+                            }
+                        } else {
+                            echo '创建目录'.$hotel_path.'失败'.PHP_EOL;
+                        }
+                    }
+
+                } else {
+                    echo '创建目录'.$savor_path.'失败'.PHP_EOL;
+                }
+                $zip=new \ZipArchive();
+                $pzip = $po_th.'.zip';
+                if ($zip->open($pzip, \ZipArchive::OVERWRITE)=== TRUE) {
+                    var_export($zip);
+                    die;
+                    $this->addFileToZip($po_th, $zip);
+                    //调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
+                    $zip->close(); //关闭处理的zip文件
+                } else {
+                    echo '打开压缩包失败';
+                }
+            }
+        } else {
+            echo '数据已执行完毕';
+        }
+
+    }
+
+    public function addtoZip($path, $zip) {
+        $handler=opendir($path);
+        while ( ($filename=readdir($handler))!==false ) {
+            if($filename != "." && $filename != ".."){
+                if(is_dir($path."/".$filename)){
+                    $this->addtoZip($path."/".$filename, $zip);
+                }else{
+                    //将文件加入zip对象
+                    $zip->addFile($path."/".$filename);
+                }
+            }
+        }
+        @closedir($path);
+    }
+
+
+    public function getHotelMedia($hotel_id) {
+        //jtype 0已存在json文件,1需要添加
+        $result = array();
+        $menuhotelModel = new \Admin\Model\MenuHotelModel();
+        $adsModel = new \Admin\Model\AdsModel();
+        //获取广告期号
+        $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
+        //var_export($per_arr);
+        if(empty($per_arr)){
+            return $result;
+        }
+        $menuid = $per_arr[0]['menuid'];
+        $rdata = $this->copy_j;
+        $hda = array_search($menuid, $rdata);
+        if ( $hda ) {
+            $rp['hotel_id']= $hda;
+            $rp['jtype']= 0;
+            return $rp;
+        }
+        $perid = $per_arr[0]['period'];
+        //获取节目单的节目数据start
+        $result['playbill_list'][0]['version'] = array(
+            'label'=>'节目期号',
+            'type'=>'pro',
+            'version'=>$perid,
+        );
+        $pro_arr = $adsModel->getproInfo($menuid);
+        $pro_arr = $this->changeadvList($pro_arr,1);
+        $result['playbill_list'][0]['media_lib'] = $pro_arr;
+
+
+        //获取节目单的广告数据start
+        $result['playbill_list'][1]['version'] = array(
+            'label'=>'广告期号',
+            'type'=>'ads',
+            'version'=>$perid,
+        );
+        $ads_arr = $adsModel->getadsInfo($menuid);
+        $ads_arr = $this->changeadvList($ads_arr,2);
+        $result['playbill_list'][1]['media_lib'] = $ads_arr;
+        //获取节目单的广告数据end
+
+        //获取节目单的宣传片start
+        $result['playbill_list'][2]['version'] = array(
+            'label'=>'宣传片期号',
+            'type'=>'adv',
+            'version'=>$perid,
+        );
+        $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
+        $adv_arr = $this->changeadvList($adv_arr,1);
+        $result['playbill_list'][2]['media_lib'] = $adv_arr;
+
+        //获取酒楼信息
+        $hotelModel = new \Admin\Model\HotelModel();
+        $ho_arr = $hotelModel->getHotelMacInfo($hotel_id);
+        $data = array();
+        $data= $ho_arr[0];
+        foreach($data as $dk=>$dv){
+            $data['hotel_id'] = intval($data['hotel_id']);
+            $data['area_id'] = intval($data['area_id']);
+            $data['key_point'] = intval($data['key_point']);
+            $data['state'] = intval($data['state']);
+            $data['state_reason'] = intval($data['state_reason']);
+            $data['flag'] = intval($data['flag']);
+            $data['hotel_box_type'] = intval($data['hotel_box_type']);
+        }
+        $result['boite'] = $data;
+
+        //获取包间信息
+        $field = "  id AS room_id,name as room_name,
+        hotel_id,type as room_type,state,flag,remark,
+        create_time,
+        update_time";
+        $room['hotel_id'] = $hotel_id;
+        $room['flag'] = 0;
+        $room['state'] = 1;
+        $romModel = new \Admin\Model\RoomModel();
+        $room_arr = $romModel->getInfo($field, $room);
+        $room_arr =  $this->changeroomList($room_arr);
+        $result['room_info'] = $room_arr;
+        //获取机顶盒信息
+        $boxModel = new \Admin\Model\BoxModel();
+        $sysconfigModel = new \Admin\Model\SysConfigModel();
+        $field = "  box.id AS box_id,box.room_id,box.name as box_name,
+        room.hotel_id,box.mac as box_mac,box.state,box.flag,box.switch_time,box.volum as volume ";
+        $where = ' and box.state=1 and box.flag=0';
+        $box_arr = $boxModel->getInfoByHotelid($hotel_id, $field, $where);
+        $where = " 'system_ad_volume','system_switch_time'";
+        $sys_arr = $sysconfigModel->getInfo($where);
+        $sys_arr = $this->changesysconfigList($sys_arr);
+        if(!empty($box_arr)){
+            $box_arr = $this->changeBoxList($box_arr, $sys_arr);
+            $result['box_info'] = $box_arr;
+        }
+        $rp['res'] = json_encode($result);
+        $rp['menuid']= $menuid;
+        $rp['jtype']= 1;
+        return $rp;
+    }
+
+
+    /**
+     * changeadvList  将已经数组修改字段名称
+     * @access public
+     * @param $res
+     * @return array
+     */
+    private function changesysconfigList($res){
+        $vol_arr = C('CONFIG_VOLUME');
+        if($res){
+            foreach ($res as $vk=>$val) {
+                foreach($vol_arr as $k=>$v){
+                    if($k == $val['config_key']){
+                        $res[$vk]['label']  = $v;                                   }
+                }
+                $res[$vk]['configKey'] =  $res[$vk]['config_key'];
+                $res[$vk]['configValue'] =  $res[$vk]['config_value'];
+                unset($res[$vk]['config_key']);
+                unset($res[$vk]['config_value']);
+                unset($res[$vk]['status']);
+            }
+
+        }
+        return $res;
+        //如果是空
+    }
+
+    /**
+     * changeBoxList  将已经数组修改字段名称
+     * @access public
+     * @param $res 机顶盒数组
+     * * @param $sys_arr 系统数组
+     * @return array
+     */
+    private function changeBoxList($res, $sys_arr){        $da = array();
+
+        foreach ($sys_arr as $vk=>$val) {
+            foreach($val as $sk=>$sv){
+                if($sv == 'system_ad_volume') {
+                    if(empty($val['configValue'])){
+                        $da['volume'] = 0;
+                    }else{
+                        $da['volume'] = $val['configValue'];
+                    }
+                }
+                if($sv == 'system_switch_time') {
+                    if(empty($val['configValue'])){
+                        $da['switch_time'] = 0;
+                    }else{
+                        $da['switch_time'] = $val['configValue'];
+                    }
+                    break;
+                }
+            }
+
+        }
+        if($res){
+            foreach ($res as $vk=>$val) {
+                if (empty($da['volume'])) {
+                    $res[$vk]['volume'] = empty($val['volume'])?'':$val['volume'];
+                } else {
+                    $res[$vk]['volume'] = $da['volume'];
+                }
+                if (empty($da['switch_time'])) {
+                    $res[$vk]['switch_time'] =  empty($val['switch_time'])?'':$val['switch_time'];
+                    $val['switch_time'];
+                } else {
+                    $res[$vk]['switch_time'] = $da['switch_time'];
+                }
+
+                foreach($val as $rk=>$rv){
+                    if(is_numeric($rv)){
+                        $res[$vk][$rk] = intval($rv);
+                    }
+                    if($res[$vk][$rk] === null){
+                        $res[$vk][$rk] = '';
+                    }
+                }
+            }
+        }
+
+
+        return $res;
+        //如果是空
+    }
+
+
+    private function changeroomList($res){
+        $ro_type = C('ROOM_TYPE');
+
+        if($res){
+            foreach ($res as $vk=>$val) {
+                foreach($ro_type as $k=>$v){
+                    if($k == $val['room_type']){
+                        $res[$vk]['room_type']  = $v;                                   }
+                }
+                foreach($val as $rk=>$rv){
+                    if(is_numeric($res[$vk][$rk])){
+                        $res[$vk][$rk] = intval($rv);
+                    }
+                    if($res[$vk][$rk] === null){
+                        $res[$vk][$rk] = '';
+                    }
+                }
+
+            }
+
+        }
+
+        return $res;
+        //如果是空
+    }
+
+    /**
+     * changeadvList  将已经数组修改字段名称
+     * @access public
+     * @param $res
+     * @return array
+     */
+    private function changeadvList($res,$type){
+        if($res){
+            foreach ($res as $vk=>$val) {
+                if($type==1){
+                    $res[$vk]['order'] =  $res[$vk]['sortnum'];
+                    unset($res[$vk]['sortnum']);
+                }
+
+                if(!empty($val['name'])){
+                    $ttp = explode('/', $val['name']);
+                    $res[$vk]['name'] = $ttp[2];
+                }
+            }
+
+        }
+        return $res;
+        //如果是空
     }
 }

@@ -21,6 +21,16 @@ class AdvdeliveryController extends BaseController {
     }
 
     public function  doAddAdvBox() {
+        $pubadsModel = new \Admin\Model\PubAdsModel();
+        $map['state'] = array(array('eq',3),array('eq',0), 'or') ;
+        $field = 'id';
+        $p_data = $pubadsModel->getWhere($map,$field);
+        //$p_data = false;
+        if($p_data) {
+            $this->error('当前有广告正在发布，暂时无法添加，请稍后再试');
+        }
+
+
 
         $now_date = date("Y-m-d H:i:s");
         $h_b_arr = $_POST['hbarr'];
@@ -41,7 +51,6 @@ class AdvdeliveryController extends BaseController {
         $oneday_count = 3600 * 24;  //一天有多少秒
         //明天
         $save['end_date'] = date("Y-m-d H:i:s", strtotime($save['end_date']) + $oneday_count-1);
-        $pubadsModel = new \Admin\Model\PubAdsModel();
         //插入pub_ads表
         $pubadsModel->startTrans();
         if( $screen_type == 2 ){
@@ -459,10 +468,10 @@ class AdvdeliveryController extends BaseController {
             }
             if( 2 == $v['type']) {
                 $v['pub'] = '按酒楼发布';
-                if($v['stap'] == 3) {
+                if($v['stap'] == 3 || $v['stap'] == 0) {
                     $v['stap'] = '版位计算中';
                     $v['state'] = '';
-                }elseif($v['stap'] == 0){
+                }/*elseif($v['stap'] == 0){
                     //判断是否有一个成功的
                     $where = '1=1 and pub_ads_id='.$v['id'];
                     $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
@@ -484,7 +493,7 @@ class AdvdeliveryController extends BaseController {
                         $v['stap'] = '不可投放';
                         $v['state'] = '';
                     }
-                }elseif($v['stap'] == 1){
+                }*/elseif($v['stap'] == 1){
                     //判断是否有一个成功的
                     $where = '1=1 and pub_ads_id='.$v['id'];
                     $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
@@ -545,6 +554,16 @@ class AdvdeliveryController extends BaseController {
     * @return void
     */
     public function adddevilery(){
+        $pubadsModel = new \Admin\Model\PubAdsModel();
+        $map['state'] = array(array('eq',3),array('eq',0), 'or') ;
+        $field = 'type,state';
+        $pb_data = $pubadsModel->getWhere($map,$field);
+        //$bool = false;
+        if($pb_data) {
+            echo '<script>$.pdialog.closeCurrent();  alertMsg.error
+("有版位在计算中");</script>';
+        }
+
         //城市
         $areaModel  = new \Admin\Model\AreaModel();
         $area_arr = $areaModel->getAllArea();
