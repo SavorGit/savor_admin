@@ -740,6 +740,7 @@ class RequestCore
      */
     public function process_response($curl_handle = null, $response = null)
     {
+        ini_set('memory_limit','512M');
         // Accept a custom one if it's passed.
         if ($curl_handle && $response) {
             $this->response = $response;
