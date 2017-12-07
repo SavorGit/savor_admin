@@ -61,27 +61,16 @@ class SingleDriveListModel extends BaseModel
 		return $list;
 	}
 
+	public function updateInfo($where,$data){
+		$ret = $this->where($where)->save($data);
+		return $ret;
+	}
+
 
 	public function getOne($field,$where){
 		$data = $this->field($field)->where($where)->find();
 		return $data;
 	}
-
-
-	public function getAllmenu()
-	{
-		return $this->select();
-
-	}
-
-	//ɾ�����
-	public function delData($id) {
-		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";
-		$result = $this -> execute($delSql);
-		return  $result;
-	}
-
-
 
 
 }//End Class

@@ -609,16 +609,23 @@ class CrontabController extends Controller
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
         $map['state'] = 0;
-        $field='hotel_id_str, gendir';
+        $field='hotel_id_str, gendir, id';
         $single_list = $signle_Model->getWhere($map, $field);
         $smfileModel = new SimFile();
+        $now_date = date("Y-m-d H:i:s");
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
+
                 $this->copy_j = array();
                 $gendir = $sv['gendir'];
                 $po_th = $pub_path.$gendir;
                 $savor_path = $po_th.DIRECTORY_SEPARATOR.'savor';
-                if ( $smfileModel->create_dir($savor_path) ) {
+                $savor_me = $po_th.DIRECTORY_SEPARATOR.'media';
+                $savor_log = $po_th.DIRECTORY_SEPARATOR.'log';
+                if ( $smfileModel->create_dir($savor_path)
+                    && $smfileModel->create_dir($savor_me)
+                    && $smfileModel->create_dir($savor_log)
+                ) {
                     echo '创建目录'.$savor_path.'成功'.PHP_EOL;
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
                     foreach ( $hotel_id_arr as $hv) {
@@ -674,17 +681,16 @@ class CrontabController extends Controller
                 $pzip = $po_th.'.zip';
                 $zflag = $zip->open($pzip, \ZipArchive::CREATE);
                 if ($zflag) {
-                   // $zip->addFile($po_th.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tap.txt");
                     $this->addtoZip($po_th, $zip, $pubic_path);
-                    //print_r($zip);
-                    //调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
                     $zip->close(); //关闭处理的zip文件
                     echo '创建压缩包'.$gendir.'成功'.PHP_EOL;
+                    //修改状态值为0
+                    $signle_Model->updateInfo(array('id'=>$sv['id']), array('state'=>1,'update_time'=>$now_date));
                 } else {
                     var_export($zip);
                     echo '创建压缩包失败';
                 }
-                die;
+
             }
         } else {
             echo '数据已执行完毕';
