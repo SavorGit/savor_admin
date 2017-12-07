@@ -790,4 +790,10 @@ function  assoc_unique($arr, $key)
     }
     return $rAr;
 }
+//随机生成一个N位数
+function generate_code($length = 4) {
+    $min = pow(10 , ($length - 1));
+    $max = pow(10, $length) - 1;
+    return rand($min, $max);
+}
 ?>
