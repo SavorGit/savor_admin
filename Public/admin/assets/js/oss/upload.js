@@ -173,7 +173,7 @@ var uploader = new plupload.Uploader({
 				var cot = $("#ossfile .progress-bar").attr('aria-valuenow');
 				var url = $("#media_url").val();
 				  if(url == ''){
-				    if(cot != '100' && cot>0){
+				    if(cot>0){
 				      //alert('资源正在上传，请稍后');
 				      return false;
 				    }
