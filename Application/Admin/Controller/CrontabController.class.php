@@ -605,8 +605,8 @@ class CrontabController extends Controller
         $savor_path   = '';
         $gendir       = '';
         $single_list  = array();
-        $pub_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public';
-        $pub_path = $pub_path.DIRECTORY_SEPARATOR;
+        $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public';
+        $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
         $map['state'] = 0;
         $field='hotel_id_str, gendir';
@@ -668,17 +668,24 @@ class CrontabController extends Controller
                 } else {
                     echo '创建目录'.$savor_path.'失败'.PHP_EOL;
                 }
+
                 $zip=new \ZipArchive();
+                $po_th = iconv("utf-8", "GB2312//IGNORE", $po_th);
                 $pzip = $po_th.'.zip';
-                if ($zip->open($pzip, \ZipArchive::OVERWRITE)=== TRUE) {
-                    var_export($zip);
-                    die;
-                    $this->addFileToZip($po_th, $zip);
+               // $pzip = $gendir.'.zip';
+               // var_dump($pzip);
+                $zflag = $zip->open($pzip, \ZipArchive::CREATE);
+                if ($zflag) {
+                   // $zip->addFile($po_th.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tap.txt");
+                    $this->addtoZip($po_th, $zip, $pubic_path);
+                    //print_r($zip);
                     //调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
-                    $zip->close(); //关闭处理的zip文件
+                   // $zip->close(); //关闭处理的zip文件
                 } else {
-                    echo '打开压缩包失败';
+                    var_export($zip);
+                    echo '创建压缩包失败';
                 }
+                die;
             }
         } else {
             echo '数据已执行完毕';
@@ -686,15 +693,34 @@ class CrontabController extends Controller
 
     }
 
-    public function addtoZip($path, $zip) {
+    public function addtoZip($path, $zip, $pubic_path) {
+        print_r($path);
+        echo '<hr/>';
         $handler=opendir($path);
         while ( ($filename=readdir($handler))!==false ) {
             if($filename != "." && $filename != ".."){
-                if(is_dir($path."/".$filename)){
-                    $this->addtoZip($path."/".$filename, $zip);
+
+                $real_filename = $path.DIRECTORY_SEPARATOR.$filename;
+                var_dump($filename);
+                var_dump($real_filename);
+                echo '<hr/><hr/>';
+                if(is_dir($real_filename)){
+                    if ( count(scandir($real_filename)) ==2 ){
+                        //是空目录
+                        $rpname = str_replace($pubic_path.DIRECTORY_SEPARATOR, '', $real_filename);
+                        $zip->addEmptyDir($rpname);
+                    } else {
+                        $this->addtoZip($real_filename, $zip, $pubic_path);
+                    }
+
                 }else{
                     //将文件加入zip对象
-                    $zip->addFile($path."/".$filename);
+
+
+                    $real_filename = iconv("utf-8", "GB2312//IGNORE", $real_filename);
+                    $zip->addFile($real_filename);
+                    $rpname = str_replace($pubic_path.DIRECTORY_SEPARATOR, '', $real_filename);
+                    $zip->renameName($real_filename, $rpname);
                 }
             }
         }
