@@ -239,8 +239,8 @@
 		</div>
 </form>
 <!--选择版位-->
-<div class="modal fade bs-example-modal-lg" id="modales" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-	<div class="modal-dialog modal-lg" role="document">
+<div class="modal fade bs-example-modal-lg" id="modales" style="position: absolute;" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+	<div class="modal-dialog modal-lg" style="width: 100%;" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -313,8 +313,8 @@
 	</div>
 </div>
 <!--保存弹框-->
-<div class="modal fade" tabindex="-1" role="dialog" id="bctk">
-	<div class="modal-dialog" role="document">
+<div class="modal fade" tabindex="-1" role="dialog" id="bctk" style="position: absolute;">
+	<div class="modal-dialog" role="document" style="top: 20%;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -360,10 +360,28 @@ $('.tianjiabw').click(function(){
 			tsnull =3;
 		}
 	})
+	var add_startTime = $('.dval').eq(0).val();
+	var add_endTime = $('.dval').eq(1).val();
+	var add_tadatime = new Date();
+	add_startTime=add_startTime.replaceAll("-","/");
+	add_endTime=add_endTime.replaceAll("-","/");
+	var add_startTime1 = new Date(Date.parse(add_startTime));
+	var add_endTime1 = new Date(Date.parse(add_endTime));
+	
+	if (add_startTime1 > add_endTime1) {
+	  tsnull =4;
+	}
+	/*if(add_tadatime>add_startTime1){
+		tsnull =5;
+	}*/
 	if(tsnull==2){
 		alert('日期和播放次数不可以为空！')
 	}else if(tsnull==3){
 		alert('请添加视频')
+	}else if(tsnull==4){
+		alert('结束时间不可以小于开始时间')
+	}else if(tsnull==5){
+		alert('开始时间不能小于等于当前时间')
 	}else if(tsnull==1){
 	boiteName()
 	$('#modales').modal('show');
@@ -869,6 +887,7 @@ $('body').on('click','#saveImg',function(){
 	$('#sp').hide();*/
 })
 $('#sdd').click(function(){
+	$('#box_qx').prop('checked',false);
 	var city_id = $('.cityId').val();
 	var serch_name = $('#serch-name').val();
 	$('.position-list').html('');
