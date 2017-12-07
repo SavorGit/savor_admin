@@ -942,3 +942,10 @@ ALTER TABLE `savor_pub_ads_box` ADD INDEX box_id ( `box_id` )
 ALTER TABLE `savor_pub_ads` ADD INDEX start_date(`start_date`)
 ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
 
+
+增加说明：广告投放机顶盒表添加索引
+修改时间：2017.12.07
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);;
+
