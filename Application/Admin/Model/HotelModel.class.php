@@ -11,6 +11,42 @@ use Admin\Model\BaseModel;
 
 class HotelModel extends BaseModel{
 	protected $tableName = 'hotel';
+
+	public function getHotelMacInfo($hotelid){
+		$sql = "SELECT
+        sh.id AS hotel_id,
+        sh.name AS hotel_name,
+        sh.area_id AS area_id,
+        sh.addr AS address,
+        sh.contractor AS linkman,
+        sh.mobile AS mobile,
+        sh.tel AS tel,
+        sh.maintainer AS maintainer,
+        sh.level AS level,
+        sh.iskey AS key_point,
+        sh.install_date AS install_date,
+        sh.state AS state,
+        sh.state_change_reason AS state_reason,
+        sh.gps AS gps,
+        sh.remark AS remark,
+        sh.flag AS flag,
+        sh.create_time AS create_time,
+        sh.update_time AS update_time,
+        sh.hotel_box_type AS hotel_box_type,
+        she.mac_addr AS mac,
+        she.ip_local AS ip_local,
+        she.ip AS ip,
+        she.server_location AS server
+        FROM savor_hotel sh
+        LEFT JOIN savor_hotel_ext she
+        ON sh.id=she.hotel_id
+        where
+            sh.id={$hotelid}";
+		$result = $this->query($sql);
+		return $result;
+	}
+
+
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)

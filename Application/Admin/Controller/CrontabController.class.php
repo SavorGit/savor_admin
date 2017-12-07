@@ -672,15 +672,14 @@ class CrontabController extends Controller
                 $zip=new \ZipArchive();
                 $po_th = iconv("utf-8", "GB2312//IGNORE", $po_th);
                 $pzip = $po_th.'.zip';
-               // $pzip = $gendir.'.zip';
-               // var_dump($pzip);
                 $zflag = $zip->open($pzip, \ZipArchive::CREATE);
                 if ($zflag) {
                    // $zip->addFile($po_th.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tap.txt");
                     $this->addtoZip($po_th, $zip, $pubic_path);
                     //print_r($zip);
                     //调用方法，对要打包的根目录进行操作，并将ZipArchive的对象传递给方法
-                   // $zip->close(); //关闭处理的zip文件
+                    $zip->close(); //关闭处理的zip文件
+                    echo '创建压缩包'.$gendir.'成功'.PHP_EOL;
                 } else {
                     var_export($zip);
                     echo '创建压缩包失败';
@@ -715,8 +714,6 @@ class CrontabController extends Controller
 
                 }else{
                     //将文件加入zip对象
-
-
                     $real_filename = iconv("utf-8", "GB2312//IGNORE", $real_filename);
                     $zip->addFile($real_filename);
                     $rpname = str_replace($pubic_path.DIRECTORY_SEPARATOR, '', $real_filename);
