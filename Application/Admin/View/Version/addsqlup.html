@@ -93,16 +93,7 @@
   });
 
 
-  function dialogAjaxDone(json) {
-    console.log(json);
-    DWZ.ajaxDone(json);
-    if(json.navTabId == 'version/sqlupsuccess') {
-      //navTab.closeTab('versionaddsqlup');
-      $.pdialog.close('versionaddsqlup');
-      navTab.reload('version/sqlup');
-      //$( "div" ).removeClass( "modal-backdrop fade in" );
-    }
-  }
+
 
 
 </script>

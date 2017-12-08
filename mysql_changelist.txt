@@ -890,8 +890,64 @@ CREATE TABLE `savor_subcontract` (
 修改人：白玉涛
 执行sql:
 alter table `cloud`.`savor_sysusergroup`
-   add column `area_city` varchar(50) DEFAULT '9999' NULL COMMENT '地区id1,2,3,4' ;
+   add column `area_city` smallint(10) DEFAULT '0' NULL COMMENT '地区id' ;
 
 
+增加说明：用户投放广告表添加type区分酒楼投还是版位
+修改时间：2017.11.15
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_pub_ads`
+add column `type` smallint(10) DEFAULT '0' NULL COMMENT '1版位2酒楼' ;
 
+alter table `cloud`.`savor_pub_ads`
+   change `state` `state` tinyint(5) default '0' NOT NULL comment '状态:0未执行1已经执行2删除3.默认选择酒楼状态';
+
+增加说明：投放广告对应酒楼表
+修改时间：2017.11.15
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_pub_ads_hotel` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `hotel_id` int(12) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='广告对应酒楼'
+
+增加说明：选择酒楼投放广告对应错误表
+修改时间：2017.11.15
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_pub_ads_box_error` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `bid` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `bname` varchar(50) NOT NULL DEFAULT '' COMMENT '机顶盒名称',
+  `rid` int(12) NOT NULL DEFAULT '0' COMMENT '包间id',
+  `rname` varchar(50) NOT NULL DEFAULT '' COMMENT '包间名称',
+  `hid` int(12) NOT NULL DEFAULT '0' COMMENT '酒店id',
+  `hname` varchar(50) NOT NULL DEFAULT '' COMMENT '酒店名称',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `error_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '错误原因1:剩余广告位不足,2酒楼冻结',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='广告投放机顶盒出错表'
+增加说明：机顶盒广告投放添加索引
+修改时间：2017.12.06
+修改人：张英涛
+执行sql:
+ALTER TABLE `savor_pub_ads_box` ADD INDEX box_id ( `box_id` ) 
+
+
+增加说明：广告投放表添加索引
+修改时间：2017.12.06
+修改人：张英涛
+执行sql:
+ALTER TABLE `savor_pub_ads` ADD INDEX start_date(`start_date`)
+ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
+
+
+增加说明：广告投放机顶盒表添加索引
+修改时间：2017.12.07
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);;
 

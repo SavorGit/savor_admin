@@ -113,14 +113,7 @@
     }
   }
 
-  function dialogAjaxDone(json){
-    console.log(json);
-    DWZ.ajaxDone(json);
-    if(json.navTabId == 'sysusergroup/sysusergroupAddTest') {
-      $.pdialog.closeCurrent();
-      navTab.reload('sysusergroup/sysusergroupList');
-    }
-  }
+
 
   $('.sysusergroupaddtest').on('change','#inch',function(){
     var this_val =  $(this).val();

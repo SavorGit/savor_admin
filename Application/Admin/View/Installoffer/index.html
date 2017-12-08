@@ -1,0 +1,61 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/installoffer/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+   <!--  <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" target="navTab" href="{$host_name}/installoffer/add" title="发布新报价" mask="true"><i class="fa fa-plus"></i>发布新报价</a>
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>名称</th>
+              <th>创建日期</th>
+              
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="ID">{$vlist.id}</td>
+              <td data-title="名称">{$vlist.name}</td>
+              <td data-title="创建日期">{$vlist.create_time}</td>
+             
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+	              
+                  <a data-tip="预览"
+
+                  href="/installoffershow/index?id={$vlist.id}"
+                     target="_blank"  class="btn btn-success btn-icon">
+                    <i class="fa fa-eye"></i>
+                </div>
+              </td>
+
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

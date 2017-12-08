@@ -215,36 +215,9 @@
 
 		})
 
-		 function navTabAjaxDone(json) {
-			jap = JSON.stringify(json);
-			console.log(jap);
-			//alert(jap);
-			DWZ.ajaxDone(json);
-			if (json.status == DWZ.statusCode.ok) {
-				if (json.navTabId) {
-					$(".ceshipilianxin span").html('酒楼信息');
-					navTab.reload('hotel/manager');
-				}
+		 
 
 
-			}
-		}
-
-		/*function dialogAjaxDone(json){
-			//alert(json);
-			//console.log(json);
-			jap = JSON.stringify(json);
-			console.log(jap);
-			//alert(jap);
-			DWZ.ajaxDone(json);
-			navTab.reloadFlag('hotel/manager');
-			if(json.status==1){
-				navTab.reload('hotel/manager');
-			}
-			//navTab.reloadFlag('menu/getlist');
-
-			//return false;
-		}*/
 
 
 

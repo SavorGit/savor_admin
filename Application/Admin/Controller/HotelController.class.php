@@ -387,6 +387,8 @@ smlist.menu_name';
 			$vinfo['ip'] = $res_hotelext['ip'];
 			$vinfo['server_location'] = $res_hotelext['server_location'];
 			$vinfo['tag'] = $res_hotelext['tag'];
+			$navtp = I('get.navtp');
+			$this->assign('navtp',$navtp);
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -395,6 +397,12 @@ smlist.menu_name';
 		}
 		$this->display('add');
 	}
+
+
+
+
+
+
 
 
 	/*
@@ -604,7 +612,13 @@ smlist.menu_name';
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			$this->output('操作成功!', 'hotel/doaddsuccess');
+			$navtp				 = I('post.navtp','');
+			if($navtp == 34) {
+				$this->output('操作成功!', 'hotel/detail');
+			} else {
+				$this->output('操作成功!', 'hotel/manager');
+			}
+
 		} else {
 			$tranDb->rollback();
 			$this->error('操作失败3!');
@@ -1180,6 +1194,7 @@ smlist.menu_name';
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+		//$this->output('操作成功!', 'hotel/pubmanager');
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
@@ -1227,7 +1242,7 @@ smlist.menu_name';
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('操作成功!', 'hotel/doAddPubtype1');
+				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
@@ -1266,7 +1281,7 @@ smlist.menu_name';
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('添加宣传片成功!', 'hotel/doAddPubtype1');
+				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}

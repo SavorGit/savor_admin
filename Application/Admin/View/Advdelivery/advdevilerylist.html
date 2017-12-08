@@ -13,7 +13,7 @@
         <div class="goods-date">
           <div class="form-inline">
             <div class="form-group">
-              <a class="btn btn-success btn-sm add" href="{$host_name}/Advdelivery/adddevilery" rel="Advdelivery/adddevilery" title="新增投放" target="navTab" mask="true"> <i class="fa fa-plus"></i><span>新增投放</span></a>
+              <a class="btn btn-success btn-sm add" href="{$host_name}/Advdelivery/adddevilery" rel="Advdelivery/adddevilery" title="新增投放" target="dialog"  mask="true"> <i class="fa fa-plus"></i><span>新增投放</span></a>
 
               <div class="input-group-sm input-group">
                 <label>投放状态：</label>
@@ -55,7 +55,9 @@
           <tr id="post">
             <th>ID</th>
             <th>广告名称</th>
-            <th>状态</th>
+            <th>按类型发布</th>
+            <th>发布状态</th>
+            <th>投放进程</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -66,22 +68,41 @@
               <td data-title="名称">{$vlist.name}
 
               </td>
+              <td data-title="按类型发布">{$vlist.pub}
 
-              <td data-title="状态" style="text-align:center;">
+              </td>
+
+              <td data-title="发布状态" style="text-align:center;">
+                {$vlist['stap']}
+              </td>
+
+              <td data-title="投放进程" style="text-align:center;">
                 {$vlist['state']}
               </td>
+
               <td class="table-tool" data-title="操作">
 
                 <div class="tools-edit">
 
-                  <a data-tip="预览"
+                  <if condition="$vlist.type eq 2">
+                    <a data-tip="预览" href="{$host_name}/advdelivery/showadverjiulou?deliveryid={$vlist.id}"
+                       rel="Advdelivery/showadverjiulou" title="广告预览" target="navTab"
+                       class="btn btn-success btn-icon">
+                      <i class="fa fa-eye"></i>
+                    </a>
 
-                     href="
-                  {$host_name}/advdelivery/showdelivery?deliveryid={$vlist.id}" rel="Advdelivery/showdelivery" title="广告预览" target="navTab"
+                    <a data-tip="查看明细" target="navTab" data-placement="left" mask="true" rel="Advdeliveryshowdetail" href="{$host_name}/advdelivery/showdetail?deliveryid={$vlist.id}" class="btn btn-success btn-icon" title="查看明细">
+                      <i class="fa fa-heart-o"></i>
+                    </a>
 
-                  class="btn btn-success btn-icon">
-                  <i class="fa fa-eye"></i>
-                  </a>
+                    <else/>
+                    <a data-tip="预览" href="{$host_name}/advdelivery/showdelivery?deliveryid={$vlist.id}"
+                    rel="Advdelivery/showdelivery" title="广告预览" target="navTab"
+                    class="btn btn-success btn-icon">
+                    <i class="fa fa-eye"></i>
+                    </a>
+                    </if>
+
                 </div>
               </td>
 

@@ -255,4 +255,15 @@ class BoxModel extends BaseModel{
 	    return $data;
 	
 	}
+
+
+	public function getInfoByHotelid($hotelid , $field,$where){
+		$sql = 'select '.$field;
+		$sql  .= ' FROM  savor_box box  LEFT JOIN savor_room room ON  box.room_id = room.id  WHERE room.hotel_id=' . $hotelid.$where;
+
+		$result = $this->query($sql);
+		return $result;
+	}
+
+
 }

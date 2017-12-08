@@ -221,8 +221,28 @@ $config['WX_DYH_CONFIG'] = array(
 );
 $config['WX_FWH_CONFIG'] = array(
     'appid'=>'wx7036d73746ff1a14',
-    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',  
+    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',
+    'key_ticket'=>'savor_wx_xiaorefu_jsticket',
+    'key_token'=>'savor_wx_xiaorefu_token',
 );
+
+$config['XIAO_REDIAN_DING'] = array(
+    'appid'=>'wxb19f976865ae9404',
+    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
+    'key_ticket'=>'savor_wx_xiaore_jsticket',
+    'key_token'=>'savor_wx_xiaore_token',
+);
+
+
+$config['ZHI_XIANG_CONFIG'] = array(
+    'appid'=>'wx75025eb1e60df2cf',
+    'appsecret'=>'32427ebb0caae2d9e76747fed56e2071',
+    'key_ticket'=>'savor_wx_zhixiang_jsticket',
+    'key_token'=>'savor_wx_zhixiang_token',
+    'cardapi_ticket'=>'savor_wx_zhixiang_cardapiticket',
+    'token'=>'savor',
+);
+
 $config['UMENT_API_CONFIG'] = array(
      'API_URL'=>'http://msg.umeng.com/api/send',
      'opclient'=>array(
@@ -260,7 +280,7 @@ $config['ADV_VIDEO'] = array(
 );
 $config['ADVE_OCCU'] = array(
     'name' => '广告位',
-    'num' => '10',
+    'num' => '50',
 );
 $config['TOU_STATE'] = array(
     '0'=>'全部',
@@ -301,6 +321,16 @@ $config['HOTEL_DAMAGE_CONFIG'] = array(
     '11'=>'酒楼电视机',
 	'12'=>'未开机',
     '13'=>'其它',
+);
+$config['PUB_ADS_HOTEL_ERROR'] = array(
+    '1'=>'剩余广告位不足',
+    '2'=>'酒楼冻结',
+    '3'=>'酒楼报损',
+    '4'=>'包间冻结',
+    '5'=>'包间报损',
+    '6'=>'机顶盒冻结',
+    '7'=>'机顶盒报损',
+    '8'=>'包间机顶盒为空',
 );
 $config['HEART_LOG_SAVE_DAYS'] = 30;
 return $config;

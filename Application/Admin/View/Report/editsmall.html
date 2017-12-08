@@ -34,13 +34,3 @@
 
   </form>
 </div>
-<script type="text/javascript">
-  function dialogAjaxDone(json){
-    console.log(json);
-    DWZ.ajaxDone(json);
-    if(json.navTabId == 'report/doeditsmallplatwarn') {
-      $.pdialog.closeCurrent();
-      navTab.reload('report/smallplatwarn');
-    }
-  }
-</script>

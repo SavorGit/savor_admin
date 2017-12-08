@@ -73,7 +73,7 @@
         账号：
       </label>
       <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select name="user_id" style="width: 20px" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" required>
+  		<select name="user_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter " data-style="btn-success btn-sm" data-container="body" required>
   			<option>请选择账号</option>
   			<php>
   				foreach($userlist as $key=>$v){
@@ -94,7 +94,7 @@
         角色：
       </label>
   		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-  		<select  name="role_id" style="width: 20px" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" required>
+  		<select  name="role_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" required>
   			<option value="">请选择</option>
   			<php>foreach($option_user_role_arr as $key=>$v){</php>
   				<option value="{$key}">{$v}</option>
@@ -115,20 +115,36 @@
   		<div class="form-group" id="teaminstall" style="display:none">
   		<input name="is_lead_install" value=1 type="checkbox" id="is_install" /><label for="is_install" style="vertical-align: text-top;margin-left: 10px;margin-bottom: 10px;">带队安装</label>
   		</div>
-  		<div class="form-group">
+  		<div class="form-group" id="all_city_list">
     <div class="input-group-sm input-group" style="margin-top:5px;">
       <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
         所属城市：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
-      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" required>
-       <volist name="areaList" id="list">
-           <option value="{$list.id}">{$list.region_name}</option>
+      <select id="inch" name="manage_city[]" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+       <volist name="areaList" key="k" id="list">
+           <option <if condition="$list.id eq 9999">selected="selected" </if> value="{$list.id}">{$list.region_name}</option>
        </volist>
       </select>
     </span>
     </div>
   </div>
+  
+  			<div id="city_list" class="form-group" style="display:none;">
+    <div  class="input-group-sm input-group" style="margin-top:5px;" >
+      <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
+        所属城市：
+      </label>
+        <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
+      <select id="inch" name="manage_city_one" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body"  >
+       <volist name="city_area_list" key="k" id="list">
+           <option <if condition="$list.id eq 1">selected="selected" </if> value="{$list.id}">{$list.region_name}</option>
+       </volist>
+      </select>
+    </span>
+    </div>
+  </div>
+  
   <button type="submit"  class="btn btn-primary"style="width: 100px;margin-left: 30%;">确定</button>
   	</div>
  </form>
@@ -141,21 +157,36 @@
 		}else{
 			$('.kuai').hide();
 		}
+		if($(this).val()==1 || $(this).val()==3){
+			$('#all_city_list').hide();
+			$('#city_list').show();
+		}else {
+			$('#all_city_list').show();
+			$('#city_list').hide();
+		}
+		var installs =  $('#2').val();
+		if($(this).val()==3 && installs !=''){
+			$('#teaminstall').show();
+		}else {
+			$('#teaminstall').hide();
+		}
+		
 		$(this).next().find('span').prop('class','')
+		
 	})
 	$('.kuai span').click(function(){
 		var skill_id = $(this).prop('id');
 		if($(this).is('.active')){
 			$(this).removeClass('active')
 			$(this).find('input').val('')
-			if(skill_id ==6){
+			if(skill_id ==2){
 				$('#teaminstall').hide();
 			}
 		}else{
 			$(this).addClass('active');
 			$(this).find('input').val($(this).prop('id'))
 			
-			if(skill_id ==6){
+			if(skill_id ==2){
 				$('#teaminstall').show();
 			}
 		}

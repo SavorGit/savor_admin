@@ -52,8 +52,29 @@ smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel
         return $data;
 
 
-	}//End Function
+	}
 
+
+	/**
+	 * getadsPeriod 获取酒楼广告期号拿最新的一条
+	 * @access public
+	 * @param $hotelid
+	 * @return array
+	 */
+	public function getadsPeriod($hotelid){
+		$sql = "select
+        menu_hotel.id AS menuHotelId,
+        menu_hotel.menu_id AS menuId,
+        CONCAT(DATE_FORMAT(menu_hotel.update_time,'%m%d%H%i'),
+		  DATE_FORMAT(list.update_time,'%m%d%H%i')) AS period,
+        menu_hotel.pub_time AS pubTime,list.menu_name
+        FROM savor_menu_hotel menu_hotel
+        LEFT JOIN savor_menu_list list on menu_hotel.menu_id=list.id
+        where menu_hotel.hotel_id = $hotelid
+        ORDER BY menu_hotel.update_time desc,menu_hotel.id desc limit 1";
+		$result = $this->query($sql);
+		return $result;
+	}
 
 
 

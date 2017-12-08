@@ -96,7 +96,7 @@
                                          任务类型：
             </label>
                 <span class="input-group-btn">
-               <select name="task_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+               <select name="task_type" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value="">请选择</option>
                 <php>
                 	foreach($task_type_arr as $k=>$row){
@@ -125,7 +125,7 @@
               执行人：
             </label>
                 <span class="input-group-btn">
-               <select name="personid" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+               <select name="personid" style="width: 20px;display:none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value="">请选择</option>
                  <volist name="task_person_arr" key="k" id="row">
                  	 

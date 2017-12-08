@@ -1,0 +1,33 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>节目名称</th>
+            <th>时长</th>
+           
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" key="k" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$k}</td>
+              <td data-title="节目名称">{$vlist.media_name}</td>
+              <td data-title="时长">{$vlist.second}</td>
+             
+</tr>
+</volist>
+</tbody>
+</table>
+</form>
+
+</div>
+</div>
+
+</div>

@@ -11,6 +11,42 @@ use Admin\Model\BaseModel;
 
 class HotelModel extends BaseModel{
 	protected $tableName = 'hotel';
+
+	public function getHotelMacInfo($hotelid){
+		$sql = "SELECT
+        sh.id AS hotel_id,
+        sh.name AS hotel_name,
+        sh.area_id AS area_id,
+        sh.addr AS address,
+        sh.contractor AS linkman,
+        sh.mobile AS mobile,
+        sh.tel AS tel,
+        sh.maintainer AS maintainer,
+        sh.level AS level,
+        sh.iskey AS key_point,
+        sh.install_date AS install_date,
+        sh.state AS state,
+        sh.state_change_reason AS state_reason,
+        sh.gps AS gps,
+        sh.remark AS remark,
+        sh.flag AS flag,
+        sh.create_time AS create_time,
+        sh.update_time AS update_time,
+        sh.hotel_box_type AS hotel_box_type,
+        she.mac_addr AS mac,
+        she.ip_local AS ip_local,
+        she.ip AS ip,
+        she.server_location AS server
+        FROM savor_hotel sh
+        LEFT JOIN savor_hotel_ext she
+        ON sh.id=she.hotel_id
+        where
+            sh.id={$hotelid}";
+		$result = $this->query($sql);
+		return $result;
+	}
+
+
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)
@@ -142,7 +178,13 @@ class HotelModel extends BaseModel{
 	public function getHotelCount($where){
 	    return $this->where($where)->count();
 	}
-
+	public function getHotelCountNums($where){
+	    $count =$this->alias('a')
+	    ->join('savor_hotel_ext b on a.id=b.hotel_id','left')
+	    ->where($where)
+	    ->count();
+	    return $count;
+	}
 	public function getWhereData($where, $field='') {
 		$result = $this->where($where)->field($field)->select();
 		return  $result;
@@ -169,8 +211,6 @@ class HotelModel extends BaseModel{
 		$list = $this->alias('sht')
 			->join('savor_room room on sht.id = room.hotel_id')
 			->join('savor_box box on room.id = box.room_id')
-			->join(' join savor_area_info sari on sari.id = sht.area_id')
-			->join('savor_tv tv on tv.box_id = box.id')
 			->order($order)
 			->field($field)
 			->where($where)
@@ -204,6 +244,12 @@ class HotelModel extends BaseModel{
 	}
 	public function getHotelList($where,$order,$limit,$fields = '*'){
 	    $data = $this->field($fields)->where($where)->order($order)->limit($limit)->select();
+	    return $data;
+	}
+	public function getHotelLists($where,$order,$limit,$fields = '*'){
+	    $data = $this->alias('a')
+	    ->join('savor_hotel_ext b on a.id=b.hotel_id')
+	    ->field($fields)->where($where)->order($order)->limit($limit)->select();
 	    return $data;
 	}
 }
