@@ -51,6 +51,15 @@ class AdvdeliveryController extends BaseController {
         $save['start_date'] = I('post.start_time', '');
         $save['end_date'] = I('post.end_time', '');
         $save['play_times'] = I('post.play_times', '');
+        if($save['start_date'] > $save['end_date']) {
+            $msg = '投放开始时间必须小于结束时间';
+            $this->error($msg);
+        }
+        if($save['start_date'] < $now_date) {
+            $msg = '投放开始时间必须大于等于今天';
+            $this->error($msg);
+        }
+
         //投放类型1机顶盒2酒店
         $screen_type = I('post.screenadv_type','1');
         $userInfo = session('sysUserInfo');
@@ -426,7 +435,7 @@ class AdvdeliveryController extends BaseController {
         $start  = ( $start-1 ) * $size;
         $where = "1=1 and pads.state != 2";
         $name = I('serachads');
-        $tou_state = I('tou_state');
+        $tou_state = I('tou_state',0);
         $beg_time = I('starttime','');
         $end_time = I('end_time','');
         $dap = array(
@@ -450,29 +459,56 @@ class AdvdeliveryController extends BaseController {
             $where.=" AND pads.end_date <='$end_time'";
         }
         if($tou_state) {
+            if(1 == $tou_state) {
+                $where.=" AND pads.start_date >'$now_date' AND sbox.box_id > 0";
+            }
+            if(2 == $tou_state) {
+                $where .= " AND pads.start_date <= '$now_date'
+                AND pads.end_date >= '$now_date' AND sbox.box_id > 0";
+            }
+            if(3 == $tou_state) {
+                $where .=" AND pads.end_date < '$now_date' AND sbox.box_id > 0";
+            }
+            if(4 == $tou_state) {
+                $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
+            }
             $this->assign('to_state', $tou_state);
         }
-
-        $field = 'ads.name,pads.id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
-        $result = $pubadsModel->getList($field, $where, $orders,$start,$size);
-       // var_export($result);
+        $field = 'ads.name,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
+        $group = 'pads.id';
+        $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
 
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);
             $v['start_date'] = strtotime( $v['start_date'] );
             $v['end_date'] = strtotime( $v['end_date'] );
+            $tou_state = $dap['tou_st'];
             if( 1 == $v['type'] ) {
                 $v['pub'] = '按版位发布';
-                if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
-
+                if( $tou_state == 2) {
                     $v['tp'] = 2;
                     $v['state'] = '投放中';
-                } else if ($now_date < $v['start_date'] ) {
+                }
+                if ($tou_state == 1 ) {
                     $v['tp'] = 1;
                     $v['state'] = '未到投放时间';
-                } else {
+                }
+                if ($tou_state == 3 ) {
                     $v['tp'] = 3;
                     $v['state'] = '投放完毕';
+                }
+                if($tou_state == 0) {
+                    if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
+
+                        $v['tp'] = 2;
+                        $v['state'] = '投放中';
+                    } else if ($now_date < $v['start_date'] ) {
+                        $v['tp'] = 1;
+                        $v['state'] = '未到投放时间';
+                    } else {
+                        $v['tp'] = 3;
+                        $v['state'] = '投放完毕';
+                    }
                 }
                 $v['stap'] = '';
             }
@@ -481,13 +517,61 @@ class AdvdeliveryController extends BaseController {
                 if($v['stap'] == 3) {
                     $v['stap'] = '版位计算中';
                     $v['state'] = '';
-                }elseif($v['stap'] == 0){
-                    //判断是否有一个成功的
-                    $where = '1=1 and pub_ads_id='.$v['id'];
-                    $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
-                    $count = $pub_ads_box_Model->getDataCount($where);
-                    if($count>0) {
-                        $v['stap'] = '可投放';
+                }elseif($v['stap'] == 0 || $v['stap'] == 1){
+                    $v['stap'] = '可投放';
+                    if( $tou_state == 2) {
+                        $v['tp'] = 2;
+                        $v['state'] = '投放中';
+                    }
+                    if ($tou_state == 1 ) {
+                        $v['tp'] = 1;
+                        $v['state'] = '未到投放时间';
+                    }
+                    if ($tou_state == 3 ) {
+                        $v['tp'] = 3;
+                        $v['state'] = '投放完毕';
+                    }
+                    if ($tou_state == 4 ) {
+                        $v['tp'] = 4;
+                        $v['stap'] = '不可投放';
+                    }
+                    if($tou_state == 0) {
+                        $where = '1=1 and pub_ads_id='.$v['id'];
+                        $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
+                        $count = $pub_ads_box_Model->getDataCount($where);
+                        if($count <= 0) {
+                            $v['stap'] = '不可投放';
+                        }elseif( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
+
+                            $v['tp'] = 2;
+                            $v['state'] = '投放中';
+                        } else if ($now_date < $v['start_date'] ) {
+                            $v['tp'] = 1;
+                            $v['state'] = '未到投放时间';
+                        } else {
+                            $v['tp'] = 3;
+                            $v['state'] = '投放完毕';
+                        }
+                    }
+                }/*else if($v['stap'] == 1){
+                    $v['stap'] = '可投放';
+                    if( $tou_state == 2) {
+                        $v['tp'] = 2;
+                        $v['state'] = '投放中';
+                    }
+                    if ($tou_state == 1 ) {
+                        $v['tp'] = 1;
+                        $v['state'] = '未到投放时间';
+                    }
+                    if ($tou_state == 3 ) {
+                        $v['tp'] = 3;
+                        $v['state'] = '投放完毕';
+                    }
+                    if ($tou_state == 4 ) {
+                        $v['tp'] = 4;
+                        $v['state'] = '不可投放';
+                    }
+                    if($tou_state == 0) {
                         if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
 
                             $v['tp'] = 2;
@@ -499,37 +583,11 @@ class AdvdeliveryController extends BaseController {
                             $v['tp'] = 3;
                             $v['state'] = '投放完毕';
                         }
-                    } else {
-                        $v['stap'] = '不可投放';
-                        $v['state'] = '';
                     }
-                }elseif($v['stap'] == 1){
-                    //判断是否有一个成功的
-                    $where = '1=1 and pub_ads_id='.$v['id'];
-                    $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
-                    $count = $pub_ads_box_Model->getDataCount($where);
-                    if($count>0) {
-                        $v['stap'] = '可投放';
-                        if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
-
-                            $v['tp'] = 2;
-                            $v['state'] = '投放中';
-                        } else if ($now_date < $v['start_date'] ) {
-                            $v['tp'] = 1;
-                            $v['state'] = '未到投放时间';
-                        } else {
-                            $v['tp'] = 3;
-                            $v['state'] = '投放完毕';
-                        }
-                    } else {
-                        $v['stap'] = '不可投放';
-                        $v['state'] = '';
-                    }
-                }
+                }*/
             }
         });
-
-        if($tou_state != 0) {
+        /*if($tou_state != 0) {
             $result['list'] = array_filter($result['list'], function(&$v, $k)use($tou_state){
                 if($v['tp'] != $tou_state) {
                     return 0;
@@ -545,7 +603,8 @@ class AdvdeliveryController extends BaseController {
             $retp = array_slice($result['list'], $start, $size);
         } else {
             $retp = $result['list'];
-        }
+        }*/
+        $retp = $result['list'];
 
 
 

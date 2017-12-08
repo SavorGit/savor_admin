@@ -42,24 +42,29 @@ class PubAdsModel extends BaseModel
 	}
 
 
-	public function getList($field,$where, $order='id desc', $start=0,$size=5)
+	public function getList($field,$where,$group, $order='id desc', $start=0,$size=5)
 	{
 
 
 		$list = $this->alias('pads')
 			->where($where)
 			->field($field)
-			->join('left join savor_ads ads ON pads.ads_id = ads.id ')
+			->group($group)
+			->join('LEFT JOIN savor_pub_ads_box sbox ON sbox.pub_ads_id = pads.id ')
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
 			->order($order)
 			->limit($start,$size)
 			->select();
-
 		$count = $this
-			->join('savor_ads ads ON pads.ads_id = ads.id ')
+			->field('pads.id')
+			->join('LEFT JOIN savor_pub_ads_box sbox ON sbox.pub_ads_id = pads.id ')
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->group($group)
 			->alias('pads')
 			->where($where)
-			->count();
-
+			->select();
+		//print_r($this->getLastSql());
+		$count = count($count);
 		$objPage = new Page($count,$size);
 
 		$show = $objPage->admin_page();

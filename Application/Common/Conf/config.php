@@ -284,8 +284,9 @@ $config['ADVE_OCCU'] = array(
 );
 $config['TOU_STATE'] = array(
     '0'=>'全部',
-    '1'=>'未投放',
+    '1'=>'未到投放时间',
     '3'=>'投放完毕',
+    '4'=>'不可投放',
     '2'=>'投放中',
 );
 $config['USER_GRP_CONFIG'] = array(
@@ -332,5 +333,16 @@ $config['PUB_ADS_HOTEL_ERROR'] = array(
     '7'=>'机顶盒报损',
     '8'=>'包间机顶盒为空',
 );
+$config['ROOM_TYPE'] = array(
+    1=>'包间',
+    2=>'大厅',
+    3=>'等候区'
+);
 $config['HEART_LOG_SAVE_DAYS'] = 30;
+$config['CONFIG_VOLUME'] = array(
+    'system_ad_volume'=>'广告音量',
+    'system_pro_screen_volume'=>'投屏音量',
+    'system_demand_video_volume'=>'点播音量',
+    'system_tv_volume'=>'电视音量'
+);
 return $config;
