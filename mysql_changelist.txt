@@ -513,10 +513,10 @@ ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`)
 增加说明：文章表添加样式字段
 修改时间：2017.8.30 9：00
 修改人：白玉涛
-执行结果：已执行
+
 执行sql:
 ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `img_style` TINYINT(1) DEFAULT '1' NOT NULL COMMENT '图样式1小图2大图' AFTER `order_tag`;
-
+执行结果：已执行
 
 增加说明：添加专题组表
 修改时间：2017.8.30 9：00
@@ -900,6 +900,7 @@ add column `type` smallint(10) DEFAULT '0' NULL COMMENT '1版位2酒楼' ;
 
 alter table `cloud`.`savor_pub_ads`
    change `state` `state` tinyint(5) default '0' NOT NULL comment '状态:0未执行1已经执行2删除3.默认选择酒楼状态';
+执行结果：已执行
 
 增加说明：投放广告对应酒楼表
 修改时间：2017.11.15
@@ -910,7 +911,10 @@ CREATE TABLE `savor_pub_ads_hotel` (
   `hotel_id` int(12) NOT NULL DEFAULT '0' COMMENT '酒楼id',
   `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='广告对应酒楼'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告对应酒楼'
+执行结果：已执行
+
+
 
 增加说明：选择酒楼投放广告对应错误表
 修改时间：2017.11.15
@@ -927,13 +931,18 @@ CREATE TABLE `savor_pub_ads_box_error` (
   `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
   `error_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '错误原因1:剩余广告位不足,2酒楼冻结',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='广告投放机顶盒出错表'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告投放机顶盒出错表'
+执行结果：已执行
+
+
+
+
 增加说明：机顶盒广告投放添加索引
 修改时间：2017.12.06
 修改人：张英涛
 执行sql:
 ALTER TABLE `savor_pub_ads_box` ADD INDEX box_id ( `box_id` ) 
-
+执行结果：已执行
 
 增加说明：广告投放表添加索引
 修改时间：2017.12.06
@@ -941,11 +950,12 @@ ALTER TABLE `savor_pub_ads_box` ADD INDEX box_id ( `box_id` )
 执行sql:
 ALTER TABLE `savor_pub_ads` ADD INDEX start_date(`start_date`)
 ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
-
+执行结果：已执行
 
 增加说明：广告投放机顶盒表添加索引
 修改时间：2017.12.07
 修改人：白玉涛
 执行sql:
-ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);;
+ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);
+执行结果：已执行
 
