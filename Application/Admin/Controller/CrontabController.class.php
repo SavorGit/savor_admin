@@ -608,6 +608,7 @@ class CrontabController extends Controller
         $single_list = $signle_Model->getWhere($map, $field);
         $smfileModel = new SimFile();
         $now_date = date("Y-m-d H:i:s");
+        $hotelModel = new \Admin\Model\HotelModel();
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
                 $po_th = '';
@@ -621,6 +622,23 @@ class CrontabController extends Controller
                     && $smfileModel->create_dir($savor_me)
                     && $smfileModel->create_dir($savor_log)
                 ) {
+                    //创建hotel.json文件
+                    $hotel_file = $po_th.DIRECTORY_SEPARATOR.'hotel.json';
+                    if ( $smfileModel->create_file($hotel_file, true) ) {
+                        echo '创建hotel.json成功'.PHP_EOL;
+                        //写入hotel.json
+                        $hwhere['hotel_box_type'] =  array('in', array(2,3) );
+                        $hwhere['state'] = 1;
+                        $hwhere['flag'] = 0;
+                        $hotel_arr = $hotelModel->getInfo('id, name', $hwhere);
+                        $hid_arr = array_column($hotel_arr, 'id');
+                        $hname_arr = array_column($hotel_arr, 'name');
+                        $hotel_info = array_combine($hid_arr, $hname_arr);
+                        $hotel_info = json_encode($hotel_info);
+                        $smfileModel->write_file($hotel_file, $hotel_info);
+
+                    }
+
                     echo '创建目录'.$savor_path.'成功'.PHP_EOL;
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
                     foreach ( $hotel_id_arr as $hv) {

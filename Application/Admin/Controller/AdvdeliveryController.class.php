@@ -47,15 +47,16 @@ class AdvdeliveryController extends BaseController {
         $h_b_arr = json_decode($h_b_arr, true);
 
         $now_date = date("Y-m-d H:i:s");
+        $now_day = date("Y-m-d");
         $save['ads_id'] = I('post.marketid','237');
         $save['start_date'] = I('post.start_time', '');
         $save['end_date'] = I('post.end_time', '');
         $save['play_times'] = I('post.play_times', '');
         if($save['start_date'] > $save['end_date']) {
-            $msg = '投放开始时间必须小于结束时间';
+            $msg = '投放开始时间必须小于等于结束时间';
             $this->error($msg);
         }
-        if($save['start_date'] < $now_date) {
+        if($save['start_date'] < $now_day) {
             $msg = '投放开始时间必须大于等于今天';
             $this->error($msg);
         }
@@ -70,6 +71,7 @@ class AdvdeliveryController extends BaseController {
         $oneday_count = 3600 * 24;  //一天有多少秒
         //明天
         $save['end_date'] = date("Y-m-d H:i:s", strtotime($save['end_date']) + $oneday_count-1);
+        $save['type'] = 1;
         //插入pub_ads表
         $pubadsModel->startTrans();
         if( $screen_type == 2 ){
@@ -354,7 +356,7 @@ class AdvdeliveryController extends BaseController {
             die;
         }
         if($start_time > $end_time) {
-            $msg = '投放开始时间必须小于结束时间';
+            $msg = '投放开始时间必须小于等于结束时间';
             $res = array('code'=>0,'msg'=>$msg);
             echo json_encode($res);
             die;
