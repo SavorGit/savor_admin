@@ -830,7 +830,7 @@ class CrontabController extends Controller
     /**
      * @desc 餐厅端日志上报
      */
-    public function  syncData(){
+    public function  syncHotelLog(){
         $redis = SavorRedis::getInstance();
         $key = 'dinnertoupinglog';
         $redis->select(13);
