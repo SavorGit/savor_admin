@@ -19,6 +19,12 @@
 	}
 	.sleft{
 		float: left;
+		float: left;
+	    display: inline-block;
+	    width: 63%;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
 	}
 	.sright{
 		float: right;
@@ -206,6 +212,8 @@
 					url:"{$host_name}/programmenu/analyseexcel",
 					data:"excelpath="+excelpath+"&adsname="+str2,
 					success:function(data){
+						alert(1)
+						console.log(data)
 						if(data.error==0){
 							var data = data.message;
 							for(var i=0,l=data.length;i<l;i++) {
@@ -224,7 +232,7 @@
 
 								}
 
-								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+								$("#righta").append("<div type="+datap[i].type+"  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
 
 								//$('#mymodal').modal('hide');
 
@@ -259,7 +267,7 @@
 
 								}
 
-								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+								$("#righta").append("<div type="+datap[i].type+"  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
 
 								//$('#mymodal').modal('hide');
 
@@ -355,7 +363,8 @@
 					if($(this).is('.active')){
 						var ides = $(this).attr('id');
 						var dures = $(this).attr('dur');
-						_this.before('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+						var types = $(this).attr('type');
+						_this.before('<div type="'+types+'" id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
 					}
 				})
 			}
@@ -613,14 +622,21 @@
 	var htm = '';
 
 	$('#left').on('click','#f_searchb',function(){
-
+		var ggw = [];
+		$('.rightlist div').each(function(){
+			if($(this).attr('type')==33){
+				var a = $(this).find('span').eq(0).html();
+				ggw.push(a)
+			}
+		})
+		var asd = ggw.join(',')
 
 
 		$.ajax({
 			type:"POST",
 			dataType: "json",
 			url:"{$host_name}/programmenu/get_se_left",
-			data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val(),
+			data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val()+"&adval="+asd,
 			success:function(data){
 
 				//alert(data);

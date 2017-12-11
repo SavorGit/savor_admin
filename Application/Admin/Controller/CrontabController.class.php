@@ -3,7 +3,7 @@ namespace Admin\Controller;
 use Common\Lib\UmengApi;
 use Think\Controller;
 use Common\Lib\SimFile;
-
+use \Common\Lib\SavorRedis;
 /**
  * @desc 定时任务
  *
@@ -827,7 +827,58 @@ class CrontabController extends Controller
         $rp['jtype']= 1;
         return $rp;
     }
-
+    /**
+     * @desc 餐厅端日志上报
+     */
+    public function  syncHotelLog(){
+        $redis = SavorRedis::getInstance();
+        $key = 'dinnertoupinglog';
+        $redis->select(13);
+        $count = $redis->lsize($key);
+        $num = 0;
+        $rool_back = array();
+        $size = 100;
+        $dinner_hall_Model = new \Admin\Model\DinnerHallLogModel(); 
+        $insert_arr = array();
+        while($data = $redis->lpop($key)) {
+            $data = json_decode($data, true);
+    
+            $insert_arr[] = $data;
+            $num++;
+            if($num%$size == 0) {
+    
+                $bool = $dinner_hall_Model->addAll($insert_arr);
+                if($bool) {
+                    $page = $num/$size;
+                    echo '第'.$page.'页完毕'.PHP_EOL;
+                    //sleep(2);
+                    $insert_arr = array();
+                } else {
+                    $rool_back[] = $insert_arr;
+                }
+            }
+    
+        }
+        if($insert_arr) {
+            $bool = $dinner_hall_Model->addAll($insert_arr);
+            if($bool) {
+                $page = $page+1;
+                echo '23i第'.$page.'页完毕'.PHP_EOL;
+            } else {
+                $rool_back[] = $insert_arr;
+            }
+        }
+        if($rool_back) {
+            foreach ($rool_back as $k=>$v) {
+                foreach ($v as $ks=>$vs) {
+                    $bool = $redis->rpush('dinnertoupinglog', json_encode($vs));
+                }
+                
+            }
+        } else {
+            echo '处理成功';
+        }
+    }
 
     /**
      * changeadvList  将已经数组修改字段名称

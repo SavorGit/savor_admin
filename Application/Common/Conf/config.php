@@ -142,11 +142,14 @@ $config['STATE_REASON'] = array(
 $config['hotel_box_type'] = array(
     '1'=>'一代单机版',
     '2'=>'二代网络版',
-    '3'=>'三代5G版',
+    '3'=>'二代5G版',
+    '4'=>'二代单机版',
+    '5'=>'三代单机版',
+    '6'=>'三代网络版',
 );
 $config['heart_hotel_box_type'] = array(
     '2'=>'二代网络版',
-    '3'=>'三代5G版',
+    '3'=>'二代5G版',
 );
 $config['source_type'] = array(
     '1'=>'官网',

@@ -294,7 +294,7 @@ class AdvdeliveryController extends BaseController {
         }
 
         $where .= " and sht.hotel_box_type in (2,3) ";
-        //获取节目单对应最大id还没写且在预约时间内<今天
+        /*//获取节目单对应最大id还没写且在预约时间内<今天
         $where_pr = ' UNIX_TIMESTAMP(`pub_time`) < '.$now_time;
         $fieldpr="hotel_id";
         $group = 'hotel_id';
@@ -310,10 +310,10 @@ class AdvdeliveryController extends BaseController {
             $res = array('code'=>1,'data'=>array());
             echo json_encode($res);
             die;
-        }
+        }*/
         $field = 'sht.id hid, sht.name hname';
         $hotelModel = new \Admin\Model\HotelModel();
-        $where .= ' and '.$h_str;
+        //$where .= ' and '.$h_str;
         $orders = 'convert(sht.name using gbk) asc';
         $result = $hotelModel->getHotelidByArea($where, $field, $orders);
         //var_export($hotelModel->getLastSql());
