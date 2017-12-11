@@ -357,25 +357,20 @@ class CrontabController extends Controller
         $m_pub_ads = new \Admin\Model\PubAdsModel(); 
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
         $pub_ads_list = $m_pub_ads->getEmptyLocationList();
-        
         foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
             
             $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到盒子
-            
             foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
                 
                 $all_have_location_arr = array();
                 //取出该机顶盒所有未填写位置的列表
                 $all_empty_location_info = $m_pub_ads_box->getEmptyLocation('id',$val['id'],$v['box_id']);
-                
                 if(!empty($all_empty_location_info)){
                     //取出该机顶盒在该广告起止时间内所有的位置
                     $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
-                    
                     foreach($all_have_location_info as $hl){
                         $all_have_location_arr[] = $hl['location_id'];
                     }
-                    
                     $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
                     //如果还有未分配的位置
                     //print_r($diff_location_arr);exit;
@@ -605,7 +600,7 @@ class CrontabController extends Controller
         $savor_path   = '';
         $gendir       = '';
         $single_list  = array();
-        $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public';
+        $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udriverpath';
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
         $map['state'] = 0;
@@ -615,7 +610,7 @@ class CrontabController extends Controller
         $now_date = date("Y-m-d H:i:s");
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
-
+                $po_th = '';
                 $this->copy_j = array();
                 $gendir = $sv['gendir'];
                 $po_th = $pub_path.$gendir;
@@ -675,8 +670,10 @@ class CrontabController extends Controller
                 } else {
                     echo '创建目录'.$savor_path.'失败'.PHP_EOL;
                 }
-
+                ob_end_clean();
+                var_dump($pubic_path);
                 $zip=new \ZipArchive();
+                var_export($zip);
                 $po_th = iconv("utf-8", "GB2312//IGNORE", $po_th);
                 $pzip = $po_th.'.zip';
                 $zflag = $zip->open($pzip, \ZipArchive::CREATE);
