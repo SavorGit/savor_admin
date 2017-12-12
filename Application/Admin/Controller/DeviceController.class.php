@@ -236,9 +236,9 @@ class DeviceController extends BaseController{
 		        $this->error('请输入正确的Mac地址');
 		    }
 		    if($id){
-		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.id !=".$id;
+		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.id !=".$id." and b.state=1";
 		    }else {
-		        $where = " b.mac='".$save['mac']."' and b.flag=0";
+		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.state=1";
 		    }
 		    
 		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
