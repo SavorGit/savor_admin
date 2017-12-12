@@ -180,10 +180,11 @@ class AdvdeliveryController extends BaseController {
         ads.end_date and '".$save['end_time']."' >= ads.start_date )";
         $map['ads_box.box_id'] = $box_id;
         $map['ads.state'] = array('neq', 2);
-        $field = 'COUNT(ads_box.location_id) AS lcount,ads.id,ads.start_date st,ads.end_date se';
+        $field = 'ads_box.location_id as lid';
         $p_tiems = $save['play_times'];
-        $group = 'ads.start_date,ads.end_date';
+        $group = '';
         $ocu_arr = $pubadsModel->getBoxPlayTimes($map, $field, $group);
+        $ocu_len = count($ocu_arr);
         $bool = false;
         if ($type == 1) {
             if (empty($ocu_arr)) {
@@ -191,34 +192,7 @@ class AdvdeliveryController extends BaseController {
             } else {
                 $adv_promote_num_arr = C('ADVE_OCCU');
                 $adv_promote_num = $adv_promote_num_arr['num'];
-                //判断单个日期的所占用广告数
-                $start = strtotime($save['start_time']);
-                $end = strtotime($save['end_time']);
-                while($start <= $end){
-                    $datearr[] = date('Y-m-d',$end);//得到dataarr的日期数组。
-                    $end = $end - 86400;
-                }
-
-                $sum = array();
-                foreach($datearr as $dk=>$dv) {
-                    $sum[$dv] = 0;
-                    foreach($ocu_arr as $ov) {
-                        if(strtotime($dv) >= strtotime($ov['st'])
-                            && strtotime($dv) <= strtotime($ov['se'])
-                        ) {
-                            $sum[$dv] = $sum[$dv] + $ov['lcount'];
-                        }
-                    }
-                }
-                //求出数组最大值
-                $max = max($sum);
-                /*if($box_id == 788) {
-                    var_export($datearr);
-                    var_export($ocu_arr);
-                    var_export($sum);
-                    var_export($max);
-                }*/
-                $l_len = $adv_promote_num-$max-$p_tiems;
+                $l_len = $adv_promote_num-$ocu_len-$p_tiems;
                 if($l_len>=0) {
                     $bool = true;
                 }else {
