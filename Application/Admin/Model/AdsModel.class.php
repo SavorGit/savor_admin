@@ -22,7 +22,7 @@ class AdsModel extends BaseModel
 	 * @return mixed
 	 */
 	public function getadvInfo($hotelid, $menuid){
-		$field = "media.id AS id,
+		$field = "media.id AS vid,
 				media.oss_addr AS name,
 				media.md5 AS md5,
 				'easyMd5' AS md5_type,
@@ -62,7 +62,7 @@ class AdsModel extends BaseModel
 	 * @return mixed
 	 */
 	public function getadsInfo($menuid){
-		$field = "media.id AS id,
+		$field = "media.id AS vid,
 				media.oss_addr AS name,
 				media.md5 AS md5,
 				'easyMd5' AS md5_type,
@@ -98,7 +98,7 @@ class AdsModel extends BaseModel
 	 * @return mixed
 	 */
 	public function getproInfo($menuid){
-		$field = "media.id AS id,
+		$field = "media.id AS vid,
 				media.oss_addr AS name,
 				media.md5 AS md5,
 				'easyMd5' AS md5_type,

@@ -12,6 +12,17 @@ use Common\Lib\Page;
 class RoomModel extends BaseModel
 {
 	protected $tableName='room';
+
+	public function getRoomBox($field ='*',$where){
+		$result = $this->alias('rom')
+					   ->field($field)
+			           ->join('LEFT JOIN savor_box sbox ON rom.id = sbox.room_id')
+			           ->where($where)
+			           ->select();
+		return $result;
+	}
+
+
 	public function getList($where, $order='id desc', $start=0,$size=5)
 	{	
 		
