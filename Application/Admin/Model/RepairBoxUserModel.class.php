@@ -52,6 +52,21 @@ class RepairBoxUserModel extends BaseModel
 					 ->select();
 		return $data;
 	}
-
+	public function getWhere($fields,$where,$order,$limit,$type=1){
+	    if($type==1){
+	        $data = $this->field($fields)
+	        ->where($where)
+	        ->order($order)
+	        ->limit($limit)
+	        ->find();
+	    }else{
+	        $data = $this->field($fields)
+	        ->where($where)
+	        ->order($order)
+	        ->limit($limit)
+	        ->select();
+	    }
+	    return $data;
+	}
 
 }//End Class
