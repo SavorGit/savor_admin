@@ -10,7 +10,13 @@ use \Common\Lib\SavorRedis;
  */
 class CrontabController extends Controller
 {
+    private $oss_host = '';
     public $copy_j = array();
+
+
+    public function __construct(){
+        $this->oss_host = get_oss_host();
+    }
 
 
     public function report(){
@@ -618,6 +624,11 @@ class CrontabController extends Controller
                 $savor_path = $po_th.DIRECTORY_SEPARATOR.'savor';
                 $savor_me = $po_th.DIRECTORY_SEPARATOR.'media';
                 $savor_log = $po_th.DIRECTORY_SEPARATOR.'log';
+                $delfile = $po_th;
+                $delzipfile = $po_th.'.zip';
+                $del_res = $smfileModel->remove_dir($delfile, true);
+                $del_res = $smfileModel->unlink_file($delzipfile);
+                //var_export($del_res);
                 if ( $smfileModel->create_dir($savor_path)
                     && $smfileModel->create_dir($savor_me)
                     && $smfileModel->create_dir($savor_log)
@@ -627,20 +638,46 @@ class CrontabController extends Controller
                     if ( $smfileModel->create_file($hotel_file, true) ) {
                         echo '创建hotel.json成功'.PHP_EOL;
                         //写入hotel.json
-                        $hwhere['hotel_box_type'] =  array('in', array(2,3) );
+                        $hwhere = array();
+                        $hwhere['hotel_box_type'] =  array('eq', 4 );
                         $hwhere['state'] = 1;
                         $hwhere['flag'] = 0;
                         $hotel_arr = $hotelModel->getInfo('id, name', $hwhere);
-                        $hid_arr = array_column($hotel_arr, 'id');
-                        $hname_arr = array_column($hotel_arr, 'name');
-                        $hotel_info = array_combine($hid_arr, $hname_arr);
-                        $hotel_info = json_encode($hotel_info);
+                        if ($hotel_arr) {
+                            $hid_arr = array_column($hotel_arr, 'id');
+                            $hname_arr = array_column($hotel_arr, 'name');
+                            $hotel_info = array_combine($hid_arr, $hname_arr);
+                            $hotel_info = json_encode($hotel_info);
+                        } else {
+                            $hotel_info = '';
+                        }
                         $smfileModel->write_file($hotel_file, $hotel_info);
 
                     }
-
                     echo '创建目录'.$savor_path.'成功'.PHP_EOL;
+
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
+                    //下载apk
+                    $m_version_upgrade = new \Admin\Model\UpgradeModel();
+                    foreach ($hotel_id_arr as $hid) {
+                        $field = 'sdv.oss_addr apurl ';
+                        $apk_device_type = 2;
+                        $apk_info = $m_version_upgrade->getLastOneByDevice($field, $apk_device_type, $hid);
+                        if($apk_info) {
+
+                            $apk_url = $this->oss_host.$apk_info['apurl'];
+                            var_export($apk_url);
+                            $apk_filename = $gendir.'.apk';
+                            $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
+                            if($apk_res) {
+                                echo '创建apk'.$savor_path.'成功'.PHP_EOL;
+                            }
+                            break;
+                        }
+
+                    }
+
+
                     foreach ( $hotel_id_arr as $hv) {
                         $hotel_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                         if ( $smfileModel->create_dir($hotel_path) ) {
@@ -654,8 +691,22 @@ class CrontabController extends Controller
                                     $info = '';
                                     echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
                                     //获取酒楼对应节目单
-                                    $info = $this->getHotelMedia($hv);
+
+                                    $info = $this->getHotelMedia($hv, $gendir);
                                     if ( !empty($info) ) {
+
+                                        if(!empty($info['logourl'])) {
+                                            //写入酒店目录图片
+                                            $img_url = $info['logourl'];
+                                            $img_filename = 'logo.jpg';
+                                            $img_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
+                                            $img_res = $smfileModel->getFile($img_url, $img_path, $img_filename);
+                                            var_export($img_res);
+                                            if($img_res) {
+                                                echo '创建图片'.$play_file.'成功'.PHP_EOL;
+                                            }
+
+                                        }
                                         if ( 0 == $info['jtype'] ) {
                                             //复制文件
                                             $oldpath = '';
@@ -672,6 +723,15 @@ class CrontabController extends Controller
                                             $smfileModel->write_file($play_file, $info['res']);
                                             $this->copy_j[$hv] = $info['menuid'];
                                         }
+                                        //写入update.cfg
+                                        $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
+                                        $upd_str = "#get_channel\n#set_channel\n#get_log\n#get_loged\n#update_media\n#update_apk";
+                                        $smfileModel->write_file($update_path, $upd_str);
+
+
+
+
+
                                     }
 
                                 } else {
@@ -746,7 +806,7 @@ class CrontabController extends Controller
     }
 
 
-    public function getHotelMedia($hotel_id) {
+    public function getHotelMedia($hotel_id, $gendir) {
         //jtype 0已存在json文件,1需要添加
         $result = array();
         $menuhotelModel = new \Admin\Model\MenuHotelModel();
@@ -755,8 +815,9 @@ class CrontabController extends Controller
         $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
         //var_export($per_arr);
         if(empty($per_arr)){
-            return $result;
+            return array();
         }
+
         $menuid = $per_arr[0]['menuid'];
         $rdata = $this->copy_j;
         $hda = array_search($menuid, $rdata);
@@ -766,83 +827,96 @@ class CrontabController extends Controller
             return $rp;
         }
         $perid = $per_arr[0]['period'];
-        //获取节目单的节目数据start
-        $result['playbill_list'][0]['version'] = array(
-            'label'=>'节目期号',
-            'type'=>'pro',
-            'version'=>$perid,
-        );
+        $result['period'] = $perid;
         $pro_arr = $adsModel->getproInfo($menuid);
         $pro_arr = $this->changeadvList($pro_arr,1);
-        $result['playbill_list'][0]['media_lib'] = $pro_arr;
 
-
-        //获取节目单的广告数据start
-        $result['playbill_list'][1]['version'] = array(
-            'label'=>'广告期号',
-            'type'=>'ads',
-            'version'=>$perid,
-        );
         $ads_arr = $adsModel->getadsInfo($menuid);
         $ads_arr = $this->changeadvList($ads_arr,2);
-        $result['playbill_list'][1]['media_lib'] = $ads_arr;
-        //获取节目单的广告数据end
 
-        //获取节目单的宣传片start
-        $result['playbill_list'][2]['version'] = array(
-            'label'=>'宣传片期号',
-            'type'=>'adv',
-            'version'=>$perid,
-        );
         $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
         $adv_arr = $this->changeadvList($adv_arr,1);
-        $result['playbill_list'][2]['media_lib'] = $adv_arr;
 
+        $result['play_list'] = array_merge($pro_arr,
+        $ads_arr,$adv_arr);
         //获取酒楼信息
         $hotelModel = new \Admin\Model\HotelModel();
-        $ho_arr = $hotelModel->getHotelMacInfo($hotel_id);
-        $data = array();
-        $data= $ho_arr[0];
-        foreach($data as $dk=>$dv){
-            $data['hotel_id'] = intval($data['hotel_id']);
-            $data['area_id'] = intval($data['area_id']);
-            $data['key_point'] = intval($data['key_point']);
-            $data['state'] = intval($data['state']);
-            $data['state_reason'] = intval($data['state_reason']);
-            $data['flag'] = intval($data['flag']);
-            $data['hotel_box_type'] = intval($data['hotel_box_type']);
-        }
-        $result['boite'] = $data;
-
+        $ar['sht.id'] = $hotel_id;
+        $field = ' sht.id hotel_id, sht.name AS hotel_name,sht.area_id AS area_id,
+        sht.addr AS address ';
+        $ho_arr = $hotelModel->getHotelidByArea($ar, $field);
+        $result['boite'] = $ho_arr[0];
         //获取包间信息
-        $field = "  id AS room_id,name as room_name,
-        hotel_id,type as room_type,state,flag,remark,
-        create_time,
-        update_time";
-        $room['hotel_id'] = $hotel_id;
-        $room['flag'] = 0;
-        $room['state'] = 1;
+        $field = "  rom.id room_id,rom.NAME room_name,rom.TYPE room_type,sbox.id
+        box_id, sbox.mac box_mac,sbox.switch_time,sbox.volum volume ";
+        $room['rom.hotel_id'] = $hotel_id;
+        $room['rom.flag'] = 0;
+        $room['rom.state'] = 1;
         $romModel = new \Admin\Model\RoomModel();
-        $room_arr = $romModel->getInfo($field, $room);
+        $room_arr = $romModel->getRoomBox($field, $room);
         $room_arr =  $this->changeroomList($room_arr);
-        $result['room_info'] = $room_arr;
-        //获取机顶盒信息
-        $boxModel = new \Admin\Model\BoxModel();
-        $sysconfigModel = new \Admin\Model\SysConfigModel();
-        $field = "  box.id AS box_id,box.room_id,box.name as box_name,
-        room.hotel_id,box.mac as box_mac,box.state,box.flag,box.switch_time,box.volum as volume ";
-        $where = ' and box.state=1 and box.flag=0';
-        $box_arr = $boxModel->getInfoByHotelid($hotel_id, $field, $where);
-        $where = " 'system_ad_volume','system_switch_time'";
-        $sys_arr = $sysconfigModel->getInfo($where);
-        $sys_arr = $this->changesysconfigList($sys_arr);
-        if(!empty($box_arr)){
-            $box_arr = $this->changeBoxList($box_arr, $sys_arr);
-            $result['box_info'] = $box_arr;
+        $rp = array();
+        $bk = array();
+        foreach ($room_arr as $rk=>$rv) {
+            $bk[$rv['room_id']][] = array(
+                'box_id'    => $rv['box_id'],
+                'box_mac'   => $rv['box_mac'],
+                'switch_time'   => $rv['switch_time'],
+                'box_mac'   => $rv['box_mac'],
+                'volume'   => $rv['volume'],
+                'room_id'   => $rv['room_id'],
+            );
+            $rp[$rv['room_id']] = array(
+                'room_id'   => $rv['room_id'],
+                'room_name' => $rv['room_name'],
+                'room_type' => $rv['room_type'],
+                'box_list' => $bk[$rv['room_id']],
+            );
         }
+        $rp = array_values($rp);
+        $result['room_info'] = $rp;
+
+        //获取版本信息
+        $m_version_upgrade = new \Admin\Model\UpgradeModel();
+        $device_type = 2;
+        $field = ' sdv.md5 apkmd,sdv.version_code vername,sdv.oss_addr apurl ';
+        $upgrade_info = array();
+        $upgrade_info = $m_version_upgrade->getLastOneByDevice($field, $device_type, $hotel_id);
+        if(empty($upgrade_info)) {
+            $apk_md = '';
+            $apk_name = '';
+            $apk_url = '';
+        } else {
+            $apk_md = $upgrade_info['apkmd'];
+            $apk_name = $upgrade_info['vername'];
+            $apk_url = $this->oss_host.$upgrade_info['apurl'];
+        }
+        //获取logomd5
+        $logo_arr = $hotelModel->gethotellogoInfo($hotel_id);
+        var_export($logo_arr);
+        if(empty($logo_arr)) {
+            $logo_md = '';
+            $logo_url = '';
+            $logo_name = '';
+        } else {
+            $logo_md  = $logo_arr[0]['logo_md5'];
+            $logo_url = $this->oss_host.$logo_arr[0]['lourl'];
+            $logo_name = $logo_arr[0]['logoname'];
+        }
+        $result['version'] = array(
+            'apkMd5'         => $apk_md,
+            'newestApkVersion' => $apk_name,
+            'apk_name'        => $gendir.'.apk',
+            'logo_name'        => $logo_name,
+            'logo_url'        => $logo_url,
+            'logo_md5'        => $logo_md,
+        );
+        print_r($result['version']);
         $rp['res'] = json_encode($result);
         $rp['menuid']= $menuid;
         $rp['jtype']= 1;
+        $rp['logourl']= $logo_url;
+        $rp['apk_url'] = $apk_url;
         return $rp;
     }
     /**
@@ -1033,5 +1107,37 @@ class CrontabController extends Controller
         }
         return $res;
         //如果是空
+    }
+
+    public function clearUdriver() {
+        //获取目录
+        $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.
+        'Public/udriverpath';
+        var_export($pubic_path);
+        $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
+        $signle_Model = new \Admin\Model\SingleDriveListModel();
+        $yestoday = strtotime(date("Y-m-d", strtotime("-1 day")));
+        $yestoday = time();
+        $smfileModel = new SimFile();
+        if (is_dir($pub_path)) {
+            $path_arr = scandir($pub_path);
+            print_r($path_arr);
+            foreach ($path_arr as $k=>$v) {
+                if($v != '.' && $v != '..') {
+                    $detail_path = $pub_path.$v;
+                    $v = str_replace('udriver_','',$v);
+                    $time = substr($v,0, 10);
+                    var_export($time);
+                    if ($time < $yestoday) {
+                        //删除文件及压缩包
+                        print_r($detail_path);
+                        $smfileModel->remove_dir($detail_path, true);
+                    }
+                }
+                //获取时间戳文件
+            }
+        }
+        //删除前天
+
     }
 }
