@@ -636,7 +636,7 @@ class CrontabController extends Controller
                     //创建hotel.json文件
                     $hotel_file = $po_th.DIRECTORY_SEPARATOR.'hotel.json';
                     if ( $smfileModel->create_file($hotel_file, true) ) {
-                        echo '创建hotel.json成功'.PHP_EOL;
+                      //  echo '创建hotel.json成功'.PHP_EOL;
                         //写入hotel.json
                         $hwhere = array();
                         $hwhere['hotel_box_type'] =  array('eq', 4 );
@@ -654,7 +654,7 @@ class CrontabController extends Controller
                         $smfileModel->write_file($hotel_file, $hotel_info);
 
                     }
-                    echo '创建目录'.$savor_path.'成功'.PHP_EOL;
+                   // echo '创建目录'.$savor_path.'成功'.PHP_EOL;
 
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
                     //下载apk
@@ -666,11 +666,10 @@ class CrontabController extends Controller
                         if($apk_info) {
 
                             $apk_url = $this->oss_host.$apk_info['apurl'];
-                            var_export($apk_url);
                             $apk_filename = $gendir.'.apk';
                             $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
                             if($apk_res) {
-                                echo '创建apk'.$savor_path.'成功'.PHP_EOL;
+                               // echo '创建apk'.$savor_path.'成功'.PHP_EOL;
                             }
                             break;
                         }
@@ -681,18 +680,19 @@ class CrontabController extends Controller
                     foreach ( $hotel_id_arr as $hv) {
                         $hotel_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                         if ( $smfileModel->create_dir($hotel_path) ) {
-                            echo '创建目录'.$hotel_path.'成功'.PHP_EOL;
+                            //echo '创建目录'.$hotel_path.'成功'.PHP_EOL;
                             $adv_path = $hotel_path.DIRECTORY_SEPARATOR.'adv';
                             if ( $smfileModel->create_dir($adv_path) ) {
-                                echo '创建目录'.$adv_path.'成功'.PHP_EOL;
+                              //  echo '创建目录'.$adv_path.'成功'.PHP_EOL;
                                 //创建json文件
                                 $play_file = $hotel_path.DIRECTORY_SEPARATOR.'play_list.json';
                                 if ( $smfileModel->create_file($play_file, true) ) {
                                     $info = '';
-                                    echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
+                                   // echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
                                     //获取酒楼对应节目单
 
                                     $info = $this->getHotelMedia($hv, $gendir);
+
                                     if ( !empty($info) ) {
 
                                         if(!empty($info['logourl'])) {
@@ -701,11 +701,12 @@ class CrontabController extends Controller
                                             $img_filename = 'logo.jpg';
                                             $img_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                                             $img_res = $smfileModel->getFile($img_url, $img_path, $img_filename);
-                                            var_export($img_res);
+                                            //var_export($img_res);
                                             if($img_res) {
-                                                echo '创建图片'.$play_file.'成功'.PHP_EOL;
+                                                // echo '创建图片'.$img_path.'成功'.PHP_EOL;
+                                            } else {
+                                                 echo '创建图片'.$img_path.'失败'.PHP_EOL;
                                             }
-
                                         }
                                         if ( 0 == $info['jtype'] ) {
                                             //复制文件
@@ -735,7 +736,7 @@ class CrontabController extends Controller
                                     }
 
                                 } else {
-                                    echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
+                                   echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
                                 }
                             } else {
                                 echo '创建目录'.$adv_path.'失败'.PHP_EOL;
@@ -748,21 +749,22 @@ class CrontabController extends Controller
                 } else {
                     echo '创建目录'.$savor_path.'失败'.PHP_EOL;
                 }
-                ob_end_clean();
-                var_dump($pubic_path);
+                //ob_clean();
+               // var_dump($pubic_path);
                 $zip=new \ZipArchive();
-                var_export($zip);
+                //var_export($zip);
                 $po_th = iconv("utf-8", "GB2312//IGNORE", $po_th);
                 $pzip = $po_th.'.zip';
                 $zflag = $zip->open($pzip, \ZipArchive::CREATE);
                 if ($zflag) {
                     $this->addtoZip($po_th, $zip, $pubic_path);
                     $zip->close(); //关闭处理的zip文件
-                    echo '创建压缩包'.$gendir.'成功'.PHP_EOL;
+                   // echo '创建压缩包'.$gendir.'成功'.PHP_EOL;
                     //修改状态值为0
                     $signle_Model->updateInfo(array('id'=>$sv['id']), array('state'=>1,'update_time'=>$now_date));
+                     echo '状态值'.$gendir.'修改成功'.PHP_EOL;
                 } else {
-                    var_export($zip);
+                   // var_export($zip);
                     echo '创建压缩包失败';
                 }
 
@@ -774,16 +776,16 @@ class CrontabController extends Controller
     }
 
     public function addtoZip($path, $zip, $pubic_path) {
-        print_r($path);
-        echo '<hr/>';
+        //print_r($path);
+       // echo '<hr/>';
         $handler=opendir($path);
         while ( ($filename=readdir($handler))!==false ) {
             if($filename != "." && $filename != ".."){
 
                 $real_filename = $path.DIRECTORY_SEPARATOR.$filename;
-                var_dump($filename);
-                var_dump($real_filename);
-                echo '<hr/><hr/>';
+                //var_dump($filename);
+               // var_dump($real_filename);
+                //echo '<hr/><hr/>';
                 if(is_dir($real_filename)){
                     if ( count(scandir($real_filename)) ==2 ){
                         //是空目录
@@ -813,19 +815,19 @@ class CrontabController extends Controller
         $adsModel = new \Admin\Model\AdsModel();
         //获取广告期号
         $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
-        //var_export($per_arr);
+       // var_export($per_arr);
         if(empty($per_arr)){
             return array();
         }
 
         $menuid = $per_arr[0]['menuid'];
-        $rdata = $this->copy_j;
+        /*$rdata = $this->copy_j;
         $hda = array_search($menuid, $rdata);
         if ( $hda ) {
             $rp['hotel_id']= $hda;
             $rp['jtype']= 0;
             return $rp;
-        }
+        }*/
         $perid = $per_arr[0]['period'];
         $result['period'] = $perid;
         $pro_arr = $adsModel->getproInfo($menuid);
@@ -893,7 +895,6 @@ class CrontabController extends Controller
         }
         //获取logomd5
         $logo_arr = $hotelModel->gethotellogoInfo($hotel_id);
-        var_export($logo_arr);
         if(empty($logo_arr)) {
             $logo_md = '';
             $logo_url = '';
@@ -911,9 +912,8 @@ class CrontabController extends Controller
             'logo_url'        => $logo_url,
             'logo_md5'        => $logo_md,
         );
-        print_r($result['version']);
         $rp['res'] = json_encode($result);
-        $rp['menuid']= $menuid;
+        //$rp['menuid']= $menuid;
         $rp['jtype']= 1;
         $rp['logourl']= $logo_url;
         $rp['apk_url'] = $apk_url;

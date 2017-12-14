@@ -6,21 +6,39 @@ namespace Admin\Controller;
  *
  */
 use Admin\Controller\BaseController;
-use Admin\Model\ArticleModel;
-use Admin\Model\CategoModel;
-use Admin\Model\MediaModel;
-use Admin\Model\MenuHotelModel;
-use Admin\Model\MenuListLogModel;
-use Admin\Model\ProgramModel;
-use Admin\Model\AdsModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
-use Admin\Model\MenuListOpeModel;
+use Common\Lib\Page;
+
 class FlashMenuController extends BaseController {
 
     public function __construct() {
         parent::__construct();
         $this->hosname = $this->host_name();
+    }
+
+    public function getdetail(){
+        $id = I('flid');
+        $this->assign('_flid',$id);
+        $mlModel = new \Admin\Model\SingleDriveListModel();
+        $deatil_info = $mlModel->find($id);
+        $hotel_arr = json_decode($deatil_info['hotel_id_str'], true);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $start  = ( $start-1 ) * $size;
+        $count = count($hotel_arr);
+        $objPage = new Page($count, $size);
+        $show = $objPage->admin_page();
+        $hotel_arr = array_slice($hotel_arr, $start, $size);
+        $hotelModel = new \Admin\Model\HotelModel();
+        $field = 'name hotel_name,id hotel_id';
+        $map['id']  = array('in', $hotel_arr);
+        $hotel_info = $hotelModel->getInfo($field, $map);
+        $this->assign('list', $hotel_info);
+        $this->assign('page',  $show);
+        $this->display('getflashdetail');
     }
 
 
@@ -139,16 +157,15 @@ class FlashMenuController extends BaseController {
         $pcity = $userinfo['area_city'];
         $is_city_search = 0;
         if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
-            $pawhere = '1=1';
             $is_city_search = 1;
             $this->assign('is_city_search',$is_city_search);
             $this->assign('pusera', $userinfo);
         }else {
             $this->assign('is_city_search',$is_city_search);
             $where .= "	AND area_id in ($pcity)";
-            $pawhere = '1=1 and area_id = '.$pcity;
         }
-
+        //$where .= " AND flag=0 AND state=1 AND hotel_box_type = 4";
+        $where .= " AND flag=0 AND state=1";
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);

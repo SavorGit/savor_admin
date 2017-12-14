@@ -12,14 +12,10 @@ class SimFile {
         if (trim($save_dir) == '') {
             $save_dir = '.'.DIRECTORY_SEPARATOR;
         }
-        echo ($save_dir);
-        echo '<hr/>';
-        var_export(strrpos($save_dir, DIRECTORY_SEPARATOR));
 
         if (0 !== strrpos($save_dir, DIRECTORY_SEPARATOR)) {
             $save_dir.= DIRECTORY_SEPARATOR;
         }
-        echo ($save_dir);
         //创建保存目录
         if (!file_exists($save_dir) && !mkdir($save_dir, 0777, true)) {
             return false;
@@ -27,7 +23,7 @@ class SimFile {
         //获取远程文件所采用的方法
         if ($type) {
             $ch = curl_init();
-            $timeout = 20;
+            $timeout = 50;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -149,7 +145,7 @@ class SimFile {
         //把//和\\替换为正常符号
         $dirName = $this->dir_replace($dir_path);
 
-        echo $dirName.'<hr/><hr/>';
+        //echo $dirName.'<hr/><hr/>';
         if(is_dir($dirName)) {
             //打开目录句柄
             $handle = @opendir($dirName);
@@ -159,12 +155,11 @@ class SimFile {
                 if($file != '.' && $file != '..')
                 {
                     $dir = $dirName . DIRECTORY_SEPARATOR . $file;
-                    var_dump($dir);
+                    //var_dump($dir);
                     //返回目录文件和目录数组
-                    var_dump( scandir($dir));
+                    //var_dump( scandir($dir));
                     if( count( scandir($dir) ) == 2 ) {
                         rmdir($dir);
-                        echo 'lw';
                     } else {
                         if($is_all)
                         {
@@ -172,7 +167,7 @@ class SimFile {
                         }
                         else
                         {
-                            var_export($dir);
+                            //var_export($dir);
                             if(is_file($dir))
                             {
                                 $this->unlink_file($dir);
@@ -711,11 +706,15 @@ class SimFile {
 
     public function write_file($filename, $data) {
         if ( file_exists($filename) ) {
-            $num = file_put_contents($filename, $data);
-            if ($num) {
-                echo  highlight_string("写入文件：".$filename."成功的".PHP_EOL);
+            if(empty($data)) {
+
             } else {
-                echo highlight_string("写入文件：".$filename."失败的".PHP_EOL);
+                $num = file_put_contents($filename, $data);
+                if ($num) {
+                    // echo  highlight_string("写入文件：".$filename."成功的".PHP_EOL);
+                } else {
+                    echo highlight_string("写入文件：".$filename."失败的".PHP_EOL);
+                }
             }
         } else {
             $this->create_file($filename);
