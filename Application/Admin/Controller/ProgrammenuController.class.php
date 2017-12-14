@@ -356,7 +356,7 @@ class ProgrammenuController extends BaseController {
             $where .= "	AND area_id in ($pcity)";
             $pawhere = '1=1 and area_id = '.$pcity;
         }
-        $where .= " and hotel_box_type in (2,3) ";
+        $where .= " and hotel_box_type in (2,3,6) and state=1 and flag=0 ";
 
         $prHoModel = new \Admin\Model\ProgramMenuHotelModel();
         $pafield = 'DISTINCT smh.menu_id id,
