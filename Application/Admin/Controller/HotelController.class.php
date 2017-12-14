@@ -49,13 +49,15 @@ class HotelController extends BaseController {
 
 		$where = "1=1";
 		$name = I('name');
+		$search_name = addslashes($name);
+		
 		$beg_time = I('starttime','');
 		$end_time = I('endtime','');
 		if($beg_time)   $where.=" AND install_date>='$beg_time'";
 		if($end_time)   $where.=" AND install_date<='$end_time'";
 		if($name){
 			$this->assign('name',$name);
-			$where .= "	AND name LIKE '%{$name}%'";
+			$where .= "	AND name LIKE '%{$search_name}%'";
 		}
 		//机顶盒类型
 		$hbt_v = I('hbt_v');
@@ -557,6 +559,20 @@ smlist.menu_name';
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
+		//判断酒楼重名start
+		$hotel_name = addslashes($save['name']);
+		if(!empty($hotel_name)){
+		    if($hotel_id){
+		        $where = " name='".$hotel_name."' and  id !=".$hotel_id;
+		    }else {
+		        $where = " name='".$hotel_name."'";
+		    }
+		    $nums = $hotelModel->getHotelCount($where);
+		    if(!empty($nums)){
+		        $this->error('该酒楼名称已存在');
+		    }
+		}
+		//判断酒楼重名end
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
 		if(!empty($mac_addr) && $mac_addr !='000000000000'){
