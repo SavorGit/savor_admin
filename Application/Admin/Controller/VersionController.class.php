@@ -926,5 +926,126 @@ class VersionController extends BaseController{
 		echo json_encode($res);
 
 	}
+	
+	/**
+	 * @desc 餐厅段升级列表
+	 */
+	public function dinner(){
+	    $size   = I('numPerPage',50);//显示每页记录数
+	    $start = I('pageNum',1);
+	    $order = I('_order','id');
+	    $sort = I('_sort','desc');
+	    $orders = $order.' '.$sort;
+	    $pagenum = ($start-1) * $size>0?($start-1) * $size:0;
+	    $device_type = array(5,6);//终端类型：1小平台，2机顶盒，3,4手机
+	    $result = $this->upgradeList($device_type, $orders, $pagenum, $size);
+	    $this->assign('pageNum',$start);
+	    $this->assign('numPerPage',$size);
+	    $this->assign('_order',$order);
+	    $this->assign('_sort',$sort);
+	    $this->assign('datalist', $result['list']);
+	    $this->assign('page',  $result['page']);
+	    $this->display('dinner');
+	}
+	public function addUpgradeDinner(){
+	    
+	$upgradeModel = new \Admin\Model\UpgradeModel();
+	    $versionModel = new \Admin\Model\VersionModel();
+	    $name = I('name','dinner');
+	    if(IS_POST){
+	        $device_type = I('post.devicetype');//终端类型：1小平台，2机顶盒，3,4手机
+	        $add_data = array();
+	        $add_data['device_type'] = $device_type;
+	        $add_data['version_min'] = I('post.version_min');
+	        $add_data['version_max'] = I('post.version_max');
+	        $add_data['version'] = I('post.version');
+	        $add_data['update_type'] = I('post.update_type');
+	        $add_data['create_time'] = date('Y-m-d H:i:s');
+	        $add_data['state'] = 0;
+	        if($device_type==1 || $device_type==2){
+	            $upgrade_time_start = I('post.upgrade_time_start',0,'intval');
+	            $upgrade_time_end = I('post.upgrade_time_end',0,'intval');
+	            if($upgrade_time_start>$upgrade_time_end){
+	                $this->output('升级开始时间不能大于结束时间', 'version/addUpgrade', 3);
+	            }
+	            $area_id = I('post.area_id',0,'intval');
+	            $hotel_id = I('post.hotel_id','');
+	            if($area_id)   $add_data['area_id'] = $area_id;
+	            if($hotel_id)   $add_data['hotel_id'] = $hotel_id;
+	        }
+	        $res_data = $upgradeModel->add($add_data);
+	        if($res_data){
+	            $navTab = "version/$name";
+	            $this->output('新增升级版成功', $navTab,1);
+	        }else{
+	            $this->error('新增升级版本失败');
+	        }
+	    }else{
+	        $filed = 'version_code,version_name,device_type';
+	        $device_condition = array(
+	            'dinner'=>array('IN','5,6'),
+	            'box'=>2,
+	            'platform'=>1
+	        );
+	        $where = array();
+	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
+
+	        $order = 'id desc';
+	        $datalist = $versionModel->getAllList($filed, $where, $order);
+	        $android = array();
+	        $ios = array();
+	        $version = array();
+	        foreach ($datalist as $k=>$v){
+	            $version_code = $v['version_code'];
+	            $version[$v['device_type']][$version_code] = $v['version_name'];
+	        }
+	        if($name=='dinner'){
+	            $android = $version[5];
+	            krsort($android);
+	            $android_max = $android;
+	            ksort($android);
+	            $android_min = $android;
+	            $android_vinfo = array(
+	                'min'=>$android_min,
+	                'max'=>$android_max
+	            );
+	            $ios = $version[6];
+	            ksort($ios);
+	            $ios_min = $ios;
+	            krsort($ios);
+	            $ios_max = $ios;
+	            $ios_vinfo = array(
+	                'min'=>$ios_min,
+	                'max'=>$ios_max
+	            );
+	            $devicedata = array('5'=>$android_vinfo,'6'=>$ios_vinfo);
+	            
+	            $devicedata = json_encode($devicedata,true);
+	            $this->assign('devicedata',$devicedata);
+	            $this->assign('android_vinfo',$android_vinfo);
+	        }else{
+	            if(isset($device_condition[$name])){
+	                $device_type =$device_condition[$name];
+	                $version = $version[$device_type];
+	                ksort($version);
+	                $version_min = $version;
+	                krsort($version);
+	                $version_max = $version;
+	                $version_vinfo = array(
+	                    'min'=>$version_min,
+	                    'max'=>$version_max,
+	                );
+
+	                $this->assign('version_vinfo',$version_vinfo);
+	                $areaModel  = new \Admin\Model\AreaModel();
+	                $area_arr = $areaModel->getAllArea();
+	                $this->assign('area', $area_arr);
+	            }
+	        }
+	       
+	        $display_html = "adddinner";
+	        $this->display($display_html);
+	    }
+	}
 }
 

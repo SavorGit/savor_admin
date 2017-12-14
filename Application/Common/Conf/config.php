@@ -47,6 +47,12 @@ $config['DEVICE_TYPE'] = array(
     '2'=>'机顶盒',
     '3'=>'android',
     '4'=>'ios',
+    '5'=>'餐厅端_android',
+    '6'=>'餐厅端_ios',
+    '7'=>'运维端_android',
+    '8'=>'运维端_ios',
+    '9'=>'运维-单机版_android',
+    '10'=>'运维-单机版_ios',
 );
 $config['UPDATE_TYPE'] = array(
     '0'=>'手动更新',

@@ -1,0 +1,75 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/version/client" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/version/addUpgradeDinner" rel="versionaddUpgradeClient"  title="发布新版" target="dialog" mask="true"><i class="fa fa-plus"></i>发布新版</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>应用类型</th>
+              <th>应用URL</th>
+              <th>最低版本</th>
+              <th>最高版本</th>
+              <th>升级版本</th>
+              <th>升级类型</th>
+              <th>创建时间</th>
+              <th>更新时间</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="datalist" id="vlist">
+            <tr target="sid_user">
+              <td data-title="ID">{$vlist.id}</td>
+              <td data-title="应用类型">{$vlist.device_typestr}</td>
+              <td data-title="应用URL">{$vlist.oss_addr}</td>
+              <td data-title="最低版本">{$vlist.version_min}</td>
+              <td data-title="最高版本">{$vlist.version_max}</td>
+              <td data-title="升级版本">{$vlist.version}</td>
+              <td data-title="升级类型">{$vlist.update_typestr}</td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="更新时间">{$vlist.update_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+	              <if condition="$vlist['state'] eq 1">
+	              <a data-tip="已开启" target="ajaxTodo" href="{$host_name}/version/operateClientStatus?id={$vlist.id}&name=client&state=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+	                <i class="fa fa-toggle-on"></i></span></a>
+	              <else/>
+	              <a data-tip="已关闭" target="ajaxTodo" href="{$host_name}/version/operateClientStatus?id={$vlist.id}&name=client&state=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+	                <i class="fa fa-toggle-off"></i></span></a>
+	              </if>
+                  <a data-tip="删除" target="ajaxTodo" href="{$host_name}/version/delClient?id={$vlist.id}&name=client&state=20" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

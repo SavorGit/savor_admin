@@ -1,0 +1,134 @@
+<div class="pageContent">
+  <div id="dz-filecontainer">
+    <div class="tab-content">
+	   	<input id="oss_host" type="hidden" value="{$oss_host}">
+	   	<input id="devicedata" type="hidden" value='{$devicedata}'>
+		  <form id="dropbase-form" method="post" name=theform action="{$host_name}/version/addUpgradeDinner" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		    <input name="name" type="hidden" value="dinner">
+		    <div class="pageFormContent modal-body">
+		         <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                应用类型：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                <volist name=":C('DEVICE_TYPE')" id="vo">
+		                 <if condition="$key gt 4 and $key lt 7">
+		                  <input name="devicetype" type="radio" id="{$key}" value="{$key}" <if condition="$key eq 5">checked</if> />&nbsp;{$vo}
+		                  &nbsp;&nbsp;
+		                  </if>
+		                </volist>
+		              </div>
+		         </div>
+		         <div id="device">
+	            	<div class="form-group row">
+						<label class="col-xs-12 col-sm-2 control-label">
+								最低版本：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<select id="version_min" name="version_min" class="form-control">
+								<volist name="android_vinfo.min" id="vo">
+									<option value="{$key}" >{$vo}</option>
+								</volist>
+							</select>
+						</div>
+				     </div>
+	            	<div class="form-group row">
+						<label class="col-xs-12 col-sm-2 control-label">
+								最高版本：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<select id="version_max" name="version_max" class="form-control">
+								<volist name="android_vinfo.max" id="vo">
+									<option value="{$key}" >{$vo}</option>
+								</volist>
+							</select>
+						</div>
+				     </div>
+	            	<div class="form-group row">
+						<label class="col-xs-12 col-sm-2 control-label">
+								升级版本：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<select id="version" name="version" class="form-control">
+								<volist name="android_vinfo.max" id="vo">
+									<option value="{$key}" >{$vo}</option>
+								</volist>
+							</select>
+						</div>
+				     </div>
+			     </div>
+				 <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                升级类型：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                <input name="update_type" type="hidden" value="0">
+						<input name="update_type" type="checkbox" value="1" class="make-switch status" data-size="small" data-on-text="强制更新" data-off-text="手动更新" >
+				      </div>
+		         </div>
+		    </div>
+		    <div class="modal-footer">
+		      <button class="btn btn-default close-m" type="button">取消</button>
+		      <button class="btn btn-primary" type="submit">提交</button>     
+		    </div>
+		  </form>
+      </div>
+  </div>
+</div>
+<script>
+function changeType(val){
+	var id = $(this).attr("id");
+    var jsonDate=eval("("+$("#devicedata").val()+")");
+    var jsonA=jsonDate[5];
+	var jsonI=jsonDate[6];
+	var jsonAMin=jsonA.min;
+	var jsonAMax=jsonA.max;
+	var jsonIMin=jsonI.min;
+	var jsonIMax=jsonI.max;
+	//console.log(jsonA);
+	//console.log(jsonI);
+
+	if (val == 6) {
+    	  //解析json字符串 进行重置数据
+    	  var strMin="";
+    	  var strMax="";
+    	  for(var i in jsonI.min){
+    	  	strMin+="<option value='"+i+"'>"+i+"("+jsonI.min[i]+")"+"</option>";
+    	  };
+    	  $("#version_min").html(strMin);
+    	  for(var j in jsonI.max){
+    	  	strMax+="<option value='"+j+"'>"+j+"("+jsonI.max[j]+")"+"</option>";
+    	  };
+    	  //console.log(strMin);
+    	  //console.log(strMax);
+    	  $("#version_max").html(strMax).change();
+    	  $("#version").html(strMax).change();
+      }else if(val == 5){
+    	  //解析字符串 进行重置数据
+    	  //解析json字符串 进行重置数据
+    	  var strMin="";
+    	  var strMax="";
+    	  for(var i in jsonA.min){
+    	  	strMin+="<option value='"+i+"'>"+i+"("+jsonA.min[i]+")"+"</option>";
+    	  };
+    	  $("#version_min").html(strMin);
+    	  for(var j in jsonA.max){
+    	  	strMax+="<option value='"+j+"'>"+j+"("+jsonA.max[j]+")"+"</option>";
+    	  };
+    	  //console.log(strMin);
+    	  //console.log(strMax);
+    	  $("#version_max").html(strMax).change();
+    	  $("#version").html(strMax).change();
+      }
+}
+  $(function() {
+  	changeType(5);
+    $("input[name='devicetype']").click(function() {
+      var id = $(this).attr("id");
+      changeType(id);
+    });
+  });
+ 
+
+
+</script>
