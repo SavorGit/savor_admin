@@ -24,6 +24,20 @@ class ProgrammenuController extends BaseController {
         parent::__construct();
     }
 
+    public function getsessionHotel(){
+        $get_hotel_arr = json_decode($_POST['seshot'], true);
+        $key = 'select_programmenuhotel_key';
+        $h_arr = empty(session($key))?array():session($key);
+        foreach($get_hotel_arr as $tp=>$tv) {
+            if($tv['type'] == 1) {
+                $h_arr[$tv['id']] = 1;
+            } else {
+                unset($h_arr[$tv['id']]);
+            }
+        }
+        session($key, $h_arr);
+    }
+
 
     public function copynew() {
         $menuid = I('get.menuid', 0, 'int');
@@ -342,6 +356,7 @@ class ProgrammenuController extends BaseController {
             $where .= "	AND area_id in ($pcity)";
             $pawhere = '1=1 and area_id = '.$pcity;
         }
+        $where .= " and hotel_box_type in (2,3) ";
 
         $prHoModel = new \Admin\Model\ProgramMenuHotelModel();
         $pafield = 'DISTINCT smh.menu_id id,
@@ -397,7 +412,13 @@ smlist.menu_name';
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         //print_r($result);die;
-
+        $hotel_box_type = C('hotel_box_type');
+        $hotel_box_type = array(
+            '2'=>'二代网络版',
+            '3'=>'二代5G版',
+            '6'=>'三代网络版',
+        );
+        $this->assign('h_box_type', $hotel_box_type);
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
         $this->assign('alist', $result['list']);
@@ -494,6 +515,7 @@ smlist.menu_name';
 
     public function doaddnewMenu(){
             //表单提交即是新增和导入ajax区分以及与修改进行区分
+
             $now_date = date('Y-m-d H:i:s');
             $id = I('post.id','');
             //添加到menu_list 表
