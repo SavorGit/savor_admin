@@ -708,30 +708,12 @@ class CrontabController extends Controller
                                                  echo '创建图片'.$img_path.'失败'.PHP_EOL;
                                             }
                                         }
-                                        if ( 0 == $info['jtype'] ) {
-                                            //复制文件
-                                            $oldpath = '';
-                                            $old_hotel_id = $info['hotel_id'];
-                                            $oldpath = $savor_path.DIRECTORY_SEPARATOR.$old_hotel_id;
-                                            $old_playfile = $oldpath.DIRECTORY_SEPARATOR.'play_list.json';
-                                            if ( $smfileModel->handle_file($old_playfile,
-                                                $play_file, 'copy', true)) {
-                                                echo '源文件'.$old_playfile.'复制到'.$play_file.'成功'.PHP_EOL;
-                                            } else {
-                                                echo '源文件'.$old_playfile.'复制到'.$play_file.'失败'.PHP_EOL;
-                                            }
-                                        } else {
-                                            $smfileModel->write_file($play_file, $info['res']);
-                                        }
+                                        $smfileModel->write_file($play_file, $info['res']);
                                         //写入update.cfg
                                         $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
                                         $upd_str = "#get_channel\n#set_channel\n#get_log\n#get_loged\n#update_media\n#update_apk";
                                         $smfileModel->write_file($update_path, $upd_str);
-
-
-
-
-
+                                        
                                     }
 
                                 } else {
