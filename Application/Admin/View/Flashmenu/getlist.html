@@ -43,6 +43,7 @@
             <th>序号</th>
             <th>创建日期</th>
             <th>更新日期</th>
+              <th>创建人</th>
             <th>选择酒楼</th>
             <th>生成进程</th>
           </tr>
@@ -53,6 +54,7 @@
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="创建日期">{$vlist.create_time}</td>
               <td data-title="更新日期">{$vlist.update_time}</td>
+                <th>{$vlist.uname}</th>
               <td data-title="选择酒楼">
                 <a data-tip="查看" class="btn btn-success " target="navTab" mask="true" rel="flashmenu/getdetail"
 href="{$host_name}/flashmenu/getdetail?flid={$vlist.id}">查看</a>

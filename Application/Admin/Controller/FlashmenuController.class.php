@@ -58,12 +58,12 @@ class FlashMenuController extends BaseController {
         $start  = ( $start-1 ) * $size;
 
         $where = "1=1";
-        $userinfo = session('sysUserInfo');
+        /*$userinfo = session('sysUserInfo');
         $area_city = $userinfo['area_city'];
         if($userinfo['groupid'] == 1 || empty($userinfo['area_city']) ){
         }else{
             $where .= " and sysgroup.area_city=$area_city";
-        }
+        }*/
         $result = $mlModel->getList($where,$orders,$start,$size);
         $ht = str_replace('/', DIRECTORY_SEPARATOR, $this->hosname);
         $web = $ht.DIRECTORY_SEPARATOR.'Public'.DIRECTORY_SEPARATOR.'udriverpath'.DIRECTORY_SEPARATOR;
@@ -164,12 +164,11 @@ class FlashMenuController extends BaseController {
             $this->assign('is_city_search',$is_city_search);
             $where .= "	AND area_id in ($pcity)";
         }
-        //$where .= " AND flag=0 AND state=1 AND hotel_box_type = 4";
-        $where .= " AND flag=0 AND state=1";
+        $where .= " AND flag=0 AND state=1 AND hotel_box_type = 4";
+
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
-        //print_r($result);die;
 
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
