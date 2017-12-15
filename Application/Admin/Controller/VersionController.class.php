@@ -991,28 +991,20 @@ class VersionController extends BaseController{
 	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
 
 	        $order = 'id desc';
-			//按创建顺序获取餐厅端_android或者ios的
 	        $datalist = $versionModel->getAllList($filed, $where, $order);
-			print_r($versionModel->getLastSql());
-			var_export($datalist);
 	        $android = array();
 	        $ios = array();
 	        $version = array();
-			//取得数组分别对应android,ios的类型所有版本
 	        foreach ($datalist as $k=>$v){
 	            $version_code = $v['version_code'];
 	            $version[$v['device_type']][$version_code] = $v['version_name'];
 	        }
-			var_export($version);
 	        if($name=='dinner'){
-
 	            $android = $version[5];
-				//key由高到低排序
 	            krsort($android);
 	            $android_max = $android;
 	            ksort($android);
 	            $android_min = $android;
-				//得到andorid最低最高数组
 	            $android_vinfo = array(
 	                'min'=>$android_min,
 	                'max'=>$android_max
@@ -1027,14 +1019,10 @@ class VersionController extends BaseController{
 	                'max'=>$ios_max
 	            );
 	            $devicedata = array('5'=>$android_vinfo,'6'=>$ios_vinfo);
-				//数组的排序
-				$dexpa = array ( 'min' => array ( 2017061501 => '1.0', 2017121201 => '1.2', ), 'max' => array ( 2017121201 => '1.2', 2017061501 => '1.0', ), );
-
-
+	            
 	            $devicedata = json_encode($devicedata,true);
 	            $this->assign('devicedata',$devicedata);
 	            $this->assign('android_vinfo',$android_vinfo);
-				var_export($android_vinfo);
 	        }else{
 	            if(isset($device_condition[$name])){
 	                $device_type =$device_condition[$name];
@@ -1054,9 +1042,8 @@ class VersionController extends BaseController{
 	                $this->assign('area', $area_arr);
 	            }
 	        }
-
+	       
 	        $display_html = "adddinner";
-			var_export($display_html);
 	        $this->display($display_html);
 	    }
 	}
