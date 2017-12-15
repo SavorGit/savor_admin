@@ -108,7 +108,7 @@
                <span class="input-group-btn input-group-sm">
               <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
-                <volist name=":C('hotel_box_type')" id="vo">
+                <volist name="h_box_type" id="vo">
                   <option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
                 </volist>
               </select>

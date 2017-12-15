@@ -722,7 +722,6 @@ class CrontabController extends Controller
                                             }
                                         } else {
                                             $smfileModel->write_file($play_file, $info['res']);
-                                            $this->copy_j[$hv] = $info['menuid'];
                                         }
                                         //写入update.cfg
                                         $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
@@ -815,32 +814,31 @@ class CrontabController extends Controller
         $adsModel = new \Admin\Model\AdsModel();
         //获取广告期号
         $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
-       // var_export($per_arr);
         if(empty($per_arr)){
             return array();
         }
 
         $menuid = $per_arr[0]['menuid'];
-        /*$rdata = $this->copy_j;
-        $hda = array_search($menuid, $rdata);
-        if ( $hda ) {
-            $rp['hotel_id']= $hda;
-            $rp['jtype']= 0;
-            return $rp;
-        }*/
         $perid = $per_arr[0]['period'];
         $result['period'] = $perid;
-        $pro_arr = $adsModel->getproInfo($menuid);
-        $pro_arr = $this->changeadvList($pro_arr,1);
+        $rdata = $this->copy_j;
+        if ( array_key_exists($menuid, $rdata) ) {
+            $result['play_list'] = json_decode($this->copy_j[$menuid], true);
+        } else {
+            $pro_arr = $adsModel->getproInfo($menuid);
+            $pro_arr = $this->changeadvList($pro_arr,1);
 
-        $ads_arr = $adsModel->getadsInfo($menuid);
-        $ads_arr = $this->changeadvList($ads_arr,2);
+            $ads_arr = $adsModel->getadsInfo($menuid);
+            $ads_arr = $this->changeadvList($ads_arr,2);
 
-        $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
-        $adv_arr = $this->changeadvList($adv_arr,1);
+            $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
+            $adv_arr = $this->changeadvList($adv_arr,1);
 
-        $result['play_list'] = array_merge($pro_arr,
-        $ads_arr,$adv_arr);
+            $result['play_list'] = array_merge($pro_arr,
+                $ads_arr,$adv_arr);
+
+            $this->copy_j[$menuid] = json_encode($result['play_list']);
+        }
         //获取酒楼信息
         $hotelModel = new \Admin\Model\HotelModel();
         $ar['sht.id'] = $hotel_id;

@@ -169,7 +169,11 @@ class FlashMenuController extends BaseController {
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
-
+        $h_box_type = C('hotel_box_type');
+        $h_box_type = array(
+            4=>'二代单机版',
+        );
+        $this->assign('h_box_type', $h_box_type);
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
         $this->assign('alist', $result['list']);
