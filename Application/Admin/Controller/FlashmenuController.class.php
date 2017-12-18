@@ -181,7 +181,6 @@ class FlashMenuController extends BaseController {
             '1'=>'一代单机版',
             '4'=>'二代单机版',
             '5'=>'三代单机版',
-            5=>'三代单机版',
         );
         $this->assign('h_box_type', $h_box_type);
         $this->assign('menuid', $menu_id);
