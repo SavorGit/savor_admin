@@ -69,7 +69,14 @@ class FlashMenuController extends BaseController {
         $web = $ht.DIRECTORY_SEPARATOR.'Public'.DIRECTORY_SEPARATOR.'udriverpath'.DIRECTORY_SEPARATOR;
         array_walk($result['list'], function(&$v, $k)use($web) {
             if($v['state'] == 1) {
-                $v['addr'] = "<a href='".$web.$v['gendir'].".zip' target='_blank'>点击下载文件</a>";
+                $now_date =  date('Y-m-d',strtotime('-1 day'));
+                $update_date = date('Y-m-d',strtotime($v['update_time']));
+                if($now_date>$update_date){
+                    $v['addr'] = '压缩包已过期';
+                }else {
+                    $v['addr'] = "<a href='".$web.$v['gendir'].".zip' target='_blank'>点击下载文件</a>";
+                }
+                
             } else{
                 $v['addr'] = '压缩包生成中';
             }
@@ -172,6 +179,7 @@ class FlashMenuController extends BaseController {
         $h_box_type = C('hotel_box_type');
         $h_box_type = array(
             4=>'二代单机版',
+            5=>'三代单机版',
         );
         $this->assign('h_box_type', $h_box_type);
         $this->assign('menuid', $menu_id);

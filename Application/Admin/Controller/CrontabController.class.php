@@ -644,10 +644,10 @@ class CrontabController extends Controller
                         $hwhere['flag'] = 0;
                         $hotel_arr = $hotelModel->getInfo('id, name', $hwhere);
                         if ($hotel_arr) {
-                            $hid_arr = array_column($hotel_arr, 'id');
+                            /* $hid_arr = array_column($hotel_arr, 'id');
                             $hname_arr = array_column($hotel_arr, 'name');
-                            $hotel_info = array_combine($hid_arr, $hname_arr);
-                            $hotel_info = json_encode($hotel_info);
+                            $hotel_info = array_combine($hid_arr, $hname_arr); */
+                            $hotel_info = json_encode($hotel_arr);
                         } else {
                             $hotel_info = '';
                         }
