@@ -4,6 +4,52 @@ namespace Common\Lib;
 
 class SimFile {
 
+
+    public function getFile($url, $save_dir = '', $filename = '', $type = 0) {
+        if (trim($url) == '') {
+            return false;
+        }
+        if (trim($save_dir) == '') {
+            $save_dir = '.'.DIRECTORY_SEPARATOR;
+        }
+
+        if (0 !== strrpos($save_dir, DIRECTORY_SEPARATOR)) {
+            $save_dir.= DIRECTORY_SEPARATOR;
+        }
+        //创建保存目录
+        if (!file_exists($save_dir) && !mkdir($save_dir, 0777, true)) {
+            return false;
+        }
+        //获取远程文件所采用的方法
+        if ($type) {
+            $ch = curl_init();
+            $timeout = 50;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $content = curl_exec($ch);
+            curl_close($ch);
+        } else {
+            ob_start();
+            readfile($url);
+            $content = ob_get_contents();
+            ob_end_clean();
+        }
+
+        $size = strlen($content);
+        //文件大小
+        $fp2 = @fopen($save_dir . $filename, 'a');
+        fwrite($fp2, $content);
+        fclose($fp2);
+        unset($content, $url);
+        return array(
+            'file_name' => $filename,
+            'save_path' => $save_dir . $filename,
+            'file_size' => $size
+        );
+    }
+
+
     /**
      * 创建多级目录
      * @param string $dir
@@ -92,31 +138,52 @@ class SimFile {
      * @param boolean $is_all 是否删除所有
      * @param boolean $del_dir 是否删除目录
      * @return boolean
+     * 一个目录遍历完了才遍历另一个
      */
     public function remove_dir($dir_path,$is_all=FALSE)
     {
+        //把//和\\替换为正常符号
         $dirName = $this->dir_replace($dir_path);
-        $handle = @opendir($dirName);
-        while (($file = @readdir($handle)) !== FALSE)
-        {
-            if($file != '.' && $file != '..')
+
+        //echo $dirName.'<hr/><hr/>';
+        if(is_dir($dirName)) {
+            //打开目录句柄
+            $handle = @opendir($dirName);
+            //由opendir打开的目录句柄资源
+            while (($file = @readdir($handle)) !== FALSE)
             {
-                $dir = $dirName . '/' . $file;
-                if($is_all)
+                if($file != '.' && $file != '..')
                 {
-                    is_dir($dir) ? $this->remove_dir($dir) : $this->unlink_file($dir);
-                }
-                else
-                {
-                    if(is_file($dir))
-                    {
-                        $this->unlink_file($dir);
+                    $dir = $dirName . DIRECTORY_SEPARATOR . $file;
+                    //var_dump($dir);
+                    //返回目录文件和目录数组
+                    //var_dump( scandir($dir));
+                    if( count( scandir($dir) ) == 2 ) {
+                        rmdir($dir);
+                    } else {
+                        if($is_all)
+                        {
+                            is_dir($dir) ? $this->remove_dir($dir, true) : $this->unlink_file($dir);
+                        }
+                        else
+                        {
+                            //var_export($dir);
+                            if(is_file($dir))
+                            {
+                                $this->unlink_file($dir);
+                            }
+                        }
                     }
+
                 }
             }
+            closedir($handle);
+            return @rmdir($dirName);
+        } else {
+            $this->unlink_file($dirName);
         }
-        closedir($handle);
-        return @rmdir($dirName);
+
+
     }
 
     /**
@@ -167,6 +234,8 @@ class SimFile {
      */
     public function unlink_file($path)
     {
+
+
         $path = $this->dir_replace($path);
         if (file_exists($path))
         {
@@ -263,7 +332,7 @@ class SimFile {
      */
     public function dir_replace($path)
     {
-        return str_replace('//','/',str_replace('\\','/',$path));
+        return str_replace('//',DIRECTORY_SEPARATOR,str_replace('\\',DIRECTORY_SEPARATOR,$path));
     }
 
     /**
@@ -637,11 +706,15 @@ class SimFile {
 
     public function write_file($filename, $data) {
         if ( file_exists($filename) ) {
-            $num = file_put_contents($filename, $data);
-            if ($num) {
-                echo  highlight_string("写入文件：".$filename."成功的".PHP_EOL);
+            if(empty($data)) {
+
             } else {
-                echo highlight_string("写入文件：".$filename."失败的".PHP_EOL);
+                $num = file_put_contents($filename, $data);
+                if ($num) {
+                    // echo  highlight_string("写入文件：".$filename."成功的".PHP_EOL);
+                } else {
+                    echo highlight_string("写入文件：".$filename."失败的".PHP_EOL);
+                }
             }
         } else {
             $this->create_file($filename);

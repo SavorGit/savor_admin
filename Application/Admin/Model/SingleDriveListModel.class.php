@@ -29,7 +29,7 @@ class SingleDriveListModel extends BaseModel
 
 
 		$list = $this->alias('a')
-			->field('a.*')
+			->field('a.create_time, a.update_time, a.gendir, a.state,a.id,sysuser.`remark` uname')
 			->join('savor_sysuser as sysuser on a.creator_id=sysuser.id','left')
 			->join('savor_sysusergroup as sysgroup on sysuser.groupId=sysgroup.id','left')
 			->where($where)

@@ -6,21 +6,39 @@ namespace Admin\Controller;
  *
  */
 use Admin\Controller\BaseController;
-use Admin\Model\ArticleModel;
-use Admin\Model\CategoModel;
-use Admin\Model\MediaModel;
-use Admin\Model\MenuHotelModel;
-use Admin\Model\MenuListLogModel;
-use Admin\Model\ProgramModel;
-use Admin\Model\AdsModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
-use Admin\Model\MenuListOpeModel;
+use Common\Lib\Page;
+
 class FlashMenuController extends BaseController {
 
     public function __construct() {
         parent::__construct();
         $this->hosname = $this->host_name();
+    }
+
+    public function getdetail(){
+        $id = I('flid');
+        $this->assign('_flid',$id);
+        $mlModel = new \Admin\Model\SingleDriveListModel();
+        $deatil_info = $mlModel->find($id);
+        $hotel_arr = json_decode($deatil_info['hotel_id_str'], true);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $start  = ( $start-1 ) * $size;
+        $count = count($hotel_arr);
+        $objPage = new Page($count, $size);
+        $show = $objPage->admin_page();
+        $hotel_arr = array_slice($hotel_arr, $start, $size);
+        $hotelModel = new \Admin\Model\HotelModel();
+        $field = 'name hotel_name,id hotel_id';
+        $map['id']  = array('in', $hotel_arr);
+        $hotel_info = $hotelModel->getInfo($field, $map);
+        $this->assign('list', $hotel_info);
+        $this->assign('page',  $show);
+        $this->display('getflashdetail');
     }
 
 
@@ -40,18 +58,25 @@ class FlashMenuController extends BaseController {
         $start  = ( $start-1 ) * $size;
 
         $where = "1=1";
-        $userinfo = session('sysUserInfo');
+        /*$userinfo = session('sysUserInfo');
         $area_city = $userinfo['area_city'];
         if($userinfo['groupid'] == 1 || empty($userinfo['area_city']) ){
         }else{
             $where .= " and sysgroup.area_city=$area_city";
-        }
+        }*/
         $result = $mlModel->getList($where,$orders,$start,$size);
         $ht = str_replace('/', DIRECTORY_SEPARATOR, $this->hosname);
         $web = $ht.DIRECTORY_SEPARATOR.'Public'.DIRECTORY_SEPARATOR.'udriverpath'.DIRECTORY_SEPARATOR;
         array_walk($result['list'], function(&$v, $k)use($web) {
             if($v['state'] == 1) {
-                $v['addr'] = "<a href='".$web.$v['gendir'].".zip' target='_blank'>点击下载文件</a>";
+                $now_date =  date('Y-m-d',strtotime('-1 day'));
+                $update_date = date('Y-m-d',strtotime($v['update_time']));
+                if($now_date>$update_date){
+                    $v['addr'] = '压缩包已过期';
+                }else {
+                    $v['addr'] = "<a href='".$web.$v['gendir'].".zip' target='_blank'>点击下载文件</a>";
+                }
+                
             } else{
                 $v['addr'] = '压缩包生成中';
             }
@@ -139,21 +164,24 @@ class FlashMenuController extends BaseController {
         $pcity = $userinfo['area_city'];
         $is_city_search = 0;
         if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
-            $pawhere = '1=1';
             $is_city_search = 1;
             $this->assign('is_city_search',$is_city_search);
             $this->assign('pusera', $userinfo);
         }else {
             $this->assign('is_city_search',$is_city_search);
             $where .= "	AND area_id in ($pcity)";
-            $pawhere = '1=1 and area_id = '.$pcity;
         }
+        $where .= " AND flag=0 AND state=1 AND hotel_box_type = 4";
 
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
-        //print_r($result);die;
-
+        $h_box_type = C('hotel_box_type');
+        $h_box_type = array(
+            4=>'二代单机版',
+            5=>'三代单机版',
+        );
+        $this->assign('h_box_type', $h_box_type);
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
         $this->assign('alist', $result['list']);

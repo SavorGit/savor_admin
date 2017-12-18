@@ -17,14 +17,7 @@
                     </div>
                 </div>
 
-              <div class="col-xs-4 col-sm-4 col-md-4 pull-right">
-                <div class="input-group input-group-sm">
-                  <input type="text" class="form-control" name="titlename" value="{$name}" placeholder="输入名称查找">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
-                </div>
-              </div>
+
 
             </div>
           </div>
@@ -50,6 +43,8 @@
             <th>序号</th>
             <th>创建日期</th>
             <th>更新日期</th>
+              <th>创建人</th>
+            <th>选择酒楼</th>
             <th>生成进程</th>
           </tr>
           </thead>
@@ -59,6 +54,11 @@
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="创建日期">{$vlist.create_time}</td>
               <td data-title="更新日期">{$vlist.update_time}</td>
+                <th>{$vlist.uname}</th>
+              <td data-title="选择酒楼">
+                <a data-tip="查看" class="btn btn-success " target="navTab" mask="true" rel="flashmenu/getdetail"
+href="{$host_name}/flashmenu/getdetail?flid={$vlist.id}">查看</a>
+              </td>
               <td data-title="生成进程">
                   {$vlist.addr}
               </td>

@@ -48,6 +48,8 @@ class ExcelController extends Controller
             $tmpname = '内容链接明细';
         }else if($filename =='expcontentwxauth'){
             $tmpname = '文章微信授权日志';
+        }else if ($filename == 'optionerrobox'){
+            $tmpname = '运维端异常机顶盒';
         }
 
         if($filename == "heartlostinfo"){
@@ -1928,5 +1930,99 @@ class ExcelController extends Controller
 	    $xlsName = '文章微信授权明细';
 	    $filename = 'expcontentwxauth';
 	    $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    /**
+     * @desc 获取运维端机顶盒为异常状态的数据
+     */
+    public function reportErroBoxInfo(){
+        $m_hotel = new \Admin\Model\HotelModel();
+        $now = time();
+        $start_time = strtotime('-72 hours');
+        $where = '';
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) ";
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,a.name hotel_name,a.addr');
+        //print_r($hotel_list);exit;
+        $m_box = new \Admin\Model\BoxModel();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $m_repair_box_user = new \Admin\Model\RepairBoxUserModel();
+        $m_repair_detail = new \Admin\Model\RepairDetailModel();
+        $result = array();
+        $repair_type_arr = C('HOTEL_DAMAGE_CONFIG');
+        foreach($hotel_list as $key=>$v){
+            $where =" 1 and room.hotel_id=".$v['id'].' and a.state =1 and a.flag =0 and room.state =1 and room.flag =0 ';
+            $box_list = $m_box->getListInfo( 'a.id,room.name rname, a.name boxname, a.mac,a.id box_id',$where);
+            foreach($box_list as $ks=>$vs){
+                $tmp = array();
+                $where = '';
+                $where .=" 1 and hotel_id=".$v['id']." and type=2 and box_mac='".$vs['mac']."'";
+            
+                $rets  = $m_heart_log->getHotelHeartBox($where,'max(last_heart_time) ltime', 'box_mac');
+                
+                if(empty($rets)){
+                    $tmp['hotel_name'] = $v['hotel_name'];  //酒楼名称
+                    $tmp['addr']       = $v['addr'];        //酒楼地址
+                    $tmp['rname']      = $vs['rname'];       //包间名称
+                    $tmp['boxname']    = $vs['boxname'];     //盒子名称
+                    //$tmp['boxid'] = $vs['id'];
+                    $tmp['repair_0']   = '';
+                    $tmp['repair_1']   = '';
+                    $tmp['repair_2']   = '';
+                    $repair_info = $m_repair_box_user->getWhere('id,remark'," hotel_id = ".$v['id']." and mac='".$vs['mac']."' and  flag=0",' create_time desc ','0,3',2);
+                    foreach($repair_info as $rk=>$rv){
+                        $space = '';
+                        $detail_info = $m_repair_detail->getWhere('repair_type',' repair_id='.$rv['id'],'id desc','',2);
+                        foreach($detail_info as $dk=>$dv){
+                            $tmp["repair_".$rk] .= $space . $repair_type_arr[$dv['repair_type']];
+                            $space = '、';
+                        }
+                    }
+                    
+                    
+                    $result[] = $tmp;
+                }else {
+                    $ltime = $rets[0]['ltime'];
+                    $ltime = strtotime($ltime);
+                    if($ltime <= $start_time) {
+                        //$unusual_num +=1;
+                        //$box_list[$ks]['ustate'] = 0;
+                        $tmp['hotel_name'] = $v['hotel_name'];  //酒楼名称
+                        $tmp['addr']       = $v['addr'];        //酒楼地址
+                        $tmp['rname']      = $vs['rname'];       //包间名称
+                        $tmp['boxname']    = $vs['boxname'];     //盒子名称
+                        //$tmp['boxid'] = $vs['id'];
+                        $tmp['repair_0']   = '';
+                        $tmp['repair_1']   = '';
+                        $tmp['repair_2']   = '';
+                        $repair_info = $m_repair_box_user->getWhere('id,remark'," hotel_id = ".$v['id']." and mac='".$vs['mac']."' and  flag=0",' create_time desc ','0,3',2);
+                        foreach($repair_info as $rk=>$rv){
+                            $space = '';
+                            $detail_info = $m_repair_detail->getWhere('repair_type',' repair_id='.$rv['id'],'id desc','',2);
+                            foreach($detail_info as $dk=>$dv){
+                                $tmp["repair_".$rk] .= $space . $repair_type_arr[$dv['repair_type']];
+                                $space = '、';
+                            }
+                        }
+                        
+                        $result[] = $tmp;
+                    } 
+                }
+            }
+        }
+        $xlsCell = array(
+            array('hotel_name', '酒楼名称'),
+            array('addr', '酒楼地址'),
+            array('rname','包间名称'),
+            array('boxname', '盒子名称'),
+            array('repair_0','维修记录1'),
+            array('repair_1', '维修记录2'),
+            array('repair_2', '维修记录3'),
+            
+            
+             
+        );
+        $xlsName = '运维端异常机顶盒';
+        $filename = 'optionerrobox';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+        
     }
 }
