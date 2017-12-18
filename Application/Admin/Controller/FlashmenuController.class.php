@@ -164,14 +164,16 @@ class FlashMenuController extends BaseController {
             $this->assign('is_city_search',$is_city_search);
             $where .= "	AND area_id in ($pcity)";
         }
-        $where .= " AND flag=0 AND state=1 AND hotel_box_type = 4";
+        $where .= " AND flag=0 AND state=1 AND hotel_box_type in (1,4,5)";
 
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         $h_box_type = C('hotel_box_type');
         $h_box_type = array(
-            4=>'二代单机版',
+            '1'=>'一代单机版',
+            '4'=>'二代单机版',
+            '5'=>'三代单机版',
         );
         $this->assign('h_box_type', $h_box_type);
         $this->assign('menuid', $menu_id);

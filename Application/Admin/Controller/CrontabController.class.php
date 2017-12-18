@@ -639,7 +639,7 @@ class CrontabController extends Controller
                       //  echo '创建hotel.json成功'.PHP_EOL;
                         //写入hotel.json
                         $hwhere = array();
-                        $hwhere['hotel_box_type'] =  array('eq', 4 );
+                        $hwhere['hotel_box_type'] =  array('in', array('1','4','5') );
                         $hwhere['state'] = 1;
                         $hwhere['flag'] = 0;
                         $hotel_arr = $hotelModel->getInfo('id, name', $hwhere);
@@ -713,7 +713,7 @@ class CrontabController extends Controller
                                         $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
                                         $upd_str = "#get_channel\n#set_channel\n#get_log\n#get_loged\n#update_media\n#update_apk";
                                         $smfileModel->write_file($update_path, $upd_str);
-                                        
+
                                     }
 
                                 } else {
