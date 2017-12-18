@@ -145,7 +145,7 @@ $config['STATE_REASON'] = array(
     '7'=>'终止合作',
     '8'=>'问题沟通中',
 );
-$config['hotel_box_type'] = array(
+$config['hotel_box_type'] = [
     '1'=>'一代单机版',
     '2'=>'二代网络版',
     '3'=>'二代5G版',
@@ -153,7 +153,7 @@ $config['hotel_box_type'] = array(
     '4'=>'二代单机版',
     '5'=>'三代单机版',
     '6'=>'三代网络版',
-);
+];
 $config['heart_hotel_box_type'] = array(
     '2'=>'二代网络版',
     '3'=>'二代5G版',
