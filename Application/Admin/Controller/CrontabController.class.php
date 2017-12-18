@@ -1100,7 +1100,7 @@ class CrontabController extends Controller
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
         $yestoday = strtotime(date("Y-m-d", strtotime("-1 day")));
-        $yestoday = time();
+        //$yestoday = time();
         $smfileModel = new SimFile();
         if (is_dir($pub_path)) {
             $path_arr = scandir($pub_path);
