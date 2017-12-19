@@ -53,7 +53,7 @@ class RecfoodController extends BaseController {
         $userinfo = session('sysUserInfo');
         $data = array();
         $data['name'] = $name;
-        $data['media_id']= $media_id;
+        //$data['media_id']= $media_id;
         $data['big_media_id'] = $select_media_id;
         $data['hotel_id'] = $hotel_id;
         $data['creator_id']= $userinfo['id'];
@@ -92,7 +92,7 @@ class RecfoodController extends BaseController {
         }
         $data = array();
         $data['name'] = I('post.name');
-        $data['media_id'] = I('post.media_id');
+        //$data['media_id'] = I('post.media_id');
         $data['big_media_id'] = I('post.select_media_id');
         $ret = $m_hotel_recommend_food->saveInfo($where, $data);
         if($ret){
