@@ -79,12 +79,11 @@ class ProgrammenuController extends BaseController {
                     $menu_item_arr[$rk]['create_time'] = $now_date;
                 }
             }
-            /*var_export($menu_item_arr);
-            die;*/
+
             $menuItemModel = new \Admin\Model\MenuItemModel();
             $ret = $menuItemModel->addAll($menu_item_arr);
             if($ret) {
-                $this->output('复制到老节目单成功', 'programmenu/copynew',2);
+                $this->output('复制到老节目单成功', 'menu/getlist');
             } else {
                 $this->error('复制失败了请重新复制');
             }
