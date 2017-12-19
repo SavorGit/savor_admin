@@ -642,7 +642,7 @@ class CrontabController extends Controller
                         $hwhere['hotel_box_type'] =  array('in', array('1','4','5') );
                         $hwhere['state'] = 1;
                         $hwhere['flag'] = 0;
-                        $hotel_arr = $hotelModel->getInfo('id, name', $hwhere);
+                        $hotel_arr = $hotelModel->getInfo('id hotel_id, name hotel_name', $hwhere);
                         if ($hotel_arr) {
                             /* $hid_arr = array_column($hotel_arr, 'id');
                             $hname_arr = array_column($hotel_arr, 'name');
@@ -698,7 +698,7 @@ class CrontabController extends Controller
                                         if(!empty($info['logourl'])) {
                                             //写入酒店目录图片
                                             $img_url = $info['logourl'];
-                                            $img_filename = 'logo.jpg';
+                                            $img_filename = $info['logo_name'];
                                             $img_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                                             $img_res = $smfileModel->getFile($img_url, $img_path, $img_filename);
                                             //var_export($img_res);
@@ -711,7 +711,7 @@ class CrontabController extends Controller
                                         $smfileModel->write_file($play_file, $info['res']);
                                         //写入update.cfg
                                         $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
-                                        $upd_str = "#get_channel\n#set_channel\n#get_log\n#get_loged\n#update_media\n#update_apk";
+                                        $upd_str = "#get_channel\n#update_logo\n#set_channel\n#get_log\n#get_loged\n#update_media\n#update_apk";
                                         $smfileModel->write_file($update_path, $upd_str);
 
                                     }
@@ -830,10 +830,12 @@ class CrontabController extends Controller
         $result['boite'] = $ho_arr[0];
         //获取包间信息
         $field = "  rom.id room_id,rom.NAME room_name,rom.TYPE room_type,sbox.id
-        box_id, sbox.mac box_mac,sbox.switch_time,sbox.volum volume ";
+        box_id, sbox.mac box_mac,sbox.name box_name,sbox.switch_time,sbox.volum volume ";
         $room['rom.hotel_id'] = $hotel_id;
         $room['rom.flag'] = 0;
         $room['rom.state'] = 1;
+        $room['sbox.flag'] = 0;
+        $room['sbox.state'] = 1;
         $romModel = new \Admin\Model\RoomModel();
         $room_arr = $romModel->getRoomBox($field, $room);
         $room_arr =  $this->changeroomList($room_arr);
@@ -843,8 +845,8 @@ class CrontabController extends Controller
             $bk[$rv['room_id']][] = array(
                 'box_id'    => $rv['box_id'],
                 'box_mac'   => $rv['box_mac'],
+                'box_name'   => $rv['box_name'],
                 'switch_time'   => $rv['switch_time'],
-                'box_mac'   => $rv['box_mac'],
                 'volume'   => $rv['volume'],
                 'room_id'   => $rv['room_id'],
             );
@@ -868,10 +870,12 @@ class CrontabController extends Controller
             $apk_md = '';
             $apk_name = '';
             $apk_url = '';
+            $ave = '';
         } else {
             $apk_md = $upgrade_info['apkmd'];
             $apk_name = $upgrade_info['vername'];
             $apk_url = $this->oss_host.$upgrade_info['apurl'];
+            $ave = $gendir.'.apk';
         }
         //获取logomd5
         $logo_arr = $hotelModel->gethotellogoInfo($hotel_id);
@@ -879,24 +883,31 @@ class CrontabController extends Controller
             $logo_md = '';
             $logo_url = '';
             $logo_name = '';
+            $logo_version = '';
         } else {
             $logo_md  = $logo_arr[0]['logo_md5'];
             $logo_url = $this->oss_host.$logo_arr[0]['lourl'];
-            $logo_name = $logo_arr[0]['logoname'];
+            $logo_name = substr($logo_url,strripos($logo_url,"/")+1);
+            $logo_version = $logo_arr[0]['id'];;
+
         }
+
+
         $result['version'] = array(
-            'apkMd5'         => $apk_md,
-            'newestApkVersion' => $apk_name,
-            'apk_name'        => $gendir.'.apk',
-            'logo_name'        => $logo_name,
-            'logo_url'        => $logo_url,
-            'logo_md5'        => $logo_md,
+            'apkMd5'            => $apk_md,
+            'newestApkVersion'  => $apk_name,
+            'apk_name'          => $ave,
+            'logo_name'         => $logo_name,
+            'logo_url'          => $logo_url,
+            'logo_md5'          => $logo_md,
+            'logo_version'      => $logo_version,
         );
         $rp['res'] = json_encode($result);
         //$rp['menuid']= $menuid;
         $rp['jtype']= 1;
         $rp['logourl']= $logo_url;
         $rp['apk_url'] = $apk_url;
+        $rp['logo_name'] = $logo_name;
         return $rp;
     }
     /**
