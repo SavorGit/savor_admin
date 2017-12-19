@@ -32,7 +32,7 @@ class AdsModel extends BaseModel
 				when 3 then 'adv' END AS type,
 				media.oss_addr AS oss_path,
 				media.duration AS duration,
-				media.surfix AS suffix,
+				media.surfix ,
 				item.sort_num AS sortNum,
 				item.ads_name AS chinese_name";
 		$sql = "select ".$field;
@@ -72,7 +72,7 @@ class AdsModel extends BaseModel
 				when 3 then 'adv' END AS type,
 				media.oss_addr AS oss_path,
 				media.duration AS duration,
-				media.surfix AS suffix,
+				media.surfix ,
 				item.sort_num AS `order`,
 				item.ads_name AS chinese_name";
 		$sql = "select ".$field;
@@ -108,7 +108,7 @@ class AdsModel extends BaseModel
 				when 3 then 'adv' END AS type,
 				media.oss_addr AS oss_path,
 				media.duration AS duration,
-				media.surfix AS suffix,
+				media.surfix ,
 				item.sort_num AS sortnum,
 				item.ads_name AS chinese_name";
 		$sql = "select ".$field;
