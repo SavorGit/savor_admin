@@ -925,8 +925,10 @@ class CrontabController extends Controller
         $insert_arr = array();
         while($data = $redis->lpop($key)) {
             $data = json_decode($data, true);
-    
-            $insert_arr[] = $data;
+            if(!empty($data)){
+                $bool = $dinner_hall_Model->add($data);
+            }
+            /* $insert_arr[] = $data;
             $num++;
             if($num%$size == 0) {
     
@@ -939,10 +941,11 @@ class CrontabController extends Controller
                 } else {
                     $rool_back[] = $insert_arr;
                 }
-            }
+            } */
     
         }
-        if($insert_arr) {
+        echo "ok";
+        /* if($insert_arr) {
             $bool = $dinner_hall_Model->addAll($insert_arr);
             if($bool) {
                 $page = $page+1;
@@ -960,7 +963,7 @@ class CrontabController extends Controller
             }
         } else {
             echo '处理成功';
-        }
+        } */
     }
 
     /**
