@@ -106,8 +106,9 @@ class ReportController extends BaseController{
 		//酒店名称
 		$where = ' 1=1 ';
 		if($name){
+		    $search_name = addslashes($name);
 			$this->assign('name',$name);
-			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
+			$where .= "	AND shlog.hotel_name LIKE '%{$search_name}%' ";
 		}
 		//城市
 		 $area_v = I('he_area_bv');
