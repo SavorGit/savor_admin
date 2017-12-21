@@ -113,7 +113,9 @@
 			var media_id = $('#media_id').val();
 			if(media_id !='' ){
 				var $a = $(this).attr('src');
-				$('.big').prop('src', $a).addClass('addbig');
+				var b = $a.split('?');
+				var c = b[0];
+				$('.big').prop('src', c).addClass('addbig');
 				$('.big').css({'max-width':'500px'})
 				$('.zhezhao').show();
 				$('.big').show();

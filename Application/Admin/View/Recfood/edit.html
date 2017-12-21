@@ -79,7 +79,7 @@
                       <if condition="($vinfo['select_oss_addr'] eq 'NULL') OR $vinfo['select_oss_addr'] eq ''">
                         <img id="select_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
                         <else />
-                        <img id="select_media_idimg" src="{$vinfo.select_oss_addr}" border="0" />
+                        <img id="select_media_idimg" src="{$vinfo.select_oss_addr}?x-oss-process=image/resize,w_100" border="0" />
                       </if>
                        <span id="select_media_idimgname"></span>
                     </a>
@@ -112,7 +112,9 @@
 			var media_id = $('#media_id').val();
 			if(media_id !='' ){
 				var $a = $(this).attr('src');
-				$('.big').prop('src', $a).addClass('addbig');
+				var b = $a.split('?');
+				var c = b[0];
+				$('.big').prop('src', c).addClass('addbig');
 				$('.big').css({'max-width':'500px'})
 				$('.zhezhao').show();
 				$('.big').show();
