@@ -24,6 +24,7 @@
           <tr id="post">
             <th>酒店id</th>
             <th>酒店名称</th>
+            <th>对应节目单</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -31,6 +32,7 @@
             <tr target="sid_user">
               <td data-title="序号">{$vlist.hotel_id}</td>
               <td data-title="酒店名称">{$vlist.hotel_name}</td>
+              <td data-title="对应节目单">{$vlist.mename}</td>
             </tr>
           </volist>
           </tbody>

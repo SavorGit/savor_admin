@@ -36,6 +36,12 @@ class FlashMenuController extends BaseController {
         $field = 'name hotel_name,id hotel_id';
         $map['id']  = array('in', $hotel_arr);
         $hotel_info = $hotelModel->getInfo($field, $map);
+        $menuhotelModel = new \Admin\Model\MenuHotelModel();
+        foreach($hotel_info as $hk=>$hv) {
+            $hid = $hv['hotel_id'];
+            $per_arr = $menuhotelModel->getadsPeriod($hid);
+            $hotel_info[$hk]['mename'] = $per_arr[0]['menu_name'];
+        }
         $this->assign('list', $hotel_info);
         $this->assign('page',  $show);
         $this->display('getflashdetail');
