@@ -213,7 +213,9 @@ smlist.menu_name';
 				$datalist[$k]['promenu_id'] = '';
 				$datalist[$k]['promenu_name'] = '无';
 			}
-
+            if(empty($v['contractor']) || $v['contractor']=='null'){
+                $datalist[$k]['contractor'] = '';
+            }
 		}
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
