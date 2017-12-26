@@ -50,6 +50,8 @@ class ExcelController extends Controller
             $tmpname = '文章微信授权日志';
         }else if ($filename == 'optionerrobox'){
             $tmpname = '运维端异常机顶盒';
+        }else if($filename == 'dinnerapp_hall_log') {
+            $tmpname = '餐厅端日志上报';
         }
 
         if($filename == "heartlostinfo"){
@@ -1280,6 +1282,89 @@ class ExcelController extends Controller
             array('play_date', '播放日期'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+
+    function expdinnerappLog(){
+        $filename = 'dinnerapp_hall_log';
+        $hallModel =  new \Admin\Model\DinnerHallLogModel();
+        $where = '1=1 ';
+        $starttime = '2017-12-20 0:0:0';
+        $endtime = '2017-12-18 15:00:00';
+        if($starttime){
+
+            $where .= "	AND dhlog.(`create_time`) >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND dhlog.(`create_time`) <=  '{$endtime}'";
+        }
+        $where .= " AND dhlog.hotel_id != 7 ";
+
+
+        $orders = 'dhlog.id desc';
+        $rea = $hallModel->getAllList($where,$orders);
+        $touping_config = array (
+            '1'=>'特色菜',
+            '2'=>'宣传片',
+            '3'=>'照片',
+            '4'=>'视频',
+            '5'=>'欢乐词',
+        );
+        $cli_arr = array('3'=>'android','4'=>'ios');
+        foreach($rea as &$val){
+            if($val['screen_result'] == 1) {
+                $val['screen_result'] = '成功';
+            }
+            if($val['screen_result'] == 1) {
+                $val['screen_result'] = '失败';
+            }
+            $sty = $val['screen_type'];
+            $val['screen_type'] = array_key_exists($sty,
+            $touping_config)?$touping_config[$sty]:'';
+            $dty = $val['device_type'];
+            $val['mobile'] = $val['mobile'].' ';
+            $val['device_id'] = $val['device_id'].' ';
+            $val['device_type'] = $cli_arr[$dty];
+            $temp = '';
+            if($val['info']) {
+                $ainfo = json_decode($val['info'], true);
+                if( isset($ainfo['single_play']) ) {
+                    $temp .= "单个投屏时间:".$ainfo['single_play']."秒,";
+                }
+                if( isset($ainfo['loop_time']) ) {
+                    $temp .= "总投屏时长:".$ainfo['loop_time']."秒,";
+                }
+                if( isset($ainfo['loop']) ) {
+                    if($ainfo['loop'] == 0) {
+                        $temp .= "不循环";
+                    }
+                    if($ainfo['loop'] == 1) {
+                        $temp .= "循环";
+                    }
+
+                }
+                $val['info'] = $temp;
+            }
+        }
+        $xlsName = "dinnerapphalllog";
+        $xlsCell = array(
+            array('mobile', '手机号'),
+            array('invite_code', '邀请码'),
+            array('hotel_name', '酒楼名称'),
+            array('room_name', '包间名称'),
+            array('wew', '欢迎词'),
+            array('wet', '欢迎词模版'),
+            array('screen_result', '投屏是否成功'),
+            array('screen_type', '投屏功能'),
+            array('device_type', '设备类型'),
+            array('device_id', '设备唯一标识'),
+            array('screen_num', '投屏数量'),
+            array('screen_time', '投屏总时长'),
+            array('info', '投屏设置'),
+            array('create_time', '上报时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $rea,$filename);
 
     }
 
