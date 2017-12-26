@@ -178,7 +178,12 @@ class CrontabController extends Controller
         $data['hotel_all_num']            = $hotel_all_num;               //酒楼总数
         $data['not_normal_hotel_num']     = $not_normal_hotel_num;        //异常酒楼
         $data['not_normal_smallplat_num'] = $not_normal_small_plat_num -$counts;   //异常小平台
-        $data['not_normal_box_num']       = $not_normal_box_num -$black_box_num;          //异常机顶盒
+        $real_not_normal_box_num = $not_normal_box_num -$black_box_num;
+        if($real_not_normal_box_num<0){
+            $real_not_normal_box_num = 0;
+        }
+        //$data['not_normal_box_num']       = $not_normal_box_num -$black_box_num;          //异常机顶盒
+        $data['not_normal_box_num']         = $real_not_normal_box_num;
         $m_hotel_error_report = new \Admin\Model\HotelErrorReportModel();
         $id = $m_hotel_error_report->addInfo($data);
         if($id){

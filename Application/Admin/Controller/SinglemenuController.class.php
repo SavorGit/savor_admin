@@ -124,6 +124,22 @@ class SinglemenuController extends BaseController{
             }
             $data [] = $row;
         }
+        $flag = 0;
+        foreach($data as $v){
+            foreach($v as $vv){
+                if(empty($vv)){
+                    $flag =1;
+                    break;
+                }
+            }
+            if($flag==1){
+                break;
+            }
+            
+        }
+        if($flag==1){
+            $this->error('文件内容格式错误');
+        }
         if(empty($data)){
             $this->error('文件内容不能为空');
         }
