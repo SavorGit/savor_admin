@@ -575,9 +575,11 @@ class CrontabController extends Controller
 
                         $tmp_res = $pub_ads_box_error->addData($tpp_b);
                     }
+                    sleep(10);
                 }
             }
             //修改状态值为0
+            sleep(10);
             $pub_adsModel->updateInfo(array('id'=>$pb['id']),array('state'=>0,'update_time'=>$now_date));
         }
         echo 'ok选择酒楼处理完成 ';
@@ -731,7 +733,7 @@ class CrontabController extends Controller
                     echo '创建目录'.$savor_path.'失败'.PHP_EOL;
                 }
                 //ob_clean();
-               // var_dump($pubic_path);
+
                 $zip=new \ZipArchive();
                 //var_export($zip);
                 $po_th = iconv("utf-8", "GB2312//IGNORE", $po_th);
