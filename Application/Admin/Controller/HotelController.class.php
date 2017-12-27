@@ -452,6 +452,7 @@ smlist.menu_name';
 		$vinfo['ip_local'] = $res_hotelext['ip_local'];
 		$vinfo['ip'] = $res_hotelext['ip'];
 		$vinfo['server_location'] = $res_hotelext['server_location'];
+		$vinfo['is_open_customer'] = $res_hotelext['is_open_customer'];
 	    $vinfo['id'] = $id;
 		$condition['hotel_id'] = $id;
 		$arr = $menuHoModel->where($condition)->order('id desc')->find();
@@ -1356,6 +1357,26 @@ smlist.menu_name';
 			$this->output('删除宣传片失败!', 'hotel/pubmanager');
 		}
 		;
+	}
+
+
+	public function changeCustomState(){
+		$cid = I('request.cid');
+		$save = array();
+		$save['is_open_customer
+'] = I('request.cus_state');
+
+		$hextModel = new \Admin\Model\HotelExtModel();
+		$res_save = $hextModel->where('hotel_id='.$cid)->save($save);
+
+		if($res_save){
+			$message = '更新成功!';
+			$url = 'hotel/detail';
+		} else {
+			$message = '更新失败!';
+			$url = 'hotel/detail';
+		}
+		$this->output($message, $url,2);
 	}
 
 }

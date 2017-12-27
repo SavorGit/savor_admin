@@ -171,6 +171,19 @@
 					<span id="" style="text-align: center;"></span>
 				</a>
 				<p style="text-align: center;width: 100%;font-weight: 700;">{$vinfo.name}</p>
+				<p style="text-align: center;width: 100%;font-weight: 700;">
+
+					<if condition="$vinfo['is_open_customer'] eq 0">
+						<a data-tip="客户管理关闭" target="ajaxTodo" href="{$host_name}/hotel/changeCustomState?cid={$vinfo.id}&cus_state=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+						<else/>
+						<a data-tip="客户管理开启" target="ajaxTodo" href="{$host_name}/hotel/changeCustomState?cid={$vinfo.id}&cus_state=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+					</if>
+
+
+				</p>
+
 			</div>
 			<div class="div_right">
 				<ul class="ul1">
