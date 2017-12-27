@@ -1323,6 +1323,7 @@ class ExcelController extends Controller
             $val['screen_type'] = array_key_exists($sty,
             $touping_config)?$touping_config[$sty]:'';
             $dty = $val['device_type'];
+            //加空格可以防止过长显示不完整或者不识别
             $val['mobile'] = $val['mobile'].' ';
             $val['device_id'] = $val['device_id'].' ';
             $val['device_type'] = $cli_arr[$dty];
