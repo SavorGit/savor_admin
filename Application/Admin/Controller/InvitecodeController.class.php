@@ -7,6 +7,7 @@ namespace Admin\Controller;
  * @since       20171129
  */
 use Admin\Controller\BaseController;
+
 class InvitecodeController extends BaseController {
     private $oss_host = '';
     public function __construct() {
@@ -62,16 +63,25 @@ class InvitecodeController extends BaseController {
        
         $f_hotel_name = mb_substr($hotel_name, 0,1,'utf8');
         $s_hotel_name = mb_substr($hotel_name, 1,1,'utf8');
+        //$code_charter = $pi
         
         $code_charter .=getFirstCharter($f_hotel_name);
         $code_charter .=getFirstCharter($s_hotel_name);
         $code_charter  = strtolower($code_charter);
-        
-        if(empty($code_charter) || strlen($code_charter)!=2){
-            $this->error('酒楼首字母错误');
+
+        $st = '';
+        $letter=range('a','z');
+        $letter =array_flip($letter);
+        for($a=1;$a<=2;$a++)
+        {
+            $num = array_rand($letter,1);
+            $st .=$num;
         }
-        
-        //echo $code_charter;exit;
+
+        /*if(empty($code_charter) || strlen($code_charter)!=2){
+            $this->error('酒楼首字母错误');
+        }*/
+        $code_charter = strtolower($st);
         $data = array();
         $flag = 0;
         $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
