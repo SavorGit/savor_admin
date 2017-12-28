@@ -959,3 +959,128 @@ ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
 ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);
 执行结果：已执行
 
+
+增加说明：HOTEL_EXT表增加客户端是否开启字段
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_hotel_ext` ADD COLUMN `is_open_customer`
+TINYINT(1) NOT NULL DEFAULT '0' COMMENT '是否开通客户管理0:未开通1：开通';
+
+
+
+增加说明：添加餐厅2.0客户操作历史表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_action_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action_id` int(11) NOT NULL DEFAULT '0' COMMENT '客户id或者预订id',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '1新增2查看3修改4预订',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请id区分出酒楼',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='客户历史记录表'
+
+
+增加说明：添加餐厅2.0客户消费记录表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_consume_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) NOT NULL DEFAULT '0' COMMENT '客户id',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '预订信息id',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
+  `recipt` varchar(50) NOT NULL DEFAULT '' COMMENT '小票截图',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消费记录';
+
+
+增加说明：添加餐厅2.0客户表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_customer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请id',
+  `name` varchar(50) NOT NULL DEFAULT '0' COMMENT '名称',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
+  `mobile1` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号2',
+  `sex` tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别 1：男2：女',
+  `birthday` varchar(11) NOT NULL DEFAULT '' COMMENT '生日',
+  `birthplace` varchar(255) NOT NULL DEFAULT '' COMMENT '籍贯',
+  `face_url` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `consume_ability` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '消费能力',
+  `bill_info` varchar(255) NOT NULL DEFAULT '' COMMENT '发票文字',
+  `remark` text COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8
+
+
+增加说明：添加餐厅2.0客户标签表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_customer_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) NOT NULL DEFAULT '0' COMMENT '客户id',
+  `label_id` int(11) NOT NULL DEFAULT '0' COMMENT '标签id',
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='客户标签表';
+
+
+增加说明：添加餐厅2.0总标签库
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '标签名称',
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='餐厅端总标签库';
+
+增加说明：添加餐厅2.0销售经理标签库
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+
+CREATE TABLE `savor_dinner_manager_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '销售经理id',
+  `label_id` int(11) NOT NULL DEFAULT '0' COMMENT '标签id',
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='销售经理标签表'
+
+
+增加说明：HOTEL_invite_code表增加昵称字段
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_hotel_invite_code` add column `nickname`
+varchar(50) not null default '' comment 'nickname';
+
+
+增加说明：pub_ads表增加是否被移除到历史字段
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_pub_ads` add column `is_remove`
+tinyint(2) not null default 0 comment '0未1已经被移除';
