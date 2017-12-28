@@ -243,7 +243,7 @@
 	<div class="modal-dialog modal-lg" style="width: 100%;" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: white;">X</span></button>
 				<h4 class="modal-title" id="myModalLabel">选择酒楼</h4>
 			</div>
 			<div class="modal-body" style="height: 520px;">
@@ -357,7 +357,7 @@ $('.tianjiabw').click(function(){
 		if($(this).val()==''||$('#cishu').val()==''){
 			tsnull = 2;
 		}else if($('#marketid').val()==''){
-			tsnull =3;
+			tsnull =1;
 		}
 	})
 	var add_startTime = $('.dval').eq(0).val();
@@ -928,6 +928,8 @@ $('#sdd').click(function(){
 })*/
 $('#datetimepicker,#datetimepicker2').datetimepicker().on('changeDate', function(ev){
 	$('.ban_list').html('');
+	$('.jiuloushuliang').html('0');
+	$('.banweishu').html('0');
 	$('.jiuloushu span').eq(0).html('0');
 	$('.jiuloushu span').eq(1).html('0');
 	$('.position-list-group').html('');
@@ -935,6 +937,8 @@ $('#datetimepicker,#datetimepicker2').datetimepicker().on('changeDate', function
 });
 $('#cishu').change(function(){
 	$('.ban_list').html('');
+	$('.jiuloushuliang').html('0');
+	$('.banweishu').html('0');
 	$('.jiuloushu span').eq(0).html('0');
 	$('.jiuloushu span').eq(1).html('0');
 	$('.acitve-position-lists').html('');
