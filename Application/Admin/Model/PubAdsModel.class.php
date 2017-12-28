@@ -13,6 +13,33 @@ class PubAdsModel extends BaseModel
 {
 	protected $tableName='pub_ads';
 
+
+	public function gethistory($where,$field, $order='id desc', $start=0,$size=5)
+	{
+
+		$list = $this->alias('pads')->where($where)
+			->field($field)
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->order($order)
+			->limit($start,$size)
+			->select();
+
+
+		$count = $this->alias('pads')->where($where)
+			->count();
+
+		$objPage = new Page($count,$size);
+
+		$show = $objPage->admin_page();
+
+
+		$data = array('list'=>$list,'page'=>$show);
+
+
+		return $data;
+
+	}
+
 	public function getBoxPlayTimes($where, $field, $group) {
 		$list = $this->alias('ads')
 					 ->where($where)

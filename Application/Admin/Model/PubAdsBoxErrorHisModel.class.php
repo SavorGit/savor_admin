@@ -8,9 +8,9 @@ namespace Admin\Model;
 
 use Admin\Model\BaseModel;
 
-class PubAdsBoxErrorModel extends BaseModel
+class PubAdsBoxErrorHisModel extends BaseModel
 {
-	protected $tableName='pub_ads_box_error';
+	protected $tableName='pub_ads_box_error_history';
 
 	public function addData($data, $acttype) {
 		if(0 == $acttype) {

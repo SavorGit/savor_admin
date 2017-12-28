@@ -149,6 +149,16 @@ class PubAdsBoxModel extends BaseModel
 	    return $ret;
 	}
 
+	public function deleteInfo($where){
+		$ret = $this->where($where)->delete();
+		return $ret;
+	}
+
+	public function removeToNew($insfield, $oldfield, $where,$newtable){
+		$list = $this->where($where)->field($oldfield)->selectAdd($insfield, $newtable);
+		return $list;
+	}
+
 
 
 
