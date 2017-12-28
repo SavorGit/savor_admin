@@ -1093,3 +1093,40 @@ tinyint(2) not null default 0 comment '0未1已经被移除';
 ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'  AFTER `create_time` 
 执行结果:
 
+
+增加说明：增加机顶盒错误日志历史表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_pub_ads_box_error_history` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `bid` INT(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `bname` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机顶盒名称',
+  `rid` INT(12) NOT NULL DEFAULT '0' COMMENT '包间id',
+  `rname` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '包间名称',
+  `hid` INT(12) NOT NULL DEFAULT '0' COMMENT '酒店id',
+  `hname` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '酒店名称',
+  `pub_ads_id` INT(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `error_type` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '错误原因1:剩余广告位不足,2酒楼冻结',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告投放机顶盒出错历史表'
+
+
+增加说明：增加机顶盒日志历史表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_pub_ads_box_history` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `box_id` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `location_id` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒位置id',
+  `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '原来的旧表创建时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '从表里挪移过来创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `down_state` tinyint(1) NOT NULL DEFAULT '0' COMMENT '机顶盒下载状态',
+  PRIMARY KEY (`id`),
+  KEY `box_id` (`box_id`),
+  KEY `pbs` (`pub_ads_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告对应机顶盒历史表'
+
