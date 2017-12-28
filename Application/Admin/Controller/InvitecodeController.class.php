@@ -83,9 +83,9 @@ class InvitecodeController extends BaseController {
             $st .=$num;
         }*/
 
-        /*if(empty($code_charter) || strlen($code_charter)!=2){
+        if(empty($code_charter) || strlen($code_charter)!=2){
             $this->error('酒楼首字母错误');
-        }*/
+        }
         $data = array();
         $flag = 0;
         $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
