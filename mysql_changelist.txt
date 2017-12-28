@@ -959,6 +959,7 @@ ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
 ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);
 执行结果：已执行
 
+<<<<<<< HEAD
 
 增加说明：HOTEL_EXT表增加客户端是否开启字段
 修改时间：2017.12.28
@@ -1084,3 +1085,11 @@ varchar(50) not null default '' comment 'nickname';
 执行sql:
 alter table `cloud`.`savor_pub_ads` add column `is_remove`
 tinyint(2) not null default 0 comment '0未1已经被移除';
+
+增加说明：ads表增加更新时间
+修改时间：2017.12.28
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'  AFTER `create_time` 
+执行结果:
+
