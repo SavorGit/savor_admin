@@ -959,3 +959,9 @@ ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
 ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);
 执行结果：已执行
 
+增加说明：ads表增加更新时间
+修改时间：2017.12.28
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'  AFTER `create_time` 
+执行结果:
