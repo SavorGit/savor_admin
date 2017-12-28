@@ -7,6 +7,7 @@ namespace Admin\Controller;
  * @since       20171129
  */
 use Admin\Controller\BaseController;
+use OSS\Tests\Common;
 
 class InvitecodeController extends BaseController {
     private $oss_host = '';
@@ -61,27 +62,30 @@ class InvitecodeController extends BaseController {
         $hotel_name = $hotel_info[0]['name'];
         $code_charter = '';
        
-        $f_hotel_name = mb_substr($hotel_name, 0,1,'utf8');
-        $s_hotel_name = mb_substr($hotel_name, 1,1,'utf8');
-        //$code_charter = $pi
-        
-        $code_charter .=getFirstCharter($f_hotel_name);
-        $code_charter .=getFirstCharter($s_hotel_name);
+        /*$f_hotel_name = mb_substr($hotel_name, 0,1,'utf8');
+        $s_hotel_name = mb_substr($hotel_name, 1,1,'utf8');*/
+
+        $s_hotel_name = mb_substr($hotel_name, 0,2,'utf8');
+        $pi = new \Common\Lib\Pin();
+        $p_obj = new \Overtrue\Pinyin\Pinyin();
+        $code_charter = $p_obj->abbr($s_hotel_name);
+        $code_charter  = strtolower($code_charter);
+        /* $code_charter .=getFirstCharter($f_hotel_name);
+         $code_charter .=getFirstCharter($s_hotel_name);*/
         $code_charter  = strtolower($code_charter);
 
-        $st = '';
+        /*$st = '';
         $letter=range('a','z');
         $letter =array_flip($letter);
         for($a=1;$a<=2;$a++)
         {
             $num = array_rand($letter,1);
             $st .=$num;
-        }
+        }*/
 
         /*if(empty($code_charter) || strlen($code_charter)!=2){
             $this->error('酒楼首字母错误');
         }*/
-        $code_charter = strtolower($st);
         $data = array();
         $flag = 0;
         $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
