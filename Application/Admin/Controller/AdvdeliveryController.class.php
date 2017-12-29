@@ -611,7 +611,7 @@ class AdvdeliveryController extends BaseController {
         $tou_state = 3;
         if ($name) {
             $this->assign('adsname', $name);
-            $where .= " and ads.name like '%".$name."%' ";
+            $where .= " and ads.`name` like '%".$name."%' ";
         }
         if(3 == $tou_state) {
             $where .=" AND pads.end_date < '$now_date'";

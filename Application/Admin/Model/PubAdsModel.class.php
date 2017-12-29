@@ -25,7 +25,9 @@ class PubAdsModel extends BaseModel
 			->select();
 
 
-		$count = $this->alias('pads')->where($where)
+		$count = $this->alias('pads')
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->where($where)
 			->count();
 
 		$objPage = new Page($count,$size);
