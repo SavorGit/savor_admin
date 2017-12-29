@@ -396,6 +396,7 @@ class AdvdeliveryController extends BaseController {
      */
     public function getlist(){
         $tou_arr = C('TOU_STATE');
+        unset($tou_arr[3]);
         $this->assign('to_ar', $tou_arr);
         $now_date = date("Y-m-d");
         $pubadsModel = new \Admin\Model\PubAdsModel();
@@ -409,30 +410,17 @@ class AdvdeliveryController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        $where = "1=1 and pads.state != 2";
+        $where = "1=1 and pads.state != 2 and pads.is_remove=0";
         $name = I('serachads');
         $tou_state = I('tou_state',0);
-        $beg_time = I('starttime','');
-        $end_time = I('end_time','');
         $dap = array(
             'now'=>$now_date,
             'tou_st'=>$tou_state,
         );
-        if($beg_time > $end_time) {
-            $msg = '开始时间必须小于等于结束时间';
-            $this->error($msg);
-        }
+
         if ($name) {
             $this->assign('adsname', $name);
             $where .= " and ads.name like '%".$name."%' ";
-        }
-        if($beg_time) {
-            $this->assign('starttime', $beg_time);
-            $where.=" AND pads.start_date >='$beg_time'";
-        }
-        if($end_time) {
-            $this->assign('end_time', $end_time);
-            $where.=" AND pads.end_date <='$end_time'";
         }
         if($tou_state) {
             if(1 == $tou_state) {
@@ -449,8 +437,10 @@ class AdvdeliveryController extends BaseController {
                 $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
             }
             $this->assign('to_state', $tou_state);
+        } else {
+            $where .=" AND pads.end_date >= '$now_date' AND sbox.box_id > 0";
         }
-        $field = 'ads.name,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
+        $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
 
@@ -510,6 +500,17 @@ class AdvdeliveryController extends BaseController {
                     if ($tou_state == 4 ) {
                         $v['tp'] = 4;
                         $v['stap'] = '不可投放';
+                        $where = '1=1 and pub_ads_id='.$v['id'];
+                        $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
+                        $count = $pub_ads_box_Model->getDataCount($where);
+
+
+                        if($count <= 0) {
+                            $v['stap'] = '不可投放';
+                        }else{
+                            unset($v);
+                            var_export($v);
+                        }
                     }
                     if($tou_state == 0) {
                         $where = '1=1 and pub_ads_id='.$v['id'];
@@ -529,38 +530,7 @@ class AdvdeliveryController extends BaseController {
                             $v['state'] = '投放完毕';
                         }
                     }
-                }/*else if($v['stap'] == 1){
-                    $v['stap'] = '可投放';
-                    if( $tou_state == 2) {
-                        $v['tp'] = 2;
-                        $v['state'] = '投放中';
-                    }
-                    if ($tou_state == 1 ) {
-                        $v['tp'] = 1;
-                        $v['state'] = '未到投放时间';
-                    }
-                    if ($tou_state == 3 ) {
-                        $v['tp'] = 3;
-                        $v['state'] = '投放完毕';
-                    }
-                    if ($tou_state == 4 ) {
-                        $v['tp'] = 4;
-                        $v['state'] = '不可投放';
-                    }
-                    if($tou_state == 0) {
-                        if( $now_date >= $v['start_date'] && $now_date <=$v['end_date']) {
-
-                            $v['tp'] = 2;
-                            $v['state'] = '投放中';
-                        } else if ($now_date < $v['start_date'] ) {
-                            $v['tp'] = 1;
-                            $v['state'] = '未到投放时间';
-                        } else {
-                            $v['tp'] = 3;
-                            $v['state'] = '投放完毕';
-                        }
-                    }
-                }*/
+                }
             }
         });
         /*if($tou_state != 0) {
