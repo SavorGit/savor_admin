@@ -575,18 +575,26 @@ class AdvdeliveryController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        $where = "1=1 and pads.state != 2 ";
+        $where = "1=1 and pads.state != 2 and pads.is_remove=1";
         $name = I('serachads');
-        $tou_state = 3;
+        $tou_state = I('tou_state',0);
         if ($name) {
             $this->assign('adsname', $name);
             $where .= " and ads.`name` like '%".$name."%' ";
         }
         if(3 == $tou_state) {
-            $where .=" AND pads.end_date < '$now_date'";
+            $where .=" AND pads.end_date < '$now_date' AND sbox.box_id > 0";
+        }
+        if(4 == $tou_state) {
+            $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
+    }
+        if($tou_state == 0) {
+            $where .=" AND ( ( pads.end_date < '$now_date' AND sbox.box_id > 0 )";
+            $where .=" or (sbox.box_id IS NULL OR  sbox.box_id = 0) ) ";
         }
         $field = 'ads.name,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
-        $result = $pubadsModel->gethistory($where,$field,  $orders,$start,$size);
+        $group = 'pads.id';
+        $result = $pubadsModel->gethistory($where,$field,$group,  $orders,$start,$size);
         array_walk($result['list'], function(&$v, $k)use($now_date){
             $now_date = strtotime( $now_date);
             $v['start_date'] = strtotime( $v['start_date'] );
