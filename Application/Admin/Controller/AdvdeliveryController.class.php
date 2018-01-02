@@ -525,9 +525,6 @@ class AdvdeliveryController extends BaseController {
                         } else if ($now_date < $v['start_date'] ) {
                             $v['tp'] = 1;
                             $v['state'] = '未到投放时间';
-                        } else {
-                            $v['tp'] = 3;
-                            $v['state'] = '投放完毕';
                         }
                     }
                 }
@@ -563,6 +560,8 @@ class AdvdeliveryController extends BaseController {
 
     public function gethistorylist(){
         $tou_arr = C('TOU_STATE');
+        unset($tou_arr[1]);
+        unset($tou_arr[2]);
         $this->assign('to_ar', $tou_arr);
         $now_date = date("Y-m-d");
         $pubadsModel = new \Admin\Model\PubAdsModel();
@@ -599,10 +598,7 @@ class AdvdeliveryController extends BaseController {
             }
             if( 2 == $v['type']) {
                 $v['pub'] = '按酒楼发布';
-                if($v['stap'] == 3) {
-                    $v['stap'] = '版位计算中';
-                    $v['state'] = '';
-                }elseif($v['stap'] == 0 || $v['stap'] == 1){
+               if($v['stap'] ==  1){
                     $v['stap'] = '可投放';
                     $v['tp'] = 3;
                     $v['state'] = '投放完毕';
