@@ -1290,8 +1290,8 @@ class ExcelController extends Controller
         $filename = 'dinnerapp_hall_log';
         $hallModel =  new \Admin\Model\DinnerHallLogModel();
         $where = '1=1 ';
-        $starttime = '2017-12-20 0:0:0';
-        $endtime = '2017-12-18 15:00:00';
+        $starttime = '2017-12-18 00:00:00';
+        $endtime = '2017-12-20 15:00:00';
         if($starttime){
 
             $where .= "	AND dhlog.(`create_time`) >= '{$starttime}'";
