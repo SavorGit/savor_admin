@@ -437,12 +437,11 @@ class AdvdeliveryController extends BaseController {
                 $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
             }
             $this->assign('to_state', $tou_state);
-        } else {
-            $where .=" AND pads.end_date >= '$now_date' AND sbox.box_id > 0";
         }
         $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
+
 
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);
@@ -503,7 +502,6 @@ class AdvdeliveryController extends BaseController {
                         $where = '1=1 and pub_ads_id='.$v['id'];
                         $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
                         $count = $pub_ads_box_Model->getDataCount($where);
-
 
                         if($count <= 0) {
                             $v['stap'] = '不可投放';
