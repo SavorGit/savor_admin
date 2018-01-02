@@ -52,6 +52,8 @@ class ExcelController extends Controller
             $tmpname = '运维端异常机顶盒';
         }else if($filename == 'dinnerapp_hall_log') {
             $tmpname = '餐厅端日志上报';
+        }else if($filename == 'bind_invite_hotel_info') {
+            $tmpname = '餐厅端绑定酒楼数据';
         }
 
         if($filename == "heartlostinfo"){
@@ -1285,13 +1287,40 @@ class ExcelController extends Controller
 
     }
 
+    /*
+     *餐厅端目前已经绑定酒楼数据
+     */
+    function exphotelinvitecode() {
+        $filename = 'bind_invite_hotel_info';
+        $fileds = 'a.code invite_code,a.bind_mobile, a.bind_time,ht.name hname';
+        $where = ' a.state=1 and a.flag = 0';
 
+        $orders = 'a.hotel_id desc';
+        $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
+        $list = $m_hotel_invite_code->getInviteExcel($fileds,$where,$orders);
+        $xlsName = "bindhotelinfo";
+        $xlsCell = array(
+            array('hname', '酒楼名称'),
+            array('invite_code', '邀请码'),
+            array('bind_mobile', '绑定手机号'),
+            array('bind_time', '绑定时间'),
+        );
+        foreach($list as &$val){
+            $val['bind_mobile'] = $val['bind_mobile'].' ';
+        }
+
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+
+    }
+    /*
+         *餐厅端投屏日志
+         */
     function expdinnerappLog(){
         $filename = 'dinnerapp_hall_log';
         $hallModel =  new \Admin\Model\DinnerHallLogModel();
         $where = '1=1 ';
         $starttime = '2017-12-18 00:00:00';
-        $endtime = '2017-12-20 15:00:00';
+        $endtime = date("Y-m-d H:i:s");
         if($starttime){
 
             $where .= "	AND dhlog.(`create_time`) >= '{$starttime}'";
