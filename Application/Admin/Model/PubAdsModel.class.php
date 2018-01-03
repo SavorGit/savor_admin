@@ -14,22 +14,28 @@ class PubAdsModel extends BaseModel
 	protected $tableName='pub_ads';
 
 
-	public function gethistory($where,$field, $order='id desc', $start=0,$size=5)
+	public function gethistory($where,$field,$group, $order='id desc', $start=0,$size=5)
 	{
 
 		$list = $this->alias('pads')->where($where)
 			->field($field)
+			->group($group)
 			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->join('LEFT JOIN savor_pub_ads_box_history sbox ON sbox.pub_ads_id = pads.id ')
 			->order($order)
 			->limit($start,$size)
 			->select();
 
 
+
+
 		$count = $this->alias('pads')
+			->join('LEFT JOIN savor_pub_ads_box_history sbox ON sbox.pub_ads_id = pads.id ')
 			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
 			->where($where)
-			->count();
-
+			->field( 'distinct pads.`id`')
+			->select();
+		$count = count($count);
 		$objPage = new Page($count,$size);
 
 		$show = $objPage->admin_page();

@@ -39,4 +39,14 @@ class HotelInviteCodeModel extends BaseModel
 	    }
 	    return $ret;
 	}
+	public function getInviteExcel($fields,$where, $order='id desc'){
+		$list = $this->alias('a')
+			->join('savor_hotel ht on ht.id= a.hotel_id','left')
+			->field($fields)
+			->where($where)
+			->order($order)
+			->select();
+
+		return $list;
+	}
 }

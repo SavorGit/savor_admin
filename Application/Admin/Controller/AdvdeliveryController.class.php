@@ -437,12 +437,11 @@ class AdvdeliveryController extends BaseController {
                 $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
             }
             $this->assign('to_state', $tou_state);
-        } else {
-            $where .=" AND pads.end_date >= '$now_date' AND sbox.box_id > 0";
         }
         $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
+
 
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);
@@ -504,7 +503,6 @@ class AdvdeliveryController extends BaseController {
                         $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
                         $count = $pub_ads_box_Model->getDataCount($where);
 
-
                         if($count <= 0) {
                             $v['stap'] = '不可投放';
                         }else{
@@ -525,9 +523,6 @@ class AdvdeliveryController extends BaseController {
                         } else if ($now_date < $v['start_date'] ) {
                             $v['tp'] = 1;
                             $v['state'] = '未到投放时间';
-                        } else {
-                            $v['tp'] = 3;
-                            $v['state'] = '投放完毕';
                         }
                     }
                 }
@@ -563,6 +558,8 @@ class AdvdeliveryController extends BaseController {
 
     public function gethistorylist(){
         $tou_arr = C('TOU_STATE');
+        unset($tou_arr[1]);
+        unset($tou_arr[2]);
         $this->assign('to_ar', $tou_arr);
         $now_date = date("Y-m-d");
         $pubadsModel = new \Admin\Model\PubAdsModel();
@@ -576,18 +573,26 @@ class AdvdeliveryController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        $where = "1=1 and pads.state != 2 ";
+        $where = "1=1 and pads.state != 2 and pads.is_remove=1";
         $name = I('serachads');
-        $tou_state = 3;
+        $tou_state = I('tou_state',0);
         if ($name) {
             $this->assign('adsname', $name);
             $where .= " and ads.`name` like '%".$name."%' ";
         }
         if(3 == $tou_state) {
-            $where .=" AND pads.end_date < '$now_date'";
+            $where .=" AND pads.end_date < '$now_date' AND sbox.box_id > 0";
+        }
+        if(4 == $tou_state) {
+            $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
+    }
+        if($tou_state == 0) {
+            $where .=" AND ( ( pads.end_date < '$now_date' AND sbox.box_id > 0 )";
+            $where .=" or (sbox.box_id IS NULL OR  sbox.box_id = 0) ) ";
         }
         $field = 'ads.name,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
-        $result = $pubadsModel->gethistory($where,$field,  $orders,$start,$size);
+        $group = 'pads.id';
+        $result = $pubadsModel->gethistory($where,$field,$group,  $orders,$start,$size);
         array_walk($result['list'], function(&$v, $k)use($now_date){
             $now_date = strtotime( $now_date);
             $v['start_date'] = strtotime( $v['start_date'] );
@@ -599,10 +604,7 @@ class AdvdeliveryController extends BaseController {
             }
             if( 2 == $v['type']) {
                 $v['pub'] = '按酒楼发布';
-                if($v['stap'] == 3) {
-                    $v['stap'] = '版位计算中';
-                    $v['state'] = '';
-                }elseif($v['stap'] == 0 || $v['stap'] == 1){
+               if($v['stap'] ==  1){
                     $v['stap'] = '可投放';
                     $v['tp'] = 3;
                     $v['state'] = '投放完毕';
