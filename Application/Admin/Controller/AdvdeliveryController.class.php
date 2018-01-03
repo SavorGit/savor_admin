@@ -505,9 +505,6 @@ class AdvdeliveryController extends BaseController {
 
                         if($count <= 0) {
                             $v['stap'] = '不可投放';
-                        }else{
-                            unset($v);
-                            var_export($v);
                         }
                     }
                     if($tou_state == 0) {
@@ -528,27 +525,7 @@ class AdvdeliveryController extends BaseController {
                 }
             }
         });
-        /*if($tou_state != 0) {
-            $result['list'] = array_filter($result['list'], function(&$v, $k)use($tou_state){
-                if($v['tp'] != $tou_state) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            });
-            //数组分页
-            $len = count($result['list']);
-            $objPage = new \Common\Lib\Page($len,$size);
-            $show = $objPage->admin_page();
-            $result['page'] = $show;
-            $retp = array_slice($result['list'], $start, $size);
-        } else {
-            $retp = $result['list'];
-        }*/
         $retp = $result['list'];
-
-
-
         //判断是否数组分页
         $this->assign('list', $retp);
         $this->assign('page',  $result['page']);
