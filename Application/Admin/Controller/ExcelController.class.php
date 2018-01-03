@@ -52,6 +52,8 @@ class ExcelController extends Controller
             $tmpname = '运维端异常机顶盒';
         }else if($filename == 'dinnerapp_hall_log') {
             $tmpname = '餐厅端日志上报';
+        }else if($filename =='option_sh_task_list'){
+            $tmpname='上海发布任务列表';
         }
 
         if($filename == "heartlostinfo"){
@@ -2108,5 +2110,121 @@ class ExcelController extends Controller
         $filename = 'optionerrobox';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
         
+    }
+    public function testone(){
+        $aa = fopen('./aa.csv', 'w');
+        vendor("PHPExcel.PHPExcel");
+        
+        $PHPReader =new \PHPExcel_Reader_Excel2007();
+        if(!$PHPReader->canRead('./aa.csv')){
+            $PHPReader = new \PHPExcel_Reader_Excel5();
+        }
+        if(!$PHPReader->canRead('./aa.csv')){
+            $PHPReader = new \PHPExcel_Reader_CSV();
+        }
+        if(!$PHPReader->canRead('./aa.csv')){
+            echo '无法识别';
+            return false;
+        }
+        //读取Excel
+        $PHPExcel = $PHPReader->load('./aa.csv');
+        //读取工作表1
+        $currentSheet = $PHPExcel->getSheet();
+        
+        $currentSheet->setCellValue('B13','11111s');//表头赋值//
+        
+        $phpWrite = new \PHPExcel_Writer_CSV($PHPExcel);
+        
+        $phpWrite->save('./aa.csv');
+    }
+    public function exportShtask(){
+        $m_option_task = new \Admin\Model\OptiontaskModel();
+        $where = array();
+        $where['a.task_area'] = 9;
+        $where['a.task_type'] = 4;
+        $where['a.flag']      =0;
+        $fields = "a.id, a.task_area, a.task_emerge, a.task_type,b.name hotel_name,a.hotel_address,
+                   a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state";
+        $list = $m_option_task->alias('a')
+                              ->join('savor_hotel b on a.hotel_id= b.id','left')
+                              ->field($fields)->where($where)->select();
+        $model = D();
+        
+        foreach($list as $key=>$val){
+            $repair_str = '';
+            $space = '';
+            $data = $model->query('select b.name box_name,fault_desc from 
+                                   savor_option_task_repair a left join savor_box b
+                                   on a.box_id = b.id where a.task_id='.$val['id']);
+            if(!empty($data)){
+                foreach($data as $k=>$v){
+                    $repair_str .= $space .'机顶盒名称:'.$v['box_name'];
+                    $repair_str .=' 故障说明:'.$v['fault_desc'];
+                    $space = ',';
+                }
+            }
+            $list[$key]['task_area'] = '上海';
+            switch ($val['task_emerge']){
+                case '2':
+                    $list[$key]['task_emerge'] = '紧急';
+                    break;
+                case '3':
+                    $list[$key]['task_emerge'] = '正常';
+                    break;
+            }
+            switch ($val['task_type']){
+                case '1':
+                    $list[$key]['task_type'] = '信息检测';
+                    break;
+                case '8':
+                    $list[$key]['task_type'] = '网络改造';
+                    break;
+                case '2':
+                    $list[$key]['task_type'] = '安装验收';
+                    break;
+                case '4':
+                    $list[$key]['task_type'] = '维修';
+                    break;
+            }
+            switch ($val['state']){
+                case '1':
+                    $list[$key]['state'] = '新任务';
+                    break;
+                case '2':
+                    $list[$key]['state'] = '执行中';
+                    break;
+                case '3':
+                    $list[$key]['state'] = '排队等待';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '已完成';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '拒绝';
+                    break;
+                    
+            }
+            $list[$key]['repair_info'] = $repair_str;
+        }
+        //print_r($list);exit;
+        $xlsCell = array(
+            array('id', '任务id'),
+            array('hotel_name','酒楼名称'),
+            array('hotel_address','酒楼地址'),
+            array('hotel_linkman','酒楼联系人'),
+            array('hotel_linkman_tel','酒楼联系人电话'),
+            
+            array('task_area', '任务城市'),
+            array('task_emerge','任务紧急程度'),
+            array('task_type', '任务类型'),
+            array('tv_nums','版位数量'),
+            
+            array('state', '任务状态'),
+            array('repair_info', '维修记录'),
+        
+        );
+        $xlsName = '上海运维任务列表';
+        $filename = 'option_sh_task_list';
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
     }
 }
