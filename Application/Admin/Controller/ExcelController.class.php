@@ -56,7 +56,10 @@ class ExcelController extends Controller
             $tmpname='上海发布任务列表';
         }else if($filename == 'bind_invite_hotel_info') {
             $tmpname = '餐厅端绑定酒楼数据';
+        }else if($filename == 'box_version_condition') {
+            $tmpname = '机顶盒版本情况分布';
         }
+
 
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
@@ -1251,6 +1254,98 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
+
+    function expdeviceinfo(){
+
+        //设备故障数
+        $hotel_box_type = C('hotel_box_type');
+        $box_state = C('HOTEL_STATE');
+        $box_fl = array (
+            '0'=>'正常',
+            '1'=>'删除',
+        );
+        $boxModel = new \Admin\Model\BoxModel();
+        foreach($hotel_box_type as $hb=>$hv) {
+
+            $map = array();
+            $map['sht.hotel_box_type'] = $hb;
+            $asm = array();
+            foreach($box_fl as $k=>$v) {
+
+                $map['box.flag'] = $k;
+                foreach($box_state as $bk=>$bv) {
+                    $map['box.state'] = $bk;
+                    $box_count = $boxModel->alias('box')
+                        ->join(' join savor_room rom on rom.id= box.room_id')
+                        ->join(' join savor_hotel sht on sht.id = rom.hotel_id')
+                        ->where($map)->count();
+                    echo $hv.' '.'冻结状态'.$bv.' 删除状态'.$v.'  机顶盒'.$box_count.'个'.'<br/>';
+                    $asm[] = $box_count;
+                }
+
+            }
+            echo $hv.'机顶盒'.array_sum($asm).'个'.'<br/>';
+        }
+        //每日开机数
+        //算日期间隔
+        $now = date("Y-m-d");
+        $yes = date("Y-m-d", strtotime("today") - 604800);
+        $dat_diff = $this->prDates($yes, $now);
+        $heartLogModel = new \Admin\Model\HeartLogModel();
+        $btype = array(
+            '1'=>'小平台',
+            '2'=>'机顶盒',
+        );
+
+        foreach($btype as $bt=>$bv) {
+            $map = array();
+            $map['type'] = $bt;
+            $lo_arr = array();
+            /*foreach($dat_diff as $dk=>$dv) {
+
+                $map['DATE_FORMAT(`last_heart_time`,"%Y-%m-%d")'] = $dv;
+
+                $box_num = $heartLogModel->where($map)->count();
+                $lo_arr[] = $box_num;
+            }*/
+            $box_num = $heartLogModel->where($map)->count();
+            echo $bv.'每日开机数'.$box_num.'个'.'<br/>';
+
+        }
+
+        ob_end_clean();
+
+        //报表导出数据
+        $map = array();
+        $map['hear.type'] = 2;
+        $box_arr = $heartLogModel->alias('hear')
+        ->join(' savor_box box on box.id= hear.box_id')
+        ->where($map)->field('hotel_name,
+        apk_version,box.name bname')->select();
+        $filename = 'box_version_condition';
+        $xlsName = "boxversioncondition";
+        $xlsCell = array(
+            array('bname', '机顶盒名称'),
+            array('hotel_name', '酒楼名称'),
+            array('apk_version', '版本号'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+
+    }
+
+
+    function prDates($start,$end){
+        $dat = array();
+        $dt_start = strtotime($start);
+        $dt_end = strtotime($end);
+        while ($dt_start<=$dt_end){
+            $dat[] = date('Y-m-d',$dt_start);
+            $dt_start = strtotime('+1 day',$dt_start);
+        }
+        return $dat;
+    }
+
 
     function exphotelscreen(){
         $filename = 'hotelscreen';

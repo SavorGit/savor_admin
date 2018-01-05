@@ -12,6 +12,13 @@ class PubAdsBoxErrorModel extends BaseModel
 {
 	protected $tableName='pub_ads_box_error';
 
+	public function getDataCount($where){
+		$count = $this->where($where)
+			->count();
+		return $count;
+
+	}
+
 	public function addData($data, $acttype) {
 		if(0 == $acttype) {
 			$result = $this->add($data);

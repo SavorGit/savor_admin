@@ -437,6 +437,8 @@ class AdvdeliveryController extends BaseController {
                 $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
             }
             $this->assign('to_state', $tou_state);
+        } else {
+            $where .=" AND ( pads.end_date >= '$now_date' AND sbox.box_id > 0) or (pads.end_date >= '$now_date' AND pads.type=2)";
         }
         $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';
@@ -505,9 +507,6 @@ class AdvdeliveryController extends BaseController {
 
                         if($count <= 0) {
                             $v['stap'] = '不可投放';
-                        }else{
-                            unset($v);
-                            var_export($v);
                         }
                     }
                     if($tou_state == 0) {
@@ -528,27 +527,7 @@ class AdvdeliveryController extends BaseController {
                 }
             }
         });
-        /*if($tou_state != 0) {
-            $result['list'] = array_filter($result['list'], function(&$v, $k)use($tou_state){
-                if($v['tp'] != $tou_state) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            });
-            //数组分页
-            $len = count($result['list']);
-            $objPage = new \Common\Lib\Page($len,$size);
-            $show = $objPage->admin_page();
-            $result['page'] = $show;
-            $retp = array_slice($result['list'], $start, $size);
-        } else {
-            $retp = $result['list'];
-        }*/
         $retp = $result['list'];
-
-
-
         //判断是否数组分页
         $this->assign('list', $retp);
         $this->assign('page',  $result['page']);
