@@ -1284,6 +1284,7 @@ class CrontabController extends Controller
         $where.=" AND end_date <'$now_date'";
         $pad_arr = $pubadsModel->getWhere($where, $field);
         var_export($pad_arr);
+
         if($pad_arr) {
             foreach($pad_arr as $pk=>$pv) {
                 if($pk == 1) {
@@ -1319,11 +1320,61 @@ class CrontabController extends Controller
                 //酒楼选
                 if($pv['type'] == 2) {
                     $puberrorModel = new \Admin\Model\PubAdsBoxErrorModel();
-                    //从box表移动数据到box_history
                     $bwhere['pub_ads_id'] = $pa_id;
                     $bnum = $pubox->getDataCount($bwhere);
                     //判断box是否为空
+                   
+
                     if($bnum >0 ) {
+                        //从box表移动数据到box_history
+                        $oldfield = 'box_id, pub_ads_id, location_id, create_time';
+                        $insfield = 'box_id, pub_ads_id, location_id, ctime';
+                        $map['pub_ads_id'] = $pa_id;
+                        $newtable = 'savor_pub_ads_box_history';
+                        $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
+                        if($bool) {
+                            $oldfield = 'box_id, pub_ads_id, location_id, create_time';
+                            $insfield = 'box_id, pub_ads_id, location_id, ctime';
+                            $map['pub_ads_id'] = $pa_id;
+                            $newtable = 'savor_pub_ads_box_history';
+                            $err_count = $puberrorModel->getDataCount($map);
+                            if($err_count > 0) {
+                                $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
+                                if($bool) {
+                                    //从box_error表移动数据到error_history
+                                    $oldfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
+                                    $insfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
+                                    $newtable = 'savor_pub_ads_box_error_history';
+                                    $error_remove = $puberrorModel->removeToNew($insfield, $oldfield, $map,$newtable);
+                                    if($error_remove) {
+                                        //删除box_error表数据
+                                        $puberrorModel->deleteInfo($map);
+                                        //删除box表数据
+                                        $pubox->deleteInfo($map);
+
+                                    } else {
+                                        //删除box_history表数据
+                                        $pubHis->deleteInfo($map);
+                                        continue;
+                                    }
+                                } else {
+
+                                    //删除box_history
+                                    $pubHis->deleteInfo($map);
+                                    continue;
+                                }
+                            } else {
+
+                            }
+                        } else {
+                            continue;
+                        }
+
+
+
+
+                    } else {
+                        //判断error
                         $oldfield = 'box_id, pub_ads_id, location_id, create_time';
                         $insfield = 'box_id, pub_ads_id, location_id, ctime';
                         $map['pub_ads_id'] = $pa_id;
@@ -1331,17 +1382,12 @@ class CrontabController extends Controller
                         $err_count = $puberrorModel->getDataCount($map);
                         if($err_count > 0) {
                             $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
-                           /* print_r($pubox->getLastSql());
-                            print_r($bool);*/
                             if($bool) {
                                 //从box_error表移动数据到error_history
                                 $oldfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
                                 $insfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
                                 $newtable = 'savor_pub_ads_box_error_history';
                                 $error_remove = $puberrorModel->removeToNew($insfield, $oldfield, $map,$newtable);
-                              /*  print_r($puberrorModel->getLastSql());
-                                print_r($error_remove);*/
-
                                 if($error_remove) {
                                     //删除box_error表数据
                                     $puberrorModel->deleteInfo($map);
@@ -1354,15 +1400,14 @@ class CrontabController extends Controller
                                     continue;
                                 }
                             } else {
+
+                                //删除box_history
+                                $pubHis->deleteInfo($map);
                                 continue;
                             }
                         } else {
 
                         }
-
-
-                    } else {
-
                     }
 
                 }
