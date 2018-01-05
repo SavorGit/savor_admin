@@ -437,6 +437,8 @@ class AdvdeliveryController extends BaseController {
                 $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
             }
             $this->assign('to_state', $tou_state);
+        } else {
+            $where .=" AND ( pads.end_date >= '$now_date' AND sbox.box_id > 0) or (pads.end_date >= '$now_date' AND pads.type=2)";
         }
         $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';

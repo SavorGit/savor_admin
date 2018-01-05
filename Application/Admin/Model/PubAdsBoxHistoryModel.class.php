@@ -32,7 +32,6 @@ class PubAdsBoxHistoryModel extends BaseModel
 
 	public function deleteInfo($where){
 		$ret = $this->where($where)->delete();
-		print_r($this->getLastSql());
 		return $ret;
 	}
 

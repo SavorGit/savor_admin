@@ -1286,6 +1286,9 @@ class CrontabController extends Controller
         var_export($pad_arr);
         if($pad_arr) {
             foreach($pad_arr as $pk=>$pv) {
+                if($pk == 1) {
+                    die;
+                }
                 $pa_id = $pv['id'];
                 $p_ads = array();
                 $map = array();
@@ -1298,7 +1301,7 @@ class CrontabController extends Controller
                     $map['pub_ads_id'] = $pa_id;
                     $newtable = 'savor_pub_ads_box_history';
                     $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
-                    print_r($pubox->getLastSql());
+                   /* print_r($pubox->getLastSql());*/
                     if($bool) {
                         //删除box表数据
                         $del_box = $pubox->deleteInfo($map);
@@ -1325,27 +1328,39 @@ class CrontabController extends Controller
                         $insfield = 'box_id, pub_ads_id, location_id, ctime';
                         $map['pub_ads_id'] = $pa_id;
                         $newtable = 'savor_pub_ads_box_history';
-                        $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
-                        if($bool) {
-                            //从box_error表移动数据到error_history
-                            $oldfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
-                            $insfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
-                            $newtable = 'savor_pub_ads_box_error_history';
-                            $error_remove = $puberrorModel->removeToNew($insfield, $oldfield, $map,$newtable);
-                            if($error_remove) {
-                                //删除box_error表数据
-                                $puberrorModel->deleteInfo($map);
-                                //删除box表数据
-                                $pubox->deleteInfo($map);
+                        $err_count = $puberrorModel->getDataCount($map);
+                        if($err_count > 0) {
+                            $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
+                           /* print_r($pubox->getLastSql());
+                            print_r($bool);*/
+                            if($bool) {
+                                //从box_error表移动数据到error_history
+                                $oldfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
+                                $insfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
+                                $newtable = 'savor_pub_ads_box_error_history';
+                                $error_remove = $puberrorModel->removeToNew($insfield, $oldfield, $map,$newtable);
+                              /*  print_r($puberrorModel->getLastSql());
+                                print_r($error_remove);*/
 
+                                if($error_remove) {
+                                    //删除box_error表数据
+                                    $puberrorModel->deleteInfo($map);
+                                    //删除box表数据
+                                    $pubox->deleteInfo($map);
+
+                                } else {
+                                    //删除box_history表数据
+                                    $pubHis->deleteInfo($map);
+                                    continue;
+                                }
                             } else {
-                                //删除box_history表数据
-                                $pubHis->deleteInfo($map);
                                 continue;
                             }
                         } else {
-                            continue;
+
                         }
+
+
                     } else {
 
                     }
@@ -1355,6 +1370,7 @@ class CrontabController extends Controller
                 $save['is_remove'] = 1;
                 $pubadsModel->updateInfo($p_ads, $save);
                 echo '更新广告ID'.$pa_id."\n";
+
 
             }
         } else {
