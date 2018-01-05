@@ -21,7 +21,7 @@
 					<div class="pageFormContent modal-body" style="margin-bottom: 14px;">
 						<div class="form-group row">
 							<div class="col-xs-12 col-sm-12">
-								<div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
+								<div id="ossfile">因网络原因，初始化失败！请重新打开此页面。</div>
 							</div>
 						</div>
 
@@ -55,7 +55,8 @@
 
 								<div class="form-group col-md-4 col-xs-4 col-sm-4" style="width: 245px;margin-left: 26px;">
 
-									<span class="form-control col-sm-2">秒</span><input style="width:60px;" min="1" max="3600" required alt="数字" id="seco" name="seco" type="text" value="<if condition=" $vainfo.duration gt 0 ">{$vainfo['duration']%60}<else/></if>" class="form-control col-sm-2" />
+									<span class="form-control col-sm-2">秒</span><input style="width:60px;margin-right: 59%;" min="1" max="3600" required alt="数字" id="seco" name="seco" type="text" value="<if condition=" $vainfo.duration gt 0 ">{$vainfo['duration']%60}<else/></if>" class="form-control col-sm-2" />
+									<button class="btn btn-success" style="margin-top: 10px;" id="miao_btn">获取</button>
 								</div>
 							</div>
 						</div>
@@ -78,6 +79,9 @@
 		</div>
 	</div>
 </div>
+<video src="" id="video_src" style="display: none;">
+	
+</video>
 <script>
 	var imgs = "Image files";
 	var files = "files";
@@ -308,7 +312,7 @@ accessid = ''
 	            	document.getElementById('oss_filesize').value = file.size;
 	                document.getElementById('oss_addr').value = get_uploaded_object_name(file.name);
 	                document.getElementById('media_url').value = document.getElementById('oss_host').value+get_uploaded_object_name(file.name);
-
+	                									$('#video_src').prop('src',document.getElementById('oss_host').value+get_uploaded_object_name(file.name))
 	                document.getElementById('resource_name').value = file.name.substring(0,file.name.lastIndexOf('.'));
 	                console && console.log(get_uploaded_object_name(file.name));
 	            }
@@ -527,7 +531,7 @@ accessid = ''
 	//选择资料库文件
 	var cntrlIsPressed = false;
 	$(document).keydown(function(event) {
-		if(event.which == "17" && mult != "") {
+		if(event.which == "17" ) {
 			cntrlIsPressed = true;
 		} else {
 			cntrlIsPressed = false;
@@ -603,4 +607,15 @@ accessid = ''
 			})
 		}
 	});
+	$('#miao_btn').click(function(){
+		if($('#media_url').val()!=''){
+			var a_miao = $('#video_src').prop('duration');
+			var math_miao = Math.round(a_miao);
+			if(isNaN(math_miao)){
+				alert('浏览器正在加载视频 请重新获取')
+			}else{
+				$('#seco').val(math_miao);
+			}
+		}
+	})
 </script>
