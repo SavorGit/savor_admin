@@ -1148,3 +1148,21 @@ CREATE TABLE `savor_singlezip_list` (
   `state` int(2) NOT NULL DEFAULT '0' COMMENT '0未执行计划1已经执行2删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='u盘节目单目录'
+执行结果:已执行
+
+增加说明：宣传片增加更新时间字段
+修改时间：2017.1.8
+修改人：张英涛
+执行sql:
+alter table `cloud`.`savor_room` add column `probe`
+varchar(20) not null default '' comment 'wifi探针' after `remark`;
+执行结果:已执行
+
+增加说明：包间表增加wifi探针
+修改时间：2017.1.8
+修改人：张英涛
+执行sql:
+alter table `cloud`.`savor_room` add column `probe`
+varchar(20) not null default '' comment 'wifi探针' after `remark`;
+
+
