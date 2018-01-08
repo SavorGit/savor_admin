@@ -135,6 +135,7 @@ class AdvertController extends BaseController{
 	         $ads_data['name'] = $name;
 			 $ads_data['duration'] = $duration;
 	         $ads_data['type'] = $adstype;
+	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;
 	         $res_ads = $adsModel->where("id='$adsid'")->save($ads_data);
 	         if($res_ads){

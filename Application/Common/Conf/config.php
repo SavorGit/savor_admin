@@ -360,4 +360,5 @@ $config['CONFIG_VOLUME'] = array(
     'system_demand_video_volume'=>'点播音量',
     'system_tv_volume'=>'电视音量'
 );
+$config['PROGRAM_ADS_CACHE_PRE'] = 'program_ads_';
 return $config;
