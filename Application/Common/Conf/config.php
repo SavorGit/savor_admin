@@ -292,6 +292,10 @@ $config['ADVE_OCCU'] = array(
     'name' => '广告位',
     'num' => '50',
 );
+$config['RTBADVE_OCCU'] = array(
+    'name' => 'RTB广告位',
+    'num' => '18',
+);
 $config['TOU_STATE'] = array(
     '0'=>'全部',
     '1'=>'未到投放时间',
