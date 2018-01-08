@@ -58,7 +58,10 @@ class ExcelController extends Controller
             $tmpname = '餐厅端绑定酒楼数据';
         }else if($filename == 'box_version_condition') {
             $tmpname = '机顶盒版本情况分布';
+        }else if($filename == 'box_lost_version_condition') {
+            $tmpname = '失联机顶盒分布';
         }
+
 
 
         if($filename == "heartlostinfo"){
@@ -1286,6 +1289,13 @@ class ExcelController extends Controller
             }
             echo $hv.'机顶盒'.array_sum($asm).'个'.'<br/>';
         }
+
+
+        $map['sht.flag'] = 0;
+        $map['sht.state'] = 1;
+        $map['rom.flag'] = 0;
+        $map['rom.state'] = 1;
+
         //每日开机数
         //算日期间隔
         $now = date("Y-m-d");
@@ -1314,8 +1324,41 @@ class ExcelController extends Controller
         }
 
         ob_end_clean();
+        //导出失陪30天
+        //获取所有二代网络5G机顶盒
+        $map = array();
+        $map['sht.hotel_box_type'] = array('in', array('2','3'));
+        $map['box.flag'] = 0;
+        $box_id_arr = $boxModel->alias('box')
+            ->field('box.id,box.name bname,sht.name hotel_name')
+            ->join(' join savor_room rom on rom.id= box.room_id')
+            ->join(' join savor_hotel sht on sht.id = rom.hotel_id')
+            ->where($map)
+            ->select();
+        $map = array();
+        $map['hear.type'] = 2;
+        $box_arr = $heartLogModel->alias('hear')
+            ->join(' savor_box box on box.id= hear.box_id')
+            ->where($map)->field('hear.box_id')->select();
 
-        //报表导出数据
+        $box_arr_hear = array_column($box_arr, 'box_id');
+        foreach($box_id_arr as $bk=>$bv) {
+            if(in_array($bv['id'], $box_arr_hear)) {
+                unset($box_id_arr[$bk]);
+                continue;
+            }else{
+                unset($box_id_arr[$bk]['id']);
+            }
+            $box_id_arr[$bk]['apk_version'] = '';
+
+        }
+        $box_arr = array_values($box_id_arr);
+
+        $filename = 'box_lost_version_condition';
+        $xlsName = "boxlostversioncondition";
+
+
+       /* //报表导出数据
         $map = array();
         $map['hear.type'] = 2;
         $box_arr = $heartLogModel->alias('hear')
@@ -1324,14 +1367,14 @@ class ExcelController extends Controller
         apk_version,box.name bname')->select();
         $filename = 'box_version_condition';
         $xlsName = "boxversioncondition";
+
+        */
         $xlsCell = array(
             array('bname', '机顶盒名称'),
             array('hotel_name', '酒楼名称'),
             array('apk_version', '版本号'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
-
-
     }
 
 
