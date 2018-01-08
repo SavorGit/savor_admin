@@ -136,7 +136,7 @@ class PubAdsBoxModel extends BaseModel
 	                       or (b.start_date<='".$start_date."' and b.end_date>='".$end_date."')
 	                       or (b.end_date>='".$start_date."' and b.end_date<='".$end_date."'))"; */
 	    $where = 'a.box_id='.$box_id
-	              ." and '".$end_date."'>=b.start_date and '".$start_date."'<=b.end_date and a.location_id!=0";
+	              ." and '".$end_date."'>=b.start_date and '".$start_date."'<=b.end_date and a.location_id!=0 and b.state!=2";
 	    $data = $this->alias('a')
 	         ->field('a.location_id')
 	         ->join('savor_pub_ads b on a.pub_ads_id=b.id','left')
