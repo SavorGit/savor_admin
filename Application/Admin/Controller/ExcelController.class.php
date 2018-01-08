@@ -2320,12 +2320,12 @@ class ExcelController extends Controller
         foreach($list as $key=>$val){
             $repair_str = '';
             $space = '';
-            $data = $model->query('select b.name box_name,fault_desc from 
+            $data = $model->query('select a.box_id,b.name box_name,fault_desc from 
                                    savor_option_task_repair a left join savor_box b
                                    on a.box_id = b.id where a.task_id='.$val['id']);
             if(!empty($data)){
                 foreach($data as $k=>$v){
-                    $repair_str .= $space .'机顶盒名称:'.$v['box_name'];
+                    $repair_str .= $space .'机顶盒id:'.$v['box_id'].' 机顶盒名称:'.$v['box_name'];
                     $repair_str .=' 故障说明:'.$v['fault_desc'];
                     $space = ',';
                 }
