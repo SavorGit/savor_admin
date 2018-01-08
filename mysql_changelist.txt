@@ -1130,3 +1130,21 @@ CREATE TABLE `savor_pub_ads_box_history` (
   KEY `pbs` (`pub_ads_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告对应机顶盒历史表'
 
+
+
+
+
+增加说明：增加U盘节目单
+修改时间：2018.1.8
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_singlezip_list` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `hotel_id_str` text NOT NULL COMMENT '酒楼id字符串json{1,2,3,4}',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` int(5) NOT NULL DEFAULT '0',
+  `gendir` varchar(50) NOT NULL DEFAULT '' COMMENT 'public下生成的目录',
+  `state` int(2) NOT NULL DEFAULT '0' COMMENT '0未执行计划1已经执行2删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='u盘节目单目录'
