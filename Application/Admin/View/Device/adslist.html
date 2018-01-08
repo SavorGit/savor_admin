@@ -1,0 +1,42 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr><td>广告号：{$ads_num}</td></tr>
+          <tr id="post">
+            <th>广告名称</th>
+            <th>广告位置</th>
+            
+            <th>播放时长</th>
+            <th>预览</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="ads_list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="广告名称">{$vlist.name}</td>
+              <td data-title="广告位置">广告位_{$vlist.location_id}</td>
+              
+              <td data-title="播放时长">{$vlist.duration}</td>
+              <td>
+              	  <div class="tools-edit">
+                  <a href="{$vlist.oss_addr}" target="_blank">
+              	  <i class="fa fa-eye"></i>	
+              	  </a>
+              	  </div>
+              </td>
+</tr>
+</volist>
+</tbody>
+</table>
+</form>
+
+</div>
+</div>
+{$page}
+</div>

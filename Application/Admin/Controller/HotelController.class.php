@@ -736,6 +736,7 @@ smlist.menu_name';
 		$save['type']        = I('post.type','','intval');
 		$save['flag']        = I('post.flag','','intval');
 		$save['state']       = I('post.state','','intval');
+		$save['probe']       = I('post.probe','','trim');
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$RoomModel = new \Admin\Model\RoomModel();
@@ -1239,6 +1240,16 @@ smlist.menu_name';
 		}
 		$save['hotel_id'] = I('post.hotel_id');
 		if($ads_id){
+		    $maps = array();
+		    $maps['name'] = $save['name'];
+		    $maps['hotel_id'] = $save['hotel_id'];
+		    $maps['id'] = array('neq',$ads_id);
+		    $count = $adsModel->where($maps)->count();
+		    if ($count >0 ){
+		        $this->output('宣传片已经存在', 'hotel/addpub',1,0);
+		    }
+		    
+		    $save['update_time'] = date('Y-m-d H:i:s');
 			$res_save = $adsModel->where('id='.$ads_id)->save($save);
 
 			$ads_info = $adsModel->find($ads_id);
@@ -1268,7 +1279,7 @@ smlist.menu_name';
 		}else{
 			//判断宣传片名称是否存在
 			$count = $adsModel->where(array('name'=>$save['name'],'hotel_id'=>$save['hotel_id']))->count();
-			if ($count >1 ){
+			if ($count >0 ){
 				$this->output('宣传片已经存在', 'hotel/addpub',1,0);
 			}
 			$userInfo = session('sysUserInfo');
@@ -1316,7 +1327,7 @@ smlist.menu_name';
 		$adsModel = new \Admin\Model\AdsModel();
 		$message = '';
 		$flag = I('request.flag');
-		$data = array('state'=>$flag);
+		$data = array('state'=>$flag,'update_time'=>date('Y-m-d H:i:s'));
 
 		$res = $adsModel->where("id='$adsid'")->save($data);
 
