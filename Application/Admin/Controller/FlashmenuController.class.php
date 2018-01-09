@@ -264,8 +264,11 @@ class FlashMenuController extends BaseController {
         $msec = $this->msectime();
         $sp['gendir'] = 'udriver_'.time().$msec;
         $upcfg = I('post.cfg');
-        $sp['up_cfg'] = implode(',' ,$upcfg);
-
+        if($upcfg) {
+            $sp['up_cfg'] = implode(',' ,$upcfg);
+        } else {
+            $sp['up_cfg'] = '';
+        }
         $bool = $single_list_Model->addData($sp, 0);
         if($bool) {
             $this->output('发布成功了!', 'flashmenu/getlist');

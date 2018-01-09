@@ -764,6 +764,7 @@ class CrontabController extends Controller
                 } else {
                     $upcfg = array();
                 }
+
                 $po_th = $pub_path.$gendir;
                 $savor_path = $po_th.DIRECTORY_SEPARATOR.'savor';
                 $savor_me = $po_th.DIRECTORY_SEPARATOR.'media';
@@ -856,14 +857,16 @@ class CrontabController extends Controller
                                         //写入update.cfg
                                         $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
                                         $upd_str = '';
+
                                         foreach($update_config_cfg as $cfgk=>$cfgv) {
-                                            if( array_key_exists($cfgk, $upcfg) ) {
+
+                                            if( in_array($cfgk, $upcfg) ) {
                                                 $upd_str .= '#'.$cfgv['ename']."\n";
                                             } else {
                                                 $upd_str .= $cfgv['ename']."\n";
                                             }
                                         }
-
+var_export($upd_str);
                                         $smfileModel->write_file($update_path, $upd_str);
 
                                     }
