@@ -492,4 +492,51 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
             33 => array ( 'name' => '澳门', 'value' => 0, 'rate' => 0, ), 34 => array ( 'name' => '南海诸岛', 'value' => 0, 'rate' => 0, ), );
         echo json_encode($res);
     }
+    public function rtbTag(){
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        $path = 'D:\wamp\www\savor_admin/Public/uploads/2018-01-09/7.xls';
+        $type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        if ($type == 'xlsx' || $type == 'xls') {
+            $objPHPExcel = \PHPExcel_IOFactory::load($path);
+        } elseif ($type == 'csv') {
+            $objReader = \PHPExcel_IOFactory::createReader('CSV')
+            ->setDelimiter(',')
+            ->setInputEncoding('GBK')//不设置将导致中文列内容返回boolean(false)或乱码
+            ->setEnclosure('"')
+            ->setLineEnding("\r\n")
+            ->setSheetIndex(0);
+            $objPHPExcel = $objReader->load($path);
+        } else {
+            $this->error('上传文件不能为空');
+            //$this->output('文件格式不正确', 'importdata', 0, 0);
+        }
+        $sheet = $objPHPExcel->getSheet(0);
+        //获取行数与列数,注意列数需要转换
+        $highestRowNum = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+        // var_dump($highestRowNum, $highestColumn, $highestColumnNum);
+        //取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+        $filed = array();
+        //echo $highestColumnNum;exit;
+        for ($i = 0; $i < $highestColumnNum; $i++) {
+            $cellName = \PHPExcel_Cell::stringFromColumnIndex($i) . '1';    
+            $cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+            $filed[] = $cellVal;
+        }
+        
+        $data = array();
+        for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
+            $row = array();
+            for ($j = 0; $j < $highestColumnNum; $j++) {
+                $cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
+                $cellVal = $sheet->getCell($cellName)->getValue();
+                $row[$filed[$j]] = $cellVal;
+            }
+            $data [] = $row;
+        }
+        //print_r($data);exit;
+        $m_rtbtaglist = new \Admin\Model\RtbTagListModel();
+        $m_rtbtaglist->addAll($data);
+    }
 }
