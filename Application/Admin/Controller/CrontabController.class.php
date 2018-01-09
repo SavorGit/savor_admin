@@ -747,16 +747,23 @@ class CrontabController extends Controller
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
         $map['state'] = 0;
-        $field='hotel_id_str, gendir, id';
+        $field='hotel_id_str, gendir, id, up_cfg';
         $single_list = $signle_Model->getWhere($map, $field);
         $smfileModel = new SimFile();
         $now_date = date("Y-m-d H:i:s");
         $hotelModel = new \Admin\Model\HotelModel();
+        $update_config_cfg = C('UPD_STR');
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
                 $po_th = '';
                 $this->copy_j = array();
                 $gendir = $sv['gendir'];
+                $upcfg = $sv['up_cfg'];
+                if($upcfg) {
+                    $upcfg = explode(',', $upcfg);
+                } else {
+                    $upcfg = array();
+                }
                 $po_th = $pub_path.$gendir;
                 $savor_path = $po_th.DIRECTORY_SEPARATOR.'savor';
                 $savor_me = $po_th.DIRECTORY_SEPARATOR.'media';
@@ -848,7 +855,15 @@ class CrontabController extends Controller
                                         $smfileModel->write_file($play_file, $info['res']);
                                         //写入update.cfg
                                         $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
-                                        $upd_str = "#get_channel\n#update_logo\n#set_channel\n#get_log\n#get_loged\n#update_media\n#update_apk";
+                                        $upd_str = '';
+                                        foreach($update_config_cfg as $cfgk=>$cfgv) {
+                                            if( array_key_exists($cfgk, $upcfg) ) {
+                                                $upd_str .= '#'.$cfgv['ename']."\n";
+                                            } else {
+                                                $upd_str .= $cfgv['ename']."\n";
+                                            }
+                                        }
+
                                         $smfileModel->write_file($update_path, $upd_str);
 
                                     }
@@ -1267,6 +1282,8 @@ class CrontabController extends Controller
                 }
                 //获取时间戳文件
             }
+        } else {
+
         }
         //删除前天
 
@@ -1323,8 +1340,6 @@ class CrontabController extends Controller
                     $bwhere['pub_ads_id'] = $pa_id;
                     $bnum = $pubox->getDataCount($bwhere);
                     //判断box是否为空
-                   
-
                     if($bnum >0 ) {
                         //从box表移动数据到box_history
                         $oldfield = 'box_id, pub_ads_id, location_id, create_time';
