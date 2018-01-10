@@ -968,7 +968,8 @@ $('#qb_save').click(function() {
 	$('.bqstyle').each(function(){  //显示标签
 		bc_htmls+=$(this).html()+'、';
 	})
-	$('.bq_zs span').html(bc_htmls);
+	var bc_html = bc_htmls.substring(0,bc_htmls.length-1)
+	$('.bq_zs span').html(bc_html);
 	var sp_isid = $('#newsp').css('display');
 	if($('.ban_list').html() != '') {
 		$('#bctk').modal('show');
