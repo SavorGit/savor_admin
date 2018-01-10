@@ -28,7 +28,7 @@ class OptiontaskController extends BaseController {
 		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S');
 		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S','2'=>'Ap0h2sGR8i9Q2uQvA_-RKQupNMi9yI3xV4pMjv3xmDo7');
 		$this->person_device_iostoken = array('1'=>'bede4b5d51c2f5dca3ec7ddfa19f54c23fb91d485da0ef880fed0b880fffde4d','2'=>'34e426055514d99da6803ed309da1b3d983035299dbae7e01c0e8f3ea99c324a');
-
+//用的是UMENBAI_API_CONFIG
 	}
 
 	public function testduo_iossa(){
