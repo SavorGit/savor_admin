@@ -361,4 +361,35 @@ $config['CONFIG_VOLUME'] = array(
     'system_tv_volume'=>'电视音量'
 );
 $config['PROGRAM_ADS_CACHE_PRE'] = 'program_ads_';
+
+$config['UPD_STR'] = array(
+    1=>array(
+        'ename'=>'get_channel',
+        'cname'=>'导出电视节目列表',
+    ),
+    2=>array(
+        'ename'=>'update_logo',
+        'cname'=>'上传酒楼LOGO',
+    ),
+    3=>array(
+        'ename'=>'set_channel',
+        'cname'=>'更新电视节目列表',
+    ),
+    4=>array(
+        'ename'=>'get_log',
+        'cname'=>'导出开机率日志',
+    ),
+    5=>array(
+        'ename'=>'get_loged',
+        'cname'=>'导出备份开机率日志',
+    ),
+    6=>array(
+        'ename'=>'update_media',
+        'cname'=>'更新广告视频',
+    ),
+    7=>array(
+        'ename'=>'update_apk',
+        'cname'=>'更新客户端APK',
+    ),
+);
 return $config;

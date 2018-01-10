@@ -71,6 +71,18 @@ class RtbPubAdsModel extends BaseModel
 		return $list;
 	}
 
+	public function getRtbLabelHotelById($field, $where) {
+		$list = $this->alias('pads')
+			->where($where)
+			->join('savor_pub_rtbads_hotel srh ON pads.id = srh.pub_ads_id')
+			->join('savor_pub_rtbtag  srt ON pads.id = srt.pub_ads_id')
+			->join('savor_hotel sht ON sht.id = srh.hotel_id')
+			->join('savor_rtbtaglist srtl ON srtl.id = srt.tagid')
+			->field($field)
+			->select();
+		return $list;
+	}
+
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 		return $list;

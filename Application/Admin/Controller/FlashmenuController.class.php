@@ -193,6 +193,8 @@ class FlashMenuController extends BaseController {
         $this->assign('menuname', $menu_name);
         $this->assign('alist', $result['list']);
         $this->assign('page',  $result['page']);
+
+
         $this->display('selecthotel');
     }
 
@@ -212,6 +214,11 @@ class FlashMenuController extends BaseController {
         }else{
             $h_info = array();
         }
+
+        $upda_cfg = C('UPD_STR');
+
+        $this->assign('up_cfg',  $upda_cfg);
+
         $this->assign('vinfo', $h_info);
         $this->display('hotelconfirm');
     }
@@ -239,6 +246,7 @@ class FlashMenuController extends BaseController {
 
 
     public function publishMenu(){
+
         $now_date = date("Y-m-d H:i:s");
         $hotel_id_arr = I('post.pubhotelhotel');
         if($hotel_id_arr == '') {
@@ -255,7 +263,12 @@ class FlashMenuController extends BaseController {
         $sp['update_time'] = $now_date;
         $msec = $this->msectime();
         $sp['gendir'] = 'udriver_'.time().$msec;
-        //var_export($sp);
+        $upcfg = I('post.cfg');
+        if($upcfg) {
+            $sp['up_cfg'] = implode(',' ,$upcfg);
+        } else {
+            $sp['up_cfg'] = '';
+        }
         $bool = $single_list_Model->addData($sp, 0);
         if($bool) {
             $this->output('发布成功了!', 'flashmenu/getlist');
