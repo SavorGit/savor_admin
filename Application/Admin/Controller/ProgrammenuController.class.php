@@ -693,9 +693,13 @@ smlist.menu_name';
         $result = $this->getAdsAcccounce($result);
         //获取广告占位符
         $result_adsoc = $this->getAdsOccup($result);
+
+        //获取RTB广告占位符
+        $result_rtbadsoc = $this->getRtbadsOccup($result);
         //取出name列
         $xuan_arr = array_column($result, 'name');
         $adsoc_arr = array_column($result_adsoc, 'name');
+        $rtbadsoc_arr = array_column($result_rtbadsoc, 'name');
         $now_date = date("Y-m-d H:i:s");
         foreach ($data as $rk=>$rv) {
             if (in_array($rv[0], $xuan_arr)) {
@@ -706,6 +710,14 @@ smlist.menu_name';
                     'create_time'=>$now_date,
                 );
             }elseif (in_array($rv[0], $adsoc_arr)) {
+                $inc_arr[] = array(
+                    'id'=>0,
+                    'name'=>$rv[0],
+                    'duration'=>0,
+                    'create_time'=>$now_date,
+                    'type'=>'33',
+                );
+            }elseif (in_array($rv[0], $rtbadsoc_arr)) {
                 $inc_arr[] = array(
                     'id'=>0,
                     'name'=>$rv[0],
