@@ -512,6 +512,30 @@ smlist.menu_name';
 
     }
 
+    public function judgertbAdvOuc($name_arr) {
+        $result = array();
+        $result = $this->getRtbadsOccup($result);
+        $adv_arr = array_column($result, 'name');
+        $len = count ($adv_arr);
+        //判断要有10个
+        if ( array_diff($adv_arr, $name_arr) ) {
+            $this->error("RTB广告位必须选择{$len}个");
+        }
+        //取广告位数组
+        $ad_arr = array_filter($name_arr, function($result, $item)use($adv_arr) {
+            if(in_array($result, $adv_arr)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        //判断恰好10个,取广告位数组反转然后比较
+        if (count($ad_arr) != $len) {
+            $this->error("RTB广告位必须选择{$len}个且不能有重复");
+        }
+
+    }
+
     public function doaddnewMenu(){
             //表单提交即是新增和导入ajax区分以及与修改进行区分
 
@@ -543,8 +567,10 @@ smlist.menu_name';
             if(empty($rightid_arr)){
                 $this->error('节目单列表不能为空!');
             }
-            //判断广告位版位都有10个
+            //判断广告位版位都有10个,
             $this->judgeAdvOuc($name_arr);
+            //判断RTB广告位版位都有10个,
+            $this->judgertbAdvOuc($name_arr);
             $result = $mlModel->add($save);
             if ( $result ) {
                 $menu_id = $mlModel->getLastInsID();
@@ -556,11 +582,16 @@ smlist.menu_name';
                 $res_xuan = $this->getAdsAcccounce($res);
                 //获取广告占位符
                 $res_adv = $this->getAdsOccup($res);
+                //获取rtb广告占位符
+                $rertb_adv = $this->getRtbadsOccup($res);
                 //取出name列
                 $res_adv = array_column($res_adv, 'name');
                 $res_xuan = array_column($res_xuan, 'name');
+                $rertb_adv = array_column($rertb_adv, 'name');
                 $adv_promote_num_arr = C('ADVE_OCCU');
                 $adv_name = $adv_promote_num_arr['name'];
+                $rtbadv_promote_num_arr = C('RTBADVE_OCCU');
+                $rtbadv_name = $rtbadv_promote_num_arr['name'];
                 foreach($id_arr as $k=>$v) {
                     //判断type类型
                     $ad_name = $name_arr[$k];
@@ -568,7 +599,11 @@ smlist.menu_name';
                         $type = 1;
                         $lo = str_replace($adv_name, "",
                             $ad_name);
-                    } else if ( in_array($ad_name, $res_xuan) ) {
+                    }else if ( in_array($ad_name, $rertb_adv)) {
+                        $type = 4;
+                        $lo = str_replace($rtbadv_name, "",
+                            $ad_name);
+                    }else if ( in_array($ad_name, $res_xuan) ) {
                         $type = 3;
                         $lo = 0;
                     } else {
@@ -807,6 +842,27 @@ smlist.menu_name';
         return $result;
     }
 
+    public function getRtbadsOccup($result, $filter='') {
+
+        $adv_promote_num_arr = C('RTBADVE_OCCU');
+        if($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_promote_num = $adv_promote_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i=1; $i<=$adv_promote_num; $i++) {
+            if(in_array($adv_promote_num_arr['name'].$i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array('id'=>0,
+                    'name'=>$adv_promote_num_arr['name'].$i,
+                    'create_time'=>$now_date_time,'duration'=>0,
+                    'type'=>'33',
+                );
+            }
+        }
+        return $result;
+    }
 
     public function get_se_left(){
         $m_type = I('post.m_type','0');
@@ -844,6 +900,9 @@ smlist.menu_name';
         } else if ($m_type == 4){
             //获取广告占位符
             $result = $this->getAdsOccup($result, $adval);
+        } else if ($m_type == 5){
+            //获取RTB广告占位符
+            $result = $this->getRtbadsOccup($result, $adval);
         } else {
             $where .= "	AND type = '{$m_type}'";
             $result = $adModel->getWhere($where, $field);
