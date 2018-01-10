@@ -454,7 +454,7 @@ class RtbadvertController extends BaseController
 		$twhere = '1=1 and flag=0 and pid='.$tid;
 		$tag_cat = $tagModel->getAllList($tfield, $twhere, $torder);
 		foreach($tag_cat as $tv) {
-			if($tv['tagname'] == '育儿') {
+			if($tv['tagname'] == '性别') {
 				$tcat_id = $tv['id'];
 				break;
 			}
