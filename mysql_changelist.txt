@@ -1164,5 +1164,10 @@ varchar(20) not null default '' comment 'wifi探针' after `remark`;
 执行sql:
 alter table `cloud`.`savor_room` add column `probe`
 varchar(20) not null default '' comment 'wifi探针' after `remark`;
+执行结果:已执行
 
-
+增加说明：包间表增加wifi探针
+修改时间：2017.1.8
+修改人：张英涛
+执行sql:
+ALTER TABLE `cloud`.`savor_box` ADD COLUMN `devicce_token` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机顶盒设备号' AFTER `tag`
