@@ -336,28 +336,22 @@ class RtbadvertController extends BaseController
 			$v['end_date'] = strtotime($v['end_date']);
 			$tou_state = $dap['tou_st'];
 			if ($tou_state == 2) {
-				$v['tp'] = 2;
 				$v['state'] = '投放中';
 			}
 			if ($tou_state == 1) {
-				$v['tp'] = 1;
 				$v['state'] = '未到投放时间';
 			}
 			if ($tou_state == 3) {
-				$v['tp'] = 3;
 				$v['state'] = '投放完毕';
 			}
 			if ($tou_state == 0) {
 				if ($now_date >= $v['start_date'] && $now_date <= $v['end_date']) {
-
-						$v['tp'] = 2;
 						$v['state'] = '投放中';
 				} else if ($now_date < $v['start_date']) {
-						$v['tp'] = 1;
+
 						$v['state'] = '未到投放时间';
 				} else  {
-					$v['tp'] = 1;
-					$v['state'] = '未到投放时间';
+					$v['state'] = '投放完毕';
 				}
 			}
 
