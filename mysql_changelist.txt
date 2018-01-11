@@ -1171,3 +1171,8 @@ varchar(20) not null default '' comment 'wifi探针' after `remark`;
 修改人：张英涛
 执行sql:
 ALTER TABLE `cloud`.`savor_box` ADD COLUMN `devicce_token` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机顶盒设备号' AFTER `tag`
+
+增加说明：u盘节目单表增加选择标志
+修改时间：2017.1.8
+修改人：白玉涛
+ALTER TABLE `cloud`.`savor_singlezip_list`     ADD COLUMN `up_cfg` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '筛选标识';
