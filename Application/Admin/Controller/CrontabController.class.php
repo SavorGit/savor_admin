@@ -861,12 +861,12 @@ class CrontabController extends Controller
                                         foreach($update_config_cfg as $cfgk=>$cfgv) {
 
                                             if( in_array($cfgk, $upcfg) ) {
-                                                $upd_str .= '#'.$cfgv['ename']."\n";
-                                            } else {
                                                 $upd_str .= $cfgv['ename']."\n";
+                                            } else {
+                                                $upd_str .= '#'.$cfgv['ename']."\n";
                                             }
                                         }
-var_export($upd_str);
+
                                         $smfileModel->write_file($update_path, $upd_str);
 
                                     }
