@@ -60,10 +60,9 @@ class ExcelController extends Controller
             $tmpname = '机顶盒版本情况分布';
         }else if($filename == 'box_lost_version_condition') {
             $tmpname = '失联机顶盒分布';
+        }else if($filename == 'adver_warn_report') {
+            $tmpname = '广告播放异常预警';
         }
-
-
-
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
             $acp = 3;
@@ -2394,4 +2393,79 @@ class ExcelController extends Controller
         $filename = 'option_sh_task_list';
         $this->exportExcel($xlsName, $xlsCell, $list,$filename);
     }
+
+
+    public function getho() {
+       $arr = array ( 0 => '阿根廷庄园（北京店）-餐厅 ', 1 => '百富怡大酒店 ', 2 => '草菁菁（金融街店） ', 3 => '朝尚食都 ', 4 => '大益膳房 ', 5 => '东海汇渔港 ', 6 => '朵颐河鲜 ', 7 => '福润龙庭 ', 8 => '花家怡园（金融街店） ', 9 => '辉哥火锅（8号公馆店） ', 10 => '辉哥火锅（远洋国际店） ', 11 => '江南赋 ', 12 => '江仙雅居（苏州桥店） ', 13 => '经易大丰合 ', 14 => '郡王府半岛明珠酒家 ', 15 => '浏阳河大酒楼 ', 16 => '美锦酒家（港澳中心店） ', 17 => '权茂北京菜 ', 18 => '山釜餐厅 ', 19 => '山海楼 ', 20 => '石榴花开餐厅 ', 21 => '食说江南(鸭王店) ', 22 => '唐宫海鲜舫（大悦城店） ', 23 => '唐宫海鲜舫（好苑建国店） ', 24 => '唐宫海鲜舫（丽都店） ', 25 => '唐宫海鲜舫（西藏大厦店） ', 26 => '天水雅居（木樨地店） ', 27 => '天水雅居（万豪店） ', 28 => '晚枫亭（石佛营店） ', 29 => '万龙洲大兴店 ', 30 => '万龙洲海鲜大酒楼（安定门店） ', 31 => '王府茶楼中轴路店 ', 32 => '新净雅烹小鲜 ', 33 => '盐府（大望路店） ', 34 => '夜上海（长安大戏院店） ', 35 => '怡和春天（怡和店） ', 36 => '俞翰姥爷的海味人生 ', 37 => '悦府.潮州菜 ', 38 => '悦融-精致中菜(金融街店) ', 39 => '粤悦香海鲜舫 ', 40 => '镇三关重庆老火锅（工体旗舰店） ', 41 => '正院大宅门（西翠路店） ', 42 => '万国城MOMASO餐厅 ', 43 => '瞳海鲜料理(崇文门店) ', 44 => '唐宫海鲜舫（新世纪饭店店）', );
+        $hotelModel = new \Admin\Model\HotelModel();
+        $where['flag'] = 0;
+        $where['state'] = 1;
+        $ho = array();
+        foreach($arr as $v) {
+            $where['name']  = trim($v);
+            $hotel_info = $hotelModel->where($where)->find();
+            $ho[] = $hotel_info['id'];
+        }
+        var_export($ho);
+        $ho = array ( 0 => '41', 1 => '48', 2 => '16', 3 => '70', 4 => '30', 5 => '76', 6 => '17', 7 => '9', 8 => '12', 9 => '46', 10 => '19', 11 => '38', 12 => '436', 13 => '28', 14 => '13', 15 => '126', 16 => '25', 17 => '10', 18 => '26', 19 => '33', 20 => '511', 21 => '478', 22 => '171', 23 => '32', 24 => '39', 25 => '175', 26 => '52', 27 => '99', 28 => '184', 29 => '185', 30 => '186', 31 => '196', 32 => '34', 33 => '225', 34 => '35', 35 => '232', 36 => '465', 37 => '51', 38 => '468', 39 => '37', 40 => '466', 41 => '238', 42 => '27', 43 => '517', 44 => '177', );
+
+    }
+
+
+    public function expadverwarnreport(){
+        $field = 'awarn.*,sb.mac box_mac,  ( CASE awarn.report_adsPeriod WHEN "" THEN "999999999999999"
+	WHEN NULL THEN "999999999999999"
+ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
+        $adWarnModel = new \Admin\Model\AdverWarnModel();
+        $where = '1=1';
+        $order      = I('_order',' reportadsPeriod asc, awarn.last_time asc '); //排序字段
+        $result = $adWarnModel->getData($field,$where,$order);
+
+        array_walk($result, function(&$v, $k){
+            //修改时间
+            $v['hea'] = '否';
+            $v['adp'] = '否';
+            $v['vid'] = '否';
+            if($v['last_time'] >= 24) {
+                $v['hea'] = '是';
+                $day = floor($v['last_time']/24);
+                $hour = floor($v['last_time']%24);
+                $v['last_time'] = $day.'天'.$hour.'小时';
+            } else {
+                $v['last_time'] = $v['last_time'].'小时';
+            }
+            if( $v['report_adsperiod'] < $v['new_adsperiod'] ) {
+                $v['adp'] = '是';
+            }
+            if( $v['report_demperiod'] != $v['new_demperiod'] ) {
+                $v['vid'] = '是';
+            }
+            $v['report_adsperiod'] = $v['report_adsperiod'].' ';
+            $v['report_demperiod'] = $v['report_demperiod'].' ';
+        });
+
+        $xlsCell = array(
+            array('id', '序号'),
+            array('box_id','机顶盒ID'),
+            array('box_mac','机顶盒MAC'),
+            array('maintainer','维护人'),
+            array('room_id','包间ID'),
+
+            array('room_name', '包间名称'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name', '酒楼名称'),
+            array('last_time','心跳距离现在时间'),
+
+            array('report_adsperiod', '广告期号'),
+            array('report_demperiod', '点播期号'),
+            array('hea', '心跳异常'),
+            array('adp', '广告未更'),
+            array('vid', '点播未更'),
+
+        );
+        $xlsName = '广告播放异常预警';
+        $filename = 'adver_warn_report';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
+
 }

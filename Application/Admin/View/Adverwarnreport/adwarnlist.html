@@ -1,0 +1,162 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/adverwarnreport/getlist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" id="high" value="{$hightest}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+       <!-- <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              报表类型：
+            </label>
+                <span class="input-group-btn">
+               <select name="baotype" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <option <if condition="$typea eq '1'">selected="selected" </if> value=1 >小平台</option>
+                 <option <if condition="$typea eq '2'">selected="selected" </if> value=2 >机顶盒</option>
+               </select>
+          </div>
+
+          </div>
+
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                维护人：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="he_main_v" value="{$main_k}" placeholder="维护人" style="width:95px;">
+            </span>
+            </div>
+          </div>
+		<if condition="$is_city_search eq 1"> 
+         <div class="form-group"  >
+            <div class="input-group-sm input-group">
+              <label class="col-xs-1 col-sm-1 control-label">
+                城&nbsp;&nbsp;&nbsp;市：
+              </label>
+
+                <span class="input-group-btn input-group-sm">
+              <select name="he_area_bv" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                <option value=0>全国</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                </volist>
+              </select>
+            </span>
+            </div>
+          </div> 
+		  </if>
+          <div class="form-inline" style="margin-top:10px;">
+
+
+            <div class="form-group" style="margin-left:50px;">
+              <div class="input-group input-group-sm pull-right">
+                <input type="text" class="form-control" name="he_name" value="{$name}" placeholder="酒楼名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+              </div>
+            </div>-->
+
+            <div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/expadverwarnreport" title="导出广告播放异常预警数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出广告播放异常预警数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>机顶盒ID</th>
+            <th>MAC地址</th>
+            <th>维护人</th>
+            <th>包间ID</th>
+            <th>包间名称</th>
+            <th>酒楼ID</th>
+            <th>酒楼名称</th>
+            <th>最后一次心跳距离现在时间</th>
+            <th>广告期号</th>
+            <th>点播期号</th>
+
+            <th>心跳异常</th>
+            <th>广告未更</th>
+            <th>点播未更</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="机顶盒ID">{$vlist.box_id}</td>
+              <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+              <td data-title="维护人">{$vlist.maintainer}</td>
+              <td data-title="包间ID">{$vlist.room_id}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="酒楼ID">{$vlist.hotel_id}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="心跳距离现在时间">{$vlist.last_time}</td>
+              <td data-title="广告期号">{$vlist.report_adsperiod}</td>
+              <td data-title="点播期号">{$vlist.report_demperiod}</td>
+              <td data-title="心跳异常">{$vlist.hea}</th>
+            <td data-title="广告未更">{$vlist.adp}</th>
+            <td data-title="点播未更">{$vlist.vid}</th>
+
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+  /*$(function(){
+    $('select').css({ "cssText": "display:none !important" });
+  })
+  $("#exportheartlistlog").click(function(){
+
+    var typ = $('select[name="baotype"]').val();
+    var height = $('#high').val();
+    if(typ == 0){
+      alert('报表类型必填');
+      return false;
+    }
+    if(height==9999){
+       //最高权限
+        var arv = $('select[name="he_area_bv"]').val();
+        if(arv == 0){
+          alert('城市必填');
+          return false;
+        }
+    } else {
+      var arv = height;
+    }
+
+    var hre = $("#xiaohref").val();
+    var mav = $('input[name="he_main_v"]').val();
+    var hbv = $('select[name="he_hbt_v"]').val();
+    var nav = $('input[name="he_name"]').val();
+    var hrp = hre+"?type="+typ+"&main_v="+mav+"&area_v="+arv+"&hbt_v="+hbv+"&name="+nav;
+    $(this).attr("href",hrp);
+  })*/
+</script>
