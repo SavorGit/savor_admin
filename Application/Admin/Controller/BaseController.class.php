@@ -501,7 +501,7 @@ class BaseController extends Controller {
                              'admin.menu.analyseexcel','admin.checkaccount.getaccountinfo','admin.checkaccount.analyseexcel',
                              'admin.checkaccount.confirmpaydone','admin.tag.getajaxpage','admin.tag.doaddajaxtag',
                              'admin.resource.uploadmapresource','admin.contentads.getads_ajax','admin.contentads.getexpstate','admin.specialgroup.getarticlebyname'
-       ,'admin.programmenu.get_se_left','admin.resource.uploadadvdeliveryresource','admin.advdelivery.getocuphotel','admin.advdelivery.getvalidboxidbyhotel', 'admin.programmenu.analyseexcel', 'admin.programmenu.getfile','admin.menu.getsessionhotel');
+       ,'admin.programmenu.get_se_left','admin.resource.uploadadvdeliveryresource','admin.advdelivery.getocuphotel','admin.advdelivery.getvalidboxidbyhotel', 'admin.programmenu.analyseexcel', 'admin.programmenu.getfile','admin.menu.getsessionhotel','admin.rtbadvert.gettaginfobycat','admin.rtbadvert.gettagcat','admin.resource.uploadrtbadvdeliveryresource');
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);
         $action_name     = strtolower(ACTION_NAME);
