@@ -1176,3 +1176,25 @@ ALTER TABLE `cloud`.`savor_box` ADD COLUMN `devicce_token` VARCHAR(50) NOT NULL 
 修改时间：2017.1.8
 修改人：白玉涛
 ALTER TABLE `cloud`.`savor_singlezip_list`     ADD COLUMN `up_cfg` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '筛选标识';
+
+
+CREATE TABLE `savor_pub_rtbads` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `ads_id` int(12) NOT NULL DEFAULT '0' COMMENT '广告id',
+  `start_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放开始时间',
+  `end_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放结束时间',
+  `admaster_sin` varchar(255) NOT NULL DEFAULT '' COMMENT 'admaster广告监测标识',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '操作人Id',
+  `flag` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0正常1删除',
+  PRIMARY KEY (`id`),
+  KEY `start_date` (`start_date`),
+  KEY `end_data` (`end_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='rtb广告投放表';
+
+增加说明：餐厅标签增加默认标签字段
+修改时间：2017.1.8
+修改人：白玉涛
+alter table `cloud`.`savor_dinner_label`
+   add `default_tag`  tinyint(2) default '0' NOT NULL comment '1是默认标签0是非默认标签'
