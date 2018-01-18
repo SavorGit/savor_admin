@@ -1443,9 +1443,7 @@ class CrontabController extends Controller
 
         if($pad_arr) {
             foreach($pad_arr as $pk=>$pv) {
-                if($pk == 1) {
-                    die;
-                }
+                
                 $pa_id = $pv['id'];
                 $p_ads = array();
                 $map = array();
