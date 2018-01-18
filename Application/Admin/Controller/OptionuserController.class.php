@@ -404,7 +404,7 @@ class OptionuserController extends BaseController{
         $fields = 'hotel_info hotel_id_str';
         $h_info =  $m_opser_role->getList($fields,$us_hotel,'','');
         $tmp = array();
-        $where = "1=1 and hotel_box_type in(2,3) and state=1 and flag = 0 and b.mac !='' ";
+        $where = "1=1 and a.hotel_box_type in(2,3) and a.state=1 and a.flag = 0 and b.mac_addr !='' ";
         foreach($h_info as $vs) {
             if( empty($vs['hotel_id_str']) ) {
 
@@ -506,7 +506,7 @@ class OptionuserController extends BaseController{
             $field = 'a.id,a.name';
             $result = $hotelModel->getListMac($field, $where,$orders='');
             $res_hotel = array();
-            foreach ($result['list'] as $v){
+            foreach ($result as $v){
                 $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
             }
             $arr = array('hotel'=>$res_hotel,'arinfo'=>$area_arr);

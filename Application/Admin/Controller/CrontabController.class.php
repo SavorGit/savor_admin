@@ -21,10 +21,12 @@ class CrontabController extends Controller
     public function insCurrentDetailRecopt(){
         //获取所有酒楼
         $m_hotel = new \Admin\Model\HotelModel();
-        //$where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
-        $where = " a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+       // $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        //虚拟小平台也拿到
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !=''";
+        //$where = " a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
         $max_hour = 720;
-        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id，b.mac_addr');
 
         //$hotel_list = array_slice($hotel_list,0, 5);
 
@@ -54,20 +56,27 @@ class CrontabController extends Controller
             $where['hotel_id'] = $v['id'];
             $where['type']  =1;
             $dt = $m_heart_log->getInfo('last_heart_time',$where);
-            if(!empty($ret)){
-                $data['small_plat_status'] = 1;
-                $data['small_plat_report_time'] = $dt['last_heart_time'];
+            //判断是否是虚拟小平台
+            if($v['mac_addr'] == '') {
+                //虚拟小平台标志
+                $data['small_plat_status'] = 2;
+                $data['small_plat_report_time'] = $now;
             } else {
-                if(!empty($dt)){
-                    $p_last_time = $dt['last_heart_time'];
-                    $data['small_plat_report_time'] = $p_last_time;
-                    $l_hour = strtotime($p_last_time);
-                    $data['pla_lost_hour'] = ceil( ($now_time-$l_hour)/3600);
-                }else {
-                    $data['small_plat_report_time'] = '';
-                    $data['pla_lost_hour'] = $max_hour;
+                if(!empty($ret)){
+                    $data['small_plat_status'] = 1;
+                    $data['small_plat_report_time'] = $dt['last_heart_time'];
+                } else {
+                    if(!empty($dt)){
+                        $p_last_time = $dt['last_heart_time'];
+                        $data['small_plat_report_time'] = $p_last_time;
+                        $l_hour = strtotime($p_last_time);
+                        $data['pla_lost_hour'] = ceil( ($now_time-$l_hour)/3600);
+                    }else {
+                        $data['small_plat_report_time'] = '';
+                        $data['pla_lost_hour'] = $max_hour;
+                    }
+                    $data['small_plat_status'] = 0;
                 }
-                $data['small_plat_status'] = 0;
             }
             //机顶盒判断
             $where = '';
