@@ -1097,6 +1097,7 @@ ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRE
 增加说明：增加机顶盒错误日志历史表
 修改时间：2017.12.28
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_pub_ads_box_error_history` (
   `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
@@ -1115,6 +1116,7 @@ CREATE TABLE `savor_pub_ads_box_error_history` (
 增加说明：增加机顶盒日志历史表
 修改时间：2017.12.28
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_pub_ads_box_history` (
   `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
