@@ -28,7 +28,15 @@ class HotelModel extends BaseModel{
 		return $result;
 	}
 
-
+	public function getListMac($field, $where, $order='id desc'){
+		$list = $this->alias('a')
+			->field($field)
+			->where($where)
+			->join('left join savor_hotel_ext b on a.id=b.hotel_id')
+			->order($order)
+			->select();
+		return $list;
+	}
 
 
 	public function getList($where, $order='id desc', $start=0,$size=5){	

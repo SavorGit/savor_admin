@@ -404,7 +404,7 @@ class OptionuserController extends BaseController{
         $fields = 'hotel_info hotel_id_str';
         $h_info =  $m_opser_role->getList($fields,$us_hotel,'','');
         $tmp = array();
-        $where = "1=1";
+        $where = "1=1 and hotel_box_type in(2,3) and state=1 and flag = 0 and b.mac !='' ";
         foreach($h_info as $vs) {
             if( empty($vs['hotel_id_str']) ) {
 
@@ -422,43 +422,27 @@ class OptionuserController extends BaseController{
         if($tmp) {
             $h_temp = array_keys($tmp);
             $h_temp = implode(',', $h_temp);
-            $where .= " and id not in (".$h_temp.")";
+            $where .= " and a.id not in (".$h_temp.")";
 
         }
-
-
         $hotelModel = new \Admin\Model\HotelModel();
         $areaModel  = new \Admin\Model\AreaModel();
 
-
-        /*//合作维护人
-         $per_arr = $hotelModel->distinct(true)->field('area_id')->select();
-        $per_ho_arr = $areaModel->areaIdToAareName($per_arr);
-        $this->assign('per_ho', $per_ho_arr);*/
         $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
-        $size   = I('numPerPage',50);//显示每页记录数
-        $this->assign('numPerPage',$size);
-        $start = I('pageNum',1);
-        $this->assign('pageNum',$start);
-        $order = I('_order','update_time');
-        $this->assign('_order',$order);
-        $sort = I('_sort','desc');
-        $this->assign('_sort',$sort);
-        $orders = $order.' '.$sort;
-        $start  = ( $start-1 ) * $size;
+
 
 
 
         $name = I('name');
         if($name){
             $this->assign('name',$name);
-            $where .= "	AND name LIKE '%{$name}%'";
+            $where .= "	AND a.name LIKE '%{$name}%'";
         }
         //机顶盒类型
         $hbt_v = I('hbt_v');
         if ($hbt_v) {
             $this->assign('hbt_k',$hbt_v);
-            $where .= "	AND hotel_box_type = $hbt_v";
+            $where .= "	AND a.hotel_box_type = $hbt_v";
         }
         //城市
         $area_v = I('area_v');
@@ -475,7 +459,7 @@ class OptionuserController extends BaseController{
 
 
                 } else {
-                    $where .= "	AND area_id = $area_v";
+                    $where .= "	AND a.area_id = $area_v";
 
                 }
             }
@@ -485,9 +469,9 @@ class OptionuserController extends BaseController{
             $map['id'] = array('in', $m_city_id);
             $field = 'id,region_name';
             $area_arr = $areaModel->getWhere($field, $map, '','');
-            $where .= "	AND area_id in ( ".$m_city_id.")";
+            $where .= "	AND a.area_id in ( ".$m_city_id.")";
             if($area_v) {
-                $where .= "	AND area_id = $area_v";
+                $where .= "	AND a.area_id = $area_v";
             }
         }
 
@@ -496,32 +480,31 @@ class OptionuserController extends BaseController{
         $level_v = I('level_v');
         if ($level_v) {
             $this->assign('level_k',$level_v);
-            $where .= "	AND level = $level_v";
+            $where .= "	AND a.level = $level_v";
         }
         //状态
         $state_v = I('state_v');
         if ($state_v) {
             $this->assign('state_k',$state_v);
-            $where .= "	AND state = $state_v";
+            $where .= "	AND a.state = $state_v";
         }
 
         //重点
         $key_v = I('key_v');
         if ($key_v) {
             $this->assign('key_k',$key_v);
-            $where .= "	AND iskey = $key_v";
+            $where .= "	AND a.iskey = $key_v";
         }
         //合作维护人
         $main_v = I('main_v');
         if ($main_v) {
             $this->assign('main_k',$main_v);
-            $where .= "	AND maintainer LIKE '%{$main_v}%'";
+            $where .= "	AND a.maintainer LIKE '%{$main_v}%'";
         }
 
         if($ajaxversion){
-            $start = 0;
-            $size = 1000;
-            $result = $hotelModel->getList($where,$orders,$start,$size);
+            $field = 'a.id,a.name';
+            $result = $hotelModel->getListMac($field, $where,$orders='');
             $res_hotel = array();
             foreach ($result['list'] as $v){
                 $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
