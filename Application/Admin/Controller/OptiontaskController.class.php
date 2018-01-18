@@ -24,11 +24,11 @@ class OptiontaskController extends BaseController {
 	    $this->task_type_arr = array('5'=>'报修单机版','6'=>'单机版特殊更新','1'=>'网络信息采集及报价','8'=>'网络施工改造','2'=>'安装机顶盒','3'=>'安装网络+机顶盒','4'=>'报修网络版','9'=>'设备拆回');
 	    $this->task_emerge_arr = array('1'=>'火烧眉毛','2'=>'急','3'=>'一般');
 	    $this->task_area_arr = array('1'=>'广州','2'=>'上海','3'=>'深圳','4'=>'北京');
-	    $this->task_person_arr = array('1'=>'苏苏','2'=>'张磊','3'=>'成通','4'=>'黄勇','5'=>'刘朝伟','6'=>'罗浩','7'=>'邱志宇','8'=>'施华杰','9'=>'朱毅','10'=>'张文宇','11'=>'王卫华','12'=>'李丛','13'=>'任伟','14'=>'郑伟','15'=>'冯颖亮','16'=>'外包');
+	    $this->task_person_arr = array('1'=>'苏苏','2'=>'张磊','3'=>'成通','4'=>'黄勇','5'=>'刘朝伟','6'=>'罗浩','7'=>'邱志宇','8'=>'施华杰','9'=>'朱毅','10'=>'张文宇','11'=>'王卫华','12'=>'李丛','13'=>'任伟','14'=>'郑伟','15'=>'冯颖亮','16'=>'外包','17'=>'汪朋');
 		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S');
 		$this->person_device_token = array('1'=>'Ak6nFuL7K3nu4AVVAHMLUEJK1Fc-RHUDL8pBONVbdf5S','2'=>'Ap0h2sGR8i9Q2uQvA_-RKQupNMi9yI3xV4pMjv3xmDo7');
 		$this->person_device_iostoken = array('1'=>'bede4b5d51c2f5dca3ec7ddfa19f54c23fb91d485da0ef880fed0b880fffde4d','2'=>'34e426055514d99da6803ed309da1b3d983035299dbae7e01c0e8f3ea99c324a');
-
+//用的是UMENBAI_API_CONFIG
 	}
 
 	public function testduo_iossa(){
@@ -202,10 +202,14 @@ class OptiontaskController extends BaseController {
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$personid = I('personid');
+		$publisher = I('publisher');
+		$task_type = I('task_type');
+		
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
-		
+		$offsets = $start+1;
+		$this->assign('offsets',$offsets);
 		/* $where['state'] = array('in','1,2,3');
 		$where['flag'] = 0; */
 		$where= ' 1 and state in(1,2,3) and flag=0';
@@ -219,7 +223,16 @@ class OptiontaskController extends BaseController {
 		    
 		    $this->assign('personid',$personid);
 		}
-		$m_option_task = new \Admin\Model\OptiontaskModel();
+		if($publisher){
+		    $where .=" and publisher like '%$publisher%'";
+		    $this->assign('publisher',$publisher);
+		}
+		if($task_type){
+		    $where .=" and task_type=$task_type";
+		    $this->assign('task_type',$task_type);
+		}
+		
+		$m_option_task = new \Admin\Model\OptiontaskoldModel();
 		$list= $m_option_task->getList($where,$orders,$start,$size);
 		foreach($list['list'] as $key=>$v){
 		    $performer_str = '';
@@ -272,7 +285,7 @@ class OptiontaskController extends BaseController {
 
 	        $data['performer'] = $performer; 
 	        $data['update_time'] = date('Y-m-d H:i:s');
-	        $m_option_task = new \Admin\Model\OptiontaskModel();
+	        $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	        $ret = $m_option_task->where('id='.$id)->save($data);
 	        if($ret){
 	            $this->output('修改成功', 'optiontask/index', 1);
@@ -284,7 +297,7 @@ class OptiontaskController extends BaseController {
 	        unset($data['ajax']);
 	        $data['performer'] = $performer;
 	        //print_r($data);exit;
-	        $m_option_task = new \Admin\Model\OptiontaskModel();
+	        $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	        $ret = $m_option_task->add($data);
 	        if($ret){
 	            $this->output('发布成功', 'optiontask/index', 1);
@@ -295,7 +308,7 @@ class OptiontaskController extends BaseController {
 	    
 	}
 	public function edit(){
-	     $m_option_task = new \Admin\Model\OptiontaskModel();
+	     $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $id = I('get.id',0,'intval');
 	    $list = $m_option_task->where('id='.$id)->find();
 	    $performer = $list['performer'];
@@ -314,7 +327,7 @@ class OptiontaskController extends BaseController {
 	}
 	public function delete(){
 	    $id = I('get.id');
-	    $m_option_task = new \Admin\Model\OptiontaskModel();
+	    $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $data['flag'] = 1;
 	    $ret = $m_option_task->where('id='.$id)->save($data);
 	    if($ret){
@@ -334,10 +347,24 @@ class OptiontaskController extends BaseController {
 	    $this->assign('_sort',$sort);
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
+	    $publisher = I('publisher');
+	    $task_type = I('task_type');
+	    
+	    $offsets = $start+1;
+	    $this->assign('offsets',$offsets);
+	    
 	    
 	    $where['state'] = array('in','4');
 	    $where['flag'] = 0;
-	    $m_option_task = new \Admin\Model\OptiontaskModel();
+	    if($publisher){
+	        $where['publisher'] = array('like',"%$publisher%");
+	        $this->assign('publisher',$publisher);
+	    }
+	    if($task_type){
+	        $where['task_type'] = $task_type;
+	        $this->assign('task_type',$task_type);
+	    }
+	    $m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $list= $m_option_task->getList($where,$orders,$start,$size);
 	    
 	    

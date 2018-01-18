@@ -3,7 +3,7 @@
 <link href="/Public/admin/assets/css/jquery.treeTable.css" rel="stylesheet" type="text/css" />
 <script src="/Public/admin/assets/js/jquery.treetable.js" type="text/javascript" />
 
-<div class="pageContent">
+<div class="pageContent sysusergroupaddtest">
   <form method="post" action="{$host_name}/sysusergroup/sysusergroupAddTest" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="acttype" value="{$acttype}">
     <input type="hidden" name="id" value="{$vinfo.id}">
@@ -34,6 +34,24 @@
 
 
         </div>
+      </div>
+
+
+      <div class="form-group row">
+
+        <label class="col-xs-12 col-sm-2 control-label">
+          所属城市：
+        </label>
+        <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
+      <select id="inch" name="manage_city[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+
+        <volist name="areaList" id="list">
+          <option value="{$list.id}" <if condition="$vinfo['area_city'] eq $list['id']">selected</if>>{$list.region_name}</option>
+        </volist>
+
+      </select>
+    </span>
+
       </div>
     </div>
     <div class="modal-footer">
@@ -94,5 +112,24 @@
 
     }
   }
+
+
+
+  $('.sysusergroupaddtest').on('change','#inch',function(){
+    var this_val =  $(this).val();
+    //alert(this_val)
+    if(this_val.indexOf('9999')==0){
+      $('.inner li').each(function(){
+        $(this).removeClass('selected');
+        if($(this).attr('data-original-index')==0){
+          $('.btn-success').attr('title','全国')
+          //$('.pull-left').html('全国');
+          $('#inch').prev().find('.pull-left').html('全国')
+          $('#inch').val('9999')
+          $(this).addClass('selected')
+        }
+      })
+    }
+  })
   
 </script>

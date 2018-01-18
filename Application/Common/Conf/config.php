@@ -47,6 +47,12 @@ $config['DEVICE_TYPE'] = array(
     '2'=>'机顶盒',
     '3'=>'android',
     '4'=>'ios',
+    '5'=>'餐厅端_android',
+    '6'=>'餐厅端_ios',
+    '7'=>'运维端_android',
+    '8'=>'运维端_ios',
+    '9'=>'运维-单机版_android',
+    '10'=>'运维-单机版_ios',
 );
 $config['UPDATE_TYPE'] = array(
     '0'=>'手动更新',
@@ -139,14 +145,18 @@ $config['STATE_REASON'] = array(
     '7'=>'终止合作',
     '8'=>'问题沟通中',
 );
-$config['hotel_box_type'] = array(
+$config['hotel_box_type'] = [
     '1'=>'一代单机版',
     '2'=>'二代网络版',
-    '3'=>'三代5G版',
-);
+    '3'=>'二代5G版',
+    //U盘更新
+    '4'=>'二代单机版',
+    '5'=>'三代单机版',
+    '6'=>'三代网络版',
+];
 $config['heart_hotel_box_type'] = array(
     '2'=>'二代网络版',
-    '3'=>'三代5G版',
+    '3'=>'二代5G版',
 );
 $config['source_type'] = array(
     '1'=>'官网',
@@ -221,8 +231,28 @@ $config['WX_DYH_CONFIG'] = array(
 );
 $config['WX_FWH_CONFIG'] = array(
     'appid'=>'wx7036d73746ff1a14',
-    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',  
+    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',
+    'key_ticket'=>'savor_wx_xiaorefu_jsticket',
+    'key_token'=>'savor_wx_xiaorefu_token',
 );
+
+$config['XIAO_REDIAN_DING'] = array(
+    'appid'=>'wxb19f976865ae9404',
+    'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
+    'key_ticket'=>'savor_wx_xiaore_jsticket',
+    'key_token'=>'savor_wx_xiaore_token',
+);
+
+
+$config['ZHI_XIANG_CONFIG'] = array(
+    'appid'=>'wx75025eb1e60df2cf',
+    'appsecret'=>'32427ebb0caae2d9e76747fed56e2071',
+    'key_ticket'=>'savor_wx_zhixiang_jsticket',
+    'key_token'=>'savor_wx_zhixiang_token',
+    'cardapi_ticket'=>'savor_wx_zhixiang_cardapiticket',
+    'token'=>'savor',
+);
+
 $config['UMENT_API_CONFIG'] = array(
      'API_URL'=>'http://msg.umeng.com/api/send',
      'opclient'=>array(
@@ -260,12 +290,17 @@ $config['ADV_VIDEO'] = array(
 );
 $config['ADVE_OCCU'] = array(
     'name' => '广告位',
-    'num' => '10',
+    'num' => '50',
+);
+$config['RTBADVE_OCCU'] = array(
+    'name' => 'RTB广告位',
+    'num' => '18',
 );
 $config['TOU_STATE'] = array(
     '0'=>'全部',
-    '1'=>'未投放',
+    '1'=>'未到投放时间',
     '3'=>'投放完毕',
+    '4'=>'不可投放',
     '2'=>'投放中',
 );
 $config['USER_GRP_CONFIG'] = array(
@@ -278,12 +313,14 @@ $config['OPTION_USER_ROLE_ARR']  = ARRAY(
      '2'=>'指派者',
      '3'=>'执行者',
      '4'=>'查看',
+     '5'=>'外包',
+     '6'=>'巡检员',
 );
 $config['OPTION_USER_SKILL_ARR'] = array(
-    '3'=>'信息检测',
-    '4'=>'网络改造',
-    '6'=>'安装验收',
-    '7'=>'维修',
+    '1'=>'信息检测',
+    '8'=>'网络改造',
+    '2'=>'安装验收',
+    '4'=>'维修',
 );
 
 
@@ -301,5 +338,59 @@ $config['HOTEL_DAMAGE_CONFIG'] = array(
     '11'=>'酒楼电视机',
 	'12'=>'未开机',
     '13'=>'其它',
+);
+$config['PUB_ADS_HOTEL_ERROR'] = array(
+    '1'=>'剩余广告位不足',
+    '2'=>'酒楼冻结',
+    '3'=>'酒楼报损',
+    '4'=>'包间冻结',
+    '5'=>'包间报损',
+    '6'=>'机顶盒冻结',
+    '7'=>'机顶盒报损',
+    '8'=>'包间机顶盒为空',
+);
+$config['ROOM_TYPE'] = array(
+    1=>'包间',
+    2=>'大厅',
+    3=>'等候区'
+);
+$config['HEART_LOG_SAVE_DAYS'] = 30;
+$config['CONFIG_VOLUME'] = array(
+    'system_ad_volume'=>'广告音量',
+    'system_pro_screen_volume'=>'投屏音量',
+    'system_demand_video_volume'=>'点播音量',
+    'system_tv_volume'=>'电视音量'
+);
+$config['PROGRAM_ADS_CACHE_PRE'] = 'program_ads_';
+
+$config['UPD_STR'] = array(
+    1=>array(
+        'ename'=>'get_channel',
+        'cname'=>'导出电视节目列表',
+    ),
+    2=>array(
+        'ename'=>'update_logo',
+        'cname'=>'上传酒楼LOGO',
+    ),
+    3=>array(
+        'ename'=>'set_channel',
+        'cname'=>'更新电视节目列表',
+    ),
+    4=>array(
+        'ename'=>'get_log',
+        'cname'=>'导出开机率日志',
+    ),
+    5=>array(
+        'ename'=>'get_loged',
+        'cname'=>'导出备份开机率日志',
+    ),
+    6=>array(
+        'ename'=>'update_media',
+        'cname'=>'更新广告视频',
+    ),
+    7=>array(
+        'ename'=>'update_apk',
+        'cname'=>'更新客户端APK',
+    ),
 );
 return $config;

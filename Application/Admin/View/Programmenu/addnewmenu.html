@@ -71,7 +71,7 @@
 <!--显示列表样式1 start-->
 
 
-<form id="pagerFormaddmenuct" action="{$host_name}/programmenu/doaddnewMenu" method="post" onsubmit="return validateCallback(this, dialogAjaxDone);">
+<form id="pagerFormaddmenuct" action="{$host_name}/programmenu/doaddnewMenu" method="post" onsubmit="return iframeCallback(this, dialogAjaxDone);">
 	<div class="searchBar">
 		<div class="clearfix">
 			<!--新增节目单-->
@@ -97,6 +97,7 @@
 					<option value="2">节目</option>
 					<option value="3">宣传片</option>
 					<option value="4">广告位</option>
+					<option value="5">RTB广告位</option>
 				</select>
 				<input type="text" id="searchtitle" name="searchtitle" style="width: 320px;"placeholder="名称"/>
 
@@ -701,16 +702,6 @@
 
 
 	})
-
-	navTab.closeTab('menu/addmen');
-	function dialogAjaxDone(json){
-		console.log(json);
-		DWZ.ajaxDone(json);
-		if(json.navTabId == 'programmenu/getlist') {
-			navTab.closeTab('programmenu/addnewmenu');
-			navTab.reload('programmenu/getlist');
-		}
-	}
 
 
 

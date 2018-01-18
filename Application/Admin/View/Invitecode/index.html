@@ -1,0 +1,85 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/invitecode/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" name="hotel_id" value="{$hotel_id}" />
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:10px;">
+        
+		<div class="input-group input-group-sm pull-left">
+          <!-- <a class="btn btn-success btn-sm add" href="{$host_name}/invitecode/doadd?hotel_id={$hotel_id}" title="新增邀请码" target="dialog" mask="true"> -->
+          <a warn="警告"  title="你确定要添加邀请码吗？" target="ajaxTodo" href="{$host_name}/invitecode/doadd?hotel_id={$hotel_id}"  class="btn btn-success btn-icon">
+          <i class="fa fa-plus"></i> 
+          	
+          </a>
+          
+        </div>
+       
+          
+          </div>
+        </div>
+        </div>
+      </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
+enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>邀请码</th>
+            <th>绑定手机</th>
+            <th>状态</th>
+            <th>首次使用时间</th>
+            <th>操作</th>
+           
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="邀请码">{$vlist.code}</td>
+              <td data-title="绑定手机">{$vlist.bind_mobile}</td>
+              <td data-title="状态">
+              <if condition ="$vlist.state eq 0">
+              	未使用
+              <else />
+              	已使用
+              </if>
+              </td>
+              <td data-title="首次使用时间">{$vlist.bind_time}</td>
+              <td data-title="操作">
+              	<div class="tools-edit">
+                  <!-- <a data-tip="删除" target="dialog" data-placement="left" mask="true" rel="xiugaihotel" href="{$host_name}/invitecode/delete?id={$vlist.id}" class="btn btn-success btn-icon">
+
+                    <i class="fa fa-tag"></i> -->
+                    <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/invitecode/dodelete?id={$vlist.id}"  class="btn btn-success btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+            
+                </div>
+              </td>
+              
+              
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+

@@ -1,0 +1,77 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/flashmenu/getlist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="goods-date">
+            <div class="form-inline">
+                <div class="form-group">
+                    <div class="input-group-sm input-group">
+                        <a class="btn btn-success btn-sm add" href="{$host_name}/flashmenu/selecthotel" rel="flashmenu/selecthotel" title="添加新记录" target="navTab" mask="true"><i class="fa fa-plus"></i> 添加新记录</a>
+                    </div>
+                </div>
+
+
+
+            </div>
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>创建日期</th>
+            <th>更新日期</th>
+              <th>创建人</th>
+            <th>选择酒楼</th>
+            <th>生成进程</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="创建日期">{$vlist.create_time}</td>
+              <td data-title="更新日期">{$vlist.update_time}</td>
+                <th>{$vlist.uname}</th>
+              <td data-title="选择酒楼">
+                <a data-tip="查看" class="btn btn-success " target="navTab" mask="true" rel="flashmenu/getdetail"
+href="{$host_name}/flashmenu/getdetail?flid={$vlist.id}">查看</a>
+              </td>
+              <td data-title="生成进程">
+                  {$vlist.addr}
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+</script>

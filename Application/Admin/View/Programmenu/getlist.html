@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/getlist" method="post" >
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/programmenu/getlist" method="post" >
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -28,6 +28,12 @@
                        <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
                      </span>
               </div>
+
+                <div class="form-group">
+                    <div class="input-group-sm input-group">
+                        <a class="btn btn-success btn-sm add" href="{$host_name}/programmenu/addnewmenu" title="添加新节目单" target="dialog" mask="true"><i class="fa fa-plus"></i> 添加新节目单</a>
+                    </div>
+                </div>
 
               <div class="col-xs-4 col-sm-4 col-md-4 pull-right">
                 <div class="input-group input-group-sm">
@@ -59,7 +65,6 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
-            <th width="22"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
             <th>序号</th>
             <th>名称</th>
             <th>创建日期</th>
@@ -74,7 +79,6 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td><input name="ids" value="{$vlist.id}" type="checkbox"></td>
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="名称">{$vlist.menu_name}</td>
               <td data-title="创建日期">{$vlist.create_time}</td>
@@ -104,13 +108,12 @@ href="{$host_name}/programmenu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.
                     </a>
                 </div>
 
-
-                <!--  <div class="tools-edit">
-                      <a warn="警告" data-tip="复制" title="你确定要复制到老节目单吗" callback="dialogAjaxProgram" target="ajaxTodo" href="{$host_name}/programmenu/copynew?menuid={$vlist.id}&pctype=1"  class="btn btn-success btn-icon">
+                  <div class="tools-edit">
+                      <a warn="警告" data-tip="复制" title="你确定要复制到老节目单吗"  target="ajaxTodo" href="{$host_name}/programmenu/copynew?menuid={$vlist.id}&pctype=1"  class="btn btn-success btn-icon">
                           <i class="fa fa-asterisk"></i>
                       </a>
                   </div>
--->
+
 
               </td>
 
@@ -125,15 +128,5 @@ href="{$host_name}/programmenu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.
   {$page}
 </div>
 <script type="text/javascript">
-    function dialogAjaxProgram(json){
-        console.log(json);
-        DWZ.ajaxDone(json);
-        if(json.navTabId == 'programmenu/copynew') {
-            //$.pdialog.closeCurrent();
-            navTab.closeCurrentTab();
-            navTab.reload('menu/getlist');
-            //navTab.openTab('menu/getlist');
-        }
-    }
 
 </script>

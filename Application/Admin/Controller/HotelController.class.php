@@ -29,9 +29,7 @@ class HotelController extends BaseController {
 		$area_arr = $areaModel->getAllArea();
 
 		$this->assign('area', $area_arr);
-		//包含酒楼
-		$men_arr = $menliModel->select();
-		$this->assign('include', $men_arr);
+
 		/*//合作维护人
 		$per_arr = $hotelModel->distinct(true)->field('area_id')->select();
 		$per_ho_arr = $areaModel->areaIdToAareName($per_arr);
@@ -51,13 +49,15 @@ class HotelController extends BaseController {
 
 		$where = "1=1";
 		$name = I('name');
+		$search_name = addslashes($name);
+		
 		$beg_time = I('starttime','');
 		$end_time = I('endtime','');
 		if($beg_time)   $where.=" AND install_date>='$beg_time'";
 		if($end_time)   $where.=" AND install_date<='$end_time'";
 		if($name){
 			$this->assign('name',$name);
-			$where .= "	AND name LIKE '%{$name}%'";
+			$where .= "	AND name LIKE '%{$search_name}%'";
 		}
 		//机顶盒类型
 		$hbt_v = I('hbt_v');
@@ -66,10 +66,34 @@ class HotelController extends BaseController {
 			$where .= "	AND hotel_box_type = $hbt_v";
 		}
 		//城市
+		$userinfo = session('sysUserInfo');
+		$pcity = $userinfo['area_city'];
+		$is_city_search = 0;
+		if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+			$pawhere = '1=1';
+			$is_city_search = 1;
+			$this->assign('is_city_search',$is_city_search);
+			$this->assign('pusera', $userinfo);
+		}else {
+		   
+		    $this->assign('is_city_search',$is_city_search);
+			$where .= "	AND area_id in ($pcity)";
+			$pawhere = '1=1 and area_id = '.$pcity;
+		}
+		//包含酒楼
+		$pafield = 'DISTINCT smh.menu_id id,
+smlist.menu_name';
+		$men_arr = $menuHoModel->getPrvMenu($pafield, $pawhere);
+		//获取包含有该地区酒楼
+		$this->assign('include', $men_arr);
+		//城市
 		$area_v = I('area_v');
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
-			$where .= "	AND area_id = $area_v";
+			if(!empty($area_v) ){
+			
+				$where .= "	AND area_id = $area_v";
+			}
 		}
 		//级别
 		$level_v = I('level_v');
@@ -112,6 +136,7 @@ class HotelController extends BaseController {
 			}
 			$bak_ho_arr = array_unique($bak_ho_arr);
 			$bak_ho_str = implode(',', $bak_ho_arr);
+			var_export($bak_ho_str);
 			if($bak_ho_str){
 				$where .= "	AND id  in ($bak_ho_str)";
 			}else{
@@ -150,6 +175,7 @@ class HotelController extends BaseController {
 		}else{
 		    $result = $hotelModel->getList($where,$orders,$start,$size);
 		}
+
 		$datalist = $areaModel->areaIdToAareName($result['list']);
 		foreach ($datalist as $k=>$v){
 			$conditon = array();
@@ -187,7 +213,9 @@ class HotelController extends BaseController {
 				$datalist[$k]['promenu_id'] = '';
 				$datalist[$k]['promenu_name'] = '无';
 			}
-
+            if(empty($v['contractor']) || $v['contractor']=='null'){
+                $datalist[$k]['contractor'] = '';
+            }
 		}
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
@@ -336,7 +364,19 @@ class HotelController extends BaseController {
 		$id = I('get.id');
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
-		$area = $areaModel->getAllArea();
+		
+		
+		$userinfo = session('sysUserInfo');
+		$pcity = $userinfo['area_city'];
+		if($userinfo['groupid'] ==1 || empty($pcity)){
+		    $area = $areaModel->getAllArea();
+		}else {
+		    $where = array();
+		    $where['is_in_hotel'] = 1;
+		    $where['id'] = $pcity;
+		    $area = $areaModel->getWhere('id,region_name',$where);
+		}
+		
 		$this->assign('area',$area);
 		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();
@@ -351,6 +391,8 @@ class HotelController extends BaseController {
 			$vinfo['ip'] = $res_hotelext['ip'];
 			$vinfo['server_location'] = $res_hotelext['server_location'];
 			$vinfo['tag'] = $res_hotelext['tag'];
+			$navtp = I('get.navtp');
+			$this->assign('navtp',$navtp);
 			$this->assign('vinfo',$vinfo);
 		}else{
 			$vinfo['state'] = 2;
@@ -359,6 +401,12 @@ class HotelController extends BaseController {
 		}
 		$this->display('add');
 	}
+
+
+
+
+
+
 
 
 	/*
@@ -404,6 +452,7 @@ class HotelController extends BaseController {
 		$vinfo['ip_local'] = $res_hotelext['ip_local'];
 		$vinfo['ip'] = $res_hotelext['ip'];
 		$vinfo['server_location'] = $res_hotelext['server_location'];
+		$vinfo['is_open_customer'] = $res_hotelext['is_open_customer'];
 	    $vinfo['id'] = $id;
 		$condition['hotel_id'] = $id;
 		$arr = $menuHoModel->where($condition)->order('id desc')->find();
@@ -513,6 +562,20 @@ class HotelController extends BaseController {
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
+		//判断酒楼重名start
+		$hotel_name = addslashes($save['name']);
+		if(!empty($hotel_name)){
+		    if($hotel_id){
+		        $where = " name='".$hotel_name."' and  id !=".$hotel_id;
+		    }else {
+		        $where = " name='".$hotel_name."'";
+		    }
+		    $nums = $hotelModel->getHotelCount($where);
+		    if(!empty($nums)){
+		        $this->error('该酒楼名称已存在');
+		    }
+		}
+		//判断酒楼重名end
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$data['mac_addr'] = $mac_addr;
 		if(!empty($mac_addr) && $mac_addr !='000000000000'){
@@ -568,7 +631,13 @@ class HotelController extends BaseController {
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			$this->output('操作成功!', 'hotel/doaddsuccess');
+			$navtp				 = I('post.navtp','');
+			if($navtp == 34) {
+				$this->output('操作成功!', 'hotel/detail');
+			} else {
+				$this->output('操作成功!', 'hotel/manager');
+			}
+
 		} else {
 			$tranDb->rollback();
 			$this->error('操作失败3!');
@@ -667,6 +736,7 @@ class HotelController extends BaseController {
 		$save['type']        = I('post.type','','intval');
 		$save['flag']        = I('post.flag','','intval');
 		$save['state']       = I('post.state','','intval');
+		$save['probe']       = I('post.probe','','trim');
 		$save['remark']      = I('post.remark','','trim');
 		$save['update_time'] = date('Y-m-d H:i:s');
 		$RoomModel = new \Admin\Model\RoomModel();
@@ -1144,6 +1214,7 @@ class HotelController extends BaseController {
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
+		//$this->output('操作成功!', 'hotel/pubmanager');
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
@@ -1169,6 +1240,16 @@ class HotelController extends BaseController {
 		}
 		$save['hotel_id'] = I('post.hotel_id');
 		if($ads_id){
+		    $maps = array();
+		    $maps['name'] = $save['name'];
+		    $maps['hotel_id'] = $save['hotel_id'];
+		    $maps['id'] = array('neq',$ads_id);
+		    $count = $adsModel->where($maps)->count();
+		    if ($count >0 ){
+		        $this->output('宣传片已经存在', 'hotel/addpub',1,0);
+		    }
+		    
+		    $save['update_time'] = date('Y-m-d H:i:s');
 			$res_save = $adsModel->where('id='.$ads_id)->save($save);
 
 			$ads_info = $adsModel->find($ads_id);
@@ -1191,14 +1272,14 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('操作成功!', 'hotel/doAddPubtype1');
+				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
 		}else{
 			//判断宣传片名称是否存在
 			$count = $adsModel->where(array('name'=>$save['name'],'hotel_id'=>$save['hotel_id']))->count();
-			if ($count >1 ){
+			if ($count >0 ){
 				$this->output('宣传片已经存在', 'hotel/addpub',1,0);
 			}
 			$userInfo = session('sysUserInfo');
@@ -1230,7 +1311,7 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
-				$this->output('添加宣传片成功!', 'hotel/doAddPubtype1');
+				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
 			}
@@ -1246,7 +1327,7 @@ class HotelController extends BaseController {
 		$adsModel = new \Admin\Model\AdsModel();
 		$message = '';
 		$flag = I('request.flag');
-		$data = array('state'=>$flag);
+		$data = array('state'=>$flag,'update_time'=>date('Y-m-d H:i:s'));
 
 		$res = $adsModel->where("id='$adsid'")->save($data);
 
@@ -1287,6 +1368,26 @@ class HotelController extends BaseController {
 			$this->output('删除宣传片失败!', 'hotel/pubmanager');
 		}
 		;
+	}
+
+
+	public function changeCustomState(){
+		$cid = I('request.cid');
+		$save = array();
+		$save['is_open_customer
+'] = I('request.cus_state');
+
+		$hextModel = new \Admin\Model\HotelExtModel();
+		$res_save = $hextModel->where('hotel_id='.$cid)->save($save);
+
+		if($res_save){
+			$message = '更新成功!';
+			$url = 'hotel/detail';
+		} else {
+			$message = '更新失败!';
+			$url = 'hotel/detail';
+		}
+		$this->output($message, $url,2);
 	}
 
 }

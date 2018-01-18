@@ -18,6 +18,9 @@ use Admin\Model\MenuItemModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
 use Admin\Model\MenuListOpeModel;
+use Common\Lib\Page;
+
+
 class MenuController extends BaseController {
 
     public function __construct() {
@@ -85,21 +88,27 @@ class MenuController extends BaseController {
 
     public function hotelconfirm(){
 
-
         $menu_id = I('menuid');
         $menu_name = I('menuname');
-        //2是新增
-        $hoty = I('hopu');
-        $ids = I('ids');
-        $data = array();
-        $arr = array();
-        foreach($ids as $k=>$v){
-            $arr = explode('|', $v);
-            $data[] = array('hoid'=>$arr[0],'honame'=>$arr[1]);
+
+
+        $key = 'select_hotel_key';
+        $h_id_arr = session($key);
+        $h_id_arr = array_keys($h_id_arr);
+        session($key,null);
+        $where['id'] = array('in', $h_id_arr);
+        if($h_id_arr) {
+            $hotelModel = new \Admin\Model\HotelModel();
+            $field = 'name honame, id hoid';
+            $h_info = $hotelModel->getInfo($field, $where);
+        }else{
+            $h_info = array();
         }
+
+        $hoty = I('hopu');
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
-        $this->assign('vinfo', $data);
+        $this->assign('vinfo', $h_info);
         $this->assign('hoty', $hoty);
         $this->display('hotelconfirm');
     }
@@ -280,7 +289,7 @@ class MenuController extends BaseController {
             //var_dump($menuliModel->getLastSql());
         }
 
-         $this->output('发布成功了!', 'menu/publish');
+         $this->output('发布成功了!', 'menu/getlist');
        // ob_end_clean();
        // $this->redirect("content/getlist");
         //echo "<script>location.href='http://www.baidu.com'</script>";
@@ -440,9 +449,6 @@ class MenuController extends BaseController {
         $this->assign('area', $area_arr);
 
         $men_arr = $menliModel->select();
-
-
-
         $this->assign('include', $men_arr);
 
         $menu_id = I('menuid');
@@ -480,11 +486,36 @@ class MenuController extends BaseController {
             $where .= "	AND hotel_box_type = $hbt_v";
         }
 
+
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+        $is_city_search = 0;
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $pawhere = '1=1';
+            $is_city_search = 1;
+            $this->assign('is_city_search',$is_city_search);
+            $this->assign('pusera', $userinfo);
+        }else {
+            $this->assign('is_city_search',$is_city_search);
+            $where .= "	AND area_id in ($pcity)";
+            $pawhere = '1=1 and area_id = '.$pcity;
+        }
+        //包含酒楼
+        $menuHoModel = new \Admin\Model\MenuHotelModel();
+        $pafield = 'DISTINCT smh.menu_id id,
+smlist.menu_name';
+        $men_arr = $menuHoModel->getPrvMenu($pafield, $pawhere);
+        //获取包含有该地区酒楼
+        $this->assign('include', $men_arr);
         //城市
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            $where .= "	AND area_id = $area_v";
+            if(empty($area_v)){
+            
+                $where .= "	AND area_id = $area_v";
+            }
         }
         //级别
         $level_v = I('level_v');
@@ -720,6 +751,20 @@ class MenuController extends BaseController {
         $this->display('gethotelinfo');
     }
 
+    public function getsessionHotel(){
+        $get_hotel_arr = json_decode($_POST['seshot'], true);
+        $key = 'select_hotel_key';
+        $h_arr = empty(session($key))?array():session($key);
+        foreach($get_hotel_arr as $tp=>$tv) {
+            if($tv['type'] == 1) {
+                $h_arr[$tv['id']] = 1;
+            } else {
+                unset($h_arr[$tv['id']]);
+            }
+        }
+        session($key, $h_arr);
+    }
+
     public function manager() {
         //实例化redis
         //         $redis = SavorRedis::getInstance();
@@ -729,6 +774,8 @@ class MenuController extends BaseController {
 
     public function getlist(){
 
+        $key = 'select_hotel_key';
+        session($key,null);
         $mlModel = new MenuListModel();
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -745,17 +792,22 @@ class MenuController extends BaseController {
         $name = I('titlename');
         $beg_time = I('starttime','');
         $end_time = I('end_time','');
-        if($beg_time)   $where.=" AND create_time>='$beg_time 00:00:00'";
-        if($end_time)   $where.=" AND create_time<='$end_time 23:59:59'";
+        if($beg_time)   $where.=" AND a.create_time>='$beg_time 00:00:00'";
+        if($end_time)   $where.=" AND a.create_time<='$end_time 23:59:59'";
         if($name)
         {
             $this->assign('name',$name);
-            $where .= "	AND menu_name LIKE '%{$name}%' ";
+            $where .= "	AND a.menu_name LIKE '%{$name}%' ";
 
         }
 
+        $userinfo = session('sysUserInfo');
+        $area_city = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city']) ){ 
+        }else{
+            $where .= " and sysgroup.area_city=$area_city"; 
+        }
         $result = $mlModel->getList($where,$orders,$start,$size);
-
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
@@ -871,7 +923,7 @@ class MenuController extends BaseController {
                     $this->addlog($data, $menu_id);
 
                    // $this->output('新增成功', 'menu/addmen',2);
-                    $this->output('新增成功', 'menu/getlistgetlistgetlist',2);
+                    $this->output('新增成功', 'menu/getlist');
                 } else {
                     $this->error('新增失败');
                 }

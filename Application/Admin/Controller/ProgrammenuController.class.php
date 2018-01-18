@@ -24,6 +24,20 @@ class ProgrammenuController extends BaseController {
         parent::__construct();
     }
 
+    public function getsessionHotel(){
+        $get_hotel_arr = json_decode($_POST['seshot'], true);
+        $key = 'select_programmenuhotel_key';
+        $h_arr = empty(session($key))?array():session($key);
+        foreach($get_hotel_arr as $tp=>$tv) {
+            if($tv['type'] == 1) {
+                $h_arr[$tv['id']] = 1;
+            } else {
+                unset($h_arr[$tv['id']]);
+            }
+        }
+        session($key, $h_arr);
+    }
+
 
     public function copynew() {
         $menuid = I('get.menuid', 0, 'int');
@@ -65,12 +79,11 @@ class ProgrammenuController extends BaseController {
                     $menu_item_arr[$rk]['create_time'] = $now_date;
                 }
             }
-            /*var_export($menu_item_arr);
-            die;*/
+
             $menuItemModel = new \Admin\Model\MenuItemModel();
             $ret = $menuItemModel->addAll($menu_item_arr);
             if($ret) {
-                $this->output('复制到老节目单成功', 'programmenu/copynew',2);
+                $this->output('复制到老节目单成功', 'menu/getlist');
             } else {
                 $this->error('复制失败了请重新复制');
             }
@@ -163,7 +176,7 @@ class ProgrammenuController extends BaseController {
                $res =  $menuliModel->addData($dat,1);
                 if($res) {
                     $menuHoModel->commit();
-                    $this->output('发布成功了!', 'programmenu/getlistgetlist');
+                    $this->output('发布成功了!', 'programmenu/getlist');
                 } else {
                     $menuHoModel->rollback();
                     $this->error('发布失败了!');
@@ -259,6 +272,8 @@ class ProgrammenuController extends BaseController {
     }//End Function
 
     public function selectHotel(){
+
+
         $areaModel  = new AreaModel;
         $menliModel  = new \Admin\Model\ProgramMenuListModel();
         //城市
@@ -266,8 +281,6 @@ class ProgrammenuController extends BaseController {
 
         $this->assign('area', $area_arr);
 
-        $men_arr = $menliModel->select();
-        $this->assign('include', $men_arr);
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         $hotelModel = new HotelModel;
@@ -305,7 +318,10 @@ class ProgrammenuController extends BaseController {
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            $where .= "	AND area_id = $area_v";
+            if($area_v == 9999){
+            }else{
+                $where .= "	AND area_id = $area_v";
+            }
         }
         //级别
         $level_v = I('level_v');
@@ -325,6 +341,30 @@ class ProgrammenuController extends BaseController {
             $this->assign('key_k',$key_v);
             $where .= "	AND iskey = $key_v";
         }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+        $is_city_search = 0;
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $pawhere = '1=1';
+            $is_city_search = 1;
+            $this->assign('is_city_search',$is_city_search);
+            $this->assign('pusera', $userinfo);
+        }else {
+            $this->assign('is_city_search',$is_city_search);
+            $where .= "	AND area_id in ($pcity)";
+            $pawhere = '1=1 and area_id = '.$pcity;
+        }
+        $where .= " and hotel_box_type in (2,3,6) and state=1 and flag=0 ";
+
+        $prHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $pafield = 'DISTINCT smh.menu_id id,
+smlist.menu_name';
+        $men_arr = $prHoModel->getPrvMenu($pafield, $pawhere);
+
+        //获取包含有该地区酒楼
+        $this->assign('include', $men_arr);
+
         //包含
         $include_v = I('include_v');
         //获取节目单对应hotelid
@@ -332,8 +372,7 @@ class ProgrammenuController extends BaseController {
             //取部分包含节目单
             $bak_ho_arr = array();
             foreach ($include_v as $iv) {
-                $sql = "SELECT hotel_id FROM `savor_programmenu_hotel` WHERE create_time=
-                (SELECT MAX(create_time) FROM `savor_programmenu_hotel` WHERE menu_id={$iv})";
+                $sql = "SELECT hotel_id FROM `savor_programmenu_hotel`  WHERE menu_id={$iv}";
                 $bak_hotel_id_arr = $menliModel->query($sql);
                 foreach ($bak_hotel_id_arr as $bk=>$bv){
                     $bak_ho_arr[] = $bv['hotel_id'];
@@ -352,8 +391,7 @@ class ProgrammenuController extends BaseController {
             if ($exc_v) {
                 $bak_ho_arr_p = array();
                 foreach ($exc_v as $iv) {
-                    $sql = "SELECT hotel_id FROM `savor_programmenu_hotel` WHERE create_time=
-                (SELECT MAX(create_time) FROM  `savor_programmenu_hotel` WHERE menu_id={$iv})";
+                    $sql = "SELECT hotel_id FROM `savor_programmenu_hotel` WHERE menu_id={$iv}";
                     $bak_hotel_id_arr = $menliModel->query($sql);
                     foreach ($bak_hotel_id_arr as $bk=>$bv){
                         $bak_ho_arr_p[] = $bv['hotel_id'];
@@ -369,45 +407,17 @@ class ProgrammenuController extends BaseController {
             }
         }
 
-        $type = I('type');
-        //新增酒楼判断
-        $addhotel = I('addhotel');
-        if($addhotel == 2) {
-            $ex_arr = I('inf');
-            //从gethotelinfo新增转过来
-            $acp = $addhotel;
-            $this->assign('hot', $acp);
-            $this->assign('addhotel', $acp);
-            $str = '';
-            foreach($ex_arr as $ek=>$ev){
-                $str .= $ev.',';
-            }
-            $str = substr($str, 0,-1);
-
-            $where .= "	AND id not in ({$str}) ";
-            $this->assign('hopu', $addhotel);
-            $nup = 1;
-            $this->assign('meyi', 1);
-
-        }
-        $hot = I('hot');
-
-
-        if($hot == 2){
-            $str = I('infp');
-            $where .= "	AND id not in ({$str}) ";
-            $this->assign('hopu', $hot);
-            $this->assign('hot', $hot);
-            $this->assign('addhotel', $hot);
-
-        }
-
-
-
         $result = $hotelModel->getList($where,$orders,$start,$size);
+
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
         //print_r($result);die;
-        $this->assign('ext', $str);
+        $hotel_box_type = C('hotel_box_type');
+        $hotel_box_type = array(
+            '2'=>'二代网络版',
+            '3'=>'二代5G版',
+            '6'=>'三代网络版',
+        );
+        $this->assign('h_box_type', $hotel_box_type);
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
         $this->assign('alist', $result['list']);
@@ -454,17 +464,21 @@ class ProgrammenuController extends BaseController {
         $name = I('titlename');
         $beg_time = I('starttime','');
         $end_time = I('end_time','');
-        if($beg_time)   $where.=" AND create_time>='$beg_time 00:00:00'";
-        if($end_time)   $where.=" AND create_time<='$end_time 23:59:59'";
+        if($beg_time)   $where.=" AND a.create_time>='$beg_time 00:00:00'";
+        if($end_time)   $where.=" AND a.create_time<='$end_time 23:59:59'";
         if($name)
         {
             $this->assign('name',$name);
-            $where .= "	AND menu_name LIKE '%{$name}%' ";
+            $where .= "	AND a.menu_name LIKE '%{$name}%' ";
 
         }
-
+        $userinfo = session('sysUserInfo');
+        $area_city = $userinfo['area_city'];
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city']) ){
+        }else{
+            $where .= " and sysgroup.area_city=$area_city";
+        }
         $result = $mlModel->getList($where,$orders,$start,$size);
-
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
@@ -498,8 +512,33 @@ class ProgrammenuController extends BaseController {
 
     }
 
+    public function judgertbAdvOuc($name_arr) {
+        $result = array();
+        $result = $this->getRtbadsOccup($result);
+        $adv_arr = array_column($result, 'name');
+        $len = count ($adv_arr);
+        //判断要有10个
+        if ( array_diff($adv_arr, $name_arr) ) {
+            $this->error("RTB广告位必须选择{$len}个");
+        }
+        //取广告位数组
+        $ad_arr = array_filter($name_arr, function($result, $item)use($adv_arr) {
+            if(in_array($result, $adv_arr)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        //判断恰好10个,取广告位数组反转然后比较
+        if (count($ad_arr) != $len) {
+            $this->error("RTB广告位必须选择{$len}个且不能有重复");
+        }
+
+    }
+
     public function doaddnewMenu(){
             //表单提交即是新增和导入ajax区分以及与修改进行区分
+
             $now_date = date('Y-m-d H:i:s');
             $id = I('post.id','');
             //添加到menu_list 表
@@ -528,8 +567,10 @@ class ProgrammenuController extends BaseController {
             if(empty($rightid_arr)){
                 $this->error('节目单列表不能为空!');
             }
-            //判断广告位版位都有10个
+            //判断广告位版位都有10个,
             $this->judgeAdvOuc($name_arr);
+            //判断RTB广告位版位都有10个,
+            $this->judgertbAdvOuc($name_arr);
             $result = $mlModel->add($save);
             if ( $result ) {
                 $menu_id = $mlModel->getLastInsID();
@@ -541,11 +582,16 @@ class ProgrammenuController extends BaseController {
                 $res_xuan = $this->getAdsAcccounce($res);
                 //获取广告占位符
                 $res_adv = $this->getAdsOccup($res);
+                //获取rtb广告占位符
+                $rertb_adv = $this->getRtbadsOccup($res);
                 //取出name列
                 $res_adv = array_column($res_adv, 'name');
                 $res_xuan = array_column($res_xuan, 'name');
+                $rertb_adv = array_column($rertb_adv, 'name');
                 $adv_promote_num_arr = C('ADVE_OCCU');
                 $adv_name = $adv_promote_num_arr['name'];
+                $rtbadv_promote_num_arr = C('RTBADVE_OCCU');
+                $rtbadv_name = $rtbadv_promote_num_arr['name'];
                 foreach($id_arr as $k=>$v) {
                     //判断type类型
                     $ad_name = $name_arr[$k];
@@ -553,7 +599,11 @@ class ProgrammenuController extends BaseController {
                         $type = 1;
                         $lo = str_replace($adv_name, "",
                             $ad_name);
-                    } else if ( in_array($ad_name, $res_xuan) ) {
+                    }else if ( in_array($ad_name, $rertb_adv)) {
+                        $type = 4;
+                        $lo = str_replace($rtbadv_name, "",
+                            $ad_name);
+                    }else if ( in_array($ad_name, $res_xuan) ) {
                         $type = 3;
                         $lo = 0;
                     } else {
@@ -573,7 +623,7 @@ class ProgrammenuController extends BaseController {
                 $res = $mItemModel->addAll($data);
                 if ($res) {
                     $mlModel->commit();
-                    $this->output('新增成功', 'programmenu/getlist',2);
+                    $this->output('新增成功', 'programmenu/getlist');
                 } else {
                     $mlModel->rollback();
                     $this->error('新增失败');
@@ -643,9 +693,13 @@ class ProgrammenuController extends BaseController {
         $result = $this->getAdsAcccounce($result);
         //获取广告占位符
         $result_adsoc = $this->getAdsOccup($result);
+
+        //获取RTB广告占位符
+        $result_rtbadsoc = $this->getRtbadsOccup($result);
         //取出name列
         $xuan_arr = array_column($result, 'name');
         $adsoc_arr = array_column($result_adsoc, 'name');
+        $rtbadsoc_arr = array_column($result_rtbadsoc, 'name');
         $now_date = date("Y-m-d H:i:s");
         foreach ($data as $rk=>$rv) {
             if (in_array($rv[0], $xuan_arr)) {
@@ -656,6 +710,14 @@ class ProgrammenuController extends BaseController {
                     'create_time'=>$now_date,
                 );
             }elseif (in_array($rv[0], $adsoc_arr)) {
+                $inc_arr[] = array(
+                    'id'=>0,
+                    'name'=>$rv[0],
+                    'duration'=>0,
+                    'create_time'=>$now_date,
+                    'type'=>'33',
+                );
+            }elseif (in_array($rv[0], $rtbadsoc_arr)) {
                 $inc_arr[] = array(
                     'id'=>0,
                     'name'=>$rv[0],
@@ -713,9 +775,17 @@ class ProgrammenuController extends BaseController {
                 $field = "spi.ads_name,spi.ads_id,spi.duration,spi.sort_num,sads.create_time";
                 $where .= " AND spi.menu_id={$menuid}  ";
                 $res = $mItemModel->getCopyMenuInfo($where, $order, $field);
-                array_walk($res, function(&$v, $k) {
+
+                //获取广告占位符
+                $result_adsoc = $this->getAdsOccup();
+                $adsoc_arr = array_column($result_adsoc, 'name');
+                $adsoc_arr = array_flip($adsoc_arr);
+                array_walk($res, function(&$v, $k)use($adsoc_arr) {
                    if(empty($v['create_time'])) {
                        $v['create_time'] = '无';
+                   }
+                   if(array_key_exists($v['ads_name'], $adsoc_arr)) {
+                       $v['type'] = 33;
                    }
                 });
                 $this->assign('menuid', $menuid);
@@ -784,6 +854,27 @@ class ProgrammenuController extends BaseController {
         return $result;
     }
 
+    public function getRtbadsOccup($result, $filter='') {
+
+        $adv_promote_num_arr = C('RTBADVE_OCCU');
+        if($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_promote_num = $adv_promote_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i=1; $i<=$adv_promote_num; $i++) {
+            if(in_array($adv_promote_num_arr['name'].$i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array('id'=>0,
+                    'name'=>$adv_promote_num_arr['name'].$i,
+                    'create_time'=>$now_date_time,'duration'=>0,
+                    'type'=>'33',
+                );
+            }
+        }
+        return $result;
+    }
 
     public function get_se_left(){
         $m_type = I('post.m_type','0');
@@ -821,6 +912,9 @@ class ProgrammenuController extends BaseController {
         } else if ($m_type == 4){
             //获取广告占位符
             $result = $this->getAdsOccup($result, $adval);
+        } else if ($m_type == 5){
+            //获取RTB广告占位符
+            $result = $this->getRtbadsOccup($result, $adval);
         } else {
             $where .= "	AND type = '{$m_type}'";
             $result = $adModel->getWhere($where, $field);

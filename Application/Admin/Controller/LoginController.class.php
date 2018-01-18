@@ -42,8 +42,8 @@ class LoginController extends BaseController {
 
 
             $cache_locknum = $cache_db->get($cache_key);
-            file_put_contents('/application_data/app_logs/php/savor_admin
-/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);
+            /*file_put_contents('/application_data/app_logs/php/savor_admin
+/login.log', $cache_locknum."\r\n".$cache_key, FILE_APPEND);*/
             if(!empty($cache_locknum) && $cache_locknum==$lock_max){
                 $this->assign('errormsg', $error_msg);
                 $this->display('Login/index');
@@ -53,8 +53,10 @@ class LoginController extends BaseController {
             $userpwd  = I('post.password', '', "trim");
             if($userName && $userpwd) {
                 $user = new \Admin\Model\UserModel();
-                $where = " and username='".$userName."'";
-                $result = $user->getUser($where);
+                $where = "1 and  a.status = 1 and a.username='".$userName."'";
+                //$result = $user->getUser($where);
+                $fields = " a.*,b.area_city";
+                $result = $user->getGourpList($fields,$where);
                 if(empty($result)){
                     $this->assign('errormsg', '用户名或密码错误，请重新输入。');
                     $this->display('Login/index');

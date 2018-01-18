@@ -33,7 +33,7 @@
           包间名称:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="name" minlength="2" maxlength="20" value="{$vinfo.name}" required>
+          <input type="text" class="form-control" name="name" minlength="1" maxlength="20" value="{$vinfo.name}" required>
         </div>
       </div>
 
@@ -49,7 +49,16 @@
           </select>
         </div>
       </div>
-
+      
+	  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+        WIFI探针:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="probe" minlength="2" maxlength="20" value="{$vinfo.probe}" >
+        </div>
+      </div>
+      
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
          备注

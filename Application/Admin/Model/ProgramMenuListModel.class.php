@@ -29,7 +29,7 @@ class ProgramMenuListModel extends BaseModel
 
 	}
 
-	//É¾³ıÊı¾İ
+	//É¾ï¿½ï¿½ï¿½ï¿½ï¿½
 	public function delData($id) {
 		$delSql = "DELETE FROM `savor_menu_item` WHERE menu_id = '{$id}'";
 		$result = $this -> execute($delSql);
@@ -40,14 +40,21 @@ class ProgramMenuListModel extends BaseModel
 	{
 
 
-		$list = $this->where($where)
-			->order($order)
-			->limit($start,$size)
-			->select();
+		$list = $this->alias('a')
+		             ->field('a.*')
+		            ->join('savor_sysuser as sysuser on a.creator_id=sysuser.id','left')
+		            ->join('savor_sysusergroup as sysgroup on sysuser.groupId=sysgroup.id','left')
+		            ->where($where)
+			        ->order($order)
+			        ->limit($start,$size)
+			        ->select();
 
 
-		$count = $this->where($where)
-			->count();
+		$count = $this->alias('a')
+		              ->join('savor_sysuser as sysuser on a.creator_id=sysuser.id','left')
+		              ->join('savor_sysusergroup as sysgroup on sysuser.groupId=sysgroup.id','left')
+		              ->where($where)
+			          ->count();
 
 		$objPage = new Page($count,$size);
 
@@ -61,7 +68,7 @@ class ProgramMenuListModel extends BaseModel
 
 	}
 
-	//ĞÂÔöºÍĞŞ¸Ä
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½
 	public function addData($data, $acttype) {
 		if(0 === $acttype) {
 			$result = $this->add($data);

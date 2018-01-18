@@ -12,7 +12,7 @@
 		              </label>
 		              <div class="col-xs-12 col-sm-10">
 		                <volist name=":C('DEVICE_TYPE')" id="vo">
-		                 <if condition="$key gt 2">
+		                 <if condition="$key gt 2 and $key lt 5">
 		                  <input name="devicetype" type="radio" id="{$key}" value="{$key}" <if condition="$key eq 3">checked</if> />&nbsp;{$vo}
 		                  &nbsp;&nbsp;
 		                  </if>
@@ -130,14 +130,5 @@ function changeType(val){
   });
 
 
-function dialogAjaxDone(json) {
-	console.log(json);
-	DWZ.ajaxDone(json);
-	if(json.navTabId == 'versionversion/client') {
-		//navTab.closeTab('versionaddsqlup');
-		$.pdialog.close('versionaddUpgradeClient');
-		navTab.reload('version/client');
-		//$( "div" ).removeClass( "modal-backdrop fade in" );
-	}
-}
+
 </script>

@@ -19,24 +19,24 @@
       </div>
       <div class="form-inline" style="margin-top:3px;">
         <div class="form-group">
-
-          <div class="form-group">
-            <div class="input-group-sm input-group">
-              <label class="col-xs-1 col-sm-1 control-label">
-                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
-              </label>
-
-                <span class="input-group-btn input-group-sm">
-              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-                <option value=0 >所有城市</option>
-                <volist name="area" id="vo">
-                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
-                </volist>
-              </select>
-            </span>
-            </div>
-          </div>
-
+		  <if condition="$is_city_search eq 1"> 
+	          <div class="form-group"  >
+	            <div class="input-group-sm input-group">
+	              <label class="col-xs-1 col-sm-1 control-label">
+	                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
+	              </label>
+	
+	                <span class="input-group-btn input-group-sm">
+	              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+	                <option value="0" >全国</option>
+	                <volist name="area" id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+	                </volist>
+	              </select>
+	            </span>
+	            </div>
+	          </div>
+	      </if>		
           <div class="form-group">
             <div class="input-group-sm input-group">
               <label>级别：</label>
@@ -266,6 +266,14 @@
                   <a data-tip="批量新增版位" data-placement="left"
                      target="navTab" title="批量新增版位" rel="ceshipilianxin"  href="{$host_name}/hotel/batchposition?hotel_id={$vlist.id}&name={$vlist.name}" class="btn btn-success btn-icon">
                     <i class="fa fa-bullhorn"></i>
+                  </a>
+                  <a data-tip="批量生成邀请码" data-placement="left"
+                     target="navTab" title="批量生成邀请码" rel="invitecode/index"  href="{$host_name}/invitecode/index?hotel_id={$vlist.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-mobile"></i>
+                  </a>
+				  <a data-tip="推荐菜管理" data-placement="left"
+                     target="navTab" title="推荐菜管理" rel="recfood/index"  href="{$host_name}/recfood/index?hotel_id={$vlist.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-eraser"></i>
                   </a>
 
 

@@ -154,7 +154,7 @@
 		<div class="main_top">
 			<div class="div_top"><h2>基本信息</h2>
 				
-					<a data-tip="修改详情" style="position: absolute; right: 52px;top: 33px;" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$hotelid}&acttype=1" class="btn btn-success btn-icon">
+					<a data-tip="修改详情" style="position: absolute; right: 52px;top: 33px;" target="dialog" mask="true" href="{$host_name}/hotel/add?id={$hotelid}&acttype=1&navtp=34" class="btn btn-success btn-icon">
 						<i class="fa fa-pencil"></i>
 					</a>
 				
@@ -171,6 +171,22 @@
 					<span id="" style="text-align: center;"></span>
 				</a>
 				<p style="text-align: center;width: 100%;font-weight: 700;">{$vinfo.name}</p>
+				
+				<p style="margin-top:25px;text-align: center;width: 100%;font-weight: 700;">
+				酒楼客户管理：
+					<if condition="$vinfo['is_open_customer'] eq 0">
+						<a data-tip="客户管理关闭" target="ajaxTodo" href="{$host_name}/hotel/changeCustomState?cid={$vinfo.id}&cus_state=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+						
+                <i class="fa fa-toggle-off"></i></span></a>
+						<else/>
+						<a data-tip="客户管理开启" target="ajaxTodo" href="{$host_name}/hotel/changeCustomState?cid={$vinfo.id}&cus_state=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                		
+                <i class="fa fa-toggle-on"></i></span></a>
+					</if>
+
+
+				</p>
+
 			</div>
 			<div class="div_right">
 				<ul class="ul1">

@@ -61,6 +61,7 @@
                 <input type="checkbox" data-check="all" data-parent=".table" />
               </th> -->
               <th>名称</th>
+              <th>视频连接</th>
               <th>封面图片</th>
               <th>创建人</th>
               <th>简介</th>
@@ -77,6 +78,7 @@
                 <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
               </td> -->
               <td data-title="宣传片名称">{$vlist.name}</td>
+              <td data-title="视频连接"><a href ="{$vlist.oss_addr}" target="_blank">{$vlist.oss_addr}</a></td>
               <td data-title="封面图片"><a data-tip="预览" target="__blank" mask="true" href="{$host_name}/hotel/getpic?img={$vlist.img_url}" class="btn btn-success btn-icon">
                 <i class="fa fa-pencil"></i>
               </a></td>

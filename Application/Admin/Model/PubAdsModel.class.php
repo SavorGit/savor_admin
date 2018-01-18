@@ -13,13 +13,50 @@ class PubAdsModel extends BaseModel
 {
 	protected $tableName='pub_ads';
 
-	public function getBoxPlayTimes($where, $field) {
+
+	public function gethistory($where,$field,$group, $order='id desc', $start=0,$size=5)
+	{
+
+		$list = $this->alias('pads')->where($where)
+			->field($field)
+			->group($group)
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->join('LEFT JOIN savor_pub_ads_box_history sbox ON sbox.pub_ads_id = pads.id ')
+			->order($order)
+			->limit($start,$size)
+			->select();
+
+
+
+
+		$count = $this->alias('pads')
+			->join('LEFT JOIN savor_pub_ads_box_history sbox ON sbox.pub_ads_id = pads.id ')
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->where($where)
+			->field( 'distinct pads.`id`')
+			->select();
+		$count = count($count);
+		$objPage = new Page($count,$size);
+
+		$show = $objPage->admin_page();
+
+
+		$data = array('list'=>$list,'page'=>$show);
+
+
+		return $data;
+
+	}
+
+	public function getBoxPlayTimes($where, $field, $group) {
 		$list = $this->alias('ads')
 					 ->where($where)
 					 ->join('savor_pub_ads_box ads_box ON ads.id
 					 = ads_box.pub_ads_id')
 			         ->field($field)
+					 ->group($group)
 			         ->select();
+		//print_r($this->getLastSql());
 		return $list;
 	}
 
@@ -40,24 +77,29 @@ class PubAdsModel extends BaseModel
 	}
 
 
-	public function getList($field,$where, $order='id desc', $start=0,$size=5)
+	public function getList($field,$where,$group, $order='id desc', $start=0,$size=5)
 	{
 
 
 		$list = $this->alias('pads')
 			->where($where)
 			->field($field)
-			->join('left join savor_ads ads ON pads.ads_id = ads.id ')
+			->group($group)
+			->join('LEFT JOIN savor_pub_ads_box sbox ON sbox.pub_ads_id = pads.id ')
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
 			->order($order)
 			->limit($start,$size)
 			->select();
-
 		$count = $this
-			->join('savor_ads ads ON pads.ads_id = ads.id ')
+			->field('pads.id')
+			->join('LEFT JOIN savor_pub_ads_box sbox ON sbox.pub_ads_id = pads.id ')
+			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->group($group)
 			->alias('pads')
 			->where($where)
-			->count();
-
+			->select();
+		//print_r($this->getLastSql());
+		$count = count($count);
 		$objPage = new Page($count,$size);
 
 		$show = $objPage->admin_page();

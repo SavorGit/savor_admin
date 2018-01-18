@@ -57,6 +57,7 @@ class DeviceController extends BaseController{
                 $result['list'][$k]['tv_num'] = $tv_num;
             }
             $result['list'] = $boxModel->roomIdToRoomName($result['list']);
+
         }
    		$this->assign('room_id', $room_id);
    		$this->assign('hotel_id', $hotel_id);
@@ -201,7 +202,7 @@ class DeviceController extends BaseController{
 		$tvModel = new TvModel;
 		if($id){
 			if($tvModel->editData($id,$save)){
-				$this->output('更新成功!', 'device/updatetv');
+				$this->output('更新成功!', 'device/tv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
@@ -236,9 +237,9 @@ class DeviceController extends BaseController{
 		        $this->error('请输入正确的Mac地址');
 		    }
 		    if($id){
-		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.id !=".$id;
+		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.id !=".$id." and b.state=1";
 		    }else {
-		        $where = " b.mac='".$save['mac']."' and b.flag=0";
+		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.state=1";
 		    }
 		    
 		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
@@ -251,7 +252,7 @@ class DeviceController extends BaseController{
 	
 		if($id){
 			if($boxModel->editData($id, $save)){
-				$this->output('更新成功!', 'device/abceditbox');
+				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
 			}		

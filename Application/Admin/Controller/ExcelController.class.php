@@ -48,8 +48,21 @@ class ExcelController extends Controller
             $tmpname = '内容链接明细';
         }else if($filename =='expcontentwxauth'){
             $tmpname = '文章微信授权日志';
+        }else if ($filename == 'optionerrobox'){
+            $tmpname = '运维端异常机顶盒';
+        }else if($filename == 'dinnerapp_hall_log') {
+            $tmpname = '餐厅端日志上报';
+        }else if($filename =='option_sh_task_list'){
+            $tmpname='上海发布任务列表';
+        }else if($filename == 'bind_invite_hotel_info') {
+            $tmpname = '餐厅端绑定酒楼数据';
+        }else if($filename == 'box_version_condition') {
+            $tmpname = '机顶盒版本情况分布';
+        }else if($filename == 'box_lost_version_condition') {
+            $tmpname = '失联机顶盒分布';
+        }else if($filename == 'adver_warn_report') {
+            $tmpname = '广告播放异常预警';
         }
-
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
             $acp = 3;
@@ -1246,6 +1259,138 @@ class ExcelController extends Controller
 
     }
 
+    function expdeviceinfo(){
+
+        //设备故障数
+        $hotel_box_type = C('hotel_box_type');
+        $box_state = C('HOTEL_STATE');
+        $box_fl = array (
+            '0'=>'正常',
+            '1'=>'删除',
+        );
+        $boxModel = new \Admin\Model\BoxModel();
+        foreach($hotel_box_type as $hb=>$hv) {
+
+            $map = array();
+            $map['sht.hotel_box_type'] = $hb;
+            $asm = array();
+            foreach($box_fl as $k=>$v) {
+
+                $map['box.flag'] = $k;
+                foreach($box_state as $bk=>$bv) {
+                    $map['box.state'] = $bk;
+                    $box_count = $boxModel->alias('box')
+                        ->join(' join savor_room rom on rom.id= box.room_id')
+                        ->join(' join savor_hotel sht on sht.id = rom.hotel_id')
+                        ->where($map)->count();
+                    echo $hv.' '.'冻结状态'.$bv.' 删除状态'.$v.'  机顶盒'.$box_count.'个'.'<br/>';
+                    $asm[] = $box_count;
+                }
+
+            }
+            echo $hv.'机顶盒'.array_sum($asm).'个'.'<br/>';
+        }
+
+
+        $map['sht.flag'] = 0;
+        $map['sht.state'] = 1;
+        $map['rom.flag'] = 0;
+        $map['rom.state'] = 1;
+
+        //每日开机数
+        //算日期间隔
+        $now = date("Y-m-d");
+        $yes = date("Y-m-d", strtotime("today") - 604800);
+        $dat_diff = $this->prDates($yes, $now);
+        $heartLogModel = new \Admin\Model\HeartLogModel();
+        $btype = array(
+            '1'=>'小平台',
+            '2'=>'机顶盒',
+        );
+
+        foreach($btype as $bt=>$bv) {
+            $map = array();
+            $map['type'] = $bt;
+            $lo_arr = array();
+            /*foreach($dat_diff as $dk=>$dv) {
+
+                $map['DATE_FORMAT(`last_heart_time`,"%Y-%m-%d")'] = $dv;
+
+                $box_num = $heartLogModel->where($map)->count();
+                $lo_arr[] = $box_num;
+            }*/
+            $box_num = $heartLogModel->where($map)->count();
+            echo $bv.'每日开机数'.$box_num.'个'.'<br/>';
+
+        }
+
+        ob_end_clean();
+        //导出失陪30天
+        //获取所有二代网络5G机顶盒
+        $map = array();
+        $map['sht.hotel_box_type'] = array('in', array('2','3'));
+        $map['box.flag'] = 0;
+        $box_id_arr = $boxModel->alias('box')
+            ->field('box.id,box.name bname,sht.name hotel_name')
+            ->join(' join savor_room rom on rom.id= box.room_id')
+            ->join(' join savor_hotel sht on sht.id = rom.hotel_id')
+            ->where($map)
+            ->select();
+        $map = array();
+        $map['hear.type'] = 2;
+        $box_arr = $heartLogModel->alias('hear')
+            ->join(' savor_box box on box.id= hear.box_id')
+            ->where($map)->field('hear.box_id')->select();
+
+        $box_arr_hear = array_column($box_arr, 'box_id');
+        foreach($box_id_arr as $bk=>$bv) {
+            if(in_array($bv['id'], $box_arr_hear)) {
+                unset($box_id_arr[$bk]);
+                continue;
+            }else{
+                unset($box_id_arr[$bk]['id']);
+            }
+            $box_id_arr[$bk]['apk_version'] = '';
+
+        }
+        $box_arr = array_values($box_id_arr);
+
+        $filename = 'box_lost_version_condition';
+        $xlsName = "boxlostversioncondition";
+
+
+       /* //报表导出数据
+        $map = array();
+        $map['hear.type'] = 2;
+        $box_arr = $heartLogModel->alias('hear')
+        ->join(' savor_box box on box.id= hear.box_id')
+        ->where($map)->field('hotel_name,
+        apk_version,box.name bname')->select();
+        $filename = 'box_version_condition';
+        $xlsName = "boxversioncondition";
+
+        */
+        $xlsCell = array(
+            array('bname', '机顶盒名称'),
+            array('hotel_name', '酒楼名称'),
+            array('apk_version', '版本号'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+    }
+
+
+    function prDates($start,$end){
+        $dat = array();
+        $dt_start = strtotime($start);
+        $dt_end = strtotime($end);
+        while ($dt_start<=$dt_end){
+            $dat[] = date('Y-m-d',$dt_start);
+            $dt_start = strtotime('+1 day',$dt_start);
+        }
+        return $dat;
+    }
+
+
     function exphotelscreen(){
         $filename = 'hotelscreen';
         $hscreenModel =  new \Admin\Model\HotelscreenRpModel();
@@ -1280,6 +1425,117 @@ class ExcelController extends Controller
             array('play_date', '播放日期'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+
+    }
+
+    /*
+     *餐厅端目前已经绑定酒楼数据
+     */
+    function exphotelinvitecode() {
+        $filename = 'bind_invite_hotel_info';
+        $fileds = 'a.code invite_code,a.bind_mobile, a.bind_time,ht.name hname';
+        $where = ' a.state=1 and a.flag = 0';
+
+        $orders = 'a.hotel_id desc';
+        $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
+        $list = $m_hotel_invite_code->getInviteExcel($fileds,$where,$orders);
+        $xlsName = "bindhotelinfo";
+        $xlsCell = array(
+            array('hname', '酒楼名称'),
+            array('invite_code', '邀请码'),
+            array('bind_mobile', '绑定手机号'),
+            array('bind_time', '绑定时间'),
+        );
+        foreach($list as &$val){
+            $val['bind_mobile'] = $val['bind_mobile'].' ';
+        }
+
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+
+    }
+    /*
+         *餐厅端投屏日志
+         */
+    function expdinnerappLog(){
+        $filename = 'dinnerapp_hall_log';
+        $hallModel =  new \Admin\Model\DinnerHallLogModel();
+        $where = '1=1 ';
+        $starttime = '2017-12-18 00:00:00';
+        $endtime = date("Y-m-d H:i:s");
+        if($starttime){
+
+            $where .= "	AND dhlog.(`create_time`) >= '{$starttime}'";
+        }
+        if($endtime){
+            $where .= "	AND dhlog.(`create_time`) <=  '{$endtime}'";
+        }
+        $where .= " AND dhlog.hotel_id != 7 ";
+
+
+        $orders = 'dhlog.id desc';
+        $rea = $hallModel->getAllList($where,$orders);
+        $touping_config = array (
+            '1'=>'特色菜',
+            '2'=>'宣传片',
+            '3'=>'照片',
+            '4'=>'视频',
+            '5'=>'欢乐词',
+        );
+        $cli_arr = array('3'=>'android','4'=>'ios');
+        foreach($rea as &$val){
+            if($val['screen_result'] == 1) {
+                $val['screen_result'] = '成功';
+            }
+            if($val['screen_result'] == 1) {
+                $val['screen_result'] = '失败';
+            }
+            $sty = $val['screen_type'];
+            $val['screen_type'] = array_key_exists($sty,
+            $touping_config)?$touping_config[$sty]:'';
+            $dty = $val['device_type'];
+            //加空格可以防止过长显示不完整或者不识别
+            $val['mobile'] = $val['mobile'].' ';
+            $val['device_id'] = $val['device_id'].' ';
+            $val['device_type'] = $cli_arr[$dty];
+            $temp = '';
+            if($val['info']) {
+                $ainfo = json_decode($val['info'], true);
+                if( isset($ainfo['single_play']) ) {
+                    $temp .= "单个投屏时间:".$ainfo['single_play']."秒,";
+                }
+                if( isset($ainfo['loop_time']) ) {
+                    $temp .= "总投屏时长:".$ainfo['loop_time']."秒,";
+                }
+                if( isset($ainfo['loop']) ) {
+                    if($ainfo['loop'] == 0) {
+                        $temp .= "不循环";
+                    }
+                    if($ainfo['loop'] == 1) {
+                        $temp .= "循环";
+                    }
+
+                }
+                $val['info'] = $temp;
+            }
+        }
+        $xlsName = "dinnerapphalllog";
+        $xlsCell = array(
+            array('mobile', '手机号'),
+            array('invite_code', '邀请码'),
+            array('hotel_name', '酒楼名称'),
+            array('room_name', '包间名称'),
+            array('wew', '欢迎词'),
+            array('wet', '欢迎词模版'),
+            array('screen_result', '投屏是否成功'),
+            array('screen_type', '投屏功能'),
+            array('device_type', '设备类型'),
+            array('device_id', '设备唯一标识'),
+            array('screen_num', '投屏数量'),
+            array('screen_time', '投屏总时长'),
+            array('info', '投屏设置'),
+            array('create_time', '上报时间'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $rea,$filename);
 
     }
 
@@ -1929,4 +2185,289 @@ class ExcelController extends Controller
 	    $filename = 'expcontentwxauth';
 	    $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
+    /**
+     * @desc 获取运维端机顶盒为异常状态的数据
+     */
+    public function reportErroBoxInfo(){
+        $m_hotel = new \Admin\Model\HotelModel();
+        $now = time();
+        $start_time = strtotime('-72 hours');
+        $where = '';
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) ";
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,a.name hotel_name,a.addr');
+        //print_r($hotel_list);exit;
+        $m_box = new \Admin\Model\BoxModel();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $m_repair_box_user = new \Admin\Model\RepairBoxUserModel();
+        $m_repair_detail = new \Admin\Model\RepairDetailModel();
+        $result = array();
+        $repair_type_arr = C('HOTEL_DAMAGE_CONFIG');
+        foreach($hotel_list as $key=>$v){
+            $where =" 1 and room.hotel_id=".$v['id'].' and a.state =1 and a.flag =0 and room.state =1 and room.flag =0 ';
+            $box_list = $m_box->getListInfo( 'a.id,room.name rname, a.name boxname, a.mac,a.id box_id',$where);
+            foreach($box_list as $ks=>$vs){
+                $tmp = array();
+                $where = '';
+                $where .=" 1 and hotel_id=".$v['id']." and type=2 and box_mac='".$vs['mac']."'";
+            
+                $rets  = $m_heart_log->getHotelHeartBox($where,'max(last_heart_time) ltime', 'box_mac');
+                
+                if(empty($rets)){
+                    $tmp['hotel_name'] = $v['hotel_name'];  //酒楼名称
+                    $tmp['addr']       = $v['addr'];        //酒楼地址
+                    $tmp['rname']      = $vs['rname'];       //包间名称
+                    $tmp['boxname']    = $vs['boxname'];     //盒子名称
+                    //$tmp['boxid'] = $vs['id'];
+                    $tmp['repair_0']   = '';
+                    $tmp['repair_1']   = '';
+                    $tmp['repair_2']   = '';
+                    $repair_info = $m_repair_box_user->getWhere('id,remark'," hotel_id = ".$v['id']." and mac='".$vs['mac']."' and  flag=0",' create_time desc ','0,3',2);
+                    foreach($repair_info as $rk=>$rv){
+                        $space = '';
+                        $detail_info = $m_repair_detail->getWhere('repair_type',' repair_id='.$rv['id'],'id desc','',2);
+                        foreach($detail_info as $dk=>$dv){
+                            $tmp["repair_".$rk] .= $space . $repair_type_arr[$dv['repair_type']];
+                            $space = '、';
+                        }
+                    }
+                    
+                    
+                    $result[] = $tmp;
+                }else {
+                    $ltime = $rets[0]['ltime'];
+                    $ltime = strtotime($ltime);
+                    if($ltime <= $start_time) {
+                        //$unusual_num +=1;
+                        //$box_list[$ks]['ustate'] = 0;
+                        $tmp['hotel_name'] = $v['hotel_name'];  //酒楼名称
+                        $tmp['addr']       = $v['addr'];        //酒楼地址
+                        $tmp['rname']      = $vs['rname'];       //包间名称
+                        $tmp['boxname']    = $vs['boxname'];     //盒子名称
+                        //$tmp['boxid'] = $vs['id'];
+                        $tmp['repair_0']   = '';
+                        $tmp['repair_1']   = '';
+                        $tmp['repair_2']   = '';
+                        $repair_info = $m_repair_box_user->getWhere('id,remark'," hotel_id = ".$v['id']." and mac='".$vs['mac']."' and  flag=0",' create_time desc ','0,3',2);
+                        foreach($repair_info as $rk=>$rv){
+                            $space = '';
+                            $detail_info = $m_repair_detail->getWhere('repair_type',' repair_id='.$rv['id'],'id desc','',2);
+                            foreach($detail_info as $dk=>$dv){
+                                $tmp["repair_".$rk] .= $space . $repair_type_arr[$dv['repair_type']];
+                                $space = '、';
+                            }
+                        }
+                        
+                        $result[] = $tmp;
+                    } 
+                }
+            }
+        }
+        $xlsCell = array(
+            array('hotel_name', '酒楼名称'),
+            array('addr', '酒楼地址'),
+            array('rname','包间名称'),
+            array('boxname', '盒子名称'),
+            array('repair_0','维修记录1'),
+            array('repair_1', '维修记录2'),
+            array('repair_2', '维修记录3'),
+            
+            
+             
+        );
+        $xlsName = '运维端异常机顶盒';
+        $filename = 'optionerrobox';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+        
+    }
+    public function testone(){
+        $aa = fopen('./aa.csv', 'w');
+        vendor("PHPExcel.PHPExcel");
+        
+        $PHPReader =new \PHPExcel_Reader_Excel2007();
+        if(!$PHPReader->canRead('./aa.csv')){
+            $PHPReader = new \PHPExcel_Reader_Excel5();
+        }
+        if(!$PHPReader->canRead('./aa.csv')){
+            $PHPReader = new \PHPExcel_Reader_CSV();
+        }
+        if(!$PHPReader->canRead('./aa.csv')){
+            echo '无法识别';
+            return false;
+        }
+        //读取Excel
+        $PHPExcel = $PHPReader->load('./aa.csv');
+        //读取工作表1
+        $currentSheet = $PHPExcel->getSheet();
+        
+        $currentSheet->setCellValue('B13','11111s');//表头赋值//
+        
+        $phpWrite = new \PHPExcel_Writer_CSV($PHPExcel);
+        
+        $phpWrite->save('./aa.csv');
+    }
+    public function exportShtask(){
+        $m_option_task = new \Admin\Model\OptiontaskModel();
+        $where = array();
+        $where['a.task_area'] = 9;
+        $where['a.task_type'] = 4;
+        $where['a.flag']      =0;
+        $fields = "a.id, a.task_area, a.task_emerge, a.task_type,b.name hotel_name,a.hotel_address,
+                   a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state";
+        $list = $m_option_task->alias('a')
+                              ->join('savor_hotel b on a.hotel_id= b.id','left')
+                              ->field($fields)->where($where)->select();
+        $model = D();
+        
+        foreach($list as $key=>$val){
+            $repair_str = '';
+            $space = '';
+            $data = $model->query('select a.box_id,b.name box_name,fault_desc from 
+                                   savor_option_task_repair a left join savor_box b
+                                   on a.box_id = b.id where a.task_id='.$val['id']);
+            if(!empty($data)){
+                foreach($data as $k=>$v){
+                    $repair_str .= $space .'机顶盒id:'.$v['box_id'].' 机顶盒名称:'.$v['box_name'];
+                    $repair_str .=' 故障说明:'.$v['fault_desc'];
+                    $space = ',';
+                }
+            }
+            $list[$key]['task_area'] = '上海';
+            switch ($val['task_emerge']){
+                case '2':
+                    $list[$key]['task_emerge'] = '紧急';
+                    break;
+                case '3':
+                    $list[$key]['task_emerge'] = '正常';
+                    break;
+            }
+            switch ($val['task_type']){
+                case '1':
+                    $list[$key]['task_type'] = '信息检测';
+                    break;
+                case '8':
+                    $list[$key]['task_type'] = '网络改造';
+                    break;
+                case '2':
+                    $list[$key]['task_type'] = '安装验收';
+                    break;
+                case '4':
+                    $list[$key]['task_type'] = '维修';
+                    break;
+            }
+            switch ($val['state']){
+                case '1':
+                    $list[$key]['state'] = '新任务';
+                    break;
+                case '2':
+                    $list[$key]['state'] = '执行中';
+                    break;
+                case '3':
+                    $list[$key]['state'] = '排队等待';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '已完成';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '拒绝';
+                    break;
+                    
+            }
+            $list[$key]['repair_info'] = $repair_str;
+        }
+        //print_r($list);exit;
+        $xlsCell = array(
+            array('id', '任务id'),
+            array('hotel_name','酒楼名称'),
+            array('hotel_address','酒楼地址'),
+            array('hotel_linkman','酒楼联系人'),
+            array('hotel_linkman_tel','酒楼联系人电话'),
+            
+            array('task_area', '任务城市'),
+            array('task_emerge','任务紧急程度'),
+            array('task_type', '任务类型'),
+            array('tv_nums','版位数量'),
+            
+            array('state', '任务状态'),
+            array('repair_info', '维修记录'),
+        
+        );
+        $xlsName = '上海运维任务列表';
+        $filename = 'option_sh_task_list';
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+    }
+
+
+    public function getho() {
+       $arr = array ( 0 => '阿根廷庄园（北京店）-餐厅 ', 1 => '百富怡大酒店 ', 2 => '草菁菁（金融街店） ', 3 => '朝尚食都 ', 4 => '大益膳房 ', 5 => '东海汇渔港 ', 6 => '朵颐河鲜 ', 7 => '福润龙庭 ', 8 => '花家怡园（金融街店） ', 9 => '辉哥火锅（8号公馆店） ', 10 => '辉哥火锅（远洋国际店） ', 11 => '江南赋 ', 12 => '江仙雅居（苏州桥店） ', 13 => '经易大丰合 ', 14 => '郡王府半岛明珠酒家 ', 15 => '浏阳河大酒楼 ', 16 => '美锦酒家（港澳中心店） ', 17 => '权茂北京菜 ', 18 => '山釜餐厅 ', 19 => '山海楼 ', 20 => '石榴花开餐厅 ', 21 => '食说江南(鸭王店) ', 22 => '唐宫海鲜舫（大悦城店） ', 23 => '唐宫海鲜舫（好苑建国店） ', 24 => '唐宫海鲜舫（丽都店） ', 25 => '唐宫海鲜舫（西藏大厦店） ', 26 => '天水雅居（木樨地店） ', 27 => '天水雅居（万豪店） ', 28 => '晚枫亭（石佛营店） ', 29 => '万龙洲大兴店 ', 30 => '万龙洲海鲜大酒楼（安定门店） ', 31 => '王府茶楼中轴路店 ', 32 => '新净雅烹小鲜 ', 33 => '盐府（大望路店） ', 34 => '夜上海（长安大戏院店） ', 35 => '怡和春天（怡和店） ', 36 => '俞翰姥爷的海味人生 ', 37 => '悦府.潮州菜 ', 38 => '悦融-精致中菜(金融街店) ', 39 => '粤悦香海鲜舫 ', 40 => '镇三关重庆老火锅（工体旗舰店） ', 41 => '正院大宅门（西翠路店） ', 42 => '万国城MOMASO餐厅 ', 43 => '瞳海鲜料理(崇文门店) ', 44 => '唐宫海鲜舫（新世纪饭店店）', );
+        $hotelModel = new \Admin\Model\HotelModel();
+        $where['flag'] = 0;
+        $where['state'] = 1;
+        $ho = array();
+        foreach($arr as $v) {
+            $where['name']  = trim($v);
+            $hotel_info = $hotelModel->where($where)->find();
+            $ho[] = $hotel_info['id'];
+        }
+        var_export($ho);
+        $ho = array ( 0 => '41', 1 => '48', 2 => '16', 3 => '70', 4 => '30', 5 => '76', 6 => '17', 7 => '9', 8 => '12', 9 => '46', 10 => '19', 11 => '38', 12 => '436', 13 => '28', 14 => '13', 15 => '126', 16 => '25', 17 => '10', 18 => '26', 19 => '33', 20 => '511', 21 => '478', 22 => '171', 23 => '32', 24 => '39', 25 => '175', 26 => '52', 27 => '99', 28 => '184', 29 => '185', 30 => '186', 31 => '196', 32 => '34', 33 => '225', 34 => '35', 35 => '232', 36 => '465', 37 => '51', 38 => '468', 39 => '37', 40 => '466', 41 => '238', 42 => '27', 43 => '517', 44 => '177', );
+
+    }
+
+
+    public function expadverwarnreport(){
+        $field = 'awarn.*,sb.mac box_mac,  ( CASE awarn.report_adsPeriod WHEN "" THEN "999999999999999"
+	WHEN NULL THEN "999999999999999"
+ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
+        $adWarnModel = new \Admin\Model\AdverWarnModel();
+        $where = '1=1';
+        $order      = I('_order',' reportadsPeriod asc, awarn.last_time asc '); //排序字段
+        $result = $adWarnModel->getData($field,$where,$order);
+
+        array_walk($result, function(&$v, $k){
+            //修改时间
+            $v['hea'] = '否';
+            $v['adp'] = '否';
+            $v['vid'] = '否';
+            if($v['last_time'] >= 24) {
+                $v['hea'] = '是';
+                $day = floor($v['last_time']/24);
+                $hour = floor($v['last_time']%24);
+                $v['last_time'] = $day.'天'.$hour.'小时';
+            } else {
+                $v['last_time'] = $v['last_time'].'小时';
+            }
+            if( $v['report_adsperiod'] < $v['new_adsperiod'] ) {
+                $v['adp'] = '是';
+            }
+            if( $v['report_demperiod'] != $v['new_demperiod'] ) {
+                $v['vid'] = '是';
+            }
+            $v['report_adsperiod'] = $v['report_adsperiod'].' ';
+            $v['report_demperiod'] = $v['report_demperiod'].' ';
+        });
+
+        $xlsCell = array(
+            array('id', '序号'),
+            array('box_id','机顶盒ID'),
+            array('box_mac','机顶盒MAC'),
+            array('maintainer','维护人'),
+            array('room_id','包间ID'),
+
+            array('room_name', '包间名称'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name', '酒楼名称'),
+            array('last_time','心跳距离现在时间'),
+
+            array('report_adsperiod', '广告期号'),
+            array('report_demperiod', '点播期号'),
+            array('hea', '心跳异常'),
+            array('adp', '广告未更'),
+            array('vid', '点播未更'),
+
+        );
+        $xlsName = '广告播放异常预警';
+        $filename = 'adver_warn_report';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
+
 }

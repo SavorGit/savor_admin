@@ -12,6 +12,23 @@ use Common\Lib\Page;
 class PubAdsBoxModel extends BaseModel
 {
 	protected $tableName='pub_ads_box';
+
+	public function getBoxInfoBySize($field, $where,$order='id desc',$group, $start, $size) {
+		$list = $this->alias('adbox')
+			->field($field)
+			->where($where)
+			->join('savor_box box on box.id = adbox.box_id', 'left')
+			->join('savor_room room on room.id = box.room_id', 'left')
+			->join('savor_hotel sht on sht.id = room.hotel_id', 'left')
+			->group($group)
+			->order($order)
+			->limit($start,$size)
+			->select();
+
+		$data = array('list'=>$list);
+		return $data;
+
+	}
 	public function getBoxArrByPubAdsId($pub_ads_id){
 	    $fields = 'box_id';
 	    $where = array('pub_ads_id'=>$pub_ads_id);
@@ -56,6 +73,13 @@ class PubAdsBoxModel extends BaseModel
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
 		return $list;
+	}
+
+	public function getDataCount($where){
+		$count = $this->where($where)
+			->count();
+		return $count;
+
 	}
 
 
@@ -112,7 +136,7 @@ class PubAdsBoxModel extends BaseModel
 	                       or (b.start_date<='".$start_date."' and b.end_date>='".$end_date."')
 	                       or (b.end_date>='".$start_date."' and b.end_date<='".$end_date."'))"; */
 	    $where = 'a.box_id='.$box_id
-	              ." and '".$end_date."'>=b.start_date and '".$start_date."'<=b.end_date and a.location_id!=0";
+	              ." and '".$end_date."'>=b.start_date and '".$start_date."'<=b.end_date and a.location_id!=0 and b.state!=2";
 	    $data = $this->alias('a')
 	         ->field('a.location_id')
 	         ->join('savor_pub_ads b on a.pub_ads_id=b.id','left')
@@ -123,6 +147,16 @@ class PubAdsBoxModel extends BaseModel
 	public function updateInfo($where,$data){
 	    $ret = $this->where($where)->save($data);
 	    return $ret;
+	}
+
+	public function deleteInfo($where){
+		$ret = $this->where($where)->delete();
+		return $ret;
+	}
+
+	public function removeToNew($insfield, $oldfield, $where,$newtable){
+		$list = $this->where($where)->field($oldfield)->selectAdd($insfield, $newtable);
+		return $list;
 	}
 
 

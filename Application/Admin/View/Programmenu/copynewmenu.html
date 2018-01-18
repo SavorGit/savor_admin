@@ -19,6 +19,12 @@
 	}
 	.sleft{
 		float: left;
+		float: left;
+	    display: inline-block;
+	    width: 63%;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
 	}
 	.sright{
 		float: right;
@@ -71,7 +77,7 @@
 <!--显示列表样式1 start-->
 
 
-<form id="pagerFormaddmenuct" action="{$host_name}/programmenu/doaddnewMenu" method="post" onsubmit="return validateCallback(this, dialogAjaxDone);">
+<form id="pagerFormaddmenuct" action="{$host_name}/programmenu/doaddnewMenu" method="post" onsubmit="return iframeCallback(this, dialogAjaxDone);">
 	<div class="searchBar">
 		<div class="clearfix">
 			<!--新增节目单-->
@@ -97,6 +103,7 @@
 					<option value="2">节目</option>
 					<option value="3">宣传片</option>
 					<option value="4">广告位</option>
+					<option value="5">RTB广告位</option>
 				</select>
 				<input type="text" id="searchtitle" name="searchtitle" style="width: 320px;"placeholder="名称"/>
 
@@ -124,7 +131,7 @@
 				</div>
 				<div class="rightlist" style="width: 94%;max-height:300px;min-height:300px;margin-left: 15px;overflow: auto;" id="righta">
 					<volist name="list" id="vlist">
-						<div id="{$vlist.ads_id}" dur="{$vlist.duration}" class="divlist2"><span class="sleft">{$vlist.ads_name}</span><span class="sright">{$vlist.create_time}</span></div>
+						<div type="{$vlist.type}" id="{$vlist.ads_id}" dur="{$vlist.duration}" class="divlist2"><span class="sleft">{$vlist.ads_name}</span><span class="sright">{$vlist.create_time}</span></div>
 
 					</volist>
 					</select>
@@ -184,18 +191,6 @@
 
 
 <script type="text/javascript">
-navTab.closeTab('programmenu/addnewmenu');
-navTab.closeTab('menu/addmen');
-
-	/*
-	function dialogAjaxDone(json){
-		//alert(json);
-		DWZ.ajaxDone(json);
-		//navTab.reloadFlag('menu/getlist');
-		navTab.reload('menu/getlist');
-		//return false;
-	}*/
-
 
 	//$('#mymodal').modal({backdrop: 'static', keyboard: false});
 	$("#excelsub").click(
@@ -218,6 +213,7 @@ navTab.closeTab('menu/addmen');
 					url:"{$host_name}/programmenu/analyseexcel",
 					data:"excelpath="+excelpath+"&adsname="+str2,
 					success:function(data){
+						console.log(data)
 						if(data.error==0){
 							var data = data.message;
 							for(var i=0,l=data.length;i<l;i++) {
@@ -236,7 +232,7 @@ navTab.closeTab('menu/addmen');
 
 								}
 
-								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+								$("#righta").append("<div type="+datap[i].type+"  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
 
 								//$('#mymodal').modal('hide');
 
@@ -271,7 +267,7 @@ navTab.closeTab('menu/addmen');
 
 								}
 
-								$("#righta").append("<div  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
+								$("#righta").append("<div type="+datap[i].type+"  id="+ids+" dur="+dura+" class='divlist2'><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>");
 
 								//$('#mymodal').modal('hide');
 
@@ -367,7 +363,11 @@ navTab.closeTab('menu/addmen');
 					if($(this).is('.active')){
 						var ides = $(this).attr('id');
 						var dures = $(this).attr('dur');
-						_this.before('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+						var types = $(this).attr('type');
+						_this.before('<div type="'+types+'" id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+						if($(this).attr('type')=='33'){
+							$(this).remove();
+						}
 					}
 				})
 			}
@@ -382,7 +382,11 @@ navTab.closeTab('menu/addmen');
 					$(this).removeClass('active');
 					var ides = $(this).attr('id');
 					var dures = $(this).attr('dur');
-					$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+					var types = $(this).attr('type');
+					$('.rightlist').append('<div type="'+types+'" id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+					if($(this).attr('type')=='33'){
+						$(this).remove();
+					}
 				}
 			})
 
@@ -404,8 +408,11 @@ navTab.closeTab('menu/addmen');
 	$('#lefta').on('dblclick','.divlist',function(){
 		var ides = $(this).attr('id');
 		var dures = $(this).attr('dur');
-		$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
-
+		var types = $(this).attr('type');
+		$('.rightlist').append('<div type="'+types+'" id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
+		if($(this).attr('type')=='33'){
+			$(this).remove();
+		}
 
 	})
 
@@ -417,13 +424,20 @@ navTab.closeTab('menu/addmen');
 	//$('.rightlist').append('<div id="'+ides+'" dur="'+dures+'" class="divlist2">'+$(this).html()+'</div>')
 	/*删除*/
 	$('.delz').click(function(){
+		var delkg = 1;
 		$('.divlist2').each(function(){
-			console.log(1)
 			if($(this).is('.active')){
-				$(this).remove().parent()
-
+				if($(this).attr('type')!='33'){
+					$(this).remove().parent()
+				}else{
+					delkg = 2;
+				}
+				
 			}
 		})
+		if(delkg==2){
+			alert('广告位不可以删除')
+		}
 	})
 	/*置顶*/
 	$('.topz').click(function(){
@@ -486,9 +500,21 @@ navTab.closeTab('menu/addmen');
 	})
 	/*复制*/
 	$('.clones').click(function(){
-
-		$('.rightlist>.active').clone().removeClass('active').insertAfter($('.rightlist>.active').last())
-
+var fuzhis = 1;
+		$('.rightlist>.active').each(function(){
+			
+			if($(this).attr('type')!='33'){
+				fuzhis = 1;
+				
+			}else if($(this).attr('type')=='33'){
+				fuzhis = 2;
+			}
+		})
+		if(fuzhis==2){
+			alert('广告位不可以复制');
+		}else{
+			$('.rightlist>.active').clone().removeClass('active').insertAfter($('.rightlist>.active').last())
+		}
 		console.log($('.rightlist>.active').clone());
 	})
 
@@ -625,16 +651,23 @@ navTab.closeTab('menu/addmen');
 	var htm = '';
 
 	$('#left').on('click','#f_searchb',function(){
-
+		var ggw = [];
+		$('.rightlist div').each(function(){
+			if($(this).attr('type')==33){
+				var a = $(this).find('span').eq(0).html();
+				ggw.push(a)
+			}
+		})
+		var asd = ggw.join(',')
 
 
 		$.ajax({
 			type:"POST",
 			dataType: "json",
 			url:"{$host_name}/programmenu/get_se_left",
-			data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val(),
+			data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val()+"&adval="+asd,
 			success:function(data){
-
+				console.log(data)
 				//alert(data);
 				//$("#lefta").empty();
 				//$("#left2").empty();
@@ -657,7 +690,7 @@ navTab.closeTab('menu/addmen');
 						}
 
 					}
-					htm += "<div class='divlist' id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>";
+					htm += "<div type='"+data[i].type+"' class='divlist' id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>";
 
 				}
 				$("#lefta").empty();

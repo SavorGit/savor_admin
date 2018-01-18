@@ -515,10 +515,10 @@ ALTER TABLE `savor_heart_log` ADD INDEX `box_time` (`box_mac`,`last_heart_time`)
 增加说明：文章表添加样式字段
 修改时间：2017.8.30 9：00
 修改人：白玉涛
-执行结果：已执行
+
 执行sql:
 ALTER TABLE `cloud`.`savor_mb_content`     ADD COLUMN `img_style` TINYINT(1) DEFAULT '1' NOT NULL COMMENT '图样式1小图2大图' AFTER `order_tag`;
-
+执行结果：已执行
 
 增加说明：添加专题组表
 修改时间：2017.8.30 9：00
@@ -885,5 +885,320 @@ CREATE TABLE `savor_subcontract` (
 ) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8
 
 
+增加说明：系统用户组表添加城市选项
+修改时间：2017.11.9
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_sysusergroup`
+   add column `area_city` smallint(10) DEFAULT '0' NULL COMMENT '地区id' ;
 
 
+增加说明：用户投放广告表添加type区分酒楼投还是版位
+修改时间：2017.11.15
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_pub_ads`
+add column `type` smallint(10) DEFAULT '0' NULL COMMENT '1版位2酒楼' ;
+
+alter table `cloud`.`savor_pub_ads`
+   change `state` `state` tinyint(5) default '0' NOT NULL comment '状态:0未执行1已经执行2删除3.默认选择酒楼状态';
+执行结果：已执行
+
+增加说明：投放广告对应酒楼表
+修改时间：2017.11.15
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_pub_ads_hotel` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `hotel_id` int(12) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告对应酒楼'
+执行结果：已执行
+
+
+
+增加说明：选择酒楼投放广告对应错误表
+修改时间：2017.11.15
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_pub_ads_box_error` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `bid` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `bname` varchar(50) NOT NULL DEFAULT '' COMMENT '机顶盒名称',
+  `rid` int(12) NOT NULL DEFAULT '0' COMMENT '包间id',
+  `rname` varchar(50) NOT NULL DEFAULT '' COMMENT '包间名称',
+  `hid` int(12) NOT NULL DEFAULT '0' COMMENT '酒店id',
+  `hname` varchar(50) NOT NULL DEFAULT '' COMMENT '酒店名称',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `error_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '错误原因1:剩余广告位不足,2酒楼冻结',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告投放机顶盒出错表'
+执行结果：已执行
+
+
+
+
+增加说明：机顶盒广告投放添加索引
+修改时间：2017.12.06
+修改人：张英涛
+执行sql:
+ALTER TABLE `savor_pub_ads_box` ADD INDEX box_id ( `box_id` ) 
+执行结果：已执行
+
+增加说明：广告投放表添加索引
+修改时间：2017.12.06
+修改人：张英涛
+执行sql:
+ALTER TABLE `savor_pub_ads` ADD INDEX start_date(`start_date`)
+ALTER TABLE `savor_pub_ads` ADD INDEX end_date(`end_date`)
+执行结果：已执行
+
+增加说明：广告投放机顶盒表添加索引
+修改时间：2017.12.07
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_pub_ads_box` ADD INDEX `pbs` (`pub_ads_id`);
+执行结果：已执行
+
+<<<<<<< HEAD
+
+增加说明：HOTEL_EXT表增加客户端是否开启字段
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+ALTER TABLE `cloud`.`savor_hotel_ext` ADD COLUMN `is_open_customer`
+TINYINT(1) NOT NULL DEFAULT '0' COMMENT '是否开通客户管理0:未开通1：开通';
+
+
+
+增加说明：添加餐厅2.0客户操作历史表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_action_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action_id` int(11) NOT NULL DEFAULT '0' COMMENT '客户id或者预订id',
+  `type` tinyint(2) NOT NULL DEFAULT '0' COMMENT '1新增2查看3修改4预订',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请id区分出酒楼',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='客户历史记录表'
+
+
+增加说明：添加餐厅2.0客户消费记录表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_consume_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) NOT NULL DEFAULT '0' COMMENT '客户id',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '预订信息id',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
+  `recipt` varchar(50) NOT NULL DEFAULT '' COMMENT '小票截图',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消费记录';
+
+
+增加说明：添加餐厅2.0客户表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_customer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请id',
+  `name` varchar(50) NOT NULL DEFAULT '0' COMMENT '名称',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
+  `mobile1` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号2',
+  `sex` tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别 1：男2：女',
+  `birthday` varchar(11) NOT NULL DEFAULT '' COMMENT '生日',
+  `birthplace` varchar(255) NOT NULL DEFAULT '' COMMENT '籍贯',
+  `face_url` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `consume_ability` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '消费能力',
+  `bill_info` varchar(255) NOT NULL DEFAULT '' COMMENT '发票文字',
+  `remark` text COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8
+
+
+增加说明：添加餐厅2.0客户标签表
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_customer_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) NOT NULL DEFAULT '0' COMMENT '客户id',
+  `label_id` int(11) NOT NULL DEFAULT '0' COMMENT '标签id',
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='客户标签表';
+
+
+增加说明：添加餐厅2.0总标签库
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_dinner_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '标签名称',
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='餐厅端总标签库';
+
+增加说明：添加餐厅2.0销售经理标签库
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+
+CREATE TABLE `savor_dinner_manager_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invite_id` int(11) NOT NULL DEFAULT '0' COMMENT '销售经理id',
+  `label_id` int(11) NOT NULL DEFAULT '0' COMMENT '标签id',
+  `flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态0:正常1：删除',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='销售经理标签表'
+
+
+增加说明：HOTEL_invite_code表增加昵称字段
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_hotel_invite_code` add column `nickname`
+varchar(50) not null default '' comment 'nickname';
+
+
+增加说明：pub_ads表增加是否被移除到历史字段
+修改时间：2017.12.28
+修改人：白玉涛
+执行sql:
+alter table `cloud`.`savor_pub_ads` add column `is_remove`
+tinyint(2) not null default 0 comment '0未1已经被移除';
+
+增加说明：ads表增加更新时间
+修改时间：2017.12.28
+修改人：张英涛
+执行sql:
+ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'  AFTER `create_time` 
+执行结果:
+
+
+增加说明：增加机顶盒错误日志历史表
+修改时间：2017.12.28
+修改人：白玉涛
+执行结果：已执行
+执行sql:
+CREATE TABLE `savor_pub_ads_box_error_history` (
+  `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `bid` INT(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `bname` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机顶盒名称',
+  `rid` INT(12) NOT NULL DEFAULT '0' COMMENT '包间id',
+  `rname` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '包间名称',
+  `hid` INT(12) NOT NULL DEFAULT '0' COMMENT '酒店id',
+  `hname` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '酒店名称',
+  `pub_ads_id` INT(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `error_type` TINYINT(1) NOT NULL DEFAULT '1' COMMENT '错误原因1:剩余广告位不足,2酒楼冻结',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告投放机顶盒出错历史表'
+
+
+增加说明：增加机顶盒日志历史表
+修改时间：2017.12.28
+修改人：白玉涛
+执行结果：已执行
+执行sql:
+CREATE TABLE `savor_pub_ads_box_history` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `box_id` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `location_id` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒位置id',
+  `ctime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '原来的旧表创建时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '从表里挪移过来创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `down_state` tinyint(1) NOT NULL DEFAULT '0' COMMENT '机顶盒下载状态',
+  PRIMARY KEY (`id`),
+  KEY `box_id` (`box_id`),
+  KEY `pbs` (`pub_ads_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='广告对应机顶盒历史表'
+
+
+
+
+
+增加说明：增加U盘节目单
+修改时间：2018.1.8
+修改人：白玉涛
+执行sql:
+CREATE TABLE `savor_singlezip_list` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `hotel_id_str` text NOT NULL COMMENT '酒楼id字符串json{1,2,3,4}',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` int(5) NOT NULL DEFAULT '0',
+  `gendir` varchar(50) NOT NULL DEFAULT '' COMMENT 'public下生成的目录',
+  `state` int(2) NOT NULL DEFAULT '0' COMMENT '0未执行计划1已经执行2删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='u盘节目单目录'
+执行结果:已执行
+
+增加说明：宣传片增加更新时间字段
+修改时间：2017.1.8
+修改人：张英涛
+执行sql:
+alter table `cloud`.`savor_room` add column `probe`
+varchar(20) not null default '' comment 'wifi探针' after `remark`;
+执行结果:已执行
+
+增加说明：包间表增加wifi探针
+修改时间：2017.1.8
+修改人：张英涛
+执行sql:
+alter table `cloud`.`savor_room` add column `probe`
+varchar(20) not null default '' comment 'wifi探针' after `remark`;
+执行结果:已执行
+
+增加说明：包间表增加wifi探针
+修改时间：2017.1.8
+修改人：张英涛
+执行sql:
+ALTER TABLE `cloud`.`savor_box` ADD COLUMN `devicce_token` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机顶盒设备号' AFTER `tag`
+
+增加说明：u盘节目单表增加选择标志
+修改时间：2017.1.8
+修改人：白玉涛
+ALTER TABLE `cloud`.`savor_singlezip_list`     ADD COLUMN `up_cfg` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '筛选标识';
+
+
+CREATE TABLE `savor_pub_rtbads` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `ads_id` int(12) NOT NULL DEFAULT '0' COMMENT '广告id',
+  `start_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放开始时间',
+  `end_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放结束时间',
+  `admaster_sin` varchar(255) NOT NULL DEFAULT '' COMMENT 'admaster广告监测标识',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '操作人Id',
+  `flag` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0正常1删除',
+  PRIMARY KEY (`id`),
+  KEY `start_date` (`start_date`),
+  KEY `end_data` (`end_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='rtb广告投放表';
+
+增加说明：餐厅标签增加默认标签字段
+修改时间：2017.1.8
+修改人：白玉涛
+alter table `cloud`.`savor_dinner_label`
+   add `default_tag`  tinyint(2) default '0' NOT NULL comment '1是默认标签0是非默认标签'

@@ -188,68 +188,7 @@
 
 <script type="text/javascript">
 
-  /* function navTabAjaxDoneab(json){
 
-    DWZ.ajaxDone(json);
-    //注意返回的JSON的数据结构
-    if (json.statusCode == DWZ.statusCode.ok){
-      if (json.navTabId){
-        //把指定navTab页面标记为需要“重新载入”。注意navTabId不能是当前navTab页面的
-        navTab.reloadFlag(json.navTabId);
-
-      } else {
-        //重新载入当前navTab页面
-        navTabPageBreak();
-
-      }
-      if ("closeCurrent" == json.callbackType) {
-
-        setTimeout(function(){navTab.closeCurrentTab();}, 100);
-
-      } else if ("forward" == json.callbackType) {
-
-        navTab.reload(json.forwardUrl);
-
-      }
-
-    }
-
-  }
-
-  function navTabSearch(form, navTabId){
-    console.log(form);
-    console.log(navTabId);
-    var $form = $(form);
-    if (form[DWZ.pageInfo.pageNum]) form[DWZ.pageInfo.pageNum].value = 1;
-    navTab.reload($form.attr('action'), {data: $form.serializeArray(), navTabId:navTabId});
-    return false;
-  }
-
-  function navTabAjaxDone(json){
-
-    DWZ.ajaxDone(json);
-    if(json.statusCode==DWZ.statusCode.ok){
-      if(json.navTabId){
-        //先判断当前的nav是否有 pagerForm，
-        //有，就刷新这个nav 中的分页控件
-        var $pageForm = $("form[name="+json.navTabId+"_pageForm]");
-        if($pageForm){
-          console.log("刷新分页");
-          $pageForm.submit();
-        }else{
-          console.log("刷新本Nav");
-          navTab.reloadFlag(json.navTabId);
-        }
-      }else{
-        navTabPageBreak({},json.rel);
-      }
-      if("closeCurrent"==json.callbackType){
-        setTimeout(function(){navTab.closeCurrentTab();},100);
-      }else if("forward"==json.callbackType){
-        navTab.reload(json.forwardUrl);
-      }
-    }
-  } */
 
 
   $(".box").click(function(){

@@ -43,6 +43,7 @@
               <th>音量</th>
               <th>冻结状态</th>
               <th>删除状态</th>
+              <th>查看最新广告</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -74,6 +75,15 @@
                   <else/>
                       删除
                   </if>
+              </td>
+              <td data-title="查看最新广告">
+              		<div class="tools-edit">
+	              		<a data-tip="预览" href="{$host_name}/box/getAdsList?box_id={$vlist['id']}"
+	                    rel="box/showdelivery" title="广告预览" target="dialog"
+	                    class="btn btn-success btn-icon">
+	                    <i class="fa fa-eye"></i>
+	                    </a>
+	                </div>
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">

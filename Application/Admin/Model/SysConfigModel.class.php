@@ -9,6 +9,15 @@ namespace Admin\Model;
 
 class SysConfigModel extends BaseModel{
     protected $tableName  ='sys_config';
+
+    public function getInfo($where){
+        if($where){
+            $where =" config_key in(".$where.") and status=1";
+        }
+        $result = $this->where($where)->select();
+        return $result;
+    }
+
     public function getOne($config_key){
         $ret = $this->where("config_key='".$config_key."'")->find();
         return $ret;

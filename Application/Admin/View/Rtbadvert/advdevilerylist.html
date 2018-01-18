@@ -1,7 +1,8 @@
 <include file="Public/script"/>
 <!--显示列表样式333331 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/advdelivery/getlist" method="post" >
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/rtbadvert/getlist" method="post" >
+    <input type="hidden" name="taginfo" id="hid"  value="{$taginfod}" />
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
@@ -13,12 +14,12 @@
         <div class="goods-date">
           <div class="form-inline">
             <div class="form-group">
-              <a class="btn btn-success btn-sm add" href="{$host_name}/Advdelivery/adddevilery" rel="Advdelivery/adddevilery" title="新增投放" target="navTab" mask="true"> <i class="fa fa-plus"></i><span>新增投放</span></a>
+              <a class="btn btn-success btn-sm add" href="{$host_name}/Rtbadvert/adddevilery" rel="Rtbadvert/adddevilery" title="新增投放" target="dialog"  mask="true"> <i class="fa fa-plus"></i><span>新增投放</span></a>
 
               <div class="input-group-sm input-group">
                 <label>投放状态：</label>
                 <span class="input-group-btn input-group-sm">
-                <select name="tou_state" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <select name="tou_state" style="width: 20px;display: none !important;" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                   <volist name="to_ar" id="vo">
                     <option value="{$key}"
                     <if condition="$key eq $to_state">selected</if>
@@ -27,27 +28,9 @@
                 </select>
               </span>
               </div>
-<!--
-              <label>投放时间：</label>
-              <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
-                <input name="starttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$vinfo.st_time}" readonly>
-                         <span class="input-group-btn">
-                           <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
-                           <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
-                         </span>
-              </div>
-              <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
-                <input name="end_time" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$vinfo.en_time}" readonly>
-                     <span class="input-group-btn">
-                       <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
-                       <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
-                     </span>
-              </div>
+
             </div>
 
-
-
-            -->
             <div class="col-xs-10 col-sm-5 col-md-4 pull-right">
               <div class="input-group input-group-sm">
                 <input type="text" class="form-control" name="serachads" value="{$adsname}" placeholder="请输入广告名称">
@@ -73,7 +56,8 @@
           <tr id="post">
             <th>ID</th>
             <th>广告名称</th>
-            <th>状态</th>
+
+            <th>投放进程</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -85,22 +69,30 @@
 
               </td>
 
-              <td data-title="状态" style="text-align:center;">
+
+
+
+              <td data-title="投放进程" style="text-align:center;">
                 {$vlist['state']}
               </td>
+
               <td class="table-tool" data-title="操作">
 
                 <div class="tools-edit">
 
-                  <a data-tip="预览"
-
-                     href="
-                  {$host_name}/advdelivery/showdelivery?deliveryid={$vlist.id}" rel="Advdelivery/showdelivery" title="广告预览" target="navTab"
-
-                  class="btn btn-success btn-icon">
-                  <i class="fa fa-eye"></i>
+                  <a data-tip="预览" href="{$host_name}/rtbadvert/showadverjiulou?deliveryid={$vlist.id}"
+                     rel="rtbadvert/showadverjiulou" title="广告预览" target="navTab"
+                     class="btn btn-success btn-icon">
+                    <i class="fa fa-eye"></i>
                   </a>
+
                 </div>
+
+               <!-- <div class="tools-edit">
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/rtbadvert/delrtb?id={$vlist.id}"  class="btn btn-success btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>-->
               </td>
 
             </tr>

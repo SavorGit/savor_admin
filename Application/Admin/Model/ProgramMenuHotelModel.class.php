@@ -12,6 +12,17 @@ use Admin\Model\BaseModel;
 class ProgramMenuHotelModel extends BaseModel
 {
 	protected $tableName='programmenu_hotel';
+
+	//查找其中的一条
+	public function getPrvMenu($field, $where) {
+		$data  = array();
+		$sql = "SELECT $field FROM savor_programmenu_hotel smh JOIN savor_programmenu_list
+smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel WHERE $where)";
+		$InfoData    = $this->query($sql);
+		$data        = !empty($InfoData)? $InfoData : $data;
+		return $data;
+	}
+
 	public function getWhere($where, $order, $field, $group=''){
 
 		$list = $this->where($where)

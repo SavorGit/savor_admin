@@ -11,6 +11,26 @@ use Admin\Model\BaseModel;
 
 class HotelModel extends BaseModel{
 	protected $tableName = 'hotel';
+
+
+	public function gethotellogoInfo($hotelid){
+		$sql = "SELECT
+        media.id AS id,
+        media.name as logoname,
+        media.md5 AS logo_md5,
+        media.oss_addr as lourl
+        FROM savor_hotel hotel
+        LEFT JOIN savor_media media on media.id=hotel.media_id
+        where
+            hotel.id={$hotelid}";
+
+		$result = $this->query($sql);
+		return $result;
+	}
+
+
+
+
 	public function getList($where, $order='id desc', $start=0,$size=5){	
 		 $list = $this->where($where)
 					  ->order($order)
@@ -142,7 +162,13 @@ class HotelModel extends BaseModel{
 	public function getHotelCount($where){
 	    return $this->where($where)->count();
 	}
-
+	public function getHotelCountNums($where){
+	    $count =$this->alias('a')
+	    ->join('savor_hotel_ext b on a.id=b.hotel_id','left')
+	    ->where($where)
+	    ->count();
+	    return $count;
+	}
 	public function getWhereData($where, $field='') {
 		$result = $this->where($where)->field($field)->select();
 		return  $result;
@@ -169,8 +195,6 @@ class HotelModel extends BaseModel{
 		$list = $this->alias('sht')
 			->join('savor_room room on sht.id = room.hotel_id')
 			->join('savor_box box on room.id = box.room_id')
-			->join(' join savor_area_info sari on sari.id = sht.area_id')
-			->join('savor_tv tv on tv.box_id = box.id')
 			->order($order)
 			->field($field)
 			->where($where)
@@ -204,6 +228,12 @@ class HotelModel extends BaseModel{
 	}
 	public function getHotelList($where,$order,$limit,$fields = '*'){
 	    $data = $this->field($fields)->where($where)->order($order)->limit($limit)->select();
+	    return $data;
+	}
+	public function getHotelLists($where,$order,$limit,$fields = '*'){
+	    $data = $this->alias('a')
+	    ->join('savor_hotel_ext b on a.id=b.hotel_id')
+	    ->field($fields)->where($where)->order($order)->limit($limit)->select();
 	    return $data;
 	}
 }

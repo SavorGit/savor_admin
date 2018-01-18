@@ -106,14 +106,17 @@ class ReportController extends BaseController{
 		//酒店名称
 		$where = ' 1=1 ';
 		if($name){
+		    $search_name = addslashes($name);
 			$this->assign('name',$name);
-			$where .= "	AND shlog.hotel_name LIKE '%{$name}%' ";
+			$where .= "	AND shlog.hotel_name LIKE '%{$search_name}%' ";
 		}
 		//城市
-		$area_v = I('he_area_bv');
+		 $area_v = I('he_area_bv');
 		if ($area_v) {
+		    
+		        $where .= "	AND shlog.area_id = $area_v ";
+		    
 			$this->assign('area_k',$area_v);
-			$where .= "	AND shlog.area_id = $area_v ";
 		}
 		//查询类型
 		if($type){
@@ -132,6 +135,19 @@ class ReportController extends BaseController{
 			$this->assign('hbt_k',$hbt_v);
 			$where .= "	AND sht.hotel_box_type = $hbt_v";
 		}
+        //城市
+        $userinfo = session('sysUserInfo');
+        $is_city_search = 0;
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])  ) {
+            $is_city_search = 1;
+			$this->assign('is_city_search',$is_city_search);
+            $this->assign('hightest', 0);
+            $this->assign('pusera', $userinfo);
+        }else {
+            $this->assign('is_city_search',$is_city_search);
+            $where .= "	AND shlog.area_id in ($userinfo[area_city])";
+            $this->assign('hightest', $userinfo['area_city']);
+        }
 
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
@@ -295,6 +311,22 @@ class ReportController extends BaseController{
             $where .= " and spl.create_time<='".$end_date." 23:59:59'";
             $this->assign('end_date',$end_date);
         }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+        $is_city_search = 0;
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $pawhere = '1=1';
+            $is_city_search = 1;
+            $this->assign('is_city_search',$is_city_search);
+            $this->assign('pusera', $userinfo);
+        }else {
+             
+            $this->assign('is_city_search',$is_city_search);
+            $where .= "	AND spl.area_id in ($pcity)";
+            
+        }
+        
         if(!empty($start_date) && !empty($end_date)){
             if($end_date<$start_date){
                 $this->error('结束时间不能小于开始时间');
@@ -366,6 +398,22 @@ class ReportController extends BaseController{
         if(!empty($mac)){
             $where .=" and mac like '%{$mac}%'";
             $this->assign('mac',$mac);
+        }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $gid = $userinfo['groupid'];
+
+        $usergrp = new \Admin\Model\SysusergroupModel();
+        $p_user_arr = $usergrp->getInfo($gid);
+        $pcity = $p_user_arr['area_city'];
+        $is_city_search = 0;
+        if($p_user_arr['id'] == 1 || empty($p_user_arr['area_city'])  ) {
+            $is_city_search = 1;
+            $this->assign('is_city_search',$is_city_search);
+            $this->assign('pusera', $p_user_arr);
+        }else {
+            $this->assign('is_city_search',$is_city_search);
+            $where .= "	AND area_id in ($pcity)";
         }
         $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
         $result = $m_heart_all_log->getlist('*',$where,$orders,$start,$size);
