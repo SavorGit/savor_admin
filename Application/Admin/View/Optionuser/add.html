@@ -59,11 +59,49 @@
 	.kuai .active{
 	    background-color: #3f51b5;
 	}
+	.jiulou{
+		display: inline-block;
+		border: 1px solid black;
+		height: 25px;
+		line-height: 23px;
+		margin-left: 10px;
+	}
+	.del{
+		margin-left: 11px;
+		font-size: 19px;
+		font-weight: 700;
+		color: red;
+	}
+	.modal-content{
+		
+		height:800px;
+	}
+
+	#boite input{
+		width: 15px;
+		height: 15px;
+		margin-top: 10px;
+	}
+	#boite span{
+		font-size: 17px;
+		margin-right: 13px;
+		margin-left: 6px;
+	}
+	#boite {
+		height: 500px;
+    	overflow: auto;
+	}
+	.jlwid{
+	    width: 48%;
+    	float: left;
+	}
 </style>
 
   <div class="pageContent">
   <div class="entirety">
   	<form method="post" action="{$host_name}/optionuser/doadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+  	<input name="hotel_idstr" id="hotelids" type="hidden">
+  	<input type="hidden" id="honame" value="{$host_name}">
   	<h1>账号设置</h1>
   	<div class="xian"></div>
   	<div class="inp">
@@ -144,71 +182,88 @@
     </span>
     </div>
   </div>
-  
+  <div class="form-group"><!--选择酒楼-->
+  	<div style="margin-left: 12px;margin-bottom: 30px;">
+		<span>目标酒楼</span>
+		<button type="button" id="tj" class="btn btn-primary" style="margin-left: 20px;" data-toggle="modal" data-target="#myModal">添加酒楼</button>
+		<p>注：如未添加酒楼，默认为全部酒楼</p>
+	</div>
+	  <div style="margin-bottom: 30px;" id="jia"></div>
+  </div>
+  <!-----------------酒楼--------------------->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">酒楼选择</h4>
+      </div>
+      <div class="modal-body">
+        <div style="margin: 20px;">
+        	<span>城市</span>
+        	<select name="area_v" id="cityhtml" style="margin-left: 15px;width: 70px;">
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" >{$vo.region_name}</option><br>
+                </volist>
+        	</select>
+        	<span style="margin-left: 15px;">级别</span>
+        	<select name="level_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_LEVEL')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select>
+        	<span style="margin-left: 15px;">状态</span>
+        	<select name="state_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_STATE')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select>
+
+
+
+
+        	<span style="margin-left: 15px;">重点</span>
+        	<select name="key_v" style="margin-left: 10px;width: 70px;">
+                <option value=0 >全部</option>
+                <volist name=":C('HOTEL_KEY')" id="vo">
+                  <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
+                </volist>
+        	</select><br /><br />
+
+			<span style="">酒楼机顶盒类型</span>
+			<select name="hbt_v" style="margin-left: 10px;width: 120px;">
+				<option value=0 >全部</option>
+				<volist name=":C('hotel_box_type')" id="vo">
+					<option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
+				</volist>
+			</select>
+
+        	<span style="margin-top: 10px;">维护人</span>
+        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/><br/><br/>
+        	<input type="text" name="names" style="width: 153px;"placeholder="输入酒楼名称查找" style="margin-left: 30px;"/>
+        	<button type="button" id="searchs" class="btn btn-primary" style="margin-left: 15px;height: 26px;line-height: 14px;">查询</button>
+        	<div style="margin-top: 10px;">
+        		<input type="radio" id="checkquan"name="one" class="one" /><span>全选</span><input type="radio"name="one" class="one" id="checkfan" style="margin-left: 10px;"/><span>反选</span><br />
+        		<p style="width:100%;border: 1px solid black;margin-top: 15px;"></p>
+        		<div id="boite">
+        		</div>
+        		<div style="margin-top: 20px;">
+        	<button type="button" class="btn btn-primary"data-dismiss="modal" id="yes" style="margin-left: 35%;height: 26px;line-height: 14px;">确定</button>
+        	<button type="button" class="btn btn-primary"data-dismiss="modal" style="margin-left: 15px;height: 26px;line-height: 14px;">取消</button>
+        			
+        		</div>
+        	</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
   <button type="submit"  class="btn btn-primary"style="width: 100px;margin-left: 30%;">确定</button>
   	</div>
  </form>
   </div>
 </div>
-<script type="text/javascript">
-	$('.positions').change(function(){
-		if($(this).val()==3){		
-			$('.kuai').show();
-		}else{
-			$('.kuai').hide();
-		}
-		if($(this).val()==1 || $(this).val()==3){
-			$('#all_city_list').hide();
-			$('#city_list').show();
-		}else {
-			$('#all_city_list').show();
-			$('#city_list').hide();
-		}
-		var installs =  $('#2').val();
-		if($(this).val()==3 && installs !=''){
-			$('#teaminstall').show();
-		}else {
-			$('#teaminstall').hide();
-		}
-		
-		$(this).next().find('span').prop('class','')
-		
-	})
-	$('.kuai span').click(function(){
-		var skill_id = $(this).prop('id');
-		if($(this).is('.active')){
-			$(this).removeClass('active')
-			$(this).find('input').val('')
-			if(skill_id ==2){
-				$('#teaminstall').hide();
-			}
-		}else{
-			$(this).addClass('active');
-			$(this).find('input').val($(this).prop('id'))
-			
-			if(skill_id ==2){
-				$('#teaminstall').show();
-			}
-		}
-		
-	})
-	
-	
-	
-	$('.entirety').on('change','#inch',function(){
-		var this_val =  $(this).val();
-		//alert(this_val)
-		if(this_val.indexOf('9999')==0){
-			$('.inner li').each(function(){
-				$(this).removeClass('selected');
-				if($(this).attr('data-original-index')==0){
-					$('.btn-success').attr('title','全国')
-					//$('.pull-left').html('全国');
-					$('#inch').prev().find('.pull-left').html('全国')
-					$('#inch').val('9999')
-					$(this).addClass('selected')
-				}
-			})
-		}
-	})
-</script>
+<script src="../../../../Public/admin/assets/js/optionuser.js" type="text/javascript" charset="utf-8"></script>

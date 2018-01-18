@@ -18,6 +18,142 @@ class CrontabController extends Controller
         $this->oss_host = get_oss_host();
     }
 
+    public function insCurrentDetailRecopt(){
+        //获取所有酒楼
+        $m_hotel = new \Admin\Model\HotelModel();
+        //$where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $where = " a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $max_hour = 720;
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
+
+        //$hotel_list = array_slice($hotel_list,0, 5);
+
+        $hotel_unusual = new \Admin\Model\HotelUnusualModel();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $m_box = new \Admin\Model\BoxModel();
+        //正常酒楼 、异常酒楼
+        $start_time = date('Y-m-d H:i:s',strtotime('-72 hours'));
+        $now = date("Y-m-d H:i:s");
+        $now_time = strtotime($now);
+        foreach($hotel_list as $key=>$v){
+            $data = array();
+            $hotel_id = $v['id'];
+            $box_not_normal_num = 0;
+            $box_last_hour = 0;
+            //判断表是否存在该
+            $r_info = $hotel_unusual->getOneInfo('id', array('hotel_id'=>$hotel_id) );
+
+
+            //判断酒楼小平台是否有心跳
+            $where = '';
+            $where .=" 1 and hotel_id=".$hotel_id." and type=1";
+            $where .="  and last_heart_time>='".$start_time."'";
+            $ret = $m_heart_log->getOnlineHotel($where,'hotel_id');
+            $data['hotel_id'] = $hotel_id;
+            $where = array();
+            $where['hotel_id'] = $v['id'];
+            $where['type']  =1;
+            $dt = $m_heart_log->getInfo('last_heart_time',$where);
+            if(!empty($ret)){
+                $data['small_plat_status'] = 1;
+                $data['small_plat_report_time'] = $dt['last_heart_time'];
+            } else {
+                if(!empty($dt)){
+                    $p_last_time = $dt['last_heart_time'];
+                    $data['small_plat_report_time'] = $p_last_time;
+                    $l_hour = strtotime($p_last_time);
+                    $data['pla_lost_hour'] = ceil( ($now_time-$l_hour)/3600);
+                }else {
+                    $data['small_plat_report_time'] = '';
+                    $data['pla_lost_hour'] = $max_hour;
+                }
+                $data['small_plat_status'] = 0;
+            }
+            //机顶盒判断
+            $where = '';
+            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0  and  room.flag=0 and room.state =1';
+            $box_list = $m_box->getListInfo( 'a.id, a.mac,a.state',$where);
+            $data['box_num'] = count($box_list);
+            foreach($box_list as $ks=>$vs){
+                $where = '';
+                $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
+                $where .="  and last_heart_time>='".$start_time."'";
+
+                $rets  = $m_heart_log->getOnlineHotel($where,'hotel_id');
+                if ( $vs['state'] == 1) {
+                    if(empty($rets)){
+                        $box_not_normal_num +=1;
+                        $where = '';
+                        $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
+                        $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
+                        if( empty($hea_online) ) {
+
+                        } else {
+                            $box_report_time = strtotime($hea_online[0]['last_heart_time']);
+                            if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
+
+                            } else {
+                                $diff_box_report_time = $now_time-$box_report_time;
+                                $box_last_hour += $diff_box_report_time;
+                            }
+
+
+                        }
+
+                    }else {
+
+                    }
+                } else {
+                    $box_not_normal_num +=1;
+                    if(empty($rets)){
+//获取失聪时长
+                        $where = '';
+                        $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
+                        $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
+                        if( empty($hea_online) ) {
+
+                        } else {
+                            $box_report_time = strtotime($hea_online[0]['last_heart_time']);
+                            if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
+
+                            } else {
+                                $diff_box_report_time = $now_time-$box_report_time;
+                                $box_last_hour += $diff_box_report_time;
+                            }
+
+
+                        }
+                    } else {
+
+                    }
+                }
+
+
+            }
+            $data['not_normal_box_num'] = $box_not_normal_num;
+            $data['not_box_percent'] =  ceil(($box_not_normal_num/$data['box_num'])*100);
+            $data['box_lost_hour'] = ceil($box_last_hour/3600);
+            $data['update_time'] = $now;
+            if ($r_info) {
+                 //更新
+                $map['id'] = $r_info['id'];;
+                $bool = $hotel_unusual->saveData($data, $map);
+            } else {
+                //添加
+                $data['create_time'] = $now;
+                $bool = $hotel_unusual->addData($data);
+
+            }
+
+            if($bool) {
+                echo $hotel_id.'执行成功\n'.'<br/>';
+            }
+
+        }
+
+    }
+
+
 
     public function report(){
         //酒楼总数
