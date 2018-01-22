@@ -1091,7 +1091,7 @@ tinyint(2) not null default 0 comment '0未1已经被移除';
 修改人：张英涛
 执行sql:
 ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'  AFTER `create_time` 
-执行结果:
+执行结果:已执行
 
 
 增加说明：增加机顶盒错误日志历史表
@@ -1171,8 +1171,20 @@ varchar(20) not null default '' comment 'wifi探针' after `remark`;
 修改人：张英涛
 执行sql:
 ALTER TABLE `cloud`.`savor_box` ADD COLUMN `devicce_token` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机顶盒设备号' AFTER `tag`
+执行结果:已执行
 
 增加说明：u盘节目单表增加选择标志
 修改时间：2017.1.8
 修改人：白玉涛
 ALTER TABLE `cloud`.`savor_singlezip_list`     ADD COLUMN `up_cfg` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '筛选标识';
+执行结果:已执行
+
+
+
+增加说明：心跳上报增加字段
+修改时间：2018.1.16
+修改人：张英涛
+ALTER TABLE `savor_heart_log` ADD COLUMN `pro_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '当前节目号',
+                              ADD COLUMN `adv_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '当前宣传片期号',
+			      ADD COLUMN `pro_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载节目期号',
+			      ADD COLUMN `ads_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载广告期号';
