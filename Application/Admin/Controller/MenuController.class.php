@@ -512,7 +512,7 @@ smlist.menu_name';
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
-            if(empty($area_v)){
+            if(!empty($area_v) && $area_v !=9999){
             
                 $where .= "	AND area_id = $area_v";
             }
