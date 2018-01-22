@@ -1122,6 +1122,7 @@ class CrontabController extends Controller
 
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
+
                 $po_th = '';
                 $this->copy_j = array();
                 $gendir = $sv['gendir'];
@@ -1140,6 +1141,7 @@ class CrontabController extends Controller
                 $delzipfile = $po_th.'.zip';
                 $del_res = $smfileModel->remove_dir($delfile, true);
                 $del_res = $smfileModel->unlink_file($delzipfile);
+
                 //var_export($del_res);
                 if ( $smfileModel->create_dir($savor_path)
                     && $smfileModel->create_dir($savor_me)
@@ -1169,38 +1171,44 @@ class CrontabController extends Controller
                    // echo '创建目录'.$savor_path.'成功'.PHP_EOL;
 
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
+
                     //下载apk
                     $m_version_upgrade = new \Admin\Model\UpgradeModel();
                     foreach ($hotel_id_arr as $hid) {
                         $field = 'sdv.oss_addr apurl ';
                         $apk_device_type = 2;
                         $apk_info = $m_version_upgrade->getLastOneByDevice($field, $apk_device_type, $hid);
+
                         if($apk_info) {
 
                             $apk_url = $this->oss_host.$apk_info['apurl'];
                             $apk_filename = $gendir.'.apk';
+//var_export($apk_url);
+
                             $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
+
                             if($apk_res) {
+                                break;
                                // echo '创建apk'.$savor_path.'成功'.PHP_EOL;
                             }
-                            break;
+
                         }
 
                     }
 
 
-                    foreach ( $hotel_id_arr as $hv) {
+                    foreach ( $hotel_id_arr as $hkk=>$hv) {
                         $hotel_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                         if ( $smfileModel->create_dir($hotel_path) ) {
                             //echo '创建目录'.$hotel_path.'成功'.PHP_EOL;
                             $adv_path = $hotel_path.DIRECTORY_SEPARATOR.'adv';
                             if ( $smfileModel->create_dir($adv_path) ) {
-                              //  echo '创建目录'.$adv_path.'成功'.PHP_EOL;
+                                //  echo '创建目录'.$adv_path.'成功'.PHP_EOL;
                                 //创建json文件
                                 $play_file = $hotel_path.DIRECTORY_SEPARATOR.'play_list.json';
                                 if ( $smfileModel->create_file($play_file, true) ) {
                                     $info = '';
-                                   // echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
+                                    // echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
                                     //获取酒楼对应节目单
 
                                     $info = $this->getHotelMedia($hv, $gendir);
@@ -1217,7 +1225,7 @@ class CrontabController extends Controller
                                             if($img_res) {
                                                 // echo '创建图片'.$img_path.'成功'.PHP_EOL;
                                             } else {
-                                                 echo '创建图片'.$img_path.'失败'.PHP_EOL;
+                                                echo '创建图片'.$img_path.'失败'.PHP_EOL;
                                             }
                                         }
                                         $smfileModel->write_file($play_file, $info['res']);
@@ -1239,7 +1247,7 @@ class CrontabController extends Controller
                                     }
 
                                 } else {
-                                   echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
+                                    echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
                                 }
                             } else {
                                 echo '创建目录'.$adv_path.'失败'.PHP_EOL;
@@ -1247,7 +1255,15 @@ class CrontabController extends Controller
                         } else {
                             echo '创建目录'.$hotel_path.'失败'.PHP_EOL;
                         }
+                      //  $cop++;
+
                     }
+
+                    //var_export($hotel_id_arr);
+
+
+
+
 
                 } else {
                     echo '创建目录'.$savor_path.'失败'.PHP_EOL;
@@ -1322,15 +1338,15 @@ class CrontabController extends Controller
             return array();
         }
 
-
         $menuid = $per_arr[0]['menuid'];
         $perid = $per_arr[0]['period'];
         $result['period'] = $perid;
         $rdata = $this->copy_j;
-        if ( array_key_exists($menuid, $rdata) ) {
+        /*if ( array_key_exists($menuid, $rdata) ) {
             $result['play_list'] = json_decode($this->copy_j[$menuid], true);
-            $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
-            $adv_arr = $this->changeadvList($adv_arr,1);
+           // $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
+            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+            $adv_arr = $this->changupaneadvList($adv_arr,1);
             $result['play_list'] = array_merge($result['play_list'], $adv_arr);
         } else {
             $pro_arr = $adsModel->getproInfo($menuid);
@@ -1339,13 +1355,27 @@ class CrontabController extends Controller
             $ads_arr = $adsModel->getadsInfo($menuid);
             $ads_arr = $this->changeadvList($ads_arr,2);
 
-            $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
-            $adv_arr = $this->changeadvList($adv_arr,1);
+            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+            $adv_arr = $this->changupaneadvList($adv_arr,1);
+
             $result['play_list'] = array_merge($pro_arr,
                 $ads_arr,$adv_arr);
             $this->copy_j[$menuid] = array_merge($pro_arr,
                 $ads_arr);
-        }
+        }*/
+        $pro_arr = $adsModel->getproInfo($menuid);
+        $pro_arr = $this->changeadvList($pro_arr,1);
+
+        $ads_arr = $adsModel->getadsInfo($menuid);
+        $ads_arr = $this->changeadvList($ads_arr,2);
+
+        $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+        $adv_arr = $this->changupaneadvList($adv_arr,1);
+
+        $result['play_list'] = array_merge($pro_arr,
+            $ads_arr,$adv_arr);
+
+
         //获取酒楼信息
 
 
@@ -1606,12 +1636,7 @@ class CrontabController extends Controller
         //如果是空
     }
 
-    /**
-     * changeadvList  将已经数组修改字段名称
-     * @access public
-     * @param $res
-     * @return array
-     */
+
     private function changeadvList($res,$type){
         if($res){
             foreach ($res as $vk=>$val) {
@@ -1623,6 +1648,33 @@ class CrontabController extends Controller
                 if(!empty($val['name'])){
                     $ttp = explode('/', $val['name']);
                     $res[$vk]['name'] = $ttp[2];
+                }
+            }
+
+        }
+        return $res;
+        //如果是空
+    }
+
+    /**
+     * changeadvList  将已经数组修改字段名称
+     * @access public
+     * @param $res
+     * @return array
+     */
+    private function changupaneadvList($res,$type){
+        if($res){
+            foreach ($res as $vk=>$val) {
+                if($type==1){
+                    $res[$vk]['order'] =  $res[$vk]['sortnum'];
+                    unset($res[$vk]['sortnum']);
+                }
+
+                if(!empty($val['name'])){
+                    $ttp = explode('/', $val['name']);
+                    $res[$vk]['name'] = $ttp[2];
+                }else{
+                    unset($res[$vk]);
                 }
             }
 
