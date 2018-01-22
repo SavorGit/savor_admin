@@ -1112,7 +1112,7 @@ class CrontabController extends Controller
         $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udriverpath';
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
-        $map['state'] = 0;
+        $map['state'] = 5;
         $field='hotel_id_str, gendir, id, up_cfg';
         $single_list = $signle_Model->getWhere($map, $field);
         $smfileModel = new SimFile();
@@ -1141,8 +1141,6 @@ class CrontabController extends Controller
                 $delzipfile = $po_th.'.zip';
                 $del_res = $smfileModel->remove_dir($delfile, true);
                 $del_res = $smfileModel->unlink_file($delzipfile);
-
-                //var_export($del_res);
                 if ( $smfileModel->create_dir($savor_path)
                     && $smfileModel->create_dir($savor_me)
                     && $smfileModel->create_dir($savor_log)
@@ -1158,22 +1156,18 @@ class CrontabController extends Controller
                         $hwhere['flag'] = 0;
                         $hotel_arr = $hotelModel->getInfo('id hotel_id, name hotel_name', $hwhere);
                         if ($hotel_arr) {
-                            /* $hid_arr = array_column($hotel_arr, 'id');
-                            $hname_arr = array_column($hotel_arr, 'name');
-                            $hotel_info = array_combine($hid_arr, $hname_arr); */
                             $hotel_info = json_encode($hotel_arr);
                         } else {
                             $hotel_info = '';
                         }
                         $smfileModel->write_file($hotel_file, $hotel_info);
-
                     }
                    // echo '创建目录'.$savor_path.'成功'.PHP_EOL;
 
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
 
                     //下载apk
-                    $m_version_upgrade = new \Admin\Model\UpgradeModel();
+                  $m_version_upgrade = new \Admin\Model\UpgradeModel();
                     foreach ($hotel_id_arr as $hid) {
                         $field = 'sdv.oss_addr apurl ';
                         $apk_device_type = 2;
@@ -1183,7 +1177,6 @@ class CrontabController extends Controller
 
                             $apk_url = $this->oss_host.$apk_info['apurl'];
                             $apk_filename = $gendir.'.apk';
-//var_export($apk_url);
 
                             $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
 
@@ -1341,44 +1334,35 @@ class CrontabController extends Controller
         $menuid = $per_arr[0]['menuid'];
         $perid = $per_arr[0]['period'];
         $result['period'] = $perid;
-        $rdata = $this->copy_j;
-        /*if ( array_key_exists($menuid, $rdata) ) {
-            $result['play_list'] = json_decode($this->copy_j[$menuid], true);
-           // $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
-            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
-            $adv_arr = $this->changupaneadvList($adv_arr,1);
-            $result['play_list'] = array_merge($result['play_list'], $adv_arr);
+
+        $redis = SavorRedis::getInstance();
+        $redis->select(13);
+        $procache_key = 'udriverpan_pro_'.$menuid;
+        $adscache_key = 'udriverpan_ads_'.$menuid;
+        $pro_arr = $redis->get($procache_key);
+        if($pro_arr) {
+            $pro_arr = json_decode($pro_arr, true);
+            $pro_arr = $this->changeadvList($pro_arr,1);
         } else {
             $pro_arr = $adsModel->getproInfo($menuid);
+            $redis->set($procache_key , json_encode($pro_arr), 120);
             $pro_arr = $this->changeadvList($pro_arr,1);
 
-            $ads_arr = $adsModel->getadsInfo($menuid);
+        }
+        $ads_arr = $redis->get($adscache_key);
+        if($ads_arr) {
+            $ads_arr = json_decode($ads_arr, true);
             $ads_arr = $this->changeadvList($ads_arr,2);
-
-            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
-            $adv_arr = $this->changupaneadvList($adv_arr,1);
-
-            $result['play_list'] = array_merge($pro_arr,
-                $ads_arr,$adv_arr);
-            $this->copy_j[$menuid] = array_merge($pro_arr,
-                $ads_arr);
-        }*/
-        $pro_arr = $adsModel->getproInfo($menuid);
-        $pro_arr = $this->changeadvList($pro_arr,1);
-
-        $ads_arr = $adsModel->getadsInfo($menuid);
-        $ads_arr = $this->changeadvList($ads_arr,2);
+        } else {
+            $ads_arr = $adsModel->getadsInfo($menuid);
+            $redis->set($adscache_key , json_encode($ads_arr), 120);
+            $ads_arr = $this->changeadvList($ads_arr,2);
+        }
 
         $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
         $adv_arr = $this->changupaneadvList($adv_arr,1);
-
         $result['play_list'] = array_merge($pro_arr,
             $ads_arr,$adv_arr);
-
-
-        //获取酒楼信息
-
-
         //获取酒楼信息
         $hotelModel = new \Admin\Model\HotelModel();
         $ar['sht.id'] = $hotel_id;
