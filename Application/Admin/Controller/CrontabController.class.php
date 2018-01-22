@@ -1112,7 +1112,7 @@ class CrontabController extends Controller
         $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udriverpath';
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
-        $map['state'] = 5;
+        $map['state'] = 0;
         $field='hotel_id_str, gendir, id, up_cfg';
         $single_list = $signle_Model->getWhere($map, $field);
         $smfileModel = new SimFile();
