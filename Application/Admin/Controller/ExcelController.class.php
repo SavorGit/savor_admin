@@ -1070,6 +1070,8 @@ class ExcelController extends Controller
     }
 
     function expscreenrep(){
+        ini_set ('memory_limit', '512M');
+
         $filename = 'screencastreport';
         $dtype = I('get.datetype');
         if ( $dtype == 1) {

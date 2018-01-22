@@ -314,6 +314,7 @@ $config['OPTION_USER_ROLE_ARR']  = ARRAY(
      '3'=>'执行者',
      '4'=>'查看',
      '5'=>'外包',
+     '6'=>'巡检员',
 );
 $config['OPTION_USER_SKILL_ARR'] = array(
     '1'=>'信息检测',

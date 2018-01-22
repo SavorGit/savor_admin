@@ -87,8 +87,8 @@ ALTER TABLE `savor_box` ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRE
 修改时间:2017.3.31 13:46
 修改人:白玉涛
 执行SQL: ALTER TABLE `savor_menulist_log` change  `hotel_id`  `hotel_id_s` text NOT NULL DEFAULT '' COMMENT '发布酒楼id字符串';
-ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
 
+ALTER TABLE `savor_menulist_log` ADD COLUMN  `flag` text NOT NULL DEFAULT '' COMMENT '存储上一次节目单的酒店字符串';
 
 增加说明：添加酒楼wifi及密码
 修改时间:2017.4.17 16：00
@@ -98,6 +98,7 @@ alter table `savor_hotel`
  add column `remote_id` varchar(255) DEFAULT '' NOT NULL COMMENT '远程ID',
    add column `hotel_wifi` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi名称' after `remote_id`, 
    add column `hotel_wifi_pas` varchar(255) DEFAULT '' NOT NULL COMMENT '酒楼wifi密码' after `hotel_wifi`
+
 #########以上sql均已执行######
 
 增加说明：添加意见反馈手机类型
@@ -212,6 +213,7 @@ alter table `cloud`.`savor_nodemenu`
 
    alter table `cloud`.`savor_role_priv` 
    change `a` `a` char(30) character set utf8 collate utf8_general_ci NOT NULL comment '方法名'
+
 
 
 
@@ -1097,6 +1099,7 @@ ALTER TABLE savor_ads ADD COLUMN `update_time`   DATETIME NOT NULL DEFAULT CURRE
 增加说明：增加机顶盒错误日志历史表
 修改时间：2017.12.28
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_pub_ads_box_error_history` (
   `id` INT(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
@@ -1115,6 +1118,7 @@ CREATE TABLE `savor_pub_ads_box_error_history` (
 增加说明：增加机顶盒日志历史表
 修改时间：2017.12.28
 修改人：白玉涛
+执行结果：已执行
 执行sql:
 CREATE TABLE `savor_pub_ads_box_history` (
   `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
@@ -1177,6 +1181,7 @@ ALTER TABLE `cloud`.`savor_box` ADD COLUMN `devicce_token` VARCHAR(50) NOT NULL 
 修改时间：2017.1.8
 修改人：白玉涛
 ALTER TABLE `cloud`.`savor_singlezip_list`     ADD COLUMN `up_cfg` VARCHAR(100) DEFAULT '' NOT NULL COMMENT '筛选标识';
+
 执行结果:已执行
 
 
@@ -1188,3 +1193,27 @@ ALTER TABLE `savor_heart_log` ADD COLUMN `pro_period` VARCHAR(50) NOT NULL DEFAU
                               ADD COLUMN `adv_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '当前宣传片期号',
 			      ADD COLUMN `pro_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载节目期号',
 			      ADD COLUMN `ads_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载广告期号';
+
+
+
+CREATE TABLE `savor_pub_rtbads` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `ads_id` int(12) NOT NULL DEFAULT '0' COMMENT '广告id',
+  `start_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放开始时间',
+  `end_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放结束时间',
+  `admaster_sin` varchar(255) NOT NULL DEFAULT '' COMMENT 'admaster广告监测标识',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '操作人Id',
+  `flag` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0正常1删除',
+  PRIMARY KEY (`id`),
+  KEY `start_date` (`start_date`),
+  KEY `end_data` (`end_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='rtb广告投放表';
+
+增加说明：餐厅标签增加默认标签字段
+修改时间：2017.1.8
+修改人：白玉涛
+alter table `cloud`.`savor_dinner_label`
+   add `default_tag`  tinyint(2) default '0' NOT NULL comment '1是默认标签0是非默认标签'
+

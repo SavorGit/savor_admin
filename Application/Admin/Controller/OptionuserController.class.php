@@ -76,9 +76,11 @@ class OptionuserController extends BaseController{
         $limit = '';
         
         $list = $m_sysuser->getGourpList($fields, $where, $order, $limit);
+
         
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $set_user_list = $m_opuser_role->getList('user_id','state=1');
+
         foreach($set_user_list as $v){
             $tmp[] = $v['user_id'];
         }
@@ -101,7 +103,7 @@ class OptionuserController extends BaseController{
         
         $nationwide = array('id'=>9999,'region_name'=>'全国');
         array_unshift($areaList, $nationwide);
-        
+        $this->assign('area',$areaList);
         $this->assign('city_area_list',$city_area_list);
         $this->assign('areaList',$areaList);
         $this->assign('userlist',$userlist);
@@ -121,10 +123,19 @@ class OptionuserController extends BaseController{
         if(empty($role_id)){
             $this->error('请选择角色');
         }
+        $hotel_info = I('post.hotel_idstr');
+        if(empty($hotel_info)) {
+            $hotel_info_str = '';
+        } else {
+            $hotel_info_str = $hotel_info;
+        }
         if(empty($id)){
         
             
             $skill_info = I('post.skill');            //技能
+
+
+
             
             $m_opser_role = new \Admin\Model\OpuserroleModel();
             $role_info = $m_opser_role->getList('id',array('user_id'=>$user_id,'state'=>1));
@@ -163,6 +174,7 @@ class OptionuserController extends BaseController{
             $data = array();
             $data['user_id']    = $user_id;
             $data['role_id']    = $role_id;
+            $data['hotel_info']    = $hotel_info_str;
             if($role_id ==3){
                 $data['skill_info'] = $skill_info_str;
                 $data['is_lead_install'] = $is_lead_install;
@@ -226,7 +238,8 @@ class OptionuserController extends BaseController{
             }
             
             $data['oprator_id']  = $oprator_id;
-   
+            $data['update_time'] = date("Y-m-d H:i:s");
+            $data['hotel_info']    = $hotel_info_str;
             $m_opser_role = new \Admin\Model\OpuserroleModel();
             $ret = $m_opser_role->saveInfo($map,$data);
             //$ret = $m_opser_role->addInfo($data);
@@ -238,6 +251,272 @@ class OptionuserController extends BaseController{
             }
         }
     }
+
+
+    public function searchHotel(){
+        //加限制条件不能选已经选过的
+        //获取所有酒楼
+        $m_opser_role = new \Admin\Model\OpuserroleModel();
+        $us_hotel = array();
+        $us_hotel['state'] = 1;
+        $fields = 'hotel_info hotel_id_str';
+        $h_info =  $m_opser_role->getList($fields,$us_hotel,'','');
+        $tmp = array();
+        $where = "1=1";
+        foreach($h_info as $vs) {
+            if( empty($vs['hotel_id_str']) ) {
+
+            } else {
+                $hid_arr = explode(',', $vs['hotel_id_str']);
+                foreach($hid_arr as $hv) {
+                    if ( array_key_exists($hv, $tmp)) {
+                        continue;
+                    } else {
+                        $tmp[$hv] = 1;
+                    }
+                }
+            }
+        }
+        if($tmp) {
+            $h_temp = array_keys($tmp);
+            $h_temp = implode(',', $h_temp);
+            $where .= " and id not in (".$h_temp.")";
+
+        }
+
+
+        $hotelModel = new \Admin\Model\HotelModel();
+        $areaModel  = new \Admin\Model\AreaModel();
+
+
+        /*//合作维护人
+         $per_arr = $hotelModel->distinct(true)->field('area_id')->select();
+        $per_ho_arr = $areaModel->areaIdToAareName($per_arr);
+        $this->assign('per_ho', $per_ho_arr);*/
+
+        $size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $order = I('_order','update_time');
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+
+
+
+        $name = I('name');
+        if($name){
+            $this->assign('name',$name);
+            $where .= "	AND name LIKE '%{$name}%'";
+        }
+        //机顶盒类型
+        $hbt_v = I('hbt_v');
+        if ($hbt_v) {
+            $this->assign('hbt_k',$hbt_v);
+            $where .= "	AND hotel_box_type = $hbt_v";
+        }
+        //城市
+        $area_v = I('area_v');
+        //所属城市
+        $m_city_id = I('cityid');
+        if ($m_city_id == 9999) {
+            $map['is_in_hotel'] = 1;
+            $field = 'id,region_name';
+            $area_arr = $areaModel->getWhere($field, $map, '','');
+            $nationwide = array('id'=>9999,'region_name'=>'全国');
+            array_unshift($area_arr, $nationwide);
+            if($area_v) {
+                if ($area_v == 9999) {
+
+
+                } else {
+                    $where .= "	AND area_id = $area_v";
+
+                }
+            }
+
+        } else {
+            $map['is_in_hotel'] = 1;
+            $map['id'] = array('in', $m_city_id);
+            $field = 'id,region_name';
+            $area_arr = $areaModel->getWhere($field, $map, '','');
+            $where .= "	AND area_id in ( ".$m_city_id.")";
+            if($area_v) {
+                $where .= "	AND area_id = $area_v";
+            }
+        }
+
+
+        //级别
+        $level_v = I('level_v');
+        if ($level_v) {
+            $this->assign('level_k',$level_v);
+            $where .= "	AND level = $level_v";
+        }
+        //状态
+        $state_v = I('state_v');
+        if ($state_v) {
+            $this->assign('state_k',$state_v);
+            $where .= "	AND state = $state_v";
+        }
+
+        //重点
+        $key_v = I('key_v');
+        if ($key_v) {
+            $this->assign('key_k',$key_v);
+            $where .= "	AND iskey = $key_v";
+        }
+        //合作维护人
+        $main_v = I('main_v');
+        if ($main_v) {
+            $this->assign('main_k',$main_v);
+            $where .= "	AND maintainer LIKE '%{$main_v}%'";
+        }
+
+        if($ajaxversion){
+            $start = 0;
+            $size = 1000;
+            $result = $hotelModel->getList($where,$orders,$start,$size);
+            $res_hotel = array();
+            foreach ($result['list'] as $v){
+                $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
+            }
+            $arr = array('hotel'=>$res_hotel,'arinfo'=>$area_arr);
+            echo json_encode($arr);
+            exit;
+        }
+
+    }
+
+
+    /**
+     * @机顶盒、小平台升级选择酒楼
+     */
+    public function manager_list(){
+        //加限制条件不能选已经选过的
+        //获取所有酒楼
+        $m_opser_role = new \Admin\Model\OpuserroleModel();
+        $us_hotel = array();
+        $us_hotel['state'] = 1;
+        $fields = 'hotel_info hotel_id_str';
+        $h_info =  $m_opser_role->getList($fields,$us_hotel,'','');
+        $tmp = array();
+        $where = "1=1 and a.hotel_box_type in(2,3) and a.state=1 and a.flag = 0 and b.mac_addr !='' ";
+        foreach($h_info as $vs) {
+            if( empty($vs['hotel_id_str']) ) {
+
+            } else {
+                $hid_arr = explode(',', $vs['hotel_id_str']);
+                foreach($hid_arr as $hv) {
+                    if ( array_key_exists($hv, $tmp)) {
+                        continue;
+                    } else {
+                        $tmp[$hv] = 1;
+                    }
+                }
+            }
+        }
+        if($tmp) {
+            $h_temp = array_keys($tmp);
+            $h_temp = implode(',', $h_temp);
+            $where .= " and a.id not in (".$h_temp.")";
+
+        }
+        $hotelModel = new \Admin\Model\HotelModel();
+        $areaModel  = new \Admin\Model\AreaModel();
+
+        $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
+
+
+
+
+        $name = I('name');
+        if($name){
+            $this->assign('name',$name);
+            $where .= "	AND a.name LIKE '%{$name}%'";
+        }
+        //机顶盒类型
+        $hbt_v = I('hbt_v');
+        if ($hbt_v) {
+            $this->assign('hbt_k',$hbt_v);
+            $where .= "	AND a.hotel_box_type = $hbt_v";
+        }
+        //城市
+        $area_v = I('area_v');
+        //所属城市
+        $m_city_id = I('cityid');
+        if ($m_city_id == 9999) {
+            $map['is_in_hotel'] = 1;
+            $field = 'id,region_name';
+            $area_arr = $areaModel->getWhere($field, $map, '','');
+            $nationwide = array('id'=>9999,'region_name'=>'全国');
+            array_unshift($area_arr, $nationwide);
+            if($area_v) {
+                if ($area_v == 9999) {
+
+
+                } else {
+                    $where .= "	AND a.area_id = $area_v";
+
+                }
+            }
+
+        } else {
+            $map['is_in_hotel'] = 1;
+            $map['id'] = array('in', $m_city_id);
+            $field = 'id,region_name';
+            $area_arr = $areaModel->getWhere($field, $map, '','');
+            $where .= "	AND a.area_id in ( ".$m_city_id.")";
+            if($area_v) {
+                $where .= "	AND a.area_id = $area_v";
+            }
+        }
+
+
+        //级别
+        $level_v = I('level_v');
+        if ($level_v) {
+            $this->assign('level_k',$level_v);
+            $where .= "	AND a.level = $level_v";
+        }
+        //状态
+        $state_v = I('state_v');
+        if ($state_v) {
+            $this->assign('state_k',$state_v);
+            $where .= "	AND a.state = $state_v";
+        }
+
+        //重点
+        $key_v = I('key_v');
+        if ($key_v) {
+            $this->assign('key_k',$key_v);
+            $where .= "	AND a.iskey = $key_v";
+        }
+        //合作维护人
+        $main_v = I('main_v');
+        if ($main_v) {
+            $this->assign('main_k',$main_v);
+            $where .= "	AND a.maintainer LIKE '%{$main_v}%'";
+        }
+
+        if($ajaxversion){
+            $field = 'a.id,a.name';
+            $result = $hotelModel->getListMac($field, $where,$orders='');
+            $res_hotel = array();
+            foreach ($result as $v){
+                $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
+            }
+            $arr = array('hotel'=>$res_hotel,'arinfo'=>$area_arr);
+            echo json_encode($arr);
+            exit;
+        }
+
+    }
+
+
     public function edit(){
         $id = I('get.id',0,'intval');
         
@@ -246,8 +525,17 @@ class OptionuserController extends BaseController{
         $m_opser_role = new \Admin\Model\OpuserroleModel();
         $where = array();
         $where['a.id'] = $id;
-        $fields = 'a.role_id,a.skill_info,a.is_lead_install,a.manage_city,user.id  ,user.remark';
+        $fields = 'a.role_id,a.skill_info,a.is_lead_install,a.manage_city,user.id  ,user.remark,a.hotel_info hotel_id_str';
         $info =  $m_opser_role->getInfo($fields,$where);
+        if($info['hotel_id_str']) {
+            $hotelModel = new \Admin\Model\HotelModel();
+            $map['id'] = array(in, $info['hotel_id_str']);
+            $hinfo = $hotelModel->getWhereData($map, 'id hid,name hname');
+            $this->assign('hinfo',$hinfo);
+        } else {
+            $this->assign('hinfo',array());
+        }
+
         $manage_city = $info['manage_city'];
         $manage_city_arr = explode(',', $manage_city);
         $this->assign('manage_city_arr',$manage_city_arr);

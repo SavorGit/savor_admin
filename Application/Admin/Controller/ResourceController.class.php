@@ -472,7 +472,9 @@ class ResourceController extends BaseController{
 	             $name = I('post.name','','trim');
 	             
 	             $type = I('post.type',3,'intval');
+
 	             if($type ==1){
+
 	                 if(empty($name)){
 	                     $message = '资源名称不能为空';
 	                     $this->error($message);
@@ -481,7 +483,9 @@ class ResourceController extends BaseController{
 	                 if(!empty($nass['name'])){
 	                     $message = '文件名已存在，请换一个名称';
 	                     $this->error($message);
-	                 } 
+
+	                 }
+
 	             }
 				 $minu = I('post.minu','0','intval');
 				 $seco = I('post.seco','0','intval');
@@ -496,10 +500,11 @@ class ResourceController extends BaseController{
 	         if($media_id){
 	             if($mediaModel->where('id='.$media_id)->save($save)){
 	                 $message = '更新成功!';
-	                 $url = 'resource/resourceList';
+	                 
+	                 $this->output('更新成功!', 'resource/resourceList',2);
 	             }else{
-	                 $message = '更新失败!';
-	                 $url = 'resource/resourceList';
+	                 
+	                 $this->error('更新失败!');
 	             }
 	         }
 	         $this->output($message, $url,2);
