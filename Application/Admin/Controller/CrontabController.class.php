@@ -1101,6 +1101,8 @@ class CrontabController extends Controller
     }
 
     public function generateDir() {
+        set_time_limit(0);
+        ini_set("memory_limit", "1024M");
         //获取需要执行的列表
         $pub_path     = '';
         $map          = array();
@@ -1117,6 +1119,7 @@ class CrontabController extends Controller
         $now_date = date("Y-m-d H:i:s");
         $hotelModel = new \Admin\Model\HotelModel();
         $update_config_cfg = C('UPD_STR');
+
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
                 $po_th = '';
@@ -1319,12 +1322,16 @@ class CrontabController extends Controller
             return array();
         }
 
+
         $menuid = $per_arr[0]['menuid'];
         $perid = $per_arr[0]['period'];
         $result['period'] = $perid;
         $rdata = $this->copy_j;
         if ( array_key_exists($menuid, $rdata) ) {
             $result['play_list'] = json_decode($this->copy_j[$menuid], true);
+            $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
+            $adv_arr = $this->changeadvList($adv_arr,1);
+            $result['play_list'] = array_merge($result['play_list'], $adv_arr);
         } else {
             $pro_arr = $adsModel->getproInfo($menuid);
             $pro_arr = $this->changeadvList($pro_arr,1);
@@ -1334,12 +1341,14 @@ class CrontabController extends Controller
 
             $adv_arr = $adsModel->getadvInfo($hotel_id, $menuid);
             $adv_arr = $this->changeadvList($adv_arr,1);
-
             $result['play_list'] = array_merge($pro_arr,
                 $ads_arr,$adv_arr);
-
-            $this->copy_j[$menuid] = json_encode($result['play_list']);
+            $this->copy_j[$menuid] = array_merge($pro_arr,
+                $ads_arr);
         }
+        //获取酒楼信息
+
+
         //获取酒楼信息
         $hotelModel = new \Admin\Model\HotelModel();
         $ar['sht.id'] = $hotel_id;
