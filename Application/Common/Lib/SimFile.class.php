@@ -5,6 +5,61 @@ namespace Common\Lib;
 class SimFile {
 
 
+    public function getupanFile($url, $save_dir = '', $filename = '', $type = 0) {
+        if (trim($url) == '') {
+            return false;
+        }
+        if (trim($save_dir) == '') {
+            $save_dir = '.'.DIRECTORY_SEPARATOR;
+        }
+
+        if (0 !== strrpos($save_dir, DIRECTORY_SEPARATOR)) {
+            $save_dir.= DIRECTORY_SEPARATOR;
+        }
+        //创建保存目录
+        if (!file_exists($save_dir) && !mkdir($save_dir, 0777, true)) {
+            return false;
+        }
+        //获取远程文件所采用的方法
+        if ($type) {
+            $fp2 = fopen($save_dir . $filename, 'w');
+            $ch = curl_init();
+            $timeout = 150;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FILE, $fp2);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $res = curl_exec($ch);
+            if ($res) {
+                $size = filesize($save_dir . $filename);
+                return array(
+                    'file_name' => $filename,
+                    'save_path' => $save_dir . $filename,
+                    'file_size' => $size
+                );
+            } else {
+                return false;
+            }
+        } else {
+            ob_start();
+            readfile($url);
+            $content = ob_get_contents();
+            ob_end_clean();
+        }
+
+        $size = strlen($content);
+        //文件大小
+        $fp2 = @fopen($save_dir . $filename, 'a');
+        fwrite($fp2, $content);
+        fclose($fp2);
+        unset($content, $url);
+        return array(
+            'file_name' => $filename,
+            'save_path' => $save_dir . $filename,
+            'file_size' => $size
+        );
+    }
+
     public function getFile($url, $save_dir = '', $filename = '', $type = 0) {
         if (trim($url) == '') {
             return false;
@@ -23,7 +78,7 @@ class SimFile {
         //获取远程文件所采用的方法
         if ($type) {
             $ch = curl_init();
-            $timeout = 50;
+            $timeout = 100;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);

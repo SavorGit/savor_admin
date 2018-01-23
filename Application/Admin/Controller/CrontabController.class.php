@@ -1119,7 +1119,8 @@ class CrontabController extends Controller
         $now_date = date("Y-m-d H:i:s");
         $hotelModel = new \Admin\Model\HotelModel();
         $update_config_cfg = C('UPD_STR');
-
+        $upan_apk_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udripanapk';
+        $smfileModel->create_dir($upan_apk_path);
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
 
@@ -1132,7 +1133,6 @@ class CrontabController extends Controller
                 } else {
                     $upcfg = array();
                 }
-
                 $po_th = $pub_path.$gendir;
                 $savor_path = $po_th.DIRECTORY_SEPARATOR.'savor';
                 $savor_me = $po_th.DIRECTORY_SEPARATOR.'media';
@@ -1165,31 +1165,69 @@ class CrontabController extends Controller
                    // echo '创建目录'.$savor_path.'成功'.PHP_EOL;
 
                     $hotel_id_arr = json_decode($sv['hotel_id_str'], true);
-
+                    $adsModel = new \Admin\Model\AdsModel();
+                    $menuhotelModel = new \Admin\Model\MenuHotelModel();
+                    $xuan_hotel_st = '';
+                    $start_time = microtime(true);
+                    foreach ( $hotel_id_arr as $hav) {
+                        $per_arr = $menuhotelModel->getadsPeriod($hav);
+                        if($per_arr) {
+                            //获取宣传片
+                            $menupid = $per_arr[0]['menuid'];
+                            $resa = $adsModel->getuAdvname($hav, $menupid);
+                            if($resa) {
+                                $xuan_hotel_st .= $resa[0]['hname']."\r\n";
+                            }
+                        } else {
+                            continue;
+                        }
+                    }
+                    $adv_file = $po_th.DIRECTORY_SEPARATOR.'adv.txt';
+                    $smfileModel->write_file($adv_file, $xuan_hotel_st);
+                    //echo '创建adv'.$adv_file.'成功'.PHP_EOL;
+                    $end_time = microtime(true);
+                    echo '循环执行时间为：'.($end_time-$start_time).' s';
                     //下载apk
-                  $m_version_upgrade = new \Admin\Model\UpgradeModel();
+                    $start_time = microtime(true);
+
+                    $m_version_upgrade = new \Admin\Model\UpgradeModel();
+
                     foreach ($hotel_id_arr as $hid) {
                         $field = 'sdv.oss_addr apurl ';
                         $apk_device_type = 2;
                         $apk_info = $m_version_upgrade->getLastOneByDevice($field, $apk_device_type, $hid);
 
                         if($apk_info) {
-
                             $apk_url = $this->oss_host.$apk_info['apurl'];
                             $apk_filename = $gendir.'.apk';
 
-                            $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
-
-                            if($apk_res) {
+                            $apk_res = $smfileModel->getupanFile($apk_url, $savor_path, $apk_filename, 1);
+                            // $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
+                            if($apk_res['file_size']) {
+                                //echo '创建apk'.$savor_path.'成功'.PHP_EOL;
+                                //复制名称
+                                /* $realname = $apk_res['savor_path'];
+                                 //old-new
+                                 $newname = $upan_apk_path.DIRECTORY_SEPARATOR.$apk_name;
+                                 if($smfileModel->handle_file($realname , $create_path.'/index.php','copy',true)) {
+                                     echo '复制文件成功!';
+                                 } else {
+                                 else echo '复制文件失败!';
+                                 }*/
                                 break;
-                               // echo '创建apk'.$savor_path.'成功'.PHP_EOL;
-                            }
 
+                            }
+                        } else {
+                            continue;
                         }
 
                     }
 
+                    $end_time = microtime(true);
+                    echo '循环执行时间为：'.($end_time-$start_time).' s';
 
+
+                    $start_time = microtime(true);
                     foreach ( $hotel_id_arr as $hkk=>$hv) {
                         $hotel_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                         if ( $smfileModel->create_dir($hotel_path) ) {
@@ -1279,6 +1317,9 @@ class CrontabController extends Controller
                    // var_export($zip);
                     echo '创建压缩包失败';
                 }
+                $end_time = microtime(true);
+                echo '循环执行时间为：'.($end_time-$start_time).' s';
+
 
             }
         } else {
@@ -1327,7 +1368,7 @@ class CrontabController extends Controller
         $adsModel = new \Admin\Model\AdsModel();
         //获取广告期号
         $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
-        if(empty($per_arr)){
+        if (empty($per_arr)) {
             return array();
         }
 

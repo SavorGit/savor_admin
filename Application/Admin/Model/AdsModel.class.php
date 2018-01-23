@@ -54,6 +54,27 @@ class AdsModel extends BaseModel
 	}
 
 
+	public function getuAdvname($hotelid, $menuid){
+		$field = "ads.name adname,sht.name hname";
+		$sql = "select ".$field;
+
+		$sql .= " FROM savor_ads ads
+        LEFT JOIN savor_menu_item item on ads.name like CONCAT('%',item.ads_name,'%')
+        LEFT JOIN savor_media media on media.id = ads.media_id
+        left join savor_hotel sht on ads.hotel_id = sht.id
+        where ads.type=3
+            and ads.hotel_id={$hotelid}
+            and (item.ads_id is null or item.ads_id=0)
+            and ads.state=1
+            and item.menu_id={$menuid}
+
+            and media.oss_addr is not null";
+
+		$result = $this->query($sql);
+		return $result;
+
+	}
+
 	public function getupanadvInfo($hotelid, $menuid){
 		$field = "media.id AS vid,
 				media.oss_addr AS name,
