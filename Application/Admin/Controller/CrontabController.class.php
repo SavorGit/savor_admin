@@ -1191,6 +1191,7 @@ class CrontabController extends Controller
                             continue;
                         }
                     }
+
                     foreach($rs_hotel as $arh=>$ahv) {
                         $xuan_hotel_st .= $arh."\r\n";
                         foreach($ahv as $bk=>$bv) {
@@ -1244,7 +1245,7 @@ class CrontabController extends Controller
 
 
                     $start_time = microtime(true);
-                    foreach ( $hotel_id_arr as $hkk=>$hv) {
+                    foreach ( $hotel_id_arr as $hv) {
                         $hotel_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
                         if ( $smfileModel->create_dir($hotel_path) ) {
                             //echo '创建目录'.$hotel_path.'成功'.PHP_EOL;

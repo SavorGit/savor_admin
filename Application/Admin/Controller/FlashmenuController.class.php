@@ -261,7 +261,7 @@ class FlashMenuController extends BaseController {
         $sp['hotel_id_str'] = $hotel_id_str;
         $sp['create_time'] = $now_date;
         $sp['update_time'] = $now_date;
-        $msec = $this->msectime();
+        $msec = rand(1,9);
         $sp['gendir'] = 'udriver_'.time().$msec;
         $upcfg = I('post.cfg');
         if($upcfg) {

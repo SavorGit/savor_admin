@@ -24,7 +24,7 @@ class SimFile {
         if ($type) {
             $fp2 = fopen($save_dir . $filename, 'w');
             $ch = curl_init();
-            $timeout = 150;
+            $timeout = 80;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_FILE, $fp2);
@@ -78,7 +78,7 @@ class SimFile {
         //获取远程文件所采用的方法
         if ($type) {
             $ch = curl_init();
-            $timeout = 100;
+            $timeout = 80;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
