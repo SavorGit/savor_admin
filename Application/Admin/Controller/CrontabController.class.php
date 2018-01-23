@@ -1114,13 +1114,15 @@ class CrontabController extends Controller
         $signle_Model = new \Admin\Model\SingleDriveListModel();
         $map['state'] = 0;
         $field='hotel_id_str, gendir, id, up_cfg';
-        $single_list = $signle_Model->getWhere($map, $field);
+        $order = ' id asc ';
+        $limit = 1;
+        $single_list = $signle_Model->getOrderOne($field, $map, $order, $limit);
         $smfileModel = new SimFile();
         $now_date = date("Y-m-d H:i:s");
         $hotelModel = new \Admin\Model\HotelModel();
         $update_config_cfg = C('UPD_STR');
-        $upan_apk_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udripanapk';
-        $smfileModel->create_dir($upan_apk_path);
+        /*$upan_apk_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udripanapk';
+        $smfileModel->create_dir($upan_apk_path);*/
         if ($single_list) {
             foreach ($single_list as $sk=>$sv) {
 
@@ -1204,11 +1206,11 @@ class CrontabController extends Controller
                     //echo '创建adv'.$adv_file.'成功'.PHP_EOL;
                     $end_time = microtime(true);
                     echo '循环执行时间为：'.($end_time-$start_time).' s';
+
                     //下载apk
-                    $start_time = microtime(true);
+                    //$start_time = microtime(true);
 
                     $m_version_upgrade = new \Admin\Model\UpgradeModel();
-
                     foreach ($hotel_id_arr as $hid) {
                         $field = 'sdv.oss_addr apurl ';
                         $apk_device_type = 2;
@@ -1240,8 +1242,10 @@ class CrontabController extends Controller
 
                     }
 
-                    $end_time = microtime(true);
-                    echo '循环执行时间为：'.($end_time-$start_time).' s';
+
+
+                    //$end_time = microtime(true);
+                    //echo '循环执行时间为：'.($end_time-$start_time).' s';
 
 
                     $start_time = microtime(true);
@@ -1334,8 +1338,8 @@ class CrontabController extends Controller
                    // var_export($zip);
                     echo '创建压缩包失败';
                 }
-                $end_time = microtime(true);
-                echo '循环执行时间为：'.($end_time-$start_time).' s';
+               // $end_time = microtime(true);
+                //echo '循环执行时间为：'.($end_time-$start_time).' s';
 
 
             }

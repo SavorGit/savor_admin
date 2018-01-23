@@ -72,5 +72,10 @@ class SingleDriveListModel extends BaseModel
 		return $data;
 	}
 
+	public function getOrderOne($field,$where, $order,$limit){
+		$data = $this->field($field)->where($where)->order($order)->limit($limit)->select();
+		return $data;
+	}
+
 
 }//End Class

@@ -24,11 +24,14 @@ class SimFile {
         if ($type) {
             $fp2 = fopen($save_dir . $filename, 'w');
             $ch = curl_init();
-            $timeout = 80;
+            $timeout = 480;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_FILE, $fp2);
+            //PHP脚本在成功连接服务器前等待多久
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            //PHP脚本从服务器接收缓冲完成前需要等待多长时间
+            //curl_setopt($ch, CURLOPT_TIMEOUT, 100);
             $res = curl_exec($ch);
             if ($res) {
                 $size = filesize($save_dir . $filename);
