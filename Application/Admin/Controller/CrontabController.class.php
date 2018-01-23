@@ -1272,7 +1272,7 @@ class CrontabController extends Controller
                                             $img_url = $info['logourl'];
                                             $img_filename = $info['logo_name'];
                                             $img_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
-                                            $img_res = $smfileModel->getFile($img_url, $img_path, $img_filename);
+                                            $img_res = $smfileModel->getFile($img_url, $img_path, $img_filename,1);
                                             //var_export($img_res);
                                             if($img_res) {
                                                 // echo '创建图片'.$img_path.'成功'.PHP_EOL;
