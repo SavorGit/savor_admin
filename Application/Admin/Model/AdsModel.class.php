@@ -55,7 +55,8 @@ class AdsModel extends BaseModel
 
 
 	public function getuAdvname($hotelid, $menuid){
-		$field = "ads.name adname,sht.name hname";
+		$field = "ads.name adname,sht.name hname,ads.id ads_id,media.oss_addr,
+		sht.id hotel_id";
 		$sql = "select ".$field;
 
 		$sql .= " FROM savor_ads ads

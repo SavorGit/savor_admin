@@ -1169,6 +1169,8 @@ class CrontabController extends Controller
                     $menuhotelModel = new \Admin\Model\MenuHotelModel();
                     $xuan_hotel_st = '';
                     $start_time = microtime(true);
+                    $oss_host = get_oss_host();
+                    $rs_hotel = array();
                     foreach ( $hotel_id_arr as $hav) {
                         $per_arr = $menuhotelModel->getadsPeriod($hav);
                         if($per_arr) {
@@ -1176,13 +1178,27 @@ class CrontabController extends Controller
                             $menupid = $per_arr[0]['menuid'];
                             $resa = $adsModel->getuAdvname($hav, $menupid);
                             if($resa) {
-                                $xuan_hotel_st .= $resa[0]['hname']."\r\n";
+                                //获取酒楼下宣传片
+                                foreach($resa as $ras=>$rks) {
+                                    $rs_hotel[$rks['hname']][$rks['ads_id']] = array(
+                                        'name'=>$rks['adname'],
+                                        'url'=>$oss_host.$rks['oss_addr'],
+                                        'hname'=>$rks['hname'],
+                                    );
+                                }
                             }
                         } else {
                             continue;
                         }
                     }
-                    $adv_file = $po_th.DIRECTORY_SEPARATOR.'adv.txt';
+                    foreach($rs_hotel as $arh=>$ahv) {
+                        $xuan_hotel_st .= $arh."\r\n";
+                        foreach($ahv as $bk=>$bv) {
+                            $xuan_hotel_st .= $bv['name']."\t".$bv['url']."\r\n";
+                        }
+                    }
+
+                    $adv_file = $po_th.DIRECTORY_SEPARATOR.'hotel.txt';
                     $smfileModel->write_file($adv_file, $xuan_hotel_st);
                     //echo '创建adv'.$adv_file.'成功'.PHP_EOL;
                     $end_time = microtime(true);
