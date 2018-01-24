@@ -1125,7 +1125,7 @@ class CrontabController extends Controller
         $pic_err_log = LOG_PATH.'upan_error_'.date("Y-m-d").'log';
         //获取系统默认音量值
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $whereconfig = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume') and status =1 ";
+        $whereconfig = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_switch_time')  ";
 
         $volume_arr = $m_sys_config->getList($whereconfig);
         $vol = array();
@@ -1157,10 +1157,19 @@ class CrontabController extends Controller
                         $vol['system_tv_volume'] = $vol_default['system_tv_volume'];
                     }
                     $vol['system_tv_volume'] = intval($v['config_value']);
+                }else if($v['config_key']=='system_switch_time' ){
+
+                    //电视音量
+                    if($v['status'] == 1) {
+                        if( empty($v['config_value']) ) {
+                            $vol['system_switch_time'] = $vol_default['system_switch_time'];
+                        }
+                        $vol['system_switch_time'] = intval($v['config_value']);
+                    } else {
+                        $vol['system_switch_time'] = -8;
+                    }
                 }
             }
-        } else {
-            $vol = C('CONFIG_VOLUME_VAL');
         }
 
         if ($single_list) {
@@ -1497,12 +1506,13 @@ class CrontabController extends Controller
         $room_arr =  $this->changeroomList($room_arr);
         $rp = array();
         $bk = array();
+        $vol['system_switch_time'] = -8;
         foreach ($room_arr as $rk=>$rv) {
             $bk[$rv['room_id']][] = array(
                 'box_id'    => $rv['box_id'],
                 'box_mac'   => $rv['box_mac'],
                 'box_name'   => $rv['box_name'],
-                'switch_time'   => $rv['switch_time'],
+                'switch_time'   => ($vol['system_switch_time']<0)?$rv['switch_time']:$vol['system_switch_time'],
                 'volume'   => $rv['volume'],
                 'room_id'   => $rv['room_id'],
                 'ads_volume'=> $vol['system_ad_volume'],
