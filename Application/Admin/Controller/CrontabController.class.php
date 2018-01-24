@@ -1128,7 +1128,7 @@ class CrontabController extends Controller
         $accessKeySecret = C('OSS_ACCESS_KEY');
         $endpoint = C('OSS_HOST');
         $bucket = C('OSS_BUCKET');
-        $pic_err_log = LOG_PATH.'upan_error.log';
+        $pic_err_log = LOG_PATH.'upan_error_'.date("Y-m-d").'log';
         if ($single_list) {
 
 
@@ -1234,10 +1234,14 @@ class CrontabController extends Controller
                                     $flag = 1;
                                     break;
                                 } else {
+                                    $tpic = '创建' . $afilename . '失败' . PHP_EOL;
+                                    error_log($tpic, 3, $pic_err_log);
                                     if (file_exists($afilename))
                                     {
+
                                         unlink($afilename);
                                     }
+
                                     continue;
                                 }
                             }

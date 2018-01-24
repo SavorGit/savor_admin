@@ -24,7 +24,7 @@ class SimFile {
         if ($type) {
             $fp2 = fopen($save_dir . $filename, 'w');
             $ch = curl_init();
-            $timeout = 480;
+            $timeout = 80;
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_FILE, $fp2);
