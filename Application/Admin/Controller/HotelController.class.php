@@ -756,7 +756,7 @@ smlist.menu_name';
 			}
 		}else{
 			if($bool){
-				$this->output('操作成功!', 'hotel/manager');
+				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
