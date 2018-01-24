@@ -4,6 +4,7 @@ use Common\Lib\UmengApi;
 use Think\Controller;
 use Common\Lib\SimFile;
 use \Common\Lib\SavorRedis;
+use \Common\Lib\Aliyun;
 /**
  * @desc 定时任务
  *
@@ -1123,11 +1124,18 @@ class CrontabController extends Controller
         $update_config_cfg = C('UPD_STR');
         /*$upan_apk_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udripanapk';
         $smfileModel->create_dir($upan_apk_path);*/
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = C('OSS_HOST');
+        $bucket = C('OSS_BUCKET');
+        $pic_err_log = LOG_PATH.'upan_error.log';
         if ($single_list) {
+
+
             foreach ($single_list as $sk=>$sv) {
 
                 $po_th = '';
-                $this->copy_j = array();
+                $gid = $sv['id'];
                 $gendir = $sv['gendir'];
                 $upcfg = $sv['up_cfg'];
                 if($upcfg) {
@@ -1203,39 +1211,40 @@ class CrontabController extends Controller
 
                     $adv_file = $po_th.DIRECTORY_SEPARATOR.'hotel.txt';
                     $smfileModel->write_file($adv_file, $xuan_hotel_st);
-                    //echo '创建adv'.$adv_file.'成功'.PHP_EOL;
-                    $end_time = microtime(true);
-                    echo '循环执行时间为：'.($end_time-$start_time).' s';
-
-                    //下载apk
-                    //$start_time = microtime(true);
-
                     $m_version_upgrade = new \Admin\Model\UpgradeModel();
+                    $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+                    $aliyun->setBucket($bucket);
                     foreach ($hotel_id_arr as $hid) {
-                        $field = 'sdv.oss_addr apurl ';
+                        $field = 'sdv.oss_addr apurl,sdv.md5 md5 ';
                         $apk_device_type = 2;
                         $apk_info = $m_version_upgrade->getLastOneByDevice($field, $apk_device_type, $hid);
-
                         if($apk_info) {
-                            $apk_url = $this->oss_host.$apk_info['apurl'];
+                            $flag = 0;
                             $apk_filename = $gendir.'.apk';
+                            $afilename = $savor_path .DIRECTORY_SEPARATOR. $apk_filename;
+                            for($ai=0;$ai<2;$ai++) {
+                                $aliyun->getObjectToLocalFile($apk_info['apurl'], $afilename);
+                                ob_start();
+                                readfile($afilename);
+                                $md5file= ob_get_contents();
+                                ob_end_clean();
+                                $down_md5 = md5($md5file);
 
-                            $apk_res = $smfileModel->getupanFile($apk_url, $savor_path, $apk_filename, 1);
-                            // $apk_res = $smfileModel->getFile($apk_url, $savor_path, $apk_filename, 1);
-                            if($apk_res['file_size']) {
-                                //echo '创建apk'.$savor_path.'成功'.PHP_EOL;
-                                //复制名称
-                                /* $realname = $apk_res['savor_path'];
-                                 //old-new
-                                 $newname = $upan_apk_path.DIRECTORY_SEPARATOR.$apk_name;
-                                 if($smfileModel->handle_file($realname , $create_path.'/index.php','copy',true)) {
-                                     echo '复制文件成功!';
-                                 } else {
-                                 else echo '复制文件失败!';
-                                 }*/
-                                break;
-
+                                if($down_md5 == $apk_info['md5']) {
+                                    $flag = 1;
+                                    break;
+                                } else {
+                                    if (file_exists($afilename))
+                                    {
+                                        unlink($afilename);
+                                    }
+                                    continue;
+                                }
                             }
+                            if($flag == 1) {
+                                break;
+                            }
+
                         } else {
                             continue;
                         }
@@ -1244,9 +1253,9 @@ class CrontabController extends Controller
 
 
 
-                    //$end_time = microtime(true);
-                    //echo '循环执行时间为：'.($end_time-$start_time).' s';
 
+                    $end_time = microtime(true);
+                    echo '循环执行时间为：'.($end_time-$start_time).' s';
 
                     $start_time = microtime(true);
                     foreach ( $hotel_id_arr as $hv) {
@@ -1272,13 +1281,27 @@ class CrontabController extends Controller
                                             $img_url = $info['logourl'];
                                             $img_filename = $info['logo_name'];
                                             $img_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
-                                            $img_res = $smfileModel->getFile($img_url, $img_path, $img_filename,1);
-                                            //var_export($img_res);
-                                            if($img_res) {
-                                                // echo '创建图片'.$img_path.'成功'.PHP_EOL;
-                                            } else {
-                                                echo '创建图片'.$img_path.'失败'.PHP_EOL;
+
+                                            $new_img = $img_path.DIRECTORY_SEPARATOR.$img_filename;
+                                            $oldmd5 = $info['lomd5'];
+                                            for($ai=0;$ai<2;$ai++) {
+                                                $aliyun->getObjectToLocalFile($img_url, $new_img);
+                                                $md5file = file_get_contents($new_img);
+                                                $down_md5 = md5($md5file);
+                                                if ($down_md5 == $oldmd5) {
+                                                    break;
+
+                                                } else {
+                                                    if (file_exists($new_img)) {
+                                                        $tpic = '创建' . $gid . '的图片' . $new_img . '失败' . PHP_EOL;
+                                                        error_log($tpic, 3, $pic_err_log);
+
+                                                        unlink($new_img);
+                                                    }
+                                                    continue;
+                                                }
                                             }
+
                                         }
                                         $smfileModel->write_file($play_file, $info['res']);
                                         //写入update.cfg
@@ -1307,15 +1330,8 @@ class CrontabController extends Controller
                         } else {
                             echo '创建目录'.$hotel_path.'失败'.PHP_EOL;
                         }
-                      //  $cop++;
 
                     }
-
-                    //var_export($hotel_id_arr);
-
-
-
-
 
                 } else {
                     echo '创建目录'.$savor_path.'失败'.PHP_EOL;
@@ -1488,8 +1504,10 @@ class CrontabController extends Controller
             $logo_url = '';
             $logo_name = '';
             $logo_version = '';
+            $logo_urld = '';
         } else {
             $logo_md  = $logo_arr[0]['logo_md5'];
+            $logo_urld = $logo_arr[0]['lourl'];
             $logo_url = $this->oss_host.$logo_arr[0]['lourl'];
             $logo_name = substr($logo_url,strripos($logo_url,"/")+1);
             $logo_version = $logo_arr[0]['id'];;
@@ -1509,7 +1527,8 @@ class CrontabController extends Controller
         $rp['res'] = json_encode($result);
         //$rp['menuid']= $menuid;
         $rp['jtype']= 1;
-        $rp['logourl']= $logo_url;
+        $rp['logourl']= $logo_urld;
+        $rp['lomd5']= $logo_md;
         $rp['apk_url'] = $apk_url;
         $rp['logo_name'] = $logo_name;
         return $rp;
