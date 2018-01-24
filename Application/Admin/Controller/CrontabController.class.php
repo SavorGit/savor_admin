@@ -1136,35 +1136,43 @@ class CrontabController extends Controller
                     //广告轮播音量
                     if( $v['config_value'] === '') {
                         $vol['system_ad_volume'] = $vol_default['system_ad_volume'];
+                    } else {
+                        $vol['system_ad_volume'] = intval($v['config_value']);
                     }
-                    $vol['system_ad_volume'] = intval($v['config_value']);
+
                 }else if($v['config_key']=='system_pro_screen_volume'){
                     //投屏音量
                     if( $v['config_value'] === '') {
                         $vol['system_pro_screen_volume'] = $vol_default['system_pro_screen_volume'];
+                    } else {
+                        $vol['system_pro_screen_volume'] = intval($v['config_value']);
                     }
-                    $vol['system_pro_screen_volume'] = intval($v['config_value']);
+
                 }else if($v['config_key']=='system_demand_video_volume'){
                     //点播音量
                     if( $v['config_value'] === '') {
                         $vol['system_demand_video_volume'] = $vol_default['system_demand_video_volume'];
+                    } else {
+                        $vol['system_demand_video_volume'] = intval($v['config_value']);
                     }
-                    $vol['system_demand_video_volume'] = intval($v['config_value']);
 
                 }else if($v['config_key']=='system_tv_volume'){
                     //电视音量
                     if( $v['config_value'] === '') {
                         $vol['system_tv_volume'] = $vol_default['system_tv_volume'];
+                    } else {
+                        $vol['system_tv_volume'] = intval($v['config_value']);
                     }
-                    $vol['system_tv_volume'] = intval($v['config_value']);
+
                 }else if($v['config_key']=='system_switch_time' ){
 
                     //电视音量
                     if($v['status'] == 1) {
                         if( empty($v['config_value']) ) {
                             $vol['system_switch_time'] = $vol_default['system_switch_time'];
+                        } else {
+                            $vol['system_switch_time'] = intval($v['config_value']);
                         }
-                        $vol['system_switch_time'] = intval($v['config_value']);
                     } else {
                         $vol['system_switch_time'] = -8;
                     }
@@ -1506,7 +1514,6 @@ class CrontabController extends Controller
         $room_arr =  $this->changeroomList($room_arr);
         $rp = array();
         $bk = array();
-        $vol['system_switch_time'] = -8;
         foreach ($room_arr as $rk=>$rv) {
             $bk[$rv['room_id']][] = array(
                 'box_id'    => $rv['box_id'],
