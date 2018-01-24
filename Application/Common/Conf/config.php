@@ -398,6 +398,8 @@ $config['CONFIG_VOLUME_VAL'] = array(
     'system_pro_screen_volume'=>100,
     'system_demand_video_volume'=>90,
     'system_tv_volume'=>100,
+    'system_tv_volume'=>100,
+    'system_switch_time'=>30,
 );
 return $config;
 

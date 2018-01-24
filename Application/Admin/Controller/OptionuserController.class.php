@@ -419,12 +419,7 @@ class OptionuserController extends BaseController{
                 }
             }
         }
-        if($tmp) {
-            $h_temp = array_keys($tmp);
-            $h_temp = implode(',', $h_temp);
-            $where .= " and a.id not in (".$h_temp.")";
 
-        }
         $hotelModel = new \Admin\Model\HotelModel();
         $areaModel  = new \Admin\Model\AreaModel();
 
@@ -507,7 +502,12 @@ class OptionuserController extends BaseController{
             $result = $hotelModel->getListMac($field, $where,$orders='');
             $res_hotel = array();
             foreach ($result as $v){
-                $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
+                if(array_key_exists($v['id'], $tmp)) {
+                    $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name'],'check'=>0);
+                } else {
+                    $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name'],'check'=>1);
+                }
+
             }
             $arr = array('hotel'=>$res_hotel,'arinfo'=>$area_arr);
             echo json_encode($arr);
