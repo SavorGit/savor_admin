@@ -136,6 +136,7 @@
       </label>
   		 <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
   		<select   name="role_id" style="width: 20px;display:none !important;" class="form-control bs-select class-filter positions" data-style="btn-success btn-sm" data-container="body" >
+
   			<option value="">请选择</option>
   			<php>foreach($option_user_role_arr as $key=>$v){</php>
   				<option <if condition="$info.role_id eq $key"> selected="selected" </if> value="{$key}">{$v}</option>
@@ -201,7 +202,7 @@
     </span>
     </div>
   </div>
-  
+<if condition="$info.role_id EQ 6">
   <div class="form-group" id="disjl"><!--选择酒楼-->
   	<div style="margin-left: 12px;margin-bottom: 30px;">
 		<span>目标酒楼</span>
@@ -217,6 +218,7 @@
 
 	  </div>
   </div>
+</if>
   <!-----------------酒楼--------------------->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
