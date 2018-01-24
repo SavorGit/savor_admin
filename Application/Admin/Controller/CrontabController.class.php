@@ -1281,26 +1281,27 @@ class CrontabController extends Controller
                                             $img_url = $info['logourl'];
                                             $img_filename = $info['logo_name'];
                                             $img_path = $savor_path.DIRECTORY_SEPARATOR.$hv;
+
                                             $new_img = $img_path.DIRECTORY_SEPARATOR.$img_filename;
                                             $oldmd5 = $info['lomd5'];
                                             for($ai=0;$ai<2;$ai++) {
                                                 $aliyun->getObjectToLocalFile($img_url, $new_img);
                                                 $md5file = file_get_contents($new_img);
                                                 $down_md5 = md5($md5file);
-                                                if($down_md5 == $oldmd5) {
+                                                if ($down_md5 == $oldmd5) {
                                                     break;
 
                                                 } else {
-                                                    if (file_exists($new_img))
-                                                    {
-                                                        $tpic = '创建'.$gid.'的图片'.$new_img.'失败'.PHP_EOL;
-                                                        error_log($tpic,3,$pic_err_log);
+                                                    if (file_exists($new_img)) {
+                                                        $tpic = '创建' . $gid . '的图片' . $new_img . '失败' . PHP_EOL;
+                                                        error_log($tpic, 3, $pic_err_log);
 
                                                         unlink($new_img);
                                                     }
                                                     continue;
                                                 }
                                             }
+
                                         }
                                         $smfileModel->write_file($play_file, $info['res']);
                                         //写入update.cfg
