@@ -393,4 +393,12 @@ $config['UPD_STR'] = array(
         'cname'=>'更新客户端APK',
     ),
 );
+$config['CONFIG_VOLUME_VAL'] = array(
+    'system_ad_volume'=>60,
+    'system_pro_screen_volume'=>100,
+    'system_demand_video_volume'=>90,
+    'system_tv_volume'=>100,
+);
 return $config;
+
+

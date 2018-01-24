@@ -1129,27 +1129,38 @@ class CrontabController extends Controller
 
         $volume_arr = $m_sys_config->getList($whereconfig);
         $vol = array();
+        $vol_default = C('CONFIG_VOLUME_VAL');
         if($volume_arr) {
             foreach($volume_arr as $k=>$v) {
                 if($v['config_key']=='system_ad_volume'){
                     //广告轮播音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_ad_volume'] = $vol_default['system_ad_volume'];
+                    }
                     $vol['system_ad_volume'] = intval($v['config_value']);
                 }else if($v['config_key']=='system_pro_screen_volume'){
                     //投屏音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_pro_screen_volume'] = $vol_default['system_pro_screen_volume'];
+                    }
                     $vol['system_pro_screen_volume'] = intval($v['config_value']);
                 }else if($v['config_key']=='system_demand_video_volume'){
                     //点播音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_demand_video_volume'] = $vol_default['system_demand_video_volume'];
+                    }
                     $vol['system_demand_video_volume'] = intval($v['config_value']);
+
                 }else if($v['config_key']=='system_tv_volume'){
                     //电视音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_tv_volume'] = $vol_default['system_tv_volume'];
+                    }
                     $vol['system_tv_volume'] = intval($v['config_value']);
                 }
             }
         } else {
-            $vol['system_ad_volume'] = 0;
-            $vol['system_pro_screen_volume'] = 0;
-            $vol['system_demand_video_volume'] = 0;
-            $vol['system_tv_volume'] = 0;
+            $vol = C('CONFIG_VOLUME_VAL');
         }
 
         if ($single_list) {
