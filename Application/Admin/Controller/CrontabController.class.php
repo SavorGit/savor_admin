@@ -1105,11 +1105,7 @@ class CrontabController extends Controller
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         //获取需要执行的列表
-        $pub_path     = '';
         $map          = array();
-        $savor_path   = '';
-        $gendir       = '';
-        $single_list  = array();
         $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udriverpath';
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
@@ -1122,15 +1118,12 @@ class CrontabController extends Controller
         $now_date = date("Y-m-d H:i:s");
         $hotelModel = new \Admin\Model\HotelModel();
         $update_config_cfg = C('UPD_STR');
-        /*$upan_apk_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udripanapk';
-        $smfileModel->create_dir($upan_apk_path);*/
         $accessKeyId = C('OSS_ACCESS_ID');
         $accessKeySecret = C('OSS_ACCESS_KEY');
         $endpoint = C('OSS_HOST');
         $bucket = C('OSS_BUCKET');
         $pic_err_log = LOG_PATH.'upan_error_'.date("Y-m-d").'log';
         //获取系统默认音量值
-
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $whereconfig = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume')";
 
@@ -1152,8 +1145,6 @@ class CrontabController extends Controller
             }
         }
         if ($single_list) {
-
-
             foreach ($single_list as $sk=>$sv) {
 
                 $po_th = '';
