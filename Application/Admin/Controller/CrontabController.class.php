@@ -1129,6 +1129,28 @@ class CrontabController extends Controller
         $endpoint = C('OSS_HOST');
         $bucket = C('OSS_BUCKET');
         $pic_err_log = LOG_PATH.'upan_error_'.date("Y-m-d").'log';
+        //获取系统默认音量值
+
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $whereconfig = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume')";
+
+        $volume_arr = $m_sys_config->getList($whereconfig);
+        $vol = array();
+        foreach($volume_arr as $k=>$v) {
+            if($v['config_key']=='system_ad_volume'){
+                //广告轮播音量
+                $vol['system_ad_volume'] = intval($v['config_value']);
+            }else if($v['config_key']=='system_pro_screen_volume'){
+                //投屏音量
+                $vol['system_pro_screen_volume'] = intval($v['config_value']);
+            }else if($v['config_key']=='system_demand_video_volume'){
+                //点播音量
+                $vol['system_demand_video_volume'] = intval($v['config_value']);
+            }else if($v['config_key']=='system_tv_volume'){
+                //电视音量
+                $vol['system_tv_volume'] = intval($v['config_value']);
+            }
+        }
         if ($single_list) {
 
 
@@ -1276,7 +1298,7 @@ class CrontabController extends Controller
                                     // echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
                                     //获取酒楼对应节目单
 
-                                    $info = $this->getHotelMedia($hv, $gendir);
+                                    $info = $this->getHotelMedia($hv, $gendir, $vol);
 
                                     if ( !empty($info) ) {
 
@@ -1402,7 +1424,7 @@ class CrontabController extends Controller
     }
 
 
-    public function getHotelMedia($hotel_id, $gendir) {
+    public function getHotelMedia($hotel_id, $gendir, $vol) {
         //jtype 0已存在json文件,1需要添加
         $result = array();
         $menuhotelModel = new \Admin\Model\MenuHotelModel();
@@ -1473,6 +1495,10 @@ class CrontabController extends Controller
                 'switch_time'   => $rv['switch_time'],
                 'volume'   => $rv['volume'],
                 'room_id'   => $rv['room_id'],
+                'ads_volume'=> $vol['system_ad_volume'],
+                'project_volume'=> $vol['system_pro_screen_volume'],
+                'demand_volume'=> $vol['system_demand_video_volume'],
+                'tv_volume'=> $vol['system_tv_volume'],
             );
             $rp[$rv['room_id']] = array(
                 'room_id'   => $rv['room_id'],
