@@ -90,6 +90,7 @@ $('.positions').change(function(){
 	obj.ajaxversion = 1;
 	obj.hbt_v = hbt_v;
 	obj.cityid = citys;
+	obj.del_hotel_id_str = $('#idss').val();
 	$.ajax({
 		type:"post",
 		url:honame+'/optionuser/manager_list',
@@ -238,7 +239,27 @@ $('#checkfan').click(function(){
 		}
 	})
 	//删除
-	$('body').on('click','.del',function(){
+	var arrs = [];
+	$('#disjl').on('click','.del',function(){
+		if($(this).attr('type')==1){
+			var aid = $(this).parent().prop('id');
+			arrs.push(aid);
+			var strs = arrs.join(',')
+			console.log(strs)
+			$('#idss').val(strs)
+			/*$.ajax({
+			type:"post",
+			url:honame+'/optionuser/manager_list',
+			data:{
+				del_hotel_id_str:aid
+			},
+			async: true,
+			success:function(call){
+				console.log(call)
+			}
+			})*/
+		}
+		
 		var _thisid = $(this).parent().prop('id')
 		$('.jlwid').each(function(){
 			var ifthis = $(this).find('input').prop('id');
@@ -253,6 +274,7 @@ $('#checkfan').click(function(){
 		})
 		var hotelstr =id.join(",");
 		$("#hotelids").val(hotelstr);
+		
 	})
 	
 //保存

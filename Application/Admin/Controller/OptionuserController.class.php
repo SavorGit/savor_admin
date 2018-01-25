@@ -420,6 +420,18 @@ class OptionuserController extends BaseController{
             }
         }
 
+        $del_h_id = I('del_hotel_id_str');
+        $del_h_id_arr = explode(',', $del_h_id);
+        if($del_h_id_arr) {
+            foreach($tmp as $tk=>$tv) {
+                if(in_array($tk, $del_h_id_arr)) {
+                    unset($tmp[$tk]);
+                }
+            }
+        }
+
+
+
         $hotelModel = new \Admin\Model\HotelModel();
         $areaModel  = new \Admin\Model\AreaModel();
 
