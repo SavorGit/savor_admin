@@ -1105,11 +1105,7 @@ class CrontabController extends Controller
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         //获取需要执行的列表
-        $pub_path     = '';
         $map          = array();
-        $savor_path   = '';
-        $gendir       = '';
-        $single_list  = array();
         $pubic_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udriverpath';
         $pub_path = $pubic_path.DIRECTORY_SEPARATOR;
         $signle_Model = new \Admin\Model\SingleDriveListModel();
@@ -1122,16 +1118,69 @@ class CrontabController extends Controller
         $now_date = date("Y-m-d H:i:s");
         $hotelModel = new \Admin\Model\HotelModel();
         $update_config_cfg = C('UPD_STR');
-        /*$upan_apk_path = dirname(APP_PATH).DIRECTORY_SEPARATOR.'Public/udripanapk';
-        $smfileModel->create_dir($upan_apk_path);*/
         $accessKeyId = C('OSS_ACCESS_ID');
         $accessKeySecret = C('OSS_ACCESS_KEY');
         $endpoint = C('OSS_HOST');
         $bucket = C('OSS_BUCKET');
-        $pic_err_log = LOG_PATH.'upan_error.log';
+        $pic_err_log = LOG_PATH.'upan_error_'.date("Y-m-d").'log';
+        //获取系统默认音量值
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $whereconfig = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_switch_time')  ";
+
+        $volume_arr = $m_sys_config->getList($whereconfig);
+        $vol = array();
+        $vol_default = C('CONFIG_VOLUME_VAL');
+        if($volume_arr) {
+            foreach($volume_arr as $k=>$v) {
+                if($v['config_key']=='system_ad_volume'){
+                    //广告轮播音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_ad_volume'] = $vol_default['system_ad_volume'];
+                    } else {
+                        $vol['system_ad_volume'] = intval($v['config_value']);
+                    }
+
+                }else if($v['config_key']=='system_pro_screen_volume'){
+                    //投屏音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_pro_screen_volume'] = $vol_default['system_pro_screen_volume'];
+                    } else {
+                        $vol['system_pro_screen_volume'] = intval($v['config_value']);
+                    }
+
+                }else if($v['config_key']=='system_demand_video_volume'){
+                    //点播音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_demand_video_volume'] = $vol_default['system_demand_video_volume'];
+                    } else {
+                        $vol['system_demand_video_volume'] = intval($v['config_value']);
+                    }
+
+                }else if($v['config_key']=='system_tv_volume'){
+                    //电视音量
+                    if( $v['config_value'] === '') {
+                        $vol['system_tv_volume'] = $vol_default['system_tv_volume'];
+                    } else {
+                        $vol['system_tv_volume'] = intval($v['config_value']);
+                    }
+
+                }else if($v['config_key']=='system_switch_time' ){
+
+                    //电视音量
+                    if($v['status'] == 1) {
+                        if( empty($v['config_value']) ) {
+                            $vol['system_switch_time'] = $vol_default['system_switch_time'];
+                        } else {
+                            $vol['system_switch_time'] = intval($v['config_value']);
+                        }
+                    } else {
+                        $vol['system_switch_time'] = -8;
+                    }
+                }
+            }
+        }
+
         if ($single_list) {
-
-
             foreach ($single_list as $sk=>$sv) {
 
                 $po_th = '';
@@ -1234,10 +1283,14 @@ class CrontabController extends Controller
                                     $flag = 1;
                                     break;
                                 } else {
+                                    $tpic = '创建' . $afilename . '失败' . PHP_EOL;
+                                    error_log($tpic, 3, $pic_err_log);
                                     if (file_exists($afilename))
                                     {
+
                                         unlink($afilename);
                                     }
+
                                     continue;
                                 }
                             }
@@ -1272,7 +1325,7 @@ class CrontabController extends Controller
                                     // echo '创建JSON文件'.$play_file.'成功'.PHP_EOL;
                                     //获取酒楼对应节目单
 
-                                    $info = $this->getHotelMedia($hv, $gendir);
+                                    $info = $this->getHotelMedia($hv, $gendir, $vol);
 
                                     if ( !empty($info) ) {
 
@@ -1398,7 +1451,7 @@ class CrontabController extends Controller
     }
 
 
-    public function getHotelMedia($hotel_id, $gendir) {
+    public function getHotelMedia($hotel_id, $gendir, $vol) {
         //jtype 0已存在json文件,1需要添加
         $result = array();
         $menuhotelModel = new \Admin\Model\MenuHotelModel();
@@ -1466,9 +1519,13 @@ class CrontabController extends Controller
                 'box_id'    => $rv['box_id'],
                 'box_mac'   => $rv['box_mac'],
                 'box_name'   => $rv['box_name'],
-                'switch_time'   => $rv['switch_time'],
+                'switch_time'   => ($vol['system_switch_time']<0)?$rv['switch_time']:$vol['system_switch_time'],
                 'volume'   => $rv['volume'],
                 'room_id'   => $rv['room_id'],
+                'ads_volume'=> $vol['system_ad_volume'],
+                'project_volume'=> $vol['system_pro_screen_volume'],
+                'demand_volume'=> $vol['system_demand_video_volume'],
+                'tv_volume'=> $vol['system_tv_volume'],
             );
             $rp[$rv['room_id']] = array(
                 'room_id'   => $rv['room_id'],

@@ -5,6 +5,13 @@ $('.positions').change(function(){
 		}else{
 			$('.kuai').hide();
 		}
+		if($(this).val()==6){
+			$('#disjl').show()
+		}else{
+			$("#hotelids").val('');
+			$('#jia').html('')
+			$('#disjl').hide()
+		}
 		if($(this).val()==1 || $(this).val()==3){
 			$('#all_city_list').hide();
 			$('#city_list').show();
@@ -83,6 +90,7 @@ $('.positions').change(function(){
 	obj.ajaxversion = 1;
 	obj.hbt_v = hbt_v;
 	obj.cityid = citys;
+	obj.del_hotel_id_str = $('#idss').val();
 	$.ajax({
 		type:"post",
 		url:honame+'/optionuser/manager_list',
@@ -104,7 +112,11 @@ $('.positions').change(function(){
 			for(var i=0;i<cdata.length;i++){
 				var texts = cdata[i].hotel_name;
 				var tid = cdata[i].hotel_id;
-				boite.innerHTML+='<div class="jlwid"><input type="checkbox"id="'+tid+'" class="checks" /><span>'+texts+'</span></div>'
+				if(cdata[i].check==1){
+					boite.innerHTML+='<div class="jlwid"><input type="checkbox"id="'+tid+'" class="checks" /><span>'+texts+'</span></div>'
+				}else if(cdata[i].check==0){
+					boite.innerHTML+='<div class="jlwid"><span>'+texts+'</span></div>'
+				}
 			}
 		}
 	});
@@ -120,13 +132,13 @@ $('.positions').change(function(){
 /*------反选----------*/
 $('#checkfan').click(function(){
 	 $(".checks").each(function(){     
-   
+
      if($(this).prop("checked"))     
-   {     
-    $(this).removeAttr("checked");     
+   {
+    $(this).removeAttr("checked");
          
-   }     
-   else    
+   }
+   else
    {     
     $(this).prop("checked",true);
          
@@ -171,7 +183,12 @@ $('#checkfan').click(function(){
 				for(var i=0;i<cdata.length;i++){
 						var texts = cdata[i].hotel_name;
 						var tid = cdata[i].hotel_id;
-						boite.innerHTML+='<div class="jlwid"><input type="checkbox"id="'+tid+'" class="checks" /><span>'+texts+'</span></div>'
+						if(cdata[i].check==1){
+							boite.innerHTML+='<div class="jlwid"><input type="checkbox"id="'+tid+'" class="checks" /><span>'+texts+'</span></div>'
+						}else if(cdata[i].check==0){
+							boite.innerHTML+='<div class="jlwid"><span>'+texts+'</span></div>'
+						}
+						//boite.innerHTML+='<div class="jlwid"><input type="checkbox"id="'+tid+'" class="checks" /><span>'+texts+'</span></div>'
 				}
 				if($('#jia').html()!=''){
 					$('.jiulou').each(function(){
@@ -222,7 +239,27 @@ $('#checkfan').click(function(){
 		}
 	})
 	//删除
-	$('body').on('click','.del',function(){
+	var arrs = [];
+	$('#disjl').on('click','.del',function(){
+		if($(this).attr('type')==1){
+			var aid = $(this).parent().prop('id');
+			arrs.push(aid);
+			var strs = arrs.join(',')
+			console.log(strs)
+			$('#idss').val(strs)
+			/*$.ajax({
+			type:"post",
+			url:honame+'/optionuser/manager_list',
+			data:{
+				del_hotel_id_str:aid
+			},
+			async: true,
+			success:function(call){
+				console.log(call)
+			}
+			})*/
+		}
+		
 		var _thisid = $(this).parent().prop('id')
 		$('.jlwid').each(function(){
 			var ifthis = $(this).find('input').prop('id');
@@ -237,6 +274,7 @@ $('#checkfan').click(function(){
 		})
 		var hotelstr =id.join(",");
 		$("#hotelids").val(hotelstr);
+		
 	})
 	
 //保存
