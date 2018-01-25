@@ -1552,6 +1552,7 @@ class ExcelController extends Controller
             array('install_date', '安装日期'),
             array('boxstate', '机顶盒状态'),
             array('mac', '机顶盒mac地址'),
+            array('bname', '机顶盒名称'),
             array('rname', '包间名称'),
             array('rtype', '包间类型'),
             array('tbrd', '品牌'),

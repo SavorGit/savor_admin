@@ -24,7 +24,7 @@ class BoxModel extends BaseModel{
 		$t_str = substr($t_str,0,-1);
 		$Model = new \Think\Model();
 	 $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,tv.state tsta,box.state boxstate,
-	         box.mac mac, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz, 
+	         box.mac mac,box.name bname, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz,
 	         tv.tv_source, hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor, 
 	         hotel.mobile, hotel.tel, hotel.iskey, hotel.maintainer, hotel.tech_maintainer 
 	         from savor_tv as tv 
