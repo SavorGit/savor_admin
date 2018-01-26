@@ -157,6 +157,7 @@ $config['hotel_box_type'] = [
 $config['heart_hotel_box_type'] = array(
     '2'=>'二代网络版',
     '3'=>'二代5G版',
+    '6'=>'三代网络版',
 );
 $config['source_type'] = array(
     '1'=>'官网',

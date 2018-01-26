@@ -158,9 +158,16 @@ class AdvdeliveryController extends BaseController {
 
 
     public function getAllBox($hotel_id) {
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
         $where = '1=1 and sht.id='.$hotel_id.' and sht.state=1 and
         sht.flag=0
-        and sht.hotel_box_type in (2,3) and room.state=1
+        and sht.hotel_box_type in ('.$hotel_box_type_str.') and room.state=1
         and room.flag=0 and box.flag=0 and box.state=1';
         $hotelModel = new \Admin\Model\HotelModel();
         $field = 'box.id bid,box.name bname';
@@ -268,8 +275,14 @@ class AdvdeliveryController extends BaseController {
             
             $where .= "	AND sht.area_id in ($pcity)";
         }
-
-        $where .= " and sht.hotel_box_type in (2,3) ";
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        $where .= " and sht.hotel_box_type in ({$hotel_box_type_str}) ";
         /*//获取节目单对应最大id还没写且在预约时间内<今天
         $where_pr = ' UNIX_TIMESTAMP(`pub_time`) < '.$now_time;
         $fieldpr="hotel_id";
