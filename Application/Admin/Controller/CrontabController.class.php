@@ -1514,12 +1514,13 @@ class CrontabController extends Controller
         $room_arr =  $this->changeroomList($room_arr);
         $rp = array();
         $bk = array();
+        $vol_default = C('CONFIG_VOLUME_VAL');
         foreach ($room_arr as $rk=>$rv) {
             $bk[$rv['room_id']][] = array(
                 'box_id'    => $rv['box_id'],
                 'box_mac'   => $rv['box_mac'],
                 'box_name'   => $rv['box_name'],
-                'switch_time'   => ($vol['system_switch_time']<0)?$rv['switch_time']:$vol['system_switch_time'],
+                'switch_time'   => ($vol['system_switch_time']<0)?(empty($rv['switch_time'])?$vol_default['system_switch_time']:$rv['switch_time']):$vol['system_switch_time'],
                 'volume'   => $rv['volume'],
                 'room_id'   => $rv['room_id'],
                 'ads_volume'=> $vol['system_ad_volume'],
