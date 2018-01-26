@@ -1357,22 +1357,24 @@ class CrontabController extends Controller
 
                                         }
                                         $smfileModel->write_file($play_file, $info['res']);
-                                        //写入update.cfg
-                                        $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
-                                        $upd_str = '';
 
-                                        foreach($update_config_cfg as $cfgk=>$cfgv) {
-
-                                            if( in_array($cfgk, $upcfg) ) {
-                                                $upd_str .= $cfgv['ename']."\n";
-                                            } else {
-                                                $upd_str .= '#'.$cfgv['ename']."\n";
-                                            }
-                                        }
-
-                                        $smfileModel->write_file($update_path, $upd_str);
 
                                     }
+
+                                    //写入update.cfg
+                                    $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
+                                    $upd_str = '';
+
+                                    foreach($update_config_cfg as $cfgk=>$cfgv) {
+
+                                        if( in_array($cfgk, $upcfg) ) {
+                                            $upd_str .= $cfgv['ename']."\n";
+                                        } else {
+                                            $upd_str .= '#'.$cfgv['ename']."\n";
+                                        }
+                                    }
+
+                                    $smfileModel->write_file($update_path, $upd_str);
 
                                 } else {
                                     echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
