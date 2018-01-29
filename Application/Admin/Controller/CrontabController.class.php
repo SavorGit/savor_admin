@@ -1102,6 +1102,10 @@ class CrontabController extends Controller
     }
 
     public function generateDir() {
+
+
+
+
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         //获取需要执行的列表
@@ -1460,42 +1464,48 @@ class CrontabController extends Controller
         $adsModel = new \Admin\Model\AdsModel();
         //获取广告期号
         $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
+
+
+
         if (empty($per_arr)) {
-            return array();
+            $emp_play_str = array();
+            $result['play_list'] = $emp_play_str;
+        }else{
+            $menuid = $per_arr[0]['menuid'];
+            $perid = $per_arr[0]['period'];
+            $result['period'] = $perid;
+
+            $redis = SavorRedis::getInstance();
+            $redis->select(13);
+            $procache_key = 'udriverpan_pro_'.$menuid;
+            $adscache_key = 'udriverpan_ads_'.$menuid;
+            $pro_arr = $redis->get($procache_key);
+            if($pro_arr) {
+                $pro_arr = json_decode($pro_arr, true);
+                $pro_arr = $this->changeadvList($pro_arr,1);
+            } else {
+                $pro_arr = $adsModel->getproInfo($menuid);
+                $redis->set($procache_key , json_encode($pro_arr), 120);
+                $pro_arr = $this->changeadvList($pro_arr,1);
+
+            }
+            $ads_arr = $redis->get($adscache_key);
+            if($ads_arr) {
+                $ads_arr = json_decode($ads_arr, true);
+                $ads_arr = $this->changeadvList($ads_arr,2);
+            } else {
+                $ads_arr = $adsModel->getadsInfo($menuid);
+                $redis->set($adscache_key , json_encode($ads_arr), 120);
+                $ads_arr = $this->changeadvList($ads_arr,2);
+            }
+
+            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+            $adv_arr = $this->changupaneadvList($adv_arr,1);
+            $result['play_list'] = array_merge($pro_arr,
+                $ads_arr,$adv_arr);
         }
 
-        $menuid = $per_arr[0]['menuid'];
-        $perid = $per_arr[0]['period'];
-        $result['period'] = $perid;
 
-        $redis = SavorRedis::getInstance();
-        $redis->select(13);
-        $procache_key = 'udriverpan_pro_'.$menuid;
-        $adscache_key = 'udriverpan_ads_'.$menuid;
-        $pro_arr = $redis->get($procache_key);
-        if($pro_arr) {
-            $pro_arr = json_decode($pro_arr, true);
-            $pro_arr = $this->changeadvList($pro_arr,1);
-        } else {
-            $pro_arr = $adsModel->getproInfo($menuid);
-            $redis->set($procache_key , json_encode($pro_arr), 120);
-            $pro_arr = $this->changeadvList($pro_arr,1);
-
-        }
-        $ads_arr = $redis->get($adscache_key);
-        if($ads_arr) {
-            $ads_arr = json_decode($ads_arr, true);
-            $ads_arr = $this->changeadvList($ads_arr,2);
-        } else {
-            $ads_arr = $adsModel->getadsInfo($menuid);
-            $redis->set($adscache_key , json_encode($ads_arr), 120);
-            $ads_arr = $this->changeadvList($ads_arr,2);
-        }
-
-        $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
-        $adv_arr = $this->changupaneadvList($adv_arr,1);
-        $result['play_list'] = array_merge($pro_arr,
-            $ads_arr,$adv_arr);
         //获取酒楼信息
         $hotelModel = new \Admin\Model\HotelModel();
         $ar['sht.id'] = $hotel_id;
