@@ -541,4 +541,18 @@ class BaseController extends Controller {
             }
         } 
     }
+    /**
+     * @desc 获取网络版酒楼类型ID字符串 例如 2,3,6
+     */
+    public function getNetHotelTypeStr(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        return $hotel_box_type_str;
+    }
 }

@@ -294,13 +294,24 @@ class ExcelController extends Controller
             if(empty($ads_info)){
                 $tmp_box_tv = array();
             }else{
+                
+                $hotel_box_type_arr = C('heart_hotel_box_type');
+                $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+                $space = '';
+                $hotel_box_type_str = '';
+                foreach($hotel_box_type_arr as $key=>$v){
+                    $hotel_box_type_str .= $space .$v;
+                    $space = ',';
+                }
+                
+                
                 $ads_media_id = $ads_info['media_id'];
                 $mhotelModel = new \Admin\Model\MenuHotelModel();
                 $hotelModel = new \Admin\Model\HotelModel();
                 $field = "distinct(`id`) hotel_id";
                 $order = 'id asc';
                 $where .= " and name not like '%永峰%' ";
-                $where .= " and hotel_box_type in (2,3) ";
+                $where .= " and hotel_box_type in ($hotel_box_type_str) ";
                 $hotel_id_arr = $hotelModel->getWhereorderData($where,  $field, $order);
                 //根据hotelid得出box
                 $where = '1=1 and box.state = 1 and box.flag = 0 ';
@@ -2028,11 +2039,20 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $info,$filename);
     }
     public function excelHotelBox(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
         $sql ="select hotel.id as hotel_id,box.id box_id,area.region_name, hotel.name,hotel.addr,box.mac from savor_box box
                left join savor_room room on room.id=box.room_id
                left join  savor_hotel hotel on hotel.id=room.hotel_id
                left join savor_area_info area on area.id=hotel.area_id
-               where hotel.state and hotel.flag =0 and box.state=1 and box.flag=0 and hotel.hotel_box_type in(2,3) and hotel.id !=7 and hotel.id!=53 order by hotel.id asc";
+               where hotel.state and hotel.flag =0 and box.state=1 and box.flag=0 and hotel.hotel_box_type in($hotel_box_type_str) and hotel.id !=7 and hotel.id!=53 order by hotel.id asc";
         
         $info = M()->query($sql);
         $tmp = array();
@@ -2190,11 +2210,20 @@ class ExcelController extends Controller
      * @desc 获取运维端机顶盒为异常状态的数据
      */
     public function reportErroBoxInfo(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
         $m_hotel = new \Admin\Model\HotelModel();
         $now = time();
         $start_time = strtotime('-72 hours');
         $where = '';
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) ";
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) ";
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,a.name hotel_name,a.addr');
         //print_r($hotel_list);exit;
         $m_box = new \Admin\Model\BoxModel();

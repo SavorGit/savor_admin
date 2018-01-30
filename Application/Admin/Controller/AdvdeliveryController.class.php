@@ -158,13 +158,7 @@ class AdvdeliveryController extends BaseController {
 
 
     public function getAllBox($hotel_id) {
-        $hotel_box_type_arr = C('heart_hotel_box_type');
-        $space = '';
-        $hotel_box_type_str = '';
-        foreach($hotel_box_type_arr as $key=>$v){
-            $hotel_box_type_str .= $space .$v;
-            $space = ',';
-        }
+        $hotel_box_type_str = $this->getNetHotelTypeStr();
         $where = '1=1 and sht.id='.$hotel_id.' and sht.state=1 and
         sht.flag=0
         and sht.hotel_box_type in ('.$hotel_box_type_str.') and room.state=1
@@ -276,6 +270,7 @@ class AdvdeliveryController extends BaseController {
             $where .= "	AND sht.area_id in ($pcity)";
         }
         $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
         $space = '';
         $hotel_box_type_str = '';
         foreach($hotel_box_type_arr as $key=>$v){
@@ -451,12 +446,11 @@ class AdvdeliveryController extends BaseController {
             }
             $this->assign('to_state', $tou_state);
         } else {
-            $where .=" AND ( ( pads.end_date >= '$now_date' AND sbox.box_id > 0) or (pads.end_date >= '$now_date' AND pads.type=2) ) ";
+            $where .=" AND (( pads.end_date >= '$now_date' AND sbox.box_id > 0) or (pads.end_date >= '$now_date' AND pads.type=2))";
         }
         $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
-
 
         array_walk($result['list'], function(&$v, $k)use($dap){
             $now_date = strtotime( $dap['now']);

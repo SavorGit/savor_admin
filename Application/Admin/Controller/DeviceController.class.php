@@ -156,7 +156,7 @@ class DeviceController extends BaseController{
 		$vinfo['state'] = 2;
 		$vinfo['name'] = $temp['name'];
 		$vinfo['switch_time'] = 30;
-		$vinfo['volum'] = 50;
+		$vinfo['volum'] = 60;
 		$this->assign('vinfo', $vinfo);
 		return $this->display('addBox');
 	}

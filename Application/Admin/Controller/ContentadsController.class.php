@@ -398,13 +398,16 @@ class ContentadsController extends BaseController{
 				if(empty($ads_info)){
 					$result = $this->emptyData($size);
 				}else{
+				    $hotel_box_type_str =  $this->getNetHotelTypeStr();
+				    
+				    
 					//判断是否在节目单中发布过
 					$ads_media_id = $ads_info['media_id'];
 					$hotelModel = new \Admin\Model\HotelModel();
 					$field = "distinct(`id`) hotel_id";
 					$order = 'id asc';
 					$where .= " and name not like '%永峰%' ";
-					$where .= " and hotel_box_type in (2,3) ";
+					$where .= " and hotel_box_type in ($hotel_box_type_str) ";
 					$hotel_id_arr = $hotelModel->getWhereorderData($where,  $field, $order);
 						if($hotel_id_arr){
 							//根据hotelid得出box
