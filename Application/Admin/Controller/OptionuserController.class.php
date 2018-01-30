@@ -391,6 +391,18 @@ class OptionuserController extends BaseController{
 
     }
 
+    public function getNetBoxType(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        return $hotel_box_type_str;
+    }
+
 
     /**
      * @机顶盒、小平台升级选择酒楼
@@ -404,7 +416,8 @@ class OptionuserController extends BaseController{
         $fields = 'hotel_info hotel_id_str';
         $h_info =  $m_opser_role->getList($fields,$us_hotel,'','');
         $tmp = array();
-        $where = "1=1 and a.hotel_box_type in(2,3) and a.state=1 and a.flag = 0 and b.mac_addr !='' ";
+        $net_hotel_type = $this->getNetBoxType();
+        $where = "1=1 and a.hotel_box_type in ($net_hotel_type and a.state=1 and a.flag = 0 and b.mac_addr !='' ";
         foreach($h_info as $vs) {
             if( empty($vs['hotel_id_str']) ) {
 
