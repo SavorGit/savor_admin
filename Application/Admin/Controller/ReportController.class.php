@@ -154,6 +154,7 @@ class ReportController extends BaseController{
 		$ind = $start;
 		$m_hotel = new \Admin\Model\HotelModel();
 		$m_box   = new \Admin\Model\BoxModel();
+        $box_state = C('HOTEL_STATE');
 		foreach ($result['list'] as $key=> &$val) {
 
 
@@ -176,10 +177,22 @@ class ReportController extends BaseController{
 			    
 			    $hotel_ext_info = $m_hotel->getHotelInfoByMac($val['box_mac']);
 			    $val['tag'] = $hotel_ext_info['tag'];
+                $val['bstate'] = '';
+                $val['bflag'] = '';
 			}else if($val['type']==2){
-			    
-			    $temp = $m_box->getInfo('tag'," mac='".$val['box_mac']."'",'');
+			    if($val['box_id'] == 832) {
+                    $temp = $m_box->getInfo('tag,state,flag'," mac='".$val['box_mac']."'",'');
+
+                }
+			    $temp = $m_box->getInfo('tag,state,flag'," mac='".$val['box_mac']."'",'');
 			    $val['tag'] = $temp[0]['tag'];
+                $val['bstate'] = $box_state[$temp[0]['state']];
+                $val['bflag'] = $temp[0]['flag'];
+                if($val['bflag'] == 0) {
+                    $val['bflag'] = '正常';
+                } else {
+                    $val['bflag'] = '删除';
+                }
 			}
 			foreach (C('DEVICE_TYPE') as  $key=>$kv){
 				if($val['type'] == $key){
