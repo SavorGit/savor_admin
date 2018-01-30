@@ -15,7 +15,29 @@ class BoxModel extends BaseModel{
     protected $tableName  ='box';
 
 
+	public function getBoxTvInfo($field,$where,$start,$size){
+		//savor_tv
+		$sql ="select $field from savor_box AS b LEFT JOIN
+				savor_tv AS tv ON b.id=tv.box_id
+	           left join savor_room as r on r.id=b.room_id
+	           left join savor_hotel as h on h.id=r.hotel_id
+	           where ".$where.' limit '.$start.','.$size;
 
+		$countsql ="select count('id') as num from savor_box
+ 				AS b LEFT JOIN 	savor_tv AS tv ON b.id=tv.box_id
+	           left join savor_room as r on r.id=b.room_id
+	           left join savor_hotel as h on h.id=r.hotel_id
+	           where ".$where;
+
+
+		$result = $this->query($sql);
+		$counts = $this->query($countsql);
+		$count = $counts[0]['num'];
+		$objPage = new Page($count,$size);
+		$show = $objPage->admin_page();
+		$data = array('list'=>$result,'page'=>$show);
+		return $data;
+	}
 
 
 
