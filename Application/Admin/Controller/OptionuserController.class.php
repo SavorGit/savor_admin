@@ -396,6 +396,7 @@ class OptionuserController extends BaseController{
      * @机顶盒、小平台升级选择酒楼
      */
     public function manager_list(){
+        $hotel_box_type_str = $this->getNetHotelTypeStr();
         //加限制条件不能选已经选过的
         //获取所有酒楼
         $m_opser_role = new \Admin\Model\OpuserroleModel();
@@ -404,7 +405,7 @@ class OptionuserController extends BaseController{
         $fields = 'hotel_info hotel_id_str';
         $h_info =  $m_opser_role->getList($fields,$us_hotel,'','');
         $tmp = array();
-        $where = "1=1 and a.hotel_box_type in(2,3) and a.state=1 and a.flag = 0 and b.mac_addr !='' ";
+        $where = "1=1 and a.hotel_box_type in($hotel_box_type_str) and a.state=1 and a.flag = 0 and b.mac_addr !='' ";
         foreach($h_info as $vs) {
             if( empty($vs['hotel_id_str']) ) {
 

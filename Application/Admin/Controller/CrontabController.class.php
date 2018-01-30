@@ -20,10 +20,19 @@ class CrontabController extends Controller
     }
 
     public function insCurrentDetailRecopt(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
         //获取所有酒楼
         $m_hotel = new \Admin\Model\HotelModel();
         //虚拟小平台也拿到
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !=''";
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !=''";
 
         $max_hour = 720;
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id，b.mac_addr');
@@ -163,12 +172,21 @@ class CrontabController extends Controller
     }
 
     public function reportNew(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
         //酒楼总数
         $m_hotel = new \Admin\Model\HotelModel();
         $where = '';
         /* $where['state'] = 1;
         $where['hotel_box_type'] = array('in','2,3'); */
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !='' and b.mac_addr !='000000000000'";
         $hotel_all_num = $m_hotel->getHotelCountNums($where);
 
         //正常酒楼 、异常酒楼
@@ -181,7 +199,7 @@ class CrontabController extends Controller
         /* $where['state'] = 1;
         $where['flag'] = 0;
         $where['hotel_box_type'] = array('in','2,3'); */
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !='' and b.mac_addr !='000000000000'";
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
 
         $normal_hotel_num = 0;
@@ -385,12 +403,21 @@ class CrontabController extends Controller
     }
 
     public function report(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
         //酒楼总数
         $m_hotel = new \Admin\Model\HotelModel();
         $where = '';
         /* $where['state'] = 1;
         $where['hotel_box_type'] = array('in','2,3'); */
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !='' and b.mac_addr !='000000000000'";
         $hotel_all_num = $m_hotel->getHotelCountNums($where);
     
         //正常酒楼 、异常酒楼
@@ -403,7 +430,7 @@ class CrontabController extends Controller
         /* $where['state'] = 1;
         $where['flag'] = 0;
         $where['hotel_box_type'] = array('in','2,3'); */
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in(2,3) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !='' and b.mac_addr !='000000000000'";
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
     
         $normal_hotel_num = 0;
@@ -784,9 +811,19 @@ class CrontabController extends Controller
 
 
     public function getAllBox($hotel_id) {
+        
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
         $where = ' ( 1=1 and sht.id='.$hotel_id.' and
         sht.flag=0
-        and sht.hotel_box_type in (2,3) and room.flag=0 and box.flag=0)';
+        and sht.hotel_box_type in ('.$hotel_box_type_str.') and room.flag=0 and box.flag=0)';
         $hotelModel = new \Admin\Model\HotelModel();
         $field = ' box.id bid,box.name bname,box.state bstate,room.id
         rid,room.name rname,room.state rstate,sht.id hid,sht.name
