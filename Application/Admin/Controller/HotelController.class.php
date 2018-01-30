@@ -474,13 +474,19 @@ smlist.menu_name';
 		$vinfo['tv_num'] = $nums['tv_num'];
 		//获取批量信息
 		$where = " h.id = ".$id;
-		$list = $tvModel->isTvInfo(' r.id as rid,b.id as bid,
+		$boxModel = new \Admin\Model\BoxModel();
+		$list = $boxModel->getBoxTvInfo(' r.id as rid,b.id as bid,
 		 tv.id as tid,h.name as hotel_name,r.name as room_name,r.type as rtp,b.name as bna,b.mac as bmac,b.switch_time as bstime,b.volum as bvm,tv.tv_brand as tbr,tv.tv_size as tsize,tv_source as tsource,tv.state as tstate  ', $where,$start,$size);
+		/*$list = $tvModel->isTvInfo(' r.id as rid,b.id as bid,
+		 tv.id as tid,h.name as hotel_name,r.name as room_name,r.type as rtp,b.name as bna,b.mac as bmac,b.switch_time as bstime,b.volum as bvm,tv.tv_brand as tbr,tv.tv_size as tsize,tv_source as tsource,tv.state as tstate  ', $where,$start,$size);*/
+
 		$isHaveTv = $list['list'];
 		$page = $list['page'];
 		if(!empty($isHaveTv)){
 			$isRealTv = $tvModel->changeTv($isHaveTv);
 		}
+		//继续获取机顶盒不为空电视为空的
+
 		$ind = $start;
 		foreach ($isRealTv as &$val) {
 			$val['indnum'] = ++$ind;

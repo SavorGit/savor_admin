@@ -56,16 +56,25 @@ class TvModel extends BaseModel{
 					$result[$key]['rtp']  = $rvalue;
 				}
 			}
-			foreach ($tv_stet as $tvkey=>$tvvalue){
-				if($value['tstate'] == $tvkey) {
-					$result[$key]['tstate']  = $tvvalue;
+			if(is_NULL($value['tstate'])) {
+				$result[$key]['tstate']  = '无';
+				$result[$key]['tsource']  = '无';
+				$result[$key]['tbr']  = '无';
+				$result[$key]['tsize']  = '无';
+			} else {
+				foreach ($tv_stet as $tvkey=>$tvvalue){
+					if($value['tstate'] == $tvkey) {
+						$result[$key]['tstate']  = $tvvalue;
+					}
+				}
+				foreach ($tv_arr as $tkey=>$tvalue){
+					if($value['tsource'] == $tkey) {
+						$result[$key]['tsource']  = $tvalue;
+					}
 				}
 			}
-			foreach ($tv_arr as $tkey=>$tvalue){
-				if($value['tsource'] == $tkey) {
-					$result[$key]['tsource']  = $tvalue;
-				}
-			}
+
+
 		}
 		/*
 		$filter       = [];
@@ -181,6 +190,8 @@ class TvModel extends BaseModel{
 
 
 		$result = $this->query($sql);
+		print_r($this->getLastSql());
+		die;
 		$counts = $this->query($countsql);
 		$count = $counts[0]['num'];
 		$objPage = new Page($count,$size);

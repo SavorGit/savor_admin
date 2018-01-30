@@ -75,12 +75,16 @@ class SysconfigController extends BaseController {
         } */
  
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
+        $t_val = $switch_time_info['config_value'];
         if(empty($switch_time_info)){
             $map['config_key'] = 'system_switch_time';
             $map['config_value'] = $system_switch_time;
             $rts = $m_sys_config->add($map);
         }else {
             $map['config_value'] = $system_switch_time;
+            if($t_val == $system_switch_time) {
+                $this->output('操作成功','sysconfig/configData');
+            }
             $rts = $m_sys_config->editData($map, 'system_switch_time',2);
         }
         

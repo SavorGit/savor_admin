@@ -1139,6 +1139,10 @@ class CrontabController extends Controller
     }
 
     public function generateDir() {
+
+
+
+
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         //获取需要执行的列表
@@ -1394,22 +1398,24 @@ class CrontabController extends Controller
 
                                         }
                                         $smfileModel->write_file($play_file, $info['res']);
-                                        //写入update.cfg
-                                        $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
-                                        $upd_str = '';
 
-                                        foreach($update_config_cfg as $cfgk=>$cfgv) {
-
-                                            if( in_array($cfgk, $upcfg) ) {
-                                                $upd_str .= $cfgv['ename']."\n";
-                                            } else {
-                                                $upd_str .= '#'.$cfgv['ename']."\n";
-                                            }
-                                        }
-
-                                        $smfileModel->write_file($update_path, $upd_str);
 
                                     }
+
+                                    //写入update.cfg
+                                    $update_path = $hotel_path.DIRECTORY_SEPARATOR.'update.cfg';
+                                    $upd_str = '';
+
+                                    foreach($update_config_cfg as $cfgk=>$cfgv) {
+
+                                        if( in_array($cfgk, $upcfg) ) {
+                                            $upd_str .= $cfgv['ename']."\n";
+                                        } else {
+                                            $upd_str .= '#'.$cfgv['ename']."\n";
+                                        }
+                                    }
+
+                                    $smfileModel->write_file($update_path, $upd_str);
 
                                 } else {
                                     echo '创建JSON文件'.$play_file.'失败'.PHP_EOL;
@@ -1495,42 +1501,48 @@ class CrontabController extends Controller
         $adsModel = new \Admin\Model\AdsModel();
         //获取广告期号
         $per_arr = $menuhotelModel->getadsPeriod($hotel_id);
+
+
+
         if (empty($per_arr)) {
-            return array();
+            $emp_play_str = array();
+            $result['play_list'] = $emp_play_str;
+        }else{
+            $menuid = $per_arr[0]['menuid'];
+            $perid = $per_arr[0]['period'];
+            $result['period'] = $perid;
+
+            $redis = SavorRedis::getInstance();
+            $redis->select(13);
+            $procache_key = 'udriverpan_pro_'.$menuid;
+            $adscache_key = 'udriverpan_ads_'.$menuid;
+            $pro_arr = $redis->get($procache_key);
+            if($pro_arr) {
+                $pro_arr = json_decode($pro_arr, true);
+                $pro_arr = $this->changeadvList($pro_arr,1);
+            } else {
+                $pro_arr = $adsModel->getproInfo($menuid);
+                $redis->set($procache_key , json_encode($pro_arr), 120);
+                $pro_arr = $this->changeadvList($pro_arr,1);
+
+            }
+            $ads_arr = $redis->get($adscache_key);
+            if($ads_arr) {
+                $ads_arr = json_decode($ads_arr, true);
+                $ads_arr = $this->changeadvList($ads_arr,2);
+            } else {
+                $ads_arr = $adsModel->getadsInfo($menuid);
+                $redis->set($adscache_key , json_encode($ads_arr), 120);
+                $ads_arr = $this->changeadvList($ads_arr,2);
+            }
+
+            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+            $adv_arr = $this->changupaneadvList($adv_arr,1);
+            $result['play_list'] = array_merge($pro_arr,
+                $ads_arr,$adv_arr);
         }
 
-        $menuid = $per_arr[0]['menuid'];
-        $perid = $per_arr[0]['period'];
-        $result['period'] = $perid;
 
-        $redis = SavorRedis::getInstance();
-        $redis->select(13);
-        $procache_key = 'udriverpan_pro_'.$menuid;
-        $adscache_key = 'udriverpan_ads_'.$menuid;
-        $pro_arr = $redis->get($procache_key);
-        if($pro_arr) {
-            $pro_arr = json_decode($pro_arr, true);
-            $pro_arr = $this->changeadvList($pro_arr,1);
-        } else {
-            $pro_arr = $adsModel->getproInfo($menuid);
-            $redis->set($procache_key , json_encode($pro_arr), 120);
-            $pro_arr = $this->changeadvList($pro_arr,1);
-
-        }
-        $ads_arr = $redis->get($adscache_key);
-        if($ads_arr) {
-            $ads_arr = json_decode($ads_arr, true);
-            $ads_arr = $this->changeadvList($ads_arr,2);
-        } else {
-            $ads_arr = $adsModel->getadsInfo($menuid);
-            $redis->set($adscache_key , json_encode($ads_arr), 120);
-            $ads_arr = $this->changeadvList($ads_arr,2);
-        }
-
-        $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
-        $adv_arr = $this->changupaneadvList($adv_arr,1);
-        $result['play_list'] = array_merge($pro_arr,
-            $ads_arr,$adv_arr);
         //获取酒楼信息
         $hotelModel = new \Admin\Model\HotelModel();
         $ar['sht.id'] = $hotel_id;
@@ -1557,7 +1569,7 @@ class CrontabController extends Controller
                 'box_id'    => $rv['box_id'],
                 'box_mac'   => $rv['box_mac'],
                 'box_name'   => $rv['box_name'],
-                'switch_time'   => ($vol['system_switch_time']<0)?(empty($rv['switch_time'])?$vol_default['system_switch_time']:$rv['switch_time']):$vol['system_switch_time'],
+                'switch_time'   => ($vol['system_switch_time']<0)?(($rv['switch_time']==='')?$vol_default['system_switch_time']:$rv['switch_time']):$vol['system_switch_time'],
                 'volume'   => $rv['volume'],
                 'room_id'   => $rv['room_id'],
                 'ads_volume'=> $vol['system_ad_volume'],
