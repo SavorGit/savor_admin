@@ -2341,6 +2341,8 @@ class ExcelController extends Controller
         $where['a.task_area'] = 9;
         $where['a.task_type'] = 4;
         $where['a.flag']      =0;
+        $where['a.create_time'] = array( array('gt','2018-01-28 00:00:00'),array('lt','2018-01-30 23:59:59'));
+
         $fields = "a.id, a.task_area, a.task_emerge, a.task_type,b.name hotel_name,a.hotel_address,
                    a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state";
         $list = $m_option_task->alias('a')
