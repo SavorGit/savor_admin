@@ -1217,3 +1217,29 @@ CREATE TABLE `savor_pub_rtbads` (
 alter table `cloud`.`savor_dinner_label`
    add `default_tag`  tinyint(2) default '0' NOT NULL comment '1是默认标签0是非默认标签'
 
+增加说明：运维端角色添加选择酒楼字段
+修改时间：2018.2.1
+修改人：白玉涛
+ALTER TABLE `savor_opuser_role` ADD COLUMN `hotel_info` text NOT NULL COMMENT '选择酒楼';
+
+
+
+增加说明：添加酒楼异常详情排序表
+修改时间：2018.2.1
+修改人：白玉涛
+CREATE TABLE `savor_hotel_unusual_report` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hotel_id` int(11) NOT NULL DEFAULT '0',
+  `box_lost_hour` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼机顶盒失联总时长',
+  `not_normal_box_num` int(11) NOT NULL DEFAULT '0' COMMENT '异常机顶盒数量',
+  `box_num` int(11) NOT NULL DEFAULT '0' COMMENT '机顶盒总数非删除',
+  `not_box_percent` varchar(10) NOT NULL DEFAULT '0' COMMENT '异常机顶盒百分比',
+  `small_plat_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '小平台异常状态0：异常 1：正常2虚拟小平台',
+  `small_plat_report_time` varchar(20) NOT NULL DEFAULT '' COMMENT '小平台最后上报时间',
+  `pla_lost_hour` int(11) NOT NULL DEFAULT '0' COMMENT '小平台失联时长',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+
+
