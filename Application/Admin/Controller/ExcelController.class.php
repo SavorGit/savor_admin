@@ -2336,20 +2336,57 @@ class ExcelController extends Controller
         $phpWrite->save('./aa.csv');
     }
     public function exportShtask(){
+        //2018-01-28 00:00:00
+        //2018-01-30 23:59:59
+        //小明，小风
         $m_option_task = new \Admin\Model\OptiontaskModel();
         $where = array();
-        $where['a.task_area'] = 9;
+        $area = I('get.area');
+        $ctime = urldecode(I('get.ctime'));
+        $etime = urldecode(I('get.etime'));
+        $uerid = I('get.userid');
+        $username = urldecode(I('get.username'));
+
+        if($ctime && $etime) {
+            $where['a.create_time'] = array( array('gt',$ctime,),array('lt',$etime));
+        } else {
+            if($ctime) {
+                $where['a.create_time'] = array('gt', $ctime);
+            }
+            if($etime) {
+                $where['a.create_time'] = array('lt', $etime);
+            }
+        }
+
+        if($area) {
+            $where['a.task_area'] = $area;
+        }
         $where['a.task_type'] = 4;
         $where['a.flag']      =0;
-        $where['a.create_time'] = array( array('gt','2018-01-28 00:00:00'),array('lt','2018-01-30 23:59:59'));
+
+        if($username) {
+            $user_ar = explode(',', $username);
+            $arr_uv = array();
+            foreach($user_ar as $uv) {
+                $arr_uv[] = array('eq', $uv);
+            }
+            $arr_uv[] = 'or';
+            $where['sy.username'] =   $arr_uv;
+
+        }
+
+
 
         $fields = "a.id, a.task_area, a.task_emerge, a.task_type,b.name hotel_name,a.hotel_address,
                    a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state";
         $list = $m_option_task->alias('a')
                               ->join('savor_hotel b on a.hotel_id= b.id','left')
+            ->join('savor_sysuser sy on a.publish_user_id = sy.id')
                               ->field($fields)->where($where)->select();
         $model = D();
-        
+        print_r($m_option_task->getLastSql());
+        var_export($list);
+        die;
         foreach($list as $key=>$val){
             $repair_str = '';
             $space = '';
