@@ -1193,7 +1193,7 @@ ALTER TABLE `savor_heart_log` ADD COLUMN `pro_period` VARCHAR(50) NOT NULL DEFAU
                               ADD COLUMN `adv_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '当前宣传片期号',
 			      ADD COLUMN `pro_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载节目期号',
 			      ADD COLUMN `ads_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载广告期号';
-
+执行结果:已执行
 
 
 CREATE TABLE `savor_pub_rtbads` (
@@ -1216,12 +1216,28 @@ CREATE TABLE `savor_pub_rtbads` (
 修改人：白玉涛
 alter table `cloud`.`savor_dinner_label`
    add `default_tag`  tinyint(2) default '0' NOT NULL comment '1是默认标签0是非默认标签'
+执行结果:已执行
+
+增加说明：增加推送日志
+修改时间：2017.2.1
+修改人：张英涛  
+CREATE TABLE savor_push_log(
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+	`probe` VARCHAR(20) NOT NULL DEFAULT '' COMMENT 'wifi探针',
+	 `hotel_id` INT(11) NOT NULL DEFAULT 0 COMMENT '酒楼id',
+	 `room_id` INT(11) NOT NULL DEFAULT 0 COMMENT '包间id',
+	`box_id` INT(11) NOT NULL DEFAULT 0 COMMENT '机顶盒id',
+	`push_info` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '推送数据',
+	`push_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '推送时间',
+	`push_type` SMALLINT(3) NOT NULL DEFAULT 0 COMMENT '推送类型1:rtb广告',
+	PRIMARY KEY (`id`)
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 
 增加说明：运维端角色添加选择酒楼字段
 修改时间：2018.2.1
 修改人：白玉涛
 ALTER TABLE `savor_opuser_role` ADD COLUMN `hotel_info` text NOT NULL COMMENT '选择酒楼';
-
+执行结果:已执行
 
 
 增加说明：添加酒楼异常详情排序表
@@ -1241,5 +1257,6 @@ CREATE TABLE `savor_hotel_unusual_report` (
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+执行结果:已执行
 
 
