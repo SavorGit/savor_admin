@@ -32,10 +32,12 @@ class CrontabController extends Controller
         //获取所有酒楼
         $m_hotel = new \Admin\Model\HotelModel();
         //虚拟小平台也拿到
-        $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !=''";
+        //$where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !=''";
+        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !=''";
 
         $max_hour = 720;
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,b.mac_addr');
+
 
         //$hotel_list = array_slice($hotel_list,0, 5);
 
