@@ -2361,7 +2361,9 @@ class ExcelController extends Controller
         if($area) {
             $where['a.task_area'] = $area;
         }
-        $where['a.task_type'] = 4;
+        
+        $where['a.state'] = array('in','1,2,3,4');
+        //$where['a.task_type'] = 4;
         $where['a.flag']      =0;
 
         if($username) {
@@ -2382,11 +2384,8 @@ class ExcelController extends Controller
         $list = $m_option_task->alias('a')
                               ->join('savor_hotel b on a.hotel_id= b.id','left')
             ->join('savor_sysuser sy on a.publish_user_id = sy.id')
-                              ->field($fields)->where($where)->select();
+                              ->field($fields)->where($where)->order('a.hotel_id desc ')->select();
         $model = D();
-        print_r($m_option_task->getLastSql());
-        var_export($list);
-        die;
         foreach($list as $key=>$val){
             $repair_str = '';
             $space = '';
@@ -2400,7 +2399,21 @@ class ExcelController extends Controller
                     $space = ',';
                 }
             }
-            $list[$key]['task_area'] = '上海';
+            switch ($val['task_area']){
+                case '1':
+                    $task_area= '北京';
+                    break;
+                case '9':
+                    $task_area = '上海';
+                    break;
+                case '236':
+                    $task_area = '广州';
+                    break;
+                case '246':
+                    $task_area = '深圳';
+                    break;
+            }
+            $list[$key]['task_area'] = $task_area;
             switch ($val['task_emerge']){
                 case '2':
                     $list[$key]['task_emerge'] = '紧急';
