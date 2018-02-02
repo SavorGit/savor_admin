@@ -92,7 +92,7 @@
     	overflow: auto;
 	}
 	.jlwid{
-	    width: 48%;
+	    width: 49%;
 	    height: 31px;
 	    float: left;
 	    line-height: 31px;
@@ -105,7 +105,6 @@
   	<input type="hidden" name="id" value="{$id}" />
   	<input name="hotel_idstr" id="hotelids" type="hidden">
   	<input type="hidden" id="honame" value="{$host_name}">
-  	<input type="hidden" id="idss" value="" />
   	<h1>账号设置</h1>
   	<div class="xian"></div>
   	<div class="inp">
@@ -213,8 +212,8 @@
 	  <div style="margin-bottom: 30px;" id="jia">
 
 			  <volist name="hinfo" id="row">
-				  <a class="jiulou" names="{$row['hname']}" id="{$row['hid']}">
-					  {$row['hname']}<span class="del" type="1">X</span>&nbsp;&nbsp;</a>
+				  <a class="jiulou" id="{$row['hid']}">
+					  {$row['hname']}<span class="del">X</span>&nbsp;&nbsp;</a>
 			  </volist>
 
 	  </div>
@@ -222,7 +221,7 @@
 </if>
   <!-----------------酒楼--------------------->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button style="width:20px;height:20px;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
