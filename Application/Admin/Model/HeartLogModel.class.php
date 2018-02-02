@@ -66,7 +66,8 @@ class HeartLogModel extends BaseModel
 			shlog.room_name,shlog.hotel_id,shlog.hotel_ip,shlog.small_ip,
 			shlog.ads_period,shlog.demand_period,shlog.apk_version,
 			shlog.war_version,shlog.logo_period,shlog.hotel_name,
-			sht.maintainer,sht.hotel_box_type'
+			sht.maintainer,sht.hotel_box_type,shlog.pro_period,shlog.adv_period,
+			shlog.pro_download_period,shlog.ads_download_period'
 	              )
 			->where($where)
 			->order($order)
