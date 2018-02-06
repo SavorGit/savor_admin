@@ -206,6 +206,7 @@ class OptionuserController extends BaseController{
                 if($get_rid == 1) {
                     $map = array();
                     $map['a.id'] = $id;
+                    $map['sht.flag'] = 0;
                     $field = 'count(*) num';
                     $op_info = $m_opser_role->getRelaOpHotel($field, $map);
                    if($op_info) {

@@ -591,7 +591,7 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
                     $sql = "update savor_hotel_ext set maintainer_id=$rel_uid where hotel_id=$hid";
                     echo $sql;
                     echo "<br/><br/>";
-                    //$hext->query($sql);
+                    $hext->query($sql);
                     $hotel_info[$hk]['st'] = '关联成功';
                 } else {
                     $hotel_info[$hk]['st'] = '关联失败';
