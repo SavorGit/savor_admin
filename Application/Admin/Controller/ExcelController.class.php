@@ -62,6 +62,8 @@ class ExcelController extends Controller
             $tmpname = '失联机顶盒分布';
         }else if($filename == 'adver_warn_report') {
             $tmpname = '广告播放异常预警';
+        }else if($filename == 'noheartlog'){
+            $tmpname = '无心跳版位';
         }
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
@@ -2551,5 +2553,79 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'adver_warn_report';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
-
+    /**
+     * @desc 导出没有心跳的机顶盒版位信息
+     */
+    public function exportNoHeart(){
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_box = new \Admin\Model\BoxModel();
+        $where = array();
+        //$where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !='' and b.mac_addr !='000000000000'";
+        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in(2,3,6) ";
+    
+        //if($city_id) $where .=" and a.area_id=".$city_id;
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
+    
+    
+        $normal_box_num = 0;
+        $not_normal_box_num = 0;
+        //print_r($hotel_list);exit;
+        $start_time = date('Y-m-d H:i:s',strtotime('-72 hours'));
+        $m_black_list = new \Admin\Model\BlackListModel();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
+        $data =  array();
+        foreach($hotel_list as $key=>$v){
+            $flag = 0;
+            $where = '';
+            $where .=" 1 and room.hotel_id=".$v['id'].' and a.state=1 and a.flag =0 and room.flag=0 and room.state=1';
+            $box_list = $m_box->getListInfo( 'a.id, a.mac',$where);
+            foreach($box_list as $ks=>$vs){
+                $where = '';
+                $where .=" 1 and hotel_id=".$v['id']." and type=2 and box_mac='".$vs['mac']."'";
+                //$where .="  and last_heart_time>='".$start_time."'";
+    
+                $b_counts = $m_black_list->countNums(array('box_id'=>$vs['id']));
+                $rets  = $m_heart_log->getOnlineHotel($where,'box_id');
+                if(empty($rets)){
+                    if(empty($b_counts)){
+                        $sql =" select hotel.name hotelname,room.name roomname, box.name boxname,box.id
+                                from savor_box box
+                                left join savor_room room on box.room_id=room.id
+                                left join savor_hotel hotel on room.hotel_id=hotel.id
+                                where box.id=".$vs['id'];
+                        $rt= D()->query($sql);
+                        
+                        $sql = "select id from savor_heart_all_log where type=2 and box_id=".$vs['id'];
+                        $hrt = D()->query($sql);
+                        if(empty($hrt)){
+                            $tmp['hotel_name'] = $rt[0]['hotelname'];
+                            $tmp['room_name']  = $rt[0]['roomname'];
+                            $tmp['box_name']   = $rt[0]['boxname'];
+                            $tmp['box_id']     = $rt[0]['id'];
+                            $data[] = $tmp;
+                        }
+                        
+    
+                    }
+                }else {
+                     
+                }
+            }
+        }
+        
+        $xlsCell = array(
+            
+            array('box_id','机顶盒ID'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_name','机顶盒名称'),
+        
+           
+        
+        );
+        $xlsName = '无心跳的版位';
+        $filename = 'noheartlog';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
 }
