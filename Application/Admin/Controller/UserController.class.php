@@ -66,6 +66,10 @@ class UserController extends BaseController {
             if($count > 0){
                 $this->error('用户登录名称已经存在');
             }
+            $count = $user->getUserCount(array('remark'=>trim($remark)));
+            if($count > 0){
+                $this->error('用户昵称已经存在');
+            }
             //判断添加
             if($remark && $username && $userpwd) {
                 $data['id']   = $userId;
@@ -118,6 +122,14 @@ class UserController extends BaseController {
             $remark  = I('remark');
             $newuserpwd = I('newuserpwd');
             $status  = I('status', 1, 'int');
+            //判断昆成
+            $user = new \Admin\Model\UserModel();
+            $map['remark'] = trim($remark);
+            $map['id'] = array('neq', $userId);
+            $count = $user->getUserCount($map);
+            if($count > 0){
+                $this->error('用户昵称已经存在');
+            }
             if($userId && $remark) {
                 $data['id']   = $userId;
                 $data['remark']   = $remark;
