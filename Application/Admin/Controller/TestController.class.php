@@ -555,4 +555,61 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
             //$rtbtagModel->add($data);
         }
     }
+
+    public function testmaintner(){
+        //获取所有酒楼
+        $hotelModel = new \Admin\Model\HotelModel();
+        $map['a.flag'] = 0;
+        $field = 'a.id, a.name, a.maintainer ma, b.maintainer_id maid';
+        $hotel_info = $hotelModel->getHotelLists($map,'','',$field);
+        $m_opuser_role = new \Admin\Model\OpuserroleModel();
+        $fields = 'a.user_id uid,user.remark ';
+        $map = array();
+        $map['state']   = 1;
+        $map['role_id']   = 1;
+        $user_info = $m_opuser_role->getAllRole($fields,$map,'' );
+        $u_arr = array();
+        foreach($user_info as $uv) {
+            $u_arr[$uv['uid']] = trim($uv['remark']);
+        }
+        var_export($u_arr);
+        $hext = new \Admin\Model\HotelExtModel();
+        foreach($hotel_info as $hk=>$hv) {
+            $hid = $hv['id'];
+            $main_t = $hv['ma'];
+            $main_id = $hv['maid'];
+            if($main_id) {
+                $hotel_info[$hk]['st'] = '关联成功';
+            } else {
+                $rel_uid = array_search(trim($main_t), $u_arr);
+                if($rel_uid) {
+                    //更新数据库
+                    $map = array();
+                    $save = array();
+                    $map['hotel_id'] = $hid;
+                    $save['maintainer_id'] = $rel_uid;
+                    $sql = "update savor_hotel_ext set maintainer_id=$rel_uid where hotel_id=$hid";
+                    echo $sql;
+                    echo "<br/><br/>";
+                    //$hext->query($sql);
+                    $hotel_info[$hk]['st'] = '关联成功';
+                } else {
+                    $hotel_info[$hk]['st'] = '关联失败';
+                }
+            }
+
+        }
+
+        $xlsCell = array(
+            array('id', '酒楼ID'),
+            array('name', '酒楼名称'),
+            array('ma', '合作维护人'),
+            array('st','关联状态'),
+        );
+        ob_clean();
+        $xlsName = '酒楼关联合作维护人';
+        $filename = 'exphotelmaintain';
+        $excel = new \Admin\Controller\ExcelController();
+        $excel->exportExcel($xlsName, $xlsCell, $hotel_info,$filename);
+    }
 }

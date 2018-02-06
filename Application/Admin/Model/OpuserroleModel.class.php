@@ -41,4 +41,29 @@ class OpuserroleModel extends BaseModel
         $ret = $this->where($where)->save($data);
         return $ret;
     }
+
+    public function getAllRole($fields,$where,$order,$limit){
+        $data = $this->alias('a')
+            ->join('savor_sysuser as user on user.id=a.user_id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit()
+            ->select();
+        return $data;
+    }
+
+
+    public function getRelaOpHotel($fields,$where,$order,$limit){
+        $data = $this->alias('a')
+            ->join('savor_hotel_ext as sext on sext.maintainer_id=a.user_id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit()
+            ->count();
+
+        return $data;
+    }
+
 }

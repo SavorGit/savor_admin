@@ -62,6 +62,8 @@ class ExcelController extends Controller
             $tmpname = '失联机顶盒分布';
         }else if($filename == 'adver_warn_report') {
             $tmpname = '广告播放异常预警';
+        }else if($filename == 'exphotelmaintain') {
+            $tmpname = '酒楼关联合作维护人';
         }
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
