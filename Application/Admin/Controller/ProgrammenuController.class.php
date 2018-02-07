@@ -2,7 +2,7 @@
 namespace Admin\Controller;
     // use Common\Lib\SavorRedis;
 /**
- * @desc ¹¦ÄÜ²âÊÔÀà
+ * @desc åŠŸèƒ½æµ‹è¯•ç±»
  *
  */
 use Admin\Controller\BaseController;
@@ -53,15 +53,15 @@ class ProgrammenuController extends BaseController {
         $old['menu_name'] = $info['menu_name'];
 
         $menulistModel = new \Admin\Model\MenuListModel();
-        //ÏÈÌí¼Ó¾É½ÚÄ¿µ¥
-        //ÅĞ¶Ï½ÚÄ¿µ¥Ãû³ÆÊÇ·ñ´æÔÚ
+        //å…ˆæ·»åŠ æ—§èŠ‚ç›®å•
+        //åˆ¤æ–­èŠ‚ç›®å•åç§°æ˜¯å¦å­˜åœ¨
         $count_arr  = $menulistModel->getWhere($old, '*');
         if(!empty($count_arr)) {
             $info['menu_name'] = $info['menu_name'].'_'.time();
         }
         $res = $menulistModel->add($info);
         if($res) {
-            //»ñÈ¡½ÚÄ¿µ¥ĞÅÏ¢
+            //è·å–èŠ‚ç›®å•ä¿¡æ¯
             $new_menu_id = $menulistModel->getLastInsID();
             $promItemModel = new \Admin\Model\ProgramMenuItemModel();
             $order = I('_order','a.id');
@@ -83,13 +83,13 @@ class ProgrammenuController extends BaseController {
             $menuItemModel = new \Admin\Model\MenuItemModel();
             $ret = $menuItemModel->addAll($menu_item_arr);
             if($ret) {
-                $this->output('¸´ÖÆµ½ÀÏ½ÚÄ¿µ¥³É¹¦', 'menu/getlist');
+                $this->output('å¤åˆ¶åˆ°è€èŠ‚ç›®å•æˆåŠŸ', 'menu/getlist');
             } else {
-                $this->error('¸´ÖÆÊ§°ÜÁËÇëÖØĞÂ¸´ÖÆ');
+                $this->error('å¤åˆ¶å¤±è´¥äº†è¯·é‡æ–°å¤åˆ¶');
             }
 
         } else {
-            $this->error('¸´ÖÆÊ§°ÜÇëÖØĞÂ¸´ÖÆ');
+            $this->error('å¤åˆ¶å¤±è´¥è¯·é‡æ–°å¤åˆ¶');
         }
 
     }
@@ -99,7 +99,7 @@ class ProgrammenuController extends BaseController {
     public function hotelconfirm(){
         $menu_id = I('menuid');
         $menu_name = I('menuname');
-        //2ÊÇĞÂÔö
+        //2æ˜¯æ–°å¢
         $hoty = I('hopu');
         $ids = I('ids');
         $data = array();
@@ -125,13 +125,13 @@ class ProgrammenuController extends BaseController {
         }
         $now_date = date("Y-m-d H:i:s");
         if($now_date > $putime) {
-            $this->error('Ô¤Ô¼·¢²¼Ê±¼ä²»¿ÉĞ¡ÓÚµ±Ç°Ê±¼ä');
+            $this->error('é¢„çº¦å‘å¸ƒæ—¶é—´ä¸å¯å°äºå½“å‰æ—¶é—´');
         }
         $menuid = I('post.menuid');
         $menuname = I('post.menuname');
         $hotel_id_arr = I('post.pubhotelhotel');
         if($hotel_id_arr == '') {
-            $this->error('¾ÆÂ¥Ñ¡Ôñ²»¿ÉÎª¿Õ');
+            $this->error('é…’æ¥¼é€‰æ‹©ä¸å¯ä¸ºç©º');
         }
         $hotel_id_arr = explode(',', $hotel_id_arr);
         $hotelModel = new HotelModel;
@@ -158,10 +158,10 @@ class ProgrammenuController extends BaseController {
                 );
 
             }
-            //²åÈësavor_menu_hotel
+            //æ’å…¥savor_menu_hotel
             $res = $menuHoModel->addAll($data);
             if ($res) {
-                //¸üĞÂmenulist±í
+                //æ›´æ–°menulistè¡¨
                 $hotel_count = count($hotel_id_arr);
                 if($hotel_count > 0) {
                     $dat['hotel_num'] = $hotel_count;
@@ -176,15 +176,15 @@ class ProgrammenuController extends BaseController {
                $res =  $menuliModel->addData($dat,1);
                 if($res) {
                     $menuHoModel->commit();
-                    $this->output('·¢²¼³É¹¦ÁË!', 'programmenu/getlist');
+                    $this->output('å‘å¸ƒæˆåŠŸäº†!', 'programmenu/getlist');
                 } else {
                     $menuHoModel->rollback();
-                    $this->error('·¢²¼Ê§°ÜÁË!');
+                    $this->error('å‘å¸ƒå¤±è´¥äº†!');
                 }
 
             } else {
                 $menuHoModel->rollback();
-                $this->error('·¢²¼Ê§°ÜÁË!');
+                $this->error('å‘å¸ƒå¤±è´¥äº†!');
             }
 
 
@@ -240,7 +240,7 @@ class ProgrammenuController extends BaseController {
         $hotelModel = new HotelModel;
         $areaModel  = new AreaModel;
 
-        $size   = I('numPerPage',50);//ÏÔÊ¾Ã¿Ò³¼ÇÂ¼Êı
+        $size   = I('numPerPage',50);//æ˜¾ç¤ºæ¯é¡µè®°å½•æ•°
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -276,7 +276,7 @@ class ProgrammenuController extends BaseController {
 
         $areaModel  = new AreaModel;
         $menliModel  = new \Admin\Model\ProgramMenuListModel();
-        //³ÇÊĞ
+        //åŸå¸‚
         $area_arr = $areaModel->getAllArea();
 
         $this->assign('area', $area_arr);
@@ -285,7 +285,7 @@ class ProgrammenuController extends BaseController {
         $menu_name = I('menuname');
         $hotelModel = new HotelModel;
         $areaModel  = new AreaModel;
-        $size   = I('numPerPage',50);//ÏÔÊ¾Ã¿Ò³¼ÇÂ¼Êı
+        $size   = I('numPerPage',50);//æ˜¾ç¤ºæ¯é¡µè®°å½•æ•°
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -314,7 +314,7 @@ class ProgrammenuController extends BaseController {
             $where .= "	AND hotel_box_type = $hbt_v";
         }
 
-        //³ÇÊĞ
+        //åŸå¸‚
         $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
@@ -323,25 +323,25 @@ class ProgrammenuController extends BaseController {
                 $where .= "	AND area_id = $area_v";
             }
         }
-        //¼¶±ğ
+        //çº§åˆ«
         $level_v = I('level_v');
         if ($level_v) {
             $this->assign('level_k',$level_v);
             $where .= "	AND level = $level_v";
         }
-        //×´Ì¬
+        //çŠ¶æ€
         $state_v = I('state_v');
         if ($state_v) {
             $this->assign('state_k',state_v);
             $where .= "	AND state = $state_v";
         }
-        //ÖØµã
+        //é‡ç‚¹
         $key_v = I('key_v');
         if ($key_v) {
             $this->assign('key_k',$key_v);
             $where .= "	AND iskey = $key_v";
         }
-        //³ÇÊĞ
+        //åŸå¸‚
         $userinfo = session('sysUserInfo');
         $pcity = $userinfo['area_city'];
         $is_city_search = 0;
@@ -362,14 +362,14 @@ class ProgrammenuController extends BaseController {
 smlist.menu_name';
         $men_arr = $prHoModel->getPrvMenu($pafield, $pawhere);
 
-        //»ñÈ¡°üº¬ÓĞ¸ÃµØÇø¾ÆÂ¥
+        //è·å–åŒ…å«æœ‰è¯¥åœ°åŒºé…’æ¥¼
         $this->assign('include', $men_arr);
 
-        //°üº¬
+        //åŒ…å«
         $include_v = I('include_v');
-        //»ñÈ¡½ÚÄ¿µ¥¶ÔÓ¦hotelid
+        //è·å–èŠ‚ç›®å•å¯¹åº”hotelid
         if ($include_v) {
-            //È¡²¿·Ö°üº¬½ÚÄ¿µ¥
+            //å–éƒ¨åˆ†åŒ…å«èŠ‚ç›®å•
             $bak_ho_arr = array();
             foreach ($include_v as $iv) {
                 $sql = "SELECT hotel_id FROM `savor_programmenu_hotel`  WHERE menu_id={$iv}";
@@ -413,9 +413,9 @@ smlist.menu_name';
         //print_r($result);die;
         $hotel_box_type = C('hotel_box_type');
         $hotel_box_type = array(
-            '2'=>'¶ş´úÍøÂç°æ',
-            '3'=>'¶ş´ú5G°æ',
-            '6'=>'Èı´úÍøÂç°æ',
+            '2'=>'äºŒä»£ç½‘ç»œç‰ˆ',
+            '3'=>'äºŒä»£5Gç‰ˆ',
+            '6'=>'ä¸‰ä»£ç½‘ç»œç‰ˆ',
         );
         $this->assign('h_box_type', $hotel_box_type);
         $this->assign('menuid', $menu_id);
@@ -440,7 +440,7 @@ smlist.menu_name';
     }
 
     public function manager() {
-        //ÊµÀı»¯redis
+        //å®ä¾‹åŒ–redis
         //         $redis = SavorRedis::getInstance();
         //         $redis->set($cache_key, json_encode(array()));
         $this->display('index');
@@ -449,7 +449,7 @@ smlist.menu_name';
     public function getlist(){
 
         $mlModel = new \Admin\Model\ProgramMenuListModel();
-        $size   = I('numPerPage',50);//ÏÔÊ¾Ã¿Ò³¼ÇÂ¼Êı
+        $size   = I('numPerPage',50);//æ˜¾ç¤ºæ¯é¡µè®°å½•æ•°
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -493,11 +493,11 @@ smlist.menu_name';
         $result = $this->getAdsOccup($result);
         $adv_arr = array_column($result, 'name');
         $len = count ($adv_arr);
-        //ÅĞ¶ÏÒªÓĞ10¸ö
+        //åˆ¤æ–­è¦æœ‰10ä¸ª
         if ( array_diff($adv_arr, $name_arr) ) {
-            $this->error("¹ã¸æÎ»±ØĞëÑ¡Ôñ{$len}¸ö");
+            $this->error("å¹¿å‘Šä½å¿…é¡»é€‰æ‹©{$len}ä¸ª");
         }
-        //È¡¹ã¸æÎ»Êı×é
+        //å–å¹¿å‘Šä½æ•°ç»„
         $ad_arr = array_filter($name_arr, function($result, $item)use($adv_arr) {
             if(in_array($result, $adv_arr)) {
                 return true;
@@ -505,9 +505,9 @@ smlist.menu_name';
                 return false;
             }
         });
-        //ÅĞ¶ÏÇ¡ºÃ10¸ö,È¡¹ã¸æÎ»Êı×é·´×ªÈ»ºó±È½Ï
+        //åˆ¤æ–­æ°å¥½10ä¸ª,å–å¹¿å‘Šä½æ•°ç»„åè½¬ç„¶åæ¯”è¾ƒ
         if (count($ad_arr) != $len) {
-            $this->error("¹ã¸æÎ»±ØĞëÑ¡Ôñ{$len}¸öÇÒ²»ÄÜÓĞÖØ¸´");
+            $this->error("å¹¿å‘Šä½å¿…é¡»é€‰æ‹©{$len}ä¸ªä¸”ä¸èƒ½æœ‰é‡å¤");
         }
 
     }
@@ -517,11 +517,11 @@ smlist.menu_name';
         $result = $this->getRtbadsOccup($result);
         $adv_arr = array_column($result, 'name');
         $len = count ($adv_arr);
-        //ÅĞ¶ÏÒªÓĞ10¸ö
+        //åˆ¤æ–­è¦æœ‰10ä¸ª
         if ( array_diff($adv_arr, $name_arr) ) {
-            $this->error("RTB¹ã¸æÎ»±ØĞëÑ¡Ôñ{$len}¸ö");
+            $this->error("RTBå¹¿å‘Šä½å¿…é¡»é€‰æ‹©{$len}ä¸ª");
         }
-        //È¡¹ã¸æÎ»Êı×é
+        //å–å¹¿å‘Šä½æ•°ç»„
         $ad_arr = array_filter($name_arr, function($result, $item)use($adv_arr) {
             if(in_array($result, $adv_arr)) {
                 return true;
@@ -529,19 +529,19 @@ smlist.menu_name';
                 return false;
             }
         });
-        //ÅĞ¶ÏÇ¡ºÃ10¸ö,È¡¹ã¸æÎ»Êı×é·´×ªÈ»ºó±È½Ï
+        //åˆ¤æ–­æ°å¥½10ä¸ª,å–å¹¿å‘Šä½æ•°ç»„åè½¬ç„¶åæ¯”è¾ƒ
         if (count($ad_arr) != $len) {
-            $this->error("RTB¹ã¸æÎ»±ØĞëÑ¡Ôñ{$len}¸öÇÒ²»ÄÜÓĞÖØ¸´");
+            $this->error("RTBå¹¿å‘Šä½å¿…é¡»é€‰æ‹©{$len}ä¸ªä¸”ä¸èƒ½æœ‰é‡å¤");
         }
 
     }
 
     public function doaddnewMenu(){
-            //±íµ¥Ìá½»¼´ÊÇĞÂÔöºÍµ¼ÈëajaxÇø·ÖÒÔ¼°ÓëĞŞ¸Ä½øĞĞÇø·Ö
+            //è¡¨å•æäº¤å³æ˜¯æ–°å¢å’Œå¯¼å…¥ajaxåŒºåˆ†ä»¥åŠä¸ä¿®æ”¹è¿›è¡ŒåŒºåˆ†
 
             $now_date = date('Y-m-d H:i:s');
             $id = I('post.id','');
-            //Ìí¼Óµ½menu_list ±í
+            //æ·»åŠ åˆ°menu_list è¡¨
             $mlModel = new \Admin\Model\ProgramMenuListModel();
             $mlModel->startTrans();
             $mItemModel = new \Admin\Model\ProgramMenuItemModel();
@@ -555,36 +555,36 @@ smlist.menu_name';
             $name_arr = explode (',',substr(I('post.rightname',''),0,-1));
             $time_arr = explode (',',substr(I('post.rightime',''),0,-1));
             $co_arr = $id_arr;
-           //ÅĞ¶ÏÃû×ÖÊÇ·ñ´æÔÚ
+           //åˆ¤æ–­åå­—æ˜¯å¦å­˜åœ¨
             $save['update_time'] = $now_date;
             $save['create_time'] = $now_date;
             $save['menu_name'] = I('post.program','','trim');
             $count = $mlModel->where(array('menu_name'=>$save['menu_name']))->count();
             if ($count) {
-                $this->error('½ÚÄ¿µ¥Ãû³ÆÒÑ´æÔÚ!');
+                $this->error('èŠ‚ç›®å•åç§°å·²å­˜åœ¨!');
             }
             $rightid_arr = I('post.rightid','');
             if(empty($rightid_arr)){
-                $this->error('½ÚÄ¿µ¥ÁĞ±í²»ÄÜÎª¿Õ!');
+                $this->error('èŠ‚ç›®å•åˆ—è¡¨ä¸èƒ½ä¸ºç©º!');
             }
-            //ÅĞ¶Ï¹ã¸æÎ»°æÎ»¶¼ÓĞ10¸ö,
+            //åˆ¤æ–­å¹¿å‘Šä½ç‰ˆä½éƒ½æœ‰10ä¸ª,
             $this->judgeAdvOuc($name_arr);
-            //ÅĞ¶ÏRTB¹ã¸æÎ»°æÎ»¶¼ÓĞ10¸ö,
+            //åˆ¤æ–­RTBå¹¿å‘Šä½ç‰ˆä½éƒ½æœ‰10ä¸ª,
             $this->judgertbAdvOuc($name_arr);
             $result = $mlModel->add($save);
             if ( $result ) {
                 $menu_id = $mlModel->getLastInsID();
-                //½«ÄÚÈİÌí¼Óµ½savor_menu_item±í
+                //å°†å†…å®¹æ·»åŠ åˆ°savor_menu_itemè¡¨
                 $data = array();
                 $i = 1;
                 $res = array();
-                //Ğû´«Æ¬
+                //å®£ä¼ ç‰‡
                 $res_xuan = $this->getAdsAcccounce($res);
-                //»ñÈ¡¹ã¸æÕ¼Î»·û
+                //è·å–å¹¿å‘Šå ä½ç¬¦
                 $res_adv = $this->getAdsOccup($res);
-                //»ñÈ¡rtb¹ã¸æÕ¼Î»·û
+                //è·å–rtbå¹¿å‘Šå ä½ç¬¦
                 $rertb_adv = $this->getRtbadsOccup($res);
-                //È¡³önameÁĞ
+                //å–å‡ºnameåˆ—
                 $res_adv = array_column($res_adv, 'name');
                 $res_xuan = array_column($res_xuan, 'name');
                 $rertb_adv = array_column($rertb_adv, 'name');
@@ -593,7 +593,7 @@ smlist.menu_name';
                 $rtbadv_promote_num_arr = C('RTBADVE_OCCU');
                 $rtbadv_name = $rtbadv_promote_num_arr['name'];
                 foreach($id_arr as $k=>$v) {
-                    //ÅĞ¶ÏtypeÀàĞÍ
+                    //åˆ¤æ–­typeç±»å‹
                     $ad_name = $name_arr[$k];
                     if ( in_array($ad_name, $res_adv)) {
                         $type = 1;
@@ -623,14 +623,14 @@ smlist.menu_name';
                 $res = $mItemModel->addAll($data);
                 if ($res) {
                     $mlModel->commit();
-                    $this->output('ĞÂÔö³É¹¦', 'programmenu/getlist');
+                    $this->output('æ–°å¢æˆåŠŸ', 'programmenu/getlist');
                 } else {
                     $mlModel->rollback();
-                    $this->error('ĞÂÔöÊ§°Ü');
+                    $this->error('æ–°å¢å¤±è´¥');
                 }
             } else {
                 $mlModel->rollback();
-                $this->error('ĞÂÔöÊ§°Ü');
+                $this->error('æ–°å¢å¤±è´¥');
             }
 
     }
@@ -638,7 +638,7 @@ smlist.menu_name';
 
 
     /*
-     * ´¦ÀíexcelÊı¾İ
+     * å¤„ç†excelæ•°æ®
      */
     public function analyseExcel(){
         $adsModel = new \Admin\Model\AdsModel();
@@ -655,22 +655,22 @@ smlist.menu_name';
         } elseif ($type == 'csv') {
             $objReader = \PHPExcel_IOFactory::createReader('CSV')
                 ->setDelimiter(',')
-                ->setInputEncoding('GBK')//²»ÉèÖÃ½«µ¼ÖÂÖĞÎÄÁĞÄÚÈİ·µ»Øboolean(false)»òÂÒÂë
+                ->setInputEncoding('GBK')//ä¸è®¾ç½®å°†å¯¼è‡´ä¸­æ–‡åˆ—å†…å®¹è¿”å›boolean(false)æˆ–ä¹±ç 
                 ->setEnclosure('"')
                 ->setLineEnding("\r\n")
                 ->setSheetIndex(0);
             $objPHPExcel = $objReader->load($path);
         } else {
-            $this->output('ÎÄ¼ş¸ñÊ½²»ÕıÈ·', 'importdata', 0, 0);
+            $this->output('æ–‡ä»¶æ ¼å¼ä¸æ­£ç¡®', 'importdata', 0, 0);
         }
 
         $sheet = $objPHPExcel->getSheet(0);
-        //»ñÈ¡ĞĞÊıÓëÁĞÊı,×¢ÒâÁĞÊıĞèÒª×ª»»
+        //è·å–è¡Œæ•°ä¸åˆ—æ•°,æ³¨æ„åˆ—æ•°éœ€è¦è½¬æ¢
         $highestRowNum = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
         $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
-        //Ö»ÓĞÒ»ÁĞËùÒÔĞ´ËÀ
-        //È¡µÃ×Ö¶Î£¬ÕâÀï²âÊÔ±í¸ñÖĞµÄµÚÒ»ĞĞÎªÊı¾İµÄ×Ö¶Î£¬Òò´ËÏÈÈ¡³öÓÃÀ´×÷ºóÃæÊı×éµÄ¼üÃû
+        //åªæœ‰ä¸€åˆ—æ‰€ä»¥å†™æ­»
+        //å–å¾—å­—æ®µï¼Œè¿™é‡Œæµ‹è¯•è¡¨æ ¼ä¸­çš„ç¬¬ä¸€è¡Œä¸ºæ•°æ®çš„å­—æ®µï¼Œå› æ­¤å…ˆå–å‡ºç”¨æ¥ä½œåé¢æ•°ç»„çš„é”®å
         $filed = array();
         $data = array();
         for ($i = 1; $i <= $highestRowNum; $i++) {//ignore row 1
@@ -688,15 +688,15 @@ smlist.menu_name';
         }
         $remove_arr = array();
         $inc_arr = array();
-        //»ñÈ¡Ğû´«Æ¬
+        //è·å–å®£ä¼ ç‰‡
         $result = array();
         $result = $this->getAdsAcccounce($result);
-        //»ñÈ¡¹ã¸æÕ¼Î»·û
+        //è·å–å¹¿å‘Šå ä½ç¬¦
         $result_adsoc = $this->getAdsOccup($result);
 
-        //»ñÈ¡RTB¹ã¸æÕ¼Î»·û
+        //è·å–RTBå¹¿å‘Šå ä½ç¬¦
         $result_rtbadsoc = $this->getRtbadsOccup($result);
-        //È¡³önameÁĞ
+        //å–å‡ºnameåˆ—
         $xuan_arr = array_column($result, 'name');
         $adsoc_arr = array_column($result_adsoc, 'name');
         $rtbadsoc_arr = array_column($result_rtbadsoc, 'name');
@@ -759,11 +759,11 @@ smlist.menu_name';
     public function addnewmenu()
     {
 
-        //×ó±ß±íµ¥Ìá½»£¬ÓÒ±ß±íµ¥Ìá½»£¬µ¼Èëajax,idĞŞ¸Ä
+        //å·¦è¾¹è¡¨å•æäº¤ï¼Œå³è¾¹è¡¨å•æäº¤ï¼Œå¯¼å…¥ajax,idä¿®æ”¹
         $userInfo = session('sysUserInfo');
         $menu_name = I('get.name' . '');
         $type = I('type');
-        //ĞŞ¸Ä½ÚÄ¿µ¥
+        //ä¿®æ”¹èŠ‚ç›®å•
         if ($type == 2) {
             $menuid = I('id', '0');
             if ($menuid) {
@@ -776,20 +776,20 @@ smlist.menu_name';
                 $where .= " AND spi.menu_id={$menuid}  ";
                 $res = $mItemModel->getCopyMenuInfo($where, $order, $field);
 
-                //»ñÈ¡¹ã¸æÕ¼Î»·û
+                //è·å–å¹¿å‘Šå ä½ç¬¦
                 $result_adsoc = $this->getAdsOccup();
                 $adsoc_arr = array_column($result_adsoc, 'name');
                 $adsoc_arr = array_flip($adsoc_arr);
                 array_walk($res, function(&$v, $k)use($adsoc_arr) {
                    if(empty($v['create_time'])) {
-                       $v['create_time'] = 'ÎŞ';
+                       $v['create_time'] = 'æ— ';
                    }
                    if(array_key_exists($v['ads_name'], $adsoc_arr)) {
                        $v['type'] = 33;
                    }
                 });
                 $this->assign('menuid', $menuid);
-                //ÅĞ¶ÏÊÇĞÂÔö
+                //åˆ¤æ–­æ˜¯æ–°å¢
                 $pct = I('pctype', '0');
                 $this->assign('list', $res);
                 if($pct == 1){
@@ -807,7 +807,7 @@ smlist.menu_name';
 
 
     public function addtest(){
-        $this->output('²Ù×÷³É¹¦','menu/getlist');
+        $this->output('æ“ä½œæˆåŠŸ','menu/getlist');
     }
 
 
@@ -884,7 +884,7 @@ smlist.menu_name';
         $searchtitle = I('post.searchtitle','');
         $beg_time = I('starttime','');
         $end_time = I('endtime','');
-        //¹ã¸æÎ»
+        //å¹¿å‘Šä½
         $adval = I('adval','');
 
         if($beg_time)   $where.=" AND create_time>='$beg_time'";
@@ -902,18 +902,18 @@ smlist.menu_name';
         if ($m_type == 0) {
             $where .= "	AND (`type`) = 2 ";
             $result = $adModel->getWhere($where, $field);
-            //»ñÈ¡Ğû´«Æ¬
+            //è·å–å®£ä¼ ç‰‡
             $result = $this->getAdsAcccounce($result);
-            //»ñÈ¡¹ã¸æÕ¼Î»·û
+            //è·å–å¹¿å‘Šå ä½ç¬¦
             $result = $this->getAdsOccup($result, $adval);
         } else if($m_type == 3){
-            //»ñÈ¡Ğû´«Æ¬
+            //è·å–å®£ä¼ ç‰‡
             $result = $this->getAdsAcccounce($result);
         } else if ($m_type == 4){
-            //»ñÈ¡¹ã¸æÕ¼Î»·û
+            //è·å–å¹¿å‘Šå ä½ç¬¦
             $result = $this->getAdsOccup($result, $adval);
         } else if ($m_type == 5){
-            //»ñÈ¡RTB¹ã¸æÕ¼Î»·û
+            //è·å–RTBå¹¿å‘Šå ä½ç¬¦
             $result = $this->getRtbadsOccup($result, $adval);
         } else {
             $where .= "	AND type = '{$m_type}'";
