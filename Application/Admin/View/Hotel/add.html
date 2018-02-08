@@ -169,7 +169,11 @@
          合作维护人：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <input type="text" class="form-control" name="maintainer" required minlength="1" maxlength="20" value="{$vinfo.maintainer}" >
+            <select name="maintainer" class="form-control bs-select" title="请选择..."  data-style="btn-success btn-sm" data-container="body">
+                <volist name="pub_info" id="vlist">
+                    <option value="{$vlist.main_id}" <if condition="$vlist['main_id'] eq $vinfo['main_id']">selected</if>>{$vlist.remark}</option><br>
+                </volist>
+            </select>
         </div>
       </div>
 

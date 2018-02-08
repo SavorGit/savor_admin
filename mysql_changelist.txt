@@ -1260,3 +1260,9 @@ CREATE TABLE `savor_hotel_unusual_report` (
 执行结果:已执行
 
 
+增加说明：修改酒楼表添加合作人ID字段
+修改时间：2018.2.1
+修改人：白玉涛
+ALTER TABLE `cloud`.`savor_hotel_ext`     ADD COLUMN `maintainer_id` INT(10) NOT NULL DEFAULT '0'  COMMENT '合作维护人id'  ;
+
+

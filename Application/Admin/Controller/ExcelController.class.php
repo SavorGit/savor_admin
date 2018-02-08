@@ -64,6 +64,8 @@ class ExcelController extends Controller
             $tmpname = '广告播放异常预警';
         }else if($filename == 'noheartlog'){
             $tmpname = '无心跳版位';
+        }else if($filename == 'exphotelmaintain') {
+            $tmpname = '酒楼关联合作维护人';
         }
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;

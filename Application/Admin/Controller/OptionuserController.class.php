@@ -196,7 +196,25 @@ class OptionuserController extends BaseController{
                 $this->error('添加失败');
             }
         }else {
-            
+            $m_opser_role = new \Admin\Model\OpuserroleModel();
+            if($role_id != 1) {
+                //获取原有角色然后进行对比
+
+                $r_info = $m_opser_role->find($id);
+                $get_rid = $r_info['role_id'];
+
+                if($get_rid == 1) {
+                    $map = array();
+                    $map['a.id'] = $id;
+                    $map['sht.flag'] = 0;
+                    $field = 'count(*) num';
+                    $op_info = $m_opser_role->getRelaOpHotel($field, $map);
+                   if($op_info) {
+                       $this->error('该账号已经关联'.$op_info.'个酒楼，无法修改角色');
+                   }
+                }
+            }
+
             $skill_info = I('post.skill');            //技能
             
             foreach($skill_info as $key=> $v){
@@ -240,7 +258,7 @@ class OptionuserController extends BaseController{
             $data['oprator_id']  = $oprator_id;
             $data['update_time'] = date("Y-m-d H:i:s");
             $data['hotel_info']    = $hotel_info_str;
-            $m_opser_role = new \Admin\Model\OpuserroleModel();
+
             $ret = $m_opser_role->saveInfo($map,$data);
             //$ret = $m_opser_role->addInfo($data);
             if($ret){

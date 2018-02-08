@@ -173,11 +173,25 @@ smlist.menu_name';
 		    echo json_encode($res_hotel);
 		    exit;
 		}else{
+			//获取所有发布运维者
+			$m_opuser_role = new \Admin\Model\OpuserroleModel();
+			$fields = 'a.user_id uid,user.remark ';
+			$map = array();
+			$map['state']   = 1;
+			$map['role_id']   = 1;
+			$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
+			$u_arr = array();
+			foreach($user_info as $uv) {
+				$u_arr[$uv['uid']] = trim($uv['remark']);
+			}
+
 		    $result = $hotelModel->getList($where,$orders,$start,$size);
 		}
 
 		$datalist = $areaModel->areaIdToAareName($result['list']);
+		$hotelExt = new \Admin\Model\HotelExtModel();
 		foreach ($datalist as $k=>$v){
+
 			$conditon = array();
 			$men_arr = array();
 			$nums = $hotelModel->getStatisticalNumByHotelId($v['id']);
@@ -185,6 +199,13 @@ smlist.menu_name';
 			$datalist[$k]['box_num'] = $nums['box_num'];
 			$datalist[$k]['tv_num'] = $nums['tv_num'];
 			$hotel_id = $datalist[$k]['id'];
+			$main_info = $hotelExt->where('hotel_id='.$hotel_id)->find();
+			if($main_info['maintainer_id']) {
+				$datalist[$k]['maintainer'] = $u_arr[$main_info['maintainer_id']];
+			} else {
+				$datalist[$k]['maintainer'] = '无';
+			}
+
 			$condition['hotel_id'] = $hotel_id;
 			$arr = $menuHoModel->where($condition)->order('id desc')->find();
 			$promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
@@ -378,8 +399,26 @@ smlist.menu_name';
 		}
 		
 		$this->assign('area',$area);
+		//获取所有发布者列表
+//获取发布者列表
+		$m_opuser_role = new \Admin\Model\OpuserroleModel();
+		$fields = 'a.user_id main_id,user.remark ';
+		$map['state']   = 1;
+		$map['role_id']   = 1;
+		$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
+		$l_c = count($user_info);
+		$user_info[$l_c] = array(
+			'main_id'=>0,
+			'remark'=>'无',
+		);
+
+		$this->assign('pub_info',$user_info);
 		if($id){
+
 			$vinfo = $hotelModel->where('id='.$id)->find();
+			$hotelextModel = new \Admin\Model\HotelExtModel();
+			$main_info = $hotelextModel->where('hotel_id='.$id)->find();
+			$vinfo['main_id'] = $main_info['maintainer_id'];
 			if(!empty($vinfo['media_id'])){
 				$mediaModel = new \Admin\Model\MediaModel();
 				$media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
@@ -507,7 +546,7 @@ smlist.menu_name';
 		$save['name']                = I('post.name','','trim');
 		$save['addr']                = I('post.addr','','trim');
 		$save['contractor']          = I('post.contractor','','trim');
-		$save['maintainer']          = I('post.maintainer','','trim');
+
 		$save['tech_maintainer']          = I('post.techmaintainer','','trim');
 		$save['tel']                 = I('post.tel','','trim');
 		$save['level']               = I('post.level','','trim');
@@ -599,6 +638,7 @@ smlist.menu_name';
 		
 		$data['server_location'] = $server_location;
 		$data['tag']             = I('post.tag','','trim');
+		$data['maintainer_id']   = I('post.maintainer',0);
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
