@@ -33,7 +33,7 @@ class CrontabController extends Controller
         $m_hotel = new \Admin\Model\HotelModel();
         //虚拟小平台也拿到
         //$where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !=''";
-        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !=''";
+        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) ";
 
         $max_hour = 720;
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,b.mac_addr');
