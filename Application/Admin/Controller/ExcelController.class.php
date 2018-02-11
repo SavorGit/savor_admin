@@ -2630,4 +2630,33 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'noheartlog';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
+    /**
+     * @desc 获取某个广告发布的版位信息
+     */
+    public function getAdsBoxList(){
+        $ads_id = I('ads_id');
+        $sql ="SELECT e.name hotel_name,d.name room_name,c.name box_name,c.id box_id ,c.mac
+               FROM `savor_pub_ads_box`a 
+               left join savor_pub_ads b on a.pub_ads_id=b.id
+               left join savor_box c on a.box_id=c.id
+               left join savor_room d on c.room_id=d.id
+               left join savor_hotel e on d.hotel_id=e.id 
+               where b.id=$ads_id group by box_id";
+        $data = D()->query($sql);
+        $xlsCell = array(
+        
+            array('box_id','机顶盒ID'),
+            array('mac','机顶盒mac'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_name','机顶盒名称'),
+        
+             
+        
+        );
+        $xlsName = '无心跳的版位';
+        $filename = 'noheartlog';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        
+    }
 }
