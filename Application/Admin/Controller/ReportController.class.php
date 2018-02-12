@@ -180,11 +180,7 @@ class ReportController extends BaseController{
                 $val['bstate'] = '';
                 $val['bflag'] = '';
 			}else if($val['type']==2){
-			    if($val['box_id'] == 832) {
-                    $temp = $m_box->getInfo('tag,state,flag'," mac='".$val['box_mac']."'",'');
-
-                }
-			    $temp = $m_box->getInfo('tag,state,flag'," mac='".$val['box_mac']."'",'');
+			    $temp = $m_box->getInfo('tag,state,flag'," id='".$val['box_id']."'",'');
 			    $val['tag'] = $temp[0]['tag'];
                 $val['bstate'] = $box_state[$temp[0]['state']];
                 $val['bflag'] = $temp[0]['flag'];
