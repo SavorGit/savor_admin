@@ -476,6 +476,7 @@ smlist.menu_name';
 		$tvModel = new \Admin\Model\TvModel();
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$menlistModel = new \Admin\Model\MenuListModel();
+		$hextModel = new \Admin\Model\HotelExtModel();
 		$area = $areaModel->getAllArea();
 		$this->assign('area',$area);
 
@@ -493,6 +494,23 @@ smlist.menu_name';
 		$vinfo['server_location'] = $res_hotelext['server_location'];
 		$vinfo['is_open_customer'] = $res_hotelext['is_open_customer'];
 	    $vinfo['id'] = $id;
+		$main_info = $hextModel->where('hotel_id='.$id)->find();
+		//获取所有发布运维者
+		$m_opuser_role = new \Admin\Model\OpuserroleModel();
+		$fields = 'a.user_id uid,user.remark ';
+		$map = array();
+		$map['state']   = 1;
+		$map['role_id']   = 1;
+		$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
+		$u_arr = array();
+		foreach($user_info as $uv) {
+			$u_arr[$uv['uid']] = trim($uv['remark']);
+		}
+		if($main_info['maintainer_id']) {
+			$vinfo['maintainer'] = $u_arr[$main_info['maintainer_id']];
+		} else {
+			$vinfo['maintainer'] = '无';
+		}
 		$condition['hotel_id'] = $id;
 		$arr = $menuHoModel->where($condition)->order('id desc')->find();
 		$menuid = $arr['menu_id'];
