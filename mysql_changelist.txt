@@ -1266,3 +1266,16 @@ CREATE TABLE `savor_hotel_unusual_report` (
 ALTER TABLE `cloud`.`savor_hotel_ext`     ADD COLUMN `maintainer_id` INT(10) NOT NULL DEFAULT '0'  COMMENT '合作维护人id'  ;
 
 
+增加说明：修改酒楼表添加合作人ID字段
+修改时间：2018.2.1
+修改人：白玉涛
+CREATE TABLE `savor_hotel_device_token` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT '0',
+  `v_type` smallint(4) DEFAULT '1' COMMENT '类型版本',
+  `device_type` tinyint(2) DEFAULT '3' COMMENT '3android,4ios',
+  `device_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT '' COMMENT '版本用户的token',
+  `flag` int(11) DEFAULT '0' COMMENT '0正常1删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='任务推送device_token用户表'
+

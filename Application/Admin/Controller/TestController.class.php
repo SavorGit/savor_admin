@@ -560,7 +560,7 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
         //获取所有酒楼
         $hotelModel = new \Admin\Model\HotelModel();
         $map['a.flag'] = 0;
-        $field = 'a.id, a.name, a.maintainer ma, b.maintainer_id maid';
+        $field = 'a.id, a.name, a.maintainer ma, b.maintainer_id maid,a.area_id';
         $hotel_info = $hotelModel->getHotelLists($map,'','',$field);
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $fields = 'a.user_id uid,user.remark ';
@@ -574,7 +574,11 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
         }
         //var_export($u_arr);
         $hext = new \Admin\Model\HotelExtModel();
+        $hare_model = new \Admin\Model\AreaModel();
         foreach($hotel_info as $hk=>$hv) {
+            //获取酒楼城市
+            $ar_info = $hare_model->find($hv['area_id']);
+            $hotel_info[$hk]['city'] = $ar_info['region_name'];
             $hid = $hv['id'];
             $main_t = $hv['ma'];
             $main_id = $hv['maid'];
@@ -588,10 +592,11 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
                     $save = array();
                     $map['hotel_id'] = $hid;
                     $save['maintainer_id'] = $rel_uid;
-                    $sql = "update savor_hotel_ext set maintainer_id=$rel_uid where hotel_id=$hid";
+                    /*$sql = "update savor_hotel_ext set maintainer_id=$rel_uid where hotel_id=$hid";*/
                     //echo $sql;
                     //echo "<br/><br/>";
-                    $hext->query($sql);
+                   // $hext->query($sql);
+                    $hext->saveData($save, $map);
                     $hotel_info[$hk]['st'] = '关联成功';
                 } else {
                     $hotel_info[$hk]['st'] = '关联失败';
@@ -603,6 +608,7 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
         $xlsCell = array(
             array('id', '酒楼ID'),
             array('name', '酒楼名称'),
+            array('city', '酒楼城市'),
             array('ma', '合作维护人'),
             array('st','关联状态'),
         );
