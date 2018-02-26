@@ -572,7 +572,7 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
         foreach($user_info as $uv) {
             $u_arr[$uv['uid']] = trim($uv['remark']);
         }
-        var_export($u_arr);
+        //var_export($u_arr);
         $hext = new \Admin\Model\HotelExtModel();
         foreach($hotel_info as $hk=>$hv) {
             $hid = $hv['id'];
@@ -589,8 +589,8 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
                     $map['hotel_id'] = $hid;
                     $save['maintainer_id'] = $rel_uid;
                     $sql = "update savor_hotel_ext set maintainer_id=$rel_uid where hotel_id=$hid";
-                    echo $sql;
-                    echo "<br/><br/>";
+                    //echo $sql;
+                    //echo "<br/><br/>";
                     $hext->query($sql);
                     $hotel_info[$hk]['st'] = '关联成功';
                 } else {
