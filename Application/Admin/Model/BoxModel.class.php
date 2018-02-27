@@ -40,6 +40,26 @@ class BoxModel extends BaseModel{
 	}
 
 
+	public function getBoxExNumNew(){
+		$Model = new \Think\Model();
+		$sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,tv.state tsta,box.state boxstate,
+	         box.mac mac,box.name bname, room.name rname, room.type rtype, tv.tv_brand tbrd, tv.tv_size tsiz,
+	         tv.tv_source, hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
+	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer
+	         from savor_tv as tv
+	         left join savor_box as box on tv.box_id = box.id
+	         left join savor_room as room on box.room_id = room.id
+	         left join savor_hotel as hotel on room.hotel_id = hotel.id
+	         left join savor_hotel_ext as hext on hext.hotel_id = hotel.id
+	         left join savor_sysuser as sys on sys.id = hext.maintainer_id
+	         where tv.flag=0 AND tv.state != 3 and hotel.flag=0 and hotel.state=1 order by hotel.id';
+		$volist = $Model->query($sql);
+
+		$res = $this->changeInfoName($volist);
+		return $res;
+	}
+
+
 
 	public function getBoxExNum(){
 		$Model = new \Think\Model();

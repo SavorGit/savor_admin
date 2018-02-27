@@ -1559,7 +1559,7 @@ class ExcelController extends Controller
     {//导出Excel
         $boxModel = new \Admin\Model\BoxModel();
         //获取所有数据
-        $box_arr = $boxModel->getBoxExNum();
+        $box_arr = $boxModel->getBoxExNumNew();
         $filename = 'hotel';
         $xlsName = "User";
         $xlsCell = array(
