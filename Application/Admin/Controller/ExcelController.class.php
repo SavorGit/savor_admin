@@ -1560,6 +1560,10 @@ class ExcelController extends Controller
         $boxModel = new \Admin\Model\BoxModel();
         //获取所有数据
         $box_arr = $boxModel->getBoxExNumNew();
+        $htype = C('hotel_box_type');
+        foreach($box_arr as $bk=>$bv) {
+            $box_arr[$bk]['hotel_box_type'] = $htype[$box_arr[$bk]['hotel_box_type']];
+        }
         $filename = 'hotel';
         $xlsName = "User";
         $xlsCell = array(
@@ -1583,6 +1587,7 @@ class ExcelController extends Controller
             array('iskey', '重点酒楼'),
             array('maintainer', '合作维护人'),
             array('tech_maintainer', '技术运维人'),
+            array('hotel_box_type', '设备类型'),
         );
 
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
