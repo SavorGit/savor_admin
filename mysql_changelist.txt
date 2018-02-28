@@ -1195,7 +1195,9 @@ ALTER TABLE `savor_heart_log` ADD COLUMN `pro_period` VARCHAR(50) NOT NULL DEFAU
 			      ADD COLUMN `ads_download_period` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '下载广告期号';
 执行结果:已执行
 
-
+增加说明:RTB广告投放表
+修改时间：2018.2.28
+修改人：白玉涛
 CREATE TABLE `savor_pub_rtbads` (
   `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
   `ads_id` int(12) NOT NULL DEFAULT '0' COMMENT '广告id',
@@ -1209,7 +1211,46 @@ CREATE TABLE `savor_pub_rtbads` (
   PRIMARY KEY (`id`),
   KEY `start_date` (`start_date`),
   KEY `end_data` (`end_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='rtb广告投放表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='rtb广告投放表';
+
+
+
+
+增加说明：rtb广告对应酒楼表
+修改时间：2018.2.28
+修改人：白玉涛
+CREATE TABLE `savor_pub_rtbads_hotel` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `hotel_id` int(12) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `pub_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='RTB广告对应酒楼'
+
+
+增加说明：rtb广告对应标签表
+修改时间：2018.2.28
+修改人：白玉涛
+CREATE TABLE `savor_pub_rtbtag` (
+  `pub_ads_id` int(10) DEFAULT NULL,
+  `tagid` int(10) DEFAULT NULL COMMENT '标签id',
+  `tagname` varchar(48) DEFAULT NULL COMMENT '标签名称',
+  KEY `tag` (`tagid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+增加说明：rtb标签列表
+修改时间：2018.2.28
+修改人：白玉涛
+CREATE TABLE `savor_rtbtaglist` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tagname` varchar(255) NOT NULL DEFAULT '' COMMENT '标签名称',
+  `pid` int(11) NOT NULL DEFAULT '0',
+  `tag_path` varchar(255) NOT NULL DEFAULT '' COMMENT '标签路径',
+  `tag_code` varchar(30) NOT NULL DEFAULT '' COMMENT '标签code',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `flag` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0正常1删除',
+  PRIMARY KEY (`id`),
+  KEY `NewIndex1` (`pid`)
+) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='rtb标签列表'
 
 增加说明：餐厅标签增加默认标签字段
 修改时间：2017.1.8
@@ -1279,3 +1320,9 @@ CREATE TABLE `savor_hotel_device_token` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='任务推送device_token用户表'
 
+
+增加说明：机顶盒添加是否广告机字段
+修改时间：2018.2.1
+修改人：白玉涛
+alter table `cloud`.`savor_box`
+   add column `adv_mach` tinyint(4) DEFAULT '0' NOT NULL COMMENT '0是广告机1不是' after `update_time`
