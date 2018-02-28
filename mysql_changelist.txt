@@ -1250,7 +1250,7 @@ CREATE TABLE `savor_rtbtaglist` (
   `flag` tinyint(2) NOT NULL DEFAULT '0' COMMENT '0正常1删除',
   PRIMARY KEY (`id`),
   KEY `NewIndex1` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='rtb标签列表'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='rtb标签列表'
 
 增加说明：餐厅标签增加默认标签字段
 修改时间：2017.1.8
