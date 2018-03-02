@@ -1325,4 +1325,10 @@ CREATE TABLE `savor_hotel_device_token` (
 修改时间：2018.2.1
 修改人：白玉涛
 alter table `cloud`.`savor_box`
-   add column `adv_mach` tinyint(4) DEFAULT '0' NOT NULL COMMENT '0是广告机1不是' after `update_time`
+   add column `adv_mach` tinyint(4) DEFAULT '0' NOT NULL COMMENT '0是广告机1不是' after `update_time`;
+
+
+增加说明：hotel_ext添加是否广告机字段
+修改时间：2018.2.1
+修改人：白玉涛
+   ALTER TABLE `cloud`.`savor_hotel_ext`     ADD COLUMN `adplay_num` INT(11) DEFAULT '0' NOT NULL COMMENT '酒楼下广告机数量' AFTER `maintainer_id`;

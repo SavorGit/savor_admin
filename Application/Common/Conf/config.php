@@ -402,6 +402,21 @@ $config['CONFIG_VOLUME_VAL'] = array(
     'system_tv_volume'=>100,
     'system_switch_time'=>30,
 );
+
+$config['ADV_MACH'] = array(
+    '0'=>'否',
+    '1'=>'是',
+);
+$config['SELECT_ADV_MACH'] = array(
+    '0'=>'全部',
+    '1'=>'有',
+    '2'=>'无',
+);
+$config['STATISTICS_TYPE'] = array(
+    '1'=>'广告',
+    '2'=>'节目',
+    '4'=>'B类广告',
+);
 return $config;
 
 

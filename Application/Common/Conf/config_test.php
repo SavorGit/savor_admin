@@ -41,6 +41,20 @@ $config_db =  array(
         'DB_DEBUG'  =>  TRUE,
         'DB_PARAMS' => array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL)
     ),
+    'DB_STATIS'=>array(
+        'DB_DEPLOY_TYPE' => 1, //数据库主从支持
+        'DB_RW_SEPARATE' => true, //读写分离
+        'DB_TYPE' => 'mysql',
+        'DB_HOST' => "$DB_MASTER_HOST,$DB_SLAVE_HOST",
+        'DB_NAME' => 'statisticses',
+        'DB_USER' => $db_user,
+        'DB_PWD' => $db_pwd,
+        'DB_PORT' => 3306,
+        'DB_CHARSET' => 'UTF8',
+        'DB_PREFIX' => 'view_',
+        'DB_DEBUG'  =>  TRUE,
+        'DB_PARAMS' => array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL)
+    ),
  	'REDIS_CONFIG' => $redis,
     
     //OSSS上传配置
