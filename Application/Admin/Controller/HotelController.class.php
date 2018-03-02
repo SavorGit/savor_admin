@@ -120,6 +120,9 @@ smlist.menu_name';
 			$this->assign('main_k',$main_v);
 			$where .= "	AND maintainer LIKE '%{$main_v}%'";
 		}
+		//广告机选项
+		$select_ad_mache = I('adv_machine');
+		$this->assign('se_ad_machince',$select_ad_mache);
 		//包含
 		$include_v = I('include_v');
 		//获取节目单对应hotelid
@@ -136,7 +139,6 @@ smlist.menu_name';
 			}
 			$bak_ho_arr = array_unique($bak_ho_arr);
 			$bak_ho_str = implode(',', $bak_ho_arr);
-			var_export($bak_ho_str);
 			if($bak_ho_str){
 				$where .= "	AND id  in ($bak_ho_str)";
 			}else{
@@ -162,6 +164,29 @@ smlist.menu_name';
 				}
 			}
 		}
+		$hotelExt = new \Admin\Model\HotelExtModel();
+		if($select_ad_mache != 0) {
+			$ad_machin_arr = array();
+			if($select_ad_mache == 1) {
+				//求出所有>0
+				$ad_machin_arr['adplay_num'] = array('gt', 0);
+
+			} else {
+				//求出所有<=0
+				$ad_machin_arr['adplay_num'] = array('elt', 0);
+			}
+			$se_ad_hid_arr = $hotelExt->getData('hotel_id', $ad_machin_arr);
+
+			if($se_ad_hid_arr) {
+				$se_ad_hid_arr = array_column($se_ad_hid_arr, 'hotel_id');
+				$se_ad_hid_arr = array_unique($se_ad_hid_arr);
+				$se_ad_hid_arr = array_filter($se_ad_hid_arr);
+				$se_ad_machine_str = implode(',', $se_ad_hid_arr);
+				$where .= "	AND id in ($se_ad_machine_str) ";
+			}
+
+		}
+
 		if($ajaxversion){
 		    $start = 0;
 		    $size = 1000;
@@ -189,7 +214,7 @@ smlist.menu_name';
 		}
 
 		$datalist = $areaModel->areaIdToAareName($result['list']);
-		$hotelExt = new \Admin\Model\HotelExtModel();
+
 		foreach ($datalist as $k=>$v){
 
 			$conditon = array();
@@ -238,6 +263,8 @@ smlist.menu_name';
                 $datalist[$k]['contractor'] = '';
             }
 		}
+		$se_ad_machine = C('SELECT_ADV_MACH');
+		$this->assign('select_ad_mache', $se_ad_machine);
 		$this->assign('list', $datalist);
 		$this->assign('page',  $result['page']);
 		$this->display('index');
@@ -495,6 +522,8 @@ smlist.menu_name';
 		$vinfo['is_open_customer'] = $res_hotelext['is_open_customer'];
 	    $vinfo['id'] = $id;
 		$main_info = $hextModel->where('hotel_id='.$id)->find();
+		$se_ad_machine = $main_info['adplay_num'];
+		$this->assign('se_ad_machine_num', $se_ad_machine);
 		//获取所有发布运维者
 		$m_opuser_role = new \Admin\Model\OpuserroleModel();
 		$fields = 'a.user_id uid,user.remark ';
@@ -857,6 +886,7 @@ smlist.menu_name';
 			'tvbran' => 'SONY',
 			'tvsizea'=>'32',
 		);
+
 		$hotel_id= I('get.hotel_id',0);
 		$hotel_name= I('get.name','');
 		if ($hotel_id) {
@@ -870,6 +900,8 @@ smlist.menu_name';
 		} else {
 
 		}
+		$ad_machine = C('ADV_MACH');
+		$this->assign('ad_mache', $ad_machine);
 		$this->display('batchposition');
 	}
 
@@ -878,6 +910,7 @@ smlist.menu_name';
 	 * 批量新增牌位
 	 */
 	public function doAddBatch() {
+
 		$r_arr = array(
 			1=>'包间',
 			2=>'大厅',
@@ -892,11 +925,12 @@ smlist.menu_name';
 			$this->error('创建不可为空');
 		}
 		$model = new Model();
-
+		//print_r($bat_arr);
 		foreach ($bat_arr as $k=>$v){
 			$v = json_decode($v,true);
+			//var_export($v);
 			foreach($v as $ks=>$vs){
-				if (empty($vs)) {
+				if ( empty($vs) && ($vs!== '0') ) {
 					$this->error('所有元素不可为空');
 				}else{
 					if($ks == 'bao_mac'){
@@ -1017,10 +1051,15 @@ smlist.menu_name';
 		//获取所有包间id
 		$room_bai = array();
 		//var_dump($bat_arr);
-
+		//获取酒楼下的广告机数量
+		$hextModel = new \Admin\Model\HotelExtModel();
+		$h_adv_num = 0;
 		foreach ($bat_arr as $k=>$v) {
 			$model->startTrans();
 			$v = json_decode($v, true);
+			if ( $v['adv_machi'] == 1) {
+				$h_adv_num++;
+			}
 			$where = " r.name='".$v['bao_name']."' and b.flag=0  and r.type =  ".$v['bao_lx']." and h.id = ".$hotelid;
 			$isHaveTv = $boxModel->isHaveTv(' h.name as hotel_name,r.name as room_name,r.id as rid,r.type as rtp,b.name as bna,b.id as id,b.mac as bmacc ',$where);
 			if (!empty($isHaveTv)) {
@@ -1063,6 +1102,7 @@ smlist.menu_name';
 					$dat['state']       = 1;
 					$dat['update_time'] = date('Y-m-d H:i:s');
 					$dat['create_time'] = date('Y-m-d H:i:s');
+					$dat['adv_mach'] = $v['adv_machi'];
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
 						$dap = array();
@@ -1111,6 +1151,7 @@ smlist.menu_name';
 					$dat['state']       = 1;
 					$dat['update_time'] = date('Y-m-d H:i:s');
 					$dat['create_time'] = date('Y-m-d H:i:s');
+					$dat['adv_mach'] = $v['adv_machi'];
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
 						$dap = array();
@@ -1139,7 +1180,8 @@ smlist.menu_name';
 			}
 			$model->commit();
 		}
-		//var_dump($room_bai);
+		//递增广告机
+		$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', $h_adv_num);
 		if($bool){
 			foreach ($room_bai as $k=>$v) {
 				if($v['room_id']){

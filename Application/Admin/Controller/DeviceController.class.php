@@ -137,6 +137,7 @@ class DeviceController extends BaseController{
 			$vinfo['state'] = 1;
 		}
 
+
 		$this->assign('vinfo',$vinfo);
 
 		$this->display('addTv');
@@ -158,6 +159,8 @@ class DeviceController extends BaseController{
 		$vinfo['switch_time'] = 30;
 		$vinfo['volum'] = 60;
 		$this->assign('vinfo', $vinfo);
+		$ad_machine = C('ADV_MACH');
+		$this->assign('ad_mache', $ad_machine);
 		return $this->display('addBox');
 	}
 
@@ -173,6 +176,7 @@ class DeviceController extends BaseController{
 		$boxModel  = new BoxModel;
 		$vinfo  = [];
 		$vinfo = $boxModel->getRow('*',['id'=>$id]);
+
 		if($hotel_id){
 		    $room_list = $roomModel->where("hotel_id='$hotel_id'")->field('id,name')->select();
 		}else{
@@ -182,6 +186,9 @@ class DeviceController extends BaseController{
 		foreach ($room_list as $v){
 		    $rooms[$v['id']] = $v['name'];
 		}
+		$ad_machine = C('ADV_MACH');
+		$this->assign('ad_mache', $ad_machine);
+
 		$this->assign('rooms',$rooms);
 		$this->assign('vinfo',$vinfo);
 		$this->display('editBox');
@@ -230,6 +237,7 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['tag']         = I('post.tag','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
+		$save['adv_mach']     = I('post.adv_machine',0,'intval');
 		$boxModel = new BoxModel;
 		$save['update_time'] = date('Y-m-d H:i:s');
 		if($save['mac']){
@@ -249,9 +257,41 @@ class DeviceController extends BaseController{
 		    }
 		}
 
-	
+		//广告机只考虑是否被删除
 		if($id){
+			//获取原有酒楼机顶盒数
+			$map = array();
+			$hextModel = new \Admin\Model\HotelExtModel();
+			$wherea = '';
+			$wherea = '1 and b.id='.$id;
+			$h_box_info = $boxModel->isHaveMac('h.id hoid', $wherea);
+			$hotelid = $h_box_info[0]['hoid'];
+			$map['hotel_id'] = $hotelid;
+			$mfield = 'adplay_num';
+			$hex_info = $hextModel->getOneData($mfield, $map);
+			$originon_adnum = $hex_info['adplay_num'];
 			if($boxModel->editData($id, $save)){
+				//查找酒楼下现有所有广告机顶盒
+				$hotelModel = new \Admin\Model\HotelModel();
+				$mfield = 'count(*) num';
+				$map = array();
+				$map['sht.id'] = $hotelid;
+				$map['sht.flag'] = 0;
+				$map['sht.state'] = 1;
+				$map['room.state'] = 1;
+				$map['room.flag'] = 0;
+				$map['box.flag'] = 0;
+				$map['box.adv_mach'] = 1;
+				$rnum_arr  = $hotelModel->getBoxOrderMacByHid($mfield, $map);
+				$rnum = $rnum_arr[0]['num'];
+				if($rnum != $originon_adnum) {
+					//更新
+					$map = array();
+					$map['adplay_num'] = $rnum;
+					$rp = array();
+					$rp['hotel_id'] = $hotelid;
+					$hextModel->saveData($map, $rp);
+				}
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
@@ -259,7 +299,18 @@ class DeviceController extends BaseController{
 		}else{
 			$save['update_time'] = date('Y-m-d H:i:s');
 			$save['create_time'] = date('Y-m-d H:i:s');
+
 			if($boxModel->addData($save)){
+				if($save['flag']  != 1 && $save['adv_mach'] == 1 ) {
+					//酒楼机顶盒数+1
+					$box_id = $boxModel->getLastInsID();
+					$wherea = '';
+					$wherea = '1 and b.id='.$box_id;
+					$h_box_info = $boxModel->isHaveMac('h.id hoid', $wherea);
+					$hotelid = $h_box_info[0]['hoid'];
+					$hextModel = new \Admin\Model\HotelExtModel();
+					$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', 1);
+				}
 				$this->output('添加成功!', 'hotel/room');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');

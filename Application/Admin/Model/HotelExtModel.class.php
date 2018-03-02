@@ -35,6 +35,12 @@ class HotelExtModel extends BaseModel{
 		$list = $this->field($field)->where($where)->select();
 		return $list;
 	}
+
+	public function getOneData($field, $where){
+		$list = $this->field($field)->where($where)->find();
+		return $list;
+	}
+
 	public function isHaveMac($field,$where){
 	    $sql ="select $field from savor_hotel_ext as he 
 	           left join savor_hotel as h on he.hotel_id = h.id where ".$where;

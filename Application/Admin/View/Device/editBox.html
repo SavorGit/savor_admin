@@ -84,6 +84,20 @@
           </select>
         </div>
       </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          广告机:
+        </label>
+
+        <div class="col-xs-12 col-sm-10">
+          <select name="adv_machine" class="form-control bs-select">
+            <foreach name="ad_mache" item="vlist">
+              <option value="{$key}" <if condition=" $key eq $vinfo.adv_mach "> selected </if> >{$vlist}</option>
+            </foreach>
+          </select>
+        </div>
+      </div>
             
     </div>
 

@@ -167,12 +167,30 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <div class="input-group-sm input-group">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              广告机：
+            </label>
+                <span class="input-group-btn">
+              <select id="adv_machine" name="adv_machine" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body"  >
+                <foreach name="select_ad_mache" item="vlist">
+                  <option value="{$key}" <if condition="$key eq $se_ad_machince">selected</if> >{$vlist}</option>
+                </foreach>
+              </select>
+            </span>
+          </div>
+        </div>
+
         <div class="input-group input-group-sm">
           <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
         </div>
+
+
+
         <div class="input-group input-group-sm pull-right">
           <a class="btn btn-success btn-sm add" href="{$host_name}/hotel/add?acttype=0" title="新增酒店" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增酒店</a>
           <a class="btn btn-success btn-sm add" href="{$host_name}/excel/hotelinfo" title="导出资源总表" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出酒楼资源总表</a>
