@@ -1,7 +1,9 @@
 <?php
 namespace Admin\Model;
+
 use Think\Model;
 use Common\Lib\Page;
+
 class SingleproReportModel extends Model
 {
     protected $connection = 'DB_STATIS';
@@ -29,6 +31,11 @@ class SingleproReportModel extends Model
 		->group($group)
 		->where($where)
 	    ->count();
+		if(empty($count)) {
+			$count = 0;
+		} else {
+			$count = count($count);
+		}
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();
 	    $data = array('list'=>$list,'page'=>$show);

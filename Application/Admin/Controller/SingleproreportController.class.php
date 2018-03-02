@@ -12,7 +12,7 @@
 namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
-use Common\Lib\Page;
+
 
 class SingleproreportController extends BaseController {
     public function __construct(){
