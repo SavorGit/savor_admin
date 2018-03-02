@@ -156,9 +156,22 @@ class SingleproreportController extends BaseController {
             if ( $rv['duration'] <= 60) {
                 $result['list'][$rk]['duration'] = $rv['duration'].'秒';
             } else {
-                $min = floor($rv['duration']/60);
-                $sec = $rv['duration']%60;
-                $result['list'][$rk]['duration'] = $min.'分'.$sec.'秒';
+                if($rv['duration'] < 3600) {
+                    $min = floor($rv['duration']/60);
+                    $sec = $rv['duration']%60;
+                    $result['list'][$rk]['duration'] = $min.'分'.$sec.'秒';
+                } else {
+                    $hour= floor($rv['duration']/3600);
+                    $seca = $rv['duration']%3600;
+                    if($seca<60) {
+                        $sec = $seca;
+                    } else {
+                        $min = floor($rv['duration']/60);
+                        $sec = $rv['duration']%60;
+                    }
+                    $result['list'][$rk]['duration'] = $hour.'时'.$min.'分'.$sec.'秒';
+                }
+
             }
         }
 

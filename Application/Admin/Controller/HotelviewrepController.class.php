@@ -97,11 +97,10 @@ class HotelviewrepController extends BaseController {
                     if($seca<60) {
                         $sec = $seca;
                     } else {
-
+                        $min = floor($rv['duration']/60);
+                        $sec = $rv['duration']%60;
                     }
-                    $min = floor($rv['duration']/60);
-                    $sec = $rv['duration']%60;
-                    $result['list'][$rk]['duration'] = $min.'分'.$sec.'秒';
+                    $result['list'][$rk]['duration'] = $hour.'时'.$min.'分'.$sec.'秒';
                 }
 
             }
