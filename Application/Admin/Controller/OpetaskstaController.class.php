@@ -72,7 +72,7 @@ class OpetaskstaController extends BaseController {
         $this->assign('area', $area_arr);
         $area_v = I('area_v', 0);
         if( empty($starttime) && empty($endtime)) {
-            $starttime = date("Y-m-d",strtotime("-1 year"));
+            $starttime = date("Y-m-d",strtotime("-7 days"));
             $endtime = $yesday;
             $area_v = $area_arr[0]['id'];
             $st_time = $starttime.' 00:00:00 ';
