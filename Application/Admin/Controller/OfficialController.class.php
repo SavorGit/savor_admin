@@ -142,6 +142,64 @@ class officialController extends Controller {
 	    array_push($arealist, $arr);
 	    echo "arealist(".json_encode($arealist).")";
 	}
+	
+	/**
+	 * @desc 大屏数据监控 - 获取在线版位以及版位总数
+	 */
+	public function getBoxNums(){
+	    $m_heart_log = new \Admin\Model\HeartLogModel();
+	    $where = array();
+	    $fields = "box_id";
+	    $heart_time = date('Y-m-d H:i:s',strtotime('-5 minutes')); 
+	    $where['type'] = 2;
+	    $where['last_heart_time'] = array('egt',$heart_time);
+	    
+	    $online_box = $m_heart_log->getHotelHeartBox($where,$fields);
+	    $online_box_num = count($online_box);
+	    
+	    $m_box = new \Admin\Model\BoxModel();
+	    
+	    $fields = 'b.id';
+	    $where = '1';
+	    $where .= ' and h.flag  = 0';
+	    $where .= ' and h.state = 1';
+	    $where .= ' and b.flag  = 0';
+	    $where .= ' and b.state = 1';
+	    $box_list = $m_box->isHaveMac($fields,$where);
+	    $normal_box_nums = count($box_list);
+	    $data =  array();
+	    $data['online_box_num'] = $online_box_num;
+	    $data['normal_box_num'] = $normal_box_nums;
+	    echo "bigscreen(".json_encode($data).")"; 
+	}
+	/**
+	 * @desc 大屏数据监控-运维任务统计
+	 */
+	public function getOpTaskNums(){
+	    $m_option_task =  new \Admin\Model\OptiontaskModel();
+	    //当月第一天
+	    $month_start_time = date('Y-m-01 H:i:s',strtotime(date('Y-m-d'))); 
+	    $where = array();
+	    $where['flag']  = 0;
+	    $where['state'] = array('in',array('4'));
+	    $where['complete_time'] = array('egt',$month_start_time);
+	    $complete_task_num = $m_option_task->countNums($where);  //本月已处理任务
+	    
+	    $where = array();
+	    $where['flag'] = 0;
+	    $where['state'] = array('in',array('1','2','3'));
+	    $where['complete_time'] = array('egt',$month_start_time);
+	    $not_complete_task_num = $m_option_task->countNums($where); //本月待处理的任务
+	    
+	    $data =  array();
+	    $data['complete_task_num'] = $complete_task_num;
+	    $data['not_complete_task_num'] = $not_complete_task_num;
+	    echo "bigscreen(".json_encode($data).")";
+	    
+	}
+	/**
+	 * @desc 
+	 */
 }
 
 ?>

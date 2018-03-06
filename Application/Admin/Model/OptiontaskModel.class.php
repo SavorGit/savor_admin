@@ -24,4 +24,8 @@ class OptiontaskModel extends BaseModel
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+	public function countNums($where){
+	    $nums = $this->where($where)->count();
+	    return $nums;
+	}
 }
