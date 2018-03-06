@@ -24,4 +24,11 @@ class OptiontaskModel extends BaseModel
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+
+
+
+	public function getListByGroup($fields,$where,$order,$group, $limit){
+		$data = $this->field($fields)->where($where)->group($group)->order($order)->limit($limit)->select();
+		return $data;
+	}
 }
