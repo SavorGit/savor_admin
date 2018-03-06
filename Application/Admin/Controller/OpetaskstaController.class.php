@@ -131,51 +131,77 @@ class OpetaskstaController extends BaseController {
                 if( empty($exe_user_id) ) {
                     $exe_user_id = $user_arr[0]['id'];
                 }
-                //获取该执行都的所有任务
-                $where .= ' and flag=0 and exe_user_id = '.$exe_user_id.
-                    ' and ( ( state=2 and palan_finish_time > "'.$st_time.'"
+                $t_user_remark = $user_remark_arr[$exe_user_id];
+                $task_type = C('OPTION_USER_SKILL_ARR');
+                $optaskModel = new \Admin\Model\OptiontaskModel();
+                $field = ' state, hotel_id, tv_nums, task_type ';
+                $tap = array();
+                foreach($task_type as $tk=>$tv) {
+                    $wherea = $where;
+                    $wherea .= ' and task_type= '.$tk.' and flag=0 and exe_user_id = '.$exe_user_id.
+                        ' and ( ( state=2 and palan_finish_time > "'.$st_time.'"
                 and  palan_finish_time <= "'.$en_time.'"  )
                 or (state=4 and  complete_time > "'.$st_time.'"
                 and  complete_time <= "'.$en_time.'" ) )';
-                $optaskModel = new \Admin\Model\OptiontaskModel();
-                $order = '';
-                $limit = '';
-                $field = ' state, task_type, COUNT(*) tasknum';
-                $group = 'task_type';
-                $op_task_arr = $optaskModel->getListByGroup(
-                    $field,$where, $order, $group,
-                    $limit
-                );
-                $t_user_remark = $user_remark_arr[$exe_user_id];
-                $task_type = C('OPTION_USER_SKILL_ARR');
-                if($op_task_arr) {
-                    $task_state_arr = array();
-                    $t_ar_num = array();
-                    foreach($op_task_arr as $ok=>$ov) {
-                        $tatype = $ov['task_type'];
-                        $tastate = $ov['state'];
-                        $task_state_arr[$tatype][$tastate] = $ov['tasknum'];
-                        $t_ar_num[$tatype] = 1;
-                    }
-                    $tap = array();
-                    foreach($t_ar_num as $tk=>$tv) {
-                        $tap[] = array(
-                            'type'=>$task_type[$tk],
-                            'remark'=>$t_user_remark,
-                            'finish'=>empty($task_state_arr[$tk][4])?0:$task_state_arr[$tk][4],
-                            'coni'=>empty($task_state_arr[$tk][2])?0:$task_state_arr[$tk][2]
-                        );
-                    }
-                    $result['list'] = $tap;
-                    $count = count($t_ar_num);
-                    $objPage = new Page($count, $size);
-                    $show = $objPage->admin_page();
-                    $result['page'] = $show;
+                    $order = '';
+                    $limit = '';
+                    $group = '';
+                    $op_task_arr = $optaskModel->getListByGroup(
+                        $field,$wherea, $order, $group,
+                        $limit
+                    );
+                    if($op_task_arr) {
+                        $ho_id_ar = array();
+                        $ban = array();
+                        foreach($op_task_arr as $ok=>$ov) {
+                            $tastate = $ov['state'];
+                            $ho_id_ar[$tastate][] = empty($ov['hotel_id'])?0:$ov['hotel_id'];
+                            $ban[$tastate][] = empty($ov['tv_nums'])?0:$ov['tv_nums'];
+                        }
+                        $fi_h = count($ho_id_ar[4]);
+                        $co_h = count($ho_id_ar[2]);
+                        $fi_ban = count($ban[4]);
+                        $co_ban = count($ban[2]);
+                        if( ($tk == 2) || ($tk == 4) ) {
+                            $tap[] = array(
+                                'type'=>$tv,
+                                'remark'=>$t_user_remark,
+                                'finish'=>'酒楼'.$fi_h.'个,版位'.$fi_ban.'个',
+                                'coni'=>'酒楼'.$co_h.'个,版位'.$co_ban.'个',
+                            );
+                        } else {
+                            $tap[] = array(
+                                'type'=>$tv,
+                                'remark'=>$t_user_remark,
+                                'finish'=>'酒楼'.$fi_h.'个',
+                                'coni'=>'酒楼'.$co_h.'个',
+                            );
+                        }
+                    } else {
+                        if( ($tk == 2) || ($tk == 4) ) {
+                            $tap[] = array(
+                                'type'=>$tv,
+                                'remark'=>$t_user_remark,
+                                'finish'=>'酒楼0个,版位0个',
+                                'coni'=>'酒楼0个,版位0个',
+                            );
+                        } else {
+                            $tap[] = array(
+                                'type'=>$tv,
+                                'remark'=>$t_user_remark,
+                                'finish'=>'酒楼0个',
+                                'coni'=>'酒楼0个',
+                            );
+                        }
 
-                } else {
-                    $result = $this->emptyData($size);
-
+                    }
                 }
+                $result['list'] = $tap;
+                $count = 4;
+                $objPage = new Page($count, $size);
+                $show = $objPage->admin_page();
+                $result['page'] = $show;
+
             }
 
 
