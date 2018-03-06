@@ -113,12 +113,13 @@
                         运维人：
                     </label>
 
-
-	              <select id="yunwei" name="user_v" style="width: 200px;height:50px;" class=""  data-style="btn-success btn-sm"  size="15">
+	                <span class="input-group-btn input-group-sm">
+	              <select id="yunwei" name="user_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
                       <volist name="usera" id="vo">
                           <option value="{$vo.id}" <if condition="$vo.id eq $user_k">selected</if>>{$vo.remark}</option><br>
                       </volist>
                   </select>
+	            </span>
                 </div>
             </div>
 
@@ -195,18 +196,19 @@
             data:"cityid="+gid,
             success: function(data) {
                 //如果返回值不为空则执行。
+                var option_str1 = '';
                 if (data.code == 1) {
-                    $('#yunwei ').html("");
                     var minfo =  data.list;
-                    var option_str1 = '';
                     $.each(minfo, function (index, obj) {
                         option_str1 = option_str1 + '<option value="'+obj.id+'">'+obj.remark+'</option>';
                     });
-                    console.log(option_str1);
                     $('#yunwei').html(option_str1);
-                } else {
 
+                } else {
+                    option_str1 = option_str1 + '<option value="-999">'+'无人员'+'</option>';
+                    $('#yunwei').html(option_str1);
                 }
+                $('#yunwei').selectpicker('refresh');
             }
 
         })

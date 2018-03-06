@@ -27,7 +27,7 @@ class OpetaskstaController extends BaseController {
     }
 
     public function getUserRoleByCity() {
-        //ÅÐ¶Ï¸Ã³ÇÊÐÊÇ·ñÓÐÖ´ÐÐÕß
+        //åˆ¤æ–­è¯¥åŸŽå¸‚æ˜¯å¦æœ‰æ‰§è¡Œè€…
         $area_v = I('cityid',0);
         $opUserModel = new \Admin\Model\OpuserroleModel();
         $op_field = 'a.user_id id,user.remark';
@@ -49,7 +49,7 @@ class OpetaskstaController extends BaseController {
     }
 
     /*
-     * @Purpose:ÏÔÊ¾ÁÐ±í
+     * @Purpose:æ˜¾ç¤ºåˆ—è¡¨
      * @Access:public
      * @Method:getList
      * @http: Post
@@ -59,7 +59,7 @@ class OpetaskstaController extends BaseController {
 
         $starttime = I('adsstarttime','');
         $endtime = I('adsendtime','');
-        $size   = I('numPerPage',50);//ÏÔÊ¾Ã¿Ò³¼ÇÂ¼Êý
+        $size   = I('numPerPage',50);//æ˜¾ç¤ºæ¯é¡µè®°å½•æ•°
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
@@ -89,10 +89,10 @@ class OpetaskstaController extends BaseController {
                 $this->assign('e_time',$endtime);
 
             }else{
-                $this->error('¿ªÊ¼Ê±¼ä±ØÐëÐ¡ÓÚµÈÓÚ½áÊøÊ±¼ä');
+                $this->error('å¼€å§‹æ—¶é—´å¿…é¡»å°äºŽç­‰äºŽç»“æŸæ—¶é—´');
             }
 
-            //µÃµ½ËùÓÐ³ÇÊÐ
+            //å¾—åˆ°æ‰€æœ‰åŸŽå¸‚
             $areaModel  = new \Admin\Model\AreaModel();
             $area_arr = $areaModel->getAllArea();
             $this->assign('area', $area_arr);
@@ -101,7 +101,7 @@ class OpetaskstaController extends BaseController {
             if( empty($area_v) ) {
                 $area_v = $area_arr[0]['id'];
             }
-            //ÅÐ¶Ï¸Ã³ÇÊÐÊÇ·ñÓÐÖ´ÐÐÕß
+            //åˆ¤æ–­è¯¥åŸŽå¸‚æ˜¯å¦æœ‰æ‰§è¡Œè€…
             $opUserModel = new \Admin\Model\OpuserroleModel();
             $op_field = 'a.user_id id,user.remark';
             $op_where = '1 and manage_city='.$area_v.
@@ -114,54 +114,64 @@ class OpetaskstaController extends BaseController {
                 $user_remark_arr = array_combine(
                     $uer_id_a, $uer_remark_a
                 );
-                if( empty($exe_user_id) ) {
-                    $exe_user_id = $user_arr[0]['id'];
-                }
-                //»ñÈ¡¸ÃÖ´ÐÐ¶¼µÄËùÓÐÈÎÎñ
-                $where .= ' and flag=0 and exe_user_id = '.$exe_user_id.
-                ' and ( ( state=2 and palan_finish_time > "'.$st_time.'"
+                if($exe_user_id == -999) {
+                    $result = $this->emptyData($size);
+                    $this->assign('user_k', $exe_user_id);
+                    $len = count($user_arr);
+                    $user_arr = array();
+                    $user_arr[] = array(
+                        'id'=>'-999',
+                        'remark'=>'æ— äººå‘˜',
+                    );
+                } else {
+                    if( empty($exe_user_id) ) {
+                        $exe_user_id = $user_arr[0]['id'];
+                    }
+                    //èŽ·å–è¯¥æ‰§è¡Œéƒ½çš„æ‰€æœ‰ä»»åŠ¡
+                    $where .= ' and flag=0 and exe_user_id = '.$exe_user_id.
+                        ' and ( ( state=2 and palan_finish_time > "'.$st_time.'"
                 and  palan_finish_time < "'.$en_time.'"  )
                 or (state=4 and  complete_time > "'.$st_time.'"
                 and  complete_time < "'.$en_time.'" ) )';
-                $optaskModel = new \Admin\Model\OptiontaskModel();
-                $order = '';
-                $limit = '';
-                $field = ' state, task_type, COUNT(*) tasknum';
-                $group = 'task_type';
-                $op_task_arr = $optaskModel->getListByGroup(
-                    $field,$where, $order, $group,
-                    $limit
-                );
-                $t_user_remark = $user_remark_arr[$exe_user_id];
-                $task_type = C('OPTION_USER_SKILL_ARR');
-                if($op_task_arr) {
-                    $task_state_arr = array();
-                    $t_ar_num = array();
-                    foreach($op_task_arr as $ok=>$ov) {
-                        $tatype = $ov['task_type'];
-                        $tastate = $ov['state'];
-                        $task_state_arr[$tatype][$tastate] = $ov['tasknum'];
-                        $t_ar_num[$tatype] = 1;
-                    }
-                    $tap = array();
-                    foreach($t_ar_num as $tk=>$tv) {
-                        $tap[] = array(
-                            'type'=>$task_type[$tk],
-                            'remark'=>$t_user_remark,
-                            'finish'=>empty($task_state_arr[$tk][4])?0:$task_state_arr[$tk][4],
-                            'coni'=>empty($task_state_arr[$tk][2])?0:$task_state_arr[$tk][2]
-                        );
-                    }
-                    $result['list'] = $tap;
-                    $count = count($t_ar_num);
-                    $objPage = new Page($count, $size);
-                    $show = $objPage->admin_page();
-                    $result['page'] = $show;
+                    $optaskModel = new \Admin\Model\OptiontaskModel();
+                    $order = '';
+                    $limit = '';
+                    $field = ' state, task_type, COUNT(*) tasknum';
+                    $group = 'task_type';
+                    $op_task_arr = $optaskModel->getListByGroup(
+                        $field,$where, $order, $group,
+                        $limit
+                    );
+                    $t_user_remark = $user_remark_arr[$exe_user_id];
+                    $task_type = C('OPTION_USER_SKILL_ARR');
+                    if($op_task_arr) {
+                        $task_state_arr = array();
+                        $t_ar_num = array();
+                        foreach($op_task_arr as $ok=>$ov) {
+                            $tatype = $ov['task_type'];
+                            $tastate = $ov['state'];
+                            $task_state_arr[$tatype][$tastate] = $ov['tasknum'];
+                            $t_ar_num[$tatype] = 1;
+                        }
+                        $tap = array();
+                        foreach($t_ar_num as $tk=>$tv) {
+                            $tap[] = array(
+                                'type'=>$task_type[$tk],
+                                'remark'=>$t_user_remark,
+                                'finish'=>empty($task_state_arr[$tk][4])?0:$task_state_arr[$tk][4],
+                                'coni'=>empty($task_state_arr[$tk][2])?0:$task_state_arr[$tk][2]
+                            );
+                        }
+                        $result['list'] = $tap;
+                        $count = count($t_ar_num);
+                        $objPage = new Page($count, $size);
+                        $show = $objPage->admin_page();
+                        $result['page'] = $show;
 
-                } else {
-                    $result = $this->emptyData($size);
+                    } else {
+                        $result = $this->emptyData($size);
+                    }
                 }
-
 
             } else {
                 $user_arr = array();
