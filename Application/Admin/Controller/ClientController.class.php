@@ -276,6 +276,7 @@ class ClientController extends Controller {
         $id = I('get.id',0,'intval');
         $app_version = I('get.app','');
         $oss_host = get_oss_host();
+        $this->skipShop($id);
         if($app_version == 'inner'){
             //newread证明在客户端
             $sourcename = I('get.location','');
@@ -555,5 +556,12 @@ class ClientController extends Controller {
             $m_content_wx_auth->addInfo($map);
         }
     }
-    
+    private function skipShop($id){
+        
+        if($id==-1){
+            $url = 'https://detail.youzan.com/show/goods?alias=278x9zar5q2uy&reft=1518140890930&spm=f47880926&sf=wx_sm';
+            header('Location:'.$url);
+            exit;
+        }
+    }
 }
