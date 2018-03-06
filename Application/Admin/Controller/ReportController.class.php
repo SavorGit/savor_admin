@@ -7,6 +7,7 @@ namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
 use Think\Exception;
+use Common\Lib\SavorRedis;
 
 class ReportController extends BaseController{
 
@@ -155,24 +156,38 @@ class ReportController extends BaseController{
 		$m_hotel = new \Admin\Model\HotelModel();
 		$m_box   = new \Admin\Model\BoxModel();
         $box_state = C('HOTEL_STATE');
+        $redis = SavorRedis::getInstance();
+        $redis->select(13);
+        $cache_key = "heartbeat:";
 		foreach ($result['list'] as $key=> &$val) {
 
 
 			$val['indnum'] = ++$ind;
-			$d_time = strtotime($val['last_heart_time']);
-			$diff = $time - $d_time;
-			if($diff< 3600) {
-				$val['last_heart_time'] = floor($diff/60).'分';
+			//$d_time = strtotime($val['last_heart_time']);
 
-			}else if ($diff >= 3600 && $diff <= 86400) {
-				$hour = floor($diff/3600);
-				$min = floor($diff%3600/60);
-				$val['last_heart_time'] = $hour.'小时'.$min.'分';
-			}else if ($diff > 86400) {
-				$day = floor($diff/86400);
-				$hour = floor($diff%86400/3600);
-				$val['last_heart_time'] = $day.'天'.$hour.'小时';
+			$heartbeat = $redis->get($cache_key.$val['type'].':'.$val['box_mac']);
+			if($heartbeat){
+			    $heartbeat = json_decode($heartbeat,true);
+			    $d_time = strtotime($heartbeat['date']);
+			    $diff = $time - $d_time;
+			    if($diff< 3600) {
+			        $val['last_heart_time'] = floor($diff/60).'分';
+			    
+			    }else if ($diff >= 3600 && $diff <= 86400) {
+			        $hour = floor($diff/3600);
+			        $min = floor($diff%3600/60);
+			        $val['last_heart_time'] = $hour.'小时'.$min.'分';
+			    }else if ($diff > 86400) {
+			        $day = floor($diff/86400);
+			        $hour = floor($diff%86400/3600);
+			        $val['last_heart_time'] = $day.'天'.$hour.'小时';
+			    }
+			}else {
+			    $val['last_heart_time'] = '30天前';
 			}
+			
+			
+			
 			if($val['type']==1){
 			    
 			    $hotel_ext_info = $m_hotel->getHotelInfoByMac($val['box_mac']);
