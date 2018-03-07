@@ -29,9 +29,9 @@ class SingleproreportController extends BaseController {
      */
     public function getadsAjax(){
         $searchtitle = I('adsname','');
-        $st_type = I('sta_type', 2);
+        $st_type = I('sta_type', 'pro');
         $where = "1=1";
-        $where .= " AND type = ".$st_type;
+        $where .= " AND type = '".$st_type."'";
         $field = "media_id id, media_name name,media_id";
         if ($searchtitle) {
             $where .= "	AND media_name LIKE '%{$searchtitle}%'";
@@ -74,10 +74,9 @@ class SingleproreportController extends BaseController {
         $where = "1=1";
         $yesday =  date("Y-m-d",strtotime("-1 day"));
         $start  = ( $start-1 ) * $size;
-        $sta_ad_type =  I('sta_ad_type',2,'intval');
-        $sta_ad_type = 1;
+        $sta_ad_type =  I('sta_ad_type','pro');
         $this->assign('sta_ad_k',$sta_ad_type);
-        $where .= ' AND a.type = '.$sta_ad_type;
+        $where .= ' AND a.type = "$sta_ad_type" ';
         if ( empty($starttime) ) {
             $st_time = $yesday.' 00:00:00 ';
         } else {

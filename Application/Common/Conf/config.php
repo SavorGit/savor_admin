@@ -413,9 +413,9 @@ $config['SELECT_ADV_MACH'] = array(
     '2'=>'无',
 );
 $config['STATISTICS_TYPE'] = array(
-    '1'=>'广告',
-    '2'=>'节目',
-    '4'=>'B类广告',
+    'ads'=>'广告',
+    'pro'=>'节目',
+    'rtbads'=>'B类广告',
 );
 return $config;
 
