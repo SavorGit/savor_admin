@@ -79,33 +79,18 @@ class HotelviewrepController extends BaseController {
         $total_result = $htrpModel->getAllData($where, $field);
         $total_adv = round($total_result[0]['vdur']/$total_result[0]['vtime'], 1);
         $this->assign('total_adv', $total_adv);
-
         foreach($result['list'] as $rk=>$rv) {
             if($rv['vtime'] == 0) {
                 $result['list'][$rk]['adv_vtime'] = 0;
             } else {
                 $result['list'][$rk]['adv_vtime'] = round($rv['vdur']/$rv['vtime'], 1);
             }
-            $rv['duration'] = $rv['duration'] * 60;
             if ( $rv['duration'] <= 60) {
-                $result['list'][$rk]['duration'] = $rv['duration'].'秒';
+                $result['list'][$rk]['duration'] = $rv['duration'].'分';
             } else {
-                if($rv['duration'] < 3600) {
-                    $min = floor($rv['duration']/60);
-                    $sec = $rv['duration']%60;
-                    $result['list'][$rk]['duration'] = $min.'分'.$sec.'秒';
-                } else {
-                    $hour= floor($rv['duration']/3600);
-                    $seca = $rv['duration']%3600;
-                    if($seca<60) {
-                        $sec = $seca;
-                    } else {
-                        $min = floor($rv['duration']/60);
-                        $sec = $rv['duration']%60;
-                    }
-                    $result['list'][$rk]['duration'] = $hour.'时'.$min.'分'.$sec.'秒';
-                }
-
+                $hour= floor($rv['duration']/60);
+                $min = $rv['duration']%60;
+                $result['list'][$rk]['duration'] = $hour.'时'.$min.'分';
             }
         }
 

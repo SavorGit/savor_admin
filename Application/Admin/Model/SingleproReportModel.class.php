@@ -30,7 +30,7 @@ class SingleproReportModel extends Model
 	    $count = $this->alias('a')
 		->group($group)
 		->where($where)
-	    ->count();
+	    ->select();
 		if(empty($count)) {
 			$count = 0;
 		} else {
