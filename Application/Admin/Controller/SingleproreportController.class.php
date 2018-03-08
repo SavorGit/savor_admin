@@ -76,7 +76,7 @@ class SingleproreportController extends BaseController {
         $start  = ( $start-1 ) * $size;
         $sta_ad_type =  I('sta_ad_type','pro');
         $this->assign('sta_ad_k',$sta_ad_type);
-        $where .= ' AND a.type = "$sta_ad_type" ';
+        $where .= " AND a.type = '".$sta_ad_type."'";
         if ( empty($starttime) ) {
             $st_time = $yesday.' 00:00:00 ';
         } else {
