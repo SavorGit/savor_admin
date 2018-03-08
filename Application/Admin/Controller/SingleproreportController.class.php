@@ -82,13 +82,13 @@ class SingleproreportController extends BaseController {
         } else {
             $st_time = $starttime.' 00:00:00 ';
         }
-        $where .= ' AND a.view_date >"'.$st_time.'"';
+        $where .= ' AND a.view_date >= "'.$st_time.'"';
         if ( empty($endtime) ) {
             $en_time = $yesday.' 23:59:59 ';
         } else {
             $en_time = $endtime.' 23:59:59 ';
         }
-        $where .= ' AND a.view_date < "'.$en_time.'"';
+        $where .= ' AND a.view_date <= "'.$en_time.'"';
         if($st_time < $en_time) {
             $this->assign('s_time',$starttime);
             $this->assign('e_time',$endtime);

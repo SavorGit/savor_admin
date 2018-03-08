@@ -54,13 +54,13 @@ class HotelviewrepController extends BaseController {
         } else {
             $st_time = $starttime.' 00:00:00 ';
         }
-        $where .= ' AND a.view_date >"'.$st_time.'"';
+        $where .= ' AND a.view_date >= "'.$st_time.'"';
         if ( empty($endtime) ) {
             $en_time = $yesday.' 23:59:59 ';
         } else {
             $en_time = $endtime.' 23:59:59 ';
         }
-        $where .= ' AND a.view_date < "'.$en_time.'"';
+        $where .= ' AND a.view_date <= "'.$en_time.'"';
         if($st_time < $en_time) {
             $this->assign('s_time',$starttime);
             $this->assign('e_time',$endtime);
@@ -68,12 +68,14 @@ class HotelviewrepController extends BaseController {
         }else{
             $this->error('开始时间必须小于等于结束时间');
         }
+
         $htrpModel = new \Admin\Model\HotelViewReportModel();
         $field = 'sum(`online_duration`) duration, sum(view_duration) vdur
             ,sum(`view_times`) vtime,a.hotel_id,a.hotel_name,a.room_type,a.box_name';
         $group = 'a.hotel_id';
         $result = $htrpModel->getList($field, $where, $order,$group, $start, $size);
         //算总数
+
         $total_result = $htrpModel->getAllData($where, $field);
         $total_adv = round($total_result[0]['vdur']/$total_result[0]['vtime'], 1);
         $this->assign('total_adv', $total_adv);
