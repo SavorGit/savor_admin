@@ -73,10 +73,16 @@ class SingleproreportController extends BaseController {
         $hidden_adsid = I('hadsid','',0);
         $where = "1=1";
         $yesday =  date("Y-m-d",strtotime("-1 day"));
+        $today = date("Y-m-d");
         $start  = ( $start-1 ) * $size;
         $sta_ad_type =  I('sta_ad_type','pro');
         $this->assign('sta_ad_k',$sta_ad_type);
         $where .= " AND a.type = '".$sta_ad_type."'";
+
+        if($starttime == $today || $endtime == $today) {
+            $this->error('开始或者结束时间不可选今天');
+        }
+
         if ( empty($starttime) ) {
             $st_time = $yesday.' 00:00:00 ';
         } else {

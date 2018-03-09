@@ -8,9 +8,11 @@ class SingleproReportModel extends Model
 {
     protected $connection = 'DB_STATIS';
 
-    protected $tablePrefix = "view_";
+	protected $tablePrefix = 'statistics_';
 
-    protected $tableName='statistics_program';
+	protected $tableName='advm_program';
+
+
 
 
     public function __consruct($name){

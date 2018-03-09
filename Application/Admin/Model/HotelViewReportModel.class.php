@@ -6,15 +6,15 @@ class HotelViewReportModel extends Model
 {
     protected $connection = 'DB_STATIS';
 
-    protected $tablePrefix = "view_";
+	protected $tablePrefix = 'statistics_';
 
-    protected $tableName='statistics_hotel';
+    protected $tableName='advm_hotel';
 
 
-    public function __consruct($name){
+    /*public function __consruct($name){
         parent::__construct();
         $this->tableName = $name;
-    }
+    }*/
     public function getList($field, $where, $order='id desc',$group, $start=0,$size=5){
 	    $list = $this->alias('a')
 		->field($field)

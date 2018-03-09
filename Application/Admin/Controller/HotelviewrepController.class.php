@@ -49,6 +49,11 @@ class HotelviewrepController extends BaseController {
         $where = "1=1";
         $yesday =  date("Y-m-d",strtotime("-1 day"));
         $start  = ( $start-1 ) * $size;
+        $today = date("Y-m-d");
+        if($starttime == $today || $endtime == $today) {
+            $this->error('开始或者结束时间不可选今天');
+        }
+
         if ( empty($starttime) ) {
             $st_time = $yesday.' 00:00:00 ';
         } else {
