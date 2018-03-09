@@ -146,6 +146,7 @@ class SingleproreportController extends BaseController {
             }
         }
 
+
         foreach($result['list'] as $rk=>$rv) {
             if($rv['vtime'] == 0) {
                 $result['list'][$rk]['adv_vtime'] = 0;
