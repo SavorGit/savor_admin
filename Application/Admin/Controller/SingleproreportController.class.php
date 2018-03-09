@@ -136,6 +136,16 @@ class SingleproreportController extends BaseController {
         $wherea.= "	AND play_date >= '{$starttime}'";
         $wherea .= "	AND play_date <= '{$endtime} '";
         $mefield = 'sum(play_time) meplay';
+
+        foreach($result['list'] as &$rv) {
+
+            foreach($rv as &$s) {
+                if(empty($s)) {
+                    $s = 0;
+                }
+            }
+        }
+
         foreach($result['list'] as $rk=>$rv) {
             if($rv['vtime'] == 0) {
                 $result['list'][$rk]['adv_vtime'] = 0;
