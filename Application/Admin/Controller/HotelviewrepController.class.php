@@ -79,6 +79,15 @@ class HotelviewrepController extends BaseController {
         $total_result = $htrpModel->getAllData($where, $field);
         $total_adv = round($total_result[0]['vdur']/$total_result[0]['vtime'], 1);
         $this->assign('total_adv', $total_adv);
+
+        foreach($result['list'] as &$rv) {
+
+            foreach($rv as &$s) {
+                if(empty($s)) {
+                    $s = 0;
+                }
+            }
+        }
         foreach($result['list'] as $rk=>$rv) {
             if($rv['vtime'] == 0) {
                 $result['list'][$rk]['adv_vtime'] = 0;
@@ -92,6 +101,7 @@ class HotelviewrepController extends BaseController {
                 $min = $rv['duration']%60;
                 $result['list'][$rk]['duration'] = $hour.'时'.$min.'分';
             }
+
         }
 
 
