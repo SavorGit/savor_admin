@@ -77,7 +77,7 @@ class HotelviewrepController extends BaseController {
         $htrpModel = new \Admin\Model\Statisticses\HotelViewReportModel();
         $field = 'sum(`online_duration`) duration, sum(view_duration) vdur
             ,sum(`view_times`) vtime,a.hotel_id,a.hotel_name,a.room_type,a.box_name';
-        $group = 'a.hotel_id';
+        $group = 'a.box_id';
         $result = $htrpModel->getList($field, $where, $order,$group, $start, $size);
         //算总数
 
@@ -85,11 +85,11 @@ class HotelviewrepController extends BaseController {
         $total_adv = round($total_result[0]['vdur']/$total_result[0]['vtime'], 1);
         $this->assign('total_adv', $total_adv);
 
-        foreach($result['list'] as &$rv) {
+        foreach($result['list'] as &$av) {
 
-            foreach($rv as &$s) {
-                if(empty($s)) {
-                    $s = 0;
+            foreach($av as &$sb) {
+                if(empty($sb)) {
+                    $sb = 0;
                 }
             }
         }
