@@ -50,8 +50,8 @@ class HotelviewrepController extends BaseController {
         $yesday =  date("Y-m-d",strtotime("-1 day"));
         $start  = ( $start-1 ) * $size;
         $today = date("Y-m-d");
-        if($starttime == $today || $endtime == $today) {
-            $this->error('开始或者结束时间不可选今天');
+        if($starttime >= $today || $endtime >= $today) {
+            $this->error('时间筛选范围错误');
         }
 
         if ( empty($starttime) ) {

@@ -79,8 +79,8 @@ class SingleproreportController extends BaseController {
         $this->assign('sta_ad_k',$sta_ad_type);
         $where .= " AND a.type = '".$sta_ad_type."'";
 
-        if($starttime == $today || $endtime == $today) {
-            $this->error('开始或者结束时间不可选今天');
+        if($starttime >= $today || $endtime >= $today) {
+            $this->error('时间筛选范围错误');
         }
 
         if ( empty($starttime) ) {

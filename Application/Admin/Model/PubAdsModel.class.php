@@ -112,7 +112,7 @@ class PubAdsModel extends BaseModel
 
 	}
 
-	//ĞÂÔöºÍĞŞ¸Ä
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½
 	public function addData($data, $acttype) {
 		if(0 === $acttype) {
 			$result = $this->add($data);
@@ -134,6 +134,15 @@ class PubAdsModel extends BaseModel
 	public function updateInfo($where,$data){
 	    $ret = $this->where($where)->save($data);
 	    return $ret;
+	}
+	public function getPubAdsList($field, $where) {
+		$list = $this->alias('pads')
+			->where($where)
+			->join('savor_ads ads ON pads.ads_id = ads.id')
+			->join('savor_media  med ON med.id = ads.media_id')
+			->field($field)
+			->select();
+		return $list;
 	}
 }//End Class
 
