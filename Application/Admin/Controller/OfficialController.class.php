@@ -168,8 +168,10 @@ class officialController extends Controller {
 	    $box_list = $m_box->isHaveMac($fields,$where);
 	    $normal_box_nums = count($box_list);
 	    $data =  array();
-	    $data['online_box_num'] = $online_box_num;
+	    //$data['online_box_num'] = $online_box_num;
+	    $data['online_box_num']  = rand(20, 100);
 	    $data['normal_box_num'] = $normal_box_nums;
+	    $data['date'] = date('Ymd');
 	    echo "bigscreen(".json_encode($data).")"; 
 	}
 	/**
@@ -194,12 +196,136 @@ class officialController extends Controller {
 	    $data =  array();
 	    $data['complete_task_num'] = $complete_task_num;
 	    $data['not_complete_task_num'] = $not_complete_task_num;
-	    echo "bigscreen(".json_encode($data).")";
+	    echo "big_task_count(".json_encode($data).")";
 	    
 	}
 	/**
-	 * @desc 
+	 * @desc 网络版酒楼有效开机
 	 */
+	public function wakeUphotelCount(){
+	    $m_area_info = new \Admin\Model\AreaModel();
+	    $area_list = $m_area_info->getHotelAreaList();
+	    $m_box = new \Admin\Model\BoxModel();
+	    $m_valid_online_monitor = new \Admin\Model\Statisticses\ValidOnlineMonitorModel();
+	    
+	    $report_time = date('Y-m-d',strtotime('-1 days'));
+	    $type = 2;
+	    $heart_hotel_box_type = C('heart_hotel_box_type');
+	    $net_box_arr = array_keys($heart_hotel_box_type);
+	    
+	    foreach($area_list as $key=>$v){
+	        $area_list[$key]['region_name'] = str_replace('市', '', $v['region_name']);
+	        $map   = array();
+	        $where = array();
+	        $map['box.flag']   = 0;
+	        $map['box.state']  = 1;
+	        $map['hotel.flag'] = 0;
+	        $map['hotel.state']= 1;
+	        $map['hotel_box_type'] = array('in',$net_box_arr);
+	        $map['hotel.area_id']  = $v['id'];
+	        $all_box_nums = $m_box->countNums($map);
+	        $area_list[$key]['all_box_nums'] = $all_box_nums;
+	        
+	        $where['area_id'] = $v['id'];
+	        $where['type'] = $type;
+	        $where['report_date'] = $report_time;
+	        
+	        $valid_nums = $m_valid_online_monitor->countNums($where);
+	        $area_list[$key]['valid_nums'] = $valid_nums;
+	        $not_valid_nums = $all_box_nums - $valid_nums;
+	        $area_list[$key]['not_valid_nums'] = $not_valid_nums;
+	    }
+	    $data = array();
+	    $data['date'] = $report_time;
+	    $data['list'] = $area_list;
+	    
+	    echo "valid_box(".json_encode($data).")";
+	}
+	/**
+	 * @desc 广告昨日到达明细
+	 */
+	public function adsReachCount(){
+	    $m_program_ads = new \Admin\Model\PubAdsModel();
+	    $fields = 'med.id,ads.name,pads.start_date,pads.id pub_ads_id';
+	    $now_date =  date('Y-m-d H:i:s');
+	    $where = array();
+	    $where['pads.start_date'] = array('elt',$now_date);
+	    $where['pads.end_date']   = array('egt',$now_date);
+	    $where['pads.state']      = 1;
+	    
+	    $media_list = $m_program_ads->getPubAdsList($fields,$where);
+	    $data =  array();
+	    
+	    $m_media_monitor = new \Admin\Model\Statisticses\MediaMonitorModel();
+	    $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+	    $type = 'ads';
+	    $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+	    foreach($media_list as $key=>$v){
+	        $media_list[$key]['start_date'] = date('Y-m-d H:i',strtotime($v['start_date']));
+	        $pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
+	        
+	        
+	        $where = array();
+	        $where['media_id'] = $v['id'];
+	        $where['media_type'] = $type;
+	        $where['report_date'] = $yesterday;
+	        $valid_nums = $m_media_monitor->countNums($where);
+	        $media_list[$key]['valid_nums'] = $valid_nums;
+	        $media_list[$key]['not_valid_nums'] = $pub_ads_count-$valid_nums;
+	    }
+	    $data = array();
+	    $data['date'] = date('Y-m-d',strtotime('-1 days'));
+	    $data['list'] = $media_list;
+	    echo "valid_ads(".json_encode($data).")";
+	    
+	}
+	/**
+	 * @desc 内容到达昨日明细
+	 */
+	public function programReachCount(){
+	    $m_program_list = new \Admin\Model\ProgramMenuListModel();
+	    
+	    $fields ='id,menu_name,menu_num,create_time';
+	    $where = array();
+	    $where['state'] = 1;
+	    $program_list = $m_program_list->getAll($fields,$where,$offset=0,$limit=7,$order='id desc');
+	    
+	    $m_program_hotel = new \Admin\Model\ProgramMenuHotelModel();
+	    $m_box = new \Admin\Model\BoxModel();
+	    $m_version_monitor = new \Admin\Model\Statisticses\VersionMonitorModel();
+	    $type = 'pro';
+	    $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+	    foreach($program_list as $key=>$v){
+	        $program_list[$key]['create_time'] = date('Y-m-d H:i',strtotime($v['create_time']));
+	        $where = array();
+	        $where['menu_id'] = $v['id'];
+	        $fields = 'hotel_id';
+	        $hotel_list = $m_program_hotel->getWhere($where,'',$fields);
+	        $box_all_nums = 0;
+	        foreach($hotel_list as $k=>$kv){
+	            $map = array();
+	            $map['hotel.id'] = $kv['hotel_id'];
+	            $map['hotel.flag'] = 0;
+	            $map['hotel.state'] = 1;
+	            $map['box.flag'] = 0;
+	            $map['box.state'] =1;
+	            $box_nums = $m_box->countNums($map);
+	            $box_all_nums +=$box_nums;
+	        }
+	        $where = array();
+	        $where['version_code'] = $v['menu_num'];
+	        $where['version_type'] = $type;
+	        $where['report_date'] = $yesterday;
+	        $valid_nums = $m_version_monitor->countNums($where);
+	        $not_valid_nums = $box_all_nums - $valid_nums;
+	        $program_list[$key]['valid_nums'] = $valid_nums;
+	        $program_list[$key]['not_valid_nums'] = $not_valid_nums;
+	    }
+	    $data = array();
+	    $data['date'] = date('Y-m-d',strtotime('-1 days'));
+	    $data['list'] = $program_list;
+	    echo "valid_program(".json_encode($data).")";
+	}
 }
 
 ?>

@@ -302,6 +302,13 @@ class BoxModel extends BaseModel{
 		$result = $this->query($sql);
 		return $result;
 	}
-
+    public function countNums($where){
+        $nums = $this->alias('box')
+             ->join('savor_room room on box.room_id=room.id ','left')
+             ->join('savor_hotel hotel on room.hotel_id= hotel.id','left')
+             ->where($where)
+             ->count();
+        return $nums;
+    }
 
 }
