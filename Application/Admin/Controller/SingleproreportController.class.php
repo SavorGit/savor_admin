@@ -37,7 +37,7 @@ class SingleproreportController extends BaseController {
             $where .= "	AND media_name LIKE '%{$searchtitle}%'";
         }
         $group = 'media_id';
-        $singModel = new \Admin\Model\SingleproReportModel();
+        $singModel = new \Admin\Model\Statisticses\SingleproReportModel();
         $result = $singModel->getWhere($where, $field, $group);
         echo json_encode($result);
         die;
@@ -102,7 +102,7 @@ class SingleproreportController extends BaseController {
         }else{
             $this->error('开始时间必须小于等于结束时间');
         }
-        $singlerepModel = new \Admin\Model\SingleproReportModel();
+        $singlerepModel = new \Admin\Model\Statisticses\SingleproReportModel();
         $field = 'sum(`view_times`) vtime, sum(view_duration) vdur
             ,a.media_id,a.media_name,a.type,a.duration';
         $group = 'a.media_id';
@@ -110,9 +110,8 @@ class SingleproreportController extends BaseController {
             $this->assign('adsname', $adsname);
             $this->assign('contentast', $adsname);
             $this->assign('hidden_adsid', $hidden_adsid);
-            $singModel = new \Admin\Model\SingleproReportModel();
             $map['media_id'] = $hidden_adsid;
-            $ads_info = $singModel->getOneData($map);
+            $ads_info = $singlerepModel->getOneData($map);
             if ($ads_info['media_name'] != $adsname) {
                 $this->error('请输入后选择内容与广告');
             }else{

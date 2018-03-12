@@ -74,7 +74,7 @@ class HotelviewrepController extends BaseController {
             $this->error('开始时间必须小于等于结束时间');
         }
 
-        $htrpModel = new \Admin\Model\HotelViewReportModel();
+        $htrpModel = new \Admin\Model\Statisticses\HotelViewReportModel();
         $field = 'sum(`online_duration`) duration, sum(view_duration) vdur
             ,sum(`view_times`) vtime,a.hotel_id,a.hotel_name,a.room_type,a.box_name';
         $group = 'a.hotel_id';
