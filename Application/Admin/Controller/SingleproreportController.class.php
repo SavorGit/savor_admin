@@ -138,10 +138,11 @@ class SingleproreportController extends BaseController {
         $mestaModel = new \Admin\Model\MediaStaModel();
         $get_s = date("Ymd", strtotime($starttime));
         $get_e = date("Ymd", strtotime($endtime));
-        $wherea = '1=1 ';
-        $wherea.= "	AND play_date >= '{$starttime}'";
-        $wherea .= "	AND play_date <= '{$endtime} '";
-        $mefield = 'sum(play_time) meplay';
+        $wherea = '1=1 and sbo.flag=0 and
+        sbo.state=1 and sbo.adv_mach=1 ';
+        $wherea.= "	AND sms.play_date >= '$get_s'";
+        $wherea .= "	AND sms.play_date <= '$get_e'";
+        $mefield = 'play_time meplay';
 
         foreach($result['list'] as &$av) {
 
@@ -151,26 +152,21 @@ class SingleproreportController extends BaseController {
                 }
             }
         }
-
-
-
-
-
-
         foreach($result['list'] as $rk=>$rv) {
             if($rv['vtime'] == 0) {
                 $result['list'][$rk]['adv_vtime'] = 0;
             } else {
                 $result['list'][$rk]['adv_vtime'] = round($rv['vdur']/$rv['vtime'], 1);
             }
-            $sp = " AND media_id = ".$rv['media_id'];
+            $sp = " AND sms.media_id = ".$rv['media_id'];
             $result['list'][$rk]['type'] = $statis_type[$rv['type']];
             $whereb = $wherea.$sp;
-            $me_sta_arr = $mestaModel->getWhere($whereb, $mefield);
-            $me_time = $me_sta_arr[0]['meplay'];
-            if ( empty($me_time) ) {
+            $me_sta_arr = $mestaModel->getAdvMachine($whereb, $mefield);
+            if ( empty($me_sta_arr) ) {
                 $result['list'][$rk]['ratio'] = 0;
             } else {
+                $me_time_arr = array_column($me_sta_arr, 'meplay');
+                $me_time = array_sum($me_time_arr);
                 $result['list'][$rk]['ratio'] = round($rv['vdur']/$me_time, 1);
             }
             if ( $rv['duration'] <= 60) {

@@ -21,6 +21,16 @@ class MediaStaModel extends BaseModel
 		return $list;
 	}
 
+	public function getAdvMachine($where, $field,$group=''){
+		$list = $this->alias('sms')
+			->join('savor_box sbo on sbo.mac=sms.mac')
+			->where($where)
+			->field($field)
+			->group($group)
+			->select();
+		return $list;
+	}
+
 	public function getList($where, $order='id desc', $start=0,$size=5){
 		$list = $this->where($where)
 			->order($order)
