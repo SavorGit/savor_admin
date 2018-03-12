@@ -143,14 +143,18 @@ class SingleproreportController extends BaseController {
         $wherea .= "	AND play_date <= '{$endtime} '";
         $mefield = 'sum(play_time) meplay';
 
-        foreach($result['list'] as &$rv) {
+        foreach($result['list'] as &$av) {
 
-            foreach($rv as &$s) {
-                if(empty($s)) {
-                    $s = 0;
+            foreach($av as &$sb) {
+                if(empty($sb)) {
+                    $sb = 0;
                 }
             }
         }
+
+
+
+
 
 
         foreach($result['list'] as $rk=>$rv) {
@@ -189,8 +193,8 @@ class SingleproreportController extends BaseController {
                 }
 
             }
-        }
 
+        }
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);
