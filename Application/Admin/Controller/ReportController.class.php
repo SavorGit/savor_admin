@@ -163,7 +163,7 @@ class ReportController extends BaseController{
 
 
 			$val['indnum'] = ++$ind;
-			//$d_time = strtotime($val['last_heart_time']);
+			/* //$d_time = strtotime($val['last_heart_time']);
 
 			$heartbeat = $redis->get($cache_key.$val['type'].':'.$val['box_mac']);
 			if($heartbeat){
@@ -184,8 +184,22 @@ class ReportController extends BaseController{
 			    }
 			}else {
 			    $val['last_heart_time'] = '30天前';
-			}
+			} */
+			$val['indnum'] = ++$ind;
+			$d_time = strtotime($val['last_heart_time']);
+			$diff = $time - $d_time;
+			if($diff< 3600) {
+			    $val['last_heart_time'] = floor($diff/60).'分';
 			
+			}else if ($diff >= 3600 && $diff <= 86400) {
+			    $hour = floor($diff/3600);
+			    $min = floor($diff%3600/60);
+			    $val['last_heart_time'] = $hour.'小时'.$min.'分';
+			}else if ($diff > 86400) {
+			    $day = floor($diff/86400);
+			    $hour = floor($diff%86400/3600);
+			    $val['last_heart_time'] = $day.'天'.$hour.'小时';
+			}
 			
 			
 			if($val['type']==1){
