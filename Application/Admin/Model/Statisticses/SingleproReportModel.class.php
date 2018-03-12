@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Model;
+namespace Admin\Model\Statisticses;
 
 use Think\Model;
 use Common\Lib\Page;
