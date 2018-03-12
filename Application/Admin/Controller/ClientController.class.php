@@ -562,6 +562,10 @@ class ClientController extends Controller {
             $url = 'https://detail.youzan.com/show/goods?alias=278x9zar5q2uy&reft=1518140890930&spm=f47880926&sf=wx_sm';
             header('Location:'.$url);
             exit;
+        }else if($id==-2){
+            $url = 'https://mp.weixin.qq.com/s/ZqIUAvY8jIY2EXC1fI1pUg';
+            header('Location:'.$url);
+            exit;
         }
     }
 }
