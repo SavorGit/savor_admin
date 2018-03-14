@@ -5,6 +5,7 @@ use Think\Controller;
 use Common\Lib\SimFile;
 use \Common\Lib\SavorRedis;
 use \Common\Lib\Aliyun;
+use Common\Lib\PHPMailer;
 /**
  * @desc 定时任务
  *
@@ -2037,5 +2038,249 @@ class CrontabController extends Controller
             echo '数据处理完毕';
         }
 
+    }
+    /**
+     * @desc 大屏数据监控定时发送邮件
+     */
+    public function mailBigScreenData(){
+        $body = '<!DOCTYPE html>
+                    <html>
+                	<head>
+                		<meta charset="UTF-8">
+                		<title>小热点系统状态日报</title>
+                	</head>
+                	<body>
+                		<h2 align="center">【小热点系统状态日报】'.date('Y-m-d').'</h2>
+                		<p align="center">邮件正文</p>
+                		<table align="center" style="text-align: center;">
+                			<tr>
+                				<td>统计时间:'.date('Y-m-d H:i:s').'</td>
+                			</tr>
+                			<tr>
+                				<td>----酒楼合作部网络版位统计汇总----</td>
+                			</tr>';
+        
+        
+        
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $where = array();
+        $fields = "box_id";
+        $heart_time = date('Y-m-d H:i:s',strtotime('-5 minutes'));
+        $where['type'] = 2;
+        $where['last_heart_time'] = array('egt',$heart_time);
+         
+        $online_box = $m_heart_log->getHotelHeartBox($where,$fields);
+        $online_box_num = count($online_box);
+         
+        $m_box = new \Admin\Model\BoxModel();
+         
+        $fields = 'b.id';
+        $where = '1';
+        $where .= ' and h.flag  = 0';
+        $where .= ' and h.state = 1';
+        $where .= ' and b.flag  = 0';
+        $where .= ' and b.state = 1';
+        $box_list = $m_box->isHaveMac($fields,$where);
+        $normal_box_nums = count($box_list);
+        
+        //运维任务统计
+        $m_option_task =  new \Admin\Model\OptiontaskModel();
+        //当月第一天
+        $month_start_time = date('Y-m-01 H:i:s',strtotime(date('Y-m-d')));
+        $where = array();
+        $where['flag']  = 0;
+        $where['state'] = array('in',array('4'));
+        $where['complete_time'] = array('egt',$month_start_time);
+        $complete_task_num = $m_option_task->countNums($where);  //本月已处理任务
+         
+        $where = array();
+        $where['flag'] = 0;
+        $where['state'] = array('in',array('1','2','3'));
+        $where['create_time'] = array('egt',$month_start_time);
+        $not_complete_task_num = $m_option_task->countNums($where); //本月待处理的任务
+         
+        
+        
+        
+        
+        $m_area_info = new \Admin\Model\AreaModel();
+        $area_list = $m_area_info->getHotelAreaList();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_valid_online_monitor = new \Admin\Model\Statisticses\ValidOnlineMonitorModel();
+         
+        $report_time = date('Ymd',strtotime('-1 days'));
+        $type = 2;
+        $heart_hotel_box_type = C('heart_hotel_box_type');
+        $net_box_arr = array_keys($heart_hotel_box_type);
+         
+        foreach($area_list as $key=>$v){
+            $area_list[$key]['region_name'] = str_replace('市', '', $v['region_name']);
+            $map   = array();
+            $where = array();
+            $map['box.flag']   = 0;
+            $map['box.state']  = 1;
+            $map['hotel.flag'] = 0;
+            $map['hotel.state']= 1;
+            $map['hotel_box_type'] = array('in',$net_box_arr);
+            $map['hotel.area_id']  = $v['id'];
+            $all_box_nums = $m_box->countNums($map);
+            $area_list[$key]['all_box_nums'] = $all_box_nums;
+             
+            $where['area_id'] = $v['id'];
+            $where['type'] = $type;
+            $where['report_date'] = $report_time;
+             
+            $valid_nums = $m_valid_online_monitor->countNums($where);
+            //$area_list[$key]['valid_nums'] = $valid_nums;
+            $not_valid_nums = $all_box_nums - $valid_nums;
+            //$area_list[$key]['not_valid_nums'] = $not_valid_nums;
+            
+            $body .= '<tr>
+				        <td>'.$area_list[$key]['region_name'].'</td>
+			             </tr>
+			             <tr>
+				         <td>有效屏:'.$valid_nums.' 无效屏:'.$not_valid_nums.'</td>
+			           </tr>';
+        }
+        $body .='<tr>
+				<td>----市场部广告到达统计汇总----</td>
+			</tr>';
+        
+        
+       
+        
+        //广告明细
+        $m_program_ads = new \Admin\Model\PubAdsModel();
+        $fields = 'med.id,ads.name,pads.start_date,pads.end_date,pads.id pub_ads_id';
+        $now_date =  date('Y-m-d H:i:s');
+        $where = array();
+        $where['pads.start_date'] = array('elt',$now_date);
+        $where['pads.end_date']   = array('egt',$now_date);
+        $where['pads.state']      = 1;
+         
+        $media_list = $m_program_ads->getPubAdsList($fields,$where);
+        $data =  array();
+         
+        $m_media_monitor = new \Admin\Model\Statisticses\MediaMonitorModel();
+        $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+        $type = 'ads';
+        $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+        foreach($media_list as $key=>$v){
+            $media_list[$key]['start_date'] = date('Y-m-d H:i',strtotime($v['start_date']));
+            $pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
+             
+             
+            $where = array();
+            $where['media_id'] = $v['id'];
+            $where['media_type'] = $type;
+            $where['report_date'] = $yesterday;
+            $valid_nums = $m_media_monitor->countNums($where);
+            $media_list[$key]['valid_nums'] = $valid_nums;
+            $media_list[$key]['not_valid_nums'] = $pub_ads_count-$valid_nums;
+            
+            $body .='<tr>
+				        <td>广告名称:'.$v['name'].'</td>
+			         </tr>
+			         <tr>
+				        <td>发布周期:'.$v['start_date'].'至'.$v['end_date'].'</td>
+			         </tr>
+			         <tr>
+				        <td>到达数量:'.$media_list[$key]['valid_nums'].'</td>
+			         </tr>
+        			 <tr>
+        				<td>未到达数量:'.$media_list[$key]['not_valid_nums'].'</td>
+        			 </tr>';
+        }
+        
+        $body .='<tr>
+				    <td>----内容部内容到达统计汇总----</td>
+			     </tr>';
+        //内容到达明细
+        $m_program_list = new \Admin\Model\ProgramMenuListModel();
+         
+        $fields ='id,menu_name,menu_num,create_time';
+        $where = array();
+        $where['state'] = 1;
+        $program_list = $m_program_list->getAll($fields,$where,$offset=0,$limit=7,$order='id desc');
+         
+        $m_program_hotel = new \Admin\Model\ProgramMenuHotelModel();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_version_monitor = new \Admin\Model\Statisticses\VersionMonitorModel();
+        $type = 'pro';
+        $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+        foreach($program_list as $key=>$v){
+            $program_list[$key]['create_time'] = date('Y-m-d H:i',strtotime($v['create_time']));
+            $where = array();
+            $where['menu_id'] = $v['id'];
+            $fields = 'hotel_id';
+            $hotel_list = $m_program_hotel->getWhere($where,'',$fields);
+            $box_all_nums = 0;
+            foreach($hotel_list as $k=>$kv){
+                $map = array();
+                $map['hotel.id'] = $kv['hotel_id'];
+                $map['hotel.flag'] = 0;
+                $map['hotel.state'] = 1;
+                $map['box.flag'] = 0;
+                $map['box.state'] =1;
+                $box_nums = $m_box->countNums($map);
+                $box_all_nums +=$box_nums;
+            }
+            $where = array();
+            $where['version_code'] = $v['menu_num'];
+            $where['version_type'] = $type;
+            $where['report_date'] = $yesterday;
+            $valid_nums = $m_version_monitor->countNums($where);
+            $not_valid_nums = $box_all_nums - $valid_nums;
+            
+            $body .='<tr>
+				        <td>'.$v['menu_name'].'(到达数量:'.$valid_nums.',未到达数量:'.$not_valid_nums.')</td>
+			         </tr>';
+        }
+        
+        $body .='<tr>
+				    <td>----运维部任务统计汇总----</td>
+    			</tr>
+    			<tr>
+    				<td>本月已处理任务:'.$complete_task_num.'</td>
+    			</tr>
+    			<tr>
+    				<td>待处理任务:'.$not_complete_task_num.'</td>
+    			</tr>';
+        
+        $body .= '  </table>
+	               </body>
+                </html>'; 
+        
+        $mail_config =  C('SEND_MAIL_CONF');
+        $mail_config =  $mail_config['littlehotspot'];
+        $mail = new PHPMailer(); //建立邮件发送类
+        $mail->CharSet = "UTF-8";
+        
+        $mail->IsSMTP(); // 使用SMTP方式发送
+        $mail->Host = $mail_config['host']; // 您的企业邮局域名
+        $mail->SMTPAuth = true; // 启用SMTP验证功能
+        $mail->Username = $mail_config['username']; // 邮局用户名(请填写完整的email地址)
+        $mail->Password = $mail_config['password']; // 邮局密码
+        $mail->Port=25;
+        $mail->From = $mail_config['username']; //邮件发送者email地址
+        $mail->FromName = "小热点系统状态日报";
+        
+        foreach($mail_config['tomail'] as $v){
+            $mail->AddAddress("$v");//收件人地址，可以替换成任何想要接收邮件的email信箱,格式是AddAddress("收件人email","收件人姓名")
+        }
+        //$mail->AddReplyTo("", "");
+        //$mail->AddAttachment("./aa.xls"); // 添加附件
+        $mail->IsHTML(true); // set email format to HTML //是否使用HTML格式
+        
+        $mail->Subject = "小热点系统状态日报".date('Y-m-d H:i:s'); //邮件标题
+        $mail->Body = $body;
+        if(!$mail->Send())
+        {
+            echo "邮件发送失败. <p>";
+            echo "错误原因: " . $mail->ErrorInfo;
+            exit;
+        }else {
+            echo '邮件发送成功';
+        }
     }
 }

@@ -1,9 +1,8 @@
 <?php
 namespace Admin\Controller;
-
+use Common\Lib\PHPMailer;
 use Think\Controller;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+
 
 
 // use Common\Lib\SavorRedis;
@@ -14,63 +13,140 @@ use PHPMailer\PHPMailer\Exception;
 class TestController extends Controller {
 
     public function testemail(){
-
-
-        $pat = APP_PATH;
-        require APP_PATH.'Common/Lib/PHPMailer/src/Exception.php';
-        require APP_PATH.'Common/Lib/PHPMailer/src/PHPMailer.php';
-        require APP_PATH.'Common/Lib/PHPMailer/src/SMTP.php';
-        $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-        try {
-            //Server settings
-           /* $mail->SMTPDebug = 2;
-            $mail->CharSet = "UTF-8";// Enable verbose debug output
-            $mail->isSMTP();                                      // Set mailer to use SMTP
-            $mail->Host = 'smtp.littlehotspot.com';  // Specify main and backup SMTP servers
-            $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = 'sysreport@littlehotspot.com';                 // SMTP username
-            $mail->Password = 'savor123456';                           // SMTP password
-            //$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-            $mail->Port = 25;                                    // TCP port to connect to
-
-            //Recipients
-            $mail->setFrom('sysreport@littlehotspot.com', 'savor');
-            $mail->addAddress('zhang.yingtao@savor.cn', 'zhangyingtao');     // Add a recipient
-            // $mail->addAddress('ellen@example.com');               // Name is optional
-            $mail->addReplyTo('info@example.com', 'Information');
-            $mail->addCC('cc@example.com');
-            $mail->addBCC('bcc@example.com');
-
-            //Attachments
-            // $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-            // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-
-            //Content
-            $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = 'Here is the subject';
-            $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';*/
-            $address ="bai.yutao@littlehotspot.com";
-            $mail->IsSMTP(); // 使用SMTP方式发送
-            $mail->Host = "smtp.savor.cn"; // 您的企业邮局域名
-            $mail->SMTPAuth = true; // 启用SMTP验证功能
-            $mail->Username = "zhang.yingtao@savor.cn"; // 邮局用户名(请填写完整的email地址)
-            $mail->Password = "z3583290"; // 邮局密码
-            $mail->Port=25;
-            $mail->From = "zhang.yingtao@savor.cn"; //邮件发送者email地址
-            $mail->FromName = "在线Q聊";
-            $mail->AddAddress("$address", "小热点");//收件人地址，可以替换成任何想要接收邮件的email信箱,格式是AddAddress("收件人email","收件人姓名")
-//$mail->AddReplyTo("", "");
-
-//$mail->AddAttachment("./aa.xls"); // 添加附件
-            $mail->IsHTML(true); // set email format to HTML //是否使用HTML格式
-            $mail->Subject = 'Here is the subject';
-            $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-            $mail->send();
-            echo 'Message has been sent';
-        }  catch (Exception $e) {
-            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+        
+        $mail = new PHPMailer(); //建立邮件发送类
+        $mail->CharSet = "UTF-8";
+        $address ="bai.yutao@littlehotspot.com";
+        $mail->IsSMTP(); // 使用SMTP方式发送
+        $mail->Host = "smtp.savor.cn"; // 您的企业邮局域名
+        $mail->SMTPAuth = true; // 启用SMTP验证功能
+        $mail->Username = "zhang.yingtao@savor.cn"; // 邮局用户名(请填写完整的email地址)
+        $mail->Password = "z3583290"; // 邮局密码
+        $mail->Port=25;
+        $mail->From = "zhang.yingtao@savor.cn"; //邮件发送者email地址
+        $mail->FromName = "小热点系统状态日报";
+        $mail->AddAddress("$address", "小热点");//收件人地址，可以替换成任何想要接收邮件的email信箱,格式是AddAddress("收件人email","收件人姓名")
+        //$mail->AddReplyTo("", "");
+        
+        //$mail->AddAttachment("./aa.xls"); // 添加附件
+        $mail->IsHTML(true); // set email format to HTML //是否使用HTML格式
+        
+        $mail->Subject = "小热点系统状态日报".date('Y-m-d H:i:s'); //邮件标题
+        $mail->Body = '<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>邮件模板</title>
+	</head>
+	<body>
+		<h2 align="center">【小热点系统状态日报】 2018-03-13</h2>
+		<p align="center">邮件正文</p>
+		<table align="center" style="text-align: center;">
+			<tr>
+				<td>统计时间:2018-03-13 09:34:33</td>
+			</tr>
+			<tr>
+				<td>----酒楼合作部网络版位统计汇总----</td>
+			</tr>
+			<tr>
+				<td>北京</td>
+			</tr>
+			<tr>
+				<td>有效屏:300 无效屏:200</td>
+			</tr>
+			<tr>
+				<td>上海:</td>
+			</tr>
+			<tr>
+				<td>有效屏:300 无效屏:200</td>
+			</tr>
+			<tr>
+				<td>广州:</td>
+			</tr>
+			<tr>
+				<td>有效屏:300 无效屏:200</td>
+			</tr>
+			<tr>
+				<td>深圳:</td>
+			</tr>
+			<tr>
+				<td>有效屏:300 无效屏:200</td>
+			</tr>
+			<tr>
+				<td>----市场部广告到达统计汇总----</td>
+			</tr>
+			<tr>
+				<td>广告名称:三星</td>
+			</tr>
+			<tr>
+				<td>发布周期:02-06至03-01</td>
+			</tr>
+			<tr>
+				<td>到达数量:300</td>
+			</tr>
+			<tr>
+				<td>未到达数量:300</td>
+			</tr>
+			<tr>
+				<td>广告名称:三星2</td>
+			</tr>
+			<tr>
+				<td>发布周期:02-06至03-01</td>
+			</tr>
+			<tr>
+				<td>到达数量:300</td>
+			</tr>
+			<tr>
+				<td>未到达数量:300</td>
+			</tr>
+			<tr>
+				<td>----内容部内容到达统计汇总----</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>节目单期号(到达数量:xxx,未到达数量:xxx)</td>
+			</tr>
+			<tr>
+				<td>----运维部任务统计汇总----</td>
+			</tr>
+			<tr>
+				<td>本月已处理任务:3995</td>
+			</tr>
+			<tr>
+				<td>待处理任务:265</td>
+			</tr>
+		</table>
+	</body>
+</html>
+'; //邮件内容，上面设置HTML，则可以是HTML
+        
+        if(!$mail->Send())
+        {
+            echo "邮件发送失败. <p>";
+            echo "错误原因: " . $mail->ErrorInfo;
+            exit;
+        }else {
+            echo '邮件发送成功';
         }
+
+    
     }
 
 
