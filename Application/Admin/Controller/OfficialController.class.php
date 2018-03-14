@@ -168,8 +168,8 @@ class officialController extends Controller {
 	    $box_list = $m_box->isHaveMac($fields,$where);
 	    $normal_box_nums = count($box_list);
 	    $data =  array();
-	    //$data['online_box_num'] = $online_box_num;
-	    $data['online_box_num']  = rand(20, 100);
+	    $data['online_box_num'] = $online_box_num;
+	    //$data['online_box_num']  = rand(20, 100);
 	    $data['normal_box_num'] = $normal_box_nums;
 	    $data['date'] = date('Ymd');
 	    echo "bigscreen(".json_encode($data).")"; 
@@ -190,7 +190,7 @@ class officialController extends Controller {
 	    $where = array();
 	    $where['flag'] = 0;
 	    $where['state'] = array('in',array('1','2','3'));
-	    $where['complete_time'] = array('egt',$month_start_time);
+	    $where['create_time'] = array('egt',$month_start_time);
 	    $not_complete_task_num = $m_option_task->countNums($where); //本月待处理的任务
 	    
 	    $data =  array();
@@ -208,7 +208,7 @@ class officialController extends Controller {
 	    $m_box = new \Admin\Model\BoxModel();
 	    $m_valid_online_monitor = new \Admin\Model\Statisticses\ValidOnlineMonitorModel();
 	    
-	    $report_time = date('Y-m-d',strtotime('-1 days'));
+	    $report_time = date('Ymd',strtotime('-1 days'));
 	    $type = 2;
 	    $heart_hotel_box_type = C('heart_hotel_box_type');
 	    $net_box_arr = array_keys($heart_hotel_box_type);
@@ -236,7 +236,7 @@ class officialController extends Controller {
 	        $area_list[$key]['not_valid_nums'] = $not_valid_nums;
 	    }
 	    $data = array();
-	    $data['date'] = $report_time;
+	    $data['date'] = date('Y-m-d',strtotime($report_time));
 	    $data['list'] = $area_list;
 	    
 	    echo "valid_box(".json_encode($data).")";

@@ -67,6 +67,21 @@ $config_db =  array(
 	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
+    'SEND_MAIL_CONF'=>array(
+                            'littlehotspot'=>array(
+                                'host'=>'smtp.savor.cn',
+                                'username'=>'sysreport@littlehotspot.com',
+                                'password'=>'savor123456',
+                                'port'=>25,
+                                'tomail'=>array('xie.meng@littlehotspot.com',
+                                                'tang.mimi@littlehotspot.com',
+                                                'yang.changhe@littlehotspot.com',
+                                                'bai.yutao@littlehotspot.com',
+                                                'zhang.yingtao@littlehotspot.com',
+                                ),  
+                            )
+                        )
+    
 );
 
 return $config_db;
