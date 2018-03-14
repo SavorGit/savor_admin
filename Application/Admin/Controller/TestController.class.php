@@ -52,11 +52,12 @@ class TestController extends Controller {
             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';*/
             $address ="bai.yutao@littlehotspot.com";
             $mail->IsSMTP(); // 使用SMTP方式发送
-            $mail->Host = "smtp.savor.cn"; // 您的企业邮局域名
+            $mail->Host = "smtp.littlehotspot.com"; // 您的企业邮局域名
             $mail->SMTPAuth = true; // 启用SMTP验证功能
             $mail->Username = "zhang.yingtao@savor.cn"; // 邮局用户名(请填写完整的email地址)
+            $mail->SMTPSecure = 'ssl';
             $mail->Password = "z3583290"; // 邮局密码
-            $mail->Port=25;
+            $mail->Port=465;
             $mail->From = "zhang.yingtao@savor.cn"; //邮件发送者email地址
             $mail->FromName = "在线Q聊";
             $mail->AddAddress("$address", "小热点");//收件人地址，可以替换成任何想要接收邮件的email信箱,格式是AddAddress("收件人email","收件人姓名")
