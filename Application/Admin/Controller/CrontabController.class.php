@@ -5,7 +5,7 @@ use Think\Controller;
 use Common\Lib\SimFile;
 use \Common\Lib\SavorRedis;
 use \Common\Lib\Aliyun;
-use Common\Lib\PHPMailer;
+use \Common\Lib\MailAuto;
 /**
  * @desc 定时任务
  *
@@ -2260,9 +2260,11 @@ class CrontabController extends Controller
         
         $mail_config =  C('SEND_MAIL_CONF');
         $mail_config =  $mail_config['littlehotspot'];
-        $mail = new PHPMailer(); //建立邮件发送类
+        $mail_config =  C('SEND_MAIL_CONF');
+        $mail_config =  $mail_config['littlehotspot'];
+        $ma_auto = new MailAuto();
+        $mail = new \Mail\PHPMailer();
         $mail->CharSet = "UTF-8";
-        
         $mail->IsSMTP(); // 使用SMTP方式发送
         $mail->Host = $mail_config['host']; // 您的企业邮局域名
         $mail->SMTPAuth = true; // 启用SMTP验证功能
