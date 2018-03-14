@@ -69,6 +69,7 @@ class CrontabController extends Controller
             $where['type']  =1;
             $dt = $m_heart_log->getInfo('last_heart_time',$where);
             //判断是否是虚拟小平台
+
             if($v['mac_addr'] == '000000000000') {
                 //虚拟小平台标志
                 $data['small_plat_status'] = 2;
@@ -77,6 +78,7 @@ class CrontabController extends Controller
                 if(!empty($ret)){
                     $data['small_plat_status'] = 1;
                     $data['small_plat_report_time'] = $dt['last_heart_time'];
+                    $data['pla_lost_hour'] = 0;
                 } else {
                     if(!empty($dt)){
                         $p_last_time = $dt['last_heart_time'];
@@ -88,6 +90,7 @@ class CrontabController extends Controller
                         $data['pla_lost_hour'] = $max_hour;
                     }
                     $data['small_plat_status'] = 0;
+
                 }
             }
             //机顶盒判断
@@ -158,7 +161,7 @@ class CrontabController extends Controller
             if ($r_info) {
                  //更新
                 $map['id'] = $r_info['id'];;
-                $bool = $hotel_unusual->saveData($data, $map);
+               $bool = $hotel_unusual->saveData($data, $map);
             } else {
                 //添加
                 $data['create_time'] = $now;
@@ -2167,8 +2170,12 @@ class CrontabController extends Controller
         $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
         foreach($media_list as $key=>$v){
             $media_list[$key]['start_date'] = date('Y-m-d H:i',strtotime($v['start_date']));
-            $pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
-             
+            //$pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']),'box_id');
+            $sql ="SELECT COUNT(t.counts) nums FROM  (SELECT COUNT(*) counts FROM savor_pub_ads_box t WHERE `pub_ads_id` = ".$v['pub_ads_id']." GROUP BY box_id) t";
+            $pub_ads_count = $m_program_ads->query($sql);
+            
+            //echo $m_pub_ads_box->getLastSql();exit;
+            $pub_ads_count = $pub_ads_count[0]['nums'];
              
             $where = array();
             $where['media_id'] = $v['id'];
