@@ -7,7 +7,7 @@ class UpgradeModel extends BaseModel{
 	protected $tableName='device_upgrade';
 
 	public function getLastOneByDevice($field, $device_type, $hotel_id){
-		$where = " sug.`state`=1 and FIND_IN_SET('".$hotel_id."', sug.`hotel_id`) and
+		$where = " 1 and FIND_IN_SET('".$hotel_id."', sug.`hotel_id`) and
 		sug.`device_type`='".$device_type ."' and sdv.`device_type` = '".$device_type."'";
 		$info = $this->alias('sug')
 			         ->field($field)

@@ -45,7 +45,7 @@
  * to an SMTP server.
  * original author: Chris Ryan
  */
-namespace Common\Lib;
+namespace Mail;
 
 class SMTP {
   /**

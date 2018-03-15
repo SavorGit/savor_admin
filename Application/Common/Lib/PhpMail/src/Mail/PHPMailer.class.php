@@ -37,10 +37,11 @@
  * @version $Id: class.phpmailer.php 447 2009-05-25 01:36:38Z codeworxtech $
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  */
-namespace Common\Lib;
+namespace Mail;
 //if (version_compare(PHP_VERSION, '5.0.0', '<') ) exit("Sorry, this version of PHPMailer will only run on PHP version 5 or greater!\n");
-use Common\Lib\phpmailerException;
-use Common\Lib\Smtp;
+use Mail\phpmailerException;
+use Mail\Smtp;
+
 class PHPMailer {
 
   /////////////////////////////////////////////////

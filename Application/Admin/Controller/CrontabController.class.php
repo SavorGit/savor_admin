@@ -5,7 +5,7 @@ use Think\Controller;
 use Common\Lib\SimFile;
 use \Common\Lib\SavorRedis;
 use \Common\Lib\Aliyun;
-use Common\Lib\PHPMailer;
+use \Common\Lib\MailAuto;
 /**
  * @desc 定时任务
  *
@@ -69,6 +69,7 @@ class CrontabController extends Controller
             $where['type']  =1;
             $dt = $m_heart_log->getInfo('last_heart_time',$where);
             //判断是否是虚拟小平台
+
             if($v['mac_addr'] == '000000000000') {
                 //虚拟小平台标志
                 $data['small_plat_status'] = 2;
@@ -77,6 +78,7 @@ class CrontabController extends Controller
                 if(!empty($ret)){
                     $data['small_plat_status'] = 1;
                     $data['small_plat_report_time'] = $dt['last_heart_time'];
+                    $data['pla_lost_hour'] = 0;
                 } else {
                     if(!empty($dt)){
                         $p_last_time = $dt['last_heart_time'];
@@ -88,6 +90,7 @@ class CrontabController extends Controller
                         $data['pla_lost_hour'] = $max_hour;
                     }
                     $data['small_plat_status'] = 0;
+
                 }
             }
             //机顶盒判断
@@ -158,7 +161,7 @@ class CrontabController extends Controller
             if ($r_info) {
                  //更新
                 $map['id'] = $r_info['id'];;
-                $bool = $hotel_unusual->saveData($data, $map);
+               $bool = $hotel_unusual->saveData($data, $map);
             } else {
                 //添加
                 $data['create_time'] = $now;
@@ -2257,9 +2260,11 @@ class CrontabController extends Controller
         
         $mail_config =  C('SEND_MAIL_CONF');
         $mail_config =  $mail_config['littlehotspot'];
-        $mail = new PHPMailer(); //建立邮件发送类
+        $mail_config =  C('SEND_MAIL_CONF');
+        $mail_config =  $mail_config['littlehotspot'];
+        $ma_auto = new MailAuto();
+        $mail = new \Mail\PHPMailer();
         $mail->CharSet = "UTF-8";
-        
         $mail->IsSMTP(); // 使用SMTP方式发送
         $mail->Host = $mail_config['host']; // 您的企业邮局域名
         $mail->SMTPAuth = true; // 启用SMTP验证功能

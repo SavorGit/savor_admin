@@ -1,5 +1,5 @@
 <?php
-namespace Common\Lib;
+namespace Mail;
 use Think\Exception;
 class phpmailerException extends Exception {
     public function errorMessage() {
