@@ -150,7 +150,7 @@ class officialController extends Controller {
 	    $m_heart_log = new \Admin\Model\HeartLogModel();
 	    $where = array();
 	    $fields = "box_id";
-	    $heart_time = date('Y-m-d H:i:s',strtotime('-5 minutes')); 
+	    $heart_time = date('Y-m-d H:i:s',strtotime('-10 minutes')); 
 	    $where['type'] = 2;
 	    $where['last_heart_time'] = array('egt',$heart_time);
 	    
@@ -165,6 +165,15 @@ class officialController extends Controller {
 	    $where .= ' and h.state = 1';
 	    $where .= ' and b.flag  = 0';
 	    $where .= ' and b.state = 1';
+	    $heart_hotel_box_type = C('heart_hotel_box_type');
+	    
+	    $net_box_arr = array_keys($heart_hotel_box_type);
+	    $net_box_str = '';
+	    foreach($net_box_arr as $v){
+	        $net_box_str .= $space. $v;
+	        $space = ',';
+	    }
+	    $where .= ' and hotel_box_type in('.$net_box_str.')';
 	    $box_list = $m_box->isHaveMac($fields,$where);
 	    $normal_box_nums = count($box_list);
 	    $data =  array();
@@ -261,9 +270,13 @@ class officialController extends Controller {
 	    $type = 'ads';
 	    $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
 	    foreach($media_list as $key=>$v){
-	        $media_list[$key]['start_date'] = date('Y-m-d H:i',strtotime($v['start_date']));
-	        $pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
+	        $media_list[$key]['start_date'] = date('Y-m-d',strtotime($v['start_date']));
+	        //$pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
+	        $sql ="SELECT COUNT(t.counts) nums FROM  (SELECT COUNT(*) counts FROM savor_pub_ads_box t WHERE `pub_ads_id` = ".$v['pub_ads_id']." GROUP BY box_id) t";
+	        $pub_ads_count = $m_program_ads->query($sql);
 	        
+	        //echo $m_pub_ads_box->getLastSql();exit;
+	        $pub_ads_count = $pub_ads_count[0]['nums'];
 	        
 	        $where = array();
 	        $where['media_id'] = $v['id'];
@@ -293,7 +306,7 @@ class officialController extends Controller {
 	    $m_program_hotel = new \Admin\Model\ProgramMenuHotelModel();
 	    $m_box = new \Admin\Model\BoxModel();
 	    $m_version_monitor = new \Admin\Model\Statisticses\VersionMonitorModel();
-	    $type = 'pro';
+	    $type = 'pro_down';
 	    $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
 	    foreach($program_list as $key=>$v){
 	        $program_list[$key]['create_time'] = date('Y-m-d H:i',strtotime($v['create_time']));

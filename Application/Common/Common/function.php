@@ -796,4 +796,12 @@ function generate_code($length = 4) {
     $max = pow(10, $length) - 1;
     return rand($min, $max);
 }
+function sortArrByOneField(&$array, $field, $desc = false){
+    $fieldArr = array();
+    foreach ($array as $k => $v) {
+        $fieldArr[$k] = $v[$field];
+    }
+    $sort = $desc == false ? SORT_ASC : SORT_DESC;
+    array_multisort($fieldArr, $sort, $array);
+}
 ?>
