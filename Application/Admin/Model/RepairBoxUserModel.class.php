@@ -69,4 +69,12 @@ class RepairBoxUserModel extends BaseModel
 	    return $data;
 	}
 
+	public function getTaskRepair($fields,$where,$group){
+		$data = $this->field($fields)
+			->where($where)
+			->group($group)
+			->select();
+		return $data;
+	}
+
 }//End Class
