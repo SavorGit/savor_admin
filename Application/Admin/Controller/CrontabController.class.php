@@ -2167,8 +2167,12 @@ class CrontabController extends Controller
         $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
         foreach($media_list as $key=>$v){
             $media_list[$key]['start_date'] = date('Y-m-d H:i',strtotime($v['start_date']));
-            $pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
-             
+            //$pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']),'box_id');
+            $sql ="SELECT COUNT(t.counts) nums FROM  (SELECT COUNT(*) counts FROM savor_pub_ads_box t WHERE `pub_ads_id` = ".$v['pub_ads_id']." GROUP BY box_id) t";
+            $pub_ads_count = $m_program_ads->query($sql);
+            
+            //echo $m_pub_ads_box->getLastSql();exit;
+            $pub_ads_count = $pub_ads_count[0]['nums'];
              
             $where = array();
             $where['media_id'] = $v['id'];
