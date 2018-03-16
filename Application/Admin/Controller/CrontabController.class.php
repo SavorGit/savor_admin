@@ -755,6 +755,94 @@ class CrontabController extends Controller
          $res = $umengApi->umeng_api_ios($ios_params,$ext_arr);
        
     }*/
+
+    public function getLocIdNum($total_num, $have, $remain, $times) {
+
+        sort($have);
+        sort($remain);
+        var_export($have);
+        var_export($remain);
+
+        $flag = 0;
+        $blank = intval(floor($total_num/$times)) ;
+        $pos = $remain[0];
+        $fp_arr = array();
+        if ($times == 1) {
+            $fp_arr = array_slice($remain, 0,$times);
+        } else  {
+            while($flag < $times) {
+                if($flag == 0) {
+                    $fp_arr[] = $pos;
+                    array_unshift($have, $pos);
+                    sort($have);
+                    unset($remain[0]);
+                } else {
+                    $next_pos_num = $pos + $blank;
+                    if(in_array($next_pos_num, $remain)) {
+                        $pos = $next_pos_num;
+                        array_unshift($have, $pos);
+                        $key = array_search($pos, $remain);
+                        unset($remain[$key]);
+                        $fp_arr[] = $pos;
+                    } else {
+                        if($next_pos_num > $total_num) {
+                            $pos = $next_pos_num - $total_num;
+                            if(in_array($pos, $remain)) {
+                                array_unshift($have, $pos);
+                                $key = array_search($pos, $remain);
+                                unset($remain[$key]);
+                                $fp_arr[] = $pos;
+                            } else {
+                                if ( max($remain) < $pos ) {
+                                    sort($remain);
+                                    array_unshift($have, $remain[0]);
+                                    $fp_arr[] = $remain[0];
+                                    unset($remain[0]);
+                                } else {
+                                    $tmp = $remain;
+                                    array_unshift($tmp, $pos);
+                                    sort($tmp);
+                                    $key = array_search($pos, $tmp);
+                                    $pos = $tmp[$key+1];
+                                    array_unshift($have, $pos);
+                                    $key = array_search($remain, $pos);
+                                    unset($remain[$key]);
+                                    $fp_arr[] = $pos;
+                                }
+                            }
+
+                        } else {
+                            //看是否pos以下已经无值就是已经到底
+                            if ( max($remain) < $next_pos_num ) {
+                                //从头开始
+                                sort($remain);
+                                array_unshift($have, $remain[0]);
+                                $fp_arr[] = $remain[0];
+                                unset($remain[0]);
+                            } else {
+                                $tmp = $remain;
+                                array_unshift($tmp, $next_pos_num);
+                                sort($tmp);
+                                $key = array_search($next_pos_num, $tmp);
+                                $pos = $tmp[$key+1];
+                                array_unshift($have, $pos);
+                                $key = array_search($pos, $remain);
+                                unset($remain[$key]);
+                                $fp_arr[] = $pos;
+                            }
+                        }
+                    }
+
+                }
+                $flag++;
+            }
+
+        }
+        return $fp_arr;
+
+    }
+
+
     /**
      * @desc 随机生成广告的位置
      */
@@ -763,14 +851,14 @@ class CrontabController extends Controller
         $adv_promote_num = $adv_promote_num_arr['num'];
         $base_location_arr = range(1, $adv_promote_num);
         //获取未执行插入位置的广告
-        $m_pub_ads = new \Admin\Model\PubAdsModel(); 
+        $m_pub_ads = new \Admin\Model\PubAdsModel();
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
         $pub_ads_list = $m_pub_ads->getEmptyLocationList();
         foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
-            
-            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到盒子
+
+            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到的盒子ID
             foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
-                
+
                 $all_have_location_arr = array();
                 //取出该机顶盒所有未填写位置的列表
                 $all_empty_location_info = $m_pub_ads_box->getEmptyLocation('id',$val['id'],$v['box_id']);
@@ -789,7 +877,7 @@ class CrontabController extends Controller
                         //$count = 1;
                         if($count==1){
                             $rand_key = array_rand($diff_location_arr,$count);
-                           
+
                             $now_location_arr = array($rand_key);
                         }else {
                             $now_location_arr = array_rand($diff_location_arr,$count);
@@ -800,6 +888,57 @@ class CrontabController extends Controller
                         foreach($all_empty_location_info as $ek=>$ev){
                             $where['id'] = $ev['id'];
                             $data['location_id'] = $diff_location_arr[$now_location_arr[$ek]];
+                            $data['update_time'] = date('Y-m-d H:i:s');
+                            if(!empty($data['location_id'])){
+                                $m_pub_ads_box->updateInfo($where,$data);
+                            }
+
+                        }
+                    }
+                }
+            }
+            $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
+
+        }
+        echo "OK";
+    }
+
+
+    /**
+     * @desc 随机生成广告的位置
+     */
+    public function recordAdsLocationtest(){
+        $adv_promote_num_arr = C('ADVE_OCCU');
+        $adv_promote_num = $adv_promote_num_arr['num'];
+        $base_location_arr = range(1, $adv_promote_num);
+        //获取未执行插入位置的广告
+        $m_pub_ads = new \Admin\Model\PubAdsModel(); 
+        $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+        $pub_ads_list = $m_pub_ads->getEmptyLocationList();
+        foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
+            
+            $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到的盒子ID
+            foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
+                
+                $all_have_location_arr = array();
+                //取出该机顶盒所有未填写位置的列表
+                $all_empty_location_info = $m_pub_ads_box->getEmptyLocation('id',$val['id'],$v['box_id']);
+                if(!empty($all_empty_location_info)){
+                    //取出该机顶盒在该广告起止时间内所有的位置
+                    $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
+                    foreach($all_have_location_info as $hl){
+                        $all_have_location_arr[] = $hl['location_id'];
+                    }
+
+                    $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
+                    //如果还有未分配的位置
+                    if(!empty($diff_location_arr)){
+                        //把未分配得位置负值给location_id =0 的记录
+                        $count = count($all_empty_location_info);
+                        $now_location_arr = $this->getLocIdNum($adv_promote_num, $all_have_location_arr, $diff_location_arr, $count);
+                        foreach($all_empty_location_info as $ek=>$ev){
+                            $where['id'] = $ev['id'];
+                            $data['location_id'] = $now_location_arr[$ek];
                             $data['update_time'] = date('Y-m-d H:i:s');
                             if(!empty($data['location_id'])){
                                 $m_pub_ads_box->updateInfo($where,$data);
