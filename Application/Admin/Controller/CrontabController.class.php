@@ -95,7 +95,7 @@ class CrontabController extends Controller
             }
             //机顶盒判断
             $where = '';
-            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0 and a.state=1';
+            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0  and a.state=1 ';
             $box_list = $m_box->getListInfo( 'a.id, a.mac,a.state',$where);
             $data['box_num'] = count($box_list);
             foreach($box_list as $ks=>$vs){
@@ -104,55 +104,24 @@ class CrontabController extends Controller
                 $where .="  and last_heart_time>='".$start_time."'";
 
                 $rets  = $m_heart_log->getOnlineHotel($where,'hotel_id');
-                if ( $vs['state'] == 1) {
-                    if(empty($rets)){
-                        $box_not_normal_num +=1;
-                        $where = '';
-                        $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
-                        $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
-                        if( empty($hea_online) ) {
-
-                        } else {
-                            $box_report_time = strtotime($hea_online[0]['last_heart_time']);
-                            if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
-
-                            } else {
-                                $diff_box_report_time = $now_time-$box_report_time;
-                                $box_last_hour += $diff_box_report_time;
-                            }
-
-
-                        }
-
-                    }else {
-
-                    }
-                } else {
+                
+                if(empty($rets)){
                     $box_not_normal_num +=1;
-                    if(empty($rets)){
-//获取失聪时长
-                        $where = '';
-                        $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
-                        $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
-                        if( empty($hea_online) ) {
+                    $where = '';
+                    $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
+                    $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
+                    if( empty($hea_online) ) {
+
+                    } else {
+                        $box_report_time = strtotime($hea_online[0]['last_heart_time']);
+                        if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
 
                         } else {
-                            $box_report_time = strtotime($hea_online[0]['last_heart_time']);
-                            if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
-
-                            } else {
-                                $diff_box_report_time = $now_time-$box_report_time;
-                                $box_last_hour += $diff_box_report_time;
-                            }
-
-
+                            $diff_box_report_time = $now_time-$box_report_time;
+                            $box_last_hour += $diff_box_report_time;
                         }
-                    } else {
-
                     }
                 }
-
-
             }
             $data['not_normal_box_num'] = $box_not_normal_num;
             $data['not_box_percent'] =  ceil(($box_not_normal_num/$data['box_num'])*100);
@@ -168,7 +137,6 @@ class CrontabController extends Controller
                 $bool = $hotel_unusual->addData($data);
 
             }
-
             if($bool) {
                 echo $hotel_id.'执行成功\n'.'<br/>';
             }
