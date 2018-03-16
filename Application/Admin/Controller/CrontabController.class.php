@@ -95,7 +95,7 @@ class CrontabController extends Controller
             }
             //机顶盒判断
             $where = '';
-            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0  and  room.flag=0 and room.state =1';
+            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0  and a.state=1 ';
             $box_list = $m_box->getListInfo( 'a.id, a.mac,a.state',$where);
             $data['box_num'] = count($box_list);
             foreach($box_list as $ks=>$vs){
@@ -104,55 +104,24 @@ class CrontabController extends Controller
                 $where .="  and last_heart_time>='".$start_time."'";
 
                 $rets  = $m_heart_log->getOnlineHotel($where,'hotel_id');
-                if ( $vs['state'] == 1) {
-                    if(empty($rets)){
-                        $box_not_normal_num +=1;
-                        $where = '';
-                        $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
-                        $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
-                        if( empty($hea_online) ) {
-
-                        } else {
-                            $box_report_time = strtotime($hea_online[0]['last_heart_time']);
-                            if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
-
-                            } else {
-                                $diff_box_report_time = $now_time-$box_report_time;
-                                $box_last_hour += $diff_box_report_time;
-                            }
-
-
-                        }
-
-                    }else {
-
-                    }
-                } else {
+                
+                if(empty($rets)){
                     $box_not_normal_num +=1;
-                    if(empty($rets)){
-//获取失聪时长
-                        $where = '';
-                        $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
-                        $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
-                        if( empty($hea_online) ) {
+                    $where = '';
+                    $where .=" 1 and hotel_id=".$hotel_id." and type=2 and box_mac='".$vs['mac']."'";
+                    $hea_online  = $m_heart_log->getOnlineHotel($where,'last_heart_time');
+                    if( empty($hea_online) ) {
+
+                    } else {
+                        $box_report_time = strtotime($hea_online[0]['last_heart_time']);
+                        if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
 
                         } else {
-                            $box_report_time = strtotime($hea_online[0]['last_heart_time']);
-                            if($hea_online[0]['last_heart_time'] == '0000-00-00 00:00:00') {
-
-                            } else {
-                                $diff_box_report_time = $now_time-$box_report_time;
-                                $box_last_hour += $diff_box_report_time;
-                            }
-
-
+                            $diff_box_report_time = $now_time-$box_report_time;
+                            $box_last_hour += $diff_box_report_time;
                         }
-                    } else {
-
                     }
                 }
-
-
             }
             $data['not_normal_box_num'] = $box_not_normal_num;
             $data['not_box_percent'] =  ceil(($box_not_normal_num/$data['box_num'])*100);
@@ -168,7 +137,6 @@ class CrontabController extends Controller
                 $bool = $hotel_unusual->addData($data);
 
             }
-
             if($bool) {
                 echo $hotel_id.'执行成功\n'.'<br/>';
             }
@@ -2192,14 +2160,14 @@ class CrontabController extends Controller
                 		<title>小热点系统状态日报</title>
                 	</head>
                 	<body>
-                		<h2 align="center">【小热点系统状态日报】'.date('Y-m-d').'</h2>
-                		<p align="center">邮件正文</p>
-                		<table align="center" style="text-align: center;">
+                		<h2 align="left">【小热点系统状态日报】'.date('Y-m-d').'</h2>
+                		
+                		<table align="left" style="text-align: left;font-size: 20px;">
                 			<tr>
                 				<td>统计时间:'.date('Y-m-d H:i:s').'</td>
                 			</tr>
                 			<tr>
-                				<td>----酒楼合作部网络版位统计汇总----</td>
+                				<td style="font-weight: 700;">----酒楼合作部网络版位统计汇总----</td>
                 			</tr>';
         
         
@@ -2285,7 +2253,7 @@ class CrontabController extends Controller
 			           </tr>';
         }
         $body .='<tr>
-				<td>----市场部广告到达统计汇总----</td>
+				<td style="font-weight: 700;">----市场部广告到达统计汇总----</td>
 			</tr>';
         
         
@@ -2339,7 +2307,7 @@ class CrontabController extends Controller
         }
         
         $body .='<tr>
-				    <td>----内容部内容到达统计汇总----</td>
+				    <td style="font-weight: 700;">----内容部内容到达统计汇总----</td>
 			     </tr>';
         //内容到达明细
         $m_program_list = new \Admin\Model\ProgramMenuListModel();
@@ -2384,7 +2352,7 @@ class CrontabController extends Controller
         }
         
         $body .='<tr>
-				    <td>----运维部任务统计汇总----</td>
+				    <td style="font-weight: 700;">----运维部任务统计汇总----</td>
     			</tr>
     			<tr>
     				<td>本月已处理任务:'.$complete_task_num.'</td>
