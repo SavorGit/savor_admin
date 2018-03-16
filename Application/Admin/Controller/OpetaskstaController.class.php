@@ -140,9 +140,9 @@ class OpetaskstaController extends BaseController {
                     $wherea = $where;
                     $wherea .= ' and task_type= '.$tk.' and flag=0 and exe_user_id = '.$exe_user_id.
                         ' and ( ( state=2 and palan_finish_time > "'.$st_time.'"
-                and  palan_finish_time <= "'.$en_time.'"  )
-                or (state=4 and  complete_time > "'.$st_time.'"
-                and  complete_time <= "'.$en_time.'" ) )';
+                    and  palan_finish_time <= "'.$en_time.'"  )
+                    or (state=4 and  complete_time > "'.$st_time.'"
+                    and  complete_time <= "'.$en_time.'" ) )';
                     $order = '';
                     $limit = '';
                     $group = '';
@@ -150,6 +150,7 @@ class OpetaskstaController extends BaseController {
                         $field,$wherea, $order, $group,
                         $limit
                     );
+
                     if($op_task_arr) {
                         $ho_id_ar = array();
                         $ban = array();
@@ -158,17 +159,58 @@ class OpetaskstaController extends BaseController {
                             $ho_id_ar[$tastate][] = empty($ov['hotel_id'])?0:$ov['hotel_id'];
                             $ban[$tastate][] = empty($ov['tv_nums'])?0:$ov['tv_nums'];
                         }
+
+
                         $fi_h = count($ho_id_ar[4]);
                         $co_h = count($ho_id_ar[2]);
-                        $fi_ban = count($ban[4]);
-                        $co_ban = count($ban[2]);
+                        $fi_ban = array_sum($ban[4]);
+                        $co_ban = array_sum($ban[2]);
+                        if(empty($fi_h)) {
+                            $fi_h = 0;
+                        }
+                        if(empty($co_h)) {
+                            $co_h = 0;
+                        }
+                        if(empty($fi_ban)) {
+                            $fi_ban = 0;
+                        }
+                        if(empty($co_ban)) {
+                            $co_ban = 0;
+                        }
                         if( ($tk == 2) || ($tk == 4) ) {
-                            $tap[] = array(
-                                'type'=>$tv,
-                                'remark'=>$t_user_remark,
-                                'finish'=>'酒楼'.$fi_h.'个,版位'.$fi_ban.'个',
-                                'coni'=>'酒楼'.$co_h.'个,版位'.$co_ban.'个',
-                            );
+                            if($tk == 4) {
+                                //维修需要算版位
+                                $repUserModel = new \Admin\Model\RepairBoxUserModel();
+                                $repa = array();
+                                $repa['state'] = 1;
+                                $repa['flag'] = 0;
+                                $repa['create_time'] = array(array("GT", $st_time),array("ELT", $en_time));
+                                if($exe_user_id > 0) {
+                                    $repa['userid'] = $exe_user_id;
+                                }
+                                $rep_field = 'COUNT(*) bnum,hotel_id';
+                                $rep_group = 'hotel_id';
+                                $rep_task_box = $repUserModel->getTaskRepair($rep_field,$repa,$rep_group);
+                                if ($rep_task_box) {
+                                   $hotel_len  = count($rep_task_box);
+                                    $hotel_box_arr = array_column($rep_task_box, 'bnum');
+                                    $fi_ban = $fi_ban + array_sum($hotel_box_arr);
+                                    $fi_h = $fi_h + $hotel_len;
+                                }
+                                $tap[] = array(
+                                    'type'=>$tv,
+                                    'remark'=>$t_user_remark,
+                                    'finish'=>'酒楼'.$fi_h.'个,版位'.$fi_ban.'个',
+                                    'coni'=>'酒楼'.$co_h.'个,版位'.$co_ban.'个',
+                                );
+                            } else {
+                                $tap[] = array(
+                                    'type'=>$tv,
+                                    'remark'=>$t_user_remark,
+                                    'finish'=>'酒楼'.$fi_h.'个,版位'.$fi_ban.'个',
+                                    'coni'=>'酒楼'.$co_h.'个,版位'.$co_ban.'个',
+                                );
+                            }
                         } else {
                             $tap[] = array(
                                 'type'=>$tv,

@@ -49,6 +49,10 @@ class AdvdeliveryController extends BaseController {
         $now_date = date("Y-m-d H:i:s");
         $now_day = date("Y-m-d");
         $save['ads_id'] = I('post.marketid','237');
+        if ( empty($save['ads_id']) ) {
+            $msg = '上传广告视频失败请重新上传';
+            $this->error($msg);
+        }
         $save['start_date'] = I('post.start_time', '');
         $save['end_date'] = I('post.end_time', '');
         $save['play_times'] = I('post.play_times', '');
@@ -191,6 +195,7 @@ class AdvdeliveryController extends BaseController {
             if (empty($ocu_arr)) {
                 $bool = true;
             } else {
+
                 $adv_promote_num_arr = C('ADVE_OCCU');
                 $adv_promote_num = $adv_promote_num_arr['num'];
                 $l_len = $adv_promote_num-$ocu_len-$p_tiems;
