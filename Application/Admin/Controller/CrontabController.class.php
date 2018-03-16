@@ -95,7 +95,7 @@ class CrontabController extends Controller
             }
             //机顶盒判断
             $where = '';
-            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0  and  room.flag=0 and room.state =1';
+            $where .=" 1 and room.hotel_id=".$hotel_id.' and a.flag=0 and a.state=1';
             $box_list = $m_box->getListInfo( 'a.id, a.mac,a.state',$where);
             $data['box_num'] = count($box_list);
             foreach($box_list as $ks=>$vs){
@@ -2053,14 +2053,14 @@ class CrontabController extends Controller
                 		<title>小热点系统状态日报</title>
                 	</head>
                 	<body>
-                		<h2 align="center">【小热点系统状态日报】'.date('Y-m-d').'</h2>
-                		<p align="center">邮件正文</p>
-                		<table align="center" style="text-align: center;">
+                		<h2 align="left">【小热点系统状态日报】'.date('Y-m-d').'</h2>
+                		
+                		<table align="left" style="text-align: left;font-size: 20px;">
                 			<tr>
                 				<td>统计时间:'.date('Y-m-d H:i:s').'</td>
                 			</tr>
                 			<tr>
-                				<td>----酒楼合作部网络版位统计汇总----</td>
+                				<td style="font-weight: 700;">----酒楼合作部网络版位统计汇总----</td>
                 			</tr>';
         
         
@@ -2146,7 +2146,7 @@ class CrontabController extends Controller
 			           </tr>';
         }
         $body .='<tr>
-				<td>----市场部广告到达统计汇总----</td>
+				<td style="font-weight: 700;">----市场部广告到达统计汇总----</td>
 			</tr>';
         
         
@@ -2200,7 +2200,7 @@ class CrontabController extends Controller
         }
         
         $body .='<tr>
-				    <td>----内容部内容到达统计汇总----</td>
+				    <td style="font-weight: 700;">----内容部内容到达统计汇总----</td>
 			     </tr>';
         //内容到达明细
         $m_program_list = new \Admin\Model\ProgramMenuListModel();
@@ -2245,7 +2245,7 @@ class CrontabController extends Controller
         }
         
         $body .='<tr>
-				    <td>----运维部任务统计汇总----</td>
+				    <td style="font-weight: 700;">----运维部任务统计汇总----</td>
     			</tr>
     			<tr>
     				<td>本月已处理任务:'.$complete_task_num.'</td>
