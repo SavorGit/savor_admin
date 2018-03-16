@@ -206,8 +206,13 @@ class ReportController extends BaseController{
 			    
 			    $hotel_ext_info = $m_hotel->getHotelInfoByMac($val['box_mac']);
 			    $val['tag'] = $hotel_ext_info['tag'];
-                $val['bstate'] = '';
-                $val['bflag'] = '';
+                $val['bstate'] = $box_state[$hotel_ext_info['state']];
+                if($hotel_ext_info['flag']==0){
+                    $val['bflag'] = '正常';
+                }else {
+                    $val['bflag'] = '删除';
+                }
+                
 			}else if($val['type']==2){
 			    $temp = $m_box->getInfo('tag,state,flag'," id='".$val['box_id']."'",'');
 			    $val['tag'] = $temp[0]['tag'];
