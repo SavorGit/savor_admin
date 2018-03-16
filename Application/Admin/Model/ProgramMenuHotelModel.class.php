@@ -45,5 +45,18 @@ smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel
 
 		return $list;
 	}
+	public function getProgramByHotelId($hotel_id,$fields,$order,$limit){
+	    $where =  array();
+	    $where['a.hotel_id'] = $hotel_id;
+	    $where['pl.state'] = 1;
+	    $data = $this->alias('a')
+	         ->join('savor_programmenu_list pl on a.menu_id=pl.id','left')
+	         ->field($fields)
+	         ->where($where)
+	         ->order($order)
+	         ->limit($limit)
+	         ->select();
+	    return $data;
+	}
 
 }//End Class
