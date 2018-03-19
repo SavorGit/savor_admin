@@ -161,8 +161,8 @@ class ReportController extends BaseController{
         $cache_key = "heartbeat:";
 		foreach ($result['list'] as $key=> &$val) {
 
-
-			$val['indnum'] = ++$ind;
+            
+			//$val['indnum'] = ++$ind;
 			/* //$d_time = strtotime($val['last_heart_time']);
 
 			$heartbeat = $redis->get($cache_key.$val['type'].':'.$val['box_mac']);

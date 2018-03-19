@@ -296,13 +296,41 @@ class officialController extends Controller {
 	 * @desc 内容到达昨日明细
 	 */
 	public function programReachCount(){
-	    $m_program_list = new \Admin\Model\ProgramMenuListModel();
+	    /* $m_program_list = new \Admin\Model\ProgramMenuListModel();
 	    
 	    $fields ='id,menu_name,menu_num,create_time';
 	    $where = array();
 	    $where['state'] = 1;
 	    $program_list = $m_program_list->getAll($fields,$where,$offset=0,$limit=7,$order='id desc');
-	    
+	     */
+	    $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        //获取所有酒楼
+        $m_hotel = new \Admin\Model\HotelModel();        
+        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) ";
+        $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,b.mac_addr');
+        $m_programmenu_hotel = new \Admin\Model\ProgramMenuHotelModel();
+        $program_list = array();
+        $mult_arr = array();
+        foreach($hotel_list as $key=>$v){
+            $fields = 'pl.id,pl.hotel_num,pl.menu_name,pl.create_time,pl.menu_num';
+            $order = 'pl.create_time desc';
+            $limit = ' 1';
+            
+            $ret = $m_programmenu_hotel->getProgramByHotelId($v['id'], $fields, $order, $limit);
+            $program_list[] = $ret[0];
+            $mult_arr[] = $ret[0]['hotel_num'];
+        }
+        sortArrByOneField($program_list, 'hotel_num',true);
+        assoc_unique_new($program_list,'id');
+        $program_list = array_slice($program_list, 0,7);
+        
 	    $m_program_hotel = new \Admin\Model\ProgramMenuHotelModel();
 	    $m_box = new \Admin\Model\BoxModel();
 	    $m_version_monitor = new \Admin\Model\Statisticses\VersionMonitorModel();
