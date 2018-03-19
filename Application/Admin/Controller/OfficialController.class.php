@@ -324,8 +324,11 @@ class officialController extends Controller {
             $limit = ' 1';
             
             $ret = $m_programmenu_hotel->getProgramByHotelId($v['id'], $fields, $order, $limit);
-            $program_list[] = $ret[0];
-            $mult_arr[] = $ret[0]['hotel_num'];
+            if($ret){
+                $program_list[] = $ret[0];
+                $mult_arr[] = $ret[0]['hotel_num'];
+            }
+            
         }
         sortArrByOneField($program_list, 'hotel_num',true);
         assoc_unique_new($program_list,'id');

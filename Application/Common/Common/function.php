@@ -804,4 +804,16 @@ function sortArrByOneField(&$array, $field, $desc = false){
     $sort = $desc == false ? SORT_ASC : SORT_DESC;
     array_multisort($fieldArr, $sort, $array);
 }
+function assoc_unique_new(&$arr, $key)
+{
+    $rAr=array();
+    for($i=0;$i<count($arr);$i++)
+    {
+    if(!isset($rAr[$arr[$i][$key]]))
+    {
+    $rAr[$arr[$i][$key]]=$arr[$i];
+}
+}
+$arr=array_values($rAr);
+}
 ?>
