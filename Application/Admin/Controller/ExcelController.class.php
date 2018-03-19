@@ -66,7 +66,10 @@ class ExcelController extends Controller
             $tmpname = '无心跳版位';
         }else if($filename == 'exphotelmaintain') {
             $tmpname = '酒楼关联合作维护人';
+        }else if($filename == 'option_sh_signle_pic') {
+            $tmpname = '上海单机版换画明细';
         }
+
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
             $acp = 3;
@@ -2344,6 +2347,147 @@ class ExcelController extends Controller
         
         $phpWrite->save('./aa.csv');
     }
+
+
+    /*
+     * 换画报修明细
+     */
+    public function exportShSingle(){
+        $m_option_task = new \Admin\Model\OptiontaskModel();
+        $where = array();
+        $area = I('get.area');
+        $ctime = urldecode(I('get.ctime'));
+        $etime = urldecode(I('get.etime'));
+        if($ctime && $etime) {
+            $where['a.create_time'] = array( array('gt',$ctime,),array('elt',$etime));
+        } else {
+            if($ctime) {
+                $where['a.create_time'] = array('gt', $ctime);
+            }
+            if($etime) {
+                $where['a.create_time'] = array('elt', $etime);
+            }
+        }
+
+        if($area) {
+            $where['a.task_area'] = $area;
+            $where['sro.manage_city'] = $area;
+        }
+        $where['sro.role_id'] = 5;
+        $where['a.task_type'] = 4;
+        $where['a.flag']      =0;
+
+
+
+        $fields = "a.id,b.name hotel_name,a.hotel_address,
+                   a.create_time pub_time,a.hotel_id,a.state
+                   ,a.task_area";
+        $list = $m_option_task->alias('a')
+            ->join('savor_hotel b on a.hotel_id= b.id','left')
+            ->join('savor_sysuser sy on a.publish_user_id = sy.id')
+            ->join('savor_opuser_role sro on sro.user_id = sy.id')
+            ->field($fields)->where($where)->order()->select();
+        $model = D();
+        $hotelExt = new \Admin\Model\HotelExtModel();
+        $hp_c = C('HOTEL_STANDALONE_CONFIG');
+        foreach($list as $key=>$val){
+            $repair_str = '';
+            $space = '';
+            $data = $model->query('select b.mac box_mac, a.box_id,b.name box_name,a.repair_type,a.state bste from
+                                   savor_option_task_repair a left join savor_box b
+                                   on a.box_id = b.id where a.task_id='.$val['id']);
+            if(!empty($data)){
+                $list[$key]['box_name'] = $data[0]['box_name'];
+                $list[$key]['box_mac'] = $data[0]['box_mac'];
+                $rp_type = $data[0]['repair_type'];
+                $temp = '';
+                if($rp_type) {
+                    $rp_type = explode(',', $rp_type);
+                    foreach($rp_type as $vp) {
+                        $temp .= $hp_c[$vp].',';
+                    }
+                    $temp = substr($temp,0, -1);
+                    $list[$key]['rep_type'] = $temp;
+                } else {
+                    $list[$key]['rep_type'] = '';
+                }
+                $bstp = $data[0]['bste'];
+                switch ($bstp){
+                    case '1':
+                        $list[$key]['bste'] = '已经解决';
+                        break;
+                    case '2':
+                        $list[$key]['bste'] = '未解决';
+                        break;
+                    case '0':
+                        $list[$key]['bste'] = '';
+                        break;
+                }
+            } else {
+                $list[$key]['rep_type'] = '';
+                $list[$key]['bste'] = '';
+            }
+            $map = array();
+            $map['hotel_id'] = $val['hotel_id'];
+            $hxinfo = $hotelExt->alias('hx')
+                               ->join('savor_sysuser sy on hx.maintainer_id = sy.id')
+                               ->find();
+            $list[$key]['mainta'] = $hxinfo['remark'];
+
+            switch ($val['task_area']){
+                case '1':
+                    $task_area= '北京';
+                    break;
+                case '9':
+                    $task_area = '上海';
+                    break;
+                case '236':
+                    $task_area = '广州';
+                    break;
+                case '246':
+                    $task_area = '深圳';
+                    break;
+            }
+            $list[$key]['task_area'] = $task_area;
+            switch ($val['state']){
+                case '1':
+                    $list[$key]['state'] = '新任务';
+                    break;
+                case '2':
+                    $list[$key]['state'] = '执行中';
+                    break;
+                case '3':
+                    $list[$key]['state'] = '排队等待';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '已完成';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '拒绝';
+                    break;
+
+            }
+        }
+        $xlsCell = array(
+            array('task_area','城市'),
+            array('hotel_name','酒楼名称'),
+            array('hotel_address','酒楼地址'),
+            array('mainta','合作维护人'),
+            array('pub_time', '发布时间'),
+            array('box_name','版位名称'),
+            array('rep_type', '故障现象'),
+            array('box_mac','设备编号'),
+            array('state','任务状态'),
+            array('bste','盒子是否解决'),
+
+        );
+        $xlsName = '上海单机版换画明细';
+        $filename = 'option_sh_signle_pic';
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+    }
+
+
+
     public function exportShtask(){
         //2018-01-28 00:00:00
         //2018-01-30 23:59:59
@@ -2372,19 +2516,10 @@ class ExcelController extends Controller
         }
         
         $where['a.state'] = array('in','1,2,3,4');
-        //$where['a.task_type'] = 4;
+        $where['a.task_type'] = 4;
         $where['a.flag']      =0;
 
-        if($username) {
-            $user_ar = explode(',', $username);
-            $arr_uv = array();
-            foreach($user_ar as $uv) {
-                $arr_uv[] = array('eq', $uv);
-            }
-            $arr_uv[] = 'or';
-            $where['sy.username'] =   $arr_uv;
 
-        }
 
 
 
