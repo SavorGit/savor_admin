@@ -7,6 +7,7 @@
 namespace Admin\Controller;
 
 use Think\Controller;
+use Common\Lib\SavorRedis;
 class officialController extends Controller {
     public function getHotelGps(){
         $areaid = I('get.areaid','0','intval');
@@ -147,7 +148,7 @@ class officialController extends Controller {
 	 * @desc 大屏数据监控 - 获取在线版位以及版位总数
 	 */
 	public function getBoxNums(){
-	    $m_heart_log = new \Admin\Model\HeartLogModel();
+	    /* $m_heart_log = new \Admin\Model\HeartLogModel();
 	    $where = array();
 	    $fields = "box_id";
 	    $heart_time = date('Y-m-d H:i:s',strtotime('-10 minutes')); 
@@ -155,7 +156,19 @@ class officialController extends Controller {
 	    $where['last_heart_time'] = array('egt',$heart_time);
 	    
 	    $online_box = $m_heart_log->getHotelHeartBox($where,$fields);
-	    $online_box_num = count($online_box);
+	    $online_box_num = count($online_box); */
+	    $online_box_num = 0;
+	    $heart_time = date('YmdHis',strtotime('-10 minutes'));
+	    $redis = new SavorRedis();
+	    $redis->select('13');
+	    $keys = $redis->keys('heartbeat:2:*');
+	    foreach($keys as $v){
+	        $h_data = $redis->get($v);
+	        $h_data = json_decode($h_data,true);
+	        if($h_data['date']>=$heart_time){
+	            $online_box_num +=1;
+	        }
+	    }
 	    
 	    $m_box = new \Admin\Model\BoxModel();
 	    
