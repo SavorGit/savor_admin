@@ -728,14 +728,14 @@ class CrontabController extends Controller
 
         sort($have);
         sort($remain);
-        var_export($have);
-        var_export($remain);
-
+        /*var_export($have);
+        var_export($remain);*/
         $flag = 0;
         $blank = intval(floor($total_num/$times)) ;
         $pos = $remain[0];
         $fp_arr = array();
-        if ($times == 1) {
+        $is_direct =  intval(floor(count($remain)/$times));
+        if ($is_direct == 1) {
             $fp_arr = array_slice($remain, 0,$times);
         } else  {
             while($flag < $times) {
@@ -761,43 +761,30 @@ class CrontabController extends Controller
                                 unset($remain[$key]);
                                 $fp_arr[] = $pos;
                             } else {
-                                if ( max($remain) < $pos ) {
-                                    sort($remain);
-                                    array_unshift($have, $remain[0]);
-                                    $fp_arr[] = $remain[0];
-                                    unset($remain[0]);
-                                } else {
-                                    $tmp = $remain;
-                                    array_unshift($tmp, $pos);
-                                    sort($tmp);
-                                    $key = array_search($pos, $tmp);
-                                    $pos = $tmp[$key+1];
-                                    array_unshift($have, $pos);
-                                    $key = array_search($remain, $pos);
-                                    unset($remain[$key]);
-                                    $fp_arr[] = $pos;
-                                }
+
+                                $tmp = $remain;
+                                array_unshift($tmp, $pos);
+                                sort($tmp);
+                                $key = array_search($pos, $tmp);
+                                $pos = $tmp[$key+1];
+                                array_unshift($have, $pos);
+                                $key = array_search($remain, $pos);
+                                unset($remain[$key]);
+                                $fp_arr[] = $pos;
+
                             }
 
                         } else {
-                            //看是否pos以下已经无值就是已经到底
-                            if ( max($remain) < $next_pos_num ) {
-                                //从头开始
-                                sort($remain);
-                                array_unshift($have, $remain[0]);
-                                $fp_arr[] = $remain[0];
-                                unset($remain[0]);
-                            } else {
-                                $tmp = $remain;
-                                array_unshift($tmp, $next_pos_num);
-                                sort($tmp);
-                                $key = array_search($next_pos_num, $tmp);
-                                $pos = $tmp[$key+1];
-                                array_unshift($have, $pos);
-                                $key = array_search($pos, $remain);
-                                unset($remain[$key]);
-                                $fp_arr[] = $pos;
-                            }
+                            $tmp = $remain;
+                            array_unshift($tmp, $next_pos_num);
+                            sort($tmp);
+                            $key = array_search($next_pos_num, $tmp);
+                            $pos = $tmp[$key+1];
+                            array_unshift($have, $pos);
+                            $key = array_search($pos, $remain);
+                            unset($remain[$key]);
+                            $fp_arr[] = $pos;
+
                         }
                     }
 
@@ -806,6 +793,7 @@ class CrontabController extends Controller
             }
 
         }
+        sort($fp_arr);
         return $fp_arr;
 
     }
