@@ -23,9 +23,9 @@ class HotelViewReportModel extends Model
 		->group($group)
 	    ->limit($start,$size)
 	    ->select();
-
  
 	    $count = $this->alias('a')
+		->field('a.box_id')
 		->group($group)
 		->where($where)
 	    ->select();
