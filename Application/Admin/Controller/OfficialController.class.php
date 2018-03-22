@@ -335,12 +335,30 @@ class officialController extends Controller {
             if($ret){
                 $program_list[] = $ret[0];
                 $mult_arr[] = $ret[0]['hotel_num'];
+                
             }
             
         }
         sortArrByOneField($program_list, 'hotel_num',true);
         assoc_unique_new($program_list,'id');
         $program_list = array_slice($program_list, 0,7);
+        //print_r($program_list);exit;
+        $m_program_list = new \Admin\Model\ProgramMenuListModel();
+        $where = array();
+        $menu_id_arr = array();
+        foreach($program_list as $v){
+            $menu_id_arr[] = $v['id'];
+        }
+        
+        $where['id'] = array('not in',$menu_id_arr);
+        $where['hotel_num']= array('gt',0);
+        $fields = 'id,hotel_num,menu_name,create_time,menu_num';
+        $order  = ' id desc';
+        $limit  = ' 13'; 
+        $more_program_list = $m_program_list->getWhere($where,$fields,$order,$limit);
+        //echo $m_program_list->getLastSql();exit;
+        $program_list = array_merge($program_list,$more_program_list);
+
 	    $m_program_hotel = new \Admin\Model\ProgramMenuHotelModel();
 	    $m_box = new \Admin\Model\BoxModel();
 	    $m_version_monitor = new \Admin\Model\Statisticses\VersionMonitorModel();
@@ -368,6 +386,7 @@ class officialController extends Controller {
 	        $where['version_type'] = $type;
 	        $where['report_date'] = $yesterday;
 	        $valid_nums = $m_version_monitor->countNums($where);
+	        
 	        $not_valid_nums = $box_all_nums - $valid_nums;
 	        $program_list[$key]['valid_nums'] = $valid_nums;
 	        $program_list[$key]['not_valid_nums'] = $not_valid_nums;

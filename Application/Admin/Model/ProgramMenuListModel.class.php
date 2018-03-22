@@ -18,8 +18,8 @@ class ProgramMenuListModel extends BaseModel
 		return $data;
 	}
 
-	public function getWhere($where, $field){
-		$list = $this->where($where)->field($field)->select();
+	public function getWhere($where, $field,$order,$limit){
+		$list = $this->where($where)->field($field)->order($order)->limit($limit)->select();
 		return $list;
 	}
 

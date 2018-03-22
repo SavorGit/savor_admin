@@ -2515,8 +2515,8 @@ class ExcelController extends Controller
             $where['a.task_area'] = $area;
         }
         
-        $where['a.state'] = array('in','1,2,3,4');
-        $where['a.task_type'] = 4;
+        $where['a.state'] = array('in','1,2,3,4,5');
+        $where['a.task_type'] = array('in','1,2,4,8');
         $where['a.flag']      =0;
 
 
@@ -2593,7 +2593,7 @@ class ExcelController extends Controller
                 case '4':
                     $list[$key]['state'] = '已完成';
                     break;
-                case '4':
+                case '5':
                     $list[$key]['state'] = '拒绝';
                     break;
                     
