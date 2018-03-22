@@ -4,7 +4,7 @@
  */
 namespace Common\Lib;
 
-class SavorRedis {
+class SavorRedis   {
 
     private static $_instance;
     // 是否使用 M/S 的读写集群方案
@@ -359,6 +359,18 @@ class SavorRedis {
      */
     public function hdel($key,$find){
         return $this->getRedis()->hdel($key,$find);
+    }
+
+
+    /**
+     * 删除普通缓存
+     *
+     * @param string || array $key 缓存KEY
+     * @param string $find
+     * @return int 删除的健的数量
+     */
+    public function del($key){
+        return $this->getRedis()->del($key);
     }
 
     /**
