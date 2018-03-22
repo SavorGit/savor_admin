@@ -2215,24 +2215,14 @@ class CrontabController extends Controller
             $area_list[$key]['region_name'] = str_replace('市', '', $v['region_name']);
             $map   = array();
             $where = array();
-            $map['box.flag']   = 0;
-            $map['box.state']  = 1;
-            $map['hotel.flag'] = 0;
-            $map['hotel.state']= 1;
-            $map['hotel_box_type'] = array('in',$net_box_arr);
-            $map['hotel.area_id']  = $v['id'];
-            $all_box_nums = $m_box->countNums($map);
-            $area_list[$key]['all_box_nums'] = $all_box_nums;
-             
             $where['area_id'] = $v['id'];
             $where['type'] = $type;
             $where['report_date'] = $report_time;
-             
+            $all_box_nums = $m_valid_online_monitor->countNums($where);
+            $where['state'] = 0;
+            $not_valid_nums = $m_valid_online_monitor->countNums($where);
+            $where['state'] = 1;
             $valid_nums = $m_valid_online_monitor->countNums($where);
-            //$area_list[$key]['valid_nums'] = $valid_nums;
-            $not_valid_nums = $all_box_nums - $valid_nums;
-            //$area_list[$key]['not_valid_nums'] = $not_valid_nums;
-            
             $body .= '<tr>
 				        <td>'.$area_list[$key]['region_name'].'</td>
 			             </tr>
