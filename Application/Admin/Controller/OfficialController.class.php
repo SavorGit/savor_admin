@@ -47,6 +47,90 @@ class officialController extends Controller {
         //echo  json_encode($result);exit;
         echo  "login(".json_encode($result).")";
     }
+    public function getOpHotelGps(){
+        $userid = I('get.userid','0','intval');
+        //$userid = 137;
+        $result = array();
+        if($userid){
+            $op_user_role_arr = C('OPTION_USER_ROLE_ARR');
+            $m_user = new \Admin\Model\UserModel();
+            $userinfo = $m_user->getUserInfo($userid);
+            $role_id =  $userinfo['groupid'];
+            
+            if($role_id ==1){ //超级管理员
+                $m_option_task = new \Admin\Model\OptiontaskModel();
+                $sql ="select hotel_id from savor_option_task
+                           where task_type=4 and flag=0 and state in(1,2,3)
+                           group by hotel_id";
+                 
+                $data = $m_option_task->query($sql);
+            }else {
+                $m_opuser_role = new \Admin\Model\OpuserroleModel();
+                
+                $fields = 'a.role_id';
+                $where = array();
+                $where['a.user_id'] = $userid;
+                $where['a.state'] = 1;
+                $where['user.status'] = 1;
+                $user_arr = $m_opuser_role->getInfo($fields, $where);
+                
+                if($user_arr['role_id'] ==3){//执行者
+                    
+                    $m_option_task = new \Admin\Model\OptiontaskModel();
+                    $sql ="select hotel_id from savor_option_task 
+                           where task_type=4 and  FIND_IN_SET($userid,`exe_user_id`) 
+                           and flag=0 and state in(1,2,3)
+                           group by hotel_id";
+                    $data = $m_option_task->query($sql);
+                    
+                }else {//非执行者
+                    $m_option_task = new \Admin\Model\OptiontaskModel();
+                    $sql ="select hotel_id from savor_option_task 
+                           where task_type=4 and flag=0 and state in(1,2,3)
+                           group by hotel_id";
+                   
+                    $data = $m_option_task->query($sql);
+                }  
+            } 
+            $m_hotel =  new \Admin\Model\HotelModel();
+            foreach($data as $key=>$v){
+                $map = array();
+                $map['id'] = $v['hotel_id'];
+                
+                $list = $m_hotel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
+                $hotel_info = $list[0];
+            
+                $tmp = array();
+                if(!empty($hotel_info['gps'])){
+                    $gps_arr = explode(',', $hotel_info['gps']);
+                    $tmp['id'] = $hotel_info['id'];
+                    $tmp['name'] = $hotel_info['name'];
+                    $tmp['gps'] = $hotel_info['gps'];
+                    $tmp['lng'] = $gps_arr[0];
+                    $tmp['lat'] = $gps_arr[1];
+                    $tmp['addr'] = $hotel_info['addr'];
+                    $tmp['areaid'] = $hotel_info['area_id'];
+                    if(empty($hotel_info['hotel_box_type'])){
+                        $tmp['is_screen'] = 0;
+                    }else {
+                        $heart_box_type_arr = C('heart_hotel_box_type');
+                        if(array_key_exists($hotel_info['hotel_box_type'], $heart_box_type_arr)){
+                            $tmp['is_screen'] = 1;
+                        } else {
+                            $tmp['is_screen'] = 0;
+                        }
+                         
+                    }
+                    $result[] = $tmp;
+                }
+            }
+        }
+        
+        echo  "login(".json_encode($result).")";
+    }
+    
+    
+    
     public function getHotelByPage(){
         $pageSize = I('get.pageSize','12','intval');   //每页条数
         $pageNo  = I('get.pageNo','1','intval');       //当前页数
@@ -97,6 +181,107 @@ class officialController extends Controller {
         $data['totalPage'] = $total_page;
         $data['count'] = $count;
         echo "hotel(".json_encode($data).")";
+    }
+    
+    public function getOpHotelByPage(){
+        $userid   = I('get.userid','0','intval') ;     //用户id
+        $pageSize = I('get.pageSize','12','intval');   //每页条数
+        $pageNo  = I('get.pageNo','1','intval');       //当前页数
+        $areaid = I('get.areaid','0','intval');        //区域id
+        $offset = ($pageNo-1) * $pageSize;
+        $hotelMode = new \Admin\Model\HotelModel();
+        $result =  array();
+         
+       
+        $limit = "$offset,$pageSize";
+
+        $datas = array();
+        if($userid){
+            $op_user_role_arr = C('OPTION_USER_ROLE_ARR');
+            $m_user = new \Admin\Model\UserModel();
+            $userinfo = $m_user->getUserInfo($userid);
+            $role_id =  $userinfo['groupid'];
+        
+            if($role_id ==1){ //超级管理员
+                $m_option_task = new \Admin\Model\OptiontaskModel();
+                $sql ="select hotel_id from savor_option_task
+                           where task_type=4 and flag=0 and state in(1,2,3)
+                           group by hotel_id limit $limit";
+                 
+                $data = $m_option_task->query($sql);
+            }else {
+                $m_opuser_role = new \Admin\Model\OpuserroleModel();
+        
+                $fields = 'a.role_id';
+                $where = array();
+                $where['a.user_id'] = $userid;
+                $where['a.state'] = 1;
+                $where['user.status'] = 1;
+                $user_arr = $m_opuser_role->getInfo($fields, $where);
+        
+                if($user_arr['role_id'] ==3){//执行者
+        
+                    $m_option_task = new \Admin\Model\OptiontaskModel();
+                    $sql ="select hotel_id from savor_option_task
+                    where task_type=4 and  FIND_IN_SET($userid,`exe_user_id`)
+                    and flag=0 and state in(1,2,3)
+                    group by hotel_id limit $limit";
+                    $data = $m_option_task->query($sql);
+        
+                }else {//非执行者
+                    $m_option_task = new \Admin\Model\OptiontaskModel();
+                    $sql ="select hotel_id from savor_option_task
+                    where task_type=4 and flag=0 and state in(1,2,3)
+                    group by hotel_id limit $limit";
+          
+                    $data = $m_option_task->query($sql);
+                }
+            }
+            $m_hotel =  new \Admin\Model\HotelModel();
+            foreach($data as $key=>$v){
+                $map = array();
+                $map['id'] = $v['hotel_id'];
+                $map['gps'] = array('neq','');
+                $list = $m_hotel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
+                $hotel_info = $list[0];
+            
+                $tmp = array();
+                if(!empty($hotel_info['gps'])){
+                    $gps_arr = explode(',', $hotel_info['gps']);
+                    $tmp['id'] = $hotel_info['id'];
+                    $tmp['name'] = $hotel_info['name'];
+                    $tmp['gps'] = $hotel_info['gps'];
+                    $tmp['lng'] = $gps_arr[0];
+                    $tmp['lat'] = $gps_arr[1];
+                    $tmp['addr'] = $hotel_info['addr'];
+                    $tmp['areaid'] = $hotel_info['area_id'];
+                    if(empty($hotel_info['hotel_box_type'])){
+                        $tmp['is_screen'] = 0;
+                    }else {
+                        $heart_box_type_arr = C('heart_hotel_box_type');
+                        if(array_key_exists($hotel_info['hotel_box_type'], $heart_box_type_arr)){
+                            $tmp['is_screen'] = 1;
+                        } else {
+                            $tmp['is_screen'] = 0;
+                        }
+                         
+                    }
+                    $result[] = $tmp;
+                }
+            }
+            $m_option_task = new \Admin\Model\OptiontaskModel();
+            $sql ="select count(id) as num from savor_hotel where id in(select hotel_id from savor_option_task
+            where task_type=4 and flag=0 and state in(1,2,3)
+            group by hotel_id ) and gps !=''";
+            $ret = $m_option_task->query($sql);
+            $count = $ret[0]['num'];
+            $total_page = ceil($count/$pageSize);
+            $datas['list'] = $result;
+            $datas['totalPage'] = $total_page;
+            $datas['count'] = $count;
+            
+        }
+        echo "hotel(".json_encode($datas).")";
     }
     
 	public function countDownload(){
