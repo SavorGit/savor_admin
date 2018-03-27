@@ -2148,10 +2148,12 @@ class CrontabController extends Controller
         $time_key = 'statistics_hotel_time_flag';
         $time = time();
         $d_val = $redis->get($time_key);
-        if(date("Y-m-d", $d_val) == $now_date) {
-            //已经发过
-            echo '已经发过';
-            exit;
+        if($d_val) {
+            if(date("Y-m-d", $d_val) == $now_date) {
+                //已经发过
+                echo '已经发过';
+                exit;
+            }
         } else {
             $keyt = 'statistics_hotel_time';
             $t_val = $redis->get($keyt);
@@ -2435,4 +2437,5 @@ class CrontabController extends Controller
             $redis->set($time_key, $time);
         }
     }
+
 }
