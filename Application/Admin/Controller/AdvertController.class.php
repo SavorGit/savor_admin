@@ -137,6 +137,11 @@ class AdvertController extends BaseController{
 	         $ads_data['type'] = $adstype;
 	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;
+			 $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
+			 if($nass){
+				 $message = '文件名已存在，请换一个名称';
+				 $this->error($message);
+			 }
 	         $res_ads = $adsModel->where("id='$adsid'")->save($ads_data);
 	         if($res_ads){
 	             $media_id = I('post.media_id','0','intval');
