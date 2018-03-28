@@ -782,6 +782,7 @@ class CrontabController extends Controller
                             if(empty($a_dif)) {
                               sort($remain);
                               array_unshift($have, $remain[0]);
+                              sort($have);
                               $fp_arr[] = $remain[0];
                                 $pos = $remain[0];
                                 unset($remain[0]);
