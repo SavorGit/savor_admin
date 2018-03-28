@@ -20,7 +20,10 @@ class ExcelController extends Controller
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
         if($filename == 'hotel') {
             $tmpname = '酒楼资源总表';
-        } else if ($filename == 'boxlostreport') {
+        }else if($filename =='hotelboxlist'){
+            $tmpname = '酒楼机顶盒总表';
+        }
+         else if ($filename == 'boxlostreport') {
             $tmpname = '机顶盒失联表';
         }  else if ($filename == 'screencastreport') {
             $tmpname = '投屏次数点播表';
@@ -1567,7 +1570,7 @@ class ExcelController extends Controller
         foreach($box_arr as $bk=>$bv) {
             $box_arr[$bk]['hotel_box_type'] = $htype[$box_arr[$bk]['hotel_box_type']];
         }
-        $filename = 'hotel';
+        $filename = 'hotelboxlist';
         $xlsName = "User";
         $xlsCell = array(
             array('id', '酒楼id'),
@@ -1596,7 +1599,41 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
-
+    function hotelboxinfo(){
+        $boxModel = new \Admin\Model\BoxModel();
+        //获取所有数据
+        $box_arr = $boxModel->getBoxList();
+        $htype = C('hotel_box_type');
+        foreach($box_arr as $bk=>$bv) {
+            $box_arr[$bk]['hotel_box_type'] = $htype[$box_arr[$bk]['hotel_box_type']];
+        }
+        $filename = 'hotel';
+        $xlsName = "User";
+        $xlsCell = array(
+            array('id', '酒楼id'),
+            array('install_date', '安装日期'),
+            array('boxstate', '机顶盒状态'),
+            array('mac', '机顶盒mac地址'),
+            array('bname', '机顶盒名称'),
+            array('rname', '包间名称'),
+            array('rtype', '包间类型'),
+           
+            array('hname', '酒店名称'),
+            array('level', '酒店级别'),
+            array('area_id', '酒店区域'),
+            array('addr', '酒店地址'),
+            array('contractor', '酒店联系人'),
+            array('mobile', '手机'),
+            array('tel', '固定电话'),
+            array('iskey', '重点酒楼'),
+            array('maintainer', '合作维护人'),
+            array('tech_maintainer', '技术运维人'),
+            array('hotel_box_type', '设备类型'),
+        );
+        
+        $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
+        
+    }
 
 
     public function testList()
