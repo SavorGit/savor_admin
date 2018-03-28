@@ -728,8 +728,8 @@ class CrontabController extends Controller
 
         sort($have);
         sort($remain);
-        var_export($have);
-        var_export($remain);
+        /*var_export($have);
+        var_export($remain);*/
         $flag = 0;
         $blank = intval(floor($total_num/$times)) ;
         $pos = $remain[0];
@@ -809,7 +809,7 @@ class CrontabController extends Controller
 
         }
         sort($fp_arr);
-        var_export($fp_arr);
+       /* var_export($fp_arr);*/
         return $fp_arr;
 
     }
@@ -916,14 +916,14 @@ class CrontabController extends Controller
                             $data['location_id'] = $now_location_arr[$ek];
                             $data['update_time'] = date('Y-m-d H:i:s');
                             if(!empty($data['location_id'])){
-                               // $m_pub_ads_box->updateInfo($where,$data);
+                                $m_pub_ads_box->updateInfo($where,$data);
                             }
                             
                         } 
                     }  
                 }
             }
-           // $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
+            $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
         
         }
         echo "OK";
