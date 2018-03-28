@@ -728,8 +728,8 @@ class CrontabController extends Controller
 
         sort($have);
         sort($remain);
-        /*var_export($have);
-        var_export($remain);*/
+        var_export($have);
+        var_export($remain);
         $flag = 0;
         $blank = intval(floor($total_num/$times)) ;
         $pos = $remain[0];
@@ -739,12 +739,14 @@ class CrontabController extends Controller
             $fp_arr = array_slice($remain, 0,$times);
         } else  {
             while($flag < $times) {
+
                 if($flag == 0) {
                     $fp_arr[] = $pos;
                     array_unshift($have, $pos);
                     sort($have);
                     unset($remain[0]);
                 } else {
+
                     $next_pos_num = $pos + $blank;
                     if(in_array($next_pos_num, $remain)) {
                         $pos = $next_pos_num;
@@ -773,17 +775,30 @@ class CrontabController extends Controller
                                 $fp_arr[] = $pos;
 
                             }
-
                         } else {
-                            $tmp = $remain;
-                            array_unshift($tmp, $next_pos_num);
-                            sort($tmp);
-                            $key = array_search($next_pos_num, $tmp);
-                            $pos = $tmp[$key+1];
-                            array_unshift($have, $pos);
-                            $key = array_search($pos, $remain);
-                            unset($remain[$key]);
-                            $fp_arr[] = $pos;
+                            $nex_dat = range($next_pos_num, $total_num);
+                            $a_dif = array_diff($nex_dat, $have);
+
+                            if(empty($a_dif)) {
+                              sort($remain);
+                              array_unshift($have, $remain[0]);
+                              $fp_arr[] = $remain[0];
+                                $pos = $remain[0];
+                                unset($remain[0]);
+
+
+                           } else {
+                              $tmp = $remain;
+                              array_unshift($tmp, $next_pos_num);
+                              sort($tmp);
+                              $key = array_search($next_pos_num, $tmp);
+                              $pos = $tmp[$key+1];
+                              array_unshift($have, $pos);
+                              $key = array_search($pos, $remain);
+                              unset($remain[$key]);
+                              $fp_arr[] = $pos;
+                          }
+
 
                         }
                     }
@@ -794,6 +809,7 @@ class CrontabController extends Controller
 
         }
         sort($fp_arr);
+        var_export($fp_arr);
         return $fp_arr;
 
     }
@@ -882,9 +898,12 @@ class CrontabController extends Controller
                 if(!empty($all_empty_location_info)){
                     //取出该机顶盒在该广告起止时间内所有的位置
                     $all_have_location_info = $m_pub_ads_box->getLocationList($v['box_id'],$val['start_date'],$val['end_date']);
+                   // print_r($m_pub_ads_box->getLastSql());
+
                     foreach($all_have_location_info as $hl){
                         $all_have_location_arr[] = $hl['location_id'];
                     }
+
 
                     $diff_location_arr = array_diff($base_location_arr, $all_have_location_arr);
                     //如果还有未分配的位置
@@ -897,14 +916,14 @@ class CrontabController extends Controller
                             $data['location_id'] = $now_location_arr[$ek];
                             $data['update_time'] = date('Y-m-d H:i:s');
                             if(!empty($data['location_id'])){
-                                $m_pub_ads_box->updateInfo($where,$data);
+                               // $m_pub_ads_box->updateInfo($where,$data);
                             }
                             
                         } 
                     }  
                 }
             }
-            $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
+           // $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
         
         }
         echo "OK";
