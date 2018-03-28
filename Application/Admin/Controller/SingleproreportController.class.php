@@ -142,54 +142,59 @@ class SingleproreportController extends BaseController {
         $wherea.= "	AND sms.play_date >= '$get_s'";
         $wherea .= "	AND sms.play_date <= '$get_e'";
         $mefield = 'play_time meplay';
+        if( $result['list'][0]['media_id']) {
+            foreach($result['list'] as &$av) {
 
-        foreach($result['list'] as &$av) {
-
-            foreach($av as &$sb) {
-                if(empty($sb)) {
-                    $sb = 0;
+                foreach($av as &$sb) {
+                    if(empty($sb)) {
+                        $sb = 0;
+                    }
                 }
             }
-        }
-        foreach($result['list'] as $rk=>$rv) {
-            if($rv['vtime'] == 0) {
-                $result['list'][$rk]['adv_vtime'] = 0;
-            } else {
-                $result['list'][$rk]['adv_vtime'] = round($rv['vdur']/$rv['vtime'], 1);
-            }
-            $sp = " AND sms.media_id = ".$rv['media_id'];
-            $result['list'][$rk]['type'] = $statis_type[$rv['type']];
-            $whereb = $wherea.$sp;
-            $me_sta_arr = $mestaModel->getAdvMachine($whereb, $mefield);
-            if ( empty($me_sta_arr) ) {
-                $result['list'][$rk]['ratio'] = 0;
-            } else {
-                $me_time_arr = array_column($me_sta_arr, 'meplay');
-                $me_time = array_sum($me_time_arr);
-                $result['list'][$rk]['ratio'] = round($rv['vdur']/$me_time, 1);
-            }
-            if ( $rv['duration'] <= 60) {
-                $result['list'][$rk]['duration'] = $rv['duration'].'秒';
-            } else {
-                if($rv['duration'] < 3600) {
-                    $min = floor($rv['duration']/60);
-                    $sec = $rv['duration']%60;
-                    $result['list'][$rk]['duration'] = $min.'分'.$sec.'秒';
+            foreach($result['list'] as $rk=>$rv) {
+                if($rv['vtime'] == 0) {
+                    $result['list'][$rk]['adv_vtime'] = 0;
                 } else {
-                    $hour= floor($rv['duration']/3600);
-                    $seca = $rv['duration']%3600;
-                    if($seca<60) {
-                        $sec = $seca;
-                    } else {
+                    $result['list'][$rk]['adv_vtime'] = round($rv['vdur']/$rv['vtime'], 1);
+                }
+                $sp = " AND sms.media_id = ".$rv['media_id'];
+                $result['list'][$rk]['type'] = $statis_type[$rv['type']];
+                $whereb = $wherea.$sp;
+                $me_sta_arr = $mestaModel->getAdvMachine($whereb, $mefield);
+                if ( empty($me_sta_arr) ) {
+                    $result['list'][$rk]['ratio'] = 0;
+                } else {
+                    $me_time_arr = array_column($me_sta_arr, 'meplay');
+                    $me_time = array_sum($me_time_arr);
+                    $result['list'][$rk]['ratio'] = round($rv['vdur']/$me_time, 1);
+                }
+                if ( $rv['duration'] <= 60) {
+                    $result['list'][$rk]['duration'] = $rv['duration'].'秒';
+                } else {
+                    if($rv['duration'] < 3600) {
                         $min = floor($rv['duration']/60);
                         $sec = $rv['duration']%60;
+                        $result['list'][$rk]['duration'] = $min.'分'.$sec.'秒';
+                    } else {
+                        $hour= floor($rv['duration']/3600);
+                        $seca = $rv['duration']%3600;
+                        if($seca<60) {
+                            $sec = $seca;
+                        } else {
+                            $min = floor($rv['duration']/60);
+                            $sec = $rv['duration']%60;
+                        }
+                        $result['list'][$rk]['duration'] = $hour.'时'.$min.'分'.$sec.'秒';
                     }
-                    $result['list'][$rk]['duration'] = $hour.'时'.$min.'分'.$sec.'秒';
+
                 }
 
             }
-
         }
+
+
+
+
 
         $this->assign('list', $result['list']);
         $this->assign('page',  $result['page']);

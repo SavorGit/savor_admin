@@ -30,6 +30,7 @@ class SingleproReportModel extends Model
 
  
 	    $count = $this->alias('a')
+		->field('a.media_id')
 		->group($group)
 		->where($where)
 	    ->select();
