@@ -71,6 +71,8 @@ class ExcelController extends Controller
             $tmpname = '酒楼关联合作维护人';
         }else if($filename == 'option_sh_signle_pic') {
             $tmpname = '上海单机版换画明细';
+        }else if($filename=='hhboxlist'){
+            $tmpname = '版位列表';
         }
 
         if($filename == "heartlostinfo"){
@@ -2835,5 +2837,54 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'noheartlog';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
         
+    }
+    public function getHhBox(){
+        $sql ="select hotel.id hotel_id,hotel.name hotel_name,box.id box_id, box.mac,hotel.area_id,hotel.addr from savor_box box 
+               left join savor_room room on box.room_id=room.id
+               left join savor_hotel hotel on room.hotel_id=hotel.id
+               where hotel.id in(512,48,45,51,103,23,10,433,20,184,27,225,431,436,472,500,505,515,516,492,586,52,206,25,41,26,13,46,30,
+243,196,12,175,126,99,185,34,70,133,9,232,435,461,104,35,16,17,172,509,107,531,468,19,39) and box.flag=0 and box.state=1";
+        $data = D()->query($sql);
+        foreach($data as $key=>$v){
+            $sql = 'select count(id) as num from savor_tv where box_id='.$v['box_id'].' and flag=0 and state=1';
+            $ret = D()->query($sql);
+            $data[$key]['tv_nums'] = $ret[0]['num'];
+            switch ($v['area_id']){
+                case 1:
+                    $data[$key]['province'] = '北京市';
+                    $data[$key]['city'] = '北京市';
+                    break;
+                case 9:
+                    $data[$key]['province'] = '上海市';
+                    $data[$key]['city'] = '上海市';
+                    break;
+                case 236:
+                    $data[$key]['province'] = '广东省';
+                    $data[$key]['city'] = '广州市';
+                    break;
+                case 246:
+                    $data[$key]['province'] = '广东省';
+                    $data[$key]['city'] = '深圳市';
+                    break;
+            }
+            
+        }
+        $xlsCell = array(
+        
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('box_id','机顶盒id'),
+            array('mac','机顶盒mac'),
+            array('tv_nums','屏幕数量'),
+            array('province','省份'),
+            array('city','城市'),
+            array('addr','详细地址'),
+        
+             
+        
+        );
+        $xlsName = '花花版位';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
 }

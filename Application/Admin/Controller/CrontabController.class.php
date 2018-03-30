@@ -819,7 +819,8 @@ class CrontabController extends Controller
     /**
      * @desc 随机生成广告的位置
      */
-    public function recordAdsLocation(){
+    public function recordAdsLocation_back(){
+        exit();
         $adv_promote_num_arr = C('ADVE_OCCU');
         $adv_promote_num = $adv_promote_num_arr['num'];
         $base_location_arr = range(1, $adv_promote_num);
@@ -880,7 +881,7 @@ class CrontabController extends Controller
     /**
      * @desc 随机生成广告的位置
      */
-    public function recordAdsLocationtest(){
+    public function recordAdsLocation(){
         $adv_promote_num_arr = C('ADVE_OCCU');
         $adv_promote_num = $adv_promote_num_arr['num'];
         $base_location_arr = range(1, $adv_promote_num);
