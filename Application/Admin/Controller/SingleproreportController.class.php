@@ -166,7 +166,7 @@ class SingleproreportController extends BaseController {
                 } else {
                     $me_time_arr = array_column($me_sta_arr, 'meplay');
                     $me_time = array_sum($me_time_arr);
-                    $result['list'][$rk]['ratio'] = round($rv['vdur']/$me_time, 1);
+                    $result['list'][$rk]['ratio'] = round(($rv['vdur']/$me_time)*10000, 1);
                 }
                 if ( $rv['duration'] <= 60) {
                     $result['list'][$rk]['duration'] = $rv['duration'].'秒';
