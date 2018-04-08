@@ -2,6 +2,7 @@
 namespace Admin\Controller;
 
 use Think\Controller;
+use Common\Lib\SavorRedis;
 
 // use Common\Lib\SavorRedis;
 /**
@@ -2879,6 +2880,96 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('province','省份'),
             array('city','城市'),
             array('addr','详细地址'),
+        
+             
+        
+        );
+        $xlsName = '花花版位';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    /**
+     * @desc 网络版酒楼盒子开机统计
+     */
+    public function getNetBoxHeart(){
+        $heart_hotel_box_type = C('heart_hotel_box_type');
+        $heart_hotel_box_type_arr = array_keys($heart_hotel_box_type);
+        foreach($heart_hotel_box_type_arr as $v){
+            $heart_hotel_box_type_str .=$space .$v;
+            $space = ',';
+        }
+        
+        $area_id = I('get.area_id',0,'intval');
+        $where = '';
+        if($area_id){
+            $where .=" and hotel.area_id=$area_id";
+        }
+        $sql = "select hotel.id hotel_id ,hotel.name hotel_name,room.name room_name,box.id box_id,box.name box_name,
+                box.mac 
+                from savor_box box 
+                left join savor_room room on room.id=box.room_id
+                left join savor_hotel hotel on hotel.id=room.hotel_id
+                where box.state=1 and box.flag=0 and hotel.state=1 and box.flag=0 and hotel.hotel_box_type in($heart_hotel_box_type_str)".$where;
+        $data = M()->query($sql);
+        $redis = new SavorRedis();
+        $redis->select(13);
+        
+        foreach($data as $key=>$v){
+            $cache_key =  'heartbeat:2:'.$v['mac'];
+            $heart_info = $redis->get($cache_key);
+            if($heart_info){
+                $heart_info = json_decode($heart_info,true);
+                $data[$key]['last_heart_time'] = date('Y-m-d H:i:s',strtotime($heart_info['date']));
+            }else {
+                $sql = "select last_heart_time from savor_heart_log where box_mac='".$v['mac']."' and type=2";
+                $ret = M()->query($sql);
+                $ret = $ret[0];
+               
+                if($ret){
+                    $data[$key]['last_heart_time'] = $ret['last_heart_time'];
+                }else {
+                    $data[$key]['last_heart_time'] ='从未开过机';
+                }
+            }
+            //过去一周平均开机时长
+            $sql ="SELECT `hour0`+`hour1`+`hour2`+`hour3`+`hour4`+`hour5`+`hour6`+`hour7`+`hour8`+`hour9`+`hour10`+`hour11`+`hour12`+`hour13`+`hour14`+`hour15`+`hour16`+`hour17`+`hour18`+`hour19`+`hour20`+`hour21`+`hour22`+`hour23`  as all_time
+                   FROM `savor_heart_all_log` WHERE `mac` ='".$v['mac']."'
+                   and `date` in('20180407','20180406','20180405','20180402','20180401','20180331','20180330')";
+            $all_list = M()->query($sql);
+            $all_time = 0;
+            foreach($all_list as $vs){
+                $all_time += $vs['all_time'];
+            }
+            $all_time *= 5;
+            $all_time = $all_time/7;
+            $all_time_hour = floor($all_time/60) ? floor($all_time/60) .'小时 ' :'';
+            $all_time_minute = $all_time%60 ? ($all_time%60) .'分':'';
+            $all_times =  $all_time_hour . $all_time_minute;
+            $data[$key]['all_times'] = $all_times;
+            
+            $sql ="select version_name from savor_device_upgrade a left join
+               savor_device_version b on a.version =b.version_code
+               where find_in_set(".$v['hotel_id'].",a.hotel_id)
+               order by a.create_time desc limit 1";
+
+            $ret = M()->query($sql);
+            if($ret){
+                $data[$key]['apk'] = $ret[0]['version_name'];
+            }else {
+                $data[$key]['apk'] = '';
+            }
+        }
+        
+        $xlsCell = array(
+        
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_name','机顶盒名称'),
+            array('mac','mac地址'),
+            array('apk','apk版本号'),
+            array('last_heart_time','上次心跳上报时间'),
+            array('all_times','最近一周日均开机时长'),
         
              
         
