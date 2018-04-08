@@ -49,8 +49,9 @@ class AdvspaceController extends BaseController {
         $normal_box_len = count($normal_box_arr);
         //获取当前已经用机顶盒和总时长
         $pubadsboxModel = new \Admin\Model\PubAdsBoxModel();
-        $map['end_date']  = array('egt', $now_date);
-        $map['start_date']  = array('elt', $now_date);
+        $map['sads.end_date']  = array('egt', $now_date);
+        $map['sads.start_date']  = array('elt', $now_date);
+        $map['sads.state']  = array('neq', 2);
         $field = 'sbox.box_id,sbox.pub_ads_id,ads.duration';
         $group = 'sbox.box_id,sbox.pub_ads_id';
         $ads_box_arr = $pubadsboxModel->getAllBoxPubAds($field,
