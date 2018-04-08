@@ -573,6 +573,7 @@ class officialController extends Controller {
 	        $valid_nums = $m_version_monitor->countNums($where);
 	        
 	        $not_valid_nums = $box_all_nums - $valid_nums;
+	        $not_valid_nums = $not_valid_nums>0 ?$not_valid_nums:0;
 	        $program_list[$key]['valid_nums'] = $valid_nums;
 	        $program_list[$key]['not_valid_nums'] = $not_valid_nums;
 	    }
