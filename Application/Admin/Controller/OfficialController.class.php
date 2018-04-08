@@ -21,9 +21,19 @@ class officialController extends Controller {
         $map['state'] =1;
          
         $list = $HotelModel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
+        
+        $heart_hotel_box_type = C('heart_hotel_box_type');
+        $heart_hotel_box_type_arr = array_keys($heart_hotel_box_type);
+        
+        
         foreach($list as $keyd=>$v){
             $tmp = array();
-            if(!empty($v['gps'])){
+            $sql ="select count(a.id) nums from savor_box a
+                   left join savor_room b  on a.room_id=b.id
+                   left join savor_hotel c on b.hotel_id=c.id where c.id=".$v['id'];
+            $ret =  M()->query($sql);
+            $ret = $ret[0];
+            if(!empty($v['gps']) && $ret['nums']){
                 $gps_arr = explode(',', $v['gps']);
                 $tmp['id'] = $v['id'];
                 $tmp['name'] = $v['name'];
@@ -35,11 +45,16 @@ class officialController extends Controller {
                 if(empty($v['hotel_box_type'])){
                     $tmp['is_screen'] = 0;
                 }else {
-                    if($v['hotel_box_type'] ==1 || $v['hotel_box_type'] ==2){
+                    if(in_array($v['hotel_box_type'], $heart_hotel_box_type_arr)){
+                        $tmp['is_screen'] = 1;
+                    }else {
+                        $tmp['is_screen'] = 0;
+                    }
+                    /* if($v['hotel_box_type'] ==1 || $v['hotel_box_type'] ==2){
                         $tmp['is_screen'] = 0;
                     }else if($v['hotel_box_type'] ==3){
                         $tmp['is_screen'] = 1;
-                    }
+                    } */
                 }
                 $result[] = $tmp;
             }
@@ -148,27 +163,36 @@ class officialController extends Controller {
          
         $list = $hotelMode->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map,'',$limit);
         foreach($list as $keyd=>$v){
-            $tmp = array();
-
-            $gps_arr = explode(',', $v['gps']);
-            $tmp['id'] = $v['id'];
-            $tmp['name'] = $v['name'];
-            $tmp['gps'] = $v['gps'];
-            $tmp['lng'] = $gps_arr[0];
-            $tmp['lat'] = $gps_arr[1];
-            $tmp['addr'] = $v['addr'];
-            $tmp['areaid'] = $v['area_id'];
-            if(empty($v['hotel_box_type'])){
-                $tmp['is_screen'] = 0;
-            }else {
-                if($v['hotel_box_type'] ==1 || $v['hotel_box_type'] ==2){
+            
+            $sql ="select count(a.id) nums from savor_box a
+                   left join savor_room b  on a.room_id=b.id
+                   left join savor_hotel c on b.hotel_id=c.id where c.id=".$v['id'];
+            $ret =  M()->query($sql);
+            $ret = $ret[0];
+            if($ret['nums']){
+                
+            
+                $tmp = array();
+    
+                $gps_arr = explode(',', $v['gps']);
+                $tmp['id'] = $v['id'];
+                $tmp['name'] = $v['name'];
+                $tmp['gps'] = $v['gps'];
+                $tmp['lng'] = $gps_arr[0];
+                $tmp['lat'] = $gps_arr[1];
+                $tmp['addr'] = $v['addr'];
+                $tmp['areaid'] = $v['area_id'];
+                if(empty($v['hotel_box_type'])){
                     $tmp['is_screen'] = 0;
-                }else if($v['hotel_box_type'] ==3){
-                    $tmp['is_screen'] = 1;
+                }else {
+                    if($v['hotel_box_type'] ==1 || $v['hotel_box_type'] ==2){
+                        $tmp['is_screen'] = 0;
+                    }else if($v['hotel_box_type'] ==3){
+                        $tmp['is_screen'] = 1;
+                    }
                 }
-            }
-            $result[] = $tmp;
-             
+                $result[] = $tmp;
+            } 
         }
         $where['state'] = 1;
         if($areaid){
