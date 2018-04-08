@@ -64,12 +64,18 @@ class InvitecodeController extends BaseController {
        
         /*$f_hotel_name = mb_substr($hotel_name, 0,1,'utf8');
         $s_hotel_name = mb_substr($hotel_name, 1,1,'utf8');*/
-
         $s_hotel_name = mb_substr($hotel_name, 0,2,'utf8');
-        $pi = new \Common\Lib\Pin();
-        $p_obj = new \Overtrue\Pinyin\Pinyin();
-        $code_charter = $p_obj->abbr($s_hotel_name);
-        $code_charter  = strtolower($code_charter);
+        if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+            $code_charter = $s_hotel_name;
+        }else {
+            $pi = new \Common\Lib\Pin();
+            $p_obj = new \Overtrue\Pinyin\Pinyin();
+            $code_charter = $p_obj->abbr($s_hotel_name);
+            $code_charter  = strtolower($code_charter);
+            if(strlen($code_charter)==1){
+                $code_charter .=$code_charter;
+            }
+        }
         /* $code_charter .=getFirstCharter($f_hotel_name);
          $code_charter .=getFirstCharter($s_hotel_name);*/
         $code_charter  = strtolower($code_charter);
