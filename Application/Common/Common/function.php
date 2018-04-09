@@ -816,4 +816,22 @@ function assoc_unique_new(&$arr, $key)
 }
 $arr=array_values($rAr);
 }
+/**
+ * @desc 获取网络版酒楼的类型id
+ * @param number $type  1:数组  2:字符串
+ */
+function getHeartBoXtypeIds($type=1){
+    $heart_hotel_box_type = C('heart_hotel_box_type');
+    if($type==1){
+       $heart_hotel_box_arr = array_keys($heart_hotel_box_type);
+       return  $heart_hotel_box_arr; 
+    }else {
+        $heart_hotel_box_str = '';
+        foreach($heart_hotel_box_type as $key=>$v){
+            $heart_hotel_box_str .= $space . $key;
+            $space = ',';
+        }
+        return $heart_hotel_box_str;
+    }
+}
 ?>

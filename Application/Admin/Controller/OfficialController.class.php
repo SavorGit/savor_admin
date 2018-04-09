@@ -485,14 +485,25 @@ class officialController extends Controller {
 	    $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
 	    $type = 'ads';
 	    $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+	    $heart_type_str = getHeartBoXtypeIds(2);
 	    foreach($media_list as $key=>$v){
 	        $media_list[$key]['start_date'] = date('Y-m-d',strtotime($v['start_date']));
 	        //$pub_ads_count = $m_pub_ads_box->getDataCount(array('pub_ads_id'=>$v['pub_ads_id']));
-	        $sql ="SELECT COUNT(t.counts) nums FROM  (SELECT COUNT(*) counts FROM savor_pub_ads_box t WHERE `pub_ads_id` = ".$v['pub_ads_id']." GROUP BY box_id) t";
-	        $pub_ads_count = $m_program_ads->query($sql);
+	        //$sql ="SELECT COUNT(t.counts) nums FROM  (SELECT COUNT(*) counts FROM savor_pub_ads_box t WHERE `pub_ads_id` = ".$v['pub_ads_id']." GROUP BY box_id) t";
+	        
+	        //$pub_ads_count = $m_program_ads->query($sql);
 	        
 	        //echo $m_pub_ads_box->getLastSql();exit;
-	        $pub_ads_count = $pub_ads_count[0]['nums'];
+	        $sql ="select abox.*,hotel.name,hotel.hotel_box_type 
+	               from savor_pub_ads_box abox 
+	               left join savor_box box on abox.box_id=box.id 
+	               left join savor_room room on box.room_id=room.id 
+	               left join savor_hotel hotel on room.hotel_id=hotel.id 
+	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str) 
+	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 
+	               group by abox.box_id";
+	        $rtss = M()->query($sql);
+	        $pub_ads_count = count($rtss);
 	        
 	        $where = array();
 	        $where['media_id'] = $v['id'];
@@ -500,6 +511,8 @@ class officialController extends Controller {
 	        $where['report_date'] = $yesterday;
 	        $valid_nums = $m_media_monitor->countNums($where);
 	        $media_list[$key]['valid_nums'] = $valid_nums;
+	        $not_valid_nums = $pub_ads_count-$valid_nums;
+	        $not_valid_nums = $not_valid_nums>0 ? $not_valid_nums :0;
 	        $media_list[$key]['not_valid_nums'] = $pub_ads_count-$valid_nums;
 	    }
 	    $data = array();
