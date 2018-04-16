@@ -834,4 +834,24 @@ function getHeartBoXtypeIds($type=1){
         return $heart_hotel_box_str;
     }
 }
+function secsToStr($secs) {
+    if($secs>=86400){$days=floor($secs/86400);
+    $secs=$secs%86400;
+    $r=$days.' 天';
+    
+    if($secs>0){$r.=', ';}}
+    if($secs>=3600){$hours=floor($secs/3600);
+    $secs=$secs%3600;
+    $r.=$hours.' 小时';
+    
+    if($secs>0){$r.=', ';}}
+    if($secs>=60){$minutes=floor($secs/60);
+    $secs=$secs%60;
+    $r.=$minutes.' 分';
+    
+    if($secs>0){$r.=', ';}}
+    $r.=$secs.' 秒';
+    
+    return $r;
+}
 ?>

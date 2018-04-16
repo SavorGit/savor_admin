@@ -2555,8 +2555,10 @@ class ExcelController extends Controller
             $where['a.task_area'] = $area;
         }
         
-        $where['a.state'] = array('in','1,2,3,4,5');
-        $where['a.task_type'] = array('in','1,2,4,8');
+        /* $where['a.state'] = array('in','1,2,3,4,5');
+        $where['a.task_type'] = array('in','1,2,4,8'); */
+        $where['a.state'] = array('in','4');
+        $where['a.task_type'] = array('neq','4');
         $where['a.flag']      =0;
 
 
@@ -2564,7 +2566,7 @@ class ExcelController extends Controller
 
 
         $fields = "a.id, a.task_area, a.task_emerge, a.task_type,b.name hotel_name,a.hotel_address,
-                   a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state";
+                   a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state,a.create_time,a.complete_time";
         $list = $m_option_task->alias('a')
                               ->join('savor_hotel b on a.hotel_id= b.id','left')
             ->join('savor_sysuser sy on a.publish_user_id = sy.id')
@@ -2643,6 +2645,8 @@ class ExcelController extends Controller
         //print_r($list);exit;
         $xlsCell = array(
             array('id', '任务id'),
+            array('create_time','发布时间'),
+            array('complete_time','完成时间'),
             array('hotel_name','酒楼名称'),
             array('hotel_address','酒楼地址'),
             array('hotel_linkman','酒楼联系人'),
@@ -2978,4 +2982,30 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'hhboxlist';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
+    public function getAvgTastTime(){
+        $start_time = I('get.start_time');
+        $end_time   = I('get.end_time');
+        $area_id    = I('get.area_id',0,'intval');
+        
+        $where =" 1 ";
+        $where .=" and create_time>='".$start_time."'";
+        $where .=" and create_time<='".$end_time."'";
+        $where .=" and state=4 and task_type=4 and flag=0";
+        if(!empty($area_id)){
+            $where .=" and task_area=$area_id";
+        }
+        $sql = ' select create_time,complete_time from savor_option_task where '.$where;
+        $data = M()->query($sql);
+        $all_times = 0;
+        $all_nums = count($data);
+        
+        foreach($data as $key=>$v){
+            $diff_time =  strtotime($v['complete_time']) - strtotime($v['create_time']);
+            $all_times += $diff_time;      
+        }
+        echo $all_nums;exit;
+        $avg_time = floor($all_times / $all_nums);
+        echo secsToStr($avg_time);
+    }
+    
 }
