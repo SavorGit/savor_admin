@@ -97,8 +97,9 @@
 
 	                <span class="input-group-btn input-group-sm">
 	              <select id="citicha" name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                      <option value="" <empty name="area_k">selected </empty>>全国</option>
                       <volist name="area" id="vo">
-                          <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                          <option value="{$vo.id}" <notempty name="area_k"><if condition="$vo.id eq $area_k">selected</if></notempty>>{$vo.region_name}</option><br>
                       </volist>
                   </select>
 	            </span>
@@ -115,6 +116,7 @@
 
 	                <span class="input-group-btn input-group-sm">
 	              <select id="yunwei" name="user_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+                      <option value="">全部</option>
                       <volist name="usera" id="vo">
                           <option value="{$vo.id}" <if condition="$vo.id eq $user_k">selected</if>>{$vo.remark}</option><br>
                       </volist>
@@ -138,7 +140,10 @@
             <a id="exportcontentads" class="btn btn-success btn-sm add" href="javascript:void(0)"  title="导出内容与广告统计" target="_blank" mask="true"  onclick="clickcontentads(this)"><i class="fa fa-plus"></i> 导出内容与广告统计</a>
             <input type="hidden" id="contentxiaohref" value="{$host_name}/excel/expcontentads"/>
           </div>-->
-
+			<div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/exportRepairTask?ctime={$s_time}&etime={$e_time}&area={$area_k}&exe_user_id={$user_k}" title="导出维修任务明细" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出维修任务明细</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div>
           <div class="form-inline" style="margin-top:10px;">
 
 
@@ -161,7 +166,7 @@
           <thead>
           <tr id="post">
             <th>任务类型</th>
-            <th>用户名称</th>
+            <!-- <th>用户名称</th> -->
             <th>完成结果</th>
             <th>未完成结果</th>
           </tr>
@@ -170,11 +175,15 @@
           <volist name="list" id="vlist">
             <tr target="sid_user">
               <td data-title="任务类型">{$vlist.type}</td>
-              <td data-title="用户名称">{$vlist.remark}</td>
+              <!-- <td data-title="用户名称">{$vlist.remark}</td> -->
                 <td data-title="完成结果">{$vlist.finish}</td>
               <td data-title="未完成结果">{$vlist.coni}</td>
             </tr>
           </volist>
+          <tr>
+          <td>维修任务平均时长:{$avg_time}
+          </td>
+          </tr>
           </tbody>
         </table>
       </form>

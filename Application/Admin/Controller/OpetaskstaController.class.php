@@ -31,9 +31,16 @@ class OpetaskstaController extends BaseController {
         $area_v = I('cityid',0);
         $opUserModel = new \Admin\Model\OpuserroleModel();
         $op_field = 'a.user_id id,user.remark';
-        $op_where = '1 and manage_city='.$area_v.
+        if($area_v){
+            $op_where = '1 and manage_city='.$area_v.
             ' and a.state=1 and user.status=1 and a.role_id=3';
+        }else {
+            $op_where = '1 and a.state=1 and user.status=1 and a.role_id=3';
+        }
+        
         $user_arr = $opUserModel->getAllRole($op_field, $op_where);
+        $tmp = array('id'=>0,'remark'=>'全部');
+        array_unshift($user_arr, $tmp);
         if($user_arr) {
             $result = array(
                 'code'=>1,
@@ -74,7 +81,7 @@ class OpetaskstaController extends BaseController {
         if( empty($starttime) && empty($endtime)) {
             $starttime = date("Y-m-d",strtotime("-7 days"));
             $endtime = $yesday;
-            $area_v = $area_arr[0]['id'];
+            //$area_v = $area_arr[0]['id'];
             $st_time = $starttime.' 00:00:00 ';
             $en_time = $endtime.' 23:59:59 ';
             $this->assign('s_time',$starttime);
@@ -102,15 +109,21 @@ class OpetaskstaController extends BaseController {
                 $this->error('开始时间必须小于等于结束时间');
             }
             $exe_user_id = I('user_v', 0);
-            if( empty($area_v) ) {
+            /* if( empty($area_v) ) {
                 $area_v = $area_arr[0]['id'];
-            }
+            } */
         }
+        
         //判断该城市是否有执行者
         $opUserModel = new \Admin\Model\OpuserroleModel();
         $op_field = 'a.user_id id,user.remark';
-        $op_where = '1 and manage_city='.$area_v.
+        if($area_v){
+            $op_where = '1 and manage_city='.$area_v.
             ' and a.state=1 and user.status=1 and a.role_id=3';
+        }else {
+            $op_where = '1 and a.state=1 and user.status=1 and a.role_id=3';
+        }
+        
         $user_arr = $opUserModel->getAllRole($op_field, $op_where);
         if($user_arr) {
             $uer_id_a = array_column($user_arr, 'id');
@@ -128,21 +141,29 @@ class OpetaskstaController extends BaseController {
                     'remark'=>'无人员',
                 );
             } else {
-                if( empty($exe_user_id) ) {
+                /* if( empty($exe_user_id) ) {
                     $exe_user_id = $user_arr[0]['id'];
-                }
-                $t_user_remark = $user_remark_arr[$exe_user_id];
+                } */
+                //$t_user_remark = $user_remark_arr[$exe_user_id];
                 $task_type = C('OPTION_USER_SKILL_ARR');
                 $optaskModel = new \Admin\Model\OptiontaskModel();
                 $field = ' state, hotel_id, tv_nums, task_type ';
                 $tap = array();
                 foreach($task_type as $tk=>$tv) {
                     $wherea = $where;
-                    $wherea .= ' and task_type= '.$tk.' and flag=0 and exe_user_id = '.$exe_user_id.
+                    if(empty($exe_user_id)){
+                        $wherea .= ' and task_type= '.$tk.' and flag=0  and ( ( state=2 and palan_finish_time > "'.$st_time.'"
+                    and  palan_finish_time <= "'.$en_time.'"  )
+                    or (state=4 and  complete_time > "'.$st_time.'"
+                    and  complete_time <= "'.$en_time.'" ) )';
+                    }else {
+                        $wherea .= ' and task_type= '.$tk.' and flag=0 and exe_user_id = '.$exe_user_id.
                         ' and ( ( state=2 and palan_finish_time > "'.$st_time.'"
                     and  palan_finish_time <= "'.$en_time.'"  )
                     or (state=4 and  complete_time > "'.$st_time.'"
                     and  complete_time <= "'.$en_time.'" ) )';
+                    }
+                    
                     $order = '';
                     $limit = '';
                     $group = '';
@@ -251,8 +272,31 @@ class OpetaskstaController extends BaseController {
             $user_arr = array();
             $result = $this->emptyData($size);
         }
-
-
+        //维修任务平均时长
+        $where =" 1 ";
+        $where .=" and create_time>='".$st_time."'";
+        $where .=" and create_time<='".$en_time."'";
+        $where .=" and state=4 and task_type=4 and flag=0";
+        if(!empty($area_v)){
+            $where .=" and task_area=$area_v";
+        }
+        if($exe_user_id){
+            $where .=" and exe_user_id={$exe_user_id}";
+        }
+        $sql = ' select create_time,complete_time from savor_option_task where '.$where;
+        $data = M()->query($sql);
+        $all_times = 0;
+        $all_nums = count($data);
+        
+        foreach($data as $key=>$v){
+            $diff_time =  strtotime($v['complete_time']) - strtotime($v['create_time']);
+            $all_times += $diff_time;
+        }
+        $avg_time = floor($all_times / $all_nums);
+        $avg_time = secsToStr($avg_time);
+        
+        $this->assign('avg_time',$avg_time);
+        
         $this->assign('user_k', $exe_user_id);
         $this->assign('area_k',$area_v);
         $this->assign('usera', $user_arr);
