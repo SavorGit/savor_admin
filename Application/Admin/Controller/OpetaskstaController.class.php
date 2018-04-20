@@ -223,6 +223,10 @@ class OpetaskstaController extends BaseController {
                                     'remark'=>$t_user_remark,
                                     'finish'=>'酒楼'.$fi_h.'个,版位'.$fi_ban.'个',
                                     'coni'=>'酒楼'.$co_h.'个,版位'.$co_ban.'个',
+                                    'finish_hotel'=>$fi_h,
+                                    'finish_box'=>$fi_ban,
+                                    'coni_hotel'=>$co_h,
+                                    'coni_ban'=>$co_ban,
                                 );
                             } else {
                                 $tap[] = array(
@@ -247,6 +251,10 @@ class OpetaskstaController extends BaseController {
                                 'remark'=>$t_user_remark,
                                 'finish'=>'酒楼0个,版位0个',
                                 'coni'=>'酒楼0个,版位0个',
+                                'finish_hotel'=>0,
+                                'finish_box'=>0,
+                                'coni_hotel'=>$co_h,
+                                'coni_ban'=>$co_ban,
                             );
                         } else {
                             $tap[] = array(
@@ -272,6 +280,25 @@ class OpetaskstaController extends BaseController {
             $user_arr = array();
             $result = $this->emptyData($size);
         }
+        
+        //版位维修任务统计
+        if(!empty($exe_user_id)){
+            
+            $sql ="select count(id) as num from savor_repair_box_user where create_time>='".$st_time."'
+                   and create_time<='".$en_time."' and type=2 and userid=$exe_user_id and flag=0 group by hotel_id";
+            $re_hotel_arr = M()->query($sql);
+            $re_hotel_nums = count($re_hotel_arr);
+            $sql = "select count(id) as num from savor_repair_box_user where create_time>='".$st_time."'
+                   and create_time<='".$en_time."' and type=2 and userid=$exe_user_id and flag=0 ";
+            $re_box_arr = M()->query($sql);
+            
+            $re_box_nums = $re_box_arr[0]['num'];
+            $all_finish_hotel = $result['list'][3]['finish_hotel'] + $re_hotel_nums ;
+            $all_finish_box   = $result['list'][3]['finish_box']   + $re_box_nums;
+            $result['list'][3]['finish']  = '酒楼'.$all_finish_hotel.'个,版位'.$all_finish_box.'个';  
+        }
+        
+        
         //维修任务平均时长
         $where =" 1 ";
         $where .=" and create_time>='".$st_time."'";
