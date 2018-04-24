@@ -2162,6 +2162,13 @@ class CrontabController extends Controller
      * @desc 大屏数据监控定时发送邮件
      */
     public function mailBigScreenData(){
+        /* $s_key = I('get.s_key');
+        if(empty($s_key)){
+            exit('您没有权限');
+        }
+        if($s_key !='322f8f5580740efeec8abfdfdaf1e040'){
+            exit('您没有权限');
+        } */
         //判断今天是否已经发过
         $redis = SavorRedis::getInstance();
         $redis->select(13);
@@ -2174,6 +2181,13 @@ class CrontabController extends Controller
                 //已经发过
                 echo '已经发过';
                 exit;
+            }else {
+                $keyt = 'statistics_hotel_time';
+                $t_val = $redis->get($keyt);
+                if(  empty($t_val) || (date("Y-m-d", $t_val) != $now_date)) {
+                    echo '发送失败日期非今天';
+                    exit;
+                } 
             }
         } else {
             $keyt = 'statistics_hotel_time';
