@@ -730,4 +730,21 @@ public function exportExcel($expTitle,$expCellName,$expTableData){
         $excel = new \Admin\Controller\ExcelController();
         $excel->exportExcel($xlsName, $xlsCell, $hotel_info,$filename);
     }
+    function getTaskNums(){
+        $sql ="select a.*,b.remark from savor_opuser_role a
+               left join savor_sysuser b on a.user_id=b.id
+               where a.state=1 and a.role_id=1";
+        $data = M()->query($sql);
+        $result = array();
+        foreach($data as $key=>$v){
+            $sql ="select count(id) as nums from savor_option_task where publish_user_id=".$v['user_id']." and flag=0";
+            $ret = M()->query($sql);
+            echo  $v['remark'].":".$ret[0]['nums'];
+            echo "<br>";
+        }
+        echo "aaa";exit;
+        print_r($result);exit;
+        
+        
+    }
 }
