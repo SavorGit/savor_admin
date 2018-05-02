@@ -2197,7 +2197,9 @@ class CrontabController extends Controller
                 exit;
             }
         }
-
+        
+        
+        
 
         $body = '<!DOCTYPE html>
                     <html>
@@ -2268,7 +2270,8 @@ class CrontabController extends Controller
         $type = 2;
         $heart_hotel_box_type = C('heart_hotel_box_type');
         $net_box_arr = array_keys($heart_hotel_box_type);
-         
+
+        $flag = 0;
         foreach($area_list as $key=>$v){
             $area_list[$key]['region_name'] = str_replace('市', '', $v['region_name']);
             $map   = array();
@@ -2281,12 +2284,18 @@ class CrontabController extends Controller
             $not_valid_nums = $m_valid_online_monitor->countNums($where);
             $where['state'] = 1;
             $valid_nums = $m_valid_online_monitor->countNums($where);
+            if(empty($valid_nums)){
+                $flag ++;
+            }
             $body .= '<tr>
 				        <td>'.$area_list[$key]['region_name'].'</td>
 			             </tr>
 			             <tr>
 				         <td>有效屏:'.$valid_nums.' 无效屏:'.$not_valid_nums.'</td>
 			           </tr>';
+        }
+        if($flag>0){
+            exit('数据不能为0');
         }
         $body .='<tr>
 				<td style="font-weight: 700;">----市场部广告到达统计汇总----</td>
