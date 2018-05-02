@@ -3148,5 +3148,55 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $avg_time = floor($all_times / $all_nums);
         echo secsToStr($avg_time);
     }
+    public function getBoxHearLog(){
+        
+        $sql ="select * from savor_heart_all_log where date>'20180420' and date<='20180425' and type=2";
+        $data = M()->query($sql);
+        $xlsCell = array(
+        
+            array('id','序号'),
+            array('area_id','区域ID'),
+            array('area_name','区域名称'),
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('room_id','包间id'),
+            array('room_name','包间名称'),
+            array('box_id','机顶盒id'),
+            
+            array('mac','机顶盒mac'),
+            array('date','日期'),
+            array('hour0','hour0'),
+            array('hour1','hour1'),
+            array('hour2','hour2'),
+            array('hour3','hour3'),
+            array('hour4','hour4'),
+            array('hour5','hour5'),
+            
+            array('hour6','hour6'),
+            array('hour7','hour7'),
+            array('hour8','hour8'),
+            array('hour9','hour9'),
+            array('hour10','hour10'),
+            array('hour11','hour11'),
+            array('hour12','hour12'),
+            array('hour13','hour13'),
+            array('hour14','hour14'),
+            array('hour15','hour15'),
+            array('hour16','hour16'),
+            array('hour17','hour17'),
+            
+            array('hour18','hour18'),
+            array('hour19','hour19'),
+            array('hour20','hour20'),
+            array('hour21','hour21'),
+            array('hour22','hour22'),
+            array('hour23','hour23'),
+
+        );
+        $xlsName = '花花版位';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        
+    }
     
 }
