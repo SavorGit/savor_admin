@@ -2268,6 +2268,11 @@ class CrontabController extends Controller
          
         $report_time = date('Ymd',strtotime('-1 days'));
         $type = 2;
+        $ttps = $m_valid_online_monitor->countNums(array('report_date'=>$report_time,'type'=>2));
+        
+        if(empty($ttps)){//昨天该表数据为空不发邮件
+            exit('有效屏数据不能为0');
+        }
         $heart_hotel_box_type = C('heart_hotel_box_type');
         $net_box_arr = array_keys($heart_hotel_box_type);
 
@@ -2295,7 +2300,7 @@ class CrontabController extends Controller
 			           </tr>';
         }
         if($flag>0){
-            exit('数据不能为0');
+            exit('有效屏数据不能为0');
         }
         $body .='<tr>
 				<td style="font-weight: 700;">----市场部广告到达统计汇总----</td>
@@ -2320,6 +2325,11 @@ class CrontabController extends Controller
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
         $type = 'ads';
         $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+        
+        $ttps = $m_media_monitor->countNums(array('media_type'=>$type,'report_date'=>$yesterday));
+        if(empty($ttps)){
+            exit('广告到达数据不能为0');
+        }
         $heart_type_str = getHeartBoXtypeIds(2);
         foreach($media_list as $key=>$v){
             $media_list[$key]['start_date'] = date('Y-m-d H:i',strtotime($v['start_date']));
@@ -2415,6 +2425,12 @@ class CrontabController extends Controller
         $m_version_monitor = new \Admin\Model\Statisticses\VersionMonitorModel();
         $type = 'pro_down';
         $yesterday = date('Y-m-d 00:00:00',strtotime('-1 days'));
+        
+        $ttps = $m_version_monitor->countNums(array('version_type'=>$type,'report_date'=>$yesterday));
+        
+        if(empty($ttps)){
+            exit('内容到达数据不能为0'); 
+        }
         foreach($program_list as $key=>$v){
             $program_list[$key]['create_time'] = date('Y-m-d H:i',strtotime($v['create_time']));
             $where = array();
