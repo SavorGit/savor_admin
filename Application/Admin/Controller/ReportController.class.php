@@ -106,6 +106,7 @@ class ReportController extends BaseController{
 		$this->assign('area', $area_arr);
 		//酒店名称
 		$where = ' 1=1 ';
+		$where .= " and sht.state=1 and sht.flag=0";
 		if($name){
 		    $search_name = addslashes($name);
 			$this->assign('name',$name);
