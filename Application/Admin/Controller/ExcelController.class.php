@@ -3198,5 +3198,72 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
         
     }
+    public function getHeartAdsPorid(){
+        
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        $where =" and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag = 0 
+                 and ext.mac_addr!='000000000000' and hotel.hotel_box_type in( ".$hotel_box_type_str.")";
+        $sql =" select hotel.remote_id,hotel.id hotel_id,hotel.name hotel_name,hotel.addr,room.name as room_name,box.id box_id,box.name box_name, box.mac  
+                from savor_box box 
+                left join savor_room room on box.room_id=room.id
+                left join savor_hotel hotel on room.hotel_id=hotel.id
+                left join savor_hotel_ext ext on hotel.id= ext.hotel_id
+                where 1".$where;
+ 
+        $data = M()->query($sql);
+        //print_r($data);exit;
+        $promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $promenulistModel = new \Admin\Model\ProgramMenuListModel();
+        
+        $box_id = I('get.box_id',0,'intval');
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(12);
+        
+        
+        foreach($data as $key=>$v){
+            $condition['hotel_id'] = $v['hotel_id'];
+            
+            $new_menu_arr = $promenuHoModel->field('menu_id')->where($condition)->order('id desc')->find();
+            
+            $men_arr = $promenulistModel->field('menu_num')->find($new_menu_arr['menu_id']);
+            $data[$key]['menu_num'] = $men_arr['menu_num'];
+            $cache_key = C('PROGRAM_ADS_CACHE_PRE').$v['box_id'];
+            //echo $cache_key;exit;
+            $program_ads_info = $redis->get($cache_key);
+            $program_ads_info = json_decode($program_ads_info,true);
+            
+            if(!empty($program_ads_info)){
+                $ads_num = $program_ads_info['menu_num'];
+                $data[$key]['ads_menu_num'] = $ads_num;
+            }else {
+                $data[$key]['ads_menu_num'] = '';
+            }
+        }
+        
+        $xlsCell = array(
+        
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('room_name','包间名称'),
+            array('box_name','机顶盒名称'),
+            array('mac','机顶盒mac'),
+            array('menu_num','节目单期号'),
+            array('ads_menu_num','广告期号'),
+            
+        
+            
+        
+        );
+        $xlsName = '花花版位';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
     
 }
