@@ -297,6 +297,13 @@ $config['RTBADVE_OCCU'] = array(
     'name' => 'RTB广告位',
     'num' => '18',
 );
+$config['POLY_SCREEN_OCCU']= array(
+    'name'=>'聚屏广告位',
+    'num' => '50',
+);
+$config['POLY_SCREEN_MEDIA_LIST'] = array(
+    '1'=>'百度聚屏',
+);
 $config['TOU_STATE'] = array(
     '0'=>'全部',
     '1'=>'未到投放时间',
@@ -363,7 +370,7 @@ $config['CONFIG_VOLUME'] = array(
     'system_tv_volume'=>'电视音量'
 );
 $config['PROGRAM_ADS_CACHE_PRE'] = 'program_ads_';
-
+$config['SMALL_PROGRAM_LIST_KEY'] = 'small_program_list_';
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',

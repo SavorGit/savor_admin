@@ -43,6 +43,7 @@
               <th>音量</th>
               <th>冻结状态</th>
               <th>删除状态</th>
+              <th>第三方聚屏媒体</th>
               <th>查看最新广告</th>
               <th class="table-tool">操作</th>
             </tr>
@@ -76,6 +77,7 @@
                       删除
                   </if>
               </td>
+              <td data-title="第三方聚屏媒体">{$vlist['tpmedia_id_str']}</td>
               <td data-title="查看最新广告">
               		<div class="tools-edit">
 	              		<a data-tip="预览" href="{$host_name}/box/getAdsList?box_id={$vlist['id']}"

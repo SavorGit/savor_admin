@@ -98,6 +98,26 @@
           </select>
         </div>
       </div>
+      
+       <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          聚屏广告第三方媒体:
+        </label>
+
+        <div class="col-xs-12 col-sm-10">
+        	 <span class="input-group-btn input-group-sm">
+              <select  name="tpmedia_id[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+                  <volist name="poly_screen_media_arr" key="k" id="vo">
+                  <option <php> if(in_array($k,$tpmedia_id_arr)){</php>selected <php>}</php> value="{$k}" >
+                  
+                  {$vo}
+                  </option>
+                </volist>
+              </select>
+            </span>
+        </div>
+      </div>
+      
             
     </div>
 

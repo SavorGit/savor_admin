@@ -50,11 +50,21 @@ class DeviceController extends BaseController{
             }
         }
         if(!empty($result['list'])){
+            $poly_screen_media_arr = C('POLY_SCREEN_MEDIA_LIST');
             $tvModel = new \Admin\Model\TvModel();
             foreach ($result['list'] as $k=>$v){
                 $box_id = $v['id'];
                 $tv_num = $tvModel->where("box_id='$box_id'")->count();
                 $result['list'][$k]['tv_num'] = $tv_num;
+                $tpmedia_id_str = $space = '';
+                if($v['tpmedia_id']){
+                    $tpmedia_id_arr = explode(',', $v['tpmedia_id']);
+                    foreach($tpmedia_id_arr as $vv){
+                        $tpmedia_id_str .= $space . $poly_screen_media_arr[$vv];
+                        $space = ',';
+                    }
+                    $result['list'][$k]['tpmedia_id_str'] = $tpmedia_id_str;
+                }
             }
             $result['list'] = $boxModel->roomIdToRoomName($result['list']);
 
@@ -161,6 +171,10 @@ class DeviceController extends BaseController{
 		$this->assign('vinfo', $vinfo);
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
+		
+		//聚屏广告第三方媒体
+		$poly_screen_media_arr = C('POLY_SCREEN_MEDIA_LIST');
+		$this->assign('poly_screen_media_arr',$poly_screen_media_arr);
 		return $this->display('addBox');
 	}
 
@@ -186,6 +200,16 @@ class DeviceController extends BaseController{
 		foreach ($room_list as $v){
 		    $rooms[$v['id']] = $v['name'];
 		}
+		//聚屏广告第三方媒体
+		$poly_screen_media_arr = C('POLY_SCREEN_MEDIA_LIST');
+		$this->assign('poly_screen_media_arr',$poly_screen_media_arr);
+		$tpmedia_id_arr = array();
+		if($vinfo['tpmedia_id']){
+		    $tpmedia_id_arr = explode(',', $vinfo['tpmedia_id']);
+		    $this->assign('tpmedia_id_arr',$tpmedia_id_arr);
+		}
+		
+		
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
 
@@ -237,7 +261,18 @@ class DeviceController extends BaseController{
 		$save['volum']       = I('post.volum','','trim');
 		$save['tag']         = I('post.tag','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
-		$save['adv_mach']     = I('post.adv_machine',0,'intval');
+		$save['adv_mach']    = I('post.adv_machine',0,'intval');
+		$tpmedia_id_arr      = I('post.tpmedia_id');
+		
+		if($tpmedia_id_arr){
+		    foreach($tpmedia_id_arr as $v){
+		        $tpmedia_id_str .=$space . $v;
+		        $space = ',';
+		    }
+		    $save['tpmedia_id'] = $tpmedia_id_str; 
+		}else {
+		    $save['tpmedia_id'] = '';
+		}
 		$boxModel = new BoxModel;
 		$save['update_time'] = date('Y-m-d H:i:s');
 		if($save['mac']){

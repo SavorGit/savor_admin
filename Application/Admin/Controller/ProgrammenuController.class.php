@@ -535,6 +535,29 @@ smlist.menu_name';
         }
 
     }
+    public function judgePolyScreenOuc($name_arr){
+        $result = array();
+        $result = $this->getPolyScreenOccup($result);
+        $adv_arr = array_column($result, 'name');
+        $len = count ($adv_arr);
+        //判断要有10个
+        if ( array_diff($adv_arr, $name_arr) ) {
+            $this->error("聚屏广告位必须选择{$len}个");
+        }
+        //取广告位数组
+        $ad_arr = array_filter($name_arr, function($result, $item)use($adv_arr) {
+            if(in_array($result, $adv_arr)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        //判断恰好10个,取广告位数组反转然后比较
+        if (count($ad_arr) != $len) {
+            $this->error("RTB广告位必须选择{$len}个且不能有重复");
+        }
+    }
+    
 
     public function doaddnewMenu(){
             //表单提交即是新增和导入ajax区分以及与修改进行区分
@@ -571,6 +594,8 @@ smlist.menu_name';
             $this->judgeAdvOuc($name_arr);
             //判断RTB广告位版位都有10个,
             $this->judgertbAdvOuc($name_arr);
+            //判断聚屏广告位都有50个
+            $this->judgePolyScreenOuc($name_arr);
             $result = $mlModel->add($save);
             if ( $result ) {
                 $menu_id = $mlModel->getLastInsID();
@@ -584,14 +609,21 @@ smlist.menu_name';
                 $res_adv = $this->getAdsOccup($res);
                 //获取rtb广告占位符
                 $rertb_adv = $this->getRtbadsOccup($res);
+                //获取聚屏广告位占位符
+                $poly_adv = $this->getPolyScreenOccup($res);
+                
                 //取出name列
                 $res_adv = array_column($res_adv, 'name');
                 $res_xuan = array_column($res_xuan, 'name');
                 $rertb_adv = array_column($rertb_adv, 'name');
+                $poly_adv  = array_column($poly_adv, 'name');
                 $adv_promote_num_arr = C('ADVE_OCCU');
                 $adv_name = $adv_promote_num_arr['name'];
                 $rtbadv_promote_num_arr = C('RTBADVE_OCCU');
                 $rtbadv_name = $rtbadv_promote_num_arr['name'];
+                
+                $polyadv_promote_num_arr = C('POLY_SCREEN_OCCU');
+                $polyadv_name = $polyadv_promote_num_arr['name'];
                 foreach($id_arr as $k=>$v) {
                     //判断type类型
                     $ad_name = $name_arr[$k];
@@ -606,7 +638,11 @@ smlist.menu_name';
                     }else if ( in_array($ad_name, $res_xuan) ) {
                         $type = 3;
                         $lo = 0;
-                    } else {
+                    }else if(in_array($ad_name,$poly_adv)){
+                        $type = 5;
+                        $lo = str_replace($polyadv_name, "",
+                            $ad_name);
+                    }else {
                         $type = 2;
                         $lo = 0;
                     }
@@ -875,6 +911,29 @@ smlist.menu_name';
         }
         return $result;
     }
+    /**
+     * @desc 获取聚屏类广告位
+     */
+    public function getPolyScreenOccup($result,$filter=''){
+        $adv_promote_num_arr = C('POLY_SCREEN_OCCU');
+        if($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_promote_num = $adv_promote_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i=1; $i<=$adv_promote_num; $i++) {
+            if(in_array($adv_promote_num_arr['name'].$i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array('id'=>0,
+                    'name'=>$adv_promote_num_arr['name'].$i,
+                    'create_time'=>$now_date_time,'duration'=>0,
+                    'type'=>'33',
+                );
+            }
+        }
+        return $result;
+    }
 
     public function get_se_left(){
         $m_type = I('post.m_type','0');
@@ -915,7 +974,9 @@ smlist.menu_name';
         } else if ($m_type == 5){
             //获取RTB广告占位符
             $result = $this->getRtbadsOccup($result, $adval);
-        } else {
+        } else if($m_type == 6){
+            $result = $this->getPolyScreenOccup($result, $adval);
+        }else {
             $where .= "	AND type = '{$m_type}'";
             $result = $adModel->getWhere($where, $field);
         }

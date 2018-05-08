@@ -1,0 +1,167 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+    .zhezhao{
+
+
+        
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/Polyscreen/doAdd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="ads_id" value="{$vainfo.id}">
+    <input type="hidden" name="hotel_id" value="{$vinfo.id}">
+    <div class="pageFormContent modal-body">
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label col-md-offset-4">
+                聚屏广告
+            </label>
+        </div>
+
+     
+       
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                视频内容:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput" id="xuanpian">
+                        <a id="xuanpianhr" target="_blank"
+                        <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''"> href="javascript:void(0)"
+                           <else />href="{$vainfo.videooss_addr}"></if>>
+
+                            <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
+                                <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+                                <else />
+                                <img id="media_idimg"  src="{$vainfo.oss_addr}" border="0"/>
+                            </if>
+                        </a>
+                        
+                    </div>
+
+                    <div>
+                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadPolyResource?filed=media_id&rtype=1" data-browse-file>
+                            选择视频
+                        </a>
+                        <input type="hidden" name="media_id" id="media_id" value="">
+                        <a href="javascript:;" class="btn btn-danger" id="videoshan" data-remove-file="/Public/admin/assets/img/noimage.png">
+                            删除 </a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+		<!-- <div class="form-group row" style="margin-top: 20px;margin-left: 90px;">
+			
+			<div class="form-group row" style="margin-top: 33px;">
+				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 8px;">
+					播放时段:
+				</label>
+				<div class="input-group input-group-sm date form_datetime" id="datetimepicker" data-ymd="true"  data-date="{$timeinfo.now_time}" style="width:250px; float: left;">
+					<input style="margin-left: 6px;" name="start_time" type="text" size="16" class="form-control date dval" placeholder="开始日期" value="" readonly>
+					<span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+				</div>
+
+				<div class="input-group input-group-sm date form_datetime" id="datetimepicker2" data-ymd="true" data-date="{$timeinfo.now_time}" style="width:250px;float: left;">
+
+					<input name="end_time" type="text" size="16" id="asd" class="form-control date dval" placeholder="结束日期" value="" readonly>
+					<span class="input-group-btn" style="padding:0px;margin:0px;">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+				</div>
+				
+			</div>
+		</div> -->
+		
+		<!--  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          广告名称:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input id="media_idimgname" type="text" class="form-control"style="width: 285px;" name="adsname" minlength="2" maxlength="40" value="{$vainfo.name}" required>
+        </div>
+      </div> -->
+      
+		
+        <div class="form-group row" >
+
+            <label class="col-xs-12 col-sm-2 control-label">
+                文件md5:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="form-inline">
+                <input style="width:285px;" minlength="32" maxlength="32" name="media_md5"  type="text" value="{$vainfo.duration}" class="form-control" required />
+            </div>
+                </div>
+        </div>
+<div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          视频来源:
+        </label>
+        <div class="col-xs-12 col-sm-3">
+          <select name="tpmedia_id" class="form-control bs-select" title="请选择..." data-size="10" required>
+              
+             <volist name="poly_screen_media_list" key="k" id="row">
+                 <option value="{$k}" <if condition="$k eq $vinfo['tpmedia_id']"> selected </if> > {$row} </option>
+             </volist>
+
+          </select>
+        </div>
+      </div>
+        </div>
+
+      <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" style="margin-left: 50%;">&nbsp;提交&nbsp;</button>
+      </div>
+      <div class="zhezhao"></div>
+      <img class="big" src=""/>
+  </form>
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $('#covervideo_idimg').click(function(){
+            var $a = $(this).attr('src');
+            $('.big').prop('src',$a).addClass('addbig');
+            $('.zhezhao').show(500);
+            $('.big').show(500);
+        })
+        $('.zhezhao').click(function(){
+            $('.zhezhao').hide(500);
+            $('.big').hide(500);
+        })
+
+    });
+    $("#videoshan").click(function(){
+        $("#xuanpian #xuanpianhr").attr("href",'javascript:void(0)');
+    })
+
+
+</script>
