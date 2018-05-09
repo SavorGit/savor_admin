@@ -566,6 +566,10 @@ class ClientController extends Controller {
             $url = 'https://mp.weixin.qq.com/s/ZqIUAvY8jIY2EXC1fI1pUg';
             header('Location:'.$url);
             exit;
+        }else if($id==-4){
+            $url ="https://a.appcpa.net/easyLinkPage/index.html?easy_url=ELwRJhIp&ios_url=https%3A%2F%2Flnk0.com%2F8Mxdck&android_url=https%3A%2F%2Flnk0.com%2FgU9gM1";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
