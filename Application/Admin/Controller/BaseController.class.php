@@ -505,7 +505,8 @@ class BaseController extends Controller {
                              'admin.advdelivery.getocuphotel','admin.advdelivery.getvalidboxidbyhotel','admin.programmenu.analyseexcel', 
                              'admin.programmenu.getfile','admin.menu.getsessionhotel','admin.rtbadvert.gettaginfobycat','admin.rtbadvert.gettagcat',
                              'admin.resource.uploadrtbadvdeliveryresource','admin.rtbadvert.getocuphotel','admin.rtbadvert.getcheckadshotel',
-                             'admin.optionuser.manager_list','admin.optionuser.searchhotel','admin.resource.searchresource','admin.opetasksta.getuserrolebycity','admin.singleproreport.getadsajax');
+                             'admin.optionuser.manager_list','admin.optionuser.searchhotel','admin.resource.searchresource',
+                             'admin.opetasksta.getuserrolebycity','admin.singleproreport.getadsajax','admin.resource.uploadpolyresource');
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);
         $action_name     = strtolower(ACTION_NAME);
