@@ -16,7 +16,7 @@ class SmallController extends BaseController{
      */
     public function mediadownloadlist(){
         $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
-		$size   = I('numPerPage',50);//显示每页记录数
+		$size   = I('numPerPage',500);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
@@ -144,6 +144,7 @@ class SmallController extends BaseController{
 		        $hotel_list['list'][$key]['small_download_state'] = 1;
 		    }
 		}
+		sortArrByOneField($hotel_list['list'],'small_download_state',false);
 		//print_r($hotel_list['list']);exit;
 		//城市
 		$m_area = new \Admin\Model\AreaModel();
@@ -168,6 +169,7 @@ class SmallController extends BaseController{
                 $m_media = new \Admin\Model\MediaModel();
                 sortArrByOneField($list,'type');
                 foreach($list as $key=>$v){
+                    $up_media_arr[] = $v['id'];
                     if($v['flag']==1){
                         $list[$key]['down_state'] = '已下载';
                     }else {
@@ -188,7 +190,90 @@ class SmallController extends BaseController{
                             break;
                     }
                 }
+                //start
+                //获取最新节目单
+                $m_program_menu_hotel = new \Admin\Model\ProgramMenuHotelModel();
+                $m_program_menu_item = new \Admin\Model\ProgramMenuItemModel();
+                $m_box = new \Admin\Model\BoxModel();
+                $m_pub_ads = new \Admin\Model\PubAdsModel();
+                $fields = "a.menu_id";
+                $order  = "pl.id desc ";
+                $limit  = " limit 0,1";
+                $menu_info = $m_program_menu_hotel->getProgramByHotelId($hotel_id, $fields, $order, $limit);   //获取最新的一期节目单
+                if($menu_info){//节目资源
                 
+                    $menu_id   = $menu_info[0]['menu_id'];
+                    $map = array();
+                    $map['a.menu_id'] = $menu_id;
+                    $map['a.type']    = 2;
+                    $fields = "media.id media_id,ads.name media_name,'pro' as type";
+                    $order ="a.sort_num asc";
+                    $pro_list = $m_program_menu_item->getMediaList($fields, $map, $order, '');
+                    
+                }
+                //宣传片
+                $adv_arr = $m_program_menu_item->getadvInfo($hotel_id, $menu_id);
+                
+                //获取该酒楼下的盒子
+                $box_list = $m_box->getInfoByHotelid($hotel_id, 'box.id box_id', " and box.state=1 and box.flag=0");
+                $ads_arr = array();
+                $program_ads_cache_pre = C('PROGRAM_ADS_CACHE_PRE');
+                foreach($box_list as $kk=>$vv){
+                    $cache_key = $program_ads_cache_pre.$vv['box_id'];
+                    $redis_value = $redis->get($cache_key);
+                    if($redis_value){
+                        $redis_value = json_decode($redis_value,true);
+                        $redis_value = $redis_value['ads_list'];
+                        $redis_value = assoc_unique($redis_value,'pub_ads_id');
+                        $pub_ads_id_arr = array_keys($redis_value);
+                        $whs = array();
+                        $whs['pads.id'] = array('in',$pub_ads_id_arr);
+                        $whs['pads.state']  = array('neq',2);
+                        $ads_list = $m_pub_ads->getPubAdsList("med.id media_id,ads.name media_name,'ads' as type",$whs);
+                
+                        foreach($ads_list as $ks=>$vs){
+                
+                            $ads_arr[] = $vs;
+                        }
+                    }
+                }
+                $ads_arr = assoc_unique($ads_arr, 'media_id');
+                
+                $media_arr = array_merge($pro_list,$adv_arr,$ads_arr);
+                $media_arr = assoc_unique($media_arr, 'media_id');
+                
+                //end
+                
+                foreach($media_arr as $zk=>$zv){
+                    $temp[$zv['media_id']] = $zv;
+                    $z_media_arr[] = $zv['media_id'];
+                }
+                $diff = array_diff($z_media_arr,$up_media_arr);
+                
+                $diff_arr = array();
+                foreach($diff as $key=>$v){
+                    
+                    
+                    $diff_arr[$key]['down_state'] ='未下载';
+                    
+                    $media_info = $m_media->getMediaInfoById($v);
+                    $diff_arr[$key]['name'] = $media_info['name'];
+                    $diff_arr[$key]['oss_addr'] = $media_info['oss_addr'];
+                    $type = $temp[$v]['type'];
+                    switch ($type){
+                        case 'pro':
+                            $diff_arr[$key]['type'] = '节目';
+                            break;
+                        case 'adv':
+                            $$diff_arr[$key]['type'] = '宣传片';
+                            break;
+                        case 'ads':
+                            $$diff_arr[$key]['type'] = '广告';
+                            break;
+                    }
+                }
+                
+                $this->assign('diff',$diff_arr);
                 $this->assign('list',$list);
                 $this->display(medialist);
             }else {

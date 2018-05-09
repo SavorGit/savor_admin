@@ -87,7 +87,8 @@ class ProgramMenuItemModel extends BaseModel
      */
     public function getadvInfo($hotelid,$menuid){
         $field = "media.id AS media_id,
-				item.ads_name AS media_name";
+				item.ads_name AS media_name,
+                'adv' as type";
         $sql = "select ".$field;
          
         $sql .= " FROM savor_ads ads
