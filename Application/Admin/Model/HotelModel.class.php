@@ -39,8 +39,9 @@ class HotelModel extends BaseModel{
 	}
 
 
-	public function getList($where, $order='id desc', $start=0,$size=5){	
-		 $list = $this->where($where)
+	public function getList($where, $order='id desc', $start=0,$size=5,$fields="*"){	
+		 $list = $this->field($fields)
+		              ->where($where)
 					  ->order($order)
 					  ->limit($start,$size)
 					  ->select();

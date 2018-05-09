@@ -1,0 +1,37 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+          <tr id="post">
+            <th>资源名称</th>
+            <th>是否下载</th>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="资源名称"><a href="{$vlist.oss_addr}" target="_blank">{$vlist.name}</a></td>
+              <td data-title="是否下载">
+              	{$vlist.down_state}
+              </td>
+              
+             
+             
+</tr>
+</volist>
+</tbody>
+</table>
+</form>
+
+</div>
+</div>
+
+</div>

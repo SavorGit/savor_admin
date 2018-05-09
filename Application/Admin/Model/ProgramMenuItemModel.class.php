@@ -71,13 +71,37 @@ class ProgramMenuItemModel extends BaseModel
 
 	}//End Function
 
-
-
-
-
-	
-
-
+    public function getMediaList($fields,$where,$order,$limit){
+        $data = $this->alias('a')
+                ->join('savor_ads ads on a.ads_id=ads.id','left')
+                ->join('savor_media media on media.id=ads.media_id','left')
+                ->field($fields)
+                ->where($where)
+                ->order($order)
+                ->limit($limit)
+                ->select();
+        return $data;             
+    }
+    /**
+     * @desc 获取节目单的宣传片数据
+     */
+    public function getadvInfo($hotelid,$menuid){
+        $field = "media.id AS media_id,
+				item.ads_name AS media_name";
+        $sql = "select ".$field;
+         
+        $sql .= " FROM savor_ads ads
+        LEFT JOIN savor_programmenu_item item on ads.name like CONCAT('%',item.ads_name,'%')
+        LEFT JOIN savor_media media on media.id = ads.media_id
+        where item.type=3
+        and ads.hotel_id={$hotelid}
+        and (item.ads_id is null or item.ads_id=0)
+        and ads.state=1
+        and item.menu_id={$menuid}
+        and media.oss_addr is not null order by item.sort_num asc";
+        $result = $this->query($sql);
+        return $result;
+    }
 
 
 }//End Class

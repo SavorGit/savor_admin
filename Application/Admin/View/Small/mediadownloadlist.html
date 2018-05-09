@@ -1,0 +1,104 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<style type="text/css">
+  .searchBar label{
+    width: auto;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 2px;
+  }
+</style>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/small/mediadownloadlist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+      </div>
+      <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+		  
+	          <div class="form-group"  >
+	            <div class="input-group-sm input-group">
+	              <label class="col-xs-1 col-sm-1 control-label">
+	                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
+	              </label>
+	
+	                <span class="input-group-btn input-group-sm">
+	              <select name="area_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+	                <option value="0" >全国</option>
+	                <volist name="area" id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+	                </volist>
+	              </select>
+	            </span>
+	            </div>
+	          </div>
+
+		</div>
+		<div class="input-group input-group-sm">
+          <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+		
+      </div>
+ 
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+           
+            <th>ID</th>
+            <th>酒楼名称</th>
+            <th>酒楼地址</th>
+            <th>小平台下载结果(下载最新节目单资源)</th>
+          
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              
+              <td data-title="酒店ID">{$vlist.id}</td>
+              <td data-title="酒店名称">{$vlist.hotel_name}</td>
+              <td data-title="地址">{$vlist.addr}</td>
+              
+			  <td data-title="小平台下载结果(下载最新节目单资源)">
+			  <if condition="$vlist.state eq 1">
+			  	已下载完
+			  <else />
+			    	未下载完
+			  </if>
+			  </td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="查看详情" target="dialog" mask="true" href="{$host_name}/small/medialist?id={$vlist.id}" rel="hotel/detail" title="{$vlist.name}酒楼详情"class="btn btn-success btn-icon">
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+               
+                </div>
+              </td>
+
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+
