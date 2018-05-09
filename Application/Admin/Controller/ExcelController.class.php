@@ -3265,5 +3265,79 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'hhboxlist';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
-    
+    /**
+     * @desc 导出广告到达明细
+     */
+    public function exportAdsArrDetail(){
+        $sql ="SELECT
+         area.region_name,
+         hotel.id hotel_id,
+         hotel.`name` hotel_name,
+         suser.`remark` ,
+         hotel.hotel_box_type ,
+         room.`name` room_name,
+         box.`name` box_name,
+         box.mac ,
+         media.`name` media_name,
+         MIN(smm.on_time) AS to_time,
+         heart.heart_count 
+        FROM
+         cloud.savor_pub_ads_box AS pab
+        LEFT JOIN cloud.savor_pub_ads pa ON pab.pub_ads_id = pa.id
+        LEFT JOIN cloud.savor_ads ads ON pa.ads_id = ads.id
+        LEFT JOIN cloud.savor_media AS media ON ads.media_id = media.id
+        LEFT JOIN cloud.savor_box AS box ON pab.box_id = box.id
+        LEFT JOIN cloud.savor_room AS room ON box.room_id = room.id
+        LEFT JOIN cloud.savor_hotel AS hotel ON room.hotel_id = hotel.id
+        left join cloud.savor_hotel_ext as hext on hotel.id=hext.hotel_id
+        left join cloud.savor_sysuser suser on hext.maintainer_id = suser.id
+        LEFT JOIN cloud.savor_area_info AS area ON hotel.area_id = area.id
+        LEFT JOIN statisticses.statistics_media_monitor AS smm ON box.mac = smm.box_mac
+        AND ads.media_id = smm.media_id
+        AND smm.report_date >= '2018-05-01 00:00:00'
+        AND smm.report_date <= '2018-05-07 23:59:59'
+        LEFT JOIN cloud.view_savor_heart_all_log_20180416_20180423 AS heart ON box.id = heart.box_id
+        AND room.id = heart.room_id
+        AND hotel.id = heart.hotel_id
+        WHERE
+         pa.start_date >= '2018-05-01 00:00:00'
+        AND pa.start_date <= '2018-05-07 23:59:59'
+        AND media.`name` IN (
+         '广告5月熙珠宝35秒_新'
+        )
+        AND pa.state = 1
+        AND hotel.hotel_box_type IN (2, 3, 6)
+        AND hotel.state = 1
+        AND hotel.flag = 0
+        AND box.state = 1
+        AND box.flag = 0
+        GROUP BY
+         box.id,
+         box.mac,
+         ads.media_id
+         
+         limit 0,2000";  
+        $data = M()->query($sql);
+
+        
+        $xlsCell = array(
+        
+            array('region_name','城市'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('remark','酒楼维护人'),
+            array('hotel_box_type','机顶盒类型'),
+            array('room_name','包间名称'),
+            array('box_name','盒子名称'),
+            array('mac','盒子mac'),
+            array('media_name','广告名称'),
+            array('to_time','到达时间'),
+            array('heart_count','心跳次数')
+            
+        
+        );
+        $xlsName = '广告到达明细';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
 }
