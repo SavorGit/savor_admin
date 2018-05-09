@@ -1305,7 +1305,7 @@ CREATE TABLE `savor_hotel_unusual_report` (
 修改时间：2018.2.1
 修改人：白玉涛
 ALTER TABLE `cloud`.`savor_hotel_ext`     ADD COLUMN `maintainer_id` INT(10) NOT NULL DEFAULT '0'  COMMENT '合作维护人id'  ;
-
+执行结果:已执行
 
 增加说明：修改酒楼表添加合作人ID字段
 修改时间：2018.2.1
@@ -1319,16 +1319,44 @@ CREATE TABLE `savor_hotel_device_token` (
   `flag` int(11) DEFAULT '0' COMMENT '0正常1删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='任务推送device_token用户表'
-
+执行结果:已执行
 
 增加说明：机顶盒添加是否广告机字段
 修改时间：2018.2.1
 修改人：白玉涛
 alter table `cloud`.`savor_box`
    add column `adv_mach` tinyint(4) DEFAULT '0' NOT NULL COMMENT '0是广告机1不是' after `update_time`;
-
+执行结果:已执行
 
 增加说明：hotel_ext添加是否广告机字段
 修改时间：2018.2.1
 修改人：白玉涛
    ALTER TABLE `cloud`.`savor_hotel_ext`     ADD COLUMN `adplay_num` INT(11) DEFAULT '0' NOT NULL COMMENT '酒楼下广告机数量' AFTER `maintainer_id`;
+执行结果:已执行  
+   
+增加说明：创建聚屏广告表
+修改时间：2018.4.9
+修改人：张英涛
+CREATE TABLE savor_pub_poly_ads(
+	`id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+	`ads_id` INT(11) NOT NULL DEFAULT 0 COMMENT '广告id',
+	`tpmedia_id` INT(11) NOT NULL DEFAULT 0 COMMENT '第三方媒体id',
+	`start_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放开始时间',
+	`end_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放结束时间',
+	`media_md5` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '资源md5',
+	`create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+	`creator_id` INT(11) NOT NULL DEFAULT 0 COMMENT '操作人Id',
+	`state` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '状态：0下线1上线', 
+	`flag` TINYINT(2) NOT NULL DEFAULT 0 COMMENT '0正常1删除',
+	PRIMARY KEY (`id`)
+)ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='聚屏广告投放表'  
+执行结果:已执行
+
+增加说明：机顶盒表增加聚屏广告第三方媒体id
+修改时间：2018.4.12
+修改人：张英涛
+ALTER TABLE savor_box ADD COLUMN `tpmedia_id` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '第三方媒体聚屏id';
+执行结果:已执行
+ 
+   
