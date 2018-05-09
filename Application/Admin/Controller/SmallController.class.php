@@ -126,11 +126,14 @@ class SmallController extends BaseController{
 		        if($flag==1){
 		            //print_r($z_media_arr);exit;
 		           $diff_arr = array_diff($z_media_arr, $up_media_arr);
+		           //print_r($diff_arr);exit;
 		           if(!empty($diff_arr)){
 		               $flag = 0;
 		           }
 		        
 		        }
+		    }else {
+		        $flag = 0;
 		    }
 		    
 		    
@@ -163,6 +166,7 @@ class SmallController extends BaseController{
                 $list =  json_decode($list,true);
                 $list =  $list['media_list'];
                 $m_media = new \Admin\Model\MediaModel();
+                sortArrByOneField($list,'type');
                 foreach($list as $key=>$v){
                     if($v['flag']==1){
                         $list[$key]['down_state'] = '已下载';
@@ -172,7 +176,19 @@ class SmallController extends BaseController{
                     $media_info = $m_media->getMediaInfoById($v['id']);
                     $list[$key]['name'] = $media_info['name'];
                     $list[$key]['oss_addr'] = $media_info['oss_addr'];
+                    switch ($v['type']){
+                        case 'pro':
+                            $list[$key]['type'] = '节目';
+                            break;
+                        case 'adv':
+                            $list[$key]['type'] = '宣传片';
+                            break;
+                        case 'ads':
+                            $list[$key]['type'] = '广告';
+                            break;
+                    }
                 }
+                
                 $this->assign('list',$list);
                 $this->display(medialist);
             }else {
