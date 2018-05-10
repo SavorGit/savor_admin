@@ -1,0 +1,70 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/report/heart" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" id="high" value="{$hightest}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        
+       
+
+         
+		
+          <div class="form-inline" style="margin-top:10px;">
+          
+
+           
+            <div class="input-group input-group-sm pull-right">
+              <a  class="btn btn-success btn-sm add"  title="一键删除无效数据"  target="ajaxTodo" href="{$host_name}/Sdkerror/deldata" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div>
+
+
+          </div>
+      
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>酒楼名称</th>
+            <th>酒楼地址</th>
+            <th>包间名称</th>
+            <th>机顶盒名称</th>
+            <th>异常上报次数</th>
+            <th>最后上报时间</th>
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="酒楼地址">{$vlist.addr}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒名称">{$vlist.box_name}</td>
+              <td data-title="异常上报次数">{$vlist.erro_count}</td>
+              <td data-title="最后上报时间">{$vlist.last_report_date}</td>
+              
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

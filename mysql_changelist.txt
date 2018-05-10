@@ -1358,5 +1358,17 @@ CREATE TABLE savor_pub_poly_ads(
 修改人：张英涛
 ALTER TABLE savor_box ADD COLUMN `tpmedia_id` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '第三方媒体聚屏id';
 执行结果:已执行
- 
+
+增加说明：SD卡异常上报日志表
+修改时间：2018.5.10
+修改人：张英涛 
+CREATE TABLE `savor_sdk_error` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `box_id` int(11) NOT NULL DEFAULT '0' COMMENT '机顶盒id',
+  `erro_count` int(11) NOT NULL DEFAULT '0' COMMENT '上报次数',
+  `last_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后上报时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+执行结果:已执行  2018.5.10
+
    
