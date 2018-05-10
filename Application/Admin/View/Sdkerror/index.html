@@ -39,9 +39,11 @@
           <tr id="post">
             <th>序号</th>
             <th>酒楼名称</th>
+            <th>所在城市</th>
             <th>酒楼地址</th>
             <th>包间名称</th>
             <th>机顶盒名称</th>
+            <th>机顶盒mac</th>
             <th>异常上报次数</th>
             <th>最后上报时间</th>
             
@@ -52,9 +54,12 @@
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="所在城市">{$vlist.region_name}</td>
+              
               <td data-title="酒楼地址">{$vlist.addr}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒名称">{$vlist.box_name}</td>
+              <td data-title="机顶盒mac">{$vlist.mac}</td>
               <td data-title="异常上报次数">{$vlist.erro_count}</td>
               <td data-title="最后上报时间">{$vlist.last_report_date}</td>
               

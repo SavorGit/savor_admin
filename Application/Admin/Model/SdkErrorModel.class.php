@@ -18,6 +18,7 @@ class SdkErrorModel extends BaseModel
 	                 ->join('savor_box box on box.id=a.box_id','left')
 	                 ->join('savor_room room on box.room_id=room.id','left')
 	                 ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+	                 ->join('savor_area_info area on area.id=hotel.area_id','left')
 	                 ->field($fields)
 	                 ->where($where)
 	                 ->order($order)
@@ -27,6 +28,7 @@ class SdkErrorModel extends BaseModel
             	      ->join('savor_box box on box.id=a.box_id','left')
             	      ->join('savor_room room on box.room_id=room.id','left')
             	      ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            	      ->join('savor_area_info area on area.id=hotel.area_id','left')
 	                  ->where($where)
 	                  ->count();
 	    $objPage = new Page($count,$size);
