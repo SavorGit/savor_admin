@@ -2570,7 +2570,7 @@ class ExcelController extends Controller
         ->join('savor_hotel b on a.hotel_id= b.id','left')
         ->join('savor_sysuser sy on a.publish_user_id = sy.id')
         ->field($fields)->where($where)->order('a.hotel_id desc ')->select();
-        echo $m_option_task->getLastSql();exit;
+        
         $model = D();
         foreach($list as $key=>$val){
             $repair_str = '';
