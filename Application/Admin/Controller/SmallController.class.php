@@ -162,9 +162,9 @@ class SmallController extends BaseController{
             $redis->select(8);
             $cache_key = C('SMALL_PROGRAM_LIST_KEY').$hotel_id;
             $list = $redis->get($cache_key);
-            
-            if(!empty($list)){
-                $list =  json_decode($list,true);
+            $list =  json_decode($list,true);
+            if(!empty($list['media_list'])){
+                
                 $list =  $list['media_list'];
                 $m_media = new \Admin\Model\MediaModel();
                 sortArrByOneField($list,'type');
