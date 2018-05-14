@@ -3340,4 +3340,60 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'hhboxlist';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
+    /**
+     * @desc 百度聚屏  网络版盒子导表
+     */
+    public function polyScreenBox(){
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        
+        $sql ="select box.id box_id, box.mac ,area.region_name ,hotel.name hotel_name,hotel.addr,
+               case 
+               when hotel.area_id=1 then '北京市'
+               when hotel.area_id=9 then '上海市'
+               when hotel.area_id=236 then '广东省'
+               when hotel.area_id=246 then '广东省'
+               end
+               as province
+               from savor_box box
+               left join savor_room room on room.id=box.room_id
+               left join savor_hotel hotel on room.hotel_id=hotel.id
+               left join savor_area_info area on hotel.area_id=area.id
+               where hotel.state=1 and hotel.flag=0 and box.state=1  and box.flag=0 and hotel.hotel_box_type in($hotel_box_type_str) order by hotel.area_id asc,hotel.id asc,box.id desc ";
+        $data = M()->query($sql);
+        foreach($data as $key=>$v){
+            
+            $sql ="select tv_size from savor_tv where box_id=".$v['box_id'];
+            $tv_info = M()->query($sql);
+            $mac = $v['mac'];
+            $tmp =  $mac[0].$mac[1].":".$mac[2].$mac[3].":".$mac[4].$mac[5].":".$mac[6].$mac[7].":".$mac[8].$mac[9].":".$mac[10].$mac[11];
+            $data[$key]['tv_size'] = $tv_info[0]['tv_size'];
+            $data[$key]['mac'] = $tmp;
+            $sql ="select count(1) as nums from savor_tv where box_id=".$v['box_id']." and state=1 and flag=0";
+            $ret = M()->query($sql);
+            $data[$key]['tv_nums'] = $ret[0]['nums'];
+        }
+        $xlsCell = array(
+        
+            array('tv_size','尺寸'),
+            array('mac','盒子mac'),
+            array('tv_nums','屏幕数'),
+            array('province','省份'),
+            array('region_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            
+        
+        
+        );
+        $xlsName = '百度聚品广告版位';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
 }
