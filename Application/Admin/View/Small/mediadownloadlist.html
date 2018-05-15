@@ -57,8 +57,8 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
-           
-            <th>ID</th>
+            <th>序号</th>
+            <th>酒楼ID</th>
             <th>酒楼名称</th>
             <th>酒楼地址</th>
             <th>小平台下载结果(下载最新节目单资源)</th>
@@ -67,9 +67,9 @@
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-          <volist name="list" id="vlist">
+          <volist name="list" key="k" id="vlist">
             <tr target="sid_user">
-              
+              <td data-title="序号"><php>echo $k;</php></td>
               <td data-title="酒店ID">{$vlist.id}</td>
               <td data-title="酒店名称">{$vlist.hotel_name}</td>
               <td data-title="地址">{$vlist.addr}</td>
