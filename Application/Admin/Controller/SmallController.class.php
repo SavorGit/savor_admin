@@ -31,9 +31,10 @@ class SmallController extends BaseController{
         $heart_hotel = C('heart_hotel_box_type');
         $heart_hotel_box_type_arr = array_keys($heart_hotel);
         
-        $where['hotel_box_type'] = array('in',$heart_hotel_box_type_arr);
-        $where['state']          = 1;
-        $where['flag']           = 0;
+        $where['a.hotel_box_type'] = array('in',$heart_hotel_box_type_arr);
+        $where['a.state']          = 1;
+        $where['a.flag']           = 0;
+        $where['ext.mac_addr']       = array('neq','000000000000');
         $area_id =  I('area_id');
         $name    = I('name','','trim');
         if(!empty($area_id)){
@@ -46,9 +47,9 @@ class SmallController extends BaseController{
         }
 		$m_hotel = new \Admin\Model\HotelModel();
 		
-		$fields = "id,name hotel_name,addr";
-		$orders= 'area_id asc';
-		$hotel_list = $m_hotel->getList($where,$orders,$start,$size,$fields);
+		$fields = "a.id,a.name hotel_name,a.addr";
+		$orders= 'a.area_id asc ,a.id asc';
+		$hotel_list = $m_hotel->getListExt($where,$orders,$start,$size,$fields);
 		//echo $m_hotel->getLastSql();exit;
 		$m_program_menu_hotel = new \Admin\Model\ProgramMenuHotelModel();
 		$m_program_menu_item = new \Admin\Model\ProgramMenuItemModel();
