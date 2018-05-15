@@ -57,7 +57,8 @@ class HotelModel extends BaseModel{
 		$list = $this->alias('a')
 		        ->field($fields)
 		        ->where($where)
-    			->join('savor_hotel_ext ext on ext.hotel_id=a.id')
+    			->join('savor_hotel_ext ext on ext.hotel_id=a.id','left')
+    			->join('savor_area_info area on a.area_id=area.id','left')
     			->order($order)
     			->limit($start,$size)
     			->select();

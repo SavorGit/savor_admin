@@ -34,7 +34,9 @@ class SmallController extends BaseController{
         $where['a.hotel_box_type'] = array('in',$heart_hotel_box_type_arr);
         $where['a.state']          = 1;
         $where['a.flag']           = 0;
-        $where['ext.mac_addr']       = array('neq','000000000000');
+        $where['ext.mac_addr']     = array(array('neq','000000000000'),array('neq',''), 'and') ; ;
+        
+        
         $area_id =  I('area_id');
         $name    = I('name','','trim');
         if(!empty($area_id)){
@@ -46,10 +48,12 @@ class SmallController extends BaseController{
             $this->assign('name',$name);
         }
 		$m_hotel = new \Admin\Model\HotelModel();
+		$m_box   = new \Admin\Model\BoxModel();
 		
-		$fields = "a.id,a.name hotel_name,a.addr";
+		$fields = "a.id,a.name hotel_name,a.addr,a.area_id,area.region_name";
 		$orders= 'a.area_id asc ,a.id asc';
 		$hotel_list = $m_hotel->getListExt($where,$orders,$start,$size,$fields);
+		
 		//echo $m_hotel->getLastSql();exit;
 		$m_program_menu_hotel = new \Admin\Model\ProgramMenuHotelModel();
 		$m_program_menu_item = new \Admin\Model\ProgramMenuItemModel();
@@ -59,6 +63,7 @@ class SmallController extends BaseController{
 		$program_ads_cache_pre = C('PROGRAM_ADS_CACHE_PRE');
 		$redis = new SavorRedis();
 		$redis->select(12);
+		
 		foreach($hotel_list['list'] as $key=>$v){
 		    //获取该酒楼下的最新节目单
 		    //获取最新节目单
@@ -140,6 +145,22 @@ class SmallController extends BaseController{
 		    
 		    
 		    if($flag ==0){
+		        $pre_box_mac ='';
+		        $region_name = str_replace(array('省','市'), array('',''), $v['region_name']);
+		        
+		        $pre_box_mac = getFirstCharter($region_name);
+		        
+		        $box_list = $m_box->isHaveMac('b.mac', 'h.id='.$v['id']." and b.mac like '".$pre_box_mac."%'");
+		        
+		        if(!empty($box_list)){
+		            $hotel_list['list'][$key]['is_installing'] = 1;
+		        }
+		        $count = $m_box->countNums(array('hotel.id='.$v['id']));
+		        if(empty($count)){
+		            $hotel_list['list'][$key]['is_installing'] = 1;
+		        }
+		        
+		        
 		        $hotel_list['list'][$key]['small_download_state'] = 0;
 		    }else {
 		        $hotel_list['list'][$key]['small_download_state'] = 1;
