@@ -1371,4 +1371,10 @@ CREATE TABLE `savor_sdk_error` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 执行结果:已执行  2018.5.10
 
+增加说明：增加运维表的用户手机字段
+修改时间：2018.5.15
+修改人：张英涛 
+ALTER TABLE savor_opuser_role ADD COLUMN `mobile` VARCHAR(25) NOT NULL DEFAULT '' COMMENT '联系电话' AFTER manage_city	; 
+
+
    

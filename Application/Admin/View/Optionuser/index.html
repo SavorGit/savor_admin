@@ -107,9 +107,11 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>角色</th>
             <th>用户id</th>
             <th>用户昵称</th>
+            <th>联系电话</th>
             <th>技能信息</th>
             <th>是否带队安装</th>
             <th>所属城市</th>
+            <th>区域经理</th>
             <th>创建时间</th>
             <th>更新时间</th>
             <th class="table-tool">操作</th>
@@ -122,6 +124,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="角色名称">{$vlist.role_name}</td>
               <td data-title="用户id">{$vlist.user_id}</td>
               <td data-title="用户昵称">{$vlist.username}</td>
+              <td data-title="联系电话">{$vlist.mobile}</td>
               <td data-title="技能信息">{$vlist.skill_str}</td>
               <td data-title="是否带队安装">
               <if condition="$vlist.is_lead_install eq 1">
@@ -131,6 +134,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               </if>
               </td>
               <td data-title="所属城市">{$vlist.manage_city_str}</td>
+              <td data-title="区域经理"><if condition="$vlist.is_leader eq 1">是</if></td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time} </td>
               <td class="table-tool" data-title="操作">

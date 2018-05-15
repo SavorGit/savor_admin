@@ -28,7 +28,7 @@ class OptionuserController extends BaseController{
         $start  = ( $start-1 ) * $size;
         $opuser_arr = C('OPUSER_ARRAY');
         $this->assign('opuser_arr',$opuser_arr);
-        $where = ' state=1';
+        $where = ' a.state=1 and b.status=1';
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $list = $m_opuser_role->getPageList('a.*,b.remark as username',$where,$orders,$start,$size);
         

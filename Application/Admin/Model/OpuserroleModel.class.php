@@ -22,8 +22,10 @@ class OpuserroleModel extends BaseModel
         ->order($order)
         ->limit($start,$size)
         ->select();
-        $count = $this->where($where)
-        ->count();
+        $count = $this->alias('a')
+                      ->join('savor_sysuser b on a.user_id=b.id','left')
+                      ->where($where)
+                      ->count();
         $objPage = new Page($count,$size);
         $show = $objPage->admin_page();
         $data = array('list'=>$list,'page'=>$show);
