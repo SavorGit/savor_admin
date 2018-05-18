@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title></title>
+	</head>
+	<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body,html{
+			width: 100%;
+			background-color: #f5f5f5;
+			font-size: 64.6px;
+			text-align: center;
+		}
+		.tit{
+			text-align: center;
+			margin-top: 0.2rem;
+			font-weight: 700;
+			margin-bottom: 0.2rem;
+			font-size: 0.34rem;
+		}
+		.nr{
+			width: 90%;
+			margin: 0 auto;
+			background-color: white;
+			box-shadow: 1px 1px 9px #dcdada;
+			margin-bottom: 0.12rem;
+			border-radius: 4px;
+			padding-bottom: 0.15rem;
+		}
+		.nr img{
+			width: 1.08rem;
+			height: 0.56rem;
+			margin-bottom: 0.2rem;
+			text-align: left;
+			display: block;
+		}
+		.nr a{
+			text-decoration:none;
+		}
+		.nr p{
+			font-size: 0.4rem;
+			color: #444444;
+			margin-bottom: 0.15rem;
+			margin-left: 0.2rem;
+			text-align: left;
+		}
+		.btn{
+			width: 2.4rem;
+			height: 0.88rem;
+			background: url(/Public/admin/assets/img/hotelbill/queren@3x.png) no-repeat;
+			background-size:100% ;
+			border-radius:4px;
+			border: none;
+			margin: auto;
+		}
+		.btn_two{
+			width: 2.4rem;
+			height: 0.88rem;
+			background: url(/Public/admin/assets/img/hotelbill/yiqueren@3x.png) no-repeat;
+			background-size:100% ;
+			border-radius:4px;
+			border: none;
+			margin: auto;
+		}
+		.shuo{
+			font-size: 0.24rem;
+			color: #888888;
+			margin-top: 0.2rem;
+		}
+	</style>
+	<body>
+		<div class="tit">
+			<span onclick="window.history.go(-1);" style="float:left;font-size: 1rem"> < </span>
+			<img src=""/>
+			运维客户端
+		</div>
+		<div class="nr">
+			<img src="/Public/admin/assets/img/oph5/yxb.png" style="width: 1.68rem;height: 0.56rem;"/>
+			<a href="/optionh5/heroeCalendar?userid={$userid}"><p><span>运维英雄榜</span></p></a>
+			
+		</div>
+		<div class="nr">
+			<img src="/Public/admin/assets/img/oph5/yxb.png" style="width: 1.68rem;height: 0.56rem;"/>
+			<a href=""></a><p><span>敬请期待...</span></p></a>
+			
+		</div>
+		<!-- <div class="nr">
+			<img src="/Public/admin/assets/img/hotelbill/fpyj@3x.png" style="width: 1.68rem;height: 0.56rem;"/>
+			<p><span style="display: inline-block;width: 1.2rem;">收件人</span>：<span>{$bill_info['receipt_tel'][0]}</span></p>
+			<p><span style="display: inline-block;width: 1.2rem;">电话</span>：<span>{$bill_info['receipt_tel'][1]}</span></p>
+			<p><span style="display: inline-block;width: 1.2rem;">地址</span>：<span>{$bill_info['receipt_addr']}</span></p>
+			<p>发票抬头：<span>{$bill_info['receipt_head']}</span></p>
+			<p>纳税人识别号：<span>{$bill_info['receipt_taxnum']}</span></p>
+		</div> -->
+		
+		
+	</body>
+	<script type="text/javascript" src="/Public/admin/assets/plugins/jquery.min.js"></script>
+<script type="text/javascript" >
+		
+	$(function(){
+		
+		var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			if(window.innerWidth>1000){
+			docEl.style.fontSize = '64.6px';
+			}else{
+				docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+			}
+		};
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}//53.6
+		//alert(window.innerWidth);
+		if(window.innerWidth>1000){
+			$('html').css('font-size','53.6px')
+		}
+		
+		
+
+
+
+
+		
+	});
+</script>
+</html>
