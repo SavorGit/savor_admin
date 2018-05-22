@@ -135,14 +135,21 @@ class PubAdsModel extends BaseModel
 	    $ret = $this->where($where)->save($data);
 	    return $ret;
 	}
-	public function getPubAdsList($field, $where) {
+	public function getPubAdsList($field, $where,$order) {
 		$list = $this->alias('pads')
 			->where($where)
 			->join('savor_ads ads ON pads.ads_id = ads.id')
 			->join('savor_media  med ON med.id = ads.media_id')
 			->field($field)
+			->order($order)
 			->select();
 		return $list;
+	}
+	public function countNums($where){
+	    $nums = $this->alias('a')
+	                 ->where($where)
+	                 ->count();
+	    return $nums;
 	}
 }//End Class
 

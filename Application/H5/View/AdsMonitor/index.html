@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title></title>
+	</head>
+	<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body,html{
+			width: 100%;
+			background-color: #f5f5f5;
+			font-size: 64.6px;
+			text-align: center;
+		}
+		.tab{
+			align:center;
+			width: 90%;
+			background-color: white;
+			font-size: 0.4rem;
+			text-align: center;
+			margin: auto;
+			margin-top:20px;
+			margin-bottom:20px;
+		}
+		.tab a{
+			text-decoration:none;
+		}
+		.tab a:link {
+		 color: #333333; /*连接默认的颜色变化*/
+		}
+		.tab a:visited {
+		 color: #DCDCDC; /*连接访问的颜色变化*/
+		}
+		.tab a:hover {
+		 color: #000000; /*鼠标经过的颜色变化*/
+		}
+		
+		
+		.tit{
+			
+			text-align: center;
+			margin-top: 0.2rem;
+			font-weight: 700;
+			margin-bottom: 0.2rem;
+			font-size: 1rem;
+		}
+		
+		.nr{
+			width: 90%;
+			margin: 0 auto;
+			color: white;
+			box-shadow: 1px 1px 9px #dcdada;
+			margin-bottom: 0.12rem;
+			border-radius: 4px;
+			padding-bottom: 0.15rem;
+			background-color:#152925;
+		}
+		.nr img{
+			width: 1.08rem;
+			height: 0.56rem;
+			margin-bottom: 0.2rem;
+			text-align: left;
+			display: block;
+		}
+		.nr a{
+			text-decoration:none;
+		}
+		.nr p{
+			font-size: 0.4rem;
+			color: #444444;
+			margin-bottom: 0.15rem;
+			margin-left: 0.2rem;
+			text-align: left;
+			font-weight:bold;
+			
+		}
+		.nrs span{
+			font-size: 0.4rem;
+			color: #444444;
+			margin-bottom: 0.15rem;
+			margin-left: 0.2rem;
+			text-align: left;
+		}
+		.nrs a{
+			text-decoration:none;
+		}
+		.page{
+			text-decoration:none;
+			font-size: 0.5rem;
+		}
+		.btn{
+			width: 2.4rem;
+			height: 0.88rem;
+			background: url(/Public/admin/assets/img/hotelbill/queren@3x.png) no-repeat;
+			background-size:100% ;
+			border-radius:4px;
+			border: none;
+			margin: auto;
+		}
+		.btn_two{
+			width: 2.4rem;
+			height: 0.88rem;
+			background: url(/Public/admin/assets/img/hotelbill/yiqueren@3x.png) no-repeat;
+			background-size:100% ;
+			border-radius:4px;
+			border: none;
+			margin: auto;
+		}
+		.shuo{
+			font-size: 0.24rem;
+			color: #888888;
+			margin-top: 0.2rem;
+		}
+	</style>
+	<body>
+	
+		
+		<div class="nr">
+			<p><span>广告到达情况-{$arrive_date}</span></p>
+		</div>
+		 <table class="tab" border="1" >  
+	        <tr>  
+	            <td bgcolor="#DEB887"  rowspan="3">到达率</td> 
+	            <td rowspan="3"> {$all_ads_arrive_rate}%</td> 
+	            <td bgcolor="#DEB887" >网络机顶盒</td>  
+	            <td>{$all_net_box_nums}</td>  
+	            <td bgcolor="#D4D4D4"  rowspan="3">北京</td> 
+	            <td>到达率：{$area_list[0]['ads_arrive_rate']}%</td>
+	            <td bgcolor="#D4D4D4" rowspan="3">上海</td> 
+	            <td>到达率：{$area_list[1]['ads_arrive_rate']}%</td> 
+	            <td bgcolor="#D4D4D4" rowspan="3">广州</td> 
+	            <td>到达率：{$area_list[2]['ads_arrive_rate']}%</td> 
+	            <td bgcolor="#D4D4D4" rowspan="3">深圳</td> 
+	             <td>到达率：{$area_list[3]['ads_arrive_rate']}%</td>
+	        </tr>  
+	        <tr>  
+	            <!-- <td>2.1</td>   -->
+	            <td rowspan="2" bgcolor="#DEB887" >在投广告</td>  
+	            <td rowspan="2">{$online_ads_nums}</td>
+	            <!-- <td>2.4</td> -->
+	            <td>在投广告：{$area_list[0]['area_online_ads_nums']}个</td>
+	            <!-- <td>2.6</td> -->
+	            <td>在投广告：{$area_list[1]['area_online_ads_nums']}个</td>
+	            <!-- <td>2.8</td> -->
+	            <td>在投广告：{$area_list[2]['area_online_ads_nums']}个</td>
+	             <td>在投广告：{$area_list[3]['area_online_ads_nums']}个</td> 
+	            
+	        </tr>  
+	        <tr>  
+	            <!-- <td>3.1</td> -->
+	            <!-- <td>1</td>   -->
+	            <!-- <td>2</td>  -->
+	            <!-- <td>3.4</td> -->
+				<td>网络机顶盒：{$area_list[0]['area_net_box_nums']}个</td>
+				<!-- <td>3.6</td> -->
+				<td>网络机顶盒：{$area_list[1]['area_net_box_nums']}个</td>
+				<!-- <td>3.8</td> -->
+				<td>网络机顶盒：{$area_list[2]['area_net_box_nums']}个</td>
+				<!-- <td>3.10</td> -->
+				<td>网络机顶盒：{$area_list[3]['area_net_box_nums']}个</td>
+					 
+	        </tr> 
+	        
+	        
+	    </table>  
+		<div class="nr">
+			<form name="from1" action="" method="post">
+			<p>
+				<span>广告到达明细</span>
+				<span style="margin-left:12rem;;">
+					<select  name="area_id">
+						<option value="">全部城市</option>
+						<volist name="area_list" id="vlist">
+						<option   value="{$vlist.id}" <if condition="$vlist.id eq $area_id"> selected="selected"</if> >{$vlist.region_name}</option>	
+						</volist>
+					</select>
+				</span>
+				<span>
+					<input type="text" value="{$hotel_name}"  name="hotel_name" placeholder="搜索酒楼" />
+				</span>
+				<span><input type="submit" value="搜索" name="submit" style="width:50px;" /> </span>
+			</p>
+			</form>
+		</div>
+		
+		
+		<table  class="tab" border="1" >
+			<tr>
+			<th>餐厅名称</th>
+			
+			<th>到达总计</th>
+			<volist name="pub_ads_list" id="list">
+				<th >{$list.name}</th>
+			</volist>
+			</tr>
+			<volist name="hotel_list" id="vlist">
+			<tr>
+				
+				<td bgcolor="#DEB887"><a href="/H5/AdsMonitor/hotelAdsArriveDetail?hotel_id={$vlist.hotel_id}">{$vlist.hotel_name}</a></td>
+				<td>{$vlist.arrive_ratio}</td>
+				<volist name="vlist.ads_rate_list" id="dd">
+					<td>{$dd}</td>
+				</volist>
+				
+			</tr>
+			</volist>
+			
+		</table>
+		
+		<p class="page">
+			<if condition="$is_last_page eq 1">
+				<a href="/h5/AdsMonitor/index?page={$last_page}"><span><<上一页</span></a>
+			</if>
+			<if condition="$is_next_page eq 1">
+				<a href="/h5/AdsMonitor/index?page={$next_page}"><span>下一页>></span></a>
+			</if>
+	    </p>
+		
+		<!-- <div class="nr">
+			<p><span>{$list.remark}</span></p>
+		</div> -->
+		
+	</body>
+	<script type="text/javascript" src="/Public/admin/assets/plugins/jquery.min.js"></script>
+<script type="text/javascript" >
+	$(function(){
+		
+		var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			if(window.innerWidth>1000){
+			docEl.style.fontSize = '64.6px';
+			}else{
+				docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+			}
+		};
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}//53.6
+		//alert(window.innerWidth);
+		if(window.innerWidth>1000){
+			$('html').css('font-size','53.6px')
+		}
+		
+		
+
+
+
+
+		
+	});
+</script>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title></title>
+	</head>
+	<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		body,html{
+			width: 100%;
+			background-color: #f5f5f5;
+			font-size: 64.6px;
+			text-align: center;
+		}
+		.tab{
+			align:center;
+			width: 90%;
+			background-color: white;
+			font-size: 0.4rem;
+			text-align: center;
+			margin: auto;
+			margin-top:20px;
+			margin-bottom:20px;
+		}
+		.tab a{
+			text-decoration:none;
+		}
+		.tab a:link {
+		 color: #333333; /*连接默认的颜色变化*/
+		}
+		.tab a:visited {
+		 color: #DCDCDC; /*连接访问的颜色变化*/
+		}
+		.tab a:hover {
+		 color: #000000; /*鼠标经过的颜色变化*/
+		}
+		
+		
+		.tit{
+			
+			text-align: center;
+			margin-top: 0.2rem;
+			font-weight: 700;
+			margin-bottom: 0.2rem;
+			font-size: 1rem;
+		}
+		
+		.nr{
+			width: 90%;
+			margin: 0 auto;
+			color: white;
+			box-shadow: 1px 1px 9px #dcdada;
+			margin-bottom: 0.12rem;
+			border-radius: 4px;
+			padding-bottom: 0.15rem;
+			background-color:#152925;
+		}
+		.nr img{
+			width: 1.08rem;
+			height: 0.56rem;
+			margin-bottom: 0.2rem;
+			text-align: left;
+			display: block;
+		}
+		.nr a{
+			text-decoration:none;
+		}
+		.nr p{
+			font-size: 0.4rem;
+			color: #444444;
+			margin-bottom: 0.15rem;
+			margin-left: 0.2rem;
+			text-align: left;
+			font-weight:bold;
+			
+		}
+		.nrs span{
+			font-size: 0.4rem;
+			color: #444444;
+			margin-bottom: 0.15rem;
+			margin-left: 0.2rem;
+			text-align: left;
+		}
+		.nrs a{
+			text-decoration:none;
+		}
+		.page{
+			text-decoration:none;
+			font-size: 0.5rem;
+		}
+		.btn{
+			width: 2.4rem;
+			height: 0.88rem;
+			background: url(/Public/admin/assets/img/hotelbill/queren@3x.png) no-repeat;
+			background-size:100% ;
+			border-radius:4px;
+			border: none;
+			margin: auto;
+		}
+		.btn_two{
+			width: 2.4rem;
+			height: 0.88rem;
+			background: url(/Public/admin/assets/img/hotelbill/yiqueren@3x.png) no-repeat;
+			background-size:100% ;
+			border-radius:4px;
+			border: none;
+			margin: auto;
+		}
+		.shuo{
+			font-size: 0.24rem;
+			color: #888888;
+			margin-top: 0.2rem;
+		}
+	</style>
+	<body>
+	
+		
+		<div class="nr">
+			<p><span>{$hotel_name}-广告到达明细</span></p>
+		</div>
+		 
+		
+		
+		<table  class="tab" border="1" >
+			<tr>
+			<th>机顶盒名称</th>
+			
+			
+			<volist name="pub_ads_list" id="list">
+				<th >{$list.name}</th>
+			</volist>
+			</tr>
+			<volist name="box_list" id="vlist">
+			<tr>
+				
+				<td bgcolor="#DEB887"><a href="/H5/AdsMonitor/hotelAdsArriveDetail?hotel_id={$vlist.hotel_id}">{$vlist.box_name}</a></td>
+				
+				<volist name="vlist.ads_list" id="dd">
+					<td>
+					<if condition="$dd eq 0">
+					-
+					<elseif condition="$dd eq 1" />
+					<img src="/Public/admin/assets/img/oph5/have_download.png" />
+					<else />
+					<img src="/Public/admin/assets/img/oph5/dowloadindg.png" />
+					</if>
+					
+					
+					</td>
+				</volist>
+				
+			</tr>
+			</volist>
+			
+		</table>
+		
+		<p class="page">
+			<if condition="$is_last_page eq 1">
+				<a href="/h5/AdsMonitor/index?page={$last_page}"><span><<上一页</span></a>
+			</if>
+			<if condition="$is_next_page eq 1">
+				<a href="/h5/AdsMonitor/index?page={$next_page}"><span>下一页>></span></a>
+			</if>
+	    </p>
+		
+		<!-- <div class="nr">
+			<p><span>{$list.remark}</span></p>
+		</div> -->
+		
+	</body>
+	<script type="text/javascript" src="/Public/admin/assets/plugins/jquery.min.js"></script>
+<script type="text/javascript" >
+	$(function(){
+		
+		var calculate_size = function() {
+			var BASE_FONT_SIZE = 100;
+			var docEl = document.documentElement,
+				clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			if(window.innerWidth>1000){
+			docEl.style.fontSize = '64.6px';
+			}else{
+				docEl.style.fontSize = BASE_FONT_SIZE * (clientWidth / 750) + 'px';
+			}
+		};
+		// Abort if browser does not support addEventListener
+		if(document.addEventListener) {
+			var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+			window.addEventListener(resizeEvt, calculate_size, false);
+			document.addEventListener('DOMContentLoaded', calculate_size, false);
+			calculate_size();
+		}//53.6
+		//alert(window.innerWidth);
+		if(window.innerWidth>1000){
+			$('html').css('font-size','53.6px')
+		}
+		
+		
+
+
+
+
+		
+	});
+</script>
+</html>
