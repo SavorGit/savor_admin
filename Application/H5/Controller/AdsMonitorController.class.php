@@ -152,7 +152,20 @@ class AdsMonitorController extends Controller {
                     $rates = $tmp['arrive_ratio']*100;
                     $rates .='%';
                 }else {
-                    $rates = '';
+                    $sql ="select pabox.id from savor_pub_ads_box pabox 
+                           left join savor_pub_ads pads on pabox.pub_ads_id=pads.id
+                           left join savor_box box on pabox.box_id=box.id
+                           left join savor_room room on box.room_id=room.id
+                           left join savor_hotel hotel on room.hotel_id=hotel.id
+                           where pabox.pub_ads_id=".$vv['pub_ads_id']." and hotel.id=".$v['hotel_id'];
+                    $rets = M()->query($sql);
+                    if(!empty($rets)){
+                        $rates = '0%';
+                    }else {
+                        $rates = '';
+                    }
+                    
+                    
                 }
                 
                 $ads_list[$kk] = $rates;
