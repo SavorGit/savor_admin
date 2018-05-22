@@ -115,6 +115,8 @@ class AdsMonitorController extends Controller {
         $where  = array();
         $where['a.media_id'] = '-10000';
         $where['a.hotel_id'] = array('gt',0);
+        $where['hotel.state'] = 1;
+        $where['hotel.flag']  = 0;
         $order = 'a.arrive_ratio asc';
         
         if($area_id){
