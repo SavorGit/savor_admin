@@ -1,12 +1,12 @@
 <?php
 /**
- *酒店model
- *@author  hongwei <[<email address>]>
+ *@desc 短信发送
+ *@author  zhang.yingtao
  * 
  */
 namespace Admin\Model;
 
-
+use Common\Lib\Page;
 use Admin\Model\BaseModel;
 
 class AccountMsgLogModel extends BaseModel{
@@ -28,6 +28,18 @@ class AccountMsgLogModel extends BaseModel{
 		return $bool;
 	}
 
-
+    public function getList($fields,$where,$order,$start,$size){
+        $list = $this->field($fields)
+                     ->where($where)
+                     ->order($order)
+                     ->limit($start,$size)
+                     ->select();
+        $count = $this->where($where)
+                      ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 
 }
