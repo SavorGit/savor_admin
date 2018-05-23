@@ -24,4 +24,12 @@ class BoxMediaArriveRatioModel extends Model
         $data = $this->field($fields)->where($where)->find();
         return $data;
     }
+    public function getCount($where){
+        $count = $this->alias('a')
+             ->join('cloud.savor_hotel hotel on a.hotel_id=hotel.id','left')
+             
+             ->where($where)
+             ->count();
+        return $count;
+    }
 }

@@ -16,8 +16,8 @@ class AdsMonitorController extends Controller {
      */
     public function index(){
         
-        $area_id = I('post.area_id',0,'intval');
-        $hotel_name = I('post.hotel_name','','trim');
+        $area_id = I('area_id',0,'intval');
+        $hotel_name = I('hotel_name','','trim');
         
         
         //广告到达时间
@@ -47,6 +47,7 @@ class AdsMonitorController extends Controller {
         $where['a.start_date'] = array('elt',$now_date);
         $where['a.end_date']   = array('gt',$now_date);
         $where['a.state']      = array('neq',2);
+        $where['a.id']         = array('not in','115,116,117,118,119,120,121,122');
         $online_ads_nums = $m_pub_ads->countNums($where);
         
         //北上广深数据统计
@@ -54,6 +55,8 @@ class AdsMonitorController extends Controller {
         $area_list = $m_area->getHotelAreaList();
         $all_ads_arrive_rate = 0;
         $all_net_box_nums = 0;
+        $jisuan_arrive_box_num = 0;
+        $jisuan_all_area_pub_box_num = 0;
         foreach($area_list as $key=>$v){
             
            
@@ -67,7 +70,7 @@ class AdsMonitorController extends Controller {
                    LEFT JOIN savor_area_info AS areainfo ON hotel.`area_id`=areainfo.`id` 
                    WHERE ads.start_date<=NOW() AND ads.`end_date`>NOW() AND ads.`state`!=2 
                    AND hotel.`area_id`=".$v['id']." and hotel.state=1 and hotel.flag=0 and box.state=1 
-                   and box.flag=0 GROUP by pubbox.`pub_ads_id` ";
+                   and box.flag=0 and pubbox.`pub_ads_id` not in(115,116,117,118,119,120,121,122) GROUP by pubbox.`pub_ads_id` ";
             $tmp = M()->query($sql);
             $all_area_pub_box_num = 0;
             foreach($tmp as $kk=>$vv){
@@ -82,6 +85,7 @@ class AdsMonitorController extends Controller {
             $where['box.state']     = 1;
             $where['box.flag']      = 0;
             $where['hotel.area_id'] = $v['id'];
+            $where['hotel.id'] = array('not in',array(7,53,791,747,508));
             $where['hotel.hotel_box_type'] = array('in',$hotel_box_type_str);
             
             $area_net_box_nums = $m_box->countNums($where);
@@ -95,17 +99,20 @@ class AdsMonitorController extends Controller {
             $arrive_box_num = $m_statistics_box_media_arrive->getCount($where);
             
            
-            
+            $jisuan_arrive_box_num +=$arrive_box_num; 
+            $jisuan_all_area_pub_box_num += $all_area_pub_box_num;
             $ads_arrive_rate = sprintf("%1.2f",$arrive_box_num / $all_area_pub_box_num *100) ; 
             
             $all_ads_arrive_rate +=$ads_arrive_rate;
             $area_list[$key]['ads_arrive_rate'] = $ads_arrive_rate;
         }
-        $counts = count($area_list);
-        $all_ads_arrive_rate = sprintf("%1.2f",$all_ads_arrive_rate/$counts);
+        //$counts = count($area_list);
+        //$all_ads_arrive_rate = sprintf("%1.2f",$all_ads_arrive_rate/$counts);
+        $all_ads_arrive_rate = sprintf("%1.2f",$jisuan_arrive_box_num/$jisuan_all_area_pub_box_num*100);
+        
         
         //酒楼明细
-        $page = I('get.page',0,'intval') ? I('get.page',0,'intval') : 1;
+        $page = I('page',0,'intval') ? I('page',0,'intval') : 1;
         $pageSize = 15;
         $start = ($page-1) * $pageSize;
         
@@ -117,6 +124,7 @@ class AdsMonitorController extends Controller {
         $where['a.hotel_id'] = array('gt',0);
         $where['hotel.state'] = 1;
         $where['hotel.flag']  = 0;
+        $where['hotel.id'] = array('not in',array(7,53,791,747,508));
         $order = 'a.arrive_ratio asc';
         
         if($area_id){
@@ -127,6 +135,7 @@ class AdsMonitorController extends Controller {
         }
         
         $list = $m_box_media_arrive_ratio->getList($fields, $where, $order, $start, $pageSize);
+        $total_nums = $m_box_media_arrive_ratio->getCount($where);
         //获取再投的广告列表
         $m_pub_ads = new \Admin\Model\PubAdsModel();
         
@@ -135,6 +144,7 @@ class AdsMonitorController extends Controller {
         $where['pads.start_date'] = array('elt',$now_date);
         $where['pads.end_date']   = array('gt',$now_date);
         $where['pads.state']      = array('neq',2);
+        $where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
         $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
         $order = 'pads.create_time asc';
         $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);
@@ -162,7 +172,7 @@ class AdsMonitorController extends Controller {
                     if(!empty($rets)){
                         $rates = '0%';
                     }else {
-                        $rates = '';
+                        $rates = '-';
                     }
                     
                     
@@ -178,7 +188,16 @@ class AdsMonitorController extends Controller {
             
         }
         if($page==1){
-            $is_next_page = 1;
+            
+            $nums = ceil($total_nums / $pageSize);
+            
+            if($page <$nums){
+                $is_next_page = 1;
+                $nex_page = $page+1;
+            }else {
+                $is_next_page = 0;
+            }
+            
             $is_last_page =0;
             $nex_page = $page+1;
         }else if($page>1){
@@ -186,8 +205,8 @@ class AdsMonitorController extends Controller {
             $is_last_page = 1;
             $last_page = $page -1;
             $last_page = $page-1;
-            $nums = count($list);
-            ceil($nums / $pageSize);
+            
+            $nums = ceil($total_nums / $pageSize);
             if($page <$nums){
                 $is_next_page = 1;
                 $nex_page = $page+1;
@@ -241,6 +260,7 @@ class AdsMonitorController extends Controller {
         $where['pads.start_date'] = array('elt',$now_date);
         $where['pads.end_date']   = array('gt',$now_date);
         $where['pads.state']      = array('neq',2);
+        $where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
         $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
         $order = 'pads.create_time asc';
         $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);

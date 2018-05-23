@@ -116,6 +116,13 @@
 			color: #888888;
 			margin-top: 0.2rem;
 		}
+		th.head_a {
+		    background-color: rgba(142, 128, 106, 1);
+		}
+		
+		th.head {
+		    background-color: rgba(185, 176, 162, 1);
+		}
 	</style>
 	<body>
 	
@@ -123,7 +130,7 @@
 		<div class="nr">
 			<p><span>广告到达情况-{$arrive_date}</span></p>
 		</div>
-		 <table class="tab" border="1" >  
+		 <table class="tab" border="1" cellspacing="0" cellpadding="0">  
 	        <tr>  
 	            <td bgcolor="#DEB887"  rowspan="3">到达率</td> 
 	            <td rowspan="3"> {$all_ads_arrive_rate}%</td> 
@@ -169,7 +176,7 @@
 	        
 	    </table>  
 		<div class="nr">
-			<form name="from1" action="" method="post">
+			<form name="from1" action="/h5/AdsMonitor/index" method="post">
 			<p>
 				<span>广告到达明细</span>
 				<span style="margin-left:12rem;;">
@@ -185,11 +192,12 @@
 				</span>
 				<span><input type="submit" value="搜索" name="submit" style="width:50px;" /> </span>
 			</p>
+			<input type="hidden" name ="page" value=1  />
 			</form>
 		</div>
 		
 		
-		<table  class="tab" border="1" >
+		<table  class="tab" border="1" cellspacing="0" cellpadding="0">
 			<tr>
 			<th>餐厅名称</th>
 			
@@ -214,10 +222,10 @@
 		
 		<p class="page">
 			<if condition="$is_last_page eq 1">
-				<a href="/h5/AdsMonitor/index?page={$last_page}"><span><<上一页</span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$last_page}"><span><<上一页</span></a>
 			</if>
 			<if condition="$is_next_page eq 1">
-				<a href="/h5/AdsMonitor/index?page={$next_page}"><span>下一页>></span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$next_page}"><span>下一页>></span></a>
 			</if>
 	    </p>
 		
