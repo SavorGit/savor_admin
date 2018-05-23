@@ -29,12 +29,16 @@ class AccountMsgLogModel extends BaseModel{
 	}
 
     public function getList($fields,$where,$order,$start,$size){
-        $list = $this->field($fields)
+        $list = $this->alias('a')
+                     ->join('savor_option_task task on a.detail_id=task.id','left')
+                     ->join('savor_sysuser user on task.exe_user_id= user.id','left')
+                     ->field($fields)
                      ->where($where)
                      ->order($order)
                      ->limit($start,$size)
                      ->select();
-        $count = $this->where($where)
+        $count = $this->alias('a')
+                      ->where($where)
                       ->count();
         $objPage = new Page($count,$size);
         $show = $objPage->admin_page();

@@ -40,21 +40,21 @@ class OptionsmsController extends BaseController{
         
         $m_account_smg_log = new \Admin\Model\AccountMsgLogModel();
         
-        $fields = 'url,tel,resp_code,create_time';
+        $fields = 'a.url,a.tel,a.resp_code,a.create_time,user.remark';
         $where = array();
         if(!empty($start_date) && empty($end_date)){
-            $where['create_time'] = array('egt',$start_date.' 00:00:00');
+            $where['a.create_time'] = array('egt',$start_date.' 00:00:00');
             $this->assign('start_date',$start_date);
         }else if(empty($start_date) && !empty($end_date)){
-            $where['create_time'] = array('elt',$end_date.' 23:59:59');
+            $where['a.create_time'] = array('elt',$end_date.' 23:59:59');
             $this->assign('end_date',$end_date);
         }else if(!empty($start_date) && !empty($end_date)){
-            $where['create_time'] = array(array('egt',$start_date.' 00:00:00'),array('elt',$end_date.' 23:59:59'),'and');
+            $where['a.create_time'] = array(array('egt',$start_date.' 00:00:00'),array('elt',$end_date.' 23:59:59'),'and');
             $this->assign('start_date',$start_date);
             $this->assign('end_date',$end_date);
         }
         
-        $where['type'] = 6;
+        $where['a.type'] = 6;
         
         $list = $m_account_smg_log->getList($fields, $where, $orders, $start, $size);
         
