@@ -150,7 +150,7 @@ class SmallController extends BaseController{
 		        
 		        $pre_box_mac = getFirstCharter($region_name);
 		        
-		        $box_list = $m_box->isHaveMac('b.mac', 'h.id='.$v['id']." and b.mac like '".$pre_box_mac."%'");
+		        $box_list = $m_box->isHaveMac('b.mac', 'h.id='.$v['id']." and b.mac like '".$pre_box_mac."%' and b.state=1 and b.flag=0");
 		        
 		        if(!empty($box_list)){
 		            $hotel_list['list'][$key]['is_installing'] = 1;
