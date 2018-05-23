@@ -570,6 +570,10 @@ class ClientController extends Controller {
             $url ="https://a.appcpa.net/easyLinkPage/index.html?easy_url=ELwRJhIp&ios_url=https%3A%2F%2Flnk0.com%2F8Mxdck&android_url=https%3A%2F%2Flnk0.com%2FgU9gM1";
             header('Location:'.$url);
             exit;
+        }else if($id==-6){
+            $url = "https://item.m.jd.com/product/14351822683.html?utm_source=iosapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&ShareTm=kjGW4RMtAZfLRQ25qUACDWsWw2o7rXla+fgM2d0Ed/J6vAh3ZVpc2TigaSAKSDE/kEhsRBVeyGMjhtAmDlOe3Y4hVdSdEFMzZK/OlaPdlHaoT4bVUCMsl0OPZ6HfThTdsSjmthgFytMsxu8izRBAiRKQWPhMi+OGGQW7GeuCgfg=&from=singlemessage";
+             header('Location:'.$url);
+            exit;
         }
     }
 }
