@@ -1429,7 +1429,8 @@ class CrontabController extends Controller
                     foreach ($hotel_id_arr as $hid) {
                         $field = 'sdv.oss_addr apurl,sdv.md5 md5 ';
                         $apk_device_type = 2;
-                        $apk_info = $m_version_upgrade->getLastOneByDevice($field, $apk_device_type, $hid);
+                        $apk_info =$m_version_upgrade->getLastOneByDeviceNew($field, $apk_device_type, $hid);
+                        //$apk_info = $m_version_upgrade->getLastOneByDevice($field, $apk_device_type, $hid);
                         if($apk_info) {
                             $flag = 0;
                             $apk_filename = $gendir.'.apk';
@@ -1714,7 +1715,8 @@ class CrontabController extends Controller
         $device_type = 2;
         $field = ' sdv.md5 apkmd,sdv.version_code vername,sdv.oss_addr apurl ';
         $upgrade_info = array();
-        $upgrade_info = $m_version_upgrade->getLastOneByDevice($field, $device_type, $hotel_id);
+        //$upgrade_info = $m_version_upgrade->getLastOneByDevice($field, $device_type, $hotel_id);
+        $upgrade_info = $m_version_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
         if(empty($upgrade_info)) {
             $apk_md = '';
             $apk_name = '';
