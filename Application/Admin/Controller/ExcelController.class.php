@@ -3396,4 +3396,48 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'hhboxlist';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
+    public function getAdsNotArriveDetail(){
+        $pub_ads_id =  I('pub_ads_id');
+        $media_id   =  I('media_id');
+        $sql =" SELECT e.region_name,d.name hotel_name,d.addr,c.name room_name,b.name box_name, b.mac
+                FROM cloud.`savor_pub_ads_box` a
+                left join cloud.savor_box b on a.box_id = b.id
+                left join cloud.savor_room c on b.room_id = c.id
+                left join cloud.savor_hotel d on c.hotel_id=d.id
+                left join cloud.savor_area_info e on d.area_id=e.id
+                WHERE a.pub_ads_id = $pub_ads_id and b.flag=0 and b.state=1 and d.flag=0 and d.state=1  group by box_id ";
+        $data = M()->query($sql);
+        $result = array();
+        $m_box_media_arrive = new \Admin\Model\Statisticses\BoxMediaArriveModel();
+        foreach($data as $key=>$v){
+            $nums  = $m_box_media_arrive->getCount(array('media_id'=>$media_id,'box_mac'=>$v['mac']));
+            $tmp = array();
+            if(empty($nums)){
+                $tmp['region_name'] = $v['region_name'];
+                $tmp['hotel_name']  = $v['hotel_name'];
+                $tmp['addr']        = $v['addr'];
+                $tmp['room_name']   = $v['room_name'];
+                $tmp['box_name']    = $v['box_name'];
+                $tmp['mac']         = $v['mac'];
+                $result[] = $tmp;
+            }
+        }
+        $xlsCell = array(
+        
+            array('region_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('room_name','包间名称'),
+            array('box_name','机顶盒名称'),
+            array('mac','机顶盒mac'),
+         
+        
+        
+        
+        );
+        $xlsName = '广告未到达';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
+    
 }
