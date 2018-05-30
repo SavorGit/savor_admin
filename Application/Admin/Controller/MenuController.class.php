@@ -480,12 +480,12 @@ class MenuController extends BaseController {
             $this->assign('name',$name);
             $where .= "	AND name LIKE '%{$name}%' ";
         }
-        $hbt_v = I('hbt_v');
+        /* $hbt_v = I('hbt_v');
         if ($hbt_v) {
             $this->assign('hbt_k',$hbt_v);
             $where .= "	AND hotel_box_type = $hbt_v";
-        }
-
+        } */
+        $where .= " AND hotel_box_type=5";   //获取三代单机酒楼
 
         //城市
         $userinfo = session('sysUserInfo');
@@ -509,14 +509,29 @@ smlist.menu_name';
         //获取包含有该地区酒楼
         $this->assign('include', $men_arr);
         //城市
-        $area_v = I('area_v');
+        /* $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
             if(!empty($area_v) && $area_v !=9999){
             
                 $where .= "	AND area_id = $area_v";
             }
+        } */
+        $include_a = I('include_a');
+        $area_strs = '';
+        $space = '';
+        $include_ak = array();
+        if(!empty($include_a)){
+            foreach($include_a as $key=>$v){
+                $area_strs .= $space .$v;
+                $space = ',';
+                $include_ak[] = $v;
+  
+            }
+            if($area_strs) $where .= " AND area_id in($area_strs)";
+            $this->assign('include_ak',$include_ak);
         }
+        
         //级别
         $level_v = I('level_v');
         if ($level_v) {
@@ -616,7 +631,7 @@ smlist.menu_name';
 
         }
 
-
+echo $where;
 
         $result = $hotelModel->getList($where,$orders,$start,$size);
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
