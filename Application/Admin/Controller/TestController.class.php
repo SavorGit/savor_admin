@@ -4,6 +4,7 @@ namespace Admin\Controller;
 use Think\Controller;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Common\Lib\SavorRedis;
 
 
 // use Common\Lib\SavorRedis;
@@ -12,7 +13,76 @@ use PHPMailer\PHPMailer\Exception;
  *
  */
 class TestController extends Controller {
-
+    
+    public function zyt(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(13);
+        
+        $hotel_id = 7;
+        $menuid = 203;
+        $procache_key = 'udriverpan_pro_'.$menuid;
+        $adscache_key = 'udriverpan_ads_'.$menuid;
+        $menuhotelModel = new \Admin\Model\MenuHotelModel();
+        $adsModel = new \Admin\Model\AdsModel();
+        $pro_arr = $adsModel->getproInfo($menuid);
+        $pro_arr = $this->changeadvList($pro_arr,1);
+        $ads_arr = $redis->get($adscache_key);
+        if($ads_arr) {
+            $ads_arr = json_decode($ads_arr, true);
+            $ads_arr = $this->changeadvList($ads_arr,2);
+        } else {
+            $ads_arr = $adsModel->getadsInfo($menuid);
+            $redis->set($adscache_key , json_encode($ads_arr), 120);
+            $ads_arr = $this->changeadvList($ads_arr,2);
+        }
+        
+        
+        
+        $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+        $adv_arr = $this->changupaneadvList($adv_arr,1);
+        $result['play_list'] = array_merge($pro_arr,
+            $ads_arr,$adv_arr);
+        echo json_encode($result);exit;
+    }
+    private function changeadvList($res,$type){
+        if($res){
+            foreach ($res as $vk=>$val) {
+                if($type==1){
+                    $res[$vk]['order'] =  $res[$vk]['sortnum'];
+                    unset($res[$vk]['sortnum']);
+                }
+    
+                if(!empty($val['name'])){
+                    $ttp = explode('/', $val['name']);
+                    $res[$vk]['name'] = $ttp[2];
+                }
+            }
+    
+        }
+        return $res;
+        //如果是空
+    }
+    private function changupaneadvList($res,$type){
+        if($res){
+            foreach ($res as $vk=>$val) {
+                if($type==1){
+                    $res[$vk]['order'] =  $res[$vk]['sortnum'];
+                    unset($res[$vk]['sortnum']);
+                }
+    
+                if(!empty($val['name'])){
+                    $ttp = explode('/', $val['name']);
+                    $res[$vk]['name'] = $ttp[2];
+                }else{
+                    unset($res[$vk]);
+                }
+            }
+    
+        }
+        return $res;
+        //如果是空
+    }
+    
     public function testemail(){
 
 
