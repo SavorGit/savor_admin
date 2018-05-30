@@ -574,6 +574,10 @@ class ClientController extends Controller {
             $url = "https://item.m.jd.com/product/14351822683.html?utm_source=iosapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=Wxfriends&ShareTm=kjGW4RMtAZfLRQ25qUACDWsWw2o7rXla+fgM2d0Ed/J6vAh3ZVpc2TigaSAKSDE/kEhsRBVeyGMjhtAmDlOe3Y4hVdSdEFMzZK/OlaPdlHaoT4bVUCMsl0OPZ6HfThTdsSjmthgFytMsxu8izRBAiRKQWPhMi+OGGQW7GeuCgfg=&from=singlemessage";
              header('Location:'.$url);
             exit;
+        }else if($id==-7){
+            $url = "https://mp.weixin.qq.com/s/T-NZ0BDHfs58rfeS1BhQfA";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
