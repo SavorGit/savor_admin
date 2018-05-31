@@ -370,6 +370,8 @@ $config['CONFIG_VOLUME'] = array(
     'system_tv_volume'=>'电视音量'
 );
 $config['PROGRAM_ADS_CACHE_PRE'] = 'program_ads_';
+$config['PROGRAM_PRO_CACHE_PRE'] = 'program_pro_';
+$config['PROGRAM_ADV_CACHE_PRE'] = 'program_adv_';
 $config['SMALL_PROGRAM_LIST_KEY'] = 'small_program_list_';
 $config['UPD_STR'] = array(
     1=>array(

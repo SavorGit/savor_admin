@@ -9,6 +9,7 @@ namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
 use Think\Model;
+use Common\Lib\SavorRedis;
 class HotelController extends BaseController {
 	public function __construct() {
 		parent::__construct();
@@ -1345,6 +1346,9 @@ smlist.menu_name';
 
 		}
 		$save['hotel_id'] = I('post.hotel_id');
+		$redis = SavorRedis::getInstance();
+		$redis->select(12);
+		$cache_key = C('PROGRAM_ADV_CACHE_PRE').$save['hotel_id'];
 		if($ads_id){
 		    $maps = array();
 		    $maps['name'] = $save['name'];
@@ -1366,6 +1370,7 @@ smlist.menu_name';
 			$dat['update_time'] = date("Y-m-d H:i:s");
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
+			    $redis->remove($cache_key);
 			    //期刊
 			    $mbperModel = new \Admin\Model\MbPeriodModel();
 			    $num = $mbperModel->count();
@@ -1400,11 +1405,9 @@ smlist.menu_name';
 				$media_data['duration'] = $save['duration'];
 				$mediaModel->where("id='$media_id'")->save($media_data);
 			}
-
-
-
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
+			    $redis->remove($cache_key);
 			    //期刊
 			    $mbperModel = new \Admin\Model\MbPeriodModel();
 			    $num = $mbperModel->count();
@@ -1442,6 +1445,15 @@ smlist.menu_name';
 		}
 
 		if($message){
+		    $infos = $adsModel->getWhere(array('id'=>$adsid), 'hotel_id,type');
+		    $infos = $infos[0];
+		    if(!empty($infos['hotel_id']) && $infos['type']==3){
+		        $redis = SavorRedis::getInstance();
+		        $redis->select(12);
+		        $cache_key = C('PROGRAM_ADV_CACHE_PRE').$infos['hotel_id'];
+		        $redis->remove($cache_key);
+		    }
+		    
 		    //期刊
 		    $mbperModel = new \Admin\Model\MbPeriodModel();
 		    $num = $mbperModel->count();

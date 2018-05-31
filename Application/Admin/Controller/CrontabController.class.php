@@ -882,6 +882,8 @@ class CrontabController extends Controller
      * @desc 随机生成广告的位置
      */
     public function recordAdsLocation(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(12);
         $adv_promote_num_arr = C('ADVE_OCCU');
         $adv_promote_num = $adv_promote_num_arr['num'];
         $base_location_arr = range(1, $adv_promote_num);
@@ -922,7 +924,10 @@ class CrontabController extends Controller
                             }
                             
                         } 
-                    }  
+                    }
+                    ///删除该盒子的广告缓存  
+                    $cache_key = C('PROGRAM_ADS_CACHE_PRE').$v['box_id'];
+                    $redis->remove($cache_key);
                 }
             }
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));

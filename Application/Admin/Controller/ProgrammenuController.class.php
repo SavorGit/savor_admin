@@ -18,6 +18,7 @@ use Admin\Model\MenuItemModel;
 use Admin\Model\HotelModel;
 use Admin\Model\AreaModel;
 use Admin\Model\MenuListOpeModel;
+use Common\Lib\SavorRedis;
 class ProgrammenuController extends BaseController {
 
     public function __construct() {
@@ -133,6 +134,8 @@ class ProgrammenuController extends BaseController {
         if($hotel_id_arr == '') {
             $this->error('酒楼选择不可为空');
         }
+        $redis = new SavorRedis();  
+        $redis->select(12);
         $hotel_id_arr = explode(',', $hotel_id_arr);
         $hotelModel = new HotelModel;
         $menuHoModel = new \Admin\Model\ProgramMenuHotelModel();
@@ -156,7 +159,10 @@ class ProgrammenuController extends BaseController {
                     'operator_id'=>$userInfo['id'],
                     'menu_id'=>$menuid,
                 );
-
+                $cache_key = C('PROGRAM_PRO_CACHE_PRE').$k;
+                $redis->remove($cache_key);
+                $cache_key = C('PROGRAM_ADV_CACHE_PRE').$k;
+                $redis->remove($cache_key);
             }
             //插入savor_menu_hotel
             $res = $menuHoModel->addAll($data);
@@ -315,13 +321,29 @@ class ProgrammenuController extends BaseController {
         }
 
         //城市
-        $area_v = I('area_v');
+        /* $area_v = I('area_v');
         if ($area_v) {
             $this->assign('area_k',$area_v);
             if($area_v == 9999){
             }else{
                 $where .= "	AND area_id = $area_v";
             }
+        } */
+        $include_a = I('include_a');
+        $area_strs = '';
+        $space = '';
+        $include_ak = array();
+        if(!empty($include_a)){
+            foreach($include_a as $key=>$v){
+               
+                $area_strs .= $space .$v;
+                $space = ',';
+                $include_ak[] = $v;
+               
+               
+            }
+            if($area_strs) $where .= " AND area_id in($area_strs)";
+            $this->assign('include_ak',$include_ak);
         }
         //级别
         $level_v = I('level_v');
@@ -406,7 +428,7 @@ smlist.menu_name';
 
             }
         }
-
+        
         $result = $hotelModel->getList($where,$orders,$start,$size);
 
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
