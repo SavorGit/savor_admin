@@ -149,6 +149,8 @@ class Optionh5Controller extends Controller {
             $install_num +=$ret[0]['nums'];
             if($v['user_id']==55 && $stime=='2018-5'){
                 $user_info[$key]['install_num'] = $install_num +73;
+            }else if($v['user_id']==260 && $stime='2018-5'){
+                $user_info[$key]['install_num'] = $install_num +109;
             }else {
                 $user_info[$key]['install_num'] = $install_num;
             }
@@ -162,12 +164,16 @@ class Optionh5Controller extends Controller {
             $repiar_num += $ret[0]['nums'];
             if($v['user_id']==55 && $stime=='2018-5'){
                 $user_info[$key]['repiar_num'] = $repiar_num +61;
+            }else if($v['user_id']==260 && $stime='2018-5'){
+                $user_info[$key]['repiar_num'] = $repiar_num +15;
             }else {
                 $user_info[$key]['repiar_num'] = $repiar_num;
             }
             
             if($v['user_id']==55 && $stime=='2018-5'){
                 $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +73 +$repiar_num +61;
+            }else if($v['user_id']==260 && $stime='2018-5'){
+                $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +109 +$repiar_num +15;
             }else {
                 $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +$repiar_num;
             }
