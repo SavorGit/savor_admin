@@ -15,6 +15,19 @@ use Common\Lib\SavorRedis;
 class TestController extends Controller {
     
     public function zyt(){
+        exit('ok');
+        /*$redis = SavorRedis::getInstance();
+        $redis->select(12);
+        $keys = $redis->keys('program_ads_*');
+        $flag =0;
+        foreach($keys as $key=>$v){
+            $redis->remove($v);
+            $flag++;
+        }
+        echo $flag;
+        exit(ok);*/
+        
+        
         $redis = SavorRedis::getInstance();
         $redis->select(13);
         
