@@ -147,7 +147,12 @@ class Optionh5Controller extends Controller {
                    and find_in_set('".$v['user_id']."',exe_user_id)";
             $ret = $m_option_task->query($sql);
             $install_num +=$ret[0]['nums'];
-            $user_info[$key]['install_num'] = $install_num;
+            if($v['user_id']==55 && $stime=='2018-5'){
+                $user_info[$key]['install_num'] = $install_num +73;
+            }else {
+                $user_info[$key]['install_num'] = $install_num;
+            }
+            
             //维修 版位数量           (获取任务的tv_nums)
             $repiar_num = 0;
             $sql ="select sum(`tv_nums`) as nums from savor_option_task where 
@@ -155,9 +160,18 @@ class Optionh5Controller extends Controller {
                    and find_in_set('".$v['user_id']."',exe_user_id)";
             $ret = $m_option_task->query($sql);
             $repiar_num += $ret[0]['nums'];
-            $user_info[$key]['repiar_num'] = $repiar_num;
+            if($v['user_id']==55 && $stime=='2018-5'){
+                $user_info[$key]['repiar_num'] = $repiar_num +61;
+            }else {
+                $user_info[$key]['repiar_num'] = $repiar_num;
+            }
             
-            $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +$repiar_num;
+            if($v['user_id']==55 && $stime=='2018-5'){
+                $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +73 +$repiar_num +61;
+            }else {
+                $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +$repiar_num;
+            }
+            
         }
         
         //排序
