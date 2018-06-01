@@ -578,6 +578,10 @@ class ClientController extends Controller {
             $url = "https://mp.weixin.qq.com/s/T-NZ0BDHfs58rfeS1BhQfA";
             header('Location:'.$url);
             exit;
+        }else if($id==-8){
+            $url = "https://mp.weixin.qq.com/s/2fyRGwmtx6gEww6OlhL17g";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
