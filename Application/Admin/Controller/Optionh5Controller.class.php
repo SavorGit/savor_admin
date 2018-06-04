@@ -107,7 +107,7 @@ class Optionh5Controller extends Controller {
             $where['task_type'] = 1;
             $where['state']     = 4;
             $where['flag']      = 0;
-            $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time));
+            $where['complete_time'] = array(array('egt',$start_time),array('elt',$end_time));
             $where['_string']='FIND_IN_SET("'.$v['user_id'].'", exe_user_id)';
             
             $fields = 'hotel_id';
@@ -127,7 +127,7 @@ class Optionh5Controller extends Controller {
             $where['task_type'] = 8;
             $where['state']     = 4;
             $where['flag']      = 0;
-            $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time));
+            $where['complete_time'] = array(array('egt',$start_time),array('elt',$end_time));
             $where['_string']='FIND_IN_SET("'.$v['user_id'].'", exe_user_id)';
             $fields = 'hotel_id';
             $net_list = $m_option_task->getListByGroup($fields, $where);
@@ -143,13 +143,13 @@ class Optionh5Controller extends Controller {
             //安装验收 版位数量   (获取任务的tv_nums)
             $install_num = 0;
             $sql ="select sum(`tv_nums`) as nums from savor_option_task where 
-                   task_type=2 and state=4 and flag = 0 and create_time>='".$start_time."' and create_time<='".$end_time."'
+                   task_type=2 and state=4 and flag = 0 and complete_time>='".$start_time."' and complete_time<='".$end_time."'
                    and find_in_set('".$v['user_id']."',exe_user_id)";
             $ret = $m_option_task->query($sql);
             $install_num +=$ret[0]['nums'];
             if($v['user_id']==55 && $stime=='2018-5'){
                 $user_info[$key]['install_num'] = $install_num +73;
-            }else if($v['user_id']==260 && $stime='2018-5'){
+            }else if($v['user_id']==260 && $stime=='2018-5'){
                 $user_info[$key]['install_num'] = $install_num +109;
             }else {
                 $user_info[$key]['install_num'] = $install_num;
@@ -158,13 +158,13 @@ class Optionh5Controller extends Controller {
             //维修 版位数量           (获取任务的tv_nums)
             $repiar_num = 0;
             $sql ="select sum(`tv_nums`) as nums from savor_option_task where 
-                   task_type=4 and state=4 and flag = 0 and create_time>='".$start_time."' and create_time<='".$end_time."'
+                   task_type=4 and state=4 and flag = 0 and complete_time>='".$start_time."' and complete_time<='".$end_time."'
                    and find_in_set('".$v['user_id']."',exe_user_id)";
             $ret = $m_option_task->query($sql);
             $repiar_num += $ret[0]['nums'];
             if($v['user_id']==55 && $stime=='2018-5'){
                 $user_info[$key]['repiar_num'] = $repiar_num +61;
-            }else if($v['user_id']==260 && $stime='2018-5'){
+            }else if($v['user_id']==260 && $stime=='2018-5'){
                 $user_info[$key]['repiar_num'] = $repiar_num +15;
             }else {
                 $user_info[$key]['repiar_num'] = $repiar_num;
@@ -172,7 +172,7 @@ class Optionh5Controller extends Controller {
             
             if($v['user_id']==55 && $stime=='2018-5'){
                 $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +73 +$repiar_num +61;
-            }else if($v['user_id']==260 && $stime='2018-5'){
+            }else if($v['user_id']==260 && $stime=='2018-5'){
                 $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +109 +$repiar_num +15;
             }else {
                 $user_info[$key]['option_box_num'] = $check_box_num+$net_box_num +$install_num +$repiar_num;
