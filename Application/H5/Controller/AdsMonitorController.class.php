@@ -44,10 +44,12 @@ class AdsMonitorController extends Controller {
         $m_pub_ads = new \Admin\Model\PubAdsModel();
         $where = array();
         $now_date = date('Y-m-d H:i:s');
-        $where['a.start_date'] = array('elt',$now_date);
-        $where['a.end_date']   = array('gt',$now_date);
+        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime('-1 day'));
+        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
+        $where['a.start_date'] = array('lt',$yesterday_end_time);
+        $where['a.end_date']   = array('gt',$yesterday_start_time);
         $where['a.state']      = array('neq',2);
-        $where['a.id']         = array('not in','115,116,117,118,119,120,121,122');
+        //$where['a.id']         = array('not in','115,116,117,118,119,120,121,122');
         $online_ads_nums = $m_pub_ads->countNums($where);
         
         //北上广深数据统计
@@ -57,6 +59,7 @@ class AdsMonitorController extends Controller {
         $all_net_box_nums = 0;
         $jisuan_arrive_box_num = 0;
         $jisuan_all_area_pub_box_num = 0;
+        
         foreach($area_list as $key=>$v){
             
            
@@ -68,10 +71,28 @@ class AdsMonitorController extends Controller {
                    LEFT JOIN savor_room room ON box.`room_id`=room.`id` 
                    LEFT JOIN savor_hotel hotel ON hotel.`id`=room.`hotel_id` 
                    LEFT JOIN savor_area_info AS areainfo ON hotel.`area_id`=areainfo.`id` 
-                   WHERE ads.start_date<=NOW() AND ads.`end_date`>NOW() AND ads.`state`!=2 
+                   WHERE ads.start_date<'".$yesterday_end_time."' AND ads.`end_date`>'".$yesterday_start_time."' AND ads.`state`!=2 
                    AND hotel.`area_id`=".$v['id']." and hotel.state=1 and hotel.flag=0 and box.state=1 
-                   and box.flag=0 and pubbox.`pub_ads_id` not in(115,116,117,118,119,120,121,122) GROUP by pubbox.`pub_ads_id` ";
-            $tmp = M()->query($sql);
+                   and box.flag=0  GROUP by pubbox.`pub_ads_id` ";
+            $tmp1 = M()->query($sql);
+            
+            //在投广告个数
+            $sql ="SELECT count(distinct pubbox.box_id) boxnum,pubbox.`pub_ads_id`  
+                   FROM savor_pub_ads_box_history pubbox 
+                   LEFT JOIN savor_pub_ads ads ON pubbox.`pub_ads_id`=ads.`id` 
+                   LEFT JOIN savor_box box ON pubbox.`box_id`=box.`id` 
+                   LEFT JOIN savor_room room ON box.`room_id`=room.`id` 
+                   LEFT JOIN savor_hotel hotel ON hotel.`id`=room.`hotel_id` 
+                   LEFT JOIN savor_area_info AS areainfo ON hotel.`area_id`=areainfo.`id` 
+                   WHERE ads.start_date<'".$yesterday_end_time."' AND ads.`end_date`>'".$yesterday_start_time."' AND ads.`state`!=2 
+                   AND hotel.`area_id`=".$v['id']." and hotel.state=1 and hotel.flag=0 and box.state=1 
+                   and box.flag=0  GROUP by pubbox.`pub_ads_id` ";
+            $tmp2 = M()->query($sql);
+            if(!empty($tmp1)){
+                $tmp = array_merge($tmp1,$tmp2);
+            }else {
+                $tmp = $tmp2;
+            }
             $all_area_pub_box_num = 0;
             foreach($tmp as $kk=>$vv){
                 $all_area_pub_box_num +=$vv['boxnum'];
@@ -141,10 +162,10 @@ class AdsMonitorController extends Controller {
         
         $where = array();
         $now_date = date('Y-m-d H:i:s');
-        $where['pads.start_date'] = array('elt',$now_date);
-        $where['pads.end_date']   = array('gt',$now_date);
+        $where['pads.start_date'] = array('lt',$yesterday_end_time);
+        $where['pads.end_date']   = array('gt',$yesterday_start_time);
         $where['pads.state']      = array('neq',2);
-        $where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
+        //$where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
         $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
         $order = 'pads.create_time asc';
         $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);
@@ -168,7 +189,22 @@ class AdsMonitorController extends Controller {
                            left join savor_room room on box.room_id=room.id
                            left join savor_hotel hotel on room.hotel_id=hotel.id
                            where pabox.pub_ads_id=".$vv['pub_ads_id']." and hotel.id=".$v['hotel_id'];
-                    $rets = M()->query($sql);
+                    $rets1 = M()->query($sql);
+                    
+                    $sql ="select pabox.id from savor_pub_ads_box_history pabox
+                           left join savor_pub_ads pads on pabox.pub_ads_id=pads.id
+                           left join savor_box box on pabox.box_id=box.id
+                           left join savor_room room on box.room_id=room.id
+                           left join savor_hotel hotel on room.hotel_id=hotel.id
+                           where pabox.pub_ads_id=".$vv['pub_ads_id']." and hotel.id=".$v['hotel_id'];
+                    $rets2 = M()->query($sql);
+                    
+                    if(!empty($rets1)){
+                        $rets = array_merge($rets1,$rets2);
+                    }else {
+                        $rets = $rets2;
+                    }
+                    
                     if(!empty($rets)){
                         $rates = '0%';
                     }else {
@@ -257,8 +293,13 @@ class AdsMonitorController extends Controller {
         
         $where = array();
         $now_date = date('Y-m-d H:i:s');
-        $where['pads.start_date'] = array('elt',$now_date);
-        $where['pads.end_date']   = array('gt',$now_date);
+        
+        
+        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime('-1 day'));
+        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
+        
+        $where['pads.start_date'] = array('lt',$yesterday_end_time);
+        $where['pads.end_date']   = array('gt',$yesterday_start_time);
         $where['pads.state']      = array('neq',2);
         $where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
         $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
@@ -267,6 +308,7 @@ class AdsMonitorController extends Controller {
         
         $m_box_media_arrive = new \Admin\Model\Statisticses\BoxMediaArriveModel();
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+        $m_pub_ads_box_history = new \Admin\Model\PubAdsBoxHistoryModel();
         foreach($box_list as $key=>$v){
             
             foreach($pub_ads_list as $kk=>$vv){
@@ -284,7 +326,10 @@ class AdsMonitorController extends Controller {
                     $where['pub_ads_id'] = $vv['pub_ads_id'];
                     $where['box_id']     = $v['box_id'];
                     
-                    $nums = $m_pub_ads_box->getDataCount($where);
+                    $nums1 = $m_pub_ads_box->getDataCount($where);
+                    $nums2 = $m_pub_ads_box_history->getDataCount($where);
+                    $nums = $nums1+$nums2;
+                    
                     if(empty($nums)){ //未发布
                         $ads_list[$kk] =0;
                     }else {//发布未下载
