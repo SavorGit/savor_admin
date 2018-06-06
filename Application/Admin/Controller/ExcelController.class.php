@@ -2265,6 +2265,7 @@ class ExcelController extends Controller
      */
     public function reportErroBoxInfo(){
         $hotel_box_type_arr = C('heart_hotel_box_type');
+        $heart_loss_hours   = C('HEART_LOSS_HOURS');
         $hotel_box_type_arr = array_keys($hotel_box_type_arr);
         $space = '';
         $hotel_box_type_str = '';
@@ -2275,7 +2276,7 @@ class ExcelController extends Controller
         
         $m_hotel = new \Admin\Model\HotelModel();
         $now = time();
-        $start_time = strtotime('-72 hours');
+        $start_time = strtotime('-'.$heart_loss_hours.' hours');
         $where = '';
         $where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) ";
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id,a.name hotel_name,a.addr');
@@ -2884,6 +2885,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
      * @desc 导出没有心跳的机顶盒版位信息
      */
     public function exportNoHeart(){
+        $heart_loss_hours = C('HEART_LOSS_HOURS');
         $m_hotel = new \Admin\Model\HotelModel();
         $m_box = new \Admin\Model\BoxModel();
         $where = array();
@@ -2897,7 +2899,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $normal_box_num = 0;
         $not_normal_box_num = 0;
         //print_r($hotel_list);exit;
-        $start_time = date('Y-m-d H:i:s',strtotime('-72 hours'));
+        $start_time = date('Y-m-d H:i:s',strtotime('-'.$heart_loss_hours.' hours'));
         $m_black_list = new \Admin\Model\BlackListModel();
         $m_heart_log = new \Admin\Model\HeartLogModel();
         $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
