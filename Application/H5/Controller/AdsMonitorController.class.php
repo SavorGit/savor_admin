@@ -18,10 +18,23 @@ class AdsMonitorController extends Controller {
         
         $area_id = I('area_id',0,'intval');
         $hotel_name = I('hotel_name','','trim');
+        $report_time = I('report_time','','trim');
+        if(empty($report_time)){
+            $report_time = date('Y-m-d',strtotime('-1 day'));  //广告到达时间
+        }
         
+        $m_box_media_arrive_summary = new \Admin\Model\Statisticses\BoxMediaArriveSummaryModel();
+         
+        $info = $m_box_media_arrive_summary->getOne('summary_data', array('date'=>$report_time));
+        $info = json_decode($info['summary_data'],true);
+        extract($info);  
         
-        //广告到达时间
-        $arrive_date = date('Ymd',strtotime('-1 day'));
+        $arrive_date = date('Y-m-d',strtotime($report_time)+86400);   //统计时间
+        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime($report_time));
+        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime($report_time));
+        
+         //广告到达时间
+        /* $arrive_date = date('Ymd',strtotime('-1 day'));
         
         //网络机顶盒数
         $hotel_box_type_arr = C('heart_hotel_box_type');
@@ -130,14 +143,14 @@ class AdsMonitorController extends Controller {
         //$counts = count($area_list);
         //$all_ads_arrive_rate = sprintf("%1.2f",$all_ads_arrive_rate/$counts);
         $all_ads_arrive_rate = sprintf("%1.2f",$jisuan_arrive_box_num/$jisuan_all_area_pub_box_num*100);
-        
+          */
         
         //酒楼明细
         $page = I('page',0,'intval') ? I('page',0,'intval') : 1;
         $pageSize = 15;
         $start = ($page-1) * $pageSize;
         
-        $m_box_media_arrive_ratio = new \Admin\Model\Statisticses\BoxMediaArriveRatioModel();
+        $m_box_media_arrive_ratio_history = new \Admin\Model\Statisticses\BoxMediaArriveRatioHistroyModel(); 
         
         $fields = 'a.hotel_id,hotel.name hotel_name,a.arrive_ratio,ext.mac_addr';
         $where  = array();
@@ -154,9 +167,10 @@ class AdsMonitorController extends Controller {
         if($hotel_name){
             $where['hotel.name'] = array('like',"%$hotel_name%");
         }
+        $where['statistics_time'] = $arrive_date.' 00:00:00';
         
-        $list = $m_box_media_arrive_ratio->getList($fields, $where, $order, $start, $pageSize);
-        $total_nums = $m_box_media_arrive_ratio->getCount($where);
+        $list = $m_box_media_arrive_ratio_history->getList($fields, $where, $order, $start, $pageSize);
+        $total_nums = $m_box_media_arrive_ratio_history->getCount($where);
         //获取再投的广告列表
         $m_pub_ads = new \Admin\Model\PubAdsModel();
         
@@ -178,7 +192,10 @@ class AdsMonitorController extends Controller {
                 $where['media_id'] = $vv['media_id'];
                 $where['hotel_id'] = $v['hotel_id'];
                 $where['media_type'] = 'ads';
-                $tmp = $m_box_media_arrive_ratio->getOne('arrive_ratio',$where);
+                
+                $where['statistics_time'] = $arrive_date.' 00:00:00';
+                
+                $tmp = $m_box_media_arrive_ratio_history->getOne('arrive_ratio',$where);
                 if(!empty($tmp)){
                     $rates = $tmp['arrive_ratio']*100;
                     $rates .='%';
@@ -261,6 +278,7 @@ class AdsMonitorController extends Controller {
             }
             
         }
+        $this->assign('report_time',$report_time);
         $this->assign('page_nums',$nums);
         $this->assign('all_net_box_nums',$all_net_box_nums);
         $this->assign('online_ads_nums',$online_ads_nums);
@@ -282,6 +300,7 @@ class AdsMonitorController extends Controller {
      * @desc 某个酒楼的在投广告到达明细
      */
     public function hotelAdsArriveDetail(){
+        $report_time = I('get.report_time') ? I('get.report_time') : date('Y-m-d',strtotime('-1 day'));
         $hotel_id = I('get.hotel_id');
         //获取酒楼名称
         $m_hotel = new \Admin\Model\HotelModel();
@@ -306,8 +325,8 @@ class AdsMonitorController extends Controller {
         $now_date = date('Y-m-d H:i:s');
         
         
-        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime('-1 day'));
-        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
+        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime($report_time));
+        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime($report_time));
         
         $where['pads.start_date'] = array('lt',$yesterday_end_time);
         $where['pads.end_date']   = array('gt',$yesterday_start_time);
@@ -331,6 +350,7 @@ class AdsMonitorController extends Controller {
                 $where['media_id'] = $vv['media_id'];
                 $where['media_type'] = 'ads';
                 $where['box_mac'] = $v['box_mac'];
+                $where['report_date'] = array('ELT',$report_time.' 23:59:59') ;
                 //print_r($where);exit;
                 $nums = $m_box_media_arrive->getCount($where);
                 if(!empty($nums)){//已下载

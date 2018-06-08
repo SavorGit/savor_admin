@@ -129,7 +129,7 @@
 	
 		
 		<div class="nr">
-			<p><span>广告到达情况-{$arrive_date}</span></p>
+			<p><span>广告到达情况-{$report_time}</span></p>
 		</div>
 		 <table class="tab" border="1" cellspacing="0" cellpadding="0">  
 	        <tr>  
@@ -180,7 +180,9 @@
 			<form name="from1" action="/h5/AdsMonitor/index" method="post">
 			<p>
 				<span>广告到达明细</span>
-				<span style="margin-left:12rem;;">
+				
+				<span style="margin-left:12rem;"> <input type="text" name="report_time" value="{$report_time}"></span>
+				<span >
 					<select  name="area_id">
 						<option value="">全部城市</option>
 						<volist name="area_list" id="vlist">
@@ -210,7 +212,7 @@
 			<volist name="hotel_list" id="vlist">
 			<tr>
 				
-				<td bgcolor="#DEB887"><a href="/H5/AdsMonitor/hotelAdsArriveDetail?hotel_id={$vlist.hotel_id}">{$vlist.hotel_name}</a></td>
+				<td bgcolor="#DEB887"><a href="/H5/AdsMonitor/hotelAdsArriveDetail?hotel_id={$vlist.hotel_id}&report_time={$report_time}">{$vlist.hotel_name}</a></td>
 				<td>{$vlist.small_plat_type}</td>
 				<td>{$vlist.arrive_ratio}</td>
 				<volist name="vlist.ads_rate_list" id="dd">
@@ -224,12 +226,12 @@
 		
 		<p class="page">
 			<if condition="$is_last_page eq 1">
-				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page=1"><span><<首页</span></a>
-				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$last_page}"><span><<上一页</span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&report_time={$report_time}&page=1"><span><<首页</span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&report_time={$report_time}&page={$last_page}"><span><<上一页</span></a>
 			</if>
 			<if condition="$is_next_page eq 1">
-				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$next_page}"><span>下一页>></span></a>
-				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$page_nums}"><span>尾页>></span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&report_time={$report_time}&page={$next_page}"><span>下一页>></span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&report_time={$report_time}&page={$page_nums}"><span>尾页>></span></a>
 			</if>
 			(共{$page_nums}页)
 	    </p>

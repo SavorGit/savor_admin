@@ -8,6 +8,7 @@ use Admin\Controller\BaseController;
 use Admin\Model\BoxModel;
 use Admin\Model\RoomModel;
 use Admin\Model\TvModel;
+use Common\Lib\SavorRedis;
 
 class DeviceController extends BaseController{
 
@@ -231,14 +232,26 @@ class DeviceController extends BaseController{
 		$save['tv_source'] = I('post.tv_source','','trim');
 		$save['box_id']    = I('post.box_id','','intval');
 		$tvModel = new TvModel;
+		$redis = SavorRedis::getInstance();
+		$m_box = new \Admin\Model\BoxModel();
+		$map = array();
+		$where = "1 and b.id=".$save['box_id'];
+		$hotel_info = $m_box->isHaveMac('h.id hotel_id', $where);
+		
 		if($id){
 			if($tvModel->editData($id,$save)){
+			    $redis->select(12);
+			    $cache_key = C('SMALL_TV_LIST').$hotel_info[0]['hotel_id'];
+			    $redis->remove($cache_key);
 				$this->output('更新成功!', 'device/tv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
 			}		
 		}else{	
 			if($tvModel->addData($save)){
+			    $redis->select(12);
+			    $cache_key = C('SMALL_TV_LIST').$hotel_info[0]['hotel_id'];
+			    $redis->remove($cache_key);
 				$this->output('添加成功!', 'device/tv');
 			}else{
 				 $this->output('添加失败!', 'device/doAddTv');
@@ -291,7 +304,7 @@ class DeviceController extends BaseController{
 				$this->error($str);
 		    }
 		}
-
+        $redis = SavorRedis::getInstance();
 		//广告机只考虑是否被删除
 		if($id){
 			//获取原有酒楼机顶盒数
@@ -327,6 +340,9 @@ class DeviceController extends BaseController{
 					$rp['hotel_id'] = $hotelid;
 					$hextModel->saveData($map, $rp);
 				}
+				$redis->select(12);
+				$cache_key = C('SMALL_BOX_LIST').$hotelid;
+				$redis->remove($cache_key);
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
@@ -346,6 +362,9 @@ class DeviceController extends BaseController{
 					$hextModel = new \Admin\Model\HotelExtModel();
 					$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', 1);
 				}
+				$redis->select(12);
+				$cache_key = C('SMALL_BOX_LIST').$hotelid;
+				$redis->remove($cache_key);
 				$this->output('添加成功!', 'hotel/room');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');
