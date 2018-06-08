@@ -19,7 +19,7 @@ class BoxMediaArriveSummaryModel extends Model
         return $ret;
     }
     public function getOne($fields,$where){
-        $data = $this->field($fields,$where)->find();
+        $data = $this->where($where)->field($fields)->find();
         return $data;
     }
     public function updateInfo($data,$where){

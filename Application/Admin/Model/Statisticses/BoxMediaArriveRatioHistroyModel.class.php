@@ -8,7 +8,7 @@ class BoxMediaArriveRatioHistroyModel extends Model
 
 	protected $tablePrefix = 'statistics_';
 
-    protected $tableName='box_media_arrive_ratio';
+    protected $tableName='box_media_arrive_ratio_histroy';
 
     public function getList($fields,$where,$order,$start,$limit){
         $list = $this->alias('a')

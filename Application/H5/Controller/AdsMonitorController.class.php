@@ -170,6 +170,7 @@ class AdsMonitorController extends Controller {
         $where['statistics_time'] = $arrive_date.' 00:00:00';
         
         $list = $m_box_media_arrive_ratio_history->getList($fields, $where, $order, $start, $pageSize);
+        
         $total_nums = $m_box_media_arrive_ratio_history->getCount($where);
         //获取再投的广告列表
         $m_pub_ads = new \Admin\Model\PubAdsModel();
