@@ -13,6 +13,7 @@ class BoxMediaArriveRatioModel extends Model
     public function getList($fields,$where,$order,$start,$limit){
         $list = $this->alias('a')
                      ->join('cloud.savor_hotel hotel on a.hotel_id=hotel.id','left')
+                     ->join('cloud.savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
                      ->field($fields)
                      ->where($where)
                      ->order($order)

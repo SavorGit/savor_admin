@@ -141,6 +141,7 @@
 			<volist name="pub_ads_list" id="list">
 				<th >{$list.name}</th>
 			</volist>
+			<th>最后心跳时间</th>
 			</tr>
 			<volist name="box_list" id="vlist">
 			<tr>
@@ -159,8 +160,9 @@
 					
 					
 					</td>
+					
 				</volist>
-				
+				<td>{$vlist.heart_time}</td>
 			</tr>
 			</volist>
 			

@@ -200,7 +200,7 @@
 		<table  class="tab" border="1" cellspacing="0" cellpadding="0">
 			<tr>
 			<th>餐厅名称</th>
-			
+			<th>小平台类型</th>
 			<th>到达总计</th>
 			<volist name="pub_ads_list" id="list">
 				<th >{$list.name}</th>
@@ -210,6 +210,7 @@
 			<tr>
 				
 				<td bgcolor="#DEB887"><a href="/H5/AdsMonitor/hotelAdsArriveDetail?hotel_id={$vlist.hotel_id}">{$vlist.hotel_name}</a></td>
+				<td>{$vlist.small_plat_type}</td>
 				<td>{$vlist.arrive_ratio}</td>
 				<volist name="vlist.ads_rate_list" id="dd">
 					<td>{$dd}</td>
@@ -222,11 +223,14 @@
 		
 		<p class="page">
 			<if condition="$is_last_page eq 1">
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page=1"><span><<首页</span></a>
 				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$last_page}"><span><<上一页</span></a>
 			</if>
 			<if condition="$is_next_page eq 1">
 				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$next_page}"><span>下一页>></span></a>
+				<a href="/h5/AdsMonitor/index?area_id={$area_id}&hotel_name={$hotel_name}&page={$page_nums}"><span>尾页>></span></a>
 			</if>
+			(共{$page_nums}页)
 	    </p>
 		
 		<!-- <div class="nr">

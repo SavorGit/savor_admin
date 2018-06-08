@@ -6,7 +6,7 @@
  *
  */
 namespace H5\Controller;
-
+use Common\Lib\SavorRedis;
 use Think\Controller;
 
 class AdsMonitorController extends Controller {
@@ -139,7 +139,7 @@ class AdsMonitorController extends Controller {
         
         $m_box_media_arrive_ratio = new \Admin\Model\Statisticses\BoxMediaArriveRatioModel();
         
-        $fields = 'a.hotel_id,hotel.name hotel_name,a.arrive_ratio';
+        $fields = 'a.hotel_id,hotel.name hotel_name,a.arrive_ratio,ext.mac_addr';
         $where  = array();
         $where['a.media_id'] = '-10000';
         $where['a.hotel_id'] = array('gt',0);
@@ -221,6 +221,16 @@ class AdsMonitorController extends Controller {
             $all_rates = $v['arrive_ratio']*100;
             $all_rates = $all_rates."%";
             $list[$key]['arrive_ratio'] = $all_rates;
+            if(!empty($v['mac_addr'])){
+                if($v['mac_addr']=='000000000000'){
+                    $list[$key]['small_plat_type'] = '虚拟';
+                }else {
+                    $list[$key]['small_plat_type'] = '实体';
+                }
+            }else{
+                $list[$key]['small_plat_type'] = 'mac为空';
+            }
+            
             
         }
         if($page==1){
@@ -251,6 +261,7 @@ class AdsMonitorController extends Controller {
             }
             
         }
+        $this->assign('page_nums',$nums);
         $this->assign('all_net_box_nums',$all_net_box_nums);
         $this->assign('online_ads_nums',$online_ads_nums);
         $this->assign('all_ads_arrive_rate',$all_ads_arrive_rate);
@@ -309,6 +320,9 @@ class AdsMonitorController extends Controller {
         $m_box_media_arrive = new \Admin\Model\Statisticses\BoxMediaArriveModel();
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
         $m_pub_ads_box_history = new \Admin\Model\PubAdsBoxHistoryModel();
+        $redis = SavorRedis::getInstance();
+        $time = time();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
         foreach($box_list as $key=>$v){
             
             foreach($pub_ads_list as $kk=>$vv){
@@ -338,6 +352,50 @@ class AdsMonitorController extends Controller {
                 }
             }
             $box_list[$key]['ads_list'] = $ads_list;
+            //获取机顶盒的心跳时间
+            $redis->select(13);
+            $heart_info = $redis->get('heartbeat:2:'.$v['box_mac']);
+            $heart_info = json_decode($heart_info,true);
+            if(!empty($heart_info)){
+                $d_time = strtotime($heart_info['date']);
+                $diff = $time - $d_time;
+                if($diff< 3600) {
+                    $last_heart_time = floor($diff/60).'分';
+                     
+                }else if ($diff >= 3600 && $diff <= 86400) {
+                    $hour = floor($diff/3600);
+                    $min = floor($diff%3600/60);
+                    $last_heart_time = $hour.'小时'.$min.'分';
+                }else if ($diff > 86400) {
+                    $day = floor($diff/86400);
+                    $hour = floor($diff%86400/3600);
+                    $last_heart_time = $day.'天'.$hour.'小时';
+                }
+            }else {
+                $heart_info = $m_heart_log->getInfo('last_heart_time', array('box_id'=>$v['box_id']));
+                if(!empty($heart_info)){
+                    $d_time = strtotime($heart_info['last_heart_time']);
+                    $diff = $time - $d_time;
+                    if($diff< 3600) {
+                        $last_heart_time = floor($diff/60).'分';
+                         
+                    }else if ($diff >= 3600 && $diff <= 86400) {
+                        $hour = floor($diff/3600);
+                        $min = floor($diff%3600/60);
+                        $last_heart_time = $hour.'小时'.$min.'分';
+                    }else if ($diff > 86400) {
+                        $day = floor($diff/86400);
+                        $hour = floor($diff%86400/3600);
+                        $last_heart_time = $day.'天'.$hour.'小时';
+                    }
+                }else {
+                    $last_heart_time='30天';
+                }
+                
+            }
+            
+            
+            $box_list[$key]['heart_time'] = $last_heart_time.'前';
             
         }
         $this->assign('hotel_name',$hotel_info['hotel_name']);
