@@ -4,9 +4,22 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
 		<title>广告到达情况-{$arrive_date}-小热点</title>
+		<!-- <link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/calendar-blue.css"/> -->
 		<link rel="shortcut icon" href="/Public/admin/assets/img/favicon.png"/>
+		<!-- <script type="text/javascript" src="/Public/admin/assets/plugins/calendar/calendar.js"></script> -->
+		<script type="text/javascript" src="http://jk.centv.cn/statics/js/jquery.min.js"></script>
+		
+		
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/table_form.css"/>
+
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/jscal2.css">
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/border-radius.css">
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/calendar/win2k.css">
+		<script type="text/javascript" src="/Public/admin/assets/plugins/calendar/calendar.js"></script>
+		<script type="text/javascript" src="/Public/admin/assets/plugins/calendar/lang/en.js"></script>
+		
 	</head>
-	<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	
 	<style type="text/css">
 		*{
 			margin: 0;
@@ -180,7 +193,9 @@
 			<form name="from1" action="/h5/AdsMonitor/index" method="post">
 			<p>
 				<span>广告到达明细</span>
-				
+				<span>
+					<input name="report_time" id="report_time" value="{$report_time}" size="10" class="date input-text" readonly="" type="text">
+				</span>
 				<span style="margin-left:12rem;"> <input type="text" name="report_time" value="{$report_time}"></span>
 				<span >
 					<select  name="area_id">
@@ -241,7 +256,7 @@
 		</div> -->
 		
 	</body>
-	<script type="text/javascript" src="/Public/admin/assets/plugins/jquery.min.js"></script>
+	
 <script type="text/javascript" >
 	$(function(){
 		
@@ -276,4 +291,16 @@
 		
 	});
 </script>
+
+<script type="text/javascript">
+			Calendar.setup({
+			weekNumbers: true,
+		    inputField : "report_time",
+		    trigger    : "report_time",
+		    dateFormat: "%Y-%m-%d",
+		    showTime: false,
+		    minuteStep: 1,
+		    onSelect   : function() {this.hide();}
+			});
+        </script>
 </html>
