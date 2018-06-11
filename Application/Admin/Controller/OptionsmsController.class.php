@@ -40,7 +40,7 @@ class OptionsmsController extends BaseController{
         
         $m_account_smg_log = new \Admin\Model\AccountMsgLogModel();
         
-        $fields = 'a.url,a.tel,a.resp_code,a.create_time,user.remark';
+        $fields = 'a.url,a.tel,a.resp_code,a.create_time,user.remark,task.hotel_linkman';
         $where = array();
         if(!empty($start_date) && empty($end_date)){
             $where['a.create_time'] = array('egt',$start_date.' 00:00:00');
