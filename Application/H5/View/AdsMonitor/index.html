@@ -10,11 +10,12 @@
 		<script type="text/javascript" src="http://jk.centv.cn/statics/js/jquery.min.js"></script>
 		
 		
+		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/win2k.css"/>
+		
 		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/table_form.css"/>
 
 		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/jscal2.css">
 		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/border-radius.css">
-		<link rel="stylesheet" type="text/css" href="/Public/admin/assets/plugins/calendar/calendar/win2k.css">
 		<script type="text/javascript" src="/Public/admin/assets/plugins/calendar/calendar.js"></script>
 		<script type="text/javascript" src="/Public/admin/assets/plugins/calendar/lang/en.js"></script>
 		
@@ -72,7 +73,7 @@
 			margin-bottom: 0.12rem;
 			border-radius: 4px;
 			padding-bottom: 0.15rem;
-			background-color:#152925;
+			background-color:#082a39;
 		}
 		.nr img{
 			width: 1.08rem;
@@ -193,10 +194,8 @@
 			<form name="from1" action="/h5/AdsMonitor/index" method="post">
 			<p>
 				<span>广告到达明细</span>
-				<span>
-					<input name="report_time" id="report_time" value="{$report_time}" size="10" class="date input-text" readonly="" type="text">
-				</span>
-				<span style="margin-left:12rem;"> <input type="text" name="report_time" value="{$report_time}"></span>
+				
+				<span style="margin-left:12rem;"> <input name="report_time" id="report_time" value="{$report_time}" size="10" class="date input-text" readonly="" type="text"></span>
 				<span >
 					<select  name="area_id">
 						<option value="">全部城市</option>
