@@ -150,6 +150,14 @@ class AdsMonitorController extends Controller {
         $pageSize = 15;
         $start = ($page-1) * $pageSize;
         
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
         $m_box_media_arrive_ratio_history = new \Admin\Model\Statisticses\BoxMediaArriveRatioHistroyModel(); 
         
         $fields = 'a.hotel_id,hotel.name hotel_name,a.arrive_ratio,ext.mac_addr';
@@ -159,6 +167,7 @@ class AdsMonitorController extends Controller {
         $where['hotel.state'] = 1;
         $where['hotel.flag']  = 0;
         $where['hotel.id'] = array('not in',array(7,53,791,747,508));
+        $where['hotel.hotel_box_type'] = array('in',$hotel_box_type_str);
         $order = 'a.arrive_ratio asc';
         
         if($area_id){
