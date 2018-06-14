@@ -1634,6 +1634,8 @@ class ExcelController extends Controller
             array('maintainer', '合作维护人'),
             array('tech_maintainer', '技术运维人'),
             array('hotel_box_type', '设备类型'),
+            array('remark','包间备注'),
+            array('tag','机顶盒备注'),
         );
         
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);

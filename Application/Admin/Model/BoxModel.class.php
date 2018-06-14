@@ -63,7 +63,8 @@ class BoxModel extends BaseModel{
         $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,box.state boxstate,hotel.hotel_box_type,
 	         box.mac mac,box.name bname, room.name rname, room.type rtype, 
 	          hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
-	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer
+	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer,
+             room.remark,box.tag
 	         from savor_box as box 
 	         left join savor_room as room on box.room_id = room.id
 	         left join savor_hotel as hotel on room.hotel_id = hotel.id
