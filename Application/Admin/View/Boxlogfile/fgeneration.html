@@ -1,0 +1,173 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<style type="text/css">
+  .searchBar label{
+    width: auto;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 2px;
+  }
+</style>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/Boxlogfile/firstGeneration" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+      </div>
+      <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+		  
+	          <div class="form-group"  >
+	            <div class="input-group-sm input-group">
+	              <label class="col-xs-1 col-sm-1 control-label">
+	                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
+	              </label>
+	
+	                <span class="input-group-btn input-group-sm">
+	              <select name="area_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+	                <option value="0" >全国</option>
+	                <volist name="area" id="vo">
+	                  <option value="{$vo.area_no}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+	                </volist>
+	              </select>
+	            </span>
+	            </div>
+	          </div>
+
+		</div>
+		
+		<div class="form-group"  id="timefgen" style="">
+           
+			<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}" style="width:135px;">
+
+          <input id="f_s_time" style="width:130px;padding:0px;margin:0px;margin-left: 15px;"  name="start_date" type="text" size="17" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button id="c_fgen_s_time" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+        </div>
+
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" style="width:135px;">
+
+          <input id="f_e_time" style="width:130px;padding:0px;margin:0px;margin-left: 15px;"  name="end_date" type="text" size="17" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                  <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button id="c_fgen_e_time" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+        </div>
+          </div>
+		
+		<div class="input-group input-group-sm">
+          <input type="text" class="form-control" name=box_mac value="{$box_mac}" placeholder="机顶盒mac">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+            
+            
+        </div>
+		
+      </div>
+ 
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>OSS桶名</th>
+            <th>事件触发时间</th>
+            <th>OSS对象大小</th>
+            <th>OSS键</th>
+            <th>ETag</th>
+            <th>标志</th>
+            <th>尝试次数</th>
+            <th>创建时间</th>
+            <th>地区</th>
+            <th>mac</th>
+          
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" key="k" id="vlist">
+            <tr target="sid_user">
+              <td data-title="OSS桶名">{$vlist.bucket_name}</td>
+              <td data-title="事件触发时间">{$vlist.event_time}</td>
+              <td data-title="OSS对象大小">{$vlist.size}</td>
+              <td data-title="OSS键">{$vlist.oss_key}</td>
+              <td data-title="OSSMD5">{$vlist.e_tag}</td>
+			  <td data-title="标志">
+			  <if condition="$vlist.flag eq 0">
+			  		OSS 
+			  <elseif condition="$vlist.flag eq 16" />
+			    	OSS&HDFS
+			  <elseif condition="$vlist.flag eq 31" />
+			  OSS&DOWNLOADING          
+			  <elseif condition="$vlist.flag eq 17" />
+			  OSS&DOWNLOADING
+			  <elseif condition="$vlist.flag eq 18" />
+			   OSS&DEATH
+			  </if>
+			  </td>
+              <td data-title="尝试次数">{$vlist.try_count}</td>
+			  <td data-title="创建时间">{$vlist.create_time}</td>
+			  <td data-title="地区">
+			  <if condition="$vlist.area eq '010'">
+			  北京
+			  <elseif condition="$vlist.area eq '021'" />
+			  上海
+			  <elseif condition="$vlist.area eq '236'" />
+			  广州
+			  <else />
+			  深圳
+			  </if>
+			  </td>
+			  <td data-title="mac">{$vlist.box_mac}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+ $(function(){
+	   
+
+	    $("#f_s_time").datetimepicker({
+	      //minView: "month", //閫夋嫨鏃ユ湡鍚庯紝涓嶄細鍐嶈烦杞幓閫夋嫨鏃跺垎绉�
+	      minView:0,
+	      language:  'zh-CN',
+	      format: 'yyyy-mm-dd hh:ii:ss',
+	      todayBtn:  1,
+	      autoclose: 1,
+	    });
+	    $("#f_e_time").datetimepicker({
+		      //minView: "month", //閫夋嫨鏃ユ湡鍚庯紝涓嶄細鍐嶈烦杞幓閫夋嫨鏃跺垎绉�
+	    		minView:0,
+		      language:  'zh-CN',
+		      format: 'yyyy-mm-dd hh:ii:ss',
+		      todayBtn:  1,
+		      autoclose: 1,
+		    });
+	  })
+	  $('#c_fgen_s_time').click(function(){
+		  $("#f_s_time").val('');
+		  
+	  });
+	 $('#c_fgen_e_time').click(function(){
+		  $("#f_e_time").val('');
+		  
+	 });
+</script>
+
