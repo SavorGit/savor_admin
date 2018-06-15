@@ -16,6 +16,19 @@ class TestController extends Controller {
     
     public function zyt(){
         exit('ok');
+       /* 把冻结的酒楼   版位都更新为冻结状态 
+        * $sql="SELECT id FROM savor_box WHERE id IN( SELECT box.id FROM savor_box box LEFT JOIN savor_room room ON room.id=box.room_id
+ LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.id IN(SELECT id FROM `savor_hotel` WHERE state=2))";
+        $data = M()->query($sql);
+        $ids = '';
+        foreach($data as $key=>$v){
+            $ids .= $space .$v['id'];
+            $space = ',';
+        }
+        $sql ="update savor_box set state=2 where id in($ids) limit 175";
+        $ret  =M()->execute($sql);
+        var_dump($ret); */
+        
         /*$redis = SavorRedis::getInstance();
         $redis->select(12);
         $keys = $redis->keys('program_ads_*');
