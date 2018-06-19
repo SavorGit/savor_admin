@@ -682,6 +682,11 @@ smlist.menu_name';
 		    if(!empty($have_mac_addr)){
 		        $this->error('Mac地址存在于'.$have_mac_addr[0]['name'].'酒楼');
 		    }
+		}else if(!empty($mac_addr) && $mac_addr=='000000000000'){
+		    if($hotel_id){
+		          $m_heart_log = new \Admin\Model\HeartLogModel();
+		          $m_heart_log->deleteInfo(array('hotel_id'=>$hotel_id,'type'=>1), '1');
+		    }
 		}
 		
 		$data['server_location'] = $server_location;

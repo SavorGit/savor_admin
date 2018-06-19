@@ -139,6 +139,9 @@ class HeartLogModel extends BaseModel
 	    return $result;
 	}
 
-
+    public function deleteInfo($where,$limit){
+        $ret = $this->where($where)->limit($limit)->delete();
+        return $ret;
+    }
 
 }//End Class
