@@ -33,117 +33,7 @@ class AdsMonitorController extends Controller {
         $yesterday_end_time = date('Y-m-d 23:59:59',strtotime($report_time));
         $yesterday_start_time = date('Y-m-d 00:00:00',strtotime($report_time));
         
-         //广告到达时间
-        /* $arrive_date = date('Ymd',strtotime('-1 day'));
-        
-        //网络机顶盒数
-        $hotel_box_type_arr = C('heart_hotel_box_type');
-        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
-        $space = '';
-        $hotel_box_type_str = '';
-        foreach($hotel_box_type_arr as $key=>$v){
-            $hotel_box_type_str .= $space .$v;
-            $space = ',';
-        }
-        $m_box = new \Admin\Model\BoxModel();
-        $where = array();
-        $where['hotel.state'] = 1;
-        $where['hotel.flag']  = 0;
-        $where['box.state']   = 1;
-        $where['box.flag']   = 0;
-        $where['hotel.hotel_box_type'] = array('in',$hotel_box_type_str);
-        $net_box_nums = $m_box->countNums($where); 
-        //在投广告数
-        $m_pub_ads = new \Admin\Model\PubAdsModel();
-        $where = array();
-        $now_date = date('Y-m-d H:i:s');
-        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime('-1 day'));
-        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
-        $where['a.start_date'] = array('lt',$yesterday_end_time);
-        $where['a.end_date']   = array('gt',$yesterday_start_time);
-        $where['a.state']      = array('neq',2);
-        //$where['a.id']         = array('not in','115,116,117,118,119,120,121,122');
-        $online_ads_nums = $m_pub_ads->countNums($where);
-        
-        //北上广深数据统计
-        $m_area = new \Admin\Model\AreaModel();
-        $area_list = $m_area->getHotelAreaList();
-        $all_ads_arrive_rate = 0;
-        $all_net_box_nums = 0;
-        $jisuan_arrive_box_num = 0;
-        $jisuan_all_area_pub_box_num = 0;
-        
-        foreach($area_list as $key=>$v){
-            
-           
-            //在投广告个数
-            $sql ="SELECT count(distinct pubbox.box_id) boxnum,pubbox.`pub_ads_id`  
-                   FROM savor_pub_ads_box pubbox 
-                   LEFT JOIN savor_pub_ads ads ON pubbox.`pub_ads_id`=ads.`id` 
-                   LEFT JOIN savor_box box ON pubbox.`box_id`=box.`id` 
-                   LEFT JOIN savor_room room ON box.`room_id`=room.`id` 
-                   LEFT JOIN savor_hotel hotel ON hotel.`id`=room.`hotel_id` 
-                   LEFT JOIN savor_area_info AS areainfo ON hotel.`area_id`=areainfo.`id` 
-                   WHERE ads.start_date<'".$yesterday_end_time."' AND ads.`end_date`>'".$yesterday_start_time."' AND ads.`state`!=2 
-                   AND hotel.`area_id`=".$v['id']." and hotel.state=1 and hotel.flag=0 and box.state=1 
-                   and box.flag=0  GROUP by pubbox.`pub_ads_id` ";
-            $tmp1 = M()->query($sql);
-            
-            //在投广告个数
-            $sql ="SELECT count(distinct pubbox.box_id) boxnum,pubbox.`pub_ads_id`  
-                   FROM savor_pub_ads_box_history pubbox 
-                   LEFT JOIN savor_pub_ads ads ON pubbox.`pub_ads_id`=ads.`id` 
-                   LEFT JOIN savor_box box ON pubbox.`box_id`=box.`id` 
-                   LEFT JOIN savor_room room ON box.`room_id`=room.`id` 
-                   LEFT JOIN savor_hotel hotel ON hotel.`id`=room.`hotel_id` 
-                   LEFT JOIN savor_area_info AS areainfo ON hotel.`area_id`=areainfo.`id` 
-                   WHERE ads.start_date<'".$yesterday_end_time."' AND ads.`end_date`>'".$yesterday_start_time."' AND ads.`state`!=2 
-                   AND hotel.`area_id`=".$v['id']." and hotel.state=1 and hotel.flag=0 and box.state=1 
-                   and box.flag=0  GROUP by pubbox.`pub_ads_id` ";
-            $tmp2 = M()->query($sql);
-            if(!empty($tmp1)){
-                $tmp = array_merge($tmp1,$tmp2);
-            }else {
-                $tmp = $tmp2;
-            }
-            $all_area_pub_box_num = 0;
-            foreach($tmp as $kk=>$vv){
-                $all_area_pub_box_num +=$vv['boxnum'];
-            }
-            $area_online_ads_nums = count($tmp);
-            $area_list[$key]['area_online_ads_nums'] = $area_online_ads_nums;
-            //网络机顶盒数
-            $where = array();
-            $where['hotel.state']   = 1;
-            $where['hotel.flag']    = 0;
-            $where['box.state']     = 1;
-            $where['box.flag']      = 0;
-            $where['hotel.area_id'] = $v['id'];
-            $where['hotel.id'] = array('not in',array(7,53,791,747,508));
-            $where['hotel.hotel_box_type'] = array('in',$hotel_box_type_str);
-            
-            $area_net_box_nums = $m_box->countNums($where);
-            $all_net_box_nums +=$area_net_box_nums;
-            $area_list[$key]['area_net_box_nums'] = $area_net_box_nums;
-            //广告到达率
-            $m_statistics_box_media_arrive = new \Admin\Model\Statisticses\BoxMediaArriveModel();
-            $where = array();
-            $where['area_id'] = $v['id'];
-            $where['media_id'] = array('neq','-10000');
-            $arrive_box_num = $m_statistics_box_media_arrive->getCount($where);
-            
-           
-            $jisuan_arrive_box_num +=$arrive_box_num; 
-            $jisuan_all_area_pub_box_num += $all_area_pub_box_num;
-            $ads_arrive_rate = sprintf("%1.2f",$arrive_box_num / $all_area_pub_box_num *100) ; 
-            
-            $all_ads_arrive_rate +=$ads_arrive_rate;
-            $area_list[$key]['ads_arrive_rate'] = $ads_arrive_rate;
-        }
-        //$counts = count($area_list);
-        //$all_ads_arrive_rate = sprintf("%1.2f",$all_ads_arrive_rate/$counts);
-        $all_ads_arrive_rate = sprintf("%1.2f",$jisuan_arrive_box_num/$jisuan_all_area_pub_box_num*100);
-          */
+         
         
         //酒楼明细
         $page = I('page',0,'intval') ? I('page',0,'intval') : 1;
@@ -194,8 +84,57 @@ class AdsMonitorController extends Controller {
         $order = 'pads.create_time asc';
         $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);
         
+        $m_box = new \Admin\Model\BoxModel();
+        $redis = SavorRedis::getInstance();
+        $time = time();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
         foreach($list as $key=>$v){
             $ads_list = array();
+            
+            //获取酒楼正常机顶盒列表
+            
+            $fields = 'b.id box_id,mac box_mac,b.name box_name';
+            $where = ' 1 and h.id='.$v['hotel_id'].' and h.state=1 and h.flag=0 and b.state=1 and b.flag=0';
+           
+            $box_list = $m_box->isHaveMac($fields, $where);
+            $diff = 0;
+            foreach($box_list as $kk=>$vv){
+                //获取机顶盒的心跳时间
+                $redis->select(13);
+                $heart_info = $redis->get('heartbeat:2:'.$vv['box_mac']);
+                $heart_info = json_decode($heart_info,true);
+                if(!empty($heart_info)){
+                    $d_time = strtotime($heart_info['date']);
+                    $diff += $time - $d_time;
+                    
+                }else {
+                    $heart_info = $m_heart_log->getInfo('last_heart_time', array('box_id'=>$v['box_id']));
+                    if(!empty($heart_info)){
+                        $d_time = strtotime($heart_info['last_heart_time']);
+                        $diff += $time - $d_time;
+                        
+                    }else {
+                        $diff += '2592000';
+                    }
+                
+                } 
+            }
+            $diff = floor($diff / count($box_list)); 
+            if($diff< 3600) {
+                $loss_time = floor($diff/60).'分';
+                 
+            }else if ($diff >= 3600 && $diff <= 86400) {
+                $hour = floor($diff/3600);
+                $min = floor($diff%3600/60);
+                $loss_time = $hour.'小时'.$min.'分';
+            }else if ($diff > 86400) {
+                $day = floor($diff/86400);
+                $hour = floor($diff%86400/3600);
+                $loss_time = $day.'天'.$hour.'小时';
+            }
+            
+            $list[$key]['loss_time'] = $loss_time;
+            
             foreach($pub_ads_list as $kk=>$vv){
                 
                 $where = array();

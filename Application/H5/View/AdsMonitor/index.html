@@ -222,6 +222,7 @@
 			<volist name="pub_ads_list" id="list">
 				<th >{$list.name}</th>
 			</volist>
+			<th>平均失联时间</th>
 			</tr>
 			<volist name="hotel_list" id="vlist">
 			<tr>
@@ -232,7 +233,7 @@
 				<volist name="vlist.ads_rate_list" id="dd">
 					<td>{$dd}</td>
 				</volist>
-				
+				<td>{$vlist.loss_time}</td>
 			</tr>
 			</volist>
 			
