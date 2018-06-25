@@ -3,6 +3,7 @@ namespace Admin\Controller;
 
 use Think\Controller;
 use Common\Lib\SavorRedis;
+use Behavior\AgentCheckBehavior;
 
 // use Common\Lib\SavorRedis;
 /**
@@ -3443,5 +3444,128 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'hhboxlist';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
-    
+    /**
+     * @desc 广告一个都没到的版位列表
+     * @since 2018-06-25
+     */
+    public function notArriveBox(){
+        $report_time = I('report_time');
+        
+        $m_box_media_arrive_ratio_hiistory = new \Admin\Model\Statisticses\BoxMediaArriveRatioHistroyModel();
+        $sql ="SELECT a.hotel_id,b.name hotel_name,c.mac_addr FROM statisticses.`statistics_box_media_arrive_ratio_histroy`  a
+               left join cloud.savor_hotel b on a.hotel_id=b.id
+               left join cloud.savor_hotel_ext c on b.id=c.hotel_id
+               where a.media_id=-10000 and a.arrive_ratio<1.00 and a.statistics_time='2018-06-25 00:00:00'
+               and a.hotel_id not in('7,53,791,747,508')
+               ORDER BY a.`media_id` ASC ";
+        $hotel_list = $m_box_media_arrive_ratio_hiistory->query($sql);
+        
+        //获取再投的广告列表
+        $m_pub_ads = new \Admin\Model\PubAdsModel();
+        $where = array();
+        $now_date = date('Y-m-d H:i:s');
+        $yesterday_end_time = date('Y-m-d 23:59:59',strtotime($report_time));
+        $yesterday_start_time = date('Y-m-d 00:00:00',strtotime($report_time));
+        
+        $where['pads.start_date'] = array('lt',$yesterday_end_time);
+        $where['pads.end_date']   = array('gt',$yesterday_start_time);
+        $where['pads.state']      = array('neq',2);
+        $where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
+        $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
+        $order = 'pads.create_time asc';
+        $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);        
+        //print_r($pub_ads_list);exit;
+        /* foreach($pub_ads_list as $key=>$v){
+            $media_str .=$space .$v['media_id'];
+            $space = ',';
+        }
+        */
+
+        $m_box_media_arrive = new \Admin\Model\Statisticses\BoxMediaArriveModel();
+        $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+        $m_pub_ads_box_history = new \Admin\Model\PubAdsBoxHistoryModel();
+        $redis = SavorRedis::getInstance();
+        $time = time();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
+        $m_box = new \Admin\Model\BoxModel();
+        
+        $result = array();
+        foreach($hotel_list as $keys=>$val){
+            //获取酒楼正常机顶盒列表
+            
+            $fields = 'b.id box_id,mac box_mac,b.name box_name';
+            $where = ' 1 and h.id='.$val['hotel_id'].' and h.state=1 and h.flag=0 and b.state=1 and b.flag=0'; 
+            $box_list = $m_box->isHaveMac($fields, $where);
+            
+            foreach($box_list as $key=>$v){
+                $down_count = 0;
+                $pub_count = 0;
+                foreach($pub_ads_list as $kk=>$vv){
+                    
+                    $where = array();
+                    $where['media_id'] = $vv['media_id'];
+                    $where['media_type'] = 'ads';
+                    $where['box_mac'] = $v['box_mac'];
+                    $where['report_date'] = array('ELT',$report_time.' 23:59:59') ;
+                    //print_r($where);exit;
+                    $nums = $m_box_media_arrive->getCount($where);
+                    if(!empty($nums)){//已下载
+                        $down_count ++;
+                        break;
+                    }else {
+                        $where = array();
+                        $where['pub_ads_id'] = $vv['pub_ads_id'];
+                        $where['box_id']     = $v['box_id'];
+                        
+                        $nums1 = $m_pub_ads_box->getDataCount($where);
+                        //$nums2 = $m_pub_ads_box_history->getDataCount($where);
+                        $nums = $nums1;
+                        
+                        if(empty($nums)){ //未发布
+                            
+                        }else {//发布未下载
+                            
+                            $pub_count ++;
+                        }
+                    }
+                }
+                
+                if($down_count>0) continue;
+                if($pub_count>0){
+                    $tmp['hotel_name'] = $val['hotel_name'];
+                    if($val['mac_addr']=='000000000000'){
+                        $tmp['small_mac_type'] = '虚拟';
+                    }else {
+                        $tmp['small_mac_type'] = '实体';
+                    }
+                    $tmp['box_name'] = $v['box_name'];
+                    //获取机顶盒的心跳时间
+                    $redis->select(13);
+                    $heart_info = $redis->get('heartbeat:2:'.$v['box_mac']);
+                    if($heart_info){
+                        $heart_info = json_decode($heart_info,true);
+                        $last_heart_time = date('Y-m-d H:i:s',strtotime($heart_info['date']));
+                    }else {
+                        $last_heart_time = '30天前';
+                    }
+                    
+                    $tmp['last_heart_time'] = $last_heart_time;
+                    $result[] = $tmp;
+                }
+   
+                   
+                
+            } //  $box_list 结束
+        }// $hotel_list 结束
+        $xlsCell = array(
+            array('hotel_name','酒楼名称'),
+            array('small_mac_type','小平台类型'),
+            array('hotel_box_type','机顶盒类型'),
+            array('box_name','盒子名称'),
+            array('last_heart_time','最后一次心跳时间')
+        );
+        $xlsName = '到达率为0的版位';
+        $filename = 'hhboxlist';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
 }
