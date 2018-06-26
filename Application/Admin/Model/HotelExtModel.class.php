@@ -28,6 +28,10 @@ class HotelExtModel extends BaseModel{
 		$redis->select(15);
 		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
 		$redis->set($cache_key, json_encode($data));
+		
+		$redis->select(12);
+		$cache_key = C('SMALL_HOTEL_INFO').$id;
+		$redis->remove($cache_key);
 	}
 
 

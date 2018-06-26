@@ -8,7 +8,7 @@ use Admin\Controller\BaseController;
 use Admin\Model\BoxModel;
 use Admin\Model\RoomModel;
 use Admin\Model\TvModel;
-use Common\Lib\SavorRedis;
+use Common\Lib\SavorRedis; 
 
 class DeviceController extends BaseController{
 

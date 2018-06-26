@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
+use Common\Lib\SavorRedis;
 /**
  * @desc 系统日志记录类
  *
@@ -89,6 +90,11 @@ class SysconfigController extends BaseController {
         }
         
         if($rts){
+            $sys_list = $m_sys_config->getList(array('status'=>1));
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = C('SYSTEM_CONFIG');
+            $redis->set($cache_key, json_encode($sys_list));
             $this->output('操作成功','sysconfig/configData');
         }else {
             $this->error('操作失败');
@@ -103,6 +109,11 @@ class SysconfigController extends BaseController {
         $map['status'] = $status;
         $rts = $m_sys_config->editData($map, 'system_switch_time');
         if($rts){
+            $sys_list = $m_sys_config->getList(array('status'=>1));
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = C('SYSTEM_CONFIG');
+            $redis->set($cache_key, json_encode($sys_list));
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
             $this->error('操作失败!');
@@ -124,6 +135,11 @@ class SysconfigController extends BaseController {
         $ret = $m_sys_config->updateInfo($data);
         
         if($ret){
+            $sys_list = $m_sys_config->getList(array('status'=>1));
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = C('SYSTEM_CONFIG');
+            $redis->set($cache_key, json_encode($sys_list));
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
             $this->error('操作失败3!');
@@ -164,6 +180,11 @@ class SysconfigController extends BaseController {
             $rt = $m_sys_config->editData($data, 'system_loading_image');
         }
         if($rt){
+            $sys_list = $m_sys_config->getList(array('status'=>1));
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = C('SYSTEM_CONFIG');
+            $redis->set($cache_key, json_encode($sys_list));
             $this->output('操作成功', 'Sysconfig/configData');
         }else {
             $this->error('操作失败');
@@ -175,6 +196,11 @@ class SysconfigController extends BaseController {
         $config_key = 'system_loading_image';
         $ret = $m_sys_config->editData($data, $config_key);
         if($ret){
+            $sys_list = $m_sys_config->getList(array('status'=>1));
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = C('SYSTEM_CONFIG');
+            $redis->set($cache_key, json_encode($sys_list));
             $this->output('删除成功', 'Sysconfig/configData',2);
         }else {
             $this->error('删除失败');
@@ -242,6 +268,11 @@ class SysconfigController extends BaseController {
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $ret = $m_sys_config->updateInfo($data);
         if($ret){
+            $sys_list = $m_sys_config->getList(array('status'=>1));
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = C('SYSTEM_CONFIG');
+            $redis->set($cache_key, json_encode($sys_list));
             $this->output('操作成功!', 'sysconfig/configData',2);
         }else {
             $this->error('操作失败3!');

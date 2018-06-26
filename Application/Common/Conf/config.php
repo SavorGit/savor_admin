@@ -372,6 +372,11 @@ $config['CONFIG_VOLUME'] = array(
 $config['PROGRAM_ADS_CACHE_PRE'] = 'program_ads_';
 $config['PROGRAM_PRO_CACHE_PRE'] = 'program_pro_';
 $config['PROGRAM_ADV_CACHE_PRE'] = 'program_adv_';
+$config['SMALL_ROOM_LIST']       = 'small_room_list_';
+$config['SMALL_HOTEL_INFO']      = 'small_hotel_info_';
+$config['SYSTEM_CONFIG']         = 'system_config';
+$config['SMALL_BOX_LIST']        = 'small_box_list_';
+$config['SMALL_TV_LIST']         = 'small_tv_list_';
 $config['SMALL_PROGRAM_LIST_KEY'] = 'small_program_list_';
 $config['UPD_STR'] = array(
     1=>array(
@@ -444,6 +449,7 @@ $config['HOTEL_STANDALONE_CONFIG'] = array(
     '15'=>'死机',
     '16'=>'其它',
 );
+$config['HEART_LOSS_HOURS'] = 48;
 return $config;
 
 

@@ -56,20 +56,24 @@ class RoomModel extends BaseModel
 	public function saveData($data, $id = 0) {
 		$redis  =  \Common\Lib\SavorRedis::getInstance();
 		$redis->select(15);
-		//�ж�key�Ƿ���û�еģ����������޸�
 		if($id){
-			//��ȡ����ʱ��
 			$bool = $this->where('id='.$id)->save($data);
 			$res = $this->find($id);
 			$data['create_time'] = $res['create_time'];
 			$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
 			$redis->set($cache_key, json_encode($data));
+			$redis->select(12);
+			$cache_key = C('SMALL_ROOM_LIST').$data['hotel_id'];
+			$redis->remove($cache_key);
 		}else{
 			$data['create_time'] = date('Y-m-d H:i:s');
 			$bool = $this->add($data);
 			$insert_id = $this->getLastInsID();
 			$cache_key = C('DB_PREFIX').$this->tableName.'_'.$insert_id;
 			$redis->set($cache_key, json_encode($data));
+			$redis->select(12);
+			$cache_key = C('SMALL_ROOM_LIST').$data['hotel_id'];
+			$redis->remove($cache_key);
 		}
 		return $bool;
 	}
