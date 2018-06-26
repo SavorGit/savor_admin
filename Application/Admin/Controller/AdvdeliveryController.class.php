@@ -11,6 +11,7 @@ namespace Admin\Controller;
  */
 use Admin\Controller\BaseController;
 use Common\Lib\Page;
+use Common\Lib\SavorRedis;
 
 class AdvdeliveryController extends BaseController {
 
@@ -1347,12 +1348,41 @@ class AdvdeliveryController extends BaseController {
         $this->display('showadver');
 
     }
-
-
-
-
-
-
+    /**
+     * @desc 删除广告 并且删除对应酒楼的广告缓存
+     */
+    public function deleteAds(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(12);
+        $cache_key_pre = C('PROGRAM_ADS_CACHE_PRE');
+        $pub_ads_id = I('get.id','0','intval');
+        $m_pub_ads = new \Admin\Model\PubAdsModel();
+        $where = array();
+        $where['id'] = $pub_ads_id;
+        $where['state'] = array('neq',2);
+        $field = 'id,type,state'; 
+        $infos = $m_pub_ads->getWhere($where, $field);
+        if(empty($infos)){
+            $this->error('该广告不存在');
+        }
+        $info = $infos[0];
+        if($info['state'] !=1){
+            $this->error('广告版位正在生成中，不能删除，请稍后删除');
+        }
+        $ret = $m_pub_ads->updateInfo(array('id'=>$pub_ads_id), array('state'=>2));
+        if($ret){
+            $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+            $box_list = $m_pub_ads_box->getBoxArrByPubAdsId($pub_ads_id);
+            foreach($box_list as $key=>$v){
+                $redis->remove($cache_key_pre.$v['box_id']);
+            }
+            $this->output('删除成功', 'advdelivery/getlist', 2);
+        }else {
+            $this->error('删除失败');
+        }
+        
+        
+    }
     public static  function array_group_by($arr, $key)
     {
         $grouped = [];
