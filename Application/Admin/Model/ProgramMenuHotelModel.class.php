@@ -58,5 +58,9 @@ smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel
 	         ->select();
 	    return $data;
 	}
+	public function countWhere($where,$group){
+	    $nums = $this->where($where)->group($group)->count();
+	    return $nums;
+	}
 
 }//End Class

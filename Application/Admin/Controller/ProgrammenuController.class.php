@@ -288,6 +288,13 @@ class ProgrammenuController extends BaseController {
         $this->assign('area', $area_arr);
 
         $menu_id = I('menuid');
+        $prHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $nums = $prHoModel->countWhere(array('menu_id'=>$menu_id));
+        if($nums>0){
+            $this->error('该节目单已选择了酒楼，不能重复选择');
+        }
+        
+        
         $menu_name = I('menuname');
         $hotelModel = new HotelModel;
         $areaModel  = new AreaModel;
@@ -379,7 +386,7 @@ class ProgrammenuController extends BaseController {
         }
         $where .= " and hotel_box_type in (2,3,6) and state=1 and flag=0 ";
 
-        $prHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        
         $pafield = 'DISTINCT smh.menu_id id,
 smlist.menu_name';
         $men_arr = $prHoModel->getPrvMenu($pafield, $pawhere);
