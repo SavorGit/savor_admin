@@ -16,9 +16,17 @@
               <td>
               	<select name="hotel_id" id="hotel_id" style="width:20%;">
               		<option>请选择酒楼</option>
-              		<volist name="hotel_list" id="vlist">
-              			<option value="{$vlist.hotel_id}">{$vlist.hotel_name}</option>
-              		</volist>
+              		<php>
+		  				foreach($hotel_list as $key=>$v){
+		  			</php>
+		  			
+		  				<option value="" disabled="disabled">{$key}</option>
+		  				<php> foreach($v as $vv){</php>
+		  				<option value="{$vv[hotel_id]}">{$vv[hotel_name]}</option>
+		  				<php>}</php>
+		  			<php>
+		  				}
+		  			</php>
               	</select>
               	<select name="room_id" id="room_id" style="width:20%;">
               		<option>请选择包间</option>

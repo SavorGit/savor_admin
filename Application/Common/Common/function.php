@@ -751,6 +751,12 @@ function getFirstCharter($str){
     $s2=iconv('gb2312','UTF-8',$s1);
     $s=$s2==$str?$s1:$str;
     $asc=ord($s{0})*256+ord($s{1})-65536;
+    if($asc =='-9004') return 'M';
+    if($asc =='-6993' || $asc=='-5734') return 'L';
+    if($asc =='-7431' || $asc=='-5714') return 'Y';
+    if($asc =='-5711') return 'X';
+    if($asc =='-2072') return 'Q';
+    if($asc =='-4189') return 'Z';
     if($asc>=-20319&&$asc<=-20284) return 'A';
     if($asc>=-20283&&$asc<=-19776) return 'B';
     if($asc>=-19775&&$asc<=-19219) return 'C';
@@ -853,5 +859,26 @@ function secsToStr($secs) {
     $r.=$secs.' 秒';
     
     return $r;
+}
+/**
+ * 中文截取
+ * @param str $str		需要截取的文字
+ * @param int $len		截取长度
+ * @param str $encoding	编码
+ * @param bool$CUT_LEFT	是否从左侧开始截取
+ */
+function cut_str($str,$len,$CUT_LEFT='3',$encoding='UTF-8'){
+    if(mb_strlen($str,$encoding)>$len){
+        if($CUT_LEFT==1){
+            return '…'.mb_substr($str,-$len,$len,$encoding);
+        }else if($CUT_LEFT ==2){
+            return mb_substr($str,0,$len,$encoding).'…';
+        }else if($CUT_LEFT ==3){
+            return mb_substr($str,0,$len,$encoding);
+        }
+
+    }else{
+        return $str;
+    }
 }
 ?>

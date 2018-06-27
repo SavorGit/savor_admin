@@ -24,7 +24,12 @@ class BoxshellController extends BaseController{
         $where['state'] = 1;
         $where['hotel_box_type'] = array('in',"$hotel_box_type_str");
         $hotel_list = $m_hotel->getInfo($fields,$where);
-        $this->assign('hotel_list',$hotel_list);
+        foreach($hotel_list as $key=>$v){
+            $firstCharter = getFirstCharter(cut_str($v['hotel_name'], 1));
+            $hotel_arr[$firstCharter][] = $v;
+        }
+        ksort($hotel_arr);
+        $this->assign('hotel_list',$hotel_arr);
         $this->display('index');
     }
     /**
@@ -150,7 +155,13 @@ class BoxshellController extends BaseController{
         $where['state'] = 1;
         $where['hotel_box_type'] = array('in',"$hotel_box_type_str");
         $hotel_list = $m_hotel->getInfo($fields,$where);
-        $this->assign('hotel_list',$hotel_list);
+        foreach($hotel_list as $key=>$v){
+            
+            $firstCharter = getFirstCharter(cut_str($v['hotel_name'], 1));
+            $hotel_arr[$firstCharter][] = $v;
+        }
+        ksort($hotel_arr);
+        $this->assign('hotel_list',$hotel_arr);
         $this->display('apkindex');
     }
     /**
