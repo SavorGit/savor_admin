@@ -31,12 +31,12 @@ class AndroidUnicast extends AndroidNotification {
 			// Set extra fields
 			$this->setExtraField($pam['extra']);
 
-			print("Sending unicast notification, please wait...\r\n");
+			//print("Sending unicast notification, please wait...\r\n");
 
 			$this->send();
-			print("Sent SUCCESS\r\n");
+			//print("Sent SUCCESS\r\n");
 		} catch (\Exception $e) {
-			print("Caught exception: " . $e->getMessage());
+			//print("Caught exception: " . $e->getMessage());
 		}
 	}
 

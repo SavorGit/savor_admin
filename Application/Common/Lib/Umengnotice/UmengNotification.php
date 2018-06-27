@@ -80,7 +80,7 @@ abstract class UmengNotification {
 	}
 
 	private function checkArrayValues($arr) {
-		var_dump($arr);
+		//var_dump($arr);
 
 		foreach ($arr as $key => $value) {
 			if (is_null($value))
@@ -102,9 +102,9 @@ abstract class UmengNotification {
         $url = $this->host . $this->postPath;
         $postBody = json_encode($this->data);
         $sign = md5("POST" . $url . $postBody . $this->appMasterSecret);
-		var_dump($url);
+		/* var_dump($url);
 		var_dump($this->data);
-		var_dump($sign);
+		var_dump($sign); */
 
         $url = $url . "?sign=" . $sign;
   		$ch = curl_init($url);
@@ -119,13 +119,13 @@ abstract class UmengNotification {
         $curlErrNo = curl_errno($ch);
         $curlErr = curl_error($ch);
         curl_close($ch);
-        print($result . "\r\n");
+        //print($result . "\r\n");
         if ($httpCode == "0") {
           	 // Time out
-           	throw new Exception("Curl error number:" . $curlErrNo . " , Curl error details:" . $curlErr . "\r\n");
+           	//throw new Exception("Curl error number:" . $curlErrNo . " , Curl error details:" . $curlErr . "\r\n");
         } else if ($httpCode != "200") {
            	// We did send the notifition out and got a non-200 response
-           	throw new Exception("Http code:" . $httpCode .  " details:" . $result . "\r\n");
+           	//throw new Exception("Http code:" . $httpCode .  " details:" . $result . "\r\n");
         } else {
            	return $result;
         }

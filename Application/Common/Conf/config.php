@@ -273,6 +273,12 @@ $config['UMENBAI_API_CONFIG'] = array(
         'ios_appkey'=>'59b1260a734be41803000022',
         'ios_master_secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
     ),
+    'boxclient'=>array(
+        'android_appkey'=>'58576b54677baa3b41000809',
+        'android_master_secret'=>'v6fr959wpmczeayq34utymxcm7fizufu',
+        //'ios_appkey'=>'59b1260a734be41803000022',
+        //'ios_master_secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
+    ),
 );
 //推送通知的后续行为必填值
 $config['AFTER_APP'] = array(

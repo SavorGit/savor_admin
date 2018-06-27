@@ -65,6 +65,7 @@ $config_db =  array(
     'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
 	'OSS_HOST_NEW'=> 'devp.oss.littlehotspot.com',
 	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
+    'UMENG_PRODUCTION_MODE'=>'false',
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
     'SEND_MAIL_CONF'=>array(

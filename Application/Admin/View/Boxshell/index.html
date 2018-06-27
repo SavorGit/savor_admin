@@ -1,0 +1,139 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<script src="/Public/admin/assets/js/timepicki.js" type="text/javascript" />
+<link href="/Public/admin/assets/css/timepicki.css" rel="stylesheet" type="text/css" />
+
+
+
+<style type="text/css">
+    .zhezhao{
+
+
+
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+ <!-- <div class="pageHeader">
+ <div class="tools-group hidden-xs ">常用shell命令:
+ </div> -->
+ 
+</div> 
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print" style="overflow:hidden;">
+    <div class="no-more-tables" style="margin-top:20px;">
+      <form method="post" action="{$host_name}/Boxshell/pushData" id="configrcp" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            
+          	<th colspan="3">推送机顶盒shell命令</th>
+            <tr id="post"> 
+              <td>shell命令：
+              <textarea style="width:80%;" placeholder="多条命令请用换行" name="shell_command" rows="3" cols="20"></textarea>
+              
+              </td>
+              <td>
+              	<select name="hotel_id" id="hotel_id" style="width:20%;">
+              		<option>请选择酒楼</option>
+              		<volist name="hotel_list" id="vlist">
+              			<option value="{$vlist.hotel_id}">{$vlist.hotel_name}</option>
+              		</volist>
+              	</select>
+              	<select name="room_id" id="room_id" style="width:20%;">
+              		<option>请选择包间</option>
+              	</select>
+              	<select name="box_id" id="box_id" style="width:20%;">
+              		<option>请选择机顶盒</option>
+              	</select>
+              </td>
+              <td>
+            	 <button class="btn btn-primary" type="submit">推送</button>     
+		      </td>  
+            </tr>
+            
+            <tr style="text-align:center;">
+            	<td colspan="3">常用shell命令：
+            		<span>ls /data/media<br></span>
+            	    <span style="margin-left:105px;">ls /data/media<br></span>
+            	    <span style="margin-left:105px;">ls /data/media<br></span>
+            	    <span style="margin-left:105px;">ls /data/media<br></span>
+            	    <span style="margin-left:105px;">ls /data/media<br></span>	
+            	</td>
+            </tr>
+          </thead>   
+          </tbody>
+        </table> 
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+$(function(){
+	$('#hotel_id').change(function(){
+		hotel_id = $(this).val();
+		 $.ajax({
+             type: "POST",
+             url: "/Boxshell/getRoomList",
+             data: "hotel_id="+hotel_id,
+             dataType: "json",
+             success: function(data){
+            	 var li = '';
+            	 $('#room_id').html('<option>请选择包间<optin>');
+            	 if(data.length>0){
+            		 for(var i=0;i<data.length;i++) {
+                		 li += '<option value="'+data[i]['room_id']+'">'+data[i]['room_name']+'</option>';
+                	 }
+                	 /* $.each(data, function (index, array) { //遍历json数据列
+                         li += '<option value="'+array['room_id']+'">'+array['room_name']+'</option>';
+                     }); */
+                     $('#room_id').append(li);
+            	 }
+            	 
+             }
+          });
+	});
+	
+	$('#room_id').change(function(){
+		room_id = $(this).val();
+		 $.ajax({
+             type: "POST",
+             url: "/Boxshell/getBoxList",
+             data: "room_id="+room_id,
+             dataType: "json",
+             success: function(data){
+            	 var li = '';
+            	 $('#box_id').html('<option>请选择机顶盒<optin>');
+            	 if(data.length>0){
+            		 for(var i=0;i<data.length;i++) {
+                		 li += '<option value="'+data[i]['box_id']+'">'+data[i]['box_name']+'('+data[i]['mac']+')</option>';
+                	 }
+                     $('#box_id').append(li);
+            	 }
+            	 
+             }
+          });
+	});
+});
+
+</script>

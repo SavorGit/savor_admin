@@ -26,19 +26,21 @@ class AndroidListcast extends AndroidNotification {
 			$this->setPredefinedKeyValue("title",            $pam['title']);
 			$this->setPredefinedKeyValue("text",             $pam['text']);
 			$this->setPredefinedKeyValue("after_open",       $pam['after_open']);
+			$this->setPredefinedKeyValue("custom",           $pam['custom']);
 			// Set 'production_mode' to 'false' if it's a test device.
 			// For how to register a test device, please see the developer doc.
 			$this->setPredefinedKeyValue("production_mode", $pam['production_mode']);
+			$this->setPredefinedKeyValue("display_type", $pam['display_type']);
 
 			// Set extra fields
 			$this->setExtraField($pam['extra']);
 
-			print("Sending unicast notification, please wait...\r\n");
+			//print("Sending unicast notification, please wait...\r\n");
 
 			$this->send();
-			print("Sent SUCCESS\r\n");
+			//print("Sent SUCCESS\r\n");
 		} catch (\Exception $e) {
-			print("Caught exception: " . $e->getMessage());
+			//print("Caught exception: " . $e->getMessage());
 		}
 	}
 

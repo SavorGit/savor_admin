@@ -1,0 +1,153 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<script src="/Public/admin/assets/js/timepicki.js" type="text/javascript" />
+<link href="/Public/admin/assets/css/timepicki.css" rel="stylesheet" type="text/css" />
+
+
+
+<style type="text/css">
+    .zhezhao{
+
+
+
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+ <!-- <div class="pageHeader">
+ <div class="tools-group hidden-xs ">常用shell命令:
+ </div> -->
+ 
+</div> 
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print" style="overflow:hidden;">
+    <div class="no-more-tables" style="margin-top:20px;">
+      <form method="post" action="{$host_name}/Boxshell/pushApkData"  class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            
+          	<th colspan="3">推送机顶盒apk升级</th>
+            <tr id="post"> 
+              <td>
+              	apk升级 <input type="radio" checked="checked" name="type" value="4" />
+              </td>
+              <td>
+              	<select name="hotel_id" id="shell_hotel_id" style="width:20%;">
+              		<option>请选择酒楼</option>
+              		<volist name="hotel_list" id="vlist">
+              			<option value="{$vlist.hotel_id}">{$vlist.hotel_name}</option>
+              		</volist>
+              	</select>
+              	<select name="room_id" id="shell_room_id" style="width:20%;">
+              		<option>请选择包间</option>
+              	</select>
+              	<select name="box_id" id="shell_box_id" style="width:20%;">
+              		<option>请选择机顶盒</option>
+              	</select>
+              	<select  name="apk_version" id="shell_apk_version" style="width:20%"   >
+              		
+              	</select>
+              </td>
+              <td>
+            	 <button class="btn btn-primary" type="submit">推送</button>     
+		      </td>  
+            </tr>
+            
+            
+          </thead>   
+          </tbody>
+        </table> 
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+$(function(){
+	$('#shell_hotel_id').change(function(){
+		shell_hotel_id = $(this).val();
+		 $.ajax({
+             type: "POST",
+             url: "/Boxshell/getRoomList",
+             data: "hotel_id="+shell_hotel_id,
+             dataType: "json",
+             success: function(data){
+            	 var li = '';
+            	 $('#shell_room_id').html('<option>请选择包间<optin>');
+            	 if(data.length>0){
+            		 for(var i=0;i<data.length;i++) {
+                		 li += '<option value="'+data[i]['room_id']+'">'+data[i]['room_name']+'</option>';
+                	 }
+                	 /* $.each(data, function (index, array) { //遍历json数据列
+                         li += '<option value="'+array['room_id']+'">'+array['room_name']+'</option>';
+                     }); */
+                     $('#shell_room_id').append(li);
+            	 }
+            	 
+             }
+          });
+	});
+	
+	$('#shell_room_id').change(function(){
+		shell_room_id = $(this).val();
+		 $.ajax({
+             type: "POST",
+             url: "/Boxshell/getBoxList",
+             data: "room_id="+shell_room_id,
+             dataType: "json",
+             success: function(data){
+            	 var li = '';
+            	 $('#shell_box_id').html('<option>请选择机顶盒<optin>');
+            	 if(data.length>0){
+            		 for(var i=0;i<data.length;i++) {
+                		 li += '<option value="'+data[i]['box_id']+'">'+data[i]['box_name']+'('+data[i]['mac']+')</option>';
+                	 }
+                     $('#shell_box_id').append(li);
+            	 }
+            	 
+             }
+          });
+	});
+	$('#shell_box_id').change(function(){
+		shell_hotel_id = $('#shell_hotel_id').val();
+		$.ajax({
+			type: "POST",
+            url: "/Boxshell/getBoxApkVersion",
+            data: "hotel_id="+shell_hotel_id,
+            dataType: "json",
+			success:function(data){
+				var li = '';
+				$('#shell_apk_version').html('');
+				if(data.version_name){
+					li = '<option selected="selected">'+data.version_name+'</option>';
+                    $('#shell_apk_version').append(li);
+				}else {
+					li = '<option selected="selected">没有找到更新的apk版本</option>';
+                    $('#shell_apk_version').append(li);
+				}	
+			}
+		});
+	});
+});
+
+</script>
