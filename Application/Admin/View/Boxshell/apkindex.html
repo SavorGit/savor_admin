@@ -1,44 +1,5 @@
-<!--修改样式2 p元素自适应宽度 start-->
-<script src="/Public/admin/assets/js/timepicki.js" type="text/javascript" />
-<link href="/Public/admin/assets/css/timepicki.css" rel="stylesheet" type="text/css" />
-
-
-
-<style type="text/css">
-    .zhezhao{
-
-
-
-        display: none;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        background-color: black;
-        opacity: 0.7;
-        text-align: center;
-        z-index: 99;
-    }
-    .big{
-        display: none;
-    }
-    .addbig{
-        position: absolute;
-        width: 300px;
-        height: 200px;
-        top: 100px;
-        left: 26%;
-        z-index: 100;
-    }
-</style>
 <include file="Public/script"/>
-<!--显示列表样式1 start-->
- <!-- <div class="pageHeader">
- <div class="tools-group hidden-xs ">常用shell命令:
- </div> -->
- 
-</div> 
+
 <div class="pageContent" id="pagecontent">
   <div id="w_list_print" style="overflow:hidden;">
     <div class="no-more-tables" style="margin-top:20px;">
@@ -67,6 +28,9 @@
               	<select  name="apk_version" id="shell_apk_version" style="width:20%"   >
               		
               	</select>
+              </td>
+              <td>
+              	密码:<input placeholder="请输入密码" type="password" name="password" /> 
               </td>
               <td>
             	 <button class="btn btn-primary" type="submit">推送</button>     

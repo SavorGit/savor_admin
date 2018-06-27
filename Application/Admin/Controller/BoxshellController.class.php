@@ -6,8 +6,10 @@
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
 class BoxshellController extends BaseController{
+    var $password ;
     public function __construct(){
         parent::__construct();
+        $this->password = '3c886a5e9cdb3b747f9e33507c62b62b';
     }
     /**
      * @desc 首页
@@ -32,6 +34,22 @@ class BoxshellController extends BaseController{
         $hotel_id = I('hotel_id', 0,'intval');
         $room_id  = I('room_id', 0,'intval');
         $box_id   = I('box_id', 0,'intval');
+        $password = I('password');
+        if(empty($hotel_id)){
+            $this->error('请选择一家酒楼');
+        }
+        if(empty($room_id)){
+            $this->error('请选择一个包间');
+        }
+        if(empty($box_id)){
+            $this->error('请选择一个机顶盒');
+        }
+        if(empty($password)){
+            $this->error('请输入密码');
+        }
+        if(md5($password)!==$this->password){
+            $this->error('密码输入错误');
+        }
         $shell_command = I('shell_command');
         $shell_command_arr = explode("\n", $shell_command);
         foreach($shell_command_arr as $key=>$v){
@@ -40,6 +58,9 @@ class BoxshellController extends BaseController{
             }else {
                 $shell_command_arr[$key] = str_replace("\r", '', $v);
             }
+        }
+        if(empty($shell_command_arr)){
+            $this->error('请输入shell命令');
         }
         $m_box =  new \Admin\Model\BoxModel();
         $field = "b.id,b.device_token";
@@ -152,7 +173,21 @@ class BoxshellController extends BaseController{
         $hotel_id = I('hotel_id', 0,'intval');
         $room_id  = I('room_id', 0,'intval');
         $box_id   = I('box_id', 0,'intval');
+        $password = I('password');
         
+        
+        if(empty($hotel_id)){
+            $this->error('请选择一家酒楼');
+        }
+        if(empty($room_id)){
+            $this->error('请选择一个包间');
+        }
+        if(empty($box_id)){
+            $this->error('请选择一个机顶盒');
+        }
+        if(md5($password) != $this->password){
+            $this->error('密码输入错误');
+        }
         $m_box =  new \Admin\Model\BoxModel();
         $field = "b.id,b.device_token";
         $where = " b.id=$box_id and r.id=$room_id and h.id=$hotel_id";
