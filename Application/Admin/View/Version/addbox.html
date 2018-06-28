@@ -130,21 +130,21 @@
       <div class="modal-body">
         <div style="margin: 20px;">
         	<span>城市</span>
-        	<select name="area_v" style="margin-left: 15px;width: 70px;">
+        	<select id="up_area_v" name="area_v" style="margin-left: 15px;width: 70px;">
                 <option value=0 >所有城市</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" >{$vo.region_name}</option><br>
                 </volist>
         	</select>
         	<span style="margin-left: 15px;">级别</span>
-        	<select name="level_v" style="margin-left: 10px;width: 70px;">
+        	<select id="up_level_v" name="level_v" style="margin-left: 10px;width: 70px;">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_LEVEL')" id="vo">
                   <option value="{$key}" <if condition="$key eq $level_k">selected</if>>{$vo}</option><br>
                 </volist>
         	</select>
         	<span style="margin-left: 15px;">状态</span>
-        	<select name="state_v" style="margin-left: 10px;width: 70px;">
+        	<select id="up_state_v" name="state_v" style="margin-left: 10px;width: 70px;">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_STATE')" id="vo">
                   <option value="{$key}" <if condition="$key eq $state_k">selected</if>>{$vo}</option><br>
@@ -155,7 +155,7 @@
 
 
         	<span style="margin-left: 15px;">重点</span>
-        	<select name="key_v" style="margin-left: 10px;width: 70px;">
+        	<select id="up_key_v" name="key_v" style="margin-left: 10px;width: 70px;">
                 <option value=0 >全部</option>
                 <volist name=":C('HOTEL_KEY')" id="vo">
                   <option value="{$key}" <if condition="$key eq key_k">selected</if>>{$vo}</option><br>
@@ -163,16 +163,16 @@
         	</select><br /><br />
 
 			<span style="">酒楼机顶盒类型</span>
-			<select name="hbt_v" style="margin-left: 10px;width: 120px;">
+			<select id="up_hbt_v" name="hbt_v" style="margin-left: 10px;width: 120px;">
 				<option value=0 >全部</option>
 				<volist name=":C('hotel_box_type')" id="vo">
 					<option value="{$key}" <if condition="$key eq $hbt_k">selected</if>>{$vo}</option><br>
 				</volist>
 			</select>
 
-        	<span style="margin-top: 10px;">维护人</span>
-        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/><br/><br/>
-        	<input type="text" name="names" style="width: 153px;"placeholder="输入酒楼名称查找" style="margin-left: 30px;"/>
+        	<!-- <span style="margin-top: 10px;">维护人</span>
+        	<input type="text" name="main_v" style="width: 153px;" placeholder="输入维护人名查找" style="margin-left: 30px;"/><br/> <br/>-->
+        	<input id="up_hotel_name" type="text" name="names" style="width: 153px;"placeholder="输入酒楼名称查找" style="margin-left: 30px;"/>
         	<button type="button" id="searchs" class="btn btn-primary" style="margin-left: 15px;height: 26px;line-height: 14px;">查询</button>
         	<div style="margin-top: 10px;">
         		<input type="radio" id="checkquan"name="one" class="one" /><span>全选</span><input type="radio"name="one" class="one" id="checkfan" style="margin-left: 10px;"/><span>反选</span><br />
@@ -197,13 +197,13 @@
 $(document).ready(function() {
 	var obj = {};
 	var url_s = '{$host_name}'+'/hotel/manager_list';
-	var area_v = $('select[name="area_v"]').val();
-	var level_v = $('select[name="level_v"]').val();
-	var state_v = $('select[name="state_v"]').val();
-	var key_v = $('select[name="key_v"]').val();
-	var main_v = $('input[name="main_v"]').val();
-	var hbt_v = $('select[name="hbt_v"]').val();
-	var names = $('input[name="names"]').val();
+	var area_v = $('#up_area_v').val();
+	var level_v = $('#up_level_v').val();
+	var state_v = $('#up_state_v').val();
+	var key_v = $('#up_key_v').val();
+	var main_v = $('#up_main_v').val();
+	var hbt_v = $('#up_hbt_v').val();
+	var names = $('#up_names').val();
 	$("#area_id").val(area_v);
 	obj.area_v = area_v;
 	obj.level_v = level_v;
@@ -260,13 +260,13 @@ $('#checkfan').click(function(){
 	$('#searchs').click(function(){
 		var obj = {};
 		var url_s = '{$host_name}'+'/hotel/manager_list';
-		var area_v = $('select[name="area_v"]').val();
-		var level_v = $('select[name="level_v"]').val();
-		var state_v = $('select[name="state_v"]').val();
-		var key_v = $('select[name="key_v"]').val();
-		var main_v = $('input[name="main_v"]').val();
-		var hbt_v = $('select[name="hbt_v"]').val();
-		var names = $('input[name="names"]').val();
+		var area_v = $('#up_area_v').val();
+		var level_v = $('#up_level_v').val();
+		var state_v = $('#up_state_v').val();
+		var key_v = $('#up_key_v').val();
+		var main_v = $('#up_main_v').val();
+		var hbt_v = $('#up_hbt_v').val();
+		var names = $('#up_hotel_name').val();
 		$("#area_id").val(area_v);
 		obj.area_v = area_v;
 		obj.level_v = level_v;
