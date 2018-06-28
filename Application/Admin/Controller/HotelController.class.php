@@ -26,45 +26,45 @@ class HotelController extends BaseController {
 		$menlistModel = new \Admin\Model\MenuListModel();
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
-		//城市
-		$area_arr = $areaModel->getAllArea();
 
-		$this->assign('area', $area_arr);
-
-		/*//合作维护人
-		$per_arr = $hotelModel->distinct(true)->field('area_id')->select();
-		$per_ho_arr = $areaModel->areaIdToAareName($per_arr);
-		$this->assign('per_ho', $per_ho_arr);*/
 		$ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
 		$size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
-		$order = I('_order','update_time');
+		$order = I('_order','a.id');
 		$this->assign('_order',$order);
 		$sort = I('_sort','desc');
 		$this->assign('_sort',$sort);
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
 
-
-		$where = "1=1";
-		$name = I('name');
-		$search_name = addslashes($name);
+		//城市
+		$area_arr = $areaModel->getAllArea();
+		$this->assign('area', $area_arr);
 		
-		$beg_time = I('starttime','');
-		$end_time = I('endtime','');
-		if($beg_time)   $where.=" AND install_date>='$beg_time'";
-		if($end_time)   $where.=" AND install_date<='$end_time'";
+		$where = "1=1";
+		$beg_time = I('starttime','');   //安装开始时间
+		$end_time = I('endtime','');     //安装结束时间
+		if($beg_time){
+		    $where.=" AND a.install_date>='$beg_time'";
+		    $this->assign('beg_time',$beg_time);
+		}
+		if($end_time){
+		    $where.=" AND a.install_date<='$end_time'";
+		    $this->assign('end_time',$end_time);
+		}
+		$name = I('name');
 		if($name){
+		    $search_name = addslashes($name);
 			$this->assign('name',$name);
-			$where .= "	AND name LIKE '%{$search_name}%'";
+			$where .= "	AND a.name LIKE '%{$search_name}%'";
 		}
 		//机顶盒类型
 		$hbt_v = I('hbt_v');
 		if ($hbt_v) {
 			$this->assign('hbt_k',$hbt_v);
-			$where .= "	AND hotel_box_type = $hbt_v";
+			$where .= "	AND a.hotel_box_type = $hbt_v";
 		}
 		//城市
 		$userinfo = session('sysUserInfo');
@@ -78,12 +78,11 @@ class HotelController extends BaseController {
 		}else {
 		   
 		    $this->assign('is_city_search',$is_city_search);
-			$where .= "	AND area_id in ($pcity)";
+			$where .= "	AND a.area_id in ($pcity)";
 			$pawhere = '1=1 and area_id = '.$pcity;
 		}
 		//包含酒楼
-		$pafield = 'DISTINCT smh.menu_id id,
-smlist.menu_name';
+		$pafield = 'DISTINCT smh.menu_id id,smlist.menu_name';
 		$men_arr = $menuHoModel->getPrvMenu($pafield, $pawhere);
 		//获取包含有该地区酒楼
 		$this->assign('include', $men_arr);
@@ -92,35 +91,40 @@ smlist.menu_name';
 		if ($area_v) {
 			$this->assign('area_k',$area_v);
 			if(!empty($area_v) ){
-			
-				$where .= "	AND area_id = $area_v";
+				$where .= "	AND a.area_id = $area_v";
 			}
 		}
 		//级别
 		$level_v = I('level_v');
 		if ($level_v) {
 			$this->assign('level_k',$level_v);
-			$where .= "	AND level = $level_v";
+			$where .= "	AND a.level = $level_v";
 		}
 		//状态
 		$state_v = I('state_v');
 		if ($state_v) {
 			$this->assign('state_k',$state_v);
-			$where .= "	AND state = $state_v";
+			$where .= "	AND a.state = $state_v";
 		}
 
 		//重点
 		$key_v = I('key_v');
 		if ($key_v) {
 			$this->assign('key_k',$key_v);
-			$where .= "	AND iskey = $key_v";
+			$where .= "	AND a.iskey = $key_v";
 		}
 		//合作维护人
-		$main_v = I('main_v');
+		$maintainer_id = I('maintainer_id',0,'intval');
+		if($maintainer_id){
+		    $where .=" and ext.maintainer_id=$maintainer_id";
+		    //echo $where;exit;
+		    $this->assign('maintainer_id',$maintainer_id);
+		}
+		/* $main_v = I('main_v');
 		if ($main_v) {
 			$this->assign('main_k',$main_v);
 			$where .= "	AND maintainer LIKE '%{$main_v}%'";
-		}
+		} */
 		//广告机选项
 		$select_ad_mache = I('adv_machine');
 		$this->assign('se_ad_machince',$select_ad_mache);
@@ -141,9 +145,9 @@ smlist.menu_name';
 			$bak_ho_arr = array_unique($bak_ho_arr);
 			$bak_ho_str = implode(',', $bak_ho_arr);
 			if($bak_ho_str){
-				$where .= "	AND id  in ($bak_ho_str)";
+				$where .= "	AND a.id  in ($bak_ho_str)";
 			}else{
-				$where .= "	AND id  in ('')";
+				$where .= "	AND a.id  in ('')";
 			}
 			$this->assign('include_k',$include_v);
 		} else {
@@ -161,7 +165,7 @@ smlist.menu_name';
 				$bak_ho_arr_p = array_unique($bak_ho_arr_p);
 				$bak_ho_str = implode(',', $bak_ho_arr_p);
 				if($bak_ho_str){
-					$where .= "	AND id not in ($bak_ho_str)";
+					$where .= "	AND a.id not in ($bak_ho_str)";
 				}
 			}
 		}
@@ -183,7 +187,7 @@ smlist.menu_name';
 				$se_ad_hid_arr = array_unique($se_ad_hid_arr);
 				$se_ad_hid_arr = array_filter($se_ad_hid_arr);
 				$se_ad_machine_str = implode(',', $se_ad_hid_arr);
-				$where .= "	AND id in ($se_ad_machine_str) ";
+				$where .= "	AND a.id in ($se_ad_machine_str) ";
 			}
 
 		}
@@ -199,7 +203,7 @@ smlist.menu_name';
 		    echo json_encode($res_hotel);
 		    exit;
 		}else{
-			//获取所有发布运维者
+			//获取所有合作维护人
 			$m_opuser_role = new \Admin\Model\OpuserroleModel();
 			$fields = 'a.user_id uid,user.remark ';
 			$map = array();
@@ -207,15 +211,25 @@ smlist.menu_name';
 			$map['role_id']   = 1;
 			$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
 			$u_arr = array();
+			$hezuo_arr = array();
 			foreach($user_info as $uv) {
 				$u_arr[$uv['uid']] = trim($uv['remark']);
 			}
-
-		    $result = $hotelModel->getList($where,$orders,$start,$size);
+			foreach($u_arr as $key=>$v){
+			    $firstCharter = getFirstCharter(cut_str($v, 1));
+			    $tmp['uid'] = $key;
+			    $tmp['remark'] = $v;
+			    $hezuo_arr[$firstCharter][] = $tmp;
+			}
+			ksort($hezuo_arr);
+			$this->assign('hezuo_arr',$hezuo_arr);
+            $fields = "a.id,a.name,a.addr,a.contractor,a.mobile,a.state,ext.maintainer_id,area.region_name";
+			$result = $hotelModel->getListExt($where, $orders,$start,$size, $fields);
+		    //$result = $hotelModel->getList($where,$orders,$start,$size);
 		}
-
-		$datalist = $areaModel->areaIdToAareName($result['list']);
-
+        
+		$datalist = $result['list'];
+		//$datalist = $areaModel->areaIdToAareName($result['list']);
 		foreach ($datalist as $k=>$v){
 
 			$conditon = array();
@@ -225,9 +239,10 @@ smlist.menu_name';
 			$datalist[$k]['box_num'] = $nums['box_num'];
 			$datalist[$k]['tv_num'] = $nums['tv_num'];
 			$hotel_id = $datalist[$k]['id'];
-			$main_info = $hotelExt->where('hotel_id='.$hotel_id)->find();
-			if($main_info['maintainer_id']) {
-				$datalist[$k]['maintainer'] = $u_arr[$main_info['maintainer_id']];
+			
+			//$main_info = $hotelExt->where('hotel_id='.$hotel_id)->find();
+			if($v['maintainer_id']) {
+				$datalist[$k]['maintainer'] = $u_arr[$v['maintainer_id']];
 			} else {
 				$datalist[$k]['maintainer'] = '无';
 			}

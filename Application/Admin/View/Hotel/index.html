@@ -23,7 +23,7 @@
 	          <div class="form-group"  >
 	            <div class="input-group-sm input-group">
 	              <label class="col-xs-1 col-sm-1 control-label">
-	                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
+	                                           城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
 	              </label>
 	
 	                <span class="input-group-btn input-group-sm">
@@ -72,9 +72,23 @@
               <label class="control-label" style="">
                 合作维护人：
               </label>
-                <span class="input-group-btn input-group-sm">
-                <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人" style="width:95px;">
-            </span>
+              <span class="input-group-btn input-group-sm">
+                  <!-- <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人" style="width:95px;"> -->
+                  <select name="maintainer_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+		  			<option>请选择账号</option>
+		  			<php>
+		  				foreach($hezuo_arr as $key=>$v){
+		  			</php>
+		  			
+		  				<option value="" disabled="disabled">{$key}</option>
+		  				<php> foreach($v as $kk=>$vv){</php>
+		  				<option <if condition="$vv.uid eq $maintainer_id">selected</if> value="{$vv.uid}">{$vv.remark}</option>
+		  				<php>}</php>
+		  			<php>
+		  				}
+		  			</php>
+		  		</select>
+              </span>
             </div>
           </div>
 		</div>
@@ -112,7 +126,7 @@
         </div>
 
         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}">
-          <input style="margin-left: 6px;" name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.log_time}" readonly>
+          <input style="margin-left: 6px;" name="starttime" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$beg_time}" readonly>
                   <span class="input-group-btn">
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -121,7 +135,7 @@
 
         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.log_time}" style="width:135px;">
 
-          <input style="width:73px;padding:0px;margin:0px;margin-left: 15px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.log_time}" readonly>
+          <input style="width:125px;padding:0px;margin:0px;margin-left: 15px;"  name="endtime" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}" readonly>
                   <span class="input-group-btn" style="padding:0px;margin:0px;" >
                     <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -213,6 +227,7 @@
             </th> -->
             <th>ID</th>
             <th>酒店名称</th>
+            <th>城市</th>
             <th>地址</th>
             <th>联系人</th>
             <th>联系电话</th>
@@ -222,8 +237,8 @@
             <th>包间数量</th>
             <th>机顶盒数量</th>
             <th>电视数量</th>
-            <th>节目单</th>
-            <th>新节目单</th>
+            <th>单机版节目单</th>
+            <th>网络版节目单</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -235,6 +250,7 @@
               </td> -->
               <td data-title="酒店ID">{$vlist.id}</td>
               <td data-title="酒店名称">{$vlist.name}</td>
+              <td data-title="城市">{$vlist.region_name}</td>
               <td data-title="地址">{$vlist.addr}</td>
               <td data-title="联系人">{$vlist.contractor}</td>
               <td data-title="联系电话">{$vlist.mobile}</td>
