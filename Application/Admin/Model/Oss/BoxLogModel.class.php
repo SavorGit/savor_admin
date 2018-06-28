@@ -26,5 +26,9 @@ class BoxLogModel extends Model
 		$data = array('list'=>$list,'page'=>$show);
         return $data;
 	}
+	public function getInfo($fields,$where, $order='id desc'){
+	    $list = $this->field($fields)->where($where)->order($order)->select();
+	    return $list;
+	}
 	
 }
