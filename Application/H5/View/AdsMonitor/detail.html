@@ -35,7 +35,7 @@
 		 color: #333333; /*连接默认的颜色变化*/
 		}
 		.tab a:visited {
-		 color: #DCDCDC; /*连接访问的颜色变化*/
+		 color: #333333; /*连接访问的颜色变化*/
 		}
 		.tab a:hover {
 		 color: #000000; /*鼠标经过的颜色变化*/
@@ -143,6 +143,7 @@
 				<th >{$list.name}</th>
 			</volist>
 			<th>最后心跳时间</th>
+			<th>心跳-日志统计</th>
 			</tr>
 			<volist name="box_list" id="vlist">
 			<tr>
@@ -164,6 +165,7 @@
 					
 				</volist>
 				<td>{$vlist.heart_time}</td>
+				<td><a target="_blank" href="/h5/AdsMonitor/heartLogGraph?box_mac={$vlist.box_mac}">查看</a></td>
 			</tr>
 			</volist>
 			

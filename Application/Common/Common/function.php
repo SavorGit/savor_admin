@@ -881,4 +881,14 @@ function cut_str($str,$len,$CUT_LEFT='3',$encoding='UTF-8'){
         return $str;
     }
 }
+function iconv_arr($data){
+    if(is_array($data)){
+        foreach($data as $k=>$v){
+            $data[$k] = iconv_arr($v);
+        }
+    }else{
+        $data = mb_convert_encoding($data, "html-entities","utf8" );
+    }
+    return $data;
+}
 ?>

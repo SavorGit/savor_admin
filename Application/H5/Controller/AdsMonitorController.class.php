@@ -8,7 +8,8 @@
 namespace H5\Controller;
 use Common\Lib\SavorRedis;
 use Think\Controller;
-
+use Common\Lib\PHPlot\PHPlot;
+use Common\Lib\PHPlot\PHPlot_truecolor; 
 class AdsMonitorController extends Controller {
     
     /**
@@ -371,5 +372,65 @@ class AdsMonitorController extends Controller {
         $this->assign('pub_ads_list',$pub_ads_list);
         $this->assign('box_list',$box_list);
         $this->display('detail');
+    }
+    /**
+     * @desc 心跳以及日志文件统计图表
+     * 
+     */
+    public function heartLogGraph(){
+        $box_mac = I('box_mac');
+        //echo "fdafasd";exit;
+        $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
+        $m_oss_box_log_detail = new \Admin\Model\Oss\BoxLogDetailModel();
+        $result = array();
+        for($i=14;$i>0;$i--){
+           $tmp = array();
+           $date_time_str =  strtotime("-$i days");
+           //$heart_start_time = date('Y-m-d 00:00:00',$date_time_str);
+           //$heart_end_time   = date('Y-m-d 23:59:59', $date_time_str);
+           $log_date = date('Ymd',$date_time_str);
+           //心跳统计
+           $sum_str = '';
+           for($j=0;$j<24;$j++){
+               $sum_str .= $space ."sum(hour$j)";
+               $space    = '+';
+           }
+           $sql = "select $sum_str as nums from savor_heart_all_log where mac='".$box_mac."'
+                   and type=2 and date='".$log_date."'";
+           $ret = $m_heart_all_log->query($sql);
+           
+           //日志统计
+           $rets = $m_oss_box_log_detail->where(array('box_mac'=>$box_mac,'log_create_date'=>$log_date))->count();
+           $tmp = array($log_date,intval($ret[0]['nums']),intval($rets));
+           $result[] = $tmp;
+           
+        }
+        $p = new PHPlot(1500, 800);
+        
+        $p->SetDefaultTTFont('/Public/admin/assets/Fonts/simhei.ttf'); //设置字体，还是支持中文的吧
+        $p->SetTitle(iconv_arr('机顶盒心跳-日志统计')); //设置标题，还是用iconv_arr来解决中文
+        
+        # Select the data array representation and store the data:
+        $p->SetDataType('text-data'); //设置使用的数据类型，在这个里面可以使用多种类型。
+        $p->SetDataValues($result); //把一个数组$data赋给类的一个变量$this->data_values.要开始作图之前调用。
+        $p->SetPlotType('linepoints'); //选择图表类型为线性.可以是bars,lines,linepoints,area,points,pie等。
+        
+        $p->SetPlotAreaWorld(0, 0, 14, 200);  //设置图表边距
+        
+        # Select an overall image background color and another color under the plot:
+        $p->SetBackgroundColor('#ffffcc'); //设置整个图象的背景颜色。
+        $p->SetDrawPlotAreaBackground(True); //设置节点区域的背景
+        $p->SetPlotBgColor('#ffffff'); //设置使用SetPlotAreaPixels()函数设定的区域的颜色。
+        $p->SetLineWidth(3);  //线条宽度
+        # Draw lines on all 4 sides of the plot:
+        $p->SetPlotBorderType('full');  //设置线条类型
+        
+        # Set a 3 line legend, and position it in the upper left corner:
+        $p->SetLegend(iconv_arr(array('心跳总数', '日志总数'))); //显示在一个图列框中的说明
+        $p->SetLegendWorld(0.1, 180); //设定这个文本框位置
+        
+        # Generate and output the graph now:
+        $dd = $p->DrawGraph();
+        
     }
 }
