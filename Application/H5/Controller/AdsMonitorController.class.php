@@ -81,7 +81,7 @@ class AdsMonitorController extends Controller {
         $where['pads.end_date']   = array('gt',$yesterday_start_time);
         $where['pads.state']      = array('neq',2);
         //$where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
-        $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
+        $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name,med.oss_addr';
         $order = 'pads.create_time asc';
         $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);
         
@@ -282,7 +282,7 @@ class AdsMonitorController extends Controller {
         $where['pads.end_date']   = array('gt',$yesterday_start_time);
         $where['pads.state']      = array('neq',2);
         $where['pads.id']         = array('not in','115,116,117,118,119,120,121,122');
-        $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name';
+        $fields = 'pads.id as pub_ads_id,med.id as media_id ,ads.name,med.oss_addr';
         $order = 'pads.create_time asc';
         $pub_ads_list = $m_pub_ads->getPubAdsList($fields, $where,$order);
         
@@ -342,7 +342,7 @@ class AdsMonitorController extends Controller {
                     $last_heart_time = $day.'天'.$hour.'小时';
                 }
             }else {
-                $heart_info = $m_heart_log->getInfo('last_heart_time', array('box_id'=>$v['box_id']));
+                $heart_info = $m_heart_log->getInfo('last_heart_time,apk_version as apk', array('box_id'=>$v['box_id']));
                 if(!empty($heart_info)){
                     $d_time = strtotime($heart_info['last_heart_time']);
                     $diff = $time - $d_time;
@@ -364,7 +364,7 @@ class AdsMonitorController extends Controller {
                 
             }
             
-            
+            $box_list[$key]['apk']        = $heart_info['apk'];
             $box_list[$key]['heart_time'] = $last_heart_time.'前';
             
         }

@@ -220,7 +220,7 @@
 			<th>小平台类型</th>
 			<th>到达总计</th>
 			<volist name="pub_ads_list" id="list">
-				<th >{$list.name}</th>
+				<th >{$list.name}<php>$urls = 'http://'. C('OSS_HOST_NEW').'/'.$list[oss_addr]; echo '('. remote_filesize($urls).')';</php></th>
 			</volist>
 			<th>平均失联时间</th>
 			</tr>

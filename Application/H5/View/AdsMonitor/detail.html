@@ -140,9 +140,10 @@
 			
 			
 			<volist name="pub_ads_list" id="list">
-				<th >{$list.name}</th>
+				<th >{$list.name}<php>$urls = 'http://'. C('OSS_HOST_NEW').'/'.$list[oss_addr]; echo '('. remote_filesize($urls).')';</php></th>
 			</volist>
 			<th>最后心跳时间</th>
+			<th>机顶盒apk版本</th>
 			<th>心跳-日志统计</th>
 			</tr>
 			<volist name="box_list" id="vlist">
@@ -165,6 +166,7 @@
 					
 				</volist>
 				<td>{$vlist.heart_time}</td>
+				<td>{$vlist.apk}</td>
 				<td><a target="_blank" href="/h5/AdsMonitor/heartLogGraph?box_mac={$vlist.box_mac}">查看</a></td>
 			</tr>
 			</volist>
