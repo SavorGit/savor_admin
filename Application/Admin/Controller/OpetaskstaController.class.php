@@ -205,6 +205,7 @@ class OpetaskstaController extends BaseController {
                                 $repa = array();
                                 $repa['state'] = 1;
                                 $repa['flag'] = 0;
+                                $repa['type'] = 2;
                                 $repa['create_time'] = array(array("GT", $st_time),array("ELT", $en_time));
                                 if($exe_user_id > 0) {
                                     $repa['userid'] = $exe_user_id;
@@ -282,7 +283,7 @@ class OpetaskstaController extends BaseController {
         }
         
         //版位维修任务统计
-        if(!empty($exe_user_id)){
+        /* if(!empty($exe_user_id)){
             
             $sql ="select count(id) as num from savor_repair_box_user where create_time>='".$st_time."'
                    and create_time<='".$en_time."' and type=2 and userid=$exe_user_id and flag=0 group by hotel_id";
@@ -296,7 +297,7 @@ class OpetaskstaController extends BaseController {
             $all_finish_hotel = $result['list'][3]['finish_hotel'] + $re_hotel_nums ;
             $all_finish_box   = $result['list'][3]['finish_box']   + $re_box_nums;
             $result['list'][3]['finish']  = '酒楼'.$all_finish_hotel.'个,版位'.$all_finish_box.'个';  
-        }
+        } */
         
         
         //维修任务平均时长
