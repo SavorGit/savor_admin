@@ -34,7 +34,7 @@ class SdkerrorController extends BaseController {
         $where['hotel.flag']  = 0;
         $where['box.state']   = 1;
         $where['box.flag']    = 0;   
-        $data = $m_sdk_error->getList($fields, $where, $order, $start, $size);
+        $data = $m_sdk_error->getList($fields, $where, $orders, $start, $size);
         $this->assign('list',$data['list']);
         $this->assign('page',$data['page']);
         $this->display('index');
