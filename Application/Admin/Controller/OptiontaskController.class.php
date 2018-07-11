@@ -191,7 +191,7 @@ class OptiontaskController extends BaseController {
 	/**
 	 * @desc 任务列表
 	 */
-	public function index(){
+	public function index_back(){
 	    
 	    $size   = I('numPerPage',50);//显示每页记录数
 		$this->assign('numPerPage',$size);
@@ -327,8 +327,12 @@ class OptiontaskController extends BaseController {
 	}
 	public function delete(){
 	    $id = I('get.id');
-	    $m_option_task = new \Admin\Model\OptiontaskoldModel();
+	    $m_option_task = new \Admin\Model\OptiontaskModel();
+	    //$m_option_task = new \Admin\Model\OptiontaskoldModel();
 	    $data['flag'] = 1;
+	    if(empty($id)){
+	        $this->error('请选择一个任务');
+	    }
 	    $ret = $m_option_task->where('id='.$id)->save($data);
 	    if($ret){
 	        $this->output('删除成功', 'optiontask/index', 2);
@@ -389,5 +393,39 @@ class OptiontaskController extends BaseController {
 	    $this->assign('task_person_arr',$this->task_person_arr);
 	    $this->display('historytask');
 	}
-	
+	//操作任务（删除）
+	public function handle(){
+	    $state_arr = array('1'=>'待指派','2'=>'已指派','4'=>'已完成','5'=>'已拒绝');
+	    $task_type_arr = C('OPTION_USER_SKILL_ARR'); 
+	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
+	    $size   = I('numPerPage',50);//显示每页记录数
+	    $this->assign('numPerPage',$size);
+	    $start = I('pageNum',1);
+	    $this->assign('pageNum',$start);
+	    $order = I('_order','a.id');
+	    $this->assign('_order',$order);
+	    $sort = I('_sort','desc');
+	    $this->assign('_sort',$sort);
+	    $orders = $order.' '.$sort;
+	    $start  = ( $start-1 ) * $size;
+	    
+	    $create_time = I('create_time');
+	    if($create_time){
+	        $where = array();
+	        $where['a.flag'] = 0;
+	        $where['a.create_time'] = $create_time;
+	        $m_option_task = new \Admin\Model\OptiontaskModel();
+	        $fields =  'a.id,h.name hotel_name,a.task_type,a.tv_nums,
+	                    a.hotel_address,area.region_name,a.hotel_linkman,
+	                    a.hotel_linkman_tel,a.state,puser.remark pubname,apuser.remark apname,exeuser.remark exename';
+	        $list = $m_option_task->getListInfos($fields,$where,$orders,$start,$size);
+	        
+	        $this->assign('create_time',$create_time);
+	        $this->assign('page',$list['page']);
+	        $this->assign('list',$list['list']);
+	    }
+	    $this->assign('task_state_arr',$state_arr);
+	    $this->assign('task_type_arr',$task_type_arr);
+	    $this->display('handel');
+	}
 }
