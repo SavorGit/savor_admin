@@ -67,10 +67,10 @@ class AdsMonitorController extends Controller {
         if($hotel_name){
             $where['hotel.name'] = array('like',"%$hotel_name%");
         }
-        $where['statistics_time'] = $arrive_date.' 00:00:00';
+        $where['statistics_time'] = array(array('EGT',$arrive_date.' 00:00:00'),array('ELT',$arrive_date.' 23:59:59'));
         
         $list = $m_box_media_arrive_ratio_history->getList($fields, $where, $order, $start, $pageSize);
-        
+
         $total_nums = $m_box_media_arrive_ratio_history->getCount($where);
         //获取再投的广告列表
         $m_pub_ads = new \Admin\Model\PubAdsModel();
@@ -143,7 +143,7 @@ class AdsMonitorController extends Controller {
                 $where['hotel_id'] = $v['hotel_id'];
                 $where['media_type'] = 'ads';
                 
-                $where['statistics_time'] = $arrive_date.' 00:00:00';
+                $where['statistics_time'] = array(array('EGT',$arrive_date.' 00:00:00'),array('ELT',$arrive_date.' 23:59:59'));
                 
                 $tmp = $m_box_media_arrive_ratio_history->getOne('arrive_ratio',$where);
                 if(!empty($tmp)){
