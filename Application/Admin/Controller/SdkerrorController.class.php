@@ -25,6 +25,10 @@ class SdkerrorController extends BaseController {
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
         
+        
+        $hotel_name = I('hotel_name');
+        
+        
         $m_sdk_error = new \Admin\Model\SdkErrorModel(); 
         
         $fields = "a.id,hotel.name hotel_name,hotel.addr,room.name room_name,
@@ -33,8 +37,12 @@ class SdkerrorController extends BaseController {
         $where['hotel.state'] = 1;
         $where['hotel.flag']  = 0;
         $where['box.state']   = 1;
-        $where['box.flag']    = 0;   
+        $where['box.flag']    = 0;  
+        if($hotel_name){
+            $where['hotel.name'] = array('like',"%$hotel_name%");
+        } 
         $data = $m_sdk_error->getList($fields, $where, $orders, $start, $size);
+        $this->assign('hotel_name',$hotel_name);
         $this->assign('list',$data['list']);
         $this->assign('page',$data['page']);
         $this->display('index');
