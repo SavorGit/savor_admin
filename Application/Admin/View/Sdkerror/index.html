@@ -11,12 +11,24 @@
       <div class="clearfix">
         
        
-
          
 		
           <div class="form-inline" style="margin-top:10px;">
-          
-
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                                         酒楼名称：
+              </label>
+                <span class="input-group-btn input-group-sm">
+                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称" >
+            </span>
+            </div>
+          </div>
+		 <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="sdkers"><i class="fa fa-search"></i></button>
+            </span>
+		</div>
            
             <div class="input-group input-group-sm pull-right">
               <a  class="btn btn-success btn-sm add"  title="一键删除无效数据"  target="ajaxTodo" href="{$host_name}/Sdkerror/deldata" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a>
