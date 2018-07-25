@@ -118,6 +118,19 @@
         </div>
       </div>
       
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          是否支持小程序投屏:
+        </label>
+
+        <div class="col-xs-12 col-sm-10">
+          <select name="is_sapp_forscreen" class="form-control bs-select">
+            
+              <option value="0" <if condition="  $vinfo.is_sapp_forscreen eq 0 "> selected </if> >否</option>
+              <option value="1" <if condition="  $vinfo.is_sapp_forscreen eq 1 "> selected </if> >是</option>
+          </select>
+        </div>
+      </div>
             
     </div>
 

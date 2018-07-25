@@ -275,6 +275,7 @@ class DeviceController extends BaseController{
 		$save['tag']         = I('post.tag','','trim');
 		$save['room_id']     = I('post.room_id','','intval');
 		$save['adv_mach']    = I('post.adv_machine',0,'intval');
+		$save['is_sapp_forscreen'] = I('post.is_sapp_forscreen',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		
 		if($tpmedia_id_arr){
