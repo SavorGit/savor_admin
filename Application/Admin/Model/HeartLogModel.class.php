@@ -61,12 +61,14 @@ class HeartLogModel extends BaseModel
 
 		$list = $this->alias('shlog')
 			->join(' savor_hotel sht on sht.id = shlog.hotel_id', 'LEFT')
+			->join('savor_hotel_ext ext on sht.id=ext.hotel_id','left')
+			->join('savor_sysuser user on ext.maintainer_id= user.id','left')
 			->field('shlog.area_name,shlog.area_id,shlog.type,
 			shlog.last_heart_time,shlog.box_id,shlog.box_mac,shlog.room_id,
 			shlog.room_name,shlog.hotel_id,shlog.hotel_ip,shlog.small_ip,
 			shlog.ads_period,shlog.demand_period,shlog.apk_version,
 			shlog.war_version,shlog.logo_period,shlog.hotel_name,
-			sht.maintainer,sht.hotel_box_type,shlog.pro_period,shlog.adv_period,
+			user.remark maintainer,sht.hotel_box_type,shlog.pro_period,shlog.adv_period,
 			shlog.pro_download_period,shlog.ads_download_period,shlog.net_speed'
 	              )
 			->where($where)
