@@ -23,7 +23,9 @@ class BaiduPolyPlayRecordModel extends Model
             	     ->order($order)
             	     ->limit($start,$size)
             	     ->select();
-	    $count = $this->alias('a')->where($where)->count();
+	    $count = $this->alias('a')
+	                  ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+	                  ->where($where)->count();
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();
 	    $data = array('list'=>$list,'page'=>$show);
@@ -55,8 +57,9 @@ class BaiduPolyPlayRecordModel extends Model
 	    $sql ="update savor_baidu_poly_play_record set ".$sql_d." where ".$where;
 	    return $this->execute($sql);
 	}
-	public function countPlayNums(){
-	    $sql = "select sum(play_times) as count from savor_baidu_poly_play_record";
+	public function countPlayNums($where){
+	    $sql = "select sum(play_times) as count from savor_baidu_poly_play_record a 
+	            left join savor_hotel hotel on a.hotel_id=hotel.id where".$where;
 	    $ret = $this->query($sql);
 	    return $ret[0]['count'];
 	}

@@ -24,16 +24,25 @@ class BaidupolyController extends BaseController{
 	     $orders = $order.' '.$sort;
 	     $start  = ( $start-1 ) * $size;
 	     $where = array();
+	     $maps = ' 1 ';
 	     $hotel_name = I('hotel_name','','trim');
-	     /* if($hotel_name){
+	     if($hotel_name){
 	         $where['hotel.name'] = array('like',"%$hotel_name%");
+	         $maps .= " and hotel.name like '".$hotel_name."'";
 	         $this->assign('hotel_name',$hotel_name); 
 	     }
 	     $box_mac    = I('box_mac','','trim');
 	     if($box_mac){
 	         $where['a.box_mac'] = $box_mac;
+	         $maps .= " and a.box_mac='".$box_mac."'";
 	         $this->assign('box_mac',$box_mac);
-	     } */
+	     }
+	     $play_date = I('play_date');
+	     if($play_date){
+	         $where['a.play_date'] = str_replace('-', '', $play_date);
+	         $maps .=" and a.play_date =".str_replace('-', '', $play_date);
+	         $this->assign('play_date',$play_date);
+	     }
 	     
 	     $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
 	     
@@ -42,8 +51,9 @@ class BaidupolyController extends BaseController{
 	     
 	     $list = $m_baidu_poly_play_record->getList($fields,$where,$orders,$start,$size);
 	     
-	     $count =  $m_baidu_poly_play_record->countPlayNums();
-	     $this->assign('all_play_nums',$count);
+	     
+	     $count =  $m_baidu_poly_play_record->countPlayNums($maps);
+	     $this->assign('all_play_nums',intval($count));
 	     $this->assign('list',$list['list']);
 	     $this->assign('page',$list['page']);
 	     $this->display('Report/baidupoly');

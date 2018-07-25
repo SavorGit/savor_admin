@@ -11,6 +11,13 @@
       <div class="clearfix">
 
          <div class="form-inline" style="margin-top:10px;">
+         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$play_date}">
+          		<input id="play_date" style="margin-left: 6px;" name="play_date" type="text" size="16" class="form-control date" placeholder="播放日期" value="{$play_date}" readonly>
+                <span class="input-group-btn">
+                  <button id="poly_data_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 </div>
          	<div class="form-group">
           <div class="input-group input-group-sm">
             
@@ -21,7 +28,7 @@
          
            <div class="form-group" >
              <div class="input-group input-group-sm pull-right">
-               <input type="text" class="form-control" name="box_name" value="{$box_mac}" placeholder="机顶盒mac">
+               <input type="text" class="form-control" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
            <span class="input-group-btn">
              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
            </span>
@@ -80,33 +87,19 @@
   {$page}
 </div>
 <script type="text/javascript">
+
+  $('#poly_data_reset').click(function(){
+    $(this).parent().prev().val('')
+  });
   $(function(){
-    $('select').css({ "cssText": "display:none !important" });
-  })
-  $("#exportheartlistlog").click(function(){
+    
 
-    var typ = $('select[name="baotype"]').val();
-    var height = $('#high').val();
-    if(typ == 0){
-      alert('报表类型必填');
-      return false;
-    }
-    if(height==9999){
-       //最高权限
-        var arv = $('select[name="he_area_bv"]').val();
-        if(arv == 0){
-          alert('城市必填');
-          return false;
-        }
-    } else {
-      var arv = height;
-    }
-
-    var hre = $("#xiaohref").val();
-    var mav = $('input[name="he_main_v"]').val();
-    var hbv = $('select[name="he_hbt_v"]').val();
-    var nav = $('input[name="he_name"]').val();
-    var hrp = hre+"?type="+typ+"&main_v="+mav+"&area_v="+arv+"&hbt_v="+hbv+"&name="+nav;
-    $(this).attr("href",hrp);
+    $("#play_date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
   })
 </script>
