@@ -2577,9 +2577,9 @@ class ExcelController extends Controller
         
         $model = D();
         foreach($list as $key=>$val){
-            $repair_str = '';
-            $space = '';
-            $data = $model->query('select b.mac box_mac, a.box_id,b.name box_name,fault_desc from
+            $repair_str = $rep_str =  '';
+            $space = $space_p = '';
+            $data = $model->query('select b.mac box_mac, a.box_id,b.name box_name,fault_desc,remark from
                                    savor_option_task_repair a left join savor_box b
                                    on a.box_id = b.id where a.task_id='.$val['id']);
             if(!empty($data)){
@@ -2587,6 +2587,10 @@ class ExcelController extends Controller
                     $repair_str .= $space .'机顶盒mac：'.$v['box_mac'].' 机顶盒id:'.$v['box_id'].' 机顶盒名称:'.$v['box_name'];
                     $repair_str .=' 故障说明:'.$v['fault_desc'];
                     $space = ',';
+                    
+                    $rep_str .= $space_p .'机顶盒mac：'.$v['box_mac'].' 机顶盒id:'.$v['box_id'].' 机顶盒名称:'.$v['box_name'];
+                    $rep_str .=' 解决备注:'.$v['remark'];
+                    $space_p = ',';
                 }
             }
             switch ($val['task_area']){
@@ -2645,6 +2649,7 @@ class ExcelController extends Controller
         
             }
             $list[$key]['repair_info'] = $repair_str;
+            $list[$key]['rep_info']    = $rep_str;
         }
         //print_r($list);exit;
         $xlsCell = array(
@@ -2663,6 +2668,7 @@ class ExcelController extends Controller
         
             array('state', '任务状态'),
             array('repair_info', '维修记录'),
+            array('rep_info','解决办法')
         
         );
         $xlsName = '运维任务列表';
