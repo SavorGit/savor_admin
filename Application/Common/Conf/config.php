@@ -384,6 +384,7 @@ $config['SYSTEM_CONFIG']         = 'system_config';
 $config['SMALL_BOX_LIST']        = 'small_box_list_';
 $config['SMALL_TV_LIST']         = 'small_tv_list_';
 $config['SMALL_PROGRAM_LIST_KEY'] = 'small_program_list_';
+$config['SAPP_SCRREN']           = 'smallapp:forscreen';
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',
