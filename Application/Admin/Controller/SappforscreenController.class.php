@@ -31,6 +31,8 @@ class SappforscreenController extends BaseController {
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
 	    $where = array();
+	    $where['box.flag'] = 0;
+	    
 	    
 	    $hotel_name = I('hotel_name','','trim');
 	    if($hotel_name){
@@ -57,7 +59,7 @@ class SappforscreenController extends BaseController {
 	    
 	    
 	    
-	    $fields = 'hotel.name hotel_name,room.name room_name,a.*';
+	    $fields = 'area.region_name,hotel.name hotel_name,room.name room_name,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 	    
