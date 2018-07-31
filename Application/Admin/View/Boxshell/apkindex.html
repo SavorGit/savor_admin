@@ -102,10 +102,11 @@ $(function(){
 	});
 	$('#shell_box_id').change(function(){
 		shell_hotel_id = $('#shell_hotel_id').val();
+		shell_box_id         = $('#shell_box_id').val();
 		$.ajax({
 			type: "POST",
             url: "/Boxshell/getBoxApkVersion",
-            data: "hotel_id="+shell_hotel_id,
+            data: "hotel_id="+shell_hotel_id+"&box_id="+shell_box_id,
             dataType: "json",
 			success:function(data){
 				var li = '';

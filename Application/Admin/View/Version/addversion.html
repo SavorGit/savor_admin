@@ -13,7 +13,7 @@
 		              </label>
 		              <div class="col-xs-12 col-sm-10">
 		                <volist name=":C('DEVICE_TYPE')" id="vo">
-		                 <if condition="$key lt 4">
+		                 <if condition="$key lt 4 || $key gt 20">
 		                  <input name="devicetype" type="radio" id="{$key}" value="{$key}" <if condition="$key eq 1">checked</if>/>&nbsp;
 		                  <if condition="$key eq 3">客户端<else/>{$vo}</if>
 		                  &nbsp;&nbsp;

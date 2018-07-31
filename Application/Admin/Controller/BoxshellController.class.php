@@ -106,7 +106,7 @@ class BoxshellController extends BaseController{
         $push_type['push_type']= 3;
         $m_push_log = new \Admin\Model\PushLogModel();
         $m_push_log->addInfo($push_data);
-        $this->output('推送成功', 'boxshell/apkindex', 2);
+        $this->output('推送成功', 'boxshell/index', 2);
     }
     
     
@@ -169,13 +169,24 @@ class BoxshellController extends BaseController{
      */
     public function getBoxApkVersion(){
         $hotel_id = I('hotel_id',0,'intval');
-        
-        $m_upgrade = new \Admin\Model\UpgradeModel();
-        
-        $field = 'sdv.version_code version_name';
-        $device_type = 2;
-        $data = $m_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
-        echo json_encode($data);
+        $box_id   = I('box_id',0,'intval');
+        $m_box = new \Admin\Model\BoxModel();
+        $box_info = $m_box->field('adv_mach')->where('id='.$box_id)->find();
+        if(empty($box_info['adv_mach'])){//非广告机
+            $m_upgrade = new \Admin\Model\UpgradeModel();
+            
+            $field = 'sdv.version_code version_name';
+            $device_type = 2;
+            $data = $m_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
+            echo json_encode($data);
+        }else {
+            $m_device_version = new \Admin\Model\VersionModel();
+            $data = $m_device_version->field('version_code version_name')->where('device_type=21')->order('id desc')->find();
+            if(empty($data)){
+                $data = array();
+            }
+            echo json_encode($data);
+        }   
     }
     /**
      * @desc 推送apk升级数据到机顶盒
@@ -200,7 +211,7 @@ class BoxshellController extends BaseController{
             $this->error('密码输入错误');
         }
         $m_box =  new \Admin\Model\BoxModel();
-        $field = "b.id,b.device_token";
+        $field = "b.id,b.device_token,b.adv_mach";
         $where = " b.id=$box_id and r.id=$room_id and h.id=$hotel_id";
         
         $box_info =  $m_box->isHaveMac($field, $where);
@@ -211,14 +222,22 @@ class BoxshellController extends BaseController{
         if(empty($box_info['device_token'])){
             $this->error('该机顶盒的device_token为空,不可以发shell推送');
         }
-        //获取当前机顶盒的最新apk
-        $m_upgrade = new \Admin\Model\UpgradeModel();
-        
-        $field = 'sdv.oss_addr,md5';
-        $device_type = 2;
-        $data = $m_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
+        if(empty($box_info['adv_mach'])){//非广告机
+            //获取当前机顶盒的最新apk
+            $m_upgrade = new \Admin\Model\UpgradeModel();
+            
+            $field = 'sdv.oss_addr,md5';
+            $device_type = 2;
+            $data = $m_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
+            
+        }else {//广告机
+            $m_device_version = new \Admin\Model\DeviceSqlModel();
+            $data = $m_device_version->field('oss_addr,md5')->where('device_type=21')->order('id desc')->find();
+            
+        }
         $apk_url = 'http://'.C('OSS_HOST_NEW').'/'.$data['oss_addr'];
         $apk_md5 = $data['md5'];
+        
         
         $display_type = 'notification';
         $option_name = 'boxclient';

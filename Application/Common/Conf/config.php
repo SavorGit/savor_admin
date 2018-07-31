@@ -53,6 +53,7 @@ $config['DEVICE_TYPE'] = array(
     '8'=>'运维端_ios',
     '9'=>'运维-单机版_android',
     '10'=>'运维-单机版_ios',
+    '21'=>'广告机',
 );
 $config['UPDATE_TYPE'] = array(
     '0'=>'手动更新',
