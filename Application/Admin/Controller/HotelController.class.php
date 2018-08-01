@@ -1203,21 +1203,24 @@ class HotelController extends BaseController {
 		}
 		//递增广告机
 		$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', $h_adv_num);
+		
 		if($bool){
+		    $is_room = $is_box = $is_tv = 0;
 			foreach ($room_bai as $k=>$v) {
 				if($v['room_id']){
 					$rinfo = $RoomModel->find($v['room_id']);
 					$RoomModel->saveBatdat($rinfo, $v['room_id']);
+					$is_room = 1;
 				}
 				if($v['box_id']){
 					$bo_info = $boxModel->find($v['box_id']);
 					$boxModel->saveBatdat($bo_info, $v['box_id']);
-
+                    $is_box = 1;
 				}
 				if($v['tv_id']){
 					$tv_info = $tvModel->find($v['tv_id']);
 					$tvModel->saveBatdat($tv_info, $v['tv_id']);
-
+                    $is_tv = 1;
 				}
 			}
 			if($mac_mes){
@@ -1232,6 +1235,21 @@ class HotelController extends BaseController {
 				$sps = '添加成功了';
 
 			}
+			$redis = SavorRedis::getInstance();
+			$redis->select(12);
+			if(!empty($is_room)){
+			    $cache_key = C('SMALL_ROOM_LIST').$hotelid;
+			    $redis->remove($cache_key);
+			}
+			if(!empty($is_box)){
+			    $cache_key = C('SMALL_BOX_LIST').$hotelid;
+			    $redis->remove($cache_key);
+			}
+			if(!empty($is_tv)){
+			    $cache_key = C('SMALL_TV_LIST').$hotelid;
+			    $redis->remove($cache_key);
+			}
+			
 			$this->output($sps,'hotel/manager');
 		}else{
 			$this->error('失败请重新操作');
