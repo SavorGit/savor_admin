@@ -472,7 +472,11 @@ class officialController extends Controller {
 	public function adsReachCount(){
 	    $m_program_ads = new \Admin\Model\PubAdsModel();
 	    $fields = 'med.id,ads.name,pads.start_date,pads.id pub_ads_id';
-	    $now_date =  date('Y-m-d H:i:s');
+	    $now_date =  date('Y-m-d H:i:s',strtotime('-1 day'));
+	    $sort_day = date('j'); //本月第几天 没有前导0
+	    $all_days = date('t'); //本月一共多少天
+	    
+	    
 	    $where = array();
 	    $where['pads.start_date'] = array('elt',$now_date);
 	    $where['pads.end_date']   = array('egt',$now_date);
@@ -494,14 +498,27 @@ class officialController extends Controller {
 	        //$pub_ads_count = $m_program_ads->query($sql);
 	        
 	        //echo $m_pub_ads_box->getLastSql();exit;
-	        $sql ="select abox.*,hotel.name,hotel.hotel_box_type 
-	               from savor_pub_ads_box abox 
-	               left join savor_box box on abox.box_id=box.id 
-	               left join savor_room room on box.room_id=room.id 
-	               left join savor_hotel hotel on room.hotel_id=hotel.id 
-	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str) 
-	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 
-	               group by abox.box_id";
+	        if($sort_day==1){
+	            $sql ="select abox.*,hotel.name,hotel.hotel_box_type
+	               from savor_pub_ads_box_history abox
+	               left join savor_box box on abox.box_id=box.id
+	               left join savor_room room on box.room_id=room.id
+	               left join savor_hotel hotel on room.hotel_id=hotel.id
+	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str)
+	            	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+	            	               group by abox.box_id";
+	        }else {
+	            $sql ="select abox.*,hotel.name,hotel.hotel_box_type
+	               from savor_pub_ads_box abox
+	               left join savor_box box on abox.box_id=box.id
+	               left join savor_room room on box.room_id=room.id
+	               left join savor_hotel hotel on room.hotel_id=hotel.id
+	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str)
+	            	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+	            	               group by abox.box_id";
+	        }
+	        
+	        
 	        $rtss = M()->query($sql);
 	        $pub_ads_count = count($rtss);
 	        
