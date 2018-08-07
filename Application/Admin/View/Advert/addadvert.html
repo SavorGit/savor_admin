@@ -71,6 +71,19 @@
 		                </volist>
 		              </div>
 		         </div>
+		         
+		         <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                小程序二维码：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                
+		                  <input name="is_sapp_qrcode" type="radio" value="1" <if condition=" $vinfo['is_sapp_qrcode'] eq 1"> checked </if> />&nbsp;显示
+		                  <input name="is_sapp_qrcode" type="radio" <if condition=" $vinfo['is_sapp_qrcode'] eq 0">checked</if> value="0" />&nbsp;不显示
+		                 
+		                </volist>
+		              </div>
+		         </div>
             		
             		
 				 <div class="form-group row">

@@ -75,6 +75,7 @@ class AdvertController extends BaseController{
 	         $ossaddr = I('post.oss_addr','','trim');
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
+			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval'); //小程序二维码是否显示
 			 if(empty($minu) && empty($seco)){
 			     $this->error('请输入有效的时长');
 			 }
@@ -94,6 +95,7 @@ class AdvertController extends BaseController{
              $ads_data['type'] = $adstype;
              $ads_data['create_time'] = date('Y-m-d H:i:s');
 			 $ads_data['is_online'] = 2;
+			 $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
 			 if($duration)  $ads_data['duration'] = $duration;
              if($description)   $ads_data['description'] = $description;
              $user = session('sysUserInfo');
@@ -127,24 +129,35 @@ class AdvertController extends BaseController{
 	     if(IS_POST){
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
+			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval');
 			 $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
+	         $media_id = I('post.media_id','0','intval');
 	         $ads_data = array();
 	         $ads_data['name'] = $name;
 			 $ads_data['duration'] = $duration;
 	         $ads_data['type'] = $adstype;
+	         $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
 	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;
-			 $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
+	         if(empty($media_id)){
+	             $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
+	         }else {
+	             $dts = array();
+	             $dts['name'] = $name;
+	             $dts['media_id'] = array('neq',$media_id);
+	             $nass = $adsModel->where($dts)->field('name')->find();
+	         }
+			 
 			 if($nass){
 				 $message = '文件名已存在，请换一个名称';
 				 $this->error($message);
 			 }
 	         $res_ads = $adsModel->where("id='$adsid'")->save($ads_data);
 	         if($res_ads){
-	             $media_id = I('post.media_id','0','intval');
+	             
 	             if($media_id){
 	                 $media_data = array();
 	                 $media_data['name'] = $name;

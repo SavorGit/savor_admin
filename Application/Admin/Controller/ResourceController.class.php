@@ -171,6 +171,7 @@ class ResourceController extends BaseController{
 			$ad_name = I('post.name','','trim');
 			$seco = I('post.seco','0','intval');
 			$fsize = I('post.oss_filesize','0','intval');
+			$is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval');
 			if ($fsize >  83886080 ) {
 				$res_data = array('code'=>$code,'msg'=>'上传视频不可大于80M');
 				echo json_encode($res_data);
@@ -211,6 +212,7 @@ class ResourceController extends BaseController{
 				$map['creator_name'] = '';
 				$userInfo = session('sysUserInfo');
 				$map['creator_id'] = $userInfo['id'];
+				$map['is_sapp_qrcode'] = $is_sapp_qrcode;  //小程序二维码
 				$adsModel->add($map);
 				$data['media_id'] = $adsModel->getLastInsID();
 			}
