@@ -32,6 +32,7 @@ class SappforscreenController extends BaseController {
 	    $start  = ( $start-1 ) * $size;
 	    $where = array();
 	    $where['box.flag'] = 0;
+	    $where['box.state'] =1;
 	    
 	    
 	    $hotel_name = I('hotel_name','','trim');
