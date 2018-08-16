@@ -34,4 +34,17 @@ class SmallappForscreenRecordModel extends Model
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+	public function getWhere($fields,$where,$limit,$group){
+	    $data = $this->alias('a')
+	                 ->join('savor_box box on a.box_mac=box.mac','left')
+	                 ->join('savor_room room on box.room_id=room.id','left')
+	                 ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+	                 ->field($fields)
+	                 ->where($where)->limit($limit)->select();
+        return $data;	    
+	}
+	public function delWhere($where,$order,$limit){
+	    $ret =  $this->where($where)->order($order)->limit($limit)->delete();
+	    return $ret;
+	}
 }

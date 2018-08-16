@@ -73,4 +73,24 @@ class SappforscreenController extends BaseController {
 	   	$this->assign('page',$list['page']);   
 	    $this->display('Report/sappforscreen');
 	}
+	/**
+	 * @desc 删除永峰测试数据
+	 */
+	public function delTestRecord(){
+	    $hotel_id = array(7);
+	    $fields = "a.box_mac";
+	    $where = array();
+	    $where['hotel.id'] = array('in',$hotel_id);
+	    $group = 'a.box_mac';
+	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel(); 
+	    $list = $m_smallapp_forscreen_record->getWhere($fields, $where,  $limit='', $group);
+	    //echo $m_smallapp_forscreen_record->getLastSql();exit;
+	    
+	    foreach($list as $key=>$v){
+	        $where = array();
+	        $where['box_mac'] = $v['box_mac'];
+	        $m_smallapp_forscreen_record->delWhere($where, $order='', $limit='');
+	    }
+	    $this->output('删除成功', 'sappforscreen/index', 2);
+	}
 }
