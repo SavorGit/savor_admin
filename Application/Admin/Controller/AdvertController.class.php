@@ -54,6 +54,7 @@ class AdvertController extends BaseController{
             }
             $datalist[$k]['type_str'] = $type_str;
             $datalist[$k]['oss_addr'] = $oss_addr;
+            $datalist[$k]['cover_img_url'] = !empty($v['img_url']) ? get_oss_host().$v['img_url'] : '';
         }
         $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('timeinfo',$time_info);
@@ -83,6 +84,8 @@ class AdvertController extends BaseController{
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
+	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
+	         
 	         
              $result_media = $this->handle_resource();
              if(!$result_media['media_id']){
@@ -98,6 +101,12 @@ class AdvertController extends BaseController{
 			 $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
 			 if($duration)  $ads_data['duration'] = $duration;
              if($description)   $ads_data['description'] = $description;
+             if($cover_img_media_id){
+                 $m_media = new \Admin\Model\MediaModel();
+                 $media_info = $m_media->field('oss_addr')->where('id='.$cover_img_media_id)->find();
+                 $ads_data['img_url'] = $media_info['oss_addr'];
+             }
+             
              $user = session('sysUserInfo');
              $ads_data['creator_name'] = $user['username'];
              $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
@@ -134,6 +143,7 @@ class AdvertController extends BaseController{
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
+	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
 	         $media_id = I('post.media_id','0','intval');
 	         $ads_data = array();
 	         $ads_data['name'] = $name;
@@ -142,6 +152,12 @@ class AdvertController extends BaseController{
 	         $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
 	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;
+	         if($cover_img_media_id){
+                 $m_media = new \Admin\Model\MediaModel();
+                 $media_info = $m_media->field('oss_addr')->where('id='.$cover_img_media_id)->find();
+                 $ads_data['img_url'] = $media_info['oss_addr'];
+             }
+	         
 	         if(empty($media_id)){
 	             $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
 	         }else {
@@ -176,8 +192,10 @@ class AdvertController extends BaseController{
 	             $media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
 	             $vinfo['oss_addr'] = $media_info['oss_addr'];
 	         }
+	         
 	         $this->assign('is_editads',1);
 	         $this->assign('vinfo',$vinfo);
+	         $this->assign('oss_host','http://'.C('OSS_HOST_NEW').'/');
 	         $this->assign('action_url','advert/editAds');
 	         $this->display('addadvert');
 	     }

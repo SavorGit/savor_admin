@@ -83,6 +83,7 @@ class AdvdeliveryController extends BaseController {
             $save['state'] = 3;
             $save['type'] = 2;
         }
+        $save['cover_img_media_id'] = I('post.cover_img_media_id',0,'intval');
         $res = $pubadsModel->addData($save, 0);
         //var_export($res);
         $tmp[] = array();

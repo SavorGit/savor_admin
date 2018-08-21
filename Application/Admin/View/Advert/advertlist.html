@@ -68,6 +68,7 @@
               <th>ID</th>
               <th>名称</th>
               <th>地址</th>
+              <th>封面图</th>
               <th>简介</th>
               <th>创建者</th>
               <th>创建时间</th>
@@ -82,6 +83,12 @@
               <td data-title="ID">{$vlist.id}</td>
               <td data-title="名称">{$vlist.name}</td>
               <td data-title="地址"><a href="{$vlist.oss_addr}" target='__blank'>预览</a></td>
+              <td data-title="封面图">
+              <a href="{$vlist.cover_img_url}" target='__blank'>
+              <img src="{$vlist.cover_img_url}" >
+              </a>
+              </td>
+              
               <td data-title="简介">{$vlist.description}</td>
               <td data-title="创建者">{$vlist.creator_name}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
