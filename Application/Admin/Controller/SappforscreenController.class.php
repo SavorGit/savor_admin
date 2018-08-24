@@ -66,6 +66,27 @@ class SappforscreenController extends BaseController {
 	    
 	    foreach ($list['list'] as $key=>$v){
 	        $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
+	        switch ($v['action']){
+	            case '1':
+	                $list['list'][$key]['action_name'] = '发送呼码';
+	                break;
+	            case '2':
+	                if($v['resource_type']==1) $list['list'][$key]['action_name'] = '指定投单图';
+	                if($v['resource_type']==2) $list['list'][$key]['action_name'] = '视频投屏';
+	                break;
+	            case '3':
+	                $list['list'][$key]['action_name'] = '退出投屏';
+	                break;
+	            case '4':
+	                $list['list'][$key]['action_name'] = '多图投屏';
+	                break;
+	            case '5':
+	                $list['list'][$key]['action_name'] = '视频点播';
+	                break;
+	            default :
+	                $list['list'][$key]['action_name'] = '图片投屏';
+	                break;
+	        }
 	        
 	    }
 	    $this->assign('list',$list['list']);
@@ -77,7 +98,7 @@ class SappforscreenController extends BaseController {
 	 * @desc 删除永峰测试数据
 	 */
 	public function delTestRecord(){
-	    $hotel_id = array(7);
+	    $hotel_id = array(7,791);
 	    $fields = "a.box_mac";
 	    $where = array();
 	    $where['hotel.id'] = array('in',$hotel_id);
