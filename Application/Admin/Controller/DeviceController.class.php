@@ -298,12 +298,14 @@ class DeviceController extends BaseController{
 		    }else {
 		        $where = " b.mac='".$save['mac']."' and b.flag=0 and b.state=1";
 		    }
-		    
-		    $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
-		    if(!empty($isHaveMac)){
-				$str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';	
-				$this->error($str);
+		    if($save['flag']==0){
+		        $isHaveMac = $boxModel->isHaveMac('h.name as hotel_name,r.name as room_name,b.id as id',$where);
+		        if(!empty($isHaveMac)){
+		            $str = 'Mac地址存在于'.$isHaveMac[0]['hotel_name'].'酒楼'.$isHaveMac[0]['room_name'].'包间';
+		            $this->error($str);
+		        }
 		    }
+		    
 		}
         $redis = SavorRedis::getInstance();
 		//广告机只考虑是否被删除
