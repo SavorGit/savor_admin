@@ -84,7 +84,7 @@ class SappforscreenController extends BaseController {
 	                $list['list'][$key]['action_name'] = '视频点播';
 	                break;
 	            case '6':
-	                $list['list'][$key]['action_name'] = '跳转小程序';
+	                $list['list'][$key]['action_name'] = '广告跳转';
 	                break;
 	            default :
 	                $list['list'][$key]['action_name'] = '图片投屏';
