@@ -164,4 +164,26 @@ class SappforscreenController extends BaseController {
 	    $this->display('Report/turntablelog');
 	    
 	}
+	
+	/**
+	 * @desc 删除永峰测试数据
+	 */
+	public function delTestGamelog(){
+	    $hotel_id = array(7,791);
+	    $fields = "a.box_mac";
+	    $where = array();
+	    $where['hotel.id'] = array('in',$hotel_id);
+	    $group = 'a.box_mac';
+	    $m_turntable_log = new \Admin\Model\Smallapp\TurntableLogModel(); 
+	    $list = $m_turntable_log->getWhere($fields, $where,  $limit='', $group);
+	    //echo $m_smallapp_forscreen_record->getLastSql();exit;
+	    //print_r($list);exit;   
+	    foreach($list as $key=>$v){
+	        $where = array();
+	        $where['box_mac'] = $v['box_mac'];
+	        $m_turntable_log->delWhere($where, $order='', $limit='');
+	        //$m_smallapp_forscreen_record->delWhere($where, $order='', $limit='');
+	    }
+	    $this->output('删除成功', 'gameLog/index', 2);
+	}	
 }
