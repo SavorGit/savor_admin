@@ -47,4 +47,8 @@ class TurntableLogModel extends Model
 	    $ret =  $this->where($where)->order($order)->limit($limit)->delete();
 	    return $ret;
 	}
+	public function getOne($fields,$where){
+	    $data = $this->field($fields)->where($where)->find();
+	    return $data;
+	}
 }

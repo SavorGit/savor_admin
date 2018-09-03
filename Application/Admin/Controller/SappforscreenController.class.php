@@ -162,11 +162,39 @@ class SappforscreenController extends BaseController {
 	    
 	    $list = $m_turntable_log->getList($fields,$where,$orders,$start,$size);
 	    
+	    $m_turntable_detail = new \Admin\Model\Smallapp\TurntableDetailModel();
+	    foreach($list['list'] as $key=>$v){
+	        $nums = $m_turntable_detail->countNums(array('activity_id'=>$v['activity_id']));
+	        $list['list'][$key]['nums']= $nums+1;
+	    }
+	    
 	    $this->assign('list',$list['list']);
 	    $this->assign('page',$list['page']);
 	    $this->display('Report/turntablelog');
 	    
 	}
+	/**
+	 * @desc 查看参加游戏的详细数据
+	 */
+	public function detail(){
+	    $activity_id = I('get.activity_id');
+	    $m_turntable_log = new \Admin\Model\Smallapp\TurntableLogModel();
+	    
+	    $fields = "openid,mobile_brand,mobile_model,'发起人' as `person_type`";
+	    $where = array();
+	    $where['activity_id'] = $activity_id;
+	    $fq_info = $m_turntable_log->getOne($fields, $where);
+	    
+	    $m_turntable_detail = new \Admin\Model\Smallapp\TurntableDetailModel();
+	    $fields = "openid,mobile_brand,mobile_model,'参与人' as `person_type`";
+	    $cy_info = $m_turntable_detail->getWhere($fields,$where);
+	    
+	    array_unshift($cy_info, $fq_info);
+	    $this->assign('list',$cy_info);
+	    
+	    $this->display('Report/turtbdetail');
+	}
+	
 	
 	/**
 	 * @desc 删除永峰测试数据
