@@ -130,7 +130,17 @@
           <input id="media_idimgname" type="text" class="form-control"style="width: 214px;" name="adsname" minlength="2" maxlength="40" value="{$vainfo.name}" required>
         </div>
       </div>
-      
+      <div class="form-group row">
+              <label class="col-xs-12 col-sm-2 control-label">
+                小程序二维码：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                
+                  <input id="is_app_qrcode_1" name="is_sapp_qrcode" type="radio" value="1" <if condition="$vainfo['is_sapp_qrcode'] eq 1"> checked </if> />&nbsp;显示
+                  <input id="is_app_qrcode_0" name="is_sapp_qrcode" type="radio" <if condition=" $vainfo['is_sapp_qrcode'] eq 0">checked</if> value="0" />&nbsp;不显示
+              
+              </div>
+	  </div>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           描述:

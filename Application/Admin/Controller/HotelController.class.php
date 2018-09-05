@@ -1384,6 +1384,7 @@ class HotelController extends BaseController {
 
 		}
 		$save['hotel_id'] = I('post.hotel_id');
+		$save['is_sapp_qrcode'] = I('is_sapp_qrcode');
 		$redis = SavorRedis::getInstance();
 		$redis->select(12);
 		$cache_key = C('PROGRAM_ADV_CACHE_PRE').$save['hotel_id'];
