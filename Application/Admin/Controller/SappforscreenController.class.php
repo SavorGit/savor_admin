@@ -65,6 +65,30 @@ class SappforscreenController extends BaseController {
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 	    
 	    foreach ($list['list'] as $key=>$v){
+	        if(!empty($v['resource_size'])){
+	            $list['list'][$key]['resource_size'] = formatBytes($v['resource_size']);
+	        }else {
+	            $list['list'][$key]['resource_size'] = '';
+	        }
+	        if(!empty($v['res_sup_time'])){
+	            $list['list'][$key]['res_sup_time'] = date('Y-m-d H:i:s',intval($v['res_sup_time']/1000)) ;
+	        }else {
+	            $list['list'][$key]['res_sup_time'] = '';
+	        }
+	        if(!empty($v['res_sup_time']) && !empty($v['res_eup_time'])){
+	            $list['list'][$key]['res_eup_time'] = ($v['res_eup_time'] - $v['res_sup_time']) /1000 ;
+	        }else {
+	            $list['list'][$key]['res_eup_time'] = '';
+	        }
+	        if(!empty($v['box_res_sdown_time'])){
+	            $list['list'][$key]['box_res_sdown_time'] = date('Y-m-d H:i:s',intval($v['box_res_sdown_time']/1000)) ;
+	        }
+	        if(!empty($v['box_res_sdown_time']) && !empty($v['box_res_edown_time'])){
+	            $list['list'][$key]['box_res_edown_time'] = ($v['box_res_edown_time'] - $v['box_res_sdown_time']) /1000;
+	        }else {
+	            $list['list'][$key]['box_res_edown_time'] = '';
+	        }
+	        
 	        $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
 	        switch ($v['action']){
 	            case '1':
@@ -164,6 +188,27 @@ class SappforscreenController extends BaseController {
 	    
 	    $m_turntable_detail = new \Admin\Model\Smallapp\TurntableDetailModel();
 	    foreach($list['list'] as $key=>$v){
+	        if(!empty($v['orggame_time'])){
+	            $list['list'][$key]['orggame_time'] = date('Y-m-d H:i:s',intval($v['orggame_time']/1000));
+	        }else {
+	            $list['list'][$key]['orggame_time'] = '';
+	        }
+	        if(!empty($v['orggame_time']) && !empty($v['box_orggame_time'])){
+	            $list['list'][$key]['box_orggame_time'] = ($v['box_orggame_time'] - $v['orggame_time']) /1000;
+	        }else {
+	            $list['list'][$key]['box_orggame_time'] = '';
+	        }
+	        if(!empty($v['startgame_time'])){
+	            $list['list'][$key]['startgame_time'] = date('Y-m-d H:i:s',intval($v['startgame_time']/1000));
+	        }else {
+	            $list['list'][$key]['startgame_time'] = '';
+	        }
+	        if(!empty($v['startgame_time']) && !empty($v['box_startgame_time'])){
+	            $list['list'][$key]['box_startgame_time'] = ($v['box_startgame_time'] - $v['startgame_time']) /1000;
+	        }else {
+	            $list['list'][$key]['box_startgame_time'] = '';
+	        }
+	        
 	        $nums = $m_turntable_detail->countNums(array('activity_id'=>$v['activity_id']));
 	        $list['list'][$key]['nums']= $nums+1;
 	    }
@@ -180,16 +225,31 @@ class SappforscreenController extends BaseController {
 	    $activity_id = I('get.activity_id');
 	    $m_turntable_log = new \Admin\Model\Smallapp\TurntableLogModel();
 	    
-	    $fields = "openid,mobile_brand,mobile_model,'发起人' as `person_type`";
+	    $fields = "openid,mobile_brand,mobile_model,'发起人' as `person_type`, '0' as join_time, '0' as box_join_time";
 	    $where = array();
 	    $where['activity_id'] = $activity_id;
 	    $fq_info = $m_turntable_log->getOne($fields, $where);
 	    
 	    $m_turntable_detail = new \Admin\Model\Smallapp\TurntableDetailModel();
-	    $fields = "openid,mobile_brand,mobile_model,'参与人' as `person_type`";
+	    $fields = "openid,mobile_brand,mobile_model,'参与人' as `person_type`,join_time,box_join_time";
 	    $cy_info = $m_turntable_detail->getWhere($fields,$where);
 	    
 	    array_unshift($cy_info, $fq_info);
+	    foreach($cy_info as $key=>$v){
+	        if(!empty($v['join_time'])){
+	            $cy_info[$key]['join_time'] = date('Y-m-d H:i:s',intval($v['join_time']/1000));
+	        }else {
+	            $cy_info[$key]['join_time'] = '';
+	        }
+	        if(!empty($v['join_time']) && !empty($v['box_join_time'])){
+	            $cy_info[$key]['box_join_time'] = ($v['box_join_time'] - $v['join_time']) /1000;
+	        }else {
+	            $cy_info[$key]['box_join_time'] = '';
+	        }
+	        
+	        
+	    }
+	    
 	    $this->assign('list',$cy_info);
 	    
 	    $this->display('Report/turtbdetail');

@@ -22,4 +22,8 @@ class ForscreenRecordModel extends BaseModel
 	    }
 	    return $ret;
 	}
+	public function updateInfo($where,$data){
+	    $ret = $this->where($where)->save($data);
+	    return $ret;
+	}
 }

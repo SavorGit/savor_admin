@@ -18,4 +18,8 @@ class TurntableDetailModel extends Model
 	    $nums = $this->where($where)->count();
 	    return $nums;
 	}
+	public function updateInfo($where,$data){
+	    $ret = $this->where($where)->save($data);
+	    return $ret;
+	}
 }

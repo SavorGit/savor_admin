@@ -1383,6 +1383,33 @@ ALTER TABLE savor_opuser_role ADD COLUMN `mobile` VARCHAR(25) NOT NULL DEFAULT '
 ALTER TABLE savor_heart_log ADD COLUMN `net_speed` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '机顶盒下载速度'
 
 
+增加说明：互动游戏增加埋点
+修改时间：2018.9.5
+修改人：张英涛 
 
+ALTER TABLE savor_smallapp_turntable_log ADD COLUMN `orggame_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '发起时间',
+ADD COLUMN `box_orggame_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒收到发起游戏指令时间',
+ADD COLUMN `startgame_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '开始游戏时间',
+ADD COLUMN `box_startgame_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒收到开始游戏时间',
+ADD COLUMN `play_times` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '玩游戏次数'
+
+增加说明：互动游戏增加埋点
+修改时间：2018.9.5
+修改人：张英涛 
+
+ALTER TABLE savor_smallapp_turntable_detail ADD COLUMN `join_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '加入时间',
+ADD COLUMN `box_join_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒收到用户加入时间'
+
+
+
+增加说明：图片、视频投屏增加埋点
+修改时间：2018.9.5
+修改人：张英涛 
+ALTER TABLE savor_smallapp_forscreen_record ADD COLUMN `resource_id` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '资源id' AFTER id
+
+ALTER TABLE savor_smallapp_forscreen_record ADD COLUMN `res_sup_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '资源开始长传时间',
+ADD COLUMN `res_eup_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '资源上传成功时间',
+ADD COLUMN `box_res_sdown_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒开始下载资源时间',
+ADD COLUMN `box_res_edown_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒下载资源完成时间'
 
    

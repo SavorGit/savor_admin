@@ -51,4 +51,8 @@ class TurntableLogModel extends Model
 	    $data = $this->field($fields)->where($where)->find();
 	    return $data;
 	}
+	public function updateInfo($where,$data){
+	    $ret = $this->where($where)->save($data);
+	    return $ret;
+	}
 }

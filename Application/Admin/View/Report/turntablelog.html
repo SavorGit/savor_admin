@@ -66,7 +66,12 @@
             <th>MAC地址</th>
             <th>参与人数</th>
             <th>是否开始</th>
+            <th>开始次数</th>
             <th>创建时间</th>
+            <th>发起游戏时间</th>
+            <th>机顶盒发起游戏延时</th>
+            <th>开始游戏时间</th>
+            <th>机顶盒开始游戏延时</th>
             
           </tr>
           </thead>
@@ -92,8 +97,13 @@
               	否
               	</if>
               </td>
-              <td data-title="投屏时间">{$vlist.create_time}</td>
-              
+              <td data-title="开始次数">{$vlist.play_times}</td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="发起游戏时间">{$vlist.orggame_time}</td>
+              <td data-title="机顶盒发起游戏延时">{$vlist.box_orggame_time}</td>
+              <td data-title="开始游戏时间">{$vlist.startgame_time}</td>
+              <td data-title="机顶盒开始游戏延时">{$vlist.box_startgame_time}</td>
+            
             </tr>
           </volist>
           </tbody>

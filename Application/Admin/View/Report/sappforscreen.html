@@ -70,9 +70,13 @@
             <th>手机型号</th>
             <th>投屏动作</th>
             <th>投屏图片、视频</th>
+            <th>资源大小</th>
             <th>投屏文字</th>
             <th>投屏时间</th>
-            
+            <th>资源开始上传时间</th>
+            <th>资源上传成功延时(s)</th>
+            <th>机顶盒开始下载时间</th>
+            <th>机顶盒下载成功延时</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -114,9 +118,14 @@
                 
                  
               </td>
+              <td data-title="资源大小">{$vlist.resource_size}</td>
               <td data-title="投屏文字">{$vlist.forscreen_char}</td>
              
               <td data-title="投屏时间">{$vlist.create_time}</td>
+              <td data-title="资源开始上传时间">{$vlist.res_sup_time}</td>
+              <td data-title="资源上传成功延时">{$vlist.res_eup_time}</td>
+              <td data-title="机顶盒开始下载时间">{$vlist.box_res_sdown_time}</td>
+              <td data-title="机顶盒下载成功延时">{$vlist.box_res_edown_time}</td>
               
             </tr>
           </volist>
