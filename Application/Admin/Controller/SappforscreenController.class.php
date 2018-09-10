@@ -82,6 +82,8 @@ class SappforscreenController extends BaseController {
 	        }
 	        if(!empty($v['box_res_sdown_time'])){
 	            $list['list'][$key]['box_res_sdown_time'] = date('Y-m-d H:i:s',intval($v['box_res_sdown_time']/1000)) ;
+	        }else {
+	            $list['list'][$key]['box_res_sdown_time'] = '';
 	        }
 	        if(!empty($v['box_res_sdown_time']) && !empty($v['box_res_edown_time'])){
 	            $list['list'][$key]['box_res_edown_time'] = ($v['box_res_edown_time'] - $v['box_res_sdown_time']) /1000;
