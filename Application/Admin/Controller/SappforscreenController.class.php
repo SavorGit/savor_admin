@@ -97,7 +97,7 @@ class SappforscreenController extends BaseController {
 	                $list['list'][$key]['action_name'] = '发送呼码';
 	                break;
 	            case '2':
-	                if($v['resource_type']==1) $list['list'][$key]['action_name'] = '指定投单图';
+	                if($v['resource_type']==1) $list['list'][$key]['action_name'] = '滑动';
 	                if($v['resource_type']==2) $list['list'][$key]['action_name'] = '视频投屏';
 	                break;
 	            case '3':
