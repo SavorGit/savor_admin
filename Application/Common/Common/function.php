@@ -949,4 +949,8 @@ function formatBytes($size) {
     for ($i = 0; $size >= 1024 && $i < 4; $i++) $size /= 1024;
     return round($size, 2).$units[$i];
 }
+function getMillisecond() {
+    list($s1, $s2) = explode(' ', microtime());
+    return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
+}
 ?>

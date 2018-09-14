@@ -316,7 +316,7 @@ class SappforscreenController extends BaseController {
 	        $this->assign('create_time',$create_time);
 	    }
 	    
-	    $fields = 'area.region_name,hotel.name hotel_name,room.name room_name,media.name media_name,a.*';
+	    $fields = 'area.region_name,hotel.name hotel_name,room.name room_name,media.name media_name,media.duration,a.*';
 	    $m_suncode_log = new \Admin\Model\Smallapp\SuncodeLogModel();
 	    $list = $m_suncode_log->getList($fields,$where,$orders,$start,$size);
 	    
@@ -341,5 +341,64 @@ class SappforscreenController extends BaseController {
 	    }
 	    $this->output('删除成功', 'sappforscreen/suncodeLog', 2);
 	}
-	
+	/**
+	 * @desc 小程序网络状况监测
+	 */
+	public function staticnet(){
+	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
+	    $size   = I('numPerPage',50);//显示每页记录数
+	    $this->assign('numPerPage',$size);
+	    $start = I('pageNum',1);
+	    $this->assign('pageNum',$start);
+	    $order = I('_order','a.hotel_id');
+	    $this->assign('_order',$order);
+	    $sort = I('_sort','asc');
+	    $this->assign('_sort',$sort);
+	    $orders = $order.' '.$sort;
+	    $start  = ( $start-1 ) * $size;
+	    
+	    $m_static_net = new \Admin\Model\Smallapp\StaticNetModel();
+	    $fields = "a.id,a.hotel_id,hotel.name hotel_name,area.region_name";
+	    $where =array();
+	    $yesterday = date('Y-m-d',strtotime('-1 day'));
+	    $start_date = I('start_date','','trim') ? I('start_date','','trim') : $yesterday;
+	    $hotel_name = I('hotel_name','','trim');
+	    $end_date   = I('end_date','','trim') ? I('end_date','','trim') : $yesterday;
+	    $where['a.static_date'] = array(array('EGT',$start_date),array('ELT',$end_date));
+	    if($hotel_name) $where['hotel.name'] = array('like',"%$hotel_name%");
+	    $group = "a.hotel_id";
+	    
+	    $hotel_list = $m_static_net->getWhere($fields,$where,$orders,$group,$start,$size);
+
+	    foreach($hotel_list['list'] as $key=>$v){
+	        $map = array();
+	        $map['static_date'] = array(array('EGT',$start_date),array('ELT',$yesterday));
+	        $map['hotel_id'] = $v['hotel_id'];
+	        $fields = 'sum(`box_donw_nums`) box_donw_nums,sum(`res_size`) res_size,
+	                   sum(`order_times`) order_times,sum(`avg_down_speed`) avg_down_speed,
+	                   sum(`avg_delay_time`) avg_delay_time,max(`max_down_speed`) max_down_speed,
+	                   min(`min_down_speed`) min_down_speed,max(`max_delay_times`) max_delay_times,
+	                   min(`min_delay_times`) min_delay_times';
+	        $ret  = $m_static_net->searchList($fields, $map);
+	        $nums = $m_static_net->countWhere($map);
+	        $hotel_list['list'][$key]['box_down_nums'] = $ret[0]['box_donw_nums'];              //总下载次数
+	        $hotel_list['list'][$key]['res_sizev']     = formatBytes($ret[0]['res_size']);      //总资源大小
+	        $hotel_list['list'][$key]['order_times']   = $ret[0]['order_times'];                //总质量次数
+	        
+	        $hotel_list['list'][$key]['avg_down_speed']= formatBytes($ret[0]['avg_down_speed'] / $nums).'/S';
+	        $hotel_list['list'][$key]['avg_delay_time']= $ret[0]['avg_delay_time'] /$nums;
+	        $hotel_list['list'][$key]['max_down_speed']= formatBytes($ret[0]['max_down_speed']) .'/S';
+	        $hotel_list['list'][$key]['min_down_speed']= formatBytes($ret[0]['min_down_speed']) .'/S';
+	        $hotel_list['list'][$key]['max_delay_times']= $ret[0]['max_delay_times'];
+	        $hotel_list['list'][$key]['min_delay_times']= $ret[0]['min_delay_times'];
+	        
+	        
+	    }
+	    $this->assign('list',$hotel_list['list']);
+	    $this->assign('page',$hotel_list['page']);
+	    $this->assign('start_date',$start_date);
+	    $this->assign('end_date',$end_date);
+	    $this->assign('hotel_name',$hotel_name);
+	    $this->display('Report/staticnet');
+	}
 }
