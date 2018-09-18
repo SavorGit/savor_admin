@@ -79,6 +79,8 @@ class ExcelController extends Controller
             $tmpname = '运维任务明细';
         }else if($filename=='smallapp_forsacreen'){
             $tmpname = '小程序投屏统计';
+        }else if($filename=='smallapp_staticnet'){
+            $tmpname = '小程序网络监测';
         }
 
         if($filename == "heartlostinfo"){
@@ -3801,4 +3803,60 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
         
     } 
+    /**
+     * @desc 小程序网络监测
+     */
+    public function smallappNet(){
+        $start_date = I('get.start_date') ? I('get.start_date') : '2018-09-07';
+        $end_date   = I('get.end_date')   ? I('get.end_date')   : date('Y-m-d',strtotime('-1 day'));
+        $hotel_name = I('get.hotel_name');
+        
+        $where = array();
+        $where['a.static_date'] = array(array('EGT',$start_date),array('ELT',$end_date));
+        if($hotel_name) $where['hotel.name'] = array('like',"%$hotel_name%");
+        $group = "a.hotel_id";
+        $orders = "hotel.id asc";
+        $fields = "a.id,a.hotel_id,hotel.name hotel_name,area.region_name";
+        $m_static_net = new \Admin\Model\Smallapp\StaticNetModel();
+        $hotel_list = $m_static_net->getList($fields,$where,$orders,$group);
+        foreach($hotel_list as $key=>$v){
+            $map = array();
+            $map['static_date'] = array(array('EGT',$start_date),array('ELT',$end_date));
+            $map['hotel_id'] = $v['hotel_id'];
+            $fields = 'sum(`box_donw_nums`) box_donw_nums,sum(`res_size`) res_size,
+	                   sum(`order_times`) order_times,sum(`avg_down_speed`) avg_down_speed,
+	                   sum(`avg_delay_time`) avg_delay_time,max(`max_down_speed`) max_down_speed,
+	                   min(`min_down_speed`) min_down_speed,max(`max_delay_times`) max_delay_times,
+	                   min(`min_delay_times`) min_delay_times';
+            $ret  = $m_static_net->searchList($fields, $map);
+            $nums = $m_static_net->countWhere($map);
+            $hotel_list[$key]['box_down_nums'] = $ret[0]['box_donw_nums'];              //总下载次数
+            $hotel_list[$key]['res_sizev']     = formatBytes($ret[0]['res_size']);      //总资源大小
+            $hotel_list[$key]['order_times']   = $ret[0]['order_times'];                //总质量次数
+             
+            $hotel_list[$key]['avg_down_speed']= formatBytes($ret[0]['avg_down_speed'] / $nums).'/S';
+            $hotel_list[$key]['avg_delay_time']= $ret[0]['avg_delay_time'] /$nums;
+            $hotel_list[$key]['max_down_speed']= formatBytes($ret[0]['max_down_speed']) .'/S';
+            $hotel_list[$key]['min_down_speed']= formatBytes($ret[0]['min_down_speed']) .'/S';
+            $hotel_list[$key]['max_delay_times']= $ret[0]['max_delay_times'];
+            $hotel_list[$key]['min_delay_times']= $ret[0]['min_delay_times'];
+        }
+        $xlsCell = array(
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('region_name','城市'),
+            array('box_down_nums','总下载次数'),
+            array('res_sizev','总资源大小'),
+            array('avg_down_speed','平均下载速度'),
+            array('max_down_speed','最快下载速度'),
+            array('min_down_speed','最慢下载速度'),
+            array('order_times','指令次数'),
+            array('avg_delay_time','平均指令延时'),
+            array('max_delay_times','最高延时'),
+            array('min_delay_times','最低延时'),
+        );
+        $xlsName = '小程序网络监测';
+        $filename = 'smallapp_staticnet';
+        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
+    }
 }

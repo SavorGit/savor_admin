@@ -128,6 +128,21 @@ class HotelController extends BaseController {
 		//广告机选项
 		$select_ad_mache = I('adv_machine');
 		$this->assign('se_ad_machince',$select_ad_mache);
+		$is_4g = I('is_4g','0','intval');
+		if(!empty($is_4g)){
+		    $where .=" AND a.is_4g=".$is_4g;   
+		}
+		$this->assign('is_4g',$is_4g);
+		//是否虚拟小平台
+		$is_virtual = I('is_virtual','0','intval');
+		if(!empty($is_virtual)){
+		    if($is_virtual==1){
+		        $where .=" and ext.mac_addr ='000000000000'";
+		    }else {
+		        $where .=" and ext.mac_addr !='000000000000'";
+		    }
+		}
+		$this->assign('is_virtual',$is_virtual);
 		//包含
 		$include_v = I('include_v');
 		//获取节目单对应hotelid
@@ -615,12 +630,13 @@ class HotelController extends BaseController {
 		$save['level']               = I('post.level','','trim');
 		$save['iskey']               = I('post.iskey','','intval');
 		$save['install_date']        = I('post.install_date');
-		$save['remote_id']        = I('post.remote_id');
-		$save['hotel_wifi']        = I('post.hotel_wifi','','trim');
-		$save['hotel_wifi_pas']        = I('post.hotel_wifi_pas','','trim');
-		$save['collection_company']        = I('post.collection_company','','trim');
+		$save['remote_id']           = I('post.remote_id');
+		$save['hotel_wifi']          = I('post.hotel_wifi','','trim');
+		$save['hotel_wifi_pas']      = I('post.hotel_wifi_pas','','trim');
+		$save['collection_company']  = I('post.collection_company','','trim');
 		$save['bank_account']        = I('post.bank_account','','trim');
-		$save['bank_name']        = I('post.bank_name','','trim');
+		$save['bank_name']           = I('post.bank_name','','trim');
+		$save['is_4g']               = I('post.is_4g',0,'intval');  //是否为4G酒楼
 		if(mb_strlen($save['collection_company'])>50 || mb_strlen($save['bank_account'])>50 || mb_strlen($save['bank_name'])>50){
 			$this->error('收款公司名称，银行账号以及开户行名称最多50个字');
 		}

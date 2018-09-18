@@ -137,6 +137,13 @@ class ReportController extends BaseController{
 			$this->assign('hbt_k',$hbt_v);
 			$where .= "	AND sht.hotel_box_type = $hbt_v";
 		}
+		//酒楼是否为4G
+		$is_4g = I('is_4g');
+		if(!empty($is_4g)){
+		    $where .= " and sht.is_4g=".$is_4g;
+		    $this->assign('is_4g',$is_4g);
+		}
+		
         //城市
         $userinfo = session('sysUserInfo');
         $is_city_search = 0;

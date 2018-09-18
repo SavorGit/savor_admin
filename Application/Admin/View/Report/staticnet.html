@@ -25,7 +25,24 @@
                   <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                 </span>
        	 </div>
-       	 
+       	 <div class="form-group">
+          <div class="input-group input-group-sm">
+            	<label class="col-xs-1 col-sm-1 control-label">
+              是否4G：
+            </label>
+                <span class="input-group-btn">
+              <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 <if condition="$is_4g eq 0">selected</if> >全部</option>
+                
+                  <option value="1" <if condition="$is_4g eq 1">selected</if>>是</option><br>
+                  <option value="2" <if condition="$is_4g eq 2">selected</if>>否</option><br>
+                  
+                
+              </select>
+            </span>
+          </div>
+
+          </div> 
          <div class="form-group">
           <div class="input-group input-group-sm">
             
@@ -33,13 +50,8 @@
           </div>
 
           </div>
-          <!-- <div class="form-group">
-          <div class="input-group input-group-sm">
-            	<input type="text" class="form-control" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
-                
-          </div>
-
-          </div> -->
+          
+          
          
            <div class="form-group" >
              <div class="input-group input-group-sm pull-right">
@@ -51,7 +63,7 @@
            </div>
            <div class="input-group input-group-sm pull-right">
            	  
-              <!-- <a  class="btn btn-success btn-sm add"  title="一键删除测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delSuncodeLog" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a> -->
+              <a target="_blank"  class="btn btn-success btn-sm add"  title="导出小程序网络监测日志"   href="{$host_name}/excel/smallappNet" ><i class="fa fa-plus"></i> 导出小程序网络监测日志</a> 
               <input type="hidden" id="xiaohref" value="{$host_name}/sappforscreen/delSuncodeLog"/>
             </div>
          </div> 

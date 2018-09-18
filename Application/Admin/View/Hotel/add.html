@@ -244,6 +244,19 @@
           </select>
               </div>
       </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          是否4G酒楼：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+         <select name="is_4g" class="form-control bs-select" title="请选择..." required>
+         	  <option value="2" <if condition="$vinfo.is_4g eq 2"> selected </if> >否</option><br>
+              <option value="1" <if condition="$vinfo.is_4g eq 1"> selected </if> >是</option><br>
+              
+          </select>
+        </div>
+      </div>
+      
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">

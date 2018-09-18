@@ -39,7 +39,7 @@
 	      </if>		
           <div class="form-group">
             <div class="input-group-sm input-group">
-              <label>级别：</label>
+              <label>级&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</label>
                 <span class="input-group-btn input-group-sm">
               <select name="level_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value=0 >全部</option>
@@ -112,7 +112,7 @@
 			<div class="form-group">
           <div class="input-group-sm input-group">
             <label class="col-xs-1 col-sm-1 control-label">
-              重点：
+              重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;点：
             </label>
                 <span class="input-group-btn">
               <select name="key_v" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
@@ -195,7 +195,40 @@
             </span>
           </div>
         </div>
-
+		<div class="form-group">
+          <div class="input-group-sm input-group">
+            <label class="col-xs-1 col-sm-1 control-label">
+              是否4G：
+            </label>
+                <span class="input-group-btn">
+              <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 <if condition="$is_4g eq 0">selected</if> >全部</option>
+                
+                  <option value="2" <if condition="$is_4g eq 2">selected</if>>否</option><br>
+                  <option value="1" <if condition="$is_4g eq 1">selected</if>>是</option><br>
+                
+              </select>
+            </span>
+          </div>
+        </div>
+        </div>
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+          <div class="input-group-sm input-group">
+            <label class="col-xs-1 col-sm-1 control-label">
+              是否虚拟小平台：
+            </label>
+                <span class="input-group-btn">
+              <select name="is_virtual" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 <if condition="$is_virtual eq 0">selected</if> >全部</option>
+                
+                  <option value="2" <if condition="$is_virtual eq 2">selected</if>>否</option><br>
+                  <option value="1" <if condition="$is_virtual eq 1">selected</if>>是</option><br>
+                
+              </select>
+            </span>
+          </div>
+        </div>
         <div class="input-group input-group-sm">
           <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
             <span class="input-group-btn">
@@ -215,7 +248,7 @@
     </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent" style="top:80px;margin-top:20px;">
+<div class="pageContent" id="pagecontent" style="top:80px;margin-top:62px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">

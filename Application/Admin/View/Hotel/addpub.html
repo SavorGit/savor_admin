@@ -135,10 +135,13 @@
                 小程序二维码：
               </label>
               <div class="col-xs-12 col-sm-10">
-                
+                  <empty name="vainfo">
+                  <input id="is_app_qrcode_1" name="is_sapp_qrcode" type="radio" value="1"  checked  />&nbsp;显示
+                  <input id="is_app_qrcode_0" name="is_sapp_qrcode" type="radio"  value="0" />&nbsp;不显示
+                  <else />
                   <input id="is_app_qrcode_1" name="is_sapp_qrcode" type="radio" value="1" <if condition="$vainfo['is_sapp_qrcode'] eq 1"> checked </if> />&nbsp;显示
                   <input id="is_app_qrcode_0" name="is_sapp_qrcode" type="radio" <if condition=" $vainfo['is_sapp_qrcode'] eq 0">checked</if> value="0" />&nbsp;不显示
-              
+              	  </empty>
               </div>
 	  </div>
       <div class="form-group row">

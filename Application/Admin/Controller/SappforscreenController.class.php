@@ -33,7 +33,8 @@ class SappforscreenController extends BaseController {
 	    $where = array();
 	    $where['box.flag'] = 0;
 	    $where['box.state'] =1;
-	    
+	    $where['a.mobile_brand'] = array('neq','devtools');
+	    $where['a.openid']       = array('neq','ofYZG4yZJHaV2h3lJHG5wOB9MzxE');
 	    
 	    $hotel_name = I('hotel_name','','trim');
 	    if($hotel_name){
@@ -364,15 +365,20 @@ class SappforscreenController extends BaseController {
 	    $start_date = I('start_date','','trim') ? I('start_date','','trim') : $yesterday;
 	    $hotel_name = I('hotel_name','','trim');
 	    $end_date   = I('end_date','','trim') ? I('end_date','','trim') : $yesterday;
+	    $is_4g      = I('is_4g','0','intval');
 	    $where['a.static_date'] = array(array('EGT',$start_date),array('ELT',$end_date));
 	    if($hotel_name) $where['hotel.name'] = array('like',"%$hotel_name%");
+	    if(!empty($is_4g)){
+	        $where['hotel.is_4g'] = $is_4g;
+	        
+	    }
 	    $group = "a.hotel_id";
 	    
 	    $hotel_list = $m_static_net->getWhere($fields,$where,$orders,$group,$start,$size);
 
 	    foreach($hotel_list['list'] as $key=>$v){
 	        $map = array();
-	        $map['static_date'] = array(array('EGT',$start_date),array('ELT',$yesterday));
+	        $map['static_date'] = array(array('EGT',$start_date),array('ELT',$end_date));
 	        $map['hotel_id'] = $v['hotel_id'];
 	        $fields = 'sum(`box_donw_nums`) box_donw_nums,sum(`res_size`) res_size,
 	                   sum(`order_times`) order_times,sum(`avg_down_speed`) avg_down_speed,
@@ -399,6 +405,7 @@ class SappforscreenController extends BaseController {
 	    $this->assign('start_date',$start_date);
 	    $this->assign('end_date',$end_date);
 	    $this->assign('hotel_name',$hotel_name);
+	    $this->assign('is_4g',$is_4g);
 	    $this->display('Report/staticnet');
 	}
 }
