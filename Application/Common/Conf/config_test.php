@@ -1,16 +1,16 @@
 <?php
-$DB_MASTER_HOST = '172.16.1.116';
-$DB_SLAVE_HOST  = '172.16.1.116';
+$DB_MASTER_HOST = '192.168.168.116';
+$DB_SLAVE_HOST  = '192.168.168.116';
 $db_name = 'cloud';
 $db_user = 'phpweb';
 $db_pwd = '123456';
 
 //redis缓存配置
-$redis['db1']['0']['host'] = '172.16.1.116';
+$redis['db1']['0']['host'] = '192.168.168.116';
 $redis['db1']['0']['port'] = '6380';
 $redis['db1']['0']['password'] = '!1QAZ@2WSX';
 $redis['db1']['0']['isMaster'] = '1';
-$redis['db1']['1']['host'] = '172.16.1.116'; 
+$redis['db1']['1']['host'] = '192.168.168.116'; 
 $redis['db1']['1']['port'] = '6380';
 $redis['db1']['1']['password'] = '!1QAZ@2WSX';
 $redis['db1']['1']['isMaster'] = '0';

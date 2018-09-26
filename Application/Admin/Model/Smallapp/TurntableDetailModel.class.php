@@ -22,4 +22,14 @@ class TurntableDetailModel extends Model
 	    $ret = $this->where($where)->save($data);
 	    return $ret;
 	}
+	public function getInfos($fields,$where,$limit,$group){
+	    $data = $this->alias('a') 
+	                 ->join('savor_smallapp_turntable_log b on a.activity_id=b.activity_id','left')
+            	     ->join('savor_box box on b.box_mac=box.mac','left')
+            	     ->join('savor_room room on box.room_id=room.id','left')
+            	     ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            	     ->field($fields)
+            	     ->where($where)->limit($limit)->select();
+	    return $data;
+	}
 }

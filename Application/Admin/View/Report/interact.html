@@ -1,0 +1,177 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/Sappforscreen/interactStatic" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" id="high" value="{$hightest}"/>
+     <div class="searchBar">
+      <div class="clearfix">
+
+         <div class="form-inline" style="margin-top:10px;">
+         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+          		<input id="staticnet_start_date" style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                <span class="input-group-btn">
+                  <button id="staticnet_start_date_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 </div>
+       	 <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}">
+          		<input id="staticnet_end_date" style="margin-left: 6px;" name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                <span class="input-group-btn">
+                  <button id="staticnet_end_date_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 </div>
+       	 <!-- <div class="form-group">
+          <div class="input-group input-group-sm">
+            	<label class="col-xs-1 col-sm-1 control-label">
+              是否4G：
+            </label>
+                <span class="input-group-btn">
+              <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value=0 <if condition="$is_4g eq 0">selected</if> >全部</option>
+                
+                  <option value="1" <if condition="$is_4g eq 1">selected</if>>是</option><br>
+                  <option value="2" <if condition="$is_4g eq 2">selected</if>>否</option><br>
+                  
+                
+              </select>
+            </span>
+          </div>
+
+          </div>  -->
+         <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label class="col-xs-1 col-sm-1 control-label">
+               	城市:
+            </label>
+            <select name="area_id">
+            	<option value="0" >请选择城市</option>
+            	<volist name="area_list" id="area">
+            		<option <if condition="$area[id] eq $area_id">selected </if> value="{$area.id}">{$area.region_name}</option>
+            	</volist>
+            </select>    
+          </div>
+
+          </div>
+          
+          
+         
+           <div class="form-group" >
+             <div class="input-group input-group-sm pull-right">
+               
+           <span class="input-group-btn">
+             <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+           </span>
+             </div>
+           </div>
+           <!-- <div class="input-group input-group-sm pull-right">
+           	  
+              <a target="_blank"  class="btn btn-success btn-sm add"  title="导出小程序网络监测日志"   href="{$host_name}/excel/smallappNet" ><i class="fa fa-plus"></i> 导出小程序网络监测日志</a> 
+              <input type="hidden" id="xiaohref" value="{$host_name}/sappforscreen/delSuncodeLog"/>
+            </div> -->
+         </div>  
+         
+      </div>
+    
+    </div> 
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            
+            <th>城市</th>
+            <th>酒楼名称</th>
+            <th>饭局</th>
+            <th>总屏幕数</th>
+            <th>在线屏幕数</th>
+            <th>总互动手机数</th>
+            <th>可投屏总数</th>
+            <th>总互动饭局数</th>
+            <th>饭局转化率</th>
+            <th>总互动次数</th>
+            <th>人员参与率</th>
+            <th>牵引率</th>
+            <th>单机互动数</th>
+            <th>单屏互动数</th>
+            <th>投照片转换率</th>
+            <th>投视频转换率</th>
+            <th>点播转换率</th>
+            <th>点歌转换率</th>
+            <th>游戏转换率</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <volist name="vlist.data_static" key="kt" id="val">
+            <tr target="sid_user">
+              
+              <td data-title="城市">{$vlist.region_name}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              
+              <td data-title="饭局"><if condition="$kt eq 1">午饭<else />晚饭 </if></td>
+              <td data-title="总屏幕数">{$vlist.all_num}</td>
+              
+              <td data-title="在线屏幕数">{$val.online_box_num}</td>
+              <td data-title="总互动手机数">{$val.interact_mobile_nums}</td>
+              <td data-title="可投屏总数">{$val.can_forscreen_box_num}</td>
+              <td data-title="总互动饭局数">{$val.fanju_num}</td>
+              <td data-title="饭局转化率">{$val.fanju_rate}</td>
+              <td data-title="总互动次数">{$val.interact_num}</td>
+              <td data-title="人员参与率">{$val.join_rate}</td>
+              <td data-title="牵引率">{$val.pullability_rate}</td>
+              <td data-title="单机互动数">{$val.alone_interact_num}</td>
+              <td data-title="单屏互动数">{$val.box_interact_num}</td>
+              <td data-title="投照片转换率">{$val.pic_num_rate}</td>
+              <td data-title="投视频转换率">{$val.video_num_rate}</td>
+              <td data-title="点播转换率">{$val.db_num_rate}</td>
+              <td data-title="点歌转换率">{$val.birthday_num_rate}</td>
+              <td data-title="游戏转换率">{$val.game_num_rate}</td>
+              
+              
+            </tr>
+          </volist>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+	
+$('#staticnet_start_date_reset').click(function(){
+    $(this).parent().prev().val('')
+  });	
+  $('#staticnet_end_date_reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    
+
+    $("#staticnet_end_date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+    $("#staticnet_start_date").datetimepicker({
+        minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        todayBtn:  1,
+        autoclose: 1,
+      });
+  })
+</script>

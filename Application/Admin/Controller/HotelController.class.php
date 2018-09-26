@@ -886,7 +886,7 @@ class HotelController extends BaseController {
 			}
 		}else{
 			if($bool){
-				$this->output('操作成功!', 'hotel/manager');
+				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
@@ -1140,6 +1140,7 @@ class HotelController extends BaseController {
 					$dat['update_time'] = date('Y-m-d H:i:s');
 					$dat['create_time'] = date('Y-m-d H:i:s');
 					$dat['adv_mach'] = $v['adv_machi'];
+					$dat['is_sapp_forscreen'] = 1;
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
 						$dap = array();
@@ -1189,6 +1190,7 @@ class HotelController extends BaseController {
 					$dat['update_time'] = date('Y-m-d H:i:s');
 					$dat['create_time'] = date('Y-m-d H:i:s');
 					$dat['adv_mach'] = $v['adv_machi'];
+					$dat['is_sapp_forscreen'] = 1;
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
 						$dap = array();
