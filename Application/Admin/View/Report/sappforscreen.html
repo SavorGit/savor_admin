@@ -92,7 +92,7 @@
               <td data-title="手机型号">{$vlist.mobile_model}</td>
               <td data-title="投屏动作">{$vlist.action_name}</td>
               <td data-title="投屏图片、视频">
-              	<if condition="$vlist.action eq 4">
+              	<if condition="$vlist.action eq 4 || $vlist.action eq 11">
               
               	<volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
@@ -106,7 +106,7 @@
               	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
                 </volist>
                 
-                <elseif condition="$vlist.action eq 5" />
+                <elseif condition="$vlist.action eq 5 || $vlist.action eq 12 || $vlist.action eq 21 || $vlist.action eq 22" />
                 <volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
                 </volist>

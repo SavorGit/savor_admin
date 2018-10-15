@@ -116,6 +116,18 @@ class SappforscreenController extends BaseController {
 	            case '7':
 	                $list['list'][$key]['action_name'] = '点击互动游戏';
 	                break;
+	            case '11':
+	                $list['list'][$key]['action_name'] = '发现点播图片';
+	                break;
+                case '12':
+                    $list['list'][$key]['action_name'] = '发现点播视频';
+                    break;
+                case '21':
+                    $list['list'][$key]['action_name'] = '查看点播视频';
+	                break;
+                case '22':
+                    $list['list'][$key]['action_name'] = '查看发现视频';
+                    break;
 	            default :
 	                $list['list'][$key]['action_name'] = '图片投屏';
 	                break;
@@ -947,5 +959,90 @@ class SappforscreenController extends BaseController {
 	    $this->assign('list',$list['list']);
 	    $this->assign('page',$list['page']);
 	    $this->display('Report/interact');
+	}
+	/**
+	 * @用户公开信息审核
+	 */
+	public function publicCheck(){
+	    $size   = I('numPerPage',50);//显示每页记录数
+	    $this->assign('numPerPage',$size);
+	    $start = I('pageNum',1);
+	    $this->assign('pageNum',$start);
+	    $order = I('_order','a.id');
+	    $this->assign('_order',$order);
+	    $sort = I('_sort','desc');
+	    $this->assign('_sort',$sort);
+	    $orders = $order.' '.$sort;
+	    $start  = ( $start-1 ) * $size;
+	    $m_public = new \Admin\Model\Smallapp\PublicModel();
+	    $fields = 'user.nickName,a.id,a.forscreen_id,a.openid,a.box_mac,a.res_type,a.is_pub_hotelinfo,a.create_time,a.status,a.is_recommend,a.create_time';
+	    $where = array();
+	    $where['a.status'] = array('in','1,2');
+	    $list = $m_public->getList($fields,$where, $orders, $start,$size);
+	    
+	    $this->assign('list',$list['list']);
+	    $this->assign('page',$list['page']);
+	    $this->display('Report/sapppublic');
+	}
+	public function pubdetail(){
+	    $oss_host = 'http://'. C('OSS_HOST_NEW').'/';
+	    $forscreen_id = I('get.forscreen_id',0,'intval');
+	    $res_type = I('get.res_type');
+	    $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
+	    $fields = "concat('".$oss_host."',`res_url`) res_url";
+	    $where = array();
+	    $where['forscreen_id'] = $forscreen_id;
+	    $list = $m_pubdetail->getWhere($fields,$where);
+	     
+	     
+	    $this->assign('res_type',$res_type);
+	    $this->assign('list',$list);
+	     
+	    $this->display('Report/pubdetail');
+	}
+	/**
+	 * @desc 审核通过
+	 */
+	public function operateStatus(){
+	    $id     = I('get.id',0,'intval');
+	    $status = I('get.status');
+	    $m_public = new \Admin\Model\Smallapp\PublicModel();
+	    $where = $data = array();
+	    $where['id'] = $id;
+	    $data['status'] = $status;
+	    $ret = $m_public->updateInfo($where, $data);
+	    if($ret){
+	        $this->output('审核成功', 'sappforscreen/publiccheck',2);
+	    }else {
+	        $this->output('审核失败', 'sappforscreen/publiccheck',2);
+	    }
+	    
+	}
+	public function operateRecommend(){
+	    $id = I('get.id',0,'intval');
+	    $is_recommend = I('get.is_recommend');
+	    $m_public = new \Admin\Model\Smallapp\PublicModel();
+	    $where = $data = array();
+	    $where['id'] = $id;
+	    $data['is_recommend'] = $is_recommend;
+	    $ret = $m_public->updateInfo($where, $data);
+	    if($ret){
+	        $this->output('修改成功', 'sappforscreen/publiccheck',2);
+	    }else {
+	        $this->output('修改失败', 'sappforscreen/publiccheck',2);
+	    }
+	}
+	public function delpublic(){
+	   $id     = I('get.id',0,'intval');
+	   $m_public = new \Admin\Model\Smallapp\PublicModel();
+	   $where = $data = array();
+	   $where['id'] = $id;
+	   $data['status'] = 0;
+	   $ret = $m_public->updateInfo($where, $data);
+	   if($ret){
+	       $this->output('删除成功', 'sappforscreen/publiccheck',2);
+	   }else {
+	       $this->output('删除失败', 'sappforscreen/publiccheck',2);
+	   }
 	}
 }
