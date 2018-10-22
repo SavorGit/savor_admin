@@ -3738,14 +3738,25 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         
     }
     /**
-     * @desc 获取投屏酒楼总数
+     * @desc 获取酒楼投屏总数
      */
     public function countForscreen(){
+        $s_date = I('get.s_date');
+        $e_date = I('get.e_date');
+        
+        $where = '';
+        if($s_date){
+            $where .=" and a.create_time>='".$s_date." 00:00:00'";
+        }
+        if($e_date){
+            $where .=" and a.create_time<='".$e_date." 23:59:59'";
+        }
         $sql ="SELECT hotel.id hotel_id,hotel.name hotel_name   FROM `savor_smallapp_forscreen_record` a
                left join savor_box box on a.box_mac=box.mac
                left join savor_room room on box.room_id = room.id
                left join savor_hotel hotel on room.hotel_id= hotel.id
-               where box.flag=0 and box.state=1  group by hotel.id";
+               where box.flag=0 and box.state=1 and mobile_brand !='devtools'  $where  group by hotel.id";
+
         $hotel_list = M()->query($sql);
         $count_arr = array() ;
         foreach ($hotel_list as $key=>$v){
@@ -3754,7 +3765,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                    left join savor_box box on a.box_mac=box.mac
                    left join savor_room room on box.room_id = room.id
                    left join savor_hotel hotel on room.hotel_id= hotel.id
-                   where 1 and a.action in(0,2,4,5) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'];
+                   where 1 and mobile_brand !='devtools' and a.action in(0,2,4,5) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
             
             $ret = M()->query($sql);
             
@@ -3765,7 +3776,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                    left join savor_box box on a.box_mac=box.mac
                    left join savor_room room on box.room_id = room.id
                    left join savor_hotel hotel on room.hotel_id= hotel.id
-                   where 1 and (a.action in(0,4) or (a.action=2 and a.resource_type=1)) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'];
+                   where 1 and mobile_brand !='devtools' and (a.action in(0,4) or (a.action=2 and a.resource_type=1)) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
             $ret = M()->query($sql);
             $hotel_list[$key]['img_count'] = $ret[0]['num'];
             
@@ -3774,7 +3785,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                    left join savor_box box on a.box_mac=box.mac
                    left join savor_room room on box.room_id = room.id
                    left join savor_hotel hotel on room.hotel_id= hotel.id
-                   where 1 and (a.action = 2 and a.resource_type=2) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'];
+                   where 1 and mobile_brand !='devtools' and (a.action = 2 and a.resource_type=2) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
             $ret = M()->query($sql);
             $hotel_list[$key]['video_count'] = $ret[0]['num'];
             
@@ -3783,7 +3794,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                    left join savor_box box on a.box_mac=box.mac
                    left join savor_room room on box.room_id = room.id
                    left join savor_hotel hotel on room.hotel_id= hotel.id
-                   where 1 and a.action=5 and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'];
+                   where 1 and mobile_brand !='devtools' and a.action=5 and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
             $ret = M()->query($sql);
             $hotel_list[$key]['launch'] = $ret[0]['num'];
         }

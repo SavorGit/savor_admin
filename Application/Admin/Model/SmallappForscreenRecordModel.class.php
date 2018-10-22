@@ -17,6 +17,7 @@ class SmallappForscreenRecordModel extends Model
 	                 ->join('savor_room room on room.id= box.room_id','left')
 	                 ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
 	                 ->join('savor_area_info area on hotel.area_id=area.id','left')
+	                 ->join('savor_smallapp_user user on a.openid=user.openid','left')
 	                 ->field($fields)
             	     ->where($where)
             	     ->order($order)
@@ -28,6 +29,7 @@ class SmallappForscreenRecordModel extends Model
 	                  ->join('savor_room room on room.id= box.room_id','left')
 	                  ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
 	                  ->join('savor_area_info area on hotel.area_id=area.id','left')
+	                  ->join('savor_smallapp_user user on a.openid=user.openid','left')
 	                  ->where($where)->count();
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();

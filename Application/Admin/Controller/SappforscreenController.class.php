@@ -52,19 +52,29 @@ class SappforscreenController extends BaseController {
 	        $this->assign('openid',$openid);
 	    }
 	    $create_time = I('create_time','','trim');
-	    if($create_time){
-	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$create_time.' 23:59:59'));
+	    $end_time    = I('end_time','','trim');
+	    
+	    if($create_time && $end_time){
+	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
 	        $this->assign('create_time',$create_time);
-	    } 
+	        $this->assign('end_time',$end_time);
+	    } else if($create_time && empty($end_time)){
+	        $end_time = date('Y-m-d');
+	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+	        $this->assign('create_time',$create_time);
+	        $this->assign('end_time',date('Y-m-d'));
+	    }else if(empty($create_time) && !empty($end_time)){
+	        $create_time = '2018-07-23';
+	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+	        $this->assign('create_time',$create_time);
+	        $this->assign('end_time',$end_time);
+	    }
 	    
 	    
-	    
-	    
-	    
-	    $fields = 'area.region_name,hotel.name hotel_name,room.name room_name,a.*';
+	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
-	    
+
 	    foreach ($list['list'] as $key=>$v){
 	        if(!empty($v['resource_size'])){
 	            $list['list'][$key]['resource_size'] = formatBytes($v['resource_size']);
@@ -115,6 +125,9 @@ class SappforscreenController extends BaseController {
 	                break;
 	            case '7':
 	                $list['list'][$key]['action_name'] = '点击互动游戏';
+	                break;
+	            case '9':
+	                $list['list'][$key]['action_name'] = '手机呼大码';
 	                break;
 	            case '11':
 	                $list['list'][$key]['action_name'] = '发现点播图片';
