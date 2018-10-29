@@ -126,6 +126,9 @@ class SappforscreenController extends BaseController {
 	            case '7':
 	                $list['list'][$key]['action_name'] = '点击互动游戏';
 	                break;
+	            case '8':
+	                $list['list'][$key]['action_name'] = '重投';
+	                break;
 	            case '9':
 	                $list['list'][$key]['action_name'] = '手机呼大码';
 	                break;

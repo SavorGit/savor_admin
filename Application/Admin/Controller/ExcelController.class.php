@@ -3751,11 +3751,12 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         if($e_date){
             $where .=" and a.create_time<='".$e_date." 23:59:59'";
         }
-        $sql ="SELECT hotel.id hotel_id,hotel.name hotel_name   FROM `savor_smallapp_forscreen_record` a
+        $sql ="SELECT area.region_name, hotel.id hotel_id,hotel.name hotel_name   FROM `savor_smallapp_forscreen_record` a
                left join savor_box box on a.box_mac=box.mac
                left join savor_room room on box.room_id = room.id
                left join savor_hotel hotel on room.hotel_id= hotel.id
-               where box.flag=0 and box.state=1 and mobile_brand !='devtools'  $where  group by hotel.id";
+               left join savor_area_info area on hotel.area_id= area.id
+               where box.flag=0 and box.state=1   $where  group by hotel.id";
 
         $hotel_list = M()->query($sql);
         $count_arr = array() ;
@@ -3765,7 +3766,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                    left join savor_box box on a.box_mac=box.mac
                    left join savor_room room on box.room_id = room.id
                    left join savor_hotel hotel on room.hotel_id= hotel.id
-                   where 1 and mobile_brand !='devtools' and a.action in(0,2,4,5) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
+                   where 1 and mobile_brand !='devtools' and a.action in(0,2,4,5,11,12) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
             
             $ret = M()->query($sql);
             
@@ -3794,20 +3795,42 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                    left join savor_box box on a.box_mac=box.mac
                    left join savor_room room on box.room_id = room.id
                    left join savor_hotel hotel on room.hotel_id= hotel.id
-                   where 1 and mobile_brand !='devtools' and a.action=5 and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
+                   where 1 and mobile_brand !='devtools' and a.action=5 and a.forscreen_char !='Happy Birthday' and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
             $ret = M()->query($sql);
             $hotel_list[$key]['launch'] = $ret[0]['num'];
+            
+            //视频点播生日歌
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and a.action=5 and a.forscreen_char ='Happy Birthday' and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['happy'] = $ret[0]['num'];
+            //发现点播投屏
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and a.action in(11,12) and  box.flag=0 and box.state=1  and hotel.id=".$v['hotel_id'].$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['find'] = $ret[0]['num'];
         }
         sortArrByOneField($hotel_list, 'count',true);
         //print_r($hotel_list);exit;
         //array_multisort($count_arr,SORT_DESC,$hotel_list);
         $xlsCell = array(
+            array('region_name','城市'),
             array('hotel_id','酒楼id'),
+            
             array('hotel_name','酒楼名称'),
             array('count','互动总数'),
             array('img_count','图片投屏'),
             array('video_count','视频投屏'),
-            array('launch','点播')
+            array('launch','视频点播'),
+            array('happy','生日歌点播'),
+            array('find','发现内容点播')
+            
         );
         $xlsName = '小程序投屏统计';
         $filename = 'smallapp_forsacreen';

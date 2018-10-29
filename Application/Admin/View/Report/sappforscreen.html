@@ -118,7 +118,14 @@
                 <volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
                 </volist>
-                
+                <elseif condition="($vlist.action eq 8) && ($vlist.resource_type eq 1)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                <elseif condition="($vlist.action eq 8) && ($vlist.resource_type eq 2)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
+                </volist>
                 <elseif condition="$vlist.action eq 5 || $vlist.action eq 12 ||  $vlist.action eq 22" />
                 <volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>

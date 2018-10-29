@@ -391,6 +391,7 @@ $config['SAPP_UPRES_FORSCREEN']  = 'smallapp:upresouce';
 $config['SAPP_WANT_GAME']        = 'smallapp:wantgame';
 $config['SAPP_SUNCODE_LOG']      = 'smallapp:suncodelog:';
 $config['SAPP_SCRREN_SHARE']     = 'smallapp:public:forscreen:';
+$config['SAPP_HISTORY_SCREEN']   = 'smallapp:history:forscreen:';
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',
