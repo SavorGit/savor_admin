@@ -442,7 +442,9 @@ class SappforscreenController extends BaseController {
 	public function interactStatic(){
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
+	    
 	    $start = I('pageNum',1);
+	    $pageNum = $start;
 	    $this->assign('pageNum',$start);
 	    $order = I('_order','a.hotel_id');
 	    $this->assign('_order',$order);
@@ -472,7 +474,7 @@ class SappforscreenController extends BaseController {
 	    $where['a.mobile_brand'] = array('neq','devtools');
 	    $group = "hotel.id";
 	    
-	    $list = $m_forscreen_record->getStaticList($fileds, $where, $order, $group, $start, $size);
+	    $list = $m_forscreen_record->getStaticList($fileds, $where, $order, $group, $start, $size,$pageNum,$area_id);
 	    
 	    
 	    $m_box = new \Admin\Model\BoxModel();
