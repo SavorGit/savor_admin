@@ -13,22 +13,8 @@ use Common\Lib\SavorRedis;
  *
  */
 class TestController extends Controller {
-    public function test(){
-        $sql = "SELECT count(*) as nums,forscreen_id,imgs FROM `savor_smallapp_forscreen_record` WHERE `create_time`>'2018-10-22 00:00:00' and `create_time`<'2018-10-28 23:59:59' and action =4 GROUP by `forscreen_id` ";
-        $data = M()->query($sql);
-        $nums = 0;
-        foreach($data as $key=>$v){
-            if($v['nums']==1){
-                $sql ="select id from `savor_smallapp_forscreen_record` where imgs='".$v['imgs']."' and action=2 and resource_type=1";
-                //echo $sql;exit;
-                $tmp = M()->query($sql);
-                $count  = count($tmp);
-                $nums +=$count;
-            }
-            
-        } 
-        echo $nums;
-    }
+    
+    
     
     public function importBoxLog(){
         exit('not come');
