@@ -366,15 +366,19 @@ class officialController extends Controller {
 	    
 	    $online_box = $m_heart_log->getHotelHeartBox($where,$fields);
 	    $online_box_num = count($online_box); */
+	    $m_hotel = new \Admin\Model\HotelModel();
 	    $online_box_num = 0;
 	    $heart_time = date('YmdHis',strtotime('-10 minutes'));
 	    $redis = new SavorRedis();
 	    $redis->select('13');
 	    $keys = $redis->keys('heartbeat:2:*');
+	    $area_box_arr = array(1=>0,9=>0,236=>0,246=>0);
 	    foreach($keys as $v){
 	        $h_data = $redis->get($v);
 	        $h_data = json_decode($h_data,true);
 	        if($h_data['date']>=$heart_time){
+	            $tmp = $m_hotel->field('area_id')->where('id='.$h_data['hotelId'])->find();
+	            $area_box_arr[$tmp['area_id']] +=1;
 	            $online_box_num +=1;
 	        }
 	    }
@@ -402,6 +406,10 @@ class officialController extends Controller {
 	    $data['online_box_num'] = $online_box_num;
 	    //$data['online_box_num']  = rand(20, 100);
 	    $data['normal_box_num'] = $normal_box_nums;
+	    $data['bj_onlin_box_num'] = $area_box_arr[1];
+	    $data['sh_onlin_box_num'] = $area_box_arr[9];
+	    $data['gz_onlin_box_num'] = $area_box_arr[236];
+	    $data['sz_onlin_box_num'] = $area_box_arr[246];
 	    $data['date'] = date('Ymd');
 	    echo "bigscreen(".json_encode($data).")"; 
 	}
