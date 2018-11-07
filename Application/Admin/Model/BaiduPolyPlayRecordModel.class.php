@@ -49,8 +49,8 @@ class BaiduPolyPlayRecordModel extends Model
 	    $ret = $this->where($where)->setInc($column);
 	    return $ret;
 	}
-	public function countRows($feilds,$where){
-        $nums = $this->field($feilds)->where($where)->count();
+	public function countRows($where){
+        $nums = $this->where($where)->count();
         return $nums;	    
 	}
 	public function modifyInfo($sql_d,$where){
