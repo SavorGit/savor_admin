@@ -87,15 +87,16 @@ class ForscreenRecordModel extends BaseModel
 	    }
 	    $map['a.state'] = 1;
 	    $map['a.flag']  = 0;
-	    $map['a.id']    = array('not in',$forscreen_hotel_arr);
+	    if($forscreen_hotel_arr) $map['a.id']    = array('not in',$forscreen_hotel_arr);
+	    
 	    $heart_hotel_box_type = C('heart_hotel_box_type');
-	     
+	    
 	    $net_box_arr = array_keys($heart_hotel_box_type);
 	    $map['a.hotel_box_type'] = array('in',$net_box_arr);
 	    
 	    $h_list = $m_hotel->alias('a')
 	            ->join('savor_area_info area on a.area_id=area.id','left')
-	            ->field('a.id hotel_id,area.region_name ,a.name hotel_name')
+	            ->field('a.id hotel_id,area.region_name ,a.name hotel_name,1 as `tstype`')
 	            ->where($map)
 	            ->limit($h_start,$h_size)
 	            ->select();
@@ -106,6 +107,7 @@ class ForscreenRecordModel extends BaseModel
 	            ->where($map)
 	            
 	            ->select();
+	    
 	    $count = count($ret);
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();

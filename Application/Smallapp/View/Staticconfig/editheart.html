@@ -1,0 +1,43 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/smallapp/staticconfig/editHeart" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <div class="pageFormContent modal-body">
+		
+	  <php>
+	  	for($i =0 ;$i<5;$i++){
+	  </php>	
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          心跳次数:
+        </label>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="min[]" minlength="1" maxlength="20"  value="{$data[$i]['min']}" required>
+        </div>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="max[]" minlength="1" maxlength="20"  value="{$data[$i]['max']}" required>
+        </div>
+        <label class="col-xs-12 col-sm-2 control-label">
+          得分:
+        </label>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="score[]" minlength="1" maxlength="20"  value="{$data[$i]['score']}" required>
+        </div>%
+      </div>
+      <php>
+      	}
+      </php>
+      
+     
+      
+      
+      
+      
+    </div>
+	<input type="hidden" name="type" value="{$type}"> 
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>

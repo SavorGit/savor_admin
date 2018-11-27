@@ -19,6 +19,7 @@ class BaseController extends Controller {
     
     public function handlePublicParams(){
         $this->assign('host_name',$this->host_name().'/admin');
+        $this->assign('host_url',$this->host_name());
         $this->assign('site_host_name',$this->host_name());
         $this->assign('imgup_path',$this->imgup_path());
         $this->assign('imgup_show',$this->imgup_show());

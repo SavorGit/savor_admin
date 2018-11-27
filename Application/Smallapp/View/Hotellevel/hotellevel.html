@@ -1,0 +1,163 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hotellevel/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+          		<input style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                <span class="input-group-btn">
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 	</div>
+
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
+
+          		<input    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                <span class="input-group-btn"  >
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+        	</div>
+        </div>
+        
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              地区：
+            </label>
+                <span class="input-group-btn">
+               <select name="area_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <volist name="area_list" id="val">
+                 <option <php>if($area_id==$val['id']){</php>selected="selected"<php>}</php>  value="{$val.id}" >{$val['region_name']}</option>
+                 </volist>
+               </select>
+          </div>
+          </div>
+          <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              	饭局：
+            </label>
+                <span class="input-group-btn">
+               <select name="fj" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 
+                 <option <php>if($fj==1){</php>selected="selected"<php>}</php>  value="1" >午饭</option>
+                 <option <php>if($fj==2){</php>selected="selected"<php>}</php>  value="2" >晚饭</option>
+               </select>
+          </div>
+          </div>
+		  <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              	维护人：
+            </label>
+                <span class="input-group-btn">
+               <select name="maintainer_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 
+                 <volist name="pub_info" id="vlist">
+                    <option value="{$vlist.main_id}" <if condition="$vlist['main_id'] eq $maintainer_id">selected</if>>{$vlist.remark}</option><br>
+                </volist>
+               </select>
+          </div>
+          </div>	
+          <div class="form-group" >
+	              <div class="input-group input-group-sm pull-right">
+	                
+		            
+		            <span class="input-group-btn">
+		              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+		            </span>
+	              </div>
+            </div>  
+            <div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/sappstatic?start_date={$start_date}&end_state={$end_date}&area_id={$area_id}&fj={$fj}&maintainer_id={$maintainer_id}" title="导出统计数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出统计数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/sappstatic"/>
+            </div>
+            <p style="margin:20px 0px 0px 10px;">酒楼数据 --A级酒楼：{$a_level}      B级酒楼：{$b_level}      C级酒楼：{$c_level}</p>
+          <!--   <div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/expheartlost" title="导出心跳数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出心跳数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div> -->
+          
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+          <tr id="post">
+            
+            <th>酒楼名称</th>
+            <th>级别</th>
+            <th>综合评分</th>
+            <th>网络评分</th>
+            <th>开机评分</th>
+            <th>互动评分</th> 
+            <th>心跳次数</th>
+            <th>平均网速</th>
+            <th>互动次数</th>
+            <th>版位数量</th>
+            <th>互动版位</th>
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+             
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="级别">{$vlist.multy_level}</td>
+              <td data-title="综合评分">{$vlist.mylty_score}</td>
+              <td data-title="网络评分">{$vlist.net_score}</td>
+              <td data-title="开机评分">{$vlist.wake_score}</td>
+              <td data-title="互动评分">{$vlist.hd_score}</td>
+              <td data-title="心跳次数">{$vlist.heart_log_nums}</td>
+			  <td data-title="平均网速">{$vlist.avg_down_speed}</td>
+			  <td data-title="互动次数">{$vlist.all_interact_nums}</td>
+			  <td data-title="版位数量">{$vlist.all_box_nums}</td>
+			  <td data-title="互动版位">{$vlist.hd_box_nums}</td>
+			  
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    
+
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+</script>

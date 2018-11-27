@@ -5,7 +5,7 @@ $config = array(
     'URL_MODEL'				=>2,
     'URL_CASE_INSENSITIVE'  => true, //url支持大小写
     'MODULE_DENY_LIST'      => array('Common','Runtime'), // 禁止访问的模块列表
-    'MODULE_ALLOW_LIST'     => array('Admin','H5'), //模块配置
+    'MODULE_ALLOW_LIST'     => array('Admin','H5','Smallapp'), //模块配置
     'DEFAULT_MODULE'        => 'Admin',
     //session cookie配置
     'SESSION_AUTO_START'    =>  true,    // 是否自动开启Session
@@ -134,6 +134,7 @@ $config['MANGER_KEY'] = array(
     'advdelivery'=>'广告投放节点',
 	'option'=>'运维客户端',
     'installoffer'=>'网络设备报价',
+    'smallapp'=>'小程序数据统计节点',
 
 );
 $config['STATE_REASON'] = array(

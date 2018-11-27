@@ -463,7 +463,7 @@ class SappforscreenController extends BaseController {
 	    
 	    //获取酒楼
 	    $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel(); 
-	    $fileds = "hotel.id hotel_id,area.region_name ,hotel.name hotel_name";
+	    $fileds = "hotel.id hotel_id,area.region_name ,hotel.name hotel_name,0 as `tstype`";
 	    
 	    
 	    $where['a.create_time'] = array(array('EGT',$start_date),array('ELT',$end_date));
@@ -538,31 +538,32 @@ class SappforscreenController extends BaseController {
 	            
 	            
 	        }
-	        $lunch_interact_mobile_nums  = 0;                                         //上午互动手机数
-	        $dinner_interact_mobile_nums = 0;                                         //下午互动手机数
-	        
-	        //午饭互动手机
-	        $sql = "select a.id,a.openid from savor_smallapp_forscreen_record a
+	        if($v['tstype']==0){
+	            $lunch_interact_mobile_nums  = 0;                                         //上午互动手机数
+	            $dinner_interact_mobile_nums = 0;                                         //下午互动手机数
+	             
+	            //午饭互动手机
+	            $sql = "select a.id,a.openid from savor_smallapp_forscreen_record a
 	                left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']." 
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15
 	                and a.mobile_brand!='devtools' group by a.openid";
-	        $ret_f = M()->query($sql);
-	        //$lunch_interact_mobile_nums += count($ret);
-	        $sql = "select a.id,a.openid from savor_smallapp_turntable_log a 
+	            $ret_f = M()->query($sql);
+	            //$lunch_interact_mobile_nums += count($ret);
+	            $sql = "select a.id,a.openid from savor_smallapp_turntable_log a
                     left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']." 
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15
 	                group by a.openid";
-	        $ret_t = M()->query($sql);
-	        //$lunch_interact_mobile_nums += count($ret);
-	        $sql ="select a.id,a.openid from savor_smallapp_turntable_detail a
+	            $ret_t = M()->query($sql);
+	            //$lunch_interact_mobile_nums += count($ret);
+	            $sql ="select a.id,a.openid from savor_smallapp_turntable_detail a
                     left join savor_smallapp_turntable_log b on a.activity_id=b.activity_id
                     left join savor_box box on b.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
@@ -571,187 +572,129 @@ class SappforscreenController extends BaseController {
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15
 	                group by openid";
-	        $ret_td = M()->query($sql);
-	        $ret = array_merge($ret_f,$ret_t,$ret_td);
-	        if(empty($ret)){
-	            $lunch_interact_mobile_nums = 0;
-	        }else {
-	            $ret = assoc_unique($ret, 'openid');
-	            $lunch_interact_mobile_nums = count($ret);
-	        }
-	        
-	        
-	        //晚饭互动手机
-	        $sql = "select a.id,a.openid from savor_smallapp_forscreen_record a
-	                left join savor_box box on a.box_mac=box.mac
-	                left join savor_room room on box.room_id=room.id
-	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
-	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
-	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
-	                and a.mobile_brand!='devtools' group by a.openid";
-	        $ret_f = M()->query($sql);
-	        //$dinner_interact_mobile_nums += count($ret);
-	        $sql = "select a.id,a.openid from savor_smallapp_turntable_log a
-                    left join savor_box box on a.box_mac=box.mac
-	                left join savor_room room on box.room_id=room.id
-	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
-	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
-	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
-	                group by a.openid";
-	        $ret_t = M()->query($sql);
-	        //$dinner_interact_mobile_nums += count($ret);
-	        $sql ="select a.id,a.openid from savor_smallapp_turntable_detail a
-                    left join savor_smallapp_turntable_log b on a.activity_id=b.activity_id
-                    left join savor_box box on b.box_mac=box.mac
-	                left join savor_room room on box.room_id=room.id
-	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
-	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
-	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
-	                group by openid";
-	        $ret_td = M()->query($sql);
-	        $ret = array_merge($ret_f,$ret_t,$ret_td);
-	        if(empty($ret)){
-	            $dinner_interact_mobile_nums = 0;
-	        }else {
-	            $ret = assoc_unique($ret, 'openid');
-	            $dinner_interact_mobile_nums = count($ret);
-	        }
-	        //$dinner_interact_mobile_nums += count($ret);
-	        /* $map = array();
-	        $map['hotel.id'] = $v['hotel_id'];
-	        $map['a.create_time'] = array(array('EGT',$start_date),array('ELT',$end_date));
-	        $map['a.mobile_brand'] = array('neq','devtools');
-	        $map['box.flag'] = 0;
-	        $map['box.state']= 1;
-	        $forscreen_mobile_arr = $m_forscreen_record->getWhere('a.openid,a.create_time', $map);
-	        
-	        $lunch_forscreen_mobile_arr = $dinner_forscreen_mobile_arr = array();
-	        foreach($forscreen_mobile_arr as $f=>$fv){
-	           $c_time = substr($fv['create_time'],11);
-	           if($c_time>='02:00:00' && $c_time<='14:59:59'){
-	               $lunch_forscreen_mobile_arr[] = $fv['openid'];
-	           }else {
-	               $dinner_forscreen_mobile_arr[] = $fv['openid'];
-	           }
-	        }
-	        //发起游戏手机
-	        $map = array();
-	        $map['hotel.id'] = $v['hotel_id'];
-	        $map['box.flag'] = 0;
-	        $map['box.state']= 1;
-	        $map['a.create_time'] = array(array('EGT',$start_date),array('ELT',$end_date));
-	        $turntable_mobile_arr = $m_turntale_log->getWhere('a.openid,a.create_time', $map);
-	        $lunch_turntable_mobile_arr = $dinner_turntable_mobile_arr = array();
-	        foreach($turntable_mobile_arr as $tk=>$tv){
-	           $c_time = substr($tv['create_time'],11);
-	           if($c_time>='02:00:00' && $c_time<='14:59:59'){
-	               $lunch_turntable_mobile_arr[] = $tv['openid'];
-	           }else {
-	               $dinner_turntable_mobile_arr[] = $tv['openid'];
-	           }
-	        }
-	        //参与手机游戏
-	        $map = array();
-	        $map['hotel.id'] = $v['hotel_id'];
-	        $map['box.flag'] = 0;
-	        $map['box.state']= 1;
-	        $map['a.create_time'] = array(array('EGT',$start_date),array('ELT',$end_date));
-	        $turntable_detail_mobile_arr = $m_turntale_detail->getInfos('a.openid,a.create_time', $map);
-	        $lunch_turntable_detail_mobile_arr = $dinner_turntable_detail_mobile_arr = array();
-
-	        foreach($turntable_detail_mobile_arr as $tdk=>$tdv){
-	            $c_time = substr($tdv['create_time'],11);
-	            if($c_time>='02:00:00' && $c_time<='14:59:59'){
-	                $lunch_turntable_detail_mobile_arr[] = $tdv['openid'];
+	            $ret_td = M()->query($sql);
+	            $ret = array_merge($ret_f,$ret_t,$ret_td);
+	            if(empty($ret)){
+	                $lunch_interact_mobile_nums = 0;
 	            }else {
-	                $dinner_turntable_detail_mobile_arr[] = $tdv['openid'];
+	                $ret = assoc_unique($ret, 'openid');
+	                $lunch_interact_mobile_nums = count($ret);
 	            }
-	        }
-	        //午饭互动总手机
-	        $lunch_interact_mobile_arr = array_keys(array_flip($lunch_forscreen_mobile_arr)+array_flip($lunch_turntable_mobile_arr)+array_flip($lunch_turntable_detail_mobile_arr));
-	        $lunch_interact_mobile_nums= count($lunch_interact_mobile_arr);
-            
-	        //晚饭互动手机 
-	        $dinner_interact_mobile_arr = array_keys(array_flip($dinner_forscreen_mobile_arr)+array_flip($dinner_turntable_mobile_arr)+array_flip($dinner_turntable_detail_mobile_arr));
-	        $dinner_interact_mobile_nums = count($dinner_interact_mobile_arr); */
-
-	        //互动饭局数
-	        $lunch_fanju_num = 0;   //午饭总饭局数
-	        $dinner_fanju_num =0;   //晚饭总饭局数
-	        
-	        //总互动次数
-	        $lunch_interact_num = 0 ;         //午饭总互动次数
-	        $dinner_interact_num = 0;         //晚饭总互动次数
-	        
-	        $lunch_pic_num      = 0;
-	        $lunch_video_num    = 0;
-	        $lunch_db_num       = 0;
-	        $lunch_birthday_num = 0;
-	        $lunch_game_num     = 0;
-	         
-	        $dinner_pic_num      = 0;
-	        $dinner_video_num    = 0;
-	        $dinner_db_num       = 0;
-	        $dinner_birthday_num = 0;
-	        $dinner_game_num     = 0;
-	        
-	        $sql = "select a.action,a.resource_type,forscreen_char from savor_smallapp_forscreen_record a
+	             
+	             
+	            //晚饭互动手机
+	            $sql = "select a.id,a.openid from savor_smallapp_forscreen_record a
 	                left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']." 
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
+	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
+	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
+	                and a.mobile_brand!='devtools' group by a.openid";
+	            $ret_f = M()->query($sql);
+	            //$dinner_interact_mobile_nums += count($ret);
+	            $sql = "select a.id,a.openid from savor_smallapp_turntable_log a
+                    left join savor_box box on a.box_mac=box.mac
+	                left join savor_room room on box.room_id=room.id
+	                left join savor_hotel hotel on room.hotel_id=hotel.id
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
+	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
+	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
+	                group by a.openid";
+	            $ret_t = M()->query($sql);
+	            //$dinner_interact_mobile_nums += count($ret);
+	            $sql ="select a.id,a.openid from savor_smallapp_turntable_detail a
+                    left join savor_smallapp_turntable_log b on a.activity_id=b.activity_id
+                    left join savor_box box on b.box_mac=box.mac
+	                left join savor_room room on box.room_id=room.id
+	                left join savor_hotel hotel on room.hotel_id=hotel.id
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
+	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
+	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
+	                group by openid";
+	            $ret_td = M()->query($sql);
+	            $ret = array_merge($ret_f,$ret_t,$ret_td);
+	            if(empty($ret)){
+	                $dinner_interact_mobile_nums = 0;
+	            }else {
+	                $ret = assoc_unique($ret, 'openid');
+	                $dinner_interact_mobile_nums = count($ret);
+	            }
+	             
+	            //互动饭局数
+	            $lunch_fanju_num = 0;   //午饭总饭局数
+	            $dinner_fanju_num =0;   //晚饭总饭局数
+	             
+	            //总互动次数
+	            $lunch_interact_num = 0 ;         //午饭总互动次数
+	            $dinner_interact_num = 0;         //晚饭总互动次数
+	             
+	            $lunch_pic_num      = 0;
+	            $lunch_video_num    = 0;
+	            $lunch_db_num       = 0;
+	            $lunch_birthday_num = 0;
+	            $lunch_game_num     = 0;
+	            
+	            $dinner_pic_num      = 0;
+	            $dinner_video_num    = 0;
+	            $dinner_db_num       = 0;
+	            $dinner_birthday_num = 0;
+	            $dinner_game_num     = 0;
+	             
+	            $sql = "select a.action,a.resource_type,forscreen_char from savor_smallapp_forscreen_record a
+	                left join savor_box box on a.box_mac=box.mac
+	                left join savor_room room on box.room_id=room.id
+	                left join savor_hotel hotel on room.hotel_id=hotel.id
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15
 	                and a.mobile_brand!='devtools'";
-	        $ret = M()->query($sql);
-	       
-	        
-	        foreach($ret as $rk=>$rv){
-	            if(($rv['action']==2 && $rv['resource_type']==1) || $rv['action']==4 ){//图片
-	                $lunch_pic_num ++;
-	            }else if($rv['action']==2 && $rv['resource_type']==2){//视频
-	                $lunch_video_num ++;
-	            }else if($rv['action']==5 && $rv['forscreen_char']!='Happy Birthday'){
-	                $lunch_db_num ++;
-	            }else if($rv['action']==5 && $rv['forscreen_char'] =='Happy Birthday'){
-	                $lunch_birthday_num ++;
+	            $ret = M()->query($sql);
+	            
+	             
+	            foreach($ret as $rk=>$rv){
+	                if(($rv['action']==2 && $rv['resource_type']==1) || $rv['action']==4 ){//图片
+	                    $lunch_pic_num ++;
+	                }else if($rv['action']==2 && $rv['resource_type']==2){//视频
+	                    $lunch_video_num ++;
+	                }else if($rv['action']==5 && $rv['forscreen_char']!='Happy Birthday'){
+	                    $lunch_db_num ++;
+	                }else if($rv['action']==5 && $rv['forscreen_char'] =='Happy Birthday'){
+	                    $lunch_birthday_num ++;
+	                }
 	            }
-	        }
-	        
-	        $lunch_interact_num += $lunch_pic_num +$lunch_video_num +$lunch_db_num+$lunch_birthday_num;
-	        
-            $sql = "select count(a.id) as nums from savor_smallapp_turntable_log a 
+	             
+	            $lunch_interact_num += $lunch_pic_num +$lunch_video_num +$lunch_db_num+$lunch_birthday_num;
+	             
+	            $sql = "select count(a.id) as nums from savor_smallapp_turntable_log a
                     left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']." 
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15";
-             $ret = M()->query($sql);
-             $lunch_game_num += $ret[0]['nums']; 
-             $lunch_interact_num +=$ret[0]['nums']; 
-             
-             $sql ="select count(a.id) as nums from savor_smallapp_turntable_detail a 
+	            $ret = M()->query($sql);
+	            $lunch_game_num += $ret[0]['nums'];
+	            $lunch_interact_num +=$ret[0]['nums'];
+	             
+	            $sql ="select count(a.id) as nums from savor_smallapp_turntable_detail a
                     left join savor_smallapp_turntable_log b on a.activity_id=b.activity_id
                     left join savor_box box on b.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']." 
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15";
-             $ret = M()->query($sql);
-             $lunch_game_num +=$ret[0]['nums'];
-             $lunch_interact_num +=$ret[0]['nums'];
-            
-             //午饭投屏电视数
-             $lunch_forscreen_box_num = 0;
-             //晚饭投屏电视数
-             $dinner_forscreen_box_num= 0;
-              
-             $sql = "select a.id,a.box_mac from savor_smallapp_forscreen_record a
+	            $ret = M()->query($sql);
+	            $lunch_game_num +=$ret[0]['nums'];
+	            $lunch_interact_num +=$ret[0]['nums'];
+	            
+	            //午饭投屏电视数
+	            $lunch_forscreen_box_num = 0;
+	            //晚饭投屏电视数
+	            $dinner_forscreen_box_num= 0;
+	            
+	            $sql = "select a.id,a.box_mac from savor_smallapp_forscreen_record a
 	                left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
@@ -760,10 +703,10 @@ class SappforscreenController extends BaseController {
 	                and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15
 	                and a.mobile_brand !='devtools'
 	                group by a.box_mac";
-             $ret_f = M()->query($sql);
-             
-             //$lunch_forscreen_box_num += count($ret);
-             $sql = "select a.id,a.box_mac from savor_smallapp_turntable_log a
+	            $ret_f = M()->query($sql);
+	             
+	            //$lunch_forscreen_box_num += count($ret);
+	            $sql = "select a.id,a.box_mac from savor_smallapp_turntable_log a
                 left join savor_box box on a.box_mac=box.mac
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
@@ -771,20 +714,20 @@ class SappforscreenController extends BaseController {
                 and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
                 and SUBSTRING(a.create_time,12,2)>=2 and SUBSTRING(a.create_time,12,2)<15
                 group by a.box_mac";
-             $ret_t = M()->query($sql);
-             
-             $ret = array_merge($ret_f,$ret_t);
-             
-             if(empty($ret)){
-                 $lunch_forscreen_box_num =0;
-             }else {
-                 
-                 $ret = assoc_unique($ret, 'box_mac');
-                 $lunch_forscreen_box_num = count($ret);
-             }
-             $lunch_fanju_num = $lunch_forscreen_box_num;
-              
-             $sql = "select a.id,a.box_mac from savor_smallapp_forscreen_record a
+	            $ret_t = M()->query($sql);
+	             
+	            $ret = array_merge($ret_f,$ret_t);
+	             
+	            if(empty($ret)){
+	                $lunch_forscreen_box_num =0;
+	            }else {
+	                 
+	                $ret = assoc_unique($ret, 'box_mac');
+	                $lunch_forscreen_box_num = count($ret);
+	            }
+	            $lunch_fanju_num = $lunch_forscreen_box_num;
+	            
+	            $sql = "select a.id,a.box_mac from savor_smallapp_forscreen_record a
 	                left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
@@ -793,10 +736,10 @@ class SappforscreenController extends BaseController {
 	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
 	                and a.mobile_brand !='devtools'
 	                group by a.box_mac";
-             $ret_f = M()->query($sql);
-             
-             $dinner_forscreen_box_num += count($ret);
-             $sql = "select a.id,a.box_mac from savor_smallapp_turntable_log a
+	            $ret_f = M()->query($sql);
+	             
+	            $dinner_forscreen_box_num += count($ret);
+	            $sql = "select a.id,a.box_mac from savor_smallapp_turntable_log a
                 left join savor_box box on a.box_mac=box.mac
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
@@ -804,53 +747,53 @@ class SappforscreenController extends BaseController {
                 and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
                 and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
                 group by a.box_mac";
-             $ret_t = M()->query($sql);
-             $ret = array_merge($ret_f,$ret_t);
-             
-             if(empty($ret)){
-                 $dinner_forscreen_box_num = 0;
-             }else {
-                 $ret = assoc_unique($ret, 'box_mac');
-                 $dinner_forscreen_box_num = count($ret); 
-             }
-             $dinner_fanju_num =  $dinner_forscreen_box_num;
-	         $sql = "select a.action,a.resource_type,forscreen_char from savor_smallapp_forscreen_record a
+	            $ret_t = M()->query($sql);
+	            $ret = array_merge($ret_f,$ret_t);
+	             
+	            if(empty($ret)){
+	                $dinner_forscreen_box_num = 0;
+	            }else {
+	                $ret = assoc_unique($ret, 'box_mac');
+	                $dinner_forscreen_box_num = count($ret);
+	            }
+	            $dinner_fanju_num =  $dinner_forscreen_box_num;
+	            $sql = "select a.action,a.resource_type,forscreen_char from savor_smallapp_forscreen_record a
 	                left join savor_box box on a.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
 	                left join savor_hotel hotel on room.hotel_id=hotel.id
-	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']." 
+	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
 	                and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
 	                and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))
 	                and a.mobile_brand!='devtools'";
-	        
-	        $ret = M()->query($sql);
-	        
-	        foreach($ret as $rk=>$rv){
-	            if(($rv['action']==2 && $rv['resource_type']==1) || $rv['action']==4 ){//图片
-	                $dinner_pic_num ++;
-	            }else if($rv['action']==2 && $rv['resource_type']==2){//视频
-	                $dinner_video_num ++;
-	            }else if($rv['action']==5 && $rv['forscreen_char']!='Happy Birthday'){
-	                $dinner_db_num ++;
-	            }else if($rv['action']==5 && $rv['forscreen_char'] =='Happy Birthday'){
-	                $dinner_birthday_num ++;
+	             
+	            $ret = M()->query($sql);
+	             
+	            foreach($ret as $rk=>$rv){
+	                if(($rv['action']==2 && $rv['resource_type']==1) || $rv['action']==4 ){//图片
+	                    $dinner_pic_num ++;
+	                }else if($rv['action']==2 && $rv['resource_type']==2){//视频
+	                    $dinner_video_num ++;
+	                }else if($rv['action']==5 && $rv['forscreen_char']!='Happy Birthday'){
+	                    $dinner_db_num ++;
+	                }else if($rv['action']==5 && $rv['forscreen_char'] =='Happy Birthday'){
+	                    $dinner_birthday_num ++;
+	                }
 	            }
-	        }
-	        $dinner_interact_num += $dinner_pic_num+$dinner_video_num +$dinner_db_num+$dinner_birthday_num;
-	        
-            $sql = "select count(a.id) as nums from savor_smallapp_turntable_log a
+	            $dinner_interact_num += $dinner_pic_num+$dinner_video_num +$dinner_db_num+$dinner_birthday_num;
+	             
+	            $sql = "select count(a.id) as nums from savor_smallapp_turntable_log a
                 left join savor_box box on a.box_mac=box.mac
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
                 where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
                 and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
                 and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))";
-            $ret = M()->query($sql);
-            $dinner_game_num +=$ret[0]['nums'];
-            $dinner_interact_num +=$ret[0]['nums'];
-	        
-	        
-	        $sql ="select count(a.id) as nums from savor_smallapp_turntable_detail a 
+	            $ret = M()->query($sql);
+	            $dinner_game_num +=$ret[0]['nums'];
+	            $dinner_interact_num +=$ret[0]['nums'];
+	             
+	             
+	            $sql ="select count(a.id) as nums from savor_smallapp_turntable_detail a
                     left join savor_smallapp_turntable_log b on a.activity_id=b.activity_id
                     left join savor_box box on b.box_mac=box.mac
 	                left join savor_room room on box.room_id=room.id
@@ -858,114 +801,152 @@ class SappforscreenController extends BaseController {
 	                where box.flag=0 and box.state= 1 and hotel.id=".$v['hotel_id']."
                     and a.create_time>='".$start_date."' and a.create_time<='".$end_date."'
                     and ((SUBSTRING(a.create_time,12,2)>=15 and SUBSTRING(a.create_time,12,2)<23) or (SUBSTRING(a.create_time,12,2)>=0 and SUBSTRING(a.create_time,12,2)<2))";
-	        $ret = M()->query($sql);
-	        $dinner_game_num +=$ret[0]['nums']; 
-	        $dinner_interact_num +=$ret[0]['nums'];
-	        
-	        //午饭/晚饭饭局转换率
-	        if(empty($lunch_can_forscreen_box_num)) $lunch_fanju_rate = 0;
-	        else $lunch_fanju_rate = round($lunch_fanju_num / $lunch_can_forscreen_box_num,2);
-	        
-	        if(empty($dinner_can_forscreen_box_num)) $dinner_fanju_rate = 0;
-	        else $dinner_fanju_rate= round($dinner_fanju_num / $dinner_can_forscreen_box_num,2);
-
-	        //午饭/晚饭人员参与率
-	        if(empty($lunch_can_forscreen_box_num)) $lunch_join_rate = 0;
-	        else  $lunch_join_rate = round($lunch_interact_num /($lunch_can_forscreen_box_num*8),2);
-	        
-	        if(empty($dinner_can_forscreen_box_num)) $dinner_join_rate =0;
-	        else $dinner_join_rate = round($dinner_interact_num /($dinner_can_forscreen_box_num*8),2);
-	        
-	        //午饭/晚饭牵引率
-	        if(empty($lunch_forscreen_box_num))$lunch_pullability_rate = 0;
-	        else $lunch_pullability_rate = round($lunch_interact_mobile_nums / $lunch_forscreen_box_num,2);
+	            $ret = M()->query($sql);
+	            $dinner_game_num +=$ret[0]['nums'];
+	            $dinner_interact_num +=$ret[0]['nums'];
+	             
+	            //午饭/晚饭饭局转换率
+	            if(empty($lunch_can_forscreen_box_num)) $lunch_fanju_rate = 0;
+	            else $lunch_fanju_rate = round($lunch_fanju_num / $lunch_can_forscreen_box_num,2);
+	             
+	            if(empty($dinner_can_forscreen_box_num)) $dinner_fanju_rate = 0;
+	            else $dinner_fanju_rate= round($dinner_fanju_num / $dinner_can_forscreen_box_num,2);
 	            
-	        if(empty($dinner_forscreen_box_num)) $dinner_pullability_rate=0;
-	        else $dinner_pullability_rate= round($dinner_interact_mobile_nums / $dinner_forscreen_box_num,2);
-	        
-	        
-	        //午饭单机互动数 晚饭单机互动数
-	        
-	        if(empty($lunch_interact_mobile_nums)) $lunch_alone_interact_num=0;
-	        else  $lunch_alone_interact_num = round($lunch_interact_num/$lunch_interact_mobile_nums,2);
-	        
-	        if(empty($dinner_interact_mobile_nums)) $dinner_alone_interact_num = 0;
-	        else  $dinner_alone_interact_num= round($dinner_interact_num/$dinner_interact_mobile_nums,2);
-	        
-	        //午饭单屏互动数 //晚饭单凭互动数
-	        if(empty($lunch_fanju_num)) $lunch_box_interact_num =0;
-	        else $lunch_box_interact_num = round($lunch_interact_num/$lunch_fanju_num,2); 
-	        
-	        if(empty($dinner_fanju_num)) $dinner_box_interact_num = 0;
-	        else $dinner_box_interact_num= round($dinner_interact_num/$dinner_fanju_num,2);
-	        
-	        
-	        //午饭/晚饭投照片转换率
-	        if(empty($lunch_can_forscreen_box_num)){
-	            $lunch_pic_num_rate =0;
+	            //午饭/晚饭人员参与率
+	            if(empty($lunch_can_forscreen_box_num)) $lunch_join_rate = 0;
+	            else  $lunch_join_rate = round($lunch_interact_num /($lunch_can_forscreen_box_num*8),2);
+	             
+	            if(empty($dinner_can_forscreen_box_num)) $dinner_join_rate =0;
+	            else $dinner_join_rate = round($dinner_interact_num /($dinner_can_forscreen_box_num*8),2);
+	             
+	            //午饭/晚饭牵引率
+	            if(empty($lunch_forscreen_box_num))$lunch_pullability_rate = 0;
+	            else $lunch_pullability_rate = round($lunch_interact_mobile_nums / $lunch_forscreen_box_num,2);
+	             
+	            if(empty($dinner_forscreen_box_num)) $dinner_pullability_rate=0;
+	            else $dinner_pullability_rate= round($dinner_interact_mobile_nums / $dinner_forscreen_box_num,2);
+	             
+	             
+	            //午饭单机互动数 晚饭单机互动数
+	             
+	            if(empty($lunch_interact_mobile_nums)) $lunch_alone_interact_num=0;
+	            else  $lunch_alone_interact_num = round($lunch_interact_num/$lunch_interact_mobile_nums,2);
+	             
+	            if(empty($dinner_interact_mobile_nums)) $dinner_alone_interact_num = 0;
+	            else  $dinner_alone_interact_num= round($dinner_interact_num/$dinner_interact_mobile_nums,2);
+	             
+	            //午饭单屏互动数 //晚饭单凭互动数
+	            if(empty($lunch_fanju_num)) $lunch_box_interact_num =0;
+	            else $lunch_box_interact_num = round($lunch_interact_num/$lunch_fanju_num,2);
+	             
+	            if(empty($dinner_fanju_num)) $dinner_box_interact_num = 0;
+	            else $dinner_box_interact_num= round($dinner_interact_num/$dinner_fanju_num,2);
+	             
+	             
+	            //午饭/晚饭投照片转换率
+	            if(empty($lunch_can_forscreen_box_num)){
+	                $lunch_pic_num_rate =0;
+	                 
+	                $lunch_video_num_rate =0 ;
+	                $lunch_db_num_rate = 0;
+	                $lunch_birthday_num_rate =0;
+	                $lunch_game_num_rate = 0;
+	            }
+	            else{
+	                $lunch_pic_num_rate = round($lunch_pic_num / $lunch_can_forscreen_box_num,2);
+	                $lunch_video_num_rate = round($lunch_video_num / $lunch_can_forscreen_box_num,2);
+	                $lunch_db_num_rate   = round($lunch_db_num / $lunch_can_forscreen_box_num,2);
+	                $lunch_birthday_num_rate = round($lunch_birthday_num /$lunch_can_forscreen_box_num,2);
+	                $lunch_game_num_rate = round($lunch_game_num /$lunch_can_forscreen_box_num,2);
+	            }
+	             
+	            if(empty($dinner_can_forscreen_box_num)){
+	                $dinner_pic_num_rate =0;
+	                $dinner_video_num_rate = 0;
+	                $dinner_db_num_rate =0;
+	                $dinner_birthday_num_rate =0;
+	                $dinner_game_num_rate =0;
+	            }
+	            else {
+	                $dinner_pic_num_rate = round($dinner_pic_num / $dinner_can_forscreen_box_num,2);
+	                $dinner_video_num_rate= round($dinner_video_num / $dinner_can_forscreen_box_num,2);
+	                $dinner_db_num_rate  = round($dinner_db_num /$dinner_can_forscreen_box_num,2);
+	                $dinner_birthday_num_rate= round($dinner_birthday_num/$dinner_can_forscreen_box_num,2);
+	                $dinner_game_num_rate= round($dinner_game_num/$dinner_can_forscreen_box_num,2);
+	            }
+	            $list['list'][$key]['data_static'][] = array('box_num'=>$lunch_online_box_num,
+	                'online_box_num'=>$lunch_online_box_num,
+	                'interact_mobile_nums'=>$lunch_interact_mobile_nums,
+	                'can_forscreen_box_num'=>$lunch_can_forscreen_box_num,
+	                'fanju_num'=>$lunch_fanju_num,
+	                'fanju_rate'=>$lunch_fanju_rate,
+	                'interact_num'=>$lunch_interact_num,
+	                'join_rate'  =>$lunch_join_rate,
+	                'pullability_rate'=>$lunch_pullability_rate,
+	                'alone_interact_num'=>$lunch_alone_interact_num,
+	                'box_interact_num'=>$lunch_box_interact_num,
+	                'pic_num_rate'=>$lunch_pic_num_rate,
+	                'video_num_rate'=>$lunch_video_num_rate,
+	                'db_num_rate'=>$lunch_db_num_rate,
+	                'birthday_num_rate'=>$lunch_birthday_num_rate,
+	                'game_num_rate'=>$lunch_game_num_rate
+	            );
+	             
+	            $list['list'][$key]['data_static'][] = array('box_num'=>$dinner_online_box_num,
+	                'online_box_num'=>$dinner_online_box_num,
+	                'interact_mobile_nums'=>$dinner_interact_mobile_nums,
+	                'can_forscreen_box_num'=>$dinner_can_forscreen_box_num,
+	                'fanju_num'=>$dinner_fanju_num,
+	                'fanju_rate'=>$dinner_fanju_rate,
+	                'interact_num'=>$dinner_interact_num,
+	                'join_rate'  =>$dinner_join_rate,
+	                'pullability_rate'=>$dinner_pullability_rate,
+	                'alone_interact_num'=>$dinner_alone_interact_num,
+	                'box_interact_num'=>$dinner_box_interact_num,
+	                'pic_num_rate'=>$dinner_pic_num_rate,
+	                'video_num_rate'=>$dinner_video_num_rate,
+	                'db_num_rate'=>$dinner_db_num_rate,
+	                'birthday_num_rate'=>$dinner_birthday_num_rate,
+	                'game_num_rate'=>$dinner_game_num_rate
+	            );
+	        }else {
+	            $list['list'][$key]['data_static'][] = array('box_num'=>$lunch_online_box_num,
+	                'online_box_num'=>$lunch_online_box_num,
+	                'interact_mobile_nums'=>0,
+	                'can_forscreen_box_num'=>0,
+	                'fanju_num'=>0,
+	                'fanju_rate'=>0,
+	                'interact_num'=>0,
+	                'join_rate'  =>0,
+	                'pullability_rate'=>0,
+	                'alone_interact_num'=>0,
+	                'box_interact_num'=>0,
+	                'pic_num_rate'=>0,
+	                'video_num_rate'=>0,
+	                'db_num_rate'=>0,
+	                'birthday_num_rate'=>0,
+	                'game_num_rate'=>0
+	            );
 	            
-	            $lunch_video_num_rate =0 ;
-	            $lunch_db_num_rate = 0;
-	            $lunch_birthday_num_rate =0;
-	            $lunch_game_num_rate = 0;
-	        }
-	        else{
-	            $lunch_pic_num_rate = round($lunch_pic_num / $lunch_can_forscreen_box_num,2);
-	            $lunch_video_num_rate = round($lunch_video_num / $lunch_can_forscreen_box_num,2);
-	            $lunch_db_num_rate   = round($lunch_db_num / $lunch_can_forscreen_box_num,2);
-	            $lunch_birthday_num_rate = round($lunch_birthday_num /$lunch_can_forscreen_box_num,2);
-	            $lunch_game_num_rate = round($lunch_game_num /$lunch_can_forscreen_box_num,2);
+	            $list['list'][$key]['data_static'][] = array('box_num'=>$dinner_online_box_num,
+	                'online_box_num'=>$dinner_online_box_num,
+	                'interact_mobile_nums'=>0,
+	                'can_forscreen_box_num'=>0,
+	                'fanju_num'=>0,
+	                'fanju_rate'=>0,
+	                'interact_num'=>0,
+	                'join_rate'  =>0,
+	                'pullability_rate'=>0,
+	                'alone_interact_num'=>0,
+	                'box_interact_num'=>0,
+	                'pic_num_rate'=>0,
+	                'video_num_rate'=>0,
+	                'db_num_rate'=>0,
+	                'birthday_num_rate'=>0,
+	                'game_num_rate'=>0
+	            );
 	        }
 	        
-	        if(empty($dinner_can_forscreen_box_num)){
-	            $dinner_pic_num_rate =0;
-	            $dinner_video_num_rate = 0;
-	            $dinner_db_num_rate =0;
-	            $dinner_birthday_num_rate =0;
-	            $dinner_game_num_rate =0;
-	        }
-	        else {
-	            $dinner_pic_num_rate = round($dinner_pic_num / $dinner_can_forscreen_box_num,2);
-	            $dinner_video_num_rate= round($dinner_video_num / $dinner_can_forscreen_box_num,2);
-	            $dinner_db_num_rate  = round($dinner_db_num /$dinner_can_forscreen_box_num,2);
-	            $dinner_birthday_num_rate= round($dinner_birthday_num/$dinner_can_forscreen_box_num,2);
-	            $dinner_game_num_rate= round($dinner_game_num/$dinner_can_forscreen_box_num,2);
-	        }
-	        $list['list'][$key]['data_static'][] = array('box_num'=>$lunch_online_box_num,
-	                                                     'online_box_num'=>$lunch_online_box_num,
-	                                                     'interact_mobile_nums'=>$lunch_interact_mobile_nums,
-	                                                     'can_forscreen_box_num'=>$lunch_can_forscreen_box_num,
-	                                                     'fanju_num'=>$lunch_fanju_num,
-	                                                     'fanju_rate'=>$lunch_fanju_rate,
-	                                                     'interact_num'=>$lunch_interact_num,
-	                                                     'join_rate'  =>$lunch_join_rate,
-	                                                     'pullability_rate'=>$lunch_pullability_rate,
-	                                                     'alone_interact_num'=>$lunch_alone_interact_num,
-	                                                     'box_interact_num'=>$lunch_box_interact_num, 
-	                                                     'pic_num_rate'=>$lunch_pic_num_rate,
-	                                                     'video_num_rate'=>$lunch_video_num_rate,
-	                                                     'db_num_rate'=>$lunch_db_num_rate,
-	                                                     'birthday_num_rate'=>$lunch_birthday_num_rate,
-	                                                     'game_num_rate'=>$lunch_game_num_rate
-	        );
-	        
-	        $list['list'][$key]['data_static'][] = array('box_num'=>$dinner_online_box_num,
-                                        	             'online_box_num'=>$dinner_online_box_num,
-	                                                     'interact_mobile_nums'=>$dinner_interact_mobile_nums,
-                                        	             'can_forscreen_box_num'=>$dinner_can_forscreen_box_num,
-                                        	             'fanju_num'=>$dinner_fanju_num,
-                                        	             'fanju_rate'=>$dinner_fanju_rate,
-                                        	             'interact_num'=>$dinner_interact_num,
-                                        	             'join_rate'  =>$dinner_join_rate,
-	                                                     'pullability_rate'=>$dinner_pullability_rate,
-	                                                     'alone_interact_num'=>$dinner_alone_interact_num,
-	                                                     'box_interact_num'=>$dinner_box_interact_num,
-                                        	             'pic_num_rate'=>$dinner_pic_num_rate,
-                                        	             'video_num_rate'=>$dinner_video_num_rate,
-                                        	             'db_num_rate'=>$dinner_db_num_rate,
-                                        	             'birthday_num_rate'=>$dinner_birthday_num_rate,
-                                        	             'game_num_rate'=>$dinner_game_num_rate
-	        ); 
 	    }
 	    
 	    $m_area = new \Admin\Model\AreaModel();

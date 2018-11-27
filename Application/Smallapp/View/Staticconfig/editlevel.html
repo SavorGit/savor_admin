@@ -1,0 +1,48 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/smallapp/staticconfig/editLevel" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <div class="pageFormContent modal-body">
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          A类:
+        </label>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="mina" minlength="1" maxlength="20"  value="{$data['mina']}" required>
+        </div>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="maxa" minlength="1" maxlength="20"  value="{$data['maxa']}" required>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          B类:
+        </label>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="minb" minlength="1" maxlength="20"  value="{$data['minb']}" required>
+        </div>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="maxb" minlength="1" maxlength="20"  value="{$data['maxb']}" required>
+        </div>
+      </div>
+     <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          C类:
+        </label>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="minc" minlength="1" maxlength="20"  value="{$data['minc']}" required>
+        </div>
+        <div class="col-xs-12 col-sm-2">
+           <input type="text" class="form-control" name="maxc" minlength="1" maxlength="20"  value="{$data['maxc']}" required>
+        </div>
+      </div>
+      
+    </div>
+	<input type="hidden" name="type" value="{$type}"> 
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>

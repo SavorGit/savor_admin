@@ -80,6 +80,7 @@ class SmallController extends BaseController{
 		        $fields = "media.id media_id,ads.name media_name";
 		        $order ="a.sort_num asc";
 		        $pro_list = $m_program_menu_item->getMediaList($fields, $map, $order, '');
+		        
 		    }
 		    //宣传片
 		    $adv_arr = $m_program_menu_item->getadvInfo($v['id'], $menu_id);

@@ -188,7 +188,7 @@ class IndexController extends BaseController {
                     }
                     
                     $back_url = $vv['c'].'/'.$vv['a'];
-                    $child .= '<li '.$display.'><a href="admin/'.$back_url.'" target="navTab" rel="'.$back_url.'">'.$vv['name'].'</a></li>';
+                    $child .= '<li '.$display.'><a href="'.$vv[m].'/'.$back_url.'" target="navTab" rel="'.$back_url.'">'.$vv['name'].'</a></li>';
                     
                 }
             }

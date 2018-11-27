@@ -1,0 +1,478 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<!-- <div class="pageHeader">
+  
+</div> -->
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post" style="color:#FF0000">
+            <td>综合评分-总分数设置</td>
+            <td>综合评分-分数级别</td>
+            <td>综合评分-心跳权重设置</td>
+            <td>综合评分-网速权重设置</td>
+            <td>综合评分-互动权重设置</td>
+            <td>综合评分-互动权重覆盖率设置</td>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+            <tr target="sid_user">
+              <td data-title="综合评分-总分数设置">
+              		心跳权重值:{$data[1]['heart']}<br />
+              		网速权重值:{$data[1]['net']}<br />
+              		互动权重值:{$data[1]['hd']}<br />
+              		互动覆盖率权重值:{$data[1]['cover']}<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:90px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editMulty?type=1">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="综合评分-分数级别">
+              		A类:{$data[2]['mina']}-{$data[2]['maxa']}<br />
+              		B类:{$data[2]['minb']}-{$data[2]['maxb']}<br />
+              		C类:{$data[2]['minc']}-{$data[2]['maxc']} <br />
+              		<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:50px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editLevel?type=2">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="综合评分-心跳权重设置">
+              		<php>
+              			foreach($data[3] as $key=>$v){
+              		</php>
+              		心跳次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br>
+              		<php>
+              			}
+              		</php>
+              		</volist>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHeart?type=3">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="综合评分-网速权重设置">
+              		<php>
+              			foreach($data[4] as $key=>$v){
+              		</php>
+              		网速:{$v['min']}k-{$v['max']}k &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editNet?type=4">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="综合评分-互动权重设置">
+              		<php>
+              			foreach($data[5] as $key=>$v){
+              		</php>
+					互动次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHd?type=5">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              <td data-title="综合评分-互动权重覆盖率设置">
+              		<php>
+              			foreach($data[6] as $key=>$v){
+              		</php>
+					覆盖率:{$v['min']}%-{$v['max']}% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editCover?type=6">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              
+			  
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post" style="color:#9F4D95" >
+            <td>心跳评分-总分数设置</td>
+            <td>心跳评分-分数级别</td>
+            <td>心跳评分-心跳权重设置</td>
+            <td>心跳评分-网速权重设置</td>
+            <td>心跳评分-互动权重设置</td>
+            <td>心跳评分-互动权重覆盖率设置</td>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+            <tr target="sid_user">
+              <td data-title="心跳评分-总分数设置">
+              		心跳权重值:{$data[11]['heart']}<br />
+              		网速权重值:{$data[11]['net']}<br />
+              		互动权重值:{$data[11]['hd']}<br />
+              		互动覆盖率权重值:{$data[11]['cover']}<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:90px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editMulty?type=11">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="心跳评分-分数级别">
+              		A类:{$data[12]['mina']}-{$data[12]['maxa']}<br />
+              		B类:{$data[12]['minb']}-{$data[12]['maxb']}<br />
+              		C类:{$data[12]['minc']}-{$data[12]['maxc']} <br />
+              		<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:50px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editLevel?type=12">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="心跳评分-心跳权重设置">
+              		<php>
+              			foreach($data[13] as $key=>$v){
+              		</php>
+              		心跳次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br>
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHeart?type=13">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="心跳评分-网速权重设置">
+              		<php>
+              			foreach($data[14] as $key=>$v){
+              		</php>
+              		网速:{$v['min']}k-{$v['max']}k &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editNet?type=14">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="心跳评分-互动权重设置">
+					<php>
+              			foreach($data[15] as $key=>$v){
+              		</php>
+					互动次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHd?type=15">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              <td data-title="心跳评分-互动权重覆盖率设置">
+					<php>
+              			foreach($data[16] as $key=>$v){
+              		</php>
+					覆盖率:{$v['min']}%-{$v['max']}% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editCover?type=16">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              
+			  
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post" style="color:#F75000">
+            <td>网络评分-总分数设置</td>
+            <td>网络评分-分数级别</td>
+            <td>网络评分-心跳权重设置</td>
+            <td>网络评分-网速权重设置</td>
+            <td>网络评分-互动权重设置</td>
+            <td>网络评分-互动权重覆盖率设置</td>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+            <tr target="sid_user">
+              <td data-title="网络评分-总分数设置">
+              		心跳权重值:{$data[21]['heart']}<br />
+              		网速权重值:{$data[21]['net']}<br />
+              		互动权重值:{$data[21]['hd']}<br />
+              		互动覆盖率权重值:{$data[21]['cover']}<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:90px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editMulty?type=21">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="网络评分-分数级别">
+              		A类:{$data[22]['mina']}-{$data[22]['maxa']}<br />
+              		B类:{$data[22]['minb']}-{$data[22]['maxb']}<br />
+              		C类:{$data[22]['minc']}-{$data[22]['maxc']} <br />
+              		<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:50px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editLevel?type=22">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="网络评分-心跳权重设置">
+              		<php>
+              			foreach($data[23] as $key=>$v){
+              		</php>
+              		心跳次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br>
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHeart?type=23">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="网络评分-网速权重设置">
+              		<php>
+              			foreach($data[24] as $key=>$v){
+              		</php>
+              		网速:{$v['min']}k-{$v['max']}k &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editNet?type=24">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="网络评分-互动权重设置">
+					<php>
+              			foreach($data[25] as $key=>$v){
+              		</php>
+					互动次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHd?type=25">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              <td data-title="网络评分-互动权重覆盖率设置">
+					<php>
+              			foreach($data[26] as $key=>$v){
+              		</php>
+					覆盖率:{$v['min']}%-{$v['max']}% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editCover?type=26">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              
+			  
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post" style="color:#00FF00">
+            <td>互动评分-总分数设置</td>
+            <td>互动评分-分数级别</td>
+            <td>互动评分-心跳权重设置</td>
+            <td>互动评分-网速权重设置</td>
+            <td>互动评分-互动权重设置</td>
+            <td>互动评分-互动权重覆盖率设置</td>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+            <tr target="sid_user">
+              <td data-title="互动评分-总分数设置">
+              		心跳权重值:{$data[31]['heart']}<br />
+              		网速权重值:{$data[31]['net']}<br />
+              		互动权重值:{$data[31]['hd']}<br />
+              		互动覆盖率权重值:{$data[31]['cover']}<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:90px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editMulty?type=31">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="互动评分-分数级别">
+              		A类:{$data[32]['mina']}-{$data[32]['maxa']}<br />
+              		B类:{$data[32]['minb']}-{$data[32]['maxb']}<br />
+              		C类:{$data[32]['minc']}-{$data[32]['maxc']} <br />
+              		<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:50px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editLevel?type=32">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="互动评分-心跳权重设置">
+              		<php>
+              			foreach($data[33] as $key=>$v){
+              		</php>
+              		心跳次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br>
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHeart?type=33">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="互动评分-网速权重设置">
+              		<php>
+              			foreach($data[34] as $key=>$v){
+              		</php>
+              		网速:{$v['min']}k-{$v['max']}k &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+              		<php>
+              			}
+              		</php>
+              		<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editNet?type=34">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="互动评分-互动权重设置">
+					<php>
+              			foreach($data[35] as $key=>$v){
+              		</php>
+					互动次数:{$v['min']}-{$v['max']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<br>
+              		<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editHd?type=35">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              <td data-title="互动评分-互动权重覆盖率设置">
+					<php>
+              			foreach($data[36] as $key=>$v){
+              		</php>
+					覆盖率:{$v['min']}%-{$v['max']}% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {$v['score']}%<br />
+					<php>
+						}
+					</php>
+					<br>
+					<div class="tools-edit" style="margin-left:85px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editCover?type=36">
+              			修改
+              		    </a>
+              		    
+              		</div>
+			  </td>
+              
+			  
+            </tr>
+          </tbody>
+        </table>
+      </form>
+	
+    </div>
+  </div>
+  {$page}
+</div>
