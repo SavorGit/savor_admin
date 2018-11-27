@@ -471,6 +471,11 @@ class HotelController extends BaseController {
 		);
 
 		$this->assign('pub_info',$user_info);
+		//菜系
+		$m_food_style = new \Admin\Model\FoodStyleModel(); 
+		$food_style_list = $m_food_style->getWhere('id,name', array('status'=>1));
+		$this->assign('food_style_list',$food_style_list);
+		
 		if($id){
 
 			$vinfo = $hotelModel->where('id='.$id)->find();
@@ -488,7 +493,16 @@ class HotelController extends BaseController {
 			$vinfo['ip'] = $res_hotelext['ip'];
 			$vinfo['server_location'] = $res_hotelext['server_location'];
 			$vinfo['tag'] = $res_hotelext['tag'];
+			$vinfo['food_style_id'] = $res_hotelext['food_style_id'];
+			$vinfo['avg_expense']   = $res_hotelext['avg_expense'];
 			$navtp = I('get.navtp');
+			//获取区/县id
+			$area_id = $vinfo['area_id'];
+			$m_area_info = new \Admin\Model\AreaModel();
+			$parent_id = $this->getParentAreaid($area_id);
+			$county_list = $m_area_info->getWhere('id,region_name',array('parent_id'=>$parent_id));
+			
+			$this->assign('county_list',$county_list);
 			$this->assign('navtp',$navtp);
 			$this->assign('vinfo',$vinfo);
 		}else{
@@ -682,6 +696,7 @@ class HotelController extends BaseController {
 		}
 
 		$save['area_id']             = I('post.area_id','','intval');
+		$save['county_id']           = I('post.county_id',0,'intval');
 		$save['media_id']             = I('post.media_id','0','intval');
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
@@ -723,6 +738,8 @@ class HotelController extends BaseController {
 		$data['server_location'] = $server_location;
 		$data['tag']             = I('post.tag','','trim');
 		$data['maintainer_id']   = I('post.maintainer',0);
+		$data['food_style_id']   = I('post.food_style_id',0,'intval');
+		$data['avg_expense']     = I('post.avg_expense',0,'intval');
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
@@ -1564,5 +1581,18 @@ class HotelController extends BaseController {
 		}
 		$this->output($message, $url,2);
 	}
-
+	/**
+	 * @desc 根据城市id获取区/县id
+	 */
+    public function getCountyInfo(){
+        $area_id = I('area_id');
+        $parent_id = $this->getParentAreaid($area_id);
+        $m_area_info =  new \Admin\Model\AreaModel();
+        $fields = 'id,region_name';
+        $where = array();
+        $where['parent_id'] = $parent_id;
+        $list = $m_area_info->getWhere($fields, $where);
+        echo json_encode($list);
+    }
+    
 }
