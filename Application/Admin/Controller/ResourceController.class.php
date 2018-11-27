@@ -291,6 +291,12 @@ class ResourceController extends BaseController{
 			$size = 50;
 			$mediaModel = new \Admin\Model\MediaModel();
 			$result = $mediaModel->getList($where,$orders,$start,$size);
+			$ret = $mediaModel->getWhere(array('id'=>17929));
+			$image_host = get_oss_host();
+			foreach($ret as $key=>$v){
+			    $ret[$key]['oss_addr'] = $image_host.$v['oss_addr'];
+			}
+			$result['list'] = array_merge($ret,$result['list']); 
 			$this->assign('datalist', $result['list']);
 			$oss_host = get_oss_host();
 			if($rtype){
