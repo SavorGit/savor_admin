@@ -1594,5 +1594,82 @@ class HotelController extends BaseController {
         $list = $m_area_info->getWhere($fields, $where);
         echo json_encode($list);
     }
-    
+    /**
+     * @desc 酒楼菜系
+     */
+    public function foodStyle(){
+        $size   = I('numPerPage',50);//显示每页记录数
+        $this->assign('numPerPage',$size);
+        $start = I('pageNum',1);
+        $this->assign('pageNum',$start);
+        $order = I('_order','id');
+        $this->assign('_order',$order);
+        $sort = I('_sort','desc');
+        $this->assign('_sort',$sort);
+        $orders = $order.' '.$sort;
+        $start  = ( $start-1 ) * $size;
+        
+        $name  = I('name','','trim');
+        $where = array();
+        if(!empty($name)){
+            $where['name'] = array('like','%'.$name.'%');
+        }
+        
+        $m_food_style = new \Admin\Model\FoodStyleModel();
+        $fields = "id,name,create_time,update_time";
+        
+        $where['status'] = 1;
+        $list = $m_food_style->getList($fields,$where,$orders,$start,$size);
+        
+        $this->assign('list',$list['list']);
+        $this->assign('page',$list['page']);
+        $this->display('foodstyle');
+    }
+    /**
+     * @desc 修改酒楼菜系
+     */
+    public function editFoodstyle(){
+        $id = I('id',0,'intval');
+        $m_food_style = new \Admin\Model\FoodStyleModel();
+        if(IS_POST){
+            $name = I('name','','trim');
+            $where = $data = array();
+            $where['id'] = $id;
+            $data['name'] = $name;
+            $data['update_time'] = date('Y-m-d H:i:s');
+            $ret =$m_food_style->updateInfo($where, $data);
+            if($ret){
+                $this->output('修改成功', 'hotel/foodstyle');
+            }else {
+                $this->error('修改失败');
+            }
+        }else {
+            $info = $m_food_style->getOne('id,name', array('id'=>$id));
+            $this->assign('vinfo',$info);
+            $this->display('editfoodstyle');
+        } 
+    }
+    /**
+     * @desc 添加酒楼菜系
+     */
+    public function addFoodstyle(){
+        $m_food_style = new \Admin\Model\FoodStyleModel();
+        if(IS_POST){
+            
+            $name = I('name','','trim');
+            
+            $data['name'] = $name;
+            $data['create_time'] = date('Y-m-d H:i:s');
+            $data['status']  =1; 
+            $ret =$m_food_style->addInfo($data,1);
+            if($ret){
+                $this->output('修改成功', 'hotel/foodstyle');
+            }else {
+                $this->error('修改失败');
+            }
+        }else {
+            
+            $this->display('addfoodstyle');
+        }
+    }
 }

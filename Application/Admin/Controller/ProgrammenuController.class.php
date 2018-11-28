@@ -119,6 +119,8 @@ class ProgrammenuController extends BaseController {
     public function publishMenu(){
 
         $putime = I('logtime');
+        $is_small_app = I('is_small_app','0','intval');
+        
         if($putime == '') {
             $putime = date("Y-m-d H:i:s");
         }else{
@@ -174,10 +176,12 @@ class ProgrammenuController extends BaseController {
                     $dat['state'] = 1;
                     $dat['id'] = $menuid;
                     $dat['menu_num'] = $pu_unix.$menuid;
+                    $dat['is_small_app'] = $is_small_app;
                 } else {
                     $dat['state'] = 0;
                     $dat['hotel_num'] = 0;
                     $dat['id'] = $menuid;
+                    $dat['is_small_app'] = 0;
                 }
                $res =  $menuliModel->addData($dat,1);
                 if($res) {
