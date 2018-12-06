@@ -396,6 +396,8 @@ $config['SAPP_SUNCODE_LOG']      = 'smallapp:suncodelog:';
 $config['SAPP_SCRREN_SHARE']     = 'smallapp:public:forscreen:';
 $config['SAPP_HISTORY_SCREEN']   = 'smallapp:history:forscreen:';
 $config['SAPP_PAGEVIEW_LOG']     ='smallap:pageview:log:';
+
+$config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',

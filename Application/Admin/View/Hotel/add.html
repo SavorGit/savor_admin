@@ -67,6 +67,33 @@
                 </div>
               </div>
             </div>
+      <div class="form-group row" id="hotel_cover">
+              <label class="col-xs-12 col-sm-2 control-label">
+                	酒楼封面图：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                  <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                    <a data-target="#modal-file" href="javascript:void(0)">
+                      <if condition="($vinfo['hotel_cover_url'] eq 'NULL') OR $vinfo['hotel_cover_url'] eq ''">
+                        <img id="select_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                        <else />
+                        <img id="select_media_idimg" src="{$vinfo.hotel_cover_url}" border="0" />
+                      </if>
+                       <span id="select_media_idimgname"></span>
+                    </a>
+                  </div>
+                  <div>
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResourceNew?filed=select_media_id&rtype=2" data-browse-file>
+                      选择图片
+                    </a>
+                    <input type="hidden" name="hotel_cover_media_id" id="select_media_id" value="{$vinfo['hotel_cover_media_id']}">
+                    <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                      删除 </a>
+                  </div>
+                </div>
+              </div>
+            </div>
             
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">

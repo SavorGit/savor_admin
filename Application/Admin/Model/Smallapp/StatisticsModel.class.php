@@ -11,10 +11,13 @@ class StatisticsModel extends Model
 {
 	protected $tableName='smallapp_statistics';
 	public function getPageList($fields,$where,$order,$group,$start,$size){
-	    $list = $this->field($fields)->where($where)->order($order)->group($group)->limit($start,$size)->select();
-	    $ret = $this->where($where)
-	         ->group($group)
-	         ->select();
+	    $list = $this->alias('a')
+	                 ->join('savor_sysuser user on a.maintainer_id=user.id','left')
+	                 ->field($fields)->where($where)->order($order)->group($group)->limit($start,$size)->select();
+	    $ret = $this->alias('a')
+	                ->where($where)
+	                ->group($group)
+	                ->select();
 	    $count = count($ret);
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();

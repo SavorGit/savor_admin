@@ -70,6 +70,7 @@
             <th>节目单号</th>
             <th>创建日期</th>
             <th>更新日期</th>
+            <th>是否小程序节目单</th>
             <th>是否选择洒楼</th>
             <th>节目详情</th>
 
@@ -85,6 +86,7 @@
               <td data-title="节目单号">{$vlist.menu_num}</td>
               <td data-title="创建日期">{$vlist.create_time}</td>
               <td data-title="更新日期">{$vlist.update_time}</td>
+              <td data-title="是否小程序节目单"><if condition="$vlist.is_small_app eq 1">是<else />否</if> </td>
               <td data-title="是否选择洒楼">
 
 

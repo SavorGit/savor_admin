@@ -14,54 +14,108 @@ use Common\Lib\SavorRedis;
  */
 class TestController extends Controller {
     
-    
-    
-    public function importBoxLog(){
-        exit('not come');
-        $password = I('password');
-        if(empty($password) || $password!='fklj'){
-            exit('你的非法行为已被记录');
-        }
-        $m_oss_box_log = new \Admin\Model\Oss\BoxLogModel();
+    public function recCollectCount(){
+        $m_public = new \Admin\Model\Smallapp\PublicModel();
+        $m_collect_count = new \Admin\Model\Smallapp\CollectCountModel();
         
-        $yesterday_start = date('Y-m-d 00:00:00',strtotime('-1 day'));
-        $yesterday_end   = date('Y-m-d 23:59:59',strtotime('-1 day'));
-        $fields = "*";
-        $where = array();
-        $where['create_time'] =array(array('EGT',$yesterday_start),array('ELT',$yesterday_end));
-        $where['flag']        = array('in','16,18');
-        $data = $m_oss_box_log->getInfo($fields, $where,'id asc');
-        $result = array();
-        $m_oss_box_log_detail = new \Admin\Model\Oss\BoxLogDetailModel();
-        if(!empty($data)){
-            $flag = 0;
-            foreach($data as $key=>$v){
-                $oss_key = $v['oss_key'];
-                if(!empty($oss_key)){
-                    $oss_key_arr = explode('/', $oss_key);
-                    $v['log_create_date'] = $oss_key_arr[3];
-                }
-                $v['box_log_id'] = $v['id'];
-                unset($v['id']);
-                $result[$flag] = $v;
-                $flag ++;
-                if($flag%100==0){
-                    //添加到数据库
-                    $ret = $m_oss_box_log_detail->addAll($result);
-                    //置空添加到数据库的数组
-                    $result = array();
-                    $flag = 0;
-                }  
+        $fields = "forscreen_id";
+        $where['status'] = 2;
+        $limit  = '0,1000';
+        $list = $m_public->getWhere($fields, $where,'', $limit);
+        
+        foreach($list as $key=>$v){
+            $where = array();
+            $where['res_id'] = $v['forscreen_id'];
+            $nums = $m_collect_count->countNum($where);
+            if($nums){
+                $rand_nums = rand(1, 10);
+                $m_collect_count->where($where)->setInc('nums',$rand_nums);
+            }else {
+                $data = array();
+                $data['res_id'] = $v['forscreen_id'];
+                $data['type']   = 2;
+                $data['nums']   = 1;
+                $m_collect_count->addInfo($data);
             }
-            if(!empty($result)){
-                //添加到数据库
-                $ret = $m_oss_box_log_detail->addAll($result);
-            } 
         }
-        echo "昨天日志数据导入成功";
+        echo 'ok';
     }
+    public function test(){
+        exit('非法进入');
+        /* $is_support_netty  = $_GET['is_support_netty'];
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $redis->set('support_netty_balance',$is_support_netty); */
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
+        
+        $cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
+        $keys = $redis->keys($cache_key);
+        $flag = 0;
+        foreach($keys as $k){
+            
+            $data = $redis->lgetrange($k, 0, -1);
+            
+            foreach($data as $v){
+                $flag ++;
+                $netresource = json_decode($v,true);
+                
+                $search = array();
+                $search['forscreen_id'] = $netresource['forscreen_id'];
+                $search['resource_id']  = $netresource['resource_id'];
+                $tmp = $m_smallapp_forscreen_record->getOne('id', $search);
+                
+                if(!empty($tmp)){
+                    if($netresource['is_exist']==0){//资源不存在
+                        if(!empty($netresource['resource_id']) && !empty($netresource['openid'])){
+                            $where = array();
+                            $dt = array();
+                            //$where['action'] = array('neq',8);
+                            $where['forscreen_id'] = $netresource['forscreen_id'];
+                            $where['resource_id'] = $netresource['resource_id'];
+                            $where['openid'] = $netresource['openid'];
+                            if(!empty($netresource['box_res_sdown_time'])){
+                                $dt['box_res_sdown_time'] = $netresource['box_res_sdown_time'];
+                            }
+                            if(!empty($netresource['box_res_edown_time'])){
+                                $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
+                            }
+                            $dt['is_break'] = $netresource['is_break'];
+                            $dt['is_exist'] = $netresource['is_exist'];
+                            $dt['update_time'] = date('Y-m-d H:i:s');
+                            $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
+                            $redis->lpop($k);
+                        }
+                    }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
+                        $where = $dt = array();
+                        //$where['action'] = array('neq',8);
+                        $where['forscreen_id'] = $netresource['forscreen_id'];
+                        $where['resource_id'] = $netresource['resource_id'];
+                        $where['openid'] = $netresource['openid'];
+                        $dt['is_break'] = $netresource['is_break'];
+                        $dt['is_exist'] = $netresource['is_exist'];
+                        $dt['update_time'] = date('Y-m-d H:i:s');
+                        $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
+                        
+                        $tt = $redis->lpop($k);
+                    }
+                }else {
+                    $redis->lpop($k);
+                }
+                $ret = $redis->lgetrange($k,0,-1);
+                if(empty($ret)) $redis->remove($k);
+            }
+        }
+        echo $flag ."ddd";
+    }
+    
+    
+    
+   
     //生成好友关系
     public function smallappFriends(){
+        exit('非法进入');
         $hour = date('H');
         //$hour =14;
         if($hour==14){
@@ -144,49 +198,5 @@ class TestController extends Controller {
         }
         echo "ok";
     }
-    /**
-     * @desc 处理小程序公开投屏资源
-     */
-    public function recForscreenPub(){
-        $redis = SavorRedis::getInstance();
-        $redis->select(5);
-        $cache_key = C('SAPP_SCRREN_SHARE')."*";
-        $keys = $redis->keys($cache_key);
-        $m_pub = new \Admin\Model\Smallapp\PublicModel(); 
-        $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
-        foreach($keys as $k){
-            $data = $redis->lgetrange($k,0,-1);
-            $infos = json_decode($data[0],true);
-            $k_arr = explode(':', $k);
-            $map = array();
-            $map['box_mac'] = $k_arr[3];
-            $map['openid']  = $k_arr[4];
-            $map['forscreen_id'] = $k_arr[5];
-            $map['res_type'] = $infos['res_type'];
-            $map['res_nums'] = count($data);
-            $map['status']   = 1;
-            $m_pub->addInfo($map,1);
-            $ret = array();
-            foreach($data as $kk=>$vv){
-                $vv = json_decode($vv,true);
-                $ret[$kk]['forscreen_id'] = $vv['forscreen_id'];
-                $ret[$kk]['resource_id']  = $vv['resource_id'];
-                $ret[$kk]['res_url']      = $vv['res_url'];
-            }
-            $m_pubdetail->addInfo($ret,2);
-            $redis->remove($k);
-        }
-        echo "ok";
     
-    }
-    public function removeHistoryForscreen(){
-        $redis = SavorRedis::getInstance();
-        $redis->select(5);
-        $cache_key = C('SAPP_HISTORY_SCREEN')."*";
-        $keys = $redis->keys($cache_key);
-        foreach($keys as $v){
-            $redis->remove($v);
-        }
-        echo "ok";
-    }
 }

@@ -488,6 +488,12 @@ class HotelController extends BaseController {
 				$vinfo['oss_addr'] = $media_info['oss_addr'];
 			}
 			$res_hotelext = $hotelModel->getMacaddrByHotelId($id);
+			if(!empty($res_hotelext['hotel_cover_media_id'])){
+			    $mediaModel = new \Admin\Model\MediaModel();
+			    $media_info = $mediaModel->getMediaInfoById($res_hotelext['hotel_cover_media_id']);
+			    $vinfo['hotel_cover_url'] = $media_info['oss_addr'];
+			    $vinfo['hotel_cover_media_id'] = $res_hotelext['hotel_cover_media_id'];
+			}
 			$vinfo['mac_addr'] = $res_hotelext['mac_addr'];
 			$vinfo['ip_local'] = $res_hotelext['ip_local'];
 			$vinfo['ip'] = $res_hotelext['ip'];
@@ -740,6 +746,7 @@ class HotelController extends BaseController {
 		$data['maintainer_id']   = I('post.maintainer',0);
 		$data['food_style_id']   = I('post.food_style_id',0,'intval');
 		$data['avg_expense']     = I('post.avg_expense',0,'intval');
+		$data['hotel_cover_media_id'] = I('post.hotel_cover_media_id',0,'intval');
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
