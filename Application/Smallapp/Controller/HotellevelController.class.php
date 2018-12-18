@@ -269,7 +269,7 @@ class HotellevelController extends BaseController {
         $this->display('hotellevel');
     }
 
-    public function getHotellevel($static_date){
+    public function getHotellevel($static_date,$hotel_id=0,$isdetail=0){
         $m_statics = new \Admin\Model\Smallapp\StatisticsModel();
         $fields = 'hotel_id,hotel_name';
         $where['static_date'] = $static_date;
@@ -283,7 +283,12 @@ class HotellevelController extends BaseController {
             $conf_arr[$v['type']] = json_decode($v['conf_data'],true);
         }
         //个数
-        $hotel_list = $m_statics->getWhere('hotel_id,hotel_name', $maps, '','', 'hotel_id');
+        if($hotel_id){
+            $hotel_list = array(array('hotel_id'=>$hotel_id));
+        }else{
+            $hotel_list = $m_statics->getWhere('hotel_id,hotel_name', $maps, '','', 'hotel_id');
+        }
+
         $a_level = $b_level = $c_level = 0 ;
         foreach($hotel_list as $key=>$v){
             //综合评分-心跳分数
@@ -362,8 +367,74 @@ class HotellevelController extends BaseController {
             }else if($multy_level == 'C'){
                 $c_level ++;
             }
+
+            if($isdetail){
+                //开机评分-心跳分数
+
+                $score = $this->getScore($avg_heart_log_nums,$conf_arr[13]);
+                $wake_heart_score = $conf_arr[11]['heart'] * $score;
+
+                //开机评分-网速分数
+                $score = $this->getScore($avg_down_speed, $conf_arr[14]);
+                $wake_net_score = $conf_arr[11]['net'] * $score;
+
+                //开机评分-互动分数
+                $score = $this->getScore($avg_interact_nums, $conf_arr[15]);
+                $wake_hd_score = $conf_arr[11]['hd'] * $score;
+
+                //开机评分 - 互动覆盖率分数
+                $score = $this->getScore($cover_rate, $conf_arr[16]);
+                $wake_cover_score = $conf_arr[11]['cover'] * $score;
+
+                $wake_score = $wake_heart_score + $wake_net_score + $wake_hd_score + $wake_cover_score;
+                $wake_score = round($wake_score);
+                //网络评分-心跳分数
+                $score = $this->getScore($avg_heart_log_nums,$conf_arr[23]);
+                $net_heart_score = $conf_arr[21]['heart'] * $score;
+
+                //网络评分-网速分数
+                $score = $this->getScore($avg_down_speed, $conf_arr[24]);
+                $net_net_score = $conf_arr[21]['net'] * $score;
+
+                //网络评分-互动分数
+                $score = $this->getScore($avg_interact_nums, $conf_arr[25]);
+                $net_hd_score = $conf_arr[21]['hd'] * $score;
+
+                //网络评分 - 互动覆盖率分数
+                $score = $this->getScore($cover_rate, $conf_arr[26]);
+                $net_cover_score = $conf_arr[21]['cover'] * $score;
+
+                $net_score = $net_heart_score + $net_net_score + $net_hd_score + $net_cover_score;
+                $net_score = round($net_score);
+                //互动评分-心跳分数
+                $score = $this->getScore($avg_heart_log_nums,$conf_arr[33]);
+                $hd_heart_score = $conf_arr[31]['heart'] * $score;
+                //互动评分-网速分数
+                $score = $this->getScore($avg_down_speed, $conf_arr[34]);
+                $hd_net_score = $conf_arr[31]['net'] * $score;
+                //互动评分-互动分数
+                $score = $this->getScore($avg_interact_nums, $conf_arr[35]);
+                $hd_hd_score = $conf_arr[31]['hd'] * $score;
+
+                //互动评分-互动覆盖率分数
+
+                $score = $this->getScore($cover_rate, $conf_arr[36]);
+                $hd_cover_score = $conf_arr[31]['cover'] * $score;
+                $hd_score = $hd_heart_score + $hd_net_score + $hd_hd_score + $hd_cover_score;
+                $hd_score = round($hd_score);
+            }
         }
         $hotel_level = array('a'=>$a_level,'b'=>$b_level,'c'=>$c_level);
+        if($hotel_id){
+            $hotel_level['level'] = $multy_level;
+            $hotel_level['score'] = $multy_score;
+            if($isdetail){
+                $hotel_level['net_score'] = $net_score;
+                $hotel_level['wake_score'] = $wake_score;
+                $hotel_level['hd_score'] = $hd_score;
+
+            }
+        }
         return $hotel_level;
     }
 

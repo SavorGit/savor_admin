@@ -21,7 +21,7 @@ class GeneralsituationController extends BaseController {
             $day = $day>0?$day:1;
         }
         if($day == 1){
-            $yestime = date('Ymd',strtotime('-2 day'));
+            $yestime = date('Ymd',strtotime('-1 day'));
             $index_dates = array($yestime);
         }else{
             $index_dates = $days;
@@ -45,6 +45,7 @@ class GeneralsituationController extends BaseController {
             //互动次数
             $hdnum += $nums['hdnum'];
         }
+        $nums = array('fjnum'=>$fjnum,'zxnum'=>$zxnum,'ktnum'=>$ktnum,'wlnum'=>$wlnum,'hdnum'=>$hdnum);
         $conversion = $this->getRate($nums,1);
         $transmissibility = $this->getRate($nums,2);
         $screens = $this->getRate($nums,3);
@@ -74,7 +75,7 @@ class GeneralsituationController extends BaseController {
             $detail['network'] = $this->getRate($ratenums,4);
 //            $detail['hotel_level'] = $hotellevel_c->getHotellevel($v);
             $detail_list[$v] = $detail;
-            if($k==4){
+            if($k==$detail_breaknum){
                 break;
             }
         }
