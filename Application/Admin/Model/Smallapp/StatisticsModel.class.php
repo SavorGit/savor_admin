@@ -36,4 +36,27 @@ class StatisticsModel extends Model
 	    $nums = $this->where($where)->count();
 	    return $nums;
 	}
+
+	public function getDays($day,$start_date,$end_date){
+	    $table_name = C('DB_PREFIX').$this->tableName;
+        if($start_date && $end_date){
+            $start_date = date('Ymd',strtotime($start_date));
+            $end_date = date('Ymd',strtotime($end_date));
+        }else{
+            if($day == 0 || $day == 1){
+                $total_day = 30;
+            }else{
+                $total_day = $day;
+            }
+            $end_date = date('Ymd',strtotime('-1 day'));
+            $start_date = date('Ymd',strtotime("-$total_day day"));
+        }
+        $sql = "select static_date from $table_name where static_date>=$start_date && static_date<=$end_date GROUP BY static_date ORDER BY static_date asc";
+        $res_dates = $this->query($sql);
+        $dates = array();
+        foreach ($res_dates as $v){
+            $dates[] = $v['static_date'];
+        }
+        return $dates;
+    }
 }

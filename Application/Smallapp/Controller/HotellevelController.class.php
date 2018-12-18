@@ -268,6 +268,107 @@ class HotellevelController extends BaseController {
         $this->assign('list',$hotel_list);
         $this->display('hotellevel');
     }
+
+    public function getHotellevel($static_date){
+        $m_statics = new \Admin\Model\Smallapp\StatisticsModel();
+        $fields = 'hotel_id,hotel_name';
+        $where['static_date'] = $static_date;
+        $group = 'hotel_id';
+        $maps = $where;
+        $m_static_config = new \Admin\Model\Smallapp\StaticConfigModel();
+        $conf_list = $m_static_config->getWhere('conf_data,type',array('status'=>1));
+
+        $conf_arr = array();
+        foreach($conf_list as $key=>$v){
+            $conf_arr[$v['type']] = json_decode($v['conf_data'],true);
+        }
+        //个数
+        $hotel_list = $m_statics->getWhere('hotel_id,hotel_name', $maps, '','', 'hotel_id');
+        $a_level = $b_level = $c_level = 0 ;
+        foreach($hotel_list as $key=>$v){
+            //综合评分-心跳分数
+            $where = array();
+            $where['hotel_id'] = $v['hotel_id'];
+            $where['static_date'] = $static_date;
+            $where['heart_log_nums'] = array('GT',0);
+            $fields = "sum(`heart_log_nums`) as heart_log_nums";
+            $ret = $m_statics->getOne($fields, $where);
+            $heart_log_nums = intval($ret['heart_log_nums']);
+
+            $fields =" count(id) as nums";
+            $ret = $m_statics->getOne($fields, $where);
+            $heart_box_nums = $ret['nums'];
+            $avg_heart_log_nums =round( $heart_log_nums / $heart_box_nums);
+
+            $score = $this->getScore($avg_heart_log_nums,$conf_arr[3]);
+            $multy_heart_score = $conf_arr[1]['heart'] * $score;
+
+            //综合评分-网速分数
+            $where = array();
+            $where['hotel_id'] = $v['hotel_id'];
+            $where['static_date'] = $static_date;
+            $where['avg_down_speed'] = array('GT',0);
+            $fields = "sum(`avg_down_speed`) as avg_down_speed";
+            $ret    = $m_statics->getOne($fields, $where);
+            $avg_down_speed = $ret['avg_down_speed'];
+
+            $fields =" count(id) as nums";
+            $ret = $m_statics->getOne($fields, $where);
+            $speed_box_nums = $ret['nums'];
+            $avg_down_speed = round($avg_down_speed / ($speed_box_nums*1024));
+
+            $score = $this->getScore($avg_down_speed, $conf_arr[4]);
+
+            $multy_net_score = $conf_arr[1]['net'] * $score;
+
+            //综合评分-互动分数
+            $where = array();
+            $where['hotel_id'] = $v['hotel_id'];
+            $where['static_date'] = $static_date;
+            $where['all_interact_nums'] = array('GT',0);
+            $fields = "sum(`all_interact_nums`) as all_interact_nums";
+            $ret    = $m_statics->getOne($fields, $where);
+            $all_interact_nums = intval($ret['all_interact_nums']);
+
+            $fields =" count(id) as nums";
+            $ret = $m_statics->getOne($fields, $where);
+            $hd_box_nums = $ret['nums'];
+
+            $avg_interact_nums = round($all_interact_nums / $hd_box_nums);
+
+            $score = $this->getScore($avg_interact_nums, $conf_arr[5]);
+            $multy_hd_score = $conf_arr[1]['hd'] * $score;
+
+            //综合评分 - 互动覆盖率分数
+            $where = array();
+            $where['hotel_id'] = $v['hotel_id'];
+            $where['static_date'] = $static_date;
+            $fields =" count(id) as nums";
+            $ret = $m_statics->getOne($fields, $where);
+            $all_box_nums = $ret['nums'];
+            $cover_rate = round($hd_box_nums / $all_box_nums * 100);
+
+            $score = $this->getScore($cover_rate, $conf_arr[6]);
+            $multy_cover_score = $conf_arr[1]['cover'] * $score;
+
+            $multy_score = $multy_heart_score + $multy_net_score + $multy_hd_score + $multy_cover_score;
+            $multy_score = round($multy_score);
+            $multy_level = $this->getLevel($multy_score, $conf_arr[2]);   //综合评分
+
+            if($multy_level=='A'){
+                $a_level ++;
+            }else if($multy_level=='B'){
+                $b_level ++;
+            }else if($multy_level == 'C'){
+                $c_level ++;
+            }
+        }
+        $hotel_level = array('a'=>$a_level,'b'=>$b_level,'c'=>$c_level);
+        return $hotel_level;
+    }
+
+
+
     public function datalist(){
         ini_set("memory_limit","1024M");
         $size       = I('numPerPage',50);       //显示每页记录数

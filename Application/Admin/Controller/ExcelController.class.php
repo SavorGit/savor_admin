@@ -85,7 +85,9 @@ class ExcelController extends Controller
             $tmpname = '小程序酒楼评级';
         }else if($filename=='smallapp_hotel_level_detail'){
             $tmpname = '小程序酒楼评级数据详情';
-        }
+        }else if($filename=='smallapp_generalsituationdetail'){
+             $tmpname = '小程序概况详细数据';
+         }
 
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
@@ -3839,8 +3841,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $xlsName = '小程序投屏统计';
         $filename = 'smallapp_forsacreen';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
-        
-    } 
+    }
+
     /**
      * @desc 小程序网络监测
      */
@@ -3897,6 +3899,48 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'smallapp_staticnet';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
+
+    public function smallappDetail(){
+        $day = I('get.day',0,'intval');
+        $start_date = I('get.start_date','');
+        $end_date = I('get.end_date','');
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $days = $m_statistics->getDays($day,$start_date,$end_date);
+        $data = array();
+        $hotellevel_c = A('Smallapp/Hotellevel');
+        $generalsituation_c = A('Smallapp/Generalsituation');
+        foreach ($days as $k=>$v){
+            $ratenums = $generalsituation_c->getRatenum($v,0,0,$m_statistics);
+            $detail = array('date'=>$v,'fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum']);
+            $detail['conversion'] = $generalsituation_c->getRate($ratenums,1).'%';
+            $detail['transmissibility'] = $generalsituation_c->getRate($ratenums,2);
+            $detail['screens'] = $generalsituation_c->getRate($ratenums,3).'%';
+            $detail['network'] = $generalsituation_c->getRate($ratenums,4).'%';
+            $hotel_level = $hotellevel_c->getHotellevel($v);
+            $detail['hotela'] = $hotel_level['a'];
+            $detail['hotelb'] = $hotel_level['b'];
+            $detail['hotelc'] = $hotel_level['c'];
+            $data[] = $detail;
+        }
+        $xlsCell = array(
+            array('date','日期'),
+            array('conversion','转换率'),
+            array('transmissibility','传播力'),
+            array('screens','屏幕在线率'),
+            array('network','网络质量'),
+            array('fjnum','互动饭局数'),
+            array('zxnum','在线屏幕数'),
+            array('hdnum','互动次数'),
+            array('hotela','A级酒楼'),
+            array('hotelb','B级酒楼'),
+            array('hotelc','C级酒楼'),
+        );
+        $xlsName = '小程序概况详细数据';
+        $filename = 'smallapp_generalsituationdetail';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
     public function exportStatic(){
         
         $hotel_box_type_arr = C('heart_hotel_box_type');
