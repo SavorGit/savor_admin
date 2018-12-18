@@ -59,4 +59,11 @@ class StatisticsModel extends Model
         }
         return $dates;
     }
+
+    public function getHotels(){
+        $table_name = C('DB_PREFIX').$this->tableName;
+        $sql = "SELECT `hotel_id`,`hotel_name` FROM $table_name GROUP BY hotel_id";
+        $res_dates = $this->query($sql);
+        return $res_dates;
+    }
 }

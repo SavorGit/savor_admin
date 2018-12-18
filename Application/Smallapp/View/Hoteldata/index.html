@@ -1,0 +1,232 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hoteldata/index" method="post">
+        <input type="hidden" name="type" value="{$type}">
+        <input type="hidden" name="day" id="day" value="{$day}">
+        <div class="searchBar">
+            <div class="clearfix">
+                <div class="form-inline" style="margin-bottom:100px">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">
+                            时间：
+                                <div class="btn-group choose-hotelday">
+                                    <button type="button" data-type="7" class="btn btn-sm hotelday <if condition="$day eq 7">btn-success</if>">7天</button>
+                                    <button type="button" data-type="14" class="btn btn-sm hotelday <if condition="$day eq 14">btn-success</if>">14天</button>
+                                    <button type="button" data-type="30" class="btn btn-sm hotelday <if condition="$day eq 30">btn-success</if>">30天</button>
+                                </div>
+                    </div>
+                        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group" >
+                            <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" data-style="btn-default btn-sm" required>
+                                    <option value="">请输入酒楼名称</option>
+                                    <volist name="hotels" id="hinfo">
+                                        <option value="{$hinfo.hotel_id}" <if condition="$hotel_id eq $hinfo['hotel_id']">selected</if> > {$hinfo.hotel_name}</option>
+                                    </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+		                <span class="input-group-btn">
+		                    <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+		                </span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm pull-right"><span class="text-danger">当前酒楼：{$hotel_name}</span></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent autoflow statistic" style="margin-top:100px;">
+    <div class="indexContent">
+        <div class="portlet-tab">
+            <div class="btn-group">
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=1" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 1">active</if>">转换率</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=2" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 2">active</if>">传播力</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=3" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 3">active</if>">屏幕在线率</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=4" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 4">active</if>">网络质量</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=5" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 5">active</if>">互动饭局数</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=6" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 6">active</if>">在线屏幕数</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=7" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 7">active</if>">互动次数</button>
+                </a>
+                <a href="{$host_url}/smallapp/hoteldata/index?hotel_id={$hotel_id}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=8" target="navTab" rel="hoteldata/index" title="酒楼数据">
+                <button type="button" class="btn btn-sm <if condition="$type eq 8">active</if>">评分</button>
+                </a>
+            </div>
+        </div>
+        <div class="portlet light bg-inverse portlet-table">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-area-chart"></i>
+                    <span class="caption-subject bold font-green-haze uppercase">对比图</span>
+                    <span class="caption-helper"></span>
+                </div>
+            </div>
+            <div class="portlet-body row">
+                <div id="echart_hoteldata" class="chart"></div>
+            </div>
+        </div>
+
+        <div class="portlet-row row">
+                <div class="portlet-table">
+                    <table class="table-dashboard">
+                        <thead>
+                        <tr><th colspan='13'><span class="pull-left">详细数据</span><span class="pull-right"><a href="{$host_name}/excel/smallappDetail?day={$day}&start_date={$start_date}&end_date={$end_date}" title="导出详细数据" target="_blank" mask="true">导出</a></span></th></tr>
+                        <tr>
+                            <th>日期</th>
+                            <th>级别</th>
+                            <th>综合评分</th>
+                            <th>网络评分</th>
+                            <th>开机评分</th>
+                            <th>互动评分</th>
+                            <th>转换率</th>
+                            <th>传播力</th>
+                            <th>屏幕在线率</th>
+                            <th>网络质量</th>
+                            <th>互动饭局数</th>
+                            <th>在线屏幕数</th>
+                            <th>互动次数</th>
+                        </tr>
+                        </thead>
+                        <tbody data-check="list" data-parent=".table">
+                        <volist name="detail_list" id="dinfo">
+                            <tr target="sid_user">
+                                <td data-title="日期">{$key}</td>
+                                <td data-title="级别">{$dinfo.level}</td>
+                                <td data-title="综合评分">{$dinfo.score}</td>
+                                <td data-title="网络评分">{$dinfo.net_score}</td>
+                                <td data-title="开机评分">{$dinfo.wake_score}</td>
+                                <td data-title="互动评分">{$dinfo.hd_score}</td>
+                                <td data-title="转换率">{$dinfo.conversion}%</td>
+                                <td data-title="传播力">{$dinfo.transmissibility}</td>
+                                <td data-title="屏幕在线率">{$dinfo.screens}%</td>
+                                <td data-title="网络质量">{$dinfo.network}%</td>
+                                <td data-title="互动饭局数">{$dinfo.fjnum}</td>
+                                <td data-title="在线屏幕数">{$dinfo.zxnum}</td>
+                                <td data-title="互动次数">{$dinfo.hdnum}</td>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+        <!--
+            <div class="portlet-row row">
+                <div class="portlet-table">
+                    <table class="table-dashboard">
+                        <thead>
+                        <tr>
+                            <th colspan='11'>
+                                <span class="pull-left">版位数据</span>
+                                <span class="pull-right"><a href="{$host_name}/stattraffic/landingpage?filtertype={$filtertype}" target="navTab" rel="stattraffic/landingpage" title="入口页面详情">更多</a></span>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>数据日期</th>
+                            <th>包间名称</th>
+                            <th>评分</th>
+                            <th>转换率</th>
+                            <th>传播力</th>
+                            <th>屏幕在线率</th>
+                            <th>网络质量</th>
+                            <th>互动饭局数</th>
+                            <th>在线屏幕数</th>
+                            <th>互动次数</th>
+                        </tr>
+                        </thead>
+                        <tbody id="entrancelist">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        -->
+</div>
+<script type="text/javascript">
+    var dom = document.getElementById("echart_hoteldata");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$alldays}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                type:'line',
+                data:{$chart}
+            }
+        ]
+    };
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+    $('.choose-hotelday .hotelday').click(function(){
+        $(this).addClass('btn-success').siblings().removeClass('btn-success');
+        var type = $(this).data('type');
+        $("#day").val(type);
+    });
+
+    $('.date-reset').click(function(){
+        $(this).parent().prev().val('')
+    });
+    $(function(){
+        $(".form-control.date").datetimepicker({
+            minView: "month", //选择日期后，不会再跳转去选择时分秒
+            language:  'zh-CN',
+            format: 'yyyy-mm-dd',
+            todayBtn:  1,
+            autoclose: 1,
+        });
+    })
+</script>
