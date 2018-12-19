@@ -87,7 +87,12 @@ class ExcelController extends Controller
             $tmpname = '小程序酒楼评级数据详情';
         }else if($filename=='smallapp_generalsituationdetail'){
              $tmpname = '小程序概况详细数据';
+        }else if($filename=='smallapp_hoteldata'){
+             $tmpname = '小程序酒楼数据详细数据';
+        }else if($filename=='smallapp_boxdata'){
+             $tmpname = '小程序版位数据详细数据';
          }
+
 
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
@@ -3909,14 +3914,13 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $days = $m_statistics->getDays($day,$start_date,$end_date);
         $data = array();
         $hotellevel_c = A('Smallapp/Hotellevel');
-        $generalsituation_c = A('Smallapp/Generalsituation');
         foreach ($days as $k=>$v){
-            $ratenums = $generalsituation_c->getRatenum($v,0,0,$m_statistics);
+            $ratenums = $m_statistics->getRatenum($v,0,0);
             $detail = array('date'=>$v,'fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum']);
-            $detail['conversion'] = $generalsituation_c->getRate($ratenums,1).'%';
-            $detail['transmissibility'] = $generalsituation_c->getRate($ratenums,2);
-            $detail['screens'] = $generalsituation_c->getRate($ratenums,3).'%';
-            $detail['network'] = $generalsituation_c->getRate($ratenums,4).'%';
+            $detail['conversion'] = $m_statistics->getRate($ratenums,1).'%';
+            $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
+            $detail['screens'] = $m_statistics->getRate($ratenums,3).'%';
+            $detail['network'] = $m_statistics->getRate($ratenums,4).'%';
             $hotel_level = $hotellevel_c->getHotellevel($v);
             $detail['hotela'] = $hotel_level['a'];
             $detail['hotelb'] = $hotel_level['b'];
@@ -3938,6 +3942,94 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         );
         $xlsName = '小程序概况详细数据';
         $filename = 'smallapp_generalsituationdetail';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
+    public function smallappHoteldata(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $day = I('day',7,'intval');
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $days = $m_statistics->getDays($day,$start_date,$end_date);
+
+        //详细数据
+        $data = array();
+        if($hotel_id){
+            $hotellevel_c = A('Smallapp/Hotellevel');
+            foreach ($days as $k=>$v){
+                $ratenums = $m_statistics->getRatenum($v,0,0,$hotel_id);
+                $detail = array('date'=>$v,'fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum']);
+                $detail['conversion'] = $m_statistics->getRate($ratenums,1);
+                $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
+                $detail['screens'] = $m_statistics->getRate($ratenums,3);
+                $detail['network'] = $m_statistics->getRate($ratenums,4);
+                $hotel_info = $hotellevel_c->getHotellevel($v,$hotel_id,1);
+                $detail['level'] = $hotel_info['level'];
+                $detail['score'] = $hotel_info['score'];
+                $detail['net_score'] = $hotel_info['net_score'];
+                $detail['wake_score'] = $hotel_info['wake_score'];
+                $detail['hd_score'] = $hotel_info['hd_score'];
+                $data[] = $detail;
+            }
+        }
+        $xlsCell = array(
+            array('date','日期'),
+            array('level','级别'),
+            array('score','综合评分'),
+            array('net_score','网络评分'),
+            array('wake_score','开机评分'),
+            array('hd_score','互动评分'),
+            array('conversion','转换率'),
+            array('transmissibility','传播力'),
+            array('screens','屏幕在线率'),
+            array('network','网络质量'),
+            array('fjnum','互动饭局数'),
+            array('zxnum','在线屏幕数'),
+            array('hdnum','互动次数'),
+        );
+        $xlsName = '小程序酒楼数据详细数据';
+        $filename = 'smallapp_hoteldata';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
+
+    public function smallappBoxdata(){
+        $box_mac = I('box_mac','','trim');
+        $day = I('day',7,'intval');
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $days = $m_statistics->getDays($day,$start_date,$end_date);
+
+        //详细数据
+        $data = array();
+        if($box_mac){
+            $hotellevel_c = A('Smallapp/Hotellevel');
+            foreach ($days as $k=>$v){
+                $ratenums = $m_statistics->getRatenum($v,0,0,0,$box_mac);
+                $detail = array('date'=>$v,'fjnum'=>$ratenums['fjnum'],'hdnum'=>$ratenums['hdnum']);
+                $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
+                $detail['screens'] = $m_statistics->getRate($ratenums,3);
+                $detail['network'] = $m_statistics->getRate($ratenums,4);
+                $nums = $hotellevel_c->getMacscore($v,$box_mac);
+                $detail['score'] = $nums['score'];
+                $data[] = $detail;
+            }
+        }
+        $xlsCell = array(
+            array('date','日期'),
+            array('score','评分'),
+            array('transmissibility','传播力'),
+            array('screens','屏幕在线率'),
+            array('network','网络质量'),
+            array('fjnum','互动饭局数'),
+            array('hdnum','互动次数'),
+        );
+        $xlsName = '小程序版位数据详细数据';
+        $filename = 'smallapp_boxdata';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
 
