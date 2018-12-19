@@ -33,7 +33,7 @@
                             <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" data-style="btn-default btn-sm" required>
                                     <option value="">请输入酒楼名称</option>
                                     <volist name="hotels" id="hinfo">
-                                        <option value="{$hinfo.hotel_id}" <if condition="$hotel_id eq $hinfo['hotel_id']">selected</if> > {$hinfo.hotel_name}</option>
+                                        <option value="{$hinfo.hotel_id}" {$hinfo.is_select} > {$hinfo.hotel_name}</option>
                                     </volist>
                             </select>
                         </div>

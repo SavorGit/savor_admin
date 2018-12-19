@@ -1,6 +1,5 @@
 <?php
 namespace Smallapp\Controller;
-use Common\Lib\Page;
 use Admin\Controller\BaseController ;
 /**
  * @desc 小程序数据统计-概况
@@ -29,7 +28,7 @@ class GeneralsituationController extends BaseController {
         //关键指标
         $fjnum = $zxnum = $ktnum = $hdnum = $wlnum = 0;
         foreach ($index_dates as $v){
-            $nums = $this->getRatenum($v,0,0,$m_statistics);
+            $nums = $m_statistics->getRatenum($v,0,0);
             //互动饭局数
             $fjnum += $nums['fjnum'];
 
@@ -46,17 +45,17 @@ class GeneralsituationController extends BaseController {
             $hdnum += $nums['hdnum'];
         }
         $nums = array('fjnum'=>$fjnum,'zxnum'=>$zxnum,'ktnum'=>$ktnum,'wlnum'=>$wlnum,'hdnum'=>$hdnum);
-        $conversion = $this->getRate($nums,1);
-        $transmissibility = $this->getRate($nums,2);
-        $screens = $this->getRate($nums,3);
-        $network = $this->getRate($nums,4);
+        $conversion = $m_statistics->getRate($nums,1);
+        $transmissibility = $m_statistics->getRate($nums,2);
+        $screens = $m_statistics->getRate($nums,3);
+        $network = $m_statistics->getRate($nums,4);
         $index_rate = array('conversion'=>$conversion.'%','transmissibility'=>$transmissibility,
             'screens'=>$screens.'%','network'=>$network.'%');
 
         //指标趋势
         $chart_list = array();
         foreach ($days as $k=>$v){
-            $charts = $this->ratioChart($type,$v,$m_statistics);
+            $charts = $this->ratioChart($type,$v);
             $chart_list['a'][] = $charts['a'];
             $chart_list['b'][] = $charts['b'];
             $chart_list['c'][] = $charts['c'];
@@ -67,12 +66,12 @@ class GeneralsituationController extends BaseController {
         $detail_list = array();
         $detail_breaknum = 4;
         foreach ($days as $k=>$v){
-            $ratenums = $this->getRatenum($v,0,0,$m_statistics);
+            $ratenums = $m_statistics->getRatenum($v,0,0);
             $detail = array('fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum']);
-            $detail['conversion'] = $this->getRate($ratenums,1);
-            $detail['transmissibility'] = $this->getRate($ratenums,2);
-            $detail['screens'] = $this->getRate($ratenums,3);
-            $detail['network'] = $this->getRate($ratenums,4);
+            $detail['conversion'] = $m_statistics->getRate($ratenums,1);
+            $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
+            $detail['screens'] = $m_statistics->getRate($ratenums,3);
+            $detail['network'] = $m_statistics->getRate($ratenums,4);
 //            $detail['hotel_level'] = $hotellevel_c->getHotellevel($v);
             $detail_list[$v] = $detail;
             if($k==$detail_breaknum){
@@ -101,46 +100,44 @@ class GeneralsituationController extends BaseController {
      * 比率图表
      * type 1转换率,2传播力,3屏幕在线率,4网络质量,5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级
      */
-    public function ratioChart($type,$date,$m_statistics=''){
-        if(empty($m_statistics)){
-            $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-        }
+    public function ratioChart($type,$date){
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         switch ($type){
             case 1:
             case 2:
             case 3:
             case 4:
-                $nums = $this->getRatenum($date,1,$type,$m_statistics);
-                $b = $this->getRate($nums,$type)/100;
+                $nums = $m_statistics->getRatenum($date,1,$type);
+                $b = $m_statistics->getRate($nums,$type)/100;
 
-                $nums = $this->getRatenum($date,2,$type,$m_statistics);
-                $c = $this->getRate($nums,$type)/100;
+                $nums = $m_statistics->getRatenum($date,2,$type);
+                $c = $m_statistics->getRate($nums,$type)/100;
 
                 $a = ($b+$c)/2;
                 break;
             case 5:
-                $nums = $this->getRatenum($date,1,$type,$m_statistics);
+                $nums = $m_statistics->getRatenum($date,1,$type);
                 $b = $nums['fjnum'];
 
-                $nums = $this->getRatenum($date,2,$type,$m_statistics);
+                $nums = $m_statistics->getRatenum($date,2,$type);
                 $c = $nums['fjnum'];
 
                 $a = ($b+$c)/2;
                 break;
             case 6:
-                $nums = $this->getRatenum($date,1,$type,$m_statistics);
+                $nums = $m_statistics->getRatenum($date,1,$type);
                 $b = $nums['zxnum'];
 
-                $nums = $this->getRatenum($date,2,$type,$m_statistics);
+                $nums = $m_statistics->getRatenum($date,2,$type);
                 $c = $nums['zxnum'];
 
                 $a = ($b+$c)/2;
                 break;
             case 7:
-                $nums = $this->getRatenum($date,1,$type,$m_statistics);
+                $nums = $m_statistics->getRatenum($date,1,$type);
                 $b = $nums['hdnum'];
 
-                $nums = $this->getRatenum($date,2,$type,$m_statistics);
+                $nums = $m_statistics->getRatenum($date,2,$type);
                 $c = $nums['hdnum'];
 
                 $a = ($b+$c)/2;
@@ -156,92 +153,5 @@ class GeneralsituationController extends BaseController {
         $chart = array('a'=>$a,'b'=>$b,'c'=>$c);
         return $chart;
     }
-
-    /*
-     * 获取比率
-     * type 1转换率 2传播率 3屏幕在线率 4 网络质量
-     */
-    public function getRate($nums,$type){
-        switch ($type){
-            case 1:
-                $rate = sprintf("%.2f", $nums['fjnum']/$nums['zxnum']) * 100;
-                break;
-            case 2:
-                $rate = 0;
-//                $rate = sprintf("%.2f", 互动手机数/$nums['fjnum']) * 100;
-                break;
-            case 3:
-                $rate = sprintf("%.2f", $nums['zxnum']/$nums['wlnum']) * 100;
-                break;
-            case 4:
-                $rate = sprintf("%.2f", $nums['ktnum']/$nums['zxnum']) * 100;
-                break;
-            default:
-                $rate = 0;
-        }
-        return $rate;
-    }
-
-    /* 获取比率对应数
-     * type 0所有 1转换率 2传播率 3屏幕在线率 4网络质量 5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级
-     */
-    public function getRatenum($date,$static_fj=0,$type=0,$m_statistics=''){
-        if(empty($m_statistics)){
-            $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-        }
-        $nums = array();
-        if(in_array($type,array(0,1,2,3,4,5))){
-            //互动饭局数
-            $where = array('static_date'=>$date);
-            if($static_fj)  $where['static_fj'] = $static_fj;
-            $where['all_interact_nums'] = array('GT',0);
-            $fields = "count(box_mac) as fjnum";
-            $ret = $m_statistics->getOne($fields, $where);
-            $nums['fjnum'] = $ret['fjnum'];
-        }
-        if(in_array($type,array(0,1,2,3,4,6))){
-            //在线屏幕数
-            $where = array('static_date'=>$date);
-            if($static_fj)  $where['static_fj'] = $static_fj;
-            $where['heart_log_meal_nums'] = array('GT',12);
-            $where['_string'] = 'case static_fj when 1 then (120 div heart_log_meal_nums)<10  else (180 div heart_log_meal_nums)<10 end';
-            $fields = 'count(box_mac) as zxnum';
-            $ret = $m_statistics->getOne($fields, $where);
-            $nums['zxnum'] = $ret['zxnum'];
-        }
-        if($type==0 || $type==4){
-            //可投屏数
-            $where = array('static_date'=>$date);
-            if($static_fj)  $where['static_fj'] = $static_fj;
-            $where['heart_log_meal_nums'] = array('GT',0);
-            $where['_string'] = '(avg_down_speed div 1024)>200';
-            $fields = 'count(box_mac) as ktnum';
-            $ret = $m_statistics->getOne($fields, $where);
-            $nums['ktnum'] = $ret['ktnum'];
-        }
-
-        if($type==0 || $type==3){
-            //网络屏幕数
-            $where = array('static_date'=>$date);
-            if($static_fj){
-                $where['static_fj'] = $static_fj;
-            }else{
-                $where['static_fj'] = array('eq',1);
-            }
-            $fields = "count(id) as wlnum";
-            $ret = $m_statistics->getOne($fields, $where);
-            $nums['wlnum'] = $ret['wlnum'];
-        }
-        if($type==0 || $type==7){
-            //互动次数
-            $where = array('static_date'=>$date);
-            if($static_fj)  $where['static_fj'] = $static_fj;
-            $fields = 'sum(all_interact_nums) as hdnum';
-            $ret = $m_statistics->getOne($fields, $where);
-            $nums['hdnum'] = $ret['hdnum'];
-        }
-        return $nums;
-    }
-
 
 }
