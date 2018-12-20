@@ -8,7 +8,6 @@ use Admin\Controller\BaseController ;
 class GeneralsituationController extends BaseController {
 
     public function index(){
-        ini_set("memory_limit","1024M");
         $day = I('get.day',0,'intval');
         $type = I('type',1,'intval');//1转换率,2传播力,3屏幕在线率,4网络质量,5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级
         $start_date = I('start_date','');
@@ -60,8 +59,6 @@ class GeneralsituationController extends BaseController {
             $chart_list['b'][] = $charts['b'];
             $chart_list['c'][] = $charts['c'];
         }
-
-
         //详细数据
         $detail_list = array();
         $detail_breaknum = 4;
@@ -72,17 +69,13 @@ class GeneralsituationController extends BaseController {
             $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
             $detail['screens'] = $m_statistics->getRate($ratenums,3);
             $detail['network'] = $m_statistics->getRate($ratenums,4);
-//            $detail['hotel_level'] = $hotellevel_c->getHotellevel($v);
             $detail_list[$v] = $detail;
             if($k==$detail_breaknum){
                 break;
             }
         }
-        $legend = array('平均转化率','午饭转化率','晚饭转化率');
-        if($type==8){
-            $legend = array('A级酒楼','B级酒楼','C级酒楼');
-        }
-        $this->assign('legend',$legend);
+        $all_legend = C('LEGEND_CONFIG');
+        $this->assign('legend',$all_legend[$type]);
         $this->assign('chart_a',json_encode($chart_list['a']));
         $this->assign('chart_b',json_encode($chart_list['b']));
         $this->assign('chart_c',json_encode($chart_list['c']));

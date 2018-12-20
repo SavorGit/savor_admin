@@ -3906,6 +3906,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     }
 
     public function smallappDetail(){
+        set_time_limit(180);
+        ini_set("memory_limit","1024M");
         $day = I('get.day',0,'intval');
         $start_date = I('get.start_date','');
         $end_date = I('get.end_date','');
