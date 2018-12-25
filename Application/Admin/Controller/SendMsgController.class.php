@@ -112,7 +112,7 @@ class SendmsgController extends Controller
         $detailid = $info['id'];
         $to = $tel;
         $short = encrypt_data($detailid);
-        $shortlink = C('HOST_NAME').'/admin/hotelbill/index?id='.$short;
+        $shortlink = get_host_name().'/admin/hotelbill/index?id='.$short;
         $shortlink = shortUrlAPI(1, $shortlink);
         echo $shortlink;
         $param="$shortlink";

@@ -91,7 +91,7 @@ class LoginController extends BaseController {
                     }
                     session('sysUserInfo',$userinfo);
                     //$this->sysLog('登录操作', '登录操作', '当前栏目','login');
-                    $url = $this->host_name();
+                    $url = $this->host_name;
                     header("location: $url");
                 }else{
                     if($cache_locknum){
@@ -122,7 +122,7 @@ class LoginController extends BaseController {
         //$this->sysLog('退出操作', '退出操作', '当前栏目','logout');
         session('sysUserInfo',null);
         session('licenseinfo',null);
-        $url = $this->host_name();
+        $url = $this->host_name;
         header('Location:'.$url);
     }
     

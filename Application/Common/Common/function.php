@@ -1,5 +1,26 @@
 <?php
 use Common\Lib\Crypt3Des;
+
+function check_http(){
+    $http_str = 'http://';
+// 	return $http_str;//如判断出错，则直接手动调整
+    if(isset($_SERVER['HTTP_USE_HTTPS']) && $_SERVER['HTTP_USE_HTTPS'] === 'yes'){
+        $http_str = 'https://';
+    }elseif(!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'])!== 'off'){
+        $http_str = 'https://';
+    }elseif(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'){
+        $http_str = 'https://';
+    }elseif(!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off'){
+        $http_str = 'https://';
+    }
+    return $http_str;
+}
+
+function get_host_name(){
+    $http = check_http();
+    return $http.$_SERVER['HTTP_HOST'];
+}
+
 function insert_sort($arr){
     $count = count($arr);
 	for($i=1; $i<$count; $i++){

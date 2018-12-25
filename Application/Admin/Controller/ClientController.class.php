@@ -271,7 +271,7 @@ class ClientController extends Controller {
 
     public function showcontent(){
 
-        $host_name = C('HTTPS_HOST_NAME').'/admin';
+        $host_name = 'https://'.$_SERVER['HTTP_HOST'].'/admin';
         $this->assign('hostnamed',$host_name);
         $id = I('get.id',0,'intval');
         $app_version = I('get.app','');

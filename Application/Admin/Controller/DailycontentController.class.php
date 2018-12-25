@@ -245,7 +245,7 @@ class DailycontentController extends BaseController {
             $oss_path = $m_media->getMediaInfoById($v['media_id']);
             
             $pushdata['imgUrl']  =$oss_path['oss_addr'];
-            $pushdata['share_url'] = C('HOST_NAME').'/dailycontentshow/showday?id='.$v['id'];
+            $pushdata['share_url'] = $this->host_name.'/dailycontentshow/showday?id='.$v['id'];
             
             $result['list'][$key]['pushdata'] = json_encode($pushdata,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             
