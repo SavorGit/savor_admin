@@ -131,6 +131,35 @@
           </select>
         </div>
       </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          wifi名称:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="wifi_name" minlength="1" maxlength="50" value="{$vinfo.wifi_name}" >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          wifi密码:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="wifi_password" minlength="1" maxlength="16" value="{$vinfo.wifi_password}" >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          是否开启极简版小程序:
+        </label>
+
+        <div class="col-xs-12 col-sm-10">
+          <select name="is_open_simple" class="form-control bs-select">
+              <option value="1" <if condition="$vinfo.is_open_simple eq 1 "> selected </if> >是</option>
+              <option value="0" <if condition="$vinfo.is_open_simple eq 0 "> selected </if>  >否</option>
+              
+          </select>
+        </div>
+      </div>
             
     </div>
 

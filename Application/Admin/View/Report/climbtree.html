@@ -1,0 +1,40 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+          <tr id="post">
+            <th>openid</th>
+            <th>用户头像</th>
+            <th>用户昵称</th>
+            <th>摇动次数</th>
+            <th>摇动速率</th>
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+          
+          <volist name="data" id="vlist">
+            <tr target="sid_user">
+              <td data-title="openid">{$vlist.openid}</td>
+              <td data-title="用户头像"><img src="{$vlist.avatarurl}" /></td>
+              <td data-title="用户昵称">{$vlist.nickname}</td>
+              <td data-title="摇动次数">{$vlist.rock_nums}</td>
+              <td data-title="摇动速率">{$vlist.rock_rate}次/s</td>
+                    
+</tr>
+</volist>
+</tbody>
+</table>
+</form>
+
+</div>
+</div>
+
+</div>

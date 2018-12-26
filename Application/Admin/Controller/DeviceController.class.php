@@ -276,6 +276,9 @@ class DeviceController extends BaseController{
 		$save['room_id']     = I('post.room_id','','intval');
 		$save['adv_mach']    = I('post.adv_machine',0,'intval');
 		$save['is_sapp_forscreen'] = I('post.is_sapp_forscreen',0,'intval');
+		$save['wifi_name']   = I('post.wifi_name','','trim');
+		$save['wifi_password']=I('post.wifi_password','','trim');
+		$save['is_open_simple']=I('post.is_open_simple',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		
 		if($tpmedia_id_arr){
