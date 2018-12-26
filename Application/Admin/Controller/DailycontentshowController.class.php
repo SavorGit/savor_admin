@@ -17,7 +17,6 @@ class DailycontentshowController extends Controller {
     private $oss_host = '';
     public function __construct() {
         parent::__construct();
-        $this->host_name =  C('HOST_NAME').'/admin';
         $this->oss_host = 'http://'.C('OSS_HOST_NEW').'/';
     }
 

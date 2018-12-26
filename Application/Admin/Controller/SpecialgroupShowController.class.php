@@ -17,7 +17,7 @@ class SpecialgroupShowController extends Controller {
     private $oss_host = '';
     public function __construct() {
         parent::__construct();
-        $this->host_name =  C('HOST_NAME').'/admin';
+        $this->host_name_admin =  get_host_name().'/admin';
         $this->oss_host = 'http://'.C('OSS_HOST_NEW').'/';
     }
 
@@ -54,7 +54,7 @@ class SpecialgroupShowController extends Controller {
                     $speca_arr_info[$spk]['simg'] = $oss_host.$spv['simg'];
                 }else if($spv['sgtype'] == 2){
                     $speca_arr_info[$spk]['mimg'] = $oss_host.$spv['mimg'];
-                    $speca_arr_info[$spk]['mcurl'] = $this->host_name.'/'.$spv['mcurl'];
+                    $speca_arr_info[$spk]['mcurl'] = $this->host_name_admin.'/'.$spv['mcurl'];
                     $speca_arr_info[$spk]['create_time'] = date("Y-m-d", strtotime($spv['create_time']));
                 }
             }

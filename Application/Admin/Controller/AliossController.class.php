@@ -21,7 +21,8 @@ class AliossController extends Controller{
         $key = C('OSS_ACCESS_KEY');
         //$host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST');
         $host = 'http://'.C('OSS_HOST_NEW');
-        $callbackUrl = C('HOST_NAME').'/'.C('OSS_SYNC_CALLBACK_URL');
+        $host_name = get_host_name();
+        $callbackUrl = $host_name.'/'.C('OSS_SYNC_CALLBACK_URL');
         $callback_param = array(
             'callbackUrl'=>$callbackUrl,
             'callbackBody'=>'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}',

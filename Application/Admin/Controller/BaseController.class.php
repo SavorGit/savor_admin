@@ -8,7 +8,9 @@ use Common\Lib\UmengNotice;
  *
  */
 class BaseController extends Controller {
-    
+
+    protected $host_name='';
+
     public function __construct(){
         parent::__construct();
         $this->checkLogin();
@@ -18,9 +20,10 @@ class BaseController extends Controller {
     }
     
     public function handlePublicParams(){
-        $this->assign('host_name',$this->host_name().'/admin');
-        $this->assign('host_url',$this->host_name());
-        $this->assign('site_host_name',$this->host_name());
+        $this->host_name = get_host_name();
+        $this->assign('host_name',$this->host_name.'/admin');
+        $this->assign('host_url',$this->host_name);
+        $this->assign('site_host_name',$this->host_name);
         $this->assign('imgup_path',$this->imgup_path());
         $this->assign('imgup_show',$this->imgup_show());
         $this->checkPriv();  //检查权限
@@ -29,7 +32,7 @@ class BaseController extends Controller {
     }
     
     public function host_name(){
-        $host_name = C('HOST_NAME');
+        $host_name = get_host_name();
         return $host_name;
     }
     
@@ -45,7 +48,7 @@ class BaseController extends Controller {
      * @return 页面图片展示地址
      */
     public function imgup_show(){
-        $imgup_show= C('HOST_NAME').'/Public/uploads/';
+        $imgup_show= $this->host_name.'/Public/uploads/';
         return $imgup_show;
     }
 
@@ -92,7 +95,7 @@ class BaseController extends Controller {
         $name = $imgPart[$i-1];
         $path = str_replace($name, '', $img);
         //去掉域名
-        $pathNohost = str_replace('./','/',str_replace(C('HOST_NAME'), '', $path));
+        $pathNohost = str_replace('./','/',str_replace($this->host_name, '', $path));
         $sizeinfo = getimagesize('.'.$pathNohost.$name);
         if($sizeinfo[0] >= $width && $sizeinfo[1] >= $height){
             $imglib -> open('.'.$pathNohost.$name)->thumb($width, $height, $type)->save('.'.$pathNohost.$prefix.$name);

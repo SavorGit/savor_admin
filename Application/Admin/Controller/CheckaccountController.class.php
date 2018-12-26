@@ -70,7 +70,7 @@ class CheckaccountController extends BaseController{
 		$tel= $info['tel'];
 		$detailid = $info['id'];
 		$short = encrypt_data($detailid);
-		$shortlink = C('HOST_NAME').'/admin/hotelbill/index?id='.$short;
+		$shortlink = $this->host_name.'/admin/hotelbill/index?id='.$short;
 		$shortlink = shortUrlAPI(1, $shortlink);
 
 		$param="$shortlink";

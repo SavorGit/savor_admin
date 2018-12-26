@@ -47,7 +47,7 @@ class IndexController extends BaseController {
     
     //获取当前用户管理栏目
    /*  private function getMyMenuList(){
-        $host_name=$this->host_name();
+        $host_name=$this->host_name;
         $userInfo = session('sysUserInfo');
         $username = $userInfo['username'];
         $uid = $userInfo['id'];
@@ -110,7 +110,7 @@ class IndexController extends BaseController {
         }
     } */
     public function getMyMenuList(){
-        $host_name=$this->host_name();
+        $host_name=$this->host_name;
         $userInfo = session('sysUserInfo');
         
         $username = $userInfo['username'];
