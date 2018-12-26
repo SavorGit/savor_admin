@@ -14,7 +14,7 @@ class FlashMenuController extends BaseController {
 
     public function __construct() {
         parent::__construct();
-        $this->hosname = $this->host_name();
+        $this->hosname = $this->host_name;
     }
 
     public function getdetail(){
