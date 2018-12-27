@@ -1,0 +1,272 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hotelgrade/index" method="post">
+        <input type="hidden" name="type" value="{$type}">
+        <input type="hidden" name="level" id="level" value="{$level}">
+        <div class="searchBar">
+            <div class="clearfix">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">
+                            等级：
+                            <div class="btn-group choose-hotelgrade">
+                                <button type="button" data-type="0" class="btn btn-sm hotelgrade <if condition="$level eq 0">btn-success</if>">全部</button>
+                                <button type="button" data-type="1" class="btn btn-sm hotelgrade <if condition="$level eq 1">btn-success</if>">A级</button>
+                                <button type="button" data-type="2" class="btn btn-sm hotelgrade <if condition="$level eq 2">btn-success</if>">B级</button>
+                                <button type="button" data-type="3" class="btn btn-sm hotelgrade <if condition="$level eq 3">btn-success</if>">C级</button>
+                            </div>
+                        </div>
+                        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+		                <span class="input-group-btn">
+		                    <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+		                </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent autoflow statistic">
+    <div class="indexContent">
+        <div class="portlet-tab">
+            <div class="btn-group">
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=8" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 8">active</if>">酒楼评级</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=1" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 1">active</if>">转换率</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=2" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 2">active</if>">传播力</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=3" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 3">active</if>">屏幕在线率</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=4" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 4">active</if>">网络质量</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=5" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 5">active</if>">互动饭局数</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=6" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 6">active</if>">在线屏幕数</button>
+                </a>
+                <a href="{$host_url}/smallapp/hotelgrade/index?level={$level}&start_date={$start_date}&end_date={$end_date}&type=7" target="navTab" rel="hotelgrade/index" title="酒楼详细趋势图">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 7">active</if>">互动次数</button>
+                </a>
+            </div>
+        </div>
+        <div class="portlet light bg-inverse portlet-table">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-area-chart"></i>
+                    <span class="caption-subject bold font-green-haze uppercase">对比图</span>
+                    <span class="caption-helper"></span>
+                </div>
+            </div>
+            <div class="portlet-body row">
+                <div id="echart_hotelgradedata" class="chart"></div>
+            </div>
+        </div>
+
+        <div class="portlet-row row">
+            <div class="portlet-table">
+                <table class="table-dashboard">
+                    <thead>
+                    <tr><th colspan='11'><span class="pull-left">详细数据</span><span class="pull-right"><a href="{$host_name}/excel/smallappGradedetail?level={$level}&start_date={$start_date}&end_date={$end_date}" title="导出详细数据" target="_blank" mask="true">导出</a></span></th></tr>
+                    <tr>
+                        <th>日期</th>
+                        <th>级别</th>
+                        <th>名称</th>
+                        <th>心跳次数</th>
+                        <th>平均网速</th>
+                        <th>互动次数</th>
+                        <th>版位数量</th>
+                        <th>在线屏数</th>
+                        <th>互动版位</th>
+                        <th>转换率</th>
+                        <th>覆盖率</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <volist name="detail_list" id="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="日期">{$dinfo.date}</td>
+                            <td data-title="级别">{$dinfo.level_str}</td>
+                            <td data-title="名称">{$dinfo.name}</td>
+                            <td data-title="心跳次数">{$dinfo.heart_log_nums}</td>
+                            <td data-title="平均网速">{$dinfo.avg_speed}</td>
+                            <td data-title="互动次数">{$dinfo.interact_num}</td>
+                            <td data-title="版位数量">{$dinfo.all_position}</td>
+                            <td data-title="在线屏数">{$dinfo.online_screen_num}</td>
+                            <td data-title="互动版位">{$dinfo.position_num}</td>
+                            <td data-title="转换率">{$dinfo.cvr}</td>
+                            <td data-title="覆盖率">{$dinfo.avg_coverage}</td>
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <if condition="$type eq 8 AND $level gt 0">
+        <script type="text/javascript">
+            var dom = document.getElementById("echart_hotelgradedata");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        dataZoom : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: {$alldays}
+                },
+                yAxis: {
+                    type: 'value',
+                },
+                series: [
+                    {
+                        type:'line',
+                        data:{$chart}
+                    }
+                ]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+
+            $('.choose-hotelgrade .hotelgrade').click(function(){
+                $(this).addClass('btn-success').siblings().removeClass('btn-success');
+                var level = $(this).data('type');
+                $("#level").val(level);
+            });
+
+            $('.date-reset').click(function(){
+                $(this).parent().prev().val('')
+            });
+            $(function(){
+                $(".form-control.date").datetimepicker({
+                    minView: "month", //选择日期后，不会再跳转去选择时分秒
+                    language:  'zh-CN',
+                    format: 'yyyy-mm-dd',
+                    todayBtn:  1,
+                    autoclose: 1,
+                });
+            })
+        </script>
+
+    <else />
+
+        <script type="text/javascript">
+            var dom = document.getElementById("echart_hotelgradedata");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['{$legend.0}','{$legend.1}','{$legend.2}']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    show : true,
+                    feature : {
+                        dataZoom : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: {$alldays}
+                },
+                yAxis: {
+                    type: 'value',
+                },
+                series: [
+                    {
+                        name:'{$legend.0}',
+                        type:'line',
+                        data:{$chart_a}
+                    },
+                    {
+                        name:'{$legend.1}',
+                        type:'line',
+                        data:{$chart_b}
+                    },
+                    {
+                        name:'{$legend.2}',
+                        type:'line',
+                        data:{$chart_c}
+                    }
+                ]
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+
+            $('.choose-hotelgrade .hotelgrade').click(function(){
+                $(this).addClass('btn-success').siblings().removeClass('btn-success');
+                var level = $(this).data('type');
+                $("#level").val(level);
+            });
+
+            $('.date-reset').click(function(){
+                $(this).parent().prev().val('')
+            });
+            $(function(){
+                $(".form-control.date").datetimepicker({
+                    minView: "month", //选择日期后，不会再跳转去选择时分秒
+                    language:  'zh-CN',
+                    format: 'yyyy-mm-dd',
+                    todayBtn:  1,
+                    autoclose: 1,
+                });
+            })
+        </script>
+
+    </if>
