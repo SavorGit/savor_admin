@@ -89,6 +89,7 @@
             <th>机顶盒下载成功延时</th>
             <th>是否打断</th>
             <th>资源下载状态</th>
+            <th>小程序版本</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -154,6 +155,8 @@
               <td data-title="机顶盒下载成功延时">{$vlist.box_res_edown_time}</td>
               <td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>
               <td data-title="是否打断"><if condition="$vlist.is_exist eq 0">下载成功 <elseif condition="$vlist.is_exist eq 1" />盒子存在该资源 <elseif condition="$vlist.is_exist eq 2" />下载失败</if></td>
+            	
+              <td data-title="是否打断"><if condition="$vlist.small_app_id eq 1"> 普通版 <elseif condition="$vlist.small_app_id eq 2" />极简版</if></td>	
             </tr>
           </volist>
           </tbody>
