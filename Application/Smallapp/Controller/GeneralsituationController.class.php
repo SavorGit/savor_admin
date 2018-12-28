@@ -136,11 +136,21 @@ class GeneralsituationController extends BaseController {
                 $a = ($b+$c)/2;
                 break;
             case 8:
+                /*
                 $hotellevel_c = A('Hotellevel');
                 $nums = $hotellevel_c->getHotellevel($date);
                 $a = $nums['a'];
                 $b = $nums['b'];
                 $c = $nums['c'];
+                */
+                $fields = 'hotel_id,level';
+                $where = array('static_date'=>$date);
+                $order = 'id desc';
+                $m_static_hotel = new \Admin\Model\Smallapp\StaticHotelgradeModel();
+                $res_hotel = $m_static_hotel->getListnums($fields,$where,$order);
+                $a = $res_hotel['a'];
+                $b = $res_hotel['b'];
+                $c = $res_hotel['c'];
                 break;
         }
         $chart = array('a'=>$a,'b'=>$b,'c'=>$c);

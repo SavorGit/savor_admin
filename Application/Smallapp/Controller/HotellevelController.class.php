@@ -351,6 +351,9 @@ class HotellevelController extends BaseController {
             $fields =" count(id) as nums";
             $ret = $m_statics->getOne($fields, $where);
             $all_box_nums = $ret['nums'];
+
+
+
             $cover_rate = round($hd_box_nums / $all_box_nums * 100);
 
             $score = $this->getScore($cover_rate, $conf_arr[6]);

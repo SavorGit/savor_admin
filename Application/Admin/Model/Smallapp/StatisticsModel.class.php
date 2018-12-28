@@ -78,7 +78,13 @@ class StatisticsModel extends Model
             //互动饭局数
             $where = array('static_date'=>$date);
             if($box_mac)    $where['box_mac'] = $box_mac;
-            if($hotel_id)   $where['hotel_id'] = $hotel_id;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['all_interact_nums'] = array('GT',0);
             $fields = "count(box_mac) as fjnum";
@@ -89,7 +95,13 @@ class StatisticsModel extends Model
             //在线屏幕数
             $where = array('static_date'=>$date);
             if($box_mac)    $where['box_mac'] = $box_mac;
-            if($hotel_id)   $where['hotel_id'] = $hotel_id;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['heart_log_meal_nums'] = array('GT',12);
             $where['_string'] = 'case static_fj when 1 then (120 div heart_log_meal_nums)<10  else (180 div heart_log_meal_nums)<10 end';
@@ -101,7 +113,13 @@ class StatisticsModel extends Model
             //可投屏数
             $where = array('static_date'=>$date);
             if($box_mac)    $where['box_mac'] = $box_mac;
-            if($hotel_id)   $where['hotel_id'] = $hotel_id;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['heart_log_meal_nums'] = array('GT',0);
             $where['_string'] = '(avg_down_speed div 1024)>200';
@@ -114,7 +132,13 @@ class StatisticsModel extends Model
             //网络屏幕数
             $where = array('static_date'=>$date);
             if($box_mac)    $where['box_mac'] = $box_mac;
-            if($hotel_id)   $where['hotel_id'] = $hotel_id;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
             if($static_fj){
                 $where['static_fj'] = $static_fj;
             }
@@ -126,7 +150,13 @@ class StatisticsModel extends Model
             //互动次数
             $where = array('static_date'=>$date);
             if($box_mac)    $where['box_mac'] = $box_mac;
-            if($hotel_id)   $where['hotel_id'] = $hotel_id;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
             if($static_fj)  $where['static_fj'] = $static_fj;
             $fields = 'sum(all_interact_nums) as hdnum';
             $ret = $this->getOne($fields, $where);
@@ -135,7 +165,13 @@ class StatisticsModel extends Model
         if($type==9){
             $where = array('static_date'=>$date);
             if($box_mac)    $where['box_mac'] = $box_mac;
-            if($hotel_id)   $where['hotel_id'] = $hotel_id;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['heart_log_nums'] = array('GT',0);
             $fields = "sum(`heart_log_nums`) as xtnum";

@@ -91,6 +91,8 @@ class ExcelController extends Controller
              $tmpname = '小程序酒楼数据详细数据';
         }else if($filename=='smallapp_boxdata'){
              $tmpname = '小程序版位数据详细数据';
+         }else if($filename=='smallapp_hotelgradedetail'){
+             $tmpname = '小程序概况酒楼评级趋势详细数据';
          }
 
 
@@ -3915,7 +3917,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $days = $m_statistics->getDays($day,$start_date,$end_date);
         $data = array();
-        $hotellevel_c = A('Smallapp/Hotellevel');
+//        $hotellevel_c = A('Smallapp/Hotellevel');
+        $m_static_hotel = new \Admin\Model\Smallapp\StaticHotelgradeModel();
         foreach ($days as $k=>$v){
             $ratenums = $m_statistics->getRatenum($v,0,0);
             $detail = array('date'=>$v,'fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum']);
@@ -3923,10 +3926,19 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
             $detail['screens'] = $m_statistics->getRate($ratenums,3).'%';
             $detail['network'] = $m_statistics->getRate($ratenums,4).'%';
+            $fields = 'hotel_id,level';
+            $where = array('static_date'=>$v);
+            $order = 'id desc';
+            $res_hotel = $m_static_hotel->getListnums($fields,$where,$order);
+            $detail['hotela'] = $res_hotel['a'];
+            $detail['hotelb'] = $res_hotel['b'];
+            $detail['hotelc'] = $res_hotel['c'];
+            /*
             $hotel_level = $hotellevel_c->getHotellevel($v);
             $detail['hotela'] = $hotel_level['a'];
             $detail['hotelb'] = $hotel_level['b'];
             $detail['hotelc'] = $hotel_level['c'];
+            */
             $data[] = $detail;
         }
         $xlsCell = array(
@@ -3944,6 +3956,69 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         );
         $xlsName = '小程序概况详细数据';
         $filename = 'smallapp_generalsituationdetail';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
+    public function smallappGradedetail(){
+        set_time_limit(180);
+        ini_set("memory_limit","1024M");
+        $level = I('get.level',0,'intval');
+        $start_date = I('get.start_date','');
+        $end_date = I('get.end_date','');
+        $m_static_hotel = new \Admin\Model\Smallapp\StaticHotelgradeModel();
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $m_hotel = new \Admin\Model\HotelModel();
+        $days = $m_statistics->getDays(0,$start_date,$end_date);
+
+        $levels = array(1=>'A',2=>'B',3=>'C');
+        $data = array();
+        foreach ($days as $dv){
+            $fields = '*';
+            $where = array('static_date'=>$dv);
+            if($level){
+                $where['level'] = $level;
+            }
+            $order = 'id asc';
+            $res_hotel = $m_static_hotel->getList($fields,$where,$order);
+
+            foreach ($res_hotel as $k=>$v){
+                $hotel_id = $v['hotel_id'];
+                $resh = $m_hotel->getOne($hotel_id);
+                $info = array('date'=>$v['static_date'],'name'=>$resh['name'],'level_str'=>$levels[$v['level']]);
+                $ratenums = $m_statistics->getRatenum($v['static_date'],0,9,$hotel_id);
+                $info['heart_log_nums'] = $ratenums['xtnum'];
+                $info['avg_speed'] = $v['avg_speed'].'kb/s';
+                $info['interact_num'] = $v['interact_num'];
+                $where = array();
+                $where['hotel_id'] = $v['hotel_id'];
+                $where['static_date'] = $v['static_date'];
+                $fields =" count(id) as nums";
+                $ret = $m_statistics->getOne($fields, $where);
+                $info['all_position'] = intval($ret['nums']);
+                $info['online_screen_num'] = $v['online_screen_num'];
+                $info['position_num'] = $v['position_num'];
+                $cvr = $v['cvr']*100;
+                $info['cvr'] = $cvr.'%';
+                $avg_coverage = round($v['avg_coverage'],1);
+                $info['avg_coverage'] = $avg_coverage.'%';
+                $data[] = $info;
+            }
+        }
+        $xlsCell = array(
+            array('date','日期'),
+            array('level_str','级别'),
+            array('name','名称'),
+            array('heart_log_nums','心跳次数'),
+            array('avg_speed','平均网速'),
+            array('interact_num','互动次数'),
+            array('all_position','版位数量'),
+            array('online_screen_num','在线屏数'),
+            array('position_num','互动版位'),
+            array('cvr','转换率'),
+            array('avg_coverage','覆盖率'),
+        );
+        $xlsName = '小程序概况详细数据';
+        $filename = 'smallapp_hotelgradedetail';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
 
