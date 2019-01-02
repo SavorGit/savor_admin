@@ -33,7 +33,32 @@
           <input type="text" class="form-control" name="mac" minlength="12" maxlength="12" value="{$vinfo.mac}" required>
         </div>
       </div>
+	  
+	  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          是否4G:
+        </label>
 
+        <div class="col-xs-12 col-sm-10">
+          <select name="is_4g" class="form-control bs-select" required>
+              <option value="0" <if condition="$vinfo.is_4g eq 0"> selected </if> >否</option>
+              <option value="1" <if condition="$vinfo.is_4g eq 1"> selected </if> >是</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+                    机顶盒类型：
+        </label>
+          <div class="col-xs-12 col-sm-10">
+          <select name="box_type" class="form-control bs-select" title="请选择..." required data-style="btn-success btn-sm" data-container="body">
+              <volist name=":C('hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $vinfo['box_type']">selected</if>>{$vo}</option><br>
+              </volist>
+          </select>
+              </div>
+      </div>
+	  
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
          切换时间:

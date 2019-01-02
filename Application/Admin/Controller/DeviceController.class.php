@@ -280,6 +280,8 @@ class DeviceController extends BaseController{
 		$save['wifi_password']=I('post.wifi_password','','trim');
 		$save['wifi_mac']     =I('post.wifi_mac','','trim');
 		$save['is_open_simple']=I('post.is_open_simple',0,'intval');
+		$save['is_4g']       = I('post.is_4g',0,'intval');
+		$save['box_type']    = I('post.box_type',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		
 		if($tpmedia_id_arr){
