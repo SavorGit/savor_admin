@@ -14,8 +14,36 @@ use Common\Lib\SavorRedis;
  */
 class TestController extends Controller {
     
+    public function updateBoxInfo(){
+        exit(1);
+        $m_box = new \Admin\Model\BoxModel();
+        $where = array();
+        $where['box.state'] = 1;
+        $where['box.flag']  = 0;
+        $where['hotel.hotel_box_type'] = array('neq',0);
+        $list = $m_box->alias('box')
+                      ->join('savor_room room on box.room_id=room.id','left')
+                      ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+                      ->field('box.id box_id,hotel.hotel_box_type')
+                      ->where($where)
+                      ->select();
+        $flag = 0 ;
+        foreach($list as $key=>$v){
+            $where = array();
+            $data  = array();
+            $where['id']      = $v['box_id'];
+            $data['box_type'] = $v['hotel_box_type']; 
+            $ret = $m_box->where($where)->save($data);
+            echo $m_box->getLastSql();exit;
+            if($ret){
+                $flag ++;
+            }
+        }
+        echo $flag;
+    }
+    
     public function recCollectCount(){
-        //exit(1);
+        exit(1);
         $m_public = new \Admin\Model\Smallapp\PublicModel();
         $m_collect_count = new \Admin\Model\Smallapp\CollectCountModel();
         
