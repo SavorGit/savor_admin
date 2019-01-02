@@ -2322,8 +2322,10 @@ class CrontabController extends Controller
         //广告明细
         $m_program_ads = new \Admin\Model\PubAdsModel();
         $fields = 'med.id,ads.name,pads.start_date,pads.end_date,pads.id pub_ads_id';
-        $now_date =  date('Y-m-d H:i:s');
-        $where = array();
+        $now_date =  date('Y-m-d H:i:s',strtotime('-1 day'));
+        $sort_day = date('j'); //本月第几天 没有前导0
+        $all_days = date('t'); //本月一共多少天
+	$where = array();
         $where['pads.start_date'] = array('elt',$now_date);
         $where['pads.end_date']   = array('egt',$now_date);
         $where['pads.state']      = 1;
@@ -2348,15 +2350,26 @@ class CrontabController extends Controller
             //$pub_ads_count = $m_program_ads->query($sql);
             
             //echo $m_pub_ads_box->getLastSql();exit;
-            $sql ="select abox.*,hotel.name,hotel.hotel_box_type
-	               from savor_pub_ads_box abox
-	               left join savor_box box on abox.box_id=box.id
-	               left join savor_room room on box.room_id=room.id
-	               left join savor_hotel hotel on room.hotel_id=hotel.id
-	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str)
-	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-	               group by abox.box_id";
-            $rtss = M()->query($sql);
+            if($sort_day==1){
+                $sql ="select abox.*,hotel.name,hotel.hotel_box_type
+    	               from savor_pub_ads_box_history abox
+    	               left join savor_box box on abox.box_id=box.id
+    	               left join savor_room room on box.room_id=room.id
+    	               left join savor_hotel hotel on room.hotel_id=hotel.id
+    	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str)
+    	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+    	               group by abox.box_id";
+            }else {
+                $sql ="select abox.*,hotel.name,hotel.hotel_box_type
+    	               from savor_pub_ads_box abox
+    	               left join savor_box box on abox.box_id=box.id
+    	               left join savor_room room on box.room_id=room.id
+    	               left join savor_hotel hotel on room.hotel_id=hotel.id
+    	               where abox.pub_ads_id=".$v['pub_ads_id']." and hotel.hotel_box_type in($heart_type_str)
+                    	               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+                    	               group by abox.box_id";
+            }
+	    $rtss = M()->query($sql);
             $pub_ads_count = count($rtss);
             
             $where = array();
@@ -2522,5 +2535,751 @@ class CrontabController extends Controller
             $redis->set($time_key, $time);
         }
     }
+    public function importBoxLog(){
+        $password = I('password');
+        if(empty($password) || $password!='fklj'){
+            exit('你的非法行为已被记录');
+        }
+        $m_oss_box_log = new \Admin\Model\Oss\BoxLogModel();
+        
+        $yesterday_start = date('Y-m-d 00:00:00',strtotime('-1 day'));
+        $yesterday_end   = date('Y-m-d 23:59:59',strtotime('-1 day'));
+        $fields = "*";
+        $where = array();
+        $where['create_time'] =array(array('EGT',$yesterday_start),array('ELT',$yesterday_end));
+        $where['flag']        = array('in','16,18');
+        $data = $m_oss_box_log->getInfo($fields, $where,'id asc');
+        $result = array();
+        $m_oss_box_log_detail = new \Admin\Model\Oss\BoxLogDetailModel();
+        if(!empty($data)){
+            $flag = 0;
+            foreach($data as $key=>$v){
+                $oss_key = $v['oss_key'];
+                if(!empty($oss_key)){
+                    $oss_key_arr = explode('/', $oss_key);
+                    $v['log_create_date'] = $oss_key_arr[3];
+                }
+                $v['box_log_id'] = $v['id'];
+                unset($v['id']);
+                $result[$flag] = $v;
+                $flag ++;
+                if($flag%100==0){
+                    //添加到数据库
+                    $ret = $m_oss_box_log_detail->addAll($result);
+                    //置空添加到数据库的数组
+                    $result = array();
+                    $flag = 0;
+                }  
+            }
+            if(!empty($result)){
+                //添加到数据库
+                $ret = $m_oss_box_log_detail->addAll($result);
+            } 
+        }
+        echo "昨天日志数据导入成功";
+    }
+    /**
+     * @desc 将百度聚屏广告缓存数据导入到数据库
+     */
+    public function recordBaiduPolyPlayInfo(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(4);
+        $keys = $redis->keys("*");
+        $m_box = new \Admin\Model\BoxModel();
+        $field = 'h.id hotel_id,r.id room_id,b.id box_id';
+        foreach($keys as $k){
+            $data = $where = $map =  array();
+            $keys_arr = explode(':', $k);
+            $info = $m_box->isHaveMac($field, "b.mac='".$keys_arr[0]."' and b.state=1 and b.flag=0 and h.flag=0 and h.state=1");
+	    if(!empty($info)){
+                $info = $info[0];
+                $data['hotel_id'] = $info['hotel_id'];
+                $data['room_id']  = $info['room_id'];
+                $data['box_id']   = $info['box_id'];
+                $data['box_mac']  = $keys_arr[0];
+                $data['play_date']= date('Ymd',intval($keys_arr[1]/1000));
+                $data['media_id'] = $redis->get($k);
+                
+                $map['box_mac'] = $keys_arr[0];
+                $map['media_id']= $data['media_id'];
+                $map['play_date'] = $data['play_date'];
+                //判断该机顶盒当前天是否播过此广告
+                
+                $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
+                $nums = $m_baidu_poly_play_record->countRows($map);
+		if(empty($nums)){//没有播放记录
+                    $data['play_times'] = 1;
+                    $ret = $m_baidu_poly_play_record->addInfo($data,1);
+		}else {//已有播放记录 更新  (播放次数+1)
+                    $update_time = date('Y-m-d H:i:s',intval($keys_arr[1]/1000));
+		    $sql_d = "  `play_times`= `play_times`+1,`update_time`=' ".$update_time."'";
+                    $where = " 1 and  box_mac='".$map['box_mac']."' and media_id=".$map['media_id']." and play_date=".$map['play_date'];
+                    $ret = $m_baidu_poly_play_record->modifyInfo($sql_d,$where);
+		}
+            }
+             $redis->remove($k); //删除缓存
+        }
+        echo "OK";
+    }
+    public function recordForScreenPics(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_SCRREN')."*";
+        $keys = $redis->keys($cache_key);
+        $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();  
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k,0,-1);
+            foreach($data as $v){
+                $forscreen_info = json_decode($v,true);
+                
+                $ret = $m_smallapp_forscreen_record->addInfo($forscreen_info,1);
+                if($ret) $redis->lpop($k);
+            }
+            $data = $redis->lgetrange($k,0,-1);
+            if(empty($data)) $redis->remove($k);
+        }
+	$cache_key = C('SAPP_UPRES_FORSCREEN')."*";
+        $keys = $redis->keys($cache_key);
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k, 0, -1);
+            foreach($data as $v){
+                $upresource = json_decode($v,true);
+                $where = $data = array();
+                if(!empty($upresource['resource_id']) && !empty($upresource['openid'])){
+                    $where['action'] = array('neq',8);
+		    $where['resource_id'] = $upresource['resource_id'];
+                    $where['openid'] = $upresource['openid'];
+                    if(!empty($upresource['box_res_sdown_time'])){
+                        $data['box_res_sdown_time'] = $upresource['box_res_sdown_time'];
+                    }else if(!empty($upresource['box_res_edown_time'])){
+                        $data['box_res_edown_time'] = $upresource['box_res_edown_time'];
+                    }
+                    $ret = $m_smallapp_forscreen_record->updateInfo($where, $data);
+                    if($ret) $redis->lpop($k);
+                } 
+            }
+            $ret = $redis->lgetrange($k,0,-1);
+            if(empty($ret)) $redis->remove($k);
+        }
+	$cache_key = C('SAPP_UPDOWN_FORSCREEN')."*";
+        $keys = $redis->keys($cache_key);
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k, 0, -1);
+            foreach($data as $v){
+                $upresource = json_decode($v,true);
+                $where = $data = array();
+                $where['forscreen_id'] = $upresource['forscreen_id'];
+                $where['resource_id']  = $upresource['resource_id'];
+                $where['openid']       = $upresource['openid'];
+                $where['box_mac']      = $upresource['box_mac'];
+                $nums = $m_smallapp_forscreen_record->where($where)->count();
+                if($nums){
+                    $data['box_res_sdown_time'] = $upresource['box_res_sdown_time'];
+                    $data['box_res_edown_time'] = $upresource['box_res_edown_time'];
+                    $ret = $m_smallapp_forscreen_record->updateInfo($where, $data);
+                    if($ret) $redis->lpop($k);
+                }else {
+                    $redis->lpop($k);
+                }
+		
+            }
+            $ret = $redis->lgetrange($k,0,-1);
+            if(empty($ret)) $redis->remove($k);
+        }
+	$cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
+        $keys = $redis->keys($cache_key);
+        foreach($keys as $k){
+            
+            $data = $redis->lgetrange($k, 0, -1);
+            
+            foreach($data as $v){
+                $netresource = json_decode($v,true);
+                
+                $search = array();
+                $search['forscreen_id'] = $netresource['forscreen_id'];
+                $search['resource_id']  = $netresource['resource_id'];
+                $tmp = $m_smallapp_forscreen_record->getOne('id', $search);
+                
+                if(!empty($tmp)){
+                    if($netresource['is_exist']==0){//资源不存在
+                        if(!empty($netresource['resource_id']) && !empty($netresource['openid'])){
+                            $where = array();
+                            $dt = array();
+                            //$where['action'] = array('neq',8);
+                            $where['forscreen_id'] = $netresource['forscreen_id'];
+                            $where['resource_id'] = $netresource['resource_id'];
+                            $where['openid'] = $netresource['openid'];
+                            if(!empty($netresource['box_res_sdown_time'])){
+                                $dt['box_res_sdown_time'] = $netresource['box_res_sdown_time'];
+                            }
+                            if(!empty($netresource['box_res_edown_time'])){
+                                $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
+                            }
+                            $dt['is_break'] = $netresource['is_break'];
+                            $dt['is_exist'] = $netresource['is_exist'];
+                            $dt['update_time'] = date('Y-m-d H:i:s');
+                            $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
+                            $redis->lpop($k);
+                        }
+                    }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
+                        $where = $dt = array();
+                        //$where['action'] = array('neq',8);
+                        $where['forscreen_id'] = $netresource['forscreen_id'];
+                        $where['resource_id'] = $netresource['resource_id'];
+                        $where['openid'] = $netresource['openid'];
+                        $dt['is_break'] = $netresource['is_break'];
+                        $dt['is_exist'] = $netresource['is_exist'];
+                        $dt['update_time'] = date('Y-m-d H:i:s');
+                        $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
+                        
+                        $tt = $redis->lpop($k);
+                    }
+                }else {
+                    $redis->lpop($k);
+                }
+                $ret = $redis->lgetrange($k,0,-1);
+                if(empty($ret)) $redis->remove($k);
+            }
+        }
+        echo "OK";
+        
+    }
+    public function recordPlayGameTime(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_PLAY_GAME')."*";
+        $keys = $redis->keys($cache_key);
+	$m_turntab_log = new \Admin\Model\Smallapp\TurntableLogModel();
+        $m_turntab_detail = new \Admin\Model\Smallapp\TurntableDetailModel();
+        foreach($keys as $k){
+            $ca_arr = explode(':', $k);
+            $ac_id = $ca_arr[2];
+            $rets = $m_turntab_log->getOne('id', array('activity_id'=>$ac_id));
+            if(empty($rets)){
+                $redis->remove($k);
+                continue;
+            }
+	    
+	    $data = $redis->lgetrange($k, 0, -1);
+            foreach($data as $v){
+                $play_game_info = json_decode($v,true);
+                $where = $data = array();
+		if(!empty($play_game_info['activity_id'])){
+                    if(!empty($play_game_info['box_orggame_time'])){
+                        $where['activity_id'] = $play_game_info['activity_id'];
+                        $data['box_orggame_time'] = $play_game_info['box_orggame_time'];
+                        
+                        $ret = $m_turntab_log->updateInfo($where, $data);
+                        if($ret) $redis->lpop($k);
+                    }else if(!empty($play_game_info['box_startgame_time'])){
+                        $where['activity_id'] = $play_game_info['activity_id'];
+                        $data['box_startgame_time'] = $play_game_info['box_startgame_time'];
+                        
+                        $ret = $m_turntab_log->updateInfo($where, $data);
+                        if($ret) $redis->lpop($k);
+                    }else if(!empty($play_game_info['box_join_time'])){
+                        $where['activity_id'] = $play_game_info['activity_id'];
+                        $where['openid'] = $play_game_info['openid'];
+                        $data['box_join_time'] = $play_game_info['box_join_time'];
+                        $ret = $m_turntab_detail->updateInfo($where, $data);
+                        if($ret) $redis->lpop($k);
+                    }
+                }else {
+                    $redis->lpop($k);
+                }
+            }
+            $ret = $redis->lgetrange($k,0,-1);
+            if(empty($ret)) $redis->remove($k);
+        }
+	echo "OK";
+    }
+    /**
+     * @desc 记录想要玩游戏的用户信息
+     */
+    public function recordWantgame(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_WANT_GAME')."*";
+        $keys = $redis->keys($cache_key);
+        $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k,0,-1);
+            foreach($data as $v){
+                $wantgame_info = json_decode($v,true);
+        
+                $ret = $m_smallapp_forscreen_record->addInfo($wantgame_info,1);
+                if($ret) $redis->lpop($k);
+            }
+            $data = $redis->lgetrange($k,0,-1);
+            if(empty($data)) $redis->remove($k);
+        }
+        echo "OK";
+    }
+    /**
+     * @desc 记录电视显示小程序码日志
+     */
+    public function recordSuncodeLog(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_SUNCODE_LOG')."*";
+        $keys = $redis->keys($cache_key);
+        $keys = array_slice($keys, 0,5);
+	$m_suncode_log = new \Admin\Model\Smallapp\SuncodeLogModel();
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k, 0, -1);
+            foreach($data as $v){
+                $suncode_log = json_decode($v,true);
+                if(!empty($suncode_log['start_time'])){
+                    $ret = $m_suncode_log->addInfo($suncode_log);
+                    if($ret) $redis->lpop($k);
+                }else if(!empty($suncode_log['end_time'])){
+                    $map = array();
+                    $map['log_id'] = $suncode_log['log_id'];
+                    $map['box_mac']= $suncode_log['box_mac'];
+                    $nums = $m_suncode_log->countNums($map);
+                    if(!empty($nums)){
+                        $updata = array();
+                        $updata['end_time'] = $suncode_log['end_time'];
+                        $ret = $m_suncode_log->updateInfo($map, $updata);
+                        if($ret) $redis->lpop($k);
+                    }else {
+                       $ret = $m_suncode_log->addInfo($suncode_log);
+                       if($ret) $redis->lpop($k);
+                    }
+			
+                }
+            }
+            $data = $redis->lgetrange($k,0,-1);
+            if(empty($data)) $redis->remove($k);
+        }
+        echo 'OK';
+    }
+    /**
+     * @desc 按照天统计投屏网络状况
+     */
+    public function staticSappNet(){
+        $jstime = I('get.jstime');
+        $strtime =  strtotime('-1 day');
+        $start_time = $jstime ? $jstime." 00:00:00" : date('Y-m-d 00:00:00',$strtime) ;
+        $end_time   = $jstime ? $jstime." 23:59:59" : date('Y-m-d 23:59:59',$strtime) ;
+        
+        $m_forscreen_log = new \Admin\Model\ForscreenRecordModel();
+        $fields = 'hotel.id hotel_id,hotel.name hotel_name';
+        $where = array();
+        $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+	$where['a.box_res_sdown_time'] = array('neq', 0);
+        $where['a.box_res_edown_time'] = array('neq', 0);
+        $where['hotel.flag'] = 0;
+        $where['hotel.state']= 1; 
+	$where["_string"] = "  a.box_res_sdown_time>a.res_eup_time and a.box_res_edown_time >a.box_res_sdown_time";
+	$hotel_list = $m_forscreen_log->getWhere($fields, $where, $order='', $limit='', $group="hotel.id");
+        $m_static_net =  new \Admin\Model\Smallapp\StaticNetModel();
+        foreach($hotel_list as $key=>$v){
+            $where = $data =  array();
+            $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+            $where['hotel.id'] = $v['hotel_id'];
+	    $where['a.box_res_sdown_time'] = array('neq', 0);
+            $where['a.box_res_edown_time'] = array('neq', 0);
+	    $where['hotel.flag'] = 0;
+            $where['hotel.state']= 1; 
+            $where["_string"] = "  a.box_res_sdown_time>a.res_eup_time and a.box_res_edown_time >a.box_res_sdown_time";
+	    $data['box_donw_nums'] = $m_forscreen_log->countWhere($where);         //机顶盒总下载次数
+            
+            $fields = "sum(`resource_size`) as all_res_size";
+            $ret = $m_forscreen_log->getWhere($fields, $where);                    //机顶盒总下载大小
+            //$data['res_size'] = $ret[0]['all_res_size'];
+            $data['res_size'] = $ret[0]['all_res_size'] ?  $ret[0]['all_res_size'] :0;
+	    
+            $fields = "sum(`box_res_edown_time` - `box_res_sdown_time`) as down_times";  
+            $ret = $m_forscreen_log->getWhere($fields, $where);
+            $down_times = $ret[0]['down_times'];                       
+            
+            $data['avg_down_speed'] = round($data['res_size'] / ($down_times/1000),2) ;       //平均下载速度
+            
+            
+            $fields = " max(`resource_size` / (`box_res_edown_time`-`box_res_sdown_time`)) as max_down_speed";
+            $ret = $m_forscreen_log->getWhere($fields, $where);
+            $data['max_down_speed'] = round($ret[0]['max_down_speed']*1000 , 2) ;                //最快下载速度
+                 
+            
+            $fields = " min(`resource_size` / (`box_res_edown_time`-`box_res_sdown_time`)) as min_down_speed";
+	    $ret = $m_forscreen_log->getWhere($fields, $where);
+	    $data['min_down_speed'] = round($ret[0]['min_down_speed']*1000 , 2);                //最慢下载速度
+                   
+            
+            $where = array();
+            $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+            $where['hotel.id'] = $v['hotel_id'];
+            $where['a.res_eup_time'] = array('neq',0);
+            $where['a.box_res_sdown_time'] = array('neq',0);
+	    $where['hotel.flag'] = 0;
+            $where['hotel.state']= 1; 
+	    $where["_string"] = "  a.box_res_sdown_time>a.res_eup_time and a.box_res_edown_time >a.box_res_sdown_time"; 
+            $data['order_times'] = $m_forscreen_log->countWhere($where);            //总指令次数
+            
+            $fields = "sum(`box_res_sdown_time` - `res_eup_time`) as all_delay_times";
+            $ret = $m_forscreen_log->getWhere($fields, $where);
+            $all_delay_times = $ret[0]['all_delay_times'];
+            
+            $data['avg_delay_time'] = round(($all_delay_times / 1000) / $data['order_times'] ,2) ;  //平均指令延时
+            
+            $fields = "max(`box_res_sdown_time` - `res_eup_time`) max_delay_times";
+            $ret = $m_forscreen_log->getWhere($fields, $where);
+            $data['max_delay_times'] = round($ret[0]['max_delay_times'] / 1000  ,2) ;           //最高延时
+            
+            $fields = "min(`box_res_sdown_time` - `res_eup_time`) min_delay_times";
+            $ret = $m_forscreen_log->getWhere($fields, $where);
+            $data['min_delay_times'] = round($ret[0]['min_delay_times'] / 1000 ,2) ;           //最低延时
+            
+            $data['hotel_id'] = $v['hotel_id'];
+            $data['static_date'] = date('Y-m-d',strtotime($start_time));
+            
+            $m_static_net->addInfo($data,1);
+        }
+        echo "OK";
+    }
+    /**
+     * @desc 模拟投屏
+     * @author zhang.yingtao
+     * @since  2018-09-13
+     */
+    public function simulateForscreen(){
+        echo "废弃" ;exit; 
+        //获取目前链接netty的机顶盒
+        $box_list =  file_get_contents('https://netty-push.littlehotspot.com/netty/box/connections');
+        $box_list = json_decode($box_list,true);
+        $box_list = $box_list['result'];
+        
+        //上线关闭
+        /*$box_list = array();
+        $box_list[] = array('box_mac'=>'00226D5845CE'); 
+        $box_list[] = array('box_mac'=>'FCD5D900B57E');
+        $box_list[] = array('box_mac'=>'00226D583D0E');
+        $box_list[] = array('box_mac'=>'00226D2FB21D');*/ 
+        foreach($box_list as $key=>$v){
+            $timestamp = getMillisecond();
+            $url = 'http://mobile.littlehotspot.com/Smallapp/index/recordForScreenPics'; //调用接口的平台服务地址
+            $post_string = array('openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE','box_mac'=>$v['box_mac'],
+                                 'action'=>2,'resource_type'=>2,'mobile_brand'=>'devtools',
+                                 'mobile_model'=>'devtools','forscreen_char'=>'',
+                                 'imgs'=>'["forscreen/resource/15368043845967.mp4"]',
+                                 'resource_id'=>$timestamp,'res_sup_time' =>$timestamp,
+                                 'res_eup_time'=>$timestamp , 'resource_size'=>'1149039',
+            );
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            $result = curl_exec($ch);
+            
+            if($result){
+                $result = json_decode($result,true);
+                if($result['code'] == 10000){
+                    
+                    $msg = array('action'=>999,'url'=>'forscreen/resource/15368043845967.mp4',
+                                 'filename'=>'15368043845967.mp4','openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE',
+                                 'resource_type'=>2,'video_id'=>$timestamp
+                    );
+                    $msg = json_encode($msg);
+                    $msg = str_replace('\\', '', $msg);
+                    $url = 'https://netty-push.littlehotspot.com/push/box'; //调用接口的平台服务地址
+                    $post_string = array('box_mac'=>$v['box_mac'],'cmd'=>'call-mini-program',
+                                          'msg'=>$msg,'req_id'=>$timestamp
+                    ); 
+                     
+                    $post_string = http_build_query($post_string);
+                    
+                    $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                    curl_setopt($ch, CURLOPT_POSTFIELDS,$post_string);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    
 
+                    $result = curl_exec($ch);
+                    if (curl_errno($ch)) {
+                        continue;
+                        
+                    }
+                    curl_close($ch);
+                   /*  $result = json_decode($result,true);
+                    if($result['code']==10000){
+                        echo "aaaa";
+                    } */
+                }
+            }
+            echo "ok";
+        }
+    }
+    /**
+     * @desc 处理小程序公开投屏资源
+     */
+    public function recForscreenPub(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_SCRREN_SHARE')."*";
+        $keys = $redis->keys($cache_key);
+        $m_pub = new \Admin\Model\Smallapp\PublicModel(); 
+        $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k,0,-1);
+            $infos = json_decode($data[0],true);
+            $k_arr = explode(':', $k);
+            $map = array();
+            $map['box_mac'] = $k_arr[3];
+            $map['openid']  = $k_arr[4];
+            $map['forscreen_id'] = $k_arr[5];
+            $map['is_pub_hotelinfo'] = $infos['is_pub_hotelinfo'];
+	    $map['res_type'] = $infos['res_type'];
+            $map['res_nums'] = count($data);
+            $map['status']   = 1;
+            $m_pub->addInfo($map,1);
+            $ret = array();
+            foreach($data as $kk=>$vv){
+                $vv = json_decode($vv,true);
+                $ret[$kk]['forscreen_id'] = $vv['forscreen_id'];
+                $ret[$kk]['resource_id']  = $vv['resource_id'];
+                $ret[$kk]['res_url']      = $vv['res_url'];
+	        $ret[$kk]['duration']     = $infos['duration'] ?$infos['duration'] : '0.00';
+	        $ret[$kk]['resource_size']= $infos['resource_size'] ? $infos['resource_size'] :0;
+	    }
+            $m_pubdetail->addInfo($ret,2);
+            $redis->remove($k);
+        }
+        echo "ok";
+    
+    }
+    //生成好友关系
+    public function smallappFriends(){
+        $hour = date('H');
+        //$hour =14;
+        if($hour==14){
+            $start_time = date('Y-m-d')." 11:00:00";
+            $end_time   = date('Y-m-d')." 14:00:00";
+        }else{
+            $start_time = date('Y-m-d')." 17:00:00";
+            $end_time   = date('Y-m-d')." 23:00:00";
+        }
+        $sql = "select box_mac from savor_smallapp_forscreen_record where create_time>='".$start_time."'
+                and create_time<='".$end_time."' and mobile_brand !='devtools' group by box_mac";
+        $forscreen_box_arr = M()->query($sql);
+        $sql ="select box_mac from savor_smallapp_turntable_log where create_time>='".$start_time."'
+                and create_time<='".$end_time."' group by box_mac";
+        $turntable_box_arr = M()->query($sql);
+        $box_list = array_merge($forscreen_box_arr,$turntable_box_arr);
+        $ret = assoc_unique($box_list, 'box_mac');
+        $box_list = array_keys($ret);
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        foreach($box_list as $v){
+            $sql ="select openid from savor_smallapp_forscreen_record where box_mac='".$v."' 
+                   and  create_time>='".$start_time."'
+                   and create_time<='".$end_time."' and mobile_brand !='devtools' 
+                   group by openid";
+            //echo $sql;exit;
+            $forscreen_openid_arr = M()->query($sql);  //投屏用户
+            $sql ="select openid from savor_smallapp_turntable_log where box_mac='".$v."'
+                   and  create_time>='".$start_time."'
+                   and create_time<='".$end_time."' group by openid";
+            $turntab_openid_arr = M()->query($sql);
+            $sql ="select a.openid from savor_smallapp_turntable_detail a 
+                   left join savor_smallapp_turntable_log b on a.activity_id = b.id
+                   where b.box_mac='".$v."'
+                   and  a.create_time>='".$start_time."'and a.create_time<='".$end_time."'
+                   group by openid";
+            $turntab_detail_openid_arr = M()->query($sql);
+            $openid_list = array_merge($forscreen_openid_arr,$turntab_openid_arr,$turntab_detail_openid_arr);
+            
+            $nums = count($openid_list);
+            if($nums<=1) continue;
+            $openid_list = assoc_unique($openid_list, 'openid');
+            $openid_list = array_keys($openid_list);
+            if(count($openid_list)<=1) continue;
+            $m_friend = new \Admin\Model\Smallapp\FriendModel();
+            $f_arr = array();
+            $flag=0;
+            foreach($openid_list as $ov){
+                $sql ="select count(id) as nums from savor_smallapp_user where openid='".$ov."' limit 1";
+                $ret = M()->query($sql);
+                $user_nums = $ret[0]['nums'];
+                if(empty($user_nums)){
+                    $sql =" insert into savor_smallapp_user(`openid`) values('".$ov."')";
+                    M()->execute($sql);
+                }
+                foreach($openid_list as $fv){
+                    if($ov!=$fv){
+                        $sql ="select status from savor_smallapp_friend 
+                               where openid='".$ov."' and f_openid='".$fv."'";
+                        $ret = M()->query($sql);
+                        if(empty($ret)){
+                            
+                            $f_arr[$flag]['openid'] = $ov;
+                            $f_arr[$flag]['f_openid'] = $fv;
+                            $f_arr[$flag]['type'] = 1;
+                            $f_arr[$flag]['status'] = 1;
+                            $flag++;
+                            
+                        }else {
+                            if($ret[0]['status'] ==0){
+                                $where = array();
+                                $where['openid'] = $ov;
+                                $where['f_openid']= $fv;
+                                $m_friend->updateInfo($where, array('status'=>1));
+                            }
+                        }
+                    }
+                }
+            }
+            $m_friend->addInfo($f_arr,2);
+        }
+        echo "ok";
+    }
+    //清除投屏历史
+    public function removeHistoryForscreen(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_HISTORY_SCREEN')."*";
+        $keys = $redis->keys($cache_key);
+        foreach($keys as $v){
+            $redis->remove($v);
+        }
+        echo "ok";
+    }
+    /**
+     * @desc 记录用户切换页面日志
+     */
+    public function recordPageViewLog(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_PAGEVIEW_LOG')."*";
+        $keys = $redis->keys($cache_key);
+        $m_pageview_log = new \Admin\Model\Smallapp\PageviewLogModel();
+        foreach($keys as $k){
+            $data = $redis->lgetrange($k,0,-1);
+            $map = array();
+	    foreach($data as $ks=> $v){
+                $infos = json_decode($v,true);
+		$map[$ks]['openid'] = $infos['openid'];
+                $map[$ks]['page_id']= $infos['page_id'];
+                $map[$ks]['create_time'] = $infos['create_time'];
+		$redis->lpop($k);
+	    }
+	    $tmp = $redis->lgetrange($k,0,-1);
+            if(empty($tmp)) $redis->remove($k);
+            $m_pageview_log->addInfo($map,2);
+	 }
+        echo "OK";
+    }
+    /**
+     * @desc 按照盒子每小时互动生成网络情况
+     */
+    public function staticBoxNet(){
+         
+        $strtime    =  strtotime('-1 hours');  //*********上线改为一小时
+        $start_time =  date('Y-m-d H:00:00',$strtime) ;
+        $end_time   =  date('Y-m-d H:59:59',$strtime) ;
+    
+    
+    
+        $m_forscreen_log = new \Admin\Model\ForscreenRecordModel();
+        $fields = 'box.id box_id,box.mac box_mac';
+        $where = array();
+        $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        $where['a.box_res_sdown_time'] = array('neq', 0);
+        $where['a.box_res_edown_time'] = array('neq', 0);
+        $where['hotel.flag'] = 0;
+        $where['hotel.state']= 1;
+        $where['box.flag']   = 0;
+        $where['box.state']  = 1;
+        $where["_string"] = "  a.box_res_edown_time >a.box_res_sdown_time";
+    
+        $box_list = $m_forscreen_log->getWhere($fields, $where, $order='', $limit='', $group="box.mac");
+        //print_r($box_list);exit;
+        $m_static_boxnet =  new \Admin\Model\Smallapp\StaticBoxnetModel();
+        foreach($box_list as $key=>$v){
+            $where = $data =  array();
+            $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+            $where['box.id'] = $v['box_id'];
+            $where['a.box_res_sdown_time'] = array('neq', 0);
+            $where['a.box_res_edown_time'] = array('neq', 0);
+            $where['hotel.flag'] = 0;
+            $where['hotel.state']= 1;
+            $where['box.flag']   = 0;
+            $where['box.state']  = 1;
+            $where["_string"] = "  a.box_res_edown_time >a.box_res_sdown_time";
+    
+            $data['box_donw_nums'] = $m_forscreen_log->countWhere($where);         //机顶盒总下载次数
+    
+            $fields = "sum(`resource_size`) as all_res_size,sum(`box_res_edown_time` - `box_res_sdown_time`) as down_times,
+                       max(`resource_size` / (`box_res_edown_time`-`box_res_sdown_time`)) as max_down_speed,
+                       min(`resource_size` / (`box_res_edown_time`-`box_res_sdown_time`)) as min_down_speed";
+            $ret = $m_forscreen_log->getWhere($fields, $where);                    //机顶盒总下载大小
+    
+            $data['res_size'] = $ret[0]['all_res_size'] ?  $ret[0]['all_res_size'] :0;
+    
+            $down_times = $ret[0]['down_times'];
+    
+            $data['avg_down_speed'] = round($data['res_size'] / ($down_times/1000),2) ;       //平均下载速度
+            $data['max_down_speed'] = round($ret[0]['max_down_speed']*1000 , 2) ;                //最快下载速度
+            $data['min_down_speed'] = round($ret[0]['min_down_speed']*1000 , 2);                //最慢下载速度
+            //print_r($data);exit;
+    
+    
+            $where = array();
+            $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+            $where['box.id'] = $v['box_id'];
+            $where['a.res_eup_time'] = array('neq',0);
+            $where['a.box_res_sdown_time'] = array('neq',0);
+            $where['hotel.flag'] = 0;
+            $where['hotel.state']= 1;
+            $where['box.flag']   = 0;
+            $where['box.state']  = 1;
+            $where["_string"] = "  a.box_res_sdown_time>a.res_eup_time and a.box_res_edown_time >a.box_res_sdown_time";
+            $data['order_times'] = $m_forscreen_log->countWhere($where);            //总指令次数
+    
+            $fields = "sum(`box_res_sdown_time` - `res_eup_time`) as all_delay_times,
+                       max(`box_res_sdown_time` - `res_eup_time`) max_delay_times,
+                       min(`box_res_sdown_time` - `res_eup_time`) min_delay_times";
+            $ret = $m_forscreen_log->getWhere($fields, $where);
+            $all_delay_times = $ret[0]['all_delay_times'];
+    
+            $data['avg_delay_time'] = round(($all_delay_times / 1000) / $data['order_times'] ,2) ;  //平均指令延时
+            $data['max_delay_times'] = round($ret[0]['max_delay_times'] / 1000  ,2) ;               //最高延时
+            $data['min_delay_times'] = round($ret[0]['min_delay_times'] / 1000 ,2) ;                //最低延时
+    
+            $data['box_mac'] = $v['box_mac'];
+            $data['static_date'] = date('YmdH',strtotime($start_time));
+            $m_static_boxnet->addInfo($data,1);
+        }
+        echo "OK";
+    }
+    //随机每天增加发现页的点赞数
+    public function recCollectCount(){
+        $m_public = new \Admin\Model\Smallapp\PublicModel();
+        $m_collect_count = new \Admin\Model\Smallapp\CollectCountModel();
+        
+        $fields = "forscreen_id";
+        $where['status'] = 2;
+        $limit  = '0,1000';
+        $list = $m_public->getWhere($fields, $where,'id desc', $limit);
+        
+        foreach($list as $key=>$v){
+            $where = array();
+            $where['res_id'] = $v['forscreen_id'];
+            $nums = $m_collect_count->countNum($where);
+            if($nums){
+                $rand_nums = rand(1, 10);
+                $m_collect_count->where($where)->setInc('nums',$rand_nums);
+            }else {
+                $data = array();
+                $data['res_id'] = $v['forscreen_id'];
+                $data['type']   = 2;
+                $rand_nums = rand(1, 10);
+                $data['nums']   = $rand_nums;
+		$m_collect_count->addInfo($data);
+            }
+        }
+        echo 'ok';
+    }
 }
