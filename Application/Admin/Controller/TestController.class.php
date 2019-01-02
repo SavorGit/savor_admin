@@ -15,14 +15,15 @@ use Common\Lib\SavorRedis;
 class TestController extends Controller {
     
     public function recCollectCount(){
+        //exit(1);
         $m_public = new \Admin\Model\Smallapp\PublicModel();
         $m_collect_count = new \Admin\Model\Smallapp\CollectCountModel();
         
         $fields = "forscreen_id";
         $where['status'] = 2;
         $limit  = '0,1000';
-        $list = $m_public->getWhere($fields, $where,'', $limit);
-        
+        $list = $m_public->getWhere($fields, $where,'id desc', $limit);
+        print_r($list);exit;
         foreach($list as $key=>$v){
             $where = array();
             $where['res_id'] = $v['forscreen_id'];
@@ -34,7 +35,8 @@ class TestController extends Controller {
                 $data = array();
                 $data['res_id'] = $v['forscreen_id'];
                 $data['type']   = 2;
-                $data['nums']   = 1;
+                $rand_nums = rand(1, 10);
+                $data['nums']   = $rand_nums;
                 $m_collect_count->addInfo($data);
             }
         }

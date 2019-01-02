@@ -1,0 +1,156 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/H5game/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" id="high" value="{$hightest}"/>
+     <div class="searchBar">
+      <div class="clearfix">
+
+         <div class="form-inline" style="margin-top:10px;">
+         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$create_time}">
+          		<input id="h5game_date" style="margin-left: 6px;" name="create_time" type="text" size="16" class="form-control date" placeholder="游戏日期" value="{$create_time}" readonly>
+                <span class="input-group-btn">
+                  <button id="h5game_date_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 </div>
+         <div class="form-group">
+          <div class="input-group input-group-sm">
+            
+                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+          </div>
+
+          </div>
+          <div class="form-group">
+          <div class="input-group input-group-sm">
+            	<input type="text" class="form-control" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
+                
+          </div>
+
+          </div>
+         <div class="form-group">
+          <div class="input-group input-group-sm">
+            	<select name="game_id"  class="form-control " title="请选择..." data-size="20">
+            		<option value="2">猴子爬树</option>
+            		
+            	</select>
+                
+          </div>
+
+          </div>
+           <div class="form-group" >
+             <div class="input-group input-group-sm pull-right">
+               
+           <span class="input-group-btn">
+             <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+           </span>
+             </div>
+           </div>
+           <!-- <div class="input-group input-group-sm pull-right">
+              <a  class="btn btn-success btn-sm add"  title="一键删除测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delTestGamelog" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/sappforscreen/delTestGamelog"/>
+            </div> -->
+         </div>
+         
+      </div>
+    
+    </div> 
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>城市</th>
+            <th>酒楼名称</th>
+            <th>包间名称</th>
+            <th>MAC地址</th>
+            <th>参与人数</th>
+            <th>是否开始</th>
+            
+            <th>发起游戏时间</th>
+            <th>游戏开始时间</th>
+            <th>游戏结束时间</th>
+            <th>用时(S)</th>
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="城市">{$vlist.region_name}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+             
+              <td data-title="参与人数">
+              <a data-tip="查看详情" target="dialog" mask="true" href="{$host_name}/H5game/climbtree?activity_id={$vlist.id}" rel="h5game/climbtree" title="互动游戏参与详情"class="btn btn-success btn-icon">
+              
+              {$vlist.join_nums}
+              </a>
+              </td>
+              <td data-title="是否开始">
+              	<if condition="$vlist.is_start eq 1" >
+              	是
+              	<else />
+              	否
+              	</if>
+              </td>
+              <td data-title="发起游戏时间">{$vlist.create_time}</td>
+              <td data-title="游戏开始时间"><php>
+              								if($vlist['start_time']){
+              									$start_time = date('Y-m-d H:i:s',intval($vlist['start_time']/1000));
+              									echo $start_time;
+              								}
+              							</php>
+              </td>
+              <td data-title="游戏结束时间"><php>
+              								if($vlist['end_time']){
+              									$end_time = date('Y-m-d H:i:s',intval($vlist['end_time']/1000));
+              									echo $end_time;
+              								}
+              							</php>
+              </td>
+              <td data-title="游戏用时"><php>if($vlist['end_time']){
+              							       $diff_time = number_format(($vlist['end_time'] - $vlist['start_time'])/1000,2);
+              							       echo $diff_time;
+              							   }		
+              						  </php>
+              </td>
+              
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+ $('#h5game_date_reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    
+
+    $("#h5game_date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  }) 
+</script>
