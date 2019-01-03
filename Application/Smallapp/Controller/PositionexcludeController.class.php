@@ -10,8 +10,7 @@ class PositionexcludeController extends BaseController {
     public function positionlist(){
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
-        $start = ($pageNum-1)*$size;
-
+        $mac_addr = I('mac_addr','','trim');
         $area_id = I('area_id',0,'intval');
         $maintainer_id = I('maintainer_id',0,'intval');
 
@@ -23,6 +22,10 @@ class PositionexcludeController extends BaseController {
         if($maintainer_id){
             $where['maintainer_id'] = $maintainer_id;
         }
+        if($mac_addr){
+            $where['box_mac'] = $mac_addr;
+        }
+        $start = ($pageNum-1)*$size;
         $order = 'id desc';
         $res_list = $m_boxexclude->getList('*',$where,$order,$start,$size);
         $data_list = array();
@@ -35,7 +38,6 @@ class PositionexcludeController extends BaseController {
                 $data_list[] = $v;
             }
         }
-
         //地区
         $m_area_info = new \Admin\Model\AreaModel();
         $area_list = $m_area_info->getAllArea();
@@ -53,6 +55,8 @@ class PositionexcludeController extends BaseController {
         $this->assign('maintainers',$user_list);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
         $this->display();
     }
 
@@ -70,28 +74,49 @@ class PositionexcludeController extends BaseController {
             if(!empty($res)){
                 $this->output('版位MAC已添加,请勿重复添加', 'boxexclude/addexclude',2,0);
             }
-
+            $sysuserInfo = session('sysUserInfo');
             $data = array('area_id'=>$macbox_info['area_id'],'hotel_id'=>$macbox_info['hotel_id'],'box_mac'=>$mac_addr,
-                'exclude_reason'=>$exclude_reason,'maintainer_id'=>'');
+                'exclude_reason'=>$exclude_reason,'maintainer_id'=>$sysuserInfo['id']);
             $m_boxexclude = new \Admin\Model\Smallapp\BoxexcludeModel();
             $result = $m_boxexclude->addInfo($data);
             if($result){
-                $this->output('操作成功!', 'boxexclude/excludelist');
-
+                $this->output('操作成功!', 'positionexclude/positionlist');
             }else{
-                $this->output('操作失败', 'boxexclude/addexclude',2,0);
+                $this->output('操作失败', 'positionexclude/positionlist',2,0);
             }
-
         }else{
             $this->display();
         }
     }
 
-
+    public function positionedit(){
+        $id = I('id',0,'intval');
+        $m_boxexclude = new \Admin\Model\Smallapp\BoxexcludeModel();
+        if(IS_POST){
+            $exclude_reason = I('post.exclude_reason','','trim');
+            $sysuserInfo = session('sysUserInfo');
+            $data = array('exclude_reason'=>$exclude_reason,'maintainer_id'=>$sysuserInfo['id']);
+            $result = $m_boxexclude->updateData(array('id'=>$id),$data);
+            if($result){
+                $this->output('操作成功!', 'positionexclude/positionlist');
+            }else{
+                $this->output('操作失败', 'positionexclude/positionlist',2,0);
+            }
+        }else{
+            $dinfo = $m_boxexclude->getOne('*',array('id'=>$id));
+            $this->assign('dinfo',$dinfo);
+            $this->display();
+        }
+    }
 
     public function positiondel(){
-        $this->output('更新成功!', 'positionexclude/positionlist',2);
-//        $this->output('删除成功', 'positionexclude/positionlist');
-
+        $id = I('get.id',0,'intval');
+        $m_ebox = new \Admin\Model\Smallapp\BoxexcludeModel();
+        $res = $m_ebox->delData(array('id'=>$id));
+        if($res){
+            $this->output('更新成功!', 'positionexclude/positionlist',2);
+        }else{
+            $this->output('更新失败', 'positionexclude/positionlist',2,0);
+        }
     }
 }
