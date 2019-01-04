@@ -129,12 +129,12 @@ $config['MANGER_KEY'] = array(
     'testreport'=>'测试报表节点',
     'checkaccount'=>'对账系统节点',
     'dailycontent'=>'每日知享节点',
-
     'newmenu'=>'新节目节点',
     'advdelivery'=>'广告投放节点',
 	'option'=>'运维客户端',
     'installoffer'=>'网络设备报价',
     'smallapp'=>'小程序数据统计节点',
+    'miniprogram'=>'小程序管理',
 
 );
 $config['STATE_REASON'] = array(
