@@ -18,7 +18,7 @@ class SappforscreenController extends BaseController {
 	 * @desc  首页
 	 */
 	public function index(){
-	    
+	    $small_app_id = I('small_app_id',0,'intval');
 	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
@@ -41,6 +41,9 @@ class SappforscreenController extends BaseController {
 	        $where['hotel.name'] = array('like',"%$hotel_name%");
 	        $this->assign('hotel_name',$hotel_name); 
 	    }
+	    if($small_app_id){
+            $where['a.small_app_id'] = $small_app_id;
+        }
 	    $box_mac    = I('box_mac','','trim');
 	    if($box_mac){
 	        $where['a.box_mac'] = $box_mac;
@@ -150,6 +153,7 @@ class SappforscreenController extends BaseController {
 	        }
 	        
 	    }
+	    $this->assign('small_app_id',$small_app_id);
 	    $this->assign('list',$list['list']);
 	   	$this->assign('oss_host',C('OSS_HOST_NEW'));
 	   	$this->assign('page',$list['page']);   
