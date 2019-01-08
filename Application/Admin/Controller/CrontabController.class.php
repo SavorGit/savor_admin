@@ -3038,7 +3038,6 @@ class CrontabController extends Controller
             $map['res_nums'] = count($data);
             $map['status']   = 1;
             $m_pub->addInfo($map,1);
-            echo $m_pubdetail->getLastSql();exit;
             $ret = array();
             foreach($data as $kk=>$vv){
                 $vv = json_decode($vv,true);
