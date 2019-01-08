@@ -103,7 +103,8 @@ class StatisticsModel extends Model
                 }
             }
             if($static_fj)  $where['static_fj'] = $static_fj;
-            $where['heart_log_meal_nums'] = array('GT',12);
+//            $where['heart_log_meal_nums'] = array('GT',12);
+            $where['heart_log_meal_nums'] = array('GT',5);
             $where['_string'] = 'case static_fj when 1 then (120 div heart_log_meal_nums)<10  else (180 div heart_log_meal_nums)<10 end';
             $fields = 'count(box_mac) as zxnum';
             $ret = $this->getOne($fields, $where);

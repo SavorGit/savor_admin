@@ -3,8 +3,6 @@
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/positionexclude/positionlist" method="post">
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
-    <input type="hidden" name="_order" value="{$_order}"/>
-    <input type="hidden" name="_sort" value="{$_sort}"/>
     <div class="searchBar">
       <div class="clearfix">
         <div class="col-xs-12 col-sm-6 col-md-6">
@@ -68,14 +66,12 @@
               <td data-title="排除原因">{$dinfo.exclude_reason}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/positionexclude/editexclude?id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/positionexclude/positionedit?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/positionexclude/positiondel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
-                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/user/userDels?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
-
                 </div>
               </td>
             </tr>

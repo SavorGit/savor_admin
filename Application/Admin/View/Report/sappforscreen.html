@@ -42,6 +42,13 @@
          
            <div class="form-group" >
              <div class="input-group input-group-sm pull-right">
+             <span class="input-group-btn">
+               <select name="small_app_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <option <if condition="$small_app_id eq 1">selected="selected"</if>value="1" >普通版</option>
+                 <option <if condition="$small_app_id eq 2">selected="selected"</if>value="2" >极简版</option>
+               </select>
+            </span>
                <input size="30" type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入用户唯一标识">
            <span class="input-group-btn">
              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>

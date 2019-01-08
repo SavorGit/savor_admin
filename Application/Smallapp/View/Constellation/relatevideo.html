@@ -1,0 +1,75 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/constellation/relatevideo" method="post" >
+    <input type="hidden" name="constellation_id" value="{$constellation.id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="form-group">
+            <h1>{$constellation.name}-相关视频</h1>
+          </div>
+        </div>
+      </div>
+      <div class="form-inline">
+        <div class="tools-group">
+          <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/constellation/videoadd?constellation_id={$constellation.id}" title="新增视频" target="dialog" mask="true"><i class="fa fa-plus"></i>新增视频</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="top:85px">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>名称</th>
+            <th>视频地址</th>
+            <th>封面图片</th>
+            <th>创建时间</th>
+            <!--<th>状态</th>-->
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="data" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="名称">{$dinfo.name}</td>
+              <td data-title="视频地址"><a href ="{$dinfo.oss_addr}" target="_blank">{$dinfo.oss_addr}</a></td>
+              <td data-title="封面图片"><img src="{$dinfo.video_img}"></td>
+              <td data-title="创建时间">{$dinfo.create_time}</td>
+              <!--
+              <td data-title="状态">
+                <if condition="$dinfo.status eq 1">
+                  <a data-tip="启用" target="ajaxTodo" href="{$host_url}/smallapp/constellation/videoadd?id={$dinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                  <else/>
+                  <a data-tip="禁用" target="ajaxTodo" href="{$host_url}/smallapp/constellation/videoadd?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                </if>
+              </td>
+              -->
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/constellation/videoedit?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/constellation/videodel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>

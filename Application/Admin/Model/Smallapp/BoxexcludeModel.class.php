@@ -28,6 +28,11 @@ class BoxexcludeModel extends Model{
         return $data;
 	}
 
+    public function updateData($condition,$data){
+        $result = $this->where($condition)->save($data);
+        return $result;
+    }
+
 	public function delData($where){
 	    $res = $this->where($where)->delete();
 	    return $res;
