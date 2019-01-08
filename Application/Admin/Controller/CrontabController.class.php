@@ -3031,11 +3031,14 @@ class CrontabController extends Controller
             $map['box_mac'] = $k_arr[3];
             $map['openid']  = $k_arr[4];
             $map['forscreen_id'] = $k_arr[5];
-            $map['is_pub_hotelinfo'] = $infos['is_pub_hotelinfo'];
-	    $map['res_type'] = $infos['res_type'];
+            $map['public_text']  = $infos['public_text'];
+            $map['public_text']  = $infos['public_text']? $infos['public_text']:'';
+            $map['forscreen_char']   = $infos['forscreen_char'] ? $infos['forscreen_char'] :'';
+	        $map['res_type'] = $infos['res_type'];
             $map['res_nums'] = count($data);
             $map['status']   = 1;
             $m_pub->addInfo($map,1);
+            echo $m_pubdetail->getLastSql();exit;
             $ret = array();
             foreach($data as $kk=>$vv){
                 $vv = json_decode($vv,true);
