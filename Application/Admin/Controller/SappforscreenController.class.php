@@ -20,6 +20,7 @@ class SappforscreenController extends BaseController {
 	public function index(){
 	    $small_app_id = I('small_app_id',0,'intval');
 	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
+        $is_valid = I('is_valid',1,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
 	    $start = I('pageNum',1);
@@ -34,8 +35,9 @@ class SappforscreenController extends BaseController {
 	    $where['box.flag'] = 0;
 	    $where['box.state'] =1;
 	    $where['a.mobile_brand'] = array('neq','devtools');
-	    $where['a.openid']       = array('neq','ofYZG4yZJHaV2h3lJHG5wOB9MzxE');
-	    
+	    if($is_valid!=2){
+	        $where['a.is_valid'] = $is_valid;
+        }
 	    $hotel_name = I('hotel_name','','trim');
 	    if($hotel_name){
 	        $where['hotel.name'] = array('like',"%$hotel_name%");
@@ -156,29 +158,99 @@ class SappforscreenController extends BaseController {
 	    $this->assign('small_app_id',$small_app_id);
 	    $this->assign('list',$list['list']);
 	   	$this->assign('oss_host',C('OSS_HOST_NEW'));
-	   	$this->assign('page',$list['page']);   
+	   	$this->assign('page',$list['page']);
+	   	$this->assign('is_valid',$is_valid);
 	    $this->display('Report/sappforscreen');
 	}
+
+    public function invalidlist(){
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+
+        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+        $start = ($pageNum-1)*$size;
+        $orderby = 'id desc';
+        $res_list = $m_invalid->getDataList('*','',$orderby,$start,$size);
+        $all_types = array('1'=>'酒楼ID','2'=>'微信openID','3'=>'机顶盒mac');
+        foreach ($res_list['list'] as $k=>$v){
+            $res_list['list'][$k]['type_str'] = $all_types[$v['type']];
+        }
+        $this->assign('data',$res_list['list']);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->display('Report/invalidlist');
+    }
+
+    public function invalidadd(){
+        if(IS_POST){
+            $invalidid = I('post.invalidid','','trim');
+            $type = I('post.type',0,'intval');
+            $data = array('invalidid'=>$invalidid,'type'=>$type);
+            $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+            $result = $m_invalid->addData($data);
+            if($result){
+                $this->output('操作成功!', 'sappforscreen/invalidlist');
+            }else{
+                $this->output('操作失败', 'sappforscreen/invalidlist',2,0);
+            }
+        }else{
+            $this->display('Report/invalidadd');
+        }
+    }
+
+    public function invaliddel(){
+        $id = I('get.id',0,'intval');
+        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+        $result = $m_invalid->delData(array('id'=>$id));
+        if($result){
+            $this->output('操作成功!', 'sappforscreen/invalidlist',2);
+        }else{
+            $this->output('操作失败', 'sappforscreen/invalidlist',2,0);
+        }
+    }
+
 	/**
 	 * @desc 删除永峰测试数据
 	 */
 	public function delTestRecord(){
-	    $hotel_id = array(7,791);
+        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+        $orderby = 'id desc';
+        $res_list = $m_invalid->getDataList('*','',$orderby);
+        $all_invalidlist = array();
+        foreach ($res_list as $v){
+            $all_invalidlist[$v['type']][] = $v['invalidid'];
+        }
+	    $hotel_ids = $all_invalidlist[1];
 	    $fields = "a.box_mac";
 	    $where = array();
-	    $where['hotel.id'] = array('in',$hotel_id);
+	    $where['hotel.id'] = array('in',$hotel_ids);
+        $where['a.is_valid'] = 1;
 	    $group = 'a.box_mac';
-	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel(); 
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
 	    $list = $m_smallapp_forscreen_record->getWhere($fields, $where,  $limit='', $group);
-	    //echo $m_smallapp_forscreen_record->getLastSql();exit;
-	    
-	    foreach($list as $key=>$v){
-	        $where = array();
-	        $where['box_mac'] = $v['box_mac'];
-	        $m_smallapp_forscreen_record->delWhere($where, $order='', $limit='');
-	    }
-	    $this->output('删除成功', 'sappforscreen/index', 2);
+	    if(!empty($list)){
+            foreach($list as $key=>$v){
+                $condition = array('box_mac'=>$v['box_mac']);
+                $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
+            }
+        }
+        if(isset($all_invalidlist[2])){
+            foreach ($all_invalidlist[2] as $v){
+                $condition = array('openid'=>$v,'is_valid'=>1);
+                $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
+            }
+        }
+        if(isset($all_invalidlist[3])){
+            foreach ($all_invalidlist[3] as $v){
+                $condition = array('box_mac'=>$v,'is_valid'=>1);
+                $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
+            }
+        }
+	    $this->output('隔离成功', 'sappforscreen/index', 2);
 	}
+
+
 	/**
 	 * @desc 互动游戏日志
 	 */

@@ -49,4 +49,9 @@ class SmallappForscreenRecordModel extends Model
 	    $ret =  $this->where($where)->order($order)->limit($limit)->delete();
 	    return $ret;
 	}
+    public function updateData($condition,$data){
+        $result = $this->where($condition)->save($data);
+        return $result;
+    }
+
 }

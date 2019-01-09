@@ -1,0 +1,28 @@
+<div class="pageContent">
+    <form method="post" action="{$host_name}/sappforscreen/invalidadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">无效ID：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="invalidid" type="text" value="" class="form-control" required/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    类型：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="type" class="form-control bs-select" title="选择分类" required>
+                        <option value="1" <if condition="$vinfo.type eq 1">selected</if>>酒楼id</option>
+                        <option value="2" <if condition="$vinfo.type eq 2">selected</if>>微信openid</option>
+                        <option value="3" <if condition="$vinfo.type eq 3">selected</if>>机顶盒mac</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>
