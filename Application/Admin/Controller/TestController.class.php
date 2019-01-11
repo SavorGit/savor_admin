@@ -14,28 +14,32 @@ use Common\Lib\SavorRedis;
  */
 class TestController extends Controller {
     
-    //关闭大厅小程序开关
+    //关闭大厅小程序、极简版开关
     public function closeDt(){
-        exit('1');
+        //exit('1');
         $m_box = new \Admin\Model\BoxModel();
         $where = array();
         $where['box.state'] = 1;
         $where['box.flag']  = 0;
-        $where['room.type'] = 2;
-        $where['box.is_sapp_forscreen'] = 1;
+        $where['room.type'] = array('in','2,3');
+        $where['hotel.area_id'] = array('in','236,246');
+        //$where['box.is_sapp_forscreen'] = 1;
         $list = $m_box->alias('box')
                       ->join('savor_room room on box.room_id=room.id','left')
                       ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
-                      ->field('hotel.name,box.id box_id,hotel.hotel_box_type')
+                      ->join('savor_area_info area on hotel.area_id=area.id','left')
+                      ->field('area.region_name,hotel.name,box.id box_id,hotel.hotel_box_type')
                       ->where($where)
                       ->select();
+        
         $flag = 0;
         //print_r($list);exit;
         foreach($list as $key=>$v){
             $map = $data = array();
             //$map['id'] = $v['box_id'];
             $id = $v['box_id'];
-            $data['is_sapp_forscreen'] = 0;
+            $data['is_sapp_forscreen'] = 1;
+            $data['is_open_simple']  = 1;
             $ret = $m_box->editData($id, $data);
             //echo $m_box->getLastSql();exit;
             if($ret){
