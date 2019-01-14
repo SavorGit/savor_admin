@@ -18,7 +18,7 @@ class ConstellationController extends BaseController {
             $where['name'] = array('like',"%$constellation_name%");
         }
         $start = ($pageNum-1)*$size;
-        $orderby = 'id desc';
+        $orderby = 'end_month asc,end_day asc';
         $res_list = $m_constell->getDataList('*',$where,$orderby,$start,$size);
         $data_list = array();
         if(!empty($res_list['list'])){
