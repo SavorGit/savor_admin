@@ -42,7 +42,7 @@ class H5gameController extends BaseController{
 	    }
 	    
 	    $list = $m_game_interact->getList($fields, $where, $orders, $start, $size);
-	    
+
 	    $m_game_climbtree = new \Admin\Model\Smallapp\GameClimbtreeModel(); 
 	    foreach($list['list'] as $key=>$v){
 	        $map = array();
@@ -57,6 +57,7 @@ class H5gameController extends BaseController{
 	    $this->assign('hotel_name',$hotel_name);
 	    $this->assign('list',$list['list']);
 	    $this->assign('page',$list['page']);
+	    
 	    $this->display('Report/h5gameindex');
     }
     /**
