@@ -171,9 +171,36 @@ class SappforscreenController extends BaseController {
         $start = ($pageNum-1)*$size;
         $orderby = 'id desc';
         $res_list = $m_invalid->getDataList('*','',$orderby,$start,$size);
+
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_smallapp_user = new \Admin\Model\Smallapp\UserModel();
+
         $all_types = array('1'=>'酒楼ID','2'=>'微信openID','3'=>'机顶盒mac');
         foreach ($res_list['list'] as $k=>$v){
             $res_list['list'][$k]['type_str'] = $all_types[$v['type']];
+            switch ($v['type']){
+                case 1:
+                    $res_hotel = $m_hotel->getOne($v['invalidid']);
+                    $name = $res_hotel['name'];
+                    $image = '';
+                    break;
+                case 2:
+                    $res_user = $m_smallapp_user->getOne('openid,avatarUrl,nickName',array('openid'=>$v['invalidid']),'');
+                    $name = $res_user['nickname'];
+                    $image = $res_user['avatarurl'];
+                    break;
+                case 3:
+                    $res_mac = $m_box->getHotelInfoByBoxMac($v['invalidid']);
+                    $name = $v['hotel_name'].'-'.$v['room_name'].'-'.$v['box_name'];
+                    $image = '';
+                    break;
+                default:
+                    $name = '';
+                    $image = '';
+            }
+            $res_list['list'][$k]['name'] = $name;
+            $res_list['list'][$k]['image'] = $image;
         }
         $this->assign('data',$res_list['list']);
         $this->assign('page',$res_list['page']);
@@ -186,8 +213,13 @@ class SappforscreenController extends BaseController {
         if(IS_POST){
             $invalidid = I('post.invalidid','','trim');
             $type = I('post.type',0,'intval');
-            $data = array('invalidid'=>$invalidid,'type'=>$type);
             $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+            $res = $m_invalid->getInfo(array('invalidid'=>$invalidid));
+            if(!empty($res)){
+                $this->output('数据已存在,请勿重复添加', 'sappforscreen/invalidlist',2,0);
+            }
+
+            $data = array('invalidid'=>$invalidid,'type'=>$type);
             $result = $m_invalid->addData($data);
             if($result){
                 $this->output('操作成功!', 'sappforscreen/invalidlist');

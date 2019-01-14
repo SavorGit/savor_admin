@@ -25,6 +25,8 @@
 
           <tr id="post">
             <th>无效ID</th>
+            <th>名称</th>
+            <th>图片</th>
             <th>类型</th>
             <th>添加时间</th>
             <th>操作</th>
@@ -34,6 +36,8 @@
           <volist name="data" id="dinfo">
             <tr target="sid_user">
               <td data-title="无效ID">{$dinfo.invalidid}</td>
+              <td data-title="名称">{$dinfo.name}</td>
+              <td data-title="图片"><image src="{$dinfo.image}"></image></td>
               <td data-title="类型">{$dinfo.type_str}</td>
               <td data-title="添加时间">{$dinfo.create_time}</td>
               <td class="table-tool" data-title="操作">
