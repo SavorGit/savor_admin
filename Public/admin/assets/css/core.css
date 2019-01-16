@@ -395,7 +395,7 @@ body { overflow:hidden;}
 
 /* Pages default */
 .page { display:block; overflow:hidden;float:left; width:100%;position: absolute;height: 100%;}
-.pageHeader { display:block; overflow:auto; margin-bottom:1px; padding: 10px;}
+.pageHeader { display:block; overflow:visible; margin-bottom:1px; padding: 10px;}
 .searchBar {}
 .searchBar ul.searchContent { display:block; overflow:hidden; height:25px;}
 .searchBar ul.searchContent li { float:left; display:block; overflow:hidden; width:300px; height:21px; padding:2px 0;}

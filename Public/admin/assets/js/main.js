@@ -364,3 +364,12 @@ $(function(){
       }
     })();
 });
+$(document).on('click', '.dropdown-filter', function () {
+    console.log("aa")
+    if ($(this).parent().hasClass("open-filter")) {
+        $(this).parent().removeClass("open-filter")
+    } else {
+        $(this).parent().addClass("open-filter")
+    }
+
+});
