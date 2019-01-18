@@ -1,85 +1,98 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
-<div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/Sappforscreen/index" method="post" >
-    <input type="hidden" name="pageNum" value="{$pageNum}"/>
-    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
-    <input type="hidden" name="_order" value="{$_order}"/>
-    <input type="hidden" name="_sort" value="{$_sort}"/>
-    <input type="hidden" id="high" value="{$hightest}"/>
-     <div class="searchBar">
-      <div class="clearfix">
+<div class="pageHeader top-filter">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/Sappforscreen/index" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <input type="hidden" name="_order" value="{$_order}"/>
+        <input type="hidden" name="_sort" value="{$_sort}"/>
+        <input type="hidden" id="high" value="{$hightest}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="tools-group">
+                        <a class="btn btn-success btn-sm add" id="forscreen_fresh"><i class="fa fa-refresh"></i>实时刷新</a>
+                        <a class="btn btn-success btn-sm"  title="无效名单"  target="navTab" rel="sappforscreen/invalidlist" href="{$host_name}/sappforscreen/invalidlist" calback="navTabAjaxDone"><i class="fa fa-th-list"></i>无效名单</a>
+                        <a class="btn btn-success btn-sm"  title="一键隔离测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delTestRecord" calback="navTabAjaxDone"><i class="fa fa-key"></i>隔离数据</a>
+                        <a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreen?s_date={$create_time}&e_date={$end_time}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i>导出</a>
+                    </div>
+                </div>
 
-         <div class="form-inline">
-         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$create_time}">
-          		<input id="forscreen_date" style="margin-left: 6px;" name="create_time" type="text" size="16" class="form-control date" placeholder="投屏开始日期" value="{$create_time}" readonly>
-                <span class="input-group-btn">
-                  <button id="forscreen_data_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-                </span>
-       	 </div>
-       	 <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_time}">
-          		<input id="forscreen_date_end" style="margin-left: 6px;" name="end_time" type="text" size="16" class="form-control date" placeholder="投屏结束日期" value="{$end_time}" readonly>
-                <span class="input-group-btn">
-                  <button id="forscreen_data_end_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-                </span>
-       	 </div>
-         <div class="form-group">
-          <div class="input-group input-group-sm">
-            
-                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
-          </div>
+                <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 pull-right">
+                    <div class="input-group input-group-sm pull-right">
+                        <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+                        <span class="input-group-btn dropdown">
+              <button class="btn btn-success dropdown-toggle dropdown-filter" type="button">
+                <span class="filter-text">过滤</span>
+                <i class="fa fa-angle-down"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right dropdown-menu-filter">
+                <div class="filter-wrap">
+                  <div class="row">
 
-          </div>
-          <div class="form-group">
-          <div class="input-group input-group-sm">
-            	<input type="text" class="form-control" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
-                
-          </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>机顶盒mac:</label>
+                      <input type="text" class="form-control input-sm" style="min-width: 100px;" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>用户标识:</label>
+                      <input type="text" style="min-width: 100px;" class="form-control input-sm" name="openid" value="{$openid}" placeholder="请输入用户唯一标识">
+                    </div>
 
-          </div>
-         
-           <div class="form-group" >
-             <div class="input-group input-group-sm pull-right">
-               <input size="30" type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入用户唯一标识">
-                 <span class="input-group-btn">
-                   <select name="small_app_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                     <option value=0 >小程序版本</option>
-                     <option <if condition="$small_app_id eq 1">selected="selected"</if>value="1" >普通版</option>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>开始日期:</label>
+                      <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$create_time}" data-ymd="true">
+                        <input name="create_time" type="text" size="16" style="min-width: 100px;" class="form-control date" placeholder="开始日期" value="{$create_time}">
+                        <span class="input-group-btn">
+                          <button class="btn btn-success date-set" type="button">
+                            <i class="fa fa-calendar"></i>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>结束日期:</label>
+                      <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+                        <input name="end_time" type="text" size="16" style="min-width: 100px;" class="form-control date" placeholder="结束日期" value="{$end_time}">
+                        <span class="input-group-btn">
+                          <button class="btn btn-success date-set" type="button">
+                            <i class="fa fa-calendar"></i>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>小程序版本:</label>
+                     <select name="small_app_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                       <option value=0 >所有</option>
+                       <option <if condition="$small_app_id eq 1">selected="selected"</if>value="1" >普通版</option>
                        <option <if condition="$small_app_id eq 2">selected="selected"</if>value="2" >极简版</option>
-                   </select>
-                </span>
-                 <span class="input-group-btn">
-                   <select name="is_valid" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                     <option <if condition="$is_valid eq 2">selected="selected"</if> value='2' >全部数据</option>
-                     <option <if condition="$is_valid eq 1">selected="selected"</if>value="1" >有效数据</option>
-                       <option <if condition="$is_valid eq 0">selected="selected"</if>value="0" >无效数据</option>
-                   </select>
-                </span>
-           <span class="input-group-btn">
-             <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-           </span>
-             </div>
-           </div>
-         </div>
-         <div class="form-inline" style="margin-top:5px;">
-             <div class="input-group input-group-sm">
-                 <a class="btn btn-success btn-sm add" id="forscreen_fresh"><i class="fa fa-refresh"></i>实时刷新</a>
-                 <a class="btn btn-success btn-sm"  title="无效名单"  target="navTab" rel="sappforscreen/invalidlist" href="{$host_name}/sappforscreen/invalidlist" calback="navTabAjaxDone"><i class="fa fa-th-list"></i> 无效名单</a>
-                 <a class="btn btn-success btn-sm"  title="一键隔离测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delTestRecord" calback="navTabAjaxDone"><i class="fa fa-key"></i> 一键隔离无效数据</a>
-             </div>
-             <div class="input-group input-group-sm pull-right">
-                 <a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreen?s_date={$create_time}&e_date={$end_time}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i> 导出小程序投屏统计数据</a>
-             </div>
-         </div>
-         
-      </div>
-    
-    </div> 
-  </form>
+                     </select>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>数据类型:</label>
+                      <select name="is_valid" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                        <option <if condition="$is_valid eq 2">selected="selected"</if> value='2' >全部数据</option>
+                        <option <if condition="$is_valid eq 1">selected="selected"</if>value="1" >有效数据</option>
+                        <option <if condition="$is_valid eq 0">selected="selected"</if>value="0" >无效数据</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </span>
+                        <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
 </div>
-<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+
+<div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -186,35 +199,9 @@
   {$page}
 </div>
 <script type="text/javascript">
+$('#forscreen_fresh').click(function(){
+    $.get('http://admin.littlehotspot.com/crontab/recForscreenPub');
+    $.get('http://admin.littlehotspot.com/crontab/recordForScreenPics');
+});
 
-  $('#forscreen_data_reset').click(function(){
-    $(this).parent().prev().val('')
-  });
-  $('#forscreen_data_end_reset').click(function(){
-	    $(this).parent().prev().val('')
-	  });
-  $(function(){
-    
-
-    $("#forscreen_date").datetimepicker({
-      minView: "month", //选择日期后，不会再跳转去选择时分秒
-      language:  'zh-CN',
-      format: 'yyyy-mm-dd',
-      todayBtn:  1,
-      autoclose: 1,
-    });
-    $("#forscreen_date_end").datetimepicker({
-        minView: "month", //选择日期后，不会再跳转去选择时分秒
-        language:  'zh-CN',
-        format: 'yyyy-mm-dd',
-        todayBtn:  1,
-        autoclose: 1,
-      });
-  })
-  $('#forscreen_fresh').click(function(){
-	  
-	  $.get('http://admin.littlehotspot.com/crontab/recForscreenPub');
-	  $.get('http://admin.littlehotspot.com/crontab/recordForScreenPics'); 
-	  
-  });
 </script>
