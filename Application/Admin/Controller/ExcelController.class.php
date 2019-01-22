@@ -3773,6 +3773,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
 
         $hotel_list = M()->query($sql);
         $count_arr = array() ;
+
+        $where .=" and a.is_valid=1";
         foreach ($hotel_list as $key=>$v){
             
             $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a

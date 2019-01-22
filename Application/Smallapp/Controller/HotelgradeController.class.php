@@ -91,9 +91,9 @@ class HotelgradeController extends BaseController {
     }
 
     /*
- * 比率图表
- * type 1转换率,2传播力,3屏幕在线率,4网络质量,5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级
- */
+     * 比率图表
+     * type 1转换率,2传播力,3屏幕在线率,4网络质量,5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级
+     */
     public function ratioChart($type,$date,$level=0){
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $m_static_hotel = new \Admin\Model\Smallapp\StaticHotelgradeModel();
