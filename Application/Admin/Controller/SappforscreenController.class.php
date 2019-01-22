@@ -149,6 +149,9 @@ class SappforscreenController extends BaseController {
                 case '22':
                     $list['list'][$key]['action_name'] = '查看发现视频';
                     break;
+                case '101':
+                    $list['list'][$key]['action_name'] = 'h5互动游戏';
+                    break;
 	            default :
 	                $list['list'][$key]['action_name'] = '图片投屏';
 	                break;

@@ -14,27 +14,70 @@ use Common\Lib\SavorRedis;
  */
 class TestController extends Controller {
     
+    public function operateH5game(){
+        exit;
+        $m_game_tree = new \Admin\Model\Smallapp\GameClimbtreeModel();
+        echo "da";
+        $list = $m_game_tree->alias('a')
+                    ->join('savor_smallapp_game_interact b on a.activity_id=b.id','left')
+                    ->field('b.box_mac,a.openid,a.create_time')
+                    ->where('b.is_start=1')
+                    ->select();
+        $m_forscreen_log = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $flag = 0;
+        foreach($list as $key=>$v){ 
+            $data = array();
+            $data['openid'] = $v['openid'];
+            $data['box_mac']= $v['box_mac'];
+            $data['action'] = 101;
+            $data['small_app_id'] = 11;
+            $data['imgs'] = '[]';
+            $data['forscreen_id'] = 0;
+            $data['resource_id'] = 0;
+            $data['resource_size'] = 0;
+            $data['create_time'] = $v['create_time'];
+            $ret =$m_forscreen_log->addInfo($data,1);
+            if($ret){
+                $flag++;
+            }
+        }
+        echo $flag;
+    }
+    
+    
+    public function ats(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(8);
+        $list = $redis->get('small_program_list_7');
+        $list = json_decode($list,true);
+        print_r($list);
+        
+    }
     //关闭大厅小程序、极简版开关
     public function closeDt(){
-        //exit('1');
+        exit('1');
         $m_box = new \Admin\Model\BoxModel();
         $where = array();
         $where['box.state'] = 1;
         $where['box.flag']  = 0;
         $where['room.type'] = array('in','2,3');
-        $where['hotel.area_id'] = array('in','236,246');
+        $where['hotel.hotel_box_type'] = array('in','2,3,6');
+        $where['hotel.id']  = array('not in','199,464,431,209,435,206,461,463,243,201,470,867,434,433');
+        $where['hotel.flag'] = 0;
+        $where['hotel.state']= 1;
+        //$where['hotel.area_id'] = array('in','236,246');
         //$where['box.is_sapp_forscreen'] = 1;
         $list = $m_box->alias('box')
                       ->join('savor_room room on box.room_id=room.id','left')
                       ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
                       ->join('savor_area_info area on hotel.area_id=area.id','left')
-                      ->field('area.region_name,hotel.name,box.id box_id,hotel.hotel_box_type')
+                      ->field('box.wifi_mac,hotel.id,area.region_name,hotel.name,box.id box_id,hotel.hotel_box_type')
                       ->where($where)
                       ->select();
         
         $flag = 0;
         //print_r($list);exit;
-        foreach($list as $key=>$v){
+        /* foreach($list as $key=>$v){
             $map = $data = array();
             //$map['id'] = $v['box_id'];
             $id = $v['box_id'];
@@ -44,6 +87,16 @@ class TestController extends Controller {
             //echo $m_box->getLastSql();exit;
             if($ret){
                 $flag ++;
+            }
+        } */
+        foreach($list as $key=>$v){
+            if(empty($v['wifi_mac'])){
+                $id = $v['box_id'];
+                $data['is_open_simple']  = 0;
+                $ret = $m_box->editData($id, $data);
+                if($ret){
+                    $flag ++;
+                }
             }
         }
         echo $flag;
