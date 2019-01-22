@@ -174,7 +174,7 @@
               <td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>
               <td data-title="是否打断"><if condition="$vlist.is_exist eq 0">下载成功 <elseif condition="$vlist.is_exist eq 1" />盒子存在该资源 <elseif condition="$vlist.is_exist eq 2" />下载失败</if></td>
             	
-              <td data-title="是否打断"><if condition="$vlist.small_app_id eq 1"> 普通版 <elseif condition="$vlist.small_app_id eq 2" />极简版</if></td>	
+              <td data-title="是否打断"><if condition="$vlist.small_app_id eq 1"> 普通版 <elseif condition="$vlist.small_app_id eq 2" />极简版<elseif condition="$vlist.small_app_id eq 3" />极简版<elseif condition="$vlist.small_app_id eq 4" />餐厅端<elseif condition="$vlist.small_app_id eq 11" />h5互动游戏</if></td>	
             </tr>
           </volist>
           </tbody>
