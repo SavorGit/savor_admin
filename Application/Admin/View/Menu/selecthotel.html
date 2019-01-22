@@ -1,6 +1,6 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
-<div class="pageHeader" style="overflow: hidden;height:140px;">
+<div class="pageHeader top-filter">
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
     <input type="hidden" value="{$hot}" name="hot" />
     <input type="hidden" value="{$ext}" name="infp" />
@@ -232,7 +232,7 @@
 </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent" style="top: 140px;">
+<div class="pageContent" id="pagecontent" style="top: 240px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="{$host_name}/menu/hotelconfirm" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return navTabSearch(this);">

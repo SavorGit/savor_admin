@@ -73,9 +73,14 @@ class SappforscreenController extends BaseController {
 	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
 	        $this->assign('create_time',$create_time);
 	        $this->assign('end_time',$end_time);
-	    }
-	    
-	    
+	    }else{
+            $create_time = date('Y-m-d');
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+            $this->assign('create_time',$create_time);
+            $this->assign('end_time',$end_time);
+        }
+        
 	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
@@ -254,16 +259,15 @@ class SappforscreenController extends BaseController {
             $all_invalidlist[$v['type']][] = $v['invalidid'];
         }
 	    $hotel_ids = $all_invalidlist[1];
-	    $fields = "a.box_mac";
+	    $fields = "box.mac as box_mac";
 	    $where = array();
-	    $where['hotel.id'] = array('in',$hotel_ids);
-        $where['a.is_valid'] = 1;
-	    $group = 'a.box_mac';
+	    $where['sht.id'] = array('in',$hotel_ids);
+	    $m_hotel = new \Admin\Model\HotelModel();
+        $list = $m_hotel->getBoxOrderMacByHid($fields, $where, '');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-	    $list = $m_smallapp_forscreen_record->getWhere($fields, $where,  $limit='', $group);
 	    if(!empty($list)){
             foreach($list as $key=>$v){
-                $condition = array('box_mac'=>$v['box_mac']);
+                $condition = array('box_mac'=>$v['box_mac'],'is_valid'=>1);
                 $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
             }
         }
