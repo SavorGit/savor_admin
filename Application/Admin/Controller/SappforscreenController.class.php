@@ -44,7 +44,11 @@ class SappforscreenController extends BaseController {
 	        $this->assign('hotel_name',$hotel_name); 
 	    }
 	    if($small_app_id){
-            $where['a.small_app_id'] = $small_app_id;
+	        if($small_app_id == 2){
+                $where['a.small_app_id'] = array('in',array(2,3));
+            }else{
+                $where['a.small_app_id'] = $small_app_id;
+            }
         }
 	    $box_mac    = I('box_mac','','trim');
 	    if($box_mac){
@@ -80,12 +84,17 @@ class SappforscreenController extends BaseController {
             $this->assign('create_time',$create_time);
             $this->assign('end_time',$end_time);
         }
-        
+        $all_smallapps = array('1'=>'普通版','2'=>'极简版','3'=>'极简版','4'=>'餐厅端','11'=>'h5互动游戏');
 	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 
 	    foreach ($list['list'] as $key=>$v){
+	        if(isset($all_smallapps[$v['small_app_id']])){
+                $list['list'][$key]['small_app'] = $all_smallapps[$v['small_app_id']];
+            }else{
+                $list['list'][$key]['small_app'] = '';
+            }
 	        if(!empty($v['resource_size'])){
 	            $list['list'][$key]['resource_size'] = formatBytes($v['resource_size']);
 	        }else {
@@ -161,8 +170,9 @@ class SappforscreenController extends BaseController {
 	                $list['list'][$key]['action_name'] = '图片投屏';
 	                break;
 	        }
-	        
 	    }
+	    unset($all_smallapps[3]);
+	    $this->assign('small_apps',$all_smallapps);
 	    $this->assign('small_app_id',$small_app_id);
 	    $this->assign('list',$list['list']);
 	   	$this->assign('oss_host',C('OSS_HOST_NEW'));

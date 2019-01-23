@@ -3756,7 +3756,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     public function countForscreen(){
         $s_date = I('get.s_date');
         $e_date = I('get.e_date');
-        
+        $small_app_id = I('small_app_id',0,'intval');
+        $is_valid = I('is_valid',1,'intval');
+
         $where = '';
         if($s_date){
             $where .=" and a.create_time>='".$s_date." 00:00:00'";
@@ -3773,8 +3775,17 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
 
         $hotel_list = M()->query($sql);
         $count_arr = array() ;
+        if($is_valid!=2){
+            $where .=" and a.is_valid=$is_valid";
+        }
+        if($small_app_id){
+            if($small_app_id==2){
+                $where .=" and a.small_app_id in (2,3)";
+            }else{
+                $where .=" and a.small_app_id=$small_app_id";
+            }
+        }
 
-        $where .=" and a.is_valid=1";
         foreach ($hotel_list as $key=>$v){
             
             $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
