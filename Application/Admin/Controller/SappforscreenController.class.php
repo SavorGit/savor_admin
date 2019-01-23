@@ -1088,6 +1088,10 @@ class SappforscreenController extends BaseController {
 	 * @用户公开信息审核
 	 */
 	public function publicCheck(){
+	    $openid = I('openid','','trim');
+	    $status = I('status',99,'intval');
+        $is_recommend = I('is_recommend',99,'intval');
+        $res_type = I('res_type',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
 	    $start = I('pageNum',1);
@@ -1101,9 +1105,26 @@ class SappforscreenController extends BaseController {
 	    $m_public = new \Admin\Model\Smallapp\PublicModel();
 	    $fields = 'user.nickName,a.id,a.forscreen_id,a.openid,a.box_mac,a.res_type,a.is_pub_hotelinfo,a.create_time,a.status,a.is_recommend,a.create_time';
 	    $where = array();
-	    $where['a.status'] = array('in','1,2');
+	    if($status==99){
+            $where['a.status'] = array('in','1,2');
+        }else{
+            $where['a.status'] = $status;
+        }
+        if($is_recommend!=99){
+            $where['a.is_recommend'] = $is_recommend;
+        }
+        if($res_type){
+            $where['a.res_type'] = $res_type;
+        }
+        if($openid){
+            $where['a.openid'] = $openid;
+        }
 	    $list = $m_public->getList($fields,$where, $orders, $start,$size);
-	    
+
+        $this->assign('is_recommend',$is_recommend);
+        $this->assign('res_type',$res_type);
+        $this->assign('status',$status);
+        $this->assign('openid',$openid);
 	    $this->assign('list',$list['list']);
 	    $this->assign('page',$list['page']);
 	    $this->display('Report/sapppublic');
