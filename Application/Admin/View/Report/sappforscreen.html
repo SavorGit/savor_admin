@@ -14,7 +14,7 @@
                         <a class="btn btn-success btn-sm add" id="forscreen_fresh"><i class="fa fa-refresh"></i>实时刷新</a>
                         <a class="btn btn-success btn-sm"  title="无效名单"  target="navTab" rel="sappforscreen/invalidlist" href="{$host_name}/sappforscreen/invalidlist" calback="navTabAjaxDone"><i class="fa fa-th-list"></i>无效名单</a>
                         <a class="btn btn-success btn-sm"  title="一键隔离测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delTestRecord" calback="navTabAjaxDone"><i class="fa fa-key"></i>隔离数据</a>
-                        <a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreen?s_date={$create_time}&e_date={$end_time}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i>导出</a>
+                        <a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreen?s_date={$create_time}&e_date={$end_time}&small_app_id={$small_app_id}&is_valid={$is_valid}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i>导出</a>
                     </div>
                 </div>
 
@@ -65,8 +65,12 @@
                       <label>小程序版本:</label>
                      <select name="small_app_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                        <option value=0 >所有</option>
-                       <option <if condition="$small_app_id eq 1">selected="selected"</if>value="1" >普通版</option>
-                       <option <if condition="$small_app_id eq 2">selected="selected"</if>value="2" >极简版</option>
+                       <volist name="small_apps" id="aname">
+                          <option <if condition="$small_app_id eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
+                       </volist>
+                     </select>
+                       <!--<option <if condition="$small_app_id eq 1">selected="selected"</if>value="1" >普通版</option>
+                       <option <if condition="$small_app_id eq 2">selected="selected"</if>value="2" >极简版</option>-->
                      </select>
                     </div>
                     <div class="form-group col-sm-6 col-xs-12">
@@ -173,21 +177,17 @@
               	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
                 </volist>
                 </if>
-                
-                 
               </td>
               <td data-title="资源大小">{$vlist.resource_size}</td>
               <td data-title="投屏文字">{$vlist.forscreen_char}</td>
-             
               <td data-title="投屏时间">{$vlist.create_time}</td>
               <td data-title="资源开始上传时间">{$vlist.res_sup_time}</td>
               <td data-title="资源上传成功延时">{$vlist.res_eup_time}</td>
               <td data-title="机顶盒开始下载时间">{$vlist.box_res_sdown_time}</td>
               <td data-title="机顶盒下载成功延时">{$vlist.box_res_edown_time}</td>
               <td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>
-              <td data-title="是否打断"><if condition="$vlist.is_exist eq 0">下载成功 <elseif condition="$vlist.is_exist eq 1" />盒子存在该资源 <elseif condition="$vlist.is_exist eq 2" />下载失败</if></td>
-            	
-              <td data-title="是否打断"><if condition="$vlist.small_app_id eq 1"> 普通版 <elseif condition="$vlist.small_app_id eq 2" />极简版<elseif condition="$vlist.small_app_id eq 3" />极简版<elseif condition="$vlist.small_app_id eq 4" />餐厅端<elseif condition="$vlist.small_app_id eq 11" />h5互动游戏</if></td>	
+              <td data-title="资源下载状态"><if condition="$vlist.is_exist eq 0">下载成功 <elseif condition="$vlist.is_exist eq 1" />盒子存在该资源 <elseif condition="$vlist.is_exist eq 2" />下载失败</if></td>
+              <td data-title="小程序版本">{$vlist.small_app}</td>
             </tr>
           </volist>
           </tbody>
