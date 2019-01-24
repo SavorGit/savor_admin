@@ -3284,4 +3284,43 @@ class CrontabController extends Controller
         }
         echo 'ok';
     }
+    /**
+     * @desc 把昨天小游戏的数据写入投屏日志中
+     */
+    public function h5gameToForscreenLog(){
+        $yesterday = strtotime('-1 day');
+        $yesterday_start = date('Y-m-d 00:00:00',$yesterday);
+        $yesterday_end   = date('Y-m-d 23:59:59',$yesterday);
+        
+        $where = array();
+        $where['b.is_start'] = 1;
+        $where['a.create_time'] = array(array('EGT',$yesterday_start),array('ELT',$yesterday_end));
+        
+        $m_game_tree = new \Admin\Model\Smallapp\GameClimbtreeModel();
+        $list = $m_game_tree->alias('a')
+        ->join('savor_smallapp_game_interact b on a.activity_id=b.id','left')
+        ->field('b.box_mac,a.openid,a.create_time')
+        ->where($where)
+        ->select();
+        
+        $m_forscreen_log = new \Admin\Model\Smallapp\ForscreenRecordModel(); 
+        $flag = 0;
+        foreach($list as $key=>$v){
+            $data = array();
+            $data['openid'] = $v['openid'];
+            $data['box_mac']= $v['box_mac'];
+            $data['action'] = 101;
+            $data['small_app_id'] = 11;
+            $data['imgs'] = '[]';
+            $data['forscreen_id'] = 0;
+            $data['resource_id'] = 0;
+            $data['resource_size'] = 0;
+            $data['create_time'] = $v['create_time'];
+            $ret =$m_forscreen_log->addInfo($data,1);
+            if($ret){
+                $flag++;
+            }
+        }
+        echo $flag;
+    }
 }
