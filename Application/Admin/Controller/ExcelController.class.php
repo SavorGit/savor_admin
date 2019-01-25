@@ -93,6 +93,8 @@ class ExcelController extends Controller
              $tmpname = '小程序版位数据详细数据';
          }else if($filename=='smallapp_hotelgradedetail'){
              $tmpname = '小程序概况酒楼评级趋势详细数据';
+         }else if($filename=='hotel_update_adv_list'){
+             $tmpname = '45天内有更新的酒楼宣传片';
          }
 
 
@@ -4519,6 +4521,35 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $filename = 'smallapp_hotel_level_detail';
         $this->exportExcel($xlsName, $xlsCell, $list,$filename);
         
+    }
+    /**
+     * @desc 获取45天之内有更新的酒楼宣传片
+     */
+    public function getUpdateHotelAdv(){
+        $time_start = date('Y-m-d 00:00:00',strtotime('-45 days'));
+        $sql ="SELECT  hotel.id hotel_id,hotel.name hotel_name,ads.name media_name,
+               concat('http://oss.littlehotspot.com/',media.`oss_addr`) oss_addr,
+               ads.create_time,ads.update_time 
+                FROM `savor_ads` ads
+               left join savor_media media on ads.media_id=media.id
+               left join savor_hotel hotel on ads.hotel_id=hotel.id
+                
+               WHERE ads.type=3 and hotel.flag=0 and hotel.state=1 and ads.update_time>'".$time_start."' order by hotel.id asc";
+        $data  =M()->query($sql);
+        $xlsName = '45天之内有更新的酒楼宣传片';
+        $filename = 'hotel_update_adv_list';
+        
+        $xlsCell = array(
+        
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('media_name','资源名称'),
+            array('oss_addr','下载地址'),
+            array('create_time','资源创建时间'),
+            array('update_time','资源更新时间'),
+        
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     private function getScore($data,$conf_arr){
         $score = 0;
