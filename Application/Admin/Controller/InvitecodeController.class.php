@@ -141,4 +141,18 @@ class InvitecodeController extends BaseController {
             $this->error('参数错误');
         }
     }
+    //根据手机号查询酒楼
+    public function searchHotel(){
+        $mobile = I('get.mobile');
+        $sql ="select hotel.name  from savor_hotel_invite_code a
+               left join savor_hotel hotel on a.hotel_id=hotel.id
+               where a.bind_mobile=$mobile and a.flag=0";
+        
+        $data = M()->query($sql);
+        if(!empty($data)){
+            print_r($data[0]['name']);
+        }else {
+            echo '该手机号未绑定';
+        }
+    }
 }
