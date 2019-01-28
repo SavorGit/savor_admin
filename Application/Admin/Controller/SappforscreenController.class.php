@@ -21,6 +21,7 @@ class SappforscreenController extends BaseController {
 	    $small_app_id = I('small_app_id',0,'intval');
 	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
         $is_valid = I('is_valid',1,'intval');
+        $is_exist = I('is_exist',99,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
 	    $start = I('pageNum',1);
@@ -37,6 +38,9 @@ class SappforscreenController extends BaseController {
 	    $where['a.mobile_brand'] = array('neq','devtools');
 	    if($is_valid!=2){
 	        $where['a.is_valid'] = $is_valid;
+        }
+        if($is_exist!=99){
+            $where['a.is_exist'] = $is_exist;
         }
 	    $hotel_name = I('hotel_name','','trim');
 	    if($hotel_name){
@@ -85,6 +89,7 @@ class SappforscreenController extends BaseController {
             $this->assign('end_time',$end_time);
         }
         $all_smallapps = array('1'=>'普通版','2'=>'极简版','3'=>'极简版','4'=>'餐厅端','11'=>'h5互动游戏');
+	    $source_types = array('0'=>'下载成功','1'=>'盒子存在资源','2'=>'下载失败','3'=>'盒子待回执');
 	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
@@ -95,6 +100,7 @@ class SappforscreenController extends BaseController {
             }else{
                 $list['list'][$key]['small_app'] = '';
             }
+            $list['list'][$key]['source_typestr'] = $source_types[$v['is_exist']];
 	        if(!empty($v['resource_size'])){
 	            $list['list'][$key]['resource_size'] = formatBytes($v['resource_size']);
 	        }else {
@@ -171,7 +177,10 @@ class SappforscreenController extends BaseController {
 	                break;
 	        }
 	    }
+
 	    unset($all_smallapps[3]);
+	    $this->assign('is_exist',$is_exist);
+	    $this->assign('source_types',$source_types);
 	    $this->assign('small_apps',$all_smallapps);
 	    $this->assign('small_app_id',$small_app_id);
 	    $this->assign('list',$list['list']);

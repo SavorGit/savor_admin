@@ -69,9 +69,6 @@
                           <option <if condition="$small_app_id eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
                        </volist>
                      </select>
-                       <!--<option <if condition="$small_app_id eq 1">selected="selected"</if>value="1" >普通版</option>
-                       <option <if condition="$small_app_id eq 2">selected="selected"</if>value="2" >极简版</option>-->
-                     </select>
                     </div>
                     <div class="form-group col-sm-6 col-xs-12">
                       <label>数据类型:</label>
@@ -80,6 +77,15 @@
                         <option <if condition="$is_valid eq 1">selected="selected"</if>value="1" >有效数据</option>
                         <option <if condition="$is_valid eq 0">selected="selected"</if>value="0" >无效数据</option>
                       </select>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>资源下载状态:</label>
+                     <select name="is_exist" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                       <option value=99 >所有</option>
+                       <volist name="source_types" id="sourcename">
+                          <option <if condition="$is_exist eq $key">selected="selected"</if>value="{$key}" >{$sourcename}</option>
+                       </volist>
+                     </select>
                     </div>
                   </div>
                 </div>
@@ -186,7 +192,7 @@
               <td data-title="机顶盒开始下载时间">{$vlist.box_res_sdown_time}</td>
               <td data-title="机顶盒下载成功延时">{$vlist.box_res_edown_time}</td>
               <td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>
-              <td data-title="资源下载状态"><if condition="$vlist.is_exist eq 0">下载成功 <elseif condition="$vlist.is_exist eq 1" />盒子存在该资源 <elseif condition="$vlist.is_exist eq 2" />下载失败</if></td>
+              <td data-title="资源下载状态">{$vlist.source_typestr}</td>
               <td data-title="小程序版本">{$vlist.small_app}</td>
             </tr>
           </volist>
