@@ -19,12 +19,12 @@ class TestController extends Controller {
         
         $accessId = 'LTAITjXOpRHKflOX';
         $accessKey='Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt';
-                     
         $endPoint = 'https://1379506082945137.mns.cn-beijing.aliyuncs.com';
         $msg = new CreateQueueAndSendMessage($accessId, $accessKey, $endPoint);
         $queueName = 'queue-box-probe-dev';
-        $messageBody = "test";
+        $messageBody = "test 2019-01-29 16:09:32";
         $msg->run($queueName,$messageBody);
+
         
     }
     public function operateH5game(){

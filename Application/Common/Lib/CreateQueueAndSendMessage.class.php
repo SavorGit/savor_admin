@@ -28,19 +28,18 @@ class CreateQueueAndSendMessage
         $this->client = new Client($this->endPoint, $this->accessId, $this->accessKey);
 
         // 1. create queue
-        $request = new CreateQueueRequest($queueName);
-        try
-        {
-            $res = $this->client->createQueue($request);
-            echo "QueueCreated! \n";
-        }
-        catch (MnsException $e)
-        {
-            echo "CreateQueueFailed: " . $e;
-            return;
-        }
+//        $request = new CreateQueueRequest($queueName);
+//        try
+//        {
+//            $res = $this->client->createQueue($request);
+//            echo "QueueCreated! \n";
+//        }
+//        catch (MnsException $e)
+//        {
+//            echo "CreateQueueFailed: " . $e;
+//            return;
+//        }
         $queue = $this->client->getQueueRef($queueName);
-
         // 2. send message
         // as the messageBody will be automatically encoded
         // the MD5 is calculated for the encoded body
