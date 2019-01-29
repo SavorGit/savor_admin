@@ -5,7 +5,7 @@ use Think\Controller;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Common\Lib\SavorRedis;
-
+use Common\Lib\CreateQueueAndSendMessage;
 
 // use Common\Lib\SavorRedis;
 /**
@@ -14,6 +14,19 @@ use Common\Lib\SavorRedis;
  */
 class TestController extends Controller {
     
+    public function testMsn(){
+        
+        
+        $accessId = 'LTAITjXOpRHKflOX';
+        $accessKey='Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt';
+                     
+        $endPoint = 'https://1379506082945137.mns.cn-beijing.aliyuncs.com';
+        $msg = new CreateQueueAndSendMessage($accessId, $accessKey, $endPoint);
+        $queueName = 'queue-box-probe-dev';
+        $messageBody = "test";
+        $msg->run($queueName,$messageBody);
+        
+    }
     public function operateH5game(){
         exit;
         $m_game_tree = new \Admin\Model\Smallapp\GameClimbtreeModel();
