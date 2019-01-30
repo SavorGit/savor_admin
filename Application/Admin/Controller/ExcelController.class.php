@@ -95,6 +95,8 @@ class ExcelController extends Controller
              $tmpname = '小程序概况酒楼评级趋势详细数据';
          }else if($filename=='hotel_update_adv_list'){
              $tmpname = '45天内有更新的酒楼宣传片';
+         }else if($filename == 'smallapp_forsacreen_box'){
+             $tmpname = '小程序包间投屏统计';
          }
 
 
@@ -3862,6 +3864,118 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         );
         $xlsName = '小程序投屏统计';
         $filename = 'smallapp_forsacreen';
+        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
+    }
+
+    /**
+     * @desc 根据包间盒子获取投屏总数
+     */
+    public function countForscreenBybox(){
+        set_time_limit(360);
+        ini_set("memory_limit","1024M");
+        $s_date = I('get.s_date');
+        $e_date = I('get.e_date');
+        $small_app_id = I('small_app_id',0,'intval');
+        $is_valid = I('is_valid',1,'intval');
+
+        $where = '';
+        if($s_date){
+            $where .=" and a.create_time>='".$s_date." 00:00:00'";
+        }
+        if($e_date){
+            $where .=" and a.create_time<='".$e_date." 23:59:59'";
+        }
+        $sql ="SELECT area.region_name, hotel.id hotel_id,hotel.name hotel_name,room.name room_name,box.mac  FROM `savor_smallapp_forscreen_record` a
+               left join savor_box box on a.box_mac=box.mac
+               left join savor_room room on box.room_id = room.id
+               left join savor_hotel hotel on room.hotel_id= hotel.id
+               left join savor_area_info area on hotel.area_id= area.id
+               where box.flag=0 and box.state=1   $where  group by a.box_mac order by hotel.id";
+        $hotel_list = M()->query($sql);
+        $count_arr = array() ;
+        if($is_valid!=2){
+            $where .=" and a.is_valid=$is_valid";
+        }
+        if($small_app_id){
+            if($small_app_id==2){
+                $where .=" and a.small_app_id in (2,3)";
+            }else{
+                $where .=" and a.small_app_id=$small_app_id";
+            }
+        }
+
+        foreach ($hotel_list as $key=>$v){
+            $box_mac = $v['mac'];
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and a.action in(0,2,4,5,11,12) and  box.flag=0 and box.state=1  and a.box_mac='$box_mac'".$where;
+            $ret = M()->query($sql);
+
+            $hotel_list[$key]['count'] = $ret[0]['num'];   //总数
+            $count_arr[$key] = $ret[0]['num'];
+            //投图片
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and (a.action in(0,4) or (a.action=2 and a.resource_type=1)) and  box.flag=0 and box.state=1  and a.box_mac='$box_mac'".$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['img_count'] = $ret[0]['num'];
+
+            //投视频
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and (a.action = 2 and a.resource_type=2) and  box.flag=0 and box.state=1  and a.box_mac='$box_mac'".$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['video_count'] = $ret[0]['num'];
+
+            //视频点播
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and a.action=5 and a.forscreen_char !='Happy Birthday' and  box.flag=0 and box.state=1  and a.box_mac='$box_mac'".$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['launch'] = $ret[0]['num'];
+
+            //视频点播生日歌
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and a.action=5 and a.forscreen_char ='Happy Birthday' and  box.flag=0 and box.state=1  and a.box_mac='$box_mac'".$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['happy'] = $ret[0]['num'];
+            //发现点播投屏
+            $sql ="select count(a.id) as num from `savor_smallapp_forscreen_record` a
+                   left join savor_box box on a.box_mac=box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where 1 and mobile_brand !='devtools' and a.action in(11,12) and  box.flag=0 and box.state=1  and a.box_mac='$box_mac'".$where;
+            $ret = M()->query($sql);
+            $hotel_list[$key]['find'] = $ret[0]['num'];
+        }
+        sortArrByOneField($hotel_list, 'count',true);
+        $xlsCell = array(
+            array('region_name','城市'),
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('mac','MAC地址'),
+            array('count','互动总数'),
+            array('img_count','图片投屏'),
+            array('video_count','视频投屏'),
+            array('launch','视频点播'),
+            array('happy','生日歌点播'),
+            array('find','发现内容点播')
+
+        );
+        $xlsName = '小程序包间投屏统计';
+        $filename = 'smallapp_forsacreen_box';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
 
