@@ -88,6 +88,15 @@
                        </volist>
                      </select>
                     </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>投屏动作:</label>
+                     <select name="action_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                       <option value=999 >所有</option>
+                       <volist name="all_actions" id="aname">
+                          <option <if condition="$action_type eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
+                       </volist>
+                     </select>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -132,6 +141,7 @@
             <th>是否打断</th>
             <th>资源下载状态</th>
             <th>小程序版本</th>
+            <th class="table-tool">操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -195,6 +205,13 @@
               <td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>
               <td data-title="资源下载状态">{$vlist.source_typestr}</td>
               <td data-title="小程序版本">{$vlist.small_app}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="编辑" title="序号{$vlist.id}-编辑" target="dialog" mask="true" href="{$host_name}/sappforscreen/recordedit?id={$vlist.id}" rel="sappforscreen/pubdetail" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
             </tr>
           </volist>
           </tbody>

@@ -7,10 +7,15 @@
  */
 namespace Admin\Controller;
 
-use Admin\Controller\BaseController;
-use Think\Model;
-use Common\Lib\SavorRedis;
 class SappforscreenController extends BaseController {
+
+    public $all_smallapps=array('1'=>'普通版','2'=>'极简版','3'=>'极简版','4'=>'餐厅端','11'=>'h5互动游戏');
+    public $source_types = array('0'=>'下载成功','1'=>'盒子存在资源','2'=>'下载失败','3'=>'盒子待回执');
+    public $all_actions = array('0'=>'图片投屏','2-1'=>'滑动','2-2'=>'视频投屏','4'=>'多图投屏','5'=>'视频点播','6'=>'广告跳转',
+    '7'=>'点击互动游戏','8'=>'重投','9'=>'手机呼大码','11'=>'发现点播图片','12'=>'发现点播视频','21'=>'查看点播视频',
+    '22'=>'查看发现视频','101'=>'h5互动游戏');
+
+
 	public function __construct() {
 		parent::__construct();
 	}
@@ -22,16 +27,13 @@ class SappforscreenController extends BaseController {
 	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
         $is_valid = I('is_valid',1,'intval');
         $is_exist = I('is_exist',99,'intval');
+        $action_type = I('action_type',999);
 	    $size   = I('numPerPage',50);//显示每页记录数
-	    $this->assign('numPerPage',$size);
-	    $start = I('pageNum',1);
-	    $this->assign('pageNum',$start);
+	    $pagenum = I('pageNum',1);
 	    $order = I('_order','a.id');
-	    $this->assign('_order',$order);
 	    $sort = I('_sort','desc');
-	    $this->assign('_sort',$sort);
 	    $orders = $order.' '.$sort;
-	    $start  = ( $start-1 ) * $size;
+	    $start  = ( $pagenum-1 ) * $size;
 	    $where = array();
 	    $where['box.flag'] = 0;
 	    $where['box.state'] =1;
@@ -41,6 +43,15 @@ class SappforscreenController extends BaseController {
         }
         if($is_exist!=99){
             $where['a.is_exist'] = $is_exist;
+        }
+        if($action_type!=999){
+            $action_type_arr = explode('-',$action_type);
+            if(count($action_type_arr)==1){
+                $where['a.action'] = $action_type;
+            }else{
+                $where['a.action'] = $action_type_arr[0];
+                $where['a.resource_type'] = $action_type_arr[1];
+            }
         }
 	    $hotel_name = I('hotel_name','','trim');
 	    if($hotel_name){
@@ -88,8 +99,9 @@ class SappforscreenController extends BaseController {
             $this->assign('create_time',$create_time);
             $this->assign('end_time',$end_time);
         }
-        $all_smallapps = array('1'=>'普通版','2'=>'极简版','3'=>'极简版','4'=>'餐厅端','11'=>'h5互动游戏');
-	    $source_types = array('0'=>'下载成功','1'=>'盒子存在资源','2'=>'下载失败','3'=>'盒子待回执');
+        $all_smallapps = $this->all_smallapps;
+	    $source_types = $this->source_types;
+        $all_actions = $this->all_actions;
 	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
@@ -128,58 +140,21 @@ class SappforscreenController extends BaseController {
 	        }
 	        
 	        $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
-	        switch ($v['action']){
-	            case '1':
-	                $list['list'][$key]['action_name'] = '发送呼码';
-	                break;
-	            case '2':
-	                if($v['resource_type']==1) $list['list'][$key]['action_name'] = '滑动';
-	                if($v['resource_type']==2) $list['list'][$key]['action_name'] = '视频投屏';
-	                break;
-	            case '3':
-	                $list['list'][$key]['action_name'] = '退出投屏';
-	                break;
-	            case '4':
-	                $list['list'][$key]['action_name'] = '多图投屏';
-	                break;
-	            case '5':
-	                $list['list'][$key]['action_name'] = '视频点播';
-	                break;
-	            case '6':
-	                $list['list'][$key]['action_name'] = '广告跳转';
-	                break;
-	            case '7':
-	                $list['list'][$key]['action_name'] = '点击互动游戏';
-	                break;
-	            case '8':
-	                $list['list'][$key]['action_name'] = '重投';
-	                break;
-	            case '9':
-	                $list['list'][$key]['action_name'] = '手机呼大码';
-	                break;
-	            case '11':
-	                $list['list'][$key]['action_name'] = '发现点播图片';
-	                break;
-                case '12':
-                    $list['list'][$key]['action_name'] = '发现点播视频';
-                    break;
-                case '21':
-                    $list['list'][$key]['action_name'] = '查看点播视频';
-	                break;
-                case '22':
-                    $list['list'][$key]['action_name'] = '查看发现视频';
-                    break;
-                case '101':
-                    $list['list'][$key]['action_name'] = 'h5互动游戏';
-                    break;
-	            default :
-	                $list['list'][$key]['action_name'] = '图片投屏';
-	                break;
-	        }
+	        $nowaction_type = $v['action'];
+	        if($nowaction_type==2){
+                $nowaction_type = $nowaction_type.'-'.$v['resource_type'];
+            }
+            $list['list'][$key]['action_name'] = $all_actions[$nowaction_type];
 	    }
 
 	    unset($all_smallapps[3]);
+        $this->assign('_sort',$sort);
+        $this->assign('_order',$order);
+        $this->assign('pageNum',$pagenum);
+        $this->assign('numPerPage',$size);
+	    $this->assign('action_type',$action_type);
 	    $this->assign('is_exist',$is_exist);
+	    $this->assign('all_actions',$all_actions);
 	    $this->assign('source_types',$source_types);
 	    $this->assign('small_apps',$all_smallapps);
 	    $this->assign('small_app_id',$small_app_id);
@@ -189,6 +164,71 @@ class SappforscreenController extends BaseController {
 	   	$this->assign('is_valid',$is_valid);
 	    $this->display('Report/sappforscreen');
 	}
+
+	public function recordedit(){
+	    $id = I('id',0,'intval');
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+	    if(IS_POST){
+            $remark = I('post.remark','','trim');
+            $condition = array('id'=>$id);
+            $data = array('remark'=>$remark);
+            $m_smallapp_forscreen_record->updateData($condition,$data);
+            $this->output('操作成功!', 'Report/sappforscreen');
+        }else{
+            $all_smallapps = $this->all_smallapps;
+            $source_types = $this->source_types;
+            $all_actions = $this->all_actions;
+
+            $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
+            $where = array('a.id'=>$id);
+            $vinfo = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            if(!empty($vinfo)){
+                if(isset($all_smallapps[$vinfo['small_app_id']])){
+                    $vinfo['small_app'] = $all_smallapps[$vinfo['small_app_id']];
+                }else{
+                    $vinfo['small_app'] = '';
+                }
+                $vinfo['source_typestr'] = $source_types[$vinfo['is_exist']];
+                if(!empty($vinfo['resource_size'])){
+                    $vinfo['resource_size'] = formatBytes($vinfo['resource_size']);
+                }else {
+                    $vinfo['resource_size'] = '';
+                }
+                $res_sup_time = $vinfo['res_sup_time'];
+                if(!empty($res_sup_time)){
+                    $vinfo['res_sup_time'] = date('Y-m-d H:i:s',intval($res_sup_time/1000));
+                }else {
+                    $vinfo['res_sup_time'] = '';
+                }
+                if(!empty($res_sup_time) && !empty($vinfo['res_eup_time'])){
+                    $vinfo['res_eup_time'] = ($vinfo['res_eup_time'] - $res_sup_time) /1000 ;
+                }else {
+                    $vinfo['res_eup_time'] = '';
+                }
+                $box_res_sdown_time = $vinfo['box_res_sdown_time'];
+                if(!empty($box_res_sdown_time)){
+                    $vinfo['box_res_sdown_time'] = date('Y-m-d H:i:s',intval($box_res_sdown_time/1000)) ;
+                }else {
+                    $vinfo['box_res_sdown_time'] = '';
+                }
+                if(!empty($box_res_sdown_time) && !empty($vinfo['box_res_edown_time'])){
+                    $vinfo['box_res_edown_time'] = ($vinfo['box_res_edown_time'] - $box_res_sdown_time) /1000;
+                }else {
+                    $vinfo['box_res_edown_time'] = '';
+                }
+
+                $vinfo['imgs'] = json_decode(str_replace('\\', '', $vinfo['imgs']),true);
+                $nowaction_type = $vinfo['action'];
+                if($nowaction_type==2){
+                    $nowaction_type = $nowaction_type.'-'.$vinfo['resource_type'];
+                }
+                $vinfo['action_name'] = $all_actions[$nowaction_type];
+            }
+            $this->assign('oss_host',C('OSS_HOST_NEW'));
+            $this->assign('vinfo',$vinfo);
+            $this->display('Report/recordedit');
+        }
+    }
 
     public function invalidlist(){
         $size = I('numPerPage',50,'intval');//显示每页记录数
