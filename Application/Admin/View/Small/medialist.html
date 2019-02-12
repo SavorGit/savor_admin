@@ -12,8 +12,8 @@
             <th>资源名称</th>
             <th>资源类型</th>
             <th>是否下载</th>
-            
-            
+            <th>上报期号</th>
+            <th>系统最新期号</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -22,30 +22,24 @@
             <tr target="sid_user">
               <td data-title="资源名称"><a href="{$vlist.oss_addr}" target="_blank" style="color:red">{$vlist.name}</a></td>
               <td data-title="资源类型">{$vlist.type}</td>
-              <td data-title="是否下载">
-              	{$vlist.down_state}
-              </td>
-              
-             
-             
-		</tr>
-		</volist>
+              <td data-title="是否下载">{$vlist.down_state}</td>
+              <td data-title="上报期号">{$vlist.version}</td>
+              <td data-title="系统最新期号">{$newest_num}</td>
+		    </tr>
+		  </volist>
+
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td data-title="资源名称"><a href="{$vlist.oss_addr}" target="_blank">{$vlist.name}</a></td>
+              <td data-title="资源名称"><a href="{$vlist.oss_addr}" target="_blank" <if condition="$vlist.diff_status eq 2">style="color:red"</if> >{$vlist.name}</a></td>
               <td data-title="资源类型">{$vlist.type}</td>
-              <td data-title="是否下载">
-              	{$vlist.down_state}
-              </td>
-              
-             
-             
-</tr>
-</volist>
+              <td data-title="是否下载">{$vlist.down_state}</td>
+              <td data-title="上报期号">{$vlist.version}</td>
+              <td data-title="系统最新期号">{$newest_num}</td>
+            </tr>
+          </volist>
 </tbody>
 </table>
 </form>
-
 </div>
 </div>
 
