@@ -144,6 +144,9 @@ class InvitecodeController extends BaseController {
     //根据手机号查询酒楼
     public function searchHotel(){
         $mobile = I('get.mobile');
+        if($mobile){
+            
+        
         $sql ="select hotel.name  from savor_hotel_invite_code a
                left join savor_hotel hotel on a.hotel_id=hotel.id
                where a.bind_mobile=$mobile and a.flag=0";
@@ -153,6 +156,7 @@ class InvitecodeController extends BaseController {
             print_r($data[0]['name']);
         }else {
             echo '该手机号未绑定';
+        }
         }
     }
 }
