@@ -750,12 +750,18 @@ class HotelController extends BaseController {
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
+            $tmp_hotel = $hotelModel->getOne($hotel_id);
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
 			if($bool){
 				$res = $hotelModel->getOne($hotel_id);
 				$save['create_time'] = $res['create_time'];
 				$hotelModel->saveStRedis($save, $hotel_id);
+                if(!empty($save['media_id'])){
+                    if($tmp_hotel['media_id']!=$save['media_id']){
+                        sendTopicMessage($hotel_id,14);
+                    }
+                }
                 sendTopicMessage($hotel_id,1);
 			} else {
 				$this->error('操作失败1');
@@ -767,6 +773,9 @@ class HotelController extends BaseController {
 				$hotel_id = $hotelModel->getLastInsID();
 				$hotelModel->saveStRedis($save, $hotel_id);
                 sendTopicMessage($hotel_id,1);
+                if(!empty($save['media_id'])){
+                    sendTopicMessage($hotel_id,14);
+                }
 			} else {
 				$this->error('操作失败2');
 			}
