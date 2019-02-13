@@ -8,6 +8,7 @@ trait MessagePropertiesForPublish
 {
     public $messageBody;
     public $messageAttributes;
+    public $messageTag;
 
     public function getMessageBody()
     {
@@ -34,6 +35,10 @@ trait MessagePropertiesForPublish
         if ($this->messageBody != NULL)
         {
             $xmlWriter->writeElement(Constants::MESSAGE_BODY, $this->messageBody);
+        }
+        if ($this->messageTag != NULL)
+        {
+            $xmlWriter->writeElement(Constants::MESSAGE_TAG, $this->messageTag);
         }
         if ($this->messageAttributes !== NULL)
         {

@@ -30,9 +30,9 @@ class AliyunMsn{
         }
     }
 
-    public function sendTopicMessage($topicName,$messageBody){
+    public function sendTopicMessage($topicName,$messageBody,$messageTag){
         $topic = $this->client->getTopicRef($topicName);
-        $request = new PublishMessageRequest($messageBody);
+        $request = new PublishMessageRequest($messageBody,$messageTag);
         try {
             $res = $topic->publishMessage($request);
             return $res;
