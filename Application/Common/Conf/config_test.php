@@ -65,6 +65,9 @@ $config_db =  array(
     'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
 	'OSS_HOST_NEW'=> 'devp.oss.littlehotspot.com',
 	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
+    'QUEUE_ENDPOINT'=>'https://1379506082945137.mns.cn-beijing.aliyuncs.com',
+    'TOPIC_NAME'=>'test-topic',
+
     'UMENG_PRODUCTION_MODE'=>'false',
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
@@ -76,8 +79,6 @@ $config_db =  array(
                                 'port'=>25,
                                 'tomail'=>array('xie.meng@littlehotspot.com',
                                                 'tang.mimi@littlehotspot.com',
-                                                'yang.changhe@littlehotspot.com',
-                                                'bai.yutao@littlehotspot.com',
                                                 'zhang.yingtao@littlehotspot.com',
                                 ),  
                             )
