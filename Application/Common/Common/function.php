@@ -1,5 +1,6 @@
 <?php
 use Common\Lib\Crypt3Des;
+use Common\Lib\AliyunMsn;
 
 function check_http(){
     $http_str = 'http://';
@@ -19,6 +20,38 @@ function check_http(){
 function get_host_name(){
     $http = check_http();
     return $http.$_SERVER['HTTP_HOST'];
+}
+
+/**
+ * 发送主题消息
+ * @param $message消息内容 酒楼ID或者array('酒楼ID')
+ * @param $type 1.酒楼的基础信息、2.包间的基础信息、3.机顶盒的基础信息、4.电视的基础信息、5.音量开关
+ * @return Ambigous <boolean, mixed>
+ */
+function sendTopicMessage($message,$type){
+    if(empty($message) || empty($type)){
+        return false;
+    }
+    $all_type = array('1'=>'hotel','2'=>'room','3'=>'box','4'=>'tv','5'=>'volume');
+    $accessId = C('OSS_ACCESS_ID');
+    $accessKey= C('OSS_ACCESS_KEY');
+    $endPoint = C('QUEUE_ENDPOINT');
+    $topicName = C('TOPIC_NAME');
+
+    $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
+    $mir_time = getmicrotime();
+    $serial_num = $mir_time*10000;
+    if(!is_array($message)){
+        $message = array($message);
+    }
+    $now_message = array();
+    foreach ($message as $v){
+        $now_message[] = array('hotel_id'=>$v,'serial_num'=>$serial_num);
+    }
+    $messageBody = json_encode($now_message);
+    $messageTag = $all_type[$type];
+    $res = $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
+    return $res;
 }
 
 function insert_sort($arr){
