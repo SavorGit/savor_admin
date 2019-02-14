@@ -11,6 +11,7 @@ namespace Admin\Controller;
  */
 use Admin\Controller\BaseController;
 use Common\Lib\Page;
+use Common\Lib\SavorRedis;
 
 class RtbadvertController extends BaseController
 {
@@ -91,6 +92,9 @@ class RtbadvertController extends BaseController
 			$pub_ads_hotelModel = new \Admin\Model\RtbPubAdsHotelModel();
 			$datp = array();
 			$tmp_hb = array();
+			
+			//获取虚拟小平台配置的酒楼id 如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的B类广告
+			$tmp_hotel_arr = getVsmallHotelList();
 			foreach ($h_b_arr as $k => $v) {
 				if (array_key_exists($v['hotel_id'], $tmp_hb)) {
 					continue;
@@ -101,6 +105,9 @@ class RtbadvertController extends BaseController
 					'hotel_id' => $v['hotel_id'],
 					'pub_ads_id' => $pub_ads_id,
 				);
+				if(in_array($v['hotel_id'], $tmp_hotel_arr)){
+				    sendTopicMessage($v['hotel_id'], 9);
+				}
 			}
 			$res = $pub_ads_hotelModel->addAll($datp);
 			if ($res) {

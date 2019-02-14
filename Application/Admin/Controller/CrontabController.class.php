@@ -885,8 +885,7 @@ class CrontabController extends Controller
      * @desc 随机生成广告的位置
      */
     public function recordAdsLocation(){
-        $redis = SavorRedis::getInstance();
-        $redis->select(12);
+        
         $adv_promote_num_arr = C('ADVE_OCCU');
         $adv_promote_num = $adv_promote_num_arr['num'];
         $base_location_arr = range(1, $adv_promote_num);
@@ -894,9 +893,16 @@ class CrontabController extends Controller
         $m_pub_ads = new \Admin\Model\PubAdsModel(); 
         $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
         $pub_ads_list = $m_pub_ads->getEmptyLocationList();
+        
+        //获取虚拟小平台配置的酒楼id 如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的A类广告
+        $tmp_hotel_arr = getVsmallHotelList();
+        $redis = new SavorRedis();
+        $redis->select(12);
+        
         foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
             
             $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到的盒子ID
+            
             foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
                 
                 $all_have_location_arr = array();
@@ -931,6 +937,12 @@ class CrontabController extends Controller
                     ///删除该盒子的广告缓存  
                     $cache_key = C('PROGRAM_ADS_CACHE_PRE').$v['box_id'];
                     $redis->remove($cache_key);
+                }
+            }
+            $pub_ads_hotel_arr = $m_pub_ads_box->getHotelArrByPubAdsId($val['id']);//获取当前广告发布的酒楼id
+            foreach($pub_ads_hotel_arr as $tk=>$tv){
+                if(in_array($tv['hotel_id'], $tmp_hotel_arr)){
+                    sendTopicMessage($tv['hotel_id'], 8);
                 }
             }
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));

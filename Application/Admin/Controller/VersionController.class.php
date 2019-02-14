@@ -6,6 +6,7 @@ namespace Admin\Controller;
 
 use Admin\Controller\BaseController;
 use Common\Lib\Aliyun;
+use Common\Lib\SavorRedis;
 class VersionController extends BaseController{
     private $oss_host = '';
     public function __construct(){
@@ -339,6 +340,21 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
+	            $tmp_hotel_arr = getVsmallHotelList();
+	            
+	            if($hotel_id){
+	                
+	                $hotel_arr = explode(',', $hotel_id);
+	                foreach($hotel_arr as $k=>$v){
+	                    if(in_array($v, $tmp_hotel_arr)){
+	                        sendTopicMessage($v, 13);
+	                    }
+	                }
+	            }else {
+	                foreach($tmp_hotel_arr as $key=>$v){
+	                    sendTopicMessage($v, 13);
+	                }
+	            }
 	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);
 	        }else{

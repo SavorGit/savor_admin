@@ -6,6 +6,7 @@
  */
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
+use Common\Lib\SavorRedis;
 class PolyscreenController extends BaseController{
     public function __construct(){
         parent::__construct();
@@ -112,10 +113,11 @@ class PolyscreenController extends BaseController{
             $this->error('参数错误');
         }
         $m_pub_poly_ads = new \Admin\Model\PubPolyAdsModel();
-        $fields = 'a.state';
+        $fields = 'a.state,a.tpmedia_id';
         $where = array();
         $where['a.id'] = $id;
         $info = $m_pub_poly_ads->getInfo($fields, $where, '', '',1);
+        $poly_info = $info;
         if(empty($info)){
             $this->error('该广告不存在');
         }
@@ -142,8 +144,24 @@ class PolyscreenController extends BaseController{
             }else if($state==1){
                 $msg = '上线成功';
             }
-            
-            
+            //获取当前配置该第三方广告盒子的酒楼
+            $m_box = new \Admin\Model\BoxModel();
+            $sql = "select hotel.id hotel_id from savor_box box
+                    left join savor_room room on box.room_id=room.id
+                    left join savor_hotel hotel on room.hotel_id=hotel.id
+                    where box.state=1 and box.flag=0 and hotel.state=1 and hotel.flag =0 
+                    and FIND_IN_SET('".$poly_info['tpmedia_id']."',box.`tpmedia_id`) 
+                    group by hotel.id";
+            $data = $m_box->query($sql); 
+            if(!empty($data)){
+                //获取虚拟小平台配置的酒楼id 如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
+                $tmp_hotel_arr = getVsmallHotelList();
+                foreach($data as $key=>$v){
+                    if(in_array($v['hotel_id'], $tmp_hotel_arr)){
+                        sendTopicMessage($v['hotel_id'], 10);
+                    }
+                }
+            }
             
             $this->output($msg, 'polyscreen/index', 2);
         }else {

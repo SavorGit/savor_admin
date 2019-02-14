@@ -7,6 +7,7 @@ namespace Admin\Controller;
  * @since       20171130
  */
 use Admin\Controller\BaseController;
+use Common\Lib\SavorRedis;
 class RecfoodController extends BaseController {
     private $oss_host = '';
     public function __construct() {
@@ -96,6 +97,13 @@ class RecfoodController extends BaseController {
         $data['big_media_id'] = I('post.select_media_id');
         $ret = $m_hotel_recommend_food->saveInfo($where, $data);
         if($ret){
+            $tmp_hotel_arr = getVsmallHotelList();
+            foreach($tmp_hotel_arr as $key=>$v){
+                if($info['hotel_id']==$v && $info['state']==1){
+                    sendTopicMessage($info['hotel_id'], 12);
+                    break;
+                }
+            }
             $this->output('修改成功', 'recfood/index', 1);
         }else {
             $this->error('修改失败');
@@ -107,7 +115,7 @@ class RecfoodController extends BaseController {
         $m_hotel_recommend_food = new \Admin\Model\HotelRecommendFoodModel();
         $where['id'] = $id;
         $where['flag']= 0;
-        $info = $m_hotel_recommend_food->getOne('id,state',$where);
+        $info = $m_hotel_recommend_food->getOne('id,state,hotel_id',$where);
         if(empty($info)){
             $this->error('该推荐菜不存在');  
         }
@@ -122,6 +130,14 @@ class RecfoodController extends BaseController {
         $data['state'] = $state;
         $ret = $m_hotel_recommend_food->saveInfo($where, $data);
         if($ret){
+            $tmp_hotel_arr = getVsmallHotelList();
+            foreach($tmp_hotel_arr as $key=>$v){
+                if($info['hotel_id']==$v){
+                    sendTopicMessage($info['hotel_id'], 12);
+                    break;
+                }
+            }
+            
             $this->output('修改成功', 'recfood/index', 2);
         }else {
             $this->error('修改失败');
@@ -133,7 +149,7 @@ class RecfoodController extends BaseController {
         $where['id'] = $id;
         $where['flag']= 0;
         $m_hotel_recommend_food = new \Admin\Model\HotelRecommendFoodModel();
-        $info = $m_hotel_recommend_food->getOne('id',$where);
+        $info = $m_hotel_recommend_food->getOne('id,hotel_id,state',$where);
         if(empty($info)){
             $this->error('该推荐菜不存在');
         }
@@ -141,6 +157,13 @@ class RecfoodController extends BaseController {
         $data['flag'] = 1;
         $ret = $m_hotel_recommend_food->saveInfo($where, $data);
         if($ret){
+            $tmp_hotel_arr = getVsmallHotelList();
+            foreach($tmp_hotel_arr as $key=>$v){
+                if($info['hotel_id']==$v && $info['state']==1){
+                    sendTopicMessage($info['hotel_id'], 12);
+                    break;
+                }
+            }
             $this->output('删除成功', 'recfood/index', 2);
         }else {
             $this->error('删除失败');

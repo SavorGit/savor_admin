@@ -9,6 +9,7 @@ use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
 use Admin\Model\CategoModel;
 use Admin\Model\MediaModel;
+use Common\Lib\SavorRedis;
 class ArticleController extends BaseController {
     
     public  $path = 'content/img';
@@ -178,6 +179,8 @@ class ArticleController extends BaseController {
         $artid = $_REQUEST['artid'];
         $type = $_REQUEST['acttype'];
         $id = I('post.id');
+        
+        $tmp_hotel_arr = getVsmallHotelList();
         if($type == 1){
             //判断表中是否有
             $res = $mbHomeModel->where('content_id='.$artid)->find();
@@ -218,6 +221,9 @@ class ArticleController extends BaseController {
                 $save['update_time'] = $save['create_time'];
                 $res = $mbHomeModel->add($save);
                 if($res){
+                    foreach($tmp_hotel_arr as $key=>$v){
+                        sendTopicMessage($v, 11);
+                    }
                     $this->output('操作成功!', 'article/homemanager',2);
                 }else{
                     $this->output('操作失败!', 'content/getlist');
@@ -228,6 +234,9 @@ class ArticleController extends BaseController {
             $save['sort_num'] = $max_nu+1;
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
+                foreach($vm_small_hotel_list as $key=>$v){
+                    sendTopicMessage($v['hotel_id'], 11);
+                }
                 $this->output('操作成功!', 'content/getlist',3);
                 die;
             }else{
@@ -358,6 +367,10 @@ class ArticleController extends BaseController {
                 $rest = $mbperModel->execute($sql);
             }else{
                 $mbperModel->add($dat);
+            }
+            $tmp_hotel_arr = getVsmallHotelList();
+            foreach($tmp_hotel_arr as $key=>$v){
+                sendTopicMessage($v, 11);
             }
             
             

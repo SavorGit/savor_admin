@@ -1,7 +1,7 @@
 <?php
 use Common\Lib\Crypt3Des;
 use Common\Lib\AliyunMsn;
-
+use Common\Lib\SavorRedis;
 function check_http(){
     $http_str = 'http://';
 // 	return $http_str;//如判断出错，则直接手动调整
@@ -1006,5 +1006,17 @@ function formatBytes($size) {
 function getMillisecond() {
     list($s1, $s2) = explode(' ', microtime());
     return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
+}
+function getVsmallHotelList(){
+    $redis = SavorRedis::getInstance();
+    $redis->select(12);
+    $vm_hotel_key = C('VM_HOTEL_LIST');
+    $rts = $redis->get($vm_hotel_key);
+    $vm_small_hotel_list = json_decode($rts,true);
+    $tmp_hotel_arr = array();
+    foreach($vm_small_hotel_list as $key=>$v){
+        $tmp_hotel_arr[]= $v['hotel_id'];
+    }
+    return $tmp_hotel_arr;
 }
 ?>

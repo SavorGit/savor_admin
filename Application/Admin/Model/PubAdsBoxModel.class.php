@@ -159,7 +159,20 @@ class PubAdsBoxModel extends BaseModel
 		return $list;
 	}
 
-
+    public function getHotelArrByPubAdsId($pub_ads_id){
+        $fields = 'hotel.id hotel_id';
+        $where = array('pads.pub_ads_id'=>$pub_ads_id);
+        $group = ' hotel.id';
+        $data = $this->alias('pads')
+                     ->join('savor_box box ON pads.`box_id`=box.`id`','left')
+                     ->join('savor_room room ON box.`room_id`=room.`id`','left')
+                     ->join('savor_hotel hotel ON room.`hotel_id`=hotel.`id`','left')
+                     ->field($fields)
+                     ->where($where)
+                     ->group($group)
+                     ->select();
+        return $data;
+    }
 
 
 
