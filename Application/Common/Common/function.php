@@ -26,7 +26,7 @@ function get_host_name(){
  * 发送主题消息
  * @param $message消息内容 酒楼ID或者array('酒楼ID')
  * @param $type 1.酒楼的基础信息、2.包间的基础信息、3.机顶盒的基础信息、4.电视的基础信息、5.音量开关、6.节目单、
- * 7.宣传片、8.A类广告、9.B类广告、10.C类广告、11.点播、12.推荐菜 、13.机顶盒apk
+ * 7.宣传片、8.A类广告、9.B类广告、10.C类广告、11.点播、12.推荐菜 、13.机顶盒apk、14.loading图、15.酒楼logo图
  * @return Ambigous <boolean, mixed>
  */
 function sendTopicMessage($message,$type){
@@ -34,7 +34,8 @@ function sendTopicMessage($message,$type){
         return false;
     }
     $all_type = array('1'=>'hotel','2'=>'room','3'=>'box','4'=>'tv','5'=>'volume','6'=>'programmenu',
-        '7'=>'promotionalvideo','8'=>'adsa','9'=>'adsb','10'=>'adsc','11'=>'demand','12'=>'recommendation','13'=>'box_apk');
+        '7'=>'promotionalvideo','8'=>'adsa','9'=>'adsb','10'=>'adsc','11'=>'demand','12'=>'recommendation',
+        '13'=>'apk','14'=>'loading','15'=>'logo');
     $accessId = C('OSS_ACCESS_ID');
     $accessKey= C('OSS_ACCESS_KEY');
     $endPoint = C('QUEUE_ENDPOINT');
@@ -48,7 +49,7 @@ function sendTopicMessage($message,$type){
     }
     $now_message = array();
     foreach ($message as $v){
-        $now_message[] = array('hotel_id'=>$v,'serial_num'=>$serial_num);
+        $now_message[] = array('hotel_id'=>$v,'serial_num'=>"$serial_num");
     }
     $messageBody = json_encode($now_message);
     $messageTag = $all_type[$type];
