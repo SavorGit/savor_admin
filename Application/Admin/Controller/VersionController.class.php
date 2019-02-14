@@ -681,7 +681,14 @@ class VersionController extends BaseController{
 	            $message = '已开启';
 	            break;
 	        case 20:
+	            $info = $upgradeModel->field('hotel_id')->where($where)->find();
 	            $upgradeModel->where($where)->delete();
+	            if($info['hotel_id']){
+	                
+	            }else {
+	                $rest = $mbperModel->execute($sql
+	            }
+	            
 	            $message = '已删除';
 	            break;
 	        default:

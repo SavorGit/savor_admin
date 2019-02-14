@@ -1411,25 +1411,12 @@ class HotelController extends BaseController {
 		}
 		$save['hotel_id'] = I('post.hotel_id');
 		$save['is_sapp_qrcode'] = I('is_sapp_qrcode');
-		$redis = SavorRedis::getInstance();
-		$redis->select(12);
+		
 		$cache_key = C('PROGRAM_ADV_CACHE_PRE').$save['hotel_id'];
 		//获取虚拟小平台配置的酒楼id
-		$vm_small_api_url = C('GET_V_SMALL_HOTEL_LIST');
-		$post_string = array('req_id'=>getMillisecond());
-		$headers = array(
-		    "Content-Type:application/x-www-form-urlencoded",
-		    "X-API-VERSION:1.0.0"
-		);
-		$post_string = http_build_query($post_string);
-		$vm_result = curl_post($vm_small_api_url, $post_string, $headers);
-		
-		$vm_result = json_decode($vm_result,true);
-		if($vm_result && $vm_result['code']==10000){
-		    $vm_small_hotel_list = $vm_result['result'];
-		}else {
-		    $vm_small_hotel_list = array();
-		}
+		$tmp_hotel_arr = getVsmallHotelList();
+		$redis = SavorRedis::getInstance();
+		$redis->select(12);
 		if($ads_id){
 		    $maps = array();
 		    $maps['name'] = $save['name'];
@@ -1453,7 +1440,7 @@ class HotelController extends BaseController {
 			
 			if($res_save){
 			    //如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
-			    if(in_array($save['hotel_id'], $vm_small_hotel_list)){
+			    if(in_array($save['hotel_id'], $tmp_hotel_arr)){
 			        sendTopicMessage($save['hotel_id'], 7);
 			    }
 			    
@@ -1495,7 +1482,7 @@ class HotelController extends BaseController {
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
 			    //如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
-			    if(in_array($save['hotel_id'], $vm_small_hotel_list)){
+			    if(in_array($save['hotel_id'], $tmp_hotel_arr)){
 			        sendTopicMessage($save['hotel_id'], 7);
 			    }
 			    $redis->remove($cache_key);
