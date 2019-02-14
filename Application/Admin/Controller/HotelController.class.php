@@ -750,12 +750,19 @@ class HotelController extends BaseController {
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
+            $tmp_hotel = $hotelModel->getOne($hotel_id);
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
-			if( $bool ) {
+			if($bool){
 				$res = $hotelModel->getOne($hotel_id);
 				$save['create_time'] = $res['create_time'];
 				$hotelModel->saveStRedis($save, $hotel_id);
+                if(!empty($save['media_id'])){
+                    if($tmp_hotel['media_id']!=$save['media_id']){
+                        sendTopicMessage($hotel_id,14);
+                    }
+                }
+                sendTopicMessage($hotel_id,1);
 			} else {
 				$this->error('操作失败1');
 			}
@@ -765,6 +772,10 @@ class HotelController extends BaseController {
 			if($bool){
 				$hotel_id = $hotelModel->getLastInsID();
 				$hotelModel->saveStRedis($save, $hotel_id);
+                sendTopicMessage($hotel_id,1);
+                if(!empty($save['media_id'])){
+                    sendTopicMessage($hotel_id,14);
+                }
 			} else {
 				$this->error('操作失败2');
 			}
@@ -773,19 +784,19 @@ class HotelController extends BaseController {
 		$field = 'mac_addr,server_location';
 		$where = array('hotel_id'=>$hotel_id);
 		$res = $hextModel->getData($field, $where);
-		if ( $res ) {
+		if($res){
 			$res = $res[0];
 			ksort($data);
 			ksort($res);
 			$hextModel->saveData($data,$where);
-		}else {
+		}else{
 		    $data['hotel_id'] = $hotel_id;
 			$bool = $hextModel->addData($data);
 		}
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			$navtp				 = I('post.navtp','');
+			$navtp = I('post.navtp','');
 			if($navtp == 34) {
 				$this->output('操作成功!', 'hotel/detail');
 			} else {
@@ -798,9 +809,6 @@ class HotelController extends BaseController {
 		}
 
 	}
-
-
-
 
 	/**
 	 * 包间列表
@@ -881,10 +889,10 @@ class HotelController extends BaseController {
 	/**
 	 * 保存或者更新酒店信息
 	 */
-		public function doAddRoom(){
-		$id                  = I('post.id','0');
-		$save                = [];
-		$hotel_id    = I('post.hotel_id','','intval');
+	public function doAddRoom(){
+	    $id = I('post.id','0');
+		$save = array();
+		$hotel_id = I('post.hotel_id','','intval');
 		$save['hotel_id'] = $hotel_id;
 		$save['name']        = I('post.name','','trim');
 		$save['type']        = I('post.type','','intval');
@@ -896,7 +904,7 @@ class HotelController extends BaseController {
 		$RoomModel = new \Admin\Model\RoomModel();
 		if(!$id){
 			//判断包间名称
-			$temp = $RoomModel->getRow('name',['hotel_id'=>$hotel_id,'name'=>$save['name']]);
+			$temp = $RoomModel->getRow('name',array('hotel_id'=>$hotel_id,'name'=>$save['name']));
 			if($temp){
 				$this->error('包间名称已经存在');
 			}
@@ -904,12 +912,14 @@ class HotelController extends BaseController {
 		$bool = $RoomModel->saveData($save, $id);
 		if($id){
 			if($bool){
+			    sendTopicMessage($hotel_id,2);
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
 		}else{
 			if($bool){
+                sendTopicMessage($hotel_id,2);
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
@@ -919,7 +929,7 @@ class HotelController extends BaseController {
 
 
 	/*
-	 * 批量新增牌位
+	 * 批量新增版位
 	 */
 	public function batchposition() {
 		$r_arr = array(
@@ -950,16 +960,13 @@ class HotelController extends BaseController {
 
 		$hotel_id= I('get.hotel_id',0);
 		$hotel_name= I('get.name','');
-		if ($hotel_id) {
-
+		if($hotel_id){
 			$this->assign('hotelname',$hotel_name);
 			$this->assign('hotelid',$hotel_id);
 			$this->assign('rtype_list',$r_arr);
 			$this->assign('bar',$b_arr);
 			$this->assign('tvlist',$tv_arr);
 			$this->assign('tvstate',$tv_stet);
-		} else {
-
 		}
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
@@ -968,10 +975,9 @@ class HotelController extends BaseController {
 
 
 	/*
-	 * 批量新增牌位
+	 * 批量新增版位
 	 */
 	public function doAddBatch() {
-
 		$r_arr = array(
 			1=>'包间',
 			2=>'大厅',
@@ -980,37 +986,28 @@ class HotelController extends BaseController {
 		$hotelid = $_POST['hotelid'];
 		$h_str = $_POST['hval'];
 		$bat_arr = explode('???',$h_str);
-		//var_dump($bat_arr);
 		$len = count($bat_arr);
 		if( empty($bat_arr[0]) ){
 			$this->error('创建不可为空');
 		}
 		$model = new Model();
-		//print_r($bat_arr);
 		foreach ($bat_arr as $k=>$v){
 			$v = json_decode($v,true);
-			//var_export($v);
 			foreach($v as $ks=>$vs){
-				if ( empty($vs) && ($vs!== '0') ) {
+				if (empty($vs) && ($vs!== '0')){
 					$this->error('所有元素不可为空');
 				}else{
 					if($ks == 'bao_mac'){
 						if(strlen($vs)!=12){
 							$this->error('MAC地址提示12位数字与字母组合');
 						}else{
-
-
 							$preg = '/^[0-9A-Z]+$/';
 							$prg = preg_match($preg,$vs)?true:false;
 							if(!$prg){
-
 								$this->error('请输入正确12位的mac地址， 只允许输入数字或字母');
 							}
-
-
 						}
 					}
-
 				}
 			}
 		}
@@ -1065,12 +1062,10 @@ class HotelController extends BaseController {
 					}
 				}
 			}
-
 		}
 
 		//进行数据库判断
 		foreach ($dahotels as $k=>$v) {
-
 			//判断机顶盒名称是否存在且mac地址不一样
 			$wherec = " b.name='" . $v['box_name'] ."' and h.id = ".$hotelid;
 			$isHavebox = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.mac as mac ', $wherec);
@@ -1082,7 +1077,6 @@ class HotelController extends BaseController {
 			//判断是否有该机顶盒mac地址
 			$where = " b.mac='" . $v['bao_mac'] . "' and b.flag=0 ";
 			$isHaveMac = $boxModel->isHaveMac(' h.name as hotel_name,h.id as hotel_id,r.name as room_name,r.type as rtp,b.name as bna,b.id as id,b.mac as mac ', $where);
-
 			if (!empty($isHaveMac)) {
 				foreach ($isHaveMac as $ks=>$vs) {
 					$hp[$ks] = $vs['hotel_id'].','.$vs['room_name'].','.$vs['rtp'].','.$vs['bna'];
@@ -1098,8 +1092,7 @@ class HotelController extends BaseController {
 					//3个值相同
 					$rttp = $isHaveMac[0]['rtp'];
 					if (in_array($hpps, $hps)){
-							$str = $isHaveMac[0]['mac'].'机顶盒在本酒店已经存在!<br/>'.'已存在信息为:<br/>包间名称:'.$isHaveMac[0]['room_name'].'<br/>包间类型:'.$r_arr[$rttp].' <br/>机顶盒名称:'.$isHaveMac[0]['bna'];
-
+					    $str = $isHaveMac[0]['mac'].'机顶盒在本酒店已经存在!<br/>'.'已存在信息为:<br/>包间名称:'.$isHaveMac[0]['room_name'].'<br/>包间类型:'.$r_arr[$rttp].' <br/>机顶盒名称:'.$isHaveMac[0]['bna'];
 					}else{
 						$str = 'Mac地址对应机顶盒'.$v['box_name'].'存在于' . $isHaveMac[0]['hotel_name'] . '酒楼' . $isHaveMac[0]['room_name'] . '包间';
 					}
@@ -1111,7 +1104,6 @@ class HotelController extends BaseController {
 		$bool = false;
 		//获取所有包间id
 		$room_bai = array();
-		//var_dump($bat_arr);
 		//获取酒楼下的广告机数量
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$h_adv_num = 0;
@@ -1128,27 +1120,25 @@ class HotelController extends BaseController {
 					$bac_hotel_rmac[$ktv] = $vtv['bmacc'];
 				}
 
-
 				if(in_array($v['bao_mac'],$bac_hotel_rmac)){
 					//只加电视
 					$mac_key = array_search($v['bao_mac'], $bac_hotel_rmac);
 					//找到机顶盒名称
 					$ma_name = $isHaveTv[$mac_key]['bna'];
-						$dap = array();
-						$dap['box_id'] = $isHaveTv[$mac_key]['id'];
-						$dap['tv_brand'] = $v['tv_brand'];
-						$dap['tv_size'] = $v['tv_size'];
-						$dap['tv_source'] = $v['tv_source'];
-						$dap['state'] = $v['tv_state'];
-						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
-						if($bool){
-							$ttid = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
-						} else {
-							$model->rollback();
-							$this->error('失败请重新操作添加');
-						}
-
-
+                    $dap = array();
+                    $dap['box_id'] = $isHaveTv[$mac_key]['id'];
+                    $dap['tv_brand'] = $v['tv_brand'];
+                    $dap['tv_size'] = $v['tv_size'];
+                    $dap['tv_source'] = $v['tv_source'];
+                    $dap['state'] = $v['tv_state'];
+                    $bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
+                    if($bool){
+                        $ttid = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
+                        sendTopicMessage($hotelid,4);
+                    } else {
+                        $model->rollback();
+                        $this->error('失败请重新操作添加');
+                    }
 					$room_bai[] = array('room_id'=>$isHaveTv[$mac_key]['rid'],
 						'box_id'=>$isHaveTv[$mac_key]['id'],'tv_id'=>$ttid);
 				} else {
@@ -1167,6 +1157,7 @@ class HotelController extends BaseController {
 					$dat['is_sapp_forscreen'] = 1;
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
+                        sendTopicMessage($hotelid,3);
 						$dap = array();
 						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
 						$dap['tv_brand'] = $v['tv_brand'];
@@ -1175,6 +1166,7 @@ class HotelController extends BaseController {
 						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if ($bool) {
+                            sendTopicMessage($hotelid,4);
 							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
 						} else {
 							$model->rollback();
@@ -1203,6 +1195,7 @@ class HotelController extends BaseController {
 				$bool = $model->table(C('DB_PREFIX').'room')
 					->add($save);
 				if($bool){
+                    sendTopicMessage($hotelid,2);
 					$dat = array();
 					$dat['room_id'] = $model->table(C('DB_PREFIX').'room')->getLastInsID();
 					$dat['name'] = $v['box_name'];
@@ -1217,6 +1210,7 @@ class HotelController extends BaseController {
 					$dat['is_sapp_forscreen'] = 1;
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
+                        sendTopicMessage($hotelid,3);
 						$dap = array();
 						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
 						$dap['tv_brand'] = $v['tv_brand'];
@@ -1225,6 +1219,7 @@ class HotelController extends BaseController {
 						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if ($bool) {
+                            sendTopicMessage($hotelid,4);
 							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
 						} else {
 							$model->rollback();
@@ -1291,7 +1286,6 @@ class HotelController extends BaseController {
 			    $cache_key = C('SMALL_TV_LIST').$hotelid;
 			    $redis->remove($cache_key);
 			}
-			
 			$this->output($sps,'hotel/manager');
 		}else{
 			$this->error('失败请重新操作');
@@ -1352,14 +1346,6 @@ class HotelController extends BaseController {
 		$this->display('pubmanager');
 	}
 
-
-
-
-
-
-
-
-
 	/*
 	 * 显示图片
 	 */
@@ -1369,7 +1355,6 @@ class HotelController extends BaseController {
 		$this->assign('shw', $pic_url);
 		$this->display('showpic');
 	}
-
 
 	/*
 	 * 添加宣传片
@@ -1401,7 +1386,6 @@ class HotelController extends BaseController {
 	 * 对宣传片添加或者修改
 	 */
 	public function doAddPub(){
-		//$this->output('操作成功!', 'hotel/pubmanager');
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$adsModel = new \Admin\Model\AdsModel();
 		$mediaModel = new \Admin\Model\MediaModel();
@@ -1537,8 +1521,6 @@ class HotelController extends BaseController {
 	 * 修改状态
 	 */
 	public function operateStatus(){
-
-
 		$adsid = I('request.adsid','0','intval');
 		$adsModel = new \Admin\Model\AdsModel();
 		$message = '';
@@ -1604,8 +1586,7 @@ class HotelController extends BaseController {
 	public function changeCustomState(){
 		$cid = I('request.cid');
 		$save = array();
-		$save['is_open_customer
-'] = I('request.cus_state');
+		$save['is_open_customer'] = I('request.cus_state');
 
 		$hextModel = new \Admin\Model\HotelExtModel();
 		$res_save = $hextModel->where('hotel_id='.$cid)->save($save);
@@ -1693,9 +1674,7 @@ class HotelController extends BaseController {
     public function addFoodstyle(){
         $m_food_style = new \Admin\Model\FoodStyleModel();
         if(IS_POST){
-            
             $name = I('name','','trim');
-            
             $data['name'] = $name;
             $data['create_time'] = date('Y-m-d H:i:s');
             $data['status']  =1; 
@@ -1706,7 +1685,6 @@ class HotelController extends BaseController {
                 $this->error('修改失败');
             }
         }else {
-            
             $this->display('addfoodstyle');
         }
     }
