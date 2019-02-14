@@ -167,17 +167,25 @@ class SysconfigController extends BaseController {
         $this->display('addinfo');
     }
     public function doAddLoadingImg(){
+        $media_id = I('post.media_id',0,'intval');
         $m_sys_config = new \Admin\Model\SysConfigModel();
         //视频投屏loading图
         $loading_info = $m_sys_config->getOne('system_loading_image');
         $data = array();
+        $is_sendtopic = 0;
         if(empty($loading_info)){
             $data['config_key'] = 'system_loading_image'; 
-            $data['config_value'] = I('post.media_id',0,'intval');
+            $data['config_value'] = $media_id;
             $rt = $m_sys_config->add($data);
+            if(!empty($media_id)){
+                $is_sendtopic = 1;
+            }
         }else {
-            $data['config_value'] = I('post.media_id',0,'intval');
+            $data['config_value'] = $media_id;
             $rt = $m_sys_config->editData($data, 'system_loading_image');
+            if(!empty($media_id) && $media_id!=$loading_info['']){
+                $is_sendtopic = 1;
+            }
         }
         if($rt){
             $sys_list = $m_sys_config->getList(array('status'=>1));
@@ -185,6 +193,10 @@ class SysconfigController extends BaseController {
             $redis->select(12);
             $cache_key = C('SYSTEM_CONFIG');
             $redis->set($cache_key, json_encode($sys_list));
+            if($is_sendtopic){
+                $hotel_ids = getVsmallHotelList();
+                sendTopicMessage($hotel_ids,14);
+            }
             $this->output('操作成功', 'Sysconfig/configData');
         }else {
             $this->error('操作失败');
@@ -201,6 +213,10 @@ class SysconfigController extends BaseController {
             $redis->select(12);
             $cache_key = C('SYSTEM_CONFIG');
             $redis->set($cache_key, json_encode($sys_list));
+            
+            $hotel_ids = getVsmallHotelList();
+            sendTopicMessage($hotel_ids,14);
+
             $this->output('删除成功', 'Sysconfig/configData',2);
         }else {
             $this->error('删除失败');
