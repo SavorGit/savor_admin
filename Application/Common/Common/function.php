@@ -34,7 +34,7 @@ function sendTopicMessage($message,$type){
         return false;
     }
     $all_type = array('1'=>'hotel','2'=>'room','3'=>'box','4'=>'tv','5'=>'volume','6'=>'programmenu',
-        '7'=>'promotionalvideo','8'=>'adsa','9'=>'adsb','10'=>'adsc','11'=>'demand','12'=>'recommendation');
+        '7'=>'promotionalvideo','8'=>'adsa','9'=>'adsb','10'=>'adsc','11'=>'demand','12'=>'recommendation','13'=>'box_apk');
     $accessId = C('OSS_ACCESS_ID');
     $accessKey= C('OSS_ACCESS_KEY');
     $endPoint = C('QUEUE_ENDPOINT');
