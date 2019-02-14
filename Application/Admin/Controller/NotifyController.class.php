@@ -19,7 +19,8 @@ class NotifyController extends Controller {
         if(!empty($content)){
             $res = json_decode($content,true);
             if(!empty($res['Message'])){
-                $all_message = explode(',',$res['Message']);
+                $message = base64_decode($res['Message']);
+                $all_message = explode(',',$message);
                 $hotel_list = array();
                 foreach ($all_message as $v){
                     $hotel_list[] = array('hotel_id'=>$v);

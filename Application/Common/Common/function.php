@@ -51,7 +51,7 @@ function sendTopicMessage($message,$type){
     foreach ($message as $v){
         $now_message[] = array('hotel_id'=>$v,'serial_num'=>"$serial_num");
     }
-    $messageBody = json_encode($now_message);
+    $messageBody = base64_encode(json_encode($now_message));
     $messageTag = $all_type[$type];
     $res = $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
     return $res;
