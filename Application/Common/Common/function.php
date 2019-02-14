@@ -26,7 +26,7 @@ function get_host_name(){
  * 发送主题消息
  * @param $message消息内容 酒楼ID或者array('酒楼ID')
  * @param $type 1.酒楼的基础信息、2.包间的基础信息、3.机顶盒的基础信息、4.电视的基础信息、5.音量开关、6.节目单、
- * 7.宣传片、8.A类广告、9.B类广告、10.C类广告、11.点播、12.推荐菜
+ * 7.宣传片、8.A类广告、9.B类广告、10.C类广告、11.点播、12.推荐菜 、13.机顶盒apk
  * @return Ambigous <boolean, mixed>
  */
 function sendTopicMessage($message,$type){

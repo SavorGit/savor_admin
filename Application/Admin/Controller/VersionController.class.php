@@ -683,10 +683,20 @@ class VersionController extends BaseController{
 	        case 20:
 	            $info = $upgradeModel->field('hotel_id')->where($where)->find();
 	            $upgradeModel->where($where)->delete();
+	            $tmp_hotel_arr = getVsmallHotelList();
 	            if($info['hotel_id']){
+	                $select_hotel_arr = explode(',', $info['hotel_id']);
+	                foreach($select_hotel_arr as $v){
+	                    if(in_array($v, $tmp_hotel_arr)){
+	                        sendTopicMessage($v, 13);
+	                    }
+	                }
 	                
 	            }else {
-	                $rest = $mbperModel->execute($sql
+	                
+	                foreach($tmp_hotel_arr as $k=>$v){
+	                    sendTopicMessage($v, 13);
+	                }
 	            }
 	            
 	            $message = '已删除';
