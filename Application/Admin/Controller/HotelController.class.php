@@ -749,20 +749,22 @@ class HotelController extends BaseController {
 		$data['hotel_cover_media_id'] = I('post.hotel_cover_media_id',0,'intval');
 		$tranDb = new Model();
 		$tranDb->startTrans();
+        $is_sendtopic = 0;
+        $is_sendtopiclogo = 0;
 		if ($hotel_id) {
             $tmp_hotel = $hotelModel->getOne($hotel_id);
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
 			if($bool){
+                $is_sendtopic = 1;
 				$res = $hotelModel->getOne($hotel_id);
 				$save['create_time'] = $res['create_time'];
 				$hotelModel->saveStRedis($save, $hotel_id);
                 if(!empty($save['media_id'])){
                     if($tmp_hotel['media_id']!=$save['media_id']){
-                        sendTopicMessage($hotel_id,14);
+                        $is_sendtopiclogo = 1;
                     }
                 }
-                sendTopicMessage($hotel_id,1);
 			} else {
 				$this->error('操作失败1');
 			}
@@ -770,11 +772,11 @@ class HotelController extends BaseController {
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$bool = $hotelModel->addData($save);
 			if($bool){
+                $is_sendtopic = 1;
 				$hotel_id = $hotelModel->getLastInsID();
 				$hotelModel->saveStRedis($save, $hotel_id);
-                sendTopicMessage($hotel_id,1);
                 if(!empty($save['media_id'])){
-                    sendTopicMessage($hotel_id,14);
+                    $is_sendtopiclogo = 1;
                 }
 			} else {
 				$this->error('操作失败2');
@@ -796,6 +798,18 @@ class HotelController extends BaseController {
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
+			if($is_sendtopic){
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotel_id,$all_hotelids)){
+                    sendTopicMessage($hotel_id,1);
+                }
+            }
+            if($is_sendtopiclogo){
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotel_id,$all_hotelids)){
+                    sendTopicMessage($hotel_id,15);
+                }
+            }
 			$navtp = I('post.navtp','');
 			if($navtp == 34) {
 				$this->output('操作成功!', 'hotel/detail');
@@ -887,7 +901,7 @@ class HotelController extends BaseController {
 	}
 
 	/**
-	 * 保存或者更新酒店信息
+	 * 保存或者更新包间信息
 	 */
 	public function doAddRoom(){
 	    $id = I('post.id','0');
@@ -912,14 +926,20 @@ class HotelController extends BaseController {
 		$bool = $RoomModel->saveData($save, $id);
 		if($id){
 			if($bool){
-			    sendTopicMessage($hotel_id,2);
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotel_id,$all_hotelids)){
+                    sendTopicMessage($hotel_id,2);
+                }
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
 		}else{
 			if($bool){
-                sendTopicMessage($hotel_id,2);
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotel_id,$all_hotelids)){
+                    sendTopicMessage($hotel_id,2);
+                }
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');

@@ -243,7 +243,12 @@ class DeviceController extends BaseController{
 			    $redis->select(12);
 			    $cache_key = C('SMALL_TV_LIST').$hotel_info[0]['hotel_id'];
 			    $redis->remove($cache_key);
-                sendTopicMessage($hotel_info[0]['hotel_id'],4);
+
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotel_info[0]['hotel_id'],$all_hotelids)){
+                    sendTopicMessage($hotel_info[0]['hotel_id'],4);
+                }
+
 				$this->output('更新成功!', 'device/tv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
@@ -253,7 +258,10 @@ class DeviceController extends BaseController{
 			    $redis->select(12);
 			    $cache_key = C('SMALL_TV_LIST').$hotel_info[0]['hotel_id'];
 			    $redis->remove($cache_key);
-                sendTopicMessage($hotel_info[0]['hotel_id'],4);
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotel_info[0]['hotel_id'],$all_hotelids)){
+                    sendTopicMessage($hotel_info[0]['hotel_id'],4);
+                }
 				$this->output('添加成功!', 'device/tv');
 			}else{
 				 $this->output('添加失败!', 'device/doAddTv');
@@ -354,7 +362,10 @@ class DeviceController extends BaseController{
 				$redis->select(12);
 				$cache_key = C('SMALL_BOX_LIST').$hotelid;
 				$redis->remove($cache_key);
-                sendTopicMessage($hotelid,3);
+                $all_hotelids = getVsmallHotelList();
+                if(in_array($hotelid,$all_hotelids)){
+                    sendTopicMessage($hotelid,3);
+                }
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
@@ -362,7 +373,7 @@ class DeviceController extends BaseController{
 		}else{
 			$save['update_time'] = date('Y-m-d H:i:s');
 			$save['create_time'] = date('Y-m-d H:i:s');
-
+            $is_sendtopic = 0;
 			if($boxModel->addData($save)){
 				if($save['flag']  != 1 && $save['adv_mach'] == 1 ) {
 					//酒楼机顶盒数+1
@@ -373,11 +384,17 @@ class DeviceController extends BaseController{
 					$hotelid = $h_box_info[0]['hoid'];
 					$hextModel = new \Admin\Model\HotelExtModel();
 					$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', 1);
-                    sendTopicMessage($hotelid,3);
+                    $is_sendtopic = 1;
 				}
 				$redis->select(12);
 				$cache_key = C('SMALL_BOX_LIST').$hotelid;
 				$redis->remove($cache_key);
+                if($is_sendtopic){
+                    $all_hotelids = getVsmallHotelList();
+                    if(in_array($hotelid,$all_hotelids)){
+                        sendTopicMessage($hotelid,3);
+                    }
+                }
 				$this->output('添加成功!', 'hotel/room');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');
