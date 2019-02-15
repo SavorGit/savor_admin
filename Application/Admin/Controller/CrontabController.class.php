@@ -2603,33 +2603,66 @@ class CrontabController extends Controller
             $data = $where = $map =  array();
             $keys_arr = explode(':', $k);
             $info = $m_box->isHaveMac($field, "b.mac='".$keys_arr[0]."' and b.state=1 and b.flag=0 and h.flag=0 and h.state=1");
-	    if(!empty($info)){
+	        if(!empty($info)){
                 $info = $info[0];
                 $data['hotel_id'] = $info['hotel_id'];
                 $data['room_id']  = $info['room_id'];
                 $data['box_id']   = $info['box_id'];
                 $data['box_mac']  = $keys_arr[0];
                 $data['play_date']= date('Ymd',intval($keys_arr[1]/1000));
-                $data['media_id'] = $redis->get($k);
                 
-                $map['box_mac'] = $keys_arr[0];
-                $map['media_id']= $data['media_id'];
-                $map['play_date'] = $data['play_date'];
-                //判断该机顶盒当前天是否播过此广告
+                $cache_data = $redis->get($k);
+                $media_id   = $cache_data['media_id'];
                 
-                $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
-                $nums = $m_baidu_poly_play_record->countRows($map);
-		if(empty($nums)){//没有播放记录
-                    $data['play_times'] = 1;
-                    $ret = $m_baidu_poly_play_record->addInfo($data,1);
-		}else {//已有播放记录 更新  (播放次数+1)
-                    $update_time = date('Y-m-d H:i:s',intval($keys_arr[1]/1000));
-		    $sql_d = "  `play_times`= `play_times`+1,`update_time`=' ".$update_time."'";
-                    $where = " 1 and  box_mac='".$map['box_mac']."' and media_id=".$map['media_id']." and play_date=".$map['play_date'];
-                    $ret = $m_baidu_poly_play_record->modifyInfo($sql_d,$where);
-		}
+                if($media_id>0){
+                    $data['media_id']  = $media_id;
+                    $data['tpmedia_id']= $cache_data['tpmedia_id'];
+                    $map['box_mac'] = $keys_arr[0];
+                    $map['media_id']= $data['media_id'];
+                    $map['play_date'] = $data['play_date'];
+                    //判断该机顶盒当前天是否播过此广告
+                    
+                    $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
+                    $nums = $m_baidu_poly_play_record->countRows($map);
+                    if(empty($nums)){//没有播放记录
+                        $data['play_times'] = 1;
+                        $ret = $m_baidu_poly_play_record->addInfo($data,1);
+                    }else {//已有播放记录 更新  (播放次数+1)
+                        $update_time = date('Y-m-d H:i:s',intval($keys_arr[1]/1000));
+                        $sql_d = "  `play_times`= `play_times`+1,`update_time`=' ".$update_time."'";
+                        $where = " 1 and  box_mac='".$map['box_mac']."' and media_id=".$map['media_id']." and play_date=".$map['play_date'];
+                        $ret = $m_baidu_poly_play_record->modifyInfo($sql_d,$where);
+                    }
+                }else {
+                    $cache_data_arr = json_decode($cache_data,true);
+                    $data['media_id'] = $cache_data_arr['media_id'];
+                    $data['media_name'] = $cache_data_arr['media_name'];
+                    $data['media_md5']  = $cache_data_arr['media_md5'];
+                    $data['tpmedia_id'] = $cache_data_arr['tpmedia_id'];
+                    
+                    $map['box_mac'] = $keys_arr[0];
+                    $map['media_md5']= $data['media_md5'];
+                    $map['play_date'] = $data['play_date'];
+                    //判断该机顶盒当前天是否播过此广告
+                    
+                    $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
+                    $nums = $m_baidu_poly_play_record->countRows($map);
+                    if(empty($nums)){//没有播放记录
+                        $data['play_times'] = 1;
+                        $ret = $m_baidu_poly_play_record->addInfo($data,1);
+                    }else {//已有播放记录 更新  (播放次数+1)
+                        $update_time = date('Y-m-d H:i:s',intval($keys_arr[1]/1000));
+                        $sql_d = "  `play_times`= `play_times`+1,`update_time`=' ".$update_time."'";
+                        $where = " 1 and  box_mac='".$map['box_mac']."' and media_md5='".$map['media_md5']."' and play_date=".$map['play_date'];
+                        $ret = $m_baidu_poly_play_record->modifyInfo($sql_d,$where);
+                    }
+                }
+                
+                
+                
+                
             }
-             $redis->remove($k); //删除缓存
+            $redis->remove($k); //删除缓存
         }
         echo "OK";
     }
