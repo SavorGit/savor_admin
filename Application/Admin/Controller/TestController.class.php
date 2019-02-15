@@ -15,6 +15,7 @@ use Common\Lib\AliyunMsn;
 class TestController extends Controller {
     
     public function testMsn(){
+        exit();
         $accessId = 'LTAITjXOpRHKflOX';
         $accessKey='Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt';
         $endPoint = 'https://1379506082945137.mns.cn-beijing.aliyuncs.com';
