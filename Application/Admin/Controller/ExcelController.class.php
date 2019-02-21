@@ -97,6 +97,11 @@ class ExcelController extends Controller
              $tmpname = '45天内有更新的酒楼宣传片';
          }else if($filename == 'smallapp_forsacreen_box'){
              $tmpname = '小程序包间投屏统计';
+         }else if($filename == 'box_err_elec'){
+         
+             $tmpname = "全国异常机顶盒电源情况";
+         }else if($filename=='exportNetBox'){
+             $tmpname =  "全国网络机顶盒互动数据统计";
          }
 
 
@@ -4664,6 +4669,223 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         
         );
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function qgboxdy(){
+        $start_time = '2019-02-01 00:00:00';
+        $end_time   = '2019-02-17 23:59:59';
+        $sql = "select box.mac box_mac,box.id box_id,area.region_name,hotel.name hotel_name,hotel.addr,
+                room.type room_type,box.name box_name 
+                from savor_box box 
+                left join savor_room room on box.room_id=room.id
+                left join savor_hotel hotel on room.hotel_id = hotel.id
+                left join savor_area_info area on hotel.area_id = area.id
+                where box.state = 1 and box.flag=0 and hotel.state = 1 and hotel.flag = 0
+                and hotel.hotel_box_type in(2,3,6)";
+        $data = M()->query($sql);
+        $flag =0;
+        foreach($data as $key=>$v){
+            $nums_24 =0;
+            $nums_1_8=0;
+            $sql ="select box_id from savor_heart_all_log where  date=20190216 and mac='".$v['box_mac']."' and type=2
+                   and hour0>=1 and hour1>=1 and hour2>=1 and hour3>=1 and hour4>=1 
+                   and hour5>=1 and hour6>=1 and hour7>=1 and hour8>=1 and hour9>=1 and hour10>=1 
+                   and hour11>=1 and hour12>=1 and hour13>=1 and hour14>=1 and hour15>=1 
+                   and hour16>=1 and hour17>=1 and hour18>=1 and hour19>=1 and hour20>=1 
+                   and hour21>=1 and hour22>=1 and hour23>=1 ";
+            
+            $rt = M()->query($sql);
+            if(!empty($rt)){
+                $nums_24 = 1;
+            }else {
+                $sql ="select box_id from savor_heart_all_log where  date=20190217 and mac='".$v['box_mac']."' and type=2
+                   and hour0>=1 and hour1>=1 and hour2>=1 and hour3>=1 and hour4>=1 
+                   and hour5>=1 and hour6>=1 and hour7>=1 and hour8>=1 and hour9>=1 and hour10>=1 
+                   and hour11>=1 and hour12>=1 and hour13>=1 and hour14>=1 and hour15>=1 
+                   and hour16>=1 and hour17>=1 and hour18>=1 and hour19>=1 and hour20>=1 
+                   and hour21>=1 and hour22>=1 and hour23>=1 ";
+                $rt = M()->query($sql);
+                if(!empty($rt)){
+                    $nums_24 = 1;
+                }
+            }
+            
+            $sql =" select box_id from savor_heart_all_log where date=20190216 and mac='".$v['box_mac']."' and type=2
+                    and hour1>=1 and hour2>=1 and hour3>=1 and hour4>=1 and hour5>=1  
+                    and hour6>=1 and hour7>=1
+                    ";
+            $rt = M()->query($sql);
+            if(!empty($rt)){
+                $nums_1_8 = 1;
+            }else {
+                $sql =" select box_id from savor_heart_all_log where date=20190217 and mac='".$v['box_mac']."' and type=2
+                        and hour1>=1 and hour2>=1 and hour3>=1 and hour4>=1 and hour5>=1  
+                        and hour6>=1 and hour7>=1
+                        ";
+                $rt = M()->query($sql);
+                if(!empty($rt)){
+                    $nums_1_8 = 1;
+                }
+            }
+            
+            if(empty($nums_24) && empty($nums_1_8)){
+                unset($data[$key]);
+            }else {
+                if($v['room_type']==1){
+                    $v['room_type'] ='包间';
+                }else if($v['room_type']==2){
+                    $v['room_type'] ='大厅';
+                }else if($v['room_type']==3){
+                    $v['room_type'] ='等候区';
+                }
+                
+                $rts[$flag] = $v;
+                $rts[$flag]['nums_24'] = $nums_24;
+                $rts[$flag]['nums_1_8']= $nums_1_8;
+                $flag ++;
+            }
+                
+            
+        }
+        //print_r($rts);exit;
+        $xlsName = '全国异常电源机顶盒情况';
+        $filename = 'box_err_elec';
+        
+        $xlsCell = array(
+        
+            array('region_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('room_type','包间类型'),
+            array('box_name','机顶盒名称'),
+            array('box_mac','机顶盒mac'),
+            array('nums_24','24小时开机'),
+            array('nums_1_8','夜间开机'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $rts,$filename);
+        
+    }
+    //所有网络版位小程序相关
+    public function exportNetBox(){
+        $sql ="select area.region_name,hotel.id hotel_id,hotel.name hotel_name,box.name box_name,
+               ext.avg_expense, mac box_mac from savor_box box
+               left join savor_room room on box.room_id=room.id
+               left join savor_hotel hotel on room.hotel_id=hotel.id
+               left join savor_area_info area on hotel.area_id=area.id
+               left join savor_hotel_ext ext on ext.hotel_id=hotel.id
+               where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+               and hotel.hotel_box_type in(2,3,6) order by box.id asc limit 3300, 300";
+        $result = M()->query($sql);
+        $start_time = '2019-02-11 00:00:00';
+        $end_time   = '2019-02-17 23:59:59';
+        
+        $start_date = '2019-02-11';
+        $end_date   = '2019-02-17';
+        
+        $heart_start_date = '20190211';
+        $heart_end_date   = '20190217';
+        $dinner_arr = array(12,1,18,19,20);
+        foreach($result as $key=>$v){
+            //投图次数
+            $sql ="select count(id) as nums from savor_smallapp_forscreen_record
+                   where (action=4 or (action=2 and resource_type=1) or(action=8 and resource_type=1)) and box_mac='".$v['box_mac']."'
+                   and create_time>='".$start_time."' and create_time<='".$end_time."'";
+            $rt = M()->query($sql);
+            $result[$key]['pics'] = $rt[0]['nums'];
+            //投视频
+            $sql ="select count(id) as nums from savor_smallapp_forscreen_record
+                   where ( (action=2 and resource_type=2) or(action=8 and resource_type=2)) and box_mac='".$v['box_mac']."'
+                   and mobile_brand!='devtools' and create_time>='".$start_time."' and create_time<='".$end_time."'";
+            $rt = M()->query($sql);
+            $result[$key]['videos'] = $rt[0]['nums'];
+            //点播次数  节目+发现图片+发现视频+生日歌
+            $sql ="select count(id) as nums from savor_smallapp_forscreen_record
+                   where (action=5 or action=11 or action=12) and box_mac='".$v['box_mac']."'
+                   and create_time>='".$start_time."' and create_time<='".$end_time."'";
+            $rt = M()->query($sql);
+            $result[$key]['demand'] = $rt[0]['nums'];
+            
+            //游戏次数
+            $sql ="select count(id) as nums from savor_smallapp_game_interact
+                   where box_mac='".$v['box_mac']."' 
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and is_start=1";
+            $rt = M()->query($sql);
+            $result[$key]['games'] = $rt[0]['nums'];
+            
+            //网络高峰
+            $sql ="select max(max_down_speed) as max_down_speed from savor_smallapp_static_net 
+                   where hotel_id=".$v['hotel_id']." and static_date>='".$start_date."' 
+                   and static_date<='".$end_date."'";
+            $rt = M()->query($sql);
+            if($rt[0]['max_down_speed']>0) $result[$key]['max_down_speed'] = round($rt[0]['max_down_speed']/1048576,2);
+            else $result[$key]['max_down_speed'] = '';
+            //网络低峰
+            $sql ="select min(min_down_speed) as min_down_speed from savor_smallapp_static_net
+                   where hotel_id=".$v['hotel_id']." and static_date>='".$start_date."'
+                   and static_date<='".$end_date."' and min_down_speed>0";
+            $rt = M()->query($sql);
+            if($rt[0]['min_down_speed']>0) $result[$key]['min_down_speed'] = round($rt[0]['min_down_speed']/1048576,2);
+            else $result[$key]['min_down_speed'] = '';
+            
+            //网络均值
+            $sql ="select sum(avg_down_speed) as avg_down_speed from savor_smallapp_static_net
+                   where hotel_id=".$v['hotel_id']." and static_date>='".$start_date."'
+                   and static_date<='".$end_date."'";
+            $net_all = M()->query($sql);
+            
+            $sql ="select count(id) as net_nums from savor_smallapp_static_net
+                   where hotel_id=".$v['hotel_id']." and static_date>='".$start_date."'
+                   and static_date<='".$end_date."'";
+            $net_nums = M()->query($sql);
+            if(!empty($net_nums)){
+                $result[$key]['avg_down_speed'] = round(($net_all[0]['avg_down_speed'] / $net_nums[0]['net_nums'])/1048576,2 ,2); 
+            }else {
+                $result[$key]['avg_down_speed'] = '';
+                
+            }
+            //在线率
+            $all_log_time = 0;
+            
+            foreach($dinner_arr as $vv){
+                $sql ="select sum(hour".$vv.") as hours from savor_heart_all_log where
+                       date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."'";
+                $rt = M()->query($sql);
+                if(!empty($rt)){
+                    $all_log_time +=$rt[0]['hours'];
+                    
+                }
+            }
+            $sql ="select count(id) as nums from savor_heart_all_log where 
+                     date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."'";
+            $rt = M()->query($sql);
+            $log_days = $rt[0]['nums'];
+            if($all_log_time>0){
+                $result[$key]['online_rate'] = sprintf("%.2f",($all_log_time) / ($log_days*60)) ;
+            }else {
+                $result[$key]['online_rate'] = 0 ;
+            }
+            
+            
+        }
+        $xlsName = '全国网络机顶盒互动数据统计';
+        $filename = 'exportNetBox';
+        
+        $xlsCell = array(
+        
+            array('region_name','区域'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','mac'),
+            array('pics','投图次数'),
+            array('videos','投视频次数'),
+            array('demand','点播次数'),
+            array('games','游戏次数'),
+            array('avg_down_speed','网络均值'),
+            array('max_down_speed','网络高峰'),
+            array('min_down_speed','网络低峰'),
+            array('online_rate','在线率'),
+            array('avg_expense','人均消费'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
     private function getScore($data,$conf_arr){
         $score = 0;
