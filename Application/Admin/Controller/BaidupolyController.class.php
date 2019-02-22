@@ -47,7 +47,7 @@ class BaidupolyController extends BaseController{
 	     $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
 	     
 	     $fields = 'a.id,hotel.name hotel_name,room.name room_name, a.box_mac,media.name media_name,
-	                a.play_date,a.play_times,a.create_time , a.update_time';
+	                a.play_date,a.play_times,a.create_time , a.update_time,a.media_md5';
 	     
 	     $list = $m_baidu_poly_play_record->getList($fields,$where,$orders,$start,$size);
 	     
