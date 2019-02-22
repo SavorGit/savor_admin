@@ -375,14 +375,16 @@ class DeviceController extends BaseController{
 			$save['create_time'] = date('Y-m-d H:i:s');
             $is_sendtopic = 0;
 			if($boxModel->addData($save)){
+			    $box_id = $boxModel->getLastInsID();
 			    $is_sendtopic = 1;
+			    $wherea = '';
+			    $wherea = '1 and b.id='.$box_id;
+			    $h_box_info = $boxModel->isHaveMac('h.id hoid', $wherea);
+			    $hotelid = $h_box_info[0]['hoid'];
 				if($save['flag']  != 1 && $save['adv_mach'] == 1 ) {
 					//酒楼机顶盒数+1
-					$box_id = $boxModel->getLastInsID();
-					$wherea = '';
-					$wherea = '1 and b.id='.$box_id;
-					$h_box_info = $boxModel->isHaveMac('h.id hoid', $wherea);
-					$hotelid = $h_box_info[0]['hoid'];
+					
+					
 					$hextModel = new \Admin\Model\HotelExtModel();
 					$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', 1);
 				}
