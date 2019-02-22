@@ -375,6 +375,7 @@ class DeviceController extends BaseController{
 			$save['create_time'] = date('Y-m-d H:i:s');
             $is_sendtopic = 0;
 			if($boxModel->addData($save)){
+			    $is_sendtopic = 1;
 				if($save['flag']  != 1 && $save['adv_mach'] == 1 ) {
 					//酒楼机顶盒数+1
 					$box_id = $boxModel->getLastInsID();
@@ -384,7 +385,6 @@ class DeviceController extends BaseController{
 					$hotelid = $h_box_info[0]['hoid'];
 					$hextModel = new \Admin\Model\HotelExtModel();
 					$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', 1);
-                    $is_sendtopic = 1;
 				}
 				$redis->select(12);
 				$cache_key = C('SMALL_BOX_LIST').$hotelid;
