@@ -4766,6 +4766,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     }
     //所有网络版位小程序相关
     public function exportNetBox(){
+        
         $sql ="select area.region_name,hotel.id hotel_id,hotel.name hotel_name,box.name box_name,
                ext.avg_expense, mac box_mac from savor_box box
                left join savor_room room on box.room_id=room.id
@@ -4773,16 +4774,16 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                left join savor_area_info area on hotel.area_id=area.id
                left join savor_hotel_ext ext on ext.hotel_id=hotel.id
                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               and hotel.hotel_box_type in(2,3,6) order by box.id asc limit 3300, 300";
+               and hotel.hotel_box_type in(2,3,6) order by box.id asc limit 3300, 100";
         $result = M()->query($sql);
-        $start_time = '2019-02-11 00:00:00';
-        $end_time   = '2019-02-17 23:59:59';
+        $start_time = '2019-02-01 00:00:00';
+        $end_time   = '2019-02-24 23:59:59';
         
-        $start_date = '2019-02-11';
-        $end_date   = '2019-02-17';
+        $start_date = '2019-02-01';
+        $end_date   = '2019-02-24';
         
-        $heart_start_date = '20190211';
-        $heart_end_date   = '20190217';
+        $heart_start_date = '20190201';
+        $heart_end_date   = '20190224';
         $dinner_arr = array(12,1,18,19,20);
         foreach($result as $key=>$v){
             //投图次数
