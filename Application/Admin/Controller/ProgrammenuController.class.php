@@ -160,10 +160,7 @@ class ProgrammenuController extends BaseController
         $redis = new SavorRedis();
         $redis->select(12);
         foreach ($com_arr as $k => $v) {
-            if(in_array($k, $tmp_hotel_arr)){
-                sendTopicMessage($k, 6);  //通知虚拟小平台更新节目单数据
-                sendTopicMessage($k, 7);  //通知虚拟小平台更新节目单宣传片数据
-            }
+            
             $data[] = array(
                 'hotel_id' => $k,
                 'create_time' => $now_date,
@@ -172,10 +169,7 @@ class ProgrammenuController extends BaseController
                 'operator_id' => $userInfo['id'],
                 'menu_id' => $menuid
             );
-            $cache_key = C('PROGRAM_PRO_CACHE_PRE') . $k;
-            $redis->remove($cache_key);
-            $cache_key = C('PROGRAM_ADV_CACHE_PRE') . $k;
-            $redis->remove($cache_key);
+            
         }
         // 插入savor_menu_hotel
         $res = $menuHoModel->addAll($data);
@@ -197,6 +191,16 @@ class ProgrammenuController extends BaseController
             $res = $menuliModel->addData($dat, 1);
             if ($res) {
                 $menuHoModel->commit();
+                foreach ($com_arr as $k => $v) {
+                    $cache_key = C('PROGRAM_PRO_CACHE_PRE') . $k;
+                    $redis->remove($cache_key);
+                    $cache_key = C('PROGRAM_ADV_CACHE_PRE') . $k;
+                    $redis->remove($cache_key);
+                    if(in_array($k, $tmp_hotel_arr)){
+                        sendTopicMessage($k, 6);  //通知虚拟小平台更新节目单数据
+                        sendTopicMessage($k, 7);  //通知虚拟小平台更新节目单宣传片数据
+                    }
+                }
                 $this->output('发布成功了!', 'programmenu/getlist');
             } else {
                 $menuHoModel->rollback();
