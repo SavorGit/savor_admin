@@ -234,7 +234,7 @@ $config['WX_DYH_CONFIG'] = array(
 );
 $config['WX_FWH_CONFIG'] = array(
     'appid'=>'wx7036d73746ff1a14',
-    'appsecret'=>'64e1aa2f06146f901f013198d92ef1c9',
+    'appsecret'=>'8b658fc90d7105d5cf66cb2193edb7d4',
     'key_ticket'=>'savor_wx_xiaorefu_jsticket',
     'key_token'=>'savor_wx_xiaorefu_token',
 );
