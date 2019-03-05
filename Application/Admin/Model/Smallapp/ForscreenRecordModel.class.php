@@ -40,12 +40,14 @@ class ForscreenRecordModel extends BaseModel
 	    $data = $this->field($fields)->where($where)->find();
 	    return $data;
 	}
-	public function countWhere($where){
+	public function countWhere($where,$group){
 	    $nums = $this->alias('a')
 	                 ->join('savor_box box on a.box_mac=box.mac','left')
 	                 ->join('savor_room room on box.room_id=room.id','left')
 	                 ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
-	                 ->where($where)->count();
+	                 ->where($where)
+	                 ->group($group)
+	                 ->count();
 	    return $nums;
 	}
 	public function getStaticList($fields,$where,$order,$group,$start,$size,$pageNum,$area_id){

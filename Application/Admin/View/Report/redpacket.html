@@ -1,0 +1,149 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/sappredpacket/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+     <div class="searchBar">
+      <div class="clearfix">
+
+         <div class="form-inline" style="margin-top:10px;">
+         <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_time}">
+          		<input id="redpacket_start_date" style="margin-left: 6px;" name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}" readonly>
+                <span class="input-group-btn">
+                  <button id="redpacket_start_date_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 </div>
+       	 <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_time}">
+          		<input id="redpacket_end_date" style="margin-left: 6px;" name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}" readonly>
+                <span class="input-group-btn">
+                  <button id="redpacket_end_date_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 </div>
+         <div class="form-group">
+          <div class="input-group input-group-sm">
+            
+                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+          </div>
+
+          </div>
+          <div class="form-group">
+          <div class="input-group input-group-sm">
+            	<input type="text" class="form-control" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
+                
+          </div>
+
+          </div>
+         
+           <div class="form-group" >
+             <div class="input-group input-group-sm pull-right">
+               
+           <span class="input-group-btn">
+             <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+           </span>
+             </div>
+           </div>
+           <!-- <div class="input-group input-group-sm pull-right">
+              <a  class="btn btn-success btn-sm add"  title="一键删除测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delTestGamelog" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/sappforscreen/delTestGamelog"/>
+            </div> -->
+         </div>
+         
+      </div>
+    
+    </div> 
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>红包id</th>
+            <th>城市</th>
+            <th>酒楼名称</th>
+            <th>包间名称</th>
+            <th>MAC地址</th>
+            <th>用户头像</th>
+            <th>用户昵称</th>
+            <th>红包总金额(元)</th>
+            <th>支付金额(元)</th>
+            <th>红包个数</th>
+            <th>支付时间</th>
+            <th>支付类型</th>
+            <th>红包状态</th>
+            <th>扫码枪红包人数</th>
+            <th>抢红包明细</th>
+            <th>创建时间</th>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="城市">{$vlist.region_name}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒MAC">{$vlist.mac}</td>
+              <td data-title="用户头像"><img src="{$vlist.avatarurl}" /></td>
+              <td data-title="用户昵称">{$vlist.nickname}</td>
+              <td data-title="红包总金额">{$vlist.total_fee}</td>
+              <td data-title="支付金额">{$vlist.pay_fee}</td>
+              <td data-title="红包个数">{$vlist.amount}</td>
+              <td data-title="支付时间">{$vlist.pay_time}</td>
+              <td data-title="支付类型">{$vlist.pay_type}</td>
+              <td data-title="红包状态">{$vlist.order_status}</td>
+              <td data-title="扫码枪红包人数">{$vlist.scan_nums}</td>
+              <td data-title="抢红包明细">
+              <if condition="$vlist.status GT 4">
+              <a data-tip="查看详情" target="dialog" mask="true" href="{$host_name}/sappredpacket/detail?id={$vlist.id}" rel="hotel/detail" title="抢红包明细"class="btn btn-success btn-icon">
+              
+              {$vlist.grab_nums}
+              </a>
+              </if>
+              </td>
+              <td data-title="创建时间">{$vlist.add_time}</td>
+            
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+  $('#redpacket_start_date_reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $('#redpacket_end_date_reset').click(function(){
+	    $(this).parent().prev().val('')
+	  });
+  $(function(){
+    $("#redpacket_start_date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+    $("#redpacket_end_date").datetimepicker({
+        minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        todayBtn:  1,
+        autoclose: 1,
+      });
+  })
+</script>

@@ -1,0 +1,42 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+          <tr id="post">
+            <th>用户头像</th>
+            <th>用户昵称</th>
+            <th>红包金额</th>
+            <th>弹幕</th>
+            <th>领取时间</th>
+            <th>创建时间</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+          
+          <volist name="data" id="vlist">
+            <tr target="sid_user">
+              <td data-title="用户头像"><img src="{$vlist.avatarurl}" /></td>
+              <td data-title="用户昵称">{$vlist.nickname}</td>
+              <td data-title="红包金额">{$vlist.money}</td>
+              <td data-title="弹幕">{$vlist.barrage}</td>
+              
+              <td data-title="领取时间">{$vlist.receive_time}</td>
+              <td data-title="创建时间">{$vlist.add_time}</td>
+                    
+</tr>
+</volist>
+</tbody>
+</table>
+</form>
+
+</div>
+</div>
+
+</div>
