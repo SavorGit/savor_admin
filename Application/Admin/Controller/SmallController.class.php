@@ -306,7 +306,7 @@ class SmallController extends BaseController{
                 $this->assign('newest_num',$newest_num);
                 $this->assign('diff',$diff_arr);
                 $this->assign('list',$list);
-                $this->display(medialist);
+                $this->display('medialist');
             }else {
                 echo '<script>$.pdialog.closeCurrent();  alertMsg.error("该酒楼下的小平台未上报下载资源数据");</script>';
             }
