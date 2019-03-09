@@ -398,6 +398,7 @@ $config['SAPP_SCRREN_SHARE']     = 'smallapp:public:forscreen:';
 $config['SAPP_HISTORY_SCREEN']   = 'smallapp:history:forscreen:';
 $config['SAPP_PAGEVIEW_LOG']     ='smallap:pageview:log:';
 $config['VM_HOTEL_LIST']         ='vsmall_hotel_list';
+$config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
 
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['UPD_STR'] = array(

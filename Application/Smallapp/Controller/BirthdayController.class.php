@@ -30,9 +30,7 @@ class BirthdayController extends BaseController {
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
 
-
             $data = array('name'=>$name,'media_id'=>$media_id);
-
             $m_birthday = new \Admin\Model\Smallapp\BirthdayModel();
             if($id){
                 $result = $m_birthday->updateData(array('id'=>$id),$data);
@@ -40,6 +38,19 @@ class BirthdayController extends BaseController {
                 $result = $m_birthday->addData($data);
             }
             if($result){
+
+                $redis  =  \Common\Lib\SavorRedis::getInstance();
+                $redis->select(5);
+                $key_demand = C('SAPP_BIRTHDAYDEMAND');
+                $res_demand = $redis->get($key_demand);
+                if(!empty($res_demand)){
+                    $demand = json_decode($res_demand,true);
+                }else{
+                    $demand = array();
+                }
+                $demand['period'] = getMillisecond();
+                $redis->set($key_demand,json_encode($demand));
+
                 $this->output('操作成功!', 'birthday/birthdaylist');
             }else{
                 $this->output('操作失败', 'birthday/birthdaylist',2,0);
@@ -71,6 +82,19 @@ class BirthdayController extends BaseController {
         $m_birthday = new \Admin\Model\Smallapp\BirthdayModel();
         $result = $m_birthday->delData(array('id'=>$id));
         if($result){
+
+            $redis  =  \Common\Lib\SavorRedis::getInstance();
+            $redis->select(5);
+            $key_demand = C('SAPP_BIRTHDAYDEMAND');
+            $res_demand = $redis->get($key_demand);
+            if(!empty($res_demand)){
+                $demand = json_decode($res_demand,true);
+            }else{
+                $demand = array();
+            }
+            $demand['period'] = getMillisecond();
+            $redis->set($key_demand,json_encode($demand));
+
             $this->output('操作成功!', 'birthday/birthdaylist',2);
         }else{
             $this->output('操作失败', 'birthday/birthdaylist',2,0);
