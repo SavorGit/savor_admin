@@ -244,6 +244,14 @@
 			<input class="mokuai" name="rad" checked="true" type="radio" id="rad_jiulou"/><label for="rad_jiulou">选择酒楼</label>
 			<input class="mokuai" name="rad" style="margin-left: 15px;" type="radio" id="rad_banw"/><label for="rad_banw">选择版位</label>
 		</div>
+		<div id="del_hall" class="form-group row" style="margin-left: 20px;">
+			<label >是否剔除非包间版位</label>
+			<select name="del_hall">
+				<option value="0">否</option>
+				<option value="1">是</option>
+			</select>
+			
+		</div>
 		<div class="form-group row" style="margin-top: 20px;border: 1px solid #999;height: 280px;padding-bottom: 15px;overflow: auto;">
 			<div class="form-group row" id="tops">
 				<span class="biaoti">选择版位</span>
@@ -902,7 +910,8 @@
         if($(this).prop('id')=='rad_jiulou'){
             $('#scree_type').val('2')
         }else{
-            $('#scree_type').val('1')
+            $('#scree_type').val('1');
+            $('#del_hall').hide();
         }
     })
 

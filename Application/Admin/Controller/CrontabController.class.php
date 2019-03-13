@@ -952,7 +952,7 @@ class CrontabController extends Controller
     }
 
 
-    public function getAllBox($hotel_id) {
+    public function getAllBox($hotel_id,$type='0') {
         
         $hotel_box_type_arr = C('heart_hotel_box_type');
         $hotel_box_type_arr = array_keys($hotel_box_type_arr);
@@ -962,10 +962,16 @@ class CrontabController extends Controller
             $hotel_box_type_str .= $space .$v;
             $space = ',';
         }
+        if($type==0){
+            $where = ' ( 1=1 and sht.id='.$hotel_id.' and
+                        sht.flag=0
+                        and sht.hotel_box_type in ('.$hotel_box_type_str.') and room.flag=0 and box.flag=0)';
+        }else if($type==1) {//去除非包间版位
+            $where = ' ( 1=1 and sht.id='.$hotel_id.' and
+                        sht.flag=0
+                        and sht.hotel_box_type in ('.$hotel_box_type_str.') and room.flag=0 and box.flag=0 and room.type=1)';
+        }
         
-        $where = ' ( 1=1 and sht.id='.$hotel_id.' and
-        sht.flag=0
-        and sht.hotel_box_type in ('.$hotel_box_type_str.') and room.flag=0 and box.flag=0)';
         $hotelModel = new \Admin\Model\HotelModel();
         $field = ' box.id bid,box.name bname,box.state bstate,room.id
         rid,room.name rname,room.state rstate,sht.id hid,sht.name
@@ -987,7 +993,7 @@ class CrontabController extends Controller
         $pub_adsboxModel = new \Admin\Model\PubAdsBoxModel();
         $pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
         $pub_ads_box_error = new \Admin\Model\PubAdsBoxErrorModel();
-        $field = 'id, start_date, end_date, play_times';
+        $field = 'id, start_date, end_date, play_times,del_hall';
         $where['state'] = 3;
         $pub_ads_list = $pub_adsModel->getWhere($where, $field);
         foreach($pub_ads_list as $pa=>$pb) {
@@ -1001,7 +1007,12 @@ class CrontabController extends Controller
             if ( !empty($pub_hotel_list) ) {
                 foreach($pub_hotel_list as $pc=>$pd) {
                     //获取当前酒店所有机顶盒
-                    $box_arr = $this->getAllBox($pd['hotel_id']);
+                    if($pb['del_hall']==1){
+                        $box_arr = $this->getAllBox($pd['hotel_id'],$type=1);
+                    }else if($pb['del_hall']==0){
+                        $box_arr = $this->getAllBox($pd['hotel_id']);
+                    }
+                    
                     //var_dump($box_arr);
                     // var_dump($box_arr);
                     if (!empty($box_arr)) {

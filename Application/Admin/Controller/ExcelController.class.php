@@ -4766,51 +4766,113 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     }
     //所有网络版位小程序相关
     public function exportNetBox(){
-        
+        $box_type_arr = C('hotel_box_type');
+        $month_days = date('t',strtotime('2019-01'));
+        $page = I('get.page');
+        $start = ($page - 1) * 30; 
+        //echo $start;exit;
         $sql ="select area.region_name,hotel.id hotel_id,hotel.name hotel_name,box.name box_name,
-               ext.avg_expense, mac box_mac from savor_box box
+               ext.avg_expense, mac box_mac,box.is_4g,box.box_type from savor_box box
                left join savor_room room on box.room_id=room.id
                left join savor_hotel hotel on room.hotel_id=hotel.id
                left join savor_area_info area on hotel.area_id=area.id
                left join savor_hotel_ext ext on ext.hotel_id=hotel.id
                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               and hotel.hotel_box_type in(2,3,6) order by box.id asc limit 3300, 100";
+               and hotel.hotel_box_type in(2,3,6)  order by box.id asc limit $start, 30";
+        
         $result = M()->query($sql);
         $start_time = '2019-02-01 00:00:00';
-        $end_time   = '2019-02-24 23:59:59';
+        $end_time   = '2019-02-28 23:59:59';
         
         $start_date = '2019-02-01';
-        $end_date   = '2019-02-24';
+        $end_date   = '2019-02-28';
         
         $heart_start_date = '20190201';
-        $heart_end_date   = '20190224';
-        $dinner_arr = array(12,1,18,19,20);
+        $heart_end_date   = '20190228';
+        $dinner_arr = array(18,19,20);   //晚饭时间
+        $lunch_arr  = array(12,13);       //午饭
         foreach($result as $key=>$v){
+            $result[$key]['box_type'] = $box_type_arr[$v['box_type']];
+            $result[$key]['is_4g']    = $v['is_4g']== 0 ? '否' : '是';
+            //独立用户数
+            $sql ="select id from savor_smallapp_qrcode_log where box_mac='".$v['box_mac']."' 
+                   and  create_time>='".$start_time."' and create_time<='".$end_time."' group by openid";
+            
+            $rt = M()->query($sql);
+            $result[$key]['user_nums'] = count($rt);
+            
             //投图次数
             $sql ="select count(id) as nums from savor_smallapp_forscreen_record
-                   where (action=4 or (action=2 and resource_type=1) or(action=8 and resource_type=1)) and box_mac='".$v['box_mac']."'
-                   and create_time>='".$start_time."' and create_time<='".$end_time."'";
+                   where  box_mac='".$v['box_mac']."'  
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and (action=4 or (action=2 and resource_type=1) or(action=8 and resource_type=1))";
+            
             $rt = M()->query($sql);
             $result[$key]['pics'] = $rt[0]['nums'];
             //投视频
             $sql ="select count(id) as nums from savor_smallapp_forscreen_record
-                   where ( (action=2 and resource_type=2) or(action=8 and resource_type=2)) and box_mac='".$v['box_mac']."'
-                   and mobile_brand!='devtools' and create_time>='".$start_time."' and create_time<='".$end_time."'";
+                   where  box_mac='".$v['box_mac']."'  
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and mobile_brand!='devtools' and ( (action=2 and resource_type=2) or(action=8 and resource_type=2))";
             $rt = M()->query($sql);
             $result[$key]['videos'] = $rt[0]['nums'];
-            //点播次数  节目+发现图片+发现视频+生日歌
+            
+            //点播次数
             $sql ="select count(id) as nums from savor_smallapp_forscreen_record
-                   where (action=5 or action=11 or action=12) and box_mac='".$v['box_mac']."'
-                   and create_time>='".$start_time."' and create_time<='".$end_time."'";
+                   where  box_mac='".$v['box_mac']."'   
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and action=5 and forscreen_char!='Happy Birthday'";
             $rt = M()->query($sql);
             $result[$key]['demand'] = $rt[0]['nums'];
             
+            //生日歌点播
+            $sql ="select count(id) as nums from savor_smallapp_forscreen_record
+                   where    box_mac='".$v['box_mac']."'
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and  action=5 and forscreen_char='Happy Birthday'";
+            $rt = M()->query($sql);
+            $result[$key]['happy']  = $rt[0]['nums'];
+            
+            //发现内容点播
+            $sql ="select count(id) as nums from savor_smallapp_forscreen_record
+                   where  box_mac='".$v['box_mac']."'
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and ( action=11 or action=12) ";
+            $rt = M()->query($sql);
+            $result[$key]['find'] = $rt[0]['nums'];
+             
             //游戏次数
             $sql ="select count(id) as nums from savor_smallapp_game_interact
                    where box_mac='".$v['box_mac']."' 
                    and create_time>='".$start_time."' and create_time<='".$end_time."' and is_start=1";
             $rt = M()->query($sql);
             $result[$key]['games'] = $rt[0]['nums'];
+            
+            //互动总次数
+            $result[$key]['all_hd_nums'] = $result[$key]['pics']+ $result[$key]['videos'] + $result[$key]['demand'] + $result[$key]['happy'] + $result[$key]['find'] + $result[$key]['games'];
+            
+            //扫码总数
+            /* $sql ="select count(id) as nums from savor_smallapp_qrcode_log where and  box_mac='".$v['box_mac']."' and type!=6
+                   and  create_time>='".$start_time."' and create_time<='".$end_time."'";
+            $rt = M()->query($sql);
+            $result[$key]['qrcode'] = $rt[0]['nums']; */
+            
+            //轮播大码
+            $sql ="select count(id) as nums from savor_smallapp_qrcode_log where   box_mac='".$v['box_mac']."' 
+                   and  create_time>='".$start_time."' and create_time<='".$end_time."' and type in(2,5)";
+            $rt = M()->query($sql);
+            $result[$key]['lunbo'] = $rt[0]['nums'];
+            //呼出大码
+            $sql ="select count(id) as nums from savor_smallapp_qrcode_log where  box_mac='".$v['box_mac']."' 
+                   and  create_time>='".$start_time."' and create_time<='".$end_time."' and type =3";
+            $rt = M()->query($sql);
+            $result[$key]['huma'] = $rt[0]['nums'];
+            //小码
+            $sql ="select count(id) as nums from savor_smallapp_qrcode_log where   box_mac='".$v['box_mac']."' 
+                   and  create_time>='".$start_time."' and create_time<='".$end_time."' and type in(1,6)";
+            $rt = M()->query($sql);
+            $result[$key]['xiaoma'] = $rt[0]['nums'];
+            
+            
+            
+            //扫码总数
+            $result[$key]['qrcode'] = $result[$key]['lunbo'] + $result[$key]['huma'] + $result[$key]['xiaoma'];
+            
             
             //网络高峰
             $sql ="select max(max_down_speed) as max_down_speed from savor_smallapp_static_net 
@@ -4843,26 +4905,51 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 $result[$key]['avg_down_speed'] = '';
                 
             }
-            //在线率
+            //晚饭在线率
             $all_log_time = 0;
             
             foreach($dinner_arr as $vv){
                 $sql ="select sum(hour".$vv.") as hours from savor_heart_all_log where
-                       date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."'";
+                       date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."' and type=2";
                 $rt = M()->query($sql);
                 if(!empty($rt)){
                     $all_log_time +=$rt[0]['hours'];
                     
                 }
             }
-            $sql ="select count(id) as nums from savor_heart_all_log where 
+            /* $sql ="select count(id) as nums from savor_heart_all_log where 
                      date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."'";
             $rt = M()->query($sql);
-            $log_days = $rt[0]['nums'];
+            $log_days = $rt[0]['nums']; */
             if($all_log_time>0){
-                $result[$key]['online_rate'] = sprintf("%.2f",($all_log_time) / ($log_days*60)) ;
+                $result[$key]['dinner_online_rate'] = sprintf("%.4f",($all_log_time*5) / ($month_days*180)) ;
             }else {
-                $result[$key]['online_rate'] = 0 ;
+                $result[$key]['dinner_online_rate'] = 0 ;
+            }
+            
+            //午饭在线率
+            $all_log_time = 0;
+            
+            foreach($lunch_arr as $vv){
+                $sql ="select sum(hour".$vv.") as hours from savor_heart_all_log where
+                       date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."' and type=2";
+                
+                $rt = M()->query($sql);
+                if(!empty($rt)){
+                    $all_log_time +=$rt[0]['hours'];
+            
+                }
+            }
+           
+            /* $sql ="select count(id) as nums from savor_heart_all_log where
+                     date>=".$heart_start_date." and date<=".$heart_end_date." and mac='".$v['box_mac']."'";
+            $rt = M()->query($sql);
+            $log_days = $rt[0]['nums']; */
+            if($all_log_time>0){
+                $result[$key]['lunch_online_rate'] = sprintf("%.4f",($all_log_time*5) / ($month_days*120)) ;
+                
+            }else {
+                $result[$key]['lunch_online_rate'] = 0 ;
             }
             
             
@@ -4876,14 +4963,26 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('hotel_name','酒楼名称'),
             array('box_name','版位名称'),
             array('box_mac','mac'),
-            array('pics','投图次数'),
-            array('videos','投视频次数'),
-            array('demand','点播次数'),
+            array('user_nums','独立用户'),
+            array('all_hd_nums','互动总数'),
+            array('pics','图片投屏'),
+            array('videos','视频投屏'),
+            array('demand','视频点播'),
+            array('happy','生日歌点播'),
+            array('find','发现内容点播'),
             array('games','游戏次数'),
-            array('avg_down_speed','网络均值'),
-            array('max_down_speed','网络高峰'),
-            array('min_down_speed','网络低峰'),
-            array('online_rate','在线率'),
+            array('qrcode','扫码总数'),
+            array('lunbo','轮播大码次数'),
+            array('huma','呼出大码'),
+            array('xiaoma','小码次数'),
+            array('lunch_online_rate','午市开机率'),
+            array('dinner_online_rate','晚市开机率'),
+            array('box_type','设备类型'),
+            array('is_4g','是否4G'),
+            array('avg_down_speed','网络均值(M)'),
+            array('max_down_speed','网络高峰(M)'),
+            array('min_down_speed','网络低峰(M)'),
+            
             array('avg_expense','人均消费'),
         );
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);

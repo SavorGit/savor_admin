@@ -68,11 +68,13 @@ class AdvdeliveryController extends BaseController {
 
         //投放类型1机顶盒2酒店
         $screen_type = I('post.screenadv_type','1');
+        $del_hall    = I('post.del_hall');  //是否剔除大厅版位
         $userInfo = session('sysUserInfo');
         $save['create_time'] = $now_date;
         $save['update_time'] = $now_date;
         $save['creator_id'] = $userInfo['id'];
         $save['state'] = 0;
+        $save['del_hall'] = $del_hall;
         $oneday_count = 3600 * 24;  //一天有多少秒
         //明天
         $save['end_date'] = date("Y-m-d H:i:s", strtotime($save['end_date']) + $oneday_count-1);
