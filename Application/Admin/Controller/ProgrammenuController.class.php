@@ -1010,7 +1010,7 @@ setEnclosure('"')
         $m_type = I('post.m_type', '0');
         
         $where = "1=1";
-        $field = "id,name,media_id,create_time,duration";
+        $field = "id,name,media_id,create_time,resource_type,duration";
         $searchtitle = I('post.searchtitle', '');
         $beg_time = I('starttime', '');
         $end_time = I('endtime', '');

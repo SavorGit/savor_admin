@@ -20,6 +20,9 @@
 	.sleft{
 		float: left;
 	}
+	.scenter{
+		color: #0c9611;
+	}
 	.sright{
 		float: right;
 	}
@@ -668,12 +671,6 @@
 			url:"{$host_name}/programmenu/get_se_left",
 			data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val()+"&adval="+asd,
 			success:function(data){
-
-				//alert(data);
-				//$("#lefta").empty();
-				//$("#left2").empty();
-
-					console.log(data)
 				var strdu = '';
 				var htm = '';
 
@@ -687,11 +684,19 @@
 							var cr_time = data[i][key];
 						}else if(key == 'duration') {
 							var dura = data[i][key];
-
-						}
+						}else if(key == 'resource_type') {
+                            var resource_type = data[i][key];
+                            if(resource_type==1){
+                                var resource_typestr = '视频';
+							}else if(resource_type==2){
+                                var resource_typestr = '图片';
+							}else{
+                                var resource_typestr = '';
+							}
+                        }
 
 					}
-					htm += "<div class='divlist' type="+data[i].type+" id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>";
+					htm += "<div class='divlist' type="+data[i].type+" id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='scenter'>"+"("+resource_typestr+")"+"</span><span class='sright'>"+cr_time+"</span></div>";
 
 				}
 				$("#lefta").empty();
