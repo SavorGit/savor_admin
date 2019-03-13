@@ -165,6 +165,23 @@ class ConstellationController extends BaseController {
                 $result = $m_constellvideo->addData($data);
             }
             if($result){
+
+                $current_id = $this->getCurrentConstellation();
+                if($current_id==$constellation_id){
+                    $redis  =  \Common\Lib\SavorRedis::getInstance();
+                    $redis->select(5);
+                    $key_demand = C('SAPP_BIRTHDAYDEMAND');
+                    $res_demand = $redis->get($key_demand);
+                    if(!empty($res_demand)){
+                        $demand = json_decode($res_demand,true);
+                    }else{
+                        $demand = array();
+                    }
+                    $demand['period'] = getMillisecond();
+                    $demand['constellation_id'] = $constellation_id;
+                    $redis->set($key_demand,json_encode($demand));
+                }
+
                 $this->output('操作成功!', 'constellation/relatevideo');
             }else{
                 $this->output('操作失败', 'constellation/relatevideo',2,0);
@@ -206,12 +223,51 @@ class ConstellationController extends BaseController {
     public function videodel(){
         $id = I('get.id',0,'intval');
         $m_constellvideo = new \Admin\Model\Smallapp\ConstellationvideoModel();
+        $res_constellvideo = $m_constellvideo->getInfo(array('id'=>$id));
         $result = $m_constellvideo->delData(array('id'=>$id));
         if($result){
+
+            $current_id = $this->getCurrentConstellation();
+            if($current_id==$res_constellvideo['constellation_id']){
+                $redis  =  \Common\Lib\SavorRedis::getInstance();
+                $redis->select(5);
+                $key_demand = C('SAPP_BIRTHDAYDEMAND');
+                $res_demand = $redis->get($key_demand);
+                if(!empty($res_demand)){
+                    $demand = json_decode($res_demand,true);
+                }else{
+                    $demand = array();
+                }
+                $demand['period'] = getMillisecond();
+                $demand['constellation_id'] = $res_constellvideo['constellation_id'];
+                $redis->set($key_demand,json_encode($demand));
+            }
+
             $this->output('操作成功!', 'constellation/relatevideo',2);
         }else{
             $this->output('操作失败', 'constellation/relatevideo',2,0);
         }
+    }
+
+    private function getCurrentConstellation(){
+        $fields = 'id,name,media_id,start_month,start_day,end_month,end_day,intro';
+        $where = array('status'=>1);
+        $orderby = 'end_month asc,end_day asc';
+        $m_constellation = new \Common\Model\Smallapp\ConstellationModel();
+        $res = $m_constellation->getDataList($fields,$where,$orderby);
+        $month = date('n');
+        $day = date('j');
+        $constellation_id = 1;
+        foreach ($res as $k=>$v){
+            if($month==$v['end_month'] && $day<=$v['end_day']){
+                $constellation_id = $v['id'];
+                break;
+            }elseif($month==$v['start_month'] && $day>=$v['start_day']){
+                $constellation_id = $v['id'];
+                break;
+            }
+        }
+        return $constellation_id;
     }
 
 }

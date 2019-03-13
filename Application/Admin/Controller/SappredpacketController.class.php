@@ -10,10 +10,9 @@ class SappredpacketController extends BaseController {
     private $order_status ;
     private $pay_type;
 	public function __construct() {
-	    $this->order_status = array('0'=>'未付款','1'=>'付款码到电视','2'=>'付款中','3'=>'付款失败','4'=>'付款成功',
-	                                '5'=>'已抢完','6'=>'未抢完'  
-	    );
-	    $this->pay_type     = array('0'=>'未知','10'=>'微信');
+	    $this->order_status = array('0'=>'未付款','1'=>'付款码到电视','2'=>'付款中','3'=>'付款失败',
+            '4'=>'付款成功','5'=>'已抢完','6'=>'未抢完','7'=>'未抢完已退款');
+	    $this->pay_type = array('0'=>'未知','10'=>'微信');
 		parent::__construct();
 	}
     public function index(){
@@ -87,8 +86,6 @@ class SappredpacketController extends BaseController {
             }
             //红包被抢人数
             $data['list'][$key]['grab_nums'] = $m_redpacket_receive->countWhere(array('redpacket_id'=>$v['id']));
-            
-            
         }
         $this->assign('_sort',$sort);
         $this->assign('_order',$order);
@@ -97,8 +94,8 @@ class SappredpacketController extends BaseController {
         $this->assign('list',$data['list']);
         $this->assign('page',$data['page']);
         $this->display('Report/redpacket');
-        
-    }	
+    }
+
     public function detail(){
         $id = I('get.id');
         $m_redpacket_receive = new \Admin\Model\Smallapp\RedpacketReceiveModel();

@@ -1,59 +1,58 @@
 <include file="Public/script"/>
-<!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/advert/adsList" method="post" >
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/advert/adsList" method="post">
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <input type="hidden" name="_order" value="{$_order}"/>
     <input type="hidden" name="_sort" value="{$_sort}"/>
     <div class="searchBar">
       <div class="clearfix">
-      <div class="col-xs-12 col-sm-2 col-md-2">
-          <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/advert/addAdvert" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i>新增</a>
-          </div>
-        </div>
-       <div class="col-xs-12 col-sm-4 col-md-2">
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="keywords" style="width: 150px;" value="{$keywords}" placeholder="输入名称查找">
-            <span class="input-group-btn">
-            	<select name="adstype" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-					<option value="0" data-content='全部' <if condition="$adstype eq 0"> selected</if> >全部{$adstype}</option>
-					<volist name=":C('ADS_TYPE')" id="vo">
-						<if condition="$key neq 3">
-						<option value="{$key}" data-content='{$vo}'<if condition="$key eq $adstype"> selected</if> >{$vo}</option>
-						</if>
-					</volist>
-				</select>
-			</span>
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-4 col-md-5" style="margin-left:100px;">
-          <div class="form-inline">
-            <div class="form-group">
-              <label>上传时间：</label>
-              <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
-                <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
-                         <span class="input-group-btn">
-                           <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
-                           <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
-                         </span>
+        <div class="form-inline">
+          <div class="form-group pull-left">
+            <div class="input-group input-group-sm">
+              <div class="tools-group">
+                <a class="btn btn-success btn-sm add" href="{$host_name}/advert/addAdvert?resource_type=1" title="新增视频广告" target="dialog" mask="true"><i class="fa fa-plus"></i>新增视频广告</a>
+                <a class="btn btn-success btn-sm add" href="{$host_name}/advert/addAdvert?resource_type=2" title="新增图片广告" target="dialog" mask="true"><i class="fa fa-plus"></i>新增图片广告</a>
               </div>
             </div>
+          </div>
+          <div class="form-group pull-right">
+            <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
+              <input name="begin_time" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$timeinfo.begin_time}" readonly>
+              <span class="input-group-btn">
+                 <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                 <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+               </span>
+            </div>
+
             <div class="input-group input-group-sm date form_datetime" data-date="{$timeinfo.now_time}" data-ymd="true">
               <input name="end_time" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$timeinfo.end_time}" readonly>
-                     <span class="input-group-btn">
-                       <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
-                       <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
-                     </span>
-                     <span class="input-group-btn">
-              			<button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search">搜索</i></button>
-            		</span>
+              <span class="input-group-btn">
+                 <button class="btn default btn-sm date-reset" type="button" style="display:none"><i class="fa fa-times"></i></button>
+                 <button class="btn btn-success btn-sm date-set" type="button"><i class="fa fa-calendar"></i></button>
+               </span>
+            </div>
+
+            <div class="input-group" >
+              <input type="text" class="form-control" name="keywords" value="{$keywords}" placeholder="输入名称查找">
+              <span class="input-group-btn">
+              <select name="adstype" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="0" data-content='全部' <if condition="$adstype eq 0"> selected</if> >全部{$adstype}</option>
+                <volist name=":C('ADS_TYPE')" id="vo">
+                <if condition="$key neq 3">
+                <option value="{$key}" data-content='{$vo}'<if condition="$key eq $adstype"> selected</if> >{$vo}</option>
+                </if>
+                </volist>
+              </select>
+              </span>
+           </div>
+            <div class="input-group">
+              <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+              </span>
             </div>
           </div>
-          </div>
-
-
+        </div>
       </div>
     </div>
   </form>
@@ -64,44 +63,44 @@
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
-            <tr id="post">
-              <th>ID</th>
-              <th>名称</th>
-              <th>地址</th>
-              <th>封面图</th>
-              <th>简介</th>
-              <th>创建者</th>
-              <th>创建时间</th>
-              <th>类型</th>
-              <th>状态</th>
-              <th class="table-tool">操作</th>
-            </tr>
+          <tr id="post">
+            <th>ID</th>
+            <th>名称</th>
+            <th>地址</th>
+            <th>封面图</th>
+            <th>简介</th>
+            <th>创建者</th>
+            <th>创建时间</th>
+            <th>类型</th>
+            <th>状态</th>
+            <th class="table-tool">操作</th>
+          </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-            <volist name="datalist" id="vlist">
+          <volist name="datalist" id="vlist">
             <tr target="sid_user">
               <td data-title="ID">{$vlist.id}</td>
               <td data-title="名称">{$vlist.name}</td>
               <td data-title="地址"><a href="{$vlist.oss_addr}" target='__blank'>预览</a></td>
               <td data-title="封面图">
-              <a href="{$vlist.cover_img_url}" target='__blank'>
-              <img src="{$vlist.cover_img_url}" >
-              </a>
+                <a href="{$vlist.cover_img_url}" target='__blank'>
+                  <img src="{$vlist.cover_img_url}" >
+                </a>
               </td>
-              
+
               <td data-title="简介">{$vlist.description}</td>
               <td data-title="创建者">{$vlist.creator_name}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="类型">{$vlist.type_str}</td>
               <td data-title="状态">
-              <if condition="$vlist['state'] eq 1">
-              <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <if condition="$vlist['state'] eq 1">
+                  <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-on"></i></span></a>
-              <else/>
-              <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                  <else/>
+                  <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/advert/operateStatus?adsid={$vlist.id}&atype=1&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-off"></i></span></a>
-              </if>
-              
+                </if>
+
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
@@ -114,7 +113,7 @@
                 </div>
               </td>
             </tr>
-            </volist>
+          </volist>
           </tbody>
         </table>
       </form>

@@ -4,14 +4,14 @@
  * 
  */
 namespace Admin\Controller;
-use Admin\Controller\BaseController;
 class AdvertController extends BaseController{
+
 	 private $oss_host = '';
 	 public function __construct(){
 	     parent::__construct();
-	     //$this->oss_host = 'http://'.C('OSS_BUCKET').'.'.C('OSS_HOST').'/';
 	     $this->oss_host = get_oss_host();
 	 }
+
 	 /**
 	  * 资源列表
 	  */
@@ -34,7 +34,7 @@ class AdvertController extends BaseController{
         if($adstype){
             $where['type'] = $adstype;
         }else{
-            $where['type'] = array('IN',"1,2");;
+            $where['type'] = array('IN',"1,2");
         }
 	 	$adsModel = new \Admin\Model\AdsModel();
 	 	$mediaModel = new \Admin\Model\MediaModel();
@@ -54,7 +54,7 @@ class AdvertController extends BaseController{
             }
             $datalist[$k]['type_str'] = $type_str;
             $datalist[$k]['oss_addr'] = $oss_addr;
-            $datalist[$k]['cover_img_url'] = !empty($v['img_url']) ? get_oss_host().$v['img_url'] : '';
+            $datalist[$k]['cover_img_url'] = !empty($v['img_url']) ? $this->oss_host.$v['img_url'] : '';
         }
         $time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
         $this->assign('timeinfo',$time_info);
@@ -67,13 +67,12 @@ class AdvertController extends BaseController{
     	$this->assign('keywords',$name);
     	$this->assign('adstype',$adstype);
         $this->display('advertlist');
-        
 	 }
 
 	 public function addAdvert(){
+	     $resource_type = I('resource_type',1,'intval');
 	     if(IS_POST){
 	         $adsModel = new \Admin\Model\AdsModel();
-	         $ossaddr = I('post.oss_addr','','trim');
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
 			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval'); //小程序二维码是否显示
@@ -82,6 +81,7 @@ class AdvertController extends BaseController{
 			 }
 	         $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
+
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
 	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
@@ -99,6 +99,7 @@ class AdvertController extends BaseController{
              $ads_data['create_time'] = date('Y-m-d H:i:s');
 			 $ads_data['is_online'] = 2;
 			 $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
+			 $ads_data['resource_type'] = $resource_type;
 			 if($duration)  $ads_data['duration'] = $duration;
              if($description)   $ads_data['description'] = $description;
              if($cover_img_media_id){
@@ -120,14 +121,19 @@ class AdvertController extends BaseController{
              }
              $this->output($message, $url);
 	     }else{
-	         $this->get_file_exts(1);
+	         $this->get_file_exts($resource_type);
 	         $oss_host = $this->oss_host;
 			 $vinfo['type'] = 1;
 			 $vinfo['duration'] = 0;
 			 $this->assign('vinfo',$vinfo);
 	         $this->assign('oss_host',$oss_host);
+	         $this->assign('resource_type',$resource_type);
 	         $this->assign('action_url','advert/addAdvert');
-	         $this->display('addadvert');
+	         if($resource_type==1){
+                 $this->display('addadvert');
+             }else{
+                 $this->display('addimgadvert');
+             }
 	     }
 	 }
 	 

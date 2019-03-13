@@ -32,31 +32,60 @@
 		   	<input type="hidden" name="media_id" value="{$vinfo.media_id}">
 		   	<input type="hidden" name="oss_addr" id='oss_addr' value=''>
 		   	<input type="hidden" name="oss_filesize" id='oss_filesize' value=''>
-		   	<input type="hidden" name="resource_type" value='{$resource_type}'>
+		    <input type="hidden" name="resource_type" value='{$resource_type}'>
 		    <div class="pageFormContent modal-body">
-		    	<div class="form-group row">
-			        <div class="col-xs-12 col-sm-12">
-			        	<div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div>
-			        </div>
-		       </div>
-		        
-		        <div class="form-group row" <if condition="$is_editads eq 1">style="display:none;"</if> >
-    			    <label class="col-xs-12 col-sm-2 control-label">
-    			    视频内容
-		        	</label>
+
+				<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+						图片：
+					</label>
 					<div class="col-xs-12 col-sm-10">
-		               <a id="selectfiles" class="btn btn-success" href="javascript:void(0);" ><i class="fa fa-plus"></i> 选择视频</a>
-				  		<a id="postfiles" class="btn btn-success" href="javascript:void(0);" ><i class="fa fa-upload"></i> 开始上传</a>
-		        	</div>
-		          </div>
-				 <div class="form-group row">
-			         <label class="col-xs-12 col-sm-2 control-label">
-			          URL:
-			        </label>
-			        <div class="col-xs-12 col-sm-10">
-			          <input type="text" class="form-control" id="media_url" value="{$vinfo.oss_addr}" readonly>
-			      	 </div>
-			      </div>
+						<div class="fileinput fileinput-new" data-fileinput>
+							<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+								<a  href="javascript:void(0)" >
+									<if condition="($vinfo['img_url'] eq 'NULL') OR $vinfo['img_url'] eq ''">
+										<img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
+										<else />
+										<img src="{$oss_host}{$vinfo.img_url}" id="covervideo_idimg" border="0" />
+									</if>
+									<span id="covervideo_idimgname"></span>
+								</a>
+							</div>
+							<div>
+								<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
+									选择图片
+								</a>
+								<input type="hidden" name="cover_img_media_id" id="covervideo_id" value="" >
+								<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+									删除 </a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+						资源类型：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<volist name=":C('ADS_TYPE')" id="vo">
+							<if condition="$key neq 3">
+								<input name="type" type="radio" id="tts_{$key}" value="{$key}" <if condition="$key eq $vinfo['type']">checked</if> />&nbsp;{$vo}
+								&nbsp;&nbsp;
+							</if>
+						</volist>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">
+						名称:
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<input type="text" class="form-control" name="name" minlength="2" maxlength="30" value="{$vinfo.name}" required>
+					</div>
+				</div>
+
 			  <div class="form-group row">
 				  <div class="form-inline">
 
@@ -84,20 +113,7 @@
 				  </div>
 
 			  </div>
-		         <div class="form-group row">
-		              <label class="col-xs-12 col-sm-2 control-label">
-		                资源类型：
-		              </label>
-		              <div class="col-xs-12 col-sm-10">
-		                <volist name=":C('ADS_TYPE')" id="vo">
-		                 <if condition="$key neq 3">
-		                  <input name="type" type="radio" id="tts_{$key}" value="{$key}" <if condition="$key eq $vinfo['type']">checked</if> />&nbsp;{$vo}
-		                  &nbsp;&nbsp;
-		                  </if>
-		                </volist>
-		              </div>
-		         </div>
-		         
+
 		         <div class="form-group row">
 		              <label class="col-xs-12 col-sm-2 control-label">
 		                小程序二维码：
@@ -110,53 +126,7 @@
 		                </volist>
 		              </div>
 		         </div>
-            		
-            		
-				 <div class="form-group row">
-			         <label class="col-xs-12 col-sm-2 control-label">
-			          名称:
-			        </label>
-			        <div class="col-xs-12 col-sm-10">
-			          <input type="text" class="form-control" name="name" minlength="2" maxlength="30" value="{$vinfo.name}" required>
-			      	 </div>
-			      </div>
-			      <div class="form-group row">
-		              <label class="col-xs-12 col-sm-2 control-label">
-		                描述：
-		              </label>
-		              <div class="col-xs-12 col-sm-10">
-		                <textarea name="description" type="textInput" class="form-control">{$vinfo.description}</textarea>
-		                <span class="tips">注：请输入资源描述，允许为空。</span>
-		              </div>
-           		 </div>
-           		 
-           		 <div class="form-group row">
-            <label class="col-xs-12 col-sm-2 control-label">
-                视频封面：
-            </label>
-            <div class="col-xs-12 col-sm-10">
-                <div class="fileinput fileinput-new" data-fileinput>
-                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
-                        <a  href="javascript:void(0)" >
-                            <if condition="($vinfo['img_url'] eq 'NULL') OR $vinfo['img_url'] eq ''">
-                                <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
-                                <else />
-                                <img src="{$oss_host}{$vinfo.img_url}" id="covervideo_idimg" border="0" />
-                            </if>
-                            <span id="covervideo_idimgname"></span>
-                        </a>
-                    </div>
-                    <div>
-                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
-                            选择封面
-                        </a>
-                        <input type="hidden" name="cover_img_media_id" id="covervideo_id" value="" >
-                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
-                            删除 </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 		    </div>
 		    <div class="modal-footer">
 		      <button class="btn btn-default close-m" type="button">取消</button>

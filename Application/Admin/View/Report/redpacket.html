@@ -105,11 +105,16 @@
               <td data-title="抢红包明细">
               <if condition="$vlist.status GT 4">
               <a data-tip="查看详情" target="dialog" mask="true" href="{$host_name}/sappredpacket/detail?id={$vlist.id}" rel="hotel/detail" title="抢红包明细"class="btn btn-success btn-icon">
-              
               {$vlist.grab_nums}
               </a>
               </if>
+              <if condition="$vlist.status eq 4 OR $vlist.status eq 6">
+                  <a data-tip="" href="https://mobile.littlehotspot.com/h5/scanqrcode/sendtv?oid={$vlist.id}" target="_blank" class="btn btn-success btn-icon" data-original-title="重发">
+                      <i class="fa fa-send-o"></i>
+                  </a>
+              </if>
               </td>
+
               <td data-title="创建时间">{$vlist.add_time}</td>
             
             </tr>

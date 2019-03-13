@@ -367,7 +367,6 @@ class BaseController extends Controller {
      */
     protected function handle_resource(){
         $add_mediadata = array();
-        $type = I('post.type',0,'intval');//资源类型资1视频2图片3其他
         $minu = I('post.minu','0','intval');
         $seco = I('post.seco','0','intval');
         $duration = $minu*60+$seco;
@@ -431,7 +430,6 @@ class BaseController extends Controller {
         $user = session('sysUserInfo');
         $add_mediadata['surfix'] = $surfix;
         $add_mediadata['create_time'] = date('Y-m-d H:i:s');
-        //$add_mediadata['creator'] = $user['username'];
         $add_mediadata['creator'] = $user['remark'];
         $add_mediadata['type'] = $type;
         $media_id = $mediaModel->add($add_mediadata);
