@@ -391,10 +391,16 @@ class DeviceController extends BaseController{
 				$redis->select(12);
 				$cache_key = C('SMALL_BOX_LIST').$hotelid;
 				$redis->remove($cache_key);
+				$cache_key = C('PROGRAM_PRO_CACHE_PRE').$hotelid;
+				$redis->remove($cache_key);
+				$cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
+				$redis->remove($cache_key);
                 if($is_sendtopic){
                     $all_hotelids = getVsmallHotelList();
                     if(in_array($hotelid,$all_hotelids)){
                         sendTopicMessage($hotelid,3);
+                        sendTopicMessage($hotelid, 6);
+                        sendTopicMessage($hotelid, 7);
                     }
                 }
 				$this->output('添加成功!', 'hotel/room');

@@ -1177,7 +1177,17 @@ class HotelController extends BaseController {
 					$dat['is_sapp_forscreen'] = 1;
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
+					    $rds = SavorRedis::getInstance();
+					    $rds->select(12);
+					    $cache_key = C('SMALL_BOX_LIST').$hotelid;
+					    $rds->remove($cache_key);
+					    $cache_key = C('PROGRAM_PRO_CACHE_PRE').$hotelid;
+					    $rds->remove($cache_key);
+					    $cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
+					    $rds->remove($cache_key);
                         sendTopicMessage($hotelid,3);
+                        sendTopicMessage($hotelid, 6);
+                        sendTopicMessage($hotelid, 7);
 						$dap = array();
 						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
 						$dap['tv_brand'] = $v['tv_brand'];
@@ -1230,7 +1240,17 @@ class HotelController extends BaseController {
 					$dat['is_sapp_forscreen'] = 1;
 					$bool = $model->table(C('DB_PREFIX').'box')->add($dat);
 					if ($bool) {
+					    $rds = SavorRedis::getInstance();
+					    $rds->select(12);
+					    $cache_key = C('SMALL_BOX_LIST').$hotelid;
+					    $rds->remove($cache_key);
+					    $cache_key = C('PROGRAM_PRO_CACHE_PRE').$hotelid;
+					    $rds->remove($cache_key);
+					    $cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
+					    $rds->remove($cache_key);
                         sendTopicMessage($hotelid,3);
+                        sendTopicMessage($hotelid, 6);
+                        sendTopicMessage($hotelid, 7);
 						$dap = array();
 						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
 						$dap['tv_brand'] = $v['tv_brand'];
