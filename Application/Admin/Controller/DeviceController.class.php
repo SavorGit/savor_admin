@@ -162,7 +162,7 @@ class DeviceController extends BaseController{
 	public function addBox(){
 		$room_id = I('get.room_id');
 		$roomModel = new RoomModel;
-		$temp = $roomModel->getRow('name',['id'=>$room_id]);
+		$temp = $roomModel->getRow('name',array('id'=>$room_id));
 		$this->assign('room_name',$temp['name']);
 		$this->assign('room_id',$room_id);
 		$vinfo['state'] = 2;
@@ -190,7 +190,7 @@ class DeviceController extends BaseController{
 		$roomModel = new RoomModel;
 		$boxModel  = new BoxModel;
 		$vinfo  = [];
-		$vinfo = $boxModel->getRow('*',['id'=>$id]);
+		$vinfo = $boxModel->getRow('*',array('id'=>$id));
 
 		if($hotel_id){
 		    $room_list = $roomModel->where("hotel_id='$hotel_id'")->field('id,name')->select();
@@ -290,6 +290,7 @@ class DeviceController extends BaseController{
 		$save['wifi_password']=I('post.wifi_password','','trim');
 		$save['wifi_mac']     =I('post.wifi_mac','','trim');
 		$save['is_open_simple']=I('post.is_open_simple',0,'intval');
+		$save['is_open_interactscreenad']=I('post.is_open_interactscreenad',0,'intval');
 		$save['is_4g']       = I('post.is_4g',0,'intval');
 		$save['box_type']    = I('post.box_type',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
