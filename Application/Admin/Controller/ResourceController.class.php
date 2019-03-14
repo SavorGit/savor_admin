@@ -239,11 +239,7 @@ class ResourceController extends BaseController{
 			$hidden_filed = I('get.filed','media_id');
 			$autofill = I('get.autofill',0);
 			$oss_host = get_oss_host();
-			if($rtype){
-				$this->get_file_exts($rtype);
-			}else{
-				$this->get_file_exts();
-			}
+            $this->get_file_exts($rtype);
 			$this->assign('autofill',$autofill);
 			$this->assign('rtype',$rtype);
 			$this->assign('hidden_filed',$hidden_filed);

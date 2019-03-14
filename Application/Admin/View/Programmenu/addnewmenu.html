@@ -673,8 +673,8 @@
 			success:function(data){
 				var strdu = '';
 				var htm = '';
-
 				for(var i=0,l=data.length;i<l;i++) {
+                    var resource_typestr = '';
 					for (var key in data[i]) {
 						if (key == 'id') {
 							var ids = data[i][key];
@@ -685,18 +685,15 @@
 						}else if(key == 'duration') {
 							var dura = data[i][key];
 						}else if(key == 'resource_type') {
-                            var resource_type = data[i][key];
+                            var resource_type = data[i]['resource_type'];
                             if(resource_type==1){
-                                var resource_typestr = '视频';
+                                var resource_typestr = '(视频)';
 							}else if(resource_type==2){
-                                var resource_typestr = '图片';
-							}else{
-                                var resource_typestr = '';
+                                var resource_typestr = '(图片)';
 							}
                         }
-
 					}
-					htm += "<div class='divlist' type="+data[i].type+" id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='scenter'>"+"("+resource_typestr+")"+"</span><span class='sright'>"+cr_time+"</span></div>";
+					htm += "<div class='divlist' type="+data[i].type+" id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='scenter'>"+resource_typestr+"</span><span class='sright'>"+cr_time+"</span></div>";
 
 				}
 				$("#lefta").empty();

@@ -52,6 +52,12 @@ class AdvertController extends BaseController{
                 $mediainfo = $mediaModel->getMediaInfoById($v['media_id']);
                 $oss_addr = $mediainfo['oss_addr'];
             }
+            if($v['resource_type']==1){
+                $resource_typestr = '视频';
+            }else{
+                $resource_typestr = '图片';
+            }
+            $datalist[$k]['resource_typestr'] = $resource_typestr;
             $datalist[$k]['type_str'] = $type_str;
             $datalist[$k]['oss_addr'] = $oss_addr;
             $datalist[$k]['cover_img_url'] = !empty($v['img_url']) ? $this->oss_host.$v['img_url'] : '';
@@ -86,12 +92,16 @@ class AdvertController extends BaseController{
 	         $description = I('post.description','');
 	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
 	         
-	         
-             $result_media = $this->handle_resource();
-             if(!$result_media['media_id']){
-                 $this->error($result_media['message'], 'advert/adsList');
+	         if($resource_type==1){
+                 $result_media = $this->handle_resource();
+                 if(!$result_media['media_id']){
+                     $this->error($result_media['message'], 'advert/adsList');
+                 }
+                 $media_id = $result_media['media_id'];
+             }else{
+                 $media_id =$cover_img_media_id;
              }
-             $media_id = $result_media['media_id'];
+
              $ads_data = array();
              $ads_data['name'] = $name;
              $ads_data['media_id'] = $media_id;
@@ -145,6 +155,7 @@ class AdvertController extends BaseController{
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
 			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval');
+             $resource_type = I('post.resource_type',1,'intval');
 			 $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
@@ -156,6 +167,7 @@ class AdvertController extends BaseController{
 			 $ads_data['duration'] = $duration;
 	         $ads_data['type'] = $adstype;
 	         $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
+	         $ads_data['resource_type'] = $resource_type;
 	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;
 	         if($cover_img_media_id){
@@ -194,16 +206,23 @@ class AdvertController extends BaseController{
 	     }else{
 	         $vinfo = $adsModel->find($adsid);
 	         $oss_addr = '';
+             $resource_type = 1;
 	         if($vinfo['media_id']){
 	             $media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
 	             $vinfo['oss_addr'] = $media_info['oss_addr'];
+                 $resource_type = $vinfo['resource_type'];
 	         }
-	         
+             $this->assign('resource_type',$resource_type);
 	         $this->assign('is_editads',1);
 	         $this->assign('vinfo',$vinfo);
 	         $this->assign('oss_host','http://'.C('OSS_HOST_NEW').'/');
 	         $this->assign('action_url','advert/editAds');
-	         $this->display('addadvert');
+             if($resource_type==1){
+                 $this->display('addadvert');
+             }else{
+                 $this->display('addimgadvert');
+             }
+
 	     }
 	 }
 	 

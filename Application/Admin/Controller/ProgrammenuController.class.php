@@ -1030,6 +1030,36 @@ setEnclosure('"')
         }
         $adModel = new AdsModel();
         $result = array();
+        switch ($m_type){
+            case 0:
+                $where .= "	AND (`type`) = 2 ";
+                $result = $adModel->getWhere($where, $field);
+                // 获取宣传片
+                $result = $this->getAdsAcccounce($result);
+                // 获取广告占位符
+                $result = $this->getAdsOccup($result, $adval);
+                break;
+            case 3:
+                // 获取宣传片
+                $result = $this->getAdsAcccounce($result);
+                break;
+            case 4:
+                // 获取广告占位符
+                $result = $this->getAdsOccup($result, $adval);
+                break;
+            case 5:
+                // 获取RTB广告占位符
+                $result = $this->getRtbadsOccup($result, $adval);
+                break;
+            case 6:
+                $result = $this->getPolyScreenOccup($result, $adval);
+                break;
+            default:
+                $where .= "	AND type = '{$m_type}'";
+                $result = $adModel->getWhere($where, $field);
+        }
+
+
         if ($m_type == 0) {
             $where .= "	AND (`type`) = 2 ";
             $result = $adModel->getWhere($where, $field);

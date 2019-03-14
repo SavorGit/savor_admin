@@ -375,6 +375,7 @@ class BaseController extends Controller {
         $add_mediadata['oss_addr'] = I('post.oss_addr','','trim');
         if($duration)  $add_mediadata['duration'] = $duration;
         if($description)   $add_mediadata['description'] = $description;
+
         $message = $url = $oss_addr = '';
         $media_id = 0;
         $mediaModel = new \Admin\Model\MediaModel();
