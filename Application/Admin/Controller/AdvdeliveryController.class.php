@@ -633,11 +633,9 @@ class AdvdeliveryController extends BaseController {
         if($pb_data) {
             foreach( $pb_data as $pk=>$pv) {
                 if($pv['state']== 3) {
-                    echo '<script>$.pdialog.closeCurrent();  alertMsg.error
-("有版位在计算中");</script>';
+                    echo '<script>$.pdialog.closeCurrent();  alertMsg.error("有版位在计算中");</script>';
                 }
             }
-
         }
 
         //城市

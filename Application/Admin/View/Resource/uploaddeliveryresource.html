@@ -2,7 +2,7 @@
 	<div id="dz-filecontainer">
 		<ul style="margin-bottom:10px;" class="nav nav-tabs">
 			<li class="active" style="">
-				<a href="#dropbase" data-toggle="tab"><span>上传广告</span></a>
+				<a href="#dropbase" data-toggle="tab"><span>上传视频广告</span></a>
 			</li>
 			<li class="pull-right">
 				<a data-dismiss="modal" href="#">&times;</a>
@@ -18,6 +18,7 @@
 					<input id="oss_id" type="hidden" name="id" value="{$row.id}">
 					<input type="hidden" name="oss_addr" id='oss_addr' value=''>
 					<input type="hidden" name="oss_filesize" id='oss_filesize' value=''>
+					<input type="hidden" name="rtype" value='{$rtype}'>
 					<div class="pageFormContent modal-body" style="margin-bottom: 14px;">
 						<div class="form-group row">
 							<div class="col-xs-12 col-sm-12">

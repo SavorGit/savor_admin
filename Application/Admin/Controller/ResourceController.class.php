@@ -166,6 +166,7 @@ class ResourceController extends BaseController{
 	public function uploadAdvdeliveryResource(){
 		$code = 10001;
 		$data = array();
+        $rtype = I('rtype',0,'intval');
 		if(IS_POST){
 			//获取文件大小
 			$ad_name = I('post.name','','trim');
@@ -176,11 +177,13 @@ class ResourceController extends BaseController{
 				$res_data = array('code'=>$code,'msg'=>'上传视频不可大于80M');
 				echo json_encode($res_data);
 				exit;
-			}else if( mb_strlen($ad_name) >= 40) {
+			}
+			if( mb_strlen($ad_name) >= 40) {
 				$res_data = array('code'=>$code,'msg'=>'广告名称40字以内');
 				echo json_encode($res_data);
 				exit;
-			}else if( $seco < 1 || !(is_int($seco)) || $seco>3600) {
+			}
+			if( $seco < 1 || !(is_int($seco)) || $seco>3600) {
 				$res_data = array('code'=>$code,'msg'=>'只可输入1-3600的数字');
 				echo json_encode($res_data);
 				exit;
@@ -196,8 +199,6 @@ class ResourceController extends BaseController{
 			}
 			$result = $this->handle_resource();
 			if($result['media_id']){
-
-
 				$code = 10000;
 				$data['media_id'] = $result['media_id'];
 				$data['path'] = $result['oss_addr'];
@@ -213,6 +214,9 @@ class ResourceController extends BaseController{
 				$userInfo = session('sysUserInfo');
 				$map['creator_id'] = $userInfo['id'];
 				$map['is_sapp_qrcode'] = $is_sapp_qrcode;  //小程序二维码
+                if($rtype){
+                    $map['resource_type'] = $rtype;
+                }
 				$adsModel->add($map);
 				$data['media_id'] = $adsModel->getLastInsID();
 			}
@@ -233,18 +237,7 @@ class ResourceController extends BaseController{
              * <span id="media_idimgname"></span>
              */
 			$hidden_filed = I('get.filed','media_id');
-			$rtype = I('get.rtype',0);
 			$autofill = I('get.autofill',0);
-			$where = ' flag=0';
-			if($rtype){
-				$where.=" and type='$rtype'";
-			}
-			$orders = 'id desc';
-			$start = 0;
-			$size = 50;
-			$mediaModel = new \Admin\Model\MediaModel();
-			$result = $mediaModel->getList($where,$orders,$start,$size);
-			$this->assign('datalist', $result['list']);
 			$oss_host = get_oss_host();
 			if($rtype){
 				$this->get_file_exts($rtype);
@@ -255,7 +248,11 @@ class ResourceController extends BaseController{
 			$this->assign('rtype',$rtype);
 			$this->assign('hidden_filed',$hidden_filed);
 			$this->assign('oss_host',$oss_host);
-			$this->display('uploaddeliveryresource');
+			if($rtype==1){
+                $this->display('uploaddeliveryresource');
+            }elseif($rtype==2){
+                $this->display('uploaddeliveryimgresource');
+            }
 		}
 	}
 
@@ -279,31 +276,16 @@ class ResourceController extends BaseController{
              * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
              * <span id="media_idimgname"></span>
              */
+            $oss_host = get_oss_host();
 			$hidden_filed = I('get.filed','media_id');
 			$rtype = I('get.rtype',0);
 			$autofill = I('get.autofill',0);
-			$where = ' flag=0';
-			if($rtype){
-				$where.=" and type='$rtype'";
-			}
-			$orders = 'id desc';
-			$start = 0;
-			$size = 50;
+
 			$mediaModel = new \Admin\Model\MediaModel();
-			$result = $mediaModel->getList($where,$orders,$start,$size);
 			$ret = $mediaModel->getWhere(array('id'=>17929));
-			$image_host = get_oss_host();
-			foreach($ret as $key=>$v){
-			    $ret[$key]['oss_addr'] = $image_host.$v['oss_addr'];
-			}
-			$result['list'] = array_merge($ret,$result['list']); 
-			$this->assign('datalist', $result['list']);
-			$oss_host = get_oss_host();
-			if($rtype){
-				$this->get_file_exts($rtype);
-			}else{
-				$this->get_file_exts();
-			}
+            $ret[0]['oss_addr'] = $oss_host.$ret[0]['oss_addr'];
+
+            $this->get_file_exts($rtype);
 			$this->assign('autofill',$autofill);
 			$this->assign('rtype',$rtype);
 			$this->assign('hidden_filed',$hidden_filed);
