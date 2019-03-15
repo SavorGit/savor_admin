@@ -3379,4 +3379,47 @@ class CrontabController extends Controller
         }
         echo $flag;
     }
+
+    public function forscreenAds(){
+        $m_forscreen = new \Admin\Model\ForscreenAdsModel();
+        $res_ads = $m_forscreen->getDataList('id,type',array('state'=>1),'id asc',0,1);
+        if(!empty($res_ads['list'][0])){
+            //state 状态:0未执行,1执行中,2可用,3不可用,4已删除
+            $forscreen_ads_id = $res_ads['list'][0]['id'];
+            $type = $res_ads['list'][0]['type'];//1版位2酒楼
+            if($type==1){
+
+            }elseif($type==2){
+                $m_forscreen_hotel = new \Admin\Model\ForscreenAdsHotelModel();
+                $m_forscreendasbox = new \Admin\Model\ForscreenAdsBoxModel();
+                $where = array('forscreen_ads_id'=>$forscreen_ads_id);
+                $res_hotel = $m_forscreen_hotel->getDataList('hotel_id',$where,'id asc');
+                foreach ($res_hotel as $v){
+                    $hotel_id = $v['hotel_id'];
+                    $m_box = new \Admin\Model\BoxModel();
+                    $field = 'b.id as box_id';
+                    $where = "h.id=$hotel_id and b.state=1 and b.flag=0 and h.state=1 and h.flag=0";
+                    $res_mac = $m_box->isHaveMac($field,$where);
+                    foreach ($res_mac as $bv){
+                        $data_box[] = array('forscreen_ads_id'=>$forscreen_ads_id,'box_id'=>$bv['box_id']);
+                    }
+                    if(!empty($data_box)){
+                        $m_forscreendasbox->addAll($data_box);
+                        echo 'forscreen_ads_id:'.$forscreen_ads_id.' hotel_id:'.$hotel_id.' execute finish'."\r\n";
+                    }else{
+                        echo 'forscreen_ads_id:'.$forscreen_ads_id.' hotel_id:'.$hotel_id.' execute 0 finish'."\r\n";
+                    }
+                }
+                $condition = array('id'=>$forscreen_ads_id);
+                $data = array('state'=>2);
+                $m_forscreen->updateData($condition,$data);
+                echo "forscreen ads finish \r\n";
+            }else{
+                echo "forscreen ads type error \r\n";
+            }
+        }else{
+            echo "forscreen ads over \r\n";
+        }
+
+    }
 }

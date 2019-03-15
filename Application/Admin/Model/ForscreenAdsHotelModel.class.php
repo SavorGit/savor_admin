@@ -19,11 +19,16 @@ class ForscreenAdsHotelModel extends BaseModel{
 
 	public function getAdsHotelId($pub_ads_id){
 		$fields = 'hotel_id';
-		$where = array('pub_ads_id'=>$pub_ads_id);
+		$where = array('forscreen_ads_id'=>$pub_ads_id);
 		$group = '';
 		$data = $this->field($fields)->where($where)->group($group)->select();
 		return $data;
 	}
+
+    public function getDataCount($where){
+        $count = $this->where($where)->count();
+        return $count;
+    }
 
 }
 

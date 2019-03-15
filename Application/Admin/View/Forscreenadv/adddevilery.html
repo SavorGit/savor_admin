@@ -161,7 +161,29 @@
 				选择图片
 			</a>
 		</div>
-
+		<div class="form-group row" id="newsp" style="margin-top: 40px;margin-left: 17px;display: none;">
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+					广告名称：
+				</label>
+				<label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">钛晶手机，你值得拥有</label>
+				<a class="" style="margin-left: 14px;color: blue;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
+					重新选择
+				</a>
+			</div>
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+					广告时长：
+				</label>
+				<label class="col-xs-12 col-sm-2 control-label" id="sp_time" style="width: auto;">60秒</label>
+			</div>
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+					URL：
+				</label>
+				<label class="col-xs-12 col-sm-2 control-label" id="sp_url" style="width: auto;">https://pro.modao.cc/app/cdY3v0DbsenVjHAR04WvTjycLUTjsWu?#screen=s3EA34B3A4B1506394954112</label>
+			</div>
+		</div>
 		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
 			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
 				视频封面：
@@ -212,7 +234,7 @@
                   </span>
 				</div>
 				<label style="float: left;margin-top: 8px;">插播位置</label>
-				<select name="play_times" id="cishu" style="float: left;width: 170px;height: 30px;margin-left: 11px;">
+				<select name="play_position" id="cishu" style="float: left;width: 170px;height: 30px;margin-left: 11px;">
 					<option value="0">请选择</option>
 					<option value="1">投屏前</option>
 					<option value="2">投屏后</option>
@@ -332,7 +354,6 @@
 				<p style="margin-top: 12%;">您的视频"<span class="vid_names">jasld</span>"</p>
 				<p>是否要在【<span class="str_time">asdasd</span>-<span class="end_time">asdasda</span>】时间段内,</p>
 				<p>发布到选择的<span class="ljiu_num">5</span>家酒楼的<span class="h_num">30</span>个机顶盒上</p>
-				<p>每个节目循环内,播放<span class="bf_cishu">5</span>次</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -736,9 +757,11 @@
         $('.ljiu_num').html($('.jiuloushu span').eq(0).html())
         $('.h_num').html($('.jiuloushu span').eq(1).html())
         $('.bf_cishu').html($('#cishu').val())
-        if($('.ban_list').html()!=''){
+        var sp_isid = $('#newsp').css('display');
+        if($('.ban_list').html()!=''&& sp_isid!='none'){
             $('#bctk').modal('show');
         }else{
+            //$('#bctk').modal('show');
             alert('请补全信息!')
         }
         //console.log(arr)
