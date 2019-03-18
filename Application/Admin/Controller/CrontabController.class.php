@@ -3394,6 +3394,10 @@ class CrontabController extends Controller
                 $m_forscreendasbox = new \Admin\Model\ForscreenAdsBoxModel();
                 $where = array('forscreen_ads_id'=>$forscreen_ads_id);
                 $res_hotel = $m_forscreen_hotel->getDataList('hotel_id',$where,'id asc');
+                $redis = SavorRedis::getInstance();
+                $redis->select(12);
+                $cache_key_pre = C('SMALLAPP_FORSCREEN_ADS');
+
                 foreach ($res_hotel as $v){
                     $hotel_id = $v['hotel_id'];
                     $m_box = new \Admin\Model\BoxModel();
@@ -3401,7 +3405,9 @@ class CrontabController extends Controller
                     $where = "h.id=$hotel_id and b.state=1 and b.flag=0 and h.state=1 and h.flag=0";
                     $res_mac = $m_box->isHaveMac($field,$where);
                     foreach ($res_mac as $bv){
-                        $data_box[] = array('forscreen_ads_id'=>$forscreen_ads_id,'box_id'=>$bv['box_id']);
+                        $box_id = $bv['box_id'];
+                        $redis->remove($cache_key_pre.$box_id);
+                        $data_box[] = array('forscreen_ads_id'=>$forscreen_ads_id,'box_id'=>$box_id);
                     }
                     if(!empty($data_box)){
                         $m_forscreendasbox->addAll($data_box);

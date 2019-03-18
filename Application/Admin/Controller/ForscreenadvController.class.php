@@ -226,6 +226,16 @@ class ForscreenadvController extends BaseController {
         }else{
             $message = '操作成功';
         }
+        $redis = SavorRedis::getInstance();
+        $redis->select(12);
+        $cache_key_pre = C('SMALLAPP_FORSCREEN_ADS');
+
+        $m_forscreenads_box = new \Admin\Model\ForscreenAdsBoxModel();
+        $box_list = $m_forscreenads_box->getBoxArrByForscreenAdsId($forscreenads_id);
+        foreach($box_list as $key=>$v){
+            $redis->remove($cache_key_pre.$v['box_id']);
+        }
+
         $this->output($message, 'forscreenadv/advlist',2);
     }
 

@@ -32,9 +32,9 @@ class ForscreenAdsBoxModel extends BaseModel{
         return $count;
     }
 
-	public function getBoxArrByForscreenAdsId($pub_ads_id){
+	public function getBoxArrByForscreenAdsId($forscreen_ads_id){
 	    $fields = 'box_id';
-	    $where = array('forscreen_ads_id'=>$pub_ads_id);
+	    $where = array('forscreen_ads_id'=>$forscreen_ads_id);
 	    $group = ' box_id';
 	    $data = $this->field($fields)->where($where)->group($group)->select();
 	    return $data;

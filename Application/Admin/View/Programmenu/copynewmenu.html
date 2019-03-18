@@ -26,6 +26,9 @@
 	    text-overflow: ellipsis;
 	    white-space: nowrap;
 	}
+	.scenter{
+		color: #0c9611;
+	}
 	.sright{
 		float: right;
 	}
@@ -631,16 +634,10 @@ var fuzhis = 1;
 			var adsname = $(this).find('.sleft').html();
 			var cr_time = $(this).find('.sright').html();
 
-
 			str += ida + ',';
-			//alert(str);
 			str1 += dura + ',';
-
 			str2 += adsname + ',';
-
 			str3 += cr_time + ',';
-
-
 		});
 
 		document.getElementById('rightid').value = str;
@@ -660,8 +657,6 @@ var fuzhis = 1;
 			}
 		})
 		var asd = ggw.join(',')
-
-
 		$.ajax({
 			type:"POST",
 			dataType: "json",
@@ -669,15 +664,11 @@ var fuzhis = 1;
 			data:"m_type="+$("#m_type option:selected").val()+"&starttime="+$("#starttime").val()+"&endtime="+$("#endtime").val()+"&searchtitle="+$("#searchtitle").val()+"&adval="+asd,
 			success:function(data){
 				console.log(data)
-				//alert(data);
-				//$("#lefta").empty();
-				//$("#left2").empty();
-
-
 				var strdu = '';
 				var htm = '';
 
 				for(var i=0,l=data.length;i<l;i++) {
+                    var resource_typestr = '';
 					for (var key in data[i]) {
 						if (key == 'id') {
 							var ids = data[i][key];
@@ -687,17 +678,19 @@ var fuzhis = 1;
 							var cr_time = data[i][key];
 						}else if(key == 'duration') {
 							var dura = data[i][key];
-
-						}
-
+						}else if(key == 'resource_type') {
+                            var resource_type = data[i]['resource_type'];
+                            if(resource_type==1){
+                                var resource_typestr = '(视频)';
+                            }else if(resource_type==2){
+                                var resource_typestr = '(图片)';
+                            }
+                        }
 					}
-					htm += "<div type='"+data[i].type+"' class='divlist' id="+ids+" dur="+dura+"><span class='sleft'>"+name+"</span><span class='sright'>"+cr_time+"</span></div>";
-
+					htm += "<div type='"+data[i].type+"' class='divlist' id="+ids+" dur="+dura+"><span class='sleft'>"+name+"<span class='scenter'>"+resource_typestr+"</span>"+"</span><span class='sright'>"+cr_time+"</span></div>";
 				}
 				$("#lefta").empty();
 				$("#lefta").html(htm);
-				//var skk = "<div class='divlist' id="+id+"></div>";
-
 			}
 		});
 
