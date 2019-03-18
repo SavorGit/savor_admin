@@ -1,0 +1,24 @@
+<div class="pageContent">
+    <form method="post" action="{$host_name}/forscreenadv/addconfig" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input type="hidden" name="id" value="{$vinfo.id}">
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    播放频次：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="system_sapp_forscreen_nums" class="form-control bs-select" title="请选择" required>
+                        <volist name="play" id="vo">
+                            <option value="{$key}" <if condition="$key eq $system_sapp_forscreen_nums">selected</if> >{$vo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>

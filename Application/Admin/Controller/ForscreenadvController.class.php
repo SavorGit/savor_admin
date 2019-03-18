@@ -116,7 +116,6 @@ class ForscreenadvController extends BaseController {
                     $tmp_hb[$hotel_id] = 1;
                     $data_hotel[] = array('hotel_id'=>$hotel_id,'forscreen_ads_id'=>$forscreen_ads_id);
                 }
-
                 $res = $m_forscreenhotel->addAll($data_hotel);
                 if($res){
                     $this->output('添加成功','forscreenadv/advlist');
@@ -253,6 +252,27 @@ class ForscreenadvController extends BaseController {
         }else {
             $this->error('删除失败');
         }
+    }
+
+    public function addconfig(){
+        $m_sysconfig = new \Admin\Model\SysConfigModel();
+        if(IS_POST){
+            $where = array('config_key'=>'system_sapp_forscreen_nums');
+            $system_sapp_forscreen_nums = I('post.system_sapp_forscreen_nums',1,'intval');
+            $m_sysconfig->updateData($where,array('config_value'=>$system_sapp_forscreen_nums));
+            $this->output('操作成功', 'forscreenadv/advlist');
+        }else{
+            $play_num = 10;
+            $play = array();
+            for($i=1;$i<=$play_num;$i++) {
+                $play[$i] = "每{$i}次投屏出现1次";
+            }
+            $res = $m_sysconfig->getOne('system_sapp_forscreen_nums');
+            $this->assign('system_sapp_forscreen_nums',$res['config_value']);
+            $this->assign('play',$play);
+            $this->display('addconfig');
+        }
+
     }
 
 }
