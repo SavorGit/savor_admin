@@ -428,10 +428,8 @@ class ResourceController extends BaseController{
 				if($vinfo['surfix'] == 'png' || $vinfo['surfix'] == 'jpg' || $vinfo['surfix'] == 'gif' || $vinfo['surfix'] == 'jpeg'){
 					$list .= '<img class="dz-nthumb" style="width:100%" src="'.$vinfo['oss_addr'].'"/> <span style="width:100%;height:1.4em;line-height:1.4em;padding:0 10px;position:absolute;bottom:10px;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,0.5);">"'.$vinfo['name'].'"</span>';
 				}else{
-					$list .= '<div class="dz-file">
-                      <i class="file-"'.$vinfo['surfix'].'"></i>
-                      <span>"'.$vinfo['name'].'"</span>
-                    </div>';
+				    $surfix = $vinfo['surfix'];
+					$list .= "<div class=\"dz-file\"><i class=\"file-{$surfix}\"></i><span>{$vinfo['name']}</span></div>";
 				}
 
 				$list .= ' </div></div></div>';
