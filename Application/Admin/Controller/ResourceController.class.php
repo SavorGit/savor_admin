@@ -237,8 +237,18 @@ class ResourceController extends BaseController{
              * <span id="media_idimgname"></span>
              */
 			$hidden_filed = I('get.filed','media_id');
-			$autofill = I('get.autofill',0);
-			$oss_host = get_oss_host();
+            $autofill = I('get.autofill',0);
+            $where = ' flag=0';
+            if($rtype){
+                $where.=" and type='$rtype'";
+            }
+            $oss_host = get_oss_host();
+            $orders = 'id desc';
+            $start = 0;
+            $size = 50;
+            $mediaModel = new \Admin\Model\MediaModel();
+            $result = $mediaModel->getList($where,$orders,$start,$size);
+            $this->assign('datalist', $result['list']);
             $this->get_file_exts($rtype);
 			$this->assign('autofill',$autofill);
 			$this->assign('rtype',$rtype);
@@ -272,16 +282,26 @@ class ResourceController extends BaseController{
              * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
              * <span id="media_idimgname"></span>
              */
-            $oss_host = get_oss_host();
 			$hidden_filed = I('get.filed','media_id');
 			$rtype = I('get.rtype',0);
 			$autofill = I('get.autofill',0);
-
-			$mediaModel = new \Admin\Model\MediaModel();
-			$ret = $mediaModel->getWhere(array('id'=>17929));
-            $ret[0]['oss_addr'] = $oss_host.$ret[0]['oss_addr'];
-
+			$where = ' flag=0';
+			if($rtype){
+				$where.=" and type='$rtype'";
+			}
+			$orders = 'id desc';
+			$start = 0;
+			$size = 50;
+            $mediaModel = new \Admin\Model\MediaModel();
+            $result = $mediaModel->getList($where,$orders,$start,$size);
+            $ret = $mediaModel->getWhere(array('id'=>17929));
+            $oss_host = get_oss_host();
+            foreach($ret as $key=>$v){
+                $ret[$key]['oss_addr'] = $oss_host.$v['oss_addr'];
+            }
+            $result['list'] = array_merge($ret,$result['list']);
             $this->get_file_exts($rtype);
+            $this->assign('datalist', $result['list']);
 			$this->assign('autofill',$autofill);
 			$this->assign('rtype',$rtype);
 			$this->assign('hidden_filed',$hidden_filed);
@@ -368,14 +388,15 @@ class ResourceController extends BaseController{
 			$start = 0;
 			$size = 50;
 			$mediaModel = new \Admin\Model\MediaModel();
-			$result = $mediaModel->getList($where,$orders,$start,$size);
-			$this->assign('datalist', $result['list']);
-			$oss_host = get_oss_host();
-			if($rtype){
-				$this->get_file_exts($rtype);
-			}else{
-				$this->get_file_exts();
-			}
+            $result = $mediaModel->getList($where,$orders,$start,$size);
+            $ret = $mediaModel->getWhere(array('id'=>17929));
+            $oss_host = get_oss_host();
+            foreach($ret as $key=>$v){
+                $ret[$key]['oss_addr'] = $oss_host.$v['oss_addr'];
+            }
+            $result['list'] = array_merge($ret,$result['list']);
+            $this->assign('datalist', $result['list']);
+            $this->get_file_exts($rtype);
 			$this->assign('autofill',$autofill);
 			$this->assign('rtype',$rtype);
 			$this->assign('hidden_filed',$hidden_filed);
@@ -410,14 +431,13 @@ class ResourceController extends BaseController{
 			$start = 0;
 			$size = 50;
 			$mediaModel = new \Admin\Model\MediaModel();
-			//$result = $mediaModel->getList($where,$orders,$start,$size);
-			$result = $mediaModel->where($where)->select();
+			$result = $mediaModel->getList($where,$orders,$start,$size);
+			$datalist = $result['list'];
 			$image_host = get_oss_host();
-			foreach ($result as $k=>$v){
-				$result[$k]['oss_addr'] = $image_host.$v['oss_addr'];
+			foreach ($datalist as $k=>$v){
+                $datalist[$k]['oss_addr'] = $image_host.$v['oss_addr'];
 			}
-			//var_dump($result);
-			$result['list'] = array_slice($result,0,30);
+			$result['list'] = $datalist;
 			$list = '';
 
 			foreach ( $result['list'] as $rk=>$vinfo) {
@@ -433,8 +453,6 @@ class ResourceController extends BaseController{
 				}
 
 				$list .= ' </div></div></div>';
-
-
 			}
 			echo $list;
 
