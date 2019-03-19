@@ -22,8 +22,8 @@ class ResourceController extends BaseController{
         $orders = $order.' '.$sort;
         $pagenum = ($start-1) * $size>0?($start-1) * $size:0;
         $where = "1=1";
-        if($name)   $where.= "	AND name LIKE '%{$name}%'";
-        if($beg_time)   $where.=" AND create_time>='$beg_time'";
+        if($name)   $where.= " AND name LIKE '%{$name}%'";
+        if($beg_time)   $where.= " AND create_time>='$beg_time'";
         if($end_time){
             $end_time = "$end_time 23:59:59";
             $where.=" AND create_time<='$end_time'";
@@ -52,9 +52,7 @@ class ResourceController extends BaseController{
         	$this->assign('keywords',$name);
     	 	$this->display($display_html);
         }
-        
 	 }
-
 
 	 public function addResource(){
 	     if(IS_POST){
@@ -100,8 +98,6 @@ class ResourceController extends BaseController{
 			}
 			$result = $this->handle_resource();
 			if($result['media_id']){
-
-
 				$code = 10000;
 				$data['media_id'] = $result['media_id'];
 				$data['path'] = $result['oss_addr'];
@@ -161,7 +157,6 @@ class ResourceController extends BaseController{
 			$this->display('uplortbdeliveryresource');
 		}
 	}
-
 
 	public function uploadAdvdeliveryResource(){
 		$code = 10001;
@@ -407,58 +402,44 @@ class ResourceController extends BaseController{
     
 
 	public function searchResource(){
-		$data = array();
-			/*
-             * 隐藏域文件规则：
-             * filed 为:media_id时
-             * <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
-             * <span id="media_idimgname"></span>
-             */
+        $hidden_filed = I('post.filed','media_id');
+        $rtype = I('post.rtype',0);
+        $autofill = I('post.autofill',0);
+        $name = I('post.name','','trim');
+        $where = 'flag=0';
+        if($rtype){
+            $where.=" and type='$rtype'";
+        }
+        if($name){
+            $where.=" and name like '%". $name."%'";
+        }
+        $orders = 'id desc';
+        $start = 0;
+        $size = 50;
+        $mediaModel = new \Admin\Model\MediaModel();
+        $result = $mediaModel->getList($where,$orders,$start,$size);
+        $datalist = $result['list'];
+        $image_host = get_oss_host();
+        foreach ($datalist as $k=>$v){
+            $datalist[$k]['oss_addr'] = $image_host.$v['oss_addr'];
+        }
+        $result['list'] = $datalist;
+        $list = '';
 
-			$hidden_filed = I('post.filed','media_id');
-			$rtype = I('post.rtype',0);
-			$autofill = I('post.autofill',0);
-			$name = I('post.name','','trim');
-			$where = ' flag=0';
-			if($rtype){
-				$where.=" and type='$rtype'";
-			}
-			if($name){
-				$where.=" and name like '%". $name."%'";
-			}
-
-			$orders = 'id desc';
-			$start = 0;
-			$size = 50;
-			$mediaModel = new \Admin\Model\MediaModel();
-			$result = $mediaModel->getList($where,$orders,$start,$size);
-			$datalist = $result['list'];
-			$image_host = get_oss_host();
-			foreach ($datalist as $k=>$v){
-                $datalist[$k]['oss_addr'] = $image_host.$v['oss_addr'];
-			}
-			$result['list'] = $datalist;
-			$list = '';
-
-			foreach ( $result['list'] as $rk=>$vinfo) {
-				$list .= ' <div class="dz-preview dz-file-preview" data-list-file> <div class="file-content" data-wh="" data-title="'.$vinfo['name'].'" data-src="'.$vinfo['oss_addr'].'"> <div class="dz-overlay hidden"></div>
-                  <label class="dz-check">  <input type="checkbox" value="'.$vinfo['id'].'" name="selected[]">
-                    <span><i class="fa fa-check"></i></span>
-                  </label> <div class="dz-details" title="'.$vinfo['name'].'">';
-				if($vinfo['surfix'] == 'png' || $vinfo['surfix'] == 'jpg' || $vinfo['surfix'] == 'gif' || $vinfo['surfix'] == 'jpeg'){
-					$list .= '<img class="dz-nthumb" style="width:100%" src="'.$vinfo['oss_addr'].'"/> <span style="width:100%;height:1.4em;line-height:1.4em;padding:0 10px;position:absolute;bottom:10px;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,0.5);">"'.$vinfo['name'].'"</span>';
-				}else{
-				    $surfix = $vinfo['surfix'];
-					$list .= "<div class=\"dz-file\"><i class=\"file-{$surfix}\"></i><span>{$vinfo['name']}</span></div>";
-				}
-
-				$list .= ' </div></div></div>';
-			}
-			echo $list;
-
-
-
-
+        foreach ( $result['list'] as $rk=>$vinfo) {
+            $list .= ' <div class="dz-preview dz-file-preview" data-list-file> <div class="file-content" data-wh="" data-title="'.$vinfo['name'].'" data-src="'.$vinfo['oss_addr'].'"> <div class="dz-overlay hidden"></div>
+              <label class="dz-check">  <input type="checkbox" value="'.$vinfo['id'].'" name="selected[]">
+                <span><i class="fa fa-check"></i></span>
+              </label> <div class="dz-details" title="'.$vinfo['name'].'">';
+            if($vinfo['surfix'] == 'png' || $vinfo['surfix'] == 'jpg' || $vinfo['surfix'] == 'gif' || $vinfo['surfix'] == 'jpeg'){
+                $list .= '<img class="dz-nthumb" style="width:100%" src="'.$vinfo['oss_addr'].'"/> <span style="width:100%;height:1.4em;line-height:1.4em;padding:0 10px;position:absolute;bottom:10px;overflow:hidden;text-overflow:ellipsis;background:rgba(255,255,255,0.5);">"'.$vinfo['name'].'"</span>';
+            }else{
+                $surfix = $vinfo['surfix'];
+                $list .= "<div class=\"dz-file\"><i class=\"file-{$surfix}\"></i><span>{$vinfo['name']}</span></div>";
+            }
+            $list .= ' </div></div></div>';
+        }
+        echo $list;
 	}
 	 
 	 public function editResource(){
@@ -472,11 +453,8 @@ class ResourceController extends BaseController{
 	             $save['state'] = $flag;
 	         }else{
 	             $name = I('post.name','','trim');
-	             
 	             $type = I('post.type',3,'intval');
-
 	             if($type ==1){
-
 	                 if(empty($name)){
 	                     $message = '资源名称不能为空';
 	                     $this->error($message);
@@ -485,9 +463,7 @@ class ResourceController extends BaseController{
 	                 if(!empty($nass['name'])){
 	                     $message = '文件名已存在，请换一个名称';
 	                     $this->error($message);
-
 	                 }
-
 	             }
 				 $minu = I('post.minu','0','intval');
 				 $seco = I('post.seco','0','intval');
@@ -502,10 +478,8 @@ class ResourceController extends BaseController{
 	         if($media_id){
 	             if($mediaModel->where('id='.$media_id)->save($save)){
 	                 $message = '更新成功!';
-	                 
 	                 $this->output('更新成功!', 'resource/resourceList',2);
 	             }else{
-	                 
 	                 $this->error('更新失败!');
 	             }
 	         }
@@ -516,6 +490,7 @@ class ResourceController extends BaseController{
 	         $this->display('editresource');
 	     }
 	 }
+
 	 public function uploadPolyResource(){
 	     $code = 10001;
 	     $data = array();
@@ -548,13 +523,10 @@ class ResourceController extends BaseController{
 	         }
 	         $result = $this->handle_resource();
 	         if($result['media_id']){
-	 
-	 
 	             $code = 10000;
 	             $data['media_id'] = $result['media_id'];
 	             $data['path'] = $result['oss_addr'];
 	             //添加到ads表
-	 
 	             $map['media_id'] = $result['media_id'];
 	             $map['name'] = $ad_name;
 	             $map['duration'] = $seco;
