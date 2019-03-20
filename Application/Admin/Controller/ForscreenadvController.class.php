@@ -1,5 +1,6 @@
 <?php
 namespace Admin\Controller;
+use \Common\Lib\SavorRedis;
 
 /**
  *@desc 投屏广告管理
@@ -269,7 +270,8 @@ class ForscreenadvController extends BaseController {
         if(IS_POST){
             $where = array('config_key'=>'system_sapp_forscreen_nums');
             $system_sapp_forscreen_nums = I('post.system_sapp_forscreen_nums',1,'intval');
-            $m_sysconfig->updateData($where,array('config_value'=>$system_sapp_forscreen_nums));
+            $status = I('post.status',0,'intval');
+            $m_sysconfig->updateData($where,array('config_value'=>$system_sapp_forscreen_nums,'status'=>$status));
             $this->output('操作成功', 'forscreenadv/advlist');
         }else{
             $play_num = 10;
@@ -278,6 +280,7 @@ class ForscreenadvController extends BaseController {
                 $play[$i] = "每{$i}次投屏出现1次";
             }
             $res = $m_sysconfig->getOne('system_sapp_forscreen_nums');
+            $this->assign('status',$res['status']);
             $this->assign('system_sapp_forscreen_nums',$res['config_value']);
             $this->assign('play',$play);
             $this->display('addconfig');

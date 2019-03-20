@@ -15,6 +15,16 @@
                 </div>
             </div>
 
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    状态:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="hidden" name="status" value="0">
+                    <input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="启用" data-off-text="禁用" <if condition="$status eq 1" >checked</if>>
+                </div>
+            </div>
+
         </div>
         <div class="modal-footer">
             <button class="btn btn-default close-m" type="button">取消</button>
