@@ -396,6 +396,9 @@ class BaseController extends Controller {
 
         $tempInfo = pathinfo($add_mediadata['oss_addr']);
         $surfix = $tempInfo['extension'];
+        if($surfix){
+            $surfix = strtolower($surfix);
+        }
         $typeinfo = C('RESOURCE_TYPEINFO');
         if(isset($typeinfo[$surfix])){
             $type = $typeinfo[$surfix];

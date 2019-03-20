@@ -99,7 +99,7 @@ class AdvertController extends BaseController{
                  }
                  $media_id = $result_media['media_id'];
              }else{
-                 $media_id =$cover_img_media_id;
+                 $media_id = $cover_img_media_id;
              }
 
              $ads_data = array();
