@@ -14,6 +14,76 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
     
+    public function removeProCach(){
+        exit('11111');
+        $redis = SavorRedis::getInstance();
+        $redis->select(12);
+        $keys  = $redis->keys('program_pro_*');
+        foreach($keys as $key){
+            //echo $key;exit;
+            $redis->remove($key);
+        }
+    }
+    
+    
+    public function closeSmallappJijian(){
+        exit(1);
+        $m_box = new \Admin\Model\BoxModel();
+        $sql =  "SELECT box.id box_id FROM savor_box box
+left join savor_room room  on box.room_id=room.id
+left join savor_hotel hotel on room.hotel_id=hotel.id
+where box.state=1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_type in(2,3) and box.is_open_simple=1";
+        $list = M()->query($sql);
+        $flag = 0;
+        foreach($list as $key=>$v){
+            $data['is_open_simple']  = 0;
+            $id = $v['box_id'];
+            $ret = $m_box->editData($id, $data);
+            if($ret){
+                $flag++;
+            }
+        }
+        
+        echo $flag;
+        
+    }
+    
+    //打开三代网络酒楼盒子的极简版开关
+    public function openSmallappJijian(){
+        exit(1);
+        $m_box = new \Admin\Model\BoxModel();
+        $where = array();
+        $where['box.state'] = 1;
+        $where['box.flag']  = 0;
+        
+        $where['hotel.hotel_box_type'] = array('in','6');
+        
+        $where['hotel.flag'] = 0;
+        $where['hotel.state']= 1;
+        $where['box.is_open_simple'] = 0;
+        $list = $m_box->alias('box')
+        ->join('savor_room room on box.room_id=room.id','left')
+        ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+        ->join('savor_area_info area on hotel.area_id=area.id','left')
+        ->field('box.wifi_mac,hotel.id,area.region_name,hotel.name,box.id box_id,hotel.hotel_box_type')
+        ->where($where)
+        ->select();
+        $flag = 0;
+        foreach($list as $key=>$v){
+            $data['is_open_simple']  = 1;
+            $id = $v['box_id'];
+            $ret = $m_box->editData($id, $data);
+            if($ret){
+                $flag++;
+            }
+        }
+        
+        echo $flag;
+        
+    }
+    
+    
+    
     public function testMsn(){
         exit();
         $accessId = 'LTAITjXOpRHKflOX';
