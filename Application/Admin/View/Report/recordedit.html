@@ -175,6 +175,18 @@
 			</div>
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
+					所属分类：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="category_id" class="form-control bs-select" title="请选择">
+						<volist name="category" id="cinfo">
+							<option value="{$cinfo.id}" data-content='<span class="lvl">{$cinfo.html}</span>{$cinfo.name}' {$cinfo.is_select}>{$cinfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
 					备注：
 				</label>
 				<div class="col-xs-12 col-sm-10">
