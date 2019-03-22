@@ -169,9 +169,10 @@ class SappforscreenController extends BaseController {
 	    $id = I('id',0,'intval');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
 	    if(IS_POST){
+	        $category_id = I('post.category_id',0,'intval');
             $remark = I('post.remark','','trim');
             $condition = array('id'=>$id);
-            $data = array('remark'=>$remark);
+            $data = array('remark'=>$remark,'category_id'=>$category_id);
             $m_smallapp_forscreen_record->updateData($condition,$data);
             $this->output('操作成功!', 'Report/sappforscreen');
         }else{
@@ -182,7 +183,9 @@ class SappforscreenController extends BaseController {
             $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
             $where = array('a.id'=>$id);
             $vinfo = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            $category_id = 0;
             if(!empty($vinfo)){
+                $category_id = $vinfo['category_id'];
                 if(isset($all_smallapps[$vinfo['small_app_id']])){
                     $vinfo['small_app'] = $all_smallapps[$vinfo['small_app_id']];
                 }else{
@@ -224,6 +227,9 @@ class SappforscreenController extends BaseController {
                 }
                 $vinfo['action_name'] = $all_actions[$nowaction_type];
             }
+            $m_category = new \Admin\Model\CategoryModel();
+            $category = $m_category->getCategory($category_id);
+            $this->assign('category',$category);
             $this->assign('oss_host',C('OSS_HOST_NEW'));
             $this->assign('vinfo',$vinfo);
             $this->display('Report/recordedit');
