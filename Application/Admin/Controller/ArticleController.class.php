@@ -369,10 +369,7 @@ class ArticleController extends BaseController {
                 $mbperModel->add($dat);
             }
             $tmp_hotel_arr = getVsmallHotelList();
-            foreach($tmp_hotel_arr as $key=>$v){
-                sendTopicMessage($v, 11);
-            }
-            
+            sendTopicMessage($tmp_hotel_arr, 11);
             
             $message = '更新成功!';
             $url = 'article/homemanager';
