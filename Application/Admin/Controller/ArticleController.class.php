@@ -221,9 +221,11 @@ class ArticleController extends BaseController {
                 $save['update_time'] = $save['create_time'];
                 $res = $mbHomeModel->add($save);
                 if($res){
-                    foreach($tmp_hotel_arr as $key=>$v){
+                    /* foreach($tmp_hotel_arr as $key=>$v){
                         sendTopicMessage($v, 11);
-                    }
+                    } */
+                    
+                    sendTopicMessage($tmp_hotel_arr, 11);
                     $this->output('操作成功!', 'article/homemanager',2);
                 }else{
                     $this->output('操作失败!', 'content/getlist');
@@ -234,9 +236,10 @@ class ArticleController extends BaseController {
             $save['sort_num'] = $max_nu+1;
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
-                foreach($vm_small_hotel_list as $key=>$v){
+                /* foreach($vm_small_hotel_list as $key=>$v){
                     sendTopicMessage($v['hotel_id'], 11);
-                }
+                } */
+                sendTopicMessage($tmp_hotel_arr, 11);
                 $this->output('操作成功!', 'content/getlist',3);
                 die;
             }else{
