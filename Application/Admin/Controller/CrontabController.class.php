@@ -3435,15 +3435,15 @@ class CrontabController extends Controller
      * @since  20190322
      */
     public function removeSimuForscreenData(){
-        exit('1');
         $date_time = date('Y-m-d 23:59:59',strtotime('-2 days')); //**************上线用这个
         
         $where ="WHERE mobile_brand='devtools' and imgs='[\"forscreen/resource/15368043845967.mp4\"]' 
                and openid='ofYZG4yZJHaV2h3lJHG5wOB9MzxE' and create_time<'".$date_time."'";
         
         $sql ="select * from `savor_smallapp_forscreen_record` ".$where;
-        echo $sql ;exit;
+        
         $data = M()->query($sql);
+        $count = count($data);
         $map =  array();
         $fk = 1 ;
         //print_r($data);exit;
@@ -3465,7 +3465,7 @@ class CrontabController extends Controller
         }
         
         
-        $sql ="delete FROM `savor_smallapp_forscreen_record` ".$where;
+        $sql ="delete FROM `savor_smallapp_forscreen_record` ".$where." limit ".$count;
                
         $rt = M()->execute($sql);
         if($rt){
