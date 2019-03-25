@@ -527,7 +527,8 @@ class ArticleController extends BaseController {
             }else{
                 $mbperModel->add($dat);
             }
-            
+            $tmp_hotel_arr = getVsmallHotelList();
+            sendTopicMessage($tmp_hotel_arr, 11);
             $this->output('操作成功','article/homemanager');
 
         } else{
