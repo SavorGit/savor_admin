@@ -2569,6 +2569,7 @@ class ExcelController extends Controller
         $ctime = I('get.ctime');
         $etime = I('get.etime');
         $exe_user_id = I('get.exe_user_id');
+        $hotel_box_type = I('get.hotel_box_type');
         //$userid= I('user_id');
         $ctime = !empty($ctime) ? $ctime.' 00:00:00' : '';
         $etime = !empty($etime) ? $etime.' 23:59:59' : '';
@@ -2589,7 +2590,9 @@ class ExcelController extends Controller
         if($exe_user_id){
             $where['a.exe_user_id'] = $exe_user_id;
         }
-        
+        if($hotel_box_type){
+            $where['b.hotel_box_type'] = array('in',$hotel_box_type);
+        }
         $where['a.state'] = array('in','4');
         $where['a.task_type'] = array('eq','4');
         $where['a.flag']      =0;
@@ -2599,7 +2602,7 @@ class ExcelController extends Controller
         $list = $m_option_task->alias('a')
         ->join('savor_hotel b on a.hotel_id= b.id','left')
         ->join('savor_sysuser sy on a.publish_user_id = sy.id')
-        ->field($fields)->where($where)->order('a.hotel_id desc ')->select();
+        ->field($fields)->where($where)->order('a.create_time asc ')->select();
         
         $model = D();
         foreach($list as $key=>$val){
