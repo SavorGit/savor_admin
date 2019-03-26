@@ -47,7 +47,29 @@ where box.state=1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.ho
         echo $flag;
         
     }
+    public function closeSmallappJjPt(){
+        exit(1);
+        $m_box = new \Admin\Model\BoxModel();
+        $sql =  "SELECT box.id box_id FROM savor_box box
+left join savor_room room  on box.room_id=room.id
+left join savor_hotel hotel on room.hotel_id=hotel.id
+where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_type in(2) ";
+        
+        $list = M()->query($sql);
+        $flag = 0;
+        foreach($list as $key=>$v){
+            $data['is_open_simple']  = 0;
+            $data['is_sapp_forscreen'] = 0;
+            $id = $v['box_id'];
+            $ret = $m_box->editData($id, $data);
+            if($ret){
+                $flag++;
+            }
+        }
     
+        echo $flag;
+    
+    }
     //打开三代网络酒楼盒子的极简版开关
     public function openSmallappJijian(){
         exit(1);
