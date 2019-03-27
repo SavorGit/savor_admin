@@ -1675,7 +1675,7 @@ class CrontabController extends Controller
                 $pro_arr = json_decode($pro_arr, true);
                 $pro_arr = $this->changeadvList($pro_arr,1);
             } else {
-                $pro_arr = $adsModel->getproInfo($menuid);
+                $pro_arr = $adsModel->getproInfoNew($menuid);
                 $redis->set($procache_key , json_encode($pro_arr), 120);
                 $pro_arr = $this->changeadvList($pro_arr,1);
 
@@ -1685,12 +1685,12 @@ class CrontabController extends Controller
                 $ads_arr = json_decode($ads_arr, true);
                 $ads_arr = $this->changeadvList($ads_arr,2);
             } else {
-                $ads_arr = $adsModel->getadsInfo($menuid);
+                $ads_arr = $adsModel->getadsInfoNew($menuid);
                 $redis->set($adscache_key , json_encode($ads_arr), 120);
                 $ads_arr = $this->changeadvList($ads_arr,2);
             }
 
-            $adv_arr = $adsModel->getupanadvInfo($hotel_id, $menuid);
+            $adv_arr = $adsModel->getupanadvInfoNew($hotel_id, $menuid);
             $adv_arr = $this->changupaneadvList($adv_arr,1);
             $result['play_list'] = array_merge($pro_arr,
                 $ads_arr,$adv_arr);
