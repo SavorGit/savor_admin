@@ -109,7 +109,7 @@ class SmallController extends BaseController{
 		    foreach($media_arr as $zk=>$zv){
 		        $z_media_arr[] = $zv['media_id'];
 		    }
-		    
+
 		    $cache_key = C('SMALL_PROGRAM_LIST_KEY').$v['id'];
 		    $redis->select(8);
 		    $upload_media_list = $redis->get($cache_key);
@@ -118,10 +118,22 @@ class SmallController extends BaseController{
 		    if($upload_media_list){
 		        $upload_media_list = json_decode($upload_media_list,true);
 		        $upload_media_list = $upload_media_list['media_list'];
+
+                $adv_cache_key = C('PROGRAM_ADV_CACHE_PRE').$v['id'];
+                $redis->select(12);
+                $adv_arr = $redis->get($adv_cache_key);
+                $redis_advarr = json_decode($adv_arr,true);
+                $adv_num = $redis_advarr['adv_num'].$newest_num;
+
 		        $up_media_arr = array();
+
 		        foreach($upload_media_list as $mk=>$mv){
 		            if(isset($mv['version']) && $newest_num){
-		                if($mv['version']!=$newest_num){
+                        $now_menun_num = $newest_num;
+                        if($mv['type']=='adv'){
+                            $now_menun_num = $adv_num;
+                        }
+		                if($mv['version']!=$now_menun_num){
                             $data_type = 1;
                         }
                     }
@@ -192,7 +204,7 @@ class SmallController extends BaseController{
             $order  = "pl.id desc ";
             $limit  = " limit 0,1";
             $menu_info = $m_program_menu_hotel->getProgramByHotelId($hotel_id, $fields, $order, $limit);   //获取最新的一期节目单
-            $newest_num = $menu_info[0]['menu_num'];
+            $menu_num = $menu_info[0]['menu_num'];
 
             $redis = new SavorRedis();
             $redis->select(8);
@@ -201,10 +213,18 @@ class SmallController extends BaseController{
             $list =  json_decode($list,true);
             if(!empty($list['media_list'])){
                 $list =  $list['media_list'];
-                $m_media = new \Admin\Model\MediaModel();
                 sortArrByOneField($list,'type');
+
+                $redis->select(12);
+                $adv_cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotel_id;
+                $adv_arr = $redis->get($adv_cache_key);
+                $redis_advarr = json_decode($adv_arr,true);
+                $adv_num = $redis_advarr['adv_num'].$menu_num;
+
+                $m_media = new \Admin\Model\MediaModel();
                 $up_media_arr = array();
                 foreach($list as $key=>$v){
+                    $now_menu_num = $menu_num;
                     $diff_status = 0;
                     $up_media_arr[] = $v['id'];
                     if($v['flag']==1){
@@ -212,28 +232,32 @@ class SmallController extends BaseController{
                     }else {
                         $list[$key]['down_state'] ='未下载';
                     }
-                    if(isset($v['version'])){
-                        if($v['version']==$newest_num){
-                            $diff_status = 1;
-                        }else{
-                            $diff_status = 2;
-                        }
-                    }
-                    $list[$key]['diff_status'] = $diff_status;
-                    $media_info = $m_media->getMediaInfoById($v['id']);
-                    $list[$key]['name'] = $media_info['name'];
-                    $list[$key]['oss_addr'] = $media_info['oss_addr'];
+
                     switch ($v['type']){
                         case 'pro':
                             $list[$key]['type'] = '节目';
                             break;
                         case 'adv':
+                            $now_menu_num = $adv_num;
                             $list[$key]['type'] = '宣传片';
                             break;
                         case 'ads':
                             $list[$key]['type'] = '广告';
                             break;
                     }
+
+                    if(isset($v['version'])){
+                        if($v['version']==$now_menu_num){
+                            $diff_status = 1;
+                        }else{
+                            $diff_status = 2;
+                        }
+                    }
+                    $list[$key]['menu_num'] = $now_menu_num;
+                    $list[$key]['diff_status'] = $diff_status;
+                    $media_info = $m_media->getMediaInfoById($v['id']);
+                    $list[$key]['name'] = $media_info['name'];
+                    $list[$key]['oss_addr'] = $media_info['oss_addr'];
                 }
                 sortArrByOneField($list,'diff_status',true);
 
@@ -286,6 +310,7 @@ class SmallController extends BaseController{
                 $diff = array_diff($z_media_arr,$up_media_arr);
                 $diff_arr = array();
                 foreach($diff as $key=>$v){
+                    $now_menu_num = $menu_num;
                     $diff_arr[$key]['down_state'] ='未下载';
                     $media_info = $m_media->getMediaInfoById($v);
                     $diff_arr[$key]['name'] = $media_info['name'];
@@ -296,14 +321,15 @@ class SmallController extends BaseController{
                             $diff_arr[$key]['type'] = '节目';
                             break;
                         case 'adv':
+                            $now_menu_num = $adv_num;
                             $diff_arr[$key]['type'] = '宣传片';
                             break;
                         case 'ads':
                             $diff_arr[$key]['type'] = '广告';
                             break;
                     }
+                    $diff_arr[$key]['menu_num'] = $now_menu_num;
                 }
-                $this->assign('newest_num',$newest_num);
                 $this->assign('diff',$diff_arr);
                 $this->assign('list',$list);
                 $this->display('medialist');
