@@ -677,7 +677,40 @@
     })
     //"<div bweinum='"+arr[i].jiunum+"' val='"+new_arrhiends+"' jiuname_s='"+arr[i].namejiu+"' class='position-list-group'><span class='acitve-position-jname'>"+arr[i].namejiu+"</span><span class='acitve-position-num' >"+arr[i].jiunum+"个</span><span class='acitve-position-del' jiuname = '"+arr[i].namejiu+"'>X</span></div>"
     /*删除*/
+    $('.acitve-position-lists').on('click','.acitve-position-del',function(){
+        if($('#rad_jiulou').prop('checked')==false){
+            var a = $(this).attr('jiuname');
+            $(".position-ones-name:contains('"+a+"')").parent().find('input').prop('checked',false);
+            $(".position-ones-name:contains('"+a+"')").parent().next().find('input').prop('checked',false);
+            var is = $('#bczhi').val();
+            var ias = eval(is)
+            var del_index = $(this).parent().index();
+            ias.splice(del_index,1);
+            console.log(ias);
+            $(this).parent().remove();
+            var saco = JSON.stringify(ias)
+            $('#bczhi').val(saco);
+            $('.jiuloushuliang').html($('.position-list-group').length);
+            var xsa = $(this).parent().find('.acitve-position-num').html();
+            var asdddd = parseInt(xsa)
+            $('.banweishu').html($('.banweishu').html()-asdddd);
+        }else{
+            let this_del_html = $(this).parent().find('.acitve-position-jname').html();
+            $('.position-one').each(function(){
+                if($(this).find('label').html()==this_del_html){
+                    $(this).find('input').prop('checked',false)
+                }
+            })
+            $(this).parent().remove();
+            var arr_null = [];
+            $('.position-list-group').each(function(){
+                arr_null.push($(this).prop('id'))
+            })
+            addAjaxBoxNum(JSON.stringify(arr_null))
 
+            $('.jiuloushuliang').html($('.position-list-group').length)
+        }
+    })
     /*版位保存*/
     $('#bw_bc').click(function(){
         if($('#rad_jiulou').prop('checked')==false){
