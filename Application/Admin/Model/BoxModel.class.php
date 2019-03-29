@@ -311,7 +311,6 @@ class BoxModel extends BaseModel{
 	
 	}
 
-
 	public function getInfoByHotelid($hotelid , $field,$where){
 		$sql = 'select '.$field;
 		$sql  .= ' FROM  savor_box box  LEFT JOIN savor_room room ON  box.room_id = room.id  WHERE room.hotel_id=' . $hotelid.$where;
@@ -326,6 +325,17 @@ class BoxModel extends BaseModel{
              ->where($where)
              ->count();
         return $nums;
+    }
+
+    public function getInfoByCondition($fields='box.*',$where){
+        $res = $this->alias('box')
+            ->join('savor_room room on room.id= box.room_id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->field($fields)
+            ->where($where)
+            ->select();
+        $data = !empty($res)?$res[0]:array();
+        return $data;
     }
 
 }

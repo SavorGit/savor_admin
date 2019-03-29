@@ -9,7 +9,7 @@ namespace Admin\Controller;
 
 class SappforscreenController extends BaseController {
 
-    public $all_smallapps=array('1'=>'普通版','2'=>'极简版','3'=>'极简版','4'=>'餐厅端','11'=>'h5互动游戏');
+    public $all_smallapps = array();
     public $source_types = array('0'=>'下载成功','1'=>'盒子存在资源','2'=>'下载失败','3'=>'盒子待回执');
     public $all_actions = array('0'=>'图片投屏','2-1'=>'滑动','2-2'=>'视频投屏','4'=>'多图投屏','5'=>'视频点播','6'=>'广告跳转',
     '7'=>'点击互动游戏','8'=>'重投','9'=>'手机呼大码','11'=>'发现点播图片','12'=>'发现点播视频','21'=>'查看点播视频',
@@ -18,6 +18,7 @@ class SappforscreenController extends BaseController {
 
 	public function __construct() {
 		parent::__construct();
+		$this->all_smallapps = C('all_smallapps');
 	}
 	/**
 	 * @desc  首页

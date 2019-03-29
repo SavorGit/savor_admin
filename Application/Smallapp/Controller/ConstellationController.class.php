@@ -253,7 +253,7 @@ class ConstellationController extends BaseController {
         $fields = 'id,name,media_id,start_month,start_day,end_month,end_day,intro';
         $where = array('status'=>1);
         $orderby = 'end_month asc,end_day asc';
-        $m_constellation = new \Common\Model\Smallapp\ConstellationModel();
+        $m_constellation = new \Admin\Model\Smallapp\ConstellationModel();
         $res = $m_constellation->getDataList($fields,$where,$orderby);
         $month = date('n');
         $day = date('j');

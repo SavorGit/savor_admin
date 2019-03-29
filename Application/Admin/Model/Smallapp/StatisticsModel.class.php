@@ -24,6 +24,15 @@ class StatisticsModel extends Model
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+
+    public function getOnlinnum($fields,$where){
+        $data =$this->alias('s')
+            ->join('savor_box b on s.box_mac=b.mac','left')
+            ->field($fields)->where($where)->select();
+        return $data;
+    }
+
+
 	public function getWhere($fields,$where,$order,$limit,$group){
 	    $data = $this->field($fields)->where($where)->order($order)->group($group)->limit($limit)->select();
 	    return $data;

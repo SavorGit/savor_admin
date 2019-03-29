@@ -161,6 +161,14 @@ $config['heart_hotel_box_type'] = array(
     '3'=>'二代5G版',
     '6'=>'三代网络版',
 );
+$config['all_smallapps'] = array(
+    '1'=>'普通版',
+    '2'=>'极简版',
+    '3'=>'极简版',
+    '4'=>'餐厅端',
+    '11'=>'h5互动游戏'
+);
+
 $config['source_type'] = array(
     '1'=>'官网',
     '2'=>'客户端二维码',

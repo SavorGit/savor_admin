@@ -1,0 +1,92 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/datareport/hotel" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="col-sm-2">
+            地区：
+            <div style="display: inline-block;vertical-align: middle;">
+              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            设备类型：
+            <div style="display: inline-block;vertical-align: middle;">
+              <select name="box_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name=":C('heart_hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $box_type">selected</if>>{$vo}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            是否是4G：
+            <div style="display: inline-block;vertical-align: middle;">
+              <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <option value="1" <if condition="$is_4g eq 1">selected</if>>是</option>
+                <option value="2" <if condition="$is_4g eq 2">selected</if>>否</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-sm-2">
+            二维码开关类型：
+            <div style="display: inline-block;vertical-align: middle;">
+              <select name="qrtype" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <volist name="qrcode_types" id="aname">
+                  <option <if condition="$qrtype eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div></div>
+            <div class="input-group input-group-sm">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i>搜索</button>
+            </span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>酒楼数</th>
+              <th>版位数</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <tr target="sid_user">
+              <td>{$nums['hotelnum']}</td>
+              <td>{$nums['boxnum']}</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
