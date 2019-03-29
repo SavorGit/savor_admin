@@ -15,7 +15,7 @@ class DatareportController extends BaseController {
         $is_4g = I('is_4g',0,'intval');
 
         if(empty($start_time)){
-            $start_time = date('Y-m-d').' 00:00:00';
+            $start_time = date('Ymd');
         }else{
             $start_time = date('Ymd',strtotime($start_time));
         }
