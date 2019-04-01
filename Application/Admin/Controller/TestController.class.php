@@ -14,6 +14,59 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
     
+    //打开二代5G、三代网络版酒楼宣传片的 小程序二维码
+    public function openAdvQrcode(){
+        exit(1);
+        $sql ="select id hotel_id,name hotel_name from savor_hotel where state=1 and flag=0 
+               and hotel_box_type in(3,6)";
+        
+        $hotel_list = M()->query($sql);
+        $flag = 0;
+        
+        foreach($hotel_list as $key=>$v){
+            /* $sql ="update savor_ads set is_sapp_qrcode=1 where hotel_id=".$v['hotel_id']." and type=3";
+            $ret = M()->execute($sql);
+            if($ret){
+                $flag ++;
+            } */
+            $sql ="select id from savor_ads where hotel_id=".$v['hotel_id']." and type=3 and is_sapp_qrcode=0";
+            $rt = M()->query($sql);
+            if(!empty($rt)){
+                $ht[] = $v;
+            }
+        }
+        print_r($ht);
+    }
+    
+    
+    public function countHdNums(){
+        $date = I('date');
+        $start_time = $date.' 00:00:00';
+        $end_time   = $date.' 23:59:59';
+        $sql ="select openid from savor_smallapp_qrcode_log 
+               where `create_time`>='".$start_time."' and `create_time`<='".$end_time."' group by openid";
+        $data = M()->query($sql);
+        
+        $scan_code = count($data); //扫码人数
+        
+        //投屏人数
+        $sql ="select a.openid from savor_smallapp_forscreen_record a
+               left join savor_smallapp_user  u on a.openid = u.openid
+               left join savor_smallapp_game_user gu  on u.mpopenid = gu.openid
+               where a.mobile_brand !='devtools' 
+               and  a.`create_time`>='".$start_time."' and a.`create_time`<='".$end_time."'
+               and a.small_app_id!=4     group by a.openid";
+        
+        $data = M()->query($sql);
+        
+        $forscreen_count = count($data);
+        echo $date."扫码人数：".$scan_code.",互动人数:".$forscreen_count;
+        
+        
+        
+        
+    }
+    
     public function removeProCach(){
         exit('11111');
         $redis = SavorRedis::getInstance();
