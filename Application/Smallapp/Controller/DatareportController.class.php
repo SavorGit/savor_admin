@@ -26,6 +26,13 @@ class DatareportController extends BaseController {
         }
         $where = array();
         $where['s.static_date'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        //网络屏幕数
+        $fields = "count(DISTINCT s.box_mac) as wlnum";
+        $ret = $m_statistics->getOnlinnum($fields, $where);
+        $wlnum = intval($ret[0]['wlnum']);
+
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
         if($area_id){
@@ -45,12 +52,6 @@ class DatareportController extends BaseController {
                 $where['b.is_4g'] = 0;
             }
         }
-        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-        //网络屏幕数
-        $fields = "count(s.id) as wlnum";
-        $ret = $m_statistics->getOnlinnum($fields, $where);
-        $wlnum = intval($ret[0]['wlnum']);
-
         //在线屏幕数
 //        $where['heart_log_meal_nums'] = array('GT',12);
         $where['s.heart_log_meal_nums'] = array('GT',5);
