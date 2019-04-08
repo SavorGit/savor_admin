@@ -1400,8 +1400,6 @@ ADD COLUMN `play_times` TINYINT(3) NOT NULL DEFAULT 0 COMMENT '玩游戏次数'
 ALTER TABLE savor_smallapp_turntable_detail ADD COLUMN `join_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '加入时间',
 ADD COLUMN `box_join_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒收到用户加入时间'
 
-
-
 增加说明：图片、视频投屏增加埋点
 修改时间：2018.9.5
 修改人：张英涛 
@@ -1412,4 +1410,142 @@ ADD COLUMN `res_eup_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '资源上传成
 ADD COLUMN `box_res_sdown_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒开始下载资源时间',
 ADD COLUMN `box_res_edown_time` BIGINT(13) NOT NULL DEFAULT 0 COMMENT '机顶盒下载资源完成时间'
 
-   
+增加说明：新增红包业务相关表
+修改时间：2019-02-25 18:33
+修改人：刘斌
+执行SQL：
+
+ALTER TABLE `cloud`.`savor_smallapp_user`
+ADD COLUMN `mpopenid` varchar(100) NOT NULL DEFAULT '' COMMENT '微信服务号用户openid' AFTER `is_wx_auth`;
+
+CREATE TABLE `savor_smallapp_redpacket` (
+  `id` bigint(16) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `total_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '总金额',
+  `pay_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '支付金额',
+  `amount` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '红包个数',
+  `surname` varchar(30) NOT NULL DEFAULT '' COMMENT '姓名',
+  `sex` tinyint(1) NOT NULL DEFAULT '1' COMMENT '性别 1男,2女',
+  `bless_id` tinyint(1) NOT NULL DEFAULT '1' COMMENT '祝福语id',
+  `scope` tinyint(1) NOT NULL DEFAULT '1' COMMENT '发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视',
+  `mac` varchar(12) NOT NULL DEFAULT '' COMMENT 'mac地址',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0:未付款,1:付款码到电视,2:付款中,3:付款失败,4:付款成功,5:已抢完,6未抢完,7已退款',
+  `pay_time` timestamp NULL DEFAULT NULL COMMENT '付款时间',
+  `grab_time` timestamp NULL DEFAULT NULL COMMENT '红包抢完时间',
+  `pay_type` int(5) NOT NULL DEFAULT '0' COMMENT '0未知 10微信支付',
+  `isdel` tinyint(1) NOT NULL COMMENT '是否删除 0未删除 1删除',
+  `add_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `key_status` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='红包';
+
+CREATE TABLE `savor_smallapp_redpacket_receive` (
+  `id` bigint(16) NOT NULL AUTO_INCREMENT,
+  `redpacket_id` int(11) NOT NULL COMMENT '红包id',
+  `user_id` int(11) NOT NULL COMMENT '领取用户id',
+  `money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '红包金额',
+  `barrage` varchar(150) NOT NULL DEFAULT '' COMMENT '弹幕',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态 0 未领取 1已领取',
+  `receive_time` timestamp NULL DEFAULT NULL COMMENT '领取时间',
+  `add_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `key_redstatus` (`redpacket_id`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='红包领取记录';
+
+
+CREATE TABLE `savor_smallapp_orderserial` (
+  `id` int(13) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `trade_no` varchar(30) NOT NULL DEFAULT '' COMMENT '订单号',
+  `serial_order` varchar(200) NOT NULL DEFAULT '' COMMENT '第三方流水号',
+  `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '产品ID',
+  `pay_type` int(5) NOT NULL DEFAULT '0' COMMENT '0未知 10 微信支付',
+  `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `trade_no` (`trade_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='订单流水号记录';
+
+CREATE TABLE `savor_smallapp_refund` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `user_id` int(11) unsigned NOT NULL COMMENT '购买用户ID',
+  `refund_money` decimal(9,2) DEFAULT '0.00' COMMENT '退款金额',
+  `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品ID',
+  `batch_no` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '退款批次号',
+  `detail_data` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '退款数据',
+  `code_str` varchar(200) NOT NULL DEFAULT '' COMMENT '退款的票号',
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0整单退1部分退',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0未处理1已提交至第三方2退款完成',
+  `reason_way` tinyint(1) DEFAULT '1' COMMENT '退款方式1原路退回2退银行卡',
+  `reason_type` tinyint(1) DEFAULT '1' COMMENT '原因类型',
+  `refund_time` timestamp NULL DEFAULT NULL COMMENT '退款时间',
+  `succ_time` timestamp NULL DEFAULT NULL COMMENT '完成时间',
+  `add_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='退款';
+
+增加说明：新增互动广告
+修改时间：2019-03-19 14:00
+修改人：刘斌
+执行SQL：
+
+ALTER TABLE `cloud`.`savor_ads`
+ADD COLUMN `resource_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '资源类型1视频,2图片' AFTER `checker_id`;
+ALTER TABLE `cloud`.`savor_box`
+ADD COLUMN `is_open_interactscreenad` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否开启互动投屏广告' AFTER `is_open_simple`;
+ALTER TABLE `cloud`.`savor_ads`
+MODIFY COLUMN `type` tinyint(2) NOT NULL COMMENT '1广告，2节目，3宣传片 4B类广告 5聚屏广告 6投屏广告' AFTER `resource_type`;
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`) VALUES ('system_sapp_forscreen_nums', '2')
+
+CREATE TABLE `savor_forscreen_ads` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `ads_id` int(12) NOT NULL DEFAULT '0' COMMENT '广告id',
+  `start_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放开始时间',
+  `end_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投放结束时间',
+  `play_position` tinyint(1) NOT NULL DEFAULT '0' COMMENT '播放位置1：投屏前2：投屏后',
+  `cover_img_media_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '封面图资源id',
+  `creator_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '操作人Id',
+  `state` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态:0未执行,1执行中,2可用,3不可用,4已删除',
+  `type` smallint(10) NOT NULL DEFAULT '0' COMMENT '1版位2酒楼',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `start_date` (`start_date`),
+  KEY `end_date` (`end_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='互动投屏广告表';
+
+CREATE TABLE `savor_forscreen_ads_box` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `forscreen_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'forscreen_ads表主键id',
+  `box_id` int(12) NOT NULL DEFAULT '0' COMMENT '机顶盒ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `down_state` tinyint(1) NOT NULL DEFAULT '0' COMMENT '机顶盒下载状态',
+  PRIMARY KEY (`id`),
+  KEY `box_id` (`box_id`),
+  KEY `foradsid` (`forscreen_ads_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='互动投屏广告对应机顶盒表';
+
+CREATE TABLE `savor_forscreen_ads_hotel` (
+  `id` int(12) NOT NULL AUTO_INCREMENT COMMENT '主键Id',
+  `forscreen_ads_id` int(12) NOT NULL DEFAULT '0' COMMENT 'pub_ads表主键id',
+  `hotel_id` int(12) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='互动投屏广告对应酒楼';
+
+增加说明：新增互动广告
+修改时间：2019-04-03 09:55
+修改人：刘斌
+执行SQL：
+CREATE TABLE `savor_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '父类id',
+  `trees` varchar(100) NOT NULL DEFAULT '' COMMENT '分类树',
+  `level` tinyint(1) NOT NULL DEFAULT '0' COMMENT '分类等级0无1一级2二级等',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序值',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态1启用2禁用',
+  `add_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='分类表';
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `category_id` int(11) NOT NULL DEFAULT '0' COMMENT '分类ID' AFTER `small_app_id`;
