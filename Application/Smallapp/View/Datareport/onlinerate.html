@@ -80,6 +80,7 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
+              <th>饭局</th>
               <th>在线率</th>
               <th>在线版位</th>
               <th>网络机顶盒版位数</th>
@@ -87,10 +88,18 @@
           </thead>
           <tbody data-check="list" data-parent=".table">
             <tr target="sid_user">
-              <td>{$rate}%</td>
-              <td>{$nums['zxnum']}</td>
-              <td>{$nums['wlnum']}</td>
+              <td>午饭</td>
+              <td>{$data_list.lunch.rate}%</td>
+              <td>{$data_list.lunch.zxnum}</td>
+              <td>{$data_list.lunch.wlnum}</td>
             </tr>
+            <tr target="sid_user">
+              <td>晚饭</td>
+              <td>{$data_list.dinner.rate}%</td>
+              <td>{$data_list.dinner.zxnum}</td>
+              <td>{$data_list.dinner.wlnum}</td>
+            </tr>
+
 
           </tbody>
         </table>

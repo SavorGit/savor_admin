@@ -26,25 +26,14 @@ class DatareportController extends BaseController {
         }
         $where = array();
         $where['s.static_date'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
-
-        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-        //网络屏幕数
-        $fields = "count(DISTINCT s.box_mac) as wlnum";
-        $ret = $m_statistics->getOnlinnum($fields, $where);
-        $wlnum = intval($ret[0]['wlnum']);
+        $day = (strtotime($end_time) - strtotime($start_time))/86400;
 
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
         if($area_id){
             $where['s.area_id'] = $area_id;
         }
-        $hotel_box_types = C('heart_hotel_box_type');
-        if($box_type){
-            $where['s.box_type'] = $box_type;
-        }else{
-            $box_types = array_keys($hotel_box_types);
-            $where['s.box_type'] = array('in',$box_types);
-        }
+
         if($is_4g){
             if($is_4g == 1){
                 $where['b.is_4g'] = 1;
@@ -52,16 +41,45 @@ class DatareportController extends BaseController {
                 $where['b.is_4g'] = 0;
             }
         }
+        $hotel_box_types = C('heart_hotel_box_type');
+        if($box_type){
+            $where['s.hotel_box_type'] = $box_type;
+            $where_wl = $where;
+        }else{
+            $where_wl = $where;
+            $box_types = array_keys($hotel_box_types);
+            $where['s.hotel_box_type'] = array('in',$box_types);
+        }
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        //网络屏幕数
+        $fields = "count(DISTINCT s.box_mac) as wlnum";
+        $ret = $m_statistics->getOnlinnum($fields, $where_wl);
+        $wlnum = intval($ret[0]['wlnum']);
+        if($day){
+            $wlnum = $day*$wlnum;
+        }
+
         //在线屏幕数
 //        $where['heart_log_meal_nums'] = array('GT',12);
         $where['s.heart_log_meal_nums'] = array('GT',5);
         $where['_string'] = 'case s.static_fj when 1 then (120 div s.heart_log_meal_nums)<10  else (180 div s.heart_log_meal_nums)<10 end';
         $fields = 'count(s.box_mac) as zxnum';
+        $where['s.static_fj'] = 1;//1:午饭2:晚饭
         $ret = $m_statistics->getOnlinnum($fields, $where);
         $zxnum = intval($ret[0]['zxnum']);
-
         $nums = array('wlnum'=>$wlnum,'zxnum'=>$zxnum);
         $rate = $m_statistics->getRate($nums,3);
+        $online = array('wlnum'=>$wlnum,'zxnum'=>$zxnum,'rate'=>$rate);
+        $data_list = array('lunch'=>$online);
+
+        $where['s.static_fj'] = 2;//1:午饭2:晚饭
+        $ret = $m_statistics->getOnlinnum($fields, $where);
+        $zxnum = intval($ret[0]['zxnum']);
+        $nums = array('wlnum'=>$wlnum,'zxnum'=>$zxnum);
+        $rate = $m_statistics->getRate($nums,3);
+        $online = array('wlnum'=>$wlnum,'zxnum'=>$zxnum,'rate'=>$rate);
+        $data_list['dinner'] = $online;
 
         $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
         $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
@@ -69,8 +87,7 @@ class DatareportController extends BaseController {
         $this->assign('box_type',$box_type);
         $this->assign('is_4g',$is_4g);
         $this->assign('area', $area_arr);
-        $this->assign('rate',$rate);
-        $this->assign('nums',$nums);
+        $this->assign('data_list',$data_list);
         $this->display();
     }
 
@@ -113,10 +130,10 @@ class DatareportController extends BaseController {
 
         $hotel_box_types = C('heart_hotel_box_type');
         if($box_type){
-            $where['box.box_type'] = $box_type;
+            $where['hotel.hotel_box_type'] = $box_type;
         }else{
             $box_types = array_keys($hotel_box_types);
-            $where['box.box_type'] = array('in',$box_types);
+            $where['hotel.hotel_box_type'] = array('in',$box_types);
         }
 
         if($is_4g){
@@ -159,10 +176,10 @@ class DatareportController extends BaseController {
         }
         $hotel_box_types = C('heart_hotel_box_type');
         if($box_type){
-            $where['box.box_type'] = $box_type;
+            $where['hotel.hotel_box_type'] = $box_type;
         }else{
             $box_types = array_keys($hotel_box_types);
-            $where['box.box_type'] = array('in',$box_types);
+            $where['hotel.hotel_box_type'] = array('in',$box_types);
         }
         if($is_4g){
             if($is_4g == 1){
