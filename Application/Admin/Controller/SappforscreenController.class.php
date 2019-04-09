@@ -29,18 +29,56 @@ class SappforscreenController extends BaseController {
         $is_valid = I('is_valid',1,'intval');
         $is_exist = I('is_exist',99,'intval');
         $action_type = I('action_type',999);
+        $category_id = I('category_id',0,'intval');
+        $scene_id = I('scene_id',0,'intval');
+        $spotstatus = I('spotstatus',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $pagenum = I('pageNum',1);
 	    $order = I('_order','a.id');
 	    $sort = I('_sort','desc');
 	    $orders = $order.' '.$sort;
 	    $start  = ( $pagenum-1 ) * $size;
+
 	    $where = array();
 	    $where['box.flag'] = 0;
 	    $where['box.state'] =1;
 	    $where['a.mobile_brand'] = array('neq','devtools');
 	    if($is_valid!=2){
 	        $where['a.is_valid'] = $is_valid;
+        }
+        $create_time = I('create_time','','trim');
+        $end_time    = I('end_time','','trim');
+
+        if($create_time && $end_time){
+            $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+            $this->assign('create_time',$create_time);
+            $this->assign('end_time',$end_time);
+        } else if($create_time && empty($end_time)){
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+            $this->assign('create_time',$create_time);
+            $this->assign('end_time',date('Y-m-d'));
+        }else if(empty($create_time) && !empty($end_time)){
+            $create_time = '2018-07-23';
+            $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+            $this->assign('create_time',$create_time);
+            $this->assign('end_time',$end_time);
+        }else{
+            $create_time = date('Y-m-d');
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+            $this->assign('create_time',$create_time);
+            $this->assign('end_time',$end_time);
+        }
+        $m_category = new \Admin\Model\CategoryModel();
+        if($category_id){
+
+        }
+        if($scene_id){
+            $where['a.scene_id'] = $scene_id;
+        }
+        if($spotstatus){
+            $where['a.spotstatus'] = $spotstatus;
         }
         if($is_exist!=99){
             $where['a.is_exist'] = $is_exist;
@@ -76,30 +114,7 @@ class SappforscreenController extends BaseController {
 	        $where['a.openid'] = $openid;
 	        $this->assign('openid',$openid);
 	    }
-	    $create_time = I('create_time','','trim');
-	    $end_time    = I('end_time','','trim');
-	    
-	    if($create_time && $end_time){
-	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
-	        $this->assign('create_time',$create_time);
-	        $this->assign('end_time',$end_time);
-	    } else if($create_time && empty($end_time)){
-	        $end_time = date('Y-m-d');
-	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
-	        $this->assign('create_time',$create_time);
-	        $this->assign('end_time',date('Y-m-d'));
-	    }else if(empty($create_time) && !empty($end_time)){
-	        $create_time = '2018-07-23';
-	        $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
-	        $this->assign('create_time',$create_time);
-	        $this->assign('end_time',$end_time);
-	    }else{
-            $create_time = date('Y-m-d');
-            $end_time = date('Y-m-d');
-            $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
-            $this->assign('create_time',$create_time);
-            $this->assign('end_time',$end_time);
-        }
+
         $all_smallapps = $this->all_smallapps;
 	    $source_types = $this->source_types;
         $all_actions = $this->all_actions;
@@ -149,6 +164,11 @@ class SappforscreenController extends BaseController {
 	    }
 
 	    unset($all_smallapps[3]);
+        $category = $m_category->getCategory($category_id);
+        $scene = $m_category->getCategory($scene_id,1,2);
+        $this->assign('scene',$scene);
+        $this->assign('category',$category);
+        $this->assign('spotstatus',$spotstatus);
         $this->assign('_sort',$sort);
         $this->assign('_order',$order);
         $this->assign('pageNum',$pagenum);
@@ -171,9 +191,16 @@ class SappforscreenController extends BaseController {
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
 	    if(IS_POST){
 	        $category_id = I('post.category_id',0,'intval');
+	        $scene_id = I('post.scene_id',0,'intval');
+	        $personattr_id = I('post.personattr_id',0,'intval');
+	        $dinnernature_id = I('post.dinnernature_id',0,'intval');
+	        $contentsoft_id = I('post.contentsoft_id',0,'intval');
+	        $spotstatus = I('post.spotstatus',0,'intval');
             $remark = I('post.remark','','trim');
             $condition = array('id'=>$id);
-            $data = array('remark'=>$remark,'category_id'=>$category_id);
+            $data = array('remark'=>$remark,'category_id'=>$category_id,'scene_id'=>$scene_id,
+                'personattr_id'=>$personattr_id,'dinnernature_id'=>$dinnernature_id,'contentsoft_id'=>$contentsoft_id,
+                'spotstatus'=>$spotstatus);
             $m_smallapp_forscreen_record->updateData($condition,$data);
             $this->output('操作成功!', 'Report/sappforscreen');
         }else{
@@ -187,6 +214,11 @@ class SappforscreenController extends BaseController {
             $category_id = 0;
             if(!empty($vinfo)){
                 $category_id = $vinfo['category_id'];
+                $scene_id = $vinfo['scene_id'];
+                $personattr_id = $vinfo['personattr_id'];
+                $dinnernature_id = $vinfo['dinnernature_id'];
+                $contentsoft_id = $vinfo['contentsoft_id'];
+
                 if(isset($all_smallapps[$vinfo['small_app_id']])){
                     $vinfo['small_app'] = $all_smallapps[$vinfo['small_app_id']];
                 }else{
@@ -230,7 +262,16 @@ class SappforscreenController extends BaseController {
             }
             $m_category = new \Admin\Model\CategoryModel();
             $category = $m_category->getCategory($category_id);
+            $scene = $m_category->getCategory($scene_id,1,2);
+            $personattr = $m_category->getCategory($personattr_id,1,3);
+            $dinnernature = $m_category->getCategory($dinnernature_id,1,4);
+            $contentsoft = $m_category->getCategory($contentsoft_id,1,5);
+
+            $this->assign('scene',$scene);
             $this->assign('category',$category);
+            $this->assign('personattr',$personattr);
+            $this->assign('dinnernature',$dinnernature);
+            $this->assign('contentsoft',$contentsoft);
             $this->assign('oss_host',C('OSS_HOST_NEW'));
             $this->assign('vinfo',$vinfo);
             $this->display('Report/recordedit');

@@ -15,7 +15,7 @@ class CategoryController extends BaseController {
     	$category_id = I('category_id',0,'intval');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
-        
+        $type = I('type',0,'intval');
         if(empty($keyword)){
         	$where = array('parent_id'=>0);//只显示一级分类
         	if($category_id){
@@ -27,18 +27,26 @@ class CategoryController extends BaseController {
         		$where['trees'] = array('like',"%,$category_id,%");
         	}
         }
+        if($type){
+            $where['type'] = $type;
+            unset($where['id'],$where['trees']);
+        }
         $start  = ($page-1) * $size;
         $m_category  = new \Admin\Model\CategoryModel();
         $result = $m_category->getCustomList($where, 'id desc', $start, $size);
+        $all_types = array(0=>'',1=>'内容',2=>'场景',3=>'人员属性',4=>'饭局性质',5=>'内容所用软件');
         foreach ($result['list'] as $k=>$v){
         	$trees = $m_category->get_category_tree($v['id']);
         	if(!empty($trees)){
         		unset($trees[0]);
         	}
         	$result['list'][$k]['trees'] = $trees;
+        	$result['list'][$k]['typestr'] = $all_types[$v['type']];
         }
-        $category = $m_category->getCategory($category_id,1);
-
+        $category = $m_category->getCategory($category_id,1,1);
+        unset($all_types[0]);
+        $this->assign('alltype',$all_types);
+        $this->assign('type',$type);
         $this->assign('category',$category);
         $this->assign('keyword',$keyword);
         $this->assign('datalist', $result['list']);
@@ -50,12 +58,12 @@ class CategoryController extends BaseController {
     
     public function categoryAdd(){
         $id = I('id', 0, 'intval');
+        $type = I('type',0,'intval');
         $m_category  = new \Admin\Model\CategoryModel();
         if(IS_GET){
-        	$dinfo = array('status'=>1);
+        	$dinfo = array('status'=>1,'sort'=>1,'type'=>$type);
         	if($id){
         		$dinfo = $m_category->getInfo(array('id'=>$id));
-
         		if(!empty($dinfo['parent_id'])){
         			$id = $dinfo['parent_id'];
         		}
@@ -68,12 +76,13 @@ class CategoryController extends BaseController {
         	$name = I('post.name','','trim');
         	$category_id = I('post.category_id',0,'intval');
         	$sort = I('post.sort',1,'intval');
+        	$type = I('post.type',0,'intval');
         	$status = I('post.status',1,'intval');
 
         	if(empty($name)){
         		$this->output('缺少必要参数!', 'category/categoryAdd', 2, 0);
         	}
-        	$where = array('name'=>$name);
+        	$where = array('name'=>$name,'type'=>$type);
         	if($id){
                 $where['id']= array('neq',$id);
         		$res_category = $m_category->getInfo($where);
@@ -84,7 +93,7 @@ class CategoryController extends BaseController {
         		$this->output('名称不能重复', 'category/categoryAdd', 2, 0);
         	}
 
-        	$data = array('name'=>$name,'sort'=>$sort,'status'=>$status);
+        	$data = array('name'=>$name,'sort'=>$sort,'type'=>$type,'status'=>$status);
         	if($id){
         		if(empty($category_id)){
         			$data['level'] = 1;

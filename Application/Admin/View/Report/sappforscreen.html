@@ -15,7 +15,7 @@
                         <a class="btn btn-success btn-sm"  title="无效名单"  target="navTab" rel="sappforscreen/invalidlist" href="{$host_name}/sappforscreen/invalidlist" calback="navTabAjaxDone"><i class="fa fa-th-list"></i>无效名单</a>
                         <a class="btn btn-success btn-sm"  title="一键隔离测试数据"  target="ajaxTodo" href="{$host_name}/sappforscreen/delTestRecord" calback="navTabAjaxDone"><i class="fa fa-key"></i>隔离数据</a>
                         <a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreen?s_date={$create_time}&e_date={$end_time}&small_app_id={$small_app_id}&is_valid={$is_valid}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i>导出</a>
-                        <a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreenBybox?s_date={$create_time}&e_date={$end_time}&small_app_id={$small_app_id}&is_valid={$is_valid}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i>导出盒子</a>
+                        <!--<a class="btn btn-success btn-sm add" href="{$host_name}/excel/countForscreenBybox?s_date={$create_time}&e_date={$end_time}&small_app_id={$small_app_id}&is_valid={$is_valid}" title="导出小程序投屏统计数据" target="_blank" mask="true"><i class="fa fa-table"></i>导出盒子</a>-->
                     </div>
                 </div>
 
@@ -147,7 +147,7 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="list" id="vlist">
             <tr target="sid_user">
-              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="序号"><a class="click-able-title">{$vlist.id}</a></td>
               <td data-title="城市">{$vlist.region_name}</td>
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
