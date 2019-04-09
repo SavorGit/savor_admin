@@ -168,7 +168,10 @@ $config['all_smallapps'] = array(
     '4'=>'餐厅端',
     '11'=>'h5互动游戏'
 );
-
+$config['all_spotstatus'] = array(
+    '1'=>'现场',
+    '2'=>'非现场',
+);
 $config['source_type'] = array(
     '1'=>'官网',
     '2'=>'客户端二维码',
