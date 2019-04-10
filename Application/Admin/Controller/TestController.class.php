@@ -14,6 +14,34 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
     
+    //打开二代网络  主干版小程序开关
+    public function openSecSmallapp(){
+        exit(1);
+        $m_box = new \Admin\Model\BoxModel();
+        $sql =  "SELECT box.id box_id FROM savor_box box
+                 left join savor_room room  on box.room_id=room.id
+                 left join savor_hotel hotel on room.hotel_id=hotel.id
+                 where box.state=1 and box.flag=0 and hotel.flag=0 
+                 and hotel.state=1 and hotel.hotel_box_type in(2) 
+                 and box.is_sapp_forscreen=0";
+        $list = M()->query($sql);
+        
+        $flag = 0;
+        foreach($list as $key=>$v){
+            $data['is_sapp_forscreen']  = 1;
+            $id = $v['box_id'];
+            $ret = $m_box->editData($id, $data);
+            if($ret){
+                $flag++;
+            }
+        }
+        
+        echo $flag;
+        
+    }
+    
+    
+    
     //打开二代5G、三代网络版酒楼宣传片的 小程序二维码
     public function openAdvQrcode(){
         exit(1);
