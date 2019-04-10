@@ -6,23 +6,35 @@
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-5">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd" title="新增分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
-            <if condition="$nav_total gt 0">
-            <a class="btn btn-success btn-sm" href="{$host_name}/nav/navList" title="导航管理" target="navTab" rel="nav/navList"><i class="fa fa-arrow-right"></i> <span>查看导航</span></a>
-          	</if>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=1" title="新增内容分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容分类</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=2" title="新增场景" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增场景</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=3" title="新增人员属性" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增人员属性</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=4" title="新增饭局性质" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增饭局性质</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=5" title="新增内容所用软件" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容所用软件</a>
+
           </div>
         </div>
         
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 pull-right">
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-3 pull-right">
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="分类名称">
+          <if condition="$type eq 1">
             <span class="input-group-btn">
               <select name="category_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                 <option value='0' >所有分类</option>
                 <volist name="category" id="cinfo">
                   <option value="{$cinfo.id}" {$cinfo.is_select}>{$cinfo.name}</option><br>
+                </volist>
+              </select>
+            </span>
+          </if>
+            <span class="input-group-btn">
+              <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >所有类型</option>
+                <volist name="alltype" id="ainfo">
+                  <option value="{$key}" <if condition="$type eq $key">selected</if> >{$ainfo}</option>
                 </volist>
               </select>
             </span>
@@ -45,6 +57,7 @@
             <tr id="post">
               <th>名称</th>
               <th>状态</th>
+              <th>类型</th>
               <th>显示顺序</th>
               <th class="table-tool">操作</th>
             </tr>
@@ -62,6 +75,7 @@
                         <i class="fa fa-toggle-off"></i></span></a>
                   </if>
              </td>
+             <td data-title="类型">{$dinfo.typestr}</td>
              <td data-title="排序值">{$dinfo.sort}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
@@ -86,6 +100,7 @@
                         <i class="fa fa-toggle-off"></i></span></a>
                 </if>
                 </td>
+                 <td data-title="类型">内容</td>
 	             <td data-title="排序值">{$treeinfo.sort}</td>
 	              <td class="table-tool" data-title="操作">
 	                <div class="tools-edit">

@@ -187,6 +187,71 @@
 			</div>
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
+					所属场景：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="scene_id" class="form-control bs-select" title="请选择">
+						<volist name="scene" id="cinfo">
+							<option value="{$cinfo.id}"  {$cinfo.is_select}>{$cinfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					地点状态：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="spotstatus" class="form-control bs-select" title="请选择">
+						<option value="0">无</option>
+						<volist name=":C('all_spotstatus')" id="spinfo">
+							<option value="{$key}" <if condition="$vinfo.spotstatus eq $key">selected</if> >{$spinfo}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					人员属性：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="personattr_id" class="form-control bs-select" title="请选择">
+						<volist name="personattr" id="pinfo">
+							<option value="{$pinfo.id}"  {$pinfo.is_select}>{$pinfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					饭局性质：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="dinnernature_id" class="form-control bs-select" title="请选择">
+						<volist name="dinnernature" id="dninfo">
+							<option value="{$dninfo.id}"  {$dninfo.is_select}>{$dninfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					内容所用软件：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="contentsoft_id" class="form-control bs-select" title="请选择">
+						<volist name="contentsoft" id="csinfo">
+							<option value="{$csinfo.id}"  {$csinfo.is_select}>{$csinfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
 					备注：
 				</label>
 				<div class="col-xs-12 col-sm-10">

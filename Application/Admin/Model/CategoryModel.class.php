@@ -33,10 +33,13 @@ class CategoryModel extends BaseModel{
         return $data;
     }
 
-    public function get_category_tree($category_id=0,$status=0){
+    public function get_category_tree($category_id=0,$status=0,$type=0){
         $where = array();
         if($status){
-            $where = array('status'=>$status);
+            $where['status'] = $status;
+        }
+        if($type){
+            $where['type'] = $type;
         }
         if($category_id){
             $where['trees'] = array('like',"%,$category_id,%");
@@ -66,13 +69,16 @@ class CategoryModel extends BaseModel{
         return $trees;
     }
 
-    public function getCategory($category_id=0,$level=0){
+    public function getCategory($category_id=0,$level=0,$type=1){
         if($level==1){
             $where = array('status'=>1,'parent_id'=>0);
+            if($type){
+                $where['type'] = $type;
+            }
             $orderby = 'sort desc';
             $res_category = $this->getDataList('*',$where,$orderby);
         }else{
-            $res_category = $this->get_category_tree();
+            $res_category = $this->get_category_tree(0,1,$type);
         }
         $category = array();
         foreach ($res_category as $v){
