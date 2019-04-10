@@ -1,0 +1,74 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/smallapprest/index" method="post" >
+    <input type="hidden" name="hotel_id" value="{$hotelinfo.id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+     
+	        
+          <div class="form-inline">
+	            <div class="tools-group">
+	            	<a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/smallapprest/adddownload" title="新增下载内容" target="dialog" mask="true"><i class="fa fa-plus"></i>新增下载内容</a>
+	          	</div>
+          </div>
+	   </div>
+	   </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>id</th>
+              <th>名称</th>
+              <th>下载图片</th>
+              <th>名称</th>
+              <th>创建时间</th>
+              <th>更新时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="id">{$vlist.id}</td>
+              <td data-title="名称">{$vlist.name}</td>
+              
+              <td data-title="封面图片">
+              	<a data-tip="预览" target="__blank" mask="true" href="{$oss_host}{$vlist.oss_addr}" class="btn btn-success btn-icon">
+                	<img src="{$oss_host}{$vlist.oss_addr}" />
+              	</a>
+              </td>
+              <td data-title="名称">{$vlist.name}</td>
+              <td data-title="创建时间">{$vlist.create_time}</td>
+              <td data-title="更新时间">{$vlist.update_time}</td>
+              
+              
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" rel="hotel/xuanchuanxiugai" target="dialog" mask="true" href="{$host_url}/smallapp/smallapprest/editdownload?id={$vlist.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                  <a  class="btn btn-danger btn-icon" warn="警告" data-tip="" title="你确定要删除吗？" target="ajaxTodo" href="{$host_url}/smallapp/smallapprest/deldownload?id={$vlist.id}" calback="navTabAjaxDone" data-original-title="删除">
+				  <span>
+				   <i class="fa fa-trash"></i>
+				  </span>
+				  </a>
+                </div>
+              </td>
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
