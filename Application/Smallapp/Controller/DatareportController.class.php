@@ -1,6 +1,7 @@
 <?php
 namespace Smallapp\Controller;
 use Admin\Controller\BaseController ;
+
 /**
  * @desc 数据报表
  *
@@ -127,6 +128,9 @@ class DatareportController extends BaseController {
         if($area_id){
             $where['area.id'] = $area_id;
         }
+        $where['box.flag'] = 0;
+        $where['box.state'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
 
         $hotel_box_types = C('heart_hotel_box_type');
         if($box_type){
@@ -158,6 +162,282 @@ class DatareportController extends BaseController {
         $this->assign('all_smallapps', $all_smallapps);
         $this->assign('nums',$nums);
         $this->display('interactnum');
+    }
+
+    public function interactdiff(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $estart_time = I('estart_time','');
+        $eend_time = I('eend_time','');
+        $small_app_id = I('small_app_id',0,'intval');
+        $area_id = I('area_id',0,'intval');
+        $box_type = I('box_type',0,'intval');
+        $is_4g = I('is_4g',0,'intval');
+
+        $where = array();
+        if($start_time && $end_time){
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        } else if($start_time && empty($end_time)){
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        }else if(empty($start_time) && !empty($end_time)){
+            $start_time = '2018-07-23';
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        }else{
+            $start_time = date('Y-m-d');
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        }
+        $where['a.is_valid'] = 1;
+
+        if($small_app_id){
+            if($small_app_id == 2){
+                $where['a.small_app_id'] = array('in',array(2,3));
+            }else{
+                $where['a.small_app_id'] = $small_app_id;
+            }
+        }
+
+        $hotel_where = array('a.state'=>1,'a.flag'=>0);
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+        if($area_id){
+            $where['area.id'] = $area_id;
+            $hotel_where['a.area_id'] = $area_id;
+        }
+
+        $hotel_box_types = C('heart_hotel_box_type');
+        if($box_type){
+            $where['hotel.hotel_box_type'] = $box_type;
+            $hotel_where['a.hotel_box_type'] = $box_type;
+        }else{
+            $box_types = array_keys($hotel_box_types);
+            $where['hotel.hotel_box_type'] = array('in',$box_types);
+            $hotel_where['a.hotel_box_type'] = array('in',$box_types);
+        }
+        $where['box.flag'] = 0;
+        $where['box.state'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        if($is_4g){
+            if($is_4g == 1){
+                $where['box.is_4g'] = 1;
+                $hotel_where['a.is_4g'] = 1;
+            }else{
+                $where['box.is_4g'] = 0;
+                $hotel_where['a.is_4g'] = 0;
+            }
+        }
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num';
+        $countfields = 'COUNT(DISTINCT(hotel.id)) AS tp_count';
+        $start  = ($page-1) * $size;
+        $result = $m_smallapp_forscreen_record->getCustomeList($fields,$where,$groupby='hotel.id',$order='num desc',$countfields,$start,$size);
+        $datalist = $result['list'];
+
+        $res_ohotels = array();
+        if($result['total']>0 && $page*$size>=$result['total']){
+            $hfields = 'hotel.id as hotel_id';
+            $res_hotel = $m_smallapp_forscreen_record->getCustomeList($hfields,$where,$groupby='hotel.id',$order='',$countfields,0,10000);
+            $now_hotels = array();
+            foreach ($res_hotel['list'] as $v){
+                $now_hotels[] = $v['hotel_id'];
+            }
+            $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+            $res_invalidlist = $m_invalid->getDataList('invalidid',array('type'=>1),'id desc');
+            foreach ($res_invalidlist as $v){
+                $now_hotels[] = $v['invalidid'];
+            }
+
+            $ahfields = 'area.region_name,a.id as hotel_id,a.name as hotel_name';
+            $m_hotel = new \Admin\Model\HotelModel();
+            $res_ohotels = $m_hotel->getListExt($hotel_where,'a.id desc',0,10000,$ahfields);
+            foreach ($res_ohotels['list'] as $k=>$v){
+                if(in_array($v['hotel_id'],$now_hotels)){
+                    unset($res_ohotels['list'][$k]);
+                }
+            }
+        }
+
+        if($estart_time && $eend_time){
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        } else if($estart_time && empty($eend_time)){
+            $eend_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        }else if(empty($estart_time) && !empty($eend_time)){
+            $estart_time = '2018-07-23';
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        }else{
+            $estart_time = date('Y-m-d');
+            $eend_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        }
+        foreach ($datalist as $k=>$v){
+            $fields = 'count(a.id) as num';
+            $where['hotel.id'] = $v['hotel_id'];
+            $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            $datalist[$k]['numb'] = $res_info['num'];
+        }
+
+        if(!empty($res_ohotels)){
+            foreach ($res_ohotels['list'] as $v){
+                $fields = 'count(a.id) as num';
+                $where['hotel.id'] = $v['hotel_id'];
+                $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
+                $v['numb'] = $res_info['num'];
+                $v['num'] = 0;
+                $datalist[] = $v;
+            }
+        }
+
+        $all_smallapps = C('all_smallapps');
+        unset($all_smallapps[3]);
+        $this->assign('start_time',$start_time);
+        $this->assign('end_time',$end_time);
+        $this->assign('estart_time',$estart_time);
+        $this->assign('eend_time',$eend_time);
+        $this->assign('area_id',$area_id);
+        $this->assign('box_type',$box_type);
+        $this->assign('is_4g',$is_4g);
+        $this->assign('small_app_id',$small_app_id);
+        $this->assign('area', $area_arr);
+        $this->assign('all_smallapps', $all_smallapps);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('interactdiff');
+    }
+
+
+    public function boxdiff(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',200);//显示每页记录数
+        $hotel_id = I('hotel_id',0,'intval');
+        $hotel_name = I('hotel_name','');
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $estart_time = I('estart_time','');
+        $eend_time = I('eend_time','');
+        $small_app_id = I('small_app_id',0,'intval');
+        $area_id = I('area_id',0,'intval');
+        $box_type = I('box_type',0,'intval');
+        $is_4g = I('is_4g',0,'intval');
+
+        $where = array('hotel.id'=>$hotel_id);
+        if($start_time && $end_time){
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        } else if($start_time && empty($end_time)){
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        }else if(empty($start_time) && !empty($end_time)){
+            $start_time = '2018-07-23';
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        }else{
+            $start_time = date('Y-m-d');
+            $end_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
+        }
+        $where['a.is_valid'] = 1;
+
+        if($small_app_id){
+            if($small_app_id == 2){
+                $where['a.small_app_id'] = array('in',array(2,3));
+            }else{
+                $where['a.small_app_id'] = $small_app_id;
+            }
+        }
+
+        if($area_id){
+            $where['area.id'] = $area_id;
+        }
+        $hotel_box_types = C('heart_hotel_box_type');
+        if($box_type){
+            $where['hotel.hotel_box_type'] = $box_type;
+        }else{
+            $box_types = array_keys($hotel_box_types);
+            $where['hotel.hotel_box_type'] = array('in',$box_types);
+        }
+        $box_condition = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+        if($is_4g){
+            if($is_4g == 1){
+                $where['box.is_4g'] = 1;
+                $box_condition['box.is_4g'] = 1;
+            }else{
+                $where['box.is_4g'] = 0;
+                $box_condition['box.is_4g'] = 0;
+            }
+        }
+        $m_box = new \Admin\Model\BoxModel();
+        $box_fields = 'hotel.id as hotel_id,hotel.name as hotel_name,box.mac as box_mac,box.name as box_name';
+        $res_box = $m_box->getBoxByCondition($box_fields,$box_condition);
+        $all_box = array();
+        foreach ($res_box as $v){
+            $all_box[$v['box_mac']] = $v;
+        }
+
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $fields = 'hotel.id as hotel_id,hotel.name as hotel_name,a.box_mac,box.name as box_name,count(a.id) as num';
+        $countfields = 'COUNT(DISTINCT(box_mac)) AS tp_count';
+        $start  = ($page-1) * $size;
+        $result = $m_smallapp_forscreen_record->getCustomeList($fields,$where,$groupby='a.box_mac',$order='num desc',$countfields,$start,$size);
+        $datalist = $result['list'];
+        if($estart_time && $eend_time){
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        } else if($estart_time && empty($eend_time)){
+            $eend_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        }else if(empty($estart_time) && !empty($eend_time)){
+            $estart_time = '2018-07-23';
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        }else{
+            $estart_time = date('Y-m-d');
+            $eend_time = date('Y-m-d');
+            $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
+        }
+        foreach ($datalist as $k=>$v){
+            $fields = 'count(a.id) as num';
+            $where['a.box_mac'] = $v['box_mac'];
+            $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            $datalist[$k]['numb'] = $res_info['num'];
+            if(array_key_exists($v['box_mac'],$all_box)){
+                unset($all_box[$v['box_mac']]);
+            }
+        }
+
+        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+        $res_invalidlist = $m_invalid->getDataList('invalidid',array('type'=>3),'id desc');
+        $invalid_box = array();
+        foreach ($res_invalidlist as $v){
+            $invalid_box[] = $v['invalidid'];
+        }
+
+        foreach ($all_box as $v){
+            if(in_array($v['box_mac'],$invalid_box)){
+                continue;
+            }
+            $fields = 'count(a.id) as num';
+            $where['a.box_mac'] = $v['box_mac'];
+            $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            $v['numb'] = $res_info['num'];
+            $v['num'] = 0;
+            $datalist[] = $v;
+        }
+        $this->assign('hotel_id',$hotel_id);
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('start_time',$start_time);
+        $this->assign('end_time',$end_time);
+        $this->assign('estart_time',$estart_time);
+        $this->assign('eend_time',$eend_time);
+        $this->assign('area_id',$area_id);
+        $this->assign('box_type',$box_type);
+        $this->assign('is_4g',$is_4g);
+        $this->assign('small_app_id',$small_app_id);
+        $this->assign('datalist', $datalist);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('boxdiff');
     }
 
     public function hotel(){

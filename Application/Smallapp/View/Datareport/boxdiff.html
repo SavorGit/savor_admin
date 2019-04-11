@@ -1,0 +1,61 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/datareport/interactdiff" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="form-inline" >
+          <div class="form-group">
+            <div class="input-group input-group-sm"><b>互动版本数据对比-{$hotel_name}</b></div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间A：{$start_time}-{$end_time}</div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间B：{$estart_time}-{$eend_time}</div>
+          </div>
+          <div class="input-group input-group-sm pull-right">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/excel/boxdiff?hotel_id={$hotel_id}&hotel_name={$hotel_name}&start_time={$start_time}&end_time={$end_time}&estart_time={$estart_time}&eend_time={$eend_time}&small_app_id={$small_app_id}&area_id={$area_id}&box_type={$box_type}&is_4g={$is_4g}" title="导出" target="_blank" mask="true"><i class="fa fa-download"></i> 导出</a>
+          </div>
+      </div>
+
+      </div>
+
+    </div>
+  </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>版位名称</th>
+              <th>版位MAC</th>
+              <th>时间段A互动次数</th>
+              <th>时间段B互动次数</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td>{$dinfo.box_name}</td>
+              <td>{$dinfo.box_mac}</td>
+              <td>{$dinfo.num}</td>
+              <td>{$dinfo.numb}</td>
+            </tr>
+          </volist>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+</div>
