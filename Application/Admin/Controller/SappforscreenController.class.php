@@ -31,6 +31,9 @@ class SappforscreenController extends BaseController {
         $action_type = I('action_type',999);
         $category_id = I('category_id',0,'intval');
         $scene_id = I('scene_id',0,'intval');
+        $personattr_id = I('personattr_id',0,'intval');
+        $dinnernature_id = I('dinnernature_id',0,'intval');
+        $contentsoft_id = I('contentsoft_id',0,'intval');
         $spotstatus = I('spotstatus',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $pagenum = I('pageNum',1);
@@ -72,8 +75,19 @@ class SappforscreenController extends BaseController {
         }
         $m_category = new \Admin\Model\CategoryModel();
         if($category_id){
-
+            $where_category = array('trees'=>array('like',"%,$category_id,%"));
+            $res = $m_category->getDataList('id',$where_category);
+            if(count($res)>1){
+                $category_ids = array();
+                foreach ($res as $v){
+                    $category_ids[] = $v['id'];
+                }
+                $where['a.category_id'] = array('in',$category_ids);
+            }else{
+                $where['a.category_id'] = $category_id;
+            }
         }
+
         if($scene_id){
             $where['a.scene_id'] = $scene_id;
         }
@@ -166,8 +180,15 @@ class SappforscreenController extends BaseController {
 	    unset($all_smallapps[3]);
         $category = $m_category->getCategory($category_id);
         $scene = $m_category->getCategory($scene_id,1,2);
+        $personattr = $m_category->getCategory($personattr_id,1,3);
+        $dinnernature = $m_category->getCategory($dinnernature_id,1,4);
+        $contentsoft = $m_category->getCategory($contentsoft_id,1,5);
+
         $this->assign('scene',$scene);
         $this->assign('category',$category);
+        $this->assign('personattr',$personattr);
+        $this->assign('dinnernature',$dinnernature);
+        $this->assign('contentsoft',$contentsoft);
         $this->assign('spotstatus',$spotstatus);
         $this->assign('_sort',$sort);
         $this->assign('_order',$order);
