@@ -56,7 +56,7 @@ class CategoryController extends BaseController {
         $this->display('categorylist');
     }
     
-    public function categoryAdd(){
+    public function categoryadd(){
         $id = I('id', 0, 'intval');
         $type = I('type',0,'intval');
         $m_category  = new \Admin\Model\CategoryModel();
@@ -80,7 +80,7 @@ class CategoryController extends BaseController {
         	$status = I('post.status',1,'intval');
 
         	if(empty($name)){
-        		$this->output('缺少必要参数!', 'category/categoryAdd', 2, 0);
+        		$this->output('缺少必要参数!', 'category/categoryadd', 2, 0);
         	}
         	$where = array('name'=>$name,'type'=>$type);
         	if($id){
@@ -90,7 +90,7 @@ class CategoryController extends BaseController {
         		$res_category = $m_category->getInfo($where);
         	}
         	if(!empty($res_category)){
-        		$this->output('名称不能重复', 'category/categoryAdd', 2, 0);
+        		$this->output('名称不能重复', 'category/categoryadd', 2, 0);
         	}
 
         	$data = array('name'=>$name,'sort'=>$sort,'type'=>$type,'status'=>$status);
@@ -136,12 +136,12 @@ class CategoryController extends BaseController {
         		$m_category->updateData($condition, $data);
         		$this->output('操作成功', 'category/categorylist');
         	}else{
-        		$this->output('操作失败', 'category/categoryAdd',2,0);
+        		$this->output('操作失败', 'category/categoryadd',2,0);
         	}
         }
     }
 
-    public function operateStatus(){
+    public function operatestatus(){
         $id = I('get.id',0,'intval');
         $status = I('get.status',0,'intval');
         $condition = array('id'=>$id);
@@ -158,7 +158,7 @@ class CategoryController extends BaseController {
         $this->output($message, 'category/categorylist',2);
     }
 
-    public function categoryDel(){
+    public function categorydel(){
     	$category_id = I('get.id', 0, 'intval');
         $m_category = new \Admin\Model\CategoryModel();
     	$condition = array('trees'=>array('like',"%,$category_id,%"));
