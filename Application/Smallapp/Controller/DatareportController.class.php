@@ -58,7 +58,7 @@ class DatareportController extends BaseController {
         $ret = $m_statistics->getOnlinnum($fields, $where_wl);
         $wlnum = intval($ret[0]['wlnum']);
         if($day){
-            $wlnum = $day*$wlnum;
+            $wlnum = ($day+1)*$wlnum;
         }
 
         //在线屏幕数
@@ -503,4 +503,7 @@ class DatareportController extends BaseController {
         $this->display();
     }
 
+    public function getOpuser(){
+
+    }
 }
