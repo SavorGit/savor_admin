@@ -183,6 +183,11 @@ $config['fee_type'] = array(
     '1'=>'开机费',
     '2'=>'APP推广',
 );
+$config['SAPP_ADSPOSITION'] = array(
+    '1'=>'首页顶部',
+    '2'=>'互动页顶部',
+);
+
 $config['NOTICE_STATAE'] = array(
     '1'=>'',
     '2'=>'发送失败(酒楼不存在)',
