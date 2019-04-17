@@ -188,6 +188,24 @@ class StatisticsModel extends Model
             $ret = $this->getOne($fields, $where);
             $nums['xtnum'] = intval($ret['xtnum']);
         }
+
+        if($type==0 || $type==2){
+            $where = array('static_date'=>$date);
+            if($box_mac)    $where['box_mac'] = $box_mac;
+            if(!empty($hotel_id)){
+                if(is_array($hotel_id)){
+                    $where['hotel_id'] = array('in',$hotel_id);
+                }else{
+                    $where['hotel_id'] = $hotel_id;
+                }
+            }
+            if($static_fj)  $where['static_fj'] = $static_fj;
+            $where['hd_mobile_nums'] = array('GT',0);
+            $fields = "sum(`hd_mobile_nums`) as mobilenum";
+            $ret = $this->getOne($fields, $where);
+            $nums['mobilenum'] = intval($ret['mobilenum']);
+        }
+
         return $nums;
     }
 
@@ -201,8 +219,7 @@ class StatisticsModel extends Model
                 $rate = sprintf("%.2f", $nums['fjnum']/$nums['zxnum']) * 100;
                 break;
             case 2:
-                $rate = 0;
-//                $rate = sprintf("%.2f", 互动手机数/$nums['fjnum']) * 100;
+                $rate = sprintf("%.2f", $nums['mobilenum']/$nums['fjnum']);
                 break;
             case 3:
                 $rate = sprintf("%.2f", $nums['zxnum']/$nums['wlnum']) * 100;

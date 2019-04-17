@@ -110,7 +110,6 @@ class HotelgradeController extends BaseController {
         }
         switch ($type){
             case 1:
-            case 2:
             case 3:
             case 4:
                 $nums = $m_statistics->getRatenum($date,1,$type,$hotel_ids);
@@ -118,6 +117,15 @@ class HotelgradeController extends BaseController {
 
                 $nums = $m_statistics->getRatenum($date,2,$type,$hotel_ids);
                 $c = $m_statistics->getRate($nums,$type)/100;
+
+                $a = ($b+$c)/2;
+                break;
+            case 2:
+                $nums = $m_statistics->getRatenum($date,1,$type,$hotel_ids);
+                $b = $m_statistics->getRate($nums,$type);
+
+                $nums = $m_statistics->getRatenum($date,2,$type,$hotel_ids);
+                $c = $m_statistics->getRate($nums,$type);
 
                 $a = ($b+$c)/2;
                 break;
