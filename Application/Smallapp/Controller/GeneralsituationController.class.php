@@ -25,7 +25,7 @@ class GeneralsituationController extends BaseController {
             $index_dates = $days;
         }
         //关键指标
-        $fjnum = $zxnum = $ktnum = $hdnum = $wlnum = 0;
+        $fjnum = $zxnum = $ktnum = $hdnum = $wlnum = $mobilenum = 0;
         foreach ($index_dates as $v){
             $nums = $m_statistics->getRatenum($v,0,0);
             //互动饭局数
@@ -42,14 +42,16 @@ class GeneralsituationController extends BaseController {
 
             //互动次数
             $hdnum += $nums['hdnum'];
+
+            //互动次数
+            $mobilenum += $nums['mobilenum'];
         }
-        $nums = array('fjnum'=>$fjnum,'zxnum'=>$zxnum,'ktnum'=>$ktnum,'wlnum'=>$wlnum,'hdnum'=>$hdnum);
+        $nums = array('fjnum'=>$fjnum,'zxnum'=>$zxnum,'ktnum'=>$ktnum,'wlnum'=>$wlnum,'hdnum'=>$hdnum,'mobilenum'=>$mobilenum);
         $conversion = $m_statistics->getRate($nums,1);
         $transmissibility = $m_statistics->getRate($nums,2);
         $screens = $m_statistics->getRate($nums,3);
         $network = $m_statistics->getRate($nums,4);
-        $index_rate = array('conversion'=>$conversion.'%','transmissibility'=>$transmissibility,
-            'screens'=>$screens.'%','network'=>$network.'%');
+        $index_rate = array('conversion'=>$conversion.'%','transmissibility'=>$transmissibility,'screens'=>$screens.'%','network'=>$network.'%');
 
         //指标趋势
         $chart_list = array();
@@ -64,7 +66,7 @@ class GeneralsituationController extends BaseController {
         $detail_breaknum = 4;
         foreach ($days as $k=>$v){
             $ratenums = $m_statistics->getRatenum($v,0,0);
-            $detail = array('fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum']);
+            $detail = array('fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum'],'mobilenum'=>$ratenums['mobilenum']);
             $detail['conversion'] = $m_statistics->getRate($ratenums,1);
             $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
             $detail['screens'] = $m_statistics->getRate($ratenums,3);
@@ -97,7 +99,6 @@ class GeneralsituationController extends BaseController {
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         switch ($type){
             case 1:
-            case 2:
             case 3:
             case 4:
                 $nums = $m_statistics->getRatenum($date,1,$type);
@@ -105,6 +106,15 @@ class GeneralsituationController extends BaseController {
 
                 $nums = $m_statistics->getRatenum($date,2,$type);
                 $c = $m_statistics->getRate($nums,$type)/100;
+
+                $a = ($b+$c)/2;
+                break;
+            case 2:
+                $nums = $m_statistics->getRatenum($date,1,$type);
+                $b = $m_statistics->getRate($nums,$type);
+
+                $nums = $m_statistics->getRatenum($date,2,$type);
+                $c = $m_statistics->getRate($nums,$type);
 
                 $a = ($b+$c)/2;
                 break;
