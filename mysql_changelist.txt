@@ -1549,3 +1549,71 @@ CREATE TABLE `savor_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='分类表';
 ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
 ADD COLUMN `category_id` int(11) NOT NULL DEFAULT '0' COMMENT '分类ID' AFTER `small_app_id`;
+
+
+ALTER TABLE `cloud`.`savor_category`
+ADD COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1内容,2场景' AFTER `sort`;
+
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `scene_id` int(11) NOT NULL DEFAULT 0 COMMENT '场景分类ID' AFTER `category_id`;
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `spotstatus` tinyint(1) NOT NULL DEFAULT 0 COMMENT '地点状态' AFTER `category_id`;
+
+ALTER TABLE `cloud`.`savor_category`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1内容,2场景,3人员属性,4饭局性质,5内容所用软件' AFTER `sort`;
+
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `personattr_id` int(11) NOT NULL DEFAULT 0 COMMENT '人员属性ID(分类表savor_category)' AFTER `scene_id`;
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `dinnernature_id` int(11) NOT NULL DEFAULT 0 COMMENT '饭局性质ID(分类表savor_category)' AFTER `scene_id`;
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `contentsoft_id` int(11) NOT NULL DEFAULT 0 COMMENT '内容所用软件ID(分类表savor_category)' AFTER `scene_id`;
+
+
+CREATE TABLE `savor_smallapp_forscreen_invalidrecord` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `forscreen_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '投屏id',
+  `resource_id` bigint(13) NOT NULL DEFAULT '0' COMMENT '资源id',
+  `resource_size` int(11) NOT NULL DEFAULT '0' COMMENT '资源大小',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `box_mac` varchar(20) NOT NULL DEFAULT '' COMMENT '机顶盒mac',
+  `action` tinyint(2) NOT NULL DEFAULT '0' COMMENT '1:发送呼码2:投屏视频、图片3:退出投屏4:投多张图5:视频点播',
+  `resource_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:图片2:视频',
+  `imgs` varchar(500) NOT NULL DEFAULT '' COMMENT '投屏图片',
+  `forscreen_char` varchar(50) NOT NULL DEFAULT '' COMMENT '投屏文字',
+  `duration` float(10,2) NOT NULL DEFAULT '0.00' COMMENT '时长',
+  `mobile_brand` varchar(50) NOT NULL DEFAULT '' COMMENT '手机品牌',
+  `mobile_model` varchar(50) NOT NULL DEFAULT '' COMMENT '手机型号',
+  `is_pub_hotelinfo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否公开酒楼信息0:不公开1:公开',
+  `is_share` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否分享到发现0:不分享1:分享',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `res_sup_time` bigint(13) NOT NULL DEFAULT '0' COMMENT '资源开始长传时间',
+  `res_eup_time` bigint(13) NOT NULL DEFAULT '0' COMMENT '资源上传成功时间',
+  `box_res_sdown_time` bigint(13) NOT NULL DEFAULT '0' COMMENT '机顶盒开始下载资源时间',
+  `box_res_edown_time` bigint(13) NOT NULL DEFAULT '0' COMMENT '机顶盒下载资源完成时间',
+  `is_break` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否打断',
+  `is_exist` tinyint(1) NOT NULL DEFAULT '3' COMMENT '状态0不存在1已存在2下载失败',
+  `is_valid` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否有效1有效 0无效',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `small_app_id` tinyint(2) NOT NULL DEFAULT '1' COMMENT '小程序id1:热点投屏标准版2:热点投屏极简版',
+  PRIMARY KEY (`id`),
+  KEY `index_box_mac` (`box_mac`),
+  KEY `lhindex` (`resource_id`,`openid`),
+  KEY `index_create_time` (`create_time`),
+  KEY `index_openid` (`openid`) USING BTREE,
+  KEY `index_isvalid` (`is_valid`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `savor_smallapp_adsposition` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
+  `media_id` int(11) NOT NULL DEFAULT '0' COMMENT '资源id',
+  `linkcontent` varchar(200) NOT NULL DEFAULT '' COMMENT '链接地址',
+  `clicktype` tinyint(1) NOT NULL DEFAULT '1' COMMENT '点击类型1链接,2事件',
+  `appid` varchar(50) NOT NULL DEFAULT '' COMMENT '小程序appid',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告位类型1图片,2视频',
+  `position` tinyint(1) NOT NULL DEFAULT '0' COMMENT '广告位位置1首页顶部,2互动页顶部',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:删除1:正常',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='广告位表';
