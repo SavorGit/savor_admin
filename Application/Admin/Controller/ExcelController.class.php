@@ -105,7 +105,12 @@ class ExcelController extends Controller
              $tmpname = '小程序互动数据对比统计';
          }else if($filename=='smallapp_boxdiff'){
              $tmpname=$expTitle;
-         }
+         }else if($filename=='exportSlBoxList'){
+		     $tmpname='失联7天的酒楼版位统计';
+	     }else if($filename=='exportEmptyWifiBoxList'){
+	         $tmpname= '漏填wifi_mac版位详情';
+	         
+	     }
 
 
         if($filename == "heartlostinfo"){
@@ -5253,6 +5258,79 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('avg_expense','人均消费'),
         );
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
+    public function exportSlBoxList(){
+		$sql ="select area.region_name,hotel.name hotel_name ,hotel.id hotel_id,user.remark from savor_hotel hotel
+			   left join savor_area_info area on hotel.area_id=area.id
+			   left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+			   left join savor_sysuser user on user.id= ext.maintainer_id
+			   where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 ";
+		$hotel_list = M()->query($sql);
+		$sl_date = date('Y-m-d H:i:s',strtotime('-7 days')) ;
+		foreach($hotel_list  as $key=>$v){
+			$sql ="select box.mac box_mac from  savor_box box
+                               left join savor_room room on box.room_id=room.id
+                               left join savor_hotel hotel on room.hotel_id=hotel.id
+                               where hotel.id=".$v['hotel_id']." and box.state=1 and box.flag=0";
+                        $box_list = M()->query($sql);
+						$zx_box_nums = 0;
+                        foreach($box_list as $kk=>$vv ){
+							$sql ="select box_mac from savor_heart_log where box_mac='".$vv['box_mac']."' and type=2 and last_heart_time>'".$sl_date."'";
+							$tt = M()->query($sql);
+							if(!empty($tt)){
+								$zx_box_nums++;
+							}
+                        }
+						$all_box_nums = count($box_list);
+						$hotel_list[$key]['all_box_nums'] = $all_box_nums;
+						$hotel_list[$key]['sl_box_nums']  = $all_box_nums - $zx_box_nums;
+		
+		}
+		$xlsName = '全国网络机顶盒互动数据统计';
+        $filename = 'exportSlBoxList';
+        
+        $xlsCell = array(
+        
+            array('region_name','区域'),
+            array('hotel_name','酒楼名称'),
+            array('remark','维护人'),
+            array('all_box_nums','酒楼版位数'),
+            array('sl_box_nums','失联7天上版位数'),
+            
+        );
+        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
+    }
+    public function exportEmptyWifiBoxList(){
+        $sql ="select hotel.id,area.region_name ,hotel.name hotel_name ,hotel.addr,
+               room.name room_name,box.mac,
+               case 
+               when hotel.hotel_box_type=3 then '二代5G'
+               when hotel.hotel_box_type=6 then '三代网络'
+               end
+               as hotel_box_type
+               from savor_box box
+               left join savor_room room on box.room_id=room.id
+               left join savor_hotel hotel on room.hotel_id=hotel.id
+               left join savor_area_info area on hotel.area_id=area.id
+               where hotel.hotel_box_type in(3,6) and hotel.flag=0 and hotel.state=1 
+               and box.flag=0 and box.state=1 and wifi_mac='' and hotel.id!=7";
+        $data = M()->query($sql);
+        
+        $xlsName = '漏填wifi_mac版位详情';
+        $filename = 'exportEmptyWifiBoxList';
+        
+        $xlsCell = array(
+            array('id','酒楼id'),
+            array('region_name','区域'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('room_name','包间名称'),
+            array('mac','机顶盒mac'),
+            array('hotel_box_type','酒楼机顶盒类型')
+        
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        
     }
     private function getScore($data,$conf_arr){
         $score = 0;
