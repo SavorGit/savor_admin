@@ -28,7 +28,8 @@ class DeviceController extends BaseController{
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
-        $orders = $order.' '.$sort;
+        //$orders = $order.' '.$sort;
+        $orders  = ' flag asc,state asc,id desc'; 
         $start  = ( $start-1 ) * $size;
         $where = "1=1";
         $name = I('name');

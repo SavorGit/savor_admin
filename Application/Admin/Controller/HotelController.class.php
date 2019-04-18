@@ -249,7 +249,7 @@ class HotelController extends BaseController {
 
 			$conditon = array();
 			$men_arr = array();
-			$nums = $hotelModel->getStatisticalNumByHotelId($v['id']);
+			$nums = $hotelModel->getStatisticalNumByHotelIdNew($v['id']);
 			$datalist[$k]['room_num'] = $nums['room_num'];
 			$datalist[$k]['box_num'] = $nums['box_num'];
 			$datalist[$k]['tv_num'] = $nums['tv_num'];
