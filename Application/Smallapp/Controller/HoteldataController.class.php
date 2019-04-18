@@ -81,11 +81,14 @@ class HoteldataController extends BaseController {
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         switch ($type){
             case 1:
-            case 2:
             case 3:
             case 4:
                 $nums = $m_statistics->getRatenum($date,0,$type,$hotel_id);
                 $chart = $m_statistics->getRate($nums,$type)/100;
+                break;
+            case 2:
+                $nums = $m_statistics->getRatenum($date,0,$type,$hotel_id);
+                $chart = $m_statistics->getRate($nums,$type);
                 break;
             case 5:
                 $nums = $m_statistics->getRatenum($date,0,$type,$hotel_id);

@@ -70,11 +70,14 @@ class MacdataController extends BaseController {
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         switch ($type){
             case 1:
-            case 2:
             case 3:
             case 4:
                 $nums = $m_statistics->getRatenum($date,0,$type,0,$box_mac);
                 $chart = $m_statistics->getRate($nums,$type)/100;
+                break;
+            case 2:
+                $nums = $m_statistics->getRatenum($date,0,$type,0,$box_mac);
+                $chart = $m_statistics->getRate($nums,$type);
                 break;
             case 5:
                 $nums = $m_statistics->getRatenum($date,0,$type,0,$box_mac);

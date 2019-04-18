@@ -31,6 +31,9 @@ class SappforscreenController extends BaseController {
         $action_type = I('action_type',999);
         $category_id = I('category_id',0,'intval');
         $scene_id = I('scene_id',0,'intval');
+        $personattr_id = I('personattr_id',0,'intval');
+        $dinnernature_id = I('dinnernature_id',0,'intval');
+        $contentsoft_id = I('contentsoft_id',0,'intval');
         $spotstatus = I('spotstatus',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $pagenum = I('pageNum',1);
@@ -72,8 +75,19 @@ class SappforscreenController extends BaseController {
         }
         $m_category = new \Admin\Model\CategoryModel();
         if($category_id){
-
+            $where_category = array('trees'=>array('like',"%,$category_id,%"));
+            $res = $m_category->getDataList('id',$where_category);
+            if(count($res)>1){
+                $category_ids = array();
+                foreach ($res as $v){
+                    $category_ids[] = $v['id'];
+                }
+                $where['a.category_id'] = array('in',$category_ids);
+            }else{
+                $where['a.category_id'] = $category_id;
+            }
         }
+
         if($scene_id){
             $where['a.scene_id'] = $scene_id;
         }
@@ -162,12 +176,24 @@ class SappforscreenController extends BaseController {
             }
             $list['list'][$key]['action_name'] = $all_actions[$nowaction_type];
 	    }
-
+        $groups = array(1,56);
+        $sysuserInfo = session('sysUserInfo');
+        $is_lablefiter = 0;
+        if(in_array($sysuserInfo['groupid'],$groups)){
+            $is_lablefiter = 1;
+        }
 	    unset($all_smallapps[3]);
         $category = $m_category->getCategory($category_id);
         $scene = $m_category->getCategory($scene_id,1,2);
+        $personattr = $m_category->getCategory($personattr_id,1,3);
+        $dinnernature = $m_category->getCategory($dinnernature_id,1,4);
+        $contentsoft = $m_category->getCategory($contentsoft_id,1,5);
+
         $this->assign('scene',$scene);
         $this->assign('category',$category);
+        $this->assign('personattr',$personattr);
+        $this->assign('dinnernature',$dinnernature);
+        $this->assign('contentsoft',$contentsoft);
         $this->assign('spotstatus',$spotstatus);
         $this->assign('_sort',$sort);
         $this->assign('_order',$order);
@@ -175,6 +201,7 @@ class SappforscreenController extends BaseController {
         $this->assign('numPerPage',$size);
 	    $this->assign('action_type',$action_type);
 	    $this->assign('is_exist',$is_exist);
+	    $this->assign('is_lablefiter',$is_lablefiter);
 	    $this->assign('all_actions',$all_actions);
 	    $this->assign('source_types',$source_types);
 	    $this->assign('small_apps',$all_smallapps);
@@ -371,27 +398,46 @@ class SappforscreenController extends BaseController {
 	    $hotel_ids = $all_invalidlist[1];
 	    $fields = "box.mac as box_mac";
 	    $where = array();
-	    $where['sht.id'] = array('in',$hotel_ids);
-	    $m_hotel = new \Admin\Model\HotelModel();
-        $list = $m_hotel->getBoxOrderMacByHid($fields, $where, '');
+	    $where['hotel.id'] = array('in',$hotel_ids);
+
+	    $m_box = new \Admin\Model\BoxModel();
+	    $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
+	    $boxs = array();
+	    foreach ($hotel_boxs as $v){
+	        $boxs[]=$v['box_mac'];
+        }
+
+        if(isset($all_invalidlist[3]) && !empty($all_invalidlist[3])){
+            $boxs = array_merge($boxs,$all_invalidlist[3]);
+            $boxs = array_unique($boxs);
+        }
+
+        $condition = array();
+        $condition['a.box_mac'] = array('in',$boxs);
+        $condition['a.mobile_brand'] = array('neq','devtools');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-	    if(!empty($list)){
-            foreach($list as $key=>$v){
-                $condition = array('box_mac'=>$v['box_mac'],'is_valid'=>1);
-                $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
-            }
+        $res_boxdata = $m_smallapp_forscreen_record->getWhere('a.*',$condition,'','');
+        $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+
+        foreach ($res_boxdata as $v){
+            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark']);
+            $m_smallapp_forscreen_invalidrecord->addData($v);
         }
+        $delcondition = array('box_mac'=>array('in',$boxs));
+        $delcondition['mobile_brand'] = array('neq','devtools');
+        $m_smallapp_forscreen_record->where($delcondition)->delete();
+
         if(isset($all_invalidlist[2])){
-            foreach ($all_invalidlist[2] as $v){
-                $condition = array('openid'=>$v,'is_valid'=>1);
-                $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
+            $condition = array('a.openid'=>array('in',$all_invalidlist[2]));
+            $condition['a.mobile_brand'] = array('neq','devtools');
+            $res_userdata = $m_smallapp_forscreen_record->getWhere('a.*',$condition,'','');
+            foreach ($res_userdata as $v){
+                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark']);
+                $m_smallapp_forscreen_invalidrecord->addData($v);
             }
-        }
-        if(isset($all_invalidlist[3])){
-            foreach ($all_invalidlist[3] as $v){
-                $condition = array('box_mac'=>$v,'is_valid'=>1);
-                $m_smallapp_forscreen_record->updateData($condition,array('is_valid'=>0));
-            }
+            $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
+            $delcondition['mobile_brand'] = array('neq','devtools');
+            $m_smallapp_forscreen_record->where($delcondition)->delete();
         }
 	    $this->output('隔离成功', 'sappforscreen/index', 2);
 	}

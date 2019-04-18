@@ -8,11 +8,11 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3 col-lg-5">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=1" title="新增内容分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容分类</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=2" title="新增场景" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增场景</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=3" title="新增人员属性" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增人员属性</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=4" title="新增饭局性质" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增饭局性质</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryAdd?type=5" title="新增内容所用软件" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容所用软件</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=1" title="新增内容分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容分类</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=2" title="新增场景" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增场景</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=3" title="新增人员属性" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增人员属性</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=4" title="新增饭局性质" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增饭局性质</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=5" title="新增内容所用软件" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容所用软件</a>
 
           </div>
         </div>
@@ -68,10 +68,10 @@
               <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
               <td data-title="状态">
                   <if condition="$dinfo['status'] eq 1">
-                      <a data-tip="可用" target="ajaxTodo" href="{$host_name}/category/operateStatus?id={$dinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                      <a data-tip="可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$dinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                         <i class="fa fa-toggle-on"></i></span></a>
                       <else/>
-                      <a data-tip="不可用" target="ajaxTodo" href="{$host_name}/category/operateStatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                      <a data-tip="不可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                         <i class="fa fa-toggle-off"></i></span></a>
                   </if>
              </td>
@@ -79,10 +79,10 @@
              <td data-title="排序值">{$dinfo.sort}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a title="修改分类" data-tip="修改分类" target="dialog" mask="true" href="{$host_name}/category/categoryAdd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <a title="修改分类" data-tip="修改分类" target="dialog" mask="true" href="{$host_name}/category/categoryadd?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/category/categoryDel?id={$dinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/category/categorydel?id={$dinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
 
                 </div>
               </td>
@@ -93,10 +93,10 @@
 	              <td data-title="名称"><a class="click-able-title"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.name}</a></td>
                 <td data-title="状态">
                 <if condition="$treeinfo['status'] eq 1">
-                    <a data-tip="可用" target="ajaxTodo" href="{$host_name}/category/operateStatus?id={$treeinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                    <a data-tip="可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$treeinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                         <i class="fa fa-toggle-on"></i></span></a>
                     <else/>
-                    <a data-tip="不可用" target="ajaxTodo" href="{$host_name}/category/operateStatus?id={$treeinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                    <a data-tip="不可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$treeinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                         <i class="fa fa-toggle-off"></i></span></a>
                 </if>
                 </td>
@@ -104,10 +104,10 @@
 	             <td data-title="排序值">{$treeinfo.sort}</td>
 	              <td class="table-tool" data-title="操作">
 	                <div class="tools-edit">
-	                  <a title="修改分类" data-tip="修改分类" target="dialog" mask="true" href="{$host_name}/category/categoryAdd?id={$treeinfo.id}" class="btn btn-success btn-icon">
+	                  <a title="修改分类" data-tip="修改分类" target="dialog" mask="true" href="{$host_name}/category/categoryadd?id={$treeinfo.id}" class="btn btn-success btn-icon">
 	                    <i class="fa fa-pencil"></i>
 	                  </a>
-	                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/category/categoryDel?id={$treeinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
+	                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/category/categorydel?id={$treeinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
 	                </div>
 	              </td>
 	            </tr>   

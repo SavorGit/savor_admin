@@ -23,7 +23,6 @@ class SmallappForscreenRecordModel extends Model
             	     ->order($order)
             	     ->limit($start,$size)
             	     ->select();
-	    
 	    $count = $this->alias('a')
 	                  ->join('savor_box box on a.box_mac=box.mac','left')
 	                  ->join('savor_room room on room.id= box.room_id','left')
@@ -36,6 +35,35 @@ class SmallappForscreenRecordModel extends Model
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+
+    public function getCustomeList($fields="a.id",$where,$groupby='',$order='a.id desc',$countfields='',$start=0,$size=5){
+        $list = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on room.id= box.room_id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->field($fields)
+            ->where($where)
+            ->group($groupby)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $res_count = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on room.id= box.room_id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->field($countfields)
+            ->where($where)->select();
+        $count = $res_count[0]['tp_count'];
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+        return $data;
+    }
+
 
     public function getInfo($fields='a.*',$where){
         $res = $this->alias('a')
