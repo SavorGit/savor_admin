@@ -26,7 +26,7 @@ class SmallapprestController extends BaseController {
         $this->assign('_sort',$sort);
         
         $m_rest_download = new \Admin\Model\Smallapp\RestDownloadModel();
-        $fields = "a.id,a.name,a.update_time,media.oss_addr";
+        $fields = "a.id,a.name,a.create_time,a.update_time,media.oss_addr";
         $where = array();
         $where['a.status'] = 1;
         $res_list = $m_rest_download->getList($fields,$where, $orders, $start,$size);
