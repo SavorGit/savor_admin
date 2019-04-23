@@ -46,10 +46,14 @@ class AdspositionController extends BaseController {
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
             $linkcontent = I('post.linkcontent','','trim');
+            $bindtap = I('post.bindtap','','trim');
+            $appid = I('post.appid','','trim');
             $clicktype = I('post.clicktype',1,'intval');
             $position = I('post.position',0,'intval');
             $status = I('post.status',0,'intval');
-            $data = array('name'=>$name,'media_id'=>$media_id,'linkcontent'=>$linkcontent,'clicktype'=>$clicktype,'position'=>$position,'status'=>$status);
+            $sort = I('post.sort',1,'intval');
+            $data = array('name'=>$name,'media_id'=>$media_id,'linkcontent'=>$linkcontent,'bindtap'=>$bindtap,'appid'=>$appid,
+                'clicktype'=>$clicktype,'position'=>$position,'sort'=>$sort,'status'=>$status);
 
             $m_adsposition = new \Admin\Model\Smallapp\AdspositionModel();
             if($id){
@@ -63,7 +67,7 @@ class AdspositionController extends BaseController {
                 $this->output('操作失败', 'adsposition/adspositionadd',2,0);
             }
         }else{
-            $vinfo = array('status'=>1);
+            $vinfo = array('status'=>1,'clicktype'=>1,'sort'=>1);
             $this->assign('vinfo',$vinfo);
             $this->assign('clicktypes',$this->clicktypes);
             $this->display();

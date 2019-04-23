@@ -55,7 +55,7 @@
                     <div class="inline-radio-container">
                     <volist name="clicktypes" id="vo">
                         <label class="radio-inline">
-                            <input type="radio" name="clicktype" value='{$key}' <if condition="$key eq $vinfo['clicktype']">checked</if>>
+                            <input type="radio" name="clicktype" id="{$key}" value='{$key}' <if condition="$key eq $vinfo['clicktype']">checked</if>>
                             <span>{$vo}</span>
                         </label>
                     </volist>
@@ -66,6 +66,26 @@
                 <label class="col-xs-12 col-sm-2 control-label">链接内容：</label>
                 <div class="col-xs-12 col-sm-10">
                     <input name="linkcontent" type="text" value="{$vinfo.linkcontent}" class="form-control" required/>
+                </div>
+            </div>
+            <div class="form-group row" id="bindtapc" <if condition="$vinfo.clicktype eq 1">style="display: none;"</if> >
+                <label class="col-xs-12 col-sm-2 control-label">绑定事件：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="bindtap" type="text" value="{$vinfo.bindtap}" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">APPID：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="appid" type="text" value="{$vinfo.appid}" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    排序值：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="sort" type="text" value="{$vinfo.sort}" class="form-control digits" required />
                 </div>
             </div>
             <div class="form-group row">
@@ -84,3 +104,14 @@
         </div>
     </form>
 </div>
+
+<script>
+    $("input[name='clicktype']").click(function() {
+        var id = $(this).attr("id");
+        if (id == 1) {
+            $("#bindtapc").hide();
+        } else {
+            $("#bindtapc").show();
+        }
+    });
+</script>
