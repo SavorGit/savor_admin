@@ -83,20 +83,24 @@
               
 			  <td data-title="是否系统推荐">
 			  <if condition="$vlist.is_recommend eq 1">
-			  	<a data-tip="推荐" target="ajaxTodo" href="{$host_name}/sappforscreen/operateRecommend?id={$vlist.id}&is_recommend=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
+			  	是
+			  	<!-- <a data-tip="推荐" target="ajaxTodo" href="{$host_name}/sappforscreen/operateRecommend?id={$vlist.id}&is_recommend=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a> -->
 			  <else />
-			    	<a data-tip="未推荐" target="ajaxTodo" href="{$host_name}/sappforscreen/operateRecommend?id={$vlist.id}&is_recommend=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a>
+			  	否
+			    	<!-- <a data-tip="未推荐" target="ajaxTodo" href="{$host_name}/sappforscreen/operateRecommend?id={$vlist.id}&is_recommend=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a> -->
 			  </if>
 			  </td>
 			  <td data-title="状态">
                 <if condition="$vlist['status'] eq 2">
-                  <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
+                	已审核
+                  <!-- <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a> -->
                   <else/>
-                  <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a>
+                  	未审核
+                  <!-- <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a> -->
                 </if>
 
               </td>
@@ -104,7 +108,7 @@
 			  <td data-title="资源类型">{$vlist.create_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="查看详情" title="序号{$vlist.id}-查看详情" target="dialog" mask="true" href="{$host_name}/sappforscreen/pubdetail?forscreen_id={$vlist.forscreen_id}&res_type={$vlist.res_type}" rel="sappforscreen/pubdetail" class="btn btn-success btn-icon">
+                  <a data-tip="查看详情" title="序号{$vlist.id}-查看详情" target="dialog" mask="true" href="{$host_name}/sappforscreen/pubdetail?id={$vlist.id}&res_type={$vlist.res_type}&forscreen_id={$vlist.forscreen_id}" rel="sappforscreen/pubdetail" class="btn btn-success btn-icon">
                     <i class="fa fa-search-minus"></i>
                   </a>
                	  <a data-tip="删除" target="ajaxTodo" href="{$host_name}/sappforscreen/delpublic?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon">

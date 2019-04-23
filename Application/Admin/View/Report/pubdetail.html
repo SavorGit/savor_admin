@@ -5,11 +5,13 @@
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input type="hidden" id="pub_id" name="id" value="{$id}" />
+        <input type="hidden" name="callbacktype" value="1" />
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           
           <tr id="post">
-            <th>资源</th>
+            <!-- <th>资源</th> -->
             
             
             
@@ -18,27 +20,50 @@
           <tbody data-check="list" data-parent=".table">
           
           <volist name="list" id="vlist">
-            <tr target="sid_user">
-              <td data-title="资源名称">
+          
+            <tr>
+            	
               	<if condition="$res_type  eq 1">
               		<a href="{$vlist.res_url}" target="_blank" style="color:red">
-              			<img src="{$vlist.res_url}">
+              			<img src="{$vlist.res_url}" height="200px">
               		</a>
               	<else />
               		<a href="{$vlist.res_url}" target="_blank" style="color:red">
               		预览
               		</a>
               	</if>
+              	
+             </tr> 
               
               
-              </td>
               
               
              
              
 		</tr>
 		</volist>
-          
+		<tr>
+		
+		<td>
+			是否系统推荐:
+           	 <button id="recBtn" value="{$info.is_recommend}" class="btn btn-primary" type="button" > 
+           	 <if condition="$info.is_recommend eq 1">
+           	  是
+           	  <else />
+           	  否
+           	  </if> 
+           	 </button>
+           	 
+        	是否审核通过:
+           	 <button id="staBtn" value="{$info.status}" class="btn btn-primary" type="button" > 
+           	 <if condition="$info.status eq 2">
+           	 是
+           	 <else />
+           	 否
+           	 </if>
+        </td>
+        <tr>
+        
 </tbody>
 </table>
 </form>
@@ -47,3 +72,65 @@
 </div>
 
 </div>
+<script type="text/javascript">
+$("#recBtn").click(function(){
+	var pub_id =  $('#pub_id').val();
+	var is_recommend_status = $(this).val();
+	var status = $('#staBtn').val();
+	
+	var is_recommend ;
+	if(is_recommend_status==0){
+		is_recommend = 1;
+		var recommend_str = '是';
+	}else {
+		is_recommend = 0;
+		var recommend_str = '否';
+	}
+	$.ajax({
+		  type: 'POST',
+		  url: '/admin/sappforscreen/operateStatus',
+		  dataType: 'json',
+		  data: {
+              id:pub_id,
+              is_recommend:is_recommend,
+              status:status,
+          },
+		  success:function(res){
+			  if(res==1){
+				  $('#recBtn').html(recommend_str);
+				  $('#recBtn').val(is_recommend);
+			  }
+		  },
+		});
+});
+$('#staBtn').click(function(){
+	var pub_id =  $('#pub_id').val();
+	var is_status = $(this).val();
+	var is_recommend  = $('#recBtn').val();
+	var status;
+	if(is_status==1){
+		status= 2;
+		var status_str = '是';
+	}else {
+		status = 1;
+		var status_str = '否';
+	}
+	$.ajax({
+		  type: 'POST',
+		  url: '/admin/sappforscreen/operateStatus',
+		  dataType: 'json',
+		  data: {
+            id:pub_id,
+            is_recommend:is_recommend,
+            status:status,
+          },
+		  success:function(res){
+			  if(res==1){
+				  $('#staBtn').html(status_str);
+				  $('#staBtn').val(status);
+			  }
+		  },
+	});
+	
+});
+</script>

@@ -1274,9 +1274,13 @@ class SappforscreenController extends BaseController {
 	}
 	public function pubdetail(){
 	    $oss_host = 'http://'. C('OSS_HOST_NEW').'/';
-	    $forscreen_id = I('get.forscreen_id',0,'intval');
+	    $forscreen_id = I('get.forscreen_id',0,'trim');
 	    $res_type = I('get.res_type');
 	    $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
+	    $m_public    = new \Admin\Model\Smallapp\PublicModel();
+	    
+	    $info = $m_public->getOne('id,is_recommend,status', array('forscreen_id'=>$forscreen_id));
+	    
 	    $fields = "concat('".$oss_host."',`res_url`) res_url";
 	    $where = array();
 	    $where['forscreen_id'] = $forscreen_id;
@@ -1285,39 +1289,63 @@ class SappforscreenController extends BaseController {
 	     
 	    $this->assign('res_type',$res_type);
 	    $this->assign('list',$list);
-	     
+	    $this->assign('info',$info); 
+	    $this->assign('id',$info['id']);
 	    $this->display('Report/pubdetail');
 	}
 	/**
 	 * @desc 审核通过
 	 */
 	public function operateStatus(){
-	    $id     = I('get.id',0,'intval');
-	    $status = I('get.status');
+	    
+	    
 	    $m_public = new \Admin\Model\Smallapp\PublicModel();
+	    //print_r($_POST);exit;
+	    $id     = I('post.id',0,'intval');
+	    $is_recommend = I('post.is_recommend',0,'intval');
+	    $status = I('post.status',0,'intval');
 	    $where = $data = array();
 	    $where['id'] = $id;
-	    $data['status'] = $status;
+	    if(is_numeric($status)){
+	        $data['status'] = $status;
+	    }
+	    if(is_numeric($is_recommend)){
+	        $data['is_recommend'] = $is_recommend;
+	    }
+	    
 	    $ret = $m_public->updateInfo($where, $data);
+	    //echo $m_public->getLastSql();exit;
 	    if($ret){
-	        $this->output('审核成功', 'sappforscreen/publiccheck',2);
+	        echo "1";
+	        ///$this->error('s')
+	        //$this->outputNew('审核成功', 'sappforscreen/publiccheck',3);
 	    }else {
-	        $this->output('审核失败', 'sappforscreen/publiccheck',2);
+	        echo '0';
+	       // $this->outputNew('审核失败', 'sappforscreen/publiccheck',3);
 	    }
 	    
 	}
 	public function operateRecommend(){
-	    $id = I('get.id',0,'intval');
-	    $is_recommend = I('get.is_recommend');
+	    $id = I('id',0,'trim');
+	    $is_recommend = I('is_recommend');
+	    $callbacktype   = I('callbacktype') ? I('callbacktype') : 0;
+	    
 	    $m_public = new \Admin\Model\Smallapp\PublicModel();
 	    $where = $data = array();
 	    $where['id'] = $id;
 	    $data['is_recommend'] = $is_recommend;
+	    
 	    $ret = $m_public->updateInfo($where, $data);
-	    if($ret){
-	        $this->output('修改成功', 'sappforscreen/publiccheck',2);
+	    
+	    if(empty($callbacktype)){
+	        $callback = 2;
 	    }else {
-	        $this->output('修改失败', 'sappforscreen/publiccheck',2);
+	        $callback = 1;
+	    }
+	    if($ret){
+	        $this->output('修改成功', 'sappforscreen/publiccheck',$callback);
+	    }else {
+	        $this->output('修改失败', 'sappforscreen/publiccheck',$callback);
 	    }
 	}
 	public function delpublic(){
