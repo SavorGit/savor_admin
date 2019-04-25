@@ -191,16 +191,20 @@ class ProgrammenuController extends BaseController
             $res = $menuliModel->addData($dat, 1);
             if ($res) {
                 $menuHoModel->commit();
+                $vm_hotel_arr = array();
                 foreach ($com_arr as $k => $v) {
                     $cache_key = C('PROGRAM_PRO_CACHE_PRE') . $k;
                     $redis->remove($cache_key);
                     $cache_key = C('PROGRAM_ADV_CACHE_PRE') . $k;
                     $redis->remove($cache_key);
                     if(in_array($k, $tmp_hotel_arr)){
-                        sendTopicMessage($k, 6);  //通知虚拟小平台更新节目单数据
-                        sendTopicMessage($k, 7);  //通知虚拟小平台更新节目单宣传片数据
+                        $vm_hotel_arr[] = $k;
+                        //sendTopicMessage($k, 6);  //通知虚拟小平台更新节目单数据
+                        //sendTopicMessage($k, 7);  //通知虚拟小平台更新节目单宣传片数据
                     }
                 }
+                sendTopicMessage($vm_hotel_arr, 6); //通知虚拟小平台更新节目单数据
+                sendTopicMessage($vm_hotel_arr, 7); //通知虚拟小平台更新节目单宣传片数据
                 $this->output('发布成功了!', 'programmenu/getlist');
             } else {
                 $menuHoModel->rollback();
