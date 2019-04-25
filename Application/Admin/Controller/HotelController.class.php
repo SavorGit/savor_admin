@@ -1366,6 +1366,13 @@ class HotelController extends BaseController {
 		$mediaModel = new \Admin\Model\MediaModel();
 		$oss_host = get_oss_host();
 		foreach ($datalist as $k=>$v){
+		    $name = $v['name'];
+		    $tmp_name = explode('_', $name);
+		    if(!empty($tmp_name[1])){
+		        $datalist[$k]['order'] = intval(substr($tmp_name[1], 0,1));
+		    }else {
+		        $datalist[$k]['order'] = 0;
+		    }
 			$media_id = $v['media_id'];
 			if($media_id){
 				$mediainfo = $mediaModel->getMediaInfoById($media_id);
@@ -1376,7 +1383,7 @@ class HotelController extends BaseController {
 			$datalist[$k]['oss_addr'] = $oss_addr;
 			$datalist[$k]['img_url'] = $oss_host.$datalist[$k]['img_url'];
 		}
-
+        sortArrByOneField($datalist, 'order');
 		$time_info = array('now_time'=>date('Y-m-d H:i:s'),'begin_time'=>$beg_time,'end_time'=>$end_time);
 		$this->assign('timeinfo',$time_info);
 		$this->assign('keywords',$name);
