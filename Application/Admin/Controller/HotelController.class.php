@@ -1366,8 +1366,8 @@ class HotelController extends BaseController {
 		$mediaModel = new \Admin\Model\MediaModel();
 		$oss_host = get_oss_host();
 		foreach ($datalist as $k=>$v){
-		    $name = $v['name'];
-		    $tmp_name = explode('_', $name);
+		    $v_name = $v['name'];
+		    $tmp_name = explode('_', $v_name);
 		    if(!empty($tmp_name[1])){
 		        $datalist[$k]['order'] = intval(substr($tmp_name[1], 0,1));
 		    }else {
