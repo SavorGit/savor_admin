@@ -1,9 +1,6 @@
 <!--修改样式2 p元素自适应宽度 start-->
 <style type="text/css">
     .zhezhao{
-
-
-        
         display: none;
         position: absolute;
         top: 0;
@@ -31,49 +28,74 @@
   <form method="post" action="{$host_name}/Polyscreen/doAdd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="ads_id" value="{$vainfo.id}">
     <input type="hidden" name="hotel_id" value="{$vinfo.id}">
+    <input type="hidden" name="type" value="{$type}">
     <div class="pageFormContent modal-body">
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label col-md-offset-4">
                 聚屏广告
             </label>
         </div>
+        <if condition="$type eq 1">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    视频内容:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput" id="xuanpian">
+                            <a id="xuanpianhr" target="_blank"
+                            <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''"> href="javascript:void(0)"
+                               <else />href="{$vainfo.videooss_addr}"></if>>
 
-     
-       
+                                <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
+                                    <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+                                    <else />
+                                    <img id="media_idimg"  src="{$vainfo.oss_addr}" border="0"/>
+                                </if>
+                            </a>
 
-        <div class="form-group row">
-            <label class="col-xs-12 col-sm-2 control-label">
-                视频内容:
-            </label>
-            <div class="col-xs-12 col-sm-10">
-                <div class="fileinput fileinput-new" data-fileinput>
-                    <div class="fileinput-preview thumbnail" data-trigger="fileinput" id="xuanpian">
-                        <a id="xuanpianhr" target="_blank"
-                        <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''"> href="javascript:void(0)"
-                           <else />href="{$vainfo.videooss_addr}"></if>>
+                        </div>
 
-                            <if condition="($vainfo['videooss_addr'] eq 'NULL') OR $vainfo['videooss_addr'] eq ''">
-                                <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
-                                <else />
-                                <img id="media_idimg"  src="{$vainfo.oss_addr}" border="0"/>
-                            </if>
-                        </a>
-                        
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadPolyResource?filed=media_id&rtype=1" data-browse-file>
+                                选择视频
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="">
+                            <a href="javascript:;" class="btn btn-danger" id="videoshan" data-remove-file="/Public/admin/assets/img/noimage.png">
+                                删除 </a>
+                        </div>
                     </div>
 
-                    <div>
-                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadPolyResource?filed=media_id&rtype=1" data-browse-file>
-                            选择视频
-                        </a>
-                        <input type="hidden" name="media_id" id="media_id" value="">
-                        <a href="javascript:;" class="btn btn-danger" id="videoshan" data-remove-file="/Public/admin/assets/img/noimage.png">
-                            删除 </a>
+
+                </div>
+            </div>
+        <else />
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    图片内容:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput" id="xuanpian">
+                            <a id="xuanpianhr" target="_blank" href="javascript:void(0)">
+                                <img id="media_idimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+                            </a>
+                        </div>
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadPolyResource?filed=media_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="">
+                            <a href="javascript:;" class="btn btn-danger" id="videoshan" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
                     </div>
                 </div>
-
-
             </div>
-        </div>
+
+        </if>
+
+
 		<!-- <div class="form-group row" style="margin-top: 20px;margin-left: 90px;">
 			
 			<div class="form-group row" style="margin-top: 33px;">
@@ -123,7 +145,7 @@
         </div>
 <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-          视频来源:
+          来源:
         </label>
         <div class="col-xs-12 col-sm-3">
           <select name="tpmedia_id" class="form-control bs-select" title="请选择..." data-size="10" required>
