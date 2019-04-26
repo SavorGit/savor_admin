@@ -940,11 +940,14 @@ class CrontabController extends Controller
                 }
             }
             $pub_ads_hotel_arr = $m_pub_ads_box->getHotelArrByPubAdsId($val['id']);//获取当前广告发布的酒楼id
+            $vm_hotel_arr = array();
             foreach($pub_ads_hotel_arr as $tk=>$tv){
                 if(in_array($tv['hotel_id'], $tmp_hotel_arr)){
-                    sendTopicMessage($tv['hotel_id'], 8);
+                    $vm_hotel_arr[] = $tv['hotel_id'];
+                    //sendTopicMessage($tv['hotel_id'], 8);
                 }
             }
+            sendTopicMessage($vm_hotel_arr, 8);
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
         
         }
@@ -2055,8 +2058,7 @@ class CrontabController extends Controller
         $where = " 1=1 and state = 1 and is_remove=0 ";
         $where.=" AND end_date <'$now_date'";
         $pad_arr = $pubadsModel->getWhere($where, $field);
-        var_export($pad_arr);
-
+        //var_export($pad_arr);exit;
         if($pad_arr) {
             foreach($pad_arr as $pk=>$pv) {
                 
@@ -2107,7 +2109,8 @@ class CrontabController extends Controller
                             $newtable = 'savor_pub_ads_box_history';
                             $err_count = $puberrorModel->getDataCount($map);
                             if($err_count > 0) {
-                                $bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
+                                //$bool = $pubox->removeToNew($insfield, $oldfield, $map,$newtable);
+                                $bool = true;
                                 if($bool) {
                                     //从box_error表移动数据到error_history
                                     $oldfield = 'bid, bname, rid, rname, hid, hname,pub_ads_id, error_type';
@@ -2132,7 +2135,8 @@ class CrontabController extends Controller
                                     continue;
                                 }
                             } else {
-
+                                //删除box表数据
+                                $pubox->deleteInfo($map);
                             }
                         } else {
                             continue;
@@ -2174,7 +2178,8 @@ class CrontabController extends Controller
                                 continue;
                             }
                         } else {
-
+                            //删除box表数据
+                            $pubox->deleteInfo($map);
                         }
                     }
 
