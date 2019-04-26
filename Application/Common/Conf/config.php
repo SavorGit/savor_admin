@@ -328,7 +328,8 @@ $config['POLY_SCREEN_OCCU']= array(
 $config['POLY_SCREEN_MEDIA_LIST'] = array(
     '1'=>'百度聚屏',
     '2'=>'钛镁聚屏',
-    '3'=>'奥凌聚屏'
+    '3'=>'奥凌聚屏',
+    '4'=>'众盟聚屏'
 );
 $config['TOU_STATE'] = array(
     '0'=>'全部',
