@@ -13,7 +13,8 @@
         <div class="goods-date">
           <div class="form-inline">
            <div class="form-group">
-              <a class="btn btn-success btn-sm add" href="{$host_name}/polyscreen/add" rel="polyscreen/add" title="新增投放" target="dialog"  mask="true"> <i class="fa fa-plus"></i><span>新增投放</span></a>
+              <a class="btn btn-success btn-sm add" href="{$host_name}/polyscreen/add?type=1" rel="polyscreen/add" title="新增视频投放" target="dialog"  mask="true"> <i class="fa fa-plus"></i><span>新增视频投放</span></a>
+              <a class="btn btn-success btn-sm add" href="{$host_name}/polyscreen/add?type=2" rel="polyscreen/add" title="新增图片投放" target="dialog"  mask="true"> <i class="fa fa-plus"></i><span>新增图片投放</span></a>
 
             </div>
 
@@ -44,8 +45,8 @@
             <th>广告名称</th>
             <th>第三方媒体</th>
             <th>md5</th>
+            <th>类型</th>
             <th>创建时间</th>
-            
             <th>创建人</th>
             <th>状态</th>
             <th class="table-tool">操作</th>
@@ -64,6 +65,10 @@
 
               <td data-title="md5" style="text-align:center;">
                 {$vlist['media_md5']}
+              </td>
+
+              <td data-title="类型" style="text-align:center;">
+                {$vlist['typestr']}
               </td>
 
               <td data-title="创建时间" style="text-align:center;">

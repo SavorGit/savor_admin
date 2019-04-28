@@ -499,19 +499,26 @@ class ResourceController extends BaseController{
 	         $ad_name = I('post.name','','trim');
 	         $seco = I('post.seco','0','intval');
 	         $fsize = I('post.oss_filesize','0','intval');
+	         $up_resourcetype = I('post.up_resourcetype',0,'intval');
 	         if ($fsize >  83886080 ) {
 	             $res_data = array('code'=>$code,'msg'=>'上传视频不可大于80M');
 	             echo json_encode($res_data);
 	             exit;
-	         }else if( mb_strlen($ad_name) >= 40) {
+	         }
+
+	         if( mb_strlen($ad_name) >= 40) {
 	             $res_data = array('code'=>$code,'msg'=>'广告名称40字以内');
 	             echo json_encode($res_data);
 	             exit;
-	         }else if( $seco < 1 || !(is_int($seco)) || $seco>3600) {
-	             $res_data = array('code'=>$code,'msg'=>'只可输入1-3600的数字');
-	             echo json_encode($res_data);
-	             exit;
 	         }
+	         if($up_resourcetype==1){
+                 if( $seco < 1 || !(is_int($seco)) || $seco>3600) {
+                     $res_data = array('code'=>$code,'msg'=>'只可输入1-3600的数字');
+                     echo json_encode($res_data);
+                     exit;
+                 }
+             }
+
 	         //判断广告名称是否存在
 	         $adsModel = new \Admin\Model\AdsModel();
 	         $nass = $adsModel->where(array('name'=>$ad_name))->field('name')->find();
@@ -578,7 +585,11 @@ class ResourceController extends BaseController{
 	         $this->assign('rtype',$rtype);
 	         $this->assign('hidden_filed',$hidden_filed);
 	         $this->assign('oss_host',$oss_host);
-	         $this->display('uploadpolyresource');
+             if($rtype==1){
+                 $this->display('uploadpolyresource');
+             }elseif($rtype==2){
+                 $this->display('uploadpolyimgresource');
+             }
 	     }
 	 }
 }

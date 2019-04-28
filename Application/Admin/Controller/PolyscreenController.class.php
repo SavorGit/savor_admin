@@ -34,13 +34,19 @@ class PolyscreenController extends BaseController{
         }
         $m_pub_poly_ads = new \Admin\Model\PubPolyAdsModel();
         
-        $fields = 'ads.name,media.duration,media.oss_addr,a.id,a.tpmedia_id,a.create_time,a.media_md5,a.state,user.remark';
+        $fields = 'ads.name,media.duration,media.oss_addr,a.id,a.tpmedia_id,a.create_time,a.media_md5,a.type,a.state,user.remark';
         
         $data = $m_pub_poly_ads->getList($fields,$where,$orders,$start,$size);
         
         $third_media_list =C('POLY_SCREEN_MEDIA_LIST');
         foreach($data['list'] as $key=>$v){
-            
+            if($v['type'] == 1){
+                $data['list'][$key]['typestr'] = '视频';
+            }elseif($v['type'] == 2){
+                $data['list'][$key]['typestr'] = '图片';
+            }else{
+                $data['list'][$key]['typestr'] = '';
+            }
             $data['list'][$key]['oss_addr'] =  'http://'.C('OSS_HOST_NEW').'/'.$v['oss_addr'];
             $data['list'][$key]['third_media_name'] = $third_media_list[$v['tpmedia_id']];
         }
@@ -53,9 +59,10 @@ class PolyscreenController extends BaseController{
      * @desc 新增广告
      */
     public function add(){
-        
+        $type = I('type',1,'intval');
         $poly_screen_media_list = C('POLY_SCREEN_MEDIA_LIST');
-        
+
+        $this->assign('type',$type);
         $this->assign('poly_screen_media_list',$poly_screen_media_list);
         $this->display('add');
     }
@@ -63,7 +70,6 @@ class PolyscreenController extends BaseController{
      * @desc 提交新增
      */
     public function doAdd(){
-        
         if(IS_POST){
             $media_id   = I('post.media_id',0,'intval');    //媒体资源id
             if(empty($media_id)){
@@ -77,10 +83,9 @@ class PolyscreenController extends BaseController{
             if(empty($media_md5)){
                 $this->error('请填写文件md5值');
             }
+            $type = I('post.type',0,'intval');
             $userInfo = session('sysUserInfo');
-            
             $now_date = date('Y-m-d H:i:s');
-            
             $save = array();
             $save['ads_id']     = $media_id;
             $save['tpmedia_id'] = $tpmedia_id;
@@ -88,19 +93,17 @@ class PolyscreenController extends BaseController{
             $save['create_time']= $now_date;
             $save['update_time']= $now_date;
             $save['creator_id'] = $userInfo['id'];
+            $save['type']      = $type;
             $save['state']      = 0;
             $save['flag']       = 0;
             $m_pub_poly_ads = new \Admin\Model\PubPolyAdsModel();
             $rets = $m_pub_poly_ads->addInfo($save,1);
             if($rets){
-                
                 $this->output('添加成功','polyscreen/index');
             }else {
                 
                 $this->error('添加失败');
             }
-            
-           
         }
     }
     /**
