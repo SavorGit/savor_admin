@@ -110,6 +110,8 @@ class ExcelController extends Controller
 	     }else if($filename=='exportEmptyWifiBoxList'){
 	         $tmpname= '漏填wifi_mac版位详情';
 	         
+	     }else if($filename=='noLogBoxListInfo'){
+	         $tmpname = '未上传日志的版位详情';
 	     }
 
 
@@ -5331,6 +5333,78 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         );
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
         
+    }
+    /**
+     * @desc 1、起始时间为每月最后一天（含），北京地区向前连续30天无日志上传的版位明细，
+     *         上海、广州向前连续14天无日志上传的版位明细
+     */
+    public function noLogBoxListInfo(){
+        $now_day =  date('j');
+        $all_day =  date('t');
+        $is_last_day = is_numeric(I('is_last_day')) ? I('is_last_day') : 1;
+        if($now_day !=$all_day && !empty($is_last_day)){
+            exit('不是本月最后一天');  //上线打开
+        }
+        //获取北京地区网络版机顶盒
+        $sql ="select box.mac from savor_box box
+               left join savor_room room   on box.room_id=room.id
+               left join savor_hotel hotel on hotel.id=room.hotel_id
+               left join savor_area_info area on hotel.area_id = area.id
+               where hotel.hotel_box_type in(2,3,6) and hotel.state=1 
+               and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=1";
+        $box_list = M()->query($sql);
+        //获取北京地区连续30天没日志上传
+        $box_log = new \Admin\Model\Oss\BoxLogModel();
+        $start_date = date('Y-m-d 00:00:00',strtotime('-30 days'));
+        $end_date   = date('Y-m-d 23:59:59');
+        $fields = 'box_mac';
+        $data = array();
+        foreach($box_list as $key=>$v){
+            $where = array();
+            $where['box_mac'] = $v['mac'];
+            $where['create_time'] = array(array('EGT',$start_date),array('ELT',$end_date));
+            
+            
+            $rt = $box_log->getInfo($fields, $where);
+            if(empty($rt)){
+                $data[] = $v;
+            }
+        }
+        
+        //获取上海、广州网络版机顶盒
+        $sql ="select box.mac from savor_box box
+               left join savor_room room   on box.room_id=room.id
+               left join savor_hotel hotel on hotel.id=room.hotel_id
+               left join savor_area_info area on hotel.area_id = area.id
+               where hotel.hotel_box_type in(2,3,6) and hotel.state=1
+               and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(9,236)";
+        $box_list = M()->query($sql);
+        $start_date = date('Y-m-d 00:00:00',strtotime('-14 days'));
+        $end_date   = date('Y-m-d 23:59:59');
+        $fields = 'box_mac';
+        //获取上海、广州连续14天没日志上传
+        foreach($box_list as $key=>$v){
+            $where = array();
+            $where['box_mac'] = $v['mac'];
+            $where['create_time'] = array(array('EGT',$start_date),array('ELT',$end_date));
+        
+        
+            $rt = $box_log->getInfo($fields, $where);
+            if(empty($rt)){
+                $data[] = $v;
+            }
+        }
+        
+        $xlsName = '北、上、广未上传日志版位详情';
+        $filename = 'noLogBoxListInfo';
+        
+        $xlsCell = array(
+            
+            array('mac','机顶盒mac'),
+            
+        
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     private function getScore($data,$conf_arr){
         $score = 0;
