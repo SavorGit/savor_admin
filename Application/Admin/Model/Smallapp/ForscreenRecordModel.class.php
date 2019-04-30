@@ -116,4 +116,21 @@ class ForscreenRecordModel extends BaseModel
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+	public function getHdCountPerson($where,$group){
+	    $ret = $this->alias('a')
+	         ->join('savor_box box on a.box_mac=box.mac','left')
+             ->join('savor_room room on box.room_id=room.id','left')
+             ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+             ->join('savor_area_info area  on hotel.area_id=area.id','left')
+             ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+             ->join('savor_sysuser user on ext.maintainer_id= user.id','left')
+             ->join('savor_smallapp_user suser on a.openid=suser.openid','left')
+             ->field('a.id')
+             ->where($where)
+             ->group($group)
+             
+             ->select();
+	    $count = count($ret);
+	    return $count;
+	}
 }
