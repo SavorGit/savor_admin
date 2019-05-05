@@ -71,18 +71,38 @@ class PolyscreenController extends BaseController{
      */
     public function doAdd(){
         if(IS_POST){
-            $media_id   = I('post.media_id',0,'intval');    //媒体资源id
+            $media_id   = I('post.media_id',0,'intval');//媒体资源id
             if(empty($media_id)){
                 $this->error('请上传视频内容');
             }
-            $tpmedia_id = I('post.tpmedia_id',0,'intval'); //第三方媒体平台id
+            $tpmedia_id = I('post.tpmedia_id',0,'intval');//第三方媒体平台id
             if(empty($tpmedia_id)){
                 $this->error('请选择视频来源');
             }
-            $media_md5  = I('post.media_md5','','trim');   //文件md5
+            $media_md5  = I('post.media_md5','','trim');//文件md5
+            if($tpmedia_id==4 && empty($media_md5)){
+                $m_media = new \Admin\Model\MediaModel();
+                $res_media = $m_media->getMediaInfoById($media_id);
+                $oss_addr = $res_media['oss_addr'];
+                $accessKeyId = C('OSS_ACCESS_ID');
+                $accessKeySecret = C('OSS_ACCESS_KEY');
+                $endpoint = C('OSS_HOST');
+                $bucket = C('OSS_BUCKET');
+                $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+                $aliyun->setBucket($bucket);
+                $fileinfo = $aliyun->getObject($oss_addr,'');
+                if($fileinfo){
+                    $media_md5 = md5($fileinfo);
+                }
+            }
+
             if(empty($media_md5)){
                 $this->error('请填写文件md5值');
             }
+
+
+
+
             $type = I('post.type',0,'intval');
             $userInfo = session('sysUserInfo');
             $now_date = date('Y-m-d H:i:s');
