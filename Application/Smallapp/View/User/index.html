@@ -11,7 +11,7 @@
         <div class="form-inline" style="margin-top:3px;">
         <div class="form-group">
         	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
-          		<input style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+          		<input id="sapp_user_s_date" style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
                 <span class="input-group-btn">
                   <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                   <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -20,7 +20,7 @@
 
         	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
 
-          		<input    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+          		<input id="sapp_user_e_date"    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
                 <span class="input-group-btn"  >
                   <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                   <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -147,12 +147,19 @@
   $(function(){
     
 
-    $(".form-control.date").datetimepicker({
+    $("#sapp_user_s_date").datetimepicker({
       minView: "month", //选择日期后，不会再跳转去选择时分秒
       language:  'zh-CN',
       format: 'yyyy-mm-dd',
       todayBtn:  1,
       autoclose: 1,
     });
+    $("#sapp_user_e_date").datetimepicker({
+        minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        todayBtn:  1,
+        autoclose: 1,
+      });
   })
 </script>

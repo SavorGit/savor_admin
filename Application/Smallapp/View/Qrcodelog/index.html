@@ -11,7 +11,7 @@
         <div class="form-inline" style="margin-top:3px;">
         <div class="form-group">
         	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
-          		<input style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+          		<input id="sapp_qrcode_s_date" style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
                 <span class="input-group-btn">
                   <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                   <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -20,15 +20,41 @@
 
         	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
 
-          		<input    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+          		<input id="sapp_qrcode_e_date" name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
                 <span class="input-group-btn"  >
                   <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                   <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                 </span>
         	</div>
         </div>
-        
-        
+        <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              	城市：
+            </label>
+                <span class="input-group-btn">
+               <select name="area_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全国</option>
+	                <volist name="area_list" id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option><br>
+	                </volist>
+               </select>
+          </div>
+          </div>
+         <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              机顶盒类型：
+            </label>
+                <span class="input-group-btn">
+               <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <volist name="hotel_box_type" key="k" id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $hbt_v">selected</if>>{$vo.name}</option><br>
+	             </volist>
+               </select>
+          </div>
+          </div>
         
           <!-- <div class="form-group">
           <div class="input-group input-group-sm">
@@ -48,7 +74,7 @@
           <div class="form-group">
           <div class="input-group input-group-sm">
             <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
-              	小程序类型：
+              	扫码类型：
             </label>
                 <span class="input-group-btn">
                <select name="sapp_qrcode_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
@@ -59,7 +85,31 @@
                </select>
           </div>
           </div>
-		  <!-- <div class="form-group">
+          <div class="form-group">
+            <div class="input-group-sm input-group">
+              <label class="control-label" style="">
+                合作维护人：
+              </label>
+              <span class="input-group-btn input-group-sm">
+                  <!-- <input type="text" class="form-control" name="main_v" value="{$main_k}" placeholder="合作维护人" style="width:95px;"> -->
+                  <select name="maintainer_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+		  			<option>请选择账号</option>
+		  			<php>
+		  				foreach($hezuo_arr as $key=>$v){
+		  			</php>
+		  			
+		  				<option value="" disabled="disabled">{$key}</option>
+		  				<php> foreach($v as $kk=>$vv){</php>
+		  				<option <if condition="$vv.uid eq $maintainer_id">selected</if> value="{$vv.uid}">{$vv.remark}</option>
+		  				<php>}</php>
+		  			<php>
+		  				}
+		  			</php>
+		  		</select>
+              </span>
+            </div>
+          </div>	
+		  <div class="form-group">
           <div class="input-group input-group-sm">
             <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
               	性别：
@@ -73,7 +123,7 @@
                	 <option value="2" <if condition="$gender eq 2">selected</if>>女</option><br>
                </select>
           </div>
-          </div> -->
+          </div>
             <div class="form-group" >
 	              <div class="input-group input-group-sm pull-right">
 	                
@@ -128,7 +178,7 @@
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒mac">{$vlist.mac}</td>
               <td data-title="扫码类型"><if condition="$vlist.type eq 1">主干版小码<elseif condition="$vlist.type eq 2" />节目大码<elseif condition="$vlist.type eq 3" />小程序呼码<elseif condition="$vlist.type eq 5" />节目大码 <elseif condition="$vlist.type eq 6" />极简版</if></td>
-              <td data-title="是否微信授权登陆"><if condition="$vlist.is_wx_auth eq 1">授权但拒绝<elseif condition="$vlist.is_wx_auth eq 2"  />是<elseif condition="$vlist.is_wx_auth eq 3" />是<else />否</if></td>
+              <td data-title="是否微信授权登陆"><if condition="$vlist.is_wx_auth eq 1">拒绝授权<elseif condition="$vlist.is_wx_auth eq 2"  />是<elseif condition="$vlist.is_wx_auth eq 3" />是<else />否</if></td>
               
               <td data-title="openid">{$vlist.openid}</td>
               <td data-title="unionid">{$vlist.unionid}</td>
@@ -156,12 +206,19 @@
   $(function(){
     
 
-    $(".form-control.date").datetimepicker({
+    $("#sapp_qrcode_s_date").datetimepicker({
       minView: "month", //选择日期后，不会再跳转去选择时分秒
       language:  'zh-CN',
       format: 'yyyy-mm-dd',
       todayBtn:  1,
       autoclose: 1,
     });
+    $("#sapp_qrcode_e_date").datetimepicker({
+        minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        todayBtn:  1,
+        autoclose: 1,
+      });
   })
 </script>
