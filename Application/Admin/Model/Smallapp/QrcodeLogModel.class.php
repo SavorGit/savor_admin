@@ -28,4 +28,37 @@ class QrcodeLogModel extends Model
         $count = count($ret);
         return $count;
     }
+    public function getList($fields,$where,$order,$start,$size,$group){
+        
+        $list = $this->alias('a')
+                     ->join('savor_box box on a.box_mac=box.mac','left')
+                     ->join('savor_room room on box.room_id=room.id','left')
+                     ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+                     ->join('savor_area_info area  on hotel.area_id=area.id','left')
+                     ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+                     ->join('savor_sysuser user on ext.maintainer_id= user.id','left')
+                     ->join('savor_smallapp_user suser on a.openid=suser.openid','left')
+                     ->field($fields)
+                     ->where($where)
+                     ->limit($start,$size)
+                     ->order($order)
+                     ->group($group)
+                     ->select();
+        $count = $this->alias('a')
+                     ->join('savor_box box on a.box_mac=box.mac','left')
+                     ->join('savor_room room on box.room_id=room.id','left')
+                     ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+                     ->join('savor_area_info area  on hotel.area_id=area.id','left')
+                     ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+                     ->join('savor_sysuser user on ext.maintainer_id= user.id','left')
+                     ->join('savor_smallapp_user suser on a.openid=suser.openid','left')
+                     ->field($fields)
+                     ->where($where)
+                     ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+        
+    }
 }

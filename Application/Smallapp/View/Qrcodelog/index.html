@@ -1,0 +1,167 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/qrcodelog/index" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+        <div class="form-group">
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+          		<input style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                <span class="input-group-btn">
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 	</div>
+
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
+
+          		<input    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                <span class="input-group-btn"  >
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+        	</div>
+        </div>
+        
+        
+        
+          <!-- <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              	是否授权：
+            </label>
+                <span class="input-group-btn">
+               <select name="is_wx_auth" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value='-1' >全部</option>
+	                
+	             <option value="0" <if condition="$is_wx_auth eq 0">selected</if>>未授权</option><br>
+	             <option value="1" <if condition="$is_wx_auth eq 1">selected</if>>拒绝授权</option><br>   
+               	 <option value="2" <if condition="$is_wx_auth eq 2">selected</if>>已授权</option><br>
+               </select>
+          </div>
+          </div>-->
+          <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              	小程序类型：
+            </label>
+                <span class="input-group-btn">
+               <select name="sapp_qrcode_type" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+	                <volist name="sapp_qrcode_type_arr"  id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $sapp_qrcode_type">selected</if>>{$vo.name}</option><br>
+	                </volist>
+               </select>
+          </div>
+          </div>
+		  <!-- <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              	性别：
+            </label>
+                <span class="input-group-btn">
+               <select name="gender" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value='-1' >全部</option>
+	                
+	             <option value="0" <if condition="$gender eq 0">selected</if>>未知</option><br>
+	             <option value="1" <if condition="$gender eq 1">selected</if>>男</option><br>   
+               	 <option value="2" <if condition="$gender eq 2">selected</if>>女</option><br>
+               </select>
+          </div>
+          </div> -->
+            <div class="form-group" >
+	              <div class="input-group input-group-sm pull-right">
+	                
+		            
+		            <span class="input-group-btn">
+		              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+		            </span>
+	              </div>
+            </div>
+            
+            
+          <!--   <div class="input-group input-group-sm pull-right">
+              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/expheartlost" title="导出心跳数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出心跳数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+            </div> -->
+          
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>id</th>
+            <th>区域</th>
+            <th>酒楼名称</th>
+            <th>包间名称</th>
+            <th>机顶盒mac</th>
+            <th>扫码类型</th>
+            <th>是否微信授权登陆</th>
+            <th>openid</th>
+            <th>unionid</th>
+            <th>用户头像</th>
+            <th>用户昵称</th>
+            <th>性别</th>
+            <th>扫码时间</th>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="list"  id="vlist">
+            <tr target="sid_user">
+              <td data-title="id">{$vlist.id}</td>
+              <td data-title="区域">{$vlist.region_name}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒mac">{$vlist.mac}</td>
+              <td data-title="扫码类型"><if condition="$vlist.type eq 1">主干版小码<elseif condition="$vlist.type eq 2" />节目大码<elseif condition="$vlist.type eq 3" />小程序呼码<elseif condition="$vlist.type eq 5" />节目大码 <elseif condition="$vlist.type eq 6" />极简版</if></td>
+              <td data-title="是否微信授权登陆"><if condition="$vlist.is_wx_auth eq 1">授权但拒绝<elseif condition="$vlist.is_wx_auth eq 2"  />是<elseif condition="$vlist.is_wx_auth eq 3" />是<else />否</if></td>
+              
+              <td data-title="openid">{$vlist.openid}</td>
+              <td data-title="unionid">{$vlist.unionid}</td>
+              <!-- <td data-title="餐厅人员手机号">{$vlist.mobile}</td> -->
+              <td data-title="用户头像"><img src="{$vlist.avatarurl}" /></td>
+              <td data-title="用户头像">{$vlist.nickname}</td>
+              <td data-title="性别"><if condition="$vlist.gender eq 1">男<elseif condition="$vlist.gender eq 2"  />女<else />未知</if></td>
+              <td data-title="扫码时间">{$vlist.create_time}</td>
+              
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    
+
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+</script>

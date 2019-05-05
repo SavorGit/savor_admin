@@ -168,6 +168,14 @@ $config['all_smallapps'] = array(
     '4'=>'餐厅端',
     '11'=>'h5互动游戏'
 );
+$config['SAPP_QRCODE_TYPE_ARR'] = array(
+    array('id'=>'1','name'=>'主干版小码'),
+    array('id'=>'2','name'=>'节目大码'),
+    array('id'=>'3','name'=>'呼码'),
+    array('id'=>'5','name'=>'节目大码'),
+    array('id'=>'6','name'=>'极简版小码'),
+    
+);
 $config['all_spotstatus'] = array(
     '1'=>'现场',
     '2'=>'非现场',
