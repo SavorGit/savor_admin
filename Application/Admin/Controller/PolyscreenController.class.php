@@ -5,8 +5,7 @@
  * @since  2018-04-09
  */
 namespace Admin\Controller;
-use Admin\Controller\BaseController;
-use Common\Lib\SavorRedis;
+use Common\Lib\Aliyun;
 class PolyscreenController extends BaseController{
     public function __construct(){
         parent::__construct();
@@ -81,8 +80,10 @@ class PolyscreenController extends BaseController{
             }
             $media_md5  = I('post.media_md5','','trim');//文件md5
             if($tpmedia_id==4 && empty($media_md5)){
+                $m_ads = new \Admin\Model\AdsModel();
+                $ads_info = $m_ads->getInfo(array('id'=>$media_id));
                 $m_media = new \Admin\Model\MediaModel();
-                $res_media = $m_media->getMediaInfoById($media_id);
+                $res_media = $m_media->getInfo(array('id'=>$ads_info['media_id']));
                 $oss_addr = $res_media['oss_addr'];
                 $accessKeyId = C('OSS_ACCESS_ID');
                 $accessKeySecret = C('OSS_ACCESS_KEY');
@@ -99,9 +100,6 @@ class PolyscreenController extends BaseController{
             if(empty($media_md5)){
                 $this->error('请填写文件md5值');
             }
-
-
-
 
             $type = I('post.type',0,'intval');
             $userInfo = session('sysUserInfo');
