@@ -129,6 +129,14 @@ class InvitecodeController extends BaseController {
         $where = $data = array();
         if($id){
             $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
+            $invite_code_info = $m_hotel_invite_code->field('bind_mobile')->where(array('id'=>$id))->find();
+            if(!empty($invite_code_info['bind_mobile'])){
+                $m_user = new \Admin\Model\Smallapp\UserModel();
+                $map = $tmp =array();
+                $map['mobile'] = $invite_code_info['bind_mobile'];
+                $tmp['mobile'] = '';
+                $m_user->updateInfo($map, $tmp);
+            }
             $where['id'] = $id;
             $data['flag'] = 1;
             $ret = $m_hotel_invite_code->where($where)->save($data);
