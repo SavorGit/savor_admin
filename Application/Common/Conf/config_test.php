@@ -71,6 +71,7 @@ $config_db =  array(
     'UMENG_PRODUCTION_MODE'=>'false',
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
+    'NETTY_BALANCE_URL'=>'https://dev-api-nzb.littlehotspot.com/netty/position',
     'SEND_MAIL_CONF'=>array(
                             'littlehotspot'=>array(
                                 'host'=>'smtp.savor.cn',

@@ -22,6 +22,31 @@ function get_host_name(){
     return $http.$_SERVER['HTTP_HOST'];
 }
 
+function bonus_random($total,$num,$min,$max){
+    $data = array();
+    if ($min * $num > $total) {
+        return array();
+    }
+    if($max*$num < $total){
+        return array();
+    }
+    while ($num >= 1) {
+        $num--;
+        $kmix = max($min, $total - $num * $max);
+        $kmax = min($max, $total - $num * $min);
+        $kAvg = $total / ($num + 1);
+        //获取最大值和最小值的距离之间的最小值
+        $kDis = min($kAvg - $kmix, $kmax - $kAvg);
+        //获取0到1之间的随机数与距离最小值相乘得出浮动区间，这使得浮动区间不会超出范围
+        $r = ((float)(rand(1, 10000) / 10000) - 0.5) * $kDis * 2;
+        $k = sprintf("%.2f", $kAvg + $r);
+        $total -= $k;
+        $data[] = $k;
+    }
+    shuffle($data);
+    return $data;
+}
+
 /**
  * 发送主题消息
  * @param $message消息内容 酒楼ID或者array('酒楼ID')
