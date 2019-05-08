@@ -3496,8 +3496,11 @@ class CrontabController extends Controller
             $res_list = $m_redpacketoperation->getDataList('*',$where,$orderby);
         }
         $all_senders = C('REDPACKET_SENDERS');
+        $op_userid = C('REDPACKET_OPERATIONERID');
+        unset($all_senders[0]);
         $m_redpacket = new \Admin\Model\Smallapp\RedpacketModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $m_user = new \Admin\Model\Smallapp\UserModel();
         $redis  =  \Common\Lib\SavorRedis::getInstance();
 
         $nowdate = date('Y-m-d');
@@ -3523,7 +3526,7 @@ class CrontabController extends Controller
                     $is_send = 0;
             }
             if($is_send){
-                $redpacket = array('user_id'=>42996,'total_fee'=>$v['total_fee'],'amount'=>$v['amount'],'surname'=>'小热点',
+                $redpacket = array('user_id'=>$op_userid,'total_fee'=>$v['total_fee'],'amount'=>$v['amount'],'surname'=>'小热点',
                     'sex'=>1,'bless_id'=>1,'scope'=>$v['scope'],'mac'=>$v['mac'],'pay_fee'=>$v['total_fee'],
                     'pay_time'=>date('Y-m-d H:i:s'),'pay_type'=>10,'status'=>4);
                 $trade_no = $m_redpacket->addData($redpacket);
@@ -3552,6 +3555,10 @@ class CrontabController extends Controller
                     shuffle($all_senders);
                     $user_info = $all_senders[0];//随机
                     $user_info['avatarUrl'] = 'http://oss.littlehotspot.com/WeChat/MiniProgram/LaunchScreen/source/images/avatar/'.$user_info['id'].'.jpg';
+
+                    $where_user = array('id'=>$op_userid);
+                    $m_user->updateInfo($where_user,array('nickName'=>$user_info['nickName'],'avatarUrl'=>$user_info['avatarUrl']));
+
                     $message = array('action'=>121,'nickName'=>$user_info['nickName'],
                         'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
                     $m_netty->pushBox($redpacket['mac'],json_encode($message));

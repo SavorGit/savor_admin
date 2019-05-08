@@ -36,6 +36,8 @@ $config = array(
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
 	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
 
+    'SAPP_CALL_NETY_CMD'=>'call-mini-program',
+
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
@@ -318,6 +320,7 @@ $config['REDPACKET_SENDTYPES'] = array(
     '2'=>'单次定时',
     '3'=>'多次定时'
 );
+$config['REDPACKET_OPERATIONERID'] = 42996;
 $config['REDPACKET_SENDERS'] = array(
     '0'=>array('id'=>0,'nickName'=>'随机'),
     '1'=>array('id'=>1,'nickName'=>'夏日⊕樱花'),
