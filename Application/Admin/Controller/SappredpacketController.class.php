@@ -33,7 +33,7 @@ class SappredpacketController extends BaseController {
             $where['hotel.name'] = array('like',"%$hotel_name%");
             $this->assign('hotel_name',$hotel_name);
         }
-        $box_mac    = I('box_mac','','trim');
+        $box_mac = I('box_mac','','trim');
         if($box_mac){
             $where['a.mac'] = $box_mac;
             $this->assign('box_mac',$box_mac);
@@ -64,26 +64,38 @@ class SappredpacketController extends BaseController {
         $m_redpacket = new \Admin\Model\Smallapp\RedpacketModel();
         
         $fields ="user.avatarUrl,user.nickName,a.id,area.region_name,hotel.name hotel_name,room.name room_name,a.mac,a.total_fee,a.pay_fee,a.amount,
-                  a.status,a.pay_time,a.pay_type,a.add_time";
+                  a.status,a.pay_time,a.pay_type,a.add_time,a.scope,a.user_id";
         
         $data = $m_redpacket->getList($fields,$where, $orders, $start,$size);
         
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
         $m_redpacket_receive = new \Admin\Model\Smallapp\RedpacketReceiveModel();
+        $all_scopes = C('REDPACKET_SCOPE');
+        $operation_uid = C('REDPACKET_OPERATIONERID');
         foreach($data['list'] as $key=>$v){
             $data['list'][$key]['order_status'] = $this->order_status[$v['status']];
-            //扫码抢红包人数
-            $map = array();
-            $map['resource_id'] = $v['id'];
-            $map['action']      = 121; 
-            
-            $rt = $m_forscreen_record->field('id')->where($map)->group('openid')->select();
-            $data['list'][$key]['scan_nums'] = count($rt);
             if($v['status']>=4){
                 $data['list'][$key]['pay_type'] = $this->pay_type[$v['pay_type']];
             }else {
                 $data['list'][$key]['pay_type'] = '';
             }
+            if($v['scope']==1){
+                $data['list'][$key]['is_send'] = 1;
+            }else{
+                $data['list'][$key]['is_send'] = 0;
+            }
+            if($v['user_id']==$operation_uid){
+                $data['list'][$key]['usertype']='运营';
+            }else{
+                $data['list'][$key]['usertype']='';
+            }
+            $data['list'][$key]['scopestr'] = $all_scopes[$v['scope']];
+            //扫码抢红包人数
+            $map = array();
+            $map['resource_id'] = $v['id'];
+            $map['action']      = 121;
+            $rt = $m_forscreen_record->field('id')->where($map)->group('openid')->select();
+            $data['list'][$key]['scan_nums'] = count($rt);
             //红包被抢人数
             $data['list'][$key]['grab_nums'] = $m_redpacket_receive->countWhere(array('redpacket_id'=>$v['id']));
         }
