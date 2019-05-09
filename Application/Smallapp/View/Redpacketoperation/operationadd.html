@@ -112,14 +112,14 @@
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
                 <div class="col-xs-12 col-sm-10  form-inline">
-                    <select id="regiona_0_0" name="regiona1_id" onchange="setregiona(0,0)"  class="form-control">
+                    <select id="regiona_0_0" name="regiona1_id" onchange="setregiona(0,0)"  class="form-control bs-select class-filter" data-live-search="true" >
                         <option name="selected" selected='selected' value="0">请选择酒楼</option>
                         <volist name="hlist" id="vo">
                             <option value="{$vo.id}"> {$vo.name}</option>
                         </volist>
                     </select>
 
-                    <select id="regiona_1_0" name="regiona2_id" onchange="setregiona(1,0)"  class="form-control">
+                    <select id="regiona_1_0" name="regiona2_id" onchange="setregiona(1,0)"  class="form-control" >
                         <option name="selected" selected='selected' value="0">包间</option>
                     </select>
 

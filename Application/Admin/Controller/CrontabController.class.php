@@ -3547,16 +3547,16 @@ class CrontabController extends Controller
                     //推送红包小程序码到电视
                     $http_host = 'https://mobile.littlehotspot.com';
 
-                    list($t1, $t2) = explode(' ', microtime());
-                    $sys_time = (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
-
                     $box_mac = $redpacket['mac'];
-                    $qrinfo =  $trade_no.'_'.$box_mac.'_'.$sys_time;
+                    $qrinfo =  $trade_no.'_'.$box_mac;
                     $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
 
-
-                    shuffle($all_senders);
-                    $user_info = $all_senders[0];//随机
+                    if($v['sender']){
+                        $user_info = $all_senders[$v['sender']];
+                    }else{
+                        shuffle($all_senders);
+                        $user_info = $all_senders[0];//随机
+                    }
                     $user_info['avatarUrl'] = 'http://oss.littlehotspot.com/WeChat/MiniProgram/LaunchScreen/source/images/avatar/'.$user_info['id'].'.jpg';
 
                     $where_user = array('id'=>$op_userid);
@@ -3573,7 +3573,7 @@ class CrontabController extends Controller
                         $all_box = $m_netty->getPushBox(2, $box_mac);
                         if (!empty($all_box)) {
                             foreach ($all_box as $v) {
-                                $qrinfo = $trade_no.'_'.$v.'_'.$sys_time;;
+                                $qrinfo = $trade_no.'_'.$v;
                                 $mpcode = $http_host . '/h5/qrcode/mpQrcode?qrinfo=' . $qrinfo;
                                 $message = array('action' => 121, 'nickName' => $user_info['nickName'],
                                     'avatarUrl' => $user_info['avatarUrl'], 'codeUrl' => $mpcode);
@@ -3588,10 +3588,6 @@ class CrontabController extends Controller
                         }
                     }
                     //end
-                    if($v['type']!=1){
-                        $log = "redpacket: $trade_no ok \r\n";
-                        print_r($log);
-                    }
                 }
             }
 
