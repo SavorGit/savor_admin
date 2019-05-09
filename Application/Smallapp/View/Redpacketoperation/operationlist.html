@@ -12,14 +12,19 @@
           </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
-          <!--
+
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" value="" placeholder="">
+            <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+              <option value="99">全部</option>
+              <option value="1" <if condition="$status eq 1"> selected </if> > 可用</option>
+              <option value="0" <if condition="$status eq 0"> selected </if> > 不可用</option>
+            </select>
+
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
           </div>
-          -->
+
         </div>
       </div>
     </div>
@@ -75,3 +80,10 @@
   </div>
   {$page}
 </div>
+<script>
+    $(function(){
+        $(".class-filter").change(function (){
+            $(this).closest("form").submit();
+        })
+    })
+</script>

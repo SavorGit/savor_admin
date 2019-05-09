@@ -8,12 +8,16 @@ use Admin\Controller\BaseController ;
 class RedpacketoperationController extends BaseController {
 
     public function operationlist(){
+        $status = I('status',99,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
 
         $all_sendtypes = C('REDPACKET_SENDTYPES');
         $m_redpacketoperation = new \Admin\Model\Smallapp\RedpacketoperationModel();
         $where = array();
+        if($status!=99){
+            $where['status'] = $status;
+        }
         $start = ($pageNum-1)*$size;
         $orderby = 'id desc';
         $res_list = $m_redpacketoperation->getDataList('*',$where,$orderby,$start,$size);
@@ -35,8 +39,8 @@ class RedpacketoperationController extends BaseController {
             }else{
                 $data_list[$k]['statusstr'] = '不可用';
             }
-
         }
+        $this->assign('status',$status);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
