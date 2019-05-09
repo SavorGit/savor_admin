@@ -97,7 +97,7 @@ class SappredpacketController extends BaseController {
             $rt = $m_forscreen_record->field('id')->where($map)->group('openid')->select();
             $data['list'][$key]['scan_nums'] = count($rt);
             //红包被抢人数
-            $data['list'][$key]['grab_nums'] = $m_redpacket_receive->countWhere(array('redpacket_id'=>$v['id']));
+            $data['list'][$key]['grab_nums'] = $m_redpacket_receive->countWhere(array('redpacket_id'=>$v['id'],'status'=>1));
         }
         $this->assign('_sort',$sort);
         $this->assign('_order',$order);
@@ -113,7 +113,8 @@ class SappredpacketController extends BaseController {
         $m_redpacket_receive = new \Admin\Model\Smallapp\RedpacketReceiveModel();
         $fields = 'user.avatarUrl,user.nickName,a.money,a.barrage,a.receive_time,a.add_time';
         $where = array();
-        $where['a.redpacket_id'] =  $id;
+        $where['a.redpacket_id'] = $id;
+        $where['a.status'] = 1;
         $order = 'a.id asc';
         $data = $m_redpacket_receive->getList($fields, $where, $order);
         
