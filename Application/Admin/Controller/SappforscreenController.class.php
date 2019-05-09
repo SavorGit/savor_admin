@@ -14,6 +14,8 @@ class SappforscreenController extends BaseController {
     public $all_actions = array('0'=>'图片投屏','2-1'=>'滑动','2-2'=>'视频投屏','4'=>'多图投屏','5'=>'视频点播','6'=>'广告跳转',
     '7'=>'点击互动游戏','8'=>'重投','9'=>'手机呼大码','11'=>'发现点播图片','12'=>'发现点播视频','21'=>'查看点播视频',
     '22'=>'查看发现视频','101'=>'h5互动游戏','120'=>'发红包','121'=>'扫码抢红包');
+    public $all_invalidtypes = array('1'=>'酒楼ID','2'=>'微信openID','3'=>'机顶盒mac','4'=>'红包黑名单用户');
+
 
 
 	public function __construct() {
@@ -318,9 +320,9 @@ class SappforscreenController extends BaseController {
         $m_box = new \Admin\Model\BoxModel();
         $m_smallapp_user = new \Admin\Model\Smallapp\UserModel();
 
-        $all_types = array('1'=>'酒楼ID','2'=>'微信openID','3'=>'机顶盒mac');
+
         foreach ($res_list['list'] as $k=>$v){
-            $res_list['list'][$k]['type_str'] = $all_types[$v['type']];
+            $res_list['list'][$k]['type_str'] = $this->all_invalidtypes[$v['type']];
             switch ($v['type']){
                 case 1:
                     $res_hotel = $m_hotel->getOne($v['invalidid']);
@@ -328,13 +330,14 @@ class SappforscreenController extends BaseController {
                     $image = '';
                     break;
                 case 2:
+                case 4:
                     $res_user = $m_smallapp_user->getOne('openid,avatarUrl,nickName',array('openid'=>$v['invalidid']),'');
                     $name = $res_user['nickname'];
                     $image = $res_user['avatarurl'];
                     break;
                 case 3:
                     $res_mac = $m_box->getHotelInfoByBoxMac($v['invalidid']);
-                    $name = $v['hotel_name'].'-'.$v['room_name'].'-'.$v['box_name'];
+                    $name = $res_mac['hotel_name'].'-'.$res_mac['room_name'].'-'.$res_mac['box_name'];
                     $image = '';
                     break;
                 default:
@@ -344,6 +347,7 @@ class SappforscreenController extends BaseController {
             $res_list['list'][$k]['name'] = $name;
             $res_list['list'][$k]['image'] = $image;
         }
+
         $this->assign('data',$res_list['list']);
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
@@ -356,7 +360,11 @@ class SappforscreenController extends BaseController {
             $invalidid = I('post.invalidid','','trim');
             $type = I('post.type',0,'intval');
             $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
-            $res = $m_invalid->getInfo(array('invalidid'=>$invalidid));
+            $condition = array('invalidid'=>$invalidid);
+            if($type==4){
+                $condition['type']=4;
+            }
+            $res = $m_invalid->getInfo($condition);
             if(!empty($res)){
                 $this->output('数据已存在,请勿重复添加', 'sappforscreen/invalidlist',2,0);
             }
@@ -364,20 +372,34 @@ class SappforscreenController extends BaseController {
             $data = array('invalidid'=>$invalidid,'type'=>$type);
             $result = $m_invalid->addData($data);
             if($result){
+                if($type==4){
+                    $key = C('SAPP_REDPACKET').'invaliduser';
+                    $redis  =  \Common\Lib\SavorRedis::getInstance();
+                    $redis->select(5);
+                    $redis->remove($key);
+                }
                 $this->output('操作成功!', 'sappforscreen/invalidlist');
             }else{
                 $this->output('操作失败', 'sappforscreen/invalidlist',2,0);
             }
         }else{
+            $this->assign('types',$this->all_invalidtypes);
             $this->display('Report/invalidadd');
         }
     }
 
     public function invaliddel(){
         $id = I('get.id',0,'intval');
+        $type = I('get.type',0,'intval');
         $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
         $result = $m_invalid->delData(array('id'=>$id));
         if($result){
+            if($type==4){
+                $key = C('SAPP_REDPACKET').'invaliduser';
+                $redis  =  \Common\Lib\SavorRedis::getInstance();
+                $redis->select(5);
+                $redis->remove($key);
+            }
             $this->output('操作成功!', 'sappforscreen/invalidlist',2);
         }else{
             $this->output('操作失败', 'sappforscreen/invalidlist',2,0);
