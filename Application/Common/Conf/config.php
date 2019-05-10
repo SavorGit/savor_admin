@@ -36,6 +36,8 @@ $config = array(
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
 	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
 
+    'SAPP_CALL_NETY_CMD'=>'call-mini-program',
+
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
@@ -313,6 +315,50 @@ $config['AFTER_APP'] = array(
     2=>"go_activity",
     3=>"go_custom",
 );
+$config['REDPACKET_SENDTYPES'] = array(
+    '1'=>'立即发送',
+    '2'=>'单次定时',
+    '3'=>'多次定时'
+);
+$config['REDPACKET_OPERATIONERID'] = 42996;
+$config['REDPACKET_SENDERS'] = array(
+    '0'=>array('id'=>0,'nickName'=>'随机'),
+    '1'=>array('id'=>1,'nickName'=>'夏日⊕樱花'),
+    '2'=>array('id'=>2,'nickName'=>'夏至*初晴'),
+    '3'=>array('id'=>3,'nickName'=>'墨Se天空'),
+    '4'=>array('id'=>4,'nickName'=>'静待花开'),
+    '5'=>array('id'=>5,'nickName'=>'风掠幽蓝'),
+    '6'=>array('id'=>6,'nickName'=>'曙光女神'),
+    '7'=>array('id'=>7,'nickName'=>'青丝缠雪'),
+    '8'=>array('id'=>8,'nickName'=>'鹿港小镇'),
+    '9'=>array('id'=>9,'nickName'=>'何必远方'),
+    '10'=>array('id'=>10,'nickName'=>'人生百味'),
+    '11'=>array('id'=>11,'nickName'=>'落花入盏'),
+    '12'=>array('id'=>12,'nickName'=>'凉城听暖'),
+    '13'=>array('id'=>13,'nickName'=>'澄成诚程'),
+    '14'=>array('id'=>14,'nickName'=>'海上明月共潮生'),
+    '15'=>array('id'=>15,'nickName'=>'清风入梦'),
+    '16'=>array('id'=>16,'nickName'=>'南风草木香'),
+    '17'=>array('id'=>17,'nickName'=>'雾时之森'),
+    '18'=>array('id'=>18,'nickName'=>'烟云似雪'),
+    '19'=>array('id'=>19,'nickName'=>'水清天蓝'),
+    '20'=>array('id'=>20,'nickName'=>'岛是海的寂寞'),
+    '21'=>array('id'=>21,'nickName'=>'冰橙♀柠檬'),
+    '22'=>array('id'=>22,'nickName'=>'与花如笺'),
+    '23'=>array('id'=>23,'nickName'=>'九月茉莉'),
+    '24'=>array('id'=>24,'nickName'=>'暗香疏影'),
+    '25'=>array('id'=>25,'nickName'=>'清风耳畔拂'),
+    '26'=>array('id'=>26,'nickName'=>'清风徐来'),
+    '27'=>array('id'=>27,'nickName'=>'葱郁风光'),
+    '28'=>array('id'=>28,'nickName'=>'花落肩头'),
+    '29'=>array('id'=>29,'nickName'=>'秋叶静美'),
+    '30'=>array('id'=>30,'nickName'=>'未若柳絮'),
+);
+$config['REDPACKET_SCOPE'] = array(
+    '1'=>'全网餐厅电视',
+    '2'=>'当前餐厅所有电视',
+    '3'=>'当前包间电视'
+);
 
 $config['ADV_VIDEO'] = array(
     'name' => array(
@@ -365,8 +411,6 @@ $config['OPTION_USER_SKILL_ARR'] = array(
     '2'=>'安装验收',
     '4'=>'维修',
 );
-
-
 $config['HOTEL_DAMAGE_CONFIG'] = array(
     '1'=>'电源适配器',
     '2'=>'SD卡',
@@ -425,8 +469,8 @@ $config['SAPP_PAGEVIEW_LOG']     ='smallap:pageview:log:';
 $config['VM_HOTEL_LIST']         ='vsmall_hotel_list';
 $config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
 $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
-
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
+$config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',

@@ -26,9 +26,7 @@ class StatisticsModel extends Model
 	}
 
     public function getOnlinnum($fields,$where){
-        $data =$this->alias('s')
-            ->join('savor_box b on s.box_mac=b.mac','left')
-            ->field($fields)->where($where)->select();
+        $data =$this->alias('s')->field($fields)->where($where)->select();
         return $data;
     }
 

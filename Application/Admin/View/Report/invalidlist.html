@@ -10,8 +10,25 @@
             <a class="btn btn-success btn-sm add" href="{$host_name}/sappforscreen/invalidadd" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i><span>新增</span></a>
           </div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-6 pull-right">
+
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+
+          <div class="input-group input-group-sm">
+            <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+              <option value="0">全部</option>
+              <volist name="types" id="tinfo">
+                <option value="{$key}" <if condition="$type eq $key">selected</if>> {$tinfo} </option>
+              </volist>
+            </select>
+
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
         </div>
+
+
       </div>
     </div>
   </form>
@@ -42,7 +59,7 @@
               <td data-title="添加时间">{$dinfo.create_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/sappforscreen/invaliddel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_name}/sappforscreen/invaliddel?id={$dinfo.id}&type={$dinfo.type}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
                 </div>
@@ -57,3 +74,10 @@
   </div>
   {$page}
 </div>
+<script>
+    $(function(){
+        $(".class-filter").change(function (){
+            $(this).closest("form").submit();
+        })
+    })
+</script>

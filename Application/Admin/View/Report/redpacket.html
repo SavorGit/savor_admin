@@ -72,13 +72,15 @@
             <th>MAC地址</th>
             <th>用户头像</th>
             <th>用户昵称</th>
+            <th>人员类型</th>
             <th>红包总金额(元)</th>
             <th>支付金额(元)</th>
             <th>红包个数</th>
             <th>支付时间</th>
             <th>支付类型</th>
             <th>红包状态</th>
-            <th>扫码枪红包人数</th>
+            <th>发送范围</th>
+            <th>扫码抢红包人数</th>
             <th>抢红包明细</th>
             <th>创建时间</th>
             
@@ -95,12 +97,14 @@
               <td data-title="机顶盒MAC">{$vlist.mac}</td>
               <td data-title="用户头像"><img src="{$vlist.avatarurl}" /></td>
               <td data-title="用户昵称">{$vlist.nickname}</td>
+              <td data-title="人员类型">{$vlist.usertype}</td>
               <td data-title="红包总金额">{$vlist.total_fee}</td>
               <td data-title="支付金额">{$vlist.pay_fee}</td>
               <td data-title="红包个数">{$vlist.amount}</td>
               <td data-title="支付时间">{$vlist.pay_time}</td>
               <td data-title="支付类型">{$vlist.pay_type}</td>
               <td data-title="红包状态">{$vlist.order_status}</td>
+              <td data-title="发送范围">{$vlist.scopestr}</td>
               <td data-title="扫码枪红包人数">{$vlist.scan_nums}</td>
               <td data-title="抢红包明细">
               <if condition="$vlist.status GT 4">
@@ -108,7 +112,7 @@
               {$vlist.grab_nums}
               </a>
               </if>
-              <if condition="$vlist.status eq 4 OR $vlist.status eq 6">
+              <if condition="($vlist.status eq 4 OR $vlist.status eq 6) AND $vlist.is_send eq 1">
                   <a data-tip="" href="https://mobile.littlehotspot.com/h5/scanqrcode/sendtv?oid={$vlist.id}" target="_blank" class="btn btn-success btn-icon" data-original-title="重发">
                       <i class="fa fa-send-o"></i>
                   </a>
