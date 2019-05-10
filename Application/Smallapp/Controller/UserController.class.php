@@ -14,13 +14,14 @@ class UserController extends BaseController {
         $size       = I('numPerPage',50);       //显示每页记录数
         $pagenum      = I('pageNum',1);          //当前页码
         $pagenum      = $pagenum ? $pagenum :1;
+        
         $order      = I('_order','id');         //排序字段
         $sort       = I('_sort','desc');        //排序类型
         $orders     = $order.' '.$sort;
         $start = ($pagenum-1)* $size;
         
         $this->assign('numPerPage',$size);
-        $this->assign('pageNum',$start);
+        $this->assign('pageNum',$pagenum);
         $this->assign('_order',$order);
         $this->assign('_sort',$sort);
         
@@ -63,8 +64,8 @@ class UserController extends BaseController {
         }
         $this->assign('gender',$gender);
         
-        $limit ="limit $start,$size";
-            
+        $limit ="$start,$size";
+        
         $m_user = new \Admin\Model\Smallapp\UserModel();
         
         $fields = "*";

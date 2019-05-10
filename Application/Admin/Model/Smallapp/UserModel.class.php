@@ -24,6 +24,7 @@ class UserModel extends Model
 	    return $ret;
 	}
 	public function getWhere($fields,$where,$order,$limit,$group){
+	    
 	    $data = $this->field($fields)->where($where)->order($order)->group($group)->limit($limit)->select();
 	    return $data;
 	}
