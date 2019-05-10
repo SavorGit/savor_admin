@@ -586,6 +586,14 @@ class ClientController extends Controller {
             $url ="https://mp.weixin.qq.com/s/KXI3E2PIGl6ESG9tBu01Kw";
             header('Location:'.$url);
             exit;
+        }else if($id==-10){
+            $url = "http://wap.iemys.com/wap/index.php?ctl=deal&data_id=368";
+            header('Location:'.$url);
+            exit;
+        }else if($id==-11){
+            $url = "http://wap.iemys.com/wap/index.php?ctl=deal&data_id=367";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
