@@ -152,7 +152,7 @@ class RedpacketoperationController extends BaseController {
         }
         $m_mac = new \Admin\Model\BoxModel();
         $fields = 'box.mac as box_mac,room.name as room_name,hotel.name as hotel_name';
-        $where = array('box.mac'=>$vinfo['mac']);
+        $where = array('box.mac'=>$vinfo['mac'],'box.state'=>1,'box.flag'=>0);
         $macinfo = $m_mac->getInfoByCondition($fields,$where);
 
         $all_sendtypes = C('REDPACKET_SENDTYPES');

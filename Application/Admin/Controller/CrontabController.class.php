@@ -3514,18 +3514,22 @@ class CrontabController extends Controller
                     $optime = date('H:i',strtotime($v['timing']));
                     if($v['start_date']==$nowdate && $nowtime==$optime){
                         $is_send = 1;
+                    }else{
+                        $is_send = 0;
                     }
                     break;
                 case 3:
                     $optime = date('H:i',strtotime($v['timing']));
                     if($v['start_date']>=$nowdate && $nowdate<=$v['end_date'] && $nowtime==$optime){
                         $is_send = 1;
+                    }else{
+                        $is_send = 0;
                     }
                     break;
                 default:
                     $is_send = 0;
             }
-            if($is_send){
+            if($is_send==1){
                 $redpacket = array('user_id'=>$op_userid,'total_fee'=>$v['total_fee'],'amount'=>$v['amount'],'surname'=>'小热点',
                     'sex'=>1,'bless_id'=>1,'scope'=>$v['scope'],'mac'=>$v['mac'],'pay_fee'=>$v['total_fee'],
                     'pay_time'=>date('Y-m-d H:i:s'),'pay_type'=>10,'status'=>4);

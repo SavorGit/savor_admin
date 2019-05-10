@@ -310,11 +310,16 @@ class SappforscreenController extends BaseController {
     public function invalidlist(){
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
+        $type = I('type',0,'intval');
 
         $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
         $start = ($pageNum-1)*$size;
         $orderby = 'id desc';
-        $res_list = $m_invalid->getDataList('*','',$orderby,$start,$size);
+        $where = array();
+        if($type){
+            $where['type'] = $type;
+        }
+        $res_list = $m_invalid->getDataList('*',$where,$orderby,$start,$size);
 
         $m_hotel = new \Admin\Model\HotelModel();
         $m_box = new \Admin\Model\BoxModel();
@@ -347,7 +352,8 @@ class SappforscreenController extends BaseController {
             $res_list['list'][$k]['name'] = $name;
             $res_list['list'][$k]['image'] = $image;
         }
-
+        $this->assign('type',$type);
+        $this->assign('types',$this->all_invalidtypes);
         $this->assign('data',$res_list['list']);
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
@@ -567,8 +573,6 @@ class SappforscreenController extends BaseController {
 	        }else {
 	            $cy_info[$key]['box_join_time'] = '';
 	        }
-	        
-	        
 	    }
 	    
 	    $this->assign('list',$cy_info);
