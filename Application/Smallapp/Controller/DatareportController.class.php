@@ -341,7 +341,9 @@ class DatareportController extends BaseController {
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }
         $where['a.is_valid'] = 1;
-
+        $where['box.flag'] = 0;
+        $where['box.state'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
         if($small_app_id){
             if($small_app_id == 2){
                 $where['a.small_app_id'] = array('in',array(2,3));
