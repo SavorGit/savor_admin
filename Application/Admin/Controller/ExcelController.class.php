@@ -4201,7 +4201,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }
         $where['a.is_valid'] = 1;
-
+        $where['box.flag'] = 0;
+        $where['box.state'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
         if($small_app_id){
             if($small_app_id == 2){
                 $where['a.small_app_id'] = array('in',array(2,3));
@@ -4284,7 +4286,6 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $v['num'] = 0;
             $datalist[] = $v;
         }
-
 
         $num_str = "时间段A {$start_time}-{$end_time}互动次数";
         $numb_str = "时间段B {$estart_time}-{$eend_time}互动次数";
