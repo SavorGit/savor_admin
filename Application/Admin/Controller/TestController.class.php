@@ -14,6 +14,28 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
     
+    public function openZmtmpid(){
+        exit(1);
+        $m_box = new \Admin\Model\BoxModel();
+        $sql =" select box.id
+                from savor_box box
+                left join savor_room room on box.room_id=room.id
+                left join savor_hotel hotel on hotel.id=room.hotel_id
+                where hotel.hotel_box_type in(2,3,6) and hotel.flag=0
+                and hotel.state=1 and box.flag=0 and box.state=1";
+        $data = $m_box->query($sql);
+        $flag = 0;
+        foreach($data as $key=>$v){
+            $sql ="update savor_box set tpmedia_id='1,2,3,4' where id=".$v['id'];
+            $rt = M()->execute($sql);
+            if($rt){
+                $flag ++;
+            }    
+        } 
+        echo $flag;
+    }
+    
+    
     //全量打开网络版机顶盒的互动广告开关
     public function openHdBox(){
         exit(1);
