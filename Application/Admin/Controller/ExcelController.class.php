@@ -3885,6 +3885,51 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
 
+    public function countForscreenByboxpy(){
+        $s_date = I('get.s_date');
+        $e_date = I('get.e_date');
+        $small_app_id = I('small_app_id',0,'intval');
+        $is_valid = I('is_valid',1,'intval');
+
+        $cache_key = C('SAPP_SCRREN').':exportbox'.$s_date.$e_date.$small_app_id.$is_valid;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $res = $redis->get($cache_key);
+        if(!empty($res)){
+            if($res == 1){
+                $this->success('数据正在生成中,请稍后点击下载');
+//                $this->output('数据正在生成中,请稍后点击下载', 'sappforscreen/index',2);
+            }else{
+                //下载
+                $dir = SITE_TP_PATH;
+                $file_name = $res;
+                download($dir,$file_name);
+            }
+        }else{
+            $shell = "/opt/anaconda/envs/python36/bin/python  /application_data/web/python/smallapp/countForscreenBybox.py $s_date $e_date $small_app_id $is_valid > /tmp/null &";
+            system($shell);
+            $redis->set($cache_key,1,7200);
+            $this->success('数据正在生成中,请稍后点击下载');
+        }
+    }
+
+    public function output($message,$navTab,$type=1,$status=1,$callback="",$del){
+        switch ($type){
+            case 1://关闭
+                $callbackType = 'closeCurrent';
+                break;
+            case 2://重新载入
+                $callbackType = 'forward';
+                break;
+            default://停留在当前页
+                $callbackType = '';
+                break;
+        }
+        $data = array('status'=>$status,'info'=>$message,'navTabId'=>$navTab,'url'=>'',
+            'callbackType'=>$callbackType,'forwardUrl'=>'','confirmMsg'=>'','callback'=>$callback,'del'=>$del);
+        $this->ajaxReturn($data,'TEXT');
+    }
+
     /**
      * @desc 根据包间盒子获取投屏总数
      */
@@ -3894,7 +3939,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $s_date = I('get.s_date');
         $e_date = I('get.e_date');
         $small_app_id = I('small_app_id',0,'intval');
-        $is_valid = I('is_valid',1,'intval');
+//        $is_valid = I('is_valid',1,'intval');
 
         $where = '';
         if($s_date){
@@ -3911,9 +3956,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                where box.flag=0 and box.state=1   $where  group by a.box_mac order by hotel.id";
         $hotel_list = M()->query($sql);
         $count_arr = array() ;
-        if($is_valid!=2){
-            $where .=" and a.is_valid=$is_valid";
-        }
+//        if($is_valid!=2){
+//            $where .=" and a.is_valid=$is_valid";
+//        }
         if($small_app_id){
             if($small_app_id==2){
                 $where .=" and a.small_app_id in (2,3)";
@@ -3990,7 +4035,6 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('launch','视频点播'),
             array('happy','生日歌点播'),
             array('find','发现内容点播')
-
         );
         $xlsName = '小程序包间投屏统计';
         $filename = 'smallapp_forsacreen_box';
@@ -4157,7 +4201,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }
         $where['a.is_valid'] = 1;
-
+        $where['box.flag'] = 0;
+        $where['box.state'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
         if($small_app_id){
             if($small_app_id == 2){
                 $where['a.small_app_id'] = array('in',array(2,3));
@@ -4240,7 +4286,6 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $v['num'] = 0;
             $datalist[] = $v;
         }
-
 
         $num_str = "时间段A {$start_time}-{$end_time}互动次数";
         $numb_str = "时间段B {$estart_time}-{$eend_time}互动次数";

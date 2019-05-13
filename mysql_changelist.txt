@@ -1610,10 +1610,34 @@ CREATE TABLE `savor_smallapp_adsposition` (
   `media_id` int(11) NOT NULL DEFAULT '0' COMMENT '资源id',
   `linkcontent` varchar(200) NOT NULL DEFAULT '' COMMENT '链接地址',
   `clicktype` tinyint(1) NOT NULL DEFAULT '1' COMMENT '点击类型1链接,2事件',
+  `bindtap` varchar(50) NOT NULL DEFAULT '' COMMENT '绑定事件',
   `appid` varchar(50) NOT NULL DEFAULT '' COMMENT '小程序appid',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '广告位类型1图片,2视频',
   `position` tinyint(1) NOT NULL DEFAULT '0' COMMENT '广告位位置1首页顶部,2互动页顶部',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:删除1:正常',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='广告位表';
+
+ALTER TABLE `cloud`.`savor_pub_poly_ads`
+ADD COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1视频广告 2图片广告' AFTER `creator_id`;
+
+CREATE TABLE `savor_smallapp_redpacketoperation` (
+  `id` bigint(16) NOT NULL AUTO_INCREMENT,
+  `total_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '总金额',
+  `amount` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '红包个数',
+  `scope` tinyint(1) NOT NULL DEFAULT '1' COMMENT '发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视',
+  `mac` varchar(12) NOT NULL DEFAULT '' COMMENT 'mac地址',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型 1立即发送,2单次定时,3多次定时',
+  `start_date` date DEFAULT NULL COMMENT '开始日期',
+  `end_date` date DEFAULT NULL COMMENT '结束日期',
+  `timing` time DEFAULT NULL COMMENT '定时精确到分,小时分钟如: 13:00',
+  `sender` int(11) NOT NULL DEFAULT '0' COMMENT '发送人',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0:不可用,1:可用',
+  `sysuser_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建人',
+  `add_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='红包运营表';
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_invalidlist`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 1酒楼id,2微信openid,3机顶盒mac,4红包黑名单用户' AFTER `invalidid`;
