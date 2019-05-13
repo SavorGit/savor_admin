@@ -594,6 +594,14 @@ class ClientController extends Controller {
             $url = "http://wap.iemys.com/wap/index.php?ctl=deal&data_id=367";
             header('Location:'.$url);
             exit;
+        }else if($id==-12){
+            $url="https://h5.youzan.com/v2/goods/2g424kesxo442?scan=1&activity=none&from=kdt&redirect_count=1";
+            header('Location:'.$url);
+            exit;
+        }else if($id==-13){
+            $url="https://h5.youzan.com/v2/goods/3nhxesz0m010y?scan=1&activity=none&from=kdt";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
