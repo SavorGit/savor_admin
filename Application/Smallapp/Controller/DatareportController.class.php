@@ -34,7 +34,8 @@ class DatareportController extends BaseController {
         if($area_id){
             $where['s.area_id'] = $area_id;
         }
-
+        $where['b.state'] = 1;
+        $where['b.flag'] = 0;
         if($is_4g){
             if($is_4g == 1){
                 $where['b.is_4g'] = 1;
