@@ -599,7 +599,7 @@ class ClientController extends Controller {
             header('Location:'.$url);
             exit;
         }else if($id==-13){
-            $url="https://h5.youzan.com/v2/goods/3nhxesz0m010y?scan=1&activity=none&from=kdt";
+            $url="http://wap.iemys.com/wap/index.php?ctl=deal&data_id=368&tunnel=xrd&state=1";
             header('Location:'.$url);
             exit;
         }
