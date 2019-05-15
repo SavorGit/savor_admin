@@ -364,9 +364,16 @@ class DeviceController extends BaseController{
 				$redis->select(12);
 				$cache_key = C('SMALL_BOX_LIST').$hotelid;
 				$redis->remove($cache_key);
+				$cache_key = C('SMALL_PROGRAM_LIST_KEY').hotelid;
+				$redis->remove($cache_key);
+				
                 $all_hotelids = getVsmallHotelList();
                 if(in_array($hotelid,$all_hotelids)){
+                    
                     sendTopicMessage($hotelid,3);
+                    sendTopicMessage($hotelid,6);
+                    sendTopicMessage($hotelid,7);
+                    sendTopicMessage($hotelid,8);
                 }
 				$this->output('更新成功!', 'device/box');
 			}else{
