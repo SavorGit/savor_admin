@@ -63,6 +63,7 @@ class GeneralsituationController extends BaseController {
         }
         //详细数据
         $detail_list = array();
+        /*
         $detail_breaknum = 4;
         foreach ($days as $k=>$v){
             $ratenums = $m_statistics->getRatenum($v,0,0);
@@ -76,6 +77,7 @@ class GeneralsituationController extends BaseController {
                 break;
             }
         }
+        */
         $all_legend = C('LEGEND_CONFIG');
         $this->assign('legend',$all_legend[$type]);
         $this->assign('chart_a',json_encode($chart_list['a']));

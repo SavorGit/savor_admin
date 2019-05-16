@@ -10,10 +10,8 @@ namespace Admin\Controller;
 class SappforscreenController extends BaseController {
 
     public $all_smallapps = array();
+    public $all_actions = array();
     public $source_types = array('0'=>'下载成功','1'=>'盒子存在资源','2'=>'下载失败','3'=>'盒子待回执');
-    public $all_actions = array('0'=>'图片投屏','2-1'=>'滑动','2-2'=>'视频投屏','4'=>'多图投屏','5'=>'视频点播','6'=>'广告跳转',
-    '7'=>'点击互动游戏','8'=>'重投','9'=>'手机呼大码','11'=>'发现点播图片','12'=>'发现点播视频','21'=>'查看点播视频',
-    '22'=>'查看发现视频','101'=>'h5互动游戏','120'=>'发红包','121'=>'扫码抢红包');
     public $all_invalidtypes = array('1'=>'酒楼ID','2'=>'微信openID','3'=>'机顶盒mac','4'=>'红包黑名单用户');
 
 
@@ -21,6 +19,7 @@ class SappforscreenController extends BaseController {
 	public function __construct() {
 		parent::__construct();
 		$this->all_smallapps = C('all_smallapps');
+		$this->all_actions = C('all_forscreen_actions');
 	}
 	/**
 	 * @desc  首页

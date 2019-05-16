@@ -32,6 +32,7 @@ class MacdataController extends BaseController {
         }
         //详细数据
         $detail_list = array();
+        /*
         if($box_mac){
             $hotellevel_c = A('Hotellevel');
             $detail_breaknum = 4;
@@ -49,6 +50,7 @@ class MacdataController extends BaseController {
                 }
             }
         }
+        */
 
         $this->assign('chart',json_encode($chart_list));
         $this->assign('detail_list',$detail_list);

@@ -69,6 +69,17 @@ class StatisticsModel extends Model
         return $dates;
     }
 
+    public function getDates($start,$end){
+        $all_dates = array();
+        $dt_start = strtotime($start);
+        $dt_end = strtotime($end);
+        while ($dt_start<=$dt_end){
+            $all_dates[]=date('Y-m-d',$dt_start);
+            $dt_start=strtotime('+1 day',$dt_start);
+        }
+        return $all_dates;
+    }
+
     public function getHotels(){
         $table_name = C('DB_PREFIX').$this->tableName;
         $sql = "SELECT `hotel_id`,`hotel_name` FROM $table_name GROUP BY hotel_id";

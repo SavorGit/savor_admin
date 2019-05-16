@@ -37,6 +37,7 @@ class HoteldataController extends BaseController {
 
         //详细数据
         $detail_list = array();
+        /*
         if($hotel_id){
             $hotellevel_c = A('Hotellevel');
             $detail_breaknum = 4;
@@ -59,7 +60,7 @@ class HoteldataController extends BaseController {
                 }
             }
         }
-
+        */
         $this->assign('chart',json_encode($chart_list));
         $this->assign('detail_list',$detail_list);
         $this->assign('hotels',$hotels);
