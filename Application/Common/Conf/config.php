@@ -5,7 +5,7 @@ $config = array(
     'URL_MODEL'				=>2,
     'URL_CASE_INSENSITIVE'  => true, //url支持大小写
     'MODULE_DENY_LIST'      => array('Common','Runtime'), // 禁止访问的模块列表
-    'MODULE_ALLOW_LIST'     => array('Admin','H5','Smallapp'), //模块配置
+    'MODULE_ALLOW_LIST'     => array('Admin','H5','Smallapp','Dataexport'), //模块配置
     'DEFAULT_MODULE'        => 'Admin',
     //session cookie配置
     'SESSION_AUTO_START'    =>  true,    // 是否自动开启Session
@@ -170,6 +170,25 @@ $config['all_smallapps'] = array(
     '4'=>'餐厅端',
     '11'=>'h5互动游戏'
 );
+$config['all_forscreen_actions'] = array(
+    '0'=>'图片投屏',
+    '2-1'=>'滑动',
+    '2-2'=>'视频投屏',
+    '4'=>'多图投屏',
+    '5'=>'视频点播',
+    '6'=>'广告跳转',
+    '7'=>'点击互动游戏',
+    '8'=>'重投',
+    '9'=>'手机呼大码',
+    '11'=>'发现点播图片',
+    '12'=>'发现点播视频',
+    '21'=>'查看点播视频',
+    '22'=>'查看发现视频',
+    '101'=>'h5互动游戏',
+    '120'=>'发红包',
+    '121'=>'扫码抢红包'
+);
+
 $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'1','name'=>'主干版小码'),
     array('id'=>'2','name'=>'节目大码'),
