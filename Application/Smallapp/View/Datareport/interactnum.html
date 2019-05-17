@@ -72,6 +72,20 @@
             </div>
           </div>
           <div class="form-group">
+            <div class="input-group input-group-sm">合作维护人：</div>
+            <div class="input-group">
+              <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name="opusers" id="vo">
+                  <option value="" disabled="disabled">{$key}</option>
+                  <volist name="vo" id="vinfo">
+                    <option value="{$vinfo.uid}" {$vinfo.select} >{$vinfo.remark}</option>
+                  </volist>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
             <div class="input-group input-group-sm pull-right">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
@@ -94,7 +108,9 @@
             <tr id="post">
               <th>互动量</th>
               <th>活动酒楼数</th>
+              <th>涉及版位数</th>
               <th>互动版位数</th>
+              <th>互动饭局数</th>
               <th>用户数</th>
             </tr>
           </thead>
@@ -103,6 +119,8 @@
               <td>{$nums['hdnum']}</td>
               <td>{$nums['hotelnum']}</td>
               <td>{$nums['boxnum']}</td>
+              <td>{$nums['total_boxnums']}</td>
+              <td>{$nums['fjnum']}</td>
               <td>{$nums['usernum']}</td>
             </tr>
 

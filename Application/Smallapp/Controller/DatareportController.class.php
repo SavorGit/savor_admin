@@ -14,6 +14,7 @@ class DatareportController extends BaseController {
         $area_id = I('area_id',0,'intval');
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
+        $maintainer_id = I('maintainer_id',0,'intval');
 
         if(empty($start_time)){
             $start_time = date('Ymd');
@@ -33,6 +34,9 @@ class DatareportController extends BaseController {
         $area_arr = $m_area->getAllArea();
         if($area_id){
             $where['s.area_id'] = $area_id;
+        }
+        if($maintainer_id){
+            $where['s.maintainer_id'] = $maintainer_id;
         }
         $where['b.state'] = 1;
         $where['b.flag'] = 0;
@@ -83,12 +87,14 @@ class DatareportController extends BaseController {
         $online = array('wlnum'=>$wlnum,'zxnum'=>$zxnum,'rate'=>$rate);
         $data_list['dinner'] = $online;
 
+        $opusers = $this->getOpuser($maintainer_id);
         $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
         $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
         $this->assign('area_id',$area_id);
         $this->assign('box_type',$box_type);
         $this->assign('is_4g',$is_4g);
         $this->assign('area', $area_arr);
+        $this->assign('opusers', $opusers);
         $this->assign('data_list',$data_list);
         $this->display();
     }
@@ -100,6 +106,7 @@ class DatareportController extends BaseController {
         $area_id = I('area_id',0,'intval');
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
+        $maintainer_id = I('maintainer_id',0,'intval');
 
         $where = array('a.is_valid'=>1);
         if($start_time && $end_time){
@@ -123,7 +130,6 @@ class DatareportController extends BaseController {
                 $where['a.small_app_id'] = $small_app_id;
             }
         }
-
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
         if($area_id){
@@ -148,11 +154,45 @@ class DatareportController extends BaseController {
                 $where['box.is_4g'] = 0;
             }
         }
+        if($maintainer_id){
+            $where['hotelext.maintainer_id'] = $maintainer_id;
+        }
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $fields = 'count(a.id) as hdnum,count(DISTINCT(hotel.id)) as hotelnum,count(DISTINCT(a.box_mac)) as boxnum,count(DISTINCT(a.openid)) as usernum';
         $nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+        $nums['total_boxnums'] = 0;
+        $m_statis = new \Admin\Model\Smallapp\StatisticsModel();
+        if($end_time>$start_time){
+            $all_dates = $m_statis->getDates($start_time,$end_time);
+            $total_boxnums = 0;
+            foreach ($all_dates as $v){
+                $fields = "count(DISTINCT(a.box_mac)) as boxnum";
+                $where['a.create_time'] = array(array('EGT',$v.' 00:00:00'),array('ELT',$v.' 23:59:59'));
+                $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+                if($res_nums){
+                    $total_boxnums+=$res_nums['boxnum'];
+                }
+            }
+            $nums['total_boxnums'] = $total_boxnums;
+        }
+
+        unset($where['a.is_valid'],$where['a.create_time'],$where['a.small_app_id'],$where['a.mobile_brand'],$where['hotelext.maintainer_id']);
+        if($maintainer_id){
+            $where['a.maintainer_id'] = $maintainer_id;
+        }
+        $where['a.static_date'] = array(array('EGT',date('Ymd',strtotime($start_time))),array('ELT',date('Ymd',strtotime($end_time))));
+        $where['a.all_interact_nums'] = array('GT',0);
+        $fields = "count(a.box_mac) as fjnum";
+        $ret = $m_statis->getFeast($fields, $where);
+        if($ret){
+            $nums['fjnum'] = $ret['fjnum'];
+        }else{
+            $nums['fjnum'] = 0;
+        }
         $all_smallapps = C('all_smallapps');
         unset($all_smallapps[3]);
+        $opusers = $this->getOpuser($maintainer_id);
+        $this->assign('opusers', $opusers);
         $this->assign('start_time',$start_time);
         $this->assign('end_time',$end_time);
         $this->assign('area_id',$area_id);
@@ -176,6 +216,7 @@ class DatareportController extends BaseController {
         $area_id = I('area_id',0,'intval');
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
+        $maintainer_id = I('maintainer_id',0,'intval');
 
         $where = array();
         if($start_time && $end_time){
@@ -229,6 +270,10 @@ class DatareportController extends BaseController {
                 $where['box.is_4g'] = 0;
                 $hotel_where['a.is_4g'] = 0;
             }
+        }
+        if($maintainer_id){
+            $where['hotelext.maintainer_id'] = $maintainer_id;
+            $hotel_where['ext.maintainer_id'] = $maintainer_id;
         }
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num';
@@ -294,6 +339,9 @@ class DatareportController extends BaseController {
 
         $all_smallapps = C('all_smallapps');
         unset($all_smallapps[3]);
+        $opusers = $this->getOpuser($maintainer_id);
+        $this->assign('opusers', $opusers);
+        $this->assign('maintainer_id', $maintainer_id);
         $this->assign('start_time',$start_time);
         $this->assign('end_time',$end_time);
         $this->assign('estart_time',$estart_time);
@@ -449,6 +497,7 @@ class DatareportController extends BaseController {
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
         $qrtype = I('qrtype',0,'intval');
+        $maintainer_id = I('maintainer_id',0,'intval');
 
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
@@ -470,6 +519,9 @@ class DatareportController extends BaseController {
             }else{
                 $where['box.is_4g'] = 0;
             }
+        }
+        if($maintainer_id){
+            $where['hotelext.maintainer_id'] = $maintainer_id;
         }
         if($qrtype){
             switch ($qrtype){
@@ -495,7 +547,8 @@ class DatareportController extends BaseController {
         $fields = 'count(DISTINCT(hotel.id)) as hotelnum,count(DISTINCT(box.id)) as boxnum';
         $m_box = new \Admin\Model\BoxModel();
         $nums = $m_box->getInfoByCondition($fields,$where);
-
+        $opusers = $this->getOpuser($maintainer_id);
+        $this->assign('opusers', $opusers);
         $this->assign('area_id',$area_id);
         $this->assign('box_type',$box_type);
         $this->assign('is_4g',$is_4g);
@@ -506,7 +559,26 @@ class DatareportController extends BaseController {
         $this->display();
     }
 
-    public function getOpuser(){
+    public function getOpuser($op_uid=0){
+        $m_opuser_role = new \Admin\Model\OpuserroleModel();
+        $fields = 'a.user_id uid,user.remark ';
+        $where = array('state'=>1,'role_id'=>1);
+        $res_users = $m_opuser_role->getAllRole($fields,$where,'' );
 
+        $opusers = array();
+        foreach($res_users as $v){
+            $uid = $v['uid'];
+            $remark = $v['remark'];
+            if($uid==$op_uid){
+                $select = 'selected';
+            }else{
+                $select = '';
+            }
+            $firstCharter = getFirstCharter(cut_str($remark, 1));
+            $opusers[$firstCharter][] = array('uid'=>$uid,'remark'=>$remark,'select'=>$select);
+        }
+        ksort($opusers);
+        return $opusers;
     }
+
 }

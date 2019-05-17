@@ -87,6 +87,18 @@ class StatisticsModel extends Model
         return $res_dates;
     }
 
+    public function getFeast($fields,$where){
+        $res = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on room.id= box.room_id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->field($fields)
+            ->where($where)
+            ->select();
+        $data = !empty($res)?$res[0]:array();
+        return $data;
+    }
     /*
      * 获取比率对应数
      * type 0所有 1转换率 2传播率 3屏幕在线率 4网络质量 5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级,9心跳次数

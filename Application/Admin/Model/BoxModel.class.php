@@ -331,6 +331,7 @@ class BoxModel extends BaseModel{
         $res = $this->alias('box')
             ->join('savor_room room on room.id= box.room_id','left')
             ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->join('savor_hotel_ext hotelext on hotel.id=hotelext.hotel_id','left')
             ->field($fields)
             ->where($where)
             ->select();

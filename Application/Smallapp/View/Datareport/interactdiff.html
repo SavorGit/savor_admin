@@ -86,6 +86,20 @@
           </div>
         </div>
         <div class="form-group">
+          <div class="input-group input-group-sm">合作维护人：</div>
+          <div class="input-group">
+            <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+              <option value=0>全部</option>
+              <volist name="opusers" id="vo">
+                <option value="" disabled="disabled">{$key}</option>
+                <volist name="vo" id="vinfo">
+                  <option value="{$vinfo.uid}" {$vinfo.select} >{$vinfo.remark}</option>
+                </volist>
+              </volist>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
           <div class="input-group input-group-sm pull-right">
           <span class="input-group-btn">
             <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
@@ -94,7 +108,7 @@
         </div>
 
         <div class="input-group input-group-sm pull-right">
-          <a class="btn btn-success btn-sm add" href="{$host_name}/excel/interactdiff?start_time={$start_time}&end_time={$end_time}&estart_time={$estart_time}&eend_time={$eend_time}&small_app_id={$small_app_id}&area_id={$area_id}&box_type={$box_type}&is_4g={$is_4g}" title="导出" target="_blank" mask="true"><i class="fa fa-download"></i> 导出</a>
+          <a class="btn btn-success btn-sm add" href="{$host_url}/dataexport/datadiff/hotel?start_time={$start_time}&end_time={$end_time}&estart_time={$estart_time}&eend_time={$eend_time}&small_app_id={$small_app_id}&area_id={$area_id}&box_type={$box_type}&is_4g={$is_4g}&maintainer_id={$maintainer_id}" title="导出" target="_blank" mask="true"><i class="fa fa-download"></i> 导出</a>
         </div>
       </div>
 
