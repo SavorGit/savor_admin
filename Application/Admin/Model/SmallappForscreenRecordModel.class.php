@@ -67,7 +67,7 @@ class SmallappForscreenRecordModel extends Model
     }
 
 
-    public function getInfo($fields='a.*',$where){
+    public function getInfo($fields='a.*',$where,$group='',$is_one=1){
         $res = $this->alias('a')
             ->join('savor_box box on a.box_mac=box.mac','left')
             ->join('savor_room room on room.id= box.room_id','left')
@@ -78,7 +78,24 @@ class SmallappForscreenRecordModel extends Model
             ->field($fields)
             ->where($where)
             ->select();
-        $data = !empty($res)?$res[0]:array();
+        if($group){
+            $res = $this->alias('a')
+                ->join('savor_box box on a.box_mac=box.mac','left')
+                ->join('savor_room room on room.id= box.room_id','left')
+                ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+                ->join('savor_hotel_ext hotelext on hotel.id=hotelext.hotel_id','left')
+                ->join('savor_area_info area on hotel.area_id=area.id','left')
+                ->join('savor_smallapp_user user on a.openid=user.openid','left')
+                ->field($fields)
+                ->where($where)
+                ->group($group)
+                ->select();
+        }
+        if($is_one){
+            $data = !empty($res)?$res[0]:array();
+        }else{
+            $data = $res;
+        }
         return $data;
     }
 	public function getWhere($fields,$where,$limit,$group){

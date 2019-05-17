@@ -203,7 +203,7 @@ class ForscreenController extends BaseController{
                 }
             }
             foreach ($data as $k=>$v){
-                $v['date'] = date('Y/m/d',strtotime($date));
+                $v['date'] = date('Y/n/d',strtotime($date));
                 $v['box_type'] = $all_boxtypes[$v['hotel_box_type']];
 
                 $hotel_id = $v['hotel_id'];
