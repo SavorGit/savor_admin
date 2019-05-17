@@ -125,7 +125,9 @@
             <tr id="post">
               <th>酒楼名称</th>
               <th>时间段A互动次数</th>
+              <th>时间段A覆盖率</th>
               <th>时间段B互动次数</th>
+              <th>时间段B覆盖率</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -134,7 +136,9 @@
             <tr target="sid_user">
               <td>{$dinfo.hotel_name}</td>
               <td>{$dinfo.num}</td>
+              <td>{$dinfo.a_coverage}</td>
               <td>{$dinfo.numb}</td>
+              <td>{$dinfo.b_coverage}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="版位对比" title="{$dinfo.hotel_name}版位列表" target="navTab" rel="datareport/boxdiff" href="{$host_url}/smallapp/datareport/boxdiff?hotel_id={$dinfo.hotel_id}&hotel_name={$dinfo.hotel_name}&start_time={$start_time}&end_time={$end_time}&estart_time={$estart_time}&eend_time={$eend_time}&area_id={$area_id}&box_type={$box_type}&is_4g={$is_4g}&small_app_id={$small_app_id}" class="btn btn-success btn-icon">
