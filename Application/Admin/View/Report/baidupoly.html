@@ -11,6 +11,20 @@
       <div class="clearfix">
 
          <div class="form-inline" style="margin-top:10px;">
+         <div class="form-group">
+          <div class="input-group input-group-sm">
+            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
+              第三方媒体：
+            </label>
+                <span class="input-group-btn">
+               <select name="tpmedia_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                 <option value=0 >全部</option>
+                 <volist name="tpmedia_arr" key="k" id="vo">
+	                  <option value="{$k}" <if condition="$k eq $tpmedia_id">selected</if>>{$vo}</option><br>
+	             </volist>
+               </select>
+          </div>
+          </div>
          <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$play_date}">
           		<input id="play_date" style="margin-left: 6px;" name="play_date" type="text" size="16" class="form-control date" placeholder="播放日期" value="{$play_date}" readonly>
                 <span class="input-group-btn">
@@ -55,6 +69,7 @@
             <th>酒楼名称</th>
             <th>包间名称</th>
             <th>MAC地址</th>
+            <th>第三方媒体</th>
             <th>广告名称</th>
             <th>资源MD5</th>
             <th>播放日期</th>
@@ -72,6 +87,7 @@
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+              <td data-title="第三方媒体">{$tpmedia_arr[$vlist[tpmedia_id]]}</td>
               <td data-title="广告名称">{$vlist.media_name}</td>
               <td data-title="广告资源MD5">{$vlist.media_md5}</td>
               

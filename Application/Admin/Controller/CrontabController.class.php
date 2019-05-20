@@ -2633,6 +2633,10 @@ class CrontabController extends Controller
                 if($media_id>0){
                     $data['media_id']  = $media_id;
                     $data['tpmedia_id']= $cache_data['tpmedia_id'];
+                    $data['media_name'] = $cache_data['media_name'];
+                    $data['chinese_name'] = $cache_data['chinese_name'];
+                    $data['media_md5'] = $cache_data['media_md5'];
+                    
                     $map['box_mac'] = $keys_arr[0];
                     $map['media_id']= $data['media_id'];
                     $map['play_date'] = $data['play_date'];
@@ -2654,6 +2658,7 @@ class CrontabController extends Controller
                     $data['media_id'] = $cache_data_arr['media_id'];
                     $data['media_name'] = $cache_data_arr['media_name'];
                     $data['media_md5']  = $cache_data_arr['media_md5'];
+                    $data['chinese_name'] = $cache_data['chinese_name'];
                     $data['tpmedia_id'] = $cache_data_arr['tpmedia_id'];
                     
                     $map['box_mac'] = $keys_arr[0];

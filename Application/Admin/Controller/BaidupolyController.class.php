@@ -25,6 +25,12 @@ class BaidupolyController extends BaseController{
 	     $start  = ( $start-1 ) * $size;
 	     $where = array();
 	     $maps = ' 1 ';
+	     $tpmedia_id = I('tpmedia_id');
+	     if($tpmedia_id){
+	         $where['a.tpmedia_id'] = $tpmedia_id;
+	         $maps .=" and a.tpmedia_id=".$tpmedia_id;
+	         $this->assign('tpmedia_id',$tpmedia_id);
+	     }
 	     $hotel_name = I('hotel_name','','trim');
 	     if($hotel_name){
 	         $where['hotel.name'] = array('like',"%$hotel_name%");
@@ -46,13 +52,15 @@ class BaidupolyController extends BaseController{
 	     
 	     $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
 	     
-	     $fields = 'a.id,hotel.name hotel_name,room.name room_name, a.box_mac,media.name media_name,
-	                a.play_date,a.play_times,a.create_time , a.update_time,a.media_md5';
+	     $fields = 'a.id,hotel.name hotel_name,room.name room_name, a.box_mac,a.media_name,
+	                a.play_date,a.play_times,a.create_time , a.update_time,a.media_md5,a.tpmedia_id';
 	     
 	     $list = $m_baidu_poly_play_record->getList($fields,$where,$orders,$start,$size);
 	     
 	     
 	     $count =  $m_baidu_poly_play_record->countPlayNums($maps);
+	     $tpmedia_arr = C('POLY_SCREEN_MEDIA_LIST');
+	     $this->assign('tpmedia_arr',$tpmedia_arr);
 	     $this->assign('all_play_nums',intval($count));
 	     $this->assign('list',$list['list']);
 	     $this->assign('page',$list['page']);
