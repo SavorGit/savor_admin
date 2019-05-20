@@ -69,6 +69,7 @@ $config_db =  array(
     'TOPIC_NAME'=>'test-topic',
 
     'UMENG_PRODUCTION_MODE'=>'false',
+    'SAVOR_API_URL'=>'dev-mobile.littlehotspot.com',
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
     'NETTY_BALANCE_URL'=>'https://dev-api-nzb.littlehotspot.com/netty/position',
