@@ -52,8 +52,10 @@ class BaseController extends Controller {
             exit;
         }else{
             $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $file_path =  SITE_TP_PATH."/Public/content/$fileName.xls";
-            return $objWriter->save($file_path);
+            $file_path = "/Public/content/$fileName.xls";
+            $file_rootpath =  SITE_TP_PATH.$file_path;
+            $objWriter->save($file_rootpath);
+            return $file_path;
         }
     }
     

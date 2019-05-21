@@ -166,6 +166,39 @@ class ForscreenController extends BaseController{
         $e_date = I('get.e_date');
         $small_app_id = I('small_app_id',0,'intval');
         $is_valid = I('is_valid',1,'intval');
+
+        $cache_key = C('SAPP_SCRREN').':hotelscript'.$s_date.$e_date.$small_app_id.$is_valid;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $res = $redis->get($cache_key);
+        if(!empty($res)){
+            if($res == 1){
+                $this->success('数据正在生成中,请稍后点击下载');
+            }else{
+                //下载
+                $file_name = $res;
+                $file_path = SITE_TP_PATH.$file_name;
+                $file_size = filesize($file_path);
+                header("Content-type:application/octet-tream");
+                header('Content-Transfer-Encoding: binary');
+                header("Content-Length:$file_size");
+                header("Content-Disposition:attachment;filename=".$file_name);
+                @readfile($file_path);
+            }
+        }else{
+            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/forscreen/hotelscript/s_date/$s_date/e_date/$e_date/small_app_id/$small_app_id/is_valid/$is_valid > /tmp/null &";
+            system($shell);
+            $redis->set($cache_key,1,7200);
+            $this->success('数据正在生成中,请稍后点击下载');
+        }
+    }
+
+    public function hotelscript(){
+        $s_date = I('s_date');
+        $e_date = I('e_date');
+        $small_app_id = I('small_app_id',0,'intval');
+        $is_valid = I('is_valid',1,'intval');
+
         $spe_action = 2;//图片滑动,视频投屏
         $all_actions = C('all_forscreen_actions');
         foreach ($all_actions as $k=>$v){
@@ -176,6 +209,10 @@ class ForscreenController extends BaseController{
         $all_boxtypes = C('hotel_box_type');
         $m_statis = new \Admin\Model\Smallapp\StatisticsModel();
         $all_dates = $m_statis->getDates($s_date,$e_date);
+        if(empty($all_dates)){
+            die('date error');
+        }
+        $end_date = end($all_dates);
         $all_data = array();
         foreach ($all_dates as $date){
             $where = "box.flag=0 and box.state=1 and a.mobile_brand !='devtools' ";
@@ -281,6 +318,7 @@ class ForscreenController extends BaseController{
                 }
                 $all_data[] = $v;
             }
+            print_r($date." ok\r\n");
         }
         $filename = 'forsacreen_hotel';
         $cell = array(
@@ -311,6 +349,10 @@ class ForscreenController extends BaseController{
             array('maintainer_name','维护人'),
             array('box_type','设备类型'),
         );
-        $this->exportToExcel($cell,$all_data,$filename,1);
+        $path = $this->exportToExcel($cell,$all_data,$filename,2);
+        $cache_key = C('SAPP_SCRREN').':hotelscript'.$s_date.$e_date.$small_app_id.$is_valid;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $redis->set($cache_key,$path,7200);
     }
 }
