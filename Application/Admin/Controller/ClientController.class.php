@@ -602,6 +602,10 @@ class ClientController extends Controller {
             $url="http://wap.iemys.com/wap/index.php?ctl=deal&data_id=368&tunnel=xrd&state=1";
             header('Location:'.$url);
             exit;
+        }else if($id==-14){
+            $url ="https://wap.iemys.com/wap/index.php?ctl=deal&data_id=367&tunnel=xrd&state=1";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
