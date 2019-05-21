@@ -3525,7 +3525,7 @@ class CrontabController extends Controller
                     break;
                 case 3:
                     $optime = date('H:i',strtotime($v['timing']));
-                    if($v['start_date']>=$nowdate && $nowdate<=$v['end_date'] && $nowtime==$optime){
+                    if($nowdate>=$v['start_date'] && $nowdate<=$v['end_date'] && $nowtime==$optime){
                         $is_send = 1;
                     }else{
                         $is_send = 0;
