@@ -1,0 +1,160 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/admin/assets/css/horsey.css" />
+
+<style type="text/css">
+  body {
+    font-family: Helvetica;
+    font-size: 11px;
+    color: #000;
+  }
+
+  h3 {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul,
+  li {
+    list-style: none;
+  }
+
+  a {
+    color: black;
+    text-decoration: none;
+  }
+
+  #datalist {
+    max-height: 400px;
+    overflow: auto;
+    position: absolute;
+    top: 42px;
+    border: #eee 1px solid;
+    min-width: 200px;
+    text-align: left;
+    z-index: 9;
+    background-color: white;
+    border-bottom: none;
+    border-top: none;
+  }
+
+  #datalist li {
+    height: 25px;
+    line-height: 25px;
+    white-space: nowrap;
+  }
+
+  #datalist li a {
+    text-decoration: none;
+  }
+
+  .inputDel {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+  }
+</style>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/contentlink/index" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="_order" value="{$_order}" />
+    <input type="hidden" name="_sort" value="{$_sort}" />
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+
+          <div class="form-group" id="timegiy" style="">
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input id="linkst" name="adsstarttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
+							<span class="input-group-btn" style="padding:0px;margin:0px;">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input id="linken" name="adsendtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
+							<span class="input-group-btn" style="padding:0px;margin:0px;">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="width:240px;font-weight: 800;" class="form-label">http://admin.littlehotspot.com/</label>
+          </div>
+          <div class="input-group">
+            <input type="text" id="linksearch" class="form-control textInput" style="width:400px;" name="url" value="{$urld}" placeholder="">
+
+						<span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="nonon"><i class="fa fa-search"></i></button>
+            </span>
+
+          </div>
+
+          <div class="input-group input-group-sm pull-right" style="margin-top: 21px;">
+            <a id="exportcontentads" class="btn btn-success btn-sm add" href="javascript:void(0)" title="导出内容链接明细表" target="_blank" mask="true" onclick="clickcontentlink(this)"><i class="fa fa-plus"></i> 导出内容链接明细表 </a>
+            <input type="hidden" id="contentlinkexp" value="{$host_name}/excel/expcontentlink" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:55px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>访问日期</th>
+            <th>设备类型</th>
+            <th>是否为微信打开</th>
+            <th>IP</th>
+            <th>网络类型</th>
+            <th>是否授权</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$vlist.num}</td>
+              <td data-title="访问日期">{$vlist.vtime}</td>
+              <td data-title="设备类型">{$vlist.device_type}</td>
+              <td data-title="是否为微信打开">{$vlist.is_wx}</td>
+              <td data-title="IP">{$vlist.ip}</td>
+              <td data-title="网络类型">{$vlist.net_type}</td>
+              <td data-title="是否授权">{$vlist.is_sq}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>
+<ul id="datalist"></ul>
+<script type="text/javascript">
+  function clickcontentlink(obj) {
+    var hre = $("#contentlinkexp").val();
+    var linkst = $("#linkst").val();
+    var linken = $('#linken').val();
+    var linksearch = $('#linksearch').val();
+    var end = $('input[name="adsendtime"]').val();
+    var hrp = hre + "?adsstarttime=" + linkst + "&adsendtime=" + linken + "&url=" + linksearch;
+    //alert(hrp);
+    window.open(hrp);
+  }
+</script>
