@@ -2658,7 +2658,7 @@ class CrontabController extends Controller
                     $data['media_id'] = $cache_data_arr['media_id'];
                     $data['media_name'] = $cache_data_arr['media_name'];
                     $data['media_md5']  = $cache_data_arr['media_md5'];
-                    $data['chinese_name'] = $cache_data['chinese_name'];
+                    $data['chinese_name'] = $cache_data_arr['chinese_name'];
                     $data['tpmedia_id'] = $cache_data_arr['tpmedia_id'];
                     
                     $map['box_mac'] = $keys_arr[0];

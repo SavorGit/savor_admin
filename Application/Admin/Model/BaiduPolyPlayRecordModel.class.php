@@ -17,7 +17,7 @@ class BaiduPolyPlayRecordModel extends Model
 	    $list = $this->alias('a')
 	                 ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
 	                 ->join('savor_room room on a.room_id = room.id','left')
-	                 //->join('savor_media media on a.media_id=media.id','left')
+	                 ->join('savor_media media on a.media_id=media.id','left')
             	     ->field($fields)
             	     ->where($where)
             	     ->order($order)

@@ -8,8 +8,10 @@
 namespace Admin\Controller;
 use Admin\Controller\BaseController;
 class BaidupolyController extends BaseController{
-	 public function __construct(){
+	var $direct_tpmedia_arr; 
+    public function __construct(){
 	     parent::__construct();
+	     $this->direct_tpmedia_arr = array(2,3,5);  //不是后台发布广告的第三方媒体
 	 }
 	 public function index(){
 	     $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
@@ -52,8 +54,14 @@ class BaidupolyController extends BaseController{
 	     
 	     $m_baidu_poly_play_record = new \Admin\Model\BaiduPolyPlayRecordModel();
 	     
-	     $fields = 'a.id,hotel.name hotel_name,room.name room_name, a.box_mac,a.media_name,
+	     if(in_array($tpmedia_id,$this->direct_tpmedia_arr)){
+	         $fields = 'a.id,hotel.name hotel_name,room.name room_name, a.box_mac,a.chinese_name media_name,
 	                a.play_date,a.play_times,a.create_time , a.update_time,a.media_md5,a.tpmedia_id';
+	     }else {
+	         $fields = 'a.id,hotel.name hotel_name,room.name room_name, a.box_mac,media.name media_name,
+	                a.play_date,a.play_times,a.create_time , a.update_time,a.media_md5,a.tpmedia_id';
+	     }
+	     
 	     
 	     $list = $m_baidu_poly_play_record->getList($fields,$where,$orders,$start,$size);
 	     
