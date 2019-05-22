@@ -345,7 +345,7 @@ class ForscreenController extends BaseController{
             array('count121','扫码抢红包'),
             array('boxnum','版位数量'),
             array('onlinescreen','在线屏数'),
-            array('hdnum','互动版位'),
+            array('hdnum','投屏互动版位'),
             array('maintainer_name','维护人'),
             array('box_type','设备类型'),
         );

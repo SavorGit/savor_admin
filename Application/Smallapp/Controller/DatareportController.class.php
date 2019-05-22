@@ -160,6 +160,7 @@ class DatareportController extends BaseController {
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $fields = 'count(a.id) as hdnum,count(DISTINCT(hotel.id)) as hotelnum,count(DISTINCT(a.box_mac)) as boxnum,count(DISTINCT(a.openid)) as usernum';
         $nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+
         $nums['total_boxnums'] = 0;
         $m_statis = new \Admin\Model\Smallapp\StatisticsModel();
         if($end_time>=$start_time){
@@ -175,10 +176,11 @@ class DatareportController extends BaseController {
             $nums['total_boxnums'] = $total_boxnums;
         }
 
-        unset($where['a.is_valid'],$where['a.create_time'],$where['a.small_app_id'],$where['a.mobile_brand'],$where['hotelext.maintainer_id']);
+        unset($where['a.is_valid'],$where['a.create_time'],$where['a.small_app_id'],$where['a.mobile_brand'],$where['hotelext.maintainer_id'],$where['_string']);
         if($maintainer_id){
             $where['a.maintainer_id'] = $maintainer_id;
         }
+
         $where['a.static_date'] = array(array('EGT',date('Ymd',strtotime($start_time))),array('ELT',date('Ymd',strtotime($end_time))));
         $where['a.all_interact_nums'] = array('GT',0);
         $fields = "count(a.box_mac) as fjnum";
@@ -275,7 +277,7 @@ class DatareportController extends BaseController {
             $hotel_where['ext.maintainer_id'] = $maintainer_id;
         }
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-        $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num';
+        $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num,count(DISTINCT(a.box_mac)) as boxnum';
         $countfields = 'COUNT(DISTINCT(hotel.id)) AS tp_count';
         $start  = ($page-1) * $size;
         $result = $m_smallapp_forscreen_record->getCustomeList($fields,$where,$groupby='hotel.id',$order='num desc',$countfields,$start,$size);
@@ -318,33 +320,37 @@ class DatareportController extends BaseController {
             $eend_time = date('Y-m-d');
             $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
         }
+        $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
+            //计算时间段B
             $fields = 'count(a.id) as num';
             $where['hotel.id'] = $v['hotel_id'];
             $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
             $datalist[$k]['numb'] = $res_info['num'];
 
-            unset($where['a.create_time']);
-            $where['_string'] = "DATE(a.create_time)>='$start_time' AND DATE(a.create_time)<='$end_time'";
-            $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-            $group = 'screen_createtime';
-            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-            $a_boxnums = 0;
-            foreach ($res_nums as $vn){
-                $a_boxnums +=$vn['boxnum'];
-            }
-            $datalist[$k]['a_boxnum'] = $a_boxnums;
-            $datalist[$k]['a_coverage'] = sprintf("%0.2f",$datalist[$k]['num']/$a_boxnums);
-            $where['_string'] = "DATE(a.create_time)>='$estart_time' AND DATE(a.create_time)<='$eend_time'";
-            $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-            $group = 'screen_createtime';
-            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-            $b_boxnums = 0;
-            foreach ($res_nums as $vn){
-                $b_boxnums +=$vn['boxnum'];
-            }
+//            unset($where['a.create_time']);
+//            $where['_string'] = "DATE(a.create_time)>='$start_time' AND DATE(a.create_time)<='$end_time'";
+//            $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
+//            $group = 'screen_createtime';
+//            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
+//            $a_boxnums = 0;
+//            foreach ($res_nums as $vn){
+//                $a_boxnums +=$vn['boxnum'];
+//            }
+
+            $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+            $all_box = $m_box->countNums($b_where);
+
+            $fields = "count(DISTINCT (a.box_mac)) as boxnum";
+            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            $b_boxnums = $res_nums['boxnum'];
             $datalist[$k]['b_boxnum'] = $b_boxnums;
-            $datalist[$k]['b_coverage'] = sprintf("%0.2f",$datalist[$k]['numb']/$b_boxnums);
+            $datalist[$k]['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
+
+            //时间段A
+            $a_boxnums = $v['boxnum'];
+            $datalist[$k]['a_boxnum'] = $a_boxnums;
+            $datalist[$k]['a_coverage'] = sprintf("%0.2f",$a_boxnums/$all_box);
         }
 
         if(!empty($res_ohotels)){
@@ -357,17 +363,14 @@ class DatareportController extends BaseController {
                 $v['a_boxnum'] = 0;
                 $v['a_coverage'] = 0.00;
 
-                unset($where['a.create_time']);
-                $where['_string'] = "DATE(a.create_time)>='$estart_time' AND DATE(a.create_time)<='$eend_time'";
-                $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-                $group = 'screen_createtime';
-                $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-                $b_boxnums = 0;
-                foreach ($res_nums as $vn){
-                    $b_boxnums +=$vn['boxnum'];
-                }
+                $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+                $all_box = $m_box->countNums($b_where);
+
+                $fields = "count(DISTINCT (a.box_mac)) as boxnum";
+                $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+                $b_boxnums = $res_nums['boxnum'];
                 $v['b_boxnum'] = $b_boxnums;
-                $v['b_coverage'] = sprintf("%0.2f",$v['numb']/$b_boxnums);
+                $v['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
                 $datalist[] = $v;
             }
         }

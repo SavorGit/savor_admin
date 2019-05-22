@@ -70,7 +70,7 @@ class DatadiffController extends BaseController{
             $hotel_where['ext.maintainer_id'] = $maintainer_id;
         }
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-        $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num';
+        $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num,count(DISTINCT(a.box_mac)) as boxnum';
         $countfields = 'COUNT(DISTINCT(hotel.id)) AS tp_count';
         $result = $m_smallapp_forscreen_record->getCustomeList($fields,$where,$groupby='hotel.id',$order='num desc',$countfields,0,10000);
         $datalist = $result['list'];
@@ -115,6 +115,7 @@ class DatadiffController extends BaseController{
         $users = array();
         $m_sysuser = new \Admin\Model\UserModel();
         $m_hotelext = new \Admin\Model\HotelExtModel();
+        $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
             $fields = 'count(a.id) as num,hotel.id as hotel_id,hotelext.maintainer_id';
             $where['hotel.id'] = $v['hotel_id'];
@@ -134,28 +135,19 @@ class DatadiffController extends BaseController{
             }
             $datalist[$k]['numb'] = $res_info['num'];
 
+            $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+            $all_box = $m_box->countNums($b_where);
 
-            unset($where['a.create_time']);
-            $where['_string'] = "DATE(a.create_time)>='$start_time' AND DATE(a.create_time)<='$end_time'";
-            $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-            $group = 'screen_createtime';
-            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-            $a_boxnums = 0;
-            foreach ($res_nums as $vn){
-                $a_boxnums +=$vn['boxnum'];
-            }
-            $datalist[$k]['a_boxnum'] = $a_boxnums;
-            $datalist[$k]['a_coverage'] = sprintf("%0.2f",$datalist[$k]['num']/$a_boxnums);
-            $where['_string'] = "DATE(a.create_time)>='$estart_time' AND DATE(a.create_time)<='$eend_time'";
-            $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-            $group = 'screen_createtime';
-            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-            $b_boxnums = 0;
-            foreach ($res_nums as $vn){
-                $b_boxnums +=$vn['boxnum'];
-            }
+            $fields = "count(DISTINCT (a.box_mac)) as boxnum";
+            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+            $b_boxnums = $res_nums['boxnum'];
             $datalist[$k]['b_boxnum'] = $b_boxnums;
-            $datalist[$k]['b_coverage'] = sprintf("%0.2f",$datalist[$k]['numb']/$b_boxnums);
+            $datalist[$k]['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
+
+            //时间段A
+            $a_boxnums = $v['boxnum'];
+            $datalist[$k]['a_boxnum'] = $a_boxnums;
+            $datalist[$k]['a_coverage'] = sprintf("%0.2f",$a_boxnums/$all_box);
 
 
         }
@@ -182,19 +174,15 @@ class DatadiffController extends BaseController{
                 $v['a_boxnum'] = 0;
                 $v['a_coverage'] = 0.00;
 
-                unset($where['a.create_time']);
-                $where['_string'] = "DATE(a.create_time)>='$estart_time' AND DATE(a.create_time)<='$eend_time'";
-                $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-                $group = 'screen_createtime';
-                $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-                $b_boxnums = 0;
-                foreach ($res_nums as $vn){
-                    $b_boxnums +=$vn['boxnum'];
-                }
-                $v['b_boxnum'] = $b_boxnums;
-                $v['b_coverage'] = sprintf("%0.2f",$v['numb']/$b_boxnums);
-                $datalist[] = $v;
+                $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+                $all_box = $m_box->countNums($b_where);
 
+                $fields = "count(DISTINCT (a.box_mac)) as boxnum";
+                $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
+                $b_boxnums = $res_nums['boxnum'];
+                $v['b_boxnum'] = $b_boxnums;
+                $v['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
+                
                 $datalist[] = $v;
             }
         }
