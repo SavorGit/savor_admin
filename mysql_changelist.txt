@@ -1641,3 +1641,6 @@ CREATE TABLE `savor_smallapp_redpacketoperation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='红包运营表';
 ALTER TABLE `cloud`.`savor_smallapp_forscreen_invalidlist`
 MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 1酒楼id,2微信openid,3机顶盒mac,4红包黑名单用户' AFTER `invalidid`;
+
+ALTER TABLE `cloud`.`savor_hotel_ext`
+ADD COLUMN `contract_expiretime` timestamp NULL DEFAULT NULL COMMENT '合同到期时间' AFTER `hotel_cover_media_id`;
