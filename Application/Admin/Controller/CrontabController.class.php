@@ -3510,6 +3510,7 @@ class CrontabController extends Controller
 
         $nowdate = date('Y-m-d');
         $nowtime = date('H:i');
+        $nowdatetime = date("Y-m-d H:i:s");
         foreach ($res_list as $v){
             switch ($v['type']){//类型 1立即发送,2单次定时,3多次定时
                 case 1:
@@ -3599,7 +3600,9 @@ class CrontabController extends Controller
                     //end
                 }
             }
-
         }
+        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
+        $log_file_name = APP_PATH.'Runtime/Logs/'.'operationbonus_'.date("Ymd").".log";
+        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
     }
 }
