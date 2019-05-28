@@ -443,8 +443,7 @@ class HotelController extends BaseController {
 		$id = I('get.id');
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
-		
-		
+
 		$userinfo = session('sysUserInfo');
 		$pcity = $userinfo['area_city'];
 		if($userinfo['groupid'] ==1 || empty($pcity)){
@@ -458,7 +457,7 @@ class HotelController extends BaseController {
 		
 		$this->assign('area',$area);
 		//获取所有发布者列表
-//获取发布者列表
+        //获取发布者列表
 		$m_opuser_role = new \Admin\Model\OpuserroleModel();
 		$fields = 'a.user_id main_id,user.remark ';
 		$map['state']   = 1;
@@ -475,9 +474,15 @@ class HotelController extends BaseController {
 		$m_food_style = new \Admin\Model\FoodStyleModel(); 
 		$food_style_list = $m_food_style->getWhere('id,name', array('status'=>1));
 		$this->assign('food_style_list',$food_style_list);
-		
-		if($id){
 
+        $groups = array(1,56);
+        $sysuserInfo = session('sysUserInfo');
+        $is_lablefiter = 0;
+        if(in_array($sysuserInfo['groupid'],$groups)){
+            $is_lablefiter = 1;
+        }
+
+		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();
 			$hotelextModel = new \Admin\Model\HotelExtModel();
 			$main_info = $hotelextModel->where('hotel_id='.$id)->find();
@@ -501,6 +506,7 @@ class HotelController extends BaseController {
 			$vinfo['tag'] = $res_hotelext['tag'];
 			$vinfo['food_style_id'] = $res_hotelext['food_style_id'];
 			$vinfo['avg_expense']   = $res_hotelext['avg_expense'];
+			$vinfo['contract_expiretime']   = $res_hotelext['contract_expiretime'];
 			$navtp = I('get.navtp');
 			//获取区/县id
 			$area_id = $vinfo['area_id'];
@@ -516,23 +522,15 @@ class HotelController extends BaseController {
 			$vinfo['state_change_reason'] = 1;
 			$this->assign('vinfo',$vinfo);
 		}
+		$this->assign('is_lablefiter',$is_lablefiter);
 		$this->display('add');
 	}
-
-
-
-
-
-
-
 
 	/*
 	 * 查看酒楼详情
 	 *
 	 */
 	public function getdetail(){
-
-
 		$id = I('get.id');
 		if(!$id){
 			$id = I('post.id');
@@ -747,6 +745,10 @@ class HotelController extends BaseController {
 		$data['food_style_id']   = I('post.food_style_id',0,'intval');
 		$data['avg_expense']     = I('post.avg_expense',0,'intval');
 		$data['hotel_cover_media_id'] = I('post.hotel_cover_media_id',0,'intval');
+		$contract_expiretime = I('post.contract_expiretime','');
+		if($contract_expiretime){
+		    $data['contract_expiretime'] = $contract_expiretime;
+        }
 		$tranDb = new Model();
 		$tranDb->startTrans();
         $is_sendtopic = 0;

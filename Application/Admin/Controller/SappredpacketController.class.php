@@ -72,6 +72,8 @@ class SappredpacketController extends BaseController {
         $m_redpacket_receive = new \Admin\Model\Smallapp\RedpacketReceiveModel();
         $all_scopes = C('REDPACKET_SCOPE');
         $operation_uid = C('REDPACKET_OPERATIONERID');
+        $diff_time = 86400;
+        $now_time = time();
         foreach($data['list'] as $key=>$v){
             $data['list'][$key]['order_status'] = $this->order_status[$v['status']];
             if($v['status']>=4){
@@ -79,7 +81,8 @@ class SappredpacketController extends BaseController {
             }else {
                 $data['list'][$key]['pay_type'] = '';
             }
-            if($v['scope']==1){
+            $order_time = strtotime($v['add_time']);
+            if($now_time-$order_time<=$diff_time && $v['scope']==1){
                 $data['list'][$key]['is_send'] = 1;
             }else{
                 $data['list'][$key]['is_send'] = 0;
