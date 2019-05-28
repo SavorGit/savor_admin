@@ -491,6 +491,7 @@ $config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
 $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
+$config['BOX_TPMEDIA']  = 'box:tpmedia:';
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',

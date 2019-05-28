@@ -366,6 +366,9 @@ class DeviceController extends BaseController{
 				$redis->remove($cache_key);
 				$cache_key = C('SMALL_PROGRAM_LIST_KEY').hotelid;
 				$redis->remove($cache_key);
+				$redis->select(10);
+				$cache_key = C('BOX_TPMEDIA').$save['mac'];
+				$redis->remove($cache_key);
 				
                 $all_hotelids = getVsmallHotelList();
                 if(in_array($hotelid,$all_hotelids)){
