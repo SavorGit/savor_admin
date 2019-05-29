@@ -442,7 +442,7 @@
             <label class="col-xs-12 col-sm-2 control-label">
                 合同到期时间:
             </label>
-            <div class="col-xs-12 col-sm-10">
+            <!-- <div class="col-xs-12 col-sm-10">
                 <div class="input-group date form_datetime" data-date="{$vinfo.contract_expiretime}" >
                     <input name="contract_expiretime" type="text" size="16" class="form-control date" placeholder="合同到期时间" value="{$vinfo.contract_expiretime}" readonly >
                     <span class="input-group-btn">
@@ -450,7 +450,15 @@
                     <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
                   </span>
                 </div>
-            </div>
+            </div> -->
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.contract_expiretime}" >
+
+          		<input id="htdq_time"    name="contract_expiretime" type="text" size="16" class="form-control date" placeholder="合同到期时间" value="{$vinfo.contract_expiretime}" readonly>
+                <span class="input-group-btn"  >
+                  <button id="htdq_time_reset" class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+        	</div>
         </div>
         </if>
 
@@ -467,6 +475,16 @@
 </div>
 <script type="text/javascript">
     $(function(){
+    	$('#htdq_time_reset').click(function(){
+    	    $(this).parent().prev().val('')
+    	  });
+    	$("#htdq_time").datetimepicker({
+    	      minView: "month", //选择日期后，不会再跳转去选择时分秒
+    	      language:  'zh-CN',
+    	      format: 'yyyy-mm-dd',
+    	      todayBtn:  1,
+    	      autoclose: 1,
+    	    });
 	$('#media_idimg').click(function(){
 		var $a = $(this).attr('src');
 			$('.big').prop('src',$a).addClass('addbig')
