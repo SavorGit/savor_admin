@@ -1,5 +1,5 @@
 <?php
-namespace Common\Lib;
+namespace Common\Lib; 
 use AliyunMNS\Client;
 use AliyunMNS\Requests\SendMessageRequest;
 use AliyunMNS\Requests\PublishMessageRequest;
@@ -37,7 +37,8 @@ class AliyunMsn{
             $res = $topic->publishMessage($request);
             return $res;
         }catch (MnsException $e){
-            die("sendTopicMessage Failed: " . $e);
+            return false;
+            //die("sendTopicMessage Failed: " . $e);
         }
     }
 }

@@ -1,5 +1,5 @@
 <?php
-//系统配置
+//系统配置 
 $config = array(
     //路由配置
     'URL_MODEL'				=>2,
@@ -492,6 +492,15 @@ $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
+
+//新虚拟小平台接口缓存key
+$config['VSMALL_HOTELLIST'] = "vsmall:hotellist";
+$config['VSMALL_PRO']   = "vsmall:pro:";
+$config['VSMALL_ADV']   = "vsmall:adv:";
+$config['VSMALL_ADS']   = "vsmall:ads:";
+$config['VSMALL_POLY']  = "vsmall:poly:";
+$config['VSMALL_VOD']   = "vsmall:vod:";
+$config['VSMALL_APK']   = "vsmall:apk:";
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',

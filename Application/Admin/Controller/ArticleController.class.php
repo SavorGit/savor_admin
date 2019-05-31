@@ -221,11 +221,22 @@ class ArticleController extends BaseController {
                 $save['update_time'] = $save['create_time'];
                 $res = $mbHomeModel->add($save);
                 if($res){
-                    /* foreach($tmp_hotel_arr as $key=>$v){
-                        sendTopicMessage($v, 11);
-                    } */
                     
-                    sendTopicMessage($tmp_hotel_arr, 11);
+                    //新虚拟小平台接口
+                    $redis = SavorRedis::getInstance();
+                    $redis->select(10);
+                    $v_hotel_list_key = C('VSMALL_HOTELLIST');
+                    $redis_result = $redis->get($v_hotel_list_key);
+                    $v_hotel_list = json_decode($redis_result,true);
+                    $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+                    $v_vod_key = C('VSMALL_VOD');
+                    foreach($v_hotel_arr as $v){
+                        $keys_arr = $redis->keys($v_vod_key.$v."*");
+                        foreach($keys_arr as $vv){
+                            $redis->del($vv);
+                        }
+                    }
+                    
                     $this->output('操作成功!', 'article/homemanager',2);
                 }else{
                     $this->output('操作失败!', 'content/getlist');
@@ -236,10 +247,7 @@ class ArticleController extends BaseController {
             $save['sort_num'] = $max_nu+1;
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
-                /* foreach($vm_small_hotel_list as $key=>$v){
-                    sendTopicMessage($v['hotel_id'], 11);
-                } */
-                sendTopicMessage($tmp_hotel_arr, 11);
+                
                 $this->output('操作成功!', 'content/getlist',3);
                 die;
             }else{
@@ -371,8 +379,22 @@ class ArticleController extends BaseController {
             }else{
                 $mbperModel->add($dat);
             }
-            $tmp_hotel_arr = getVsmallHotelList();
-            sendTopicMessage($tmp_hotel_arr, 11);
+            
+            
+            //新虚拟小平台接口
+            $redis = SavorRedis::getInstance();
+            $redis->select(10);
+            $v_hotel_list_key = C('VSMALL_HOTELLIST');
+            $redis_result = $redis->get($v_hotel_list_key);
+            $v_hotel_list = json_decode($redis_result,true);
+            $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+            $v_vod_key = C('VSMALL_VOD');
+            foreach($v_hotel_arr as $v){
+                $keys_arr = $redis->keys($v_vod_key.$v."*");
+                foreach($keys_arr as $vv){
+                    $redis->del($vv);
+                }
+            }
             
             $message = '更新成功!';
             $url = 'article/homemanager';
@@ -491,7 +513,6 @@ class ArticleController extends BaseController {
                     $mbperModel->add($dat);
                 }
                 
-                
                 $this->output('操作成功!', 'article/homemanager',2);
             }else{
                 $this->output('操作失败!', 'article/homemanager');
@@ -527,8 +548,22 @@ class ArticleController extends BaseController {
             }else{
                 $mbperModel->add($dat);
             }
-            $tmp_hotel_arr = getVsmallHotelList();
-            sendTopicMessage($tmp_hotel_arr, 11);
+            
+            //新虚拟小平台接口
+            $redis = SavorRedis::getInstance();
+            $redis->select(10);
+            $v_hotel_list_key = C('VSMALL_HOTELLIST');
+            $redis_result = $redis->get($v_hotel_list_key);
+            $v_hotel_list = json_decode($redis_result,true);
+            $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+            $v_vod_key = C('VSMALL_VOD');
+            foreach($v_hotel_arr as $v){
+                $keys_arr = $redis->keys($v_vod_key.$v."*");
+                foreach($keys_arr as $vv){
+                    $redis->del($vv);
+                }
+            }
+            
             $this->output('操作成功','article/homemanager');
 
         } else{
@@ -693,6 +728,21 @@ WHERE id IN (1,2,3)*/
                     $hid = $hinfo['id'];
                     $shome['state'] = 0;
                     $homeModel->where('id='.$hid)->save($shome);
+                    
+                    //新虚拟小平台接口
+                    $redis = SavorRedis::getInstance();
+                    $redis->select(10);
+                    $v_hotel_list_key = C('VSMALL_HOTELLIST');
+                    $redis_result = $redis->get($v_hotel_list_key);
+                    $v_hotel_list = json_decode($redis_result,true);
+                    $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+                    $v_vod_key = C('VSMALL_VOD');
+                    foreach($v_hotel_arr as $v){
+                        $keys_arr = $redis->keys($v_vod_key.$v."*");
+                        foreach($keys_arr as $vv){
+                            $redis->del($vv);
+                        }
+                    }
                 }
                 //$this->showvideocontent($id, $save['tx_url']);
                 $this->output('修改成功!', 'content/getlist');

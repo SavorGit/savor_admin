@@ -1,5 +1,5 @@
 <?php
-namespace Smallapp\Controller;
+namespace Smallapp\Controller; 
 
 use Admin\Controller\BaseController ;
 /**

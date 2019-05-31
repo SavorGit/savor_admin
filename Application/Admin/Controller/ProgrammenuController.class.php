@@ -156,7 +156,7 @@ class ProgrammenuController extends BaseController
         $com_arr = array_combine($hotel_id_arr, $hotel_name);
         //如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的节目单、宣传片
         
-        $tmp_hotel_arr = getVsmallHotelList();
+        //$tmp_hotel_arr = getVsmallHotelList();
         $redis = new SavorRedis();
         $redis->select(12);
         foreach ($com_arr as $k => $v) {
@@ -192,19 +192,35 @@ class ProgrammenuController extends BaseController
             if ($res) {
                 $menuHoModel->commit();
                 $vm_hotel_arr = array();
+                
                 foreach ($com_arr as $k => $v) {
                     $cache_key = C('PROGRAM_PRO_CACHE_PRE') . $k;
                     $redis->remove($cache_key);
                     $cache_key = C('PROGRAM_ADV_CACHE_PRE') . $k;
                     $redis->remove($cache_key);
-                    if(in_array($k, $tmp_hotel_arr)){
-                        $vm_hotel_arr[] = $k;
-                        //sendTopicMessage($k, 6);  //通知虚拟小平台更新节目单数据
-                        //sendTopicMessage($k, 7);  //通知虚拟小平台更新节目单宣传片数据
+                    
+                }
+                //新虚拟小平台接口
+                $redis->select(10);
+                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+                $redis_result = $redis->get($v_hotel_list_key);
+                $v_hotel_list = json_decode($redis_result,true);
+                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+                $v_pro_key = C('VSMALL_PRO');
+                $v_adv_key = C('VSMALL_ADV');
+                foreach($com_arr as $key=>$v){
+                    if(in_array($k, $v_hotel_arr)){
+                        $keys_arr = $redis->keys($v_pro_key.$k."*");
+                        foreach($keys_arr as $vv){
+                            $redis->del($vv);
+                        }
+                        $keys_arr = $redis->keys($v_adv_key.$k."*");
+                        foreach($keys_arr as $vv){
+                            $redis->del($vv);   
+                        }
                     }
                 }
-                sendTopicMessage($vm_hotel_arr, 6); //通知虚拟小平台更新节目单数据
-                sendTopicMessage($vm_hotel_arr, 7); //通知虚拟小平台更新节目单宣传片数据
+                
                 $this->output('发布成功了!', 'programmenu/getlist');
             } else {
                 $menuHoModel->rollback();
