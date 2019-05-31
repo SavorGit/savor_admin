@@ -1,5 +1,5 @@
 <?php
-//系统配置
+//系统配置 
 $config = array(
     //路由配置
     'URL_MODEL'				=>2,

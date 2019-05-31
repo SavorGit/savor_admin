@@ -1,5 +1,5 @@
 <?php
-namespace Common\Lib;
+namespace Common\Lib; 
 use AliyunMNS\Client;
 use AliyunMNS\Requests\SendMessageRequest;
 use AliyunMNS\Requests\PublishMessageRequest;
