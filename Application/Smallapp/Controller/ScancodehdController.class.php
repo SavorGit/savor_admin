@@ -118,11 +118,9 @@ class ScancodehdController extends BaseController {
 		$this->assign('hezuo_arr',$hezuo_arr);
         $hd_where = $where;
 		
-		$where .=" and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-		           and a.action in(2,4,5,8,9,11,12,21,22,101,120,121) and a.mobile_brand!='devtools' and suser.unionId!=''";
+		$where .=" and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and a.mobile_brand!='devtools' and suser.unionId!=''";
 		$qrcode_where .=" and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and suser.unionId!=''";
-		$hd_where .= " and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-		           and a.action in(2,4,5,8,9,11,12,21,22,101,120,121) and a.mobile_brand!='devtools' ";
+		$hd_where .= " and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and a.mobile_brand!='devtools' ";
 		//扫码人数
 		$qrcode_log = new \Admin\Model\Smallapp\QrcodeLogModel();
 		$qrcode_person_nums = $qrcode_log->getQrcount($qrcode_where,'suser.unionid');
@@ -134,8 +132,7 @@ class ScancodehdController extends BaseController {
 		
 		//互动量
 		$hd_nums = $forscreen_record->getHdCountPerson($hd_where);
-		//echo $forscreen_record->getLastSql();
-		
+
 		//酒楼数
 		
         

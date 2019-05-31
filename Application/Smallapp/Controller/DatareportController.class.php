@@ -53,8 +53,8 @@ class DatareportController extends BaseController {
             $where_wl = $where;
         }else{
             $where_wl = $where;
-            $box_types = array_keys($hotel_box_types);
-            $where['s.hotel_box_type'] = array('in',$box_types);
+//            $box_types = array_keys($hotel_box_types);
+//            $where['s.hotel_box_type'] = array('in',$box_types);
         }
 
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
@@ -143,8 +143,8 @@ class DatareportController extends BaseController {
         if($box_type){
             $where['hotel.hotel_box_type'] = $box_type;
         }else{
-            $box_types = array_keys($hotel_box_types);
-            $where['hotel.hotel_box_type'] = array('in',$box_types);
+//            $box_types = array_keys($hotel_box_types);
+//            $where['hotel.hotel_box_type'] = array('in',$box_types);
         }
 
         if($is_4g){
@@ -160,7 +160,6 @@ class DatareportController extends BaseController {
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $fields = 'count(a.id) as hdnum,count(DISTINCT(hotel.id)) as hotelnum,count(DISTINCT(a.box_mac)) as boxnum,count(DISTINCT(a.openid)) as usernum';
         $nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
-
         $nums['total_boxnums'] = 0;
         $m_statis = new \Admin\Model\Smallapp\StatisticsModel();
         if($end_time>=$start_time){
@@ -256,9 +255,9 @@ class DatareportController extends BaseController {
             $where['hotel.hotel_box_type'] = $box_type;
             $hotel_where['a.hotel_box_type'] = $box_type;
         }else{
-            $box_types = array_keys($hotel_box_types);
-            $where['hotel.hotel_box_type'] = array('in',$box_types);
-            $hotel_where['a.hotel_box_type'] = array('in',$box_types);
+//            $box_types = array_keys($hotel_box_types);
+//            $where['hotel.hotel_box_type'] = array('in',$box_types);
+//            $hotel_where['a.hotel_box_type'] = array('in',$box_types);
         }
         $where['box.flag'] = 0;
         $where['box.state'] = 1;
@@ -445,8 +444,8 @@ class DatareportController extends BaseController {
         if($box_type){
             $where['hotel.hotel_box_type'] = $box_type;
         }else{
-            $box_types = array_keys($hotel_box_types);
-            $where['hotel.hotel_box_type'] = array('in',$box_types);
+//            $box_types = array_keys($hotel_box_types);
+//            $where['hotel.hotel_box_type'] = array('in',$box_types);
         }
         $box_condition = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
         if($is_4g){
