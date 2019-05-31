@@ -1,14 +1,14 @@
 <include file="Public/script"/>
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/tvprogram/programlist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/tvchannel/channellist" method="post">
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
         <div class="col-xs-12 col-sm-6 col-md-10">
           <div class="tools-group s2">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/tvprogram/programadd?type=3" title="三代上传" target="dialog" mask="true"><i class="fa fa-plus"></i><span>三代电视节目</span></a>
-            <a class="btn btn-success btn-sm add" href="{$host_url}/tvprogram/programadd?type=2" title="二代上传" target="dialog" mask="true"><i class="fa fa-plus"></i><span>二代电视节目</span></a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/tvchannel/channeladd?type=3" title="三代上传" target="dialog" mask="true"><i class="fa fa-plus"></i><span>三代电视节目</span></a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/tvchannel/channeladd?type=2" title="二代上传" target="dialog" mask="true"><i class="fa fa-plus"></i><span>二代电视节目</span></a>
           </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
@@ -62,7 +62,7 @@
               <td data-title="锁定"><if condition="$dinfo.is_lock eq 1">已锁定<else />正常</if></td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a warn="警告" data-tip="锁定" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/tvprogram/programlock?id={$dinfo.id}&lock={$dinfo.is_lock}"  class="btn btn-success btn-icon">
+                  <a warn="警告" data-tip="锁定" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/tvchannel/channellock?id={$dinfo.id}&lock={$dinfo.is_lock}"  class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>
