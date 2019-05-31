@@ -37,7 +37,8 @@ class AliyunMsn{
             $res = $topic->publishMessage($request);
             return $res;
         }catch (MnsException $e){
-            die("sendTopicMessage Failed: " . $e);
+            return false;
+            //die("sendTopicMessage Failed: " . $e);
         }
     }
 }

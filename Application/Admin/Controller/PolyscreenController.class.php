@@ -6,6 +6,7 @@
  */
 namespace Admin\Controller;
 use Common\Lib\Aliyun;
+use Common\Lib\SavorRedis;
 class PolyscreenController extends BaseController{
     public function __construct(){
         parent::__construct();
@@ -175,17 +176,24 @@ class PolyscreenController extends BaseController{
                     group by hotel.id";
             $data = $m_box->query($sql); 
             if(!empty($data)){
-                //获取虚拟小平台配置的酒楼id 如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
-                $tmp_hotel_arr = getVsmallHotelList();
-                $ht_arr = array();
+                
+                
+                //新虚拟小平台接口
+                $redis = SavorRedis::getInstance();
+                $redis->select(10);
+                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+                $redis_result = $redis->get($v_hotel_list_key);
+                $v_hotel_list = json_decode($redis_result,true);
+                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+                $v_poly_key = C("VSMALL_POLY");
                 foreach($data as $key=>$v){
-                    if(in_array($v['hotel_id'], $tmp_hotel_arr)){
-                        $ht_arr[] = $v['hotel_id'];
-                        //sendTopicMessage($v['hotel_id'], 10);
+                    if(in_array($v['hotel_id'], $v_hotel_arr)){
+                        $keys_arr = $redis->keys($v_poly_key.$v['hotel_id']."*");
+                        foreach($keys_arr as $vv){
+                            $redis->del($vv);
+                        }
                     }
                 }
-                sendTopicMessage($ht_arr, 10);
-                
             }
             
             $this->output($msg, 'polyscreen/index', 2);

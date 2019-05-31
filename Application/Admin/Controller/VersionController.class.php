@@ -340,20 +340,44 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            $tmp_hotel_arr = getVsmallHotelList();
 	            
 	            if($hotel_id){
 	                
 	                $hotel_arr = explode(',', $hotel_id);
+	                
+	                //新虚拟小平台接口
+	                $redis = SavorRedis::getInstance();
+	                $redis->select(10);
+	                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+	                $redis_result = $redis->get($v_hotel_list_key);
+	                $v_hotel_list = json_decode($redis_result,true);
+	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+	                $v_apk_key = C('VSMALL_APK');
 	                foreach($hotel_arr as $k=>$v){
-	                    if(in_array($v, $tmp_hotel_arr)){
-	                        sendTopicMessage($v, 13);
+	                    if(in_array($v, $v_hotel_arr)){
+	                        $keys_arr = $redis->keys($v_apk_key.$v."*");
+	                        foreach($keys_arr as $vv){
+	                            $redis->del($vv);
+	                        }
 	                    }
 	                }
+	                
 	            }else {
-	                foreach($tmp_hotel_arr as $key=>$v){
-	                    sendTopicMessage($v, 13);
+	                //新虚拟小平台接口
+	                $redis = SavorRedis::getInstance();
+	                $redis->select(10);
+	                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+	                $redis_result = $redis->get($v_hotel_list_key);
+	                $v_hotel_list = json_decode($redis_result,true);
+	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+	                $v_apk_key = C('VSMALL_APK');
+	                foreach($hotel_arr as $k=>$v){
+	                    $keys_arr = $redis->keys($v_apk_key.$v."*");
+	                    foreach($keys_arr as $vv){
+	                        $redis->del($vv);
+	                    }
 	                }
+	                
 	            }
 	            $navTab = "version/$name";
 	            $this->output('新增升级版成功', $navTab);

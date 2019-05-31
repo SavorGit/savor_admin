@@ -751,22 +751,22 @@ class HotelController extends BaseController {
         }
 		$tranDb = new Model();
 		$tranDb->startTrans();
-        $is_sendtopic = 0;
-        $is_sendtopiclogo = 0;
+        //$is_sendtopic = 0;
+        //$is_sendtopiclogo = 0;
 		if ($hotel_id) {
-            $tmp_hotel = $hotelModel->getOne($hotel_id);
+            //$tmp_hotel = $hotelModel->getOne($hotel_id);
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
 			if($bool){
-                $is_sendtopic = 1;
+                //$is_sendtopic = 1;
 				$res = $hotelModel->getOne($hotel_id);
 				$save['create_time'] = $res['create_time'];
 				$hotelModel->saveStRedis($save, $hotel_id);
-                if(!empty($save['media_id'])){
-                    if($tmp_hotel['media_id']!=$save['media_id']){
+                /*if(!empty($save['media_id'])){
+                     if($tmp_hotel['media_id']!=$save['media_id']){
                         $is_sendtopiclogo = 1;
-                    }
-                }
+                    } 
+                }*/
 			} else {
 				$this->error('操作失败1');
 			}
@@ -774,12 +774,12 @@ class HotelController extends BaseController {
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$bool = $hotelModel->addData($save);
 			if($bool){
-                $is_sendtopic = 1;
+                //$is_sendtopic = 1;
 				$hotel_id = $hotelModel->getLastInsID();
 				$hotelModel->saveStRedis($save, $hotel_id);
-                if(!empty($save['media_id'])){
+                /* if(!empty($save['media_id'])){
                     $is_sendtopiclogo = 1;
-                }
+                } */
 			} else {
 				$this->error('操作失败2');
 			}
@@ -800,18 +800,7 @@ class HotelController extends BaseController {
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			if($is_sendtopic){
-                $all_hotelids = getVsmallHotelList();
-                if(in_array($hotel_id,$all_hotelids)){
-                    sendTopicMessage($hotel_id,1);
-                }
-            }
-            if($is_sendtopiclogo){
-                $all_hotelids = getVsmallHotelList();
-                if(in_array($hotel_id,$all_hotelids)){
-                    sendTopicMessage($hotel_id,15);
-                }
-            }
+			
 			$navtp = I('post.navtp','');
 			if($navtp == 34) {
 				$this->output('操作成功!', 'hotel/detail');
@@ -928,20 +917,14 @@ class HotelController extends BaseController {
 		$bool = $RoomModel->saveData($save, $id);
 		if($id){
 			if($bool){
-                $all_hotelids = getVsmallHotelList();
-                if(in_array($hotel_id,$all_hotelids)){
-                    sendTopicMessage($hotel_id,2);
-                }
+                
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
 			}
 		}else{
 			if($bool){
-                $all_hotelids = getVsmallHotelList();
-                if(in_array($hotel_id,$all_hotelids)){
-                    sendTopicMessage($hotel_id,2);
-                }
+                
 				$this->output('操作成功!', 'hotel/room');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddRoom');
@@ -1156,7 +1139,6 @@ class HotelController extends BaseController {
                     $bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
                     if($bool){
                         $ttid = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
-                        sendTopicMessage($hotelid,4);
                     } else {
                         $model->rollback();
                         $this->error('失败请重新操作添加');
@@ -1187,9 +1169,6 @@ class HotelController extends BaseController {
 					    $rds->remove($cache_key);
 					    $cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
 					    $rds->remove($cache_key);
-                        sendTopicMessage($hotelid,3);
-                        sendTopicMessage($hotelid, 6);
-                        sendTopicMessage($hotelid, 7);
 						$dap = array();
 						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
 						$dap['tv_brand'] = $v['tv_brand'];
@@ -1198,7 +1177,6 @@ class HotelController extends BaseController {
 						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if ($bool) {
-                            sendTopicMessage($hotelid,4);
 							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
 						} else {
 							$model->rollback();
@@ -1227,7 +1205,6 @@ class HotelController extends BaseController {
 				$bool = $model->table(C('DB_PREFIX').'room')
 					->add($save);
 				if($bool){
-                    sendTopicMessage($hotelid,2);
 					$dat = array();
 					$dat['room_id'] = $model->table(C('DB_PREFIX').'room')->getLastInsID();
 					$dat['name'] = $v['box_name'];
@@ -1250,9 +1227,6 @@ class HotelController extends BaseController {
 					    $rds->remove($cache_key);
 					    $cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
 					    $rds->remove($cache_key);
-                        sendTopicMessage($hotelid,3);
-                        sendTopicMessage($hotelid, 6);
-                        sendTopicMessage($hotelid, 7);
 						$dap = array();
 						$dap['box_id'] = $model->table(C('DB_PREFIX').'box')->getLastInsID();
 						$dap['tv_brand'] = $v['tv_brand'];
@@ -1261,7 +1235,6 @@ class HotelController extends BaseController {
 						$dap['state'] = $v['tv_state'];
 						$bool = $model->table(C('DB_PREFIX').'tv')->add($dap);
 						if ($bool) {
-                            sendTopicMessage($hotelid,4);
 							$datv['tv_id'] = $model->table(C('DB_PREFIX').'tv')->getLastInsID();
 						} else {
 							$model->rollback();
@@ -1461,11 +1434,7 @@ class HotelController extends BaseController {
 		$save['hotel_id'] = I('post.hotel_id');
 		$save['is_sapp_qrcode'] = I('is_sapp_qrcode');
 		
-		$cache_key = C('PROGRAM_ADV_CACHE_PRE').$save['hotel_id'];
-		//获取虚拟小平台配置的酒楼id
-		$tmp_hotel_arr = getVsmallHotelList();
-		$redis = SavorRedis::getInstance();
-		$redis->select(12);
+		
 		if($ads_id){
 		    $maps = array();
 		    $maps['name'] = $save['name'];
@@ -1488,12 +1457,8 @@ class HotelController extends BaseController {
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			
 			if($res_save){
-			    //如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
-			    if(in_array($save['hotel_id'], $tmp_hotel_arr)){
-			        sendTopicMessage($save['hotel_id'], 7);
-			    }
 			    
-			    $redis->remove($cache_key);
+			    
 			    //期刊
 			    $mbperModel = new \Admin\Model\MbPeriodModel();
 			    $num = $mbperModel->count();
@@ -1530,11 +1495,7 @@ class HotelController extends BaseController {
 			}
 			$menuHoModel->where(array('hotel_id'=>$save['hotel_id']))->save($dat);
 			if($res_save){
-			    //如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
-			    if(in_array($save['hotel_id'], $tmp_hotel_arr)){
-			        sendTopicMessage($save['hotel_id'], 7);
-			    }
-			    $redis->remove($cache_key);
+			    
 			    //期刊
 			    $mbperModel = new \Admin\Model\MbPeriodModel();
 			    $num = $mbperModel->count();
@@ -1573,15 +1534,25 @@ class HotelController extends BaseController {
 		    $infos = $adsModel->getWhere(array('id'=>$adsid), 'hotel_id,type');
 		    $infos = $infos[0];
 		    if(!empty($infos['hotel_id']) && $infos['type']==3){
-		        //获取虚拟小平台配置的酒楼id 如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
-		        $tmp_hotel_arr = getVsmallHotelList();
-		        if(in_array($infos['hotel_id'], $tmp_hotel_arr)){
-		            sendTopicMessage($infos['hotel_id'], 7);
-		        }
+		        
 		        $redis = SavorRedis::getInstance();
 		        $redis->select(12);
 		        $cache_key = C('PROGRAM_ADV_CACHE_PRE').$infos['hotel_id'];
 		        $redis->remove($cache_key);
+		        
+		        //新虚拟小平台接口
+		        $redis->select(10);
+		        $v_hotel_list_key = C('VSMALL_HOTELLIST');
+		        $redis_result = $redis->get($v_hotel_list_key);
+		        $v_hotel_list = json_decode($redis_result,true);
+		        $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+		        $v_adv_key = C('VSMALL_ADV');
+		        if(in_array($infos['hotel_id'], $v_hotel_arr)){
+		            $keys_arr = $redis->keys($v_adv_key.$infos['hotel_id']."*");
+		            foreach($keys_arr as $vv){
+		                $redis->del($vv);
+		            }
+		        }
 		    }
 		    
 		    //期刊
