@@ -32,6 +32,12 @@ class HotelExtModel extends BaseModel{
 		$redis->select(12);
 		$cache_key = C('SMALL_HOTEL_INFO').$id;
 		$redis->remove($cache_key);
+		
+		$hotelModel = new \Admin\Model\HotelModel();
+		$v_hotel_result = $hotelModel->getListMac('a.id hotel_id',array('b.mac_addr'=>'000000000000','a.state'=>1,'a.flag'=>0),'a.id asc');
+		$redis->select(10);
+		$cache_key = "vsmall:hotellist";
+		$redis->set($cache_key, json_encode($v_hotel_result));	
 	}
 
 
