@@ -1,0 +1,28 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_name}/tvprogram/programadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="type" value="{$type}"/>
+    <div class="pageFormContent modal-body">
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label"> 上传电视节目文件：</label>
+        <div class="col-xs-12 col-sm-10">
+          <div class="input-group" data-fileinput style="max-width: 500px">
+            <input type="text" class="form-control" name="tvfile" readonly data-file>
+            <div class="input-group-btn">
+              <a class="btn btn-success" data-target="#modal-file" href="{$host_name}/uploadmgr/uploadmgrList?browseFile=true&s_type=ext&s_ext=csv" data-browse-file>浏览</a>
+              <a href="javascript:;" class="btn btn-danger" data-remove-file>删除</a>
+            </div>
+          </div>
+          <span class="help-block" id="img-msg">请上传csv文件，文件大小在2M内</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+  </form>
+</div>
