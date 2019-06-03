@@ -33,7 +33,7 @@ class TvchannelController extends BaseController {
         $type = I('type',0,'intval');
         if(IS_GET){
             $this->assign('type',$type);
-            $this->display('programadd');
+            $this->display('channeladd');
         }else{
             $tvfile = I('post.tvfile','');
             if(empty($tvfile)){
