@@ -3553,6 +3553,10 @@ class CrontabController extends Controller
                 if($trade_no){
                     if($v['type']==1 || $v['type']==2){
                         $m_redpacketoperation->updateData(array('id'=>$v['id']),array('status'=>0));
+                    }else{
+                        if($nowdate==$v['end_date'] && $nowtime==$optime){
+                            $m_redpacketoperation->updateData(array('id'=>$v['id']),array('status'=>0));
+                        }
                     }
                     //根据红包总金额和人数进行分配红包
                     $money = $redpacket['total_fee'];
