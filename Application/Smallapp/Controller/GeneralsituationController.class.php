@@ -24,29 +24,43 @@ class GeneralsituationController extends BaseController {
         }else{
             $index_dates = $days;
         }
+        $start_time = $days[0];
+        $end_time = end($days);
         //关键指标
         $fjnum = $zxnum = $ktnum = $hdnum = $wlnum = $mobilenum = 0;
-        foreach ($index_dates as $v){
-            $nums = $m_statistics->getRatenum($v,0,0);
-            //互动饭局数
-            $fjnum += $nums['fjnum'];
-
-            //在线屏幕数
-            $zxnum += $nums['zxnum'];
-
-            //可投屏数
-            $ktnum += $nums['ktnum'];
-
-            //网络屏幕数
-            $wlnum += $nums['wlnum'];
-
-            //互动次数
-            $hdnum += $nums['hdnum'];
-
-            //互动次数
-            $mobilenum += $nums['mobilenum'];
+        if($day==1){
+            $nums = $m_statistics->getRatenum($yestime,0,0);
+            $fjnum = $nums['fjnum'];
+            $zxnum = $nums['zxnum'];
+            $ktnum = $nums['ktnum'];
+            $wlnum = $nums['wlnum'];
+            $hdnum = $nums['hdnum'];
+            $mobilenum = $nums['mobilenum'];
+        }else{
+            $between_time = array($start_time,$end_time);
+            $nums = $m_statistics->getRatenum($between_time,0,0);
+            foreach ($nums['fjnum'] as $v){
+                $fjnum += $v['fjnum'];
+            }
+            foreach ($nums['zxnum'] as $v){
+                $zxnum += $v['zxnum'];
+            }
+            foreach ($nums['ktnum'] as $v){
+                $ktnum += $v['ktnum'];
+            }
+            foreach ($nums['wlnum'] as $v){
+                $wlnum += $v['wlnum'];
+            }
+            foreach ($nums['hdnum'] as $v){
+                $hdnum += $v['hdnum'];
+            }
+            foreach ($nums['mobilenum'] as $v){
+                $mobilenum += $v['mobilenum'];
+            }
         }
+
         $nums = array('fjnum'=>$fjnum,'zxnum'=>$zxnum,'ktnum'=>$ktnum,'wlnum'=>$wlnum,'hdnum'=>$hdnum,'mobilenum'=>$mobilenum);
+
         $conversion = $m_statistics->getRate($nums,1);
         $transmissibility = $m_statistics->getRate($nums,2);
         $screens = $m_statistics->getRate($nums,3);
@@ -55,29 +69,28 @@ class GeneralsituationController extends BaseController {
 
         //指标趋势
         $chart_list = array();
-        foreach ($days as $k=>$v){
-            $charts = $this->ratioChart($type,$v);
-            $chart_list['a'][] = $charts['a'];
-            $chart_list['b'][] = $charts['b'];
-            $chart_list['c'][] = $charts['c'];
-        }
-        //详细数据
-        $detail_list = array();
-        /*
-        $detail_breaknum = 4;
-        foreach ($days as $k=>$v){
-            $ratenums = $m_statistics->getRatenum($v,0,0);
-            $detail = array('fjnum'=>$ratenums['fjnum'],'zxnum'=>$ratenums['zxnum'],'hdnum'=>$ratenums['hdnum'],'mobilenum'=>$ratenums['mobilenum']);
-            $detail['conversion'] = $m_statistics->getRate($ratenums,1);
-            $detail['transmissibility'] = $m_statistics->getRate($ratenums,2);
-            $detail['screens'] = $m_statistics->getRate($ratenums,3);
-            $detail['network'] = $m_statistics->getRate($ratenums,4);
-            $detail_list[$v] = $detail;
-            if($k==$detail_breaknum){
-                break;
+        if($type!=8){
+            $between_time = array($start_time,$end_time);
+            $charts = $this->ratioChart($type,$between_time);
+            $chart_list['a'] = array_values($charts['a']);
+            $chart_list['b'] = array_values($charts['b']);
+            $chart_list['c'] = array_values($charts['c']);
+        }else{
+            foreach ($days as $k=>$v){
+                $charts = $this->ratioChart($type,$v);
+                $chart_list['a'][] = $charts['a'];
+                $chart_list['b'][] = $charts['b'];
+                $chart_list['c'][] = $charts['c'];
             }
         }
-        */
+
+        //详细数据
+        $detail_list = array();
+
+        $chart_list['a'] = isset($chart_list['a'])?$chart_list['a']:array();
+        $chart_list['b'] = isset($chart_list['b'])?$chart_list['b']:array();
+        $chart_list['c'] = isset($chart_list['c'])?$chart_list['c']:array();
+
         $all_legend = C('LEGEND_CONFIG');
         $this->assign('legend',$all_legend[$type]);
         $this->assign('chart_a',json_encode($chart_list['a']));
@@ -93,6 +106,61 @@ class GeneralsituationController extends BaseController {
         $this->display();
     }
 
+    public function ratioChartByDates($type,$date,$is_percent=0,$is_rate=0){
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $res_bnums = $m_statistics->getRatenum($date, 1, $type);
+        $b_nums = array();
+        foreach ($res_bnums as $v){
+            foreach ($v as $kk => $vv) {
+                $tmp_static_date = $vv['static_date'];
+                unset($vv['static_date']);
+                $b_nums[$tmp_static_date] = isset($b_nums[$tmp_static_date])?array_merge($b_nums[$tmp_static_date], $vv):$vv;
+            }
+        }
+        $b = array();
+        foreach ($b_nums as $k=>$v){
+            if($is_rate){
+                if($is_percent){
+                    $b_num = $m_statistics->getRate($v,$type)/100;
+                }else{
+                    $b_num = $m_statistics->getRate($v,$type);
+                }
+            }else{
+                $tmp_bnuminfo = array_values($v);
+                $b_num = $tmp_bnuminfo[0];
+            }
+            $b[$k] = $b_num;
+        }
+
+        $res_cnums = $m_statistics->getRatenum($date,2,$type);
+        $c_nums = array();
+        foreach ($res_cnums as $v){
+            foreach ($v as $kk => $vv) {
+                $tmp_static_date = $vv['static_date'];
+                unset($vv['static_date']);
+                $c_nums[$tmp_static_date] = isset($c_nums[$tmp_static_date])?array_merge($c_nums[$tmp_static_date], $vv):$vv;
+            }
+        }
+        $c = array();
+        $a = array();
+        foreach ($c_nums as $k=>$v){
+            if($is_rate){
+                if($is_percent){
+                    $c_num = $m_statistics->getRate($v,$type)/100;
+                }else{
+                    $c_num = $m_statistics->getRate($v,$type);
+                }
+            }else{
+                $tmp_cnuminfo = array_values($v);
+                $c_num = $tmp_cnuminfo[0];
+            }
+
+            $c[$k] = $c_num;
+            $a[$k] = ($b[$k]+$c[$k])/2;
+        }
+        return array('a'=>$a,'b'=>$b,'c'=>$c);
+    }
+
     /*
      * 比率图表
      * type 1转换率,2传播力,3屏幕在线率,4网络质量,5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级
@@ -103,49 +171,87 @@ class GeneralsituationController extends BaseController {
             case 1:
             case 3:
             case 4:
-                $nums = $m_statistics->getRatenum($date,1,$type);
-                $b = $m_statistics->getRate($nums,$type)/100;
+                if(is_array($date)) {
+                    $res_nums = $this->ratioChartByDates($type,$date,1,1);
+                    $b = $res_nums['b'];
+                    $c = $res_nums['c'];
+                    $a = $res_nums['a'];
+                }else{
+                    $nums = $m_statistics->getRatenum($date,1,$type);
+                    $b = $m_statistics->getRate($nums,$type)/100;
 
-                $nums = $m_statistics->getRatenum($date,2,$type);
-                $c = $m_statistics->getRate($nums,$type)/100;
+                    $nums = $m_statistics->getRatenum($date,2,$type);
+                    $c = $m_statistics->getRate($nums,$type)/100;
 
-                $a = ($b+$c)/2;
+                    $a = ($b+$c)/2;
+                }
+
                 break;
             case 2:
-                $nums = $m_statistics->getRatenum($date,1,$type);
-                $b = $m_statistics->getRate($nums,$type);
+                if(is_array($date)){
+                    $res_nums = $this->ratioChartByDates($type,$date,0,1);
+                    $b = $res_nums['b'];
+                    $c = $res_nums['c'];
+                    $a = $res_nums['a'];
+                }else{
+                    $nums = $m_statistics->getRatenum($date,1,$type);
+                    $b = $m_statistics->getRate($nums,$type);
 
-                $nums = $m_statistics->getRatenum($date,2,$type);
-                $c = $m_statistics->getRate($nums,$type);
+                    $nums = $m_statistics->getRatenum($date,2,$type);
+                    $c = $m_statistics->getRate($nums,$type);
 
-                $a = ($b+$c)/2;
+                    $a = ($b+$c)/2;
+                }
+
                 break;
             case 5:
-                $nums = $m_statistics->getRatenum($date,1,$type);
-                $b = $nums['fjnum'];
+                if(is_array($date)){
+                    $res_nums = $this->ratioChartByDates($type,$date,0,0);
+                    $b = $res_nums['b'];
+                    $c = $res_nums['c'];
+                    $a = $res_nums['a'];
+                }else{
+                    $nums = $m_statistics->getRatenum($date,1,$type);
+                    $b = $nums['fjnum'];
 
-                $nums = $m_statistics->getRatenum($date,2,$type);
-                $c = $nums['fjnum'];
+                    $nums = $m_statistics->getRatenum($date,2,$type);
+                    $c = $nums['fjnum'];
 
-                $a = ($b+$c)/2;
+                    $a = ($b+$c)/2;
+                }
+
                 break;
             case 6:
-                $nums = $m_statistics->getRatenum($date,1,$type);
-                $b = $nums['zxnum'];
+                if(is_array($date)){
+                    $res_nums = $this->ratioChartByDates($type,$date,0,0);
+                    $b = $res_nums['b'];
+                    $c = $res_nums['c'];
+                    $a = $res_nums['a'];
+                }else{
+                    $nums = $m_statistics->getRatenum($date,1,$type);
+                    $b = $nums['zxnum'];
 
-                $nums = $m_statistics->getRatenum($date,2,$type);
-                $c = $nums['zxnum'];
+                    $nums = $m_statistics->getRatenum($date,2,$type);
+                    $c = $nums['zxnum'];
 
-                $a = ($b+$c)/2;
+                    $a = ($b+$c)/2;
+                }
                 break;
             case 7:
-                $nums = $m_statistics->getRatenum($date,1,$type);
-                $b = $nums['hdnum'];
+                if(is_array($date)){
+                    $res_nums = $this->ratioChartByDates($type,$date,0,0);
+                    $b = $res_nums['b'];
+                    $c = $res_nums['c'];
+                    $a = $res_nums['a'];
+                }else{
+                    $nums = $m_statistics->getRatenum($date,1,$type);
+                    $b = $nums['hdnum'];
 
-                $nums = $m_statistics->getRatenum($date,2,$type);
-                $c = $nums['hdnum'];
+                    $nums = $m_statistics->getRatenum($date,2,$type);
+                    $c = $nums['hdnum'];
 
-                $a = ($b+$c)/2;
+                    $a = ($b+$c)/2;
+                }
                 break;
             case 8:
                 /*

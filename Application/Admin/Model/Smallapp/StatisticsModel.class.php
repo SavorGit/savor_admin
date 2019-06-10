@@ -99,6 +99,19 @@ class StatisticsModel extends Model
         $data = !empty($res)?$res[0]:array();
         return $data;
     }
+
+    public function getRatenumDatewhere($date){
+        $where = array();
+        if(is_array($date)){
+            $start_time = $date[0];
+            $end_time = $date[1];
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else{
+            $where['static_date'] = $date;
+        }
+        return $where;
+    }
+
     /*
      * 获取比率对应数
      * type 0所有 1转换率 2传播率 3屏幕在线率 4网络质量 5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级,9心跳次数
@@ -108,7 +121,7 @@ class StatisticsModel extends Model
         $nums = array();
         if(in_array($type,array(0,1,2,3,4,5))){
             //互动饭局数
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -120,12 +133,20 @@ class StatisticsModel extends Model
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['all_interact_nums'] = array('GT',0);
             $fields = "count(box_mac) as fjnum";
-            $ret = $this->getOne($fields, $where);
-            $nums['fjnum'] = intval($ret['fjnum']);
+            if(is_array($date)){
+                $fields = "count(box_mac) as fjnum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['fjnum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['fjnum'] = intval($ret['fjnum']);
+            }
+
         }
         if(in_array($type,array(0,1,2,3,4,6))){
             //在线屏幕数
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -139,12 +160,20 @@ class StatisticsModel extends Model
             $where['heart_log_meal_nums'] = array('GT',5);
             $where['_string'] = 'case static_fj when 1 then (120 div heart_log_meal_nums)<10  else (180 div heart_log_meal_nums)<10 end';
             $fields = 'count(box_mac) as zxnum';
-            $ret = $this->getOne($fields, $where);
-            $nums['zxnum'] = intval($ret['zxnum']);
+            if(is_array($date)){
+                $fields = "count(box_mac) as zxnum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['zxnum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['zxnum'] = intval($ret['zxnum']);
+            }
+
         }
         if($type==0 || $type==4){
             //可投屏数
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -157,13 +186,21 @@ class StatisticsModel extends Model
             $where['heart_log_meal_nums'] = array('GT',0);
             $where['_string'] = '(avg_down_speed div 1024)>200';
             $fields = 'count(box_mac) as ktnum';
-            $ret = $this->getOne($fields, $where);
-            $nums['ktnum'] = intval($ret['ktnum']);
+            if(is_array($date)){
+                $fields = "count(box_mac) as ktnum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['ktnum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['ktnum'] = intval($ret['ktnum']);
+            }
+
         }
 
         if($type==0 || $type==3){
             //网络屏幕数
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -176,12 +213,20 @@ class StatisticsModel extends Model
                 $where['static_fj'] = $static_fj;
             }
             $fields = "count(id) as wlnum";
-            $ret = $this->getOne($fields, $where);
-            $nums['wlnum'] = intval($ret['wlnum']);
+            if(is_array($date)){
+                $fields = "count(id) as wlnum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['wlnum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['wlnum'] = intval($ret['wlnum']);
+            }
+
         }
         if($type==0 || $type==7){
             //互动次数
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -192,11 +237,19 @@ class StatisticsModel extends Model
             }
             if($static_fj)  $where['static_fj'] = $static_fj;
             $fields = 'sum(all_interact_nums) as hdnum';
-            $ret = $this->getOne($fields, $where);
-            $nums['hdnum'] = intval($ret['hdnum']);
+            if(is_array($date)){
+                $fields = "sum(all_interact_nums) as hdnum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['hdnum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['hdnum'] = intval($ret['hdnum']);
+            }
+
         }
         if($type==9){
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -208,12 +261,20 @@ class StatisticsModel extends Model
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['heart_log_nums'] = array('GT',0);
             $fields = "sum(`heart_log_nums`) as xtnum";
-            $ret = $this->getOne($fields, $where);
-            $nums['xtnum'] = intval($ret['xtnum']);
+            if(is_array($date)){
+                $fields = "sum(`heart_log_nums`) as xtnum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['xtnum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['xtnum'] = intval($ret['xtnum']);
+            }
+
         }
 
         if($type==0 || $type==2){
-            $where = array('static_date'=>$date);
+            $where = $this->getRatenumDatewhere($date);
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -225,10 +286,16 @@ class StatisticsModel extends Model
             if($static_fj)  $where['static_fj'] = $static_fj;
             $where['hd_mobile_nums'] = array('GT',0);
             $fields = "sum(`hd_mobile_nums`) as mobilenum";
-            $ret = $this->getOne($fields, $where);
-            $nums['mobilenum'] = intval($ret['mobilenum']);
+            if(is_array($date)){
+                $fields = "sum(`hd_mobile_nums`) as mobilenum,static_date";
+                $groupby = "static_date";
+                $ret = $this->getWhere($fields, $where,'','',$groupby);
+                $nums['mobilenum'] = $ret;
+            }else{
+                $ret = $this->getOne($fields, $where);
+                $nums['mobilenum'] = intval($ret['mobilenum']);
+            }
         }
-
         return $nums;
     }
 
