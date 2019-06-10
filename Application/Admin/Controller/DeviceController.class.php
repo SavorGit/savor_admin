@@ -294,6 +294,7 @@ class DeviceController extends BaseController{
 		$save['is_open_interactscreenad']=I('post.is_open_interactscreenad',0,'intval');
 		$save['is_4g']       = I('post.is_4g',0,'intval');
 		$save['box_type']    = I('post.box_type',0,'intval');
+		$save['qrcode_type'] = I('post.qrcode_type',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		
 		if($tpmedia_id_arr){
