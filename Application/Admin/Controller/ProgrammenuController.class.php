@@ -208,7 +208,7 @@ class ProgrammenuController extends BaseController
                 $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
                 $v_pro_key = C('VSMALL_PRO');
                 $v_adv_key = C('VSMALL_ADV');
-                foreach($com_arr as $key=>$v){
+                foreach($com_arr as $k=>$v){
                     if(in_array($k, $v_hotel_arr)){
                         $keys_arr = $redis->keys($v_pro_key.$k."*");
                         foreach($keys_arr as $vv){
