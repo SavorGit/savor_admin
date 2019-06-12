@@ -81,13 +81,21 @@ class TvchannelController extends BaseController {
 
     public function channellock(){
         $id = I('get.id',0,'intval');
+        $hotel_id = I('get.hotelid',0,'intval');
         $lock = I('get.lock',0,'intval');
         if($lock==0){
             $is_lock = 1;
         }else{
             $is_lock = 0;
         }
-        $m_channel = new \Admin\Model\TvchannelModel();
+        if($is_lock){
+            $m_channel = new \Admin\Model\TvchannelModel();
+            $res_channel = $m_channel->getInfo(array('hotel_id'=>$hotel_id,'is_lock'=>1));
+            if(!empty($res_channel)){
+                $this->output('只能锁定1个节目', 'tvchannel/channellist',2,0);
+            }
+        }
+
         $result = $m_channel->updateData(array('id'=>$id),array('is_lock'=>$is_lock));
         if($result){
             $this->output('操作成功!', 'tvchannel/channellist',2);
