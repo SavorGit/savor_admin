@@ -62,7 +62,7 @@
               <td data-title="锁定"><if condition="$dinfo.is_lock eq 1">已锁定<else />正常</if></td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a warn="警告" data-tip="锁定" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/tvchannel/channellock?id={$dinfo.id}&lock={$dinfo.is_lock}&hotelid={$dinfo.hotel_id}"  class="btn btn-success btn-icon">
+                  <a warn="警告" data-tip="锁定" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/tvchannel/channellock?id={$dinfo.id}&lock={$dinfo.is_lock}&hotelid={$dinfo.hotel_id}&type={$dinfo.type}"  class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>
