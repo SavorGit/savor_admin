@@ -92,6 +92,15 @@ class SappforscreenController extends BaseController {
         if($scene_id){
             $where['a.scene_id'] = $scene_id;
         }
+        if($personattr_id){
+            $where['a.personattr_id'] = $personattr_id;
+        }
+        if($dinnernature_id){
+            $where['a.dinnernature_id'] = $dinnernature_id;
+        }
+        if($contentsoft_id){
+            $where['a.contentsoft_id'] = $contentsoft_id;
+        }
         if($spotstatus){
             $where['a.spotstatus'] = $spotstatus;
         }
