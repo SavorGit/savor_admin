@@ -218,11 +218,11 @@ class ProgrammenuController extends BaseController
                     if(in_array($k, $v_hotel_arr)){
                         $keys_arr = $redis->keys($v_pro_key.$k."*");
                         foreach($keys_arr as $vv){
-                            $redis->del($vv);
+                            $redis->remove($vv);
                         }
                         $keys_arr = $redis->keys($v_adv_key.$k."*");
                         foreach($keys_arr as $vv){
-                            $redis->del($vv);   
+                            $redis->remove($vv);   
                         }
                     }
                 }

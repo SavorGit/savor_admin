@@ -233,7 +233,7 @@ class ArticleController extends BaseController {
                     foreach($v_hotel_arr as $v){
                         $keys_arr = $redis->keys($v_vod_key.$v."*");
                         foreach($keys_arr as $vv){
-                            $redis->del($vv);
+                            $redis->remove($vv);
                         }
                     }
                     sendTopicMessage($tmp_hotel_arr, 11);
@@ -393,7 +393,7 @@ class ArticleController extends BaseController {
             foreach($v_hotel_arr as $v){
                 $keys_arr = $redis->keys($v_vod_key.$v."*");
                 foreach($keys_arr as $vv){
-                    $redis->del($vv);
+                    $redis->remove($vv);
                 }
             }
             
@@ -562,7 +562,7 @@ class ArticleController extends BaseController {
             foreach($v_hotel_arr as $v){
                 $keys_arr = $redis->keys($v_vod_key.$v."*");
                 foreach($keys_arr as $vv){
-                    $redis->del($vv);
+                    $redis->remove($vv);
                 }
             }
             
@@ -742,7 +742,7 @@ WHERE id IN (1,2,3)*/
                     foreach($v_hotel_arr as $v){
                         $keys_arr = $redis->keys($v_vod_key.$v."*");
                         foreach($keys_arr as $vv){
-                            $redis->del($vv);
+                            $redis->remove($vv);
                         }
                     }
                 }

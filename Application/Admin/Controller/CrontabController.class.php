@@ -956,7 +956,7 @@ class CrontabController extends Controller
                 if(in_array($tv['hotel_id'], $v_hotel_arr)){
                     $keys_arr = $redis->keys($v_ads_key.$tv['hotel_id']."*");
                     foreach($keys_arr as $vv){
-                        $redis->del($vv);
+                        $redis->remove($vv);
                     }
                 }
             }

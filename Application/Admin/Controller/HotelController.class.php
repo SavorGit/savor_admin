@@ -1597,7 +1597,7 @@ class HotelController extends BaseController {
 		        if(in_array($infos['hotel_id'], $v_hotel_arr)){
 		            $keys_arr = $redis->keys($v_adv_key.$infos['hotel_id']."*");
 		            foreach($keys_arr as $vv){
-		                $redis->del($vv);
+		                $redis->remove($vv);
 		            }
 		        }
 		    }

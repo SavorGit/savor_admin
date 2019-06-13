@@ -199,7 +199,7 @@ class PolyscreenController extends BaseController{
                     if(in_array($v['hotel_id'], $v_hotel_arr)){
                         $keys_arr = $redis->keys($v_poly_key.$v['hotel_id']."*");
                         foreach($keys_arr as $vv){
-                            $redis->del($vv);
+                            $redis->remove($vv);
                         }
                     }
                 }

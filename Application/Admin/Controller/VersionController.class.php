@@ -364,7 +364,7 @@ class VersionController extends BaseController{
 	                    if(in_array($v, $v_hotel_arr)){
 	                        $keys_arr = $redis->keys($v_apk_key.$v."*");
 	                        foreach($keys_arr as $vv){
-	                            $redis->del($vv);
+	                            $redis->remove($vv);
 	                        }
 	                    }
 	                }
@@ -387,7 +387,7 @@ class VersionController extends BaseController{
 	                foreach($v_hotel_arr as $k=>$v){
 	                    $keys_arr = $redis->keys($v_apk_key.$v."*");
 	                    foreach($keys_arr as $vv){
-	                        $redis->del($vv);
+	                        $redis->remove($vv);
 	                    }
 	                }
 	                
@@ -743,7 +743,7 @@ class VersionController extends BaseController{
 	                    if(in_array($v, $v_hotel_arr)){
 	                        $keys_arr = $redis->keys($v_apk_key.$v."*");
 	                        foreach($keys_arr as $vv){
-	                            $redis->del($vv);
+	                            $redis->remove($vv);
 	                        }
 	                    }
 	                }
@@ -766,7 +766,7 @@ class VersionController extends BaseController{
 	                foreach($v_hotel_arr as $k=>$v){
 	                    $keys_arr = $redis->keys($v_apk_key.$v."*");
 	                    foreach($keys_arr as $vv){
-	                        $redis->del($vv);
+	                        $redis->remove($vv);
 	                    }
 	                }
 	            }
