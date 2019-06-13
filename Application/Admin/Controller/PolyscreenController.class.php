@@ -176,7 +176,16 @@ class PolyscreenController extends BaseController{
                     group by hotel.id";
             $data = $m_box->query($sql); 
             if(!empty($data)){
-                
+                //获取虚拟小平台配置的酒楼id 如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
+                $tmp_hotel_arr = getVsmallHotelList();
+                $ht_arr = array();
+                foreach($data as $key=>$v){
+                    if(in_array($v['hotel_id'], $tmp_hotel_arr)){
+                        $ht_arr[] = $v['hotel_id'];
+                        //sendTopicMessage($v['hotel_id'], 10);
+                    }
+                }
+                sendTopicMessage($ht_arr, 10);
                 
                 //新虚拟小平台接口
                 $redis = SavorRedis::getInstance();

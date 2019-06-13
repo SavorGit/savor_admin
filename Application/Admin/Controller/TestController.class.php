@@ -13,6 +13,130 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+    public function removeHotelinfoCache(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        
+        $sql ="select * from savor_hotel hotel 
+               left join savor_hotel_ext ext on hotel.id=ext.hotel_id
+               ";
+        $data = M()->query($sql);
+        $data = array();
+        foreach($data  as $key=>$v){
+            $hotel_info = array();
+            $hotel_ext_info = array();
+            $hotel_id = $v['id'];
+            $hotel_info['name']      = $v['name'];
+            $hotel_info['addr']      = $v['addr'];
+            $hotel_info['area_id']   = $v['area_id'];
+            $hotel_info['county_id'] = $v['county_id'];
+            $hotel_info['media_id']  = $v['media_id'];
+            $hotel_info['contractor']= $v['contractor'];
+            $hotel_info['mobile']    = $v['mobile'];
+            $hotel_info['tel']       = $v['tel'];
+            $hotel_info['maintainer']= $v['maintainer'];
+            $hotel_info['level']     = $v['level'];
+            $hotel_info['iskey']     = $v['iskey'];
+            $hotel_info['install_date'] = $v['install_date'];
+            $hotel_info['state']     = $v['state'];
+            $hotel_info['state_change_reason'] = $v['state_change_reason'];
+            $hotel_info['gps']       = $v['gps'];
+            $hotel_info['remark']    = $v['remark'];
+            $hotel_info['hotel_box_type'] = $v['hotel_box_type'];
+            $hotel_info['create_time']=$v['create_time'];
+            $hotel_info['update_time']=$v['update_time'];
+            $hotel_info['flag']      = $v['flag'];
+            $hotel_info['tech_maintainer'] = $v['tech_maintainer'];
+            $hotel_info['remote_id'] = $v['remote_id'];
+            $hotel_info['hotel_wifi']= $v['hotel_wifi'];
+            $hotel_info['hotel_wifi_pas'] = $v['hotel_wifi_pas'];
+            $hotel_info['bill_per']  = $v['bill_per'];
+            $hotel_info['collection_company'] = $v['collection_company'];
+            $hotel_info['bank_account'] = $v['bank_account'];
+            $hotel_info['bank_name'] = $v['bank_name'];
+            $hotel_info['is_4g']     = $v['is_4g'];
+            $hotel_cache_key = C('DB_PREFIX').'hotel_'.$hotel_id;
+            $redis->set($hotel_cache_key, json_encode($hotel_info));
+            
+            $hotel_ext_info['mac_addr'] = $v['mac_addr'];
+            $hotel_ext_info['ip_local'] = $v['ip_local'];
+            $hotel_ext_info['ip']       = $v['ip'];
+            $hotel_ext_info['server_location'] = $v['server_location'];
+            $hotel_ext_info['tag']      = $v['tag'];
+            $hotel_ext_info['hotel_id'] = $v['hotel_id'];
+            $hotel_ext_info['is_open_customer'] = $v['is_open_customer'];
+            $hotel_ext_info['maintainer_id'] = $v['maintainer_id'];
+            $hotel_ext_info['adplay_num'] = $v['adplay_num'];
+            $hotel_ext_info['food_style_id'] = $v['food_style_id'];
+            $hotel_ext_info['avg_expense']= $v['avg_expense'];
+            $hotel_ext_info['hotel_cover_media_id'] = $v['hotel_cover_media_id'];
+            $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
+            $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
+            $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
+            
+            
+        }
+        //包间
+        $sql  = "select * from savor_room ";
+        $data = M()->query($sql);
+        $data = array();
+        foreach($data as $key=>$v){
+            $room_info = array();
+            $room_id  = $v['id'];
+            $room_info['id'] = $v['id'];
+            $room_info['hotel_id'] = $v['hotel_id'];
+            $room_info['name']     = $v['name'];
+            $room_info['type']     = $v['type'];
+            $room_info['remark']   = $v['remark'];
+            $room_info['probe']    = $v['probe'];
+            $room_info['create_time'] = $v['create_time'];
+            $room_info['update_time'] = $v['update_time'];
+            $room_info['flag']     = $v['flag'];
+            $room_info['state']    = $v['state'];
+            $room_cache_key =   C('DB_PREFIX').'room_'.$room_id;
+            $redis->set($room_cache_key, json_encode($room_info));
+            
+        }
+        $sql = "select * from savor_box ";
+        $data = M()->query($sql);
+        $data = array();
+        foreach($data as $key=>$v){
+            $box_info = array();
+            $box_id = $v['id'];
+            $box_info['id']      = $v['id'];
+            $box_info['room_id'] = $v['room_id'];
+            $box_info['name']    = $v['name'];
+            $box_info['mac']     = $v['mac'];
+            $box_info['switch_time'] = $v['switch_time'];
+            $box_info['volum']   = $v['volum'];
+            $box_info['tag']     = $v['tag'];
+            $box_info['device_token'] = $v['device_token'];
+            $box_info['state']   = $v['state'];
+            $box_info['flag']    = $v['flag'];
+            $box_info['create_time'] = $v['create_time'];
+            $box_info['update_time'] = $v['update_time'];
+            $box_info['adv_mach']    = $v['adv_mach'];
+            $box_info['tpmedia_id']  = $v['tpmedia_id'];
+            $box_info['qrcode_type'] = $v['qrcode_type'];
+            $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
+            $box_info['is_4g']       = $v['is_4g'];
+            $box_info['box_type']    = $v['box_type'];
+            $box_info['wifi_name']   = $box_info['wifi_name'];
+            $box_info['wifi_password']=$box_info['wifi_password'];
+            $box_info['wifi_mac']    = $box_info['wifi_mac'];
+            $box_info['is_open_simple'] = $box_info['is_open_simple'];
+            $box_info['is_open_interactscreenad'] = $box_info['is_open_interactscreenad'];
+            $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
+            $redis->set($box_cache_key, json_encode($box_info));
+        }
+        
+    }
+    public function genHotelInfoCache(){
+        
+        
+        
+    }
+    
     
     public function openZmtmpid(){
         exit(1);

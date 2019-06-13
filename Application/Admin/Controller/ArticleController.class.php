@@ -236,7 +236,7 @@ class ArticleController extends BaseController {
                             $redis->del($vv);
                         }
                     }
-                    
+                    sendTopicMessage($tmp_hotel_arr, 11);
                     $this->output('操作成功!', 'article/homemanager',2);
                 }else{
                     $this->output('操作失败!', 'content/getlist');
@@ -247,7 +247,7 @@ class ArticleController extends BaseController {
             $save['sort_num'] = $max_nu+1;
             $res_save = $mbHomeModel->where('id='.$id)->save($save);
             if($res_save){
-                
+                sendTopicMessage($tmp_hotel_arr, 11);
                 $this->output('操作成功!', 'content/getlist',3);
                 die;
             }else{
@@ -379,7 +379,8 @@ class ArticleController extends BaseController {
             }else{
                 $mbperModel->add($dat);
             }
-            
+            $tmp_hotel_arr = getVsmallHotelList();
+            sendTopicMessage($tmp_hotel_arr, 11);
             
             //新虚拟小平台接口
             $redis = SavorRedis::getInstance();
@@ -548,7 +549,8 @@ class ArticleController extends BaseController {
             }else{
                 $mbperModel->add($dat);
             }
-            
+            $tmp_hotel_arr = getVsmallHotelList();
+            sendTopicMessage($tmp_hotel_arr, 11);
             //新虚拟小平台接口
             $redis = SavorRedis::getInstance();
             $redis->select(10);

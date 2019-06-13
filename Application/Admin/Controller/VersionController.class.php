@@ -340,11 +340,18 @@ class VersionController extends BaseController{
 	        }
 	        $res_data = $upgradeModel->add($add_data);
 	        if($res_data){
-	            
+	            $tmp_hotel_arr = getVsmallHotelList();
 	            if($hotel_id){
 	                
 	                $hotel_arr = explode(',', $hotel_id);
-	                
+	                $tt_mps = array();
+	                foreach($hotel_arr as $k=>$v){
+	                    if(in_array($v, $tmp_hotel_arr)){
+	                        $tt_mps[] = $v;
+	                        //sendTopicMessage($v, 13);
+	                    }
+	                }
+	                sendTopicMessage($tt_mps, 13);
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
@@ -363,6 +370,12 @@ class VersionController extends BaseController{
 	                }
 	                
 	            }else {
+	                $tt_mps = array();
+	                foreach($tmp_hotel_arr as $key=>$v){
+	                    $tt_mps[] = $v;
+	                    //sendTopicMessage($v, 13);
+	                }
+	                sendTopicMessage($tt_mps, 13);
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
@@ -707,10 +720,17 @@ class VersionController extends BaseController{
 	        case 20:
 	            $info = $upgradeModel->field('hotel_id')->where($where)->find();
 	            $upgradeModel->where($where)->delete();
-	            //$tmp_hotel_arr = getVsmallHotelList();
+	            $tmp_hotel_arr = getVsmallHotelList();
 	            if($info['hotel_id']){
 	                $select_hotel_arr = explode(',', $info['hotel_id']);
-	                
+	                $tt_mps =array();
+	                foreach($select_hotel_arr as $v){
+	                    if(in_array($v, $tmp_hotel_arr)){
+	                        $tt_mps[]=$v;
+	                        //sendTopicMessage($v, 13);
+	                    }
+	                }
+	                sendTopicMessage($tt_mps, 13);
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
@@ -729,7 +749,12 @@ class VersionController extends BaseController{
 	                }
 	                
 	            }else {
-	                
+	                $tt_mps = array();
+	                foreach($tmp_hotel_arr as $k=>$v){
+	                    $tt_mps[] =$v;
+	                    //sendTopicMessage($v, 13);
+	                }
+	                sendTopicMessage($tt_mps, 13);
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
