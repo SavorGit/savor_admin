@@ -121,15 +121,15 @@ class TestController extends Controller {
             $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
             $box_info['is_4g']       = $v['is_4g'];
             $box_info['box_type']    = $v['box_type'];
-            $box_info['wifi_name']   = $box_info['wifi_name'];
-            $box_info['wifi_password']=$box_info['wifi_password'];
-            $box_info['wifi_mac']    = $box_info['wifi_mac'];
-            $box_info['is_open_simple'] = $box_info['is_open_simple'];
-            $box_info['is_open_interactscreenad'] = $box_info['is_open_interactscreenad'];
+            $box_info['wifi_name']   = $v['wifi_name'];
+            $box_info['wifi_password']=$v['wifi_password'];
+            $box_info['wifi_mac']    = $v['wifi_mac'];
+            $box_info['is_open_simple'] = $v['is_open_simple'];
+            $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
         }
-        
+        echo "ok";
     }
     public function genHotelInfoCache(){
         
