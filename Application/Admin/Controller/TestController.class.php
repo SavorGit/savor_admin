@@ -18,7 +18,7 @@ class TestController extends Controller {
         $redis->select(15);
         
         $sql ="select * from savor_hotel hotel 
-               left join savor_hotel_ext ext on hotel.id=ext.hotel_id
+               
                ";
         $data = M()->query($sql);
         $data = array();
@@ -58,7 +58,7 @@ class TestController extends Controller {
             $hotel_cache_key = C('DB_PREFIX').'hotel_'.$hotel_id;
             $redis->set($hotel_cache_key, json_encode($hotel_info));
             
-            $hotel_ext_info['mac_addr'] = $v['mac_addr'];
+            /* $hotel_ext_info['mac_addr'] = $v['mac_addr'];
             $hotel_ext_info['ip_local'] = $v['ip_local'];
             $hotel_ext_info['ip']       = $v['ip'];
             $hotel_ext_info['server_location'] = $v['server_location'];
@@ -72,10 +72,35 @@ class TestController extends Controller {
             $hotel_ext_info['hotel_cover_media_id'] = $v['hotel_cover_media_id'];
             $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
             $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
-            $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
+            $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); */
             
             
         }
+        $sql ="select * from savor_hotel_ext 
+        
+               ";
+        $data = M()->query($sql);
+        $data = array();
+        foreach ($data as $key=>$v){
+             $hotel_id = $v['hotel_id'];
+             $hotel_ext_info = array();
+             $hotel_ext_info['mac_addr'] = $v['mac_addr'];
+             $hotel_ext_info['ip_local'] = $v['ip_local'];
+             $hotel_ext_info['ip']       = $v['ip'];
+             $hotel_ext_info['server_location'] = $v['server_location'];
+             $hotel_ext_info['tag']      = $v['tag'];
+             $hotel_ext_info['hotel_id'] = $v['hotel_id'];
+             $hotel_ext_info['is_open_customer'] = $v['is_open_customer'];
+             $hotel_ext_info['maintainer_id'] = $v['maintainer_id'];
+             $hotel_ext_info['adplay_num'] = $v['adplay_num'];
+             $hotel_ext_info['food_style_id'] = $v['food_style_id'];
+             $hotel_ext_info['avg_expense']= $v['avg_expense'];
+             $hotel_ext_info['hotel_cover_media_id'] = $v['hotel_cover_media_id'];
+             $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
+             $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
+             $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); 
+        }
+        
         //包间
         $sql  = "select * from savor_room ";
         $data = M()->query($sql);
@@ -676,6 +701,78 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
                 }
             }
             $m_friend->addInfo($f_arr,2);
+        }
+        echo "ok";
+    }
+    public function hotelredis(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        $cache_key = "savor_hotel_7";
+        $info = $redis->get($cache_key);
+        $info = json_decode($info,true);
+        print_r($info);
+   
+    }
+    public function getHotelinfosByboxmac(){
+        $box_mac = I('get.box_mac');
+        $sql ="select hotel.name hotel_name,room.name room_name,box.name box_name
+               from savor_box box left join savor_room room on box.room_id=room.id
+               left join savor_hotel hotel on  room.hotel_id=hotel.id
+               where box.mac='".$box_mac."' and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+        $data = M()->query($sql);
+        print_r($data);
+    }
+    public function testredis(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        $sql ="select * from savor_hotel 
+               
+               ";
+        $data = M()->query($sql);
+        $data = array();
+        foreach($data as $key=>$v){
+            $tmp = $redis->get('savor_hotel_'.$v['id']);
+            if($tmp){
+                $hotel_info = json_decode($tmp,true);
+                if($v['name'] != $hotel_info['name']){
+                    echo $v['name'].'savor_hotel_'.$v['id'].$hotel_info['name']."<br>";
+                }
+            }
+        }
+        $sql ="select * from savor_hotel_ext ";
+        $data = M()->query($sql);
+        $data = array();
+        foreach($data as $key=>$v){
+            $tmp = $redis->get('savor_hotel_ext_'.$v['hotel_id']);
+            if($tmp){
+                $hotel_ext_info = json_decode($tmp,true);
+                if($v['mac_addr']!=$hotel_ext_info['mac_addr']){
+                    echo $v['hotel_id']."<br>";
+                }
+            }
+        }
+        $sql ="select * from savor_room";
+        $data = M()->query($sql);
+        $data = array();
+        foreach($data as $key=>$v){
+            $tmp = $redis->get('savor_room_'.$v['id']);
+            if($tmp){
+                $room_info = json_decode($tmp,true);
+                if($v['name']!=$room_info['name']){
+                    echo $v['id']."<br>";
+                }
+            }
+        }
+        $sql ="select * from savor_box ";
+        $data = M()->query($sql);
+        foreach($data as $key=>$v){
+            $tmp = $redis->get('savor_box_'.$v['id']);
+            if($tmp){
+                $box_info = json_decode($tmp,true);
+                if($v['name']!=$box_info['name']){
+                    echo $v['id'];
+                }
+            }
         }
         echo "ok";
     }
