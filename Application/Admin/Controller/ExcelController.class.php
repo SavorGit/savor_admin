@@ -112,6 +112,8 @@ class ExcelController extends Controller
 	         
 	     }else if($filename=='noLogBoxListInfo'){
 	         $tmpname = '未上传日志的版位详情';
+	     }else if($filename=='forscreenTimes'){
+	         $tmpname = '投屏时长分布';
 	     }
 
 
@@ -4946,6 +4948,36 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         
         );
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function forscreenTimes(){
+        $sql ="SELECT a.box_res_edown_time,a.res_sup_time FROM savor_smallapp_forscreen_record a 
+               LEFT JOIN savor_box box ON a.box_mac=box.mac 
+               LEFT JOIN savor_room room ON room.id= box.room_id 
+               LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id 
+               LEFT JOIN savor_area_info AREA ON hotel.area_id=area.id 
+               LEFT JOIN savor_smallapp_user USER ON a.openid=user.openid 
+               WHERE box.flag = 0 AND box.state = 1 AND a.mobile_brand <> 'devtools' 
+               AND a.is_valid = 1 AND ( a.create_time >= '2019-06-07 00:00:00' AND a.create_time <= '2019-06-14 23:59:59' ) 
+               AND a.is_exist = 0 AND a.small_app_id = 1 AND a.box_res_edown_time>0 AND A.res_sup_time>0
+               AND A.box_res_edown_time>A.res_sup_time
+               ORDER BY a.id DESC ";
+        $data = M()->query($sql);
+        $rts = array();
+        foreach($data as $key=>$v){
+            $diff = $v['box_res_edown_time'] - $v['res_sup_time'];
+            $diff = $diff/1000;
+            $rts[$key]['diff'] = sprintf('%.2f',$diff);
+        }
+        $xlsName = '6月7日-6月14投屏时长分布';
+        $filename = 'forscreenTimes';
+        
+        $xlsCell = array(
+        
+            array('diff','总时长'),
+        
+        
+        );
+        $this->exportExcel($xlsName, $xlsCell, $rts,$filename);
     }
     private function getScore($data,$conf_arr){
         $score = 0;
