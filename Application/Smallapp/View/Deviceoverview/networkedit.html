@@ -1,0 +1,69 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/deviceoverview/networkedit" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="box_id" type="hidden" value="{$vinfo.id}"/>
+
+        <div class="pageFormContent modal-body">
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    机顶盒名称:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" class="form-control" name="name" minlength="1" maxlength="20" value="{$vinfo.name}" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    mac地址:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" class="form-control" name="mac" minlength="12" maxlength="12" value="{$vinfo.mac}" required>
+                </div>
+            </div>
+
+            <div class="form-group row" >
+                <label class="col-xs-12 col-sm-2 control-label">
+                    小程序码类型:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="qrcode_type" class="form-control bs-select">
+                        <option value="1" <if condition="  $vinfo.qrcode_type eq 1 "> selected </if> >小程序码</option>
+                        <option value="2" <if condition="  $vinfo.qrcode_type eq 2 "> selected </if> >二维码</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    是否支持小程序投屏:
+                </label>
+
+                <div class="col-xs-12 col-sm-10">
+                    <select name="is_sapp_forscreen" class="form-control bs-select">
+
+                        <option value="0" <if condition="  $vinfo.is_sapp_forscreen eq 0 "> selected </if> >否</option>
+                        <option value="1" <if condition="  $vinfo.is_sapp_forscreen eq 1 "> selected </if> >是</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    是否开启极简版小程序:
+                </label>
+
+                <div class="col-xs-12 col-sm-10">
+                    <select name="is_open_simple" class="form-control bs-select">
+                        <option value="1" <if condition="$vinfo.is_open_simple eq 1 "> selected </if> >是</option>
+                        <option value="0" <if condition="$vinfo.is_open_simple eq 0 "> selected </if>  >否</option>
+
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>

@@ -25,6 +25,94 @@ class StatisticsModel extends Model
 	    return $data;
 	}
 
+	public function getBoxNetworkList($all_box_speed,$speed,$tv_code,$hotel_name,$start,$size){
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(15);
+        foreach ($all_box_speed as $k=>$v){
+            $box_cache_key = "savor_box_{$v['box_id']}";
+            $box_info = $redis->get($box_cache_key);
+            $all_box_speed[$k]['box_name'] = $box_info['name'];
+            $all_box_speed[$k]['qrcode_type'] = $box_info['qrcode_type'];
+            $all_box_speed[$k]['is_sapp_forscreen'] = $box_info['is_sapp_forscreen'];
+            $all_box_speed[$k]['is_open_simple'] = $box_info['is_open_simple'];
+
+            $is_del = 0;
+            if($speed){
+                $spinfo = explode('-',$speed);
+                if($v['avg_speed']>=$spinfo[0] && $v['avg_speed']<=$spinfo[1]){
+                    $is_del = 0;
+                }else{
+                    $is_del = 1;
+                    unset($all_box_speed[$k]);
+                }
+            }
+            if($is_del==0){
+                if($tv_code){
+                    switch ($tv_code){
+                        case 1:
+                            if($box_info['qrcode_type']==1 && $box_info['is_sapp_forscreen']==1){
+                                $is_del = 0;
+                            }else{
+                                $is_del = 1;
+                            }
+                            break;
+                        case 2:
+                            if($box_info['qrcode_type']==1 && $box_info['is_open_simple']==1){
+                                $is_del = 0;
+                            }else{
+                                $is_del = 1;
+                            }
+                            break;
+                        case 3:
+                            if($box_info['qrcode_type']==1 && $box_info['is_sapp_forscreen']==1 && $box_info['is_open_simple']==1){
+                                $is_del = 0;
+                            }else{
+                                $is_del = 1;
+                            }
+                            break;
+                        case 4:
+                            if($box_info['qrcode_type']==2 && $box_info['is_sapp_forscreen']==1){
+                                $is_del = 0;
+                            }else{
+                                $is_del = 1;
+                            }
+                            break;
+                        case 5:
+                            if($box_info['qrcode_type']==2 && $box_info['is_open_simple']==1){
+                                $is_del = 0;
+                            }else{
+                                $is_del = 1;
+                            }
+                            break;
+                        case 6:
+                            if($box_info['qrcode_type']==2 && $box_info['is_sapp_forscreen']==1 && $box_info['is_open_simple']==1){
+                                $is_del = 0;
+                            }else{
+                                $is_del = 1;
+                            }
+                            break;
+                    }
+                }
+            }
+            if($is_del==0){
+                if(!empty($hotel_name)){
+                    preg_match("/$hotel_name/",$v['hotel_name'],$regs);
+                    if(empty($regs)){
+                        unset($all_box_speed[$k]);
+                    }
+                }
+            }else{
+                unset($all_box_speed[$k]);
+            }
+        }
+        $list = array_slice($all_box_speed,$start,$size);
+        $count = count($all_box_speed);
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
+
     public function getOnlinnum($fields,$where){
         $data =$this->alias('s')
             ->join('savor_box b on s.box_mac=b.mac','left')
@@ -69,12 +157,22 @@ class StatisticsModel extends Model
         return $dates;
     }
 
-    public function getDates($start,$end){
+    public function getDates($start,$end,$type=1){
         $all_dates = array();
         $dt_start = strtotime($start);
         $dt_end = strtotime($end);
         while ($dt_start<=$dt_end){
-            $all_dates[]=date('Y-m-d',$dt_start);
+            switch ($type){
+                case 1:
+                    $now_date = date('Y-m-d',$dt_start);
+                    break;
+                case 2:
+                    $now_date = date('Ymd',$dt_start);
+                    break;
+                default:
+                    $now_date = date('Y-m-d',$dt_start);
+            }
+            $all_dates[]=$now_date;
             $dt_start=strtotime('+1 day',$dt_start);
         }
         return $all_dates;
@@ -103,9 +201,14 @@ class StatisticsModel extends Model
     public function getRatenumDatewhere($date){
         $where = array();
         if(is_array($date)){
-            $start_time = $date[0];
-            $end_time = $date[1];
-            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+            $count_date = count($date);
+            if($count_date==2){
+                $start_time = $date[0];
+                $end_time = $date[1];
+                $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+            }else{
+                $where['static_date'] = array('in',$date);
+            }
         }else{
             $where['static_date'] = $date;
         }
@@ -117,11 +220,14 @@ class StatisticsModel extends Model
      * type 0所有 1转换率 2传播率 3屏幕在线率 4网络质量 5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级,9心跳次数
      *
      */
-    public function getRatenum($date,$static_fj=0,$type=0,$hotel_id=0,$box_mac=''){
+    public function getRatenum($date,$static_fj=0,$type=0,$hotel_id=0,$box_mac='',$area_id=0){
         $nums = array();
         if(in_array($type,array(0,1,2,3,4,5))){
             //互动饭局数
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -147,6 +253,9 @@ class StatisticsModel extends Model
         if(in_array($type,array(0,1,2,3,4,6))){
             //在线屏幕数
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -174,6 +283,9 @@ class StatisticsModel extends Model
         if($type==0 || $type==4){
             //可投屏数
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -201,6 +313,9 @@ class StatisticsModel extends Model
         if($type==0 || $type==3){
             //网络屏幕数
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -227,6 +342,9 @@ class StatisticsModel extends Model
         if($type==0 || $type==7){
             //互动次数
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -250,6 +368,9 @@ class StatisticsModel extends Model
         }
         if($type==9){
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){
@@ -275,6 +396,9 @@ class StatisticsModel extends Model
 
         if($type==0 || $type==2){
             $where = $this->getRatenumDatewhere($date);
+            if($area_id){
+                $where['area_id'] = $area_id;
+            }
             if($box_mac)    $where['box_mac'] = $box_mac;
             if(!empty($hotel_id)){
                 if(is_array($hotel_id)){

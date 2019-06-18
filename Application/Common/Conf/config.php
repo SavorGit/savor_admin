@@ -501,6 +501,10 @@ $config['VSMALL_ADS']   = "vsmall:ads:";
 $config['VSMALL_POLY']  = "vsmall:poly:";
 $config['VSMALL_VOD']   = "vsmall:vod:";
 $config['VSMALL_APK']   = "vsmall:apk:";
+
+//统计缓存key
+$config['STATS_CACHE_PRE'] = "statistics:";
+
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',
