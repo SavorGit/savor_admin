@@ -12,8 +12,6 @@ class DeviceoverviewController extends BaseController {
         $start_date = date('Ymd',strtotime('-31days'));
         $end_date = date('Ymd',strtotime('-1days'));
 
-        $start_date = 20190301;
-        $end_date = 20190331;
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $date = $m_statistics->getDates($start_date,$end_date,2);
         $m_area = new \Admin\Model\AreaModel();
@@ -169,7 +167,7 @@ class DeviceoverviewController extends BaseController {
         $box_id = I('box_id',0,'intval');
         $m_box = new \Admin\Model\BoxModel();
         if(IS_GET){
-            $vinfo = $m_box->getInfo(array('id'=>$box_id));
+            $vinfo = $m_box->getRow('*',array('id'=>$box_id),'','');
             $this->assign('vinfo',$vinfo);
             $this->display();
         }else{
@@ -182,7 +180,7 @@ class DeviceoverviewController extends BaseController {
                 $redis = \Common\Lib\SavorRedis::getInstance();
                 $redis->select(15);
                 $cache_key =  C('DB_PREFIX').'box_'.$box_id;
-                $vinfo = $m_box->getInfo(array('id'=>$box_id));
+                $vinfo = $m_box->getRow('*',array('id'=>$box_id),'','');
                 $redis->set($cache_key,json_encode($vinfo));
                 $this->output('操作成功!', 'deviceoverview/networklist');
             }else{

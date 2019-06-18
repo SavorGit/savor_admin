@@ -30,7 +30,8 @@ class StatisticsModel extends Model
         $redis->select(15);
         foreach ($all_box_speed as $k=>$v){
             $box_cache_key = "savor_box_{$v['box_id']}";
-            $box_info = $redis->get($box_cache_key);
+            $tmp_box = $redis->get($box_cache_key);
+            $box_info = json_decode($tmp_box,true);
             $all_box_speed[$k]['box_name'] = $box_info['name'];
             $all_box_speed[$k]['qrcode_type'] = $box_info['qrcode_type'];
             $all_box_speed[$k]['is_sapp_forscreen'] = $box_info['is_sapp_forscreen'];

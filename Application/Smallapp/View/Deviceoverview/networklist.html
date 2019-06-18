@@ -42,7 +42,7 @@
           <div class="form-group">
             <div class="input-group input-group-sm">链接码：</div>
             <div class="input-group">
-              <select name="box_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+              <select name="tvcode" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
                 <option value=0>全部</option>
                 <volist name="alltv_code" id="vo">
                   <option value="{$key}" <if condition="$key eq $tv_code">selected</if>>{$vo}</option>
@@ -82,7 +82,7 @@
               <th>版位名称</th>
               <th>酒楼名称</th>
               <th>平均网速</th>
-              <th>当前链接码</th>
+              <!--<th>当前链接码</th>-->
               <th>操作</th>
             </tr>
           </thead>
@@ -92,7 +92,7 @@
               <td data-title="版位名称">{$dinfo.box_name}</td>
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
               <td data-title="平均网速">{$dinfo.avg_speed}k/s</td>
-              <td data-title="当前链接码">{$dinfo.linkcode_str}</td>
+              <!--<td data-title="当前链接码">{$dinfo.linkcode_str}</td>-->
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="版位设置" target="dialog" mask="true" href="{$host_url}/smallapp/deviceoverview/networkedit?box_id={$dinfo.box_id}" class="btn btn-success btn-icon">
