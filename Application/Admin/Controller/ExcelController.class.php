@@ -4968,6 +4968,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $diff = $diff/1000;
             $rts[$key]['diff'] = sprintf('%.2f',$diff);
         }
+        var_export($rts);exit;
+        
+        //var_dump($rts);exit;
         $xlsName = '6月7日-6月14投屏时长分布';
         $filename = 'forscreenTimes';
         
