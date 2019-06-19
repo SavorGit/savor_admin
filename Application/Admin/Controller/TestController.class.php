@@ -156,9 +156,61 @@ class TestController extends Controller {
         }
         echo "ok";
     }
+    public function ttss(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(10);
+    }
     public function genHotelInfoCache(){
-        
-        
+        $sql ="select box.* ,hotel.id hotel_id from savor_box box 
+               left join savor_room  room on box.room_id=room.id
+               left join savor_hotel hotel on room.hotel_id = hotel.id
+               where hotel.id in('848','679','833','827','315','340','601','392','421','418')
+               and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+               ";
+        $data = M()->query($sql);
+        //print_r($data);exit;
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        $flag = 0;
+        foreach($data as $key=>$v){
+            
+            $sql  = "update savor_box set qrcode_type=2 where id=".$v['id']." limit 1";
+            
+            $rt = M()->execute($sql);
+            if($rt){
+                $box_info = array();
+                $box_id = $v['id'];
+                $box_info['id']      = $v['id'];
+                $box_info['room_id'] = $v['room_id'];
+                $box_info['name']    = $v['name'];
+                $box_info['mac']     = $v['mac'];
+                $box_info['switch_time'] = $v['switch_time'];
+                $box_info['volum']   = $v['volum'];
+                $box_info['tag']     = $v['tag'];
+                $box_info['device_token'] = $v['device_token'];
+                $box_info['state']   = $v['state'];
+                $box_info['flag']    = $v['flag'];
+                $box_info['create_time'] = $v['create_time'];
+                $box_info['update_time'] = $v['update_time'];
+                $box_info['adv_mach']    = $v['adv_mach'];
+                $box_info['tpmedia_id']  = $v['tpmedia_id'];
+                $box_info['qrcode_type'] = 2;
+                $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
+                $box_info['is_4g']       = $v['is_4g'];
+                $box_info['box_type']    = $v['box_type'];
+                $box_info['wifi_name']   = $v['wifi_name'];
+                $box_info['wifi_password']=$v['wifi_password'];
+                $box_info['wifi_mac']    = $v['wifi_mac'];
+                $box_info['is_open_simple'] = $v['is_open_simple'];
+                $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
+                $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
+                $redis->set($box_cache_key, json_encode($box_info));
+                $flag++;
+            }
+            
+            
+        }
+        echo $flag;
         
     }
     
