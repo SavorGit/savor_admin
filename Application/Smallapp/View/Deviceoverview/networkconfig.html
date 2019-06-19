@@ -1,0 +1,30 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/smallapp/deviceoverview/networkconfig" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <div class="pageFormContent modal-body">
+		
+	  <php>
+	  	for($i =0 ;$i<6;$i++){
+	  </php>	
+      <div class="form-group row">
+        <div class="col-xs-6 col-sm-4">
+           <input placeholder="请输入数字,默认单位为KB" type="number" class="form-control" name="min[]" minlength="1" maxlength="6"  value="{$data[$i]['min']}" required>
+        </div>
+        <div class="col-xs-1 col-sm-1">至</div>
+
+        <div class="col-xs-6 col-sm-4">
+           <input placeholder="请输入数字,默认单位为KB" type="number" class="form-control" name="max[]" minlength="1" maxlength="6"  value="{$data[$i]['max']}" required>
+        </div>
+      </div>
+      <php>
+      	}
+      </php>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>

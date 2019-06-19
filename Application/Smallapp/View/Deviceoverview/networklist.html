@@ -1,0 +1,112 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/deviceoverview/networklist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$s_date}" data-ymd="true">
+              <input name="s_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$s_date}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$e_date}" data-ymd="true">
+              <input name="e_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$e_date}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">平均网速：</div>
+            <div class="input-group">
+              <select name="speed" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name="all_speeds" id="vo">
+                  <option value="{$vo.value}" {$vo.selected}>{$vo.name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">链接码：</div>
+            <div class="input-group">
+              <select name="tvcode" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name="alltv_code" id="vo">
+                  <option value="{$key}" <if condition="$key eq $tv_code">selected</if>>{$vo}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">酒楼名称：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>版位名称</th>
+              <th>酒楼名称</th>
+              <th>平均网速</th>
+              <!--<th>当前链接码</th>-->
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="版位名称">{$dinfo.box_name}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="平均网速">{$dinfo.avg_speed}k/s</td>
+              <!--<td data-title="当前链接码">{$dinfo.linkcode_str}</td>-->
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="版位设置" target="dialog" mask="true" href="{$host_url}/smallapp/deviceoverview/networkedit?box_id={$dinfo.box_id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

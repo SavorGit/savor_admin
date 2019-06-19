@@ -339,12 +339,13 @@ class BoxModel extends BaseModel{
         return $data;
     }
 
-    public function getBoxByCondition($fields='box.*',$where){
+    public function getBoxByCondition($fields='box.*',$where,$group=''){
         $res = $this->alias('box')
             ->join('savor_room room on room.id= box.room_id','left')
             ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
             ->field($fields)
             ->where($where)
+            ->group($group)
             ->select();
         return $res;
     }
