@@ -255,7 +255,8 @@ class DeviceoverviewController extends BaseController {
             $lunch[] = $v['zxnum'];
             $dinner[] = $res_dinner['zxnum'][$k]['zxnum'];
             $screen[] = $box_num;
-            $rate[] = sprintf("%.2f",($v['zxnum']+$res_dinner['zxnum'][$k]['zxnum'])/$box_num*2);
+            $all_boxnum = $box_num*2;
+            $rate[] = sprintf("%.2f",($v['zxnum']+$res_dinner['zxnum'][$k]['zxnum'])/$all_boxnum);
         }
         $res = array('lunch'=>$lunch,'dinner'=>$dinner,'screen'=>$screen,'rate'=>$rate);
         return $res;
@@ -275,8 +276,9 @@ class DeviceoverviewController extends BaseController {
             }else{
                 $hour_time = "hour$i";
             }
-            $where[$hour_time] = array('gt',0);
-            $count = $m_heartalllog->getCount($where);
+            $count_where = $where;
+            $count_where[$hour_time] = array('gt',0);
+            $count = $m_heartalllog->getCount($count_where);
             $res[] = round($count/30);
         }
         return $res;
@@ -371,7 +373,16 @@ class DeviceoverviewController extends BaseController {
         foreach ($res_log as $v){
             $all_apk[$v['apk_version']] = array('value'=>$v['num'],'name'=>$v['apk_version']);
         }
-        return $all_apk;
+        $apks = array_slice($all_apk,-5);
+        $apk_version = array_keys($apks);
+        $other_num = 0;
+        foreach ($all_apk as $k=>$v){
+            if($k<$apk_version[0]){
+                $other_num++;
+            }
+        }
+        $apks['other'] = array('value'=>$other_num,'name'=>'other');
+        return $apks;
     }
 
     private function device_type($area_id,$all_area){
