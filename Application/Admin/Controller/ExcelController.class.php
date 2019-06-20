@@ -114,6 +114,8 @@ class ExcelController extends Controller
 	         $tmpname = '未上传日志的版位详情';
 	     }else if($filename=='forscreenTimes'){
 	         $tmpname = '投屏时长分布';
+	     }else if($filename =='easySellAds'){
+	         $tmpname = '易售媒体广告模板';
 	     }
 
 
@@ -4981,6 +4983,54 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         
         );
         $this->exportExcel($xlsName, $xlsCell, $rts,$filename);
+    }
+    //易售媒体广告模板
+    public function exportDd(){
+        $city_id = $_GET['city_id']  ? $_GET['city_id'] :1;
+        $sql ="select box.mac box_mac, box.name box_name,tv.tv_size,city.region_name city_name,area.region_name area_name,
+               hotel.addr,hotel.gps,hotel.name hotel_name from savor_tv tv
+               left join savor_box box on tv.box_id=box.id
+               left join savor_room room on box.room_id=room.id
+               left join savor_hotel hotel on room.hotel_id=hotel.id
+               left join savor_area_info city on hotel.area_id= city.id
+               left join savor_area_info area on hotel.county_id=area.id
+               where hotel.area_id=$city_id and  hotel.state=1 and hotel.flag = 0 and box.state=1 and box.flag=0";
+        $data = M()->query($sql);
+        foreach($data as $key=>$v){
+            $gps_arr = explode(',',$v['gps']);
+            $data[$key]['log'] = $gps_arr[0];
+            $data[$key]['lat'] = $gps_arr[1];
+            switch ($city_id){
+                case '1':
+                    $data[$key]['pro_name'] = '北京';
+                    break;
+                case '9':
+                    $data[$key]['pro_name'] = '上海';
+                    break;
+                case '236':
+                    $data[$key]['pro_name'] = '广州';
+                    break;
+                case '246':
+                    $data[$key]['pro_name'] = '广州';
+                    break;
+            }
+        }
+        $xlsName = '易售媒体广告模板';
+        $filename = 'easySellAds';
+        
+        $xlsCell = array(
+            array('hotel_name','酒楼名称'),
+            array('box_mac','机顶盒mac'),
+            array('box_name','机顶盒名称'),
+            array('tv_size','电视尺寸'),
+            array('pro_name','省份'),
+            array('city_name','城市'),
+            array('area_name','区县'),
+            array('addr','地址'),
+            array('log','经度'),
+            array('lat','纬度'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     private function getScore($data,$conf_arr){
         $score = 0;
