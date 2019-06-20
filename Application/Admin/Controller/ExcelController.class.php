@@ -4994,7 +4994,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                left join savor_hotel hotel on room.hotel_id=hotel.id
                left join savor_area_info city on hotel.area_id= city.id
                left join savor_area_info area on hotel.county_id=area.id
-               where hotel.area_id=$city_id and  hotel.state=1 and hotel.flag = 0 and box.state=1 and box.flag=0";
+               where hotel.area_id=$city_id and  hotel.state=1 and hotel.flag = 0 and box.state=1 and box.flag=0
+               and tv.state=1 and tv.flag=0 and hotel.hotel_box_type in(2,3,6)";
         $data = M()->query($sql);
         foreach($data as $key=>$v){
             $gps_arr = explode(',',$v['gps']);
