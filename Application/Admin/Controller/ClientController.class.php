@@ -618,6 +618,10 @@ class ClientController extends Controller {
             $url = 'http://weixin.qq.com/r/7kWYgBbEEkttrVLj9xD8';
             header('Location:'.$url);
             exit;
+        }else if($id==-18){
+            $url="https://www.dji.com/cn/osmo-pocket?site=brandsite&from=homepage";
+            header('Location:'.$url);
+            exit;
         }
     }
 }
