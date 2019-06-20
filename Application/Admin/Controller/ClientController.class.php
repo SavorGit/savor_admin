@@ -610,6 +610,14 @@ class ClientController extends Controller {
             $url ="https://item.jd.com/50126735913.html";
             header('Location:'.$url);
             exit;
+        }else if($id==-16){
+            $url ="https://item.jd.com/100002133548.html";
+            header('Location:'.$url);
+            exit;
+        }else if($id ==-17){
+            $url = 'http://weixin.qq.com/r/7kWYgBbEEkttrVLj9xD8';
+            header('Location:'.$url);
+            exit;
         }
     }
 }
