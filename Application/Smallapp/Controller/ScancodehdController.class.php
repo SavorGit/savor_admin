@@ -59,9 +59,9 @@ class ScancodehdController extends BaseController {
         if($small_app_id){
             $where .=" and a.small_app_id=".$small_app_id;
             if($small_app_id==1){
-                $qrcode_where .=" and a.type in(1,2,3,5)";
-            }else if($small_app_id==3){
-                $qrcode_where .=" and a.type=6";
+                $qrcode_where .=" and a.type in(1,2,3,5,7,8,12,13,15)";
+            }else if($small_app_id==2){
+                $qrcode_where .=" and a.type in(6,9,10,11,16,19,20,21)";
             }
             $this->assign('small_app_id',$small_app_id);
         }else {
@@ -121,6 +121,7 @@ class ScancodehdController extends BaseController {
 		$where .=" and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and a.mobile_brand!='devtools' and suser.unionId!=''";
 		$qrcode_where .=" and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and suser.unionId!=''";
 		$hd_where .= " and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and a.mobile_brand!='devtools' ";
+		
 		//扫码人数
 		$qrcode_log = new \Admin\Model\Smallapp\QrcodeLogModel();
 		$qrcode_person_nums = $qrcode_log->getQrcount($qrcode_where,'suser.unionid');
