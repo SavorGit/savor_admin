@@ -1373,9 +1373,27 @@ class AdvdeliveryController extends BaseController {
         $ret = $m_pub_ads->updateInfo(array('id'=>$pub_ads_id), array('state'=>2));
         if($ret){
             $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+            $m_pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
             $box_list = $m_pub_ads_box->getBoxArrByPubAdsId($pub_ads_id);
+            $hotel_list = $m_pub_ads_hotel->getAdsHotelId($pub_ads_id);
             foreach($box_list as $key=>$v){
                 $redis->remove($cache_key_pre.$v['box_id']);
+            }
+            $redis->select(10);
+            $v_hotel_list_key = C('VSMALL_HOTELLIST');
+            $redis_result = $redis->get($v_hotel_list_key);
+            $v_hotel_list = json_decode($redis_result,true);
+            $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+            
+            $cache_key = C('VSMALL_ADS');
+            foreach ($hotel_list as $key=>$v){
+                if(in_array($v['hotel_id'], $v_hotel_arr)){
+                
+                    $keys_arr = $redis->keys($cache_key.$v['hotel_id']."*");
+                    foreach($keys_arr as $vv){
+                            $redis->remove($vv);
+                    }
+                }
             }
             $this->output('删除成功', 'advdelivery/getlist', 2);
         }else {
