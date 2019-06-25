@@ -77,7 +77,7 @@ class UrlmapController extends BaseController {
         		$result = $m_urlmap->addData($data);
         	}
         	if($result){
-        		$this->output('操作成功', 'urlmap/urllist');
+        		$this->output('操作成功', 'urlmap/urlmaplist');
         	}else{
         		$this->output('操作失败', 'urlmap/urladd',2,0);
         	}
@@ -91,6 +91,8 @@ class UrlmapController extends BaseController {
     	$condition = array('id'=>$id);
     	$result = $m_urlmap->delData($condition);
     	if($result){
+            $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
+            $m_qrscanrecord->delData(array('urlmap_id'=>$id));
     		$this->output('删除成功', '',2);
     	}else{
     		$this->output('删除失败', '',2);
