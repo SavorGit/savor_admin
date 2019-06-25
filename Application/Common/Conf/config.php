@@ -35,6 +35,7 @@ $config = array(
 	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
 	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
+    'HASH_IDS_KEY'=>'Q1xsCaoby2o',
 
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
 
