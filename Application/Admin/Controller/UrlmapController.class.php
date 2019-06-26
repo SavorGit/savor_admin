@@ -84,6 +84,40 @@ class UrlmapController extends BaseController {
         }
     }
 
+    public function scanrecord(){
+        $urlmap_id = I('urlmap_id',0,'intval');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+        $start  = ($page-1) * $size;
+
+        $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
+        $where = array();
+        if($urlmap_id){
+            $where['urlmap_id'] = $urlmap_id;
+        }
+        $result = $m_qrscanrecord->getDataList('*',$where,'id desc',$start, $size);
+
+        $m_urlmap  = new \Admin\Model\UrlmapModel();
+        $res = $m_urlmap->getDataList('*','', 'id desc');
+        $all_url = array();
+        foreach ($res as $v){
+            $info = array('id'=>$v['id'],'name'=>$v['name']);
+            if($urlmap_id && $v['id']==$urlmap_id){
+                $info['is_select'] = 'selected';
+            }else{
+                $info['is_select'] = '';
+            }
+            $all_url[] = $info;
+        }
+
+        $this->assign('datalist', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->assign('allurls',$all_url);
+        $this->display();
+    }
+
 
     public function urldel(){
     	$id = I('get.id', 0, 'intval');

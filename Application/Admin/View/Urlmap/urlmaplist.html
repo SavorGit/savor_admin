@@ -44,13 +44,16 @@
             <tr target="sid_user">
               <td data-title="ID">{$dinfo.id}</td>
               <td data-title="二维码内容地址">{$dinfo.qrcode}</td>
-              <td data-title="扫码数">{$dinfo.qrnum}</td>
+              <td data-title="扫码次数">{$dinfo.qrnum}</td>
               <td data-title="名称">{$dinfo.name}</td>
               <td data-title="URL地址">{$dinfo.link}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/urlmap/urledit?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
+                  </a>
+                  <a data-tip="详情" title="扫码记录" target="navTab" rel="urlmap/scanrecord"  href="{$host_url}/urlmap/scanrecord?urlmap_id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-list"></i>
                   </a>
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/urlmap/urldel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>

@@ -1,0 +1,66 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/urlmap/scanrecord" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-10">
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+          <div class="input-group input-group-sm">
+            <select name="urlmap_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+              <option value="0">全部</option>
+              <volist name="allurls" id="ainfo">
+                <option value="{$ainfo.id}" {$ainfo.is_select} > {$ainfo.name}</option>
+              </volist>
+            </select>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>系统</th>
+            <th>手机品牌</th>
+            <th>手机型号</th>
+            <th>扫码时间</th>
+            <th>浏览器标识UA</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="系统">{$dinfo.mobile_os}</td>
+              <td data-title="手机品牌">{$dinfo.mobile_brand}</td>
+              <td data-title="手机型号">{$dinfo.mobile_model}</td>
+              <td data-title="扫码时间">{$dinfo.add_time}</td>
+              <td data-title="浏览器标识UA">{$dinfo.user_agent}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script>
+    $(function(){
+        $(".class-filter").change(function (){
+            $(this).closest("form").submit();
+        })
+    })
+</script>
