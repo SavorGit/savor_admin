@@ -24,7 +24,8 @@ class ScanqrcodeController extends Controller {
         $jump_url = $res_map['link'];
 
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
-        $data = array('urlmap_id'=>$urlmap_id,'user_agent'=>$user_agent);
+        $ip = getClientIP();
+        $data = array('urlmap_id'=>$urlmap_id,'user_agent'=>$user_agent,'ip'=>$ip);
 
         require_once APP_PATH.'Common/Lib/DeviceDetector/spyc-0.6.2/Spyc.php';
         require_once APP_PATH.'Common/Lib/DeviceDetector/autoload.php';
