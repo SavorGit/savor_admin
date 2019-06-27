@@ -72,6 +72,7 @@ $config_db =  array(
     'SAVOR_API_URL'=>'dev-mobile.littlehotspot.com',
     //end
     'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
+    'SHORT_URL'=>'http://devp.admin.littlehotspot.com',
     'NETTY_BALANCE_URL'=>'https://dev-api-nzb.littlehotspot.com/netty/position',
     'SEND_MAIL_CONF'=>array(
                             'littlehotspot'=>array(

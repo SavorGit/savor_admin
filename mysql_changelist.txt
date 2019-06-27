@@ -1639,8 +1639,72 @@ CREATE TABLE `savor_smallapp_redpacketoperation` (
   `add_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='红包运营表';
+
+CREATE TABLE `savor_smallapp_forscreen_invalidlist` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `invalidid` varchar(100) NOT NULL DEFAULT '' COMMENT '无效ID',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 1酒楼id,2微信openid,3机顶盒mac,4红包黑名单用户',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序投屏无效名单';
+
 ALTER TABLE `cloud`.`savor_smallapp_forscreen_invalidlist`
 MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 1酒楼id,2微信openid,3机顶盒mac,4红包黑名单用户' AFTER `invalidid`;
 
 ALTER TABLE `cloud`.`savor_hotel_ext`
 ADD COLUMN `contract_expiretime` timestamp NULL DEFAULT NULL COMMENT '合同到期时间' AFTER `hotel_cover_media_id`;
+
+ALTER TABLE `cloud`.`savor_tv` ADD INDEX `key_boxid`(`box_id`);
+
+ALTER TABLE `cloud`.`savor_uploadmgr`
+MODIFY COLUMN `shw_savepath` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '文件路径' AFTER `shw_title`;
+
+CREATE TABLE `savor_tvchannel` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `channel_name` varchar(20) NOT NULL DEFAULT '' COMMENT '频道名称',
+  `freq` int(11) NOT NULL DEFAULT '0' COMMENT '频点',
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `raw_number` int(11) NOT NULL DEFAULT '0' COMMENT '原始序号',
+  `play_number` int(11) NOT NULL DEFAULT '0' COMMENT '播放序号',
+  `is_lock` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否锁定',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '2二代盒子,3三代盒子',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='电视频道表';
+
+CREATE TABLE `savor_tvchannel_ext` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `tvchannel_id` int(11) NOT NULL DEFAULT '0' COMMENT '电视频道ID',
+  `video_standard` int(11) NOT NULL DEFAULT '0' COMMENT '电视默认数据视频标准',
+  `audio_standard` int(11) NOT NULL DEFAULT '0' COMMENT '电视默认数据音频标准',
+  `display_name` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据显示名称',
+  `display_number` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据显示序号',
+  `input_id` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据id',
+  `is_browsable` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据',
+  `provider_data` text COMMENT '电视默认数据',
+  `service_id` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据',
+  `service_type` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据',
+  `type` varchar(255) NOT NULL DEFAULT '' COMMENT '电视默认数据',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='电视频道扩展表';
+
+CREATE TABLE `savor_urlmap` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL DEFAULT '' COMMENT '名称',
+  `link` varchar(255) NOT NULL DEFAULT '' COMMENT 'URL地址',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='URL映射表';
+
+CREATE TABLE `savor_qrscan_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `urlmap_id` int(11) NOT NULL DEFAULT '0' COMMENT 'URL映射ID',
+  `mobile_os` varchar(50) NOT NULL DEFAULT '' COMMENT '手机系统',
+  `mobile_brand` varchar(100) NOT NULL DEFAULT '' COMMENT '手机品牌',
+  `mobile_model` varchar(100) NOT NULL DEFAULT '' COMMENT '手机型号',
+  `user_agent` varchar(500) NOT NULL DEFAULT '' COMMENT 'UA',
+  `ip` varchar(50) NOT NULL DEFAULT '' COMMENT '访问IP',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='二维码扫描记录表';

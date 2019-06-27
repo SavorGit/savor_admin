@@ -1,0 +1,72 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/urlmap/urlmaplist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-10">
+          <div class="tools-group s2">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/urlmap/urladd" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i><span>新增</span></a>
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="name" value="{$name}" placeholder="请输入名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>ID</th>
+            <th>二维码内容</th>
+            <th>扫码次数</th>
+            <th>名称</th>
+            <th>URL地址</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="二维码内容地址">{$dinfo.qrcode}</td>
+              <td data-title="扫码次数">{$dinfo.qrnum}</td>
+              <td data-title="名称">{$dinfo.name}</td>
+              <td data-title="URL地址">{$dinfo.link}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/urlmap/urledit?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                  <a data-tip="详情" title="扫码记录" target="navTab" rel="urlmap/scanrecord"  href="{$host_url}/urlmap/scanrecord?urlmap_id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-list"></i>
+                  </a>
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/urlmap/urldel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

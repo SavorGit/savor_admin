@@ -1,0 +1,25 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/urlmap/urledit" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="id" type="hidden" value="{$dinfo.id}"/>
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">名称：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="name" type="text" value="{$dinfo.name}" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">URL：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="link" type="text" value="{$dinfo.link}" class="form-control" required/>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>
