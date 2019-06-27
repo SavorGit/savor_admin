@@ -194,8 +194,21 @@ $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'1','name'=>'主干版小码'),
     array('id'=>'2','name'=>'节目大码'),
     array('id'=>'3','name'=>'呼码'),
-    array('id'=>'5','name'=>'节目大码'),
+    array('id'=>'5','name'=>'新节目大码'),
     array('id'=>'6','name'=>'极简版小码'),
+    array('id'=>'7','name'=>'主干版桌牌码'),
+    array('id'=>'8','name'=>'主干版二维码'),
+    array('id'=>'9','name'=>'极简版节目大码'),
+    array('id'=>'10','name'=>'极简版大码'),
+    array('id'=>'11','name'=>"极简版呼码"),
+    array('id'=>'12','name'=>'主干版节目大二维码'),
+    array('id'=>'13','name'=>'主干版呼二维码'),
+    array('id'=>'15','name'=>'新节目大二维码'),
+    array('id'=>'16','name'=>'极简版二维码'),
+    array('id'=>'19','name'=>'极简版新节目大二维码'),
+    array('id'=>'20','name'=>'极简版节目大二维码'),
+    array('id'=>'21','name'=>'极简版呼二维码')
+    
     
 );
 $config['all_spotstatus'] = array(

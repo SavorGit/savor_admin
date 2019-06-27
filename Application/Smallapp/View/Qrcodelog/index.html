@@ -177,7 +177,16 @@
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒mac">{$vlist.mac}</td>
-              <td data-title="扫码类型"><if condition="$vlist.type eq 1">主干版小码<elseif condition="$vlist.type eq 2" />节目大码<elseif condition="$vlist.type eq 3" />小程序呼码<elseif condition="$vlist.type eq 5" />节目大码 <elseif condition="$vlist.type eq 6" />极简版</if></td>
+              <td data-title="扫码类型">
+              <php>
+                foreach($sapp_qrcode_type_arr as $key=>$v){
+                	if($v['id']==$vlist['type']){
+                		echo $v['name'];
+                		break;
+                	}
+                }
+              </php>
+              </td>
               <td data-title="是否微信授权登陆"><if condition="$vlist.is_wx_auth eq 1">拒绝授权<elseif condition="$vlist.is_wx_auth eq 2"  />是<elseif condition="$vlist.is_wx_auth eq 3" />是<else />否</if></td>
               
               <td data-title="openid">{$vlist.openid}</td>
