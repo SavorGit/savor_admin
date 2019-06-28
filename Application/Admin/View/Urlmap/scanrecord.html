@@ -4,23 +4,54 @@
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
+
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-6 col-md-10">
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
-          <div class="input-group input-group-sm">
-            <select name="urlmap_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
-              <option value="0">全部</option>
-              <volist name="allurls" id="ainfo">
-                <option value="{$ainfo.id}" {$ainfo.is_select} > {$ainfo.name}</option>
-              </volist>
-            </select>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_time}" data-ymd="true">
+              <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+              <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
           </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">名称：</div>
+            <div class="input-group">
+              <select name="urlmap_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+                <option value="0">全部</option>
+                <volist name="allurls" id="ainfo">
+                  <option value="{$ainfo.id}" {$ainfo.is_select} > {$ainfo.name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
         </div>
+
       </div>
+
+
+
     </div>
   </form>
 </div>

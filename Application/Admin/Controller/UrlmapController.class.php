@@ -85,16 +85,28 @@ class UrlmapController extends BaseController {
     }
 
     public function scanrecord(){
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
         $urlmap_id = I('urlmap_id',0,'intval');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
         $start  = ($page-1) * $size;
+        if(empty($start_time)){
+            $start_time = date('Y-m-d',strtotime("-7days"));
+        }
+        if(empty($end_time)){
+            $end_time = date('Y-m-d');
+        }
+        if($start_time>$end_time){
+            $this->output('请选择正确时间段', 'urlmap/scanrecord',2,0);
+        }
 
         $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
         $where = array();
         if($urlmap_id){
             $where['urlmap_id'] = $urlmap_id;
         }
+        $where['add_time'] = array(array('egt',"$start_time 00:00:00"),array('elt',"$end_time 23:59:59"),'and');
         $result = $m_qrscanrecord->getDataList('*',$where,'id desc',$start, $size);
 
         $m_urlmap  = new \Admin\Model\UrlmapModel();
@@ -109,7 +121,8 @@ class UrlmapController extends BaseController {
             }
             $all_url[] = $info;
         }
-
+        $this->assign('start_time',$start_time);
+        $this->assign('end_time',$end_time);
         $this->assign('datalist', $result['list']);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
