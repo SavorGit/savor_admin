@@ -457,11 +457,15 @@ class AdvdeliveryController extends BaseController {
         } else {
             $where .=" AND (( pads.end_date >= '$now_date' AND sbox.box_id > 0) or (pads.end_date >= '$now_date' AND pads.type=2))";
         }
-        $field = 'ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
+        $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
+        
+        
+        $field = 'm.oss_addr image_cover,ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
 
         array_walk($result['list'], function(&$v, $k)use($dap){
+            
             $now_date = strtotime( $dap['now']);
             $v['start_date'] = strtotime( $v['start_date'] );
             $v['end_date'] = strtotime( $v['end_date'] );
@@ -547,6 +551,7 @@ class AdvdeliveryController extends BaseController {
         //判断是否数组分页
         $this->assign('list', $retp);
         $this->assign('page',  $result['page']);
+        $this->assign('oss_host',$oss_host);
         $this->display('advdevilerylist');
     }
 

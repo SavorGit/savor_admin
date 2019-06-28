@@ -87,6 +87,7 @@ class PubAdsModel extends BaseModel
 			->group($group)
 			->join('LEFT JOIN savor_pub_ads_box sbox ON sbox.pub_ads_id = pads.id ')
 			->join('LEFT JOIN savor_ads  ads ON ads.id=pads.ads_id')
+			->join('savor_media m on pads.cover_img_media_id = m.id','left')
 			->order($order)
 			->limit($start,$size)
 			->select();

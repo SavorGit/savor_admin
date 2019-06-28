@@ -55,6 +55,7 @@
           <tr id="post">
             <th>ID</th>
             <th>广告名称</th>
+            <th>广告封面</th>
             <th>按类型发布</th>
             <th>发布状态</th>
             <th>投放进程</th>
@@ -67,6 +68,21 @@
               <td data-title="ID">{$vlist.id}</td>
               <td data-title="名称">{$vlist.name}
 
+              </td>
+              <td data-title="广告封面">
+              
+              <php>
+              	if(!empty($vlist['image_cover'])){
+              </php>
+              <img alt="" src="{$oss_host}{$vlist.image_cover}">
+			  <php>
+			    }else{
+			  </php>
+			  	暂无封面
+			  <php>
+			  	}
+			  </php>
+			  
               </td>
               <td data-title="按类型发布">{$vlist.pub}
 
