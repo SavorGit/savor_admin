@@ -418,6 +418,7 @@ $config['POLY_SCREEN_MEDIA_LIST'] = array(
     '3'=>'奥凌聚屏',
     '4'=>'众盟聚屏',
     '5'=>'京东聚屏',
+    '6'=>'易售聚屏',
 );
 $config['TOU_STATE'] = array(
     '0'=>'全部',
