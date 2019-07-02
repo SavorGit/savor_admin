@@ -164,11 +164,11 @@ class TestController extends Controller {
         //'848','679','833','827','315','340','601','392','421','418'  第一批
         //'258','267','273','327','328','766','818','618','445','601','690','676','293','266','60','837','839','795','9','85','89','555','18','46','549','678','685','28','116','129','896','147','552','742','878','177','223','833','186','827','34','563','763','238'
         //199 464 431 435 206 461 463 460 243 470 867 434 433   第三批 关闭聚屏广告
+        //网络版版位 展示二维码
         $sql ="select box.* ,hotel.id hotel_id from savor_box box 
                left join savor_room  room on box.room_id=room.id
                left join savor_hotel hotel on room.hotel_id = hotel.id
-               where hotel.id in('199','464','431','435','206','461','463','460','243','470','867',
-                                 '434','433')
+               where 1 and hotel.hotel_box_type in(2,3,6)
                and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
                ";
         $data = M()->query($sql);
@@ -178,7 +178,7 @@ class TestController extends Controller {
         $flag = 0;
         foreach($data as $key=>$v){
             
-            $sql  = "update savor_box set tpmedia_id='' where id=".$v['id']." limit 1";
+            $sql  = "update savor_box set qrcode_type=2 where id=".$v['id']." limit 1";
             
             $rt = M()->execute($sql);
             if($rt){
@@ -197,8 +197,8 @@ class TestController extends Controller {
                 $box_info['create_time'] = $v['create_time'];
                 $box_info['update_time'] = $v['update_time'];
                 $box_info['adv_mach']    = $v['adv_mach'];
-                $box_info['tpmedia_id']  = '';
-                $box_info['qrcode_type'] = $v['qrcode_type'];
+                $box_info['tpmedia_id']  = $v['tpmedia_id'];
+                $box_info['qrcode_type'] = 2;
                 $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
                 $box_info['is_4g']       = $v['is_4g'];
                 $box_info['box_type']    = $v['box_type'];
