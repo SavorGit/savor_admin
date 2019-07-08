@@ -4849,18 +4849,20 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     }
     public function exportEmptyWifiBoxList(){
         $sql ="select hotel.id,area.region_name ,hotel.name hotel_name ,hotel.addr,
-               room.name room_name,box.mac,
+               room.name room_name,box.name box_name,box.mac,
                case 
                when hotel.hotel_box_type=3 then '二代5G'
                when hotel.hotel_box_type=6 then '三代网络'
                end
-               as hotel_box_type
+               as hotel_box_type,user.remark, box.wifi_name,box.wifi_mac,box.wifi_password
                from savor_box box
                left join savor_room room on box.room_id=room.id
                left join savor_hotel hotel on room.hotel_id=hotel.id
+               left join savor_hotel_ext ext on hotel.id=ext.hotel_id
+               left join savor_sysuser user  on ext.maintainer_id = user.id
                left join savor_area_info area on hotel.area_id=area.id
                where hotel.hotel_box_type in(3,6) and hotel.flag=0 and hotel.state=1 
-               and box.flag=0 and box.state=1 and wifi_mac='' and hotel.id!=7";
+               and box.flag=0 and box.state=1 and wifi_mac !='' and hotel.id!=7 limit 4000,1000";
         $data = M()->query($sql);
         
         $xlsName = '漏填wifi_mac版位详情';
@@ -4872,8 +4874,14 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('hotel_name','酒楼名称'),
             array('addr','酒楼地址'),
             array('room_name','包间名称'),
+            array('box_name','机顶盒名称'),
             array('mac','机顶盒mac'),
-            array('hotel_box_type','酒楼机顶盒类型')
+            array('remark','维护人'),
+            
+            array('hotel_box_type','酒楼机顶盒类型'),
+            array('wifi_name','wifi名称'),
+            array('wifi_mac','内网mac'),
+            array('wifi_password','wifi密码'),
         
         );
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
