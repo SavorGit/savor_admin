@@ -3619,8 +3619,8 @@ class CrontabController extends Controller
                 }
             }
         }
-        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
-        $log_file_name = APP_PATH.'Runtime/Logs/'.'operationbonus_'.date("Ymd").".log";
-        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+//        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
+//        $log_file_name = APP_PATH.'Runtime/Logs/'.'operationbonus_'.date("Ymd").".log";
+//        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
     }
 }
