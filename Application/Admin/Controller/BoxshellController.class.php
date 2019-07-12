@@ -121,7 +121,7 @@ class BoxshellController extends BaseController{
         $where = array();
         $where['hotel_id'] = $hotel_id;
         $where['flag'] = 0;
-        
+        $where['state'] = 1;
         $room_list = $m_room->getInfo($fields,$where);
         echo json_encode($room_list);
         exit;
