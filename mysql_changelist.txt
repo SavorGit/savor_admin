@@ -1708,6 +1708,16 @@ CREATE TABLE `savor_qrscan_record` (
   `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='二维码扫描记录表';
+
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `resource_name` varchar(255) NOT NULL DEFAULT '' AFTER `box_res_edown_time`;
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `md5_file` char(32) NOT NULL DEFAULT '' AFTER `resource_name`;
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `save_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '文件投屏保存类型 0未知,1阅后即焚,2本地保存' AFTER `md5_file`;
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD COLUMN `file_conversion_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '文件转换状态 0未转换 1转换成功' AFTER `save_type`;
+
 增加说明：新增互动广告
 修改时间：2019-07-15 15:00
 修改人：张英涛
