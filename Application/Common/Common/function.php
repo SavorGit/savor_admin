@@ -54,6 +54,7 @@ function bonus_random($total,$num,$min,$max){
  * @return Ambigous <boolean, mixed>
  */
 function sendTopicMessage($message,$type){
+    return true;
     if(empty($message) || empty($type)){
         return false;
     }
@@ -88,6 +89,7 @@ function sendTopicMessage($message,$type){
  * @return Ambigous <boolean, mixed>
  */
 function sendTopicMessage_back($message,$type){
+    return true;
     if(empty($message) || empty($type)){
         return false;
     }
