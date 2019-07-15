@@ -373,6 +373,7 @@ class BaseController extends Controller {
         $description = I('post.description','');
         $add_mediadata['name'] = I('post.name','','trim');
         $add_mediadata['oss_addr'] = I('post.oss_addr','','trim');
+        $add_mediadata['oss_filesize'] = I('post.oss_filesize',0,'intval');
         if($duration)  $add_mediadata['duration'] = $duration;
         if($description)   $add_mediadata['description'] = $description;
 

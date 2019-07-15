@@ -871,6 +871,7 @@ class VersionController extends BaseController{
 	        $oss_addr = I('post.oss_addr','');
 	        $version_name = I('post.version_name','');
 	        $version_code = I('post.version_code','');
+	        $oss_filesize = I('post.oss_filesize',0,'intval');
 	        $remark = I('post.remark','');
 	        if($devicetype==3) $devicetype = $clienttype;
 	        if(empty($oss_addr)){
@@ -885,6 +886,7 @@ class VersionController extends BaseController{
 	        $version_data['create_time'] = date('Y-m-d H:i:s');
 	        if($oss_addr){
 	            $version_data['oss_addr'] = $oss_addr;
+	            $version_data['oss_filesize'] = $oss_filesize;
 	            $accessKeyId = C('OSS_ACCESS_ID');
 	            $accessKeySecret = C('OSS_ACCESS_KEY');
 	            $endpoint = C('OSS_HOST');

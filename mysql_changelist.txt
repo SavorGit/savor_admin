@@ -1708,3 +1708,9 @@ CREATE TABLE `savor_qrscan_record` (
   `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='二维码扫描记录表';
+增加说明：新增互动广告
+修改时间：2019-07-15 15:00
+修改人：张英涛
+执行SQL
+ALTER TABLE savor_media ADD COLUMN `oss_filesize` INT(11) NOT NULL DEFAULT 0 COMMENT '文件大小单位:字节' AFTER `file_path`
+ALTER TABLE savor_device_version ADD COLUMN `oss_filesize` INT(11) NOT NULL DEFAULT 0 COMMENT '文件大小单位:字节' AFTER  `oss_addr`
