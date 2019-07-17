@@ -74,6 +74,8 @@ class ForscreenController extends BaseController{
                     array('count12','发现点播视频'),
                     array('count21','查看点播视频'),
                     array('count22','查看发现视频'),
+                    array('count30','投屏文件'),
+                    array('count31','投屏文件图片'),
                     array('count101','h5互动游戏'),
                     array('count120','发红包'),
                     array('count121','扫码抢红包'),
@@ -167,9 +169,9 @@ class ForscreenController extends BaseController{
         $small_app_id = I('small_app_id',0,'intval');
         $is_valid = I('is_valid',1,'intval');
 
-        $cache_key = C('SAPP_SCRREN').':hotelscript'.$s_date.$e_date.$small_app_id.$is_valid;
+        $cache_key = 'cronscript:hotel'.$s_date.$e_date.$small_app_id.$is_valid;
         $redis  =  \Common\Lib\SavorRedis::getInstance();
-        $redis->select(5);
+        $redis->select(1);
         $res = $redis->get($cache_key);
         if(!empty($res)){
             if($res == 1){
@@ -188,7 +190,7 @@ class ForscreenController extends BaseController{
         }else{
             $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/forscreen/hotelscript/s_date/$s_date/e_date/$e_date/small_app_id/$small_app_id/is_valid/$is_valid > /tmp/null &";
             system($shell);
-            $redis->set($cache_key,1,7200);
+            $redis->set($cache_key,1,3600);
             $this->success('数据正在生成中,请稍后点击下载');
         }
     }
@@ -340,6 +342,8 @@ class ForscreenController extends BaseController{
             array('count12','发现点播视频'),
             array('count21','查看点播视频'),
             array('count22','查看发现视频'),
+            array('count30','投屏文件'),
+            array('count31','投屏文件图片'),
             array('count101','h5互动游戏'),
             array('count120','发红包'),
             array('count121','扫码抢红包'),
@@ -350,9 +354,9 @@ class ForscreenController extends BaseController{
             array('box_type','设备类型'),
         );
         $path = $this->exportToExcel($cell,$all_data,$filename,2);
-        $cache_key = C('SAPP_SCRREN').':hotelscript'.$s_date.$e_date.$small_app_id.$is_valid;
+        $cache_key = 'cronscript:hotel'.$s_date.$e_date.$small_app_id.$is_valid;
         $redis  =  \Common\Lib\SavorRedis::getInstance();
-        $redis->select(5);
-        $redis->set($cache_key,$path,7200);
+        $redis->select(1);
+        $redis->set($cache_key,$path,3600);
     }
 }
