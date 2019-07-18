@@ -940,6 +940,8 @@ class CrontabController extends Controller
                 }
             }
             $pub_ads_hotel_arr = $m_pub_ads_box->getHotelArrByPubAdsId($val['id']);//获取当前广告发布的酒楼id
+
+            /*
             $vm_hotel_arr = array();
             //新虚拟小平台接口
             $redis->select(10);
@@ -961,6 +963,14 @@ class CrontabController extends Controller
                 }
             }
             sendTopicMessage($vm_hotel_arr, 8);
+            */
+            $v_ads_key = C('VSMALL_ADS');
+            foreach($pub_ads_hotel_arr as $tk=>$tv){
+                $keys_arr = $redis->keys($v_ads_key.$tv['hotel_id']."*");
+                foreach($keys_arr as $vv){
+                    $redis->remove($vv);
+                }
+            }
             
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
         
