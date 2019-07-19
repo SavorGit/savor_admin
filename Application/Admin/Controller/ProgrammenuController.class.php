@@ -611,6 +611,31 @@ smlist.menu_name';
         }
     }
 
+    public function judgeActivityGoodsAdvOuc($name_arr)
+    {
+        $result = array();
+        $result = $this->getActivityGoodsOccup($result);
+        $adv_arr = array_column($result, 'name');
+        $len = count($adv_arr);
+        // 判断要有10个
+        if (array_diff($adv_arr, $name_arr)) {
+            $this->error("活动商品广告位必须选择{$len}个");
+        }
+        // 取广告位数组
+        $ad_arr = array_filter($name_arr, function ($result, $item) use($adv_arr)
+        {
+            if (in_array($result, $adv_arr)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        // 判断恰好10个,取广告位数组反转然后比较
+        if (count($ad_arr) != $len) {
+            $this->error("活动商品广告位必须选择{$len}个且不能有重复");
+        }
+    }
+
     public function judgePolyScreenOuc($name_arr)
     {
         $result = array();
@@ -645,7 +670,7 @@ smlist.menu_name';
         $mlModel = new \Admin\Model\ProgramMenuListModel();
         $mlModel->startTrans();
         $mItemModel = new \Admin\Model\ProgramMenuItemModel();
-        $save = [];
+        $save = array();
         $userInfo = session('sysUserInfo');
         $save['creator_name'] = $userInfo['username'];
         $save['creator_id'] = $userInfo['id'];
@@ -659,9 +684,7 @@ smlist.menu_name';
         $save['update_time'] = $now_date;
         $save['create_time'] = $now_date;
         $save['menu_name'] = I('post.program', '', 'trim');
-        $count = $mlModel->where(array(
-            'menu_name' => $save['menu_name']
-        ))->count();
+        $count = $mlModel->where(array('menu_name' => $save['menu_name']))->count();
         if ($count) {
             $this->error('节目单名称已存在!');
         }
@@ -673,6 +696,9 @@ smlist.menu_name';
         $this->judgeAdvOuc($name_arr);
         // 判断RTB广告位版位都有10个,
         $this->judgertbAdvOuc($name_arr);
+
+        // 判断活动商品广告位版位都有10个,
+        $this->judgeActivityGoodsAdvOuc($name_arr);
         // 判断聚屏广告位都有50个
         $this->judgePolyScreenOuc($name_arr);
         $result = $mlModel->add($save);
@@ -690,12 +716,17 @@ smlist.menu_name';
             $rertb_adv = $this->getRtbadsOccup($res);
             // 获取聚屏广告位占位符
             $poly_adv = $this->getPolyScreenOccup($res);
+
+            // 获取活动商品广告占位符
+            $res_activitygoods_adv = $this->getActivityGoodsOccup($res);
             
             // 取出name列
             $res_adv = array_column($res_adv, 'name');
             $res_xuan = array_column($res_xuan, 'name');
             $rertb_adv = array_column($rertb_adv, 'name');
             $poly_adv = array_column($poly_adv, 'name');
+            $activitygoods_adv = array_column($res_activitygoods_adv, 'name');
+
             $adv_promote_num_arr = C('ADVE_OCCU');
             $adv_name = $adv_promote_num_arr['name'];
             $rtbadv_promote_num_arr = C('RTBADVE_OCCU');
@@ -703,28 +734,32 @@ smlist.menu_name';
             
             $polyadv_promote_num_arr = C('POLY_SCREEN_OCCU');
             $polyadv_name = $polyadv_promote_num_arr['name'];
+
+            $actgadv_promote_num_arr = C('ACTIVITY_GOODS_OCCU');
+            $activitygoodsadv_name = $actgadv_promote_num_arr['name'];
+
             foreach ($id_arr as $k => $v) {
-                // 判断type类型
+                // 判断type类型 1广告位 2节目 3宣传片 4rtb广告 5聚屏广告位 6活动商品广告位
                 $ad_name = $name_arr[$k];
                 if (in_array($ad_name, $res_adv)) {
-                    $type = 1;
+                    $type = 1;//广告位
                     $lo = str_replace($adv_name, "", $ad_name);
-                } else 
-                    if (in_array($ad_name, $rertb_adv)) {
-                        $type = 4;
-                        $lo = str_replace($rtbadv_name, "", $ad_name);
-                    } else 
-                        if (in_array($ad_name, $res_xuan)) {
-                            $type = 3;
-                            $lo = 0;
-                        } else 
-                            if (in_array($ad_name, $poly_adv)) {
-                                $type = 5;
-                                $lo = str_replace($polyadv_name, "", $ad_name);
-                            } else {
-                                $type = 2;
-                                $lo = 0;
-                            }
+                } elseif(in_array($ad_name, $rertb_adv)) {
+                    $type = 4;//rtb广告
+                    $lo = str_replace($rtbadv_name, "", $ad_name);
+                }elseif (in_array($ad_name, $res_xuan)) {
+                    $type = 3;//宣传片
+                    $lo = 0;
+                } elseif (in_array($ad_name, $poly_adv)) {
+                    $type = 5;//聚屏广告位
+                    $lo = str_replace($polyadv_name, "", $ad_name);
+                } elseif (in_array($ad_name, $activitygoods_adv)) {
+                    $type = 6;//聚屏广告位
+                    $lo = str_replace($activitygoodsadv_name, "", $ad_name);
+                } else {
+                    $type = 2;//节目
+                    $lo = 0;
+                }
                 $data[] = array(
                     'ads_id' => $v,
                     'ads_name' => $ad_name,
@@ -1031,6 +1066,33 @@ setEnclosure('"')
         return $result;
     }
 
+    /**
+     * 获取活动商品广告位
+     */
+    public function getActivityGoodsOccup($result, $filter = '')
+    {
+        $adv_activitygoods_num_arr = C('ACTIVITY_GOODS_OCCU');
+        if ($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_activitygoods_num = $adv_activitygoods_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i = 1; $i <= $adv_activitygoods_num; $i ++) {
+            if (in_array($adv_activitygoods_num_arr['name'] . $i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array(
+                    'id' => 0,
+                    'name' => $adv_activitygoods_num_arr['name'] . $i,
+                    'create_time' => $now_date_time,
+                    'duration' => 0,
+                    'type' => '33'
+                );
+            }
+        }
+        return $result;
+    }
+
     public function get_se_left()
     {
         $m_type = I('post.m_type', '0');
@@ -1064,6 +1126,8 @@ setEnclosure('"')
                 $result = $this->getAdsAcccounce($result);
                 // 获取广告占位符
                 $result = $this->getAdsOccup($result, $adval);
+
+                $result = $this->getActivityGoodsOccup($result);
                 break;
             case 3:
                 // 获取宣传片
@@ -1080,38 +1144,13 @@ setEnclosure('"')
             case 6:
                 $result = $this->getPolyScreenOccup($result, $adval);
                 break;
+            case 7:
+                $result = $this->getActivityGoodsOccup($result);
+                break;
             default:
                 $where .= "	AND type = '{$m_type}'";
                 $result = $adModel->getWhere($where, $field);
         }
-
-
-        if ($m_type == 0) {
-            $where .= "	AND (`type`) = 2 ";
-            $result = $adModel->getWhere($where, $field);
-            // 获取宣传片
-            $result = $this->getAdsAcccounce($result);
-            // 获取广告占位符
-            $result = $this->getAdsOccup($result, $adval);
-        } else 
-            if ($m_type == 3) {
-                // 获取宣传片
-                $result = $this->getAdsAcccounce($result);
-            } else 
-                if ($m_type == 4) {
-                    // 获取广告占位符
-                    $result = $this->getAdsOccup($result, $adval);
-                } else 
-                    if ($m_type == 5) {
-                        // 获取RTB广告占位符
-                        $result = $this->getRtbadsOccup($result, $adval);
-                    } else 
-                        if ($m_type == 6) {
-                            $result = $this->getPolyScreenOccup($result, $adval);
-                        } else {
-                            $where .= "	AND type = '{$m_type}'";
-                            $result = $adModel->getWhere($where, $field);
-                        }
         echo json_encode($result);
         die();
     }
