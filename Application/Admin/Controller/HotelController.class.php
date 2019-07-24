@@ -507,6 +507,8 @@ class HotelController extends BaseController {
 			$vinfo['food_style_id'] = $res_hotelext['food_style_id'];
 			$vinfo['avg_expense']   = $res_hotelext['avg_expense'];
 			$vinfo['contract_expiretime']   = $res_hotelext['contract_expiretime'];
+			$vinfo['activity_contact']   = $res_hotelext['activity_contact'];
+			$vinfo['activity_phone']   = $res_hotelext['activity_phone'];
 			$navtp = I('get.navtp');
 			//获取区/县id
 			$area_id = $vinfo['area_id'];
@@ -654,6 +656,20 @@ class HotelController extends BaseController {
 		$save['collection_company']  = I('post.collection_company','','trim');
 		$save['bank_account']        = I('post.bank_account','','trim');
 		$save['bank_name']           = I('post.bank_name','','trim');
+        $activity_contact            = I('post.activity_contact','','trim');
+        $activity_phone              = I('post.activity_phone','','trim');
+
+        if($activity_phone){
+            if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
+                $this->error('手机号非法输入');
+            }
+        }
+        if($activity_contact){
+            if(  mb_strlen($activity_contact)<2 ||  mb_strlen($activity_contact)>10 ){
+                $this->error('联系人2至10个字符');
+            }
+        }
+
 		$save['is_4g']               = I('post.is_4g',0,'intval');  //是否为4G酒楼
 		if(mb_strlen($save['collection_company'])>50 || mb_strlen($save['bank_account'])>50 || mb_strlen($save['bank_name'])>50){
 			$this->error('收款公司名称，银行账号以及开户行名称最多50个字');
@@ -748,6 +764,12 @@ class HotelController extends BaseController {
 		$contract_expiretime = I('post.contract_expiretime','');
 		if($contract_expiretime){
 		    $data['contract_expiretime'] = $contract_expiretime;
+        }
+        if($activity_contact){
+            $data['activity_contact'] = $activity_contact;
+        }
+        if($activity_phone){
+            $data['activity_phone'] = $activity_phone;
         }
 		$tranDb = new Model();
 		$tranDb->startTrans();
