@@ -440,7 +440,7 @@ class HotelController extends BaseController {
 	 *
 	 */
 	public function add(){
-		$id = I('get.id');
+		$id = I('get.id',0,'intval');
 		$hotelModel = new \Admin\Model\HotelModel();
 		$areaModel  = new \Admin\Model\AreaModel();
 
@@ -524,6 +524,10 @@ class HotelController extends BaseController {
 			$vinfo['state_change_reason'] = 1;
 			$this->assign('vinfo',$vinfo);
 		}
+		$m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+		$goods = $m_hotelgoods->chooseGoodsByHotelid($id);
+
+		$this->assign('goods',$goods);
 		$this->assign('is_lablefiter',$is_lablefiter);
 		$this->display('add');
 	}
@@ -658,6 +662,7 @@ class HotelController extends BaseController {
 		$save['bank_name']           = I('post.bank_name','','trim');
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
+        $goods_ids = I('goods_ids');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -773,22 +778,13 @@ class HotelController extends BaseController {
         }
 		$tranDb = new Model();
 		$tranDb->startTrans();
-        $is_sendtopic = 0;
-        $is_sendtopiclogo = 0;
 		if ($hotel_id) {
-            $tmp_hotel = $hotelModel->getOne($hotel_id);
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
 			if($bool){
-                $is_sendtopic = 1;
 				$res = $hotelModel->getOne($hotel_id);
 				$save['create_time'] = $res['create_time'];
 				$hotelModel->saveStRedis($save, $hotel_id);
-                if(!empty($save['media_id'])){
-                     if($tmp_hotel['media_id']!=$save['media_id']){
-                        $is_sendtopiclogo = 1;
-                    } 
-                }
 			} else {
 				$this->error('操作失败1');
 			}
@@ -796,17 +792,17 @@ class HotelController extends BaseController {
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$bool = $hotelModel->addData($save);
 			if($bool){
-                $is_sendtopic = 1;
 				$hotel_id = $hotelModel->getLastInsID();
 				$hotelModel->saveStRedis($save, $hotel_id);
-                if(!empty($save['media_id'])){
-                    $is_sendtopiclogo = 1;
-                }
 			} else {
 				$this->error('操作失败2');
 			}
 
 		}
+
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $m_hotelgoods->HandleHotelGoods($hotel_id,$goods_ids);
+
 		$field = 'mac_addr,server_location';
 		$where = array('hotel_id'=>$hotel_id);
 		$res = $hextModel->getData($field, $where);
@@ -822,18 +818,6 @@ class HotelController extends BaseController {
 		if($bool){
 			$tranDb->commit();
 			$hextModel->saveStRedis($data, $hotel_id);
-			if($is_sendtopic){
-			    $all_hotelids = getVsmallHotelList();
-			    if(in_array($hotel_id,$all_hotelids)){
-			        sendTopicMessage($hotel_id,1);
-			    }
-			}
-			if($is_sendtopiclogo){
-			    $all_hotelids = getVsmallHotelList();
-			    if(in_array($hotel_id,$all_hotelids)){
-			        sendTopicMessage($hotel_id,15);
-			    }
-			}
 			$navtp = I('post.navtp','');
 			if($navtp == 34) {
 				$this->output('操作成功!', 'hotel/detail');

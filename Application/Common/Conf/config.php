@@ -38,12 +38,33 @@ $config = array(
     'HASH_IDS_KEY'=>'Q1xsCaoby2o',
 
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
+    'SAPP_DINNER'=>'smallappdinner:',
+    'SAPP_DINNER_ACTIVITYGOODS_PROGRAM'=>'smallappdinner:activitygoodsprogram',
 
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
     $config['TMPL_EXCEPTION_FILE'] = APP_PATH.'Site/View/Public/404.html';// 异常页面的模板文件
 }
+
+$config['GOODS_TYPE'] = array(
+    '10'=>'官方活动促销',
+    '20'=>'商家添加',
+    '30'=>'积分兑换现金',
+);
+
+$config['GOODS_SCOPE'] = array(
+    '0'=>'全部',
+    '1'=>'包间',
+    '2'=>'非包间',
+);
+
+$config['GOODS_STATUS'] = array(
+    '1'=>'未审核',
+    '2'=>'审核通过',
+    '3'=>'审核不通过',
+    '4'=>'下架',
+);
 
 $config['DEVICE_TYPE'] = array(
     '1'=>'小平台',

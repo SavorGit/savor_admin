@@ -1,0 +1,139 @@
+<?php
+namespace Smallapp\Controller;
+use Admin\Controller\BaseController ;
+/**
+ * @desc 商品管理
+ *
+ */
+class GoodsController extends BaseController {
+    
+    public function __construct() {
+        parent::__construct();
+    }
+    
+    public function goodslist() {
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
+    	$keyword = I('keyword','','trim');
+    	$type = I('type',0,'intval');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+
+        $where = array();
+        if(!empty($keyword)){
+            $where['name'] = array('like',"%$keyword%");
+        }
+        if($type){
+            $where['type'] = $type;
+        }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        $start  = ($page-1) * $size;
+        $m_category  = new \Admin\Model\Smallapp\GoodsModel();
+        $result = $m_category->getDataList('*',$where, 'id desc', $start, $size);
+        $datalist = $result['list'];
+        $goods_types = C('GOODS_TYPE');
+        $goods_status = C('GOODS_STATUS');
+        $m_media = new \Admin\Model\MediaModel();
+        foreach ($datalist as $k=>$v){
+            $media_info = $m_media->getMediaInfoById($v['media_id']);
+            if($media_info['type']==1){
+                $media_typestr = '视频';
+            }else{
+                $media_typestr = '图片';
+            }
+            $datalist[$k]['media_typestr'] = $media_typestr;
+            $datalist[$k]['typestr'] = $goods_types[$v['type']];
+            $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+        }
+
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('type',$type);
+        $this->assign('keyword',$keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('goodslist');
+    }
+    
+    public function goodsadd(){
+        $id = I('id', 0, 'intval');
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        if(IS_GET){
+        	$dinfo = array('media_type'=>1);
+        	if($id){
+        		$dinfo = $m_goods->getInfo(array('id'=>$id));
+                $m_media = new \Admin\Model\MediaModel();
+                $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
+                $dinfo['oss_addr'] = $media_info['oss_addr'];
+                $dinfo['media_type'] = $media_info['type'];
+                $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
+                $dinfo['end_date'] = date('Y-m-d',strtotime($dinfo['end_time']));
+        	}
+        	$this->assign('vinfo',$dinfo);
+        	$this->display('goodsadd');
+        }else{
+            $type = I('post.type',0,'intval');
+        	$name = I('post.name','','trim');
+        	$price = I('post.price','','trim');
+        	$rebate_integral = I('post.rebate_integral',0,'intval');
+        	$jd_url = I('post.jd_url','','trim');
+        	$start_date = I('post.start_date','');
+        	$end_date = I('post.end_date','');
+            $media_id = I('post.media_id',0);
+        	$status = I('post.status',1,'intval');
+            $clicktype = I('post.clicktype',0,'intval');
+            if($clicktype==1){
+                $media_id = I('post.media_vid',0);
+            }
+        	if(empty($name)){
+        		$this->output('缺少必要参数!', 'goods/goodsadd', 2, 0);
+        	}
+        	if(!$media_id){
+        	    $this->output('请上传相关资源', 'goods/goodsadd', 2, 0);
+            }
+        	$where = array('name'=>$name,'type'=>$type);
+        	if($id){
+                $where['id']= array('neq',$id);
+        		$res_goods = $m_goods->getInfo($where);
+        	}else{
+                $res_goods = $m_goods->getInfo($where);
+        	}
+        	if(!empty($res_goods)){
+        		$this->output('名称不能重复', 'goods/goodsadd', 2, 0);
+        	}
+            $stime = strtotime($start_date);
+        	$etime = strtotime($end_date);
+        	if($stime>$etime){
+        	    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+        	$end_time = date('Y-m-d 23:59:59',$etime);
+        	$data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
+                'start_time'=>$start_time,'end_time'=>$end_time,'media_id'=>$media_id,'status'=>$status);
+        	if($id){
+        	    $result = $m_goods->updateData(array('id'=>$id),$data);
+            }else{
+        	    $result = $m_goods->add($data);
+            }
+
+        	if($result){
+        		$this->output('操作成功', 'goods/goodslist');
+        	}else{
+        		$this->output('操作失败', 'goods/goodslist',2,0);
+        	}
+
+        }
+    }
+
+}
