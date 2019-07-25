@@ -66,6 +66,20 @@ $config['GOODS_STATUS'] = array(
     '4'=>'下架',
 );
 
+$config['ORDER_STATUS'] = array(
+    '10'=>'已下单',
+    '20'=>'申请兑换',
+    '21'=>'兑换成功',
+);
+$config['BUY_TYPE'] = array(
+    '1'=>'店内购买',
+    '2'=>'京东购买',
+);
+$config['ORDER_OTYPE'] = array(
+    '1'=>'商品订单',
+    '2'=>'抵用券订单',
+);
+
 $config['DEVICE_TYPE'] = array(
     '1'=>'小平台',
     '2'=>'机顶盒',
