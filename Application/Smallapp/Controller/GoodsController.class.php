@@ -43,6 +43,9 @@ class GoodsController extends BaseController {
         $goods_types = C('GOODS_TYPE');
         $goods_status = C('GOODS_STATUS');
         $m_media = new \Admin\Model\MediaModel();
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $m_hotel = new \Admin\Model\HotelModel();
+
         foreach ($datalist as $k=>$v){
             $media_info = $m_media->getMediaInfoById($v['media_id']);
             if($media_info['type']==1){
@@ -53,6 +56,15 @@ class GoodsController extends BaseController {
             $datalist[$k]['media_typestr'] = $media_typestr;
             $datalist[$k]['typestr'] = $goods_types[$v['type']];
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+
+            $goods_id = $v['id'];
+            $subQuery = $m_hotelgoods->field('hotel_id')->where(array('goods_id'=>$goods_id))->group('hotel_id')->buildSql();
+            $res = $m_hotel->field('name')->where("id in $subQuery")->select();
+            $hotelarr = array();
+            foreach ($res as $hv){
+                $hotelarr[] = $hv['name'];
+            }
+            $datalist[$k]['hotels'] = join(',',$hotelarr);
         }
 
         $this->assign('start_date',$start_date);
