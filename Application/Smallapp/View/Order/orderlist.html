@@ -82,11 +82,13 @@
               <td data-title="购买时间">{$dinfo.add_time}</td>
               <td data-title="状态">{$dinfo.statusstr}</td>
               <td class="table-tool" data-title="操作">
+                <if condition="$dinfo.status eq 20">
                 <div class="tools-edit">
-                  <!--<a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">-->
-                    <!--<i class="fa fa-pencil"></i>-->
-                  <!--</a>-->
+                    <a warn="审核" data-tip="提示" title="审核通过后,会直接提现到用户微信零钱" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/order/orderaudit?id={$dinfo.id}"  class="btn btn-success btn-icon">
+                        <i class="fa fa-pencil-square"></i>
+                    </a>
                 </div>
+                </if>
               </td>
             </tr>
 

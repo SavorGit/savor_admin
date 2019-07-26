@@ -1,6 +1,8 @@
 <?php
 namespace Smallapp\Controller;
 use Admin\Controller\BaseController ;
+use Common\Lib\Curl;
+
 /**
  * @desc 订单管理
  *
@@ -49,7 +51,6 @@ class OrderController extends BaseController {
             $datalist[$k]['statusstr'] = $order_status[$v['status']];
 
         }
-
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('status',$status);
@@ -60,5 +61,29 @@ class OrderController extends BaseController {
         $this->display('orderlist');
     }
 
+    public function orderaudit(){
+        $order_id = I('order_id',0,'intval');
+        $hash_ids_key = C('HASH_IDS_KEY');
+        $hashids = new \Common\Lib\Hashids($hash_ids_key);
+        $params = $hashids->encode($order_id);
+        $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';
+        $curl = new Curl();
+        $data = array('params'=>$params);
+        $curl::post($url,$data,$result,10);
+        if($result['code']!=10000){
+            if($result['code']==99003){
+                $message = '用户无mopenid,无法提现';
+            }elseif($result['code']==99005){
+                $message = '用户积分不够,无法提现';
+            }else{
+                $message = '不满足兑换条件';
+            }
+        }else{
+            $message = '提现成功';
+            $m_order = new \Common\Model\Smallapp\OrderModel();
+            $m_order->updateData(array('id'=>$order_id),array('status'=>20));
+        }
+        $this->output($message, 'order/orderlist',2);
+    }
 
 }
