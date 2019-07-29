@@ -68,7 +68,7 @@ class UserSigninModel extends BaseModel{
                     'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                     'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                     'box_id'=>$box_info['box_id'],'box_mac'=>$v['box_mac'],'box_type'=>$box_info['box_type'],
-                    'integral'=>$boot_integral,'content'=>$online_hour,'type'=>1);
+                    'integral'=>$boot_integral,'content'=>$online_hour,'type'=>1,'integral_time'=>$v['signout_time']);
                 $m_userintegralrecord->add($integralrecord_data);
                 $now_integral+=$boot_integral;
             }
@@ -82,7 +82,7 @@ class UserSigninModel extends BaseModel{
                     'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                     'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                     'box_id'=>$box_info['box_id'],'box_mac'=>$v['box_mac'],'box_type'=>$box_info['box_type'],
-                    'integral'=>$interact_integral,'content'=>$integral_usernum,'type'=>2);
+                    'integral'=>$interact_integral,'content'=>$integral_usernum,'type'=>2,'integral_time'=>$v['signout_time']);
                 $m_userintegralrecord->add($integralrecord_data);
                 $now_integral+=$interact_integral;
             }
@@ -99,7 +99,7 @@ class UserSigninModel extends BaseModel{
                             'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                             'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                             'box_id'=>$box_info['box_id'],'box_mac'=>$v['box_mac'],'box_type'=>$box_info['box_type'],
-                            'integral'=>$goods_integral,'content'=>$goods_id,'type'=>3);
+                            'integral'=>$goods_integral,'content'=>$goods_id,'type'=>3,'integral_time'=>$v['signout_time']);
                         $m_userintegralrecord->add($integralrecord_data);
                         $now_integral+=$goods_integral;
                     }
