@@ -49,13 +49,34 @@ class HotelGoodsModel extends BaseModel{
                 }
             }
         }
-        if($is_issue=1){
+        if($is_issue==1){
             $redis = \Common\Lib\SavorRedis::getInstance();
             $redis->select(14);
-            $program_key = C('SAPP_DINNER_ACTIVITYGOODS_PROGRAM').":$hotel_id";
+            $program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM').":$hotel_id";
             $period = getMillisecond();
             $period_data = array('period'=>$period);
             $redis->set($program_key,json_encode($period_data));
+        }
+        return true;
+    }
+
+    public function HandleGoodsperiod($goods_id){
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(14);
+        $cache_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
+
+        $where = array('goods_id'=>$goods_id);
+        $group = 'hotel_id';
+        $res_hotels = $this->where($where)->group($group)->select();
+        if(!empty($res_hotels)){
+            foreach ($res_hotels as $v){
+                $hotel_id = $v['hotel_id'];
+
+                $program_key = $cache_key.":$hotel_id";
+                $period = getMillisecond();
+                $period_data = array('period'=>$period);
+                $redis->set($program_key,json_encode($period_data));
+            }
         }
         return true;
     }

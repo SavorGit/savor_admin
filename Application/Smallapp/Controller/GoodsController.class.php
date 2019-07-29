@@ -135,6 +135,8 @@ class GoodsController extends BaseController {
                 'start_time'=>$start_time,'end_time'=>$end_time,'media_id'=>$media_id,'status'=>$status);
         	if($id){
         	    $result = $m_goods->updateData(array('id'=>$id),$data);
+        	    $m_hotelgoods = new \Admin\Model\Smallapp\HotelgoodsModel();
+        	    $m_hotelgoods->HandleGoodsperiod($id);
             }else{
         	    $result = $m_goods->add($data);
             }
