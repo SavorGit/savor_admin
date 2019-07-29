@@ -3633,4 +3633,9 @@ class CrontabController extends Controller
 //        $log_file_name = APP_PATH.'Runtime/Logs/'.'operationbonus_'.date("Ymd").".log";
 //        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
     }
+
+    public function userintegral(){
+        $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
+        $m_usersignin->userintegral();
+    }
 }

@@ -38,8 +38,9 @@ $config = array(
     'HASH_IDS_KEY'=>'Q1xsCaoby2o',
 
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
-    'SAPP_DINNER'=>'smallappdinner:',
-    'SAPP_DINNER_ACTIVITYGOODS_PROGRAM'=>'smallappdinner:activitygoodsprogram',
+    'SAPP_SALE'=>'smallappsale:',
+    'SAPP_SALE_ACTIVITYGOODS_PROGRAM'=>'smallappsale:activitygoodsprogram',
+    'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
 
 );
 if(APP_DEBUG === false){
