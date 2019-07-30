@@ -108,7 +108,7 @@ class GoodsController extends BaseController {
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
             }
-        	if(empty($name)){
+        	if(empty($name) && $type!=20){
         		$this->output('缺少必要参数!', 'goods/goodsadd', 2, 0);
         	}
         	if(!$media_id){
@@ -134,8 +134,9 @@ class GoodsController extends BaseController {
         	$data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
                 'start_time'=>$start_time,'end_time'=>$end_time,'media_id'=>$media_id,'status'=>$status);
         	if($id){
-        	    $result = $m_goods->updateData(array('id'=>$id),$data);
-        	    $m_hotelgoods = new \Admin\Model\Smallapp\HotelgoodsModel();
+        	    $m_goods->updateData(array('id'=>$id),$data);
+                $result = true;
+        	    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         	    $m_hotelgoods->HandleGoodsperiod($id);
             }else{
         	    $result = $m_goods->add($data);

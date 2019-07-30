@@ -11,13 +11,14 @@ class UserSigninModel extends BaseModel{
         $begin_time = $now_date." 00:00:00";
         $end_time = $now_date." 23:59:59";
 
-        $begin_time = "2019-07-01 00:00:00";
-        $end_time = "2019-07-29 23:59:59";
-
-
         $where = array();
         $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
+        echo "$begin_time-$end_time \r\n";
         $res_data = $this->getDataList('*',$where,'id asc');
+        if(empty($res_data)){
+            echo "user_signin empty \r\n";
+        }
+
         $m_hearlog = new \Admin\Model\HeartAllLogModel();
         $m_sysconfig = new \Admin\Model\SysConfigModel();
         $res_config = $m_sysconfig->getAllconfig();
