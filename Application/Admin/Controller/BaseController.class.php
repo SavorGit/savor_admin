@@ -367,9 +367,12 @@ class BaseController extends Controller {
      */
     protected function handle_resource(){
         $add_mediadata = array();
-        $minu = I('post.minu','0','intval');
-        $seco = I('post.seco','0','intval');
-        $duration = $minu*60+$seco;
+        $minu = I('post.minu',0,'intval');
+        $seco = I('post.seco',0,'intval');
+        $duration = I('post.duration',0,'intval');
+        if($duration==0){
+            $duration = $minu*60+$seco;
+        }
         $description = I('post.description','');
         $add_mediadata['name'] = I('post.name','','trim');
         $add_mediadata['oss_addr'] = I('post.oss_addr','','trim');

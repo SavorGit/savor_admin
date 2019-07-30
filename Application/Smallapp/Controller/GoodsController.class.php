@@ -121,7 +121,7 @@ class GoodsController extends BaseController {
         	}else{
                 $res_goods = $m_goods->getInfo($where);
         	}
-        	if(!empty($res_goods)){
+        	if(!empty($res_goods) && $type!=20){
         		$this->output('名称不能重复', 'goods/goodsadd', 2, 0);
         	}
             $stime = strtotime($start_date);
