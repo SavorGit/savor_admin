@@ -48,6 +48,12 @@ class HotelGoodsModel extends BaseModel{
                     $is_issue = 1;
                 }
             }
+            $where = array('hotel_id'=>$hotel_id);
+            $where['goods_id'] = array('notin',$goods_ids);
+            $res_del = $this->delData($where);
+            if($res_del){
+                $is_issue = 1;
+            }
         }
         if($is_issue==1){
             $redis = \Common\Lib\SavorRedis::getInstance();
