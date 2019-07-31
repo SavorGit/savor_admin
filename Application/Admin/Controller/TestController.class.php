@@ -129,7 +129,7 @@ class TestController extends Controller {
                 where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=236";
         $data = M()->query($sql);
         $flag = 0;
-        //$data = array();
+        $data = array();
         foreach($data as $key=>$v){
             
             $sql ="update savor_box set switch_time=999 where id=".$v['id'].' limit 1';
