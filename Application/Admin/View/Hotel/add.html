@@ -462,7 +462,37 @@
                 <input name="bank_name" type="text" class="form-control" value="{$vinfo.bank_name}" />
             </div>
         </div>
-            
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">选择商品：</label>
+            <div class="col-xs-12 col-sm-10  form-inline">
+                <select name="goods_ids[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+                    <volist name="goods" id="ginfo">
+                        <option value="{$ginfo.id}" {$ginfo.select}>{$ginfo.name}</option>
+                    </volist>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                活动促销联系人:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="activity_contact" type="text" class="form-control" value="{$vinfo.activity_contact}" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                活动促销手机号:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="activity_phone" type="text" class="form-control" value="{$vinfo.activity_phone}" />
+            </div>
+        </div>
+
     </div>
 
     <div class="modal-footer">

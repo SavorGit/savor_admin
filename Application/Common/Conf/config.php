@@ -38,12 +38,49 @@ $config = array(
     'HASH_IDS_KEY'=>'Q1xsCaoby2o',
 
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
+    'SAPP_SALE'=>'smallappsale:',
+    'SAPP_SALE_ACTIVITYGOODS_PROGRAM'=>'smallappsale:activitygoodsprogram',
+    'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
 
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
     $config['TMPL_EXCEPTION_FILE'] = APP_PATH.'Site/View/Public/404.html';// 异常页面的模板文件
 }
+
+$config['GOODS_TYPE'] = array(
+    '10'=>'官方活动促销',
+    '20'=>'商家添加',
+    '30'=>'积分兑换现金',
+);
+
+$config['GOODS_SCOPE'] = array(
+    '0'=>'全部',
+    '1'=>'包间',
+    '2'=>'非包间',
+);
+
+$config['GOODS_STATUS'] = array(
+    '1'=>'未审核',
+    '2'=>'审核通过',
+    '3'=>'审核不通过',
+    '4'=>'下架',
+    '5'=>'已过期',
+);
+
+$config['ORDER_STATUS'] = array(
+    '10'=>'已下单',
+    '20'=>'申请兑换',
+    '21'=>'兑换成功',
+);
+$config['BUY_TYPE'] = array(
+    '1'=>'店内购买',
+    '2'=>'京东购买',
+);
+$config['ORDER_OTYPE'] = array(
+    '1'=>'商品订单',
+    '2'=>'抵用券订单',
+);
 
 $config['DEVICE_TYPE'] = array(
     '1'=>'小平台',
@@ -413,6 +450,10 @@ $config['RTBADVE_OCCU'] = array(
 $config['POLY_SCREEN_OCCU']= array(
     'name'=>'聚屏广告位',
     'num' => '50',
+);
+$config['ACTIVITY_GOODS_OCCU']= array(
+    'name'=>'活动商品广告位',
+    'num' => '10',
 );
 $config['POLY_SCREEN_MEDIA_LIST'] = array(
     '1'=>'百度聚屏',
