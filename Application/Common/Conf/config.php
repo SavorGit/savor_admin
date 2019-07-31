@@ -65,6 +65,7 @@ $config['GOODS_STATUS'] = array(
     '2'=>'审核通过',
     '3'=>'审核不通过',
     '4'=>'下架',
+    '5'=>'已过期',
 );
 
 $config['ORDER_STATUS'] = array(
