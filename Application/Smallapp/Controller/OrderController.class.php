@@ -62,7 +62,7 @@ class OrderController extends BaseController {
     }
 
     public function orderaudit(){
-        $order_id = I('order_id',0,'intval');
+        $order_id = I('get.id',0,'intval');
         $hash_ids_key = C('HASH_IDS_KEY');
         $hashids = new \Common\Lib\Hashids($hash_ids_key);
         $params = $hashids->encode($order_id);
@@ -100,8 +100,6 @@ class OrderController extends BaseController {
                 $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_order['openid']));
                 $userintegral = $res_userintegral['integral'] - $integral;
                 $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral));
-
-
             }
         }
         $this->output($message, 'order/orderlist',2);

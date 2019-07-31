@@ -76,6 +76,9 @@ class UserSigninModel extends BaseModel{
             //互动积分
             $activity_interact_integral = $res_config['activity_interact_integral'];
             $where = array('a.box_mac'=>$v['box_mac']);
+            $where['a.create_time'] = array(array('EGT',$begin_time),array('ELT',$end_time));
+            $where['a.mobile_brand'] = array('neq','devtools');
+            $where['a.is_valid'] = 1;
             $integral_usernum = $m_forscreenrecord->countWhere($where,'a.openid');
             if($integral_usernum){
                 $interact_integral = $integral_usernum*$activity_interact_integral;
