@@ -206,6 +206,7 @@ $config['all_smallapps'] = array(
     '2'=>'极简版',
     '3'=>'极简版',
     '4'=>'餐厅端',
+    '5'=>'销售端',
     '11'=>'h5互动游戏'
 );
 $config['all_forscreen_actions'] = array(
