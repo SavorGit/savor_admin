@@ -122,17 +122,27 @@ class TestController extends Controller {
             $redis->set($room_cache_key, json_encode($room_info));
             
         }
-        $sql = "select * from savor_box ";
+        //$sql = "select * from savor_box ";
+        $sql = "select box.* from savor_box box
+                left join savor_room room on box.room_id=room.id
+                left join savor_hotel hotel on room.hotel_id=hotel.id
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=236";
         $data = M()->query($sql);
+        $flag = 0;
         $data = array();
         foreach($data as $key=>$v){
+            
+            $sql ="update savor_box set switch_time=999 where id=".$v['id'].' limit 1';
+            //echo $sql;exit;
+            M()->execute($sql);
+            
             $box_info = array();
             $box_id = $v['id'];
             $box_info['id']      = $v['id'];
             $box_info['room_id'] = $v['room_id'];
             $box_info['name']    = $v['name'];
             $box_info['mac']     = $v['mac'];
-            $box_info['switch_time'] = $v['switch_time'];
+            $box_info['switch_time'] = 999;
             $box_info['volum']   = $v['volum'];
             $box_info['tag']     = $v['tag'];
             $box_info['device_token'] = $v['device_token'];
@@ -151,8 +161,10 @@ class TestController extends Controller {
             $box_info['wifi_mac']    = $v['wifi_mac'];
             $box_info['is_open_simple'] = $v['is_open_simple'];
             $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
+            $box_info['is_open_signin'] = $v['is_open_signin'];
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
+            $flag++;
         }
         echo "ok";
     }
