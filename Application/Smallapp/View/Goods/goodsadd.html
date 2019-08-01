@@ -127,7 +127,7 @@
 								<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
 									<img id="media_vidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
 									<else />
-									<img id="media_vidimg" src="{$vinfo.oss_addr}" border="0" />
+									<img id="media_vidimg" src="{$vinfo.oss_addr}?x-oss-process=video/snapshot,t_1000,f_jpg,w_450" border="0" />
 								</if>
 								<span id="media_vidimgname">{$vinfo.name}</span>
 							</a>
