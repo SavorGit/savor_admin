@@ -2079,7 +2079,7 @@ class CrontabController extends Controller
         $pubHis = new \Admin\Model\PubAdsBoxHistoryModel();
         $field = 'id,type';
         //找执行完毕的广告
-        $where = " 1=1 and state = 1 and is_remove=0 ";
+        $where = " 1=1 and ((state = 1 and is_remove=0 ) or (state=2 and is_remove=0))";
         $where.=" AND end_date <'$now_date'";
         $pad_arr = $pubadsModel->getWhere($where, $field);
         //var_export($pad_arr);exit;
