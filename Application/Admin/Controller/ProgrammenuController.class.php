@@ -613,6 +613,7 @@ smlist.menu_name';
 
     public function judgeActivityGoodsAdvOuc($name_arr)
     {
+        return true;
         $result = array();
         $result = $this->getActivityGoodsOccup($result);
         $adv_arr = array_column($result, 'name');

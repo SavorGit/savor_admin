@@ -55,7 +55,7 @@ class UserSigninModel extends BaseModel{
             $res_logdate = $m_hearlog->getOne($v['box_mac'],2,$tmp_date);
             $online_hour = 0;
             for ($i=$tmp_singin_h;$i<=$tmp_signout_h;$i++){
-                if($res_logdate["hour$i"]>=12){
+                if($res_logdate["hour$i"]>=10){
                     $online_hour+=1;
                 }
             }
@@ -91,6 +91,7 @@ class UserSigninModel extends BaseModel{
                 $now_integral+=$interact_integral;
             }
             //商品销售积分
+            /*
             $sale_where = array('box_mac'=>$v['box_mac'],'otype'=>1);
             $res_order = $m_order->getDataList('goods_id',$sale_where,'id desc');
             if(!empty($res_order)){
@@ -109,6 +110,7 @@ class UserSigninModel extends BaseModel{
                     }
                 }
             }
+            */
             if($now_integral){
                 $res_userintegral = $m_userintegral->getInfo(array('openid'=>$v['openid']));
                 if(!empty($res_userintegral)){
