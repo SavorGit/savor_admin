@@ -69,11 +69,13 @@ class OrderController extends BaseController {
         $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';
         $curl = new Curl();
         $data = array('params'=>$params);
-        $curl::post($url,$data,$result,10);
-        if($result['code']!=10000){
-            if($result['code']==99003){
+        $resapi = array('code'=>10000);
+        $curl::post($url,$data,$resapi,10);
+        $resapi = json_decode($resapi,true);
+        if($resapi['code']!=10000){
+            if($resapi['code']==99003){
                 $message = '用户无mopenid,无法提现';
-            }elseif($result['code']==99005){
+            }elseif($resapi['code']==99005){
                 $message = '用户积分不够,无法提现';
             }else{
                 $message = '不满足兑换条件';
@@ -81,19 +83,14 @@ class OrderController extends BaseController {
         }else{
             $message = '提现成功';
             $m_order = new \Admin\Model\Smallapp\OrderModel();
-            $m_order->updateData(array('id'=>$order_id),array('status'=>20));
+            $m_order->updateData(array('id'=>$order_id),array('status'=>21));
             $res_order = $m_order->getInfo(array('id'=>$order_id));
             $m_goods = new \Admin\Model\Smallapp\GoodsModel();
             $goods_info = $m_goods->getInfo(array('id'=>$res_order['goods_id']));
             if($goods_info['rebate_integral']){
-                $m_box = new \Admin\Model\BoxModel();
-                $box_info = $m_box->getHotelInfoByBoxMac($res_order['box_mac']);
                 $integral = $goods_info['rebate_integral'];
-                $integralrecord_data = array('openid' => $res_order['openid'], 'area_id' => $box_info['area_id'],
-                    'area_name' => $box_info['area_name'], 'hotel_id' => $box_info['hotel_id'], 'hotel_name' => $box_info['hotel_name'],
-                    'hotel_box_type' => $box_info['hotel_box_type'], 'room_id' => $box_info['room_id'], 'room_name' => $box_info['room_name'],
-                    'box_id' => $box_info['box_id'], 'box_mac' => $res_order['box_mac'], 'box_type' => $box_info['box_type'],
-                    'integral' => -$integral, 'content' => $res_order['goods_id'], 'type' => 4, 'integral_time' => date('Y-m-d H:i:s'));
+                $integralrecord_data = array('openid' => $res_order['openid'],'integral' => -$integral,
+                    'content' => $res_order['goods_id'], 'type' => 4, 'integral_time' => date('Y-m-d H:i:s'));
                 $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
                 $m_userintegralrecord->add($integralrecord_data);
                 $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
