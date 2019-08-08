@@ -720,13 +720,17 @@ smlist.menu_name';
 
             // 获取活动商品广告占位符
             $res_activitygoods_adv = $this->getActivityGoodsOccup($res);
-            
+
+            // 获取活动商品广告占位符
+            $res_selectcontent_adv = $this->getSelectcontentOccup($res);
+
             // 取出name列
             $res_adv = array_column($res_adv, 'name');
             $res_xuan = array_column($res_xuan, 'name');
             $rertb_adv = array_column($rertb_adv, 'name');
             $poly_adv = array_column($poly_adv, 'name');
             $activitygoods_adv = array_column($res_activitygoods_adv, 'name');
+            $selectcontent_adv = array_column($res_selectcontent_adv, 'name');
 
             $adv_promote_num_arr = C('ADVE_OCCU');
             $adv_name = $adv_promote_num_arr['name'];
@@ -738,6 +742,10 @@ smlist.menu_name';
 
             $actgadv_promote_num_arr = C('ACTIVITY_GOODS_OCCU');
             $activitygoodsadv_name = $actgadv_promote_num_arr['name'];
+
+            $selectcontent_promote_num_arr = C('SELECTCONTENT_GOODS_OCCU');
+            $selectcontentadv_name = $selectcontent_promote_num_arr['name'];
+
 
             foreach ($id_arr as $k => $v) {
                 // 判断type类型 1广告位 2节目 3宣传片 4rtb广告 5聚屏广告位 6活动商品广告位
@@ -755,8 +763,11 @@ smlist.menu_name';
                     $type = 5;//聚屏广告位
                     $lo = str_replace($polyadv_name, "", $ad_name);
                 } elseif (in_array($ad_name, $activitygoods_adv)) {
-                    $type = 6;//聚屏广告位
+                    $type = 6;//活动商品广告位
                     $lo = str_replace($activitygoodsadv_name, "", $ad_name);
+                } elseif (in_array($ad_name, $selectcontent_adv)) {
+                    $type = 7;//精选内容广告位
+                    $lo = str_replace($selectcontentadv_name, "", $ad_name);
                 } else {
                     $type = 2;//节目
                     $lo = 0;
