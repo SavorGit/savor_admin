@@ -189,7 +189,7 @@ class TestController extends Controller {
         $redis->select(15);
         $flag = 0;
         foreach($data as $key=>$v){
-            
+//            $sql =  "update savor_box set tpmedia_id='1,2,3,4,5,6' where id=".$v['id']." limit 1";
             $sql  = "update savor_box set qrcode_type=2 where id=".$v['id']." limit 1";
             
             $rt = M()->execute($sql);
