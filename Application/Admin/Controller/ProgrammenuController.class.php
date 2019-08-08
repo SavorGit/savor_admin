@@ -1094,6 +1094,33 @@ setEnclosure('"')
         return $result;
     }
 
+    /**
+     * 获取精选内容广告位
+     */
+    public function getSelectcontentOccup($result, $filter = '')
+    {
+        $adv_selectcontent_num_arr = C('SELECTCONTENT_GOODS_OCCU');
+        if ($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_selectcontent_num = $adv_selectcontent_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i = 1; $i <= $adv_selectcontent_num; $i ++) {
+            if (in_array($adv_selectcontent_num_arr['name'] . $i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array(
+                    'id' => 0,
+                    'name' => $adv_selectcontent_num_arr['name'] . $i,
+                    'create_time' => $now_date_time,
+                    'duration' => 0,
+                    'type' => '33'
+                );
+            }
+        }
+        return $result;
+    }
+
     public function get_se_left()
     {
         $m_type = I('post.m_type', '0');
@@ -1129,6 +1156,8 @@ setEnclosure('"')
                 $result = $this->getAdsOccup($result, $adval);
 
                 $result = $this->getActivityGoodsOccup($result);
+
+                $result = $this->getSelectcontentOccup($result);
                 break;
             case 3:
                 // 获取宣传片
@@ -1147,6 +1176,9 @@ setEnclosure('"')
                 break;
             case 7:
                 $result = $this->getActivityGoodsOccup($result);
+                break;
+            case 8:
+                $result = $this->getSelectcontentOccup($result);
                 break;
             default:
                 $where .= "	AND type = '{$m_type}'";

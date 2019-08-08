@@ -457,6 +457,10 @@ $config['ACTIVITY_GOODS_OCCU']= array(
     'name'=>'活动商品广告位',
     'num' => '10',
 );
+$config['SELECTCONTENT_GOODS_OCCU']= array(
+    'name'=>'精选内容广告位',
+    'num' => '20',
+);
 $config['POLY_SCREEN_MEDIA_LIST'] = array(
     '1'=>'百度聚屏',
     '2'=>'钛镁聚屏',
