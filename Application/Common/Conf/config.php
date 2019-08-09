@@ -270,6 +270,7 @@ $config['fee_type'] = array(
 $config['SAPP_ADSPOSITION'] = array(
     '1'=>'首页顶部',
     '2'=>'互动页顶部',
+    '3'=>'互动页中部'
 );
 
 $config['NOTICE_STATAE'] = array(
