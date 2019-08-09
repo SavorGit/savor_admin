@@ -499,19 +499,23 @@ class ContentadsController extends BaseController{
 								return $result;
 							});
 							$tmp_box_tv = array_values($tmp_box_tv);
+                            $all_play_nums = 0;
 							if($tmp_box_tv){
 								$limit = ($start-1)*$size;
+                                foreach ($tmp_box_tv as $v){
+                                    if(!empty($v['play_count'])){
+                                        $all_play_nums+=intval($v['play_count']);
+                                    }
+                                }
 								$tmp_box_tvt = array_slice($tmp_box_tv, $limit , $size,true);
 								$result['list']  = $tmp_box_tvt;
 								$totals=count($tmp_box_tv);
 								$objPage = new Page($totals,$size);
 								$result['page']  = $objPage->admin_page();
+								$this->assign('all_play_nums',$all_play_nums);
 							}else{
 								$result = $this->emptyData($size);
 							}
-
-
-
 						}
 				}
 			}
@@ -521,13 +525,10 @@ class ContentadsController extends BaseController{
 			}else{
 				$result = $this->emptyData($size);
 			}
-
 		}
-
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('showlist');
 	}
-
 
 }

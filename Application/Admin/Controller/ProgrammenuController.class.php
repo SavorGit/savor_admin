@@ -720,13 +720,17 @@ smlist.menu_name';
 
             // 获取活动商品广告占位符
             $res_activitygoods_adv = $this->getActivityGoodsOccup($res);
-            
+
+            // 获取活动商品广告占位符
+            $res_selectcontent_adv = $this->getSelectcontentOccup($res);
+
             // 取出name列
             $res_adv = array_column($res_adv, 'name');
             $res_xuan = array_column($res_xuan, 'name');
             $rertb_adv = array_column($rertb_adv, 'name');
             $poly_adv = array_column($poly_adv, 'name');
             $activitygoods_adv = array_column($res_activitygoods_adv, 'name');
+            $selectcontent_adv = array_column($res_selectcontent_adv, 'name');
 
             $adv_promote_num_arr = C('ADVE_OCCU');
             $adv_name = $adv_promote_num_arr['name'];
@@ -738,6 +742,10 @@ smlist.menu_name';
 
             $actgadv_promote_num_arr = C('ACTIVITY_GOODS_OCCU');
             $activitygoodsadv_name = $actgadv_promote_num_arr['name'];
+
+            $selectcontent_promote_num_arr = C('SELECTCONTENT_GOODS_OCCU');
+            $selectcontentadv_name = $selectcontent_promote_num_arr['name'];
+
 
             foreach ($id_arr as $k => $v) {
                 // 判断type类型 1广告位 2节目 3宣传片 4rtb广告 5聚屏广告位 6活动商品广告位
@@ -755,8 +763,11 @@ smlist.menu_name';
                     $type = 5;//聚屏广告位
                     $lo = str_replace($polyadv_name, "", $ad_name);
                 } elseif (in_array($ad_name, $activitygoods_adv)) {
-                    $type = 6;//聚屏广告位
+                    $type = 6;//活动商品广告位
                     $lo = str_replace($activitygoodsadv_name, "", $ad_name);
+                } elseif (in_array($ad_name, $selectcontent_adv)) {
+                    $type = 7;//精选内容广告位
+                    $lo = str_replace($selectcontentadv_name, "", $ad_name);
                 } else {
                     $type = 2;//节目
                     $lo = 0;
@@ -1094,6 +1105,33 @@ setEnclosure('"')
         return $result;
     }
 
+    /**
+     * 获取精选内容广告位
+     */
+    public function getSelectcontentOccup($result, $filter = '')
+    {
+        $adv_selectcontent_num_arr = C('SELECTCONTENT_GOODS_OCCU');
+        if ($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_selectcontent_num = $adv_selectcontent_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i = 1; $i <= $adv_selectcontent_num; $i ++) {
+            if (in_array($adv_selectcontent_num_arr['name'] . $i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array(
+                    'id' => 0,
+                    'name' => $adv_selectcontent_num_arr['name'] . $i,
+                    'create_time' => $now_date_time,
+                    'duration' => 0,
+                    'type' => '33'
+                );
+            }
+        }
+        return $result;
+    }
+
     public function get_se_left()
     {
         $m_type = I('post.m_type', '0');
@@ -1129,6 +1167,8 @@ setEnclosure('"')
                 $result = $this->getAdsOccup($result, $adval);
 
                 $result = $this->getActivityGoodsOccup($result);
+
+                $result = $this->getSelectcontentOccup($result);
                 break;
             case 3:
                 // 获取宣传片
@@ -1147,6 +1187,9 @@ setEnclosure('"')
                 break;
             case 7:
                 $result = $this->getActivityGoodsOccup($result);
+                break;
+            case 8:
+                $result = $this->getSelectcontentOccup($result);
                 break;
             default:
                 $where .= "	AND type = '{$m_type}'";
