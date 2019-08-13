@@ -1,0 +1,99 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/helpplay/helplist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+          <div class="tools-group s2">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/helpplay/setplaytime" title="设置播放时长" target="dialog" mask="true"><i class="fa fa-plus"></i><span>设置播放时长</span></a>
+
+          </div>
+        </div>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 pull-right">
+
+          <div class="input-group input-group-sm pull-right">
+            <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
+            <span class="input-group-btn input-group-sm">
+              <select name="is_recommend"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="99">推荐状态</option>
+                <option value="1" <if condition="$is_recommend eq 1">selected="selected"</if> >已推荐</option>
+                <option value="0" <if condition="$is_recommend eq 0">selected="selected"</if> >未推荐</option>
+              </select>
+            </span>
+            <span class="input-group-btn input-group-sm">
+              <select name="res_type"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="0">资源类型</option>
+                <option value="1" <if condition="$res_type eq 1">selected="selected"</if> >图片投屏</option>
+                <option value="2" <if condition="$res_type eq 2">selected="selected"</if> >视频投屏</option>
+              </select>
+            </span>
+            <span class="input-group-btn input-group-sm">
+              <select name="status"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="99">审核状态</option>
+                <option value="1" <if condition="$status eq 1">selected="selected"</if> >待审核</option>
+                <option value="2" <if condition="$status eq 2">selected="selected"</if> >已审核</option>
+              </select>
+            </span>
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+              </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>投屏ID</th>
+            <th>用户昵称</th>
+            <th>openid</th>
+            <th>资源类型</th>
+            <th>助力次数</th>
+            <th>是否系统推荐</th>
+            <th>审核状态</th>
+            <th>播放状态</th>
+            <th>发布时间</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="data" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.forscreen_record_id}</td>
+              <td data-title="用户昵称">{$dinfo.nickname}</td>
+              <td data-title="openid">{$dinfo.openid}</td>
+              <td data-title="资源类型">{$dinfo.res_typestr}</td>
+              <td data-title="助力次数">{$dinfo.helpnum}</td>
+              <td data-title="是否系统推荐">{$dinfo.is_recommendstr}</td>
+              <td data-title="审核状态">{$dinfo.statusstr}</td>
+              <td data-title="播放状态">{$dinfo.play_statusstr}</td>
+              <td data-title="发布时间">{$dinfo.add_time}</td>
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="查看详情" title="序号{$dinfo.id}-查看详情" target="dialog" mask="true" href="{$host_url}/smallapp/helpplay/helpdetail?id={$dinfo.id}&forscreen_record_id={$dinfo.forscreen_record_id}" rel="sappforscreen/pubdetail" class="btn btn-success btn-icon">
+                    <i class="fa fa-search-minus"></i>
+                  </a>
+
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

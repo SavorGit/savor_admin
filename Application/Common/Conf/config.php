@@ -270,7 +270,6 @@ $config['fee_type'] = array(
 $config['SAPP_ADSPOSITION'] = array(
     '1'=>'首页顶部',
     '2'=>'互动页顶部',
-    '3'=>'互动页中部'
 );
 
 $config['NOTICE_STATAE'] = array(
@@ -557,6 +556,8 @@ $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
+$config['SAPP_SELECTCONTENT_CONTENT']='smallapp:selectcontent:content';
+
 
 //新虚拟小平台接口缓存key
 $config['VSMALL_HOTELLIST'] = "vsmall:hotellist";

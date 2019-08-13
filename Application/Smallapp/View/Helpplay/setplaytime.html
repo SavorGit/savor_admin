@@ -1,0 +1,17 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/helpplay/setplaytime" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">精选内容播放时长(小时)：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="content_play_time" type="number" value="{$info.content_play_time}" class="form-control" required/>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>
