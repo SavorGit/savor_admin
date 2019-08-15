@@ -195,12 +195,15 @@ class TestController extends Controller {
                 $tpmedia_id_arr = array();
             }
             if($v['area_id']==246 && !in_array($v['hotel_id'],array(830,829,828,823))){
-                if(!in_array(6,$tpmedia_id_arr)){
-                    $tpmedia_id_arr[] = 6;
-                    $tpmedia_ids = join(',',$tpmedia_id_arr);
-                    $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
-                    $rt = M()->execute($sql);
-                }
+                $tpmedia_ids = 6;
+                $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
+                $rt = M()->execute($sql);
+//                if(!in_array(6,$tpmedia_id_arr)){
+//                    $tpmedia_id_arr[] = 6;
+//                    $tpmedia_ids = join(',',$tpmedia_id_arr);
+//                    $sql =  "update savor_box set tpmedia_id='{$tpmedia_ids}' where id=".$v['id']." limit 1";
+//                    $rt = M()->execute($sql);
+//                }
             }else{
                 $position_6 = array_search(6,$tpmedia_id_arr);
                 if($position_6){
