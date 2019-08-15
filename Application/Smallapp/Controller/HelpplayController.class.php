@@ -10,14 +10,37 @@ class HelpplayController extends BaseController {
     public function helplist(){
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
+        $openid = I('openid','','trim');
+        $is_recommend = I('is_recommend',99,'intval');
+        $res_type = I('res_type',0,'intval');
+        $status = I('status',99,'intval');
+        $playstatus = I('playstatus',0,'intval');
 
         $m_forscreenhelp = new \Admin\Model\Smallapp\ForscreenhelpModel();
         $m_forscreenhelpuser = new \Admin\Model\Smallapp\ForscreenhelpuserModel();
         $where = array();
+        if($status==99){
+            $where['p.status'] = array('in','1,2');
+        }else{
+            $where['p.status'] = $status;
+        }
+        if($is_recommend!=99){
+            $where['p.is_recommend'] = $is_recommend;
+        }
+        if($res_type){
+            $where['p.res_type'] = $res_type;
+        }
+        if($openid){
+            $where['a.openid'] = $openid;
+        }
+        if($playstatus){
+            $where['a.status'] = $playstatus;
+        }
         $start = ($pageNum-1)*$size;
         $fields = 'a.id,a.forscreen_record_id,a.openid,p.res_type,p.is_recommend,p.status as status,a.status as play_status,a.add_time';
         $orderby = 'a.id asc';
-        $res_list = $m_forscreenhelp->getList($fields,$where,$orderby,$start,$size);
+        $group = 'f.id';
+        $res_list = $m_forscreenhelp->getList($fields,$where,$orderby,$group,$start,$size);
         $data_list = array();
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $allplay_status = array(1=>'未播放',2=>'待播放',3=>'播放中',4=>'播放完');
@@ -55,6 +78,12 @@ class HelpplayController extends BaseController {
                 $data_list[] = $v;
             }
         }
+        $this->assign('allplay_status',$allplay_status);
+        $this->assign('openid',$openid);
+        $this->assign('playstatus',$playstatus);
+        $this->assign('status',$status);
+        $this->assign('res_type',$res_type);
+        $this->assign('is_recommend',$is_recommend);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
@@ -139,7 +168,7 @@ class HelpplayController extends BaseController {
                     $this->outputNew('请先推荐和审核', 'helpplay/helpdetail',3);
                 }
                 $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-                $fields = 'id,imgs,duration,md5_file';
+                $fields = 'id,openid,imgs,duration,md5_file';
                 $res_forscreen = $m_forscreen->getOne($fields,array('id'=>$forscreen_record_id));
                 if(empty($res_forscreen)){
                     $this->outputNew('投屏内容不存在', 'helpplay/helpdetail',3);

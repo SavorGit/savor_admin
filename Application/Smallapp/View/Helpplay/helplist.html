@@ -11,7 +11,7 @@
 
           </div>
         </div>
-          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 pull-right">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-6 pull-right">
 
           <div class="input-group input-group-sm pull-right">
             <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
@@ -36,6 +36,14 @@
                 <option value="2" <if condition="$status eq 2">selected="selected"</if> >已审核</option>
               </select>
             </span>
+            <span class="input-group-btn input-group-sm">
+              <select name="playstatus"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                  <option value="0">播放状态</option>
+                  <volist name="allplay_status" id="playname">
+                  <option value="{$key}" <if condition="$key eq $playstatus">selected="selected"</if> >{$playname}</option>
+                  </volist>
+              </select>
+            </span>
             <span class="input-group-btn">
                 <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
               </span>
@@ -54,6 +62,7 @@
           <thead>
 
           <tr id="post">
+            <th>ID</th>
             <th>投屏ID</th>
             <th>用户昵称</th>
             <th>openid</th>
@@ -69,7 +78,8 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="data" id="dinfo">
             <tr target="sid_user">
-              <td data-title="ID">{$dinfo.forscreen_record_id}</td>
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="投屏ID">{$dinfo.forscreen_record_id}</td>
               <td data-title="用户昵称">{$dinfo.nickname}</td>
               <td data-title="openid">{$dinfo.openid}</td>
               <td data-title="资源类型">{$dinfo.res_typestr}</td>
