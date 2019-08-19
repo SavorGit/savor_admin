@@ -367,6 +367,11 @@ $config['UMENT_API_CONFIG'] = array(
      ),
 );
 
+$config['SMALLAPP_CONFIG'] = array(
+    'cache_key'=>'smallapp_token',
+    'appid'=>'wxfdf0346934bb672f',
+    'appsecret'=>'b9b93aef8d6609722596e35385ff05c5'
+);
 
 $config['UMENBAI_API_CONFIG'] = array(
     'API_URL'=>'http://msg.umeng.com/api/send',
@@ -558,7 +563,7 @@ $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
 $config['SAPP_SELECTCONTENT_CONTENT']='smallapp:selectcontent:content';
-
+$config['SAPP_SELECTCONTENT_PUSH']='smallapp:selectcontent:wxpush';
 
 //新虚拟小平台接口缓存key
 $config['VSMALL_HOTELLIST'] = "vsmall:hotellist";

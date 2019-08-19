@@ -30,8 +30,8 @@ class UserSigninModel extends BaseModel{
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
         foreach ($res_data as $v){
             echo "ID: {$v['id']}  openid: {$v['openid']} begin \r\n";
+            $signinfo = $this->checkSigninTime(strtotime($v['signin_time']));
             if($v['signout_time']=='0000-00-00 00:00:00'){
-                $signinfo = $this->checkSigninTime(strtotime($v['signin_time']));
                 if($signinfo['is_signin']){
                     $this->updateData(array('id'=>$v['id']),array('signout_time'=>$signinfo['signout_time']));
                     $v['signout_time'] = $signinfo['signout_time'];
@@ -41,7 +41,7 @@ class UserSigninModel extends BaseModel{
                 continue;
             }
             $tmp_signout_time = strtotime($v['signout_time']);
-            $tmp_signin_time = strtotime($v['signin_time']);
+            $tmp_signin_time = strtotime($signinfo['signin_time']);
             $diff_time =  $tmp_signout_time - $tmp_signin_time;
             if($diff_time<3600){
                 continue;
@@ -74,9 +74,11 @@ class UserSigninModel extends BaseModel{
                 $now_integral+=$boot_integral;
             }
             //互动积分
+            $hd_begin_time = date('Y-m-d H:i:s',$tmp_signin_time);
+            $hd_end_time = date('Y-m-d H:i:s',$tmp_signout_time);
             $activity_interact_integral = $res_config['activity_interact_integral'];
             $where = array('a.box_mac'=>$v['box_mac']);
-            $where['a.create_time'] = array(array('EGT',$begin_time),array('ELT',$end_time));
+            $where['a.create_time'] = array(array('EGT',$hd_begin_time),array('ELT',$hd_end_time));
             $where['a.mobile_brand'] = array('neq','devtools');
             $where['a.is_valid'] = 1;
             $integral_usernum = $m_forscreenrecord->countWhere($where,'a.openid');
@@ -142,18 +144,22 @@ class UserSigninModel extends BaseModel{
         $dinner_etime = $pre_date.' '.$feast_time['dinner'][1];
 
         if($pre_time<$lunch_stime){
+            $begin_time = $lunch_stime;
             $over_time = $lunch_etime;
         }elseif($pre_time>=$lunch_stime && $pre_time<=$lunch_etime){
+            $begin_time = $pre_time;
             $over_time = $lunch_etime;
         }elseif($pre_time>$lunch_etime){
+            $begin_time = $dinner_stime;
             $over_time = $dinner_etime;
         }else{
+            $begin_time = $dinner_stime;
             $over_time = $dinner_etime;
         }
         if($now_time > $over_time){
             $is_signin = 1;
         }
-        $res = array('is_signin'=>$is_signin,'signout_time'=>$over_time);
+        $res = array('is_signin'=>$is_signin,'signin_time'=>$begin_time,'signout_time'=>$over_time);
         return $res;
     }
 }
