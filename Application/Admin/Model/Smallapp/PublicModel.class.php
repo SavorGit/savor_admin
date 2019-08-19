@@ -50,4 +50,28 @@ class PublicModel extends Model
 	    $data = array('list'=>$list,'page'=>$show);
 	    return $data;
 	}
+
+	public function cronforscreenPublicnums(){
+        $fields = 'id,forscreen_id';
+        $where = array('res_nums'=>0);
+	    $res_list = $this->field($fields)->where($where)->select();
+	    if(!empty($res_list)){
+	        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+            foreach ($res_list as $v){
+                $field = 'count(id) as num';
+                $res_forscreen_num = $m_forscreen->getOne($field,array('forscreen_id'=>$v['forscreen_id']));
+                if(!empty($res_forscreen_num)){
+                    $res_nums = $res_forscreen_num['num'];
+                    $res = $this->updateInfo(array('id'=>$v['id']),array('res_nums'=>$res_nums));
+                    if($res){
+                        echo "id: {$v['id']} ok \r\n";
+                    }else{
+                        echo "id: {$v['id']} error \r\n";
+                    }
+                }
+            }
+        }else{
+	        echo "no data \r\n";
+        }
+    }
 }
