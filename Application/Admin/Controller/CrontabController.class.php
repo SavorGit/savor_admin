@@ -3627,12 +3627,20 @@ class CrontabController extends Controller
                         }
                     }
                     //end
+
+                    $nowdatetime = date('Y-m-d H:i:s');
+                    $log_content = $nowdatetime.'[redpacket_id]'.$trade_no."\n";
+                    $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
+                    @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+
                 }
+
             }
         }
-//        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
-//        $log_file_name = APP_PATH.'Runtime/Logs/'.'operationbonus_'.date("Ymd").".log";
-//        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+        $nowdatetime = date('Y-m-d H:i:s');
+        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
+        $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
+        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
     }
 
     public function userintegral(){
