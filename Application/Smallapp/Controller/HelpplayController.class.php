@@ -38,7 +38,7 @@ class HelpplayController extends BaseController {
         }
         $start = ($pageNum-1)*$size;
         $fields = 'a.id,a.forscreen_record_id,a.openid,p.res_type,p.is_recommend,p.status as status,a.status as play_status,a.add_time';
-        $orderby = 'a.id asc';
+        $orderby = 'a.id desc';
         $group = 'f.id';
         $res_list = $m_forscreenhelp->getList($fields,$where,$orderby,$group,$start,$size);
         $data_list = array();
