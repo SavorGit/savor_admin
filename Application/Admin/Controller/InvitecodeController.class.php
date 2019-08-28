@@ -6,8 +6,6 @@ namespace Admin\Controller;
  * @version     1.2
  * @since       20171129
  */
-use Admin\Controller\BaseController;
-use OSS\Tests\Common;
 
 class InvitecodeController extends BaseController {
     private $oss_host = '';
@@ -15,6 +13,7 @@ class InvitecodeController extends BaseController {
         parent::__construct();
         $this->oss_host = get_oss_host();
     }
+
     public function index(){
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -24,6 +23,8 @@ class InvitecodeController extends BaseController {
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
+        $type = I('type',0,'intval');
+        $this->assign('type',$type);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
 
@@ -31,25 +32,25 @@ class InvitecodeController extends BaseController {
         $this->assign('hotel_id',$hotel_id);
         $fileds = 'a.*,b.remark';
         $where = ' a.hotel_id='.$hotel_id.' and flag = 0';
-        
-        
+        if($type){
+            $where.=" and type=$type";
+        }
+
         $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
         $list = $m_hotel_invite_code->getList($fileds,$where,$orders,$start,$size);
-        //print_r($list);exit;
         $this->assign('hotel_id',$hotel_id);
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
         $this->display('index');
-        
     }
+
     public function add(){
-        
         $hotel_id =  I('get.hotel_id');
         $this->assign('hotel_id',$hotel_id);
         $this->display('add');
     }
-    public function doadd(){
 
+    public function doadd(){
         $hotel_id = I('get.hotel_id'); 
         $userinfo = session('sysUserInfo');
         $m_hotel = new \Admin\Model\HotelModel();
@@ -117,6 +118,7 @@ class InvitecodeController extends BaseController {
             $this->error('添加失败');
         }    
     }
+
     public function delete(){
         $id = I('id');
         $this->assign('id',$id);
@@ -124,7 +126,6 @@ class InvitecodeController extends BaseController {
     }
     
     public function dodelete(){
-        
         $id = I('get.id');
         $where = $data = array();
         if($id){
@@ -141,7 +142,7 @@ class InvitecodeController extends BaseController {
             $data['flag'] = 1;
             $ret = $m_hotel_invite_code->where($where)->save($data);
             if($ret){
-                $this->output('添加成功', 'invitecode/index', 2);
+                $this->output('删除成功', 'invitecode/index', 2);
             }else {
                 $this->error('删除失败');
             }
@@ -149,22 +150,51 @@ class InvitecodeController extends BaseController {
             $this->error('参数错误');
         }
     }
+
+    public function editcode(){
+        $id = I('id',0,'intval');
+        $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
+        if(IS_POST){
+            $bind_mobile = I('post.bind_mobile',0,'intval');
+            $openid = I('post.openid','','trim');
+            $type = I('post.type',0,'intval');
+            $where = array('id'=>$id);
+            $data = array();
+            if($bind_mobile){
+                $data['bind_mobile'] = $bind_mobile;
+            }
+            if($openid){
+                $data['openid'] = $openid;
+            }
+            if($type){
+                $data['type'] = $type;
+            }
+            if($data){
+                $ret = $m_hotel_invite_code->where($where)->save($data);
+            }else{
+                $ret = true;
+            }
+            $this->output('更新成功!', 'invitecode/index');
+        }else{
+            $vinfo = $m_hotel_invite_code->field('*')->where(array('id'=>$id))->find();
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
+    }
+
     //根据手机号查询酒楼
     public function searchHotel(){
         $mobile = I('get.mobile');
         if($mobile){
-            
-        
-        $sql ="select hotel.name  from savor_hotel_invite_code a
-               left join savor_hotel hotel on a.hotel_id=hotel.id
-               where a.bind_mobile=$mobile and a.flag=0";
-        
-        $data = M()->query($sql);
-        if(!empty($data)){
-            print_r($data[0]['name']);
-        }else {
-            echo '该手机号未绑定';
-        }
+            $sql ="select hotel.name  from savor_hotel_invite_code a
+                   left join savor_hotel hotel on a.hotel_id=hotel.id
+                   where a.bind_mobile=$mobile and a.flag=0";
+            $data = M()->query($sql);
+            if(!empty($data)){
+                print_r($data[0]['name']);
+            }else {
+                echo '该手机号未绑定';
+            }
         }
     }
 }

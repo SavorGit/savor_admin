@@ -9,31 +9,38 @@
     <input type="hidden" name="hotel_id" value="{$hotel_id}" />
     <div class="searchBar">
       <div class="clearfix">
-        <div class="form-inline" style="margin-top:10px;">
-        
-		<div class="input-group input-group-sm pull-left">
-          <!-- <a class="btn btn-success btn-sm add" href="{$host_name}/invitecode/doadd?hotel_id={$hotel_id}" title="新增邀请码" target="dialog" mask="true"> -->
-          <a warn="警告"  title="你确定要添加邀请码吗？" target="ajaxTodo" href="{$host_name}/invitecode/doadd?hotel_id={$hotel_id}"  class="btn btn-success btn-icon">
-          <i class="fa fa-plus"></i> 
-          	
-          </a>
-          
-        </div>
-       <div class="input-group input-group-sm pull-right">
-       	<a class="btn btn-success btn-sm add" href="{$host_name}/invitecode/searchHotel?mobile=" title="新增酒店" target="_blank" mask="true">查询绑定手机</a>
-       </div>
-          
+        <div class="col-xs-12 col-sm-6 col-md-10">
+          <div class="tools-group s2">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/invitecode/searchHotel?mobile=" title="查询绑定手机" target="_blank" mask="true">查询绑定手机</a>
+
+            <a warn="警告"  title="你确定要添加邀请码吗？" target="ajaxTodo" href="{$host_name}/invitecode/doadd?hotel_id={$hotel_id}" class="btn btn-success btn-sm add"><i class="fa fa-plus"></i><span>批量生成</span></a>
           </div>
         </div>
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+
+          <div class="input-group input-group-sm">
+            <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" required>
+              <option value="0">全部</option>
+              <option value="1" <if condition="$type eq 1"> selected </if> > 普通码</option>
+              <option value="2" <if condition="$type eq 2"> selected </if> > 管理员码</option>
+            </select>
+
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+
+
+          </div>
+
         </div>
       </div>
+    </div>
   </form>
 </div>
 <div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables">
-      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second"
-enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" rel="second" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDoneER)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           <tr id="post">
@@ -62,8 +69,10 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="首次使用时间">{$vlist.bind_time}</td>
               <td data-title="操作">
               	<div class="tools-edit">
+                  <a data-tip="修改" rel="invitecode/editcode" target="dialog" mask="true" href="{$host_name}/invitecode/editcode?id={$vlist.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
                   <!-- <a data-tip="删除" target="dialog" data-placement="left" mask="true" rel="xiugaihotel" href="{$host_name}/invitecode/delete?id={$vlist.id}" class="btn btn-success btn-icon">
-
                     <i class="fa fa-tag"></i> -->
                     <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/invitecode/dodelete?id={$vlist.id}"  class="btn btn-success btn-icon">
                     <i class="fa fa-trash"></i>

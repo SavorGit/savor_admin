@@ -663,6 +663,7 @@ class HotelController extends BaseController {
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
         $goods_ids = I('goods_ids');
+        $is_open_integral = I('post.is_open_integral',0,'intval');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -775,6 +776,9 @@ class HotelController extends BaseController {
         }
         if($activity_phone){
             $data['activity_phone'] = $activity_phone;
+        }
+        if($is_open_integral){
+            $data['is_open_integral'] = $is_open_integral;
         }
 		$tranDb = new Model();
 		$tranDb->startTrans();
