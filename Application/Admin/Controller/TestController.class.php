@@ -924,5 +924,42 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         }
         echo "ok";
     }
-    
+
+    public function helpcontent(){
+        $id = I('get.id',0,'intval');
+        $content_key = C('SAPP_SELECTCONTENT_CONTENT');
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $res_cache = $redis->get($content_key);
+        if($res_cache){
+            $res_data = json_decode($res_cache,true);
+            foreach ($res_data as $k=>$v){
+                if($v['id']==$id){
+                    unset($res_data[$k]);
+                }
+            }
+            print_r($res_data);
+            $redis->set($content_key,json_encode($res_data));
+        }
+    }
+
+    public function saleuser(){
+        $sql ="select * from savor_smallapp_user where small_app_id=5";
+        $res_user = M()->query($sql);
+        foreach ($res_user as $v){
+            if(!empty($v['mobile'])){
+                $sql_invite = "select * from savor_hotel_invite_code where bind_mobile='{$v['mobile']}'";
+                $res_invite = M()->query($sql_invite);
+                if(!empty($res_invite)){
+                    $id = $res_invite[0]['id'];
+                    $openid = $v['openid'];
+                    $sql_upinvite = "update savor_hotel_invite_code set openid='$openid' where id=$id";
+                    $res = M()->execute($sql_upinvite);
+                    if($res){
+                        echo "$id ok \r\n";
+                    }
+                }
+            }
+        }
+    }
 }
