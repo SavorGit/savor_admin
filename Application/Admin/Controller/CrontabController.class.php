@@ -3628,19 +3628,19 @@ class CrontabController extends Controller
                     }
                     //end
 
-                    $nowdatetime = date('Y-m-d H:i:s');
-                    $log_content = $nowdatetime.'[redpacket_id]'.$trade_no."\n";
-                    $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
-                    @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+//                    $nowdatetime = date('Y-m-d H:i:s');
+//                    $log_content = $nowdatetime.'[redpacket_id]'.$trade_no."\n";
+//                    $log_fil1 `e_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
+//                    @file_put_contents($log_file_name, $log_content, FILE_APPEND);
 
                 }
 
             }
         }
-        $nowdatetime = date('Y-m-d H:i:s');
-        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
-        $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
-        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+//        $nowdatetime = date('Y-m-d H:i:s');
+//        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
+//        $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
+//        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
     }
 
     public function userintegral(){
@@ -3652,6 +3652,72 @@ class CrontabController extends Controller
         $m_public = new \Admin\Model\Smallapp\PublicModel();
         $m_public->cronforscreenPublicnums();
     }
+
+    public function sendredpacket(){
+        $operation_uid = 42996;
+        $m_order = new \Admin\Model\Smallapp\RedpacketModel();
+        $where = array('status'=>array('in','4,6'),'scope'=>1);
+        $where['user_id'] = array('neq',$operation_uid);
+        $where['add_time'] = array('egt','2019-08-29 15:00:00');
+        $res_order = $m_order->getDataList('id,user_id,pay_fee,add_time',$where,'id asc');
+        $nowdtime = date('Y-m-d H:i:s');
+        if(empty($res_order)){
+            echo $nowdtime.' no send redpacket'."\r\n";
+            exit;
+        }
+        //大于15分钟未发完的红包
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $sapp_redpacket_key = C('SAPP_REDPACKET');
+
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $m_redpacketreceive = new \Admin\Model\Smallapp\RedpacketReceiveModel();
+        $nowtime = time();
+        foreach ($res_order as $v){
+            $trade_no = $v['id'];
+            $add_time = strtotime($v['add_time']);
+            if($nowtime-$add_time>=900){
+                $key = $sapp_redpacket_key.$trade_no.':bonus';
+                $res_money = $redis->get($key);
+                if($res_money){
+                    $all_money = json_decode($res_money,true);
+                    if(!empty($all_money['unused']) && count($all_money['unused'])>0){
+                        $m_order->updateData(array('id'=>$trade_no),array('status'=>5,'operate_type'=>1));
+                        $res_receive = $m_redpacketreceive->getDataList('user_id',array('redpacket_id'=>$trade_no),'id desc');
+                        $has_getuser = array();
+                        foreach ($res_receive as $rv){
+                            $has_getuser[] = $rv['user_id'];
+                        }
+                        $unused_money = $all_money['unused'];
+                        $unused_num = count($unused_money);
+                        $size = $unused_num*2;
+                        $limit_arr = array();
+                        $tmp_start = 0;
+                        for ($i=0;$i<10;$i++){
+                            $tmp_start = $size*10+500+$tmp_start;
+                            $limit_arr[]="$tmp_start,$size";
+                        }
+                        shuffle($limit_arr);
+                        $limit = $limit_arr[0];
+                        $where_user = array('small_app_id'=>1,'is_wx_auth'=>3);
+                        $res_user = $m_user->getWhere('id',$where_user,'id asc',$limit);
+                        foreach ($res_user as $uv){
+                            if(empty($unused_money)){
+                                break;
+                            }
+                            $money = array_shift($unused_money);
+                            $add_data = array('redpacket_id'=>$trade_no,'user_id'=>$uv['id'],'money'=>$money,'barrage'=>'happy birthday',
+                                'status'=>1,'receive_time'=>date('Y-m-d H:i:s'),'operate_type'=>1);
+                            $m_redpacketreceive->add($add_data);
+                        }
+                        echo $nowdtime.' redpacket_id: '.$trade_no.' send finish'."\r\n";
+                    }
+                }
+            }
+
+        }
+    }
+
 
     public function wxpush(){
         $push_key = C('SAPP_SELECTCONTENT_PUSH').':ontv';
