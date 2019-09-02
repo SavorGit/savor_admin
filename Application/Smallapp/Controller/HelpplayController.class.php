@@ -168,7 +168,7 @@ class HelpplayController extends BaseController {
                     $this->outputNew('请先推荐和审核', 'helpplay/helpdetail',3);
                 }
                 $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-                $fields = 'id,openid,imgs,duration,md5_file';
+                $fields = 'id,forscreen_id,resource_id,openid,imgs,duration,md5_file';
                 $res_forscreen = $m_forscreen->getOne($fields,array('id'=>$forscreen_record_id));
                 if(empty($res_forscreen)){
                     $this->outputNew('投屏内容不存在', 'helpplay/helpdetail',3);
