@@ -97,7 +97,7 @@ class GoodsController extends BaseController {
         }else{
             $type = I('post.type',0,'intval');
         	$name = I('post.name','','trim');
-        	$price = I('post.price','','trim');
+        	$price = I('post.price',0,'intval');
         	$rebate_integral = I('post.rebate_integral',0,'intval');
         	$jd_url = I('post.jd_url','','trim');
         	$start_date = I('post.start_date','');
@@ -105,6 +105,11 @@ class GoodsController extends BaseController {
             $media_id = I('post.media_id',0);
         	$status = I('post.status',1,'intval');
             $clicktype = I('post.clicktype',0,'intval');
+            $appid = I('post.appid','','trim');
+            $buybutton = I('post.buybutton','','trim');
+            $imgmedia_id = I('post.imgmedia_id',0,'intval');
+
+
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
             }
@@ -124,15 +129,32 @@ class GoodsController extends BaseController {
         	if(!empty($res_goods) && $type!=20){
         		$this->output('名称不能重复', 'goods/goodsadd', 2, 0);
         	}
-            $stime = strtotime($start_date);
-        	$etime = strtotime($end_date);
-        	if($stime>$etime){
-        	    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+
+            $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
+                'media_id'=>$media_id,'status'=>$status);
+        	if($type==40){
+        	    if(empty($appid) || empty($buybutton)){
+                    $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
+                }
+                $data['appid'] = $appid;
+        	    $data['buybutton'] = $buybutton;
+        	    if($imgmedia_id){
+        	        $data['imgmedia_id'] = $imgmedia_id;
+                }
+
+            }else{
+                $stime = strtotime($start_date);
+                $etime = strtotime($end_date);
+                if($stime>$etime){
+                    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+                }
+                $start_time = date('Y-m-d 00:00:00',$stime);
+                $end_time = date('Y-m-d 23:59:59',$etime);
+                $data['start_time'] = $start_time;
+                $data['end_time'] = $end_time;
             }
-            $start_time = date('Y-m-d 00:00:00',$stime);
-        	$end_time = date('Y-m-d 23:59:59',$etime);
-        	$data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'start_time'=>$start_time,'end_time'=>$end_time,'media_id'=>$media_id,'status'=>$status);
+
+
         	if($id){
         	    $m_goods->updateData(array('id'=>$id),$data);
                 $result = true;
