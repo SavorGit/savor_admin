@@ -16,10 +16,19 @@ class HotelGoodsModel extends BaseModel{
             }
         }
         $m_goods = new \Admin\Model\Smallapp\GoodsModel();
-	    $where = array('type'=>10,'status'=>2);
-	    $res_goods = $m_goods->field('id,name')->where($where)->select();
+	    $where = array('status'=>2);
+	    $where['type'] = array('in',array(10,30));
+	    $res_goods = $m_goods->field('id,name,type')->where($where)->select();
 	    foreach ($res_goods as $k=>$v){
             $goods_id = $v['id'];
+            switch ($v['type']){
+                case 10:
+                    $res_goods[$k]['name'] = '官方活动-'.$v['name'];
+                    break;
+                case 30:
+                    $res_goods[$k]['name'] = '积分兑换-'.$v['name'];
+                    break;
+            }
             if(in_array($goods_id,$hotel_goods)){
                 $select = "selected='selected'";
             }else{
