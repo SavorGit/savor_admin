@@ -87,6 +87,11 @@ class GoodsController extends BaseController {
         		$dinfo = $m_goods->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
                 $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
+                $dinfo['oss_detailaddr'] = '';
+                if($dinfo['imgmedia_id']){
+                    $imgmedia_info = $m_media->getMediaInfoById($dinfo['imgmedia_id']);
+                    $dinfo['oss_detailaddr'] = $imgmedia_info['oss_addr'];
+                }
                 $dinfo['oss_addr'] = $media_info['oss_addr'];
                 $dinfo['media_type'] = $media_info['type'];
                 $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));

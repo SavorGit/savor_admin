@@ -181,10 +181,10 @@
 				<div class="fileinput fileinput-new" data-fileinput>
 					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
 						<a data-target="#modal-file" href="javascript:void(0)">
-							<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+							<if condition="($vinfo['oss_detailaddr'] eq 'NULL') OR $vinfo['oss_detailaddr'] eq ''">
 								<img id="detail_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
 								<else />
-								<img id="detail_idimg" src="{$vinfo.oss_addr}" border="0" />
+								<img id="detail_idimg" src="{$vinfo.oss_detailaddr}" border="0" />
 							</if>
 							<span id="detail_idimgname"></span>
 						</a>
@@ -193,7 +193,7 @@
 						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=detail_id&rtype=2" data-browse-file>
 							选择图片
 						</a>
-						<input type="hidden" name="imgmedia_id" id="detail_id" value="{$vinfo.media_id}" >
+						<input type="hidden" name="imgmedia_id" id="detail_id" value="{$vinfo.imgmedia_id}" >
 						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
 					</div>
 				</div>
