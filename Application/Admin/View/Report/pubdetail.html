@@ -61,6 +61,18 @@
            	 <else />
            	 否
            	 </if>
+			 </button>
+
+			是否置顶:
+			<button id="topBtn" value="{$info.is_top}" class="btn btn-primary" type="button" >
+				<if condition="$info.is_top eq 1">
+					是
+					<else />
+					否
+				</if>
+			</button>
+
+
         </td>
         <tr>
         
@@ -132,5 +144,38 @@ $('#staBtn').click(function(){
 		  },
 	});
 	
+});
+
+$('#topBtn').click(function(){
+    var pub_id =  $('#pub_id').val();
+    var status = $('#staBtn').val();
+    var is_recommend  = $('#recBtn').val();
+    var is_status = $(this).val();
+    var is_top;
+    if(is_status==0){
+        is_top =1;
+        var topstatus_str = '是';
+    }else {
+        is_top =0;
+        var topstatus_str = '否';
+    }
+    $.ajax({
+        type: 'POST',
+        url: '/admin/sappforscreen/operateStatus',
+        dataType: 'json',
+        data: {
+            id:pub_id,
+            is_recommend:is_recommend,
+            status:status,
+            is_top:is_top,
+        },
+        success:function(res){
+            if(res==1){
+                $('#topBtn').html(topstatus_str);
+                $('#topBtn').val(is_top);
+            }
+        },
+    });
+
 });
 </script>
