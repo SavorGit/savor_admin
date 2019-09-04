@@ -185,6 +185,13 @@ class HelpplayController extends BaseController {
                 }
                 if($play_status==2){
                     $content_data[$id] = $res_forscreen;
+
+                    $redis->select(5);
+                    $allkeys  = $redis->keys('smallapp:selectcontent:program:*');
+                    foreach ($allkeys as $program_key){
+                        $period = getMillisecond();
+                        $redis->set($program_key,$period);
+                    }
                 }elseif($play_status==1){
                     if(isset($content_data[$id])){
                         unset($content_data[$id]);
