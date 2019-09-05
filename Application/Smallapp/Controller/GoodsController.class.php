@@ -82,21 +82,35 @@ class GoodsController extends BaseController {
         $id = I('id', 0, 'intval');
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
         if(IS_GET){
+            $detail_img_num = 5;
         	$dinfo = array('media_type'=>1);
+        	$detailaddr = array();
         	if($id){
         		$dinfo = $m_goods->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
                 $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
-                $dinfo['oss_detailaddr'] = '';
-                if($dinfo['imgmedia_id']){
-                    $imgmedia_info = $m_media->getMediaInfoById($dinfo['imgmedia_id']);
-                    $dinfo['oss_detailaddr'] = $imgmedia_info['oss_addr'];
+                if($dinfo['detail_imgmedia_ids']){
+                    $detail_imgmedia_ids = json_decode($dinfo['detail_imgmedia_ids'],true);
+                    foreach ($detail_imgmedia_ids as $k=>$v){
+                        $imgmedia_info = $m_media->getMediaInfoById($v);
+                        $detailaddr[$k] = array('media_id'=>$v,'oss_addr'=>$imgmedia_info['oss_addr']);
+                    }
                 }
                 $dinfo['oss_addr'] = $media_info['oss_addr'];
                 $dinfo['media_type'] = $media_info['type'];
                 $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
                 $dinfo['end_date'] = date('Y-m-d',strtotime($dinfo['end_time']));
         	}
+            $detail_imgs = array();
+            for($i=1;$i<=$detail_img_num;$i++){
+                $img_info = array('id'=>$i,'imgid'=>'detail_id'.$i,'media_id'=>0);
+                if(isset($detailaddr[$i])){
+                    $img_info['media_id'] = $detailaddr[$i]['media_id'];
+                    $img_info['oss_addr'] = $detailaddr[$i]['oss_addr'];
+                }
+                $detail_imgs[] = $img_info;
+            }
+        	$this->assign('detail_imgs',$detail_imgs);
         	$this->assign('vinfo',$dinfo);
         	$this->display('goodsadd');
         }else{
@@ -112,7 +126,7 @@ class GoodsController extends BaseController {
             $clicktype = I('post.clicktype',0,'intval');
             $appid = I('post.appid','','trim');
             $buybutton = I('post.buybutton','','trim');
-            $imgmedia_id = I('post.imgmedia_id',0,'intval');
+            $detailmedia_id = I('post.detailmedia_id','');
 
 
             if($clicktype==1){
@@ -143,8 +157,8 @@ class GoodsController extends BaseController {
                 }
                 $data['appid'] = $appid;
         	    $data['buybutton'] = $buybutton;
-        	    if($imgmedia_id){
-        	        $data['imgmedia_id'] = $imgmedia_id;
+        	    if($detailmedia_id){
+        	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
                 }
 
             }else{
