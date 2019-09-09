@@ -567,6 +567,7 @@ $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
 $config['SAPP_SELECTCONTENT_CONTENT']='smallapp:selectcontent:content';
 $config['SAPP_SELECTCONTENT_PUSH']='smallapp:selectcontent:wxpush';
+$config['SAPP_OPTIMIZE_PROGRAM']='smallapp:optimize:program';
 
 //新虚拟小平台接口缓存key
 $config['VSMALL_HOTELLIST'] = "vsmall:hotellist";

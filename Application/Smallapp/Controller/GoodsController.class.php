@@ -152,6 +152,10 @@ class GoodsController extends BaseController {
             $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
                 'media_id'=>$media_id,'status'=>$status);
         	if($type==40){
+                $media_vid = I('post.media_vid',0);
+                if(empty($media_vid)){
+                    $this->output('请传入视频资源', 'goods/goodsadd', 2, 0);
+                }
         	    if(empty($appid) || empty($buybutton)){
                     $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
                 }
@@ -160,7 +164,6 @@ class GoodsController extends BaseController {
         	    if($detailmedia_id){
         	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
                 }
-
             }else{
                 $stime = strtotime($start_date);
                 $etime = strtotime($end_date);
@@ -184,6 +187,15 @@ class GoodsController extends BaseController {
             }
 
         	if($result){
+                if($type==40){
+                    $redis = \Common\Lib\SavorRedis::getInstance();
+                    $redis->select(5);
+                    $program_key = C('SAPP_OPTIMIZE_PROGRAM');
+                    $period = getMillisecond();
+                    $period_data = array('period'=>$period);
+                    $redis->set($program_key,json_encode($period_data));
+                }
+
         		$this->output('操作成功', 'goods/goodslist');
         	}else{
         		$this->output('操作失败', 'goods/goodslist',2,0);
