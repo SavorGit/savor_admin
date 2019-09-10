@@ -3714,4 +3714,34 @@ class CrontabController extends Controller
 
 
     }
+    /**
+     * @desc 机顶盒极简版更新投屏日志上报
+     */
+    public function updateSimpleUpload(){
+        $redis = SavorRedis::getInstance();
+        $redis->get(5);
+        $cache_key = C('SAPP_SIMPLE_UPLOAD_RESOUCE').":*";
+        $keys = $redis->keys($cache_key);
+        $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        foreach($keys as $k){
+            
+            $rets = $redis->lgetrange($k,0,-1);
+            foreach($rets as $v){
+                $map = $data = array();
+                $simple_resource = json_decode($v,true);
+                $map['forscreen_id'] = intval($simple_resource['forscreen_id']);
+                $map['resource_id']  = intval($simple_resource['resource_id']);
+                $map['box_mac']      = $simple_resource['box_mac'];
+                $data['imgs']        = $simple_resource['imgs'];
+                $ret = $m_forscreen_record->updateInfo($map, $data);
+                if($ret) $redis->lpop($k);
+            }
+            $list = $redis->lgetrange($k,0,-1);
+            if(empty($list)){
+                $redis->remove($k);
+            }
+            
+        }
+    }
+    
 }
