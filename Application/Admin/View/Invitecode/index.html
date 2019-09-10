@@ -46,6 +46,7 @@
           <tr id="post">
             <th>序号</th>
             <th>邀请码</th>
+            <th>类型</th>
             <th>绑定手机</th>
             <th>状态</th>
             <th>首次使用时间</th>
@@ -58,6 +59,7 @@
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="邀请码">{$vlist.code}</td>
+              <td data-title="类型"><if condition="$vlist.type eq 1">普通码<else/>管理员码</if></td>
               <td data-title="绑定手机">{$vlist.bind_mobile}</td>
               <td data-title="状态">
               <if condition ="$vlist.state eq 0">

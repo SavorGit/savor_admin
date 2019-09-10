@@ -1268,6 +1268,7 @@ class SappforscreenController extends BaseController {
 	    $openid = I('openid','','trim');
 	    $status = I('status',99,'intval');
         $is_recommend = I('is_recommend',99,'intval');
+        $is_top = I('is_top',99,'intval');
         $res_type = I('res_type',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $this->assign('numPerPage',$size);
@@ -1290,6 +1291,9 @@ class SappforscreenController extends BaseController {
         if($is_recommend!=99){
             $where['a.is_recommend'] = $is_recommend;
         }
+        if($is_top!=99){
+            $where['a.is_top'] = $is_top;
+        }
         if($res_type){
             $where['a.res_type'] = $res_type;
         }
@@ -1299,6 +1303,7 @@ class SappforscreenController extends BaseController {
 	    $list = $m_public->getList($fields,$where, $orders, $start,$size);
 
         $this->assign('is_recommend',$is_recommend);
+        $this->assign('is_top',$is_top);
         $this->assign('res_type',$res_type);
         $this->assign('status',$status);
         $this->assign('openid',$openid);
@@ -1313,7 +1318,7 @@ class SappforscreenController extends BaseController {
 	    $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
 	    $m_public    = new \Admin\Model\Smallapp\PublicModel();
 	    
-	    $info = $m_public->getOne('id,is_recommend,status', array('forscreen_id'=>$forscreen_id));
+	    $info = $m_public->getOne('id,is_recommend,status,is_top', array('forscreen_id'=>$forscreen_id));
 	    
 	    $fields = "concat('".$oss_host."',`res_url`) res_url";
 	    $where = array();
@@ -1331,13 +1336,11 @@ class SappforscreenController extends BaseController {
 	 * @desc 审核通过
 	 */
 	public function operateStatus(){
-	    
-	    
 	    $m_public = new \Admin\Model\Smallapp\PublicModel();
-	    //print_r($_POST);exit;
 	    $id     = I('post.id',0,'intval');
 	    $is_recommend = I('post.is_recommend',0,'intval');
 	    $status = I('post.status',0,'intval');
+	    $is_top = I('post.is_top',0,'intval');
 	    $where = $data = array();
 	    $where['id'] = $id;
 	    if(is_numeric($status)){
@@ -1346,9 +1349,35 @@ class SappforscreenController extends BaseController {
 	    if(is_numeric($is_recommend)){
 	        $data['is_recommend'] = $is_recommend;
 	    }
-	    
+	    if($status==2 && $is_recommend==1){
+	        $data['is_top'] = $is_top;
+        }
+        if($is_top){
+            $all_topnum = 3;
+            $res_public = $m_public->getWhere('id',array('status'=>2,'is_recommend'=>1,'is_top'=>1),'id asc','','');
+            $last_topnum = count($res_public) - $all_topnum;
+            if($last_topnum>=0){
+                $last_public = array_slice($res_public,0,$last_topnum+1);
+                $ids = array();
+                foreach ($last_public as $v){
+                    $ids[] = $v['id'];
+                }
+                $upwhere = array('id'=>array('in',$ids));
+                $m_public->updateInfo($upwhere,array('is_top'=>0));
+            }
+        }
 	    $ret = $m_public->updateInfo($where, $data);
-	    //echo $m_public->getLastSql();exit;
+
+        $key_findtop = C('SAPP_FIND_TOP');
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $res_public = $m_public->getWhere('id',array('status'=>2,'is_recommend'=>1,'is_top'=>1),'id asc','','');
+        $top_ids = array();
+        foreach ($res_public as $v){
+            $top_ids[]=$v['id'];
+        }
+        $redis->set($key_findtop,json_encode($top_ids));
+
 	    if($ret){
 	        echo "1";
 	        ///$this->error('s')

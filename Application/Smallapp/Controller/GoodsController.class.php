@@ -82,22 +82,41 @@ class GoodsController extends BaseController {
         $id = I('id', 0, 'intval');
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
         if(IS_GET){
+            $detail_img_num = 5;
         	$dinfo = array('media_type'=>1);
+        	$detailaddr = array();
         	if($id){
         		$dinfo = $m_goods->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
                 $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
+                if($dinfo['detail_imgmedia_ids']){
+                    $detail_imgmedia_ids = json_decode($dinfo['detail_imgmedia_ids'],true);
+                    foreach ($detail_imgmedia_ids as $k=>$v){
+                        $imgmedia_info = $m_media->getMediaInfoById($v);
+                        $detailaddr[$k] = array('media_id'=>$v,'oss_addr'=>$imgmedia_info['oss_addr']);
+                    }
+                }
                 $dinfo['oss_addr'] = $media_info['oss_addr'];
                 $dinfo['media_type'] = $media_info['type'];
                 $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
                 $dinfo['end_date'] = date('Y-m-d',strtotime($dinfo['end_time']));
         	}
+            $detail_imgs = array();
+            for($i=1;$i<=$detail_img_num;$i++){
+                $img_info = array('id'=>$i,'imgid'=>'detail_id'.$i,'media_id'=>0);
+                if(isset($detailaddr[$i])){
+                    $img_info['media_id'] = $detailaddr[$i]['media_id'];
+                    $img_info['oss_addr'] = $detailaddr[$i]['oss_addr'];
+                }
+                $detail_imgs[] = $img_info;
+            }
+        	$this->assign('detail_imgs',$detail_imgs);
         	$this->assign('vinfo',$dinfo);
         	$this->display('goodsadd');
         }else{
             $type = I('post.type',0,'intval');
         	$name = I('post.name','','trim');
-        	$price = I('post.price','','trim');
+        	$price = I('post.price',0,'intval');
         	$rebate_integral = I('post.rebate_integral',0,'intval');
         	$jd_url = I('post.jd_url','','trim');
         	$start_date = I('post.start_date','');
@@ -105,6 +124,11 @@ class GoodsController extends BaseController {
             $media_id = I('post.media_id',0);
         	$status = I('post.status',1,'intval');
             $clicktype = I('post.clicktype',0,'intval');
+            $appid = I('post.appid','','trim');
+            $buybutton = I('post.buybutton','','trim');
+            $detailmedia_id = I('post.detailmedia_id','');
+
+
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
             }
@@ -124,15 +148,35 @@ class GoodsController extends BaseController {
         	if(!empty($res_goods) && $type!=20){
         		$this->output('名称不能重复', 'goods/goodsadd', 2, 0);
         	}
-            $stime = strtotime($start_date);
-        	$etime = strtotime($end_date);
-        	if($stime>$etime){
-        	    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+
+            $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
+                'media_id'=>$media_id,'status'=>$status);
+        	if($type==40){
+                $media_vid = I('post.media_vid',0);
+                if(empty($media_vid)){
+                    $this->output('请传入视频资源', 'goods/goodsadd', 2, 0);
+                }
+        	    if(empty($appid) || empty($buybutton)){
+                    $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
+                }
+                $data['appid'] = $appid;
+        	    $data['buybutton'] = $buybutton;
+        	    if($detailmedia_id){
+        	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
+                }
+            }else{
+                $stime = strtotime($start_date);
+                $etime = strtotime($end_date);
+                if($stime>$etime){
+                    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+                }
+                $start_time = date('Y-m-d 00:00:00',$stime);
+                $end_time = date('Y-m-d 23:59:59',$etime);
+                $data['start_time'] = $start_time;
+                $data['end_time'] = $end_time;
             }
-            $start_time = date('Y-m-d 00:00:00',$stime);
-        	$end_time = date('Y-m-d 23:59:59',$etime);
-        	$data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'start_time'=>$start_time,'end_time'=>$end_time,'media_id'=>$media_id,'status'=>$status);
+
+
         	if($id){
         	    $m_goods->updateData(array('id'=>$id),$data);
                 $result = true;
@@ -143,6 +187,15 @@ class GoodsController extends BaseController {
             }
 
         	if($result){
+                if($type==40){
+                    $redis = \Common\Lib\SavorRedis::getInstance();
+                    $redis->select(5);
+                    $program_key = C('SAPP_OPTIMIZE_PROGRAM');
+                    $period = getMillisecond();
+                    $period_data = array('period'=>$period);
+                    $redis->set($program_key,json_encode($period_data));
+                }
+
         		$this->output('操作成功', 'goods/goodslist');
         	}else{
         		$this->output('操作失败', 'goods/goodslist',2,0);

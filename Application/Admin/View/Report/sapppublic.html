@@ -19,7 +19,7 @@
         <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
           <div class="tools-group"></div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 pull-right">
+        <div class="col-xs-12 col-sm-6 col-md-5 col-lg-5 pull-right">
           <div class="input-group input-group-sm pull-right">
             <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
             <span class="input-group-btn input-group-sm">
@@ -41,6 +41,13 @@
                 <option value="99">审核状态</option>
                 <option value="1" <if condition="$status eq 1">selected="selected"</if> >待审核</option>
                 <option value="2" <if condition="$status eq 2">selected="selected"</if> >已审核</option>
+              </select>
+            </span>
+            <span class="input-group-btn input-group-sm">
+              <select name="is_top"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="99">是否置顶</option>
+                <option value="1" <if condition="$is_top eq 1">selected="selected"</if> >置顶</option>
+                <option value="0" <if condition="$is_top eq 2">selected="selected"</if> >未置顶</option>
               </select>
             </span>
             <span class="input-group-btn">
@@ -66,6 +73,7 @@
             <th>是否公开酒楼信息</th>
             <th>资源类型</th>
             <th>是否系统推荐</th>
+            <th>是否置顶</th>
             <th>状态</th>
             <th>发布时间</th>
             <th class="table-tool">操作</th>
@@ -92,6 +100,9 @@
                 <i class="fa fa-toggle-off"></i></span></a> -->
 			  </if>
 			  </td>
+              <td data-title="是否置顶">
+                <if condition="$vlist.is_top eq 1">是<else />否</if>
+              </td>
 			  <td data-title="状态">
                 <if condition="$vlist['status'] eq 2">
                 	已审核

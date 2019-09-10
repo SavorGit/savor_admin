@@ -38,7 +38,7 @@ class HelpplayController extends BaseController {
         }
         $start = ($pageNum-1)*$size;
         $fields = 'a.id,a.forscreen_record_id,a.openid,p.res_type,p.is_recommend,p.status as status,a.status as play_status,a.add_time';
-        $orderby = 'a.id asc';
+        $orderby = 'a.id desc';
         $group = 'f.id';
         $res_list = $m_forscreenhelp->getList($fields,$where,$orderby,$group,$start,$size);
         $data_list = array();
@@ -168,7 +168,7 @@ class HelpplayController extends BaseController {
                     $this->outputNew('请先推荐和审核', 'helpplay/helpdetail',3);
                 }
                 $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-                $fields = 'id,openid,imgs,duration,md5_file';
+                $fields = 'id,forscreen_id,resource_id,openid,imgs,duration,md5_file';
                 $res_forscreen = $m_forscreen->getOne($fields,array('id'=>$forscreen_record_id));
                 if(empty($res_forscreen)){
                     $this->outputNew('投屏内容不存在', 'helpplay/helpdetail',3);
@@ -185,6 +185,13 @@ class HelpplayController extends BaseController {
                 }
                 if($play_status==2){
                     $content_data[$id] = $res_forscreen;
+
+                    $redis->select(5);
+                    $allkeys  = $redis->keys('smallapp:selectcontent:program:*');
+                    foreach ($allkeys as $program_key){
+                        $period = getMillisecond();
+                        $redis->set($program_key,$period);
+                    }
                 }elseif($play_status==1){
                     if(isset($content_data[$id])){
                         unset($content_data[$id]);

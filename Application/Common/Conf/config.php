@@ -40,6 +40,7 @@ $config = array(
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
     'SAPP_SALE'=>'smallappsale:',
     'SAPP_SALE_ACTIVITYGOODS_PROGRAM'=>'smallappsale:activitygoodsprogram',
+    'SAPP_FIND_TOP'=>'smallapp:findtop',
     'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
 
 );
@@ -52,6 +53,7 @@ $config['GOODS_TYPE'] = array(
     '10'=>'官方活动促销',
     '20'=>'商家添加',
     '30'=>'积分兑换现金',
+    '40'=>'热点优选',
 );
 
 $config['GOODS_SCOPE'] = array(
@@ -566,6 +568,7 @@ $config['BOX_TPMEDIA']  = 'box:tpmedia:';
 $config['SAPP_SELECTCONTENT_CONTENT']='smallapp:selectcontent:content';
 $config['SAPP_SELECTCONTENT_PUSH']='smallapp:selectcontent:wxpush';
 $config['SAPP_SIMPLE_UPLOAD_RESOUCE'] = 'smallapp:simple:upload:';
+$config['SAPP_OPTIMIZE_PROGRAM']='smallapp:optimize:program';
 
 //新虚拟小平台接口缓存key
 $config['VSMALL_HOTELLIST'] = "vsmall:hotellist";
