@@ -39,8 +39,14 @@
 			<div class="form-group row" id="goods_appid">
 				<label class="col-xs-12 col-sm-2 control-label">APPID：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="appid" type="text" value="{$vinfo.appid}" class="form-control" />
+					<select name="appid" class="form-control bs-select" data-size="20">
+						<option value="">请选择</option>
+						<volist name=":C('WXAPPIDS')" id="vo">
+							<option value="{$key}" <if condition="$vinfo['appid'] eq $key"> selected </if> > {$vo}</option>
+						</volist>
+					</select>
 				</div>
+
 			</div>
 
 			<div class="form-group row" id="goods_buybutton">
@@ -253,12 +259,16 @@
             $('#goods_buybutton').show();
             $('#goods_detailimg').show();
 		}else{
+		    if($(this).val()==10){
+                $('#goods_appid').show();
+			}else{
+                $('#goods_appid').hide();
+			}
             $('#goods_price').show();
             $('#goods_integral').show();
             $('#goods_start_date').show();
             $('#goods_end_date').show();
 
-            $('#goods_appid').hide();
             $('#goods_buybutton').hide();
             $('#goods_buybutton').hide();
             $('#goods_detailimg').hide();
