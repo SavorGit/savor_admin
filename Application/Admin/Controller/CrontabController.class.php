@@ -3786,7 +3786,7 @@ class CrontabController extends Controller
     public function updateSimpleUpload(){
         $redis = SavorRedis::getInstance();
         $redis->get(5);
-        $cache_key = C('SAPP_SIMPLE_UPLOAD_RESOUCE').":*";
+        $cache_key = C('SAPP_SIMPLE_UPLOAD_RESOUCE')."*";
         $keys = $redis->keys($cache_key);
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
         foreach($keys as $k){
