@@ -3789,6 +3789,7 @@ class CrontabController extends Controller
         $cache_key = C('SAPP_SIMPLE_UPLOAD_RESOUCE')."*";
         $keys = $redis->keys($cache_key);
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_forscreen_invalid_record      = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
         foreach($keys as $k){
             
             $rets = $redis->lgetrange($k,0,-1);
@@ -3799,8 +3800,18 @@ class CrontabController extends Controller
                 $map['resource_id']  = intval($simple_resource['resource_id']);
                 $map['box_mac']      = $simple_resource['box_mac'];
                 $data['imgs']        = $simple_resource['imgs'];
-                $ret = $m_forscreen_record->updateInfo($map, $data);
-                if($ret) $redis->lpop($k);
+                $f_info = $m_forscreen_record->where($map)->select();
+                if($f_info){
+                    $ret = $m_forscreen_record->updateInfo($map, $data);
+                    if($ret) $redis->lpop($k);
+                }else {
+                    $f_i_info = $m_forscreen_invalid_record->where($map)->select();
+                    if($f_i_info){
+                        $ret = $m_forscreen_invalid_record->updateData($map, $data);
+                        if($ret) $redis->lpop($k);
+                    }
+                }
+                
             }
             $list = $redis->lgetrange($k,0,-1);
             if(empty($list)){
