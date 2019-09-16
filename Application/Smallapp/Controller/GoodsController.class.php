@@ -128,7 +128,6 @@ class GoodsController extends BaseController {
             $buybutton = I('post.buybutton','','trim');
             $detailmedia_id = I('post.detailmedia_id','');
 
-
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
             }
@@ -149,8 +148,42 @@ class GoodsController extends BaseController {
         		$this->output('名称不能重复', 'goods/goodsadd', 2, 0);
         	}
 
+        	$page_url = '';
+        	if($appid){
+                $jd_config = C('JD_UNION_CONFIG');
+                $url_info = parse_url($jd_url);
+                if(isset($url_info['scheme'])){
+                    switch ($appid){
+                        case 'wx13e41a437b8a1d2e'://京东爆款(京东联盟)
+                            $params = array(
+                                'promotionCodeReq'=>array(
+                                    'materialId'=>'http://item.jd.com/40708182455.html',
+                                    'chainType'=>3,
+                                )
+                            );
+                            $res = jd_union_api($params,'jd.union.open.promotion.bysubunionid.get');
+                            if($res['code']!=200){
+                                $this->output('地址错误', 'goods/goodsadd', 2, 0);
+                            }
+                            $click_url = urlencode($res['data']['clickURL']);
+                            $page_url = '/pages/proxy/union/union?spreadUrl='.$click_url.'&customerinfo='.$jd_config['customerinfo'];
+                            break;
+                        case 'wx91d27dbf599dff74'://京东购物
+                            $tmp_jd_url = rtrim($jd_url,'.html');
+                            $page_url = str_replace('https://item.jd.com/','pages/item/detail/detail?sku=',$tmp_jd_url);
+                            break;
+                    }
+                }else{
+                    $str_position = strpos($jd_url,'pages/');
+                    if($str_position!== false && $str_position!=0){
+                        $this->output('地址错误', 'goods/goodsadd', 2, 0);
+                    }
+                    $page_url = $jd_url;
+                }
+            }
+
             $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'media_id'=>$media_id,'status'=>$status);
+                'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
         	if($type==40){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
