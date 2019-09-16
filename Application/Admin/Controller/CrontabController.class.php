@@ -3785,7 +3785,7 @@ class CrontabController extends Controller
      */
     public function updateSimpleUpload(){
         $redis = SavorRedis::getInstance();
-        $redis->get(5);
+        $redis->select(5);
         $cache_key = C('SAPP_SIMPLE_UPLOAD_RESOUCE')."*";
         $keys = $redis->keys($cache_key);
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
@@ -3800,15 +3800,18 @@ class CrontabController extends Controller
                 $map['resource_id']  = intval($simple_resource['resource_id']);
                 $map['box_mac']      = $simple_resource['box_mac'];
                 $data['imgs']        = $simple_resource['imgs'];
+                $data['update_time'] = date('Y-m-d H:i:s');
                 $f_info = $m_forscreen_record->where($map)->select();
                 if($f_info){
                     $ret = $m_forscreen_record->updateInfo($map, $data);
                     if($ret) $redis->lpop($k);
                 }else {
                     $f_i_info = $m_forscreen_invalid_record->where($map)->select();
+                    
                     if($f_i_info){
                         $ret = $m_forscreen_invalid_record->updateData($map, $data);
                         if($ret) $redis->lpop($k);
+                        
                     }
                 }
                 
@@ -3819,6 +3822,7 @@ class CrontabController extends Controller
             }
             
         }
+        echo   date('Y-m-d H:i:s'). "数据处理完成";
     }
     
 }
