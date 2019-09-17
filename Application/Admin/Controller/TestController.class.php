@@ -13,6 +13,18 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+    public function getJjInfo(){
+        $box_mac =  I('box_mac');
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $k = C('SAPP_SIMPLE_UPLOAD_RESOUCE').$box_mac;
+        $rets = $redis->lgetrange($k,0,-1);
+        $data = array();
+        foreach($rets as $key=>$v){
+            $data[$key] = json_decode($v,true);
+        }
+        print_r($data);
+    }
     public function removeHotelinfoCache(){
         $redis = SavorRedis::getInstance();
         $redis->select(15);
