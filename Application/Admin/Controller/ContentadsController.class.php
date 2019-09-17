@@ -35,6 +35,7 @@ class ContentadsController extends BaseController{
 
 	public function getExpStatebak(){
 		$adsname = I('post.adsname','');
+		$adsname = str_replace(array('amp;'),array(''),$adsname);
 		$starttime = I('post.start');
 		$endtime = I('post.end');
 		$yesday =  date("Y-m-d",strtotime("-1 day"));
