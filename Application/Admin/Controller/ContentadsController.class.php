@@ -360,7 +360,9 @@ class ContentadsController extends BaseController{
 		$start = I('pageNum',1);
 		$this->assign('pageNum',$start);
 		$order = I('_order',' shlog.last_heart_time ');
-		$adsname = I('contentast');
+		$adsname = I('contentast','');
+		$adsname = str_replace(array('amp;'),array(''),$adsname);
+		//echo $adsname;exit;
 		$hidden_adsid = I('hadsid','',0);
 		$where = "1=1";
 		//$hidden_adsid = 98;//429

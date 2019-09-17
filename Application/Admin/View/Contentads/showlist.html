@@ -152,6 +152,12 @@
 </div>
 <ul id="datalist"></ul>
 <script type="text/javascript">
+
+
+function escape2Html(str) {
+	 var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
+	 return str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
+}
 	var ass = $('#keysearch').offset().left
 	var aaa = $('#sidebar').width();
 	$('#datalist').css('left',ass-aaa)
@@ -237,7 +243,9 @@ ele_key.onkeyup = function (e) {
 	
 	$('#datalist').on("click","li a",function(){
      $('.strid').val($(this).prop('id'));
-     $('#keysearch').val($(this).html());
+     var tps = escape2Html($(this).html());
+     $('#keysearch').val(tps);
+     
 			$('.sachHtml').val($(this).html());
 			
      $('#keysearch').prop('disabled',true)
