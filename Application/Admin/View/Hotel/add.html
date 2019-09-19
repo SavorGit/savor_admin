@@ -344,6 +344,7 @@
         </label>
           <div class="col-xs-12 col-sm-10">
           <select name="hotel_box_type" class="form-control bs-select" title="请选择..." required data-style="btn-success btn-sm" data-container="body">
+              <option value="0">暂无</option>
               <volist name=":C('hotel_box_type')" id="vo">
                   <option value="{$key}" <if condition="$key eq $vinfo['hotel_box_type']">selected</if>>{$vo}</option><br>
               </volist>
@@ -463,18 +464,18 @@
             </div>
         </div>
 
-        <div class="form-group row">
-            <label class="col-xs-12 col-sm-2 control-label">
-                是否开启积分兑换:
-            </label>
+        <!--<div class="form-group row">-->
+            <!--<label class="col-xs-12 col-sm-2 control-label">-->
+                <!--是否开启积分兑换:-->
+            <!--</label>-->
 
-            <div class="col-xs-12 col-sm-10">
-                <select name="is_open_integral" class="form-control bs-select">
-                    <option value="0" <if condition="$vinfo.is_open_integral eq 0"> selected </if> >否</option>
-                    <option value="1" <if condition="$vinfo.is_open_integral eq 1"> selected </if> >是</option>
-                </select>
-            </div>
-        </div>
+            <!--<div class="col-xs-12 col-sm-10">-->
+                <!--<select name="is_open_integral" class="form-control bs-select">-->
+                    <!--<option value="0" <if condition="$vinfo.is_open_integral eq 0"> selected </if> >否</option>-->
+                    <!--<option value="1" <if condition="$vinfo.is_open_integral eq 1"> selected </if> >是</option>-->
+                <!--</select>-->
+            <!--</div>-->
+        <!--</div>-->
 
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">选择商品：</label>
