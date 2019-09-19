@@ -22,6 +22,14 @@
 				</div>
 			</div>
 
+			<div class="form-group row " id="good_goods_cate">
+				<label class="col-xs-12 col-sm-2 control-label">好物圈类目：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="wx_category" type="text" value="{$vinfo.wx_category}" class="form-control"/>
+					<span class="tips">注:请按照微信好物圈物品类目表进行填写如：酒类,洋酒,金酒</span>
+				</div>
+			</div>
+
 			<div class="form-group row" id="goods_price">
 				<label class="col-xs-12 col-sm-2 control-label">价格：</label>
 				<div class="col-xs-12 col-sm-10">
@@ -261,8 +269,10 @@
 		}else{
 		    if($(this).val()==10){
                 $('#goods_appid').show();
+                $('#good_goods_cate').show();
 			}else{
                 $('#goods_appid').hide();
+                $('#good_goods_cate').hide();
 			}
             $('#goods_price').show();
             $('#goods_integral').show();
