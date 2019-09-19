@@ -184,6 +184,9 @@ class GoodsController extends BaseController {
 
             $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
                 'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
+        	if($appid){
+                $data['appid'] = $appid;
+            }
         	if($type==40){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
@@ -192,7 +195,6 @@ class GoodsController extends BaseController {
         	    if(empty($appid) || empty($buybutton)){
                     $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
                 }
-                $data['appid'] = $appid;
         	    $data['buybutton'] = $buybutton;
         	    if($detailmedia_id){
         	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
