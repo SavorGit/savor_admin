@@ -1122,4 +1122,30 @@ function getVsmallHotelList(){
     }
     return $tmp_hotel_arr;
 }
+
+function getWxAccessToken($app_config){
+    $key_token = $app_config['cache_key'];
+    $redis = SavorRedis::getInstance();
+    $redis->select(5);
+    $token = $redis->get($key_token);
+    if(empty($token)){
+        $url_access_token = 'https://api.weixin.qq.com/cgi-bin/token';
+        $appid = $app_config['appid'];
+        $appsecret = $app_config['appsecret'];
+        $url = $url_access_token."?grant_type=client_credential&appid=$appid&secret=$appsecret";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $re = curl_exec($ch);
+        curl_close($ch);
+        $result = json_decode($re,true);
+        if(isset($result['access_token'])){
+            $redis->set($key_token,$result['access_token'],360);
+            $token = $result['access_token'];
+        }
+    }
+    return $token;
+}
 ?>
