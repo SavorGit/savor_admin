@@ -152,10 +152,13 @@ class GoodsController extends BaseController {
         	}
 
         	$page_url = '';
+        	$item_id = '';
         	if($appid){
                 $jd_config = C('JD_UNION_CONFIG');
                 $url_info = parse_url($jd_url);
                 if(isset($url_info['scheme'])){
+                    preg_match('/^http:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);
+                    $item_id = $matches[1];
                     switch ($appid){
                         case 'wx13e41a437b8a1d2e'://京东爆款(京东联盟)
                             $params = array(
@@ -172,8 +175,7 @@ class GoodsController extends BaseController {
                             $page_url = '/pages/proxy/union/union?spreadUrl='.$click_url.'&customerinfo='.$jd_config['customerinfo'];
                             break;
                         case 'wx91d27dbf599dff74'://京东购物
-                            $tmp_jd_url = rtrim($jd_url,'.html');
-                            $page_url = str_replace('https://item.jd.com/','pages/item/detail/detail?sku=',$tmp_jd_url);
+                            $page_url = 'pages/item/detail/detail?sku='.$item_id;
                             break;
                     }
                 }else{
@@ -186,7 +188,7 @@ class GoodsController extends BaseController {
             }
 
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
         	if($appid){
                 $data['appid'] = $appid;
             }
@@ -247,6 +249,7 @@ class GoodsController extends BaseController {
     }
 
     private function wx_importproduct($goods_id){
+        return true;
         $app_config = C('SMALLAPP_SALE_CONFIG');
         $access_token = getWxAccessToken($app_config);
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
