@@ -3824,5 +3824,222 @@ class CrontabController extends Controller
         }
         echo   date('Y-m-d H:i:s'). "数据处理完成";
     }
+
+    public function jdorderadd(){
+//        $hourtime = date("YmdH", strtotime("-1 hour"));
+//        $hourtime = '2019091211';
+        $hourtime = '2019091615';
+        $data['orderReq'] = array(
+            'pageNo'=>1,
+            'pageSize'=>500,
+            'type'=>1,
+            'time'=>"$hourtime",
+        );
+        $res = jd_union_api($data,'jd.union.open.order.query');
+        if($res['code']!=200){
+            $res = jd_union_api($data,'jd.union.open.order.query');
+        }
+        $nowtime = date('Y-m-d H:i:s');
+        $error_info = $nowtime.'[order_hour]'.$hourtime;
+        if($res['code']==200){
+            $m_jdorder = new \Admin\Model\Smallapp\JdorderModel();
+            if(isset($res['data'])){
+                foreach ($res['data'] as $v){
+                    $order_id = $v['orderId'];
+                    $order_time = floor($v['orderTime']/1000);
+                    $finish_time = 0;
+                    if($v['finishTime']){
+                        $finish_time = floor($v['finishTime']/1000);
+                    }
+                    $sku_info = $v['skuList'][0];
+                    $order_data = array('order_id'=>$order_id,'order_time'=>$order_time,'finish_time'=>$finish_time,'order_emt'=>$v['orderEmt'],
+                        'parent_id'=>$v['parentId'],'pay_month'=>$v['payMonth'],'plus'=>$v['plus'],'pop_id'=>$v['popId'],'actual_cos_price'=>$sku_info['actualCosPrice'],
+                        'actual_fee'=>$sku_info['actualFee'],'commissionrate'=>$sku_info['commissionRate'],'estimate_cos_price'=>$sku_info['estimateCosPrice'],
+                        'estimate_fee'=>$sku_info['estimateFee'],'final_rate'=>$sku_info['finalRate'],'pid'=>$sku_info['pid'],'price'=>$sku_info['price'],
+                        'sku_id'=>$sku_info['skuId'],'sku_name'=>$sku_info['skuName'],'sku_num'=>$sku_info['skuNum'],'sku_return_num'=>$sku_info['skuReturnNum'],
+                        'sub_side_rate'=>$sku_info['subSideRate'],'subsidy_rate'=>$sku_info['subsidyRate'],'union_alias'=>$sku_info['unionAlias'],
+                        'union_tag'=>$sku_info['unionTag'],'union_traffic_group'=>$sku_info['unionTrafficGroup'],'valid_code'=>$sku_info['validCode'],
+                        'sub_union_id'=>$sku_info['subUnionId'],'trace_type'=>$sku_info['traceType'],'cp_act_id'=>$sku_info['cpActId'],'union_role'=>$sku_info['unionRole'],
+                        'union_id'=>$v['unionId']
+                        );
+                    $m_jdorder->add($order_data);
+                    echo $error_info.'[data]'."$order_id ok \r\n";
+                }
+//                echo $error_info.'[data]'.json_encode($res['data']);
+                echo $error_info.'[data]'."ok \r\n";
+            }else{
+                echo $error_info.'[data]'.json_encode(array())." \r\n";
+            }
+        }else{
+            echo $error_info.'[error]'.json_encode($res)." \r\n";
+        }
+    }
+
+    public function jdorderupdate(){
+//        $hourtime = date("YmdH", strtotime("-1 hour"));
+        $hourtime = '2019091617';
+        $data['orderReq'] = array(
+            'pageNo'=>1,
+            'pageSize'=>500,
+            'type'=>3,
+            'time'=>"$hourtime",
+        );
+        $res = jd_union_api($data,'jd.union.open.order.query');
+        if($res['code']!=200){
+            $res = jd_union_api($data,'jd.union.open.order.query');
+        }
+        $nowtime = date('Y-m-d H:i:s');
+        $error_info = $nowtime.'[order_hour]'.$hourtime;
+        if($res['code']==200){
+            $m_jdorder = new \Admin\Model\Smallapp\JdorderModel();
+            if(isset($res['data'])){
+                foreach ($res['data'] as $v){
+                    $order_id = $v['orderId'];
+                    $order_time = floor($v['orderTime']/1000);
+                    $finish_time = 0;
+                    if($v['finishTime']){
+                        $finish_time = floor($v['finishTime']/1000);
+                    }
+                    $sku_info = $v['skuList'][0];
+                    $order_data = array('order_id'=>$order_id,'order_time'=>$order_time,'finish_time'=>$finish_time,'order_emt'=>$v['orderEmt'],
+                        'parent_id'=>$v['parentId'],'pay_month'=>$v['payMonth'],'plus'=>$v['plus'],'pop_id'=>$v['popId'],'actual_cos_price'=>$sku_info['actualCosPrice'],
+                        'actual_fee'=>$sku_info['actualFee'],'commissionrate'=>$sku_info['commissionRate'],'estimate_cos_price'=>$sku_info['estimateCosPrice'],
+                        'estimate_fee'=>$sku_info['estimateFee'],'final_rate'=>$sku_info['finalRate'],'pid'=>$sku_info['pid'],'price'=>$sku_info['price'],
+                        'sku_id'=>$sku_info['skuId'],'sku_name'=>$sku_info['skuName'],'sku_num'=>$sku_info['skuNum'],'sku_return_num'=>$sku_info['skuReturnNum'],
+                        'sub_side_rate'=>$sku_info['subSideRate'],'subsidy_rate'=>$sku_info['subsidyRate'],'union_alias'=>$sku_info['unionAlias'],
+                        'union_tag'=>$sku_info['unionTag'],'union_traffic_group'=>$sku_info['unionTrafficGroup'],'valid_code'=>$sku_info['validCode'],
+                        'sub_union_id'=>$sku_info['subUnionId'],'trace_type'=>$sku_info['traceType'],'cp_act_id'=>$sku_info['cpActId'],'union_role'=>$sku_info['unionRole'],
+                        'union_id'=>$v['unionId']
+                    );
+                    $res_order = $m_jdorder->getInfo(array('order_id'=>$order_id));
+                    if(!empty($res_order)){
+                        $order_data['update_time'] = date('Y-m-d H:i:s');
+                        $m_jdorder->updateData(array('id'=>$res_order['id']),$order_data);
+                    }else{
+                        $m_jdorder->add($order_data);
+                    }
+                    echo $error_info.'[data]'."$order_id ok \r\n";
+                }
+//                echo $error_info.'[data]'.json_encode($res['data']);
+                echo $error_info.'[data]'."ok \r\n";
+            }else{
+                echo $error_info.'[data]'.json_encode(array())." \r\n";
+            }
+        }else{
+            echo $error_info.'[error]'.json_encode($res)." \r\n";
+        }
+    }
+
+    public function jdordersettled(){
+        $month_day = date('t');
+        if($month_day>=30){
+            $settled_day = 30;
+        }else{
+            $settled_day = $month_day;
+        }
+        $pre_month = date("Ym", strtotime("-1 month"));
+        $nowtime = date('Y-m-d H:i:s');
+
+        $error_info = $nowtime.'[settled_month]'.$pre_month;
+        $now_day = date('j');
+        if($now_day==$settled_day){
+            $model = M();
+            $sql_settled = "select * from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' and valid_code=18";
+            $res_sorder = $model->query($sql_settled);
+            if(empty($res_sorder)){
+                $sql_otime = "select FROM_UNIXTIME(order_time,'%Y%m%d%H') as otime from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' GROUP BY otime";
+                $res_otimes = $model->query($sql_otime);
+                if(!empty($res_otimes)){
+                    $m_jdorder = new \Admin\Model\Smallapp\JdorderModel();
+                    foreach ($res_otimes as $ot){
+                        $data['orderReq'] = array(
+                            'pageNo'=>1,
+                            'pageSize'=>500,
+                            'type'=>1,
+                            'time'=>"$ot",
+                        );
+                        $res = jd_union_api($data,'jd.union.open.order.query');
+                        if($res['code']!=200){
+                            $res = jd_union_api($data,'jd.union.open.order.query');
+                        }
+                        if($res['code']==200){
+                            if(isset($res['data'])){
+                                foreach ($res['data'] as $v){
+                                    $order_id = $v['orderId'];
+                                    $order_time = floor($v['orderTime']/1000);
+                                    $finish_time = 0;
+                                    if($v['finishTime']){
+                                        $finish_time = floor($v['finishTime']/1000);
+                                    }
+                                    $sku_info = $v['skuList'][0];
+                                    $order_data = array('order_id'=>$order_id,'order_time'=>$order_time,'finish_time'=>$finish_time,'order_emt'=>$v['orderEmt'],
+                                        'parent_id'=>$v['parentId'],'pay_month'=>$v['payMonth'],'plus'=>$v['plus'],'pop_id'=>$v['popId'],'actual_cos_price'=>$sku_info['actualCosPrice'],
+                                        'actual_fee'=>$sku_info['actualFee'],'commissionrate'=>$sku_info['commissionRate'],'estimate_cos_price'=>$sku_info['estimateCosPrice'],
+                                        'estimate_fee'=>$sku_info['estimateFee'],'final_rate'=>$sku_info['finalRate'],'pid'=>$sku_info['pid'],'price'=>$sku_info['price'],
+                                        'sku_id'=>$sku_info['skuId'],'sku_name'=>$sku_info['skuName'],'sku_num'=>$sku_info['skuNum'],'sku_return_num'=>$sku_info['skuReturnNum'],
+                                        'sub_side_rate'=>$sku_info['subSideRate'],'subsidy_rate'=>$sku_info['subsidyRate'],'union_alias'=>$sku_info['unionAlias'],
+                                        'union_tag'=>$sku_info['unionTag'],'union_traffic_group'=>$sku_info['unionTrafficGroup'],'valid_code'=>$sku_info['validCode'],
+                                        'sub_union_id'=>$sku_info['subUnionId'],'trace_type'=>$sku_info['traceType'],'cp_act_id'=>$sku_info['cpActId'],'union_role'=>$sku_info['unionRole'],
+                                        'union_id'=>$v['unionId']
+                                    );
+                                    $res_order = $m_jdorder->getInfo(array('order_id'=>$order_id));
+                                    if(!empty($res_order)){
+                                        $order_data['update_time'] = date('Y-m-d H:i:s');
+                                        $m_jdorder->updateData(array('id'=>$res_order['id']),$order_data);
+                                    }else{
+                                        $m_jdorder->add($order_data);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $sql_settled = "select * from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' and valid_code=18";
+                    $res_sorder = $model->query($sql_settled);
+                }
+            }
+            if(!empty($res_sorder)){
+                $jd_app_id = 'wx13e41a437b8a1d2e';
+                $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                $m_user_integral = new \Admin\Model\Smallapp\UserIntegralModel();
+                foreach ($res_sorder as $ov){
+                    $user_id = $ov['sub_union_id'];
+                    $sku_id = $ov['sku_id'];
+                    if($user_id && $sku_id){
+                        $sql_user = "select openid from savor_smallapp_user where id=$user_id";
+                        $res_user = $model->query($sql_user);
+                        $openid = $res_user[0]['openid'];
+
+                        $sql_goods = "select * from savor_smallapp_goods where item_id=$sku_id and appid='$jd_app_id'";
+                        $res_goods = $model->query($sql_goods);
+                        if(!empty($res_goods)){
+                            $rebate_integral = $res_goods[0]['rebate_integral']*$ov['sku_num'];
+                            $goods_id = $res_goods[0]['id'];
+                            $record_data = array('openid'=>$openid,'integral'=>$rebate_integral,'goods_id'=>$goods_id,'content'=>$ov['sku_num'],
+                                'type'=>3,'integral_time'=>date('Y-m-d H:i:s'));
+                            $m_user_integralrecord->add($record_data);
+
+                            $res_userintegral = $m_user_integral->getInfo(array('openid'=>$openid));
+                            if(!empty($res_userintegral)){
+                                $userintegral = $res_userintegral['integral']+$rebate_integral;
+                                $m_user_integral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+                            }else{
+                                $integraldata = array('openid'=>$v['openid'],'integral'=>$rebate_integral,'update_time'=>date('Y-m-d H:i:s'));
+                                $m_user_integral->add($integraldata);
+                            }
+                        }
+                        echo $error_info."[settled_status]1[message]{$ov['order_id']} ok \r\n";
+                    }else{
+                        echo $error_info."[settled_status]1[message]{$ov['order_id']} Don't need settle \r\n";
+                    }
+                }
+                echo $error_info."[settled_status]1 \r\n";
+            }else{
+                echo $error_info."[settled_status]0[message]no order \r\n";
+            }
+
+        }else{
+            echo $error_info."[settled_status]0[message]Time is not \r\n";
+        }
+    }
     
 }
