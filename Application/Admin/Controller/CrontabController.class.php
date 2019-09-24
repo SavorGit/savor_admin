@@ -3949,7 +3949,7 @@ class CrontabController extends Controller
                 $log_content = "{$v['id']}|$total_time|$start_time|$end_time|$res_data".PHP_EOL;
                 $log_file = $log_dir.date('Ymd').'.log';
                 file_put_contents($log_file,$log_content,FILE_APPEND);
-                echo date('Y-m-d H:i:s').' '.$v['id']." ok \n";
+                echo date('Y-m-d H:i:s').'|'.$v['id']."|$img_url \n";
 
             }
 
