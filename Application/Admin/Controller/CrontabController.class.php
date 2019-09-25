@@ -3893,7 +3893,7 @@ class CrontabController extends Controller
                 $imgs_info = json_decode($v['imgs'],true);
                 if(count($imgs_info)==1){
                     $video_url = $oss_host.$imgs_info[0];
-                    $video_duration = $v['duration']*100;
+                    $video_duration = intval($v['duration']);
                     if($video_duration){
                         $video_img_num = array();
                         for($i=1;$i<=$video_duration;$i++){
@@ -3960,7 +3960,9 @@ class CrontabController extends Controller
     public function jdorderadd(){
 //        $hourtime = date("YmdH", strtotime("-1 hour"));
 //        $hourtime = '2019091211';
-        $hourtime = '2019091615';
+//        $hourtime = '2019091615';
+//        $hourtime = '2019092423';
+        $hourtime = '2019092510';
         $data['orderReq'] = array(
             'pageNo'=>1,
             'pageSize'=>500,
@@ -4010,6 +4012,7 @@ class CrontabController extends Controller
     public function jdorderupdate(){
 //        $hourtime = date("YmdH", strtotime("-1 hour"));
         $hourtime = '2019091617';
+        $hourtime = '2019092423';
         $data['orderReq'] = array(
             'pageNo'=>1,
             'pageSize'=>500,
