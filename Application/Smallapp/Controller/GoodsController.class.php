@@ -152,13 +152,17 @@ class GoodsController extends BaseController {
         	}
 
         	$page_url = '';
-        	$item_id = '';
+        	$item_id = 0;
         	if($appid){
                 $jd_config = C('JD_UNION_CONFIG');
                 $url_info = parse_url($jd_url);
                 if(isset($url_info['scheme'])){
                     preg_match('/^http:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);
-                    $item_id = $matches[1];
+                    $item_id = intval($matches[1]);
+                    if(empty($item_id)){
+                        preg_match('/^https:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);
+                        $item_id = intval($matches[1]);
+                    }
                     switch ($appid){
                         case 'wx13e41a437b8a1d2e'://京东爆款(京东联盟)
                             $params = array(

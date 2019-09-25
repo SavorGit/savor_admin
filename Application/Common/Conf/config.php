@@ -53,6 +53,7 @@ $config['GOODS_TYPE'] = array(
     '10'=>'官方活动促销',
     '20'=>'商家添加',
     '30'=>'积分兑换现金',
+    '31'=>'积分兑换物品',
     '40'=>'热点优选',
 );
 
@@ -81,7 +82,7 @@ $config['BUY_TYPE'] = array(
 );
 $config['ORDER_OTYPE'] = array(
     '1'=>'商品订单',
-    '2'=>'抵用券订单',
+    '2'=>'兑换订单',
 );
 
 $config['DEVICE_TYPE'] = array(
