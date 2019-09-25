@@ -45,7 +45,13 @@ class OrderController extends BaseController {
         $m_goods = new \Admin\Model\Smallapp\GoodsModel();
         foreach ($datalist as $k=>$v){
             $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
+            $integral = '';
+            if($goods_info['type'] == 30 || $goods_info['type'] == 31){
+                $integral = $v['amount']*$goods_info['rebate_integral'];
+            }
+            $datalist[$k]['integral'] = $integral;
             $datalist[$k]['goods_name'] = $goods_info['name'];
+            $datalist[$k]['goods_type'] = $goods_info['type'];
             $datalist[$k]['buy_typestr'] = $buy_types[$v['buy_type']];
             $datalist[$k]['otypestr'] = $order_types[$v['otype']];
             $datalist[$k]['statusstr'] = $order_status[$v['status']];
@@ -61,45 +67,94 @@ class OrderController extends BaseController {
         $this->display('orderlist');
     }
 
-    public function orderaudit(){
-        $order_id = I('get.id',0,'intval');
-        $hash_ids_key = C('HASH_IDS_KEY');
-        $hashids = new \Common\Lib\Hashids($hash_ids_key);
-        $params = $hashids->encode($order_id);
-        $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';
-        $curl = new Curl();
-        $data = array('params'=>$params);
-        $resapi = array('code'=>10000);
-        $curl::post($url,$data,$resapi,10);
-        $resapi = json_decode($resapi,true);
-        if($resapi['code']!=10000){
-            if($resapi['code']==99003){
-                $message = '用户无mopenid,无法提现';
-            }elseif($resapi['code']==99005){
-                $message = '用户积分不够,无法提现';
-            }else{
-                $message = '不满足兑换条件';
-            }
-        }else{
-            $message = '提现成功';
-            $m_order = new \Admin\Model\Smallapp\OrderModel();
-            $m_order->updateData(array('id'=>$order_id),array('status'=>21));
-            $res_order = $m_order->getInfo(array('id'=>$order_id));
-            $m_goods = new \Admin\Model\Smallapp\GoodsModel();
-            $goods_info = $m_goods->getInfo(array('id'=>$res_order['goods_id']));
-            if($goods_info['rebate_integral']){
-                $integral = $goods_info['rebate_integral'];
-                $integralrecord_data = array('openid' => $res_order['openid'],'integral' => -$integral,
-                    'content' => $res_order['goods_id'], 'type' => 4, 'integral_time' => date('Y-m-d H:i:s'));
-                $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
-                $m_userintegralrecord->add($integralrecord_data);
+    public function exchange(){
+        $order_id = I('id',0,'intval');
+        $goods_type = I('goods_type',0,'intval');
+        $m_order = new \Admin\Model\Smallapp\OrderModel();
+        $res_order = $m_order->getInfo(array('id'=>$order_id));
+        $m_goods = new \Admin\Model\Smallapp\GoodsModel();
+        $goods_info = $m_goods->getInfo(array('id'=>$res_order['goods_id']));
+
+        if($goods_info['type']==31){
+            if(IS_POST){
+                $contact = I('post.contact','','trim');
+                $phone = I('post.phone','','trim');
+                $address = I('post.address','','trim');
+                $status = I('post.status',20,'intval');
+
+                $integral = intval($res_order['amount']*$goods_info['rebate_integral']);
+                if(empty($integral)){
+                    $this->output('商品积分不能为0', 'order/orderlist',2);
+                }
+
                 $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
                 $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_order['openid']));
-                $userintegral = $res_userintegral['integral'] - $integral;
-                $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral));
+                $userintegral = $res_userintegral['integral'];
+                if($integral>$userintegral){
+                    $this->output('用户积分不能兑换此商品', 'order/orderlist',2);
+                }
+                if($status==21){
+                    $integralrecord_data = array('openid'=>$res_order['openid'],'integral'=>-$integral,
+                        'content'=>$res_order['goods_id'],'type'=>4,'integral_time'=>date('Y-m-d H:i:s'));
+                    $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                    $m_userintegralrecord->add($integralrecord_data);
+
+                    $userintegral = $res_userintegral['integral'] - $integral;
+                    $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral));
+                    $message = '商品兑换成功';
+                }else{
+                    $message = '修改成功';
+                }
+                $odata = array('contact'=>$contact,'phone'=>$phone,'address'=>$address,'status'=>$status);
+                $m_order->updateData(array('id'=>$order_id),$odata);
+
+                $this->output($message, 'order/orderlist',2);
+
+            }else{
+                $res_order['goods_name'] = $goods_info['name'];
+                $res_order['goods_integral'] = intval($res_order['amount']*$goods_info['rebate_integral']);
+                $this->assign('goods_type',$goods_type);
+                $this->assign('vinfo',$res_order);
+                $this->display('exchange');
             }
+        }else{
+            $hash_ids_key = C('HASH_IDS_KEY');
+            $hashids = new \Common\Lib\Hashids($hash_ids_key);
+            $params = $hashids->encode($order_id);
+            $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';
+            $curl = new Curl();
+            $data = array('params'=>$params);
+            $resapi = array('code'=>10000);
+            $curl::post($url,$data,$resapi,10);
+            $resapi = json_decode($resapi,true);
+            if($resapi['code']!=10000){
+                if($resapi['code']==99003){
+                    $message = '用户无mopenid,无法提现';
+                }elseif($resapi['code']==99005){
+                    $message = '用户积分不够,无法提现';
+                }else{
+                    $message = '不满足兑换条件';
+                }
+            }else{
+                $message = '提现成功';
+                $m_order = new \Admin\Model\Smallapp\OrderModel();
+                $m_order->updateData(array('id'=>$order_id),array('status'=>21));
+
+                if($goods_info['rebate_integral']){
+                    $integral = $goods_info['rebate_integral'];
+                    $integralrecord_data = array('openid' => $res_order['openid'],'integral' => -$integral,
+                        'content' => $res_order['goods_id'], 'type' => 4, 'integral_time' => date('Y-m-d H:i:s'));
+                    $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                    $m_userintegralrecord->add($integralrecord_data);
+                    $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+                    $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_order['openid']));
+                    $userintegral = $res_userintegral['integral'] - $integral;
+                    $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral));
+                }
+            }
+            $this->output($message, 'order/orderlist',2);
         }
-        $this->output($message, 'order/orderlist',2);
+
     }
 
 }
