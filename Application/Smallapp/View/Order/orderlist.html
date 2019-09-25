@@ -62,9 +62,11 @@
               <th>ID</th>
               <th>用户openID</th>
               <th>商品名称</th>
+              <th>购买数量</th>
               <th>总价</th>
               <th>购买类型</th>
               <th>订单类型</th>
+              <th>兑换所需积分</th>
               <th>购买时间</th>
               <th>状态</th>
               <th class="table-tool">操作</th>
@@ -76,19 +78,29 @@
               <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
               <td data-title="用户openid">{$dinfo.openid}</td>
               <td data-title="商品名称">{$dinfo.goods_name}</td>
+              <td data-title="购买数量">{$dinfo.amount}</td>
               <td data-title="总价">{$dinfo.total_fee}</td>
               <td data-title="购买类型">{$dinfo.buy_typestr}</td>
               <td data-title="订单类型">{$dinfo.otypestr}</td>
+              <td data-title="兑换所需积分">{$dinfo.integral}</td>
               <td data-title="购买时间">{$dinfo.add_time}</td>
               <td data-title="状态">{$dinfo.statusstr}</td>
               <td class="table-tool" data-title="操作">
-                <if condition="$dinfo.status eq 20">
                 <div class="tools-edit">
-                    <a warn="审核" data-tip="提示" title="审核通过后,会直接提现到用户微信零钱" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/order/orderaudit?id={$dinfo.id}"  class="btn btn-success btn-icon">
-                        <i class="fa fa-pencil-square"></i>
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 30">
+                    <a warn="审核" data-tip="兑换现金" title="审核通过后,会直接提现到用户微信零钱" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/order/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}"  class="btn btn-success btn-icon">
+                        <i class="fa fa-money"></i>
                     </a>
+                    </if>
+
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 31">
+                    <a title="兑换信息" data-tip="兑换商品" target="dialog" mask="true" href="{$host_url}/smallapp/order/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}" class="btn btn-success btn-icon">
+                        <i class="fa fa-exchange"></i>
+                    </a>
+                    </if>
+
                 </div>
-                </if>
+
               </td>
             </tr>
 
