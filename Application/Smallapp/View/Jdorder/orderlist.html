@@ -1,0 +1,113 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/jdorder/orderlist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pull-right">
+
+            <div class="form-inline">
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">时间：</div>
+                <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                    <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                    <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+                <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                    <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                    <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+
+          <div class="input-group input-group-sm">
+            <span class="input-group-btn">
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >订单状态</option>
+                <volist name="all_valid_codes" id="oinfo">
+                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
+                </volist>
+              </select>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>京东订单号</th>
+              <th>订单状态</th>
+              <th>下单时间</th>
+              <th>商品名称</th>
+              <th>付款金额</th>
+              <th>佣金比例</th>
+              <th>实际分成比例</th>
+              <th>预估佣金</th>
+              <th>完成时间</th>
+              <th>实际金额</th>
+              <th>实际佣金</th>
+              <th>预估结算时间</th>
+              <th>销售人员openid</th>
+              <th>销售人员昵称</th>
+              <th>销售酒楼</th>
+              <th>获得积分</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="京东订单号">{$dinfo.order_id}</td>
+              <td data-title="订单状态">{$dinfo.status_str}</td>
+              <td data-title="下单时间">{$dinfo.order_time}</td>
+              <td data-title="商品名称">{$dinfo.sku_name}</td>
+              <td data-title="付款金额">{$dinfo.estimate_cos_price}</td>
+              <td data-title="佣金比例">{$dinfo.commissionrate}%</td>
+              <td data-title="实际分成比例">{$dinfo.final_rate}%</td>
+              <td data-title="预估佣金">{$dinfo.estimate_fee}</td>
+              <td data-title="完成时间">{$dinfo.finish_time}</td>
+              <td data-title="实际金额"> <in name="dinfo.valid_code" value="17,18">{$dinfo.actual_cos_price}</in></td>
+              <td data-title="实际佣金"><in name="dinfo.valid_code" value="17,18">{$dinfo.actual_fee}</in></td>
+              <td data-title="预估结算时间"><in name="dinfo.valid_code" value="17,18">{$dinfo.pay_month}</in></td>
+              <td data-title="销售人员openid">{$dinfo.openid}</td>
+              <td data-title="销售人员昵称">{$dinfo.nickName}</td>
+              <td data-title="销售酒楼">{$dinfo.hotel_name}</td>
+              <td data-title="获得积分"><if condition="$dinfo.valid_code eq 18">{$dinfo.integral}</if></td>
+
+            </tr>
+
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
