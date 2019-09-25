@@ -3824,5 +3824,383 @@ class CrontabController extends Controller
         }
         echo   date('Y-m-d H:i:s'). "数据处理完成";
     }
+
+    public function forscreenimgSecCheck(){
+        $hourtime = date("YmdH", strtotime("-1 hour"));
+        $sql = "select id,forscreen_id,openid,create_time,imgs from savor_smallapp_forscreen_record where DATE_FORMAT(create_time,'%Y%m%d%H')='$hourtime' and action in(4,31) and mobile_brand!='devtools' order by id asc";
+//        $sql = "select id,forscreen_id,openid,create_time,imgs from savor_smallapp_forscreen_record where create_time>='2019-09-24 00:00:00' and create_time<='2019-09-24 18:59:59' and action in(4,31) order by id asc";
+
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $res_forscreen = $m_forscreen->query($sql);
+        $oss_host = 'http://oss.littlehotspot.com/';
+        $log_dir = SITE_TP_PATH.'/Public/content/forscreencheck/images/';
+        foreach ($res_forscreen as $v){
+            $img_url = '';
+            if(!empty($v['imgs'])){
+                $imgs_info = json_decode($v['imgs'],true);
+                if(!empty($imgs_info)){
+                    $img_url = $oss_host.$imgs_info[0]."?x-oss-process=image/resize,p_50/quality,q_70";
+                }
+            }
+            if(empty($img_url)){
+                continue;
+            }
+            $start_time = microtime(true);
+
+            $img = file_get_contents($img_url);
+            $filePath = $log_dir.'wx_imgtmp.png';
+            file_put_contents($filePath, $img);
+            $obj = new \CURLFile(realpath($filePath));
+            $obj->setMimeType("image/png");
+            $file['media'] = $obj;
+            $config = C('SMALLAPP_CONFIG');
+            $token = getWxAccessToken($config);
+            $url = "https://api.weixin.qq.com/wxa/img_sec_check?access_token=$token";
+
+            $data = $file;
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+            if (!empty($data)) {
+                curl_setopt($curl, CURLOPT_POST, TRUE);
+                curl_setopt($curl, CURLOPT_POSTFIELDS,$data);
+            }
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+            $res_data = curl_exec($curl);
+            curl_close($curl);
+
+            $end_time = microtime(true);
+            $calc_time = $end_time - $start_time;
+            $total_time = round($calc_time, 4);
+            $log_content = "{$v['id']}|$total_time|$start_time|$end_time|$res_data".PHP_EOL;
+            $log_file = $log_dir.date('Ymd').'.log';
+            file_put_contents($log_file,$log_content,FILE_APPEND);
+            echo date('Y-m-d H:i:s').' '.$v['id']." ok \n";
+        }
+    }
+
+    public function forscreenvideoSecCheck(){
+        $hourtime = date("YmdH", strtotime("-1 hour"));
+        $sql = "select id,forscreen_id,openid,create_time,imgs,duration from savor_smallapp_forscreen_record where DATE_FORMAT(create_time,'%Y%m%d%H')='$hourtime' and action=2 and resource_type=2 and mobile_brand!='devtools' order by id asc";
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $res_forscreen = $m_forscreen->query($sql);
+        $oss_host = 'http://oss.littlehotspot.com/';
+        $log_dir = SITE_TP_PATH.'/Public/content/forscreencheck/videos/';
+        foreach ($res_forscreen as $v){
+            $img_urls = array();
+            if(!empty($v['imgs'])){
+                $imgs_info = json_decode($v['imgs'],true);
+                if(count($imgs_info)==1){
+                    $video_url = $oss_host.$imgs_info[0];
+                    $video_duration = intval($v['duration']);
+                    if($video_duration){
+                        $video_img_num = array();
+                        for($i=1;$i<=$video_duration;$i++){
+                            $video_img_num[]=$i;
+                        }
+                        shuffle($video_img_num);
+                        $img_urls[]=$video_url."?x-oss-process=video/snapshot,t_{$video_img_num[0]}000,f_jpg,w_450,m_fast";
+                        $img_urls[]=$video_url."?x-oss-process=video/snapshot,t_{$video_img_num[1]}000,f_jpg,w_450,m_fast";
+                        $img_urls[]=$video_url."?x-oss-process=video/snapshot,t_{$video_img_num[2]}000,f_jpg,w_450,m_fast";
+                    }
+
+                }else{
+                    $imgs_info = array_slice($imgs_info,0,3);
+                    foreach ($imgs_info as $iv){
+                        $img_urls[] = $oss_host.$iv."?x-oss-process=image/resize,p_50/quality,q_70";
+                    }
+                }
+            }
+            if(empty($img_urls)){
+                continue;
+            }
+            foreach ($img_urls as $igv){
+                $img_url = $igv;
+
+                $start_time = microtime(true);
+
+                $img = file_get_contents($img_url);
+                $filePath = $log_dir.'wx_imgtmp.png';
+                file_put_contents($filePath, $img);
+                $obj = new \CURLFile(realpath($filePath));
+                $obj->setMimeType("image/png");
+                $file['media'] = $obj;
+                $config = C('SMALLAPP_CONFIG');
+                $token = getWxAccessToken($config);
+                $url = "https://api.weixin.qq.com/wxa/img_sec_check?access_token=$token";
+
+                $data = $file;
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+                if (!empty($data)) {
+                    curl_setopt($curl, CURLOPT_POST, TRUE);
+                    curl_setopt($curl, CURLOPT_POSTFIELDS,$data);
+                }
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+                $res_data = curl_exec($curl);
+                curl_close($curl);
+
+                $end_time = microtime(true);
+                $calc_time = $end_time - $start_time;
+                $total_time = round($calc_time, 4);
+                $log_content = "{$v['id']}|$total_time|$start_time|$end_time|$res_data".PHP_EOL;
+                $log_file = $log_dir.date('Ymd').'.log';
+                file_put_contents($log_file,$log_content,FILE_APPEND);
+                echo date('Y-m-d H:i:s').'|'.$v['id']."|$img_url \n";
+
+            }
+
+        }
+    }
+
+
+    public function jdorderadd(){
+//        $hourtime = date("YmdH", strtotime("-1 hour"));
+//        $hourtime = '2019091211';
+//        $hourtime = '2019091615';
+//        $hourtime = '2019092423';
+        $hourtime = '2019092510';
+        $data['orderReq'] = array(
+            'pageNo'=>1,
+            'pageSize'=>500,
+            'type'=>1,
+            'time'=>"$hourtime",
+        );
+        $res = jd_union_api($data,'jd.union.open.order.query');
+        if($res['code']!=200){
+            $res = jd_union_api($data,'jd.union.open.order.query');
+        }
+        $nowtime = date('Y-m-d H:i:s');
+        $error_info = $nowtime.'[order_hour]'.$hourtime;
+        if($res['code']==200){
+            $m_jdorder = new \Admin\Model\Smallapp\JdorderModel();
+            if(isset($res['data'])){
+                foreach ($res['data'] as $v){
+                    $order_id = $v['orderId'];
+                    $order_time = floor($v['orderTime']/1000);
+                    $finish_time = 0;
+                    if($v['finishTime']){
+                        $finish_time = floor($v['finishTime']/1000);
+                    }
+                    $sku_info = $v['skuList'][0];
+                    $order_data = array('order_id'=>$order_id,'order_time'=>$order_time,'finish_time'=>$finish_time,'order_emt'=>$v['orderEmt'],
+                        'parent_id'=>$v['parentId'],'pay_month'=>$v['payMonth'],'plus'=>$v['plus'],'pop_id'=>$v['popId'],'actual_cos_price'=>$sku_info['actualCosPrice'],
+                        'actual_fee'=>$sku_info['actualFee'],'commissionrate'=>$sku_info['commissionRate'],'estimate_cos_price'=>$sku_info['estimateCosPrice'],
+                        'estimate_fee'=>$sku_info['estimateFee'],'final_rate'=>$sku_info['finalRate'],'pid'=>$sku_info['pid'],'price'=>$sku_info['price'],
+                        'sku_id'=>$sku_info['skuId'],'sku_name'=>$sku_info['skuName'],'sku_num'=>$sku_info['skuNum'],'sku_return_num'=>$sku_info['skuReturnNum'],
+                        'sub_side_rate'=>$sku_info['subSideRate'],'subsidy_rate'=>$sku_info['subsidyRate'],'union_alias'=>$sku_info['unionAlias'],
+                        'union_tag'=>$sku_info['unionTag'],'union_traffic_group'=>$sku_info['unionTrafficGroup'],'valid_code'=>$sku_info['validCode'],
+                        'sub_union_id'=>$sku_info['subUnionId'],'trace_type'=>$sku_info['traceType'],'cp_act_id'=>$sku_info['cpActId'],'union_role'=>$sku_info['unionRole'],
+                        'union_id'=>$v['unionId']
+                        );
+                    $m_jdorder->add($order_data);
+                    echo $error_info.'[data]'."$order_id ok \r\n";
+                }
+//                echo $error_info.'[data]'.json_encode($res['data']);
+                echo $error_info.'[data]'."ok \r\n";
+            }else{
+                echo $error_info.'[data]'.json_encode(array())." \r\n";
+            }
+        }else{
+            echo $error_info.'[error]'.json_encode($res)." \r\n";
+        }
+    }
+
+    public function jdorderupdate(){
+//        $hourtime = date("YmdH", strtotime("-1 hour"));
+        $hourtime = '2019091617';
+        $hourtime = '2019092423';
+        $data['orderReq'] = array(
+            'pageNo'=>1,
+            'pageSize'=>500,
+            'type'=>3,
+            'time'=>"$hourtime",
+        );
+        $res = jd_union_api($data,'jd.union.open.order.query');
+        if($res['code']!=200){
+            $res = jd_union_api($data,'jd.union.open.order.query');
+        }
+        $nowtime = date('Y-m-d H:i:s');
+        $error_info = $nowtime.'[order_hour]'.$hourtime;
+        if($res['code']==200){
+            $m_jdorder = new \Admin\Model\Smallapp\JdorderModel();
+            if(isset($res['data'])){
+                $jd_app_id = 'wx13e41a437b8a1d2e';
+                $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                $model = M();
+                foreach ($res['data'] as $v){
+                    $order_id = $v['orderId'];
+                    $order_time = floor($v['orderTime']/1000);
+                    $finish_time = 0;
+                    if($v['finishTime']){
+                        $finish_time = floor($v['finishTime']/1000);
+                    }
+                    $sku_info = $v['skuList'][0];
+                    $order_data = array('order_id'=>$order_id,'order_time'=>$order_time,'finish_time'=>$finish_time,'order_emt'=>$v['orderEmt'],
+                        'parent_id'=>$v['parentId'],'pay_month'=>$v['payMonth'],'plus'=>$v['plus'],'pop_id'=>$v['popId'],'actual_cos_price'=>$sku_info['actualCosPrice'],
+                        'actual_fee'=>$sku_info['actualFee'],'commissionrate'=>$sku_info['commissionRate'],'estimate_cos_price'=>$sku_info['estimateCosPrice'],
+                        'estimate_fee'=>$sku_info['estimateFee'],'final_rate'=>$sku_info['finalRate'],'pid'=>$sku_info['pid'],'price'=>$sku_info['price'],
+                        'sku_id'=>$sku_info['skuId'],'sku_name'=>$sku_info['skuName'],'sku_num'=>$sku_info['skuNum'],'sku_return_num'=>$sku_info['skuReturnNum'],
+                        'sub_side_rate'=>$sku_info['subSideRate'],'subsidy_rate'=>$sku_info['subsidyRate'],'union_alias'=>$sku_info['unionAlias'],
+                        'union_tag'=>$sku_info['unionTag'],'union_traffic_group'=>$sku_info['unionTrafficGroup'],'valid_code'=>$sku_info['validCode'],
+                        'sub_union_id'=>$sku_info['subUnionId'],'trace_type'=>$sku_info['traceType'],'cp_act_id'=>$sku_info['cpActId'],'union_role'=>$sku_info['unionRole'],
+                        'union_id'=>$v['unionId']
+                    );
+                    $res_order = $m_jdorder->getInfo(array('order_id'=>$order_id));
+                    if(!empty($res_order)){
+                        $jd_order_id = $res_order['id'];
+                        $order_data['update_time'] = date('Y-m-d H:i:s');
+                        $m_jdorder->updateData(array('id'=>$res_order['id']),$order_data);
+                    }else{
+                        $jd_order_id = $m_jdorder->add($order_data);
+                    }
+
+                    if($v['validCode']==17){//订单状态 已完成
+                        $user_id = $order_data['sub_union_id'];
+                        $sku_id = $order_data['sku_id'];
+                        if($user_id && $sku_id){
+                            $sql_user = "select openid from savor_smallapp_user where id=$user_id";
+                            $res_user = $model->query($sql_user);
+                            $openid = $res_user[0]['openid'];
+
+                            $sql_goods = "select * from savor_smallapp_goods where item_id=$sku_id and appid='$jd_app_id'";
+                            $res_goods = $model->query($sql_goods);
+                            if(!empty($res_goods)){
+                                $rebate_integral = $res_goods[0]['rebate_integral']*$order_data['sku_num'];
+                                $goods_id = $res_goods[0]['id'];
+                                $record_data = array('openid'=>$openid,'integral'=>$rebate_integral,'goods_id'=>$goods_id,'status'=>2,
+                                    'jdorder_id'=>$jd_order_id,'content'=>$order_data['sku_num'],'type'=>3,'integral_time'=>date('Y-m-d H:i:s'));
+                                $m_user_integralrecord->add($record_data);
+                            }
+                        }
+                    }
+                    echo $error_info.'[data]'."$order_id ok \r\n";
+                }
+//                echo $error_info.'[data]'.json_encode($res['data']);
+                echo $error_info.'[data]'."ok \r\n";
+            }else{
+                echo $error_info.'[data]'.json_encode(array())." \r\n";
+            }
+        }else{
+            echo $error_info.'[error]'.json_encode($res)." \r\n";
+        }
+    }
+
+    public function jdordersettled(){
+        $month_day = date('t');
+        if($month_day>=30){
+            $settled_day = 30;
+        }else{
+            $settled_day = $month_day;
+        }
+        $pre_month = date("Ym", strtotime("-1 month"));
+        $nowtime = date('Y-m-d H:i:s');
+
+        $error_info = $nowtime.'[settled_month]'.$pre_month;
+        $now_day = date('j');
+        if($now_day==$settled_day){
+            $model = M();
+            $sql_settled = "select * from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' and valid_code=18";
+            $res_sorder = $model->query($sql_settled);
+            if(empty($res_sorder)){
+                $sql_otime = "select FROM_UNIXTIME(order_time,'%Y%m%d%H') as otime from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' GROUP BY otime";
+                $res_otimes = $model->query($sql_otime);
+                if(!empty($res_otimes)){
+                    $m_jdorder = new \Admin\Model\Smallapp\JdorderModel();
+                    foreach ($res_otimes as $ot){
+                        $data['orderReq'] = array(
+                            'pageNo'=>1,
+                            'pageSize'=>500,
+                            'type'=>1,
+                            'time'=>"$ot",
+                        );
+                        $res = jd_union_api($data,'jd.union.open.order.query');
+                        if($res['code']!=200){
+                            $res = jd_union_api($data,'jd.union.open.order.query');
+                        }
+                        if($res['code']==200){
+                            if(isset($res['data'])){
+                                foreach ($res['data'] as $v){
+                                    $order_id = $v['orderId'];
+                                    $order_time = floor($v['orderTime']/1000);
+                                    $finish_time = 0;
+                                    if($v['finishTime']){
+                                        $finish_time = floor($v['finishTime']/1000);
+                                    }
+                                    $sku_info = $v['skuList'][0];
+                                    $order_data = array('order_id'=>$order_id,'order_time'=>$order_time,'finish_time'=>$finish_time,'order_emt'=>$v['orderEmt'],
+                                        'parent_id'=>$v['parentId'],'pay_month'=>$v['payMonth'],'plus'=>$v['plus'],'pop_id'=>$v['popId'],'actual_cos_price'=>$sku_info['actualCosPrice'],
+                                        'actual_fee'=>$sku_info['actualFee'],'commissionrate'=>$sku_info['commissionRate'],'estimate_cos_price'=>$sku_info['estimateCosPrice'],
+                                        'estimate_fee'=>$sku_info['estimateFee'],'final_rate'=>$sku_info['finalRate'],'pid'=>$sku_info['pid'],'price'=>$sku_info['price'],
+                                        'sku_id'=>$sku_info['skuId'],'sku_name'=>$sku_info['skuName'],'sku_num'=>$sku_info['skuNum'],'sku_return_num'=>$sku_info['skuReturnNum'],
+                                        'sub_side_rate'=>$sku_info['subSideRate'],'subsidy_rate'=>$sku_info['subsidyRate'],'union_alias'=>$sku_info['unionAlias'],
+                                        'union_tag'=>$sku_info['unionTag'],'union_traffic_group'=>$sku_info['unionTrafficGroup'],'valid_code'=>$sku_info['validCode'],
+                                        'sub_union_id'=>$sku_info['subUnionId'],'trace_type'=>$sku_info['traceType'],'cp_act_id'=>$sku_info['cpActId'],'union_role'=>$sku_info['unionRole'],
+                                        'union_id'=>$v['unionId']
+                                    );
+                                    $res_order = $m_jdorder->getInfo(array('order_id'=>$order_id));
+                                    if(!empty($res_order)){
+                                        $order_data['update_time'] = date('Y-m-d H:i:s');
+                                        $m_jdorder->updateData(array('id'=>$res_order['id']),$order_data);
+                                    }else{
+                                        $m_jdorder->add($order_data);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $sql_settled = "select * from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' and valid_code=18";
+                    $res_sorder = $model->query($sql_settled);
+                }
+            }
+            if(!empty($res_sorder)){
+                $jd_app_id = 'wx13e41a437b8a1d2e';
+                $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                $m_user_integral = new \Admin\Model\Smallapp\UserIntegralModel();
+                foreach ($res_sorder as $ov){
+                    $user_id = $ov['sub_union_id'];
+                    $sku_id = $ov['sku_id'];
+                    if($user_id && $sku_id && $ov['valid_code']==18){
+                        $sql_user = "select openid from savor_smallapp_user where id=$user_id";
+                        $res_user = $model->query($sql_user);
+                        $openid = $res_user[0]['openid'];
+
+                        $sql_goods = "select * from savor_smallapp_goods where item_id=$sku_id and appid='$jd_app_id'";
+                        $res_goods = $model->query($sql_goods);
+                        if(!empty($res_goods)){
+                            $m_user_integralrecord->delData(array('jdorder_id'=>$ov['id']));
+
+                            $rebate_integral = $res_goods[0]['rebate_integral']*$ov['sku_num'];
+                            $goods_id = $res_goods[0]['id'];
+                            $record_data = array('openid'=>$openid,'integral'=>$rebate_integral,'goods_id'=>$goods_id,'content'=>$ov['sku_num'],
+                                'type'=>3,'integral_time'=>date('Y-m-d H:i:s'),'status'=>1);
+                            $m_user_integralrecord->add($record_data);
+
+                            $res_userintegral = $m_user_integral->getInfo(array('openid'=>$openid));
+                            if(!empty($res_userintegral)){
+                                $userintegral = $res_userintegral['integral']+$rebate_integral;
+                                $m_user_integral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+                            }else{
+                                $integraldata = array('openid'=>$openid,'integral'=>$rebate_integral,'update_time'=>date('Y-m-d H:i:s'));
+                                $m_user_integral->add($integraldata);
+                            }
+                        }
+                        echo $error_info."[settled_status]1[message]{$ov['order_id']} ok \r\n";
+                    }else{
+                        echo $error_info."[settled_status]1[message]{$ov['order_id']} Don't need settle \r\n";
+                    }
+                }
+                echo $error_info."[settled_status]1 \r\n";
+            }else{
+                echo $error_info."[settled_status]0[message]no order \r\n";
+            }
+
+        }else{
+            echo $error_info."[settled_status]0[message]Time is not \r\n";
+        }
+    }
     
 }

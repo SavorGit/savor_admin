@@ -53,6 +53,7 @@ $config['GOODS_TYPE'] = array(
     '10'=>'官方活动促销',
     '20'=>'商家添加',
     '30'=>'积分兑换现金',
+    '31'=>'积分兑换物品',
     '40'=>'热点优选',
 );
 
@@ -81,7 +82,7 @@ $config['BUY_TYPE'] = array(
 );
 $config['ORDER_OTYPE'] = array(
     '1'=>'商品订单',
-    '2'=>'抵用券订单',
+    '2'=>'兑换订单',
 );
 
 $config['DEVICE_TYPE'] = array(
@@ -336,11 +337,24 @@ $config['WX_DYH_CONFIG'] = array(
     'appid'=>'wxb19f976865ae9404',
     'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
 );
+
 $config['WX_FWH_CONFIG'] = array(
     'appid'=>'wx7036d73746ff1a14',
     'appsecret'=>'8b658fc90d7105d5cf66cb2193edb7d4',
     'key_ticket'=>'savor_wx_xiaorefu_jsticket',
     'key_token'=>'savor_wx_xiaorefu_token',
+);
+
+$config['SMALLAPP_CONFIG'] = array(
+    'cache_key'=>'smallapp_token',
+    'appid'=>'wxfdf0346934bb672f',
+    'appsecret'=>'b9b93aef8d6609722596e35385ff05c5'
+);
+
+$config['SMALLAPP_SALE_CONFIG'] = array(
+    'cache_key'=>'smallapp_sale_token',
+    'appid'=>'wxfc48bdfa3fcaf358',
+    'appsecret'=>'8fe57f640a23cc3ecfb3d5f8fff70144'
 );
 
 $config['XIAO_REDIAN_DING'] = array(
@@ -349,7 +363,6 @@ $config['XIAO_REDIAN_DING'] = array(
     'key_ticket'=>'savor_wx_xiaore_jsticket',
     'key_token'=>'savor_wx_xiaore_token',
 );
-
 
 $config['ZHI_XIANG_CONFIG'] = array(
     'appid'=>'wx75025eb1e60df2cf',

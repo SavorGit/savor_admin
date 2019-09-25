@@ -1,6 +1,8 @@
 <?php
 namespace Smallapp\Controller;
 use Admin\Controller\BaseController ;
+use Common\Lib\Curl;
+
 /**
  * @desc 商品管理
  *
@@ -116,6 +118,7 @@ class GoodsController extends BaseController {
         }else{
             $type = I('post.type',0,'intval');
         	$name = I('post.name','','trim');
+        	$wx_category = I('post.wx_category','','trim');
         	$price = I('post.price',0,'intval');
         	$rebate_integral = I('post.rebate_integral',0,'intval');
         	$jd_url = I('post.jd_url','','trim');
@@ -149,15 +152,22 @@ class GoodsController extends BaseController {
         	}
 
         	$page_url = '';
+        	$item_id = 0;
         	if($appid){
                 $jd_config = C('JD_UNION_CONFIG');
                 $url_info = parse_url($jd_url);
                 if(isset($url_info['scheme'])){
+                    preg_match('/^http:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);
+                    $item_id = intval($matches[1]);
+                    if(empty($item_id)){
+                        preg_match('/^https:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);
+                        $item_id = intval($matches[1]);
+                    }
                     switch ($appid){
                         case 'wx13e41a437b8a1d2e'://京东爆款(京东联盟)
                             $params = array(
                                 'promotionCodeReq'=>array(
-                                    'materialId'=>'http://item.jd.com/40708182455.html',
+                                    'materialId'=>$jd_url,
                                     'chainType'=>3,
                                 )
                             );
@@ -169,8 +179,7 @@ class GoodsController extends BaseController {
                             $page_url = '/pages/proxy/union/union?spreadUrl='.$click_url.'&customerinfo='.$jd_config['customerinfo'];
                             break;
                         case 'wx91d27dbf599dff74'://京东购物
-                            $tmp_jd_url = rtrim($jd_url,'.html');
-                            $page_url = str_replace('https://item.jd.com/','pages/item/detail/detail?sku=',$tmp_jd_url);
+                            $page_url = 'pages/item/detail/detail?sku='.$item_id;
                             break;
                     }
                 }else{
@@ -182,8 +191,11 @@ class GoodsController extends BaseController {
                 }
             }
 
-            $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
+            $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
+        	if($appid){
+                $data['appid'] = $appid;
+            }
         	if($type==40){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
@@ -192,7 +204,6 @@ class GoodsController extends BaseController {
         	    if(empty($appid) || empty($buybutton)){
                     $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
                 }
-                $data['appid'] = $appid;
         	    $data['buybutton'] = $buybutton;
         	    if($detailmedia_id){
         	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
@@ -209,14 +220,15 @@ class GoodsController extends BaseController {
                 $data['end_time'] = $end_time;
             }
 
-
         	if($id){
         	    $m_goods->updateData(array('id'=>$id),$data);
                 $result = true;
         	    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         	    $m_hotelgoods->HandleGoodsperiod($id);
+        	    $goods_id = $id;
             }else{
         	    $result = $m_goods->add($data);
+                $goods_id = $result;
             }
 
         	if($result){
@@ -228,6 +240,9 @@ class GoodsController extends BaseController {
                     $period_data = array('period'=>$period);
                     $redis->set($program_key,json_encode($period_data));
                 }
+                if($type==10){
+                    $this->wx_importproduct($goods_id);
+                }
 
         		$this->output('操作成功', 'goods/goodslist');
         	}else{
@@ -235,6 +250,42 @@ class GoodsController extends BaseController {
         	}
 
         }
+    }
+
+    private function wx_importproduct($goods_id){
+        return true;
+        $app_config = C('SMALLAPP_SALE_CONFIG');
+        $access_token = getWxAccessToken($app_config);
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        $res_goods = $m_goods->getInfo(array('id'=>$goods_id));
+        $m_media = new \Admin\Model\MediaModel();
+        $media_info = $m_media->getMediaInfoById($res_goods['media_id']);
+        $image_url = $media_info['oss_addr'];
+        if($media_info['type']==1){
+            $image_url = $image_url.'?x-oss-process=video/snapshot,t_1000,f_jpg,w_800';
+        }
+        $status = 2;
+        if($res_goods['status']==2){
+            $status = 1;
+        }
+        $goods_id = 1;
+        $goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
+            'image_list'=>array($image_url),'src_wxapp_path'=>'pages/mine/pop_detail?goods_id='.$goods_id,
+            'sku_list'=>array(array('sku_id'=>$goods_id,'price'=>$res_goods['price']*100,'status'=>$status))
+        );
+        $params = json_encode(array('product_list'=>array($goods_info)));
+        $curl = new Curl();
+        $url = 'https://api.weixin.qq.com/mall/importproduct?access_token='.$access_token;
+        $result = '';
+        $curl::post($url,$params,$result);
+        if(empty($result)){
+            $this->output('同步到微信好物圈失败,请重新提交', 'goods/goodsadd', 2, 0);
+        }
+        $result = json_decode($result,true);
+        if($result['errcode']!=0){
+            $this->output('好物圈类目错误', 'goods/goodsadd', 2, 0);
+        }
+        return true;
     }
 
 }

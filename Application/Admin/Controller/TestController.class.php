@@ -1031,4 +1031,52 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
             }
         }
     }
+
+    public function getpublic(){
+        $sql = "select * from savor_smallapp_public where create_time>='2019-08-18 00:00:00'";
+        $res = M()->query($sql);
+        foreach ($res as $v){
+            $openid = $v['openid'];
+            $forscreen_id = $v['forscreen_id'];
+            $sql_public = "select * from savor_smallapp_public where forscreen_id='$forscreen_id' and openid='$openid' order by id asc";
+            $res_public = M()->query($sql_public);
+            if(count($res_public)>1){
+                unset($res_public[0]);
+                foreach ($res_public as $pv){
+                    $sql_unset = "DELETE from savor_smallapp_public where id={$pv['id']}";
+                    M()->execute($sql_unset);
+                    echo $pv['id'].'==='.$forscreen_id."<br> \r\n";
+                }
+            }
+        }
+        echo 'finish';
+    }
+
+    public function jd(){
+//        $data['promotionCodeReq'] = array(
+//            'materialId'=>"http://item.jd.com/1003077.html",
+//            'chainType'=>3,
+//            'subUnionId'=>'14737',
+//        );
+//        $res = jd_union_api($data,'jd.union.open.promotion.bysubunionid.get');
+//        if($res['code']==200){
+//            $click_url = urlencode($res['data']['clickURL']);
+//            $jd_config = C('JD_UNION_CONFIG');
+//            $page_url = '/pages/proxy/union/union?spreadUrl='.$click_url.'&customerinfo='.$jd_config['customerinfo'];
+//        }
+//        echo $page_url;
+//        exit;
+
+        $data['orderReq'] = array(
+            'pageNo'=>1,
+            'pageSize'=>500,
+            'type'=>1,
+            'time'=>'2019091211',
+//            'time'=>'2019091615',
+        );
+        $res = jd_union_api($data,'jd.union.open.order.query');
+        print_r($res);
+        exit;
+
+    }
 }
