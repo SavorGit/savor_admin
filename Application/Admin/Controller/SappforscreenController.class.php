@@ -246,7 +246,7 @@ class SappforscreenController extends BaseController {
             $all_actions = $this->all_actions;
 
             $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
-            $where = array('a.id'=>$id);
+            $where = array('a.id'=>$id,'hotel.state'=>1,'hotel.flag'=>0,'box.state'=>1,'box.flag'=>0);
             $vinfo = $m_smallapp_forscreen_record->getInfo($fields,$where);
             $category_id = 0;
             if(!empty($vinfo)){
