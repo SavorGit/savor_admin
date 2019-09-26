@@ -165,6 +165,9 @@ class GoodsController extends BaseController {
                     }
                     switch ($appid){
                         case 'wx13e41a437b8a1d2e'://京东爆款(京东联盟)
+                            if(empty($buybutton)){
+                                $this->output('请输入购买按钮', 'goods/goodsadd', 2, 0);
+                            }
                             $params = array(
                                 'promotionCodeReq'=>array(
                                     'materialId'=>$jd_url,
@@ -179,6 +182,9 @@ class GoodsController extends BaseController {
                             $page_url = '/pages/proxy/union/union?spreadUrl='.$click_url.'&customerinfo='.$jd_config['customerinfo'];
                             break;
                         case 'wx91d27dbf599dff74'://京东购物
+                            if(empty($buybutton)){
+                                $this->output('请输入购买按钮', 'goods/goodsadd', 2, 0);
+                            }
                             $page_url = 'pages/item/detail/detail?sku='.$item_id;
                             break;
                     }
@@ -196,6 +202,9 @@ class GoodsController extends BaseController {
         	if($appid){
                 $data['appid'] = $appid;
             }
+            if($buybutton){
+                $data['buybutton'] = $buybutton;
+            }
         	if($type==40){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
@@ -204,7 +213,6 @@ class GoodsController extends BaseController {
         	    if(empty($appid) || empty($buybutton)){
                     $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
                 }
-        	    $data['buybutton'] = $buybutton;
         	    if($detailmedia_id){
         	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
                 }
