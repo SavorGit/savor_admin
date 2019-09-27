@@ -154,7 +154,10 @@ class GoodsController extends BaseController {
         	$page_url = '';
         	$item_id = 0;
         	if($appid){
-                $jd_config = C('JD_UNION_CONFIG');
+                $m_sysconfig = new \Admin\Model\SysConfigModel();
+                $all_config = $m_sysconfig->getAllconfig();
+                $jd_config = json_decode($all_config['jd_union_smallapp'],true);
+
                 $url_info = parse_url($jd_url);
                 if(isset($url_info['scheme'])){
                     preg_match('/^http:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);

@@ -404,11 +404,6 @@ $config['UMENBAI_API_CONFIG'] = array(
         //'ios_master_secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
     ),
 );
-$config['JD_UNION_CONFIG'] = array(
-    'app_key'=>'cbd3a3b0693309c79f2209b9aa6709a5',
-    'app_secret'=>'6c455b9aa3fa4bac968a59160a032249',
-    'customerinfo'=>'20190905RDTP'
-);
 $config['WXAPPIDS'] = array(
     'wx13e41a437b8a1d2e'=>'京东爆款',
     'wxf96ad76f27597d65'=>'故宫书店',
