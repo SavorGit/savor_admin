@@ -264,7 +264,6 @@ class GoodsController extends BaseController {
     }
 
     private function wx_importproduct($goods_id){
-        return true;
         $app_config = C('SMALLAPP_SALE_CONFIG');
         $access_token = getWxAccessToken($app_config);
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
@@ -279,8 +278,9 @@ class GoodsController extends BaseController {
         if($res_goods['status']==2){
             $status = 1;
         }
-        $goods_id = 1;
-        $goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
+        if(!empty($res_goods['wx_category'])){
+
+        }$goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
             'image_list'=>array($image_url),'src_wxapp_path'=>'pages/mine/pop_detail?goods_id='.$goods_id,
             'sku_list'=>array(array('sku_id'=>$goods_id,'price'=>$res_goods['price']*100,'status'=>$status))
         );
