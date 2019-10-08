@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *@author zhang.yingtao
  *@desc 公司官网接口
@@ -644,6 +644,35 @@ class officialController extends Controller {
 	    $data['list'] = $program_list;
 	    echo "valid_program(".json_encode($data).")";
 	}
+
+    public function getDpHotelGps(){
+        $areaid = I('get.areaid','0','intval');
+        $file_236 = APP_PATH.'Common/Conf/dp_hotel_236.json';
+        $hotels = file_get_contents($file_236);
+        $result = json_decode($hotels,true);
+        echo  "login(".json_encode($result).")";
+    }
+
+    public function getDpHotelGpsByPage(){
+        $pageNo  = I('get.pageNo',1,'intval');
+        $pageSize = I('get.pageSize',30,'intval');
+        $areaid = I('get.areaid','0','intval');
+        $offset = ($pageNo-1) * $pageSize;
+
+        $file_236 = APP_PATH.'Common/Conf/dp_hotel_236.json';
+        $hotels = file_get_contents($file_236);
+        $result = json_decode($hotels,true);
+        $data_list = array_slice($result,$offset,$pageSize);
+
+        $count = count($result);
+        $total_page = ceil($count/$pageSize);
+        $data['list'] = $data_list;
+        $data['totalPage'] = $total_page;
+        $data['count'] = $count;
+        echo "hotel(".json_encode($data).")";
+    }
+
+
 }
 
 ?>
