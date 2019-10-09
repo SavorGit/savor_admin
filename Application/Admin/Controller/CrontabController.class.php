@@ -3718,68 +3718,83 @@ class CrontabController extends Controller
         }
     }
 
-
     public function wxpush(){
+        $m_sysconfig = new \Admin\Model\SysConfigModel();
+        $all_config = $m_sysconfig->getAllconfig();
+        $content_play_time = $all_config['content_play_time'];
+        $config = C('SMALLAPP_CONFIG');
         $push_key = C('SAPP_SELECTCONTENT_PUSH').':ontv';
-        $push_key = C('SAPP_SELECTCONTENT_PUSH').':playtv';
-
         $redis  =  \Common\Lib\SavorRedis::getInstance();
         $redis->select(5);
-        $smallapp_config = C('SMALLAPP_CONFIG');
+        $data = $redis->lgetrange($push_key,0,-1);
+        foreach($data as $key=>$v){
+            $info = $redis->lpop($push_key);
+            $info = json_decode($info,true);
+            $openid = $info['openid'];
+            $formid = $this->get_formid($openid);
+            if(!empty($formid)){
+                $create_time = strtotime($info['create_time']);
+                $start_time = date('Y.m.d',$create_time);
+                $tmp_end_time = $create_time+$content_play_time*3600;
+                $end_time = date('Y.m.d',$tmp_end_time);
+                $time_str = "$start_time-$end_time";
 
-        $key_token = $smallapp_config['cache_key'];
-        $redis = SavorRedis::getInstance();
-        $redis->select(5);
-        $token = $redis->get($key_token);
-        if(empty($token)){
-            $appid = $smallapp_config['appid'];
-            $appsecret = $smallapp_config['appsecret'];
-            $url = $this->url_access_token."?grant_type=client_credential&appid=$appid&secret=$appsecret";
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,$url);
-
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-            $re = curl_exec($ch);
-
-            curl_close($ch);
-            $result = json_decode($re,true);
-            if(isset($result['access_token'])){
-                $redis->set($key_token,$result['access_token'],3600);
-                $token = $result['access_token'];
+                $tempalte_id = 'C7hYLM4B_wGXWVrKXPqK6yfkHAUSc_golB_TN-d-tuI';
+                $data=array(
+                    'keyword1'  => array('value'=>'通过'),
+                    'keyword2'  => array('value'=>'正在播放'),
+                    'keyword3'  => array('value'=>'公开内容助力上电视'),
+                    'keyword4'  => array('value'=>$time_str),
+                    'keyword5'  => array('value'=>'我公司在全国范围内合作的高端餐厅'),
+                    'keyword6'  => array('value'=>'您的内容已经开始在餐厅电视中播放'),
+                );
+                $template = array(
+                    'touser' => $openid,
+                    'template_id' => $tempalte_id,
+                    'page' => 'pages/find/cards',
+                    'form_id'=>$formid,
+                    'data' => $data
+                );
+                $curl = new Curl();
+                $token = getWxAccessToken($config);
+                $url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=$token";
+                $template =  json_encode($template);
+                $res_data = '';
+                $curl::post($url,$template,$res_data);
+                echo "openid|$openid|wxres|$res_data \r\n";
             }
         }
-
-        $formid = '6f93059ff6a84eb68e32708f1fefd162';
-        $openid = 'ofYZG4yZJHaV2h3lJHG5wOB9MzxE';
-
-        $tempalte_id = 'rW3_5Q4EXeBis-bQmxiv-9E2R1UDoIFEnG8sNchw9Tk';
-        $date_time = date('Y-m-d H:i:s');
-        $data=array(
-            'keyword1'  => array('value'=>20),
-            'keyword2'  => array('value'=>'小热点'),
-            'keyword3'  => array('value'=>$date_time),
-            'keyword4'  => array('value'=>'详细信息请点击查看详情'),
-        );
-        $template = array(
-            'touser' => $openid,
-            'template_id' => $tempalte_id,
-            'page' => 'pages/demand/index',
-            'form_id'=>$formid,
-            'data' => $data
-        );
-        $curl = new Curl();
-        $access_token = '24_ox5XvSR_TQ4prB40k1UcTg1KH5mxQpYFFgpEa38oZfvdn9CyCRPeXgx4JGzT11AO0POGyO71q3YJklbE8x1f321UMfcslQr0fvnE6FDKx-x4g6EMBH4zxqNbpFyGZLeUX8CDMqzNygI_a6oZEOThAFAYIN';
-        $url = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=$access_token";
-        $template =  json_encode($template);
-        $res_data = array();
-        $curl::post($url,$template,$res_data);
-        print_r($res_data);
-        exit;
-
-
     }
+
+    private function get_formid($openid){
+        $key = C('SAPP_FORMID').$openid;
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $res_cache = $redis->get($key);
+        $formid = '';
+        if(!empty($res_cache)){
+            $res_data = json_decode($res_cache,true);
+            $now_time = time();
+            $day_time = 7*86400;
+            foreach ($res_data as $k=>$v){
+                $end_time = $v+$day_time;
+                if($now_time>$end_time){
+                    unset($res_data[$k]);
+                }else{
+                    $formid = $k;
+                    break;
+                }
+            }
+            if(empty($res_data)){
+                $redis->remove($key);
+            }else{
+                $redis->set($key,json_encode($res_data),86400*8);
+            }
+        }
+        return $formid;
+    }
+
+
     /**
      * @desc 机顶盒极简版更新投屏日志上报
      */
@@ -3958,11 +3973,11 @@ class CrontabController extends Controller
 
 
     public function jdorderadd(){
-//        $hourtime = date("YmdH", strtotime("-1 hour"));
+        $hourtime = date("YmdH", strtotime("-1 hour"));
 //        $hourtime = '2019091211';
 //        $hourtime = '2019091615';
 //        $hourtime = '2019092423';
-        $hourtime = '2019092510';
+//        $hourtime = '2019092510';
         $data['orderReq'] = array(
             'pageNo'=>1,
             'pageSize'=>500,
@@ -4010,9 +4025,9 @@ class CrontabController extends Controller
     }
 
     public function jdorderupdate(){
-//        $hourtime = date("YmdH", strtotime("-1 hour"));
-        $hourtime = '2019091617';
-        $hourtime = '2019092423';
+        $hourtime = date("YmdH", strtotime("-1 hour"));
+//        $hourtime = '2019091617';
+//        $hourtime = '2019092423';
         $data['orderReq'] = array(
             'pageNo'=>1,
             'pageSize'=>500,
@@ -4102,6 +4117,7 @@ class CrontabController extends Controller
         $error_info = $nowtime.'[settled_month]'.$pre_month;
         $now_day = date('j');
         if($now_day==$settled_day){
+
             $model = M();
             $sql_settled = "select * from savor_smallapp_jdorder where FROM_UNIXTIME(order_time,'%Y%m')='$pre_month' and valid_code=18";
             $res_sorder = $model->query($sql_settled);
