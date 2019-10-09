@@ -126,6 +126,7 @@ class GoodsController extends BaseController {
         	$end_date = I('post.end_date','');
             $media_id = I('post.media_id',0);
         	$status = I('post.status',1,'intval');
+        	$is_storebuy = I('post.is_storebuy',0,'intval');
             $clicktype = I('post.clicktype',0,'intval');
             $appid = I('post.appid','','trim');
             $buybutton = I('post.buybutton','','trim');
@@ -201,7 +202,7 @@ class GoodsController extends BaseController {
             }
 
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status,'is_storebuy'=>$is_storebuy);
         	if($appid){
                 $data['appid'] = $appid;
             }
@@ -276,23 +277,24 @@ class GoodsController extends BaseController {
             $status = 1;
         }
         if(!empty($res_goods['wx_category'])){
+            $goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
+                'image_list'=>array($image_url),'src_wxapp_path'=>'pages/mine/pop_detail?goods_id='.$goods_id,
+                'sku_list'=>array(array('sku_id'=>$goods_id,'price'=>$res_goods['price']*100,'status'=>$status))
+            );
+            $params = json_encode(array('product_list'=>array($goods_info)));
+            $curl = new Curl();
+            $url = 'https://api.weixin.qq.com/mall/importproduct?access_token='.$access_token;
+            $result = '';
+            $curl::post($url,$params,$result);
+            if(empty($result)){
+                $this->output('同步到微信好物圈失败,请重新提交', 'goods/goodsadd', 2, 0);
+            }
+            $result = json_decode($result,true);
+            if($result['errcode']!=0){
+                $this->output('好物圈类目错误', 'goods/goodsadd', 2, 0);
+            }
+        }
 
-        }$goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
-            'image_list'=>array($image_url),'src_wxapp_path'=>'pages/mine/pop_detail?goods_id='.$goods_id,
-            'sku_list'=>array(array('sku_id'=>$goods_id,'price'=>$res_goods['price']*100,'status'=>$status))
-        );
-        $params = json_encode(array('product_list'=>array($goods_info)));
-        $curl = new Curl();
-        $url = 'https://api.weixin.qq.com/mall/importproduct?access_token='.$access_token;
-        $result = '';
-        $curl::post($url,$params,$result);
-        if(empty($result)){
-            $this->output('同步到微信好物圈失败,请重新提交', 'goods/goodsadd', 2, 0);
-        }
-        $result = json_decode($result,true);
-        if($result['errcode']!=0){
-            $this->output('好物圈类目错误', 'goods/goodsadd', 2, 0);
-        }
         return true;
     }
 
