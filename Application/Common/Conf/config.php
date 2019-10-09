@@ -50,11 +50,10 @@ if(APP_DEBUG === false){
 }
 
 $config['GOODS_TYPE'] = array(
-    '10'=>'官方活动促销',
+    '10'=>'热点优选',
     '20'=>'商家添加',
     '30'=>'积分兑换现金',
     '31'=>'积分兑换物品',
-    '40'=>'热点优选',
 );
 
 $config['GOODS_SCOPE'] = array(

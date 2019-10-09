@@ -208,7 +208,7 @@ class GoodsController extends BaseController {
             if($buybutton){
                 $data['buybutton'] = $buybutton;
             }
-        	if($type==40){
+        	if($type==10){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
                     $this->output('请传入视频资源', 'goods/goodsadd', 2, 0);
@@ -219,17 +219,16 @@ class GoodsController extends BaseController {
         	    if($detailmedia_id){
         	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
                 }
-            }else{
-                $stime = strtotime($start_date);
-                $etime = strtotime($end_date);
-                if($stime>$etime){
-                    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
-                }
-                $start_time = date('Y-m-d 00:00:00',$stime);
-                $end_time = date('Y-m-d 23:59:59',$etime);
-                $data['start_time'] = $start_time;
-                $data['end_time'] = $end_time;
             }
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $data['start_time'] = $start_time;
+            $data['end_time'] = $end_time;
 
         	if($id){
         	    $m_goods->updateData(array('id'=>$id),$data);
@@ -243,18 +242,16 @@ class GoodsController extends BaseController {
             }
 
         	if($result){
-                if($type==40){
+                if($type==10){
                     $redis = \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);
                     $program_key = C('SAPP_OPTIMIZE_PROGRAM');
                     $period = getMillisecond();
                     $period_data = array('period'=>$period);
                     $redis->set($program_key,json_encode($period_data));
-                }
-                if($type==10){
+
                     $this->wx_importproduct($goods_id);
                 }
-
         		$this->output('操作成功', 'goods/goodslist');
         	}else{
         		$this->output('操作失败', 'goods/goodslist',2,0);
