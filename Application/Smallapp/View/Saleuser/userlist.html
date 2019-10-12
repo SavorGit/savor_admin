@@ -1,0 +1,84 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/saleuser/userlist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+          <div class="tools-group s2">
+
+          </div>
+        </div>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-6 pull-right">
+
+          <div class="input-group input-group-sm pull-right">
+            <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
+            <span class="input-group-btn input-group-sm">
+              <select name="small_app_id"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="0">用户类型</option>
+                <option value="4" <if condition="$small_app_id eq 4">selected="selected"</if> >餐厅端</option>
+                <option value="5" <if condition="$small_app_id eq 5">selected="selected"</if> >销售端</option>
+              </select>
+            </span>
+
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+              </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>用户ID</th>
+            <th>小程序版本</th>
+            <th>openID</th>
+            <th>手机号码</th>
+            <th>用户昵称</th>
+            <th>用户头像</th>
+            <th>创建时间</th>
+            <th>用户积分</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="data" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="用户ID">{$dinfo.id}</td>
+              <td data-title="小程序版本">{$dinfo.small_app}</td>
+              <td data-title="openID">{$dinfo.openid}</td>
+              <td data-title="手机号码">{$dinfo.mobile}</td>
+              <td data-title="用户昵称">{$dinfo.nickname}</td>
+              <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
+              <td data-title="创建时间">{$dinfo.create_time}</td>
+              <td data-title="用户积分">{$dinfo.integral}</td>
+
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="查看积分明细" title="积分明细" target="navTab" rel="saleuser/integrallist" href="{$host_url}/smallapp/saleuser/integrallist?openid={$dinfo.openid}" class="btn btn-success btn-icon">
+                    <i class="fa fa-list"></i>
+                  </a>
+
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

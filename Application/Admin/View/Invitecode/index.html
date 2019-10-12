@@ -23,6 +23,7 @@
               <option value="0">全部</option>
               <option value="1" <if condition="$type eq 1"> selected </if> > 普通码</option>
               <option value="2" <if condition="$type eq 2"> selected </if> > 管理员码</option>
+              <option value="3" <if condition="$type eq 3"> selected </if> > 通用码</option>
             </select>
 
             <span class="input-group-btn">
@@ -59,7 +60,7 @@
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="邀请码">{$vlist.code}</td>
-              <td data-title="类型"><if condition="$vlist.type eq 1">普通码<else/>管理员码</if></td>
+              <td data-title="类型"><if condition="$vlist.type eq 1">普通码<elseif condition="$vlist.type eq 2" />管理员码<else />通用码</if></td>
               <td data-title="绑定手机">{$vlist.bind_mobile}</td>
               <td data-title="状态">
               <if condition ="$vlist.state eq 0">

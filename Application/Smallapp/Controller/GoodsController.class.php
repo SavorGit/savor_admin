@@ -142,7 +142,9 @@ class GoodsController extends BaseController {
         	    $this->output('请上传相关资源', 'goods/goodsadd', 2, 0);
             }
         	$where = array('name'=>$name,'type'=>$type);
+        	$tmp_goods = array();
         	if($id){
+                $tmp_goods = $m_goods->getInfo(array('id'=>$id));
                 $where['id']= array('neq',$id);
         		$res_goods = $m_goods->getInfo($where);
         	}else{
@@ -200,7 +202,6 @@ class GoodsController extends BaseController {
                     $page_url = $jd_url;
                 }
             }
-
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
                 'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status,'is_storebuy'=>$is_storebuy);
         	if($appid){
@@ -230,12 +231,13 @@ class GoodsController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $data['start_time'] = $start_time;
             $data['end_time'] = $end_time;
-
         	if($id){
         	    $m_goods->updateData(array('id'=>$id),$data);
                 $result = true;
-        	    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        	    $m_hotelgoods->HandleGoodsperiod($id);
+                if($type==10 || $type==20){
+                    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+                    $m_hotelgoods->HandleGoodsperiod($id);
+                }
         	    $goods_id = $id;
             }else{
         	    $result = $m_goods->add($data);
