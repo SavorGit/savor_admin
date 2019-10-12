@@ -50,11 +50,10 @@ if(APP_DEBUG === false){
 }
 
 $config['GOODS_TYPE'] = array(
-    '10'=>'官方活动促销',
+    '10'=>'热点优选',
     '20'=>'商家添加',
     '30'=>'积分兑换现金',
     '31'=>'积分兑换物品',
-    '40'=>'热点优选',
 );
 
 $config['GOODS_SCOPE'] = array(
@@ -403,11 +402,6 @@ $config['UMENBAI_API_CONFIG'] = array(
         //'ios_appkey'=>'59b1260a734be41803000022',
         //'ios_master_secret' =>'wgyklqy5uu8dacj9yartpic9xmpkezs4',
     ),
-);
-$config['JD_UNION_CONFIG'] = array(
-    'app_key'=>'cbd3a3b0693309c79f2209b9aa6709a5',
-    'app_secret'=>'6c455b9aa3fa4bac968a59160a032249',
-    'customerinfo'=>'20190905RDTP'
 );
 $config['WXAPPIDS'] = array(
     'wx13e41a437b8a1d2e'=>'京东爆款',

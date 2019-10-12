@@ -126,6 +126,7 @@ class GoodsController extends BaseController {
         	$end_date = I('post.end_date','');
             $media_id = I('post.media_id',0);
         	$status = I('post.status',1,'intval');
+        	$is_storebuy = I('post.is_storebuy',0,'intval');
             $clicktype = I('post.clicktype',0,'intval');
             $appid = I('post.appid','','trim');
             $buybutton = I('post.buybutton','','trim');
@@ -154,7 +155,10 @@ class GoodsController extends BaseController {
         	$page_url = '';
         	$item_id = 0;
         	if($appid){
-                $jd_config = C('JD_UNION_CONFIG');
+                $m_sysconfig = new \Admin\Model\SysConfigModel();
+                $all_config = $m_sysconfig->getAllconfig();
+                $jd_config = json_decode($all_config['jd_union_smallapp'],true);
+
                 $url_info = parse_url($jd_url);
                 if(isset($url_info['scheme'])){
                     preg_match('/^http:\/\/\item+.jd.com\/(\d+).html$/', $jd_url, $matches);
@@ -198,14 +202,14 @@ class GoodsController extends BaseController {
             }
 
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status);
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status,'is_storebuy'=>$is_storebuy);
         	if($appid){
                 $data['appid'] = $appid;
             }
             if($buybutton){
                 $data['buybutton'] = $buybutton;
             }
-        	if($type==40){
+        	if($type==10){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
                     $this->output('请传入视频资源', 'goods/goodsadd', 2, 0);
@@ -216,17 +220,16 @@ class GoodsController extends BaseController {
         	    if($detailmedia_id){
         	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
                 }
-            }else{
-                $stime = strtotime($start_date);
-                $etime = strtotime($end_date);
-                if($stime>$etime){
-                    $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
-                }
-                $start_time = date('Y-m-d 00:00:00',$stime);
-                $end_time = date('Y-m-d 23:59:59',$etime);
-                $data['start_time'] = $start_time;
-                $data['end_time'] = $end_time;
             }
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $data['start_time'] = $start_time;
+            $data['end_time'] = $end_time;
 
         	if($id){
         	    $m_goods->updateData(array('id'=>$id),$data);
@@ -240,18 +243,16 @@ class GoodsController extends BaseController {
             }
 
         	if($result){
-                if($type==40){
+                if($type==10){
                     $redis = \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);
                     $program_key = C('SAPP_OPTIMIZE_PROGRAM');
                     $period = getMillisecond();
                     $period_data = array('period'=>$period);
                     $redis->set($program_key,json_encode($period_data));
-                }
-                if($type==10){
+
                     $this->wx_importproduct($goods_id);
                 }
-
         		$this->output('操作成功', 'goods/goodslist');
         	}else{
         		$this->output('操作失败', 'goods/goodslist',2,0);
@@ -261,7 +262,6 @@ class GoodsController extends BaseController {
     }
 
     private function wx_importproduct($goods_id){
-        return true;
         $app_config = C('SMALLAPP_SALE_CONFIG');
         $access_token = getWxAccessToken($app_config);
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
@@ -276,23 +276,25 @@ class GoodsController extends BaseController {
         if($res_goods['status']==2){
             $status = 1;
         }
-        $goods_id = 1;
-        $goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
-            'image_list'=>array($image_url),'src_wxapp_path'=>'pages/mine/pop_detail?goods_id='.$goods_id,
-            'sku_list'=>array(array('sku_id'=>$goods_id,'price'=>$res_goods['price']*100,'status'=>$status))
-        );
-        $params = json_encode(array('product_list'=>array($goods_info)));
-        $curl = new Curl();
-        $url = 'https://api.weixin.qq.com/mall/importproduct?access_token='.$access_token;
-        $result = '';
-        $curl::post($url,$params,$result);
-        if(empty($result)){
-            $this->output('同步到微信好物圈失败,请重新提交', 'goods/goodsadd', 2, 0);
+        if(!empty($res_goods['wx_category'])){
+            $goods_info = array('item_code'=>$goods_id,'title'=>$res_goods['name'],'category_list'=>explode(',',$res_goods['wx_category']),
+                'image_list'=>array($image_url),'src_wxapp_path'=>'pages/mine/pop_detail?goods_id='.$goods_id,
+                'sku_list'=>array(array('sku_id'=>$goods_id,'price'=>$res_goods['price']*100,'status'=>$status))
+            );
+            $params = json_encode(array('product_list'=>array($goods_info)));
+            $curl = new Curl();
+            $url = 'https://api.weixin.qq.com/mall/importproduct?access_token='.$access_token;
+            $result = '';
+            $curl::post($url,$params,$result);
+            if(empty($result)){
+                $this->output('同步到微信好物圈失败,请重新提交', 'goods/goodsadd', 2, 0);
+            }
+            $result = json_decode($result,true);
+            if($result['errcode']!=0){
+                $this->output('好物圈类目错误', 'goods/goodsadd', 2, 0);
+            }
         }
-        $result = json_decode($result,true);
-        if($result['errcode']!=0){
-            $this->output('好物圈类目错误', 'goods/goodsadd', 2, 0);
-        }
+
         return true;
     }
 
