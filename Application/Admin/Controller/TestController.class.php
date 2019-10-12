@@ -13,6 +13,24 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+    
+    public function rmvCache(){
+        exit;
+        $redis = SavorRedis::getInstance();
+        $redis->select(10);
+        $keys = "vsmall:ads:*";
+        $k_arr = $redis->keys($keys);
+        $flag = 0;
+        foreach ($k_arr as $v){
+            
+            $tt = $redis->remove($v);
+            if($tt){
+                $flag ++;
+            }
+            //echo $flag;exit;
+        }
+        echo $flag;exit; 
+    }
     public function getJjInfo(){
         $box_mac =  I('box_mac');
         $redis = SavorRedis::getInstance();
