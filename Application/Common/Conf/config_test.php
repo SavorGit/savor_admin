@@ -57,36 +57,6 @@ $config_db =  array(
     ),
  	'REDIS_CONFIG' => $redis,
     
-    //OSSS上传配置
-	'OSS_ACCESS_ID'   => 'LTAITjXOpRHKflOX',
-	'OSS_ACCESS_KEY'  => 'Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt',
-	'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
-	//'OSS_HOST'=>'devp.oss.littlehotspot.com',
-    'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
-	'OSS_HOST_NEW'=> 'dev-oss.littlehotspot.com',
-	'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
-    'QUEUE_ENDPOINT'=>'https://1379506082945137.mns.cn-beijing.aliyuncs.com',
-    'TOPIC_NAME'=>'test-topic',
-
-    'UMENG_PRODUCTION_MODE'=>'false',
-    'SAVOR_API_URL'=>'dev-mobile.littlehotspot.com',
-    //end
-    'CONTENT_HOST'=>'http://devp.admin.littlehotspot.com/',
-    'SHORT_URL'=>'http://devp.admin.littlehotspot.com',
-    'NETTY_BALANCE_URL'=>'https://dev-api-nzb.littlehotspot.com/netty/position',
-    'SEND_MAIL_CONF'=>array(
-                            'littlehotspot'=>array(
-                                'host'=>'smtp.savor.cn',
-                                'username'=>'sysreport@littlehotspot.com',
-                                'password'=>'savor123456',
-                                'port'=>25,
-                                'tomail'=>array('xie.meng@littlehotspot.com',
-                                                'tang.mimi@littlehotspot.com',
-                                                'zhang.yingtao@littlehotspot.com',
-                                ),  
-                            )
-                        )
-    
 );
 
 return $config_db;
