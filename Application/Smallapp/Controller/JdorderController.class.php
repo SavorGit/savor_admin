@@ -50,10 +50,22 @@ class JdorderController extends BaseController {
         $m_goods = new \Admin\Model\Smallapp\GoodsModel();
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_invite_code = new \Admin\Model\HotelInviteCodeModel();
+        $m_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
         foreach ($datalist as $k=>$v){
             $sku_id = $v['sku_id'];
             $res_goods = $m_goods->getInfo(array('item_id'=>$sku_id));
-            $integral = intval($res_goods['rebate_integral']*$v['sku_num']);
+            $integral = 0;
+            $integral_status_str = '';
+            $res_integralrecord = $m_integralrecord->getInfo(array('jdorder_id'=>$v['order_id']));
+            if(!empty($res_integralrecord)){
+                $integral = $res_integralrecord['integral'];
+                if($res_integralrecord['status']==2){
+                    $integral_status_str = '未结算不可用';
+                }else{
+                    $integral_status_str = '已结算可用';
+                }
+            }
+            $datalist[$k]['integral_status_str'] = $integral_status_str;
             $datalist[$k]['integral'] = $integral;
             $datalist[$k]['goods_name'] = $res_goods['name'];
             $datalist[$k]['order_time'] = date('Y-m-d H:i:s',$v['order_time']);

@@ -76,6 +76,7 @@
               <th>销售人员昵称</th>
               <th>销售酒楼</th>
               <th>获得积分</th>
+              <th>积分状态</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -98,7 +99,8 @@
               <td data-title="销售人员openid">{$dinfo.openid}</td>
               <td data-title="销售人员昵称">{$dinfo.nickName}</td>
               <td data-title="销售酒楼">{$dinfo.hotel_name}</td>
-              <td data-title="获得积分"><if condition="$dinfo.valid_code eq 18">{$dinfo.integral}</if></td>
+              <td data-title="获得积分">{$dinfo.integral}</td>
+              <td data-title="积分状态">{$dinfo.integral_status_str}</td>
 
             </tr>
 
