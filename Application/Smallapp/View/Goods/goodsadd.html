@@ -259,19 +259,27 @@
     });
 
     $('#goods_gtype').change(function() {
-        if($(this).val()==20){
-			$('#hd_range').show();
-		}else{
-            $('#hd_range').hide();
-		}
 		if($(this).val()==10){
             $('#goods_detailimg').show();
             $('#goods_storebuy').show();
+            $('#good_goods_cate').show();
 		}else{
             $('#goods_detailimg').hide();
-            $('#goods_storebuy').hide();
+            $('#good_goods_cate').hide();
+
+            if($(this).val()==20){
+                $('#goods_storebuy').show();
+            }else{
+                $('#goods_storebuy').hide();
+            }
 
 		}
+
+        if($(this).val()==20){
+            $('#hd_range').show();
+        }else{
+            $('#hd_range').hide();
+        }
     })
     $('#goods_gtype').trigger('change');
 </script>

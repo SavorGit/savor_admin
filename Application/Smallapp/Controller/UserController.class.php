@@ -81,6 +81,7 @@ class UserController extends BaseController {
                                   array('id'=>2,'name'=>'老极简版'),
                                   array('id'=>3,'name'=>'极简版'),
                                   array('id'=>4,'name'=>'餐厅版'),
+                                  array('id'=>5,'name'=>'销售版'),
         );
         $this->assign('small_app_id_arr',$small_app_id_arr);
         $this->assign('page',$page);

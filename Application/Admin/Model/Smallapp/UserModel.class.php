@@ -36,4 +36,21 @@ class UserModel extends Model
 	    $nums = $this->where($where)->count();
 	    return $nums;
 	}
+
+    public function getUserIntegralList($fields,$where,$order,$start,$size){
+        $list = $this->alias('a')
+            ->join('savor_smallapp_user_integral i on a.openid=i.openid','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $count = $this->alias('a')
+            ->where($where)
+            ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 }
