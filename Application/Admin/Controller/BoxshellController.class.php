@@ -195,6 +195,7 @@ class BoxshellController extends BaseController{
         $hotel_id = I('hotel_id', 0,'intval');
         $room_id  = I('room_id', 0,'intval');
         $box_id   = I('box_id', 0,'intval');
+        $type     = I('type',0,'intval');
         $password = I('password');
         
         
@@ -222,36 +223,54 @@ class BoxshellController extends BaseController{
         if(empty($box_info['device_token'])){
             $this->error('该机顶盒的device_token为空,不可以发shell推送');
         }
-        if(empty($box_info['adv_mach'])){//非广告机
-            //获取当前机顶盒的最新apk
-            $m_upgrade = new \Admin\Model\UpgradeModel();
+        if($type==4){
             
-            $field = 'sdv.oss_addr,md5';
-            $device_type = 2;
-            $data = $m_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
+            if(empty($box_info['adv_mach'])){//非广告机
+                //获取当前机顶盒的最新apk
+                $m_upgrade = new \Admin\Model\UpgradeModel();
             
-        }else {//广告机
-            $m_device_version = new \Admin\Model\VersionModel();
-            $data = $m_device_version->field('oss_addr,md5')->where('device_type=21')->order('id desc')->find();
+                $field = 'sdv.oss_addr,md5';
+                $device_type = 2;
+                $data = $m_upgrade->getLastOneByDeviceNew($field, $device_type, $hotel_id);
             
+            }else {//广告机
+                $m_device_version = new \Admin\Model\VersionModel();
+                $data = $m_device_version->field('oss_addr,md5')->where('device_type=21')->order('id desc')->find();
+            
+            }
+            $apk_url = 'http://'.C('OSS_HOST_NEW').'/'.$data['oss_addr'];
+            $apk_md5 = $data['md5'];
+            
+            
+            $display_type = 'notification';
+            $option_name = 'boxclient';
+            $after_a = C('AFTER_APP');
+            $after_open = $after_a[3];
+            $device_token = $box_info['device_token'];
+            $ticker = 'apk升级推送';
+            $title  = 'apk升级推送';
+            $text   = 'apk升级推送';
+            $production_mode = C('UMENG_PRODUCTION_MODE');
+            $custom = array();
+            $custom['type'] = 4;  //1:RTB  2:4G投屏 3:shell命令推送  4：apk升级
+            $custom['action'] = 1; //1:投屏  0:结束投屏
+            $custom['data'] = array('apkUrl'=>$apk_url,'apkMd5'=>$apk_md5);
+        }else if($type==5){
+            $display_type = 'notification';
+            $option_name = 'boxclient';
+            $after_a = C('AFTER_APP');
+            $after_open = $after_a[3];
+            $device_token = $box_info['device_token'];
+            $ticker = '乐视电视关机';
+            $title  = '乐视电视关机';
+            $text   = '乐视电视关机';
+            $production_mode = C('UMENG_PRODUCTION_MODE');
+            $custom = array();
+            $custom['type'] = 5;  //1:RTB  2:4G投屏 3:shell命令推送  4：apk升级  5:乐视电视关机
+            $custom['action'] = ''; //1:投屏  0:结束投屏
+            $custom['data'] = array();
         }
-        $apk_url = 'http://'.C('OSS_HOST_NEW').'/'.$data['oss_addr'];
-        $apk_md5 = $data['md5'];
         
-        
-        $display_type = 'notification';
-        $option_name = 'boxclient';
-        $after_a = C('AFTER_APP');
-        $after_open = $after_a[3];
-        $device_token = $box_info['device_token'];
-        $ticker = 'apk升级推送';
-        $title  = 'apk升级推送';
-        $text   = 'apk升级推送';
-        $production_mode = C('UMENG_PRODUCTION_MODE');
-        $custom = array();
-        $custom['type'] = 4;  //1:RTB  2:4G投屏 3:shell命令推送  4：apk升级
-        $custom['action'] = 1; //1:投屏  0:结束投屏
-        $custom['data'] = array('apkUrl'=>$apk_url,'apkMd5'=>$apk_md5);
         $this->uPushData($display_type, 3,'listcast',$option_name, $after_open, $device_token,
             $ticker,$title,$text,$production_mode,$custom);
         
@@ -261,7 +280,7 @@ class BoxshellController extends BaseController{
         $push_data['room_id']  = $room_id;
         $push_data['box_id']   = $box_id;
         $push_data['push_info']= json_encode($custom);
-        $push_type['push_type']= 4;
+        $push_type['push_type']= $type;
         $m_push_log = new \Admin\Model\PushLogModel();
         $m_push_log->addInfo($push_data);
         $this->output('推送成功', 'boxshell/apkindex', 2);
