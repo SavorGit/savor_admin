@@ -40,6 +40,7 @@ class SaleuserController extends BaseController {
             $data_list[$k]['integral'] = intval($v['integral']);
         }
 
+        $this->assign('openid',$openid);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('small_app_id',$small_app_id);
