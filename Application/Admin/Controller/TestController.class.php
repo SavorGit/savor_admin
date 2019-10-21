@@ -622,22 +622,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     
     
     
-    public function testMsn(){
-        exit();
-        $accessId = 'LTAITjXOpRHKflOX';
-        $accessKey='Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt';
-        $endPoint = 'https://1379506082945137.mns.cn-beijing.aliyuncs.com';
-        $msn = new AliyunMsn($accessId, $accessKey, $endPoint);
-//        $queueName = 'queue-box-probe-dev';
-//        $messageBody = "test 2019-01-29 17:04:28";
-//        $res = $msn->sendQueueMessage($queueName,$messageBody);
-
-        $topicName = 'test-topic';
-        $messageBody = 'test topic 2019-01-29 17:04:28';
-        $res = $msn->sendTopicMessage($topicName,$messageBody);
-        print_r($res);
-
-    }
+    
 
     public function operateH5game(){
         exit;
