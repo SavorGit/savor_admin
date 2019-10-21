@@ -81,7 +81,7 @@ class UserSigninModel extends BaseModel{
             $where['a.create_time'] = array(array('EGT',$hd_begin_time),array('ELT',$hd_end_time));
             $where['a.mobile_brand'] = array('neq','devtools');
             $where['a.is_valid'] = 1;
-            $integral_usernum = $m_forscreenrecord->countWhere($where,'a.openid');
+            $integral_usernum = $m_forscreenrecord->countHdintegralUserNum($where);
             if($integral_usernum){
                 $interact_integral = $integral_usernum*$activity_interact_integral;
                 $integralrecord_data = array('openid'=>$v['openid'],'area_id'=>$box_info['area_id'],

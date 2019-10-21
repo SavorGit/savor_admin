@@ -50,6 +50,22 @@ class ForscreenRecordModel extends BaseModel
 	                 ->count();
 	    return $nums;
 	}
+
+	public function countHdintegralUserNum($where){
+        $fields = 'count(DISTINCT(a.openid)) as num';
+        $res_num = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on box.room_id=room.id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->field($fields)
+            ->where($where)
+            ->select();
+        $nums = 0;
+        if(!empty($res_num)){
+            $nums = $res_num[0]['num'];
+        }
+        return $nums;
+    }
 	public function getStaticList($fields,$where,$order,$group,$start,$size,$pageNum,$area_id){
 	    $list = $this->alias('a')
             	     ->join('savor_box box on a.box_mac=box.mac','left')

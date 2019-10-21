@@ -73,8 +73,10 @@ class SaleuserController extends BaseController {
             $info = '';
             switch ($v['type']){
                 case 1:
-                case 2:
                     $info = $integral_types[$v['type']].$v['content'].'小时';
+                    break;
+                case 2:
+                    $info = $integral_types[$v['type']].$v['content'].'人数';
                     break;
                 case 3:
                 case 4:
