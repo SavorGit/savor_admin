@@ -178,12 +178,15 @@ class TestController extends Controller {
              $hotel_ext_info['tag']      = $v['tag'];
              $hotel_ext_info['hotel_id'] = $v['hotel_id'];
              $hotel_ext_info['is_open_customer'] = $v['is_open_customer'];
+             $hotel_ext_info['is_open_integral'] = $v['is_open_integral'];
              $hotel_ext_info['maintainer_id'] = $v['maintainer_id'];
              $hotel_ext_info['adplay_num'] = $v['adplay_num'];
              $hotel_ext_info['food_style_id'] = $v['food_style_id'];
              $hotel_ext_info['avg_expense']= $v['avg_expense'];
              $hotel_ext_info['hotel_cover_media_id'] = $v['hotel_cover_media_id'];
              $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
+             $hotel_ext_info['activity_contact']     = $v['activity_contact'];
+             $hotel_ext_info['activity_phone']       = $v['activity_phone'];
              $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
              $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); 
         }
@@ -213,7 +216,7 @@ class TestController extends Controller {
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=236";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=246";
         $data = M()->query($sql);
         $flag = 0;
         $data = array();
@@ -229,7 +232,7 @@ class TestController extends Controller {
             $box_info['room_id'] = $v['room_id'];
             $box_info['name']    = $v['name'];
             $box_info['mac']     = $v['mac'];
-            $box_info['switch_time'] = $v['switch_time'];
+            $box_info['switch_time'] = 999;
             $box_info['volum']   = $v['volum'];
             $box_info['tag']     = $v['tag'];
             $box_info['device_token'] = $v['device_token'];
@@ -619,22 +622,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     
     
     
-    public function testMsn(){
-        exit();
-        $accessId = 'LTAITjXOpRHKflOX';
-        $accessKey='Q1t8XSK8q82H3s8jaLq9NqWx7Jsgkt';
-        $endPoint = 'https://1379506082945137.mns.cn-beijing.aliyuncs.com';
-        $msn = new AliyunMsn($accessId, $accessKey, $endPoint);
-//        $queueName = 'queue-box-probe-dev';
-//        $messageBody = "test 2019-01-29 17:04:28";
-//        $res = $msn->sendQueueMessage($queueName,$messageBody);
-
-        $topicName = 'test-topic';
-        $messageBody = 'test topic 2019-01-29 17:04:28';
-        $res = $msn->sendTopicMessage($topicName,$messageBody);
-        print_r($res);
-
-    }
+    
 
     public function operateH5game(){
         exit;
