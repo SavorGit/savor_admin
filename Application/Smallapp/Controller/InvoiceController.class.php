@@ -1,6 +1,7 @@
 <?php
 namespace Smallapp\Controller;
 use Admin\Controller\BaseController ;
+use Common\Lib\MailAuto;
 
 /**
  * @desc 发票管理
@@ -103,8 +104,30 @@ class InvoiceController extends BaseController {
             $m_orderinvoice->updateData(array('id'=>$id),$data);
             if($is_sendmail){
                 $title = '小热点电子发票';
-                $content = '您申请的发票已开具成功，可随时下载。发票链接：'.$invoice_addr;
-//                sendEmail($email,$title,$content);
+                $body = '您申请的发票已开具成功，可随时下载。发票链接：'.$invoice_addr;
+
+                $mail_config =  C('SEND_MAIL_CONF');
+                $mail_config =  $mail_config['littlehotspot'];
+                $ma_auto = new MailAuto();
+                $mail = new \Mail\PHPMailer();
+                $mail->CharSet = "UTF-8";
+                $mail->IsSMTP();
+                $mail->Host = $mail_config['host'];
+                $mail->SMTPAuth = true;
+                $mail->Username = $mail_config['username'];
+                $mail->Password = $mail_config['password'];
+                $mail->Port=25;
+                $mail->From = $mail_config['username'];
+                $mail->FromName = $title;
+
+                $mail->AddAddress("$email");
+                $mail->IsHTML(true);
+
+                $mail->Subject = $title;
+                $mail->Body = $body;
+                if(!$mail->Send()){
+                    $this->output('邮件发送失败,错误原因:'.$mail->ErrorInfo, 'invoice/invoicelist');
+                }
             }
             $this->output('操作完成', 'invoice/invoicelist');
 
