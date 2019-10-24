@@ -216,6 +216,19 @@ class ForscreenController extends BaseController{
         }
         $end_date = end($all_dates);
         $all_data = array();
+
+        //所有正常酒楼
+        $sql ="SELECT area.region_name, hotel.id hotel_id,hotel.name hotel_name,hotel.hotel_box_type,sysuser.remark maintainer_name FROM savor_hotel hotel  left join savor_area_info area on hotel.area_id=area.id
+               left join savor_hotel_ext hotelext on hotel.id=hotelext.hotel_id left join savor_sysuser sysuser on hotelext.maintainer_id=sysuser.id
+               where hotel.flag=0 and state=1 order by area.id asc";
+        $res_hotel = M()->query($sql);
+        //鱼头泡饼酒楼 非正常
+        $sql ="SELECT area.region_name, hotel.id hotel_id,hotel.name hotel_name,hotel.hotel_box_type,sysuser.remark maintainer_name FROM savor_hotel hotel  left join savor_area_info area on hotel.area_id=area.id
+               left join savor_hotel_ext hotelext on hotel.id=hotelext.hotel_id left join savor_sysuser sysuser on hotelext.maintainer_id=sysuser.id
+               where hotel.id in(886,867,470,464,463,461,460,435,434,433,431,243,209,208,207,206,205,204,199)";
+        $nohotels = M()->query($sql);
+        $hotel_data = array_merge($res_hotel,$nohotels);
+
         foreach ($all_dates as $date){
             $where = "box.flag=0 and box.state=1 and a.mobile_brand !='devtools' ";
             if($s_date){
@@ -225,12 +238,6 @@ class ForscreenController extends BaseController{
                 $where .=" and a.create_time<='".$date." 23:59:59'";
             }
 
-            $sql ="SELECT area.region_name, hotel.id hotel_id,hotel.name hotel_name,hotel.hotel_box_type,sysuser.remark maintainer_name FROM `savor_smallapp_forscreen_record` a
-               left join savor_box box on a.box_mac=box.mac left join savor_room room on box.room_id=room.id
-               left join savor_hotel hotel on room.hotel_id=hotel.id left join savor_area_info area on hotel.area_id=area.id
-               left join savor_hotel_ext hotelext on hotel.id=hotelext.hotel_id left join savor_sysuser sysuser on hotelext.maintainer_id=sysuser.id
-               where {$where} group by hotel.id";
-            $data = M()->query($sql);
             if($is_valid!=2){
                 $where .=" and a.is_valid=$is_valid";
             }
@@ -241,7 +248,8 @@ class ForscreenController extends BaseController{
                     $where .=" and a.small_app_id=$small_app_id";
                 }
             }
-            foreach ($data as $k=>$v){
+
+            foreach ($hotel_data as $k=>$v){
                 $v['date'] = date('Y/n/d',strtotime($date));
                 $v['box_type'] = $all_boxtypes[$v['hotel_box_type']];
 
