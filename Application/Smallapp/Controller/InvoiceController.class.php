@@ -20,7 +20,7 @@ class InvoiceController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $where = array('a.buy_type'=>1,'a.status'=>10);
+        $where = array('a.buy_type'=>1,'a.status'=>12);//10已下单 11支付失败 12支付成功
         if($start_date && $end_date){
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
