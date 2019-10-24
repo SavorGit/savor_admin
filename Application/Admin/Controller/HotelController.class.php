@@ -524,10 +524,6 @@ class HotelController extends BaseController {
 			$vinfo['state_change_reason'] = 1;
 			$this->assign('vinfo',$vinfo);
 		}
-		$m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-		$goods = $m_hotelgoods->chooseGoodsByHotelid($id);
-
-		$this->assign('goods',$goods);
 		$this->assign('is_lablefiter',$is_lablefiter);
 		$this->display('add');
 	}
@@ -662,7 +658,6 @@ class HotelController extends BaseController {
 		$save['bank_name']           = I('post.bank_name','','trim');
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
-        $goods_ids = I('goods_ids');
         $is_open_integral = I('post.is_open_integral',0,'intval');
 
         if($activity_phone){
@@ -801,11 +796,7 @@ class HotelController extends BaseController {
 			} else {
 				$this->error('操作失败2');
 			}
-
 		}
-
-        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        $m_hotelgoods->HandleHotelGoods($hotel_id,$goods_ids);
 
 		$field = 'mac_addr,server_location';
 		$where = array('hotel_id'=>$hotel_id);

@@ -46,8 +46,6 @@ class GoodsController extends BaseController {
         $goods_status = C('GOODS_STATUS');
         $m_media = new \Admin\Model\MediaModel();
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        $m_hotel = new \Admin\Model\HotelModel();
-
         foreach ($datalist as $k=>$v){
             $media_info = $m_media->getMediaInfoById($v['media_id']);
             if($media_info['type']==1){
@@ -59,14 +57,9 @@ class GoodsController extends BaseController {
             $datalist[$k]['typestr'] = $goods_types[$v['type']];
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
 
-            $goods_id = $v['id'];
-            $subQuery = $m_hotelgoods->field('hotel_id')->where(array('goods_id'=>$goods_id))->group('hotel_id')->buildSql();
-            $res = $m_hotel->field('name')->where("id in $subQuery")->select();
-            $hotelarr = array();
-            foreach ($res as $hv){
-                $hotelarr[] = $hv['name'];
-            }
-            $datalist[$k]['hotels'] = join(',',$hotelarr);
+            $fields = "count(DISTINCT hotel_id) as num";
+            $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'openid'=>'','type'=>1),'id desc');
+            $datalist[$k]['hotels'] = intval($res_hotelgoods['num']);
         }
 
         $this->assign('start_date',$start_date);
@@ -262,6 +255,107 @@ class GoodsController extends BaseController {
 
         }
     }
+
+    public function hoteladd(){
+        $goods_id = I('goods_id',0,'intval');
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        $dinfo = $m_goods->getInfo(array('id'=>$goods_id));
+        if($dinfo['type']==20){
+            $this->output('商家添加的商品不能选择酒楼','goods/goodslist',2,0);
+        }
+        if(IS_POST){
+            $hbarr = $_POST['hbarr'];
+            if(empty($hbarr)){
+                $this->output('请选择酒楼','goods/goodslist',2,0);
+            }
+            $hotel_arr = json_decode($hbarr, true);
+            if(empty($hotel_arr)){
+                $this->output('请选择酒楼','goods/goodslist',2,0);
+            }
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(14);
+            $goods_program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
+            $is_succ = false;
+            $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+            foreach ($hotel_arr as $v){
+                $hotel_id = $v['hotel_id'];
+                $where = array('hotel_id'=>$hotel_id,'goods_id'=>$goods_id,'openid'=>'','type'=>1);
+                $res = $m_hotelgoods->where($where)->find();
+                if(empty($res)){
+                    $is_succ = true;
+                    $m_hotelgoods->add($where);
+
+                    $program_key = $goods_program_key.":$hotel_id";
+                    $period = getMillisecond();
+                    $period_data = array('period'=>$period);
+                    $redis->set($program_key,json_encode($period_data));
+                }
+            }
+
+            if($is_succ){
+                $this->output('添加成功','goods/goodslist');
+            }else {
+                $this->output('请勿重复添加到酒楼','goods/goodslist',2,0);
+            }
+
+        }else{
+            $m_media = new \Admin\Model\MediaModel();
+            $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
+            $dinfo['oss_addr'] = $media_info['oss_addr'];
+
+            $areaModel  = new \Admin\Model\AreaModel();
+            $area_arr = $areaModel->getAllArea();
+            $this->assign('areainfo', $area_arr);
+            $this->assign('vinfo', $dinfo);
+            $this->display('hoteladd');
+        }
+    }
+
+    public function hotelgoodslist() {
+        $goods_id = I('goods_id',0,'intval');
+        $keyword = I('keyword','','trim');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+
+        $where = array('a.goods_id'=>$goods_id,'a.type'=>1,'a.openid'=>'');
+        if(!empty($keyword)){
+            $where['h.name'] = array('like',"%$keyword%");
+        }
+        $start  = ($page-1) * $size;
+        $fields = 'a.id,a.add_time,h.id as hotel_id,h.name as hotel_name';
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $result = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.id desc', $start,$size);
+        $datalist = $result['list'];
+
+        $this->assign('goods_id',$goods_id);
+        $this->assign('keyword',$keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('hotelgoodslist');
+    }
+
+    public function hotelgoodsdel(){
+        $id = I('get.id',0,'intval');
+        $hotel_id = I('get.hotel_id',0,'intval');
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $result = $m_hotelgoods->delData(array('id'=>$id));
+        if($result){
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(14);
+            $goods_program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
+            $program_key = $goods_program_key.":$hotel_id";
+            $period = getMillisecond();
+            $period_data = array('period'=>$period);
+            $redis->set($program_key,json_encode($period_data));
+
+            $this->output('操作成功!', 'goods/hotelgoodslist',2);
+        }else{
+            $this->output('操作失败', 'goods/hotelgoodslist',2,0);
+        }
+    }
+
 
     private function wx_importproduct($goods_id){
         $app_config = C('SMALLAPP_SALE_CONFIG');
