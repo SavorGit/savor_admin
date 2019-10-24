@@ -1,0 +1,80 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/invoice/editinvoice" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<div class="pageFormContent modal-body">
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">订单编号：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" value="{$vinfo.order_id}" class="form-control" readonly/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					发票类型:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="type" id="type" class="form-control bs-select" title="请选择..." data-size="20" required>
+						<volist name=":C('INVOICE_TYPE')" id="itype">
+							<option value="{$key}" <if condition="$vinfo['type'] eq $key"> selected </if> > {$itype}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">联系人：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" name="contact" value="{$vinfo.contact}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">联系电话：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" name="phone" value="{$vinfo.phone}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">联系地址：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" name="address" value="{$vinfo.address}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">邮箱：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" name="email" value="{$vinfo.email}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">发票地址：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" name="invoice_addr" value="{$vinfo.invoice_addr}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					发票状态:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="status" id="status" class="form-control bs-select" title="请选择..." data-size="20" required>
+						<volist name=":C('INVOICE_STATUS')" id="istatus">
+							<option value="{$key}" <if condition="$vinfo['status'] eq $key"> selected </if> > {$istatus}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+</form>
+</div>
