@@ -82,6 +82,7 @@ class AdvertController extends BaseController{
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
 			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval'); //小程序二维码是否显示
+			 $is_sapp_show = I('post.is_sapp_show','0','intval');
 			 if(empty($minu) && empty($seco)){
 			     $this->error('请输入有效的时长');
 			 }
@@ -109,6 +110,7 @@ class AdvertController extends BaseController{
              $ads_data['create_time'] = date('Y-m-d H:i:s');
 			 $ads_data['is_online'] = 2;
 			 $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
+			 $ads_data['is_sapp_show'] = $is_sapp_show;
 			 $ads_data['resource_type'] = $resource_type;
 			 if($duration)  $ads_data['duration'] = $duration;
              if($description)   $ads_data['description'] = $description;
@@ -162,11 +164,13 @@ class AdvertController extends BaseController{
 	         $description = I('post.description','');
 	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
 	         $media_id = I('post.media_id','0','intval');
+	         $is_sapp_show = I('post.is_sapp_show','0','intval');
 	         $ads_data = array();
 	         $ads_data['name'] = $name;
 			 $ads_data['duration'] = $duration;
 	         $ads_data['type'] = $adstype;
 	         $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
+	         $ads_data['is_sapp_show']   = $is_sapp_show;
 	         $ads_data['resource_type'] = $resource_type;
 	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;

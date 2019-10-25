@@ -110,6 +110,29 @@
 		                </volist>
 		              </div>
 		         </div>
+		         
+		         <div class="form-group row">
+		              <label class="col-xs-12 col-sm-2 control-label">
+		                小程序发现页内容：
+		              </label>
+		              <div class="col-xs-12 col-sm-10">
+		                  <php>
+		                  	if($vinfo['is_sapp_show']==''){
+		                  	
+		                  </php>
+		                  	<input  name="is_sapp_show" type="radio" value="1"   checked  />&nbsp;显示
+		                  <input  name="is_sapp_show" type="radio"  value="0" />&nbsp;不显示
+		                  <php>
+		                  	}else {
+		                  </php>
+		                  <input  name="is_sapp_show" type="radio" value="1"  <if condition=" $vinfo['is_sapp_show'] eq 1"> checked <elseif condition="$vinfo['is_sapp_show'] eq ''" /> checked</if> />&nbsp;显示
+		                  <input  name="is_sapp_show" type="radio" <if condition=" $vinfo['is_sapp_show'] eq 0">checked</if> value="0" />&nbsp;不显示
+		                 <php>
+		                 	}
+		                 </php>
+		                </volist>
+		              </div>
+		         </div>
             		
             		
 				 <div class="form-group row">
