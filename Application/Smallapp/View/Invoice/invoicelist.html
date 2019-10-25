@@ -87,9 +87,11 @@
               <td data-title="状态">{$dinfo.invoice_status_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
+                    <if condition="$dinfo.invoice_status neq 4">
                     <a title="发票信息" data-tip="发票信息" target="dialog" mask="true" href="{$host_url}/smallapp/invoice/editinvoice?id={$dinfo.invoice_id}" class="btn btn-success btn-icon">
                         <i class="fa fa-money"></i>
                     </a>
+                    </if>
                 </div>
               </td>
             </tr>

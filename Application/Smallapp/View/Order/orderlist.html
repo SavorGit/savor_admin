@@ -87,7 +87,7 @@
               <td data-title="状态">{$dinfo.statusstr}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                    <if condition="$dinfo.type eq 12">
+                    <if condition="($dinfo.status eq 12) AND ($dinfo['integral']) eq 0">
                     <a title="奖励" data-tip="奖励" target="dialog" mask="true" href="{$host_url}/smallapp/order/rewardintegral?id={$dinfo.id}" class="btn btn-success btn-icon">
                         <i class="fa fa-reddit"></i>
                     </a>
