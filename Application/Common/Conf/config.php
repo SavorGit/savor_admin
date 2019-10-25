@@ -72,9 +72,27 @@ $config['GOODS_STATUS'] = array(
 
 $config['ORDER_STATUS'] = array(
     '10'=>'已下单',
+    '11'=>'支付失败',
+    '12'=>'支付成功',
+);
+$config['EXCHANGE_STATUS'] = array(
     '20'=>'申请兑换',
     '21'=>'兑换成功',
 );
+
+$config['INVOICE_STATUS'] = array(
+    '1'=>'暂不开票',
+    '2'=>'已提申请',
+    '3'=>'待开发票',
+    '4'=>'已开发票',
+);
+
+$config['INVOICE_TYPE'] = array(
+    '1'=>'纸质发票',
+    '2'=>'电子发票',
+);
+
+
 $config['BUY_TYPE'] = array(
     '1'=>'店内购买',
     '2'=>'京东购买',
@@ -672,6 +690,14 @@ $config['HOTEL_STANDALONE_CONFIG'] = array(
     '16'=>'其它',
 );
 $config['HEART_LOSS_HOURS'] = 48;
+//发送邮件配置
+$config['MAIL_ADDRESS'] = 'xxx@xxx.com'; // 邮箱地址
+$config['MAIL_SMTP'] = 'smtp.xxx.com'; // 邮箱SMTP服务
+$config['MAIL_LOGINNAME'] = 'xx@xx.com'; // 邮箱登录帐号
+$config['MAIL_PASSWORD'] = 'mailpassword'; // 邮箱密码
+$config['MAIL_CHARSET'] = 'UTF-8';//编码
+$config['MAIL_AUTH'] = true;//邮箱认证
+$config['MAIL_HTML'] = true;//true HTML格式 false TXT格式
 return $config;
 
 

@@ -1,18 +1,14 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/goodslist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/invoice/invoicelist" method="post">
       <input type="hidden" name="pageNum" value="{$pageNum}"/>
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
-          <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
-          </div>
-        </div>
+
         
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pull-right">
 
             <div class="form-inline">
 
@@ -35,12 +31,11 @@
             </div>
 
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="商品名称">
             <span class="input-group-btn">
-              <select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                <option value='0' >所有类型</option>
-                <volist name=":C('GOODS_TYPE')" id="ginfo">
-                    <option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >发票状态</option>
+                <volist name=":C('INVOICE_STATUS')" id="istatus">
+                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$istatus}</option><br>
                 </volist>
               </select>
             </span>
@@ -64,49 +59,40 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
-              <th>ID</th>
-              <th>名称</th>
-              <th>价格</th>
-              <th>资源类型</th>
-              <th>商品类型</th>
+              <th>订单编号</th>
+              <th>订单商品</th>
+              <th>订单数量</th>
+              <th>订单金额</th>
+              <th>发票类型</th>
+              <th>联系人</th>
+              <th>联系电话</th>
+              <th>邮寄地址</th>
+              <th>电子邮箱</th>
               <th>状态</th>
-              <th>所在酒楼数</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
-              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
-              <td data-title="价格">{$dinfo.price}</td>
-              <td data-title="资源类型">{$dinfo.media_typestr}</td>
-              <td data-title="商品类型">{$dinfo.typestr}</td>
-              <td data-title="状态">{$dinfo.statusstr}</td>
-              <td data-title="所在酒楼数">
-                  <if condition="$dinfo.hotels gt 0">
-                  <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="goods/hotelgoodslist" href="{$host_url}/smallapp/goods/hotelgoodslist?goods_id={$dinfo.id}" >
-                  {$dinfo.hotels}</a>
-                  <else/>
-                  {$dinfo.hotels}
-                  </if>
-              </td>
+              <td data-title="订单编号"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="订单商品">{$dinfo.goods_name}</td>
+              <td data-title="订单数量">{$dinfo.amount}</td>
+              <td data-title="订单金额">{$dinfo.total_fee}</td>
+              <td data-title="发票类型">{$dinfo.invoice_type_str}</td>
+              <td data-title="联系人">{$dinfo.contact}</td>
+              <td data-title="联系电话">{$dinfo.phone}</td>
+              <td data-title="邮寄地址">{$dinfo.address}</td>
+              <td data-title="电子邮箱">{$dinfo.email}</td>
+              <td data-title="状态">{$dinfo.invoice_status_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
-
-                  <if condition="$dinfo.type neq 20">
-                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/goods/hoteladd?goods_id={$dinfo.id}" class="btn btn-warning btn-icon">
-                    <i class="fa fa-hotel"></i>
-                  </a>
-                  </if>
-
+                    <a title="发票信息" data-tip="发票信息" target="dialog" mask="true" href="{$host_url}/smallapp/invoice/editinvoice?id={$dinfo.invoice_id}" class="btn btn-success btn-icon">
+                        <i class="fa fa-money"></i>
+                    </a>
                 </div>
               </td>
             </tr>
-
             </foreach>
           </tbody>
         </table>

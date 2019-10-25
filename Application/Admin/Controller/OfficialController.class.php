@@ -650,6 +650,8 @@ class officialController extends Controller {
         $file_236 = APP_PATH.'Common/Conf/dp_hotel_236.json';
         $hotels = file_get_contents($file_236);
         $result = json_decode($hotels,true);
+        $result_236 = $this->getHotelGpsByAreaid(236);
+        $result = array_merge($result_236,$result);
         echo  "login(".json_encode($result).")";
     }
 
@@ -662,6 +664,9 @@ class officialController extends Controller {
         $file_236 = APP_PATH.'Common/Conf/dp_hotel_236.json';
         $hotels = file_get_contents($file_236);
         $result = json_decode($hotels,true);
+        $result_236 = $this->getHotelGpsByAreaid(236);
+        $result = array_merge($result_236,$result);
+
         $data_list = array_slice($result,$offset,$pageSize);
 
         $count = count($result);
@@ -670,6 +675,46 @@ class officialController extends Controller {
         $data['totalPage'] = $total_page;
         $data['count'] = $count;
         echo "hotel(".json_encode($data).")";
+    }
+
+    private function getHotelGpsByAreaid($areaid=0){
+        $m_hotel = new \Admin\Model\HotelModel();
+        $map = array('state'=>1);
+        if(!empty($areaid)){
+            $map['area_id'] = $areaid;
+        }
+        $list = $m_hotel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
+        $heart_hotel_box_type = C('heart_hotel_box_type');
+        $result = array();
+        foreach($list as $v){
+            $tmp = array();
+            $sql ="select count(a.id) nums from savor_box a
+                   left join savor_room b  on a.room_id=b.id
+                   left join savor_hotel c on b.hotel_id=c.id where c.id=".$v['id'];
+            $ret =  M()->query($sql);
+            $ret = $ret[0];
+            if(!empty($v['gps']) && $ret['nums']){
+                $gps_arr = explode(',', $v['gps']);
+                $tmp['id'] = $v['id'];
+                $tmp['name'] = $v['name'];
+                $tmp['gps'] = $v['gps'];
+                $tmp['lng'] = $gps_arr[0];
+                $tmp['lat'] = $gps_arr[1];
+                $tmp['addr'] = $v['addr'];
+                $tmp['areaid'] = $v['area_id'];
+                if(empty($v['hotel_box_type'])){
+                    $tmp['is_screen'] = 0;
+                }else {
+                    if(array_key_exists($v['hotel_box_type'], $heart_hotel_box_type)){
+                        $tmp['is_screen'] = 1;
+                    }else {
+                        $tmp['is_screen'] = 0;
+                    }
+                }
+                $result[] = $tmp;
+            }
+        }
+        return $result;
     }
 
 

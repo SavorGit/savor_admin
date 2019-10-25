@@ -1,18 +1,14 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/goodslist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/exchange/exchangelist" method="post">
       <input type="hidden" name="pageNum" value="{$pageNum}"/>
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
-          <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
-          </div>
-        </div>
+
         
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pull-right">
 
             <div class="form-inline">
 
@@ -35,12 +31,11 @@
             </div>
 
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="商品名称">
             <span class="input-group-btn">
-              <select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                <option value='0' >所有类型</option>
-                <volist name=":C('GOODS_TYPE')" id="ginfo">
-                    <option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >兑换状态</option>
+                <volist name=":C('EXCHANGE_STATUS')" id="oinfo">
+                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
                 </volist>
               </select>
             </span>
@@ -65,12 +60,13 @@
           <thead>
             <tr id="post">
               <th>ID</th>
-              <th>名称</th>
-              <th>价格</th>
-              <th>资源类型</th>
-              <th>商品类型</th>
+              <th>用户openID</th>
+              <th>商品名称</th>
+              <th>购买数量</th>
+              <th>总价</th>
+              <th>兑换所需积分</th>
+              <th>购买时间</th>
               <th>状态</th>
-              <th>所在酒楼数</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -78,32 +74,29 @@
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
               <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
-              <td data-title="价格">{$dinfo.price}</td>
-              <td data-title="资源类型">{$dinfo.media_typestr}</td>
-              <td data-title="商品类型">{$dinfo.typestr}</td>
+              <td data-title="用户openid">{$dinfo.openid}</td>
+              <td data-title="商品名称">{$dinfo.goods_name}</td>
+              <td data-title="购买数量">{$dinfo.amount}</td>
+              <td data-title="总价">{$dinfo.total_fee}</td>
+              <td data-title="兑换所需积分">{$dinfo.integral}</td>
+              <td data-title="购买时间">{$dinfo.add_time}</td>
               <td data-title="状态">{$dinfo.statusstr}</td>
-              <td data-title="所在酒楼数">
-                  <if condition="$dinfo.hotels gt 0">
-                  <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="goods/hotelgoodslist" href="{$host_url}/smallapp/goods/hotelgoodslist?goods_id={$dinfo.id}" >
-                  {$dinfo.hotels}</a>
-                  <else/>
-                  {$dinfo.hotels}
-                  </if>
-              </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 30">
+                    <a warn="审核" data-tip="兑换现金" title="审核通过后,会直接提现到用户微信零钱" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}"  class="btn btn-success btn-icon">
+                        <i class="fa fa-money"></i>
+                    </a>
+                    </if>
 
-                  <if condition="$dinfo.type neq 20">
-                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/goods/hoteladd?goods_id={$dinfo.id}" class="btn btn-warning btn-icon">
-                    <i class="fa fa-hotel"></i>
-                  </a>
-                  </if>
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 31">
+                    <a title="兑换信息" data-tip="兑换商品" target="dialog" mask="true" href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}" class="btn btn-success btn-icon">
+                        <i class="fa fa-exchange"></i>
+                    </a>
+                    </if>
 
                 </div>
+
               </td>
             </tr>
 
