@@ -1,0 +1,111 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/exchange/exchangelist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pull-right">
+
+            <div class="form-inline">
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">时间：</div>
+                <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                    <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                    <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+                <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                    <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                    <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+
+          <div class="input-group input-group-sm">
+            <span class="input-group-btn">
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >兑换状态</option>
+                <volist name=":C('EXCHANGE_STATUS')" id="oinfo">
+                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
+                </volist>
+              </select>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>用户openID</th>
+              <th>商品名称</th>
+              <th>购买数量</th>
+              <th>总价</th>
+              <th>兑换所需积分</th>
+              <th>购买时间</th>
+              <th>状态</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="用户openid">{$dinfo.openid}</td>
+              <td data-title="商品名称">{$dinfo.goods_name}</td>
+              <td data-title="购买数量">{$dinfo.amount}</td>
+              <td data-title="总价">{$dinfo.total_fee}</td>
+              <td data-title="兑换所需积分">{$dinfo.integral}</td>
+              <td data-title="购买时间">{$dinfo.add_time}</td>
+              <td data-title="状态">{$dinfo.statusstr}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 30">
+                    <a warn="审核" data-tip="兑换现金" title="审核通过后,会直接提现到用户微信零钱" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}"  class="btn btn-success btn-icon">
+                        <i class="fa fa-money"></i>
+                    </a>
+                    </if>
+
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 31">
+                    <a title="兑换信息" data-tip="兑换商品" target="dialog" mask="true" href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}" class="btn btn-success btn-icon">
+                        <i class="fa fa-exchange"></i>
+                    </a>
+                    </if>
+
+                </div>
+
+              </td>
+            </tr>
+
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
