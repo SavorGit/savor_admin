@@ -44,6 +44,7 @@ class OrderController extends BaseController {
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_invite_code = new \Admin\Model\HotelInviteCodeModel();
         $m_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
             $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
             $integral = 0;
@@ -59,6 +60,12 @@ class OrderController extends BaseController {
             $datalist[$k]['nickName'] = $user_info['nickname'];
             $res_invite_code = $m_invite_code->getInviteExcel('ht.name',array('a.openid'=>$user_info['openid'],'a.flag'=>0),'ht.id desc');
             $datalist[$k]['hotel_name'] = $res_invite_code[0]['name'];
+            $room_name = '';
+            if(!empty($v['box_mac'])){
+                $res_box = $m_box->getHotelInfoByBoxMac($v['box_mac']);
+                $room_name = $res_box['room_name'];
+            }
+            $datalist[$k]['room_name'] = $room_name;
         }
 
         $this->assign('start_date',$start_date);
