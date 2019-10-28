@@ -83,6 +83,9 @@ class OrderController extends BaseController {
             if(empty($integral)){
                 $this->output('奖励积分不能为0', 'order/orderlist',2,0);
             }
+            if($integral>9999){
+                $this->output('奖励积分不能大于最大值', 'order/orderlist',2,0);
+            }
             $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
             $res_order_integralrecord = $m_user_integralrecord->getInfo(array('jdorder_id'=>$res_order['id']));
             if(!empty($res_order_integralrecord)){
@@ -90,7 +93,9 @@ class OrderController extends BaseController {
             }
             $m_user = new \Admin\Model\Smallapp\UserModel();
             $user_info = $m_user->getOne('openid,nickName',array('id'=>$res_order['sale_uid']),'id desc');
-
+            if(empty($user_info)){
+                $this->output('奖励用户不存在', 'order/orderlist',2,0);
+            }
             $record_data = array('openid'=>$user_info['openid'],'integral'=>$integral,'goods_id'=>$res_order['goods_id'],
                 'jdorder_id'=>$res_order['id'],'content'=>$res_order['amount'],'type'=>3,
                 'integral_time'=>date('Y-m-d H:i:s'),'status'=>1);
