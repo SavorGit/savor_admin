@@ -44,6 +44,7 @@ class OrderController extends BaseController {
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_invite_code = new \Admin\Model\HotelInviteCodeModel();
         $m_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
             $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
             $integral = 0;
@@ -59,6 +60,12 @@ class OrderController extends BaseController {
             $datalist[$k]['nickName'] = $user_info['nickname'];
             $res_invite_code = $m_invite_code->getInviteExcel('ht.name',array('a.openid'=>$user_info['openid'],'a.flag'=>0),'ht.id desc');
             $datalist[$k]['hotel_name'] = $res_invite_code[0]['name'];
+            $room_name = '';
+            if(!empty($v['box_mac'])){
+                $res_box = $m_box->getHotelInfoByBoxMac($v['box_mac']);
+                $room_name = $res_box['room_name'];
+            }
+            $datalist[$k]['room_name'] = $room_name;
         }
 
         $this->assign('start_date',$start_date);
@@ -83,6 +90,9 @@ class OrderController extends BaseController {
             if(empty($integral)){
                 $this->output('奖励积分不能为0', 'order/orderlist',2,0);
             }
+            if($integral>9999){
+                $this->output('奖励积分不能大于最大值', 'order/orderlist',2,0);
+            }
             $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
             $res_order_integralrecord = $m_user_integralrecord->getInfo(array('jdorder_id'=>$res_order['id']));
             if(!empty($res_order_integralrecord)){
@@ -90,7 +100,9 @@ class OrderController extends BaseController {
             }
             $m_user = new \Admin\Model\Smallapp\UserModel();
             $user_info = $m_user->getOne('openid,nickName',array('id'=>$res_order['sale_uid']),'id desc');
-
+            if(empty($user_info)){
+                $this->output('奖励用户不存在', 'order/orderlist',2,0);
+            }
             $record_data = array('openid'=>$user_info['openid'],'integral'=>$integral,'goods_id'=>$res_order['goods_id'],
                 'jdorder_id'=>$res_order['id'],'content'=>$res_order['amount'],'type'=>3,
                 'integral_time'=>date('Y-m-d H:i:s'),'status'=>1);

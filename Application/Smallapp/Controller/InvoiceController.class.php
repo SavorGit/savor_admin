@@ -97,7 +97,10 @@ class InvoiceController extends BaseController {
                 if($status==4 && empty($invoice_addr)) {
                     $this->output('发票地址不能为空', 'invoice/invoicelist', 2, 0);
                 }
-                $is_sendmail = 1;
+                if($status==4){
+                    $is_sendmail = 1;
+                }
+
             }
             $data = array('status'=>$status,'type'=>$type,'contact'=>$contact,'phone'=>$phone,'address'=>$address,
                 'email'=>$email,'invoice_addr'=>$invoice_addr,'update_time'=>date('Y-m-d H:i:s'));
