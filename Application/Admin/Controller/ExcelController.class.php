@@ -2572,6 +2572,170 @@ class ExcelController extends Controller
         $this->exportExcel($xlsName, $xlsCell, $list,$filename);
     }
     /**
+     * @desc 后台运维端任务统计
+     * @author zhang.yingtao
+     * @since  2019-10-31
+     */
+    public function exportOptionTask(){
+    
+        $where = array();
+        $area = I('get.area');
+        $ctime = I('get.ctime');
+        $etime = I('get.etime');
+        $exe_user_id = I('get.exe_user_id');
+        $hotel_box_type = I('get.hotel_box_type');
+        //$userid= I('user_id');
+        $ctime = !empty($ctime) ? $ctime.' 00:00:00' : '';
+        $etime = !empty($etime) ? $etime.' 23:59:59' : '';
+        if($ctime && $etime) {
+            $where['a.create_time'] = array( array('gt',$ctime),array('lt',$etime));
+        } else {
+            if($ctime) {
+                $where['a.create_time'] = array('gt', $ctime);
+            }
+            if($etime) {
+                $where['a.create_time'] = array('lt', $etime);
+            }
+        }
+    
+        if($area) {
+            $where['a.task_area'] = $area;
+        }
+        if($exe_user_id){
+            $where['a.exe_user_id'] = $exe_user_id;
+        }
+        if($hotel_box_type){
+            $where['b.hotel_box_type'] = array('in',$hotel_box_type);
+        }
+        //$where['a.state'] = array('in','4');
+        //$where['a.task_type'] = array('eq','4');
+        $where['a.flag']      =0;
+        $fields = "a.id, a.task_area, a.task_emerge, a.task_type,b.name hotel_name,a.hotel_address,
+                   a.hotel_linkman,a.hotel_linkman_tel,tv_nums,a.state,a.create_time,a.complete_time,
+                   sy.remark pub_username,a.exe_user_id ";
+        $m_option_task = new \Admin\Model\OptiontaskModel();
+        $list = $m_option_task->alias('a')
+        ->join('savor_hotel b on a.hotel_id= b.id','left')
+        ->join('savor_sysuser sy on a.publish_user_id = sy.id','left')
+    
+        ->field($fields)->where($where)->order('a.create_time asc ')->select();
+    
+        $model = D();
+        $m_sys_user = new \Admin\Model\UserModel();
+        foreach($list as $key=>$val){
+            $repair_str = $rep_str =  '';
+            $space = $space_p = '';
+            $data = $model->query('select b.mac box_mac, a.box_id,b.name box_name,fault_desc,remark from
+                                   savor_option_task_repair a left join savor_box b
+                                   on a.box_id = b.id where a.task_id='.$val['id']);
+            if(!empty($data)){
+                foreach($data as $k=>$v){
+                    $repair_str .= $space .'机顶盒mac：'.$v['box_mac'].' 机顶盒id:'.$v['box_id'].' 机顶盒名称:'.$v['box_name'];
+                    $repair_str .=' 故障说明:'.$v['fault_desc'];
+                    $space = ',';
+    
+                    $rep_str .= $space_p .'机顶盒mac：'.$v['box_mac'].' 机顶盒id:'.$v['box_id'].' 机顶盒名称:'.$v['box_name'];
+                    $rep_str .=' 解决备注:'.$v['remark'];
+                    $space_p = ',';
+                }
+            }
+            switch ($val['task_area']){
+                case '1':
+                    $task_area= '北京';
+                    break;
+                case '9':
+                    $task_area = '上海';
+                    break;
+                case '236':
+                    $task_area = '广州';
+                    break;
+                case '246':
+                    $task_area = '深圳';
+                    break;
+            }
+            $list[$key]['task_area'] = $task_area;
+            switch ($val['task_emerge']){
+                case '2':
+                    $list[$key]['task_emerge'] = '紧急';
+                    break;
+                case '3':
+                    $list[$key]['task_emerge'] = '正常';
+                    break;
+            }
+            switch ($val['task_type']){
+                case '1':
+                    $list[$key]['task_type'] = '信息检测';
+                    break;
+                case '8':
+                    $list[$key]['task_type'] = '网络改造';
+                    break;
+                case '2':
+                    $list[$key]['task_type'] = '安装验收';
+                    break;
+                case '4':
+                    $list[$key]['task_type'] = '维修';
+                    break;
+            }
+            switch ($val['state']){
+                case '1':
+                    $list[$key]['state'] = '新任务';
+                    break;
+                case '2':
+                    $list[$key]['state'] = '执行中';
+                    break;
+                case '3':
+                    $list[$key]['state'] = '排队等待';
+                    break;
+                case '4':
+                    $list[$key]['state'] = '已完成';
+                    break;
+                case '5':
+                    $list[$key]['state'] = '拒绝';
+                    break;
+    
+            }
+            //执行人
+            if(!empty($val['exe_user_id'])){
+                $exe_user_id_arr = explode(',',$val['exe_user_id']);
+                $exe_user_str = '';
+                $space_e = '';
+                foreach($exe_user_id_arr as $v){
+                    $e_ret = $m_sys_user->field('remark')->where(array('id'=>$v))->find();
+                    $exe_user_str .=$space_e.$e_ret['remark'];
+                    $space_e = ',';
+                }
+                $list[$key]['exe_user_str'] = $exe_user_str;
+            }
+            $list[$key]['repair_info'] = $repair_str;
+            $list[$key]['rep_info']    = $rep_str;
+        }
+        //print_r($list);exit;
+        $xlsCell = array(
+            array('id', '任务id'),
+            array('task_area', '任务城市'),
+            array('hotel_name','酒楼名称'),
+            array('hotel_address','酒楼地址'),
+            array('hotel_linkman','酒楼联系人'),
+            array('hotel_linkman_tel','酒楼联系人电话'),
+            array('pub_username','下单人'),
+            array('exe_user_str','接单人'),
+            array('task_emerge','任务紧急程度'),
+            array('task_type', '任务类型'),
+            array('state', '实际处理情况'),
+            array('tv_nums','版位数量'),
+            array('create_time','发布时间'),
+            array('complete_time','完成时间'),
+//             array('repair_info', '维修记录'),
+//             array('rep_info','解决办法')
+    
+        );
+        $xlsName = '运维任务列表';
+        $filename = 'option_task_list';
+        $this->exportExcel($xlsName, $xlsCell, $list,$filename);
+    
+    
+    }
+    /**
      * @desc 后台运维端任务统计 到处维修任务列表
      * @author zhang.yingtao
      * @since  2018-04-17
