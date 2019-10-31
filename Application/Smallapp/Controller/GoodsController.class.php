@@ -27,6 +27,75 @@ class GoodsController extends BaseController {
         }
         if($type){
             $where['type'] = $type;
+        }else{
+            $where['type'] = array('not in',array(10));
+        }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        $start  = ($page-1) * $size;
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        $result = $m_goods->getDataList('*',$where, 'id desc', $start, $size);
+        $datalist = $result['list'];
+        $goods_types = C('GOODS_TYPE');
+        unset($goods_types['10']);
+
+        $goods_status = C('GOODS_STATUS');
+        $m_media = new \Admin\Model\MediaModel();
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $m_hotels = new \Admin\Model\HotelModel();
+        foreach ($datalist as $k=>$v){
+            $media_info = $m_media->getMediaInfoById($v['media_id']);
+            if($media_info['type']==1){
+                $media_typestr = '视频';
+            }else{
+                $media_typestr = '图片';
+            }
+            $datalist[$k]['media_typestr'] = $media_typestr;
+            $datalist[$k]['typestr'] = $goods_types[$v['type']];
+            $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+
+            if($v['type']==20){
+                $res_hotelgoods = $m_hotelgoods->getInfo(array('goods_id'=>$v['id']));
+                $res_hotel = $m_hotels->getOne($res_hotelgoods['hotel_id']);
+                $hotels = $res_hotel['name'];
+            }else{
+                $fields = "count(DISTINCT hotel_id) as num";
+                $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'openid'=>'','type'=>1),'id desc');
+                $hotels = intval($res_hotelgoods['num']);
+            }
+            $datalist[$k]['hotels'] = $hotels;
+        }
+
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('type',$type);
+        $this->assign('keyword',$keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->assign('goods_types',$goods_types);
+        $this->display('goodslist');
+    }
+
+    public function optimizegoodslist() {
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
+        $keyword = I('keyword','','trim');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+
+        $where = array('type'=>10);
+        if(!empty($keyword)){
+            $where['name'] = array('like',"%$keyword%");
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -64,24 +133,36 @@ class GoodsController extends BaseController {
 
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
-        $this->assign('type',$type);
         $this->assign('keyword',$keyword);
         $this->assign('datalist', $datalist);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
-        $this->display('goodslist');
+        $this->display('optimizegoodslist');
     }
-    
+
     public function goodsadd(){
+        $template_html = 'goodsadd';
+        $goods_list_f = 'goodslist';
+        $this->handle_goodsadd($template_html,$goods_list_f);
+    }
+
+    public function optimizegoodsadd(){
+        $template_html = 'optimizegoodsadd';
+        $goods_list_f = 'optimizegoodslist';
+        $this->handle_goodsadd($template_html,$goods_list_f);
+    }
+
+    private function handle_goodsadd($template_html,$goods_list_f){
         $id = I('id', 0, 'intval');
+        $type = I('type',0,'intval');
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
         if(IS_GET){
             $detail_img_num = 5;
-        	$dinfo = array('media_type'=>1);
-        	$detailaddr = array();
-        	if($id){
-        		$dinfo = $m_goods->getInfo(array('id'=>$id));
+            $dinfo = array('media_type'=>1);
+            $detailaddr = array();
+            if($id){
+                $dinfo = $m_goods->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
                 $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
                 if($dinfo['detail_imgmedia_ids']){
@@ -95,7 +176,7 @@ class GoodsController extends BaseController {
                 $dinfo['media_type'] = $media_info['type'];
                 $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
                 $dinfo['end_date'] = date('Y-m-d',strtotime($dinfo['end_time']));
-        	}
+            }
             $detail_imgs = array();
             for($i=1;$i<=$detail_img_num;$i++){
                 $img_info = array('id'=>$i,'imgid'=>'detail_id'.$i,'media_id'=>0);
@@ -105,21 +186,30 @@ class GoodsController extends BaseController {
                 }
                 $detail_imgs[] = $img_info;
             }
-        	$this->assign('detail_imgs',$detail_imgs);
-        	$this->assign('vinfo',$dinfo);
-        	$this->display('goodsadd');
+            $goods_types = C('GOODS_TYPE');
+            if($type){
+                $dinfo['type'] = $type;
+                $goods_types = array($type=>$goods_types[$type]);
+            }else{
+                unset($goods_types[10]);
+            }
+
+            $this->assign('goods_types',$goods_types);
+            $this->assign('detail_imgs',$detail_imgs);
+            $this->assign('vinfo',$dinfo);
+            $this->display($template_html);
         }else{
             $type = I('post.type',0,'intval');
-        	$name = I('post.name','','trim');
-        	$wx_category = I('post.wx_category','','trim');
-        	$price = I('post.price',0,'intval');
-        	$rebate_integral = I('post.rebate_integral',0,'intval');
-        	$jd_url = I('post.jd_url','','trim');
-        	$start_date = I('post.start_date','');
-        	$end_date = I('post.end_date','');
+            $name = I('post.name','','trim');
+            $wx_category = I('post.wx_category','','trim');
+            $price = I('post.price',0,'intval');
+            $rebate_integral = I('post.rebate_integral',0,'intval');
+            $jd_url = I('post.jd_url','','trim');
+            $start_date = I('post.start_date','');
+            $end_date = I('post.end_date','');
             $media_id = I('post.media_id',0);
-        	$status = I('post.status',1,'intval');
-        	$is_storebuy = I('post.is_storebuy',0,'intval');
+            $status = I('post.status',1,'intval');
+            $is_storebuy = I('post.is_storebuy',0,'intval');
             $clicktype = I('post.clicktype',0,'intval');
             $appid = I('post.appid','','trim');
             $buybutton = I('post.buybutton','','trim');
@@ -128,28 +218,28 @@ class GoodsController extends BaseController {
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
             }
-        	if(empty($name) && $type!=20){
-        		$this->output('缺少必要参数!', 'goods/goodsadd', 2, 0);
-        	}
-        	if(!$media_id){
-        	    $this->output('请上传相关资源', 'goods/goodsadd', 2, 0);
+            if(empty($name) && $type!=20){
+                $this->output('缺少必要参数!', "goods/$template_html", 2, 0);
             }
-        	$where = array('name'=>$name,'type'=>$type);
-        	$tmp_goods = array();
-        	if($id){
+            if(!$media_id){
+                $this->output('请上传相关资源', "goods/$template_html", 2, 0);
+            }
+            $where = array('name'=>$name,'type'=>$type);
+            $tmp_goods = array();
+            if($id){
                 $tmp_goods = $m_goods->getInfo(array('id'=>$id));
                 $where['id']= array('neq',$id);
-        		$res_goods = $m_goods->getInfo($where);
-        	}else{
                 $res_goods = $m_goods->getInfo($where);
-        	}
-        	if(!empty($res_goods) && $type!=20){
-        		$this->output('名称不能重复', 'goods/goodsadd', 2, 0);
-        	}
+            }else{
+                $res_goods = $m_goods->getInfo($where);
+            }
+            if(!empty($res_goods) && $type!=20){
+                $this->output('名称不能重复', "goods/$template_html", 2, 0);
+            }
 
-        	$page_url = '';
-        	$item_id = 0;
-        	if($appid){
+            $page_url = '';
+            $item_id = 0;
+            if($appid){
                 $m_sysconfig = new \Admin\Model\SysConfigModel();
                 $all_config = $m_sysconfig->getAllconfig();
                 $jd_config = json_decode($all_config['jd_union_smallapp'],true);
@@ -165,7 +255,7 @@ class GoodsController extends BaseController {
                     switch ($appid){
                         case 'wx13e41a437b8a1d2e'://京东爆款(京东联盟)
                             if(empty($buybutton)){
-                                $this->output('请输入购买按钮', 'goods/goodsadd', 2, 0);
+                                $this->output('请输入购买按钮', "goods/$template_html", 2, 0);
                             }
                             $params = array(
                                 'promotionCodeReq'=>array(
@@ -175,14 +265,14 @@ class GoodsController extends BaseController {
                             );
                             $res = jd_union_api($params,'jd.union.open.promotion.bysubunionid.get');
                             if($res['code']!=200){
-                                $this->output('地址错误', 'goods/goodsadd', 2, 0);
+                                $this->output('地址错误', "goods/$template_html", 2, 0);
                             }
                             $click_url = urlencode($res['data']['clickURL']);
                             $page_url = '/pages/proxy/union/union?spreadUrl='.$click_url.'&customerinfo='.$jd_config['customerinfo'];
                             break;
                         case 'wx91d27dbf599dff74'://京东购物
                             if(empty($buybutton)){
-                                $this->output('请输入购买按钮', 'goods/goodsadd', 2, 0);
+                                $this->output('请输入购买按钮', "goods/$template_html", 2, 0);
                             }
                             $page_url = 'pages/item/detail/detail?sku='.$item_id;
                             break;
@@ -190,54 +280,54 @@ class GoodsController extends BaseController {
                 }else{
                     $str_position = strpos($jd_url,'pages/');
                     if($str_position!== false && $str_position!=0){
-                        $this->output('地址错误', 'goods/goodsadd', 2, 0);
+                        $this->output('地址错误', "goods/$template_html", 2, 0);
                     }
                     $page_url = $jd_url;
                 }
             }
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
                 'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status,'is_storebuy'=>$is_storebuy);
-        	if($appid){
+            if($appid){
                 $data['appid'] = $appid;
             }
             if($buybutton){
                 $data['buybutton'] = $buybutton;
             }
-        	if($type==10){
+            if($type==10){
                 $media_vid = I('post.media_vid',0);
                 if(empty($media_vid)){
-                    $this->output('请传入视频资源', 'goods/goodsadd', 2, 0);
+                    $this->output('请传入视频资源', "goods/$template_html", 2, 0);
                 }
-        	    if(empty($appid) || empty($buybutton)){
-                    $this->output('请输入appid或购买按钮名称', 'goods/goodsadd', 2, 0);
+                if(empty($appid) || empty($buybutton)){
+                    $this->output('请输入appid或购买按钮名称', "goods/$template_html", 2, 0);
                 }
-        	    if($detailmedia_id){
-        	        $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
+                if($detailmedia_id){
+                    $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
                 }
             }
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
             if($stime>$etime){
-                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+                $this->output('开始时间不能大于结束时间', "goods/$template_html", 2, 0);
             }
             $start_time = date('Y-m-d 00:00:00',$stime);
             $end_time = date('Y-m-d 23:59:59',$etime);
             $data['start_time'] = $start_time;
             $data['end_time'] = $end_time;
-        	if($id){
-        	    $m_goods->updateData(array('id'=>$id),$data);
+            if($id){
+                $m_goods->updateData(array('id'=>$id),$data);
                 $result = true;
                 if($type==10 || $type==20){
                     $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
                     $m_hotelgoods->HandleGoodsperiod($id);
                 }
-        	    $goods_id = $id;
+                $goods_id = $id;
             }else{
-        	    $result = $m_goods->add($data);
+                $result = $m_goods->add($data);
                 $goods_id = $result;
             }
 
-        	if($result){
+            if($result){
                 if($type==10){
                     $redis = \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);
@@ -248,10 +338,10 @@ class GoodsController extends BaseController {
 
                     $this->wx_importproduct($goods_id);
                 }
-        		$this->output('操作成功', 'goods/goodslist');
-        	}else{
-        		$this->output('操作失败', 'goods/goodslist',2,0);
-        	}
+                $this->output('操作成功', "goods/$goods_list_f");
+            }else{
+                $this->output('操作失败', "goods/$goods_list_f",2,0);
+            }
 
         }
     }

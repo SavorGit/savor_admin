@@ -36,6 +36,7 @@ $config = array(
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
 	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
     'HASH_IDS_KEY'=>'Q1xsCaoby2o',
+    'HASH_IDS_KEY_ADMIN'=>'Q1xsCaoby2o',
 
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
     'SAPP_SALE'=>'smallappsale:',

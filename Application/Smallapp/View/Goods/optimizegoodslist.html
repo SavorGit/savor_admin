@@ -1,14 +1,14 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/goodslist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/optimizegoodslist" method="post">
       <input type="hidden" name="pageNum" value="{$pageNum}"/>
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/optimizegoodsadd?type=10" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
           </div>
         </div>
         
@@ -36,14 +36,6 @@
 
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="商品名称">
-            <span class="input-group-btn">
-              <select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                <option value='0' >所有类型</option>
-                <volist name="goods_types" id="ginfo">
-                    <option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>
-                </volist>
-              </select>
-            </span>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -93,7 +85,7 @@
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/optimizegoodsadd?id={$dinfo.id}&type=10" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
 
