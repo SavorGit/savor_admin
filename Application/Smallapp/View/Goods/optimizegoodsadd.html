@@ -1,0 +1,285 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/goods/optimizegoodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<div class="pageFormContent modal-body">
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					商品类型:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="type" id="goods_gtype" class="form-control bs-select" title="请选择..." data-size="20" required>
+						<volist name="goods_types" id="gtype">
+							<option value="{$key}" <if condition="$vinfo['type'] eq $key"> selected </if> > {$gtype}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="name" type="text" value="{$vinfo.name}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row " id="good_goods_cate">
+				<label class="col-xs-12 col-sm-2 control-label">好物圈类目：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="wx_category" type="text" value="{$vinfo.wx_category}" class="form-control"/>
+					<span class="tips">注:请按照微信好物圈物品类目表进行填写如：酒类,洋酒,金酒</span>
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_price">
+				<label class="col-xs-12 col-sm-2 control-label">价格：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="price" type="text" value="{$vinfo.price}" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_integral">
+				<label class="col-xs-12 col-sm-2 control-label">积分：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="rebate_integral" type="text" value="{$vinfo.rebate_integral}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_appid">
+				<label class="col-xs-12 col-sm-2 control-label">APPID：</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="appid" class="form-control bs-select" data-size="20">
+						<option value="">请选择</option>
+						<volist name=":C('WXAPPIDS')" id="vo">
+							<option value="{$key}" <if condition="$vinfo['appid'] eq $key"> selected </if> > {$vo}</option>
+						</volist>
+					</select>
+				</div>
+
+			</div>
+
+			<div class="form-group row" id="goods_buybutton">
+				<label class="col-xs-12 col-sm-2 control-label">购买按钮：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="buybutton" type="text" value="{$vinfo.buybutton}" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">链接URL：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="jd_url" type="text" value="{$vinfo.jd_url}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row send_time1" id="goods_start_date">
+				<label class="col-xs-12 col-sm-2 control-label">开始日期：</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="input-group date form_datetime" data-date="{$vinfo.start_date}" data-ymd="true">
+						<input name="start_date" type="text" size="16" class="form-control date" placeholder="发送日期" value="{$vinfo.start_date}">
+						<span class="input-group-btn">
+								<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+								<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+							</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row send_time2" id="goods_end_date">
+				<label class="col-xs-12 col-sm-2 control-label">结束日期：</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="input-group date form_datetime" data-date="{$vinfo.end_date}" data-ymd="true">
+						<input name="end_date" type="text" size="16" class="form-control date" placeholder="发送日期" value="{$vinfo.end_date}" >
+						<span class="input-group-btn">
+							<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+							<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group row" id="goods_storebuy">
+				<label class="col-xs-12 col-sm-2 control-label">
+					是否店内购买：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="hidden" name="is_storebuy" value="0">
+					<input type="checkbox" value="1" class="make-switch status" name="is_storebuy" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.is_storebuy eq 1" >checked</if>>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					资源类型:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="inline-radio-container">
+						<label class="radio-inline">
+							<input type="radio" name="clicktype" id="1" value='1' <if condition="1 eq $vinfo['media_type']">checked</if>>
+							<span>视频</span>
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="clicktype" id="2" value='2' <if condition="2 eq $vinfo['media_type']">checked</if>>
+							<span>图片</span>
+						</label>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" id="defaultpic" <if condition="$vinfo['media_type'] eq 1">style="display:none;"</if> >
+				<label class="col-xs-12 col-sm-2 control-label">
+					图片：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="javascript:void(0)">
+								<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+									<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									<else />
+									<img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+								</if>
+								<span id="media_idimgname"></span>
+							</a>
+						</div>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+								选择图片
+							</a>
+							<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" id="defaultvideo" <if condition="$vinfo['media_type'] eq 2">style="display:none;"</if> >
+				<label class="col-xs-12 col-sm-2 control-label">
+					视频：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_vid&rtype=1" data-browse-file>
+								<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+									<img id="media_vidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+									<else />
+									<img id="media_vidimg" src="{$vinfo.oss_addr}?x-oss-process=video/snapshot,t_1000,f_jpg,w_450" border="0" />
+								</if>
+								<span id="media_vidimgname">{$vinfo.name}</span>
+							</a>
+						</div>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_vid&rtype=1" data-browse-file>
+								选择视频
+							</a>
+							<input type="hidden" name="media_vid" id="media_vid" value="{$vinfo.media_id}">
+							<a id="bntt" href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" id="hd_range">
+				<label class="col-xs-12 col-sm-2 control-label">
+					互动范围:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="inline-radio-container">
+						<volist name=":C('GOODS_SCOPE')" id="vo">
+							<label class="radio-inline">
+								<input type="radio" name="scope" id="{$key}" value='{$key}' <if condition="$key eq $vinfo['scope']">checked</if>>
+								<span>{$vo}</span>
+							</label>
+						</volist>
+					</div>
+				</div>
+			</div>
+
+		<div id="goods_detailimg">
+			<foreach name="detail_imgs" item="dinfo" >
+			<div class="form-group row" >
+			<label class="col-xs-12 col-sm-2 control-label">
+				详情页图片{$dinfo.id}：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($dinfo['oss_addr'] eq 'NULL') OR $dinfo['oss_addr'] eq ''">
+								<img id="{$dinfo.imgid}img" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="{$dinfo.imgid}img" src="{$dinfo.oss_addr}" border="0" />
+							</if>
+							<span id="{$dinfo.imgid}imgname"></span>
+						</a>
+					</div>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="detailmedia_id[{$dinfo.id}]" id="{$dinfo.imgid}" value="{$dinfo.media_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+			</div>
+			</foreach>
+		</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					审核状态:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="status" class="form-control bs-select" data-size="20" required>
+						<volist name=":C('GOODS_STATUS')" id="vo">
+							<option value="{$key}" <if condition="$vinfo['status'] eq $key"> selected </if> > {$vo}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+</form>
+</div>
+
+<script>
+    $("input[name='clicktype']").click(function() {
+        var id = $(this).attr("id");
+        if (id == 1) {
+            $("#defaultvideo").show();
+            $("#defaultpic").hide();
+        } else {
+            $("#defaultvideo").hide();
+            $("#defaultpic").show();
+        }
+    });
+
+    $('#goods_gtype').change(function() {
+		if($(this).val()==10){
+            $('#goods_detailimg').show();
+            $('#goods_storebuy').show();
+            $('#good_goods_cate').show();
+		}else{
+            $('#goods_detailimg').hide();
+            $('#good_goods_cate').hide();
+
+            if($(this).val()==20){
+                $('#goods_storebuy').show();
+            }else{
+                $('#goods_storebuy').hide();
+            }
+
+		}
+
+        if($(this).val()==20){
+            $('#hd_range').show();
+        }else{
+            $('#hd_range').hide();
+        }
+    })
+    $('#goods_gtype').trigger('change');
+</script>
