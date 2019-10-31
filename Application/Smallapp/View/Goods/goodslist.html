@@ -39,7 +39,7 @@
             <span class="input-group-btn">
               <select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
                 <option value='0' >所有类型</option>
-                <volist name=":C('GOODS_TYPE')" id="ginfo">
+                <volist name="goods_types" id="ginfo">
                     <option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>
                 </volist>
               </select>

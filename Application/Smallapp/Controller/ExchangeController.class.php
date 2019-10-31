@@ -64,7 +64,7 @@ class ExchangeController extends BaseController {
     }
 
     public function exchange(){
-        $order_id = I('id',0,'intval');
+        $order_id = intval($_REQUEST['id']);
         $goods_type = I('goods_type',0,'intval');
         $m_order = new \Admin\Model\Smallapp\ExchangeModel();
         $res_order = $m_order->getInfo(array('id'=>$order_id));
@@ -114,7 +114,7 @@ class ExchangeController extends BaseController {
                 $this->display('exchange');
             }
         }else{
-            $hash_ids_key = C('HASH_IDS_KEY');
+            $hash_ids_key = C('HASH_IDS_KEY_ADMIN');
             $hashids = new \Common\Lib\Hashids($hash_ids_key);
             $params = $hashids->encode($order_id);
             $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';

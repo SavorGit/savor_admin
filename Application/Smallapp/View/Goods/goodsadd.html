@@ -8,7 +8,7 @@
 				</label>
 				<div class="col-xs-12 col-sm-10">
 					<select name="type" id="goods_gtype" class="form-control bs-select" title="请选择..." data-size="20" required>
-						<volist name=":C('GOODS_TYPE')" id="gtype">
+						<volist name="goods_types" id="gtype">
 							<option value="{$key}" <if condition="$vinfo['type'] eq $key"> selected </if> > {$gtype}</option>
 						</volist>
 					</select>

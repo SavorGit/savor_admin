@@ -95,7 +95,7 @@ class OrderController extends BaseController {
             }
             $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
             $res_order_integralrecord = $m_user_integralrecord->getInfo(array('jdorder_id'=>$res_order['id']));
-            if(!empty($res_order_integralrecord)){
+            if(!empty($res_order_integralrecord) && !empty($res_order_integralrecord['integral'])){
                 $this->output('该订单奖励积分已发放', 'order/orderlist',2,0);
             }
             $m_user = new \Admin\Model\Smallapp\UserModel();
@@ -106,7 +106,12 @@ class OrderController extends BaseController {
             $record_data = array('openid'=>$user_info['openid'],'integral'=>$integral,'goods_id'=>$res_order['goods_id'],
                 'jdorder_id'=>$res_order['id'],'content'=>$res_order['amount'],'type'=>3,
                 'integral_time'=>date('Y-m-d H:i:s'),'status'=>1);
-            $m_user_integralrecord->add($record_data);
+
+            if(!empty($res_order_integralrecord)){
+                $m_user_integralrecord->updateData(array('id'=>$res_order_integralrecord['id']),$record_data);
+            }else{
+                $m_user_integralrecord->add($record_data);
+            }
 
             $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$user_info['openid']));
