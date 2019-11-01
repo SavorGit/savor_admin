@@ -1,16 +1,16 @@
 <?php
 /**
- * @desc   閿�鍞-鏈嶅姟
+ * @desc   销售端-服务模型
  * @author zhang.yingtao
- *
+ * @since  2019-11-01
  */
 
 namespace Admin\Model\Integral;
 use Admin\Model\BaseModel;
 use Common\Lib\Page;
-class IntegralServiceModel extends BaseModel{
+class ServiceMxModel extends BaseModel{
 	
-	protected $tableName='integral_service';
+	protected $tableName='integral_service_model';
 	public function getList($fields,$where,$order,$start,$size){
 	    $list = $this->alias('a')
 	                 ->join('savor_sysuser user on a.uid=user.id','left')
