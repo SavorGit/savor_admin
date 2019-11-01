@@ -19,7 +19,7 @@ class ServiceController extends BaseController {
         $this->assign('pageNum',$start);
         $order = I('_order','id');
         $this->assign('_order',$order);
-        $sort = I('_sort','desc');
+        $sort = I('_sort','asc');
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         
@@ -84,6 +84,12 @@ class ServiceController extends BaseController {
             $name = I('name','','trim');
             $type = I('type',0,'intval');
             $desc = I('desc','','trim');
+            $where = [];
+            $where['name']   = $name;
+            $where['status'] = 1;
+            $where['id']     = array('neq',$id);
+            $info = $m_integral_service->getRow('id',$where);
+            if(!empty($info)) $this->error('该服务名称已存在!');
             
             $data = [];
             $data['name'] = $name;

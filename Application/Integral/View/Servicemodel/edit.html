@@ -1,0 +1,50 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/integral/servicemodel/edit" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+
+    
+    <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th><input type="checkbox" data-check="all" data-parent=".pageContent"> 全选</th>
+            <th>服务ID</th>
+            <th>服务名称</th>
+            <th>服务类型</th>
+            <th>服务说明</th>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="service_list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="选择"><input type="checkbox" <php> if(in_array($vlist[id],$service_ids_arr)){</php>checked="checked" <php>}</php>  name="ids[]" value="{$vlist.id}"></td>
+              <td data-title="序号">{$vlist.id}</td>
+              <td data-title="服务名称">{$vlist.name}</td>
+              
+              <td data-title="服务类型">{$service_type[$vlist['type']]}</td>
+              <td data-title="服务说明">{$vlist.desc}</td>
+              
+          </volist>
+          </tbody>
+        </table>
+        <div class="modal-body">
+		<div class="form-group row">
+	        <label class="col-xs-12 col-sm-2 control-label">
+	         模型名称:
+	        </label>
+	        <div class="col-xs-12 col-sm-10">
+	           <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
+	        </div>
+      	</div>
+        
+            
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>
