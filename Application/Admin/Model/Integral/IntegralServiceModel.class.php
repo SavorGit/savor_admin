@@ -19,7 +19,7 @@ class IntegralServiceModel extends BaseModel{
 	                 ->order($order)
 	                 ->limit($start,$size)
 	                 ->select();
-	    $count = count($data);
+	    $count = count($list);
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();
 	    $data = array('list'=>$list,'page'=>$show);
