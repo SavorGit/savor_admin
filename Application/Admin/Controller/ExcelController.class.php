@@ -116,6 +116,8 @@ class ExcelController extends Controller
 	         $tmpname = '投屏时长分布';
 	     }else if($filename =='easySellAds'){
 	         $tmpname = '易售媒体广告模板';
+	     }else if($filename =='fourBwtoLc'){
+	         $tmpname = '四地版位数据统计';
 	     }
 
 
@@ -5202,6 +5204,74 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('addr','地址'),
             array('log','经度'),
             array('lat','纬度'),
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function sdBwDataToLc(){
+        $start_time = '2019-11-01 18:00:00';
+        $end_time   = '2019-11-01 22:00:00';
+        $area_id = I('get.area_id',0,'intval');
+        $page  = I('get.page',0,'intval');
+        $pagesize = I('get.pagesize',1000,'intval');
+        if($page){
+            $offset = ($page-1)*$pagesize;
+            
+            $limit = 'limit '. $offset.','.$pagesize;
+        }else {
+            $limit = '';
+        }
+        $heart_date = '20191101';
+        $sql ="select box.id box_id,box.mac box_mac, area.region_name,hotel.id hotel_id,hotel.name hotel_name,room.name room_name    from savor_box box 
+               left join savor_room room on box.room_id=room.id
+               left join savor_hotel hotel on hotel.id=room.hotel_id
+               left join savor_area_info area on hotel.area_id= area.id
+               where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
+               and hotel.hotel_box_type in(2,3,6) and hotel.id and area.id=".$area_id." $limit";
+        //echo $sql ;exit;
+        $data = M()->query($sql);
+        $redis = SavorRedis::getInstance();
+        $redis->select(14);
+        foreach($data as $key=>$v){
+            //是否开机
+            $sql ="select (hour18+hour19+hour20+hour21+hour22) as nums from savor_heart_all_log where box_id=".$v['box_id']." and date='".$heart_date."'";
+            $h_rt = M()->query($sql);
+            if($h_rt[0]['nums']>=12){
+                $data[$key]['is_kj'] = '是';
+            }else {
+                $data[$key]['is_kj'] = '否';
+            }
+            $sql ="select count(id) as nums from `savor_smallapp_forscreen_record` where box_mac='".$v['box_mac']."' and create_time>'".$start_time."' and create_time<'".$end_time."' and action=40";
+            
+            $d_rt = M()->query($sql);
+            
+            if($d_rt[0]['nums']>0){
+                $data[$key]['is_db'] = '是';
+            }else {
+                $data[$key]['is_db'] = '否';
+            }
+            //是否轮播商品广告
+            $l_rt = $redis->get('smallappsale:activitygoods:loopplay:'.$v['hotel_id']);
+            if(empty($l_rt)){
+                $data[$key]['is_lb'] = '否';
+            }else {
+                $l_rt = json_decode($l_rt,true);
+                if(in_array(127,$l_rt)) $data[$key]['is_lb'] = '是';
+                else $data[$key]['is_lb'] = '否';
+            }
+        }
+        $xlsName = '四地版位数据统计';
+        $filename = 'fourBwtoLc';
+        
+        $xlsCell = array(
+            array('region_name','地区'),
+            
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            
+            array('is_kj','是否开机'),
+            array('is_db','是否点播商品广告'),
+            array('is_lb','是否轮播商品广告'),
+            
         );
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
