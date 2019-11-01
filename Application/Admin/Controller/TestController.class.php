@@ -1085,4 +1085,13 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         exit;
 
     }
+
+    public function decodeoid(){
+        $oid = $_REQUEST['oid'];
+        $hash_ids_key = 'Q1t80oXSKl';
+        $hashids = new \Common\Lib\Hashids($hash_ids_key);
+        $decode_info = $hashids->decode($oid);
+        echo $decode_info[0];
+        exit;
+    }
 }
