@@ -5208,9 +5208,17 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     public function sdBwDataToLc(){
-        $start_time = '2019-11-01 18:00:00';
-        $end_time   = '2019-11-01 22:00:00';
+        $start_time = I('get.start_time','','trim');
+        $end_time   = I('get.end_time','','trim');
+        //$start_time = '2019-11-01 18:00:00';
+        //$end_time   = '2019-11-01 22:00:00';
+        if(empty($start_time) || empty($end_time)){
+            exit('请填写开始和结束时间');
+        }
         $area_id = I('get.area_id',0,'intval');
+        if(empty($area_id)){
+            exit('请填写区域id');
+        }
         $page  = I('get.page',0,'intval');
         $pagesize = I('get.pagesize',1000,'intval');
         if($page){
@@ -5220,7 +5228,10 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         }else {
             $limit = '';
         }
-        $heart_date = '20191101';
+        $heart_date = date('Ymd',strtotime($start_time));
+        /* echo $start_time."<br>";
+        echo $end_time.'<br>';
+        echo $heart_date;exit; */
         $sql ="select box.id box_id,box.mac box_mac, area.region_name,hotel.id hotel_id,hotel.name hotel_name,room.name room_name    from savor_box box 
                left join savor_room room on box.room_id=room.id
                left join savor_hotel hotel on hotel.id=room.hotel_id
