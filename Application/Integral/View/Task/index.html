@@ -47,7 +47,14 @@
               <td data-title="创建、编辑人">{$vlist.user_name}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
-              <td data-title="针对商家">0</td>
+              <td data-title="针对商家">
+              <if condition="$vlist.hotel_num eq 0"> 
+              	<a data-tip="请选择商家" rel="integral/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_url}/integral/task/selecthotel?task_id={$vlist.id}">请选择商家</a>
+              <else/> 
+                <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="ingtegral/haveselecthotel"
+href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_num}</a>
+              </if>
+              </td>
               <td data-title="状态" style="text-align:center;">
 	                <if condition="$vlist['status'] eq 1">
 	                  <a style="width:60px;" data-tip="已上线" target="ajaxTodo" href="{$host_url}/Integral/task/changeStatus?id={$vlist.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>

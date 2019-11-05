@@ -33,7 +33,12 @@ class TaskController extends BaseController {
         $fields = 'a.id,a.name,a.type,a.create_time,a.update_time,user.remark user_name,a.status,a.hotel_ids';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
         $list = $m_integral_task->getList($fields, $where, $orders, $start, $size);
-        
+        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+        foreach($list['list'] as $key=>$v){
+            $count = $m_task_hotel->where(array('task_id'=>$v['id']))->count();
+            $list['list'][$key]['hotel_num'] = $count;
+        }
+        //print_r($list['list']);exit;
         $this->assign('integral_task_type',$this->integral_task_type);
         
         $this->assign('list',$list['list']);
@@ -122,6 +127,7 @@ class TaskController extends BaseController {
         $m_task = new \Admin\Model\Integral\TaskModel();
         $where['id'] = $id;
         $data['status'] = $status;
+        $data['update_time'] = date('Y-m-d H:i:s');
         $ret = $m_task->updateData($where, $data);
         if($ret){
             if($status==1) $msg = '上线成功';
@@ -209,6 +215,73 @@ class TaskController extends BaseController {
             
             $this->display();
         }
+    }
+    public function selecthotel(){
+        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+        if(IS_POST){
+            $task_id = I('post.task_id');
+            
+            $ids = I('post.ids');
+            $data = [];
+            $userinfo = session('sysUserInfo');
+            $uid = $userinfo['id'];
+            $create_time = date('Y-m-d H:i:s');
+            foreach($ids as $key=> $v){
+                $data[$key]['task_id'] = $task_id;
+                $data[$key]['hotel_id']= $v;
+                $data[$key]['uid']     = $uid;
+                $data[$key]['create_time'] =$create_time;
+            }
+            $ret = $m_task_hotel->addAll($data);
+            if($ret){
+                echo '<script>
+                navTab.closeTab("integral/selecthotel");
+                navTab.reloadFlag("task/index");
+                alertMsg.correct("发布成功！");</script>';
+                //$this->output('发布成功了!', 'task/index');
+            }else {
+                echo '<script>
+                navTab.closeTab("integral/selecthotel");
+                navTab.reloadFlag("task/index");
+                alertMsg.success("发布失败！");</script>';
+                //$this->output('发布失败!', 'task/index');
+            }
+        }else{
+            $area_id = I('area_id');
+            $task_id = I('get.task_id',0,'intval');
+            
+            $where = [];
+            $where['task_id'] = $task_id;
+            $count = $m_task_hotel->where($where)->count();
+            if(!empty($count)) {
+                echo '<script>
+                navTab.closeTab("integral/selecthotel");
+                alertMsg.error("该任务已选择酒楼！");</script>';
+            }
+            $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type,a.mobile';
+            $where = [];
+            $where['a.status']    = 1;
+            $where['hotel.state'] = 1;
+            $where['hotel.flag']  = 0;
+            if(!empty($area_id)){
+                $where['area.id'] = $area_id;
+            }
+            $order = 'convert(hotel.name using gbk) asc';
+            //选择酒楼
+            $m_merchant = new \Admin\Model\Integral\MerchantModel();
+            $hotel_list = $m_merchant->alias('a')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on area.id=hotel.area_id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->select();
+            //print_r($hotel_list);exit;
+            $this->assign('list',$hotel_list);
+            $this->assign('task_id',$task_id);
+            $this->display();
+        }
+        
     }
     private function checkMainParam($data){
         //print_r($data);exit;
