@@ -34,6 +34,7 @@ class TaskController extends BaseController {
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
         $list = $m_integral_task->getList($fields, $where, $orders, $start, $size);
         
+        $this->assign('integral_task_type',$this->integral_task_type);
         
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
@@ -133,18 +134,80 @@ class TaskController extends BaseController {
         }
     }
     public function edit(){
+        $id = I('id',0,'intval');
         
+        $m_task = new \Admin\Model\Integral\TaskModel();
         if(IS_POST){
             
-        }else{
-            $id = I('get.id',0,'intval');
+            $data = [];
+            $data['name']     = I('post.name','','trim');
+            $data['media_id'] = I('post.media_id',0,'intval');
+            $data['type']     = I('post.type',0,'intval');        //任务类型
+            $data['desc']     = I('post.desc','','trim');
+            $data['start_time'] = I('post.start_time','','trim');
+            $data['end_time'] = I('post.end_time','','trim');
+            $data['is_long_time'] = I('post.is_long_time',0,'intval');
+            $data['integral'] = I('post.integral',0,'intval');
+            //print_r($data);exit;
             
-            $m_task = new \Admin\Model\Integral\TaskModel();
+            $this->checkMainParam($data);
+            if($data['type']==1){//系统任务
+                $task_content = [];
+                $task_content['task_content_type'] = I('post.task_content_type',0,'intval'); //任务内容
+            
+                if($task_content['task_content_type']==1){//电视开机
+                    $task_content['lunch_start_time']   = I('post.kj_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.kj_lunch_end_time');
+                    $task_content['dinner_start_time']   = I('post.kj_dinner_start_time');
+                    $task_content['dinner_end_time']     = I('post.kj_dinner_end_time');
+                    $task_content['heart_time']['type'] = I('post.heart_time',0,'intval');
+                    $task_content['heart_time']['value'] = I('post.heart_time_'.$task_content['heart_time']['type'],0,'intval');
+            
+                }else if($task_content['task_content_type']==2){//电视互动
+                    $task_content['lunch_start_time']   = I('post.hd_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.hd_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.hd_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.hd_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
+                    $task_content['user_interact']['type'] = I('post.user_interact',0,'intval');
+                    $task_content['user_interact']['value'] = I('post.user_interact_'.$task_content['user_interact']['type'],0,'intval');
+                }
+                //print_r($task_content);exit;
+                $this->chekInfoParam($task_content);
+                //echo "ddd";exit;
+                $data['task_info'] = json_encode($task_content);
+            }
+            $data['status'] = 0;
+            $data['flag']   = 1;
+            $userinfo = session('sysUserInfo');
+            $data['uid'] = $userinfo['id'];
+            $ret = $m_task->updateData(array('id'=>$id), $data);
+            if($ret){
+                $this->output('编辑成功', "task/index");
+            }else {
+                $this->output('编辑失败', "task/index",2,0);
+            }
+            
+        }else{
+            
             $where = [];
             $where['id'] = $id;
             $task_info = $m_task->getRow('*',$where);
             $task_content = json_decode($task_info['task_info'],true);
             
+            $m_media = new \Admin\Model\MediaModel();
+            $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
+            
+            $m_info = $m_media->getRow('oss_addr',array('id'=>$task_info['media_id']));
+            $task_info['oss_addr'] = $oss_host.$m_info['oss_addr'];
+            
+            
+            $this->assign('integral_task_type',$this->integral_task_type);
+            $this->assign('system_task_content',$this->system_task_content);
+            $this->assign('vinfo',$task_info);
+            $this->assign('cinfo',$task_content);
+            
+            $this->display();
         }
     }
     private function checkMainParam($data){
@@ -166,12 +229,11 @@ class TaskController extends BaseController {
         if(empty($data['integral'])) $this->error('请输入奖励积分');
     }
     private function chekInfoParam($data){
-        
         if($data['task_content_type']==2){
             if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
         }else if($data['task_content_type']==1){
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
-            if(empty($data['heart_time']['val'])) $this->error('请输入开机时长');
+            if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');
         }
     }
 }
