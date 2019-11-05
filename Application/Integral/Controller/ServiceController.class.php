@@ -47,13 +47,18 @@ class ServiceController extends BaseController {
         if(IS_POST){
             $m_integral_service = new \Admin\Model\Integral\IntegralServiceModel();
             $name = I('name','','trim');
+            $m_name = I('m_name','','trim');
             if(empty($name)) $this->error('服务名称不能为空');
             $info = $m_integral_service->getRow('id',array('name'=>$name,'status'=>1));
             if(!empty($info)) $this->error('该服务名称已存在');
+            if(empty($m_name)) $this->error('模块名称不能为空');
+            $info = $m_integral_service->getRow('id',array('m_name'=>$m_name,'status'=>1));
+            if(!empty($info)) $this->error('该模块名称已存在');
             $type = I('type',0,'intval');
             $desc = I('desc','','trim');
             $data = [];
             $data['name'] = $name;
+            $data['m_name'] = $m_name;
             $data['type'] = $type;
             $data['desc'] = $desc;
             
@@ -82,6 +87,7 @@ class ServiceController extends BaseController {
         if(IS_POST){
             $id   = I('id',0,'intval');
             $name = I('name','','trim');
+            $m_name = I('m_name','','trim');
             $type = I('type',0,'intval');
             $desc = I('desc','','trim');
             $where = [];
@@ -91,8 +97,16 @@ class ServiceController extends BaseController {
             $info = $m_integral_service->getRow('id',$where);
             if(!empty($info)) $this->error('该服务名称已存在!');
             
+            $where = [];
+            $where['m_name'] = $m_name;
+            $where['status'] = 1;
+            $where['id']     = array('neq',$id);
+            $info = $m_integral_service->getRow('id',$where);
+            if(!empty($info)) $this->error('该模块名称已存在!');
+            
             $data = [];
             $data['name'] = $name;
+            $data['m_name'] = $m_name;
             $data['type'] = $type;
             $data['desc'] = $desc;
             $userinfo = session('sysUserInfo');
@@ -107,7 +121,7 @@ class ServiceController extends BaseController {
         }else {
             $id   = I('id',0,'intval');
             
-            $info = $m_integral_service->getRow('id,name,type,desc',array('id'=>$id));
+            $info = $m_integral_service->getRow('id,name,m_name,type,desc',array('id'=>$id));
             $this->assign('vinfo',$info);
             $this->assign('service_type',$service_type);
             $this->display();

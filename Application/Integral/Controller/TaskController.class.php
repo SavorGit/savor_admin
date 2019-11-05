@@ -132,6 +132,21 @@ class TaskController extends BaseController {
             $this->output($msg, "task/index",2,0);
         }
     }
+    public function edit(){
+        
+        if(IS_POST){
+            
+        }else{
+            $id = I('get.id',0,'intval');
+            
+            $m_task = new \Admin\Model\Integral\TaskModel();
+            $where = [];
+            $where['id'] = $id;
+            $task_info = $m_task->getRow('*',$where);
+            $task_content = json_decode($task_info['task_info'],true);
+            
+        }
+    }
     private function checkMainParam($data){
         //print_r($data);exit;
         if(empty($data['name'])) $this->error('请输入任务名称');
