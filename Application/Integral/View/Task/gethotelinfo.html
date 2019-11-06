@@ -1,0 +1,49 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/menu/selecthotel" method="post" >
+<div class="pageHeader">
+</div>
+<div class="pageContent">
+    <div id="w_list_print">
+    <div class="no-more-tables">
+
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+          	<th>所属城市</th>
+            <th>商家名称</th>
+            <th>商家地址</th>
+			<th>商家状态</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="hotel_list" id="vo">
+            <tr target="sid_user">
+              <td data-title="所属城市">{$vo.region_name}</td>
+              <td data-title="商家名称"><php>echo getFirstCharter($vo['hotel_name']);</php>--{$vo.hotel_name}</td>
+              <td data-title="商家地址">{$vo.addr}</td>
+              <td data-title="商家地址">
+              <if condition="$vo.state eq 1">
+              	正常
+              <elseif condition="$vo.state eq 2" />
+              	冻结
+              <elseif condition="$vo.state eq 3" />
+              	报损
+              </if>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+
+      </div>
+
+    <div class="modal-footer">
+
+    </div>
+
+</div>
+
+  </div></form>
+<script>
+
+</script>

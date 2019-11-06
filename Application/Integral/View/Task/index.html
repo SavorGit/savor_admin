@@ -67,13 +67,20 @@ href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
+                  <if condition="$vlist.hotel_num eq 0" >
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/edit?id={$vlist.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+                  </if>
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/Integral/task/delete?id={$vlist.id}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
-                  
+                  <a warn="警告" data-tip="复制" title="你确定要复制新增任务吗？" title="复制新增任务"  target="ajaxTodo" calback="navTabAjaxDone"
+
+                       href="{$host_url}/integral/task/copy?task_id={$vlist.id}"
+                       class="btn btn-success btn-icon">
+                        <i class="fa fa-copy"></i>
+                    </a>
                   
                 </div>
               </td>

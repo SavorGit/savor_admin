@@ -2,7 +2,7 @@
 <!--显示列表样式1 start-->
 <div class="pageHeader top-filter">
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/integral/task/selecthotel" method="post" >
-    
+    <input type="hidden" name="is_s" value='1'>
 
     <div class="searchBar">
       <div class="clearfix">
@@ -17,16 +17,38 @@
 	              </label>
 	
 	                <span class="input-group-btn input-group-sm">
-	              <select name="area_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+	              <!-- <select name="area_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
 	                <option value="0" >全国</option>
-	                <volist name="area" id="vo">
-	                  <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+	                <volist name="area_list" id="vo">
+	                  <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option><br>
 	                </volist>
-	              </select>
-	            </span>
+	              </select> -->
+		              <select name="include_a[]" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" multiple="multiple" >
+	                
+	                	<volist name="area_list" id="vo">
+	                  		<option value="{$vo.id}" <php>if(in_array($vo['id'],$include_ak)){ </php>selected<php>}</php>>
+	                  			{$vo.region_name}
+	                  		</option><br>
+	                	</volist>
+	              	  </select>
+	               </span>
+	            </div>
+	            <div class="input-group-sm input-group">
+	              <label class="col-xs-1 col-sm-1 control-label">
+	                                           包&nbsp;&nbsp;含&nbsp;&nbsp;酒&nbsp;&nbsp;楼：
+	              </label>
+	
+	              <span class="input-group-btn input-group-sm">
+		              <select name="in_task_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
+		                <option value="0" >请选择任务包含的酒楼</option>
+		                <volist name="task_list" id="vo">
+		                  <option value="{$vo.id}" <if condition="$vo.id eq $in_task_id">selected</if>>{$vo.name}</option><br>
+		                </volist>
+		              </select>
+	              </span>
 	            </div>
 	            <div class="input-group input-group-sm">
-		          <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称">
+		          <!-- <input type="text" class="form-control" name="name" value="{$name}" placeholder="酒店名称"> -->
 		            <span class="input-group-btn">
 		              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
 		            </span>
@@ -80,7 +102,7 @@
               <td data-title="酒店名称"><php>echo getFirstCharter($vlist['hotel_name']);</php>--{$vlist.hotel_name}</td>
               <td data-title="所在城市">{$vlist.region_name}</td>
               <td data-title="是否重点">
-                {$vlist.hotel_box_type}
+                {$hotel_box_type[$vlist['hotel_box_type']]}
               </td>
               <td data-title="绑定手机号">{$vlist.mobile}</td>
               
