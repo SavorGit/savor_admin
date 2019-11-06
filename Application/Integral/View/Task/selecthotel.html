@@ -40,7 +40,7 @@
 	
 	              <span class="input-group-btn input-group-sm">
 		              <select name="in_task_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" size="15">
-		                <option value="0" >请选择任务包含的酒楼</option>
+		                <option value="0" >--请选择任务包含的酒楼--</option>
 		                <volist name="task_list" id="vo">
 		                  <option value="{$vo.id}" <if condition="$vo.id eq $in_task_id">selected</if>>{$vo.name}</option><br>
 		                </volist>

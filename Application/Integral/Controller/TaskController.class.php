@@ -266,7 +266,7 @@ class TaskController extends BaseController {
             if($in_task_id){
                 $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type,m.mobile';
                 $where = [];
-                $where['a.status']    = 1;
+                $where['m.status']    = 1;
                 $where['hotel.state'] = 1;
                 $where['hotel.flag']  = 0;
                 $where['a.task_id']   = $in_task_id;
@@ -283,6 +283,7 @@ class TaskController extends BaseController {
                                            ->where($where)
                                            ->order($order)
                                            ->select();
+                $this->assign('in_task_id',$in_task_id);
             }else {
                 $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type,a.mobile';
                 $where = [];
