@@ -1094,4 +1094,29 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo $decode_info[0];
         exit;
     }
+
+    public function hotelinvitetomerchant(){
+        //1.排查绑定多个账号的用户
+        $model = M();
+        $sql = "select * from savor_hotel_invite_code where type=2 and state=1 and flag=0 and invite_id=0 order by hotel_id asc ";
+        $res_hotel_invite = $model->query($sql);
+        $hotels = array();
+        foreach ($res_hotel_invite as $v){
+            $hotels[$v['hotel_id']][]=array('id'=>$v['id'],'bind_mobile'=>$v['bind_mobile']);
+        }
+//        print_r($hotels);
+        $hotel_accounts = array();
+        foreach ($hotels as $k=>$v){
+            if(count($v)>1){
+                $sql_hotel = "select * from savor_hotel where id=$k";
+                $res_hotel = $model->query($sql_hotel);
+                $hotel_str = $res_hotel[0]['name'];
+                foreach ($v as $bv){
+                    $hotel_str.=','.$bv['bind_mobile'];
+                }
+                $hotel_accounts[]=$hotel_str;
+            }
+        }
+        print_r($hotel_accounts);
+    }
 }
