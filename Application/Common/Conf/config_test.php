@@ -56,6 +56,16 @@ $config_db =  array(
         'DB_PARAMS' => array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL)
     ),
  	'REDIS_CONFIG' => $redis,
+    'OSS_HOST'    => 'oss-cn-beijing.aliyuncs.com',  //注意不要在前面加 http://
+    //'OSS_HOST'=>'devp.oss.littlehotspot.com',
+    'OSS_BUCKET' => 'redian-development',                     //资源空间,即桶
+    'OSS_HOST_NEW'=> 'dev-oss.littlehotspot.com',
+    'OSS_SYNC_CALLBACK_URL'=>'alioss/syncNotify', //上传异步回调地址
+    'QUEUE_ENDPOINT'=>'https://1379506082945137.mns.cn-beijing.aliyuncs.com',
+    'TOPIC_NAME'=>'test-topic',
+    'REGION_ID'  => 'cn-beijing',
+    
+    'UMENG_PRODUCTION_MODE'=>'false',
     
 );
 
