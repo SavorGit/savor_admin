@@ -1,0 +1,106 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/integral/merchant/merchantadd" method="post">
+      <input type="hidden" name="id" value="{$id}"/>
+      <input type="hidden" name="merchant_id" value="{$merchant_id}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <if condition="$merchant_id gt 0">
+          商家名称：{$merchant_info.hotel_name}
+        <else />
+          新增商家
+        </if>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>操作步骤</th>
+              <th>名称</th>
+              <th>内容</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <tr target="sid_user">
+              <td data-title="操作步骤"><span class="text-danger">步骤一：</span></td>
+              <td data-title="名称"><span class="text-danger">选择酒楼</span></td>
+              <td data-title="内容">{$merchant_info.step1}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" title="选择酒楼" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=1" class="btn btn-default btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <tr target="sid_user">
+              <td data-title="操作步骤"><span class="text-danger">步骤二：</span></td>
+              <td data-title="名称"><span class="text-danger">选择服务模型</span></td>
+              <td data-title="内容">{$merchant_info.step2}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=2" class="btn btn-default btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <tr target="sid_user">
+              <td data-title="操作步骤"><span class="text-danger">步骤三：</span></td>
+              <td data-title="名称"><span class="text-danger">选择积分渠道</span></td>
+              <td data-title="内容">{$merchant_info.step3}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=3" class="btn btn-default btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            <tr target="sid_user">
+              <td data-title="操作步骤"><span class="text-danger">步骤四：</span></td>
+              <td data-title="名称"><span class="text-danger">绑定管理员</span></td>
+              <td data-title="内容">{$merchant_info.step4}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=4" class="btn btn-default btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          <if condition="$id gt 0">
+            <tr target="sid_user">
+              <td data-title="操作步骤"><span class="text-danger">步骤五：</span></td>
+              <td data-title="名称"><span class="text-danger">确认创建</span></td>
+              <td data-title="内容"></td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a warn="创建商家" data-tip="创建商家" title="请确认以上选择的信息,无误后点击确定。" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=5"  class="btn btn-success btn-icon">
+                    <i class="fa fa-send"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </if>
+
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

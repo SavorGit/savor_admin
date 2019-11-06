@@ -1,0 +1,58 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/integral/merchant/merchantaddStep" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="id" type="hidden" value="{$id}"/>
+		<input name="merchant_id" type="hidden" value="{$merchant_id}"/>
+		<input name="step" type="hidden" value="2"/>
+		<div class="pageFormContent modal-body">
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					服务模型:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="smodel_id" id="smodel_id" class="form-control bs-select" title="请选择..." data-size="20" required>
+						<volist name="smodels" id="sinfo">
+							<option value="{$sinfo.id}" {$sinfo.is_select}> {$sinfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">基础服务：</label>
+				<div class="col-xs-12 col-sm-10">
+					<textarea id="base_service" type="textInput" class="form-control"></textarea>
+				</div>
+			</div>
+
+			<div class="form-group row ">
+				<label class="col-xs-12 col-sm-2 control-label">增值服务：</label>
+				<div class="col-xs-12 col-sm-10">
+					<textarea id="value_service" type="textInput" class="form-control"></textarea>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+</form>
+</div>
+
+<script>
+
+    $('#smodel_id').change(function() {
+        var service_model_id = $(this).val();
+        $.post("{$host_url}/integral/merchant/getServiceByModelid", {
+            model_id: service_model_id
+        }, function(data) {
+            $("#base_service").empty();
+            $("#base_service").val(data.base);
+
+            $("#value_service").empty();
+            $("#value_service").val(data.values);
+        }, "json");
+
+    })
+    $('#smodel_id').trigger('change');
+</script>

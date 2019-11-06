@@ -700,6 +700,22 @@ $config['MAIL_PASSWORD'] = 'mailpassword'; // 邮箱密码
 $config['MAIL_CHARSET'] = 'UTF-8';//编码
 $config['MAIL_AUTH'] = true;//邮箱认证
 $config['MAIL_HTML'] = true;//true HTML格式 false TXT格式
+
+$config['ALIYUN_SMS_CONFIG'] = array(
+    'send_invoice_addr_templateid'=>'SMS_176935152',
+    'activity_goods_send_salemanager'=>'SMS_176527162',
+    'merchant_login_invite_code'=>'SMS_176927351',
+);
+
+$config['CHANNEL_MERCHANT'] = array(
+    '1'=>'内购网'
+);
+$config['GROUP_RATE'] = array(
+    '100'=>'1.0',
+    '110'=>'1.1',
+    '120'=>'1.2',
+);
+
 return $config;
 
 
