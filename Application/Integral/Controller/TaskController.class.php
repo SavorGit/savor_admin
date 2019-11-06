@@ -282,6 +282,7 @@ class TaskController extends BaseController {
                                            ->field($fields)
                                            ->where($where)
                                            ->order($order)
+                                           ->limit(0,50)
                                            ->select();
                 $this->assign('in_task_id',$in_task_id);
             }else {
