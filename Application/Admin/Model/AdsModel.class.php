@@ -270,8 +270,8 @@ class AdsModel extends BaseModel{
 	
 	}
 
-	public function getWhere($where, $field){
-		$list = $this->where($where)->field($field)->select();
+	public function getWhere($where, $field,$order){
+		$list = $this->where($where)->field($field)->order($order)->select();
 		return $list;
 	}
 

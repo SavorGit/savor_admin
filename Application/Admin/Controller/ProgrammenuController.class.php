@@ -1160,7 +1160,7 @@ setEnclosure('"')
         switch ($m_type){
             case 0:
                 $where .= "	AND (`type`) = 2 ";
-                $result = $adModel->getWhere($where, $field);
+                $result = $adModel->getWhere($where, $field,'create_time desc');
                 // 获取宣传片
                 $result = $this->getAdsAcccounce($result);
                 // 获取广告占位符
