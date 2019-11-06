@@ -352,7 +352,7 @@ class TaskController extends BaseController {
         
         
         $task_info['name'] = $task_info['name'].'-'.date('YmdHis');
-        
+        $task_info['uid']  = $uid;
         
         $ret = $m_task->addData($task_info);
         if($ret){
