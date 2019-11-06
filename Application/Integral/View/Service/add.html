@@ -17,7 +17,14 @@
 	          模块名称(小程序代码用):
 	        </label>
 	        <div class="col-xs-12 col-sm-10">
-	           <input name="m_name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.m_name}" required>
+	           <!-- <input name="m_name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.m_name}" required> -->
+	           <select  name="m_name" class="form-control bs-select" required>
+          	  <option value="" selected="selected">请选择任务内容</option>
+          	  <foreach name="service_list" item="val" key="k">
+              	<option value="{$k}" <if condition="$vinfo.m_name eq $k"> selected </if> >{$val}</option>
+              </foreach>
+              
+          </select>
 	        </div>
       	</div>
         <div class="form-group row">

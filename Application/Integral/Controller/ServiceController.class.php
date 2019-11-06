@@ -73,6 +73,8 @@ class ServiceController extends BaseController {
                 $this->output('添加失败', "service/index",2,0);
             }
         }else{
+            $service_list = C('service_list');
+            $this->assign('service_list',$service_list);
             $this->assign('service_type',$service_type);
             $this->display();
         }
@@ -122,6 +124,8 @@ class ServiceController extends BaseController {
             $id   = I('id',0,'intval');
             
             $info = $m_integral_service->getRow('id,name,m_name,type,desc',array('id'=>$id));
+            $service_list = C('service_list');
+            $this->assign('service_list',$service_list);
             $this->assign('vinfo',$info);
             $this->assign('service_type',$service_type);
             $this->display();
