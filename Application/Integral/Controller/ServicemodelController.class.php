@@ -121,4 +121,27 @@ private  $servie_type;
             $this->display();
         }
     }
+    public function delete(){
+        $id = I('get.id');
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        $where = [];
+        $where['service_model_id'] = $id;
+        $where['status']  = 1;
+        $nums = $m_merchant->where($where)->count();
+        if(empty($nums)){
+            $m_service_model = new \Admin\Model\Integral\ServiceMxModel();
+            $where = [];
+            $where['id'] = $id;
+            $data = [];
+            $data['status'] = 0;
+            $ret = $m_service_model->updateData($where, $data);
+            if($ret){
+                $this->output('删除成功', "servicemodel/index");
+            }else {
+                $this->output('删除失败', "servicemod/index",2,0);
+            }
+        }else {
+            $this->error('该模型已被商家使用，不可删除');
+        }
+    }
 }
