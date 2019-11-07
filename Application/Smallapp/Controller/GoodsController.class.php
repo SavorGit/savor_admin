@@ -153,6 +153,110 @@ class GoodsController extends BaseController {
         $this->handle_goodsadd($template_html,$goods_list_f);
     }
 
+    public function withdrawgoodslist() {
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+
+        $where = array('type'=>30);
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        $start  = ($page-1) * $size;
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        $result = $m_goods->getDataList('*',$where, 'id desc', $start, $size);
+        $datalist = $result['list'];
+        $goods_types = C('GOODS_TYPE');
+        $goods_status = C('GOODS_STATUS');
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        foreach ($datalist as $k=>$v){
+            $datalist[$k]['typestr'] = $goods_types[$v['type']];
+            $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+
+            $fields = "count(DISTINCT hotel_id) as num";
+            $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'openid'=>'','type'=>1),'id desc');
+            $datalist[$k]['hotels'] = intval($res_hotelgoods['num']);
+        }
+
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('withdrawgoodslist');
+    }
+
+    public function withdrawgoodsadd(){
+        $id = I('id', 0, 'intval');
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        if(IS_GET){
+            $dinfo = array();
+            if($id){
+                $dinfo = $m_goods->getInfo(array('id'=>$id));
+                $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
+                $dinfo['end_date'] = date('Y-m-d',strtotime($dinfo['end_time']));
+            }
+            $this->assign('vinfo',$dinfo);
+            $this->display('withdrawgoodsadd');
+        }else{
+            $price = I('post.price',0,'intval');
+            $rebate_integral = I('post.rebate_integral',0,'intval');
+            $start_date = I('post.start_date','');
+            $end_date = I('post.end_date','');
+            $status = I('post.status',1,'intval');
+            $is_audit = I('post.is_audit',0,'intval');
+            if(empty($price)){
+                $this->output('价格不能为空', "goods/withdrawgoodsadd", 2, 0);
+            }
+            $name = intval($price).'元';
+            $type = 30;
+            $where = array('name'=>$name,'type'=>$type);
+            if($id){
+                $where['id']= array('neq',$id);
+                $res_goods = $m_goods->getInfo($where);
+            }else{
+                $res_goods = $m_goods->getInfo($where);
+            }
+            if(!empty($res_goods)){
+                $this->output('价格不能重复', "goods/withdrawgoodsadd", 2, 0);
+            }
+
+            $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'is_audit'=>$is_audit,'status'=>$status);
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', "goods/withdrawgoodsadd", 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $data['start_time'] = $start_time;
+            $data['end_time'] = $end_time;
+            if($id){
+                $m_goods->updateData(array('id'=>$id),$data);
+                $result = true;
+            }else{
+                $result = $m_goods->add($data);
+            }
+
+            if($result){
+                $this->output('操作成功', "goods/withdrawgoodslist");
+            }else{
+                $this->output('操作失败', "goods/withdrawgoods",2,0);
+            }
+
+        }
+    }
+
+
     private function handle_goodsadd($template_html,$goods_list_f){
         $id = I('id', 0, 'intval');
         $type = I('type',0,'intval');
