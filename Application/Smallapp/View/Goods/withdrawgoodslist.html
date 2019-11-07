@@ -73,8 +73,8 @@
               <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
               <td data-title="金额"><a class="click-able-title">{$dinfo.price}</a></td>
               <td data-title="所需积分">{$dinfo.rebate_integral}</td>
-              <td data-title="是否需要审核">{$dinfo.is_audit}</td>
-              <td data-title="创建人"></td>
+              <td data-title="是否需要审核">{$dinfo.is_audit_str}</td>
+              <td data-title="创建人">{$dinfo.creater}</td>
               <td data-title="针对商家">
                   <if condition="$dinfo.hotels gt 0">
                   <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="goods/hotelgoodslist" href="{$host_url}/smallapp/goods/hotelgoodslist?goods_id={$dinfo.id}" >
@@ -83,8 +83,8 @@
                   {$dinfo.hotels}
                   </if>
               </td>
-              <td data-title="创建时间"></td>
-              <td data-title="上线时间"></td>
+              <td data-title="创建时间">{$dinfo.add_time}</td>
+              <td data-title="上线时间">{$dinfo.start_time}至{$dinfo.end_time}</td>
               <td data-title="状态">{$dinfo.statusstr}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">

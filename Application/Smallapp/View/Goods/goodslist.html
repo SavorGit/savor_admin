@@ -8,7 +8,7 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
+            <!--<a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>-->
           </div>
         </div>
         
@@ -36,14 +36,14 @@
 
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="商品名称">
-            <span class="input-group-btn">
-              <select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                <option value='0' >所有类型</option>
-                <volist name="goods_types" id="ginfo">
-                    <option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>
-                </volist>
-              </select>
-            </span>
+            <!--<span class="input-group-btn">-->
+              <!--<select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">-->
+                <!--<option value='0' >所有类型</option>-->
+                <!--<volist name="goods_types" id="ginfo">-->
+                    <!--<option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>-->
+                <!--</volist>-->
+              <!--</select>-->
+            <!--</span>-->
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>

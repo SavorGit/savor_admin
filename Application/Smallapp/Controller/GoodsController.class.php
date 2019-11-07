@@ -21,14 +21,9 @@ class GoodsController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $where = array();
+        $where = array('type'=>20);
         if(!empty($keyword)){
             $where['name'] = array('like',"%$keyword%");
-        }
-        if($type){
-            $where['type'] = $type;
-        }else{
-            $where['type'] = array('not in',array(10));
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -177,13 +172,31 @@ class GoodsController extends BaseController {
         $goods_types = C('GOODS_TYPE');
         $goods_status = C('GOODS_STATUS');
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $user_ids = array();
         foreach ($datalist as $k=>$v){
+            $user_ids[] = $v['sysuser_id'];
             $datalist[$k]['typestr'] = $goods_types[$v['type']];
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
-
+            if($v['is_audit']){
+                $datalist[$k]['is_audit_str'] = '需审核';
+            }else{
+                $datalist[$k]['is_audit_str'] = '无需审核';
+            }
             $fields = "count(DISTINCT hotel_id) as num";
             $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'openid'=>'','type'=>1),'id desc');
             $datalist[$k]['hotels'] = intval($res_hotelgoods['num']);
+        }
+        $user_ids = array_unique($user_ids);
+        $m_sysuser = new \Admin\Model\UserModel();
+        $where = array('id'=>array('in',join(',',$user_ids)));
+        $res_user = $m_sysuser->where($where)->order('id desc')->select();
+        $user = array();
+        foreach ($res_user as $v){
+            $user[$v['id']] = $v['remark'];
+        }
+        foreach ($datalist as $k=>$v){
+            $sysuser_id = $v['sysuser_id'];
+            $datalist[$k]['creater'] = $user[$sysuser_id];
         }
 
         $this->assign('start_date',$start_date);
