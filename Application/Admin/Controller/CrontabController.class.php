@@ -3648,6 +3648,10 @@ class CrontabController extends Controller
         $m_usersignin->userintegral();
     }
 
+    public function usertask(){
+        $m_task = new \Admin\Model\Integral\TaskUserModel();
+        $m_task->handle_user_task();
+    }
     public function forscreenPublicnums(){
         $m_public = new \Admin\Model\Smallapp\PublicModel();
         $m_public->cronforscreenPublicnums();
