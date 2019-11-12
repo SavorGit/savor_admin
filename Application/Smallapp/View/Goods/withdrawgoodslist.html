@@ -1,14 +1,14 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/goodslist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/withdrawgoodslist" method="post">
       <input type="hidden" name="pageNum" value="{$pageNum}"/>
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
           <div class="tools-group">
-            <!--<a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>-->
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/withdrawgoodsadd" title="新增提现金额" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增提现金额</a>
           </div>
         </div>
         
@@ -34,20 +34,11 @@
                 </div>
             </div>
 
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="商品名称">
-            <!--<span class="input-group-btn">-->
-              <!--<select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">-->
-                <!--<option value='0' >所有类型</option>-->
-                <!--<volist name="goods_types" id="ginfo">-->
-                    <!--<option value="{$key}" <if condition="$key eq $type">selected</if> >{$ginfo}</option><br>-->
-                <!--</volist>-->
-              <!--</select>-->
-            <!--</span>-->
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
-          </div>
+            <div class="input-group input-group-sm">
+                <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
 
           </div>
 
@@ -65,12 +56,14 @@
           <thead>
             <tr id="post">
               <th>ID</th>
-              <th>名称</th>
-              <th>价格</th>
-              <th>资源类型</th>
-              <th>商品类型</th>
+              <th>金额</th>
+              <th>所需积分</th>
+              <th>是否需要审核</th>
+              <th>创建人</th>
+              <th>针对商家</th>
+              <th>创建时间</th>
+              <th>上线时间</th>
               <th>状态</th>
-              <th>所在酒楼数</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -78,12 +71,11 @@
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
               <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
-              <td data-title="价格">{$dinfo.price}</td>
-              <td data-title="资源类型">{$dinfo.media_typestr}</td>
-              <td data-title="商品类型">{$dinfo.typestr}</td>
-              <td data-title="状态">{$dinfo.statusstr}</td>
-              <td data-title="所在酒楼数">
+              <td data-title="金额"><a class="click-able-title">{$dinfo.price}</a></td>
+              <td data-title="所需积分">{$dinfo.rebate_integral}</td>
+              <td data-title="是否需要审核">{$dinfo.is_audit_str}</td>
+              <td data-title="创建人">{$dinfo.creater}</td>
+              <td data-title="针对商家">
                   <if condition="$dinfo.hotels gt 0">
                   <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="goods/hotelgoodslist" href="{$host_url}/smallapp/goods/hotelgoodslist?goods_id={$dinfo.id}" >
                   {$dinfo.hotels}</a>
@@ -91,9 +83,12 @@
                   {$dinfo.hotels}
                   </if>
               </td>
+              <td data-title="创建时间">{$dinfo.add_time}</td>
+              <td data-title="上线时间">{$dinfo.start_time}至{$dinfo.end_time}</td>
+              <td data-title="状态">{$dinfo.statusstr}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/withdrawgoodsadd?id={$dinfo.id}&type=10" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
 

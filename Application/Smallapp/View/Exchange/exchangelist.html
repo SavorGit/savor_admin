@@ -8,10 +8,53 @@
       <div class="clearfix">
 
         
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 pull-right">
+        <div class="col-xs-12 col-sm-12 ">
 
             <div class="form-inline">
 
+            <div class="form-group">
+                <div class="input-group input-group-sm">城市：</div>
+                <div class="input-group">
+                    <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                        <option value=0>全部</option>
+                        <volist name="area" id="vo">
+                            <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">维护人：</div>
+                <div class="input-group">
+                    <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                        <option value=0>全部</option>
+                        <volist name="opusers" id="vo">
+                            <option value="" disabled="disabled">{$key}</option>
+                            <volist name="vo" id="vinfo">
+                                <option value="{$vinfo.uid}" {$vinfo.select} >{$vinfo.remark}</option>
+                            </volist>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group input-group-sm">类型：</div>
+                <div class="input-group">
+                    <select name="is_audit" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                        <volist name="audit_types" id="vo">
+                            <option value="{$key}"  <if condition="$key eq $is_audit">selected</if> >{$vo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm"></div>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+                </div>
+            </div>
             <div class="form-group">
                 <div class="input-group input-group-sm">时间：</div>
                 <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
@@ -59,13 +102,15 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
-              <th>ID</th>
-              <th>用户openID</th>
-              <th>商品名称</th>
-              <th>购买数量</th>
-              <th>总价</th>
-              <th>兑换所需积分</th>
-              <th>购买时间</th>
+              <th>订单编号</th>
+              <th>提现金额</th>
+              <th>消耗积分</th>
+              <th>商家名称</th>
+              <th>兑换人</th>
+              <th>兑换人openid</th>
+              <th>维护人</th>
+              <th>提现时间</th>
+              <th>类型</th>
               <th>状态</th>
               <th class="table-tool">操作</th>
             </tr>
@@ -73,13 +118,15 @@
           <tbody data-check="list" data-parent=".table">
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
-              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="用户openid">{$dinfo.openid}</td>
-              <td data-title="商品名称">{$dinfo.goods_name}</td>
-              <td data-title="购买数量">{$dinfo.amount}</td>
-              <td data-title="总价">{$dinfo.total_fee}</td>
-              <td data-title="兑换所需积分">{$dinfo.integral}</td>
-              <td data-title="购买时间">{$dinfo.add_time}</td>
+              <td data-title="订单编号"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="提现金额">{$dinfo.total_fee}</td>
+              <td data-title="消耗积分">{$dinfo.integral}</td>
+              <td data-title="商家名称">{$dinfo.hotel_name}</td>
+              <td data-title="兑换人">{$dinfo.user_name}</td>
+              <td data-title="兑换人openid">{$dinfo.openid}</td>
+              <td data-title="维护人">{$dinfo.maintainer}</td>
+              <td data-title="提现时间">{$dinfo.add_time}</td>
+              <td data-title="类型">{$dinfo.typestr}</td>
               <td data-title="状态">{$dinfo.statusstr}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
