@@ -87,7 +87,7 @@ class TaskController extends BaseController {
                     $task_content['user_interact']['value'] = I('post.user_interact_'.$task_content['user_interact']['type'],0,'intval');
                 }
                 //print_r($task_content);exit;
-                $this->chekInfoParam($task_content);
+                $this->chekInfoParam($task_content,$data);
                 //echo "ddd";exit;
                 $data['task_info'] = json_encode($task_content);
             }
@@ -430,21 +430,27 @@ class TaskController extends BaseController {
         }
         if(empty($data['integral'])) $this->error('请输入奖励积分');
     }
-    private function chekInfoParam($data){
+    private function chekInfoParam($data,$map){
+        
+        if($map['type']==1){
+            if(empty($data['task_content_type'])) $this->error('请选择任务内容');
+        }
+        if(empty($data['lunch_end_time']) ||empty($data['lunch_start_time'])) $this->error('午饭开始时间和午饭结束时间不能为空');
+        if($data['lunch_end_time']<=$data['lunch_start_time']){
+            $this->error('午饭结束时间必须大于开始时间');
+        }
+        if($data['dinner_end_time']<=$data['dinner_start_time']){
+            $this->error('晚饭结束时间必须大于开始时间');
+        }
+        if($data['lunch_end_time']>'17:00') $this->error('午饭结束时间不能大于17点');
+        if($data['dinner_end_time']>'23:00') $this->error('晚饭结束时间不能大于23点');
         if($data['task_content_type']==2){
             if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
         }else if($data['task_content_type']==1){
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
             if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');
         }
-        if($data['lunch_end_time']<=$data['lunch_start_time']){
-            $this->error('午饭结束时间必须大于开始时间');
-        } 
-        if($data['dinner_end_time']<=$data['dinner_start_time']){
-            $this->error('晚饭结束时间必须大于开始时间');
-        }
-        if($data['lunch_end_time']>'17:00') $this->error('午饭结束时间不能大于17点');
-        if($data['dinner_end_time']>'23:00') $this->error('晚饭结束时间不能大于23点');
+        
         
     }
 }
