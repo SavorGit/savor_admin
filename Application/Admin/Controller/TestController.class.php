@@ -21,7 +21,10 @@ class TestController extends Controller {
         print_r($hotel_list);
     }
     public function pySmallSaleUser(){
-        $sql ="select * from `savor_hotel_invite_code` where openid !='' and type=2  and invite_id=0 and state=1 and flag=0";
+        $sql ="select a.* from `savor_hotel_invite_code` a 
+               left join savor_smallapp_user u on a.openid=u.openid 
+               where a.openid !='' and a.type=2 and a.invite_id=0 
+               and a.state=1 and a.flag=0 and u.small_app_id=5 ";
         $user_list = M()->query($sql);
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $m_staff = new \Admin\Model\Integral\StaffModel();
