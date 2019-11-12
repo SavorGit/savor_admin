@@ -437,5 +437,14 @@ class TaskController extends BaseController {
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
             if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');
         }
+        if($data['lunch_end_time']<=$data['lunch_start_time']){
+            $this->error('午饭结束时间必须大于开始时间');
+        } 
+        if($data['dinner_end_time']<=$data['dinner_start_time']){
+            $this->error('晚饭结束时间必须大于开始时间');
+        }
+        if($data['lunch_end_time']>'17:00') $this->error('午饭结束时间不能大于17点');
+        if($data['dinner_end_time']>'23:00') $this->error('晚饭结束时间不能大于23点');
+        
     }
 }
