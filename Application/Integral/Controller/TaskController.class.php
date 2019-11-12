@@ -251,8 +251,7 @@ class TaskController extends BaseController {
             $area_id_arr = I('include_a');
             $in_task_id  = I('in_task_id',0,'intval');//所选任务包含酒楼
             
-            $task_id = I('get.task_id',0,'intval');
-            
+            $task_id = I('task_id',0,'intval');
             $where = [];
             $where['task_id'] = $task_id;
             $count = $m_task_hotel->where($where)->count();
