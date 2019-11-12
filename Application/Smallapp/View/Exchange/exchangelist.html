@@ -112,6 +112,7 @@
               <th>提现时间</th>
               <th>类型</th>
               <th>状态</th>
+              <th>审核状态</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
@@ -128,10 +129,11 @@
               <td data-title="提现时间">{$dinfo.add_time}</td>
               <td data-title="类型">{$dinfo.typestr}</td>
               <td data-title="状态">{$dinfo.statusstr}</td>
+              <td data-title="审核状态">{$dinfo.audit_statusstr}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 30">
-                    <a warn="审核" data-tip="兑换现金" title="审核通过后,会直接提现到用户微信零钱" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}"  class="btn btn-success btn-icon">
+                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 30 and $dinfo.audit_status eq 0">
+                    <a warn="审核" data-tip="兑换现金" title="审核通过后,会直接提现到用户微信零钱" target="dialog" mask="true"  href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}"  class="btn btn-success btn-icon">
                         <i class="fa fa-money"></i>
                     </a>
                     </if>
