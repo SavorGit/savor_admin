@@ -48,9 +48,15 @@
               <td data-title="内容">{$merchant_info.step2}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=2" class="btn btn-default btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
+                  <empty name="merchant_info.step1">
+                    <a onclick="alertMsg.error('请按照步骤顺序依次操作')" href="#" class="btn btn-default btn-icon" style="opacity:0.6"><span><i class="fa fa-pencil"></i></span></a>
+                    <else />
+                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=2" class="btn btn-default btn-icon">
+                      <i class="fa fa-pencil"></i>
+                    </a>
+                  </empty>
+
+
                 </div>
               </td>
             </tr>
@@ -61,9 +67,13 @@
               <td data-title="内容">{$merchant_info.step3}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=3" class="btn btn-default btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
+                  <empty name="merchant_info.step2">
+                    <a onclick="alertMsg.error('请按照步骤顺序依次操作')" href="#" class="btn btn-default btn-icon" style="opacity:0.6"><span><i class="fa fa-pencil"></i></span></a>
+                    <else />
+                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=3" class="btn btn-default btn-icon">
+                      <i class="fa fa-pencil"></i>
+                    </a>
+                  </empty>
                 </div>
               </td>
             </tr>
@@ -74,9 +84,13 @@
               <td data-title="内容">{$merchant_info.step4}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=4" class="btn btn-default btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
+                  <empty name="merchant_info.step3">
+                    <a onclick="alertMsg.error('请按照步骤顺序依次操作')" href="#" class="btn btn-default btn-icon" style="opacity:0.6"><span><i class="fa fa-pencil"></i></span></a>
+                    <else />
+                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=4" class="btn btn-default btn-icon">
+                      <i class="fa fa-pencil"></i>
+                    </a>
+                  </empty>
                 </div>
               </td>
             </tr>
@@ -87,9 +101,13 @@
               <td data-title="内容"></td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a warn="创建商家" data-tip="创建商家" title="请确认以上选择的信息,无误后点击确定。" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=5"  class="btn btn-success btn-icon">
-                    <i class="fa fa-send"></i>
-                  </a>
+                  <empty name="merchant_info.step4">
+                    <a onclick="alertMsg.error('请按照步骤顺序依次操作')" href="#" class="btn btn-success btn-icon" style="opacity:0.6"><span><i class="fa fa-send"></i></span></a>
+                    <else />
+                    <a warn="创建商家" data-tip="创建商家" title="请确认以上选择的信息,无误后点击确定。" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/merchant/merchantaddStep?id={$id}&merchant_id={$merchant_id}&step=5"  class="btn btn-success btn-icon">
+                      <i class="fa fa-send"></i>
+                    </a>
+                  </empty>
                 </div>
               </td>
             </tr>
