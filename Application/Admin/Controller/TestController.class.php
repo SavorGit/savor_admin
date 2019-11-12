@@ -14,6 +14,66 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
     
+    //销售端用户数据平移
+    public function getSmallSaleHotel(){
+        $sql ="SELECT * FROM `savor_hotel_invite_code` WHERE openid!='' and type=2 group by hotel_id";
+        $hotel_list = M()->query($sql);
+        print_r($hotel_list);
+    }
+    public function pySmallSaleUser(){
+        $sql ="select * from `savor_hotel_invite_code` where openid !='' and type=2  and invite_id=0 and state=1 and flag=0";
+        $user_list = M()->query($sql);
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        foreach($user_list as $key=>$v){
+            $data = [];
+            $data['hotel_id'] = $v['hotel_id'];
+            $data['service_model_id'] = '';
+            $data['channel_id'] = 0;
+            $data['rate_groupid'] = 100;
+            $data['cash_rate'] = 1.0;
+            $data['recharge_rate'] = 1.0;
+            $data['name'] = '';
+            $data['job']  = '';
+            $data['code'] = $v['code'];
+            $data['mobile'] = $v['bind_mobile'];
+            $data['type'] = 2;
+            $data['sysuser_id'] = 1;
+            $data['status'] = 1;
+        
+            $mt_id = $m_merchant->addData($data);
+            $data = [];
+            $data['merchant_id'] = $mt_id;
+            $data['parent_id']   = 0;
+            $data['name'] = '';
+            $data['openid'] = $v['openid'];
+            $data['beinvited_time'] = date('Y-m-d H:i:s');
+            $data['trees'] = '';
+            $data['level'] = 1;
+            $data['sysuser_id'] =1;
+            $data['status'] = 1;
+            $staff_id = $m_staff->addData($data);
+            //获取该用户下的员工列表 插入员工表
+            $sql ="select * from `savor_hotel_invite_code` where openid !='' and type=2  and invite_id=".$v['invite_id'];
+            $le_staff = M()->query($sql);
+            $le_staff_arr = [];
+            foreach($le_staff  as $kk=>$vv){
+                $le_staff_arr[$kk]['merchant_id'] = $mt_id;
+                $le_staff_arr[$kk]['parent_id']   = $staff_id;
+                $le_staff_arr[$kk]['name']        = '';
+                $le_staff_arr[$kk]['openid']      = $vv['openid'];
+                $le_staff_arr[$kk]['beinvited_time'] = date('Y-m-d H:i:s');
+                $le_staff_arr[$kk]['trees']       = '';
+                $le_staff_arr[$kk]['level']       = 2;
+                $le_staff_arr[$kk]['sysuser_id']  = 1;
+                $le_staff_arr[$kk]['status']      = 1; 
+            }
+            $m_staff->addAll($le_staff_arr);
+            
+        }
+    }
+    
+    
     public function rmvCache(){
         exit;
         $redis = SavorRedis::getInstance();
