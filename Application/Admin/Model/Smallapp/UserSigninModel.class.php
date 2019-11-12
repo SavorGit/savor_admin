@@ -143,23 +143,28 @@ class UserSigninModel extends BaseModel{
         $dinner_stime = $pre_date.' '.$feast_time['dinner'][0];
         $dinner_etime = $pre_date.' '.$feast_time['dinner'][1];
 
+        $type = 0;//1午饭 2晚饭
         if($pre_time<$lunch_stime){
+            $type = 1;
             $begin_time = $lunch_stime;
             $over_time = $lunch_etime;
         }elseif($pre_time>=$lunch_stime && $pre_time<=$lunch_etime){
+            $type = 1;
             $begin_time = $pre_time;
             $over_time = $lunch_etime;
         }elseif($pre_time>$lunch_etime){
+            $type = 2;
             $begin_time = $dinner_stime;
             $over_time = $dinner_etime;
         }else{
+            $type = 2;
             $begin_time = $dinner_stime;
             $over_time = $dinner_etime;
         }
         if($now_time > $over_time){
             $is_signin = 1;
         }
-        $res = array('is_signin'=>$is_signin,'signin_time'=>$begin_time,'signout_time'=>$over_time);
+        $res = array('is_signin'=>$is_signin,'signin_time'=>$begin_time,'signout_time'=>$over_time,'type'=>$type);
         return $res;
     }
 }

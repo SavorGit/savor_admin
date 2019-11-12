@@ -42,7 +42,7 @@ class ExchangeController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
-        $fields = 'a.id,a.openid,a.hotel_id,a.goods_id,a.price,a.amount,a.total_fee,a.status,a.sysuser_id,a.add_time,goods.is_audit,goods.type as goods_type,hotel.name as hotel_name,area.region_name as city,ext.maintainer_id';
+        $fields = 'a.id,a.openid,a.hotel_id,a.goods_id,a.price,a.amount,a.total_fee,a.status,a.sysuser_id,a.add_time,a.audit_status,goods.is_audit,goods.type as goods_type,hotel.name as hotel_name,area.region_name as city,ext.maintainer_id';
 
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\ExchangeModel();
@@ -50,6 +50,7 @@ class ExchangeController extends BaseController {
         $datalist = $result['list'];
 
         $audit_types = array(99=>'全部',0=>'无需审核',1=>'需审核');
+        $audit_status = array(0=>'',1=>'审核通过',2=>'审核不通过');
         $order_status = C('EXCHANGE_STATUS');
         $user_ids = array();
         $open_ids = array();
@@ -62,6 +63,7 @@ class ExchangeController extends BaseController {
             $datalist[$k]['typestr'] = $audit_types[$v['is_audit']];
             $datalist[$k]['integral'] = $v['total_fee'];
             $datalist[$k]['statusstr'] = $order_status[$v['status']];
+            $datalist[$k]['audit_statusstr'] = $audit_status[$v['audit_status']];
             $datalist[$k]['goods_type'] = $v['goods_type'];
         }
 
@@ -162,41 +164,63 @@ class ExchangeController extends BaseController {
                 $this->display('exchange');
             }
         }else{
-            $hash_ids_key = C('HASH_IDS_KEY_ADMIN');
-            $hashids = new \Common\Lib\Hashids($hash_ids_key);
-            $params = $hashids->encode($order_id);
-            $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';
-            $curl = new Curl();
-            $data = array('params'=>$params);
-            $resapi = array('code'=>10000);
-            $curl::post($url,$data,$resapi,10);
-            $resapi = json_decode($resapi,true);
-            if($resapi['code']!=10000){
-                if($resapi['code']==99003){
-                    $message = '用户无mopenid,无法提现';
-                }elseif($resapi['code']==99005){
-                    $message = '用户积分不够,无法提现';
-                }else{
-                    $message = '不满足兑换条件';
-                }
-            }else{
-                $message = '提现成功';
-                $m_order = new \Admin\Model\Smallapp\ExchangeModel();
-                $m_order->updateData(array('id'=>$order_id),array('status'=>21));
+            if(IS_POST){
+                $userinfo = session('sysUserInfo');
+                $sysuser_id = $userinfo['id'];
 
-                if($goods_info['rebate_integral']){
-                    $integral = $goods_info['rebate_integral'];
-                    $integralrecord_data = array('openid' => $res_order['openid'],'integral' => -$integral,
-                        'content' => $res_order['goods_id'], 'type' => 4, 'integral_time' => date('Y-m-d H:i:s'));
-                    $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
-                    $m_userintegralrecord->add($integralrecord_data);
-                    $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
-                    $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_order['openid']));
-                    $userintegral = $res_userintegral['integral'] - $integral;
-                    $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral));
+                if($res_order['status']==21){
+                    $this->output('请勿重复兑换', 'exchange/exchangelist',2);
                 }
+                $audit_status = I('post.audit_status',0,'intval');//1审核通过 2审核不通过
+                if($audit_status==1){
+                    $hash_ids_key = C('HASH_IDS_KEY_ADMIN');
+                    $hashids = new \Common\Lib\Hashids($hash_ids_key);
+                    $params = $hashids->encode($order_id);
+                    $url = C('SAVOR_API_URL').'/payment/wxPay/integralwithdraw';
+                    $curl = new Curl();
+                    $data = array('params'=>$params);
+                    $resapi = array('code'=>10000);
+                    $curl::post($url,$data,$resapi,10);
+                    $resapi = json_decode($resapi,true);
+                    if($resapi['code']!=10000){
+                        if($resapi['code']==99003){
+                            $message = '用户无openid,无法提现';
+                        }elseif($resapi['code']==99005){
+                            $message = '用户积分不够,无法提现';
+                        }else{
+                            $message = '不满足兑换条件';
+                        }
+                    }else{
+                        $message = '提现成功';
+                        $m_order = new \Admin\Model\Smallapp\ExchangeModel();
+                        $m_order->updateData(array('id'=>$order_id),array('status'=>21,'audit_status'=>$audit_status,'sysuser_id'=>$sysuser_id));
+                    }
+                    $this->output($message, 'exchange/exchangelist');
+                }else{
+                    $m_order = new \Admin\Model\Smallapp\ExchangeModel();
+                    $m_order->updateData(array('id'=>$order_id),array('audit_status'=>$audit_status,'sysuser_id'=>$sysuser_id));
+
+                    if($goods_info['rebate_integral']){
+                        $integral = $goods_info['rebate_integral'];
+                        $integralrecord_data = array('openid'=>$res_order['openid'],'integral' =>$integral,
+                            'content'=>$res_order['goods_id'], 'type'=>4, 'integral_time' => date('Y-m-d H:i:s'));
+                        $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                        $m_userintegralrecord->add($integralrecord_data);
+                        $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+                        $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_order['openid']));
+                        $userintegral = $res_userintegral['integral'] + $integral;
+                        $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral));
+                    }
+                    $this->output('审核不通过，积分已退回', 'exchange/exchangelist');
+                }
+
+            }else{
+                $res_order['goods_name'] = $goods_info['name'];
+                $res_order['goods_integral'] = intval($goods_info['rebate_integral']);
+                $this->assign('goods_type',$goods_type);
+                $this->assign('vinfo',$res_order);
+                $this->display('wxchange');
             }
-            $this->output($message, 'exchange/exchangelist',2);
         }
 
     }

@@ -204,7 +204,11 @@ class MerchantController extends BaseController {
                     if($merchant_id){
                         $model_id = $merchant_info['service_model_id'];
                     }else{
-                        $model_id = $merchant_info[2];
+                        if(isset($merchant_info[2])){
+                            $model_id = $merchant_info[2];
+                        }else{
+                            $model_id = 1;
+                        }
                     }
 
                     $m_servicemodel = new \Admin\Model\Integral\ServiceMxModel();
@@ -253,6 +257,9 @@ class MerchantController extends BaseController {
                     $name = I('name','','trim');
                     $job = I('job','','trim');
                     $mobile = I('mobile','','trim');
+                    if(!isMobile($mobile)){
+                        $this->output('请输入正确的手机号码', 'merchant/merchantadd',2,0);
+                    }
                     $add_info = array('name'=>$name,'job'=>$job,'mobile'=>$mobile);
                     if($merchant_id){
                         $m_merchant->updateData(array('id'=>$merchant_id),$add_info);
@@ -283,8 +290,8 @@ class MerchantController extends BaseController {
                 if(empty($merchant_info)){
                     $this->output('请按照操作步骤进行创建', 'merchant/merchantadd',2,0);
                 }
-                foreach ($merchant_info as $v){
-                    if(empty($v)){
+                for($i=1;$i<5;$i++){
+                    if(empty($merchant_info[$i])){
                         $this->output('请选择操作步骤所需数据', 'merchant/merchantadd',2,0);
                     }
                 }
