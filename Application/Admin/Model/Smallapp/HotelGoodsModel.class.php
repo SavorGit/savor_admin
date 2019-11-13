@@ -98,22 +98,30 @@ class HotelGoodsModel extends BaseModel{
         return true;
     }
 
-    public function HandleGoodsperiod($goods_id){
+    public function HandleGoodsperiod($goods_id=0){
         $redis = \Common\Lib\SavorRedis::getInstance();
         $redis->select(14);
         $cache_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
 
-        $where = array('goods_id'=>$goods_id);
-        $group = 'hotel_id';
-        $res_hotels = $this->where($where)->group($group)->select();
-        if(!empty($res_hotels)){
-            foreach ($res_hotels as $v){
-                $hotel_id = $v['hotel_id'];
-
-                $program_key = $cache_key.":$hotel_id";
+        if($goods_id){
+            $where = array('goods_id'=>$goods_id);
+            $group = 'hotel_id';
+            $res_hotels = $this->where($where)->group($group)->select();
+            if(!empty($res_hotels)){
+                foreach ($res_hotels as $v){
+                    $hotel_id = $v['hotel_id'];
+                    $program_key = $cache_key.":$hotel_id";
+                    $period = getMillisecond();
+                    $period_data = array('period'=>$period);
+                    $redis->set($program_key,json_encode($period_data));
+                }
+            }
+        }else{
+            $keys = $redis->keys("$cache_key:*");
+            foreach($keys as $key){
                 $period = getMillisecond();
                 $period_data = array('period'=>$period);
-                $redis->set($program_key,json_encode($period_data));
+                $redis->set($key,json_encode($period_data));
             }
         }
         return true;
