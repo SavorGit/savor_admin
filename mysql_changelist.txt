@@ -1724,3 +1724,460 @@ ADD COLUMN `file_conversion_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '文�
 执行SQL
 ALTER TABLE savor_media ADD COLUMN `oss_filesize` INT(11) NOT NULL DEFAULT 0 COMMENT '文件大小单位:字节' AFTER `file_path`
 ALTER TABLE savor_device_version ADD COLUMN `oss_filesize` INT(11) NOT NULL DEFAULT 0 COMMENT '文件大小单位:字节' AFTER  `oss_addr`
+
+增加说明：新增活动商品购买 销售工具
+修改时间：2019-07-25 13:00
+修改人：刘斌
+执行SQL
+
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('activity_adv_playtype', '1',1);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('activity_boot_integral', '0',1);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('activity_interact_integral', '0',1);
+
+ALTER TABLE `cloud`.`savor_hotel_ext`
+ADD COLUMN `activity_contact` varchar(100) NOT NULL DEFAULT '' COMMENT '活动联系人' AFTER `contract_expiretime`,
+ADD COLUMN `activity_phone` varchar(20) NOT NULL DEFAULT '' COMMENT '活动联系人手机号码' AFTER `activity_contact`;
+
+DROP TABLE IF EXISTS `savor_smallapp_user_signin`;
+CREATE TABLE `savor_smallapp_user_signin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `box_mac` varchar(15) NOT NULL DEFAULT '' COMMENT '机顶盒mac',
+  `signin_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '签到时间',
+  `signout_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '签出时间',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `index_box_mac` (`box_mac`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户签到表';
+
+DROP TABLE IF EXISTS `savor_smallapp_user_integral`;
+CREATE TABLE `savor_smallapp_user_integral` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `integral` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
+  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `index_openid` (`openid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户积分表';
+
+DROP TABLE IF EXISTS `savor_smallapp_user_integralrecord`;
+CREATE TABLE `savor_smallapp_user_integralrecord` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `area_id` int(11) NOT NULL DEFAULT '0' COMMENT '区域id',
+  `area_name` varchar(10) NOT NULL DEFAULT '' COMMENT '区域名称',
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `hotel_name` varchar(100) NOT NULL DEFAULT '' COMMENT '酒楼名称',
+  `hotel_box_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '酒楼盒子类型',
+  `room_id` int(11) NOT NULL DEFAULT '0' COMMENT '包间id',
+  `room_name` varchar(100) NOT NULL DEFAULT '' COMMENT '包间名称',
+  `box_id` int(11) NOT NULL DEFAULT '0' COMMENT '机顶盒id',
+  `box_mac` varchar(15) NOT NULL DEFAULT '' COMMENT '机顶盒mac',
+  `box_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '包间类型',
+  `integral` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
+  `content` varchar(255) NOT NULL DEFAULT '' COMMENT '积分内容',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '积分类型 1开机,2互动,3销售,4兑换',
+  `integral_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '积分时间',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `index_box_mac` (`box_mac`),
+  KEY `index_openid` (`openid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户积分记录表';
+
+DROP TABLE IF EXISTS `savor_smallapp_goods`;
+CREATE TABLE `savor_smallapp_goods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT '名称',
+  `media_id` int(11) NOT NULL DEFAULT '0' COMMENT '资源ID',
+  `imgmedia_id` int(11) NOT NULL DEFAULT '0' COMMENT '图片资源ID',
+  `price` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '价格',
+  `rebate_integral` int(11) NOT NULL DEFAULT '0' COMMENT '返利积分',
+  `jd_url` varchar(200) NOT NULL DEFAULT '' COMMENT '京东商品URL链接',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 10官方活动促销,20商家添加,30积分兑换现金',
+  `start_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '开始时间',
+  `end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '结束时间',
+  `scope` tinyint(1) NOT NULL DEFAULT '0' COMMENT '活动范围0全部,1包间,2非包间',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态1未审核,2审核通过,3审核不通过,4下架,5已过期',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商品表';
+
+DROP TABLE IF EXISTS `savor_smallapp_hotelgoods`;
+CREATE TABLE `savor_smallapp_hotelgoods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼ID',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '用户openid',
+  `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT 'ID',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='酒楼商品表';
+
+DROP TABLE IF EXISTS `savor_smallapp_order`;
+CREATE TABLE `savor_smallapp_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '用户openid',
+  `box_mac` varchar(15) NOT NULL DEFAULT '' COMMENT '购买所在的机顶盒mac',
+  `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品ID',
+  `price` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '商品价格',
+  `amount` int(11) NOT NULL DEFAULT '0' COMMENT '购买数量',
+  `total_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '总金额',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '10已下单,20申请兑换,21兑换成功',
+  `otype` tinyint(1) NOT NULL DEFAULT '0' COMMENT '订单类型1商品订单2抵用券订单',
+  `buy_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '购买类型1店内购买 2京东购买',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8 COMMENT='订单信息表';
+
+DROP TABLE IF EXISTS `savor_smallapp_goodscollection`;
+CREATE TABLE `savor_smallapp_goodscollection` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '用户openid',
+  `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品ID',
+  `phone` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号码',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商品收藏表';
+
+增加说明：新增好友助力上电视功能
+修改时间：2019-08-18 09:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_play_log`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:点播2:投屏3:节目单资源4精选内容' AFTER `res_id`;
+
+ALTER TABLE `cloud`.`savor_smallapp_forscreen_record`
+ADD INDEX `index_forscreen_id`(`forscreen_id`);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('content_play_time', '120', '1')
+
+CREATE TABLE `savor_smallapp_forscreen_help` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `forscreen_record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '投屏记录id',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '播放状态 1未播放,2待播放,3播放中,4播放完成',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `key_openrecord` (`openid`,`forscreen_record_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序投屏助力表';
+
+CREATE TABLE `savor_smallapp_forscreen_helpuser` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `help_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '助力播放id',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `key_helpid` (`help_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序投屏助力用户表';
+
+增加说明：优化餐厅端登录方式更改为扫码登录，红包未发送完毕进行发送完毕
+修改时间：2019-09-02 11:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_hotel_invite_code`
+ADD COLUMN `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '绑定用户openid' AFTER `bind_time`;
+
+ALTER TABLE `cloud`.`savor_hotel_invite_code`
+ADD COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1普通码 2管理员码' AFTER `openid`;
+
+ALTER TABLE `cloud`.`savor_hotel_invite_code`
+ADD COLUMN `invite_id` int(11) NOT NULL DEFAULT 0 COMMENT '邀请ID即表savor_hotel_invite_code中id' AFTER `type`;
+
+ALTER TABLE `cloud`.`savor_smallapp_redpacket`
+ADD COLUMN `operate_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '操作类型 0正常,1人工' AFTER `isdel`;
+
+ALTER TABLE `cloud`.`savor_smallapp_redpacket_receive`
+ADD COLUMN `operate_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '操作类型 0正常,1人工' AFTER `receive_time`;
+
+ALTER TABLE `cloud`.`savor_hotel_ext`
+ADD COLUMN `is_open_integral` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否开启积分兑换' AFTER `is_open_customer`;
+
+增加说明：增加精选商品内容，公开置顶
+修改时间：2019-09-05 10:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `appid` varchar(50) NOT NULL DEFAULT '' COMMENT '小程序appid' AFTER `jd_url`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `buybutton` varchar(50) NOT NULL DEFAULT '' COMMENT '购买按钮' AFTER `appid`;
+ALTER TABLE `cloud`.`savor_smallapp_collect`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:点播2:投屏3:节目单资源4:商品' AFTER `openid`;
+ALTER TABLE `cloud`.`savor_smallapp_public`
+ADD COLUMN `is_top` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否置顶 1置顶' AFTER `is_recommend`;
+ALTER TABLE `cloud`.`savor_smallapp_public`
+ADD INDEX `index_staretop`(`status`, `is_recommend`, `is_top`);
+CREATE TABLE `savor_smallapp_datalog` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `data_id` int(11) NOT NULL DEFAULT '0' COMMENT '数据id',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `action_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '动作类型1点击,2查看,3点击购买',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型 1广告,2商品',
+  `ip` varchar(50) NOT NULL DEFAULT '' COMMENT '访问IP',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据日志表';
+
+增加说明：增加商品字段,微信好物圈开发，京东订单开发
+修改时间：2019-09-19 17:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `page_url` varchar(500) NOT NULL DEFAULT '' COMMENT '小程序页面URL地址' AFTER `buybutton`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `wx_category` varchar(200) NOT NULL DEFAULT '' COMMENT '微信好物圈类目' AFTER `name`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `item_id` varchar(50) NOT NULL DEFAULT '' COMMENT '第三方商品ID' AFTER `jd_url`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 10官方活动促销,20商家添加,30积分兑换现金,31积分兑换物品,40热点优选' AFTER `page_url`;
+ALTER TABLE `cloud`.`savor_smallapp_hotelgoods`
+ADD COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1系统添加 2用户销售添加' AFTER `goods_id`;
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `goods_id` int(11) NOT NULL DEFAULT 0 COMMENT '商品ID' AFTER `integral`;
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `jdorder_id` int(11) NOT NULL DEFAULT 0 COMMENT '京东订单ID' AFTER `goods_id`;
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD INDEX `index_jdoid`(`jdorder_id`);
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态 1可用2未结算不可用' AFTER `content`;
+ALTER TABLE `cloud`.`savor_smallapp_order`
+ADD COLUMN `contact` varchar(30) NOT NULL DEFAULT '' COMMENT '联系人' AFTER `buy_type`,
+ADD COLUMN `phone` char(13) NOT NULL DEFAULT '' COMMENT '联系电话' AFTER `contact`,
+ADD COLUMN `address` varchar(200) NOT NULL DEFAULT '' COMMENT '地址' AFTER `phone`;
+CREATE TABLE `savor_smallapp_jdorder` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `order_id` varchar(50) NOT NULL DEFAULT '' COMMENT '订单ID',
+  `order_time` int(11) NOT NULL DEFAULT '0' COMMENT '下单时间',
+  `finish_time` int(11) NOT NULL DEFAULT '0' COMMENT '订单完成时间',
+  `order_emt` int(11) NOT NULL DEFAULT '0' COMMENT '下单设备(1:PC,2:无线)',
+  `parent_id` varchar(50) NOT NULL DEFAULT '' COMMENT '父单的订单ID',
+  `pay_month` int(11) NOT NULL DEFAULT '0' COMMENT '订单维度预估结算时间',
+  `plus` int(11) NOT NULL DEFAULT '0' COMMENT '下单用户是否为PLUS会员 0：否，1：是',
+  `pop_id` varchar(50) NOT NULL DEFAULT '' COMMENT '商家ID',
+  `actual_cos_price` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '实际计算佣金的金额',
+  `actual_fee` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '推客获得的实际佣金',
+  `commissionrate` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '佣金比例',
+  `estimate_cos_price` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '预估计佣金额，即用户下单的金额',
+  `estimate_fee` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '推客的预估佣金',
+  `final_rate` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '最终比例（分成比例+补贴比例）',
+  `pid` varchar(50) NOT NULL DEFAULT '' COMMENT '联盟子站长身份标识',
+  `price` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '商品单价',
+  `sku_id` varchar(50) NOT NULL DEFAULT '' COMMENT '商品ID',
+  `sku_name` varchar(200) NOT NULL DEFAULT '' COMMENT '商品名称',
+  `sku_num` int(11) NOT NULL DEFAULT '0' COMMENT '商品数量',
+  `sku_return_num` int(11) NOT NULL DEFAULT '0' COMMENT '商品已退货数量',
+  `sub_side_rate` int(11) NOT NULL DEFAULT '0' COMMENT '分成比例',
+  `subsidy_rate` int(11) NOT NULL DEFAULT '0' COMMENT '补贴比例',
+  `union_alias` varchar(50) NOT NULL DEFAULT '' COMMENT 'PID所属母账号平台名称',
+  `union_tag` varchar(50) NOT NULL DEFAULT '' COMMENT '联盟标签数据',
+  `union_traffic_group` int(11) NOT NULL DEFAULT '0' COMMENT '渠道组 1：1号店，其他：京东',
+  `valid_code` int(11) NOT NULL DEFAULT '0' COMMENT 'sku维度的有效码（-1：未知,2.无效-拆单,3.无效-取消,4.无效-京东帮帮主订单,5.无效-账号异常,6.无效-赠品类目不返佣,7.无效-校园订单,8.无效-企业订单,9.无效-团购订单,10.无效-开增值税专用发票订单,11.无效-乡村推广员下单,12.无效-自己推广自己下单,13.无效-违规订单,14.无效-来源与备案网址不符,15.待付款,16.已付款,17.已完成,18.已结算',
+  `sub_union_id` int(11) NOT NULL DEFAULT '0' COMMENT '销售人员用户ID',
+  `trace_type` int(11) NOT NULL DEFAULT '0' COMMENT '2：同店；3：跨店',
+  `cp_act_id` varchar(50) NOT NULL DEFAULT '' COMMENT '招商团活动id，正整数，为0时表示无活动',
+  `union_role` int(11) NOT NULL DEFAULT '0' COMMENT '站长角色，1： 推客、 2： 团长',
+  `union_id` varchar(50) NOT NULL DEFAULT '' COMMENT '推客的联盟ID',
+  `update_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `key_orderid` (`order_id`),
+  KEY `key_subuidvcode` (`sub_union_id`,`valid_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='京东订单信息表';
+
+增加说明：增加店内购买
+修改时间：2019-10-18 13:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 10热点优选,20商家添加,30积分兑换现金,31积分兑换物品' AFTER `page_url`;
+
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `is_storebuy` tinyint(0) NOT NULL DEFAULT 0 COMMENT '是否店内购买1是 0否' AFTER `scope`;
+
+ALTER TABLE `cloud`.`savor_hotel_invite_code`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1普通码,2管理员码,3通用邀请码' AFTER `openid`;
+
+ALTER TABLE `cloud`.`savor_smallapp_datalog`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 1广告,2商品,3发现-官方,4发现-精选,5发现-公开' AFTER `action_type`;
+
+ALTER TABLE `cloud`.`savor_smallapp_hotelgoods`
+ADD INDEX `key_hotelid`(`hotel_id`);
+
+UPDATE `cloud`.`savor_smallapp_goods` SET `type` = 10 WHERE `type` = 40;
+
+增加说明：增加扫码支付,开发票
+修改时间：2019-10-25 13:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_order`
+ADD COLUMN `pay_time` datetime(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '支付时间' AFTER `address`;
+ALTER TABLE `cloud`.`savor_smallapp_order`
+ADD COLUMN `pay_fee` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '支付金额' AFTER `total_fee`,
+ADD COLUMN `pay_type` int(5) NOT NULL DEFAULT 0 COMMENT '支付类型0未知 10微信支付' AFTER `pay_time`;
+
+ALTER TABLE `cloud`.`savor_smallapp_order`
+MODIFY COLUMN `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '10已下单 11支付失败 12支付成功' AFTER `pay_fee`;
+
+ALTER TABLE `cloud`.`savor_smallapp_order`
+ADD COLUMN `sale_uid` int(11) NOT NULL DEFAULT 0 COMMENT '销售人员用户ID' AFTER `pay_type`;
+
+ALTER TABLE savor_ads ADD COLUMN `is_sapp_show` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '小程序发现页内容';
+
+CREATE TABLE `savor_smallapp_orderinvoice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '订单号',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1暂不开票 2已提交开具发票申请 3待开发票 4发票已开',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '发票类型1纸质发票 2电子发票',
+  `contact` varchar(30) NOT NULL DEFAULT '' COMMENT '联系人',
+  `phone` char(13) NOT NULL DEFAULT '' COMMENT '联系电话',
+  `address` varchar(200) NOT NULL DEFAULT '' COMMENT '地址',
+  `email` varchar(30) NOT NULL DEFAULT '' COMMENT '邮箱地址',
+  `invoice_addr` varchar(100) NOT NULL DEFAULT '' COMMENT '发票地址',
+  `update_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `key_orderid` (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单发票信息表';
+
+CREATE TABLE `savor_smallapp_exchange` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '用户openid',
+  `box_mac` varchar(15) NOT NULL DEFAULT '' COMMENT '购买所在的机顶盒mac',
+  `goods_id` int(11) NOT NULL DEFAULT '0' COMMENT '商品ID',
+  `price` decimal(9,2) NOT NULL DEFAULT '0.00' COMMENT '商品价格',
+  `amount` int(11) NOT NULL DEFAULT '0' COMMENT '数量',
+  `total_fee` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '总金额',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '20申请兑换,21兑换成功',
+  `contact` varchar(30) NOT NULL DEFAULT '' COMMENT '联系人',
+  `phone` char(13) NOT NULL DEFAULT '' COMMENT '联系电话',
+  `address` varchar(200) NOT NULL DEFAULT '' COMMENT '地址',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='兑换信息表';
+
+
+增加说明：增加积分系统
+修改时间：2019-10-25 13:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_exchange`
+ADD COLUMN `audit_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '审核状态0无 1审核通过 2审核不通过' AFTER `status`;
+
+ALTER TABLE `cloud`.`savor_smallapp_redpacket`
+ADD COLUMN `rate` decimal(2, 2) NOT NULL DEFAULT 0.00 COMMENT '费率' AFTER `scope`;
+
+ALTER TABLE `cloud`.`savor_smallapp_redpacket`
+ADD COLUMN `rate_fee` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '费率金额' AFTER `pay_fee`;
+
+ALTER TABLE `cloud`.`savor_smallapp_exchange`
+MODIFY COLUMN `sysuser_id` int(11) NOT NULL DEFAULT 0 COMMENT '系统用户ID' AFTER `address`;
+
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `is_audit` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否需要审核1是(此状态针对类型为30的商品))' AFTER `is_storebuy`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `sysuser_id` int(11) NOT NULL DEFAULT 0 COMMENT '系统用户ID' AFTER `is_audit`;
+
+ALTER TABLE `cloud`.`savor_smallapp_exchange`
+ADD COLUMN `hotel_id` int(11) NOT NULL DEFAULT 0 COMMENT '酒楼ID' AFTER `box_mac`;
+
+ALTER TABLE `cloud`.`savor_smallapp_exchange`
+ADD COLUMN `sysuser_id` int(11) NOT NULL COMMENT '系统用户ID' AFTER `address`,
+ADD COLUMN `update_time` datetime(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间' AFTER `sysuser_id`;
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `fj_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '饭局类型0无,1午饭,2晚饭' AFTER `integral_time`;
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `task_id` int(11) NOT NULL DEFAULT 0 COMMENT '任务ID' AFTER `box_type`;
+
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('integral_exchange_rate', '0', 1);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('red_packet_rate', '0.01', 1);
+
+CREATE TABLE `savor_integral_merchant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `service_model_id` int(11) NOT NULL DEFAULT '0' COMMENT '服务模型ID',
+  `channel_id` int(11) NOT NULL DEFAULT '0' COMMENT '渠道商ID 10内购网',
+  `rate_groupid` tinyint(1) NOT NULL DEFAULT '0' COMMENT '汇率群组ID',
+  `cash_rate` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '兑现汇率',
+  `recharge_rate` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '充值汇率',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '姓名',
+  `job` varchar(20) NOT NULL DEFAULT '' COMMENT '职务',
+  `code` varchar(20) NOT NULL DEFAULT '' COMMENT '邀请码',
+  `mobile` varchar(15) NOT NULL DEFAULT '' COMMENT '手机号码',
+  `type` tinyint(1) NOT NULL DEFAULT '2' COMMENT '类型1普通码,2管理员码,3通用邀请码',
+  `sysuser_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态0未知,1正常,2删除',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序销售端商家';
+
+CREATE TABLE `savor_integral_merchant_staff` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(11) NOT NULL DEFAULT '0' COMMENT '商家id',
+  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '父类id',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '姓名',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '绑定用户openid',
+  `beinvited_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '被邀请时间',
+  `trees` varchar(100) NOT NULL DEFAULT '' COMMENT '类目树',
+  `level` tinyint(1) NOT NULL DEFAULT '0' COMMENT '等级0无,1一级,2二级,3三级,4级',
+  `sysuser_id` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑后台用户id',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态0未知,1正常,2删除',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序销售端商家员工';
+
+CREATE TABLE `savor_integral_service` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '服务名称',
+  `m_name` varchar(15) NOT NULL DEFAULT '' COMMENT '模块名称',
+  `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1:基础服务2:增值服务',
+  `desc` text COMMENT '服务说明',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:已删除1:正常',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序销售端服务列表';
+
+CREATE TABLE `savor_integral_service_model` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '服务模型名称',
+  `service_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '选择的服务类型id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:已删除1:正常',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序销售端服务模型';
+
+
+CREATE TABLE `savor_integral_task` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '任务名称',
+  `media_id` int(11) NOT NULL DEFAULT '0' COMMENT '任务封面图id',
+  `type` int(11) NOT NULL DEFAULT '0' COMMENT '任务类型1:系统任务2:活动任务',
+  `desc` text COMMENT '任务描述',
+  `start_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '任务开始时间',
+  `end_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '任务开始时间',
+  `is_long_time` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否长期任务',
+  `integral` smallint(4) NOT NULL DEFAULT '0' COMMENT '奖励积分',
+  `separate_id` int(11) NOT NULL DEFAULT '0' COMMENT '分成id',
+  `task_info` text COMMENT '任务内容(json数据)',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:下线1:上线',
+  `flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0:删除,1:正常',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务列表';
+
+CREATE TABLE `savor_integral_task_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `task_id` int(11) NOT NULL DEFAULT '0' COMMENT '任务id',
+  `integral` int(11) NOT NULL DEFAULT '0' COMMENT '积分',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `key_openidtime` (`openid`,`add_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户任务表';
