@@ -40,6 +40,7 @@ class TaskUserModel extends BaseModel{
                 echo "task_id:$task_id type not systemtask $now_time \r\n";
                 continue;
             }
+            $task_info['task_user_id'] = $v['id'];
             $task_content = json_decode($task_info['task_info'],true);
             $openid = $v['openid'];
             $where = array('openid'=>$openid);
@@ -50,7 +51,7 @@ class TaskUserModel extends BaseModel{
                 continue;
             }
             foreach ($res_signin as $signv){
-                $signinfo = $this->checkSigninTime(strtotime($signv['signin_time']));
+                $signinfo = $m_usersignin->checkSigninTime(strtotime($signv['signin_time']));
                 if($signv['signout_time']=='0000-00-00 00:00:00'){
                     if($signinfo['is_signin']){
                         $m_usersignin->updateData(array('id'=>$signv['id']),array('signout_time'=>$signinfo['signout_time']));
@@ -60,7 +61,7 @@ class TaskUserModel extends BaseModel{
                 if($signv['signout_time']=='0000-00-00 00:00:00'){
                     continue;
                 }
-                $tmp_dinner_type = $signv['type'];//1午饭 2晚饭
+                $tmp_dinner_type = $signinfo['type'];//1午饭 2晚饭
                 if($tmp_dinner_type==$dinner_type){
                     switch ($tmp_dinner_type){
                         case 1:
@@ -155,6 +156,7 @@ class TaskUserModel extends BaseModel{
             }
             //更新任务积分
             $this->setInc('integral',$now_integral);
+            $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
         }
         return true;
     }
@@ -172,11 +174,14 @@ class TaskUserModel extends BaseModel{
         $m_hearlog = new \Admin\Model\HeartAllLogModel();
         $res_logdate = $m_hearlog->getOne($signv['box_mac'],2,$task_date);
         $online_hour = 0;
-        for ($i=$tmp_singin_h;$i<=$tmp_signout_h;$i++){
-            if($res_logdate["hour$i"]>=10){
-                $online_hour+=1;
+        if(!empty($res_logdate)){
+            for ($i=$tmp_singin_h;$i<=$tmp_signout_h;$i++){
+                if($res_logdate["hour$i"]>=10){
+                    $online_hour+=1;
+                }
             }
         }
+
         $now_integral = 0;
         $task_content = json_decode($task_info['task_info'],true);
         switch ($task_content['heart_time']['type']){//1.饭点内开机时长大于多少小时则达标 2饭点内每开机1小时奖励一次
@@ -208,7 +213,7 @@ class TaskUserModel extends BaseModel{
                 $m_userintegral->add($integraldata);
             }
             //更新任务积分
-            $this->setInc('integral',$now_integral);
+            $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
         }
         return true;
     }

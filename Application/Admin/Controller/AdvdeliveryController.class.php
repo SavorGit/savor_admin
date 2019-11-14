@@ -321,7 +321,7 @@ class AdvdeliveryController extends BaseController {
         $now_time = time();
         $area_id = I('area_id',0);
         $hotel_name = I('hotel_name', '');
-        $where = "1=1";
+        $where = "sht.state=1 and sht.flag=0 ";
         if ($area_id) {
             $this->assign('area_k',$area_id);
             $where .= "	AND sht.area_id = $area_id";
