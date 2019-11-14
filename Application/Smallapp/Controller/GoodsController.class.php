@@ -434,18 +434,16 @@ class GoodsController extends BaseController {
             if($id){
                 $m_goods->updateData(array('id'=>$id),$data);
                 $result = true;
-                if($type==10 || $type==20){
-                    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-                    $m_hotelgoods->HandleGoodsperiod($id);
-                }
                 $goods_id = $id;
             }else{
                 $result = $m_goods->add($data);
                 $goods_id = $result;
             }
+            switch ($type){
+                case 10:
+                    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+                    $m_hotelgoods->HandleGoodsperiod();
 
-            if($result){
-                if($type==10){
                     $redis = \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);
                     $program_key = C('SAPP_OPTIMIZE_PROGRAM');
@@ -454,7 +452,14 @@ class GoodsController extends BaseController {
                     $redis->set($program_key,json_encode($period_data));
 
                     $this->wx_importproduct($goods_id);
-                }
+                    break;
+                case 20:
+                    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+                    $m_hotelgoods->HandleGoodsperiod($goods_id);
+                    break;
+            }
+
+            if($result){
                 $this->output('操作成功', "goods/$goods_list_f");
             }else{
                 $this->output('操作失败', "goods/$goods_list_f",2,0);

@@ -52,11 +52,16 @@ class MerchantController extends BaseController {
         foreach ($res_user as $v){
             $user[$v['id']] = $v['remark'];
         }
+        $m_staff = new \Admin\Model\Integral\StaffModel();
         foreach ($datalist as $k=>$v){
             $sysuser_id = $v['sysuser_id'];
             $maintaineru_id = $v['maintainer_id'];
             $datalist[$k]['creater'] = $user[$sysuser_id];
             $datalist[$k]['maintainer'] = $user[$maintaineru_id];
+            $filter = array('merchant_id'=>$v['id'],'status'=>1);
+            $filter['parent_id'] = array('gt',0);
+            $res_staff_num = $m_staff->getRow('count(id) as num',$filter);
+            $datalist[$k]['staff_num'] = $res_staff_num['num'];
         }
 
         $m_servicemodel = new \Admin\Model\Integral\ServiceMxModel();
@@ -139,9 +144,9 @@ class MerchantController extends BaseController {
         $id = intval($_REQUEST['id']);
         $merchant_id = intval($_REQUEST['merchant_id']);
 
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $merchant_info = array();
         if($merchant_id){
-            $m_merchant = new \Admin\Model\Integral\MerchantModel();
             $merchant_info = $m_merchant->getInfo(array('id'=>$merchant_id));
         }else{
             $merchant_info = session($id);
@@ -259,6 +264,10 @@ class MerchantController extends BaseController {
                     $mobile = I('mobile','','trim');
                     if(!isMobile($mobile)){
                         $this->output('请输入正确的手机号码', 'merchant/merchantadd',2,0);
+                    }
+                    $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile));
+                    if(!empty($res_merchant_mobile)){
+                        $this->output("该手机号码已创建商家", 'merchant/merchantadd',2,0);
                     }
                     $add_info = array('name'=>$name,'job'=>$job,'mobile'=>$mobile);
                     if($merchant_id){
@@ -378,6 +387,13 @@ class MerchantController extends BaseController {
             $res_user = $m_sysuser->find($res_hotel['maintainer_id']);
             $maintainer = $res_user['remark'];
         }
+
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $filter = array('merchant_id'=>$merchant_id,'status'=>1);
+        $filter['parent_id'] = array('gt',0);
+        $res_staff = $m_staff->getAll('*',$filter,0,1000,'level asc');
+
+
         $merchant_info['maintainer'] = $maintainer;
         $merchant_info['hotel_name'] = $res_hotel['hotel_name'];
         $merchant_info['city'] = $res_hotel['city'];
@@ -408,6 +424,11 @@ class MerchantController extends BaseController {
             'cash_rate'=>$cash_rate,'recharge_rate'=>$recharge_rate,'name'=>$name,'job'=>$job,'mobile'=>$mobile,
             'status'=>$status,'sysuser_id'=>$sysuser_id);
         if($mobile!=$merchant_info['mobile']){
+            $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile));
+            if(!empty($res_merchant_mobile)){
+                $this->output("该手机号码已创建商家", 'merchant/editdetail',2,0);
+            }
+
             $m_hotel = new \Admin\Model\HotelModel();
             $res_hotel = $m_hotel->getOne($merchant_info['hotel_id']);
             $sms_config = C('ALIYUN_SMS_CONFIG');
