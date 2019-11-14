@@ -202,10 +202,18 @@ class ExchangeController extends BaseController {
 
                     if($goods_info['rebate_integral']){
                         $integral = $goods_info['rebate_integral'];
-                        $integralrecord_data = array('openid'=>$res_order['openid'],'integral' =>$integral,
-                            'content'=>$res_order['goods_id'], 'type'=>4, 'integral_time' => date('Y-m-d H:i:s'));
+
+                        $m_hotel = new \Admin\Model\HotelModel();
+                        $field = 'a.name as hotel_name,a.hotel_box_type,area.id as area_id,area.region_name as area_name';
+                        $where = array('a.id'=>$res_order['hotel_id']);
+                        $res_hotel = $m_hotel->getHotelInfo($field,$where);
+                        $integralrecord_data = array('openid'=>$res_order['openid'],'area_id'=>$res_hotel['area_id'],'area_name'=>$res_hotel['area_name'],
+                            'hotel_id'=>$res_order['hotel_id'],'hotel_name'=>$res_hotel['hotel_name'],'hotel_box_type'=>$res_hotel['hotel_box_type'],
+                            'integral'=>$integral,'goods_id'=>$goods_info['id'],'jdorder_id'=>$order_id,'content'=>1,'type'=>5,
+                            'integral_time'=>date('Y-m-d H:i:s'));
                         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
                         $m_userintegralrecord->add($integralrecord_data);
+
                         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
                         $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_order['openid']));
                         $userintegral = $res_userintegral['integral'] + $integral;
