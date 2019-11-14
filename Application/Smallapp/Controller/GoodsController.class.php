@@ -517,11 +517,16 @@ class GoodsController extends BaseController {
             $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
             $dinfo['oss_addr'] = $media_info['oss_addr'];
 
+            if($dinfo['type']==30 || $dinfo['type']==31){
+                $display_html = 'hotelexchangeadd';
+            }else{
+                $display_html = 'hoteladd';
+            }
             $areaModel  = new \Admin\Model\AreaModel();
             $area_arr = $areaModel->getAllArea();
             $this->assign('areainfo', $area_arr);
             $this->assign('vinfo', $dinfo);
-            $this->display('hoteladd');
+            $this->display($display_html);
         }
     }
 

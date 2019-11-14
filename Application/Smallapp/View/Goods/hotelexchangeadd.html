@@ -1,0 +1,826 @@
+<style type="text/css">
+    #tops {
+        height: 40px;
+        background-color: #c7c7c7;
+    }
+
+    .biaoti {
+        float: left;
+        margin-top: 13px;
+        margin-left: 36px;
+    }
+
+    .jiuloushu {
+        float: right;
+        margin-top: 13px;
+        margin-right: 36px;
+    }
+
+    .tianjiabw {
+        width: 150px;
+        height: 90px;
+        border: 1px dashed black;
+        margin-left: 31px;
+        text-align: center;
+        line-height: 90px;
+        cursor: pointer;
+    }
+
+    .cityId {
+        margin-left: 10px;
+        width: 174px;
+        height: 33px;
+    }
+
+    #serch-name {
+        width: 174px;
+        height: 33px;
+    }
+
+    .select-position {
+        width: 100%;
+        float: left;
+    }
+
+    .select-position-top {
+        width: 100%;
+        height: 30px;
+        background-color: #bdbdbd;
+        line-height: 30px;
+        padding-left: 10px;
+    }
+
+    .position-list {
+        height: 377px;
+        overflow: auto;
+    }
+
+    .position-one {
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    .xuanz-right {
+        width: 24%;
+        height: 504px;
+        float: right;
+        background-color: #78909c;
+        position: relative;
+    }
+
+    .xuanz-right-top {
+        height: 30px;
+        width: 100%;
+        color: white;
+        line-height: 30px;
+        padding-left: 6px;
+    }
+
+    .acitve-position-lists {
+        width: 90%;
+        margin-left: 15px;
+        padding-top: 10px;
+        height: 77%;
+        overflow: auto;
+        font-size: 12px;
+    }
+    .position-list-group{
+        margin-bottom: 10px;
+    }
+    .acitve-position-jname {
+        display: inline-block;
+        min-width: 85px;
+        max-width: 162px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .acitve-position-del {
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .xuanz-right-bottom {
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+    }
+
+    .ban_list {
+        margin-top: 20px;
+        margin-left: 13px;
+    }
+
+    .jiu_names {
+        margin-bottom: 10px;
+    }
+
+    .jiu_names span {
+        font-weight: 700;
+        font-size: 20px;
+    }
+
+    .ban_a {
+        display: inline-block;
+        width: 123px;
+        height: 26px;
+    }
+    #bc_p p{
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 15px;
+    }
+    #bc_p p span{
+        color: red;
+        font-size: 15px;
+    }
+</style>
+<form method="post" style="height: 100%;overflow:auto;" id="adddevileryts" action="{$host_url}/smallapp/goods/hoteladd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+
+    <input type="hidden" name="goods_id" value="{$vinfo.id}">
+
+    <input type="hidden" id="pagetotal" value="{$pagecount}">
+    <input type="hidden" id="honame" value="{$host_name}">
+    <input type="hidden" id="bczhi" />
+    <input type="hidden" id="newarr" value=""/>
+    <input type="hidden" name="hbarr" id="hbars" />
+    <div class="form-group row">
+
+        <div class="form-group row" id="sp" style="margin-top: 40px;margin-left: 17px;">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+                    商品名称：
+                </label>
+                <label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">{$vinfo.name}</label>
+
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+                    商品价格：
+                </label>
+                <label class="col-xs-12 col-sm-2 control-label" id="sp_time" style="width: auto;">{$vinfo.price}</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+                    URL：
+                </label>
+                <label class="col-xs-12 col-sm-2 control-label" id="sp_url" style="width: auto;">{$vinfo.oss_addr}</label>
+            </div>
+        </div>
+
+        <div class="form-group row" style="margin-left: 20px;">
+            <input class="mokuai" name="rad" checked="true" type="radio" id="rad_jiulou"/><label for="rad_jiulou">选择酒楼</label>
+        </div>
+
+        <div class="form-group row" style="margin-top: 20px;border: 1px solid #999;height: 280px;padding-bottom: 15px;overflow: auto;">
+            <div class="form-group row" id="tops">
+                <span class="biaoti">选择酒楼</span>
+                <span class="jiuloushu">
+				已选<span>0</span>家酒楼
+				</span>
+            </div>
+
+            <div class="tianjiabw">
+                添加酒楼
+            </div>
+            <div class="ban_list">
+
+            </div>
+        </div>
+        <div class="form-group row" style="">
+            <button type="button" class="btn btn-primary" style="margin-left: 43%;margin-right: " id="qb_save">保存</button>
+
+            <button type="button" class="btn btn-default close-m">取消</button>
+        </div>
+</form>
+<!--选择版位-->
+<div class="modal fade bs-example-modal-lg" id="modales" style="position: absolute;" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" style="width: 100%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: white;">X</span></button>
+                <h4 class="modal-title" id="myModalLabel">选择酒楼</h4>
+            </div>
+            <div class="modal-body" style="height: 520px;">
+                <div style="margin-bottom: 30px;width: 75%;height: 43px;float: left;">
+
+                        <div class="form-group row" style="margin-left: 15px;width: 240px;float: left;">
+                            <label>城市</label>
+                            <select name="" class="cityId">
+                                <option value=0>所有城市</option>
+                                <volist name="areainfo" id="vo">
+                                    <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                                </volist>
+                            </select>
+                        </div>
+
+
+                    <div class="form-group row" style="float: left;margin-left: 40px;">
+                        <input type="text" id="serch-name" />
+                        <span class="input-group-btn" style="display:inline-block;">
+					     	<button class="btn btn-primary" style="height: 33px;margin-top: -3px;margin-left: 15px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
+					    </span>
+                    </div>
+                    <div class="select-position">
+                        <div class="select-position-top" style="display: none;">
+                            筛选版位
+                        </div>
+                        <div class="select-position-top">
+                            <input style="vertical-align: middle;margin: 0;" type="checkbox" id="box_qx"/><label style="vertical-align: middle;margin-left: 6px;" for="box_qx">全选</label>
+                        </div>
+                        <div class="position-list">
+
+                        </div>
+                        <button class="btn btn-primary" id="xuanzhe_btn" type="button">选择</button>
+                    </div>
+                </div>
+                <!--右-->
+                <div class="xuanz-right">
+                    <div class="xuanz-right-top">
+                        已选版位
+                    </div>
+
+                    <div class="acitve-position-lists">
+
+                    </div>
+
+                    <div class="xuanz-right-bottom">
+                        <div class="" style="height: 26px;line-height: 26px;text-align: center;color: white;">
+
+                            已选<span class="jiuloushuliang">0</span>家酒楼
+                        </div>
+                        <button class="btn btn-primary" id="bw_bc" type="button" style="margin-left: 40%;margin-top: 10px;">保存</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--保存弹框-->
+<div class="modal fade" tabindex="-1" role="dialog" id="bctk" style="position: absolute;">
+    <div class="modal-dialog" role="document" style="top: 20%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">请确认广告发布信息</h4>
+            </div>
+            <div class="modal-body" id="bc_p" style="height: 290px;">
+                <p style="margin-top: 12%;">您的商品"<span class="vid_names">jasld</span>"</p>
+                <p>发布到选择的<span class="ljiu_num">5</span>家酒楼</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="q_fb" class="btn btn-primary">确认发布</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<script type="text/javascript">
+    $("#q_fb").click(function() {
+        $("#bctk").modal("hide");
+        $("#adddevileryts").submit();
+
+    })
+
+
+</script>
+
+<script type="text/javascript">
+    $('.ban_list').html('');//初始化
+    var honame = $('#honame').val();
+    $('.tianjiabw').click(function(){
+        $('.position-list').html('');
+        var tsnull = 1;
+
+        if(tsnull==1){
+            boiteName()
+            $('#modales').modal('show');
+            if($('#rad_jiulou').prop('checked')==false){
+                $('.select-position-top').eq(0).show();
+                $('.select-position-top').eq(1).hide();
+                $('.xuanz-right-top').html('已选版位');
+
+            }else{
+                $('.select-position-top').eq(0).hide();
+                $('.select-position-top').eq(1).show();
+                $('.xuanz-right-top').html('已选酒楼');
+
+            }
+        }
+
+
+    })
+
+
+
+    /*全选*/
+    $('.select-position').on('click','.position-ones',function(){
+        var isnull = $(this).parent().next().html()
+        if(isnull!=''){
+            var check_position = $(this).prop('checked');
+            if(check_position==true){
+                $(this).parents().next().find('input').prop('checked',true);
+            }else if(check_position==false){
+                $(this).parents().next().find('input').prop('checked',false);
+            }
+        }else{
+            if($(this).prop('checked')==false){
+                $('#box_qx').prop('checked',false)
+            }else{
+                var true_che = 0;
+                $('.position-one').each(function(){
+                    if($(this).find('input').prop('checked')==true){
+                        true_che+=1;
+                    }
+                })
+                if($('.position-one').length==true_che){
+                    $('#box_qx').prop('checked',true)
+                }
+            }
+        }
+    })
+    $('.select-position').on('click','.position-two>div',function(){
+        $(this).parent().prev().find('input').prop('checked',false);
+        var thispos = $(this)
+        var true_a = 0;
+        $(this).parent().find('div').each(function(){
+
+            var a_chec = $(this).find('input').prop('checked');
+            console.log(a_chec)
+            if(a_chec==true){
+                true_a+=1;
+
+                if(true_a==thispos.parent().attr('nnum')){
+
+                    thispos.parent().prev().find('input').prop('checked',true);
+                }
+            }
+        })
+    })
+    /*返回已经被选中的酒楼名称和版位数量*/
+
+    $('#xuanzhe_btn').click(function(){
+        if($('#rad_jiulou').prop('checked')==false){
+            //var a = $('.position-ones,.position-twos').attr('checked');
+            var arr = [];
+            var arr2 = [];
+            $('.position-two').each(function(){
+                var is_ch = $(this).find('input').is(':checked');
+                if(is_ch==true){
+                    var obj = {};
+                    var obj2 = {};
+                    var arr3 = [];
+                    var arrid = [];
+                    var a = $(this).prev().children('label').html();//所选中的酒楼名称
+                    var a_id = $(this).prev().children('label').prop('id')//所选中的酒楼id
+                    var b = $(this).find('input:checked').length;
+                    //var c = $(this).find('label').html();
+                    var this_each = $(this).find('input');
+                    this_each.each(function(){
+                        var xuanzhong = $(this).prop('checked');//所选中的版位名称
+                        if(xuanzhong==true){
+                            var c = $(this).next().html();
+                            var c_id = $(this).next().prop('for');
+                            arr3.push(c);
+                            arrid.push(c_id);
+                        }
+                    })
+                    //console.log(arr3)
+                    var arrs3 = arr3.join(',')
+                    obj2.namejiu = a;
+                    obj2.jiuid = a_id;
+                    obj2.banid = arrid;
+                    obj2.jiunum = arr3;
+                    obj.namejiu = a;
+                    obj.jiunum = b
+                    obj.jiuid2 = a_id;
+                    obj.banid2 = arrid;
+                    obj.jiunum2 = arr3;
+                    arr.push(obj)
+                    arr2.push(obj2)
+                }
+            })
+            console.log(arr)
+            console.log(arr2)
+            var is = JSON.stringify(arr2)
+            $('#bczhi').val(is);
+            //$('.acitve-position-lists').html('');
+            var stra = 0;
+            if($('.acitve-position-lists').html()==''){
+                for(var i=0;i<arr.length;i++){
+                    var new_arrhiend = {
+                        banid:arr[i].banid2,
+                        jiuid:arr[i].jiuid2,
+                        jiunum:arr[i].jiunum2,
+                        namejiu:arr[i].namejiu
+                    }
+                    var new_arrhiends = JSON.stringify(new_arrhiend)
+                    var list_html = "<div bweinum='"+arr[i].jiunum+"' val='"+new_arrhiends+"' jiuname_s='"+arr[i].namejiu+"' class='position-list-group'><span class='acitve-position-jname'>"+arr[i].namejiu+"</span><span class='acitve-position-num' >"+arr[i].jiunum+"个</span><span class='acitve-position-del' jiuname = '"+arr[i].namejiu+"'>X</span></div>"
+                    $('.acitve-position-lists').append(list_html);
+                    stra+=arr[i].jiunum;
+                }
+                $('.jiuloushuliang').html($('.position-list-group').length);
+                var asdd = 0;
+                var bczhi_vals = [];
+                $('.position-list-group').each(function(){
+                    var bweinum = parseInt($(this).attr('bweinum'));
+                    asdd+=bweinum;
+                    var alertval = $(this).attr('val');
+                    var alertvals = $.parseJSON(alertval)
+                    bczhi_vals.push(alertvals);
+                })
+                $('#newarr').val(JSON.stringify(bczhi_vals));
+                $('.banweishu').html(asdd);
+
+            }else if($('.acitve-position-lists').html()!=''){
+                var num_swa = 1;
+                for(var i=0;i<arr.length;i++){
+                    //var new_arrhiend = '{banid:"'+arr[i].banid2+'",jiuid:"'+arr[i].jiuid2+'",jiunum:"'+arr[i].jiunum2+'",namejiu:"'+arr[i].namejiu+'"}';
+                    var new_arrhiend = {
+                        banid:arr[i].banid2,
+                        jiuid:arr[i].jiuid2,
+                        jiunum:arr[i].jiunum2,
+                        namejiu:arr[i].namejiu
+                    }
+                    var new_arrhiends = JSON.stringify(new_arrhiend)
+                    var list_html = "<div bweinum='"+arr[i].jiunum+"' val='"+new_arrhiends+"' jiuname_s='"+arr[i].namejiu+"' class='position-list-group'><span class='acitve-position-jname'>"+arr[i].namejiu+"</span><span class='acitve-position-num' >"+arr[i].jiunum+"个</span><span class='acitve-position-del' jiuname = '"+arr[i].namejiu+"'>X</span></div>"
+
+                    $('.position-list-group').each(function(){
+                        var this_jiuname_s = $(this).attr('jiuname_s');
+                        if(arr[i].namejiu==this_jiuname_s){
+                            $(this).remove();
+                        }
+
+                    })
+                    $('.acitve-position-lists').append(list_html);
+                    stra+=arr[i].jiunum;
+
+                }
+
+
+                var asdd = 0;
+                var bczhi_vals = [];
+                $('.position-list-group').each(function(){
+                    var this_jiuname_s = $(this).attr('jiuname_s');
+
+                    var num_swa=0;
+                    $('.position-one').each(function(){
+                        var position_one_html = $(this).find('label').html();
+
+                        if(this_jiuname_s==position_one_html){
+
+                            $(this).next().find('div').each(function(){
+
+                                var twos_this = $(this).find('input').prop('checked');
+                                if(twos_this==false){
+                                    num_swa+=1
+                                    if(num_swa==$(this).parent().attr('nnum'))
+                                        $('.position-list-group').each(function(){
+                                            if($(this).attr('jiuname_s')==position_one_html){
+                                                $(this).remove();
+
+                                            }
+                                        })
+                                }
+                            })
+                        }
+                    })
+
+
+                })
+                $('.jiuloushuliang').html($('.position-list-group').length);
+                $('.position-list-group').each(function(){
+                    var bweinum = parseInt($(this).attr('bweinum'));
+                    asdd+=bweinum;
+                    var alertval = $(this).attr('val');
+                    var alertvals = $.parseJSON(alertval)
+                    bczhi_vals.push(alertvals);
+                })
+                $('#newarr').val(JSON.stringify(bczhi_vals));
+                $('.banweishu').html(asdd);
+            }
+        }else{
+            //酒楼模式
+            if ($('.acitve-position-lists').html()=='') {
+                var arr_null = [];
+                $('.position-one').each(function(){
+                    if($(this).find('input').prop('checked')==true){
+                        var jiulou_name = "<div id="+$(this).find('label').prop('id')+" class='position-list-group'>"+
+                            "<span class='acitve-position-jname'>"+$(this).find('label').html()+"</span>"+
+                            "<span class='acitve-position-del'>x</span>"+
+                            "</div>"
+                        $('.acitve-position-lists').append(jiulou_name);
+                        arr_null.push($(this).find('label').prop('id'))
+                    }
+                })
+                // console.log(arr_null)
+                // addAjaxBoxNum(JSON.stringify(arr_null))
+                $('.jiuloushuliang').html($('.position-list-group').length)
+            }else{
+
+                $('.position-one').each(function(){
+                    if($(this).find('input').prop('checked')==true){
+                        var this_name = $(this).find('label').html();
+                        var _thiss = $(this);
+                        $('.position-list-group').each(function(){
+                            if($(this).find('.acitve-position-jname').html()==this_name){
+                                $(this).remove();
+                            }
+                        })
+                        var jiulou_name = "<div id="+_thiss.find('label').prop('id')+" class='position-list-group'>"+
+                            "<span class='acitve-position-jname'>"+_thiss.find('label').html()+"</span>"+
+                            "<span class='acitve-position-del'>x</span>"+
+                            "</div>"
+                        $('.acitve-position-lists').append(jiulou_name);
+                    }else{
+                        var this_name = $(this).find('label').html();
+                        var _thiss = $(this);
+                        $('.position-list-group').each(function(){
+                            if($(this).find('.acitve-position-jname').html()==this_name){
+                                $(this).remove();
+                            }
+                        })
+
+                    }
+                })
+                var arr_null = [];
+                $('.position-list-group').each(function(){
+                    arr_null.push($(this).prop('id'))
+                })
+                if(arr_null==''){
+                    $('.banweishu').html('0')
+                }
+                // addAjaxBoxNum(JSON.stringify(arr_null))
+                $('.jiuloushuliang').html($('.position-list-group').length)
+
+            }
+        }
+    })
+    //"<div bweinum='"+arr[i].jiunum+"' val='"+new_arrhiends+"' jiuname_s='"+arr[i].namejiu+"' class='position-list-group'><span class='acitve-position-jname'>"+arr[i].namejiu+"</span><span class='acitve-position-num' >"+arr[i].jiunum+"个</span><span class='acitve-position-del' jiuname = '"+arr[i].namejiu+"'>X</span></div>"
+    /*删除*/
+    $('.acitve-position-lists').on('click','.acitve-position-del',function(){
+        if($('#rad_jiulou').prop('checked')==false){
+            var a = $(this).attr('jiuname');
+            $(".position-ones-name:contains('"+a+"')").parent().find('input').prop('checked',false);
+            $(".position-ones-name:contains('"+a+"')").parent().next().find('input').prop('checked',false);
+            var is = $('#bczhi').val();
+            var ias = eval(is)
+            var del_index = $(this).parent().index();
+            ias.splice(del_index,1);
+            console.log(ias);
+            $(this).parent().remove();
+            var saco = JSON.stringify(ias)
+            $('#bczhi').val(saco);
+            $('.jiuloushuliang').html($('.position-list-group').length);
+            var xsa = $(this).parent().find('.acitve-position-num').html();
+            var asdddd = parseInt(xsa)
+            $('.banweishu').html($('.banweishu').html()-asdddd);
+        }else{
+            let this_del_html = $(this).parent().find('.acitve-position-jname').html();
+            $('.position-one').each(function(){
+                if($(this).find('label').html()==this_del_html){
+                    $(this).find('input').prop('checked',false)
+                }
+            })
+            $(this).parent().remove();
+            var arr_null = [];
+            $('.position-list-group').each(function(){
+                arr_null.push($(this).prop('id'))
+            })
+            // addAjaxBoxNum(JSON.stringify(arr_null))
+
+            $('.jiuloushuliang').html($('.position-list-group').length)
+        }
+    })
+    /*版位保存*/
+    $('#bw_bc').click(function(){
+        if($('#rad_jiulou').prop('checked')==false){
+            $('.ban_list').html('')
+            var acitve_position_lists = $('.acitve-position-lists').html();
+            if(acitve_position_lists==''){
+                alert('请选择版位')
+            }else{
+                var bczhi_vals = [];
+                $('.position-list-group').each(function(){
+                    var alertval = $(this).attr('val');
+                    var alertvals = $.parseJSON(alertval)
+                    console.log(alertvals)
+                    bczhi_vals.push(alertvals);
+                })
+                console.log(bczhi_vals);
+                $('#newarr').val(JSON.stringify(bczhi_vals));
+                for(var i = 0;i<bczhi_vals.length;i++){
+                    var bczhi_bid = bczhi_vals[i].banid;
+                    var b_ht = '<div class="jiu_names"><span id="'+bczhi_vals[i].jiuid+'">'+bczhi_vals[i].namejiu+'</span></div><div class="ban_names"></div>';
+                    $('.ban_list').append(b_ht);
+                    for(var j=0;j<bczhi_bid.length;j++){
+                        var aaa = '<div class="ban_a" id="'+bczhi_vals[i].banid[j]+'">'+bczhi_vals[i].jiunum[j]+'</div>'
+                        $('.ban_names').eq(i).append(aaa)
+                    }
+                    $('#modales').modal('hide')
+                    $('.jiuloushu span').eq(0).html($('.jiuloushuliang').html())
+                    $('.jiuloushu span').eq(1).html($('.banweishu').html())
+                    /*var bczhi_bid = bczhi_vals[i].banid;
+                    for(var j=0;j<bczhi_bid.length;j++){
+                        var b_id = '<div class="ban_a" id="'+bczhi_bid[j]+'">'+bczhi_vals[i].jiunum[j]+'</div>';
+                        $('.ban_names').append(b_id);
+
+                    }*/
+                }
+            }
+        }else{
+            if($('.acitve-position-lists').html()==''){
+                alert('请选择酒楼')
+            }else{
+                $('.ban_list').html('')
+                $('.position-list-group').each(function(){
+                    var jiulou_name =	'<div class="jiu_names">'+
+                        '<span id='+$(this).prop('id')+'>'+$(this).find('span').eq(0).html()+'</span>'+
+                        '</div>'
+                    $('.ban_list').append(jiulou_name);
+
+                })
+                $('.jiuloushu').find('span').eq(0).html($('.jiuloushuliang').html())
+                $('.jiuloushu').find('span').eq(1).html($('.banweishu').html())
+                $('#modales').modal('hide');
+            }
+        }
+    })
+    /*整体保存*/
+    $('#qb_save').click(function(){
+        var arr = [];
+        $('.jiu_names').each(function(){
+            var arr2 = [];
+            var obj = {}
+            var lname = $(this).find('span').prop('id');
+            var _this_bana = $(this).next().find('div');
+            _this_bana.each(function(){
+                var w_id = $(this).prop('id');
+                arr2.push(w_id);
+            })
+            var arrs2 = arr2.join(',');
+            obj.hotel_id = lname;
+            // obj.box_str = arr2;
+            arr.push(obj)
+        })
+        var arrstr = JSON.stringify(arr);
+        $('#hbars').val(arrstr);
+        $('.vid_names').html($('#sp_name').html())
+        $('.ljiu_num').html($('.jiuloushu span').eq(0).html())
+        $('.bf_cishu').html($('#cishu').val())
+        var sp_isid = $('#newsp').css('display');
+        if($('.ban_list').html()!=''&& sp_isid!='none'){
+            $('#bctk').modal('show');
+        }else{
+            //$('#bctk').modal('show');
+            alert('请补全信息!')
+        }
+        //console.log(arr)
+    })
+    $('#q_fb').click(function(){
+        $('#bctk').modal('hide')
+    })
+
+    $('#sdd').click(function(){
+        $('#box_qx').prop('checked',false);
+        var city_id = $('.cityId').val();
+        var serch_name = $('#serch-name').val();
+        $('.position-list').html('');
+        $.ajax({
+            type:"post",
+            url:honame+"/advdelivery/getAllHotel",
+            dataType:"json",
+            data:"area_id="+city_id+"&hotel_name="+serch_name,
+            async:true,
+            success:function(calls){
+                console.log(calls)
+                if(calls.code==1){
+                    var call = calls.data;
+                    for(var i=0;i<call.length;i++){
+                        var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div nnum="" class="position-two"></div>';
+                        $('.position-list').append(jiu_name);
+                    }
+                    if($('#rad_jiulou').prop('checked')==true){
+                        if($('.acitve-position-lists').html()!=''){
+                            $('.position-list-group').each(function(){
+                                var _this_ = $(this).find('.acitve-position-jname').html();
+                                $('.position-one').each(function(){
+                                    if($(this).find('label').html()==_this_){
+                                        $(this).find('input').prop('checked',true)
+                                    }
+                                })
+                            })
+                        }
+                    }
+                }else{
+                    alert(calls.msg)
+                }
+            }
+        });
+    })
+    /*$('body').on('click','.datetimepicker<span',function(){
+        alert(1)
+    })*/
+    $('#datetimepicker,#datetimepicker2').datetimepicker().on('changeDate', function(ev){
+        $('.ban_list').html('');
+        $('.jiuloushuliang').html('0');
+        $('.banweishu').html('0');
+        $('.jiuloushu span').eq(0).html('0');
+        $('.jiuloushu span').eq(1).html('0');
+        $('.position-list-group').html('');
+        $('#newarr').val('[]');
+    });
+    $('#cishu').change(function(){
+        $('.ban_list').html('');
+        $('.jiuloushuliang').html('0');
+        $('.banweishu').html('0');
+        $('.jiuloushu span').eq(0).html('0');
+        $('.jiuloushu span').eq(1).html('0');
+        $('.acitve-position-lists').html('');
+        $('#newarr').val('[]');
+    })
+    function boiteName(){  //酒楼名称
+        $.ajax({
+            type:"post",
+            url:honame+"/advdelivery/getAllHotel",
+            dataType:"json",
+            async:true,
+            success:function(calls){
+                console.log(calls)
+                if(calls.code==1){
+                    var call = calls.data;
+                    for(var i=0;i<call.length;i++){
+                        var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div class="position-two"></div>';
+                        $('.position-list').append(jiu_name);
+                    }
+                    if($('#rad_jiulou').prop('checked')==true){
+                        if($('.acitve-position-lists').html()!=''){
+                            $('.position-list-group').each(function(){
+                                var _this_ = $(this).find('.acitve-position-jname').html();
+                                $('.position-one').each(function(){
+                                    if($(this).find('label').html()==_this_){
+                                        $(this).find('input').prop('checked',true)
+                                    }
+                                })
+                            })
+                        }
+                    }
+                }else{
+                    //alert(calls.msg)
+                }
+            }
+        });
+    }
+    $('#box_qx').change(function(){  //酒楼状态下全选
+        if($(this).prop('checked')==true){
+            $('.position-one').each(function(){
+                $(this).find('input').prop('checked',true)
+            })
+        }else{
+            $('.position-one').each(function(){
+                $(this).find('input').prop('checked',false)
+            })
+        }
+    })
+    $('.mokuai').change(function(){ //改变状态初始化
+        $('.ban_list').html('');
+        $('.acitve-position-lists').html('');
+        $('.jiuloushuliang').html('0');
+        $('.banweishu').html('0');
+        $('.jiuloushu').find('span').eq(0).html('0')
+        $('.jiuloushu').find('span').eq(1).html('0');
+        $('#box_qx').prop('checked',false);
+        if($(this).prop('id')=='rad_jiulou'){
+            $('#scree_type').val('2')
+        }else{
+            $('#scree_type').val('1');
+            $('#del_hall').hide();
+        }
+    })
+
+    function addAjaxBoxNum(datas){ //获取版位数量
+        $.ajax({
+            type:"post",
+            url:honame+"/advdelivery/getcheckadsHotel",
+            data:"devilerychds="+datas,
+            async:true,
+            dataType:"json",
+            success:function(call){
+                console.log(call);
+
+                $('.banweishu').html(parseInt(call.num))
+                if($('.jiuloushuliang').html()=='0'){
+                    $('.banweishu').html('0')
+                }
+
+            }
+        });
+    }
+</script>
