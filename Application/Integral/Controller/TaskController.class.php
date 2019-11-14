@@ -57,8 +57,8 @@ class TaskController extends BaseController {
             $data['media_id'] = I('post.media_id',0,'intval');
             $data['type']     = I('post.type',0,'intval');        //任务类型
             $data['desc']     = I('post.desc','','trim');
-            $data['start_time'] = I('post.start_time','','trim');
-            $data['end_time'] = I('post.end_time','','trim');
+            $data['start_time'] = I('post.start_time','0000-00-00 00:00:00','trim') ? I('post.start_time') : '0000-00-00 00:00:00';
+            $data['end_time'] = I('post.end_time','0000-00-00 00:00:00','trim') ? I('post.end_time') : '0000-00-00 00:00:00';
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
             //print_r($data);exit;
@@ -150,8 +150,8 @@ class TaskController extends BaseController {
             $data['media_id'] = I('post.media_id',0,'intval');
             $data['type']     = I('post.type',0,'intval');        //任务类型
             $data['desc']     = I('post.desc','','trim');
-            $data['start_time'] = I('post.start_time','','trim');
-            $data['end_time'] = I('post.end_time','','trim');
+            $data['start_time'] = I('post.start_time','0000-00-00 00:00:00','trim') ? I('post.start_time') : '0000-00-00 00:00:00';
+            $data['end_time'] = I('post.end_time','0000-00-00 00:00:00','trim') ? I('post.end_time') : '0000-00-00 00:00:00';
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
             //print_r($data);exit;
@@ -199,6 +199,10 @@ class TaskController extends BaseController {
             $where = [];
             $where['id'] = $id;
             $task_info = $m_task->getRow('*',$where);
+            if($task_info['is_long_time']){
+                $task_info['start_time'] = '';
+                $task_info['end_time']  = '';
+            }
             $task_content = json_decode($task_info['task_info'],true);
             
             $m_media = new \Admin\Model\MediaModel();
@@ -449,7 +453,9 @@ class TaskController extends BaseController {
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
             if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');
         }
-        
-        
+        if(!preg_match('/^\d{2}:\d{2}$/',$data['lunch_start_time'])) $this->error('午饭开始时间格式错误');
+        if(!preg_match('/^\d{2}:\d{2}$/',$data['lunch_end_time'])) $this->error('午饭结束时间格式错误');
+        if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_start_time'])) $this->error('晚饭开始时间格式错误');
+        if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_end_time'])) $this->error('午饭结束时间格式错误');
     }
 }

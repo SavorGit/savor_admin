@@ -19,7 +19,7 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="service_list" id="vlist">
             <tr target="sid_user">
-              <td data-title="选择"><input type="checkbox" name="ids[]" value="{$vlist.id}"></td>
+              <td data-title="选择"><input type="checkbox" <if condition="$vlist.type eq 1">checked="checked" </if> name="ids[]" value="{$vlist.id}"></td>
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="服务名称">{$vlist.name}</td>
               
@@ -35,7 +35,7 @@
 	         模型名称:
 	        </label>
 	        <div class="col-xs-12 col-sm-10">
-	           <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
+	           <input name="name" type="text" class="form-control" minlength="1" maxlength="30"  value="{$vinfo.name}" required>
 	        </div>
       	</div>
         
