@@ -45,7 +45,7 @@
         <div class="col-xs-12 col-sm-10">
           <select id='integral_task_type' name="type" class="form-control bs-select" required>
           	  <foreach name="integral_task_type" item="val" key="k">
-              	<option value="{$k}" <if condition="$vinfo.type eq $k"> selected </if> >{$val}</option>
+              	<option <if condition="$k eq 2">disabled="disabled"</if> value="{$k}" <if condition="$vinfo.type eq $k"> selected </if> >{$val}</option>
               </foreach>
               
           </select>
