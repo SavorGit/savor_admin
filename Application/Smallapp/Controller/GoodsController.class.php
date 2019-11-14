@@ -221,14 +221,17 @@ class GoodsController extends BaseController {
             $this->assign('vinfo',$dinfo);
             $this->display('withdrawgoodsadd');
         }else{
-            $price = I('post.price',0,'intval');
+            $price = I('post.price',0);
             $rebate_integral = I('post.rebate_integral',0,'intval');
             $start_date = I('post.start_date','');
             $end_date = I('post.end_date','');
             $status = I('post.status',1,'intval');
             $is_audit = I('post.is_audit',0,'intval');
             if(empty($price)){
-                $this->output('价格不能为空', "goods/withdrawgoodsadd", 2, 0);
+                $this->output('金额不能为空', "goods/withdrawgoodsadd", 2, 0);
+            }
+            if(intval($price)!=$price){
+                $this->output('请输入整数金额', "goods/withdrawgoodsadd", 2, 0);
             }
             $name = intval($price).'元';
             $type = 30;
@@ -239,10 +242,9 @@ class GoodsController extends BaseController {
             }else{
                 $res_goods = $m_goods->getInfo($where);
             }
-            if(!empty($res_goods)){
+            if($res_goods!==null || !empty($res_goods)){
                 $this->output('价格不能重复', "goods/withdrawgoodsadd", 2, 0);
             }
-
             $data = array('type'=>$type,'name'=>$name,'price'=>$price,'rebate_integral'=>$rebate_integral,'is_audit'=>$is_audit,'status'=>$status);
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
