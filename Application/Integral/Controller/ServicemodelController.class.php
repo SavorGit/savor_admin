@@ -23,7 +23,7 @@ private  $servie_type;
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         
-        $fields = 'a.id,a.name,a.create_time,a.update_time,user.remark user_name';
+        $fields = 'a.id,a.name,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name';
         $where = [];
         $where['a.status'] = 1;
         $start  = ( $start-1 ) * $size;
@@ -92,7 +92,7 @@ private  $servie_type;
             $data['service_ids'] = json_encode($ids);
             $data['update_time'] = date('Y-m-d H:i:s');
             $userinfo     = session('sysUserInfo');
-            $data['uid']  = $userinfo['id'];
+            $data['e_uid']  = $userinfo['id'];
             $where = [];
             $where['id'] = $id;
             
@@ -124,16 +124,19 @@ private  $servie_type;
     public function delete(){
         $id = I('get.id');
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        
         $where = [];
         $where['service_model_id'] = $id;
         $where['status']  = 1;
         $nums = $m_merchant->where($where)->count();
         if(empty($nums)){
             $m_service_model = new \Admin\Model\Integral\ServiceMxModel();
+            $userinfo     = session('sysUserInfo');
             $where = [];
             $where['id'] = $id;
             $data = [];
             $data['status'] = 0;
+            $data['e_uid'] = $userinfo['id'];
             $ret = $m_service_model->updateData($where, $data);
             if($ret){
                 $this->output('删除成功', "servicemodel/index");

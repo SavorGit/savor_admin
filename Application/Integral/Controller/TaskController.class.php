@@ -30,7 +30,7 @@ class TaskController extends BaseController {
         $where = [];
         $where['flag'] = 1;
         
-        $fields = 'a.id,a.name,a.type,a.create_time,a.update_time,user.remark user_name,a.status';
+        $fields = 'a.id,a.name,a.type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
         $list = $m_integral_task->getList($fields, $where, $orders, $start, $size);
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
@@ -112,8 +112,11 @@ class TaskController extends BaseController {
     public function delete(){
         $id = I('get.id');
         $m_task = new \Admin\Model\Integral\TaskModel();
+        $userinfo = session('sysUserInfo');
+        
         $where['id'] = $id;
         $data['flag']= 0 ;
+        $data['e_uid'] = $userinfo['id'];
         $ret = $m_task->updateData($where, $data);
         if($ret){
             $this->output('删除成功', "task/index",2);
@@ -186,7 +189,7 @@ class TaskController extends BaseController {
             $data['status'] = 0;
             $data['flag']   = 1;
             $userinfo = session('sysUserInfo');
-            $data['uid'] = $userinfo['id'];
+            $data['e_uid'] = $userinfo['id'];
             $ret = $m_task->updateData(array('id'=>$id), $data);
             if($ret){
                 $this->output('编辑成功', "task/index");
@@ -456,6 +459,6 @@ class TaskController extends BaseController {
         if(!preg_match('/^\d{2}:\d{2}$/',$data['lunch_start_time'])) $this->error('午饭开始时间格式错误');
         if(!preg_match('/^\d{2}:\d{2}$/',$data['lunch_end_time'])) $this->error('午饭结束时间格式错误');
         if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_start_time'])) $this->error('晚饭开始时间格式错误');
-        if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_end_time'])) $this->error('午饭结束时间格式错误');
+        if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_end_time'])) $this->error('晚饭结束时间格式错误');
     }
 }

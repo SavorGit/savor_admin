@@ -14,6 +14,7 @@ class ServiceMxModel extends BaseModel{
 	public function getList($fields,$where,$order,$start,$size){
 	    $list = $this->alias('a')
 	                 ->join('savor_sysuser user on a.uid=user.id','left')
+	                 ->join('savor_sysuser euser on a.e_uid=euser.id','left')
 	                 ->field($fields)
 	                 ->where($where)
 	                 ->order($order)

@@ -30,7 +30,8 @@
             <th>ID</th>
             <th>任务名称</th>
             <th>任务类型</th>
-            <th>创建、最后修改人</th>
+            <th>创建人</th>
+            <th>最后修改人</th>
             <th>创建时间</th>
             <th>更新时间</th>
             <th>针对商家</th>
@@ -44,7 +45,8 @@
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="任务名称">{$vlist.name}</td>
               <td data-title="任务类型">{$integral_task_type[$vlist['type']]}</td>
-              <td data-title="创建、编辑人">{$vlist.user_name}</td>
+              <td data-title="创建人">{$vlist.user_name}</td>
+              <td data-title="编辑人">{$vlist.e_user_name}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
               <td data-title="针对商家">
