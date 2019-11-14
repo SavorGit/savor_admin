@@ -5057,15 +5057,19 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     }
     /**
      * @desc 1、起始时间为每月最后一天（含），北京地区向前连续30天无日志上传的版位明细，
-     *         上海、广州向前连续14天无日志上传的版位明细
+     *         上海、广州向前连续30天无日志上传的版位明细
      */
     public function noLogBoxListInfo(){
-        $now_day =  date('j');
+        /* $now_day =  date('j');
         $all_day =  date('t');
         $is_last_day = is_numeric(I('is_last_day')) ? I('is_last_day') : 1;
         if($now_day !=$all_day && !empty($is_last_day)){
             exit('不是本月最后一天');  //上线打开
-        }
+        } */
+        
+        $end_date = I('end_date');
+        if(empty($end_date)) exit('结束日期不能为空');
+        
         //获取北京地区网络版机顶盒
         $sql ="select box.mac from savor_box box
                left join savor_room room   on box.room_id=room.id
@@ -5076,8 +5080,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $box_list = M()->query($sql);
         //获取北京地区连续30天没日志上传
         $box_log = new \Admin\Model\Oss\BoxLogModel();
-        $start_date = date('Y-m-d 00:00:00',strtotime('-30 days'));
-        $end_date   = date('Y-m-d 23:59:59');
+        $end_date = $end_date .' 23:59:59';
+        $tmp_str = (strtotime($end_date)) - 30*86400;
+        $start_date = date('Y-m-d H:i:s',$tmp_str); 
         $fields = 'box_mac';
         $data = array();
         foreach($box_list as $key=>$v){
@@ -5100,10 +5105,9 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                where hotel.hotel_box_type in(2,3,6) and hotel.state=1
                and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(9,236)";
         $box_list = M()->query($sql);
-        $start_date = date('Y-m-d 00:00:00',strtotime('-14 days'));
-        $end_date   = date('Y-m-d 23:59:59');
+        
         $fields = 'box_mac';
-        //获取上海、广州连续14天没日志上传
+        //获取上海、广州连续30天没日志上传
         foreach($box_list as $key=>$v){
             $where = array();
             $where['box_mac'] = $v['mac'];
