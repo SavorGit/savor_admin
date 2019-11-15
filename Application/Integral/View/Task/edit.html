@@ -223,7 +223,7 @@
         		<p>
         			<input <if condition="$cinfo['user_interact']['type'] eq 1" > checked="checked" </if>   type="radio" name="user_interact" value="1" />
         			有效时段内每个互动大于
-        			<input type="text" name="user_interact_1" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo['user_interact']['value']}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;的独立用户<span for="user_interact_1" generated="true" class="help-block help-block-error"></span>
+        			<input min='1' type="text" name="user_interact_1" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo['user_interact']['value']}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;的独立用户<span for="user_interact_1" generated="true" class="help-block help-block-error"></span>
         		</p>
         		
         		<p>
