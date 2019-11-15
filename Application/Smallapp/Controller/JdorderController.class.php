@@ -56,7 +56,7 @@ class JdorderController extends BaseController {
             $res_goods = $m_goods->getInfo(array('item_id'=>$sku_id));
             $integral = 0;
             $integral_status_str = '';
-            $res_integralrecord = $m_integralrecord->getInfo(array('jdorder_id'=>$v['order_id']));
+            $res_integralrecord = $m_integralrecord->getInfo(array('jdorder_id'=>$v['order_id'],'source'=>3));
             if(!empty($res_integralrecord)){
                 $integral = $res_integralrecord['integral'];
                 if($res_integralrecord['status']==2){

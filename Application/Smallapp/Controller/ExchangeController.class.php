@@ -209,7 +209,7 @@ class ExchangeController extends BaseController {
                         $res_hotel = $m_hotel->getHotelInfo($field,$where);
                         $integralrecord_data = array('openid'=>$res_order['openid'],'area_id'=>$res_hotel['area_id'],'area_name'=>$res_hotel['area_name'],
                             'hotel_id'=>$res_order['hotel_id'],'hotel_name'=>$res_hotel['hotel_name'],'hotel_box_type'=>$res_hotel['hotel_box_type'],
-                            'integral'=>$integral,'goods_id'=>$goods_info['id'],'jdorder_id'=>$order_id,'content'=>1,'type'=>5,
+                            'integral'=>$integral,'goods_id'=>$goods_info['id'],'jdorder_id'=>$order_id,'source'=>2,'content'=>1,'type'=>5,
                             'integral_time'=>date('Y-m-d H:i:s'));
                         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
                         $m_userintegralrecord->add($integralrecord_data);
