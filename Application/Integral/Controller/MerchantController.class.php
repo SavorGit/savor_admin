@@ -268,10 +268,11 @@ class MerchantController extends BaseController {
                     if(!isMobile($mobile)){
                         $this->output('请输入正确的手机号码', 'merchant/merchantadd',2,0);
                     }
-                    $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile));
+                    $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile,'status'=>1));
                     if(!empty($res_merchant_mobile)){
                         $this->output("该手机号码已创建商家", 'merchant/merchantadd',2,0);
                     }
+
                     $add_info = array('name'=>$name,'job'=>$job,'mobile'=>$mobile);
                     if($merchant_id){
                         $m_merchant->updateData(array('id'=>$merchant_id),$add_info);
@@ -422,13 +423,22 @@ class MerchantController extends BaseController {
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $merchant_info = $m_merchant->getInfo(array('id'=>$merchant_id));
 
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        $hotel_id = $merchant_info['hotel_id'];
+        $where = array('hotel_id'=>$hotel_id,'status'=>1);
+        $where['id'] = array('neq',$merchant_id);
+        $res_merchant = $m_merchant->getInfo($where);
+        if(!empty($res_merchant)){
+            $this->output('当前商家已存在', 'merchant/merchantadd',2,0);
+        }
+
         $userinfo = session('sysUserInfo');
         $sysuser_id = $userinfo['id'];
         $add_info = array('service_model_id'=>$service_model_id,'channel_id'=>$channel_id,'rate_groupid'=>$rate_groupid,
             'cash_rate'=>$cash_rate,'recharge_rate'=>$recharge_rate,'name'=>$name,'job'=>$job,'mobile'=>$mobile,
             'status'=>$status,'sysuser_id'=>$sysuser_id);
         if($mobile!=$merchant_info['mobile']){
-            $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile));
+            $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile,'status'=>1));
             if(!empty($res_merchant_mobile)){
                 $this->output("该手机号码已创建商家", 'merchant/editdetail',2,0);
             }
