@@ -164,9 +164,9 @@
                 
             </label>
             <div class="col-xs-12 col-sm-10">
-        		<p><input <if condition="$cinfo['heart_time']['type'] eq 1"> checked="checked" </if>  type="radio" name="heart_time" value="1" />饭点内开机时长大于<input name="heart_time_1" type="text" style="width:8%;height:25px;padding:6px 12px;font-size:14px;"  minlength="1" maxlength="5" <if condition="$cinfo['heart_time']['type'] eq 1">  value="{$cinfo['heart_time']['value']}" <else /> value='' </if> placeholder="小时" />小时则达标</p>
+        		<p><input <if condition="$cinfo['heart_time']['type'] eq 1"> checked="checked" </if>  type="radio" name="heart_time" value="1" />饭点内开机时长大于<input name="heart_time_1" type="text" style="width:8%;height:25px;padding:6px 12px;font-size:14px;"  minlength="1" maxlength="5" <if condition="$cinfo['heart_time']['type'] eq 1">  value="{$cinfo['heart_time']['value']}" <else /> value='' </if> placeholder="小时" />小时则达标<span for="heart_time_1" generated="true" class="help-block help-block-error" style="display: none;"></span></p>
         		
-        		<p><input <if condition="$cinfo['heart_time']['type'] eq 2"> checked="checked" </if> type="radio" name="heart_time" value="2" />饭点内每开机&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="heart_time_2" type="text" style="width:8%;height:25px;padding:6px 12px;font-size:14px;"  minlength="1" maxlength="5" <if condition="$cinfo['heart_time']['type'] eq 2">  value="{$cinfo['heart_time']['value']}" <else />value='' </if> placeholder="小时" />小时奖励一次</p>
+        		<p><input <if condition="$cinfo['heart_time']['type'] eq 2"> checked="checked" </if> type="radio" name="heart_time" value="2" />饭点内每开机&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input name="heart_time_2" type="text" style="width:8%;height:25px;padding:6px 12px;font-size:14px;"  minlength="1" maxlength="5" <if condition="$cinfo['heart_time']['type'] eq 2">  value="{$cinfo['heart_time']['value']}" <else />value='' </if> placeholder="小时" />小时奖励一次<span for="heart_time_2" generated="true" class="help-block help-block-error" style="display: block;"></span></p>
         	</div>
         </div>
     </div><!-- 电视开机结束 -->
@@ -223,7 +223,7 @@
         		<p>
         			<input <if condition="$cinfo['user_interact']['type'] eq 1" > checked="checked" </if>   type="radio" name="user_interact" value="1" />
         			有效时段内每个互动大于
-        			<input type="text" name="user_interact_1" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo['user_interact']['value']}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;的独立用户
+        			<input type="text" name="user_interact_1" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo['user_interact']['value']}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;的独立用户<span for="user_interact_1" generated="true" class="help-block help-block-error"></span>
         		</p>
         		
         		<p>
