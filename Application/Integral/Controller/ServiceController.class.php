@@ -26,7 +26,7 @@ class ServiceController extends BaseController {
         $start  = ( $start-1 ) * $size;
         $m_service = new \Admin\Model\Integral\IntegralServiceModel();
         
-        $fields = 'a.id,a.name service_name,a.type,user.remark user_name,a.create_time,a.update_time';
+        $fields = 'a.id,a.name service_name,a.type,user.remark user_name,euser.remark e_user_name,a.create_time,a.update_time';
         $where = [];
         $where['a.status'] = 1;
         
@@ -112,7 +112,7 @@ class ServiceController extends BaseController {
             $data['type'] = $type;
             $data['desc'] = $desc;
             $userinfo = session('sysUserInfo');
-            $data['uid'] = $userinfo['id'];
+            $data['e_uid'] = $userinfo['id'];
             $data['update_time'] = date('Y-m-d H:i:s');
             $ret = $m_integral_service->updateData(array('id'=>$id), $data);
             if($ret){
@@ -138,7 +138,7 @@ class ServiceController extends BaseController {
         $data['status'] = 0;
         $data['update_time'] = date('Y-m-d H:i:s');
         $userinfo = session('sysUserInfo');
-        $data['uid'] = $userinfo['id'];
+        $data['e_uid'] = $userinfo['id'];
         
         $m_integral_service = new \Admin\Model\Integral\IntegralServiceModel();
         $ret = $m_integral_service->updateData(array('id'=>$id), $data);

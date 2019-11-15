@@ -31,7 +31,8 @@
             <th>服务名称</th>
             <th>服务类型</th>
             
-            <th>创建、编辑人</th>
+            <th>创建人</th>
+            <th>编辑人</th>
             <th>创建时间</th>
             <th>更新时间</th>
             <th>操作</th>
@@ -47,7 +48,8 @@
               		echo $service_type[$vlist[type]];
 				</php>    	
               </td>
-              <td data-title="创建、编辑人">{$vlist.user_name}</td>
+              <td data-title="创建人">{$vlist.user_name}</td>
+              <td data-title="编辑人">{$vlist.e_user_name}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
               <td class="table-tool" data-title="操作">

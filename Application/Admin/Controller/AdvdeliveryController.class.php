@@ -450,6 +450,7 @@ class AdvdeliveryController extends BaseController {
         $this->assign('to_ar', $tou_arr);
         $now_date = date("Y-m-d");
         $pubadsModel = new \Admin\Model\PubAdsModel();
+        
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -493,7 +494,7 @@ class AdvdeliveryController extends BaseController {
         $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
         
         
-        $field = 'm.oss_addr image_cover,ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap';
+        $field = 'm.oss_addr image_cover,ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap,pads.state estate';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
 
@@ -579,6 +580,10 @@ class AdvdeliveryController extends BaseController {
                     }
                 }
             }
+            //获取酒楼数
+            $pubadshotelModel = new \Admin\Model\PubAdsHotelModel();
+            $hotel_list = $pubadshotelModel->getAdsHotelId($v['id']);
+            $v['hotel_nums'] = count($hotel_list);
         });
         $retp = $result['list'];
         //判断是否数组分页
@@ -1438,6 +1443,109 @@ class AdvdeliveryController extends BaseController {
             $this->error('删除失败');
         }
         
+        
+    }
+    public function selectHotel(){
+        //navTab.reloadFlag("task/index");
+        $id = I('id',0,'intval');
+        $m_pubads = new \Admin\Model\PubAdsModel();
+        $m_pubads_hotel = new \Admin\Model\PubAdsHotelModel();
+        if(IS_POST){
+            //获取该广告之前选择的酒楼id
+            $original_hotel_list = $m_pubads_hotel->getAdsHotelId($id);
+            //print_r($original_hotel_list);exit;
+            $original_ids = array();
+            $original_ids = array_column($original_hotel_list, 'hotel_id');
+            
+            
+            $ids = I('ids'); //所选酒楼
+            if(empty($ids)){
+                echo '<script>
+                
+                alertMsg.error("请选择酒楼！");</script>';
+            }
+            $rts = array_diff($original_ids,$ids);
+            if(empty($rts)){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("所选酒楼无修改！");</script>';
+            }else {
+                
+                $m_pubads_box = new \Admin\Model\PubAdsBoxModel();
+                
+                $m_pubads->startTrans();  //事务开始
+                
+                //1、删除pub_ads_hotel表的数据
+                $where = [];
+                $where['pub_ads_id'] = $id;
+                $hotel_ret = $m_pubads_hotel->delData($where);
+                
+                //2、删除pub_ads_box表的数据
+                $box_ret = $m_pubads_box->delData($where);
+                
+                //3、插入pub_ads_hotel表新酒楼数据
+                $data = [];
+                foreach($ids as $key=>$v){
+                    $data[$key]['hotel_id'] = $v;
+                    $data[$key]['pub_ads_id'] = $id;
+                    
+                }
+                $add_hotel_ret = $m_pubads_hotel->addData($data);
+                
+                //4、更新pub_ads表的状态以及创建、更新时间
+                $data = [];
+                $data['state'] = 3;
+                $data['create_time'] = date('Y-m-d H:i:s');
+                $data['update_time'] = date('Y-m-d H:i:s');
+                $ads_ret = $m_pubads->where(array('id'=>$id))->savor($data);
+                
+                if($hotel_ret && $box_ret && $add_hotel_ret && $ads_ret){
+                    
+                }else {
+                    $m_pubads->rollback();
+                }
+                //5、删除缓存
+            }
+        }else{
+            
+            $where = [];
+            $where['id'] = $id;
+            $where['state'] = array('neq',2);
+            $pubads_info = $m_pubads->field('state,type')->where($where)->find();
+            
+            if(empty($pubads_info)){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("该广告不存在或已被删除！");</script>';
+            }
+            if($pubads_info['state']!=1){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("广告计算中不可修改！");</script>';
+            }
+            if($pubads_info['type']!=2){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("该广告未按酒楼发布！");</script>';
+            }
+            
+            //获取广告所选酒楼
+            
+            $where = [];
+            $where['a.pub_ads_id'] = $id;
+            $fields = 'a.hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type';
+            $hotel_list = $m_pubads_hotel->alias('a')
+            ->join('savor_hotel  hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->where($where)
+            ->field($fields)
+            ->select();
+            $hotel_box_type = C('hotel_box_type');
+            $this->assign('hotel_box_type',$hotel_box_type);
+            $this->assign('list',$hotel_list);
+            $this->assign('id',$id);
+            $this->display();
+        }
         
     }
     public static  function array_group_by($arr, $key)
