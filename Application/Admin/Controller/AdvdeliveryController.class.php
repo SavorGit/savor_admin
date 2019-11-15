@@ -317,6 +317,39 @@ class AdvdeliveryController extends BaseController {
         var_dump($result);*/
     }
 
+    public function getAllHotel() {
+        $now_time = time();
+        $area_id = I('area_id',0);
+        $hotel_name = I('hotel_name', '');
+        $where = "sht.state=1 and sht.flag=0 ";
+        if ($area_id) {
+            $this->assign('area_k',$area_id);
+            $where .= "	AND sht.area_id = $area_id";
+        }
+        if($hotel_name){
+            $this->assign('name',$hotel_name);
+            $where .= "	AND name LIKE '%{$hotel_name}%'";
+        }
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $pawhere = '1=1';
+            $this->assign('pusera', $userinfo);
+        }else {
+            $where .= "	AND sht.area_id in ($pcity)";
+        }
+
+        $field = 'sht.id hid, sht.name hname';
+        $hotelModel = new \Admin\Model\HotelModel();
+        $orders = 'convert(sht.name using gbk) asc';
+        $result = $hotelModel->getHotelidByArea($where, $field, $orders);
+        $msg = '';
+        $res = array('code'=>1,'msg'=>$msg,'data'=>$result);
+        echo json_encode($res);
+    }
+
 
     /*
 	 * @desc 获取当前酒店有效机顶盒

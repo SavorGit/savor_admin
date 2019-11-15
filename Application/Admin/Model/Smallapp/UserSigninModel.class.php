@@ -129,7 +129,7 @@ class UserSigninModel extends BaseModel{
 
     }
 
-    private function checkSigninTime($signin_time){
+    public function checkSigninTime($signin_time){
         $is_signin = 0;
         $feast_time = C('FEAST_TIME');
 

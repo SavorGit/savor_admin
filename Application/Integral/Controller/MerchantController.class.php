@@ -127,7 +127,10 @@ class MerchantController extends BaseController {
                 $group_rate = C('GROUP_RATE');
                 $channel_id = $merchant_info[3]['channel_id'];
                 $rate_groupid = $merchant_info[3]['rate_groupid'];
-                $merchant_info['step3'] = "渠道商：{$channel_merchant[$channel_id]}、商城汇率：{$group_rate[$rate_groupid]}";
+                $cash_rate = $merchant_info[3]['cash_rate'];
+                $recharge_rate = $merchant_info[3]['recharge_rate'];
+
+                $merchant_info['step3'] = "渠道商：{$channel_merchant[$channel_id]}，商城汇率：{$group_rate[$rate_groupid]}，兑现汇率：{$cash_rate}，充值汇率：{$recharge_rate}";
             }
             if(!empty($merchant_info[4])){
                 $merchant_info['step4'] = "姓名：{$merchant_info[4]['name']}，职务：{$merchant_info[4]['job']}，手机号码：{$merchant_info[4]['mobile']}";
@@ -353,7 +356,8 @@ class MerchantController extends BaseController {
                     $template_code = $sms_config['merchant_login_invite_code'];
                     $alisms::sendSms($data['mobile'],$params,$template_code);
 
-                    $this->output('商家创建成功','merchant/merchantlist');
+                    $message = "邀请码已通过短信的方式发送给了“{$res_hotel['name']}“的管理员请提醒其注意查收！";
+                    $this->output($message,'merchant/merchantlist');
                 }else{
                     $this->output('商家创建失败', 'merchant/merchantadd',2,0);
                 }
