@@ -270,9 +270,9 @@ class TaskController extends BaseController {
             
             
             if($in_task_id){
-                $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type,m.mobile';
+                $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type';
                 $where = [];
-                $where['m.status']    = 1;
+               
                 $where['hotel.state'] = 1;
                 $where['hotel.flag']  = 0;
                 $where['a.task_id']   = $in_task_id;
@@ -282,7 +282,7 @@ class TaskController extends BaseController {
                 }
                 $order = 'convert(hotel.name using gbk) asc';
                 $hotel_list = $m_task_hotel->alias('a')
-                                           ->join('savor_integral_merchant m on a.hotel_id=m.hotel_id','left')
+                                           
                                            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
                                            ->join('savor_area_info area on area.id=hotel.area_id','left')
                                            ->field($fields)
@@ -442,6 +442,11 @@ class TaskController extends BaseController {
             if(empty($data['task_content_type'])) $this->error('请选择任务内容');
         }
         if(empty($data['lunch_end_time']) ||empty($data['lunch_start_time'])) $this->error('午饭开始时间和午饭结束时间不能为空');
+        
+        if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['lunch_start_time'])) $this->error('午饭开始时间格式错误');
+        if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['lunch_end_time'])) $this->error('午饭结束时间格式错误');
+        if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['dinner_start_time'])) $this->error('晚饭开始时间格式错误');
+        if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['dinner_end_time'])) $this->error('晚饭结束时间格式错误');
         if($data['lunch_end_time']<=$data['lunch_start_time']){
             $this->error('午饭结束时间必须大于开始时间');
         }
@@ -456,9 +461,6 @@ class TaskController extends BaseController {
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
             if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');
         }
-        if(!preg_match('/^\d{2}:\d{2}$/',$data['lunch_start_time'])) $this->error('午饭开始时间格式错误');
-        if(!preg_match('/^\d{2}:\d{2}$/',$data['lunch_end_time'])) $this->error('午饭结束时间格式错误');
-        if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_start_time'])) $this->error('晚饭开始时间格式错误');
-        if(!preg_match('/^\d{2}:\d{2}$/',$data['dinner_end_time'])) $this->error('晚饭结束时间格式错误');
+        
     }
 }
