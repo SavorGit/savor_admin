@@ -161,7 +161,7 @@ class MerchantController extends BaseController {
                 if(IS_POST){
                     $hotel_id = I('hotel_id',0,'intval');
                     $m_merchant = new \Admin\Model\Integral\MerchantModel();
-                    $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id));
+                    $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
                     if(!empty($res_merchant)){
                         $this->output('该酒楼已经创建过商家','merchant/merchantadd',2,0);
                     }
