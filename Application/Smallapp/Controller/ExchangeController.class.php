@@ -42,7 +42,7 @@ class ExchangeController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
-        $fields = 'a.id,a.openid,a.hotel_id,a.goods_id,a.price,a.amount,a.total_fee,a.status,a.sysuser_id,a.add_time,a.audit_status,goods.is_audit,goods.type as goods_type,hotel.name as hotel_name,area.region_name as city,ext.maintainer_id';
+        $fields = 'a.id,a.openid,a.hotel_id,a.goods_id,a.price,a.amount,a.total_fee,a.status,a.sysuser_id,a.add_time,a.audit_status,goods.is_audit,goods.type as goods_type,goods.rebate_integral,hotel.name as hotel_name,area.region_name as city,ext.maintainer_id';
 
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\ExchangeModel();
@@ -61,7 +61,7 @@ class ExchangeController extends BaseController {
             }
             $open_ids[] = $v['openid'];
             $datalist[$k]['typestr'] = $audit_types[$v['is_audit']];
-            $datalist[$k]['integral'] = $v['total_fee'];
+            $datalist[$k]['integral'] = $v['rebate_integral'];
             $datalist[$k]['statusstr'] = $order_status[$v['status']];
             $datalist[$k]['audit_statusstr'] = $audit_status[$v['audit_status']];
             $datalist[$k]['goods_type'] = $v['goods_type'];
