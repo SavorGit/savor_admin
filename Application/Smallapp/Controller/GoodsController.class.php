@@ -20,10 +20,14 @@ class GoodsController extends BaseController {
     	$type = I('type',0,'intval');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
+        $status   = I('status',0,'intval');
 
         $where = array('type'=>20);
         if(!empty($keyword)){
             $where['name'] = array('like',"%$keyword%");
+        }
+        if($status){
+            $where['status'] = $status;
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -69,6 +73,7 @@ class GoodsController extends BaseController {
             $datalist[$k]['hotels'] = $hotels;
         }
 
+        $this->assign('status',$status);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('type',$type);
@@ -87,10 +92,14 @@ class GoodsController extends BaseController {
         $keyword = I('keyword','','trim');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
+        $status   = I('status',0,'intval');
 
         $where = array('type'=>10);
         if(!empty($keyword)){
             $where['name'] = array('like',"%$keyword%");
+        }
+        if($status){
+            $where['status'] = $status;
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -126,6 +135,7 @@ class GoodsController extends BaseController {
             $datalist[$k]['hotels'] = intval($res_hotelgoods['num']);
         }
 
+        $this->assign('status',$status);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('keyword',$keyword);
