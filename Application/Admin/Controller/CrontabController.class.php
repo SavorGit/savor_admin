@@ -3649,6 +3649,8 @@ class CrontabController extends Controller
     }
 
     public function usertask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "usertask:$now_time \r\n";
         $m_task = new \Admin\Model\Integral\TaskUserModel();
         $m_task->handle_user_task();
     }
@@ -4090,7 +4092,7 @@ class CrontabController extends Controller
                             if(!empty($res_goods)){
                                 $rebate_integral = $res_goods[0]['rebate_integral']*$order_data['sku_num'];
                                 $goods_id = $res_goods[0]['id'];
-                                $record_data = array('openid'=>$openid,'integral'=>$rebate_integral,'goods_id'=>$goods_id,'status'=>2,
+                                $record_data = array('openid'=>$openid,'integral'=>$rebate_integral,'goods_id'=>$goods_id,'status'=>2,'source'=>3,
                                     'jdorder_id'=>$jd_order_id,'content'=>$order_data['sku_num'],'type'=>3,'integral_time'=>date('Y-m-d H:i:s'));
                                 $m_user_integralrecord->add($record_data);
                             }
@@ -4191,12 +4193,12 @@ class CrontabController extends Controller
                         $sql_goods = "select * from savor_smallapp_goods where item_id=$sku_id and appid='$jd_app_id'";
                         $res_goods = $model->query($sql_goods);
                         if(!empty($res_goods)){
-                            $m_user_integralrecord->delData(array('jdorder_id'=>$ov['id']));
+                            $m_user_integralrecord->delData(array('jdorder_id'=>$ov['id'],'source'=>3));
 
                             $rebate_integral = $res_goods[0]['rebate_integral']*$ov['sku_num'];
                             $goods_id = $res_goods[0]['id'];
                             $record_data = array('openid'=>$openid,'integral'=>$rebate_integral,'goods_id'=>$goods_id,'content'=>$ov['sku_num'],
-                                'type'=>3,'integral_time'=>date('Y-m-d H:i:s'),'status'=>1);
+                                'type'=>3,'integral_time'=>date('Y-m-d H:i:s'),'status'=>1,'jdorder_id'=>$ov['id'],'source'=>3);
                             $m_user_integralrecord->add($record_data);
 
                             $res_userintegral = $m_user_integral->getInfo(array('openid'=>$openid));

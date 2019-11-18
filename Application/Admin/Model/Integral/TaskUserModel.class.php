@@ -114,17 +114,57 @@ class TaskUserModel extends BaseModel{
         $hd_end_time = date('Y-m-d H:i:s',$fj_estime);
 
         $now_integral = 0;
-        $max_daily_integral = $task_info['max_daily_integral'];//每日最多积分上限
         $task_content = json_decode($task_info['task_info'],true);
+        $max_daily_integral = $task_content['max_daily_integral'];//每日最多积分上限
+        //排除酒楼员工
+        $all_smallapps = C('all_smallapps');
+        unset($all_smallapps['5']);
+        $all_smallapp_ids = array_keys($all_smallapps);
+
+        $forscreen_openids = array();
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $res_staff = $m_staff->field('openid')->where(array())->order('id desc')->group('openid')->select();
+        $openids = array();
+        foreach ($res_staff as $staffv){
+            $openids[]="{$staffv['openid']}";
+        }
+        if(!empty($openids)){
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $user_where = array('openid'=>array('in',$openids));
+            $res_screenuser = $m_user->getWhere('unionId',$user_where,'id desc','','unionId');
+            $union_ids = array();
+            foreach ($res_screenuser as $suv){
+                if(!empty($suv['unionid'])){
+                    $union_ids[]="{$suv['unionid']}";
+                }
+            }
+            if(!empty($union_ids)){
+                $user_where = array('unionId'=>array('in',$union_ids));
+                $user_where['small_app_id'] = array('in',$all_smallapp_ids);
+                $res_screenuser = $m_user->getWhere('openid',$user_where,'id desc','','openid');
+                foreach ($res_screenuser as $scv){
+                    if(!empty($scv['openid'])){
+                        $forscreen_openids[]="{$scv['openid']}";
+                    }
+                }
+            }
+        }
+        //end
 
         $interact_num = 0;
-        switch ($task_content['heart_time']['type']){//1.有效时段内每个互动大于多少次的独立用户 2有效时段内每次互动
+        switch ($task_content['user_interact']['type']){//1.有效时段内每个互动大于多少次的独立用户 2有效时段内每次互动
             case 1:
                 $where = array('a.box_mac'=>$signv['box_mac']);
                 $where['a.create_time'] = array(array('EGT',$hd_begin_time),array('ELT',$hd_end_time));
                 $where['a.mobile_brand'] = array('neq','devtools');
                 $where['a.is_valid'] = 1;
+                $where['a.small_app_id'] = array('in',$all_smallapp_ids);
+                if(!empty($forscreen_openids)){
+                    $where['a.openid'] = array('not in',$forscreen_openids);
+                }
                 $interact_num = $m_forscreenrecord->countHdintegralUser($where,$task_content['user_interact']['value']);
+                $sql_interact = $m_forscreenrecord->getLastSql();
+                echo "{$task_info['task_user_id']} type:1 sql_interact:$sql_interact \r\n";
                 $now_integral = $task_info['integral']*$interact_num;
                 break;
             case 2:
@@ -132,10 +172,17 @@ class TaskUserModel extends BaseModel{
                 $where['a.create_time'] = array(array('EGT',$hd_begin_time),array('ELT',$hd_end_time));
                 $where['a.mobile_brand'] = array('neq','devtools');
                 $where['a.is_valid'] = 1;
+                $where['a.small_app_id'] = array('in',$all_smallapp_ids);
+                if(!empty($forscreen_openids)){
+                    $where['a.openid'] = array('not in',$forscreen_openids);
+                }
                 $interact_num = $m_forscreenrecord->countHdintegralNum($where);
+                $sql_interact = $m_forscreenrecord->getLastSql();
+                echo "{$task_info['task_user_id']} type:1 sql_interact:$sql_interact \r\n";
                 $now_integral = $task_info['integral']*$interact_num;
                 break;
         }
+
         $now_integral = $now_integral>$max_daily_integral?$max_daily_integral:$now_integral;
         if($now_integral){
             $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
@@ -143,7 +190,7 @@ class TaskUserModel extends BaseModel{
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
-                'integral'=>$now_integral,'content'=>$interact_num,'type'=>1,'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
+                'integral'=>$now_integral,'content'=>$interact_num,'type'=>2,'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
             $m_userintegralrecord->add($integralrecord_data);
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
@@ -158,6 +205,7 @@ class TaskUserModel extends BaseModel{
             $this->setInc('integral',$now_integral);
             $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
         }
+        echo "{$task_info['task_user_id']} finish \r\n";
         return true;
     }
 
@@ -166,16 +214,18 @@ class TaskUserModel extends BaseModel{
         $fj_estime = $task_times['fj_estime'];
         $task_date = $task_times['task_date'];
 
-        $tmp_singin_h = date('H',$fj_bstime);
-        $tmp_signout_h = date('H',$fj_estime);
+        $tmp_singin_h = date('G',$fj_bstime);
+        $tmp_signout_h = date('G',$fj_estime);
         $m_box = new \Admin\Model\BoxModel();
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
         $m_hearlog = new \Admin\Model\HeartAllLogModel();
         $res_logdate = $m_hearlog->getOne($signv['box_mac'],2,$task_date);
+        $sql_boot = $m_hearlog->getLastSql();
+        echo "{$task_info['task_user_id']} sql_boot:$sql_boot \r\n";
         $online_hour = 0;
         if(!empty($res_logdate)){
-            for ($i=$tmp_singin_h;$i<=$tmp_signout_h;$i++){
+            for($i=$tmp_singin_h;$i<$tmp_signout_h;$i++){
                 if($res_logdate["hour$i"]>=10){
                     $online_hour+=1;
                 }
@@ -215,6 +265,7 @@ class TaskUserModel extends BaseModel{
             //更新任务积分
             $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
         }
+        echo "{$task_info['task_user_id']} finish \r\n";
         return true;
     }
 

@@ -48,7 +48,7 @@ class OrderController extends BaseController {
         foreach ($datalist as $k=>$v){
             $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
             $integral = 0;
-            $res_integralrecord = $m_integralrecord->getInfo(array('jdorder_id'=>$v['id']));
+            $res_integralrecord = $m_integralrecord->getInfo(array('jdorder_id'=>$v['id'],'source'=>1));
             if(!empty($res_integralrecord)){
                 $integral = $res_integralrecord['integral'];
             }
@@ -94,7 +94,7 @@ class OrderController extends BaseController {
                 $this->output('奖励积分不能大于最大值', 'order/orderlist',2,0);
             }
             $m_user_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
-            $res_order_integralrecord = $m_user_integralrecord->getInfo(array('jdorder_id'=>$res_order['id']));
+            $res_order_integralrecord = $m_user_integralrecord->getInfo(array('jdorder_id'=>$res_order['id'],'source'=>1));
             if(!empty($res_order_integralrecord) && !empty($res_order_integralrecord['integral'])){
                 $this->output('该订单奖励积分已发放', 'order/orderlist',2,0);
             }
@@ -104,7 +104,7 @@ class OrderController extends BaseController {
                 $this->output('奖励用户不存在', 'order/orderlist',2,0);
             }
             $record_data = array('openid'=>$user_info['openid'],'integral'=>$integral,'goods_id'=>$res_order['goods_id'],
-                'jdorder_id'=>$res_order['id'],'content'=>$res_order['amount'],'type'=>3,
+                'jdorder_id'=>$res_order['id'],'content'=>$res_order['amount'],'type'=>3,'source'=>1,
                 'integral_time'=>date('Y-m-d H:i:s'),'status'=>1);
 
             if(!empty($res_order_integralrecord)){
