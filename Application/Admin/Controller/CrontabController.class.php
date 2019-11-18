@@ -3649,6 +3649,8 @@ class CrontabController extends Controller
     }
 
     public function usertask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "usertask:$now_time \r\n";
         $m_task = new \Admin\Model\Integral\TaskUserModel();
         $m_task->handle_user_task();
     }
