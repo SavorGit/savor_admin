@@ -231,7 +231,8 @@ class TaskUserModel extends BaseModel{
                 }
             }
         }
-
+        $max_online_hour = 6;//最大在线时长
+        $online_hour = $online_hour>$max_online_hour?$max_online_hour:$online_hour;
         $now_integral = 0;
         $task_content = json_decode($task_info['task_info'],true);
         switch ($task_content['heart_time']['type']){//1.饭点内开机时长大于多少小时则达标 2饭点内每开机1小时奖励一次
