@@ -1460,7 +1460,7 @@ class AdvdeliveryController extends BaseController {
             
             $ids = I('ids'); //所选酒楼
             if(empty($ids)){
-                $this->error('请选择酒楼');
+                $this->error('所选酒楼不能为空');
             }
             $del_hotel_list = array_diff($original_ids,$ids);
             if(empty($del_hotel_list)){
