@@ -1446,6 +1446,143 @@ class AdvdeliveryController extends BaseController {
         
     }
     public function selectHotel(){
+        $id = I('id',0,'intval');
+        $m_pubads = new \Admin\Model\PubAdsModel();
+        $m_pubads_hotel = new \Admin\Model\PubAdsHotelModel();
+        $m_pubads_box   = new \Admin\Model\PubAdsBoxModel();
+        if(IS_POST){
+            //获取该广告之前选择的酒楼id
+            $original_hotel_list = $m_pubads_hotel->getAdsHotelId($id);
+            //print_r($original_hotel_list);exit;
+            $original_ids = array();
+            $original_ids = array_column($original_hotel_list, 'hotel_id');
+            
+            
+            $ids = I('ids'); //所选酒楼
+            if(empty($ids)){
+                $this->error('请选择酒楼');
+            }
+            $del_hotel_list = array_diff($original_ids,$ids);
+            if(empty($del_hotel_list)){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("所选酒楼无修改！");</script>';
+            }else {
+                $m_pubads_hotel->startTrans();
+                //删除pub_ads_hotel表
+                $where = [];
+                $where['hotel_id'] = array('in',$del_hotel_list);
+                $where['pub_ads_id'] = $id;
+                $del_hotel_ret = $m_pubads_hotel->delData($where);
+                
+                
+                //删除pub_ads_box表
+                $del_box_arr = [];
+                foreach($del_hotel_list as $v){
+                    $fields = 'adbox.id ads_box_id';
+                    $map = [];
+                    $map['adbox.pub_ads_id'] = $id;
+                    $map['sht.id'] = $v;
+                    
+                    $ret = $m_pubads_box->getCurrentBox($fields, $map);
+                    $ret_ads_ids = array_column($ret,'ads_box_id');
+                    
+                    $del_box_arr = array_merge($del_box_arr,$ret_ads_ids);
+                    
+                }
+                $where = [];
+                $where['id'] = array('in',$del_box_arr);
+                
+                $del_box_ret = $m_pubads_box->delData($where);
+                
+                
+                if($del_hotel_ret && $del_box_ret){
+                    $m_pubads_hotel->commit();
+                    $redis = SavorRedis::getInstance();
+                    //删除实体小平台广告接口缓存
+                    $m_box = new \Admin\Model\BoxModel();
+                    $redis->select(12);
+                    $ads_key = C('PROGRAM_ADS_CACHE_PRE');
+                    foreach ($del_hotel_list as $v){
+                        /* $where = [];
+                        $where['h.id'] = $v;
+                        $where['h.state'] = 1;
+                        $where['h.flag']  = 0;
+                        $where['b.state'] = 1;
+                        $where['b.flag']  = 0; */
+                        $where =" h.id=".$v." and h.state=1 and h.flag=0 and b.state=1 and b.flag=0";
+                        $box_list = $m_box->isHaveMac('b.id box_id', $where);
+                        
+                        foreach($box_list as $kk=>$vv){
+                            $cache_key = $ads_key.$vv['box_id'];
+                            $redis->remove($cache_key);
+                        }
+                    }
+                    //删除虚拟小平台广告接口缓存
+                    $v_ads_key = C('VSMALL_ADS');
+                    $redis->select(10);
+                    foreach($del_hotel_list as $v){
+                        $keys_arr = $redis->keys($v_ads_key.$v."*");
+                        foreach($keys_arr as $vv){
+                            $redis->remove($vv);
+                        }
+                    }
+                    echo '<script>
+                            navTab.closeTab("advdelivery/selecthotel");
+                            navTab.reloadFlag("advdelivery/getlist");
+                            alertMsg.correct("修改成功！");</script>';
+                    
+                }else {
+                    $m_pubads_hotel->rollback();
+                    echo '<script>
+                            navTab.closeTab("advdelivery/selecthotel");
+                            navTab.reloadFlag("advdelivery/getlist");
+                            alertMsg.success("修改失败！");</script>';
+                }
+                
+                
+            }
+        }else {
+            $where = [];
+            $where['id'] = $id;
+            $where['state'] = array('neq',2);
+            $pubads_info = $m_pubads->field('state,type')->where($where)->find();
+            
+            if(empty($pubads_info)){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("该广告不存在或已被删除！");</script>';
+            }
+            if($pubads_info['state']!=1){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("广告计算中不可修改！");</script>';
+            }
+            if($pubads_info['type']!=2){
+                echo '<script>
+                navTab.closeTab("advdelivery/selecthotel");
+                alertMsg.error("该广告未按酒楼发布！");</script>';
+            }
+            
+            //获取广告所选酒楼
+            
+            $where = [];
+            $where['a.pub_ads_id'] = $id;
+            $fields = 'a.hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type';
+            $hotel_list = $m_pubads_hotel->alias('a')
+            ->join('savor_hotel  hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->where($where)
+            ->field($fields)
+            ->select();
+            $hotel_box_type = C('hotel_box_type');
+            $this->assign('hotel_box_type',$hotel_box_type);
+            $this->assign('list',$hotel_list);
+            $this->assign('id',$id);
+            $this->display();
+        }
+    }
+    public function selectHotel_bac(){
         //navTab.reloadFlag("task/index");
         $id = I('id',0,'intval');
         $m_pubads = new \Admin\Model\PubAdsModel();
@@ -1459,10 +1596,12 @@ class AdvdeliveryController extends BaseController {
             
             
             $ids = I('ids'); //所选酒楼
+            print_r($ids);exit;
             if(empty($ids)){
                 echo '<script>
                 
                 alertMsg.error("请选择酒楼！");</script>';
+                exit;
             }
             $rts = array_diff($original_ids,$ids);
             if(empty($rts)){
@@ -1500,11 +1639,44 @@ class AdvdeliveryController extends BaseController {
                 $ads_ret = $m_pubads->where(array('id'=>$id))->savor($data);
                 
                 if($hotel_ret && $box_ret && $add_hotel_ret && $ads_ret){
-                    
+                    $m_pubads->commit();
+                    $redis = SavorRedis::getInstance();
+                    //删除实体小平台广告接口缓存
+                    $m_box = new \Admin\Model\BoxModel();
+                    $ads_key = C('PROGRAM_ADS_CACHE_PRE');
+                    foreach ($original_ids as $v){
+                           $where = [];
+                           $where['h.id'] = $v;
+                           $where['h.state'] = 1;
+                           $where['h.flag']  = 0;
+                           $where['b.state'] = 1;
+                           $where['b.flag']  = 0;
+                           $box_list = $m_box->isHaveMac('b.id box_id', $where);
+                           foreach($box_list as $kk=>$vv){
+                               $cache_key = $ads_key.$vv['box_id'];
+                               $redis->remove($cache_key);
+                           }
+                    }
+                    //删除虚拟小平台广告接口缓存
+                    $v_ads_key = C('VSMALL_ADS');
+                    $redis->select(12);
+                    foreach($original_ids as $v){
+                        $keys_arr = $redis->keys($v_ads_key.$v."*");
+                        foreach($keys_arr as $vv){
+                            $redis->remove($vv);
+                        }
+                    }
+                    echo '<script>
+                            navTab.closeTab("advdelivery/selecthotel");
+                            navTab.reloadFlag("advdelivery/getlist");
+                            alertMsg.correct("修改成功！");</script>';
                 }else {
                     $m_pubads->rollback();
+                    echo '<script>
+                            navTab.closeTab("advdelivery/selecthotel");
+                            navTab.reloadFlag("advdelivery/getlist");
+                            alertMsg.success("修改失败！");</script>';
                 }
-                //5、删除缓存
             }
         }else{
             

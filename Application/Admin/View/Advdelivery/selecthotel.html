@@ -1,0 +1,63 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader top-filter">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/integral/task/selecthotel" method="post" >
+    <input type="hidden" name="is_s" value='1'>
+    <input type="hidden" name="task_id" value="{$task_id}" >
+
+    
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="{$host_name}/advdelivery/selecthotel" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return navTabSearch(this);">
+        <input type="hidden" name="id" value="{$id}">
+
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            
+            <th style="width:5%"><input type="checkbox" data-check="all" data-parent=".pageContent"> 全选</th>
+            <th>酒店ID</th>
+            <th>酒店名称</th>
+			<th>所在城市</th>
+            <th>机顶盒类型</th>
+            
+
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <!-- <td class="table-checkbox">
+                <input type="checkbox" class="checkboxes" value="30" name="postlist[]">
+              </td> -->
+              <td><input name="ids[]" checked="checked"  value="{$vlist.hotel_id}" type="checkbox">
+
+              </td>
+
+              <td data-title="酒店ID">{$vlist.hotel_id}</td>
+              <td data-title="酒店名称"><php>echo getFirstCharter($vlist['hotel_name']);</php>--{$vlist.hotel_name}</td>
+              <td data-title="所在城市">{$vlist.region_name}</td>
+              <td data-title="机顶盒类型">
+                {$hotel_box_type[$vlist['hotel_box_type']]}
+              </td>
+              
+              
+            </tr>
+          </volist>
+          </tbody>
+
+        </table>
+        <div class="row">
+
+          <button class="btn btn-success" type="button" data-check="invert" data-parent=".pageContent">反选</button>
+          <button class="btn btn-success btn-sm add" type="submit" >保存</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
