@@ -88,9 +88,9 @@
               <td data-title="按类型发布">{$vlist.pub}
 
               </td>
-			  <td data-title="所选酒楼">
+			  <td data-title="修改所选酒楼">
 			  	<if condition="$vlist.estate eq 1 && $vlist.type eq 2">
-			  	<a data-tip="请选择商家" rel="advdelivery/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/advdelivery/selecthotel?id={$vlist.id}">修改所选酒楼({$vlist.hotel_nums})</a>
+			  	<a data-tip="修改所选酒楼" rel="advdelivery/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/advdelivery/selecthotel?id={$vlist.id}">修改所选酒楼({$vlist.hotel_nums})</a>
 			
 			  	<elseif condition="$vlist.estate neq 1 " />
 			  	<span style="color:red">计算中不可修改</span>
