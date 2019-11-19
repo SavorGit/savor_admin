@@ -15,7 +15,7 @@
           <div class="form-group">
             <div class="input-group input-group-sm">城市：</div>
             <div class="input-group">
-              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                 <option value=0>全部</option>
                 <volist name="area" id="vo">
                   <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
@@ -26,7 +26,7 @@
           <div class="form-group">
             <div class="input-group input-group-sm">状态：</div>
             <div class="input-group">
-              <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+              <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                 <option value=0>全部</option>
                 <option value="1" <if condition="$status eq 1">selected</if>>正常</option>
                 <option value="2" <if condition="$status eq 2">selected</if>>冻结</option>
@@ -36,7 +36,7 @@
           <div class="form-group">
             <div class="input-group input-group-sm">维护人：</div>
             <div class="input-group">
-              <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+              <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                 <option value=0>全部</option>
                 <volist name="opusers" id="vo">
                   <option value="" disabled="disabled">{$key}</option>
@@ -48,10 +48,9 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="input-group input-group-sm">服务模型</div>
+            <div class="input-group input-group-sm">服务模型：</div>
             <div class="input-group">
-              <select name="model_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
-                <option value=0>全部</option>
+              <select name="model_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                 <volist name="service_models" id="sminfo">
                   <option value="{$sminfo.id}" <if condition="$sminfo.id eq $model_id">selected</if>>{$sminfo.name}</option>
                 </volist>
