@@ -966,6 +966,7 @@ class CrontabController extends Controller
             sendTopicMessage($vm_hotel_arr, 8);
             */
             $v_ads_key = C('VSMALL_ADS');
+            $redis->select(10);
             foreach($pub_ads_hotel_arr as $tk=>$tv){
                 $keys_arr = $redis->keys($v_ads_key.$tv['hotel_id']."*");
                 foreach($keys_arr as $vv){
