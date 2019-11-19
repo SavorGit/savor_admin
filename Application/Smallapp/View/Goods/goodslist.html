@@ -45,6 +45,14 @@
               <!--</select>-->
             <!--</span>-->
             <span class="input-group-btn">
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >全部</option>
+                <volist name=":C('GOODS_STATUS')" id="oinfo">
+                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
+                </volist>
+              </select>
+            </span>
+            <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
           </div>

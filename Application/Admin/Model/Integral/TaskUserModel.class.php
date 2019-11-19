@@ -163,7 +163,7 @@ class TaskUserModel extends BaseModel{
                     $where['a.openid'] = array('not in',$forscreen_openids);
                 }
                 $interact_num = $m_forscreenrecord->countHdintegralUser($where,$task_content['user_interact']['value']);
-                $sql_interact = $m_forscreenrecord->getLastSql();
+                $sql_interact = M()->getLastSql();
                 echo "{$task_info['task_user_id']} type:1 sql_interact:$sql_interact \r\n";
                 $now_integral = $task_info['integral']*$interact_num;
                 break;
@@ -177,7 +177,7 @@ class TaskUserModel extends BaseModel{
                     $where['a.openid'] = array('not in',$forscreen_openids);
                 }
                 $interact_num = $m_forscreenrecord->countHdintegralNum($where);
-                $sql_interact = $m_forscreenrecord->getLastSql();
+                $sql_interact = M()->getLastSql();
                 echo "{$task_info['task_user_id']} type:1 sql_interact:$sql_interact \r\n";
                 $now_integral = $task_info['integral']*$interact_num;
                 break;
@@ -221,7 +221,7 @@ class TaskUserModel extends BaseModel{
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
         $m_hearlog = new \Admin\Model\HeartAllLogModel();
         $res_logdate = $m_hearlog->getOne($signv['box_mac'],2,$task_date);
-        $sql_boot = $m_hearlog->getLastSql();
+        $sql_boot = M()->getLastSql();
         echo "{$task_info['task_user_id']} sql_boot:$sql_boot \r\n";
         $online_hour = 0;
         if(!empty($res_logdate)){
