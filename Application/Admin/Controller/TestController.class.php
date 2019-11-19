@@ -101,6 +101,26 @@ class TestController extends Controller {
                 $staff_id = $m_staff->addData($data);
             }  
         }
+        
+        $sql ="select a.* from `savor_hotel_invite_code` a
+               left join savor_smallapp_user u on a.openid=u.openid
+               where a.openid !='' and a.type=3 and a.invite_id=0
+               and a.state=1 and a.flag=0 and u.small_app_id=5 ";
+        $user_list = M()->query($sql);
+        foreach($user_list as $key=>$v){
+            $data = [];
+            $data['merchant_id'] = 3;
+            $data['parent_id']   = 1;
+            $data['name'] = '';
+            $data['openid'] = $v['openid'];
+            $data['beinvited_time'] = date('Y-m-d H:i:s');
+            $data['trees'] = '';
+            $data['level'] = 0;
+            $data['sysuser_id'] =1;
+            $data['status'] = 1;
+            $staff_id = $m_staff->addData($data);
+        }
+        
         echo "OK";
     }
     
