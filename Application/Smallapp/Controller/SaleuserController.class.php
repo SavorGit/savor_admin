@@ -19,24 +19,16 @@ class SaleuserController extends BaseController {
         $pageNum = I('pageNum',1,'intval');//当前页码
 
         $where = array('a.status'=>1);
-        if($small_app_id){
-            $where['a.small_app_id'] = $small_app_id;
-        }else{
-            $where['a.small_app_id'] = array('in',array(4,5));
-        }
         if(!empty($openid)){
             $where['a.openid'] = $openid;
         }
         $start = ($pageNum-1)*$size;
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        $fields = "a.id,a.small_app_id,a.openid,a.mobile,a.avatarUrl,a.nickName,a.create_time,i.integral";
-        $where['status'] =1;
-        $res_list = $m_user->getUserIntegralList($fields,$where,'i.integral desc',$start,$size);
+        $m_staffuser = new \Admin\Model\Integral\StaffModel();
+        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,u.create_time,i.integral";
+        $res_list = $m_staffuser->getUserIntegralList($fields,$where,'i.integral desc',$start,$size);
 
         $data_list = $res_list['list'];
-        $all_smallapps = C('all_smallapps');
         foreach ($data_list as $k=>$v){
-            $data_list[$k]['small_app'] = $all_smallapps[$v['small_app_id']];
             $data_list[$k]['integral'] = intval($v['integral']);
         }
 
