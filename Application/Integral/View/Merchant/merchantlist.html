@@ -51,6 +51,7 @@
             <div class="input-group input-group-sm">服务模型：</div>
             <div class="input-group">
               <select name="model_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>所有</option>
                 <volist name="service_models" id="sminfo">
                   <option value="{$sminfo.id}" <if condition="$sminfo.id eq $model_id">selected</if>>{$sminfo.name}</option>
                 </volist>
