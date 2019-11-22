@@ -14,13 +14,105 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
     
+    public function pltozj(){
+        exit();
+        $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
+        $list = M()->query($sql);
+        
+        $ids = array(55,137,142,143,145);
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        foreach($ids as $v){
+            
+            foreach($list as $key=>$vv){
+                $data['goods_id'] = $v;
+                $data['hotel_id'] = $vv['hotel_id'];
+                $ret = $m_hotelgoods->addData($data);
+                
+            }
+        }
+        echo 'ok';
+    }
+    public function tasktozj(){
+        $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
+        $list = M()->query($sql);
+        
+        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+        foreach($list as $key=>$vv){
+            $data['task_id']  = 5;
+            $data['hotel_id'] = $vv['hotel_id'];
+            $data['uid']      = 1;
+            
+            $m_task_hotel->addData($data);
+        }
+        echo "ok";exit;
+    }
+    
     //销售端用户数据平移
     public function getSmallSaleHotel(){
         $sql ="SELECT * FROM `savor_hotel_invite_code` WHERE openid!='' and type=2 group by hotel_id";
         $hotel_list = M()->query($sql);
         print_r($hotel_list);
     }
+    public function ttps(){
+        exit();
+        $sql ="SELECT user.*,ic.hotel_id,hotel.name FROM savor_hotel_invite_code ic  
+            left join `savor_smallapp_user` user
+             on user.openid=ic.openid
+               left join savor_hotel hotel on ic.hotel_id=hotel.id WHERE `small_app_id`=5 and ic.state=1 and ic.flag=0";
+        $user_list = M()->query($sql);
+        $tmp = $aps = [];
+        foreach($user_list as $key=>$v){
+            if($v['hotel_id']){
+                $sql ="select mt.*,staff.id parent_id from savor_integral_merchant mt
+                        left join savor_integral_merchant_staff staff on mt.id=staff.merchant_id
+                       where mt.hotel_id=".$v['hotel_id'].' and mt.status=1 and mt.id !=92';
+                
+                $mt_info = M()->query($sql);
+                //print_r($mt_info);exit;
+                //print_r($v);exit;
+                
+                if(empty($mt_info)){
+                    $tmp[$key]['name'] = $v['name'];
+                    $tmp[$key]['hotel_id'] = $v['hotel_id'];
+                    $tmp[$key]['nickname'] = $v['nickname'];
+                    $tmp[$key]['openid'] = $v['openid'];
+                }else {
+                    $sql ="select * from savor_integral_merchant_staff where openid='".$v['openid']."'";
+                    $s_info = M()->query($sql);
+                    if(empty($s_info)){
+                        $le_staff_arr[$key]['merchant_id'] = $mt_info[0]['id'];
+                        $le_staff_arr[$key]['parent_id']   = $mt_info[0]['parent_id'];
+                        $le_staff_arr[$key]['name']        = '';
+                        $le_staff_arr[$key]['openid']      = $v['openid'];
+                        $le_staff_arr[$key]['beinvited_time'] = date('Y-m-d H:i:s');
+                        $le_staff_arr[$key]['trees']       = '';
+                        $le_staff_arr[$key]['level']       = 2;
+                        $le_staff_arr[$key]['sysuser_id']  = 1;
+                        $le_staff_arr[$key]['status']      = 1;
+                    }
+                    
+                }
+            }else {
+                
+            }
+            
+        }
+        $flag = 0;
+        //print_r($le_staff_arr);exit;
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        foreach($le_staff_arr as $key=>$v){
+            //print_r($v);exit;
+            $ret = $m_staff->addData($v);
+            if($ret){
+                $flag ++;
+            }
+        }
+        
+        print_r($flag);
+        echo "ok";exit;
+    }
     public function pySmallSaleUser(){
+        exit();
         $sql ="select a.* from `savor_hotel_invite_code` a 
                left join savor_smallapp_user u on a.openid=u.openid 
                where a.openid !='' and a.type=2 and a.invite_id=0 
@@ -102,7 +194,7 @@ class TestController extends Controller {
             }  
         }
         
-        $sql ="select a.* from `savor_hotel_invite_code` a
+        /* $sql ="select a.* from `savor_hotel_invite_code` a
                left join savor_smallapp_user u on a.openid=u.openid
                where a.openid !='' and a.type=3 and a.invite_id=0
                and a.state=1 and a.flag=0 and u.small_app_id=5 ";
@@ -119,7 +211,7 @@ class TestController extends Controller {
             $data['sysuser_id'] =1;
             $data['status'] = 1;
             $staff_id = $m_staff->addData($data);
-        }
+        } */
         
         echo "OK";
     }
