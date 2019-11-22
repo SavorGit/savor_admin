@@ -1322,4 +1322,63 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         }
         print_r($hotel_accounts);
     }
+
+    public function laimao(){
+        exit;
+        $goods_id = 127;//赖茅
+        $all_hotel_ids = array(883);
+
+        $m_sysconfig = new \Admin\Model\SysConfigModel();
+        $res_config = $m_sysconfig->getAllconfig();
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        foreach ($all_hotel_ids as $hotel_id){
+            $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
+            $staff_num = 0;
+            if(!empty($res_merchant)){
+                $res_staff = $m_staff->getDataList('openid',array('merchant_id'=>$res_merchant['id'],'status'=>1),'id desc');
+                if(!empty($res_staff)){
+                    $staff_num = count($res_staff);
+                    foreach ($res_staff as $stav){
+                        $openid = $stav['openid'];
+                        $data = array('hotel_id'=>$hotel_id,'openid'=>$openid,'goods_id'=>$goods_id,'type'=>2);
+                        $res_hotelgoods = $m_hotelgoods->getInfo($data);
+                        if(empty($res_hotelgoods)){
+                            $m_hotelgoods->addData($data);
+                        }
+                    }
+                }
+            }
+
+            $redis->select(14);
+            $cache_key = C('SAPP_SALE').'activitygoods:loopplay:'.$hotel_id;
+            $res_cache = $redis->get($cache_key);
+            if(!empty($res_cache)){
+                $data = json_decode($res_cache,true);
+            }else{
+                $data = array();
+            }
+            if($res_config['activity_adv_playtype']==1){
+                $data = array();
+            }
+            if(!array_key_exists($goods_id,$data)){
+                $data_num = count($data);
+                if($data_num>4){
+                    $data = array_slice($data,0,4);
+                }
+                $data[$goods_id] = $goods_id;
+                $program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM').":$hotel_id";
+                $period = getMillisecond();
+                $period_data = array('period'=>$period);
+                $redis->set($program_key,json_encode($period_data));
+            }
+            $redis->set($cache_key,json_encode($data));
+
+            echo "hotel_id:$hotel_id staff_num:$staff_num ok \r\n";
+        }
+
+
+    }
 }

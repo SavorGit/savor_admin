@@ -2059,22 +2059,34 @@ CREATE TABLE `savor_smallapp_exchange` (
 修改时间：2019-10-25 13:00
 修改人：刘斌
 执行SQL
-ALTER TABLE `cloud`.`savor_smallapp_exchange`
-ADD COLUMN `audit_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '审核状态0无 1审核通过 2审核不通过' AFTER `status`;
-
 ALTER TABLE `cloud`.`savor_smallapp_redpacket`
 ADD COLUMN `rate` decimal(2, 2) NOT NULL DEFAULT 0.00 COMMENT '费率' AFTER `scope`;
 
 ALTER TABLE `cloud`.`savor_smallapp_redpacket`
 ADD COLUMN `rate_fee` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '费率金额' AFTER `pay_fee`;
 
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('integral_exchange_rate', '0', 1);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('red_packet_rate', '0.01', 1);
+
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `source` tinyint(1) NOT NULL DEFAULT 1 COMMENT '来源 1正常订单order 2兑换订单 3京东订单 ' AFTER `type`;
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '积分类型 1开机,2互动,3销售,4兑换,5退回' AFTER `status`;
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `fj_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '饭局类型0无,1午饭,2晚饭' AFTER `integral_time`;
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD COLUMN `task_id` int(11) NOT NULL DEFAULT 0 COMMENT '任务ID' AFTER `box_type`;
+
+
+ALTER TABLE `cloud`.`savor_smallapp_exchange`
+ADD COLUMN `audit_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '审核状态0无 1审核通过 2审核不通过' AFTER `status`;
+
 ALTER TABLE `cloud`.`savor_smallapp_exchange`
 MODIFY COLUMN `sysuser_id` int(11) NOT NULL DEFAULT 0 COMMENT '系统用户ID' AFTER `address`;
-
-ALTER TABLE `cloud`.`savor_smallapp_goods`
-ADD COLUMN `is_audit` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否需要审核1是(此状态针对类型为30的商品))' AFTER `is_storebuy`;
-ALTER TABLE `cloud`.`savor_smallapp_goods`
-ADD COLUMN `sysuser_id` int(11) NOT NULL DEFAULT 0 COMMENT '系统用户ID' AFTER `is_audit`;
 
 ALTER TABLE `cloud`.`savor_smallapp_exchange`
 ADD COLUMN `hotel_id` int(11) NOT NULL DEFAULT 0 COMMENT '酒楼ID' AFTER `box_mac`;
@@ -2083,14 +2095,10 @@ ALTER TABLE `cloud`.`savor_smallapp_exchange`
 ADD COLUMN `sysuser_id` int(11) NOT NULL COMMENT '系统用户ID' AFTER `address`,
 ADD COLUMN `update_time` datetime(0) NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间' AFTER `sysuser_id`;
 
-ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
-ADD COLUMN `fj_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '饭局类型0无,1午饭,2晚饭' AFTER `integral_time`;
-
-ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
-ADD COLUMN `task_id` int(11) NOT NULL DEFAULT 0 COMMENT '任务ID' AFTER `box_type`;
-
-INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('integral_exchange_rate', '0', 1);
-INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('red_packet_rate', '0.01', 1);
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `is_audit` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否需要审核1是(此状态针对类型为30的商品))' AFTER `is_storebuy`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `sysuser_id` int(11) NOT NULL DEFAULT 0 COMMENT '系统用户ID' AFTER `is_audit`;
 
 CREATE TABLE `savor_integral_merchant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2135,7 +2143,8 @@ CREATE TABLE `savor_integral_service` (
   `desc` text COMMENT '服务说明',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建人用户id',
+  `e_uid` int(11) DEFAULT '0' COMMENT '编辑人用户id',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:已删除1:正常',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序销售端服务列表';
@@ -2146,11 +2155,11 @@ CREATE TABLE `savor_integral_service_model` (
   `service_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '选择的服务类型id',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建人用户id',
+  `e_uid` int(11) DEFAULT '0' COMMENT '编辑人用户id',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:已删除1:正常',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序销售端服务模型';
-
 
 CREATE TABLE `savor_integral_task` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2158,19 +2167,29 @@ CREATE TABLE `savor_integral_task` (
   `media_id` int(11) NOT NULL DEFAULT '0' COMMENT '任务封面图id',
   `type` int(11) NOT NULL DEFAULT '0' COMMENT '任务类型1:系统任务2:活动任务',
   `desc` text COMMENT '任务描述',
-  `start_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '任务开始时间',
-  `end_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '任务开始时间',
+  `start_time` datetime DEFAULT NULL COMMENT '任务开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '任务开始时间',
   `is_long_time` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否长期任务',
-  `integral` smallint(4) NOT NULL DEFAULT '0' COMMENT '奖励积分',
+  `integral` int(11) NOT NULL DEFAULT '0' COMMENT '奖励积分',
   `separate_id` int(11) NOT NULL DEFAULT '0' COMMENT '分成id',
   `task_info` text COMMENT '任务内容(json数据)',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建、编辑人用户id',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '创建人用户id',
+  `e_uid` int(11) DEFAULT '0' COMMENT '编辑人用户id',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:下线1:上线',
   `flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0:删除,1:正常',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务列表';
+
+CREATE TABLE `savor_integral_task_hotel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) NOT NULL DEFAULT '0' COMMENT '任务id',
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `uid` int(11) NOT NULL DEFAULT '0' COMMENT '操作人id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务针对商家';
 
 CREATE TABLE `savor_integral_task_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

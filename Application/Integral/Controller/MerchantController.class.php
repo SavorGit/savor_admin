@@ -318,12 +318,18 @@ class MerchantController extends BaseController {
                 $m_hotel = new \Admin\Model\HotelModel();
                 $res_hotel = $m_hotel->getOne($data['hotel_id']);
 
-                $pin = new \Common\Lib\Pin();
-                $obj_pin = new \Overtrue\Pinyin\Pinyin();
-                $code_charter = $obj_pin->abbr($res_hotel['name']);
-                $code_charter  = strtolower($code_charter);
-                if(strlen($code_charter)==1){
-                    $code_charter .=$code_charter;
+                $code_charter = '';
+                $s_hotel_name = mb_substr($res_hotel['name'], 0,2,'utf8');
+                if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                    $code_charter = $s_hotel_name;
+                }else {
+                    $pin = new \Common\Lib\Pin();
+                    $obj_pin = new \Overtrue\Pinyin\Pinyin();
+                    $code_charter = $obj_pin->abbr($s_hotel_name);
+                    $code_charter  = strtolower($code_charter);
+                    if(strlen($code_charter)==1){
+                        $code_charter .=$code_charter;
+                    }
                 }
                 $code_charter  = strtolower($code_charter);
                 $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();

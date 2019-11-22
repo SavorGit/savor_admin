@@ -14,14 +14,6 @@
 
           <div class="input-group input-group-sm pull-right">
             <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
-            <span class="input-group-btn input-group-sm">
-              <select name="small_app_id"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                <option value="0">用户类型</option>
-                <option value="4" <if condition="$small_app_id eq 4">selected="selected"</if> >餐厅端</option>
-                <option value="5" <if condition="$small_app_id eq 5">selected="selected"</if> >销售端</option>
-              </select>
-            </span>
-
             <span class="input-group-btn">
                 <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
               </span>
@@ -41,7 +33,6 @@
 
           <tr id="post">
             <th>用户ID</th>
-            <th>小程序版本</th>
             <th>openID</th>
             <th>手机号码</th>
             <th>用户昵称</th>
@@ -55,7 +46,6 @@
           <volist name="data" id="dinfo">
             <tr target="sid_user">
               <td data-title="用户ID">{$dinfo.id}</td>
-              <td data-title="小程序版本">{$dinfo.small_app}</td>
               <td data-title="openID">{$dinfo.openid}</td>
               <td data-title="手机号码">{$dinfo.mobile}</td>
               <td data-title="用户昵称">{$dinfo.nickname}</td>

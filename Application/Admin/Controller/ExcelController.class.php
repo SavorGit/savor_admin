@@ -5466,11 +5466,29 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             $new_bind_hotel_num = isset($new_bind_hotels[$area_id])?$new_bind_hotels[$area_id]:0;//新增绑定酒楼数
             $hotel_let3_num = isset($hotel_let3[$area_id])?$hotel_let3[$area_id]:0;//活跃使用 使用1-3天
             $hotel_gt3_num = isset($hotel_gt4[$area_id])?$hotel_gt4[$area_id]:0;//活跃使用 使用大于3天
+            $hotel_let3_names = array();
+            if($hotel_let3_num){
+                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_let3_ids) and area_id=$area_id and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+                $res_hotel_let3name = $model->query($sql_hotel_name);
+                foreach ($res_hotel_let3name as $let3v){
+                    $hotel_let3_names[]=$let3v['name'];
+                }
+            }
+            $hotel_gt3_names = array();
+            if($hotel_gt3_num){
+                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_gt3_ids) and area_id=$area_id and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+                $res_hotel_gt3name = $model->query($sql_hotel_name);
+                foreach ($res_hotel_gt3name as $gt3v){
+                    $hotel_gt3_names[]=$gt3v['name'];
+                }
+            }
+            $hotel_let3_names = !empty($hotel_let3_names)?join('，',$hotel_let3_names):'';
+            $hotel_gt3_names = !empty($hotel_gt3_names)?join('，',$hotel_gt3_names):'';
             $bind_hotel_total_num = isset($sale_hotel_nums[$area_id])?$sale_hotel_nums[$area_id]:0;//累计绑定酒楼数
             $no_bind_hotel_num = $all_hotel_num-$bind_hotel_total_num;
             $datalist[] = array('area_id'=>$area_id,'area_name'=>$area_name,'new_bind_hotel_num'=>$new_bind_hotel_num,
-                'hotel_let3_num'=>$hotel_let3_num,'hotel_gt3_num'=>$hotel_gt3_num,'no_bind_hotel_num'=>$no_bind_hotel_num,
-                'bind_hotel_total_num'=>$bind_hotel_total_num);
+                'hotel_let3_num'=>$hotel_let3_num,'hotel_gt3_num'=>$hotel_gt3_num,'hotel_let3_names'=>$hotel_let3_names,
+                'hotel_gt3_names'=>$hotel_gt3_names,'no_bind_hotel_num'=>$no_bind_hotel_num, 'bind_hotel_total_num'=>$bind_hotel_total_num);
         }
         $xlsCell = array(
             array('area_id', '地区id'),
@@ -5478,6 +5496,8 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             array('new_bind_hotel_num','新增绑定酒楼数'),
             array('hotel_let3_num','活跃使用1-3天'),
             array('hotel_gt3_num','活跃使用3天以上'),
+            array('hotel_let3_names','活跃使用1-3天酒楼名称'),
+            array('hotel_gt3_names','活跃使用3天以上酒楼名称'),
             array('no_bind_hotel_num','未绑定酒楼数'),
             array('bind_hotel_total_num','累计绑定酒楼数'),
         );
