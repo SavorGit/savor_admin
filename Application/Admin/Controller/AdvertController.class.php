@@ -78,21 +78,23 @@ class AdvertController extends BaseController{
 	 public function addAdvert(){
 	     $resource_type = I('resource_type',1,'intval');
 	     if(IS_POST){
-	         $adsModel = new \Admin\Model\AdsModel();
+             $adstype = I('post.type',0,'intval');
+             $name = I('post.name','','trim');
+             $description = I('post.description','');
+             $portraitmedia_id = I('post.portraitmedia_id',0,'intval');
+             $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
+			 $duration = I('post.duration','0','intval');
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
 			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval'); //小程序二维码是否显示
 			 $is_sapp_show = I('post.is_sapp_show','0','intval');
-			 if(empty($minu) && empty($seco)){
+			 if(empty($duration) && empty($minu) && empty($seco)){
 			     $this->error('请输入有效的时长');
 			 }
-	         $duration = $minu*60+$seco;
-	         $adstype = I('post.type',0,'intval');
+			 if($duration==0){
+                 $duration = $minu*60+$seco;
+             }
 
-	         $name = I('post.name','','trim');
-	         $description = I('post.description','');
-	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
-	         
 	         if($resource_type==1){
                  $result_media = $this->handle_resource();
                  if(!$result_media['media_id']){
@@ -106,6 +108,7 @@ class AdvertController extends BaseController{
              $ads_data = array();
              $ads_data['name'] = $name;
              $ads_data['media_id'] = $media_id;
+             $ads_data['portraitmedia_id'] = $portraitmedia_id;
              $ads_data['type'] = $adstype;
              $ads_data['create_time'] = date('Y-m-d H:i:s');
 			 $ads_data['is_online'] = 2;
@@ -122,6 +125,7 @@ class AdvertController extends BaseController{
              
              $user = session('sysUserInfo');
              $ads_data['creator_name'] = $user['username'];
+             $adsModel = new \Admin\Model\AdsModel();
              $nass = $adsModel->where(array('name'=>$name))->field('name')->find();
              if(empty($nass['name'])){
                  $adsModel->add($ads_data);
@@ -154,17 +158,22 @@ class AdvertController extends BaseController{
 	     $mediaModel = new \Admin\Model\MediaModel();
 	     $adsModel = new \Admin\Model\AdsModel();
 	     if(IS_POST){
+			 $duration = I('post.duration','0','intval');
 			 $minu = I('post.minu','0','intval');
 			 $seco = I('post.seco','0','intval');
 			 $is_sapp_qrcode = I('post.is_sapp_qrcode','0','intval');
              $resource_type = I('post.resource_type',1,'intval');
-			 $duration = $minu*60+$seco;
 	         $adstype = I('post.type',0,'intval');
 	         $name = I('post.name','','trim');
 	         $description = I('post.description','');
+             $portraitmedia_id = I('post.portraitmedia_id',0,'intval');
 	         $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
 	         $media_id = I('post.media_id','0','intval');
 	         $is_sapp_show = I('post.is_sapp_show','0','intval');
+             if($duration==0){
+                 $duration = $minu*60+$seco;
+             }
+
 	         $ads_data = array();
 	         $ads_data['name'] = $name;
 			 $ads_data['duration'] = $duration;
@@ -172,6 +181,7 @@ class AdvertController extends BaseController{
 	         $ads_data['is_sapp_qrcode'] = $is_sapp_qrcode;
 	         $ads_data['is_sapp_show']   = $is_sapp_show;
 	         $ads_data['resource_type'] = $resource_type;
+	         $ads_data['portraitmedia_id'] = $portraitmedia_id;
 	         $ads_data['update_time'] = date('Y-m-d H:i:s');
 	         if($description)  $ads_data['description'] = $description;
 	         if($cover_img_media_id){
@@ -195,7 +205,6 @@ class AdvertController extends BaseController{
 			 }
 	         $res_ads = $adsModel->where("id='$adsid'")->save($ads_data);
 	         if($res_ads){
-	             
 	             if($media_id){
 	                 $media_data = array();
 	                 $media_data['name'] = $name;
@@ -216,6 +225,11 @@ class AdvertController extends BaseController{
 	             $vinfo['oss_addr'] = $media_info['oss_addr'];
                  $resource_type = $vinfo['resource_type'];
 	         }
+             if($vinfo['portraitmedia_id']){
+                 $media_info = $mediaModel->getMediaInfoById($vinfo['portraitmedia_id']);
+                 $vinfo['portraitoss_addr'] = $media_info['oss_addr'];
+             }
+
              $this->assign('resource_type',$resource_type);
 	         $this->assign('is_editads',1);
 	         $this->assign('vinfo',$vinfo);
