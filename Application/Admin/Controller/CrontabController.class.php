@@ -2807,7 +2807,8 @@ class CrontabController extends Controller
                             if(!empty($netresource['box_res_edown_time'])){
                                 $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
                             }
-                            $dt['is_break'] = $netresource['is_break'];
+                            $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
+                            $dt['is_break'] = $is_break;
                             $dt['is_exist'] = $netresource['is_exist'];
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
@@ -2819,7 +2820,8 @@ class CrontabController extends Controller
                         $where['forscreen_id'] = $netresource['forscreen_id'];
                         $where['resource_id'] = $netresource['resource_id'];
                         $where['openid'] = $netresource['openid'];
-                        $dt['is_break'] = $netresource['is_break'];
+                        $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
+                        $dt['is_break'] = $is_break;
                         $dt['is_exist'] = $netresource['is_exist'];
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
