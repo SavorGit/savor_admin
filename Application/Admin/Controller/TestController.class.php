@@ -1326,8 +1326,12 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     public function laimao(){
         exit;
         $goods_id = 127;//赖茅
-        $all_hotel_ids = array(883);
-
+        //$all_hotel_ids = array(883);
+        $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=145 ";
+        $zt_list = M()->query($sql);
+        $all_hotel_ids = array_column($zt_list,'hotel_id');
+        //print_r($all_hotel_ids);exit;
+        
         $m_sysconfig = new \Admin\Model\SysConfigModel();
         $res_config = $m_sysconfig->getAllconfig();
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
