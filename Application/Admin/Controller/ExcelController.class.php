@@ -120,8 +120,9 @@ class ExcelController extends Controller
 	         $tmpname = '四地版位数据统计';
 	     }else if($filename=='sale_task_list'){
              $tmpname = '销售端使用情况';
+         }else if($filename=='sale_hotel_use2list'){
+             $tmpname = '销售端酒楼使用2天以上';
          }
-
 
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
@@ -5388,7 +5389,7 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             $log.="|sql_signin|".$sql_signin;
 
             //上传我的商品，添加活动商品
-            $sql_goods = "select DATE(add_time) add_date,COUNT(DISTINCT openid) as num from savor_smallapp_hotelgoods where hotel_id=7 and DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and openid!='' group by add_date";
+            $sql_goods = "select DATE(add_time) add_date,COUNT(DISTINCT openid) as num from savor_smallapp_hotelgoods where hotel_id=$hotel_id and DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and openid!='' group by add_date";
             $res_goods = $model->query($sql_goods);
             $hotel_goods = array();
             foreach ($res_goods as $goodv){
@@ -5505,6 +5506,166 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         $filename = 'sale_task_list';
         $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
     }
+
+
+    public function exportSaleHotel(){
+        $ctime = I('get.ctime');
+        $etime = I('get.etime');
+        $ctime = !empty($ctime) ? date('Y-m-d',strtotime($ctime)).' 00:00:00' : '';
+        $etime = !empty($etime) ? date('Y-m-d',strtotime($etime)).' 23:59:59' : '';
+        if($ctime>$etime){
+            echo 'ctime > etime error';
+            exit;
+        }
+        $model = M();
+
+        //活跃酒楼数
+        $cdate = date('Y-m-d',strtotime($ctime));
+        $edate = date('Y-m-d',strtotime($etime));
+        $m_box = new \Admin\Model\BoxModel();
+        $hotel_num = array();
+
+//        $sql_bindhotel = "select id as hotel_id from savor_hotel where id in
+//(select m.hotel_id from savor_integral_merchant as m where m.status=1 group by m.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+//        $res_hotels = $model->query($sql_bindhotel);
+        $sql_bindhotel = "select id as hotel_id from savor_hotel where id in 
+(select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 
+group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+        $res_hotels = $model->query($sql_bindhotel);
+        foreach ($res_hotels as $v){
+            $hotel_id = $v['hotel_id'];
+            $log = "hotel_id|$hotel_id";
+
+            $where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
+            $hotel_boxs = $m_box->getBoxByCondition('box.mac',$where,'');
+            $boxs = array();
+            foreach ($hotel_boxs as $bv){
+                $box = $bv['mac'];
+                $boxs[] = "'$box'";
+            }
+            $hotel_boxs_str = join(',',$boxs);
+            //登录绑定
+//            $sql_bind = "select hi.add_time,hi.openid from savor_integral_merchant_staff as hi left join savor_integral_merchant as m on hi.merchant_id=m.id left join savor_smallapp_user as u on hi.openid=u.openid where m.hotel_id={$v['hotel_id']} and hi.add_time>='$ctime' and hi.add_time<='$etime' and hi.status=1 and u.small_app_id=5 order by hi.id desc";
+//            $res_bind = $model->query($sql_bind);
+
+            $sql_bind = "select hi.bind_time,hi.openid from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.hotel_id={$v['hotel_id']} and hi.bind_time>='$ctime' and hi.bind_time<='$etime' and hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 order by hi.id desc";
+            $res_bind = $model->query($sql_bind);
+
+            $hotel_bind = array();
+            foreach ($res_bind as $bindv){
+                $bind_date = date('Y-m-d',strtotime($bindv['bind_time']));
+                $hotel_bind[$bind_date][] = $bindv['openid'];
+            }
+
+            //签到
+            $hotel_sign = array();
+            if(!empty($boxs)){
+                $sql_signin = "select DATE(add_time) add_date,openid from savor_smallapp_user_signin where DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and box_mac in($hotel_boxs_str)";
+                $res_signin = $model->query($sql_signin);
+
+                foreach ($res_signin as $v){
+                    $hotel_sign[$v['add_date']][] = $v['openid'];
+                }
+                $log.="|sql_signin|".$sql_signin;
+            }
+
+            //上传我的商品，添加活动商品
+            $sql_goods = "select DATE(add_time) add_date,openid from savor_smallapp_hotelgoods where hotel_id=$hotel_id and DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and openid!=''";
+            $res_goods = $model->query($sql_goods);
+            $hotel_goods = array();
+            foreach ($res_goods as $goodv){
+                $hotel_goods[$goodv['add_date']][] = $goodv['openid'];
+            }
+            $log.="|sql_goods|".$sql_goods;
+
+            //店内下单
+            $hotel_order = array();
+            if(!empty($boxs)){
+                $sql_order= "select DATE(add_time) add_date,openid from savor_smallapp_order where DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and box_mac in($hotel_boxs_str)";
+                $res_order = $model->query($sql_order);
+                foreach ($res_order as $orderv){
+                    $hotel_order[$orderv['add_date']][] = $orderv['openid'];
+                }
+                $log.="|sql_order|".$sql_order;
+            }
+
+            //上电视
+            $hotel_ontv = array();
+            if(!empty($boxs)){
+                $sql_ontv = "select DATE(create_time) add_date,openid from savor_smallapp_forscreen_record where DATE(create_time)>='$cdate' and DATE(create_time)<='$edate' and action=40 and mobile_brand!='devtools' and box_mac in($hotel_boxs_str)";
+                $res_ontv = $model->query($sql_ontv);
+                foreach ($res_ontv as $ov){
+                    $hotel_ontv[$ov['add_date']][] = $ov['openid'];
+                }
+                $log.="|sql_ontv|".$sql_ontv."\r\n";
+            }
+
+            $all_hotel_action = array_merge($hotel_bind,$hotel_sign,$hotel_goods,$hotel_order,$hotel_ontv);
+            $action_num = count($all_hotel_action);
+            if($action_num>0){
+                if($action_num>=2){
+                    $hotel_user = array();
+                    $hotel_date = array_keys($all_hotel_action);
+                    foreach ($hotel_date as $hv){
+                        if(isset($hotel_bind[$hv])){
+                            foreach ($hotel_bind[$hv] as $hvb){
+                                $hotel_user[]=$hvb;
+                            }
+                        }
+                        if(isset($hotel_sign[$hv])){
+                            foreach ($hotel_sign[$hv] as $hvs){
+                                $hotel_user[]=$hvs;
+                            }
+                        }
+                        if(isset($hotel_goods[$hv])){
+                            foreach ($hotel_goods[$hv] as $hvg){
+                                $hotel_user[]=$hvg;
+                            }
+                        }
+                        if(isset($hotel_order[$hv])){
+                            foreach ($hotel_order[$hv] as $hvo){
+                                $hotel_user[]=$hvo;
+                            }
+                        }
+                        if(isset($hotel_ontv[$hv])){
+                            foreach ($hotel_ontv[$hv] as $hvtv){
+                                $hotel_user[]=$hvtv;
+                            }
+                        }
+                    }
+                    $hotel_users = array_unique($hotel_user);
+                    $hotel_num[$hotel_id] = $hotel_users;
+                }
+            }
+            $log.="|num|$action_num"."\r\n";
+            $log_file_name = APP_PATH.'Runtime/Logs/'.'sale_'.date("Ymd").".log";
+            @file_put_contents($log_file_name, $log, FILE_APPEND);
+        }
+
+        $hotel_ids = join(',',array_keys($hotel_num));
+        $sql_hotels = "select hotel.id as hotel_id,hotel.name as hotel_name,area.id as area_id,area.region_name as area_name,ext.maintainer_id,suser.remark as uname 
+from savor_hotel hotel left join savor_hotel_ext ext on hotel.id=ext.hotel_id left join savor_sysuser as suser on ext.maintainer_id=suser.id left join savor_area_info area on hotel.area_id=area.id
+where hotel.id in($hotel_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+        $res_hotels = $model->query($sql_hotels);
+
+        $datalist = array();
+        foreach ($res_hotels as $v){
+            $openids  = $hotel_num[$v['hotel_id']];
+            $nums = count($openids);
+            $datalist[] = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],
+                'hotel_name'=>$v['hotel_name'],'uname'=>$v['uname'],'openids'=>$openids,'nums'=>$nums);
+        }
+        $xlsCell = array(
+            array('area_name', '地区'),
+            array('hotel_name','酒楼名称'),
+            array('nums','使用人数'),
+            array('uname','维护人'),
+        );
+        $xlsName = '销售端酒楼使用2天以上';
+        $filename = 'sale_hotel_use2list';
+        $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
+    }
+
 
     private function getScore($data,$conf_arr){
         $score = 0;

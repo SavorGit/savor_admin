@@ -288,8 +288,10 @@ class GoodsController extends BaseController {
         $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
         if(IS_GET){
             $detail_img_num = 5;
+            $cover_img_num = 3;
             $dinfo = array('media_type'=>1);
             $detailaddr = array();
+            $coveraddr = array();
             if($id){
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
@@ -301,6 +303,20 @@ class GoodsController extends BaseController {
                         $detailaddr[$k] = array('media_id'=>$v,'oss_addr'=>$imgmedia_info['oss_addr']);
                     }
                 }
+                if($dinfo['cover_imgmedia_ids']){
+                    $cover_imgmedia_ids = json_decode($dinfo['cover_imgmedia_ids'],true);
+                    foreach ($cover_imgmedia_ids as $k=>$v){
+                        $imgmedia_info = $m_media->getMediaInfoById($v);
+                        $coveraddr[$k] = array('media_id'=>$v,'oss_addr'=>$imgmedia_info['oss_addr']);
+                    }
+                }
+                if(!empty($dinfo['label'])){
+                    $labels = json_decode($dinfo['label'],true);
+                    $dinfo['label1'] = $labels[0];
+                    $dinfo['label2'] = $labels[1];
+                    $dinfo['label3'] = $labels[2];
+                }
+
                 $dinfo['oss_addr'] = $media_info['oss_addr'];
                 $dinfo['media_type'] = $media_info['type'];
                 $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
@@ -315,6 +331,15 @@ class GoodsController extends BaseController {
                 }
                 $detail_imgs[] = $img_info;
             }
+            $cover_imgs = array();
+            for($i=1;$i<=$cover_img_num;$i++){
+                $img_info = array('id'=>$i,'imgid'=>'cover_id'.$i,'media_id'=>0);
+                if(isset($coveraddr[$i])){
+                    $img_info['media_id'] = $coveraddr[$i]['media_id'];
+                    $img_info['oss_addr'] = $coveraddr[$i]['oss_addr'];
+                }
+                $cover_imgs[] = $img_info;
+            }
             $goods_types = C('GOODS_TYPE');
             if($type){
                 $dinfo['type'] = $type;
@@ -322,8 +347,8 @@ class GoodsController extends BaseController {
             }else{
                 unset($goods_types[10]);
             }
-
             $this->assign('goods_types',$goods_types);
+            $this->assign('cover_imgs',$cover_imgs);
             $this->assign('detail_imgs',$detail_imgs);
             $this->assign('vinfo',$dinfo);
             $this->display($template_html);
@@ -343,6 +368,10 @@ class GoodsController extends BaseController {
             $appid = I('post.appid','','trim');
             $buybutton = I('post.buybutton','','trim');
             $detailmedia_id = I('post.detailmedia_id','');
+            $intro = I('post.intro','','trim');
+            $label = I('post.label','');
+            $covermedia_id = I('post.covermedia_id','');
+            $show_status = I('post.show_status',0);
 
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
@@ -415,12 +444,21 @@ class GoodsController extends BaseController {
                 }
             }
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'status'=>$status,'is_storebuy'=>$is_storebuy);
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'show_status'=>$show_status,'status'=>$status,'is_storebuy'=>$is_storebuy);
             if($appid){
                 $data['appid'] = $appid;
             }
             if($buybutton){
                 $data['buybutton'] = $buybutton;
+            }
+            if($intro){
+                $data['intro'] = $intro;
+            }
+            if(!empty($label)){
+                $data['label'] = json_encode($label,true);
+            }
+            if(!empty($covermedia_id)){
+                $data['cover_imgmedia_ids'] = json_encode($covermedia_id,true);
             }
             if($type==10){
                 $media_vid = I('post.media_vid',0);
@@ -432,6 +470,9 @@ class GoodsController extends BaseController {
                 }
                 if($detailmedia_id){
                     $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
+                }
+                if($covermedia_id){
+                    $data['cover_imgmedia_ids'] = json_encode($covermedia_id);
                 }
             }
             $stime = strtotime($start_date);

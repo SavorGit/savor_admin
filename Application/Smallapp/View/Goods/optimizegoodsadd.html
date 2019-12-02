@@ -1,6 +1,7 @@
 <div class="pageContent">
 	<form method="post" action="{$host_url}/smallapp/goods/optimizegoodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<input name="clicktype" type="hidden" value='1'>
 		<div class="pageFormContent modal-body">
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
@@ -18,7 +19,25 @@
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="name" type="text" value="{$vinfo.name}" class="form-control"/>
+					<input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					简介：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="255" required>{$vinfo.intro}</textarea>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">标签：</label>
+				<div class="col-xs-12 col-sm-10 form-inline">
+					<input name="label[]" type="text" value="{$vinfo.label1}" class="form-control" maxlength="10"/>
+					<input name="label[]" type="text" value="{$vinfo.label2}" class="form-control" maxlength="10"/>
+					<input name="label[]" type="text" value="{$vinfo.label3}" class="form-control" maxlength="10"/>
 				</div>
 			</div>
 
@@ -108,48 +127,89 @@
 
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
-					资源类型:
+					是否显示优选：
 				</label>
 				<div class="col-xs-12 col-sm-10">
-					<div class="inline-radio-container">
-						<label class="radio-inline">
-							<input type="radio" name="clicktype" id="1" value='1' <if condition="1 eq $vinfo['media_type']">checked</if>>
-							<span>视频</span>
-						</label>
-						<label class="radio-inline">
-							<input type="radio" name="clicktype" id="2" value='2' <if condition="2 eq $vinfo['media_type']">checked</if>>
-							<span>图片</span>
-						</label>
-
-					</div>
+					<input type="hidden" name="show_status" value="0">
+					<input type="checkbox" value="1" class="make-switch status" name="show_status" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.show_status eq 1" >checked</if>>
 				</div>
 			</div>
 
-			<div class="form-group row" id="defaultpic" <if condition="$vinfo['media_type'] eq 1">style="display:none;"</if> >
-				<label class="col-xs-12 col-sm-2 control-label">
-					图片：
-				</label>
-				<div class="col-xs-12 col-sm-10">
-					<div class="fileinput fileinput-new" data-fileinput>
-						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
-							<a data-target="#modal-file" href="javascript:void(0)">
-								<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
-									<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
-									<else />
-									<img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
-								</if>
-								<span id="media_idimgname"></span>
-							</a>
-						</div>
-						<div>
-							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
-								选择图片
-							</a>
-							<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
-							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+			<!--<div class="form-group row">-->
+				<!--<label class="col-xs-12 col-sm-2 control-label">-->
+					<!--资源类型:-->
+				<!--</label>-->
+				<!--<div class="col-xs-12 col-sm-10">-->
+					<!--<div class="inline-radio-container">-->
+						<!--<label class="radio-inline">-->
+							<!--<input type="radio" name="clicktype" id="1" value='1' <if condition="1 eq $vinfo['media_type']">checked</if>>-->
+							<!--<span>视频</span>-->
+						<!--</label>-->
+						<!--<label class="radio-inline">-->
+							<!--<input type="radio" name="clicktype" id="2" value='2' <if condition="2 eq $vinfo['media_type']">checked</if>>-->
+							<!--<span>图片</span>-->
+						<!--</label>-->
+
+					<!--</div>-->
+				<!--</div>-->
+			<!--</div>-->
+
+			<!--<div class="form-group row" id="defaultpic"  >-->
+				<!--<label class="col-xs-12 col-sm-2 control-label">-->
+					<!--封面图：-->
+				<!--</label>-->
+				<!--<div class="col-xs-12 col-sm-10">-->
+					<!--<div class="fileinput fileinput-new" data-fileinput>-->
+						<!--<div class="fileinput-preview thumbnail" data-trigger="fileinput">-->
+							<!--<a data-target="#modal-file" href="javascript:void(0)">-->
+								<!--<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">-->
+									<!--<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />-->
+									<!--<else />-->
+									<!--<img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />-->
+								<!--</if>-->
+								<!--<span id="media_idimgname"></span>-->
+							<!--</a>-->
+						<!--</div>-->
+						<!--<div>-->
+							<!--<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>-->
+								<!--选择图片-->
+							<!--</a>-->
+							<!--<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >-->
+							<!--<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</div>-->
+
+			<div id="goods_coverimg">
+				<foreach name="cover_imgs" item="dinfo" >
+					<div class="form-group row" >
+						<label class="col-xs-12 col-sm-2 control-label">
+							封面图{$dinfo.id}：
+						</label>
+						<div class="col-xs-12 col-sm-10">
+							<div class="fileinput fileinput-new" data-fileinput>
+								<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+									<a data-target="#modal-file" href="javascript:void(0)">
+										<if condition="($dinfo['oss_addr'] eq 'NULL') OR $dinfo['oss_addr'] eq ''">
+											<img id="{$dinfo.imgid}img" src="/Public/admin/assets/img/noimage.png" border="0" />
+											<else />
+											<img id="{$dinfo.imgid}img" src="{$dinfo.oss_addr}" border="0" />
+										</if>
+										<span id="{$dinfo.imgid}imgname"></span>
+									</a>
+								</div>
+								<div>
+									<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
+										选择图片
+									</a>
+									<input type="hidden" name="covermedia_id[{$dinfo.id}]" id="{$dinfo.imgid}" value="{$dinfo.media_id}" >
+									<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
+				</foreach>
 			</div>
 
 			<div class="form-group row" id="defaultvideo" <if condition="$vinfo['media_type'] eq 2">style="display:none;"</if> >
@@ -251,10 +311,8 @@
         var id = $(this).attr("id");
         if (id == 1) {
             $("#defaultvideo").show();
-            $("#defaultpic").hide();
         } else {
             $("#defaultvideo").hide();
-            $("#defaultpic").show();
         }
     });
 

@@ -370,15 +370,15 @@ class DeviceController extends BaseController{
 				$redis->select(10);
 				$cache_key = C('BOX_TPMEDIA').$save['mac'];
 				$redis->remove($cache_key);
-				
+				/*
                 $all_hotelids = getVsmallHotelList();
                 if(in_array($hotelid,$all_hotelids)){
-                    
                     sendTopicMessage($hotelid,3);
                     sendTopicMessage($hotelid,6);
                     sendTopicMessage($hotelid,7);
                     sendTopicMessage($hotelid,8);
                 }
+                */
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
@@ -396,8 +396,6 @@ class DeviceController extends BaseController{
 			    $hotelid = $h_box_info[0]['hoid'];
 				if($save['flag']  != 1 && $save['adv_mach'] == 1 ) {
 					//酒楼机顶盒数+1
-					
-					
 					$hextModel = new \Admin\Model\HotelExtModel();
 					$hextModel->where('hotel_id='.$hotelid)->setInc('adplay_num', 1);
 				}
@@ -408,7 +406,8 @@ class DeviceController extends BaseController{
 				$redis->remove($cache_key);
 				$cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
 				$redis->remove($cache_key);
-                if($is_sendtopic){
+                /*
+				if($is_sendtopic){
                     $all_hotelids = getVsmallHotelList();
                     if(in_array($hotelid,$all_hotelids)){
                         sendTopicMessage($hotelid,3);
@@ -416,6 +415,7 @@ class DeviceController extends BaseController{
                         sendTopicMessage($hotelid, 7);
                     }
                 }
+                */
 				$this->output('添加成功!', 'hotel/room');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');

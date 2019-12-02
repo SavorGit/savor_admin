@@ -15,6 +15,47 @@ class BoxModel extends BaseModel{
     protected $tableName  ='box';
 
 
+    public function checkForscreenTypeByMac($box_mac){
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(14);
+        $box_key = "box:forscreentype:$box_mac";
+        $fields = 'box.box_type,box.is_sapp_forscreen,box.is_open_simple';
+        $where = array('box.mac'=>$box_mac,'box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
+        $order = 'box.id desc';
+        $limit = '0,1';
+        $res_box = $this->alias('box')
+            ->join('savor_room as room on box.room_id=room.id')
+            ->join('savor_hotel as hotel on room.hotel_id=hotel.id')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($limit)
+            ->find();
+        $forscreen_type = 1;//1外网(主干) 2直连(极简)
+        if(!empty($res_box)){
+            $box_forscreen = "{$res_box['is_sapp_forscreen']}.'-'.{$res_box['is_open_simple']}";
+            switch ($box_forscreen){
+                case '1-0':
+                    $forscreen_type = 1;
+                    break;
+                case '0-1':
+                    $forscreen_type = 2;
+                    break;
+                case '1-1':
+                    if(in_array($res_box['box_type'],array(3,6))){
+                        $forscreen_type = 2;
+                    }elseif($res_box['box_type']==2){
+                        $forscreen_type = 1;
+                    }
+                    break;
+                default:
+                    $forscreen_type = 1;
+            }
+        }
+        $redis->set($box_key,$forscreen_type);
+        return $forscreen_type;
+    }
+
 	public function getBoxTvInfo($field,$where,$start,$size){
 		//savor_tv
 		$sql ="select $field from savor_box AS b LEFT JOIN
@@ -216,9 +257,12 @@ class BoxModel extends BaseModel{
 	        $this->add($data);
 	        $insert_id = $this->getLastInsID();
 	        if($insert_id){
+                $forscreen_type = $this->checkForscreenTypeByMac($data['mac']);
+
 	            $redis = SavorRedis::getInstance();
 	            $redis->select(15);
 	            $cache_key =  C('DB_PREFIX').$this->tableName.'_'.$insert_id;
+	            $data['forscreen_type'] = $forscreen_type;
 	            $redis->set($cache_key, json_encode($data));
 	            return $insert_id;
 	        }else {
@@ -235,6 +279,9 @@ class BoxModel extends BaseModel{
 	    if(!empty($id)){
 	        $rt = $this->where('id='.$id)->save($data);
 	        if($rt){
+                $forscreen_type = $this->checkForscreenTypeByMac($data['mac']);
+                $data['forscreen_type'] = $forscreen_type;
+
 	            $redis = SavorRedis::getInstance();
 	            $redis->select(15);
 	            $cache_key =  C('DB_PREFIX').$this->tableName.'_'.$id;
