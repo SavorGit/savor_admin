@@ -33,7 +33,7 @@ class BoxModel extends BaseModel{
             ->find();
         $forscreen_type = 1;//1外网(主干) 2直连(极简)
         if(!empty($res_box)){
-            $box_forscreen = "{$res_box['is_sapp_forscreen']}.'-'.{$res_box['is_open_simple']}";
+            $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
             switch ($box_forscreen){
                 case '1-0':
                     $forscreen_type = 1;
@@ -281,7 +281,6 @@ class BoxModel extends BaseModel{
 	        if($rt){
                 $forscreen_type = $this->checkForscreenTypeByMac($data['mac']);
                 $data['forscreen_type'] = $forscreen_type;
-
 	            $redis = SavorRedis::getInstance();
 	            $redis->select(15);
 	            $cache_key =  C('DB_PREFIX').$this->tableName.'_'.$id;
