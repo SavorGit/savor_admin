@@ -451,9 +451,7 @@ class GoodsController extends BaseController {
             if($buybutton){
                 $data['buybutton'] = $buybutton;
             }
-            if($intro){
-                $data['intro'] = $intro;
-            }
+            $data['intro'] = $intro;
             if(!empty($label)){
                 $data['label'] = json_encode($label,true);
             }
@@ -478,7 +476,11 @@ class GoodsController extends BaseController {
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
             if($stime>$etime){
-                $this->output('开始时间不能大于结束时间', "goods/$template_html", 2, 0);
+                $this->output('开始日期不能大于结束日期', "goods/$template_html", 2, 0);
+            }
+            $nowdate = date('Ymd');
+            if(date('Ymd',$stime)>$nowdate){
+                $this->output('开始日期不能大于当前日期', "goods/$template_html", 2, 0);
             }
             $start_time = date('Y-m-d 00:00:00',$stime);
             $end_time = date('Y-m-d 23:59:59',$etime);
