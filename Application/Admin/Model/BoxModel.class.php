@@ -117,7 +117,28 @@ class BoxModel extends BaseModel{
         $res = $this->changeInfoName($volist);
         return $res;
     }
-
+    public function getBoxListDb(){
+        $Model = new \Think\Model();
+        $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,box.state boxstate,hotel.hotel_box_type,
+	         box.mac mac,box.name bname, room.name rname, room.type rtype,
+	          hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
+	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer,
+             room.remark,box.tag,hext.avg_expense,tv.tv_brand,tv.tv_size,
+             case box.`is_4g`
+                when 0 then "否"
+				when 1 then "是" END AS is_4g
+	         from savor_box as box
+             left join savor_tv as tv on box.id=tv.box_id
+	         left join savor_room as room on box.room_id = room.id
+	         left join savor_hotel as hotel on room.hotel_id = hotel.id
+	         left join savor_hotel_ext as hext on hext.hotel_id = hotel.id
+	         left join savor_sysuser as sys on sys.id = hext.maintainer_id
+	         where 1 and hotel.flag=0 and hotel.state=1 and box.flag=0 and box.state!=3 and tv.flag =0  and tv.state=1 order by hotel.id';
+        $volist = $Model->query($sql);
+    
+        $res = $this->changeInfoName($volist);
+        return $res;
+    }
 
 	public function getBoxExNum(){
 		$Model = new \Think\Model();

@@ -1653,7 +1653,7 @@ class ExcelController extends Controller
     function hotelboxinfo(){
         $boxModel = new \Admin\Model\BoxModel();
         //获取所有数据
-        $box_arr = $boxModel->getBoxList();
+        $box_arr = $boxModel->getBoxListDb();
         $htype = C('hotel_box_type');
         foreach($box_arr as $bk=>$bv) {
             $box_arr[$bk]['hotel_box_type'] = $htype[$box_arr[$bk]['hotel_box_type']];
@@ -1670,18 +1670,22 @@ class ExcelController extends Controller
             array('rtype', '包间类型'),
            
             array('hname', '酒店名称'),
-            array('level', '酒店级别'),
+            //array('level', '酒店级别'),
             array('area_id', '酒店区域'),
             array('addr', '酒店地址'),
-            array('contractor', '酒店联系人'),
-            array('mobile', '手机'),
-            array('tel', '固定电话'),
-            array('iskey', '重点酒楼'),
+            //array('contractor', '酒店联系人'),
+            //array('mobile', '手机'),
+            //array('tel', '固定电话'),
+            //array('iskey', '重点酒楼'),
             array('maintainer', '合作维护人'),
-            array('tech_maintainer', '技术运维人'),
+            //array('tech_maintainer', '技术运维人'),
             array('hotel_box_type', '设备类型'),
             array('remark','包间备注'),
             array('tag','机顶盒备注'),
+            array('avg_expense','人均消费'),
+            array('tv_brand','电视品牌'),
+            array('tv_size','电视尺寸'),
+            array('is_4g','是否4G'),
         );
         
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
