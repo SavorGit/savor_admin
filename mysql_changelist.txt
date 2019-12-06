@@ -2200,3 +2200,34 @@ CREATE TABLE `savor_integral_task_user` (
   PRIMARY KEY (`id`),
   KEY `key_openidtime` (`openid`,`add_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户任务表';
+
+
+增加说明：增加销售活动任务
+修改时间：2019-10-28 16:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD INDEX `index_type`(`type`);
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '积分类型 1开机,2互动,3销售,4兑换,5退回,6活动促销' AFTER `status`;
+
+
+增加说明：增加销售活动任务
+修改时间：2019-12-04 15:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `intro` varchar(300) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '简介' AFTER `name`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `label` varchar(100) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '标签' AFTER `intro`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `cover_imgmedia_ids` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT '封面图资源ID' AFTER `imgmedia_id`;
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `show_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '显示状态 0无 1小程序优选显示' AFTER `sysuser_id`;
+ALTER TABLE `cloud`.`savor_smallapp_play_log`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:点播2:投屏3:节目单资源4精选内容5优选商品' AFTER `res_id`;
+ALTER TABLE `cloud`.`savor_ads`
+ADD COLUMN `portraitmedia_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '竖屏媒体资源id' AFTER `media_id`;
+ALTER TABLE `cloud`.`savor_smallapp_collect`
+ADD INDEX `index_ridtype`(`res_id`, `type`);
+UPDATE `cloud`.`savor_smallapp_goods` SET `show_status` = 1 WHERE `status`=2;
