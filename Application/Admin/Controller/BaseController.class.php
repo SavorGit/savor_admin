@@ -339,6 +339,11 @@ class BaseController extends Controller {
                     $img_ext = join(',', $res_files[2]);
                 }
                 break;
+            case 4:
+                if(!empty($res_files[4])){
+                    $file_ext = join(',', $res_files[4]);
+                }
+                break;
             case 3:
                 if(!empty($res_files[1])){
                     $file_ext = join(',', $res_files[1]);

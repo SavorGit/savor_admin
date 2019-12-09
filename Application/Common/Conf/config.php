@@ -124,6 +124,7 @@ $config['RESOURCE_TYPE'] = array(
     '1'=>'视频',
     '2'=>'图片',
     '3'=>'其他',
+    '4'=>'音频',
 );
 $config['ADS_TYPE'] = array(
     '1'=>'广告',
@@ -138,6 +139,8 @@ $config['RESOURCE_TYPEINFO'] = array(
     'gif'=>2,
     'jpeg'=>2,
     'bmp'=>2,
+    'wma'=>4,
+    'mp3'=>4,
 );
 $config['HOTEL_LEVEL'] = array(
     '3'=>'3A',
