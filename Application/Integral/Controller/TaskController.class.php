@@ -47,10 +47,7 @@ class TaskController extends BaseController {
         $this->display();
     }
     public function add(){
-        
         if(IS_POST){
-            
-            
             $m_task = new \Admin\Model\Integral\TaskModel();
             $data = [];
             $data['name']     = I('post.name','','trim');
@@ -76,7 +73,6 @@ class TaskController extends BaseController {
                     $task_content['dinner_end_time']     = I('post.kj_dinner_end_time');
                     $task_content['heart_time']['type'] = I('post.heart_time',0,'intval');
                     $task_content['heart_time']['value'] = I('post.heart_time_'.$task_content['heart_time']['type'],0,'intval');
-                    
                 }else if($task_content['task_content_type']==2){//电视互动
                     $task_content['lunch_start_time']   = I('post.hd_lunch_start_time');
                     $task_content['lunch_end_time']     = I('post.hd_lunch_end_time');
@@ -85,10 +81,16 @@ class TaskController extends BaseController {
                     $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
                     $task_content['user_interact']['type'] = I('post.user_interact',0,'intval');
                     $task_content['user_interact']['value'] = I('post.user_interact_'.$task_content['user_interact']['type'],0,'intval');
+                }else if($task_content['task_content_type']==3){//活动推广
+                    $task_content['lunch_start_time']   = I('post.activity_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.activity_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.activity_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.activity_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
+                    $task_content['user_promote']['type'] = I('post.user_promote',0,'intval');
+                    $task_content['user_promote']['value'] = I('post.user_promote_'.$task_content['user_promote']['type'],0,'intval');
                 }
-                //print_r($task_content);exit;
                 $this->chekInfoParam($task_content,$data);
-                //echo "ddd";exit;
                 $data['task_info'] = json_encode($task_content);
             }
             $data['status'] = 0;
@@ -147,7 +149,6 @@ class TaskController extends BaseController {
         
         $m_task = new \Admin\Model\Integral\TaskModel();
         if(IS_POST){
-            
             $data = [];
             $data['name']     = I('post.name','','trim');
             $data['media_id'] = I('post.media_id',0,'intval');
@@ -157,7 +158,6 @@ class TaskController extends BaseController {
             $data['end_time'] = I('post.end_time','0000-00-00 00:00:00','trim') ? I('post.end_time') : '0000-00-00 00:00:00';
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
-            //print_r($data);exit;
             
             $this->checkMainParam($data);
             if($data['type']==1){//系统任务
@@ -180,10 +180,16 @@ class TaskController extends BaseController {
                     $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
                     $task_content['user_interact']['type'] = I('post.user_interact',0,'intval');
                     $task_content['user_interact']['value'] = I('post.user_interact_'.$task_content['user_interact']['type'],0,'intval');
+                }else if($task_content['task_content_type']==3){//活动推广
+                    $task_content['lunch_start_time']   = I('post.activity_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.activity_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.activity_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.activity_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
+                    $task_content['user_promote']['type'] = I('post.user_promote',0,'intval');
+                    $task_content['user_promote']['value'] = I('post.user_promote_'.$task_content['user_promote']['type'],0,'intval');
                 }
-                //print_r($task_content);exit;
                 $this->chekInfoParam($task_content);
-                //echo "ddd";exit;
                 $data['task_info'] = json_encode($task_content);
             }
             $data['status'] = 0;
@@ -198,7 +204,6 @@ class TaskController extends BaseController {
             }
             
         }else{
-            
             $where = [];
             $where['id'] = $id;
             $task_info = $m_task->getRow('*',$where);
@@ -207,14 +212,12 @@ class TaskController extends BaseController {
                 $task_info['end_time']  = '';
             }
             $task_content = json_decode($task_info['task_info'],true);
-            
             $m_media = new \Admin\Model\MediaModel();
             $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
             
             $m_info = $m_media->getRow('oss_addr',array('id'=>$task_info['media_id']));
             $task_info['oss_addr'] = $oss_host.$m_info['oss_addr'];
-            
-            
+
             $this->assign('integral_task_type',$this->integral_task_type);
             $this->assign('system_task_content',$this->system_task_content);
             $this->assign('vinfo',$task_info);
@@ -437,7 +440,6 @@ class TaskController extends BaseController {
         if(empty($data['integral'])) $this->error('请输入奖励积分');
     }
     private function chekInfoParam($data,$map){
-        
         if($map['type']==1){
             if(empty($data['task_content_type'])) $this->error('请选择任务内容');
         }
@@ -455,11 +457,13 @@ class TaskController extends BaseController {
         }
         if($data['lunch_end_time']>'17:00') $this->error('午饭结束时间不能大于17点');
         if($data['dinner_end_time']>'23:00') $this->error('晚饭结束时间不能大于23点');
-        if($data['task_content_type']==2){
-            if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
-        }else if($data['task_content_type']==1){
+        if($data['task_content_type']==1){
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
             if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');
+        }elseif($data['task_content_type']==2){
+            if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
+        }elseif($data['task_content_type']==3){
+            if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
         }
         
     }

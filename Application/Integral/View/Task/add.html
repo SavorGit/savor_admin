@@ -6,7 +6,7 @@
     <div class="pageFormContent modal-body">
 		<div class="form-group row">
 	        <label class="col-xs-12 col-sm-2 control-label">
-	          服务名称:
+	          任务名称:
 	        </label>
 	        <div class="col-xs-12 col-sm-10">
 	           <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
@@ -232,6 +232,69 @@
         	</div>
         </div>
     </div><!-- 电视互动结束 -->
+    <div class="pageFormContent modal-body" id="tv_activity" style="display:none">
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  午饭-开始时间:
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：12:00" name="activity_lunch_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.lunch_start_time}" >
+              </div>
+
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  午饭-结束时间:
+              </label>
+
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：14:00" name="activity_lunch_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.lunch_end_time}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  晚饭-开始时间:
+              </label>
+
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：18:00" name="activity_dinner_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.dinner_start_time}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  晚饭-结束时间:
+              </label>
+
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：21:00" name="activity_dinner_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.dinner_end_time}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-12 col-sm-2 control-label">
+                  每日积分上限:
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                  <input name="max_daily_integral" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.max_daily_integral}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                  <p><input type="radio" name="user_promote" value="1" />饭点内点击"循环播放"</p>
+
+                  <p>
+                      <input  type="radio" name="user_promote" value="2" />
+                      饭点内每点播互动
+                      <input min='1' type="text" name="user_promote_2" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$vinfo.interact}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;奖励一次<span for="user_promote_2" generated="true" class="help-block help-block-error"></span>
+                  </p>
+
+
+              </div>
+          </div>
+    </div><!-- 活动推广结束 -->
+
     <div class="modal-footer">
       <button class="btn btn-default close-m" type="button">取消</button>
       <button class="btn btn-primary" type="submit">保存</button>     
@@ -257,17 +320,23 @@
     });
     
     $('#integral_task_type').change(function(){  
-  　　	    var type = $(this).children('option:selected').val();
+　　	    var type = $(this).children('option:selected').val();
   		if(type==1){
   			$('#tasl_content').show();
   			var tt_v = $("#task_content_type").val();
   			if(tt_v==1){
   				$('#tv_on').show();
   	    		$('#tv_interact').hide();
-  			}else if(tt_v){
+  	    		$('#tv_activity').hide();
+  			}else if(tt_v==2){
   				$('#tv_on').hide();
   	    		$('#tv_interact').show();
-  			}
+                $('#tv_activity').hide();
+  			}else if(tt_v==3){
+                $('#tv_on').hide();
+                $('#tv_interact').hide();
+                $('#tv_activity').show();
+            }
   		}else if(type==2){
   			$('#tasl_content').hide();
   			$('#tv_on').hide();
@@ -279,10 +348,16 @@
     	if(type==1){
     		$('#tv_on').show();
     		$('#tv_interact').hide();
+    		$('#tv_activity').hide();
     	}else if(type==2){
     		$('#tv_on').hide();
+            $('#tv_activity').hide();
     		$('#tv_interact').show();
-    	}
+    	}else if(type==3){
+            $('#tv_on').hide();
+            $('#tv_interact').hide();
+            $('#tv_activity').show();
+        }
     })
     $('#tasl_content').change(function(){
     	var type = $(this).children('option:selected').val();
