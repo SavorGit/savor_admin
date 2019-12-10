@@ -463,21 +463,27 @@ class TestController extends Controller {
     }
 
     public function forscreenboxcache(){
+        exit;
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
-        $sql = "select box.* from savor_box box
-                left join savor_room room on box.room_id=room.id
-                left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+//        $sql = "select box.* from savor_box box
+//                left join savor_room room on box.room_id=room.id
+//                left join savor_hotel hotel on room.hotel_id=hotel.id
+//                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+        $sql = "SELECT box.*FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
+
         $data = M()->query($sql);
         $flag = 0;
         foreach($data as $key=>$v){
-            if($v['is_open_simple'] && $v['is_sapp_forscreen']==0){
-                $v['is_sapp_forscreen'] = 1;
-            }elseif($v['is_open_simple'] && $v['is_sapp_forscreen']){
-                $v['is_open_simple'] = 0;
-            }
+//            if($v['is_open_simple']==1 && $v['is_sapp_forscreen']==0){
+//                $v['is_sapp_forscreen'] = 1;
+//            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
+//                $v['is_open_simple'] = 0;
+//            }
+            $v['is_open_simple'] = 1;
+            $v['is_sapp_forscreen'] = 1;
+
             $is_open_simple = $v['is_open_simple'];
             $is_sapp_forscreen = $v['is_sapp_forscreen'];
             $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
