@@ -134,6 +134,11 @@ class WelcomeController extends BaseController {
                 $result = $m_welcomeresource->addData($data);
             }
             if($result){
+                $redis = \Common\Lib\SavorRedis::getInstance();
+                $redis->select(14);
+                $program_key = C('SAPP_SALE_WELCOME_RESOURCE');
+                $period = getMillisecond();
+                $redis->set($program_key,$period);
                 $this->output('操作成功!', 'welcome/backgroundimglist');
             }else{
                 $this->output('操作失败', 'welcome/backgroundimglist',2,0);
@@ -165,6 +170,11 @@ class WelcomeController extends BaseController {
         $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
         $result = $m_welcomeresource->delData(array('id'=>$id));
         if($result){
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(14);
+            $program_key = C('SAPP_SALE_WELCOME_RESOURCE');
+            $period = getMillisecond();
+            $redis->set($program_key,$period);
             $this->output('操作成功!', 'welcome/backgroundimglist',2);
         }else{
             $this->output('操作失败', 'welcome/backgroundimglist',2,0);
@@ -223,6 +233,12 @@ class WelcomeController extends BaseController {
                 $result = $m_welcomeresource->addData($data);
             }
             if($result){
+                $redis = \Common\Lib\SavorRedis::getInstance();
+                $redis->select(14);
+                $program_key = C('SAPP_SALE_WELCOME_RESOURCE');
+                $period = getMillisecond();
+                $redis->set($program_key,$period);
+
                 $this->output('操作成功!', 'welcomeresource/resourcelist');
             }else{
                 $this->output('操作失败', "welcomeresource/$html",2,0);
@@ -244,6 +260,11 @@ class WelcomeController extends BaseController {
         $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
         $result = $m_welcomeresource->delData(array('id'=>$id));
         if($result){
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(14);
+            $program_key = C('SAPP_SALE_WELCOME_RESOURCE');
+            $period = getMillisecond();
+            $redis->set($program_key,$period);
             $this->output('操作成功!', 'welcomeresource/resourcelist',2);
         }else{
             $this->output('操作失败', 'welcomeresource/resourcelist',2,0);
