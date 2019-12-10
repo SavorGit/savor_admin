@@ -88,14 +88,14 @@ class WelcomeController extends BaseController {
         $m_category = new \Admin\Model\CategoryModel();
         $category = $m_category->getCategory($category_id,1,6);
 
-        $m_backgroundimg = new \Admin\Model\Smallapp\BackgroundimgModel();
-        $where = array();
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
+        $where = array('type'=>4);
         if($category_id){
             $where['category_id'] = $category_id;
         }
         $start = ($pageNum-1)*$size;
         $orderby = 'id desc';
-        $res_list = $m_backgroundimg->getDataList('*',$where,$orderby,$start,$size);
+        $res_list = $m_welcomeresource->getDataList('*',$where,$orderby,$start,$size);
         $data_list = array();
         if(!empty($res_list['list'])){
             $m_media = new \Admin\Model\MediaModel();
@@ -122,16 +122,16 @@ class WelcomeController extends BaseController {
 
     public function backgroundimgadd(){
         $id = I('id',0,'intval');
-        $m_backgroundimg = new \Admin\Model\Smallapp\BackgroundimgModel();
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
         if(IS_POST){
             $category_id = I('post.category_id',0,'intval');
             $media_id = I('post.media_id',0,'intval');
             $status = I('post.status',0,'intval');
-            $data = array('media_id'=>$media_id,'category_id'=>$category_id,'status'=>$status);
+            $data = array('media_id'=>$media_id,'category_id'=>$category_id,'type'=>4,'status'=>$status);
             if($id){
-                $result = $m_backgroundimg->updateData(array('id'=>$id),$data);
+                $result = $m_welcomeresource->updateData(array('id'=>$id),$data);
             }else{
-                $result = $m_backgroundimg->addData($data);
+                $result = $m_welcomeresource->addData($data);
             }
             if($result){
                 $this->output('操作成功!', 'welcome/backgroundimglist');
@@ -141,7 +141,7 @@ class WelcomeController extends BaseController {
         }else{
             $category_id = 0;
             if($id){
-                $vinfo = $m_backgroundimg->getInfo(array('id'=>$id));
+                $vinfo = $m_welcomeresource->getInfo(array('id'=>$id));
                 $category_id = $vinfo['category_id'];
                 $m_media = new \Admin\Model\MediaModel();
                 $res_media = $m_media->getMediaInfoById($vinfo['media_id']);
@@ -162,8 +162,8 @@ class WelcomeController extends BaseController {
 
     public function backgroundimgdel(){
         $id = I('get.id',0,'intval');
-        $m_background = new \Admin\Model\Smallapp\BackgroundimgModel();
-        $result = $m_background->delData(array('id'=>$id));
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
+        $result = $m_welcomeresource->delData(array('id'=>$id));
         if($result){
             $this->output('操作成功!', 'welcome/backgroundimglist',2);
         }else{
@@ -241,8 +241,8 @@ class WelcomeController extends BaseController {
 
     public function resourcedel(){
         $id = I('get.id',0,'intval');
-        $m_background = new \Admin\Model\Smallapp\BackgroundimgModel();
-        $result = $m_background->delData(array('id'=>$id));
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
+        $result = $m_welcomeresource->delData(array('id'=>$id));
         if($result){
             $this->output('操作成功!', 'welcomeresource/resourcelist',2);
         }else{
