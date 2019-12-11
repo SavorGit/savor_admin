@@ -94,10 +94,96 @@ class TaskUserModel extends BaseModel{
                         case 2:
                             $this->task_interact($task_times,$dinner_type,$task_info,$signv);
                             break;
+                        case 3:
+                            $this->task_activitypromote($task_times,$dinner_type,$task_info,$signv);
+                            break;
                     }
                 }
             }
         }
+    }
+
+    private function task_activitypromote($task_times,$dinner_type,$task_info,$signv){
+        $fj_bstime = $task_times['fj_bstime'];
+        $fj_estime = $task_times['fj_estime'];
+        $task_date = $task_times['task_date'];
+
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(14);
+        $key_integral = C('SAPP_SALE_ACTIVITY_PROMOTE');
+        $key_opintegral = $key_integral.date('Ymd').':'.$signv['openid'];
+        $res_cache = $redis->get($key_opintegral);
+        if(empty($res_cache)){
+            echo "{$task_info['task_user_id']} finish \r\n";
+            return true;
+        }
+
+        $m_box = new \Admin\Model\BoxModel();
+        $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+        $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+
+        $now_integral = 0;
+        $task_content = json_decode($task_info['task_info'],true);
+        $max_daily_integral = $task_content['max_daily_integral'];//每日最多积分上限
+
+        $task_type = $task_content['user_promote']['type'];
+        $ap_num = 0;
+        switch ($task_type){//1.饭点内点击"循环播放" 2饭点内每点播活动多少次奖励一次
+            case 1:
+                if(isset($res_cache[$task_type])){
+                    $now_integral = $task_info['integral'];
+                    $ap_num = 1;
+                }
+                break;
+            case 2:
+                if(isset($res_cache[$task_type])){
+                    $reward_num = $task_content['user_promote']['value'];
+                    foreach ($res_cache[$task_type] as $apv){
+                        $apv_time = strtotime($apv['date']);
+                        if($apv_time>=$fj_bstime && $apv_time<=$fj_estime){
+                            $ap_num++;
+                        }
+                    }
+                    if($ap_num>=$reward_num){
+                        $now_integral = $task_info['integral'];
+                    }
+                }
+                break;
+        }
+        if($now_integral){
+            $tmp_where = array('openid'=>$signv['openid']);
+            $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+            $tmp_where['task_id'] = $task_info['task_user_id'];
+
+            $tmp_resintegral = $this->fields('sum(integral) as total_integral')->where($tmp_where)->find();
+            $tmp_integral = intval($tmp_resintegral['total_integral']);
+            if($tmp_integral+$now_integral>$max_daily_integral){
+                $now_integral = 0;
+            }
+        }
+
+        if($now_integral){
+            $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
+            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
+                'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
+                'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
+                'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
+                'integral'=>$now_integral,'content'=>$ap_num,'type'=>6,'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
+            $m_userintegralrecord->add($integralrecord_data);
+
+            $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
+            if(!empty($res_userintegral)){
+                $userintegral = $res_userintegral['integral']+$now_integral;
+                $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+            }else{
+                $integraldata = array('openid'=>$signv['openid'],'integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
+                $m_userintegral->add($integraldata);
+            }
+            //更新任务积分
+            $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
+        }
+        echo "{$task_info['task_user_id']} finish \r\n";
+        return true;
     }
 
     private function task_interact($task_times,$dinner_type,$task_info,$signv){
@@ -182,8 +268,17 @@ class TaskUserModel extends BaseModel{
                 $now_integral = $task_info['integral']*$interact_num;
                 break;
         }
+        if($now_integral){
+            $tmp_where = array('openid'=>$signv['openid']);
+            $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+            $tmp_where['task_id'] = $task_info['task_user_id'];
 
-        $now_integral = $now_integral>$max_daily_integral?$max_daily_integral:$now_integral;
+            $tmp_resintegral = $this->fields('sum(integral) as total_integral')->where($tmp_where)->find();
+            $tmp_integral = intval($tmp_resintegral['total_integral']);
+            if($tmp_integral+$now_integral>$max_daily_integral){
+                $now_integral = 0;
+            }
+        }
         if($now_integral){
             $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
