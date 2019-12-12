@@ -1415,6 +1415,32 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         print_r($hotel_accounts);
     }
 
+    public function exchangerecord(){
+        $start = I('get.start',1000,'intval');
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+        $res = array();
+        $money = array(20,50,100,10);
+        foreach ($area_arr as $k=>$v){
+            $area_id = $v['id'];
+            $area_name = $v['region_name'];
+            $offset = $start+($k*50);
+            $sql = "select avatarUrl,nickName from savor_smallapp_user where small_app_id=1 and nickName!='' and unionId='' order by id asc limit $offset,50";
+            $res_user = $m_area->query($sql);
+            foreach ($res_user as $uv){
+                shuffle($money);
+                $u_money = $money[0];
+                $info = array('area_id'=>$area_id,'area_name'=>$area_name,'name'=>$uv['nickname'],'money'=>$u_money);
+                $res[]=$info;
+            }
+        }
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(14);
+        $cache_key = C('SAPP_SALE').'exchangerecord';
+        $redis->set($cache_key,json_encode($res));
+        echo 'ok';
+    }
+
     public function laimao(){
         exit;
         $goods_id = 127;//赖茅
