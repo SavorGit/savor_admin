@@ -14,6 +14,120 @@ class WelcomeController extends BaseController {
         4=>'背景图'
     );
 
+    public function welcomelist(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+        $area_id = I('area_id',0,'intval');
+        $play_type = I('play_type',0,'intval');
+        $status = I('status',0,'intval');
+        $hotel_name = I('hotel_name','','trim');
+
+        $fields = 'a.id,a.user_id,user.nickName user_name,a.content,a.play_type,a.play_date,a.timing,a.box_mac,a.add_time,a.status,hotel.name as hotel_name,area.region_name as city';
+        $where = array();
+        if($area_id)    $where['area.id']=$area_id;
+        if($status)     $where['a.status']=$status;
+        if($play_type)  $where['a.play_type']=$play_type;
+        if(!empty($hotel_name)) $where['hotel.name'] = array('like',"%$hotel_name%");
+
+        $m_welcome = new \Admin\Model\Smallapp\WelcomeModel();
+        $m_welcome->updateExpiredData();
+
+        $start  = ($page-1) * $size;
+        $result = $m_welcome->getWelcomeList($fields,$where,'a.id desc',$start,$size);
+        $datalist = $result['list'];
+        $all_status = C('WELCOME_STATUS');
+        foreach ($datalist as $k=>$v){
+            if($v['play_type']==1){
+                $datalist[$k]['play_str'] = '立即播放';
+                $play_time = $v['add_time'];
+            }else{
+                $datalist[$k]['play_str'] = '定时播放';
+                $play_time = $v['play_date'].' '.$v['timing'];
+            }
+            $datalist[$k]['play_time'] = $play_time;
+            $datalist[$k]['status_str'] = $all_status[$v['status']];
+        }
+
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+
+        $this->assign('play_type',$play_type);
+        $this->assign('area_id',$area_id);
+        $this->assign('status',$status);
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('area', $area_arr);
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display();
+    }
+
+    public function stopplay(){
+        $id = I('get.id',0,'intval');
+        $status = I('get.status',0,'intval');
+
+        $m_media = new \Admin\Model\MediaModel();
+        $m_welcome = new \Admin\Model\Smallapp\WelcomeModel();
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
+        if($status==1 || $status==2){
+            $m_welcome->updateData(array('id'=>$id),array('status'=>3));
+        }
+        $res_welcome = $m_welcome->getInfo(array('id'=>$id));
+
+        $wordsize_id = $res_welcome['wordsize_id'];
+        $color_id = $res_welcome['color_id'];
+        $backgroundimg_id = $res_welcome['backgroundimg_id'];
+        $music_id = $res_welcome['music_id'];
+
+        $ids = array($wordsize_id,$color_id);
+        if($music_id){
+            $ids[]=$music_id;
+        }
+        if($backgroundimg_id){
+            $ids[]=$backgroundimg_id;
+        }
+        $where = array('id'=>array('in',$ids));
+        $res_resource = $m_welcomeresource->getDataList('*',$where,'id asc');
+        $resource_info = array();
+        foreach ($res_resource as $v){
+            $resource_info[$v['id']]=$v;
+        }
+        $message = array('action'=>131,'id'=>$id,'forscreen_char'=>$res_welcome['content'],'rotation'=>intval($res_welcome['rotate']),
+            'wordsize'=>$resource_info[$wordsize_id]['tv_wordsize'],'color'=>$resource_info[$color_id]['color'],
+            'finish_time'=>$res_welcome['finish_time']);
+        if(isset($resource_info[$backgroundimg_id])){
+            $res_media = $m_media->getMediaInfoById($resource_info[$backgroundimg_id]['media_id']);
+            $message['img_id'] = intval($backgroundimg_id);
+            $message['img_oss_addr'] = $res_media['oss_addr'];
+        }else{
+            $message['img_id'] = 0;
+            $img_oss_addr = $res_welcome['image'];
+            $message['img_oss_addr'] = $img_oss_addr;
+        }
+        if(isset($resource_info[$music_id])){
+            $res_media = $m_media->getMediaInfoById($resource_info[$music_id]['media_id']);
+            $message['music_id'] = intval($music_id);
+            $message['music_oss_addr'] = $res_media['oss_addr'];
+        }else{
+            $message['music_id'] = 0;
+            $message['music_oss_addr'] = '';
+        }
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $sys_info = $m_sys_config->getAllconfig();
+        $playtime = $sys_info['welcome_playtime'];
+        $playtime = intval($playtime*60);
+        $message['play_times'] = $playtime;
+
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($res_welcome['box_mac'],json_encode($message));
+        if(isset($res_netty['error_code']) && $res_netty['error_code']==90109){
+            $m_netty->pushBox($res_welcome['box_mac'],json_encode($message));
+        }
+        $this->output('操作成功!', 'welcome/welcomelist',2);
+    }
+
     public function resourcelist(){
         $type = I('type',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
@@ -265,9 +379,9 @@ class WelcomeController extends BaseController {
             $program_key = C('SAPP_SALE_WELCOME_RESOURCE');
             $period = getMillisecond();
             $redis->set($program_key,$period);
-            $this->output('操作成功!', 'welcomeresource/resourcelist',2);
+            $this->output('操作成功!', 'welcome/resourcelist',2);
         }else{
-            $this->output('操作失败', 'welcomeresource/resourcelist',2,0);
+            $this->output('操作失败', 'welcome/resourcelist',2,0);
         }
     }
 

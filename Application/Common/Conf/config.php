@@ -721,7 +721,12 @@ $config['GROUP_RATE'] = array(
     '110'=>'1.1',
     '120'=>'1.2',
 );
-
+$config['WELCOME_STATUS'] = array(
+    '1'=>'正在播放',
+    '2'=>'定时播放',
+    '3'=>'已结束',
+    '4'=>'已删除',
+);
 return $config;
 
 

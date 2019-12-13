@@ -1,9 +1,48 @@
 <?php
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 
 class WelcomeModel extends BaseModel{
 	protected $tableName='smallapp_welcome';
+
+    public function getWelcomeList($fields,$where,$order,$start=0,$size=5){
+        $list = $this->alias('a')
+            ->join('savor_smallapp_user user on a.user_id=user.id','left')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+
+        $count = $this->alias('a')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->field('a.id')
+            ->where($where)
+            ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
+
+    public function updateExpiredData(){
+        $where = array('status'=>1);
+        $where['finish_time'] = array('lt',date('Y-m-d H:i:s'));
+        $res_ids = $this->field('id')->where($where)->select();
+        if(!empty($res_ids)){
+            $ids = array();
+            foreach ($res_ids as $v){
+                $ids[]=$v['id'];
+            }
+            $where = array('id'=>array('in',$ids));
+            $this->where($where)->save(array('status'=>3));
+        }
+        return true;
+    }
 
 	public function handle_welcome(){
 	    $nowtime = date('Y-m-d H:i');
@@ -40,7 +79,7 @@ class WelcomeModel extends BaseModel{
                     foreach ($res_resource as $resv){
                         $resource_info[$resv['id']]=$resv;
                     }
-                    $message = array('action'=>130,'id'=>$v['id'],'forscreen_char'=>$v['content'],
+                    $message = array('action'=>130,'id'=>$v['id'],'forscreen_char'=>$v['content'],'rotation'=>$v['rotate'],
                         'wordsize'=>$resource_info[$wordsize_id]['tv_wordsize'],'color'=>$resource_info[$color_id]['color'],
                         'finish_time'=>$v['finish_time']);
                     if(isset($resource_info[$backgroundimg_id])){
@@ -49,10 +88,7 @@ class WelcomeModel extends BaseModel{
                         $message['img_oss_addr'] = $res_media['oss_addr'];
                     }else{
                         $message['img_id'] = 0;
-                        $img_oss_addr = 'http://'.C('OSS_HOST')."/{$v['image']}";
-                        if($v['rotate']){
-                            $img_oss_addr.="?x-oss-process=image/rotate,{$v['rotate']}";
-                        }
+                        $img_oss_addr = $v['image'];
                         $message['img_oss_addr'] = $img_oss_addr;
                     }
                     if(isset($resource_info[$music_id])){
