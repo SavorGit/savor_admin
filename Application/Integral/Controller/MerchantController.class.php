@@ -458,6 +458,12 @@ class MerchantController extends BaseController {
             $alisms::sendSms($mobile,$params,$template_code);
         }
         $m_merchant->updateData(array('id'=>$merchant_id),$add_info);
+
+        $m_merchantstaff = new \Admin\Model\Integral\StaffModel();
+        $res_staff = $m_merchantstaff->getInfo(array('merchant_id'=>$merchant_id));
+        if(!empty($res_staff)){
+            $m_merchantstaff->updateData(array('merchant_id'=>$merchant_id),array('status'=>$status));
+        }
         $this->output('修改成功','merchant/merchantlist');
     }
 
