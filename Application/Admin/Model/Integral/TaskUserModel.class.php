@@ -155,7 +155,7 @@ class TaskUserModel extends BaseModel{
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
             $tmp_where['task_id'] = $task_info['task_user_id'];
 
-            $tmp_resintegral = $this->fields('sum(integral) as total_integral')->where($tmp_where)->find();
+            $tmp_resintegral = $this->field('sum(integral) as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
@@ -273,7 +273,7 @@ class TaskUserModel extends BaseModel{
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
             $tmp_where['task_id'] = $task_info['task_user_id'];
 
-            $tmp_resintegral = $this->fields('sum(integral) as total_integral')->where($tmp_where)->find();
+            $tmp_resintegral = $this->field('sum(integral) as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
