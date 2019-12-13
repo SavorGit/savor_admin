@@ -69,4 +69,25 @@ class OpuserroleModel extends BaseModel
         return $data;
     }
 
+    public function getOpuser($maintainer_id=0){
+        $fields = 'a.user_id uid,user.remark ';
+        $where = array('state'=>1,'role_id'=>1);
+        $res_users = $this->getAllRole($fields,$where,'' );
+
+        $opusers = array();
+        foreach($res_users as $v){
+            $uid = $v['uid'];
+            $remark = $v['remark'];
+            if($uid==$maintainer_id){
+                $select = 'selected';
+            }else{
+                $select = '';
+            }
+            $firstCharter = getFirstCharter(cut_str($remark, 1));
+            $opusers[$firstCharter][] = array('uid'=>$uid,'remark'=>$remark,'select'=>$select);
+        }
+        ksort($opusers);
+        return $opusers;
+    }
+
 }
