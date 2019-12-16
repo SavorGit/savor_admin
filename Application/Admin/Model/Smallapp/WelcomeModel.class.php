@@ -91,6 +91,8 @@ class WelcomeModel extends BaseModel{
                         $img_oss_addr = $v['image'];
                         $message['img_oss_addr'] = $img_oss_addr;
                     }
+                    $name_info = pathinfo($message['img_oss_addr']);
+                    $message['filename'] = $name_info['basename'];
                     if(isset($resource_info[$music_id])){
                         $res_media = $m_media->getMediaInfoById($resource_info[$music_id]['media_id']);
                         $message['music_id'] = intval($music_id);

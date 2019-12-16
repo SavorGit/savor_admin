@@ -117,6 +117,7 @@ class TaskUserModel extends BaseModel{
             echo "{$task_info['task_user_id']} finish \r\n";
             return true;
         }
+        $res_cache = json_decode($res_cache,true);
 
         $m_box = new \Admin\Model\BoxModel();
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
