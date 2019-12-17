@@ -41,6 +41,8 @@ $config = array(
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
     'SAPP_SALE'=>'smallappsale:',
     'SAPP_SALE_ACTIVITYGOODS_PROGRAM'=>'smallappsale:activitygoodsprogram',
+    'SAPP_SALE_WELCOME_RESOURCE'=>'smallappsale:welcomeresource',
+    'SAPP_SALE_ACTIVITY_PROMOTE'=>'smallappsale:activitypromote:',
     'SAPP_FIND_TOP'=>'smallapp:findtop',
     'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
 
@@ -124,6 +126,7 @@ $config['RESOURCE_TYPE'] = array(
     '1'=>'视频',
     '2'=>'图片',
     '3'=>'其他',
+    '4'=>'音频',
 );
 $config['ADS_TYPE'] = array(
     '1'=>'广告',
@@ -138,6 +141,8 @@ $config['RESOURCE_TYPEINFO'] = array(
     'gif'=>2,
     'jpeg'=>2,
     'bmp'=>2,
+    'wma'=>4,
+    'mp3'=>4,
 );
 $config['HOTEL_LEVEL'] = array(
     '3'=>'3A',
@@ -248,6 +253,7 @@ $config['all_forscreen_actions'] = array(
     '30'=>'投屏文件',
     '31'=>'投屏文件图片',
     '40'=>'投销售端商品',
+    '41'=>'投屏欢迎词',
     '50'=>'助力好友',
     '101'=>'h5互动游戏',
     '120'=>'发红包',
@@ -715,7 +721,12 @@ $config['GROUP_RATE'] = array(
     '110'=>'1.1',
     '120'=>'1.2',
 );
-
+$config['WELCOME_STATUS'] = array(
+    '1'=>'正在播放',
+    '2'=>'定时播放',
+    '3'=>'已结束',
+    '4'=>'已删除',
+);
 return $config;
 
 

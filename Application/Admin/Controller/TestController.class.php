@@ -306,7 +306,7 @@ class TestController extends Controller {
     public function removeHotelinfoCache(){
         $redis = SavorRedis::getInstance();
         $redis->select(15);
-        
+
         $sql ="select * from savor_hotel hotel 
                
                ";
@@ -347,7 +347,7 @@ class TestController extends Controller {
             $hotel_info['is_4g']     = $v['is_4g'];
             $hotel_cache_key = C('DB_PREFIX').'hotel_'.$hotel_id;
             $redis->set($hotel_cache_key, json_encode($hotel_info));
-            
+
             /* $hotel_ext_info['mac_addr'] = $v['mac_addr'];
             $hotel_ext_info['ip_local'] = $v['ip_local'];
             $hotel_ext_info['ip']       = $v['ip'];
@@ -363,8 +363,8 @@ class TestController extends Controller {
             $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
             $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
             $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); */
-            
-            
+
+
         }
         $sql ="select * from savor_hotel_ext 
         
@@ -391,9 +391,9 @@ class TestController extends Controller {
              $hotel_ext_info['activity_contact']     = $v['activity_contact'];
              $hotel_ext_info['activity_phone']       = $v['activity_phone'];
              $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
-             $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); 
+             $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
         }
-        
+
         //包间
         $sql  = "select * from savor_room ";
         $data = M()->query($sql);
@@ -413,7 +413,7 @@ class TestController extends Controller {
             $room_info['state']    = $v['state'];
             $room_cache_key =   C('DB_PREFIX').'room_'.$room_id;
             $redis->set($room_cache_key, json_encode($room_info));
-            
+
         }
         //$sql = "select * from savor_box ";
         $sql = "select box.* from savor_box box
@@ -424,11 +424,11 @@ class TestController extends Controller {
         $flag = 0;
         $data = array();
         foreach($data as $key=>$v){
-            
+
             $sql ="update savor_box set switch_time=999 where id=".$v['id'].' limit 1';
             //echo $sql;exit;
             M()->execute($sql);
-            
+
             $box_info = array();
             $box_id = $v['id'];
             $box_info['id']      = $v['id'];
@@ -461,6 +461,98 @@ class TestController extends Controller {
         }
         echo "ok";
     }
+
+    public function forscreenboxcache(){
+        exit;
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+
+//        $sql = "select box.* from savor_box box
+//                left join savor_room room on box.room_id=room.id
+//                left join savor_hotel hotel on room.hotel_id=hotel.id
+//                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+        $sql = "SELECT box.*FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
+
+        $data = M()->query($sql);
+        $flag = 0;
+        foreach($data as $key=>$v){
+//            if($v['is_open_simple']==1 && $v['is_sapp_forscreen']==0){
+//                $v['is_sapp_forscreen'] = 1;
+//            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
+//                $v['is_open_simple'] = 0;
+//            }
+            $v['is_open_simple'] = 1;
+            $v['is_sapp_forscreen'] = 1;
+
+            $is_open_simple = $v['is_open_simple'];
+            $is_sapp_forscreen = $v['is_sapp_forscreen'];
+            $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+            M()->execute($sql);
+
+            $box_info = array();
+            $box_id = $v['id'];
+            $box_info['id']      = $v['id'];
+            $box_info['room_id'] = $v['room_id'];
+            $box_info['name']    = $v['name'];
+            $box_info['mac']     = $v['mac'];
+            $box_info['switch_time'] = $v['switch_time'];
+            $box_info['volum']   = $v['volum'];
+            $box_info['tag']     = $v['tag'];
+            $box_info['device_token'] = $v['device_token'];
+            $box_info['state']   = $v['state'];
+            $box_info['flag']    = $v['flag'];
+            $box_info['create_time'] = $v['create_time'];
+            $box_info['update_time'] = $v['update_time'];
+            $box_info['adv_mach']    = $v['adv_mach'];
+            $box_info['tpmedia_id']  = $v['tpmedia_id'];
+            $box_info['qrcode_type'] = $v['qrcode_type'];
+            $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
+            $box_info['is_4g']       = $v['is_4g'];
+            $box_info['box_type']    = $v['box_type'];
+            $box_info['wifi_name']   = $v['wifi_name'];
+            $box_info['wifi_password']=$v['wifi_password'];
+            $box_info['wifi_mac']    = $v['wifi_mac'];
+            $box_info['is_open_simple'] = $v['is_open_simple'];
+            $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
+            $box_info['is_open_signin'] = $v['is_open_signin'];
+            $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
+            $redis->set($box_cache_key, json_encode($box_info));
+
+            if(empty($v['mac'])){
+                continue;
+            }
+            $res_box = $v;
+            $forscreen_type = 1;//1外网(主干) 2直连(极简)
+            if(!empty($res_box)){
+                $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
+                switch ($box_forscreen){
+                    case '1-0':
+                        $forscreen_type = 1;
+                        break;
+                    case '0-1':
+                        $forscreen_type = 2;
+                        break;
+                    case '1-1':
+                        if(in_array($res_box['box_type'],array(3,6))){
+                            $forscreen_type = 2;
+                        }elseif($res_box['box_type']==2){
+                            $forscreen_type = 1;
+                        }
+                        break;
+                    default:
+                        $forscreen_type = 1;
+                }
+                $redis->select(14);
+                $box_mac = $res_box['mac'];
+                $box_key = "box:forscreentype:$box_mac";
+                $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type);
+                $redis->set($box_key,json_encode($forscreen_info));
+            }
+            $flag++;
+        }
+        echo "$flag ok";
+    }
+
     public function ttss(){
         $redis = SavorRedis::getInstance();
         $redis->select(10);
@@ -1321,6 +1413,32 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
             }
         }
         print_r($hotel_accounts);
+    }
+
+    public function exchangerecord(){
+        $start = I('get.start',1000,'intval');
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+        $res = array();
+        $money = array(20,50,100,10);
+        foreach ($area_arr as $k=>$v){
+            $area_id = $v['id'];
+            $area_name = $v['region_name'];
+            $offset = $start+($k*50);
+            $sql = "select avatarUrl,nickName from savor_smallapp_user where small_app_id=1 and nickName!='' and unionId='' order by id asc limit $offset,50";
+            $res_user = $m_area->query($sql);
+            foreach ($res_user as $uv){
+                shuffle($money);
+                $u_money = $money[0];
+                $info = array('area_id'=>$area_id,'area_name'=>$area_name,'name'=>$uv['nickname'],'money'=>$u_money);
+                $res[]=$info;
+            }
+        }
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(14);
+        $cache_key = C('SAPP_SALE').'exchangerecord';
+        $redis->set($cache_key,json_encode($res));
+        echo 'ok';
     }
 
     public function laimao(){

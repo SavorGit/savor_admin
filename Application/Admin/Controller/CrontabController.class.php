@@ -3657,6 +3657,14 @@ class CrontabController extends Controller
         $m_task = new \Admin\Model\Integral\TaskUserModel();
         $m_task->handle_user_task();
     }
+
+    public function userwelcome(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "userwelcome:$now_time \r\n";
+        $m_welcome = new \Admin\Model\Smallapp\WelcomeModel();
+        $m_welcome->handle_welcome();
+    }
+
     public function forscreenPublicnums(){
         $m_public = new \Admin\Model\Smallapp\PublicModel();
         $m_public->cronforscreenPublicnums();

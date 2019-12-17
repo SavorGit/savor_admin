@@ -1,0 +1,52 @@
+<style type="text/css">
+    .zhezhao{
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: black;
+        opacity: 0.7;
+        text-align: center;
+        z-index: 99;
+    }
+    .big{
+        display: none;
+    }
+    .addbig{
+        position: absolute;
+        width: 300px;
+        height: 200px;
+        top: 100px;
+        left: 26%;
+        z-index: 100;
+    }
+</style>
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+ <div class="tools-group hidden-xs ">欢迎词设置</div>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print" style="overflow:hidden;">
+    <div class="no-more-tables" style="margin-top:20px;">
+      <form method="post" action="{$host_url}/smallapp/welcome/editconfig" id="configvolume" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <th colspan="3">配置</th>
+            <tr >
+              <td>播放时长：<input placeholder="请输入数字" type="text" name="welcome_playtime" value="{$info.welcome_playtime}" min='1' max='500'  /></td>
+              <td>音乐音量：<input  placeholder="请输入数字" type="text" name="welcome_musicvolume" value="{$info.welcome_musicvolume}" min='1' max='100'  /></td>
+              <td><button class="btn btn-primary" type="submit">保存</button></td>
+            </tr>
+
+          </thead>
+          
+          </tbody>
+        </table>
+        
+      </form>
+    </div>
+  </div>
+</div>

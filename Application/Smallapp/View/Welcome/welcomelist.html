@@ -1,0 +1,116 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/welcome/welcomelist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="form-inline">
+
+          <div class="form-group">
+
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">城市：</div>
+            <div class="input-group">
+              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">播放类型：</div>
+            <div class="input-group">
+              <select name="play_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <option value="1" <if condition="$play_type eq 1">selected</if>> 立即播放</option>
+                <option value="2" <if condition="$play_type eq 2">selected</if>> 定时播放</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">状态：</div>
+            <div class="input-group">
+              <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name=":C('WELCOME_STATUS')" id="sname">
+                  <option value="{$key}" <if condition="$key eq $status">selected</if>>{$sname}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm"></div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>用户名</th>
+              <th>内容</th>
+              <th>播放时间</th>
+              <th>播放类型</th>
+              <th>播放状态</th>
+              <th>酒楼名称</th>
+              <th>所在城市</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="用户名">{$dinfo.user_name}</td>
+              <td data-title="内容">{$dinfo.content}</td>
+              <td data-title="播放时间">{$dinfo.play_time}</td>
+              <td data-title="播放类型">{$dinfo.play_str}</td>
+              <td data-title="播放状态">{$dinfo.status_str}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="所在城市">{$dinfo.city}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a warn="警告" data-tip="停止播放" title="你确定要停止播放吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/welcome/stopplay?id={$dinfo.id}&status={$dinfo.status}"  class="btn btn-icon">
+                    <i class="fa fa-stop"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
