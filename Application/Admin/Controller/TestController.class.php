@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Controller;
 
+use Common\Lib\Aliyun;
 use Think\Controller;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -1500,7 +1501,146 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
 
             echo "hotel_id:$hotel_id staff_num:$staff_num ok \r\n";
         }
+    }
 
+    public function getfileinfo(){
+        $forscreen_id = I('get.fid',0,'intval');
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $res_forscreen = $m_forscreen->getInfo(array('forscreen_id'=>$forscreen_id));
+        $imgs = json_decode($res_forscreen['imgs'],true);
+        $oss_addr = $imgs[0];
 
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = 'oss-cn-beijing.aliyuncs.com';
+        $bucket = C('OSS_BUCKET');
+        $aliyunoss = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+        $aliyunoss->setBucket($bucket);
+
+        $res_object = $aliyunoss->getObjectMeta($oss_addr);
+        $file_size = 0;
+        if(isset($res_object['content-length']) && $res_object['content-length']>0 && isset($res_object['oss-request-url'])){
+            $tmp_file = explode("$endpoint/",$res_object['oss-request-url']);
+            if($tmp_file[1]==$oss_addr){
+                $file_size = $res_object['content-length'];
+            }
+        }
+        $is_eq = 0;
+        if($file_size==$res_forscreen['resource_size']){
+            $is_eq = 1;
+        }
+        $oss_filesize = $file_size;
+        $range = '0-199';
+        $bengin_info = $aliyunoss->getObject($oss_addr,$range);
+        $last_range = $oss_filesize-199;
+        $last_size = $oss_filesize-1;
+        $last_range = $last_size - 199;
+        $last_range = $last_range.'-'.$last_size;
+        $end_info = $aliyunoss->getObject($oss_addr,$last_range);
+        $file_str = md5($bengin_info).md5($end_info);
+        $fileinfo = strtoupper($file_str);
+        $md5_file = md5($fileinfo);
+
+        $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq,'md5_file'=>$md5_file);
+        print_r($res);
+        exit;
+    }
+
+    public function publicmd5(){
+        exit;
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = 'oss-cn-beijing.aliyuncs.com';
+        $bucket = C('OSS_BUCKET');
+        $aliyunoss = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+        $aliyunoss->setBucket($bucket);
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+
+        $m_public = new \Admin\Model\Smallapp\PublicModel();
+        $where = array('status'=>2,'res_type'=>2);
+        $order = 'id desc';
+        $res_public = $m_public->field('id,forscreen_id')->where($where)->order($order)->select();
+        $md5_data = array();
+        foreach ($res_public as $v){
+            $forscreen_id = $v['forscreen_id'];
+            $res_forscreen = $m_forscreen->getInfo(array('forscreen_id'=>$forscreen_id,'resource_type'=>2));
+            $imgs = json_decode($res_forscreen['imgs'],true);
+            $oss_addr = $imgs[0];
+            if(empty($oss_addr)){
+                continue;
+            }
+            usleep(100000);
+            $res_object = $aliyunoss->getObjectMeta($oss_addr);
+            $file_size = 0;
+            if(isset($res_object['content-length']) && $res_object['content-length']>0 && isset($res_object['oss-request-url'])){
+                $tmp_file = explode("$endpoint/",$res_object['oss-request-url']);
+                if($tmp_file[1]==$oss_addr){
+                    $file_size = $res_object['content-length'];
+                }
+            }
+            $is_eq = 0;
+            if($file_size==$res_forscreen['resource_size']){
+                $is_eq = 1;
+            }
+            echo "forscreen_id:$forscreen_id is_eq:$is_eq \r\n";
+            $res = array('forscreen_id'=>$forscreen_id,'db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq);
+            if($is_eq==0){
+                $md5_data[]=$res;
+            }
+        }
+        $res = var_export($md5_data,true);
+        $log_file_name = '/application_data/web/php/savor_admin/Public/content/'.'publicmd5_'.date("YmdHis").".log";
+        @file_put_contents($log_file_name, $res, FILE_APPEND);
+    }
+
+    public function upmd5(){
+        exit;
+        require_once '/application_data/web/php/savor_admin/Public/content/publicmd5_20191218.php';
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = C('OSS_HOST');
+        $bucket = C('OSS_BUCKET');
+        $aliyun = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+        $aliyun->setBucket($bucket);
+        $error = array();
+        foreach ($publicmd5 as $k=>$v){
+            $forscreen_id = $v['forscreen_id'];
+            $res_forscreen = $m_forscreen->getInfo(array('forscreen_id'=>$forscreen_id,'resource_type'=>2));
+            if(!empty($res_forscreen)){
+                $id = $res_forscreen['id'];
+                $oss_filesize = $v['oss_size'];
+                $imgs = json_decode($res_forscreen['imgs'],true);
+                $oss_addr = $imgs[0];
+
+                $range = '0-199';
+                $bengin_info = $aliyun->getObject($oss_addr,$range);
+                $last_range = $oss_filesize-199;
+                $last_size = $oss_filesize-1;
+                $last_range = $last_size - 199;
+                $last_range = $last_range.'-'.$last_size;
+                $end_info = $aliyun->getObject($oss_addr,$last_range);
+                $file_str = md5($bengin_info).md5($end_info);
+                $fileinfo = strtoupper($file_str);
+                $md5_file = md5($fileinfo);
+
+                $where = array('id'=>$id);
+                $data = array('resource_size'=>$oss_filesize);
+                if(!empty($bengin_info) && !empty($end_info)){
+                    $data['md5_file'] = $md5_file;
+                }else{
+                    $error[]=$v;
+                }
+                $res = $m_forscreen->updateInfo($where,$data);
+                if($res){
+                    echo "$k==$id md5_file=$md5_file \r\n";
+                }else{
+                    echo "$k==$id ok \r\n";
+                }
+            }
+        }
+        echo "finish \r\n";
+        echo json_encode($error);
     }
 }
