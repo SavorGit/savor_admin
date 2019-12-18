@@ -192,6 +192,7 @@ class ForscreenRecordModel extends BaseModel
         $res_forscreen = $this->getInfo(array('forscreen_id'=>$forscreen_id));
         $imgs = json_decode($res_forscreen['imgs'],true);
         $oss_addr = $imgs[0];
+        $md5_file = $res_forscreen['md5_file'];
         $file_size = 0;
         $is_eq = 0;
         if(!empty($oss_addr)){
@@ -212,8 +213,26 @@ class ForscreenRecordModel extends BaseModel
             if($file_size==$res_forscreen['resource_size']){
                 $is_eq = 1;
             }
+            if($is_eq==0){
+                $oss_filesize = $file_size;
+                $range = '0-199';
+                $bengin_info = $aliyunoss->getObject($oss_addr,$range);
+                $last_range = $oss_filesize-199;
+                $last_size = $oss_filesize-1;
+                $last_range = $last_size - 199;
+                $last_range = $last_range.'-'.$last_size;
+                $end_info = $aliyunoss->getObject($oss_addr,$last_range);
+                if(!empty($bengin_info) && !empty($end_info)){
+                    $file_str = md5($bengin_info).md5($end_info);
+                    $fileinfo = strtoupper($file_str);
+                    $md5_file = md5($fileinfo);
+                }else{
+                    $md5_file = '';
+                }
+
+            }
         }
-        $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq);
+        $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq,'md5_file'=>$md5_file);
         return $res;
     }
 }
