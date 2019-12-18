@@ -117,11 +117,22 @@ class TaskUserModel extends BaseModel{
             echo "{$task_info['task_user_id']} finish \r\n";
             return true;
         }
+
         $res_cache = json_decode($res_cache,true);
 
         $m_box = new \Admin\Model\BoxModel();
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+
+        $task_where = array('openid'=>$signv['openid'],'task_id'=>$task_info['task_user_id']);
+        $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+        $task_where['fj_type'] = $dinner_type;
+        $tmp_exist = $m_userintegralrecord->field('id,task_id,fj_type,integral')->where($task_where)->find();
+        if(!empty($tmp_exist) && $tmp_exist['integral']>0){
+            $integralrecord = json_encode($tmp_exist);
+            echo "{$task_info['task_user_id']} had getintegral integralrecord:$integralrecord \r\n";
+            return true;
+        }
 
         $now_integral = 0;
         $task_content = json_decode($task_info['task_info'],true);
@@ -155,8 +166,7 @@ class TaskUserModel extends BaseModel{
             $tmp_where = array('openid'=>$signv['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
             $tmp_where['task_id'] = $task_info['task_user_id'];
-
-            $tmp_resintegral = $this->field('sum(integral) as total_integral')->where($tmp_where)->find();
+            $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
@@ -274,7 +284,7 @@ class TaskUserModel extends BaseModel{
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
             $tmp_where['task_id'] = $task_info['task_user_id'];
 
-            $tmp_resintegral = $this->field('sum(integral) as total_integral')->where($tmp_where)->find();
+            $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
