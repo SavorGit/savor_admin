@@ -1341,6 +1341,23 @@ class SappforscreenController extends BaseController {
 	    $is_recommend = I('post.is_recommend',0,'intval');
 	    $status = I('post.status',0,'intval');
 	    $is_top = I('post.is_top',0,'intval');
+
+        $res_publicdata = $m_public->getOne('res_type,forscreen_id',array('id'=>$id),'id desc');
+        if($res_publicdata['res_type']==2){
+            $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+            $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id']);
+            if($res_forscreen['is_eq']==0 && $res_forscreen['oss_size']==0){
+                $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id']);
+            }
+            if($res_forscreen['is_eq']==0 && $res_forscreen['oss_size']==0){
+                die('0');
+            }elseif($res_forscreen['is_eq']==0 && $res_forscreen['oss_size']){
+                $where = array('forscreen_id'=>$res_publicdata['forscreen_id']);
+                $data = array('resource_size'=>$res_forscreen['oss_size']);
+                $m_forscreen->updateInfo($where,$data);
+            }
+        }
+
 	    $where = $data = array();
 	    $where['id'] = $id;
 	    if(is_numeric($status)){

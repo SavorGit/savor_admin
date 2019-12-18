@@ -7,6 +7,7 @@
 namespace Admin\Model\Smallapp;
 
 use Admin\Model\BaseModel;
+use Common\Lib\Aliyun;
 use Common\Lib\Page;
 
 class ForscreenRecordModel extends BaseModel
@@ -186,4 +187,33 @@ class ForscreenRecordModel extends BaseModel
 	    $count = count($ret);
 	    return $count;
 	}
+
+	public function getFileMd5($forscreen_id){
+        $res_forscreen = $this->getInfo(array('forscreen_id'=>$forscreen_id));
+        $imgs = json_decode($res_forscreen['imgs'],true);
+        $oss_addr = $imgs[0];
+        $file_size = 0;
+        $is_eq = 0;
+        if(!empty($oss_addr)){
+            $accessKeyId = C('OSS_ACCESS_ID');
+            $accessKeySecret = C('OSS_ACCESS_KEY');
+            $endpoint = 'oss-cn-beijing.aliyuncs.com';
+            $bucket = C('OSS_BUCKET');
+            $aliyunoss = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+            $aliyunoss->setBucket($bucket);
+
+            $res_object = $aliyunoss->getObjectMeta($oss_addr);
+            if(isset($res_object['content-length']) && $res_object['content-length']>0 && isset($res_object['oss-request-url'])){
+                $tmp_file = explode("$endpoint/",$res_object['oss-request-url']);
+                if($tmp_file[1]==$oss_addr){
+                    $file_size = $res_object['content-length'];
+                }
+            }
+            if($file_size==$res_forscreen['resource_size']){
+                $is_eq = 1;
+            }
+        }
+        $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq);
+        return $res;
+    }
 }
