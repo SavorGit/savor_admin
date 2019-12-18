@@ -124,7 +124,7 @@ class Aliyun{
 	    }
 	    return $download;
 	}
-	
+
 	/**
 	 * 范围下载
 	 * @param string $oss_addr 文件地址
@@ -147,6 +147,23 @@ class Aliyun{
 	    }
 	    return $content;
 	}
+
+    /**
+     * 获取一个文件（Object）的元数据信息
+     * @param string $oss_addr 文件地址
+     * @return string
+     */
+    public function getObjectMeta($oss_addr){
+        $ossClient = $this->ossClient;
+        $bucket = $this->bucket;
+        try{
+            $content = $ossClient->getObjectMeta($bucket, $oss_addr);
+        }catch (OssException $e){
+            $this->error = __FUNCTION__ . ": FAILED". $e->getMessage();
+            return false;
+        }
+        return $content;
+    }
 	
 }
 ?>
