@@ -33,6 +33,16 @@
               </select>
             </div>
           </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">类型：</div>
+            <div class="input-group">
+              <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <option value="1" <if condition="$type eq 1">selected</if>> 单个包间播放</option>
+                <option value="2" <if condition="$type eq 2">selected</if>> 所有包间播放</option>
+              </select>
+            </div>
+          </div>
 
           <div class="form-group">
             <div class="input-group input-group-sm">状态：</div>
@@ -78,9 +88,13 @@
               <th>ID</th>
               <th>用户名</th>
               <th>内容</th>
+              <th>图片</th>
               <th>播放时间</th>
               <th>播放类型</th>
               <th>播放状态</th>
+              <th>类型</th>
+              <th>MAC地址</th>
+              <th>包间名称</th>
               <th>酒楼名称</th>
               <th>所在城市</th>
               <th>操作</th>
@@ -92,9 +106,13 @@
               <td data-title="ID">{$dinfo.id}</td>
               <td data-title="用户名">{$dinfo.user_name}</td>
               <td data-title="内容">{$dinfo.content}</td>
+              <td data-title="图片"><a href="{$dinfo.img}" target="_blank"><img src="{$dinfo.img}" ></a></td>
               <td data-title="播放时间">{$dinfo.play_time}</td>
               <td data-title="播放类型">{$dinfo.play_str}</td>
               <td data-title="播放状态">{$dinfo.status_str}</td>
+              <td data-title="类型">{$dinfo.type_str}</td>
+              <td data-title="MAC地址">{$dinfo.box_mac}</td>
+              <td data-title="包间名称">{$dinfo.room}</td>
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
               <td data-title="所在城市">{$dinfo.city}</td>
               <td class="table-tool" data-title="操作">

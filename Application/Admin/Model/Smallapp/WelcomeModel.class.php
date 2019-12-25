@@ -58,6 +58,7 @@ class WelcomeModel extends BaseModel{
             $m_media = new \Admin\Model\MediaModel();
             $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
             $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            $m_box = new \Admin\Model\BoxModel();
             foreach ($res_welcome as $v){
                 $start_time = date('Y-m-d H:i',strtotime($v['play_date'].' '.$v['timing']));
                 if($start_time==$nowtime){
@@ -103,9 +104,22 @@ class WelcomeModel extends BaseModel{
                     }
                     $message['play_times'] = $playtime;
                     $push_message = json_encode($message);
-                    $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);
-                    if(isset($res_netty['error_code']) && $res_netty['error_code']==90109){
+
+                    if($v['type']==2){
+                        $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1);
+                        $res_box = $m_box->getBoxByCondition('box.mac as box_mac',$box_where);
+                        foreach ($res_box as $bv){
+                            $res_netty = $m_netty->pushBox($bv['box_mac'],$push_message);
+                            if(isset($res_netty['error_code']) && $res_netty['error_code']==90109){
+                                $res_netty = $m_netty->pushBox($bv['box_mac'],$push_message);
+                            }
+                        }
+
+                    }else{
                         $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);
+                        if(isset($res_netty['error_code']) && $res_netty['error_code']==90109){
+                            $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);
+                        }
                     }
                     $this->where(array('id'=>$v['id']))->save(array('status'=>1));
 
