@@ -2212,7 +2212,7 @@ ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
 MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '积分类型 1开机,2互动,3销售,4兑换,5退回,6活动促销' AFTER `status`;
 
 
-增加说明：增加销售活动任务
+增加说明：增加销售活动任务，主干版和极简版本合并
 修改时间：2019-12-04 15:00
 修改人：刘斌
 执行SQL
@@ -2231,3 +2231,58 @@ ADD COLUMN `portraitmedia_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '竖屏媒�
 ALTER TABLE `cloud`.`savor_smallapp_collect`
 ADD INDEX `index_ridtype`(`res_id`, `type`);
 UPDATE `cloud`.`savor_smallapp_goods` SET `show_status` = 1 WHERE `status`=2;
+
+增加说明：销售端增加欢迎词
+修改时间：2019-12-09 09:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_category`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1内容,2场景,3人员属性,4饭局性质,5内容所用软件,6欢迎词背景图分类' AFTER `sort`;
+ALTER TABLE `cloud`.`savor_integral_task_user`
+ADD INDEX `key_taskid`(`task_id`);
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+ADD INDEX `index_hotel`(`hotel_id`);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('welcome_playtime', '0', 1);
+INSERT INTO `cloud`.`savor_sys_config`(`config_key`, `config_value`, `status`) VALUES ('welcome_musicvolume', '0', 1);
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+DROP INDEX `index_openid`,
+ADD INDEX `index_openidtask`(`openid`, `task_id`) USING BTREE;
+
+CREATE TABLE `savor_smallapp_welcome` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `image` varchar(50) NOT NULL DEFAULT '' COMMENT '自主上传图片',
+  `rotate` int(11) NOT NULL DEFAULT '0' COMMENT '旋转角度',
+  `backgroundimg_id` int(11) NOT NULL DEFAULT '0' COMMENT '背景图ID',
+  `content` varchar(100) NOT NULL DEFAULT '' COMMENT '欢迎词内容',
+  `wordsize_id` int(11) NOT NULL DEFAULT '0' COMMENT '字号ID',
+  `color_id` int(11) NOT NULL DEFAULT '0' COMMENT '颜色ID',
+  `music_id` int(11) NOT NULL DEFAULT '0' COMMENT '音乐ID',
+  `play_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '播放类型1立即播放 2定时播放',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态0无 1正在播放 2定时播放 3已结束',
+  `play_date` date DEFAULT NULL COMMENT '开始日期',
+  `timing` time DEFAULT NULL COMMENT '定时精确到小时如: 13:00',
+  `finish_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '播放结束时间',
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `box_mac` varchar(15) NOT NULL DEFAULT '' COMMENT '机顶盒mac',
+  `add_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='欢迎词表';
+
+CREATE TABLE `savor_smallapp_welcome_resource` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `category_id` int(11) NOT NULL DEFAULT '0' COMMENT '分类ID',
+  `media_id` int(11) NOT NULL DEFAULT '0' COMMENT '音乐资源ID',
+  `color` varchar(50) NOT NULL DEFAULT '' COMMENT '颜色',
+  `small_wordsize` int(11) NOT NULL DEFAULT '0' COMMENT '小程序字体大小',
+  `tv_wordsize` int(11) NOT NULL DEFAULT '0' COMMENT '电视字体大小',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型1字号,2颜色,3音乐',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态0无,1启用,2禁用',
+  `add_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='欢迎词资源';
+
+ALTER TABLE `cloud`.`savor_smallapp_welcome`
+ADD COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1单个盒子播放,2全部盒子播放' AFTER `box_mac`;
+
