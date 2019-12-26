@@ -61,6 +61,7 @@ class HandleheartlogController extends Controller
                             $data['mac']        = $info['mac'];
                             $data['type']       = $info['clientid'];
                             $data['date']       = $date;
+                            $data['apk_version']= $info['apk'];
                             $data['hour'.$hour] = 1;
                             $ret = $m_heart_all_log->addInfo($data);
                         }
@@ -81,8 +82,8 @@ class HandleheartlogController extends Controller
                             $where['mac'] = $info['mac'];
                             $where['type']= $info['clientid'];
                             $where['date']= $date;
-                            $ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}");
-                        
+                            //$ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}");
+                            $ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}",$info['apk']);
                         }
                     }
                     
