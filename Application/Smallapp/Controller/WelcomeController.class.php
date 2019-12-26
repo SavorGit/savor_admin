@@ -19,14 +19,16 @@ class WelcomeController extends BaseController {
         $size   = I('numPerPage',50);
         $area_id = I('area_id',0,'intval');
         $play_type = I('play_type',0,'intval');
+        $type = I('type',0,'intval');
         $status = I('status',0,'intval');
         $hotel_name = I('hotel_name','','trim');
 
-        $fields = 'a.id,a.user_id,user.nickName user_name,a.content,a.play_type,a.play_date,a.timing,a.box_mac,a.add_time,a.status,hotel.name as hotel_name,area.region_name as city';
+        $fields = 'a.id,a.type,a.user_id,user.nickName user_name,a.backgroundimg_id,a.image,a.content,a.play_type,a.play_date,a.timing,a.box_mac,a.add_time,a.status,hotel.name as hotel_name,area.region_name as city';
         $where = array();
         if($area_id)    $where['area.id']=$area_id;
         if($status)     $where['a.status']=$status;
         if($play_type)  $where['a.play_type']=$play_type;
+        if($type)       $where['type']=$type;
         if(!empty($hotel_name)) $where['hotel.name'] = array('like',"%$hotel_name%");
 
         $m_welcome = new \Admin\Model\Smallapp\WelcomeModel();
@@ -36,6 +38,10 @@ class WelcomeController extends BaseController {
         $result = $m_welcome->getWelcomeList($fields,$where,'a.id desc',$start,$size);
         $datalist = $result['list'];
         $all_status = C('WELCOME_STATUS');
+        $m_box = new \Admin\Model\BoxModel();
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
+        $m_media = new \Admin\Model\MediaModel();
+        $oss_host = get_oss_host();
         foreach ($datalist as $k=>$v){
             if($v['play_type']==1){
                 $datalist[$k]['play_str'] = '立即播放';
@@ -44,6 +50,28 @@ class WelcomeController extends BaseController {
                 $datalist[$k]['play_str'] = '定时播放';
                 $play_time = $v['play_date'].' '.$v['timing'];
             }
+            $box_mac = $v['box_mac'];
+            if($datalist[$k]['type']==1){
+                $box_where = array('box.mac'=>$box_mac,'box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1);
+                $res_box = $m_box->getBoxByCondition('box.name',$box_where);
+                $room = $res_box[0]['name'];
+                $datalist[$k]['type_str']='单个包间播放';
+            }else{
+                $box_mac = '';
+                $room = '全部包间';
+                $datalist[$k]['type_str']='所有包间播放';
+            }
+            if($v['backgroundimg_id']){
+                $res_welcome = $m_welcomeresource->getInfo(array('id'=>$v['backgroundimg_id']));
+                $res_media = $m_media->getMediaInfoById($res_welcome['media_id']);
+                $img = $res_media['oss_addr'];
+            }else{
+                $img = $oss_host.$v['image'];
+            }
+
+            $datalist[$k]['img'] = $img;
+            $datalist[$k]['room'] = $room;
+            $datalist[$k]['box_mac'] = $box_mac;
             $datalist[$k]['play_time'] = $play_time;
             $datalist[$k]['status_str'] = $all_status[$v['status']];
         }
@@ -51,6 +79,7 @@ class WelcomeController extends BaseController {
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
 
+        $this->assign('type',$type);
         $this->assign('play_type',$play_type);
         $this->assign('area_id',$area_id);
         $this->assign('status',$status);

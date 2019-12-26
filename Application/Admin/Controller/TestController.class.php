@@ -468,11 +468,11 @@ class TestController extends Controller {
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
-//        $sql = "select box.* from savor_box box
-//                left join savor_room room on box.room_id=room.id
-//                left join savor_hotel hotel on room.hotel_id=hotel.id
-//                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
-        $sql = "SELECT box.*FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
+        $sql = "select box.* from savor_box box
+                left join savor_room room on box.room_id=room.id
+                left join savor_hotel hotel on room.hotel_id=hotel.id
+                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+//        $sql = "SELECT box.*FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
 
         $data = M()->query($sql);
         $flag = 0;
@@ -482,8 +482,9 @@ class TestController extends Controller {
 //            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
 //                $v['is_open_simple'] = 0;
 //            }
-            $v['is_open_simple'] = 1;
             $v['is_sapp_forscreen'] = 1;
+            $v['is_open_simple'] = 0;
+
 
             $is_open_simple = $v['is_open_simple'];
             $is_sapp_forscreen = $v['is_sapp_forscreen'];
@@ -548,10 +549,11 @@ class TestController extends Controller {
                 $box_key = "box:forscreentype:$box_mac";
                 $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type);
                 $redis->set($box_key,json_encode($forscreen_info));
+                echo "box_id:$box_id \r\n";
             }
             $flag++;
         }
-        echo "$flag ok";
+        echo "total:$flag ok";
     }
 
     public function ttss(){
@@ -1539,9 +1541,15 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         $end_info = $aliyunoss->getObject($oss_addr,$last_range);
         $file_str = md5($bengin_info).md5($end_info);
         $fileinfo = strtoupper($file_str);
-        $md5_file = md5($fileinfo);
+        if(!empty($bengin_info) && !empty($end_info)){
+            $md5_file = md5($fileinfo);
+        }else{
+            $md5_file = '';
+        }
 
-        $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq,'md5_file'=>$md5_file);
+
+        $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq,
+            'md5_file'=>$md5_file,'oss_addr'=>$oss_addr);
         print_r($res);
         exit;
     }
