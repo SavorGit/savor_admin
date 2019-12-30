@@ -5316,8 +5316,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
 
         //累计绑定酒楼
         $sql_saletotal_hotel = "select area_id,count(id) as num from savor_hotel where id in 
-(select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 
-group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6) group by area_id";
+(select hotel_id from savor_integral_merchant where type=2 and status=1) and state=1 and flag=0 group by area_id";
         $res_sale_hoteltotal = $model->query($sql_saletotal_hotel);
         $sale_hotel_nums = array();
         foreach ($res_sale_hoteltotal as $v){
@@ -5325,22 +5324,17 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6) group 
         }
 
         //新增绑定酒楼
-        $sql_newsale_hotel = "select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.bind_time>='$ctime' and hi.bind_time<='$etime' and hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 
-group by hi.hotel_id";
+        $sql_newsale_hotel = "select hotel_id from savor_integral_merchant where add_time>='$ctime' and add_time<='$etime' and type=2 and status=1";
         $res_newsale_hotel = $model->query($sql_newsale_hotel);
         $newsale_hotels = array();
         foreach ($res_newsale_hotel as $v){
-            $sql_sales = "select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.hotel_id={$v['hotel_id']} and hi.bind_time<'$ctime' and hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 order by hi.id desc limit 1";
-            $res_sales = $model->query($sql_sales);
-            if(empty($res_sales)){
-                $newsale_hotels[]=$v['hotel_id'];
-            }
+            $newsale_hotels[]=$v['hotel_id'];
         }
 
         $new_bind_hotels = array();
         if(!empty($newsale_hotels)){
             $hotel_ids = join(',',$newsale_hotels);
-            $sql_saletotal_hotel_last = "select area_id,count(id) as num from savor_hotel where id in ($hotel_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6) group by area_id";
+            $sql_saletotal_hotel_last = "select area_id,count(id) as num from savor_hotel where id in ($hotel_ids) and state=1 and flag=0 group by area_id";
             $res_sale_hoteltotal = $model->query($sql_saletotal_hotel_last);
             foreach ($res_sale_hoteltotal as $v){
                 $new_bind_hotels[$v['area_id']] = $v['num'];
@@ -5354,9 +5348,8 @@ group by hi.hotel_id";
         $hotel_num_gt3 = array();
         $hotel_num_let3 = array();
 
-        $sql_bindhotel = "select id as hotel_id from savor_hotel where id in 
-(select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 
-group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+        $sql_bindhotel = "select merchant.id as merchant_id,merchant.hotel_id from savor_integral_merchant as merchant left join savor_hotel as hotel on merchant.hotel_id=hotel.id 
+where merchant.type=2 and merchant.status=1 and hotel.state=1 and hotel.flag=0 ";
         $res_hotels = $model->query($sql_bindhotel);
 
         foreach ($res_hotels as $v){
@@ -5373,11 +5366,11 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             $hotel_boxs_str = join(',',$boxs);
 
             //登录绑定
-            $sql_bind = "select hi.bind_time from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.hotel_id={$v['hotel_id']} and hi.bind_time>='$ctime' and hi.bind_time<='$etime' and hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 order by hi.id desc";
+            $sql_bind = "select staff.add_time from savor_integral_merchant_staff as staff left join savor_smallapp_user as u on staff.openid=u.openid where staff.merchant_id={$v['merchant_id']} and staff.add_time>='$ctime' and staff.add_time<='$etime' and u.small_app_id=5 order by staff.id desc";
             $res_bind = $model->query($sql_bind);
             $hotel_bind = array();
             foreach ($res_bind as $bindv){
-                $bind_date = date('Y-m-d',strtotime($bindv['bind_time']));
+                $bind_date = date('Y-m-d',strtotime($bindv['add_time']));
                 $hotel_bind[$bind_date] = 1;
             }
             $log.="|sql_bind|".$sql_bind;
@@ -5420,7 +5413,16 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             }
             $log.="|sql_ontv|".$sql_ontv."\r\n";
 
-            $all_hotel_action = array_merge($hotel_bind,$hotel_sign,$hotel_goods,$hotel_order,$hotel_ontv);
+            //欢迎词
+            $sql_welcome = "select DATE(add_time) add_date,COUNT(id) as num from savor_smallapp_welcome where DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and hotel_id=$hotel_id group by add_date";
+            $res_welcome = $model->query($sql_welcome);
+            $hotel_welcome = array();
+            foreach ($res_welcome as $wv){
+                $hotel_welcome[$wv['add_date']] = $wv['num'];
+            }
+            $log.="|sql_welcome|".$sql_welcome."\r\n";
+
+            $all_hotel_action = array_merge($hotel_bind,$hotel_sign,$hotel_goods,$hotel_order,$hotel_ontv,$hotel_welcome);
             $action_num = count($all_hotel_action);
             if($action_num>0){
                 if($action_num>3){
@@ -5429,7 +5431,7 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
                     $hotel_num_let3[] = $hotel_id;
                 }
             }
-            $log.="|sql_ontv|".$sql_ontv."|num|$action_num"."\r\n";
+            $log.="|num|$action_num"."\r\n";
             $log_file_name = APP_PATH.'Runtime/Logs/'.'sale_'.date("Ymd").".log";
             @file_put_contents($log_file_name, $log, FILE_APPEND);
         }
@@ -5441,7 +5443,7 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         $hotel_let3 = array();
         if(!empty($hotel_num_let3)){
             $hotel_let3_ids = join(',',$hotel_num_let3);
-            $sql_hotel_num_let3 = "select area_id,count(id) as num from savor_hotel where id in ($hotel_let3_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6) group by area_id";
+            $sql_hotel_num_let3 = "select area_id,count(id) as num from savor_hotel where id in ($hotel_let3_ids) and state=1 and flag=0 group by area_id";
             $res_let3 = $model->query($sql_hotel_num_let3);
             foreach ($res_let3 as $v){
                 $hotel_let3[$v['area_id']] = $v['num'];
@@ -5451,7 +5453,7 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         $hotel_gt4 = array();
         if(!empty($hotel_num_gt3)){
             $hotel_gt3_ids = join(',',$hotel_num_gt3);
-            $sql_hotel_num_gt3 = "select area_id,count(id) as num from savor_hotel where id in ($hotel_gt3_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6) group by area_id";
+            $sql_hotel_num_gt3 = "select area_id,count(id) as num from savor_hotel where id in ($hotel_gt3_ids) and state=1 and flag=0 group by area_id";
             $res_gt3 = $model->query($sql_hotel_num_gt3);
             foreach ($res_gt3 as $v){
                 $hotel_gt4[$v['area_id']] = $v['num'];
@@ -5473,7 +5475,8 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             $hotel_gt3_num = isset($hotel_gt4[$area_id])?$hotel_gt4[$area_id]:0;//活跃使用 使用大于3天
             $hotel_let3_names = array();
             if($hotel_let3_num){
-                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_let3_ids) and area_id=$area_id and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+//                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_let3_ids) and area_id=$area_id and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_let3_ids) and area_id=$area_id and state=1 and flag=0";
                 $res_hotel_let3name = $model->query($sql_hotel_name);
                 foreach ($res_hotel_let3name as $let3v){
                     $hotel_let3_names[]=$let3v['name'];
@@ -5481,7 +5484,7 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             }
             $hotel_gt3_names = array();
             if($hotel_gt3_num){
-                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_gt3_ids) and area_id=$area_id and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+                $sql_hotel_name = "select name from savor_hotel where id in ($hotel_gt3_ids) and area_id=$area_id and state=1 and flag=0";
                 $res_hotel_gt3name = $model->query($sql_hotel_name);
                 foreach ($res_hotel_gt3name as $gt3v){
                     $hotel_gt3_names[]=$gt3v['name'];
@@ -5529,12 +5532,11 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         $m_box = new \Admin\Model\BoxModel();
         $hotel_num = array();
 
+        $sql_bindhotel = "select merchant.id as merchant_id,merchant.hotel_id from savor_integral_merchant as merchant left join savor_hotel as hotel on merchant.hotel_id=hotel.id 
+where merchant.type=2 and merchant.status=1 and hotel.state=1 and hotel.flag=0 ";
 //        $sql_bindhotel = "select id as hotel_id from savor_hotel where id in
-//(select m.hotel_id from savor_integral_merchant as m where m.status=1 group by m.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
-//        $res_hotels = $model->query($sql_bindhotel);
-        $sql_bindhotel = "select id as hotel_id from savor_hotel where id in 
-(select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 
-group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+//(select hi.hotel_id from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5
+//group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         $res_hotels = $model->query($sql_bindhotel);
         foreach ($res_hotels as $v){
             $hotel_id = $v['hotel_id'];
@@ -5549,10 +5551,9 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
             }
             $hotel_boxs_str = join(',',$boxs);
             //登录绑定
-//            $sql_bind = "select hi.add_time,hi.openid from savor_integral_merchant_staff as hi left join savor_integral_merchant as m on hi.merchant_id=m.id left join savor_smallapp_user as u on hi.openid=u.openid where m.hotel_id={$v['hotel_id']} and hi.add_time>='$ctime' and hi.add_time<='$etime' and hi.status=1 and u.small_app_id=5 order by hi.id desc";
-//            $res_bind = $model->query($sql_bind);
-
-            $sql_bind = "select hi.bind_time,hi.openid from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.hotel_id={$v['hotel_id']} and hi.bind_time>='$ctime' and hi.bind_time<='$etime' and hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 order by hi.id desc";
+//            $sql_bind = "select hi.bind_time,hi.openid from savor_hotel_invite_code as hi left join savor_smallapp_user as u on hi.openid=u.openid where hi.hotel_id={$v['hotel_id']} and hi.bind_time>='$ctime' and hi.bind_time<='$etime' and hi.type=2 and hi.state=1 and hi.flag=0 and hi.bind_mobile!='' and hi.openid!='' and u.small_app_id=5 order by hi.id desc";
+            //登录绑定
+            $sql_bind = "select staff.add_time,u.openid from savor_integral_merchant_staff as staff left join savor_smallapp_user as u on staff.openid=u.openid where staff.merchant_id={$v['merchant_id']} and staff.add_time>='$ctime' and staff.add_time<='$etime' and u.small_app_id=5 order by staff.id desc";
             $res_bind = $model->query($sql_bind);
 
             $hotel_bind = array();
@@ -5604,7 +5605,17 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
                 $log.="|sql_ontv|".$sql_ontv."\r\n";
             }
 
-            $all_hotel_action = array_merge($hotel_bind,$hotel_sign,$hotel_goods,$hotel_order,$hotel_ontv);
+            //欢迎词
+            $hotel_welcome = array();
+            $sql_welcome = "select DATE(welcome.add_time) add_date,u.openid from savor_smallapp_welcome as welcome left join savor_smallapp_user as u on welcome.user_id=u.id where DATE(welcome.add_time)>='$cdate' and DATE(welcome.add_time)<='$edate' and welcome.hotel_id=$hotel_id";
+            $res_welcome = $model->query($sql_welcome);
+            foreach ($res_welcome as $wv){
+                $hotel_welcome[$wv['add_date']][] = $wv['openid'];
+            }
+            $log.="|sql_welcome|".$sql_welcome."\r\n";
+
+
+            $all_hotel_action = array_merge($hotel_bind,$hotel_sign,$hotel_goods,$hotel_order,$hotel_ontv,$hotel_welcome);
             $action_num = count($all_hotel_action);
             if($action_num>0){
                 if($action_num>=2){
@@ -5636,6 +5647,11 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
                                 $hotel_user[]=$hvtv;
                             }
                         }
+                        if(isset($hotel_welcome[$hv])){
+                            foreach ($hotel_welcome[$hv] as $hwv){
+                                $hotel_user[]=$hwv;
+                            }
+                        }
                     }
                     $hotel_users = array_unique($hotel_user);
                     $hotel_num[$hotel_id] = $hotel_users;
@@ -5647,9 +5663,12 @@ group by hi.hotel_id) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         }
 
         $hotel_ids = join(',',array_keys($hotel_num));
+//        $sql_hotels = "select hotel.id as hotel_id,hotel.name as hotel_name,area.id as area_id,area.region_name as area_name,ext.maintainer_id,suser.remark as uname
+//from savor_hotel hotel left join savor_hotel_ext ext on hotel.id=ext.hotel_id left join savor_sysuser as suser on ext.maintainer_id=suser.id left join savor_area_info area on hotel.area_id=area.id
+//where hotel.id in($hotel_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
         $sql_hotels = "select hotel.id as hotel_id,hotel.name as hotel_name,area.id as area_id,area.region_name as area_name,ext.maintainer_id,suser.remark as uname 
 from savor_hotel hotel left join savor_hotel_ext ext on hotel.id=ext.hotel_id left join savor_sysuser as suser on ext.maintainer_id=suser.id left join savor_area_info area on hotel.area_id=area.id
-where hotel.id in($hotel_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6)";
+where hotel.id in($hotel_ids) and state=1 and flag=0";
         $res_hotels = $model->query($sql_hotels);
 
         $datalist = array();
