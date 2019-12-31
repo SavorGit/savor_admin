@@ -67,9 +67,13 @@ class WelcomeModel extends BaseModel{
                     $color_id = $v['color_id'];
                     $backgroundimg_id = $v['backgroundimg_id'];
                     $music_id = $v['music_id'];
+                    $font_id = $v['font_id'];
                     $ids = array($wordsize_id,$color_id);
                     if($music_id){
                         $ids[]=$music_id;
+                    }
+                    if($font_id){
+                        $ids[]=$font_id;
                     }
                     if($backgroundimg_id){
                         $ids[]=$backgroundimg_id;
@@ -102,6 +106,15 @@ class WelcomeModel extends BaseModel{
                         $message['music_id'] = 0;
                         $message['music_oss_addr'] = '';
                     }
+                    if(isset($resource_info[$font_id])){
+                        $res_media = $m_media->getMediaInfoById($resource_info[$font_id]['media_id']);
+                        $message['font_id'] = intval($font_id);
+                        $message['font_oss_addr'] = $res_media['oss_addr'];
+                    }else{
+                        $message['font_id'] = 0;
+                        $message['font_oss_addr'] = '';
+                    }
+
                     $message['play_times'] = $playtime;
                     $push_message = json_encode($message);
 
