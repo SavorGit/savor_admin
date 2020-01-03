@@ -11,7 +11,8 @@ class WelcomeController extends BaseController {
         1=>'字号',
         2=>'颜色',
         3=>'音乐',
-        4=>'背景图'
+        4=>'背景图',
+        5=>'字体',
     );
 
     public function welcomelist(){
@@ -198,6 +199,9 @@ class WelcomeController extends BaseController {
                     case 3:
                         $url = 'welcome/musicadd';
                         break;
+                    case 5:
+                        $url = 'welcome/fontadd';
+                        break;
                     default:
                         $url = '';
                 }
@@ -207,6 +211,7 @@ class WelcomeController extends BaseController {
         }
 
         $this->assign('types',$this->welcome_resource_type);
+        $this->assign('type',$type);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
@@ -224,6 +229,10 @@ class WelcomeController extends BaseController {
 
     public function musicadd(){
         $this->resource_add('musicadd');
+    }
+
+    public function fontadd(){
+        $this->resource_add('fontadd');
     }
 
     public function backgroundimglist(){
