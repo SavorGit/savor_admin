@@ -72,6 +72,14 @@
     <input type="text" id="bao_name" class="form-control"  value="{$bar.rname}">
   </div>
   <div class="leix">
+  <label>机顶盒类型</label>
+  <select id="box_type_lx" class="form-control" style="width:100px;">
+	  <foreach name="hotel_box_type_arr" item="vlist">
+		  <option value="{$key}">{$vlist}</option>
+	  </foreach>
+ </select>
+  </div>
+  <div class="leix">
   <label>包间类型</label>
   <select id="bao_lx" class="form-control" style="width:100px;">
 	  <foreach name="rtype_list" item="vlist">
@@ -160,17 +168,19 @@
 			$('.butseach .fen').each(function(){
 				var obj = {};
 				obj.bao_name = $(this).children().eq(0).children().eq(1).val();
-				obj.bao_lx = $(this).children().eq(1).children().eq(1).find("option:selected").val();
-				obj.box_name = $(this).children().eq(2).children().eq(1).val();
-				obj.bao_mac = $(this).children().eq(3).children().eq(1).val().trim();
-				obj.bao_time = $(this).children().eq(4).children().eq(1).val();
-				obj.bao_volume = $(this).children().eq(5).children().eq(1).val();
-				obj.tv_brand = $(this).children().eq(6).children().eq(1).val();
-				obj.tv_size = $(this).children().eq(7).children().eq(1).val();
-				obj.tv_source = $(this).children().eq(8).children().eq(1).find("option:selected").val();
-				obj.tv_state = $(this).children().eq(9).children().eq(1).find("option:selected").val();
-				obj.tv_state = $(this).children().eq(9).children().eq(1).find("option:selected").val();
-				obj.adv_machi = $(this).children().eq(11).children().eq(1).find("option:selected").val();
+				obj.box_type_lx = $(this).children().eq(1).children().eq(1).find("option:selected").val();
+				obj.bao_lx = $(this).children().eq(2).children().eq(1).find("option:selected").val();
+				
+				obj.box_name = $(this).children().eq(3).children().eq(1).val();
+				obj.bao_mac = $(this).children().eq(4).children().eq(1).val().trim();
+				obj.bao_time = $(this).children().eq(5).children().eq(1).val();
+				obj.bao_volume = $(this).children().eq(6).children().eq(1).val();
+				obj.tv_brand = $(this).children().eq(7).children().eq(1).val();
+				obj.tv_size = $(this).children().eq(8).children().eq(1).val();
+				obj.tv_source = $(this).children().eq(9).children().eq(1).find("option:selected").val();
+				obj.tv_state = $(this).children().eq(10).children().eq(1).find("option:selected").val();
+				obj.tv_state = $(this).children().eq(10).children().eq(1).find("option:selected").val();
+				obj.adv_machi = $(this).children().eq(12).children().eq(1).find("option:selected").val();
 				var str = JSON.stringify(obj);
 
 				arr.push(str);
@@ -198,7 +208,9 @@
 				for(var i=0;i<$num;i++){
 					$('.butseach').append($('#topseach').html())
 					$('.butseach #bao_name').val($('#topseach #bao_name').val());//包间名称
+					$('.butseach #box_type_lx').val($("#topseach #box_type_lx").find("option:selected").val());//机顶盒类型
 					$('.butseach #bao_lx').val($("#topseach #bao_lx").find("option:selected").val());//包间类型
+					
 					$('.butseach #box_name').val($('#topseach #box_name').val());//机顶盒名称
 					$('.butseach #bao_mac').val($('#topseach #bao_mac').val());//mac地址
 					$('.butseach #bao_time').val($('#topseach #bao_time').val());//切换时间

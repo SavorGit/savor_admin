@@ -970,6 +970,8 @@ class HotelController extends BaseController {
 			2=>'冻结',
 			3=>'报损',
 		);
+		$hotel_box_type_arr = C('hotel_box_type');
+		
 		$b_arr = array(
 			'rname' => 'V1',
 			'voloume' => 50,
@@ -990,6 +992,7 @@ class HotelController extends BaseController {
 			$this->assign('bar',$b_arr);
 			$this->assign('tvlist',$tv_arr);
 			$this->assign('tvstate',$tv_stet);
+			$this->assign('hotel_box_type_arr',$hotel_box_type_arr);
 		}
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
@@ -1170,6 +1173,7 @@ class HotelController extends BaseController {
 					$dat = array();
 					$dat['room_id'] = $isHaveTv[0]['rid'];
 					$dat['name'] = $v['box_name'];
+					$dat['box_type'] = $v['box_type_lx'];
 					$dat['mac'] = $v['bao_mac'];
 					$dat['switch_time'] = $v['bao_time'];
 					$dat['volum'] = $v['bao_volume'];
@@ -1233,6 +1237,7 @@ class HotelController extends BaseController {
 					$dat = array();
 					$dat['room_id'] = $model->table(C('DB_PREFIX').'room')->getLastInsID();
 					$dat['name'] = $v['box_name'];
+					$dat['box_type'] = $v['box_type_lx'];
 					$dat['mac'] = $v['bao_mac'];
 					$dat['switch_time'] = $v['bao_time'];
 					$dat['volum'] = $v['bao_volume'];
