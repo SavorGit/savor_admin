@@ -5669,6 +5669,63 @@ where hotel.id in($hotel_ids) and state=1 and flag=0 and hotel_box_type in(2,3,6
         $filename = 'sale_hotel_use2list';
         $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
     }
+    /**
+     * 失联版位明细表
+     */
+    public function lossBoxList(){
+        $days = I('days');        //失联天数
+        $area_id = I('area_id');  //区域
+        $where = '';
+        if($area_id){
+            $where .=" and hotel.area_id=".$area_id;
+        }
+        $sql ="select hotel.name,area.region_name, box.mac box_mac,box.name box_name from  savor_box box
+                               left join savor_room room on box.room_id=room.id
+                               left join savor_hotel hotel on room.hotel_id=hotel.id
+                               left join savor_area_info area on hotel.area_id= area.id
+                               where 1 and box.state=1 and box.flag=0 and hotel.state=1 and hotel.flag=0 and hotel.hotel_box_type in(2,3,6)".$where;
+        $box_list = M()->query($sql);
+        
+        $result = [];
+        foreach($box_list as $key=>$v){
+            $tmp = [];
+            $sql ="select * from savor_heart_log where box_mac='".$v['box_mac']."' and type=2";
+            
+            $heart_info = M()->query($sql);
+            if(empty($heart_info)){
+                
+                $tmp['hotel_name'] = $v['name'];
+                $tmp['region_name'] = $v['region_name'];
+                $tmp['box_mac']    = $v['box_mac'];
+                $tmp['box_name']   = $v['box_name'];
+                $result[] = $tmp;
+            }else {
+                
+                $jz_date = date('Y-m-d H:i:s',strtotime("-$days days"));
+                $last_heart_time = $heart_info[0]['last_heart_time'];
+                
+                if($jz_date>$last_heart_time){
+                    $tmp['hotel_name'] = $v['name'];
+                    $tmp['region_name'] = $v['region_name'];
+                    $tmp['box_mac']    = $v['box_mac'];
+                    $tmp['box_name']   = $v['box_name'];
+                    $result[] = $tmp;
+                }
+                
+            }
+            
+        }
+        $xlsCell = array(
+            array('region_name', '地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_mac','机顶盒mac'),
+            array('box_name','版位名称'),
+        );
+        $xlsName = '深圳地区失联超过10天的版位信息';
+        $filename = 'sale_hotel_use2list';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+        
+    }
 
 
     private function getScore($data,$conf_arr){
