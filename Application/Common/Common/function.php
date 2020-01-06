@@ -53,6 +53,17 @@ function jd_union_api($params,$api,$method='get'){
     return $res_data;
 
 }
+
+function forscreen_serial($openid,$forscreen_id,$oss_addr=''){
+    $md5_str = $openid.$forscreen_id;
+    if(!empty($oss_addr)){
+        $addr_info = parse_url($oss_addr);
+        $md5_str = $addr_info['path'];
+    }
+    $serial = md5($md5_str);
+    return $serial;
+}
+
 function check_http(){
     $http_str = 'http://';
 // 	return $http_str;//如判断出错，则直接手动调整

@@ -44,6 +44,7 @@ $config = array(
     'SAPP_SALE_WELCOME_RESOURCE'=>'smallappsale:welcomeresource',
     'SAPP_SALE_ACTIVITY_PROMOTE'=>'smallappsale:activitypromote:',
     'SAPP_FIND_TOP'=>'smallapp:findtop',
+    'SAPP_FORSCREENTRACK'=>'smallapp:trackforscreen:',
     'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
 
 );

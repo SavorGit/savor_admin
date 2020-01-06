@@ -1,0 +1,60 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+          <tr id="post">
+            <th>过程</th>
+            <th>内容</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <tr target="sid_user">
+              <td>1.OSS处理</td>
+              <td>OSS上传时间：{$info.oss_begintime} <br> 总耗时：{$info.oss_timeconsume}</td>
+            </tr>
+            <tr target="sid_user">
+              <td>2.PHP处理</td>
+              <td>
+                请求netty定位接口时间：{$info.netty_position_stime}
+                <br>
+                请求netty推送接口时间：{$info.netty_stime}
+                <br>
+                总耗时：{$info.netty_position_timeconsume}
+              </td>
+            </tr>
+            <tr target="sid_user">
+              <td>3.netty处理</td>
+              <td>
+                接收请求时间：{$info.netty_rtime}
+                <br>
+                推送盒子时间：{$info.pushbox_time}
+                <br>
+                总耗时：{$info.netty_timeconsume}
+              </td>
+            </tr>
+            <tr target="sid_user">
+              <td>4.盒子处理</td>
+              <td>
+                接收netty推送时间：{$info.box_rtime}
+                <br>
+                盒子下载时间：{$info.box_downtime}
+                <br>
+                总耗时：{$info.box_down_timeconsume}
+              </td>
+            </tr>
+
+
+
+          </tbody>
+        </table>
+      </form>
+  </div>
+</div>
+
+</div>

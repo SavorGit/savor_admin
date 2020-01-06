@@ -3670,6 +3670,13 @@ class CrontabController extends Controller
         $m_public->cronforscreenPublicnums();
     }
 
+    public function forscreentrack(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreentrack:$now_time \r\n";
+        $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
+        $m_forscreentrack->handle_forscreen_track();
+    }
+
     public function sendredpacket(){
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();
