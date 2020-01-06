@@ -557,67 +557,101 @@ class SappforscreenController extends BaseController {
         $forscreen_record_id = I('get.id',0,'intval');
 	    $m_track = new \Admin\Model\Smallapp\ForscreenTrackModel();
         $track_info = $m_track->getForscreenTrack($forscreen_record_id);
+
         if(!empty($track_info)){
             if($track_info['oss_stime']){
                 $oss_begintime = date('Y-m-d H:i:s',intval($track_info['oss_stime']/1000));
-                $oss_timeconsume = ($track_info['oss_stime']-$track_info['oss_etime'])/1000;
+                $oss_timeconsume = ($track_info['oss_etime']-$track_info['oss_stime'])/1000;
             }else{
                 $oss_begintime = '无上传动作';
                 $oss_timeconsume = '';
             }
 
-            $netty_position_stime = date('Y-m-d H:i:s',intval($track_info['position_nettystime']/1000));
-            $netty_position_timeconsume = ($track_info['request_nettytime']-$track_info['position_nettystime'])/1000;
-            $netty_stime = date('Y-m-d H:i:s',intval($track_info['request_nettytime']/1000));
+            if($track_info['action']==30){
+                if($track_info['box_downstime']){
+                    $box_downstime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
+                }else{
+                    $box_downstime = '';
+                }
+                if($track_info['box_downetime']){
+                    $box_downetime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
+                }else{
+                    $box_downetime = '';
+                }
 
-            if($track_info['netty_receive_time']){
-                $netty_rtime = date('Y-m-d H:i:s',intval($track_info['netty_receive_time']/1000));
+                if($track_info['box_downstime'] && $track_info['box_downetime']){
+                    $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_downstime'])/1000;
+                }else{
+                    $box_down_timeconsume = '';
+                }
+                $track_info['oss_begintime'] = $oss_begintime;
+                $track_info['oss_timeconsume'] = $oss_timeconsume;
+                $track_info['box_downstime'] = $box_downstime;
+                $track_info['box_downetime'] = $box_downetime;
+                $track_info['box_down_timeconsume'] = $box_down_timeconsume;
+
+                $display_html = 'trackfile';
             }else{
-                $netty_rtime = '';
-            }
-            if($track_info['netty_pushbox_time']){
-                $pushbox_time = date('Y-m-d H:i:s',intval($track_info['netty_pushbox_time']/1000));
-            }else{
-                $pushbox_time = '';
-            }
-            if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
-                $netty_timeconsume = ($track_info['netty_pushbox_time']-$track_info['netty_receive_time'])/1000;
-            }else{
-                $netty_timeconsume = '';
-            }
+                $netty_position_stime = date('Y-m-d H:i:s',intval($track_info['position_nettystime']/1000));
+                if($track_info['request_nettytime']){
+                    $netty_position_timeconsume = ($track_info['request_nettytime']-$track_info['position_nettystime'])/1000;
+                    $netty_stime = date('Y-m-d H:i:s',intval($track_info['request_nettytime']/1000));
+                }else{
+                    $netty_position_timeconsume = '';
+                    $netty_stime = '';
+                }
+
+                if($track_info['netty_receive_time']){
+                    $netty_rtime = date('Y-m-d H:i:s',intval($track_info['netty_receive_time']/1000));
+                }else{
+                    $netty_rtime = '';
+                }
+                if($track_info['netty_pushbox_time']){
+                    $pushbox_time = date('Y-m-d H:i:s',intval($track_info['netty_pushbox_time']/1000));
+                }else{
+                    $pushbox_time = '';
+                }
+                if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
+                    $netty_timeconsume = ($track_info['netty_pushbox_time']-$track_info['netty_receive_time'])/1000;
+                }else{
+                    $netty_timeconsume = '';
+                }
 
 
-            if($track_info['box_receivetime']){
-                $box_rtime = date('Y-m-d H:i:s',intval($track_info['box_receivetime']/1000));
-            }else{
-                $box_rtime = '';
-            }
-            if($track_info['box_downstime']){
-                $box_downtime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
-            }else{
-                $box_downtime = '';
-            }
-            if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
-                $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_receivetime'])/1000;
-            }else{
-                $box_down_timeconsume = '';
-            }
+                if($track_info['box_receivetime']){
+                    $box_rtime = date('Y-m-d H:i:s',intval($track_info['box_receivetime']/1000));
+                }else{
+                    $box_rtime = '';
+                }
+                if($track_info['box_downstime']){
+                    $box_downtime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
+                }else{
+                    $box_downtime = '';
+                }
+                if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
+                    $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_receivetime'])/1000;
+                }else{
+                    $box_down_timeconsume = '';
+                }
+                $track_info['netty_position_stime'] = $netty_position_stime;
+                $track_info['netty_position_timeconsume'] = $netty_position_timeconsume;
+                $track_info['netty_stime'] = $netty_stime;
+                $track_info['netty_rtime'] = $netty_rtime;
+                $track_info['pushbox_time'] = $pushbox_time;
+                $track_info['netty_timeconsume'] = $netty_timeconsume;
+                $track_info['box_rtime'] = $box_rtime;
+                $track_info['oss_begintime'] = $oss_begintime;
+                $track_info['oss_timeconsume'] = $oss_timeconsume;
+                $track_info['box_downtime'] = $box_downtime;
+                $track_info['box_down_timeconsume'] = $box_down_timeconsume;
 
-            $track_info['oss_begintime'] = $oss_begintime;
-            $track_info['oss_timeconsume'] = $oss_timeconsume;
-            $track_info['netty_position_stime'] = $netty_position_stime;
-            $track_info['netty_position_timeconsume'] = $netty_position_timeconsume;
-            $track_info['netty_stime'] = $netty_stime;
-            $track_info['netty_rtime'] = $netty_rtime;
-            $track_info['pushbox_time'] = $pushbox_time;
-            $track_info['netty_timeconsume'] = $netty_timeconsume;
-            $track_info['box_rtime'] = $box_rtime;
-            $track_info['box_downtime'] = $box_downtime;
-            $track_info['box_down_timeconsume'] = $box_down_timeconsume;
-
+                $display_html = 'trackinfo';
+            }
+        }else{
+            $display_html = 'trackinfo';
         }
         $this->assign('info',$track_info);
-        $this->display('Report/trackinfo');
+        $this->display("Report/$display_html");
     }
 
 	/**

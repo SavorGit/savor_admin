@@ -73,7 +73,11 @@ class ForscreenTrackModel extends BaseModel{
 	    if(empty($res_forscreentrack)){
             $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
             $res_forscreen = $m_forscreen->getInfo(array('id'=>$forscreen_record_id));
-            $serial_no = $this->getForscreenSerialNumber($res_forscreen);
+            if($res_forscreen['action']==30){
+                $serial_no = $res_forscreen['id'];
+            }else{
+                $serial_no = $this->getForscreenSerialNumber($res_forscreen);
+            }
             $redis = new \Common\Lib\SavorRedis();
             $redis->select(5);
             $cache_key = C('SAPP_FORSCREENTRACK');
@@ -94,6 +98,7 @@ class ForscreenTrackModel extends BaseModel{
                 $data['serial_number'] = $serial_no;
                 $this->add($data);
                 $res_forscreentrack = $data;
+                $res_forscreentrack['action'] = $res_forscreen['action'];
             }else{
                 $res_forscreentrack = array();
             }
