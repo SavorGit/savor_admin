@@ -8,6 +8,8 @@ class ScanqrcodeController extends Controller {
 
     public function ads(){
         $id = I('get.id','');
+        $box_mac = I('get.mac','');
+
         if(empty($id)){
             die('params error');
         }
@@ -20,7 +22,6 @@ class ScanqrcodeController extends Controller {
         if(empty($res_map)){
             die('params not exists');
         }
-
         $jump_url = $res_map['link'];
 
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -42,6 +43,9 @@ class ScanqrcodeController extends Controller {
         $res_model = $deviceDetector->getModel();
         if(!empty($res_model)){
             $data['mobile_model'] = $res_model;
+        }
+        if(!empty($box_mac)){
+            $data['box_mac'] = $box_mac;
         }
         $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
         $m_qrscanrecord->add($data);
