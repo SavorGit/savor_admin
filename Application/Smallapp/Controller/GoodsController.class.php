@@ -178,6 +178,7 @@ class GoodsController extends BaseController {
         $goods_types = C('GOODS_TYPE');
         $goods_status = C('GOODS_STATUS');
         $m_media = new \Admin\Model\MediaModel();
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         foreach ($datalist as $k=>$v){
             $media_info = $m_media->getMediaInfoById($v['media_id']);
             if($media_info['type']==1){
@@ -188,6 +189,10 @@ class GoodsController extends BaseController {
             $datalist[$k]['media_typestr'] = $media_typestr;
             $datalist[$k]['typestr'] = $goods_types[$v['type']];
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+
+            $fields = "count(DISTINCT hotel_id) as num";
+            $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'openid'=>'','type'=>1),'id desc');
+            $datalist[$k]['hotels'] = intval($res_hotelgoods['num']);
         }
 
         $this->assign('status',$status);
@@ -576,7 +581,7 @@ class GoodsController extends BaseController {
                     break;
                 case 40:
                     $m_urlmap  = new \Admin\Model\UrlmapModel();
-                    $where = array('link'=>$jd_url);
+                    $where = array('short_link'=>$jd_url);
                     $res_url = $m_urlmap->getInfo($where);
                     if(!empty($res_url)){
                         $m_urlmap->updateData(array('id'=>$res_url['id']),array('goods_id'=>$goods_id));

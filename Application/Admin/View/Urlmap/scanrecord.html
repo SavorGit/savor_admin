@@ -68,7 +68,11 @@
             <th>手机型号</th>
             <th>IP</th>
             <th>扫码时间</th>
-            <th>浏览器标识UA</th>
+            <th>名称</th>
+            <th>MAC地址</th>
+            <th>包间名称</th>
+            <th>酒楼名称</th>
+            <th>城市</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -79,7 +83,11 @@
               <td data-title="手机型号">{$dinfo.mobile_model}</td>
               <td data-title="IP地址">{$dinfo.ip}</td>
               <td data-title="扫码时间">{$dinfo.add_time}</td>
-              <td data-title="浏览器标识UA">{$dinfo.user_agent}</td>
+              <td data-title="名称">{$dinfo.name}</td>
+              <td data-title="MAC地址">{$dinfo.box_mac}</td>
+              <td data-title="包间名称">{$dinfo.room_name}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="城市">{$dinfo.area}</td>
             </tr>
           </volist>
           </tbody>

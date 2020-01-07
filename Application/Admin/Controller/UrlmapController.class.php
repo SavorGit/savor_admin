@@ -71,11 +71,22 @@ class UrlmapController extends BaseController {
 
         	$data = array('name'=>$name,'link'=>$link);
         	if($id){
+        	    $url_id = $id;
         		$condition = array('id'=>$id);
         		$result = $m_urlmap->updateData($condition,$data);
         	}else{
         		$result = $m_urlmap->addData($data);
+                $url_id = $result;
         	}
+
+            $hash_ids_key = C('HASH_IDS_KEY');
+            $hashids = new \Common\Lib\Hashids($hash_ids_key);
+            $short_url = C('SHORT_URL').'/rd/';
+            $encode_id = $hashids->encode($url_id);
+            $url = $short_url.$encode_id;
+            $condition = array('id'=>$url_id);
+            $m_urlmap->updateData($condition,array('short_link'=>$url));
+
         	if($result){
         		$this->output('操作成功', 'urlmap/urlmaplist');
         	}else{
@@ -101,14 +112,6 @@ class UrlmapController extends BaseController {
             $this->output('请选择正确时间段', 'urlmap/scanrecord',2,0);
         }
 
-        $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
-        $where = array();
-        if($urlmap_id){
-            $where['urlmap_id'] = $urlmap_id;
-        }
-        $where['add_time'] = array(array('egt',"$start_time 00:00:00"),array('elt',"$end_time 23:59:59"),'and');
-        $result = $m_qrscanrecord->getDataList('*',$where,'id desc',$start, $size);
-
         $m_urlmap  = new \Admin\Model\UrlmapModel();
         $res = $m_urlmap->getDataList('*','', 'id desc');
         $all_url = array();
@@ -119,11 +122,37 @@ class UrlmapController extends BaseController {
             }else{
                 $info['is_select'] = '';
             }
-            $all_url[] = $info;
+            $all_url[$v['id']] = $info;
         }
+
+        $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
+        $where = array();
+        if($urlmap_id){
+            $where['urlmap_id'] = $urlmap_id;
+        }
+        $where['add_time'] = array(array('egt',"$start_time 00:00:00"),array('elt',"$end_time 23:59:59"),'and');
+        $result = $m_qrscanrecord->getDataList('*',$where,'id desc',$start, $size);
+        $datalist = $result['list'];
+        if(!empty($datalist)){
+            $m_box = new \Admin\Model\BoxModel();
+            foreach ($datalist as $k=>$v){
+                $area = $hotel_name = $room_name = '';
+                if($v['box_mac']){
+                    $box_info = $m_box->getHotelInfoByBoxMac($v['box_mac']);
+                    $area = $box_info['area_name'];
+                    $hotel_name = $box_info['hotel_name'];
+                    $room_name = $box_info['room_name'];
+                }
+                $datalist[$k]['name'] = $all_url[$v['urlmap_id']]['name'];
+                $datalist[$k]['area'] = $area;
+                $datalist[$k]['hotel_name'] = $hotel_name;
+                $datalist[$k]['room_name'] = $room_name;
+            }
+        }
+
         $this->assign('start_time',$start_time);
         $this->assign('end_time',$end_time);
-        $this->assign('datalist', $result['list']);
+        $this->assign('datalist', $datalist);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);

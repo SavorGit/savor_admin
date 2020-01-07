@@ -70,24 +70,40 @@
               <th>资源类型</th>
               <th>商品类型</th>
               <th>状态</th>
+              <th>所在酒楼数</th>
               <th class="table-tool">操作</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
-              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
-              <td data-title="价格">{$dinfo.price}</td>
-              <td data-title="资源类型">{$dinfo.media_typestr}</td>
-              <td data-title="商品类型">{$dinfo.typestr}</td>
-              <td data-title="状态">{$dinfo.statusstr}</td>
+                <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
+                <td data-title="价格">{$dinfo.price}</td>
+                <td data-title="资源类型">{$dinfo.media_typestr}</td>
+                <td data-title="商品类型">{$dinfo.typestr}</td>
+                <td data-title="状态">{$dinfo.statusstr}</td>
+                <td data-title="所在酒楼数">
+                    <if condition="$dinfo.hotels gt 0">
+                        <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="goods/hotelgoodslist" href="{$host_url}/smallapp/goods/hotelgoodslist?goods_id={$dinfo.id}" >
+                            {$dinfo.hotels}</a>
+                        <else/>
+                        {$dinfo.hotels}
+                    </if>
+                </td>
 
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/seckillgoodsadd?id={$dinfo.id}&type=40" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+
+                <if condition="$dinfo.type neq 20">
+                    <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/goods/hoteladd?goods_id={$dinfo.id}" class="btn btn-warning btn-icon">
+                        <i class="fa fa-hotel"></i>
+                    </a>
+                </if>
+
                 </div>
               </td>
             </tr>
