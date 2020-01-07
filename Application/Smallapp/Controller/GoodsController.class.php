@@ -146,6 +146,67 @@ class GoodsController extends BaseController {
         $this->display('optimizegoodslist');
     }
 
+    public function seckillgoodslist() {
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
+        $keyword = I('keyword','','trim');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+        $status   = I('status',0,'intval');
+
+        $where = array('type'=>40);
+        if(!empty($keyword)){
+            $where['name'] = array('like',"%$keyword%");
+        }
+        if($status){
+            $where['status'] = $status;
+        }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        $start  = ($page-1) * $size;
+        $m_category  = new \Admin\Model\Smallapp\GoodsModel();
+        $result = $m_category->getDataList('*',$where, 'id desc', $start, $size);
+        $datalist = $result['list'];
+        $goods_types = C('GOODS_TYPE');
+        $goods_status = C('GOODS_STATUS');
+        $m_media = new \Admin\Model\MediaModel();
+        foreach ($datalist as $k=>$v){
+            $media_info = $m_media->getMediaInfoById($v['media_id']);
+            if($media_info['type']==1){
+                $media_typestr = '视频';
+            }else{
+                $media_typestr = '图片';
+            }
+            $datalist[$k]['media_typestr'] = $media_typestr;
+            $datalist[$k]['typestr'] = $goods_types[$v['type']];
+            $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+        }
+
+        $this->assign('status',$status);
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('keyword',$keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('seckillgoodslist');
+    }
+
+    public function seckillgoodsadd(){
+        $template_html = 'seckillgoodsadd';
+        $goods_list_f = 'seckillgoodslist';
+        $this->handle_goodsadd($template_html,$goods_list_f);
+    }
+
     public function goodsadd(){
         $template_html = 'goodsadd';
         $goods_list_f = 'goodslist';
@@ -362,6 +423,7 @@ class GoodsController extends BaseController {
             $start_date = I('post.start_date','');
             $end_date = I('post.end_date','');
             $media_id = I('post.media_id',0);
+            $imgmedia_id = I('post.imgmedia_id',0);
             $status = I('post.status',1,'intval');
             $is_storebuy = I('post.is_storebuy',0,'intval');
             $clicktype = I('post.clicktype',0,'intval');
@@ -444,7 +506,7 @@ class GoodsController extends BaseController {
                 }
             }
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'show_status'=>$show_status,'status'=>$status,'is_storebuy'=>$is_storebuy);
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'imgmedia_id'=>$imgmedia_id,'show_status'=>$show_status,'status'=>$status,'is_storebuy'=>$is_storebuy);
             if($appid){
                 $data['appid'] = $appid;
             }
@@ -511,6 +573,14 @@ class GoodsController extends BaseController {
                 case 20:
                     $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
                     $m_hotelgoods->HandleGoodsperiod($goods_id);
+                    break;
+                case 40:
+                    $m_urlmap  = new \Admin\Model\UrlmapModel();
+                    $where = array('link'=>$jd_url);
+                    $res_url = $m_urlmap->getInfo($where);
+                    if(!empty($res_url)){
+                        $m_urlmap->updateData(array('id'=>$res_url['id']),array('goods_id'=>$goods_id));
+                    }
                     break;
             }
 

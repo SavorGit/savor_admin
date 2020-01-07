@@ -58,6 +58,7 @@ $config['GOODS_TYPE'] = array(
     '20'=>'商家添加',
     '30'=>'积分兑换现金',
 //    '31'=>'积分兑换物品',
+    '40'=>'秒杀商品',
 );
 
 $config['GOODS_SCOPE'] = array(
