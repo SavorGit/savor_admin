@@ -98,7 +98,6 @@ class ForscreenTrackModel extends BaseModel{
                 $data['serial_number'] = $serial_no;
                 $this->add($data);
                 $res_forscreentrack = $data;
-                $res_forscreentrack['action'] = $res_forscreen['action'];
             }else{
                 $res_forscreentrack = array();
             }

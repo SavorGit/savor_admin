@@ -557,8 +557,10 @@ class SappforscreenController extends BaseController {
         $forscreen_record_id = I('get.id',0,'intval');
 	    $m_track = new \Admin\Model\Smallapp\ForscreenTrackModel();
         $track_info = $m_track->getForscreenTrack($forscreen_record_id);
-
         if(!empty($track_info)){
+            $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+            $res_forscreen = $m_forscreen->getInfo(array('id'=>$forscreen_record_id));
+
             if($track_info['oss_stime']){
                 $oss_begintime = date('Y-m-d H:i:s',intval($track_info['oss_stime']/1000));
                 $oss_timeconsume = ($track_info['oss_etime']-$track_info['oss_stime'])/1000;
@@ -567,14 +569,14 @@ class SappforscreenController extends BaseController {
                 $oss_timeconsume = '';
             }
 
-            if($track_info['action']==30){
+            if($res_forscreen['action']==30){
                 if($track_info['box_downstime']){
                     $box_downstime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
                 }else{
                     $box_downstime = '';
                 }
                 if($track_info['box_downetime']){
-                    $box_downetime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
+                    $box_downetime = date('Y-m-d H:i:s',intval($track_info['box_downetime']/1000));
                 }else{
                     $box_downetime = '';
                 }
