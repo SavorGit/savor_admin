@@ -115,9 +115,11 @@
               <td data-title="商家状态">{$dinfo.status_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
+                  <if condition="$dinfo.id neq 3">
                   <a data-tip="修改" title="修改商家" target="dialog" mask="true" href="{$host_url}/integral/merchant/detail?merchant_id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+                  </if>
                 </div>
               </td>
             </tr>
