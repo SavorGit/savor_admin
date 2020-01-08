@@ -560,6 +560,7 @@ class SappforscreenController extends BaseController {
         if(!empty($track_info)){
             $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
             $res_forscreen = $m_forscreen->getInfo(array('id'=>$forscreen_record_id));
+            $is_exist = $res_forscreen['is_exist'];
 
             if($track_info['oss_stime']){
                 $oss_begintime = date('Y-m-d H:i:s',intval($track_info['oss_stime']/1000));
@@ -580,6 +581,22 @@ class SappforscreenController extends BaseController {
                 }else{
                     $box_downetime = '';
                 }
+
+                $begin_time = $track_info['oss_stime'];
+                if($track_info['box_downstime']==0 && $track_info['box_downetime']==0){
+                    $end_time = $track_info['oss_etime'];
+                }else{
+                    $end_time = $track_info['box_downetime'];
+                }
+                if($begin_time && $end_time){
+                    $status = '成功';
+                    $all_timeconsume = ($end_time-$begin_time)/1000;
+                }else{
+                    $status = '失败';
+                    $all_timeconsume = '';
+                }
+                $track_info['status'] = $status;
+                $track_info['all_timeconsume'] = $all_timeconsume;
 
                 if($track_info['box_downstime'] && $track_info['box_downetime']){
                     $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_downstime'])/1000;
@@ -635,6 +652,26 @@ class SappforscreenController extends BaseController {
                 }else{
                     $box_down_timeconsume = '';
                 }
+                if($is_exist==1){
+                    $begin_time = $track_info['position_nettystime'];
+                    $end_time = $track_info['box_receivetime'];
+                }else{
+                    if($track_info['oss_stime'] && $track_info['oss_etime']){
+                        $begin_time = $track_info['oss_stime'];
+                    }else{
+                        $begin_time = $track_info['position_nettystime'];
+                    }
+                    $end_time = $track_info['box_downetime'];
+                }
+
+                if($begin_time && $end_time){
+                    $status = '成功';
+                    $all_timeconsume = ($end_time-$begin_time)/1000;
+                }else{
+                    $status = '失败';
+                    $all_timeconsume = '';
+                }
+
                 $track_info['netty_position_stime'] = $netty_position_stime;
                 $track_info['netty_position_timeconsume'] = $netty_position_timeconsume;
                 $track_info['netty_stime'] = $netty_stime;
@@ -646,6 +683,8 @@ class SappforscreenController extends BaseController {
                 $track_info['oss_timeconsume'] = $oss_timeconsume;
                 $track_info['box_downtime'] = $box_downtime;
                 $track_info['box_down_timeconsume'] = $box_down_timeconsume;
+                $track_info['status'] = $status;
+                $track_info['all_timeconsume'] = $all_timeconsume;
 
                 $display_html = 'trackinfo';
             }
