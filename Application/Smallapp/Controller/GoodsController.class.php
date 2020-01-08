@@ -586,6 +586,8 @@ class GoodsController extends BaseController {
                     if(!empty($res_url)){
                         $m_urlmap->updateData(array('id'=>$res_url['id']),array('goods_id'=>$goods_id));
                     }
+                    $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+                    $m_hotelgoods->HandleGoodsperiod($goods_id);
                     break;
             }
 
