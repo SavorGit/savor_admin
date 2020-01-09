@@ -147,6 +147,11 @@ class SappforscreenController extends BaseController {
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 
 	    foreach ($list['list'] as $key=>$v){
+	        $is_track = 0;
+	        if($v['small_app_id']==1 && !in_array($v['action'],array(21))){
+                $is_track = 1;
+            }
+            $list['list'][$key]['is_track'] = $is_track;
 	        if(isset($all_smallapps[$v['small_app_id']])){
                 $list['list'][$key]['small_app'] = $all_smallapps[$v['small_app_id']];
             }else{
@@ -642,13 +647,13 @@ class SappforscreenController extends BaseController {
                 }else{
                     $box_rtime = '';
                 }
-                if($track_info['box_downstime']){
-                    $box_downtime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
+                if($track_info['box_downetime']){
+                    $box_downtime = date('Y-m-d H:i:s',intval($track_info['box_downetime']/1000));
                 }else{
                     $box_downtime = '';
                 }
                 if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
-                    $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_receivetime'])/1000;
+                    $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_downstime'])/1000;
                 }else{
                     $box_down_timeconsume = '';
                 }

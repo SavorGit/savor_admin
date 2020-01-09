@@ -51,8 +51,8 @@ class ForscreenTrackModel extends BaseModel{
     }
 
     public function getForscreenSerialNumber($forscreen){
-        $has_img_action = array(2,4,5,8,12,21,22,30,31);
-        $other_action = array(9,11);
+        $has_img_action = array(2,4,5,12,21,22,30,31);
+        $other_action = array(8,9,11);
         if(in_array($forscreen['action'],$has_img_action)){
             $oss_addr = '';
             if(!empty($forscreen['imgs'])){
@@ -61,7 +61,20 @@ class ForscreenTrackModel extends BaseModel{
             }
             $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id'],$oss_addr);
         }elseif(in_array($forscreen['action'],$other_action)){
-            $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id']);
+            if($forscreen['action']==8){
+                if($forscreen['resource_type']==2){
+                    $oss_addr = '';
+                    if(!empty($forscreen['imgs'])){
+                        $oss_info = json_decode($forscreen['imgs'],true);
+                        $oss_addr = $oss_info[0];
+                    }
+                    $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id'],$oss_addr);
+                }else{
+                    $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id']);
+                }
+            }else{
+                $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id']);
+            }
         }else{
             $serial_no = '';
         }
