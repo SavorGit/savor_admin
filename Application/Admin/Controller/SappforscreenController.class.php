@@ -148,7 +148,7 @@ class SappforscreenController extends BaseController {
 
 	    foreach ($list['list'] as $key=>$v){
 	        $is_track = 0;
-	        if($v['small_app_id']==1 && !in_array($v['action'],array(21))){
+	        if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121))){
                 $is_track = 1;
             }
             $list['list'][$key]['is_track'] = $is_track;
@@ -568,7 +568,7 @@ class SappforscreenController extends BaseController {
             $is_exist = $res_forscreen['is_exist'];
 
             if($track_info['oss_stime']){
-                $oss_begintime = date('Y-m-d H:i:s',intval($track_info['oss_stime']/1000));
+                $oss_begintime = date('Y-m-d H:i:s',round($track_info['oss_stime']/1000));
                 $oss_timeconsume = ($track_info['oss_etime']-$track_info['oss_stime'])/1000;
             }else{
                 $oss_begintime = '无上传动作';
@@ -577,12 +577,12 @@ class SappforscreenController extends BaseController {
 
             if($res_forscreen['action']==30){
                 if($track_info['box_downstime']){
-                    $box_downstime = date('Y-m-d H:i:s',intval($track_info['box_downstime']/1000));
+                    $box_downstime = date('Y-m-d H:i:s',round($track_info['box_downstime']/1000));
                 }else{
                     $box_downstime = '';
                 }
                 if($track_info['box_downetime']){
-                    $box_downetime = date('Y-m-d H:i:s',intval($track_info['box_downetime']/1000));
+                    $box_downetime = date('Y-m-d H:i:s',round($track_info['box_downetime']/1000));
                 }else{
                     $box_downetime = '';
                 }
@@ -616,22 +616,22 @@ class SappforscreenController extends BaseController {
 
                 $display_html = 'trackfile';
             }else{
-                $netty_position_stime = date('Y-m-d H:i:s',intval($track_info['position_nettystime']/1000));
+                $netty_position_stime = date('Y-m-d H:i:s',round($track_info['position_nettystime']/1000));
                 if($track_info['request_nettytime']){
                     $netty_position_timeconsume = ($track_info['request_nettytime']-$track_info['position_nettystime'])/1000;
-                    $netty_stime = date('Y-m-d H:i:s',intval($track_info['request_nettytime']/1000));
+                    $netty_stime = date('Y-m-d H:i:s',round($track_info['request_nettytime']/1000));
                 }else{
                     $netty_position_timeconsume = '';
                     $netty_stime = '';
                 }
 
                 if($track_info['netty_receive_time']){
-                    $netty_rtime = date('Y-m-d H:i:s',intval($track_info['netty_receive_time']/1000));
+                    $netty_rtime = date('Y-m-d H:i:s',round($track_info['netty_receive_time']/1000));
                 }else{
                     $netty_rtime = '';
                 }
                 if($track_info['netty_pushbox_time']){
-                    $pushbox_time = date('Y-m-d H:i:s',intval($track_info['netty_pushbox_time']/1000));
+                    $pushbox_time = date('Y-m-d H:i:s',round($track_info['netty_pushbox_time']/1000));
                 }else{
                     $pushbox_time = '';
                 }
@@ -643,12 +643,12 @@ class SappforscreenController extends BaseController {
 
 
                 if($track_info['box_receivetime']){
-                    $box_rtime = date('Y-m-d H:i:s',intval($track_info['box_receivetime']/1000));
+                    $box_rtime = date('Y-m-d H:i:s',round($track_info['box_receivetime']/1000));
                 }else{
                     $box_rtime = '';
                 }
                 if($track_info['box_downetime']){
-                    $box_downtime = date('Y-m-d H:i:s',intval($track_info['box_downetime']/1000));
+                    $box_downtime = date('Y-m-d H:i:s',round($track_info['box_downetime']/1000));
                 }else{
                     $box_downtime = '';
                 }
