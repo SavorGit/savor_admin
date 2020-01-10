@@ -95,7 +95,27 @@
 	        <div class="col-xs-12 col-sm-10">
 	          <input type="checkbox" name="is_long_time" <if condition="$vinfo.is_long_time eq 1">checked="checked"  </if> value="1" />
 	        </div>
-        </div> 
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                是否支持分润:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select name="is_shareprofit" id="is_shareprofit" class="form-control bs-select" title="请选择..." data-size="20" required>
+                    <option value="1" <if condition="$vinfo['is_shareprofit'] eq 1"> selected </if> > 是</option>
+                    <option value="0" <if condition="$vinfo['is_shareprofit'] eq 0"> selected </if> > 否</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row " id="shareprofit_config" <if condition="$vinfo['is_shareprofit'] eq 0">style="display:none;"</if> >
+        <label class="col-xs-12 col-sm-2 control-label">
+            分润设置：
+        </label>
+        <div class="col-xs-12 col-sm-10 form-inline">
+            <span class="form-control">经理</span><input type="number" class="form-control" name="shareprofit_level1" value="{$vinfo.shareprofit_level1}" min="0" max="100">
+            <span class="form-control">员工</span><input type="number" class="form-control" name="shareprofit_level2" value="{$vinfo.shareprofit_level2}" min="0" max="100">
+        </div>
+    </div>
         <div class="form-group row">
 	        <label class="col-xs-12 col-sm-2 control-label">
 	          奖励积分:
@@ -383,4 +403,13 @@
     })
     
   })
+  $('#is_shareprofit').change(function() {
+      if($(this).val()==1){
+          $('#shareprofit_config').show();
+      }else{
+          $('#shareprofit_config').hide();
+
+      }
+  })
+  $('#is_shareprofit').trigger('change');
 </script>
