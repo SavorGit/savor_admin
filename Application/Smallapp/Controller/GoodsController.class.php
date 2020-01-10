@@ -439,6 +439,7 @@ class GoodsController extends BaseController {
             $label = I('post.label','');
             $covermedia_id = I('post.covermedia_id','');
             $show_status = I('post.show_status',0);
+            $duration = I('post.duration',0,'intval');
 
             if($clicktype==1){
                 $media_id = I('post.media_vid',0);
@@ -517,6 +518,9 @@ class GoodsController extends BaseController {
             }
             if($buybutton){
                 $data['buybutton'] = $buybutton;
+            }
+            if($duration){
+                $data['duration'] = $duration;
             }
             $data['intro'] = $intro;
             if(!empty($label)){

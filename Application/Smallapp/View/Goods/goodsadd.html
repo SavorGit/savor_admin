@@ -179,6 +179,13 @@
 				</div>
 			</div>
 
+			<div class="form-group row" id="img_duration" <if condition="$vinfo['media_type'] eq 1">style="display:none;"</if>>
+				<label class="col-xs-12 col-sm-2 control-label">播放时长：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="duration" type="number" value="{$vinfo.duration}" class="form-control" min="0" max="1000"/>
+				</div>
+			</div>
+
 			<div class="form-group row" id="hd_range">
 				<label class="col-xs-12 col-sm-2 control-label">
 					互动范围:
@@ -252,9 +259,12 @@
         if (id == 1) {
             $("#defaultvideo").show();
             $("#defaultpic").hide();
+            $("#img_duration").hide();
         } else {
             $("#defaultvideo").hide();
             $("#defaultpic").show();
+            $("#img_duration").show();
+
         }
     });
 
