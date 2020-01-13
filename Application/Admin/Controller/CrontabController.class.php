@@ -2789,7 +2789,9 @@ class CrontabController extends Controller
                 
                 $search = array();
                 $search['forscreen_id'] = $netresource['forscreen_id'];
-                $search['resource_id']  = $netresource['resource_id'];
+                if($netresource['resource_id']){
+                    $search['resource_id']  = $netresource['resource_id'];
+                }
                 $tmp = $m_smallapp_forscreen_record->getOne('id', $search);
                 
                 if(!empty($tmp)){
@@ -2818,7 +2820,9 @@ class CrontabController extends Controller
                         $where = $dt = array();
                         //$where['action'] = array('neq',8);
                         $where['forscreen_id'] = $netresource['forscreen_id'];
-                        $where['resource_id'] = $netresource['resource_id'];
+                        if($netresource['resource_id']){
+                            $where['resource_id'] = $netresource['resource_id'];
+                        }
                         $where['openid'] = $netresource['openid'];
                         $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
                         $dt['is_break'] = $is_break;
