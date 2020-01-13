@@ -191,16 +191,18 @@
             <th>手机品牌</th>
             <th>手机型号</th>
             <th>投屏动作</th>
-            <th>投屏图片、视频、文件</th>
+            <th>投屏内容</th>
             <th>资源大小</th>
-            <th>投屏文字</th>
+            <!--<th>投屏文字</th>-->
             <th>投屏时间</th>
-            <th>资源开始上传时间</th>
-            <th>资源上传成功延时(s)</th>
-            <th>机顶盒开始下载时间</th>
-            <th>机顶盒下载成功延时</th>
-            <th>是否打断</th>
-            <th>资源下载状态</th>
+            <!--<th>资源开始上传时间</th>-->
+            <!--<th>资源上传成功延时(s)</th>-->
+            <!--<th>机顶盒开始下载时间</th>-->
+            <!--<th>机顶盒下载成功延时</th>-->
+            <!--<th>是否打断</th>-->
+            <!--<th>资源下载状态</th>-->
+            <th>是否成功</th>
+            <th>总计时间</th>
             <th>小程序版本</th>
             <th class="table-tool">操作</th>
           </tr>
@@ -220,7 +222,7 @@
               <td data-title="手机品牌">{$vlist.mobile_brand}</td>
               <td data-title="手机型号">{$vlist.mobile_model}</td>
               <td data-title="投屏动作">{$vlist.action_name}</td>
-              <td data-title="投屏图片、视频">
+              <td data-title="投屏内容">
               	<if condition="$vlist.action eq 4 || $vlist.action eq 11">
               
               	<volist name="vlist.imgs" id="img">
@@ -273,14 +275,16 @@
                 </if>
               </td>
               <td data-title="资源大小">{$vlist.resource_size}</td>
-              <td data-title="投屏文字">{$vlist.forscreen_char}</td>
+              <!--<td data-title="投屏文字">{$vlist.forscreen_char}</td>-->
               <td data-title="投屏时间">{$vlist.create_time}</td>
-              <td data-title="资源开始上传时间">{$vlist.res_sup_time}</td>
-              <td data-title="资源上传成功延时">{$vlist.res_eup_time}</td>
-              <td data-title="机顶盒开始下载时间">{$vlist.box_res_sdown_time}</td>
-              <td data-title="机顶盒下载成功延时">{$vlist.box_res_edown_time}</td>
-              <td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>
-              <td data-title="资源下载状态">{$vlist.source_typestr}</td>
+              <!--<td data-title="资源开始上传时间">{$vlist.res_sup_time}</td>-->
+              <!--<td data-title="资源上传成功延时">{$vlist.res_eup_time}</td>-->
+              <!--<td data-title="机顶盒开始下载时间">{$vlist.box_res_sdown_time}</td>-->
+              <!--<td data-title="机顶盒下载成功延时">{$vlist.box_res_edown_time}</td>-->
+              <!--<td data-title="是否打断"><if condition="$vlist.is_break eq 1">打断</if></td>-->
+              <!--<td data-title="资源下载状态">{$vlist.source_typestr}</td>-->
+              <td data-title="是否成功">{$vlist.is_success_str}</td>
+              <td data-title="总计时间">{$vlist.total_time}</td>
               <td data-title="小程序版本">{$vlist.small_app}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
