@@ -10,9 +10,6 @@ class ForscreenTrackModel extends BaseModel{
         $start_time = "$hourtime:00:00";
         $end_time = "$hourtime:59:59";
 
-//        $start_time = "2020-01-13 00:00:00";
-//        $end_time = "2020-01-13 15:59:59";
-
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
         $where = array();
         $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
@@ -160,6 +157,9 @@ class ForscreenTrackModel extends BaseModel{
             }
         }else{
             if($forscreen_info['action']==5 && $forscreen_info['forscreen_char']=='Happy Birthday'){
+                $forscreen_info['is_exist'] = 1;
+            }
+            if($forscreen_info['action']==9){
                 $forscreen_info['is_exist'] = 1;
             }
             if($forscreen_info['is_exist']==1){
