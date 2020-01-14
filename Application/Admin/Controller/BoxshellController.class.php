@@ -92,20 +92,19 @@ class BoxshellController extends BaseController{
         $custom['type'] = 3;  //1:RTB  2:4G投屏 3:shell命令推送  4：apk升级
         $custom['action'] = 1; //1:投屏  0:结束投屏
         $custom['data'] = $shell_command_arr;
-        
-        
-        $this->uPushData($display_type, 3,'listcast',$option_name, $after_open, $device_token,
+
+        $m_push_log = new \Admin\Model\PushLogModel();
+        $m_push_log->uPushData($display_type, 3,'listcast',$option_name, $after_open, $device_token,
                          $ticker,$title,$text,$production_mode,$custom);
-        
-        
+
         $push_data = array();
         $push_data['hotel_id'] = $hotel_id;
         $push_data['room_id']  = $room_id;
         $push_data['box_id']   = $box_id;
         $push_data['push_info']= json_encode($custom);
         $push_type['push_type']= 3;
-        $m_push_log = new \Admin\Model\PushLogModel();
         $m_push_log->addInfo($push_data);
+
         $this->output('推送成功', 'boxshell/index', 2);
     }
     
@@ -156,7 +155,6 @@ class BoxshellController extends BaseController{
         $where['hotel_box_type'] = array('in',"$hotel_box_type_str");
         $hotel_list = $m_hotel->getInfo($fields,$where);
         foreach($hotel_list as $key=>$v){
-            
             $firstCharter = getFirstCharter(cut_str($v['hotel_name'], 1));
             $hotel_arr[$firstCharter][] = $v;
         }

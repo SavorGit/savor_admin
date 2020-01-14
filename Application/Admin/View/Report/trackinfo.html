@@ -15,21 +15,29 @@
           </thead>
           <tbody data-check="list" data-parent=".table">
             <tr target="sid_user">
-              <td>1.OSS处理</td>
+              <td>唯一序列号</td>
+              <td>{$info.serial_number}</td>
+            </tr>
+            <tr target="sid_user">
+              <td>1.OSS处理（小程序调用阿里云存储上传）</td>
               <td>OSS上传时间：{$info.oss_begintime} <br> 总耗时：{$info.oss_timeconsume}</td>
             </tr>
             <tr target="sid_user">
-              <td>2.PHP处理</td>
+              <td>2.PHP处理（PHP调用netty接口）</td>
               <td>
                 请求netty定位接口时间：{$info.netty_position_stime}
                 <br>
+                返回数据：{$info.netty_position_result}
+                <br>
                 请求netty推送接口时间：{$info.netty_stime}
+                <br>
+                返回数据：{$info.netty_result}
                 <br>
                 总耗时：{$info.netty_position_timeconsume}
               </td>
             </tr>
             <tr target="sid_user">
-              <td>3.netty处理</td>
+              <td>3.netty处理（netty接收到PHP请求，推送PHP请求数据到机顶盒）</td>
               <td>
                 接收请求时间：{$info.netty_rtime}
                 <br>
@@ -39,13 +47,25 @@
               </td>
             </tr>
             <tr target="sid_user">
-              <td>4.盒子处理</td>
+              <td>4.盒子处理（机顶盒接收到netty推送时间，盒子下载时间）</td>
               <td>
                 接收netty推送时间：{$info.box_rtime}
                 <br>
                 盒子下载时间：{$info.box_downtime}
                 <br>
                 总耗时：{$info.box_down_timeconsume}
+              </td>
+            </tr>
+            <tr target="sid_user">
+              <td>总计耗时</td>
+              <td>
+                {$info.all_timeconsume}
+              </td>
+            </tr>
+            <tr target="sid_user">
+              <td>结果</td>
+              <td>
+                {$info.status}
               </td>
             </tr>
 

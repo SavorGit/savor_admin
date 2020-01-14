@@ -3681,6 +3681,13 @@ class CrontabController extends Controller
         $m_forscreentrack->handle_forscreen_track();
     }
 
+    public function pushrebootbox(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushrebootbox:$now_time \r\n";
+        $m_forscreentrack = new \Admin\Model\PushLogModel();
+        $m_forscreentrack->handle_push_rebootbox();
+    }
+
     public function sendredpacket(){
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();

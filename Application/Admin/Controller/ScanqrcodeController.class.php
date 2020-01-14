@@ -47,6 +47,7 @@ class ScanqrcodeController extends Controller {
         if(!empty($box_mac)){
             $data['box_mac'] = $box_mac;
         }
+        $data['data_id'] = $res_map['goods_id'];
         $m_qrscanrecord = new \Admin\Model\QrscanRecordModel();
         $m_qrscanrecord->add($data);
 

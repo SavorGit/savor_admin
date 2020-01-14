@@ -58,7 +58,7 @@ class TaskController extends BaseController {
             $data['end_time'] = I('post.end_time','0000-00-00 00:00:00','trim') ? I('post.end_time') : '0000-00-00 00:00:00';
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
-            //print_r($data);exit;
+            $data['is_shareprofit'] = I('post.is_shareprofit',0,'intval');
             
             $this->checkMainParam($data);
             
@@ -100,6 +100,17 @@ class TaskController extends BaseController {
             $ret = $m_task->addData($data);
             
             if($ret){
+                if($data['is_shareprofit']){
+                    $shareprofit_level1 = I('post.shareprofit_level1',0,'intval');
+                    $shareprofit_level2 = I('post.shareprofit_level2',0,'intval');
+                    if($shareprofit_level1+$shareprofit_level2!=100){
+                        $this->output('分润设置不合理', "task/index",2,0);
+                    }
+                    $m_taskshareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
+                    $add_data = array('task_id'=>$ret,'level1'=>$shareprofit_level1,'level2'=>$shareprofit_level2);
+                    $m_taskshareprofit->add($add_data);
+                }
+
                 $this->output('添加成功', "task/index");
             }else {
                 $this->output('添加失败', "task/index",2,0);
@@ -158,6 +169,7 @@ class TaskController extends BaseController {
             $data['end_time'] = I('post.end_time','0000-00-00 00:00:00','trim') ? I('post.end_time') : '0000-00-00 00:00:00';
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
+            $data['is_shareprofit'] = I('post.is_shareprofit',0,'intval');
             
             $this->checkMainParam($data);
             if($data['type']==1){//系统任务
@@ -197,12 +209,24 @@ class TaskController extends BaseController {
             $userinfo = session('sysUserInfo');
             $data['e_uid'] = $userinfo['id'];
             $ret = $m_task->updateData(array('id'=>$id), $data);
-            if($ret){
-                $this->output('编辑成功', "task/index");
-            }else {
-                $this->output('编辑失败', "task/index",2,0);
+
+            if($data['is_shareprofit']){
+                $shareprofit_level1 = I('post.shareprofit_level1',0,'intval');
+                $shareprofit_level2 = I('post.shareprofit_level2',0,'intval');
+                if($shareprofit_level1+$shareprofit_level2!=100){
+                    $this->output('分润设置不合理', "task/index",2,0);
+                }
+                $m_taskshareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
+                $res_profit = $m_taskshareprofit->getInfo(array('task_id'=>$id,'hotel_id'=>0));
+                if(!empty($res_profit)){
+                    $update_data = array('level1'=>$shareprofit_level1,'level2'=>$shareprofit_level2);
+                    $m_taskshareprofit->updateData(array('id'=>$res_profit['id']),$update_data);
+                }else{
+                    $add_data = array('task_id'=>$id,'level1'=>$shareprofit_level1,'level2'=>$shareprofit_level2);
+                    $m_taskshareprofit->add($add_data);
+                }
             }
-            
+            $this->output('编辑成功', "task/index");
         }else{
             $where = [];
             $where['id'] = $id;
@@ -217,6 +241,16 @@ class TaskController extends BaseController {
             
             $m_info = $m_media->getRow('oss_addr',array('id'=>$task_info['media_id']));
             $task_info['oss_addr'] = $oss_host.$m_info['oss_addr'];
+
+            $m_taskshareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
+            $res_profit = $m_taskshareprofit->getInfo(array('task_id'=>$id,'hotel_id'=>0));
+            $shareprofit_level1 = $shareprofit_level2 = '';
+            if(!empty($res_profit)){
+                $shareprofit_level1 = $res_profit['level1'];
+                $shareprofit_level2 = $res_profit['level2'];
+            }
+            $task_info['shareprofit_level1'] = $shareprofit_level1;
+            $task_info['shareprofit_level2'] = $shareprofit_level2;
 
             $this->assign('integral_task_type',$this->integral_task_type);
             $this->assign('system_task_content',$this->system_task_content);
