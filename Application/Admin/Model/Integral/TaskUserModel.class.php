@@ -86,7 +86,7 @@ class TaskUserModel extends BaseModel{
                     $task_date = date('Ymd');
                     $task_times = array('fj_bstime'=>$fj_bstime,'fj_estime'=>$fj_estime,'task_date'=>$task_date);
 
-                    $task_type = $task_content['task_content_type'];//1开机 2互动
+                    $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广
                     switch ($task_type){
                         case 1:
                             $this->task_boot($task_times,$dinner_type,$task_info,$signv);
@@ -168,19 +168,30 @@ class TaskUserModel extends BaseModel{
             $tmp_where['task_id'] = $task_info['task_user_id'];
             $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
+            $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
+
+            $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$signv,$box_info);
+            $now_integral = $res_shareprofit['now_integral'];
+
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
             }
         }
 
         if($now_integral){
-            $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
                 'integral'=>$now_integral,'content'=>$ap_num,'type'=>6,'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
-            $m_userintegralrecord->add($integralrecord_data);
+            $integralrecord_id = $m_userintegralrecord->add($integralrecord_data);
+
+            $res_shareprofit['integralrecord_id'] = $integralrecord_id;
+            $res_shareprofit['dinner_type'] = $dinner_type;
+            $res_shareprofit['fj_estime'] = $fj_estime;
+            $res_shareprofit['integral_type'] = 6;
+            $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
             if(!empty($res_userintegral)){
@@ -286,18 +297,29 @@ class TaskUserModel extends BaseModel{
 
             $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
+
+            $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
+            $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$signv,$box_info);
+            $now_integral = $res_shareprofit['now_integral'];
+
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
             }
         }
         if($now_integral){
-            $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
                 'integral'=>$now_integral,'content'=>$interact_num,'type'=>2,'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
-            $m_userintegralrecord->add($integralrecord_data);
+            $integralrecord_id = $m_userintegralrecord->add($integralrecord_data);
+
+            $res_shareprofit['integralrecord_id'] = $integralrecord_id;
+            $res_shareprofit['dinner_type'] = $dinner_type;
+            $res_shareprofit['fj_estime'] = $fj_estime;
+            $res_shareprofit['integral_type'] = 2;
+            $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
             if(!empty($res_userintegral)){
@@ -354,12 +376,21 @@ class TaskUserModel extends BaseModel{
         }
         if($now_integral){
             $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
+            $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$signv,$box_info);
+            $now_integral = $res_shareprofit['now_integral'];
+
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
                 'integral'=>$now_integral,'content'=>$online_hour,'type'=>1,'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
-            $m_userintegralrecord->add($integralrecord_data);
+            $integralrecord_id = $m_userintegralrecord->add($integralrecord_data);
+
+            $res_shareprofit['integralrecord_id'] = $integralrecord_id;
+            $res_shareprofit['dinner_type'] = $dinner_type;
+            $res_shareprofit['fj_estime'] = $fj_estime;
+            $res_shareprofit['integral_type'] = 1;
+            $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
             if(!empty($res_userintegral)){
@@ -373,6 +404,71 @@ class TaskUserModel extends BaseModel{
             $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
         }
         echo "{$task_info['task_user_id']} finish \r\n";
+        return true;
+    }
+
+
+    private function calculate_shareprofit($now_integral,$task_info,$signv,$box_info){
+        $res_data = array('integral'=>$now_integral,'now_integral'=>$now_integral,'admin_integral'=>0,
+            'admin_openid'=>'','shareprofit_config'=>'');
+        if($task_info['is_shareprofit']){
+            $where_staff = array('a.openid'=>$signv['openid'],'m.hotel_id'=>$box_info['hotel_id'],'a.status'=>1,'m.status'=>1);
+            $field_staff = 'a.openid,a.level,a.parent_id,m.type';
+            $m_staff = new \Admin\Model\Integral\StaffModel();
+            $res_staff = $m_staff->getMerchantStaffInfo($field_staff,$where_staff);
+            if(!empty($res_staff) && $res_staff['level']==2){
+                $where_share= array('task_id'=>$task_info['id']);
+                $where_share['hotel_id'] = array('in',array(0,$box_info['hotel_id']));
+                $m_task_shareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
+                $res_share = $m_task_shareprofit->getTaskShareprofit('level1,level2',$where_share,'id desc',0,1);
+                if(!empty($res_share)){
+                    $res_staffadmin = $m_staff->getInfo(array('id'=>$res_staff['parent_id']));
+                    if(!empty($res_staffadmin) && $res_staffadmin['status']==1){
+                        $admin_openid = $res_staffadmin['openid'];
+                        $level1 = $res_share['level1']/100;
+                        $admin_now_integral = round($level1*$now_integral);
+                        $res_data['now_integral'] = $now_integral-$admin_now_integral;
+                        $res_data['admin_integral'] = $admin_now_integral;
+                        $res_data['admin_openid'] = $admin_openid;
+                        $res_data['shareprofit_config'] = $res_share['level1'].'-'.$res_share['level2'];
+                    }
+                }
+            }
+        }
+        return $res_data;
+    }
+
+    private function add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral){
+        if($res_shareprofit['admin_integral'] && !empty($res_shareprofit['admin_openid'])){
+            $dinner_type = $res_shareprofit['dinner_type'];
+            $fj_estime = $res_shareprofit['fj_estime'];
+            $integral_type = $res_shareprofit['integral_type'];
+
+            $integralrecord_data = array('openid'=>$res_shareprofit['admin_openid'],'area_id'=>$box_info['area_id'],
+                'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
+                'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
+                'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
+                'integral'=>$res_shareprofit['admin_integral'],'content'=>'','type'=>$integral_type,'source'=>4,
+                'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
+            $m_userintegralrecord->add($integralrecord_data);
+
+            $res_userintegral = $m_userintegral->getInfo(array('openid'=>$res_shareprofit['admin_openid']));
+            if(!empty($res_userintegral)){
+                $userintegral = $res_userintegral['integral']+$res_shareprofit['admin_integral'];
+                $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+            }else{
+                $integraldata = array('openid'=>$res_shareprofit['admin_openid'],'integral'=>$res_shareprofit['integral'],'update_time'=>date('Y-m-d H:i:s'));
+                $m_userintegral->add($integraldata);
+            }
+
+            $data = array('integralrecord_id'=>$res_shareprofit['integralrecord_id'],'original_integral'=>$res_shareprofit['integral'],
+                'openid'=>$res_shareprofit['admin_openid'],'shareprofit_integral'=>$res_shareprofit['admin_integral'],
+                'shareprofit_config'=>$res_shareprofit['shareprofit_config']
+                );
+            $m_shareprofitrecord = new \Admin\Model\Integral\ShareprofitrecordModel();
+            $m_shareprofitrecord->add($data);
+
+        }
         return true;
     }
 
