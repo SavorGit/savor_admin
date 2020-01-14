@@ -146,10 +146,14 @@ class SappforscreenController extends BaseController {
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 
+	    $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
+	    $track_start_time = '2020-01-13 10:20:00';
 	    foreach ($list['list'] as $key=>$v){
 	        $is_track = 0;
 	        if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121))){
-                $is_track = 1;
+	            if($v['create_time']>=$track_start_time){
+                    $is_track = 1;
+                }
             }
             $list['list'][$key]['is_track'] = $is_track;
 	        if(isset($all_smallapps[$v['small_app_id']])){
@@ -183,7 +187,19 @@ class SappforscreenController extends BaseController {
 	        }else {
 	            $list['list'][$key]['box_res_edown_time'] = '';
 	        }
-	        
+	        $is_success_str = '';
+	        $total_time = '';
+	        $res_track = $m_forscreentrack->getRow('is_success,total_time',array('forscreen_record_id'=>$v['id']));
+	        if(!empty($res_track)){
+	            if($res_track['is_success']){
+                    $is_success_str = '成功';
+                }else{
+                    $is_success_str = '失败';
+                }
+                $total_time = $res_track['total_time'];
+            }
+            $list['list'][$key]['is_success_str'] = $is_success_str;
+            $list['list'][$key]['total_time'] = $total_time;
 	        $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
 	        $nowaction_type = $v['action'];
 	        if($nowaction_type==2){
@@ -565,7 +581,6 @@ class SappforscreenController extends BaseController {
         if(!empty($track_info)){
             $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
             $res_forscreen = $m_forscreen->getInfo(array('id'=>$forscreen_record_id));
-            $is_exist = $res_forscreen['is_exist'];
 
             if($track_info['oss_stime']){
                 $oss_begintime = date('Y-m-d H:i:s',round($track_info['oss_stime']/1000));
@@ -587,21 +602,8 @@ class SappforscreenController extends BaseController {
                     $box_downetime = '';
                 }
 
-                $begin_time = $track_info['oss_stime'];
-                if($track_info['box_downstime']==0 && $track_info['box_downetime']==0){
-                    $end_time = $track_info['oss_etime'];
-                }else{
-                    $end_time = $track_info['box_downetime'];
-                }
-                if($begin_time && $end_time){
-                    $status = '成功';
-                    $all_timeconsume = ($end_time-$begin_time)/1000;
-                }else{
-                    $status = '失败';
-                    $all_timeconsume = '';
-                }
-                $track_info['status'] = $status;
-                $track_info['all_timeconsume'] = $all_timeconsume;
+                $track_info['status'] = $track_info['is_success']==1?'成功':'失败';
+                $track_info['all_timeconsume'] = $track_info['total_time'];
 
                 if($track_info['box_downstime'] && $track_info['box_downetime']){
                     $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_downstime'])/1000;
@@ -641,7 +643,6 @@ class SappforscreenController extends BaseController {
                     $netty_timeconsume = '';
                 }
 
-
                 if($track_info['box_receivetime']){
                     $box_rtime = date('Y-m-d H:i:s',round($track_info['box_receivetime']/1000));
                 }else{
@@ -657,25 +658,9 @@ class SappforscreenController extends BaseController {
                 }else{
                     $box_down_timeconsume = '';
                 }
-                if($is_exist==1){
-                    $begin_time = $track_info['position_nettystime'];
-                    $end_time = $track_info['box_receivetime'];
-                }else{
-                    if($track_info['oss_stime'] && $track_info['oss_etime']){
-                        $begin_time = $track_info['oss_stime'];
-                    }else{
-                        $begin_time = $track_info['position_nettystime'];
-                    }
-                    $end_time = $track_info['box_downetime'];
-                }
 
-                if($begin_time && $end_time){
-                    $status = '成功';
-                    $all_timeconsume = ($end_time-$begin_time)/1000;
-                }else{
-                    $status = '失败';
-                    $all_timeconsume = '';
-                }
+                $track_info['status'] = $track_info['is_success']==1?'成功':'失败';
+                $track_info['all_timeconsume'] = $track_info['total_time'];
 
                 $track_info['netty_position_stime'] = $netty_position_stime;
                 $track_info['netty_position_timeconsume'] = $netty_position_timeconsume;
@@ -688,8 +673,6 @@ class SappforscreenController extends BaseController {
                 $track_info['oss_timeconsume'] = $oss_timeconsume;
                 $track_info['box_downtime'] = $box_downtime;
                 $track_info['box_down_timeconsume'] = $box_down_timeconsume;
-                $track_info['status'] = $status;
-                $track_info['all_timeconsume'] = $all_timeconsume;
 
                 $display_html = 'trackinfo';
             }
