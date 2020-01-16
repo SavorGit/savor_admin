@@ -7,17 +7,20 @@
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
-          
-          <tr id="post">
+          <tr>
+            <th>唯一序列号</th>
+            <th>{$info.serial_number}</th>
+          </tr>
+          <tr>
+            <th>机顶盒MAC</th>
+            <th>{$info.box_mac}</th>
+          </tr>
+          <tr>
             <th>过程</th>
             <th>内容</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-            <tr target="sid_user">
-              <td>唯一序列号</td>
-              <td>{$info.serial_number}</td>
-            </tr>
             <tr target="sid_user">
               <td>1.OSS处理（小程序调用阿里云存储上传）</td>
               <td>OSS上传时间：{$info.oss_begintime} <br> 总耗时：{$info.oss_timeconsume}</td>
