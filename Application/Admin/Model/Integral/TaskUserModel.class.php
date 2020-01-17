@@ -16,6 +16,7 @@ class TaskUserModel extends BaseModel{
             echo "hour $date_h error \r\n";
             exit;
         }
+
         $now_date = date('Y-m-d');
         $begin_time = $now_date." 00:00:00";
         $end_time = $now_date." 23:59:59";
@@ -191,7 +192,7 @@ class TaskUserModel extends BaseModel{
             }
         }
 
-        if($admin_integral){
+        if($admin_integral || $now_integral){
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
@@ -322,7 +323,7 @@ class TaskUserModel extends BaseModel{
                 $admin_integral = $res_shareprofit['admin_integral'];
             }
         }
-        if($admin_integral){
+        if($admin_integral || $now_integral){
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
@@ -456,7 +457,7 @@ class TaskUserModel extends BaseModel{
     }
 
     private function add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral){
-        if($res_shareprofit['admin_integral'] && !empty($res_shareprofit['admin_openid'])){
+        if(!empty($res_shareprofit['shareprofit_config']) && !empty($res_shareprofit['admin_openid'])){
             $dinner_type = $res_shareprofit['dinner_type'];
             $fj_estime = $res_shareprofit['fj_estime'];
             $integral_type = $res_shareprofit['integral_type'];
