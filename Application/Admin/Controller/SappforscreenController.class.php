@@ -658,6 +658,23 @@ class SappforscreenController extends BaseController {
                 }else{
                     $box_down_timeconsume = '';
                 }
+                if(!empty($track_info['netty_position_result'])){
+                    $netty_position_result = json_decode($track_info['netty_position_result'],true);
+                    $netty_position_result_str = '';
+                    foreach ($netty_position_result as $k=>$v){
+                        $netty_position_result_str.="$k:$v|";
+                    }
+                    $track_info['netty_position_result'] = rtrim($netty_position_result_str,'|');
+                }
+
+                if(!empty($track_info['netty_result'])){
+                    $netty_result = json_decode($track_info['netty_result'],true);
+                    $netty_result_str = '';
+                    foreach ($netty_result as $k=>$v){
+                        $netty_result_str.="$k:$v|";
+                    }
+                    $track_info['netty_result'] = rtrim($netty_result_str,'|');
+                }
 
                 $track_info['status'] = $track_info['is_success']==1?'成功':'失败';
                 $track_info['all_timeconsume'] = $track_info['total_time'];
@@ -673,6 +690,7 @@ class SappforscreenController extends BaseController {
                 $track_info['oss_timeconsume'] = $oss_timeconsume;
                 $track_info['box_downtime'] = $box_downtime;
                 $track_info['box_down_timeconsume'] = $box_down_timeconsume;
+                $track_info['box_mac'] = $res_forscreen['box_mac'];
 
                 $display_html = 'trackinfo';
             }

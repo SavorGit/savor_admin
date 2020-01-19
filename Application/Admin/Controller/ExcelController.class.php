@@ -5378,10 +5378,12 @@ where merchant.type=2 and merchant.status=1 and hotel.state=1 and hotel.flag=0 "
 
             //签到
             $sql_signin = "select DATE(add_time) add_date,COUNT(DISTINCT openid) as num from savor_smallapp_user_signin where DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and box_mac in($hotel_boxs_str) GROUP BY add_date";
-            $res_signin = $model->query($sql_signin);
             $hotel_sign = array();
-            foreach ($res_signin as $v){
-                $hotel_sign[$v['add_date']] = $v['num'];
+            if(!empty($boxs)){
+                $res_signin = $model->query($sql_signin);
+                foreach ($res_signin as $v){
+                    $hotel_sign[$v['add_date']] = $v['num'];
+                }
             }
             $log.="|sql_signin|".$sql_signin;
 
@@ -5397,20 +5399,25 @@ where merchant.type=2 and merchant.status=1 and hotel.state=1 and hotel.flag=0 "
 
             //店内下单
             $sql_order= "select DATE(add_time) add_date,COUNT(id) as num from savor_smallapp_order where DATE(add_time)>='$cdate' and DATE(add_time)<='$edate' and box_mac in($hotel_boxs_str) GROUP BY add_date";
-            $res_order = $model->query($sql_order);
             $hotel_order = array();
-            foreach ($res_order as $orderv){
-                $hotel_order[$orderv['add_date']] = $orderv['num'];
+            if(!empty($boxs)){
+                $res_order = $model->query($sql_order);
+                foreach ($res_order as $orderv){
+                    $hotel_order[$orderv['add_date']] = $orderv['num'];
+                }
             }
             $log.="|sql_order|".$sql_order;
 
             //上电视
             $sql_ontv = "select DATE(create_time) add_date,COUNT(DISTINCT openid) as num from savor_smallapp_forscreen_record where DATE(create_time)>='$cdate' and DATE(create_time)<='$edate' and action=40 and mobile_brand!='devtools' and box_mac in($hotel_boxs_str) group by add_date";
-            $res_ontv = $model->query($sql_ontv);
             $hotel_ontv = array();
-            foreach ($res_ontv as $ov){
-                $hotel_ontv[$ov['add_date']] = $ov['num'];
+            if(!empty($boxs)){
+                $res_ontv = $model->query($sql_ontv);
+                foreach ($res_ontv as $ov){
+                    $hotel_ontv[$ov['add_date']] = $ov['num'];
+                }
             }
+
             $log.="|sql_ontv|".$sql_ontv."\r\n";
 
             //欢迎词

@@ -29,6 +29,7 @@ class TaskUserModel extends BaseModel{
             exit;
         }
 
+
         $m_task = new \Admin\Model\Integral\TaskModel();
         $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
         foreach ($res_data as $v){
@@ -113,6 +114,7 @@ class TaskUserModel extends BaseModel{
         $key_integral = C('SAPP_SALE_ACTIVITY_PROMOTE');
         $key_opintegral = $key_integral.date('Ymd').':'.$signv['openid'];
         $res_cache = $redis->get($key_opintegral);
+        echo "{$task_info['task_user_id']} cache $res_cache \r\n";
         if(empty($res_cache)){
             echo "{$task_info['task_user_id']} finish \r\n";
             return true;
@@ -143,12 +145,22 @@ class TaskUserModel extends BaseModel{
         switch ($task_type){//1.饭点内点击"循环播放" 2饭点内每点播活动多少次奖励一次
             case 1:
                 if(isset($res_cache[$task_type])){
-                    $now_integral = $task_info['integral'];
-                    $ap_num = 1;
+                    $cache_activitypromote = json_encode($res_cache[$task_type]);
+                    echo "{$task_info['task_user_id']} type:1 cache_activitypromote:$cache_activitypromote \r\n";
+                    foreach ($res_cache[$task_type] as $apv){
+                        $apv_time = strtotime($apv['date']);
+                        if($apv_time>=$fj_bstime && $apv_time<=$fj_estime){
+                            $now_integral = $task_info['integral'];
+                            $ap_num = 1;
+                            break;
+                        }
+                    }
                 }
                 break;
             case 2:
                 if(isset($res_cache[$task_type])){
+                    $cache_activitypromote = json_encode($res_cache[$task_type]);
+                    echo "{$task_info['task_user_id']} type:2 cache_activitypromote:$cache_activitypromote \r\n";
                     $reward_num = $task_content['user_promote']['value'];
                     foreach ($res_cache[$task_type] as $apv){
                         $apv_time = strtotime($apv['date']);
@@ -162,6 +174,7 @@ class TaskUserModel extends BaseModel{
                 }
                 break;
         }
+        $admin_integral = 0;
         if($now_integral){
             $tmp_where = array('openid'=>$signv['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
@@ -172,13 +185,14 @@ class TaskUserModel extends BaseModel{
 
             $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$signv,$box_info);
             $now_integral = $res_shareprofit['now_integral'];
-
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
+            }else{
+                $admin_integral = $res_shareprofit['admin_integral'];
             }
         }
 
-        if($now_integral){
+        if($admin_integral || $now_integral){
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
@@ -290,6 +304,7 @@ class TaskUserModel extends BaseModel{
                 $now_integral = $task_info['integral']*$interact_num;
                 break;
         }
+        $admin_integral = 0;
         if($now_integral){
             $tmp_where = array('openid'=>$signv['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
@@ -304,9 +319,11 @@ class TaskUserModel extends BaseModel{
 
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = 0;
+            }else{
+                $admin_integral = $res_shareprofit['admin_integral'];
             }
         }
-        if($now_integral){
+        if($admin_integral || $now_integral){
             $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
@@ -422,6 +439,7 @@ class TaskUserModel extends BaseModel{
                 $m_task_shareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
                 $res_share = $m_task_shareprofit->getTaskShareprofit('level1,level2',$where_share,'id desc',0,1);
                 if(!empty($res_share)){
+                    $res_share = $res_share[0];
                     $res_staffadmin = $m_staff->getInfo(array('id'=>$res_staff['parent_id']));
                     if(!empty($res_staffadmin) && $res_staffadmin['status']==1){
                         $admin_openid = $res_staffadmin['openid'];
@@ -439,7 +457,7 @@ class TaskUserModel extends BaseModel{
     }
 
     private function add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral){
-        if($res_shareprofit['admin_integral'] && !empty($res_shareprofit['admin_openid'])){
+        if(!empty($res_shareprofit['shareprofit_config']) && !empty($res_shareprofit['admin_openid'])){
             $dinner_type = $res_shareprofit['dinner_type'];
             $fj_estime = $res_shareprofit['fj_estime'];
             $integral_type = $res_shareprofit['integral_type'];
