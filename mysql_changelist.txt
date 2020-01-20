@@ -2286,3 +2286,86 @@ CREATE TABLE `savor_smallapp_welcome_resource` (
 ALTER TABLE `cloud`.`savor_smallapp_welcome`
 ADD COLUMN `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型1单个盒子播放,2全部盒子播放' AFTER `box_mac`;
 
+ALTER TABLE `cloud`.`savor_smallapp_welcome`
+ADD COLUMN `font_id` int(11) NOT NULL DEFAULT 0 COMMENT '字体ID' AFTER `music_id`;
+
+
+增加说明：增加销售端秒杀商品以及记录日志
+修改时间：2019-12-04 15:00
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+MODIFY COLUMN `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '类型 10热点优选,20商家添加,30积分兑换现金,31积分兑换物品,40秒杀商品' AFTER `page_url`;
+ALTER TABLE `cloud`.`savor_qrscan_record`
+ADD COLUMN `box_mac` varchar(20) NOT NULL DEFAULT '' COMMENT '盒子Mac地址' AFTER `ip`;
+ALTER TABLE `cloud`.`savor_urlmap`
+ADD COLUMN `goods_id` int(11) NOT NULL DEFAULT 0 COMMENT '商品ID' AFTER `link`;
+ALTER TABLE `cloud`.`savor_urlmap`
+ADD COLUMN `short_link` varchar(255) NOT NULL DEFAULT '' COMMENT '短链' AFTER `link`;
+ALTER TABLE `cloud`.`savor_qrscan_record`
+ADD COLUMN `data_id` int(11) NOT NULL DEFAULT 0 COMMENT '数据id' AFTER `box_mac`;
+
+增加说明：增加主干版本投屏轨迹
+修改时间：2020-01-09 17:01:21
+修改人：刘斌
+执行SQL
+CREATE TABLE `savor_smallapp_forscreen_track` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `forscreen_record_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '投屏id',
+  `serial_number` char(32) NOT NULL DEFAULT '' COMMENT '唯一序列号',
+  `oss_stime` bigint(20) NOT NULL DEFAULT '0' COMMENT '资源oss上传开始时间',
+  `oss_etime` bigint(20) NOT NULL DEFAULT '0' COMMENT '资源oss上传结束时间',
+  `position_nettystime` bigint(20) NOT NULL DEFAULT '0' COMMENT 'php请求定位netty接口开始时间',
+  `position_nettyetime` bigint(20) NOT NULL DEFAULT '0' COMMENT 'php请求定位netty接口结束时间',
+  `netty_position_url` varchar(255) NOT NULL DEFAULT '' COMMENT 'netty定位接口',
+  `netty_position_result` varchar(255) NOT NULL DEFAULT '' COMMENT 'netty定位接口返回数据',
+  `request_nettytime` bigint(20) NOT NULL DEFAULT '0' COMMENT 'PHP请求netty时间',
+  `netty_url` text NOT NULL COMMENT 'php请求netty接口',
+  `netty_result` varchar(255) NOT NULL DEFAULT '' COMMENT 'netty返回数据',
+  `netty_receive_time` bigint(20) NOT NULL DEFAULT '0' COMMENT 'netty接收php请求时间',
+  `netty_pushbox_time` bigint(20) NOT NULL DEFAULT '0' COMMENT 'netty推送盒子时间',
+  `box_receivetime` bigint(20) NOT NULL DEFAULT '0' COMMENT '盒子接收netty时间',
+  `box_downstime` bigint(20) NOT NULL DEFAULT '0' COMMENT '盒子下载开始时间',
+  `box_downetime` bigint(20) NOT NULL DEFAULT '0' COMMENT '盒子下载完成时间',
+  `add_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `key_frecordid` (`forscreen_record_id`),
+  KEY `key_serialno` (`serial_number`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='投屏轨迹表';
+
+
+增加说明：增加销售端分润
+修改时间：2020-01-19 10:50:35
+修改人：刘斌
+执行SQL
+ALTER TABLE `cloud`.`savor_integral_task`
+ADD COLUMN `is_shareprofit` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否支持分润' AFTER `is_long_time`;
+
+ALTER TABLE `cloud`.`savor_smallapp_goods`
+ADD COLUMN `duration` tinyint(11) NOT NULL DEFAULT 0 COMMENT '播放时长' AFTER `scope`;
+
+ALTER TABLE `cloud`.`savor_smallapp_user_integralrecord`
+MODIFY COLUMN `source` tinyint(1) NOT NULL DEFAULT 1 COMMENT '来源 1正常订单order,2京东订单,3兑换,4分润' AFTER `type`;
+
+CREATE TABLE `savor_integral_task_shareprofit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) NOT NULL DEFAULT '0' COMMENT '任务id',
+  `hotel_id` int(11) NOT NULL DEFAULT '0' COMMENT '酒楼id',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT 'openid',
+  `level1` int(11) NOT NULL DEFAULT '0' COMMENT '等级1分润(管理员)',
+  `level2` int(11) NOT NULL DEFAULT '0' COMMENT '等级2分润(员工)',
+  `add_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务分润';
+
+CREATE TABLE `savor_integral_shareprofitrecord` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `integralrecord_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户积分记录表主键ID',
+  `original_integral` int(11) NOT NULL DEFAULT '0' COMMENT '原始积分',
+  `openid` varchar(100) NOT NULL DEFAULT '' COMMENT '获得分润用户openid',
+  `shareprofit_integral` int(11) NOT NULL DEFAULT '0' COMMENT '分润积分',
+  `shareprofit_config` varchar(100) NOT NULL DEFAULT '' COMMENT '当前分润设置',
+  `add_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `index_irecordid` (`integralrecord_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户分润积分记录表';
