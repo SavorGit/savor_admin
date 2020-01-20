@@ -16,7 +16,10 @@ class HoteldataController extends BaseController {
 
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $days = $m_statistics->getDays($day,$start_date,$end_date);
-        $hotels = $m_statistics->getHotels();
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'id as hotel_id,name as hotel_name';
+        $where = array('state'=>1,'flag'=>0);
+        $hotels = $m_hotel->getWhereorderData($where, $field,'id desc');
         $hotel_name = '';
         foreach ($hotels as $k=>$v){
             if($v['hotel_id']==$hotel_id){
