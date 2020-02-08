@@ -45,8 +45,8 @@ class CommentController extends BaseController {
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
         $m_commenttagids = new \Admin\Model\Smallapp\CommenttagidsModel();
-//        $redis = new \Common\Lib\SavorRedis();
-//        $redis->select(15);
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(15);
         foreach ($datalist as $k=>$v){
             $res_user = $m_user->getOne('openid',array('id'=>$v['user_id']),'id desc');
             $datalist[$k]['user_openid'] = $res_user['openid'];
@@ -55,10 +55,10 @@ class CommentController extends BaseController {
             }else{
                 $datalist[$k]['status_str'] = '禁止显示';
             }
-//            $cache_key = 'savor_room_'.$v['room_id'];
-//            $redis_room_info = $redis->get($cache_key);
-//            $room_info = json_decode($redis_room_info, true);
-//            $datalist[$k]['room_name'] = $room_info['name'];
+            $cache_key = 'savor_room_'.$v['room_id'];
+            $redis_room_info = $redis->get($cache_key);
+            $room_info = json_decode($redis_room_info, true);
+            $datalist[$k]['room_name'] = $room_info['name'];
 
             $res_tagids = $m_commenttagids->getDataList('tag_id',array('comment_id'=>$v['id']),'id asc');
             $tag_str = '';

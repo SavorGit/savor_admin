@@ -46,10 +46,10 @@ class CommenttagController extends BaseController {
     }
 
     public function tagadd(){
-        $id = I('post.id',0,'intval');
+        $id = I('id',0,'intval');
         $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
         if(IS_POST){
-            $hotel_id = I('hotel_id',0,'intval');
+            $hotel_id = I('post.hotel_id',0,'intval');
             $status = I('post.status',0,'intval');
             $name = I('post.name','','trim');
             $data = array('name'=>$name,'status'=>$status,'hotel_id'=>$hotel_id);
@@ -59,7 +59,7 @@ class CommenttagController extends BaseController {
                 $data['type'] = 1;
             }
             if($id){
-                $result = $m_commenttag->updateData($data);
+                $result = $m_commenttag->updateData(array('id'=>$id),$data);
             }else{
                 $result = $m_commenttag->add($data);
             }

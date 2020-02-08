@@ -603,6 +603,10 @@ class GoodsController extends BaseController {
                 if($covermedia_id){
                     $data['cover_imgmedia_ids'] = json_encode($covermedia_id);
                 }
+            }elseif($type==11){
+                if($detailmedia_id){
+                    $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
+                }
             }
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
