@@ -1,6 +1,7 @@
 <?php
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 
 class CommentModel extends BaseModel{
 	protected $tableName='smallapp_comment';
@@ -20,6 +21,8 @@ class CommentModel extends BaseModel{
         $count = $this->alias('a')
             ->join('savor_integral_merchant_staff staff on a.staff_id=staff.id','left')
             ->join('savor_smallapp_user user on staff.openid=user.openid','left')
+            ->join('savor_hotel hotel on staff.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
             ->field('a.id')
             ->where($where)
             ->count();

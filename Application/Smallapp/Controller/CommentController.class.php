@@ -39,14 +39,14 @@ class CommentController extends BaseController {
         $start  = ($page-1) * $size;
         $m_comment  = new \Admin\Model\Smallapp\CommentModel();
         $fields = 'a.staff_id,a.user_id,a.score,a.content,a.status,user.nickName as staff_name,user.avatarUrl as staff_url,
-        staff.hotel_id,staff.room_id,hotel.name as hotel_name,area.name as area_name';
+        staff.hotel_id,staff.room_id,hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_comment->getCommentList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
         $m_commenttagids = new \Admin\Model\Smallapp\CommenttagidsModel();
-        $redis = new \Common\Lib\SavorRedis();
-        $redis->select(15);
+//        $redis = new \Common\Lib\SavorRedis();
+//        $redis->select(15);
         foreach ($datalist as $k=>$v){
             $res_user = $m_user->getOne('openid',array('id'=>$v['user_id']),'id desc');
             $datalist[$k]['user_openid'] = $res_user['openid'];
@@ -55,10 +55,10 @@ class CommentController extends BaseController {
             }else{
                 $datalist[$k]['status_str'] = '禁止显示';
             }
-            $cache_key = 'savor_room_'.$v['room_id'];
-            $redis_room_info = $redis->get($cache_key);
-            $room_info = json_decode($redis_room_info, true);
-            $datalist[$k]['room_name'] = $room_info['name'];
+//            $cache_key = 'savor_room_'.$v['room_id'];
+//            $redis_room_info = $redis->get($cache_key);
+//            $room_info = json_decode($redis_room_info, true);
+//            $datalist[$k]['room_name'] = $room_info['name'];
 
             $res_tagids = $m_commenttagids->getDataList('tag_id',array('comment_id'=>$v['id']),'id asc');
             $tag_str = '';
