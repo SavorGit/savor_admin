@@ -193,7 +193,7 @@ class TaskUserModel extends BaseModel{
         }
 
         if($admin_integral || $now_integral){
-            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
+            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
@@ -204,8 +204,13 @@ class TaskUserModel extends BaseModel{
             $res_shareprofit['dinner_type'] = $dinner_type;
             $res_shareprofit['fj_estime'] = $fj_estime;
             $res_shareprofit['integral_type'] = 6;
+            $res_shareprofit['task_id'] = $task_info['id'];
             $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
-
+            if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
+                $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
+                $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
+                $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+            }
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
             if(!empty($res_userintegral)){
@@ -324,7 +329,7 @@ class TaskUserModel extends BaseModel{
             }
         }
         if($admin_integral || $now_integral){
-            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
+            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
@@ -335,8 +340,13 @@ class TaskUserModel extends BaseModel{
             $res_shareprofit['dinner_type'] = $dinner_type;
             $res_shareprofit['fj_estime'] = $fj_estime;
             $res_shareprofit['integral_type'] = 2;
+            $res_shareprofit['task_id'] = $task_info['id'];
             $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
-
+            if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
+                $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
+                $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
+                $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+            }
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
             if(!empty($res_userintegral)){
@@ -396,7 +406,7 @@ class TaskUserModel extends BaseModel{
             $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$signv,$box_info);
             $now_integral = $res_shareprofit['now_integral'];
 
-            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],
+            $integralrecord_data = array('openid'=>$signv['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
@@ -407,7 +417,13 @@ class TaskUserModel extends BaseModel{
             $res_shareprofit['dinner_type'] = $dinner_type;
             $res_shareprofit['fj_estime'] = $fj_estime;
             $res_shareprofit['integral_type'] = 1;
+            $res_shareprofit['task_id'] = $task_info['id'];
             $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+            if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
+                $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
+                $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
+                $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+            }
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
             if(!empty($res_userintegral)){
@@ -433,22 +449,45 @@ class TaskUserModel extends BaseModel{
             $field_staff = 'a.openid,a.level,a.parent_id,m.type';
             $m_staff = new \Admin\Model\Integral\StaffModel();
             $res_staff = $m_staff->getMerchantStaffInfo($field_staff,$where_staff);
-            if(!empty($res_staff) && $res_staff['level']==2){
+            if(!empty($res_staff) && in_array($res_staff['level'],array(2,3))){
                 $where_share= array('task_id'=>$task_info['id']);
                 $where_share['hotel_id'] = array('in',array(0,$box_info['hotel_id']));
                 $m_task_shareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
-                $res_share = $m_task_shareprofit->getTaskShareprofit('level1,level2',$where_share,'id desc',0,1);
+                $res_share = $m_task_shareprofit->getTaskShareprofit('level1,level2,level3',$where_share,'id desc',0,1);
                 if(!empty($res_share)){
-                    $res_share = $res_share[0];
-                    $res_staffadmin = $m_staff->getInfo(array('id'=>$res_staff['parent_id']));
-                    if(!empty($res_staffadmin) && $res_staffadmin['status']==1){
-                        $admin_openid = $res_staffadmin['openid'];
-                        $level1 = $res_share['level1']/100;
-                        $admin_now_integral = round($level1*$now_integral);
-                        $res_data['now_integral'] = $now_integral-$admin_now_integral;
-                        $res_data['admin_integral'] = $admin_now_integral;
-                        $res_data['admin_openid'] = $admin_openid;
-                        $res_data['shareprofit_config'] = $res_share['level1'].'-'.$res_share['level2'];
+                    if($res_staff['level']==2){
+                        $res_share = $res_share[0];
+                        $res_staffadmin = $m_staff->getInfo(array('id'=>$res_staff['parent_id']));
+                        if(!empty($res_staffadmin) && $res_staffadmin['status']==1) {
+                            $admin_openid = $res_staffadmin['openid'];
+                            $level1 = $res_share['level1'] / 100;
+                            $admin_now_integral = round($level1 * $now_integral);
+                            $res_data['now_integral'] = $now_integral - $admin_now_integral;
+                            $res_data['admin_integral'] = $admin_now_integral;
+                            $res_data['admin_openid'] = $admin_openid;
+                            $res_data['shareprofit_config'] = $res_share['level1'].'-'.$res_share['level2'].'-'.$res_share['level3'];
+                        }
+                    }else{
+                        //处理三级用户
+                        $res_share = $res_share[0];
+                        $res_staffadmin = $m_staff->getInfo(array('id'=>$res_staff['parent_id']));
+                        if(!empty($res_staffadmin) && $res_staffadmin['status']==1) {
+                            $admin2_openid = $res_staffadmin['openid'];
+                            $res_staffadmin = $m_staff->getInfo(array('id'=>$res_staffadmin['parent_id']));
+                            $admin1_openid = $res_staffadmin['openid'];
+
+                            $level1 = $res_share['level1'] / 100;
+                            $admin1_now_integral = round($level1 * $now_integral);
+                            $level2 = $res_share['level2'] / 100;
+                            $admin2_now_integral = round($level2 * $now_integral);
+
+                            $res_data['now_integral'] = $now_integral - $admin2_now_integral-$admin1_now_integral;
+                            $res_data['admin_integral'] = $admin1_now_integral;
+                            $res_data['admin_openid'] = $admin1_openid;
+                            $res_data['middle_integral'] = $admin2_now_integral;
+                            $res_data['middle_openid'] = $admin2_openid;
+                            $res_data['shareprofit_config'] = $res_share['level1'].'-'.$res_share['level2'].'-'.$res_share['level3'];
+                        }
                     }
                 }
             }
@@ -461,8 +500,9 @@ class TaskUserModel extends BaseModel{
             $dinner_type = $res_shareprofit['dinner_type'];
             $fj_estime = $res_shareprofit['fj_estime'];
             $integral_type = $res_shareprofit['integral_type'];
+            $task_id = $res_shareprofit['task_id'];
 
-            $integralrecord_data = array('openid'=>$res_shareprofit['admin_openid'],'area_id'=>$box_info['area_id'],
+            $integralrecord_data = array('openid'=>$res_shareprofit['admin_openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_id,
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
                 'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,

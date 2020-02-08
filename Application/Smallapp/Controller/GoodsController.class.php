@@ -12,7 +12,61 @@ class GoodsController extends BaseController {
     public function __construct() {
         parent::__construct();
     }
-    
+
+    public function rdgoodslist() {
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
+        $keyword = I('keyword','','trim');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+        $status   = I('status',0,'intval');
+
+        $where = array('type'=>11);
+        if(!empty($keyword)){
+            $where['name'] = array('like',"%$keyword%");
+        }
+        if($status){
+            $where['status'] = $status;
+        }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        $start  = ($page-1) * $size;
+        $m_goods  = new \Admin\Model\Smallapp\GoodsModel();
+        $result = $m_goods->getDataList('*',$where, 'id desc', $start, $size);
+        $datalist = $result['list'];
+
+        $goods_status = C('GOODS_STATUS');
+        $m_media = new \Admin\Model\MediaModel();
+        foreach ($datalist as $k=>$v){
+            $media_info = $m_media->getMediaInfoById($v['media_id']);
+            if($media_info['type']==1){
+                $media_typestr = '视频';
+            }else{
+                $media_typestr = '图片';
+            }
+            $datalist[$k]['media_typestr'] = $media_typestr;
+            $datalist[$k]['statusstr'] = $goods_status[$v['status']];
+        }
+
+        $this->assign('status',$status);
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('keyword',$keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('rdgoodslist');
+    }
+
     public function goodslist() {
         $start_date = I('post.start_date','');
         $end_date = I('post.end_date','');
@@ -221,6 +275,12 @@ class GoodsController extends BaseController {
     public function optimizegoodsadd(){
         $template_html = 'optimizegoodsadd';
         $goods_list_f = 'optimizegoodslist';
+        $this->handle_goodsadd($template_html,$goods_list_f);
+    }
+
+    public function rdgoodsadd(){
+        $template_html = 'rdgoodsadd';
+        $goods_list_f = 'rdgoodslist';
         $this->handle_goodsadd($template_html,$goods_list_f);
     }
 
