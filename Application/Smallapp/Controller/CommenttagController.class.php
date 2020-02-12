@@ -58,6 +58,20 @@ class CommenttagController extends BaseController {
             }else{
                 $data['type'] = 1;
             }
+            $where = array('name'=>$name);
+            if($hotel_id){
+                $where['hotel_id']=$hotel_id;
+            }
+            if($id){
+                $where['id']= array('neq',$id);
+                $res_tag = $m_commenttag->getInfo($where);
+            }else{
+                $res_tag = $m_commenttag->getInfo($where);
+            }
+            if(!empty($res_tag)){
+                $this->output('名称不能重复', "commenttag/tagadd", 2, 0);
+            }
+
             if($id){
                 $result = $m_commenttag->updateData(array('id'=>$id),$data);
             }else{
