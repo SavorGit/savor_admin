@@ -68,6 +68,16 @@ $config['GOODS_SCOPE'] = array(
     '2'=>'非包间',
 );
 
+$config['DISH_STATUS'] = array(
+    '1'=>'上架',
+    '2'=>'下架',
+);
+
+$config['DISH_ORDERSTATUS'] = array(
+    '1'=>'待处理',
+    '2'=>'已完成',
+);
+
 $config['GOODS_STATUS'] = array(
     '1'=>'未审核',
     '2'=>'审核通过',

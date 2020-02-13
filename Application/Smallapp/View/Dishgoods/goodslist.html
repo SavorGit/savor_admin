@@ -1,0 +1,101 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/dishgoods/goodslist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+            <!--<a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>-->
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+            <div class="form-inline">
+
+              <div class="form-group">
+                <div class="input-group input-group-sm">城市：</div>
+                <div class="input-group">
+                    <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name="area" id="vo">
+                            <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                        </volist>
+                    </select>
+                </div>
+              </div>
+
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="酒楼名称">
+                <span class="input-group-btn">
+                  <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                    <option value='0' >全部</option>
+                    <volist name=":C('DISH_STATUS')" id="oinfo">
+                        <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
+                    </volist>
+                  </select>
+                </span>
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+              </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>价格</th>
+                        <th>图片</th>
+                        <th>上传者昵称</th>
+                        <th>上传者头像</th>
+                        <th>酒楼名称</th>
+                        <th>所在城市</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <volist name="datalist" id="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID">{$dinfo.id}</td>
+                            <td data-title="名称">{$dinfo.name}</td>
+                            <td data-title="价格">{$dinfo.price}</td>
+                            <td data-title="图片"><a href="{$dinfo.image}" target="_blank"><img src="{dinfo.image}" ></a></td>
+                            <td data-title="上传者昵称">{$dinfo.staff_name}</td>
+                            <td data-title="上传者头像"><a href="{$dinfo.staff_url}" target="_blank"><img src="{$dinfo.staff_url}" ></a></td>
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+                            <td data-title="所在城市">{$dinfo.area_name}</td>
+                            <td data-title="状态">
+                                <if condition="$dinfo['status'] eq 1">
+                                    <a data-tip="已上线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                                    <elseif condition="$dinfo['status'] eq 2"/>
+                                    <a data-tip="已下线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                                </if>
+
+                            </td>
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>
