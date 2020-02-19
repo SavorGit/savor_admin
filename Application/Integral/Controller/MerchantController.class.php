@@ -351,9 +351,24 @@ class MerchantController extends BaseController {
                 $ret = $m_hotel_invite_code->addInfo($invite_data);
                 $res_merchant = false;
                 if($ret){
-                    $data['code'] = $invite_code;
                     $m_merchant = new \Admin\Model\Integral\MerchantModel();
+                    $tmp_merchant = $m_merchant->getAll('*',array('hotel_id'=>$data['hotel_id'],'status'=>2),0,1,'id desc');
+                    $tmp_merchant_id = 0;
+                    $is_takeout = 0;
+                    $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+                    if(!empty($tmp_merchant)){
+                        $res_dishgoods = $m_dishgoods->getInfo(array('merchant_id'=>$tmp_merchant[0]['id']));
+                        if(!empty($res_dishgoods)){
+                            $tmp_merchant_id = $tmp_merchant[0]['id'];
+                            $is_takeout = $tmp_merchant[0]['is_takeout'];
+                        }
+                    }
+                    $data['code'] = $invite_code;
+                    $data['is_takeout'] = $is_takeout;
                     $res_merchant = $m_merchant->addData($data);
+                    if($tmp_merchant_id){
+                        $m_dishgoods->updateData(array('merchant_id'=>$tmp_merchant_id),array('merchant_id'=>$res_merchant));
+                    }
                 }
                 if($res_merchant){
                     //发送短信
@@ -398,13 +413,6 @@ class MerchantController extends BaseController {
             $res_user = $m_sysuser->find($res_hotel['maintainer_id']);
             $maintainer = $res_user['remark'];
         }
-
-        $m_staff = new \Admin\Model\Integral\StaffModel();
-        $filter = array('merchant_id'=>$merchant_id,'status'=>1);
-        $filter['parent_id'] = array('gt',0);
-        $res_staff = $m_staff->getAll('*',$filter,0,1000,'level asc');
-
-
         $merchant_info['maintainer'] = $maintainer;
         $merchant_info['hotel_name'] = $res_hotel['hotel_name'];
         $merchant_info['city'] = $res_hotel['city'];

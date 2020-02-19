@@ -64,6 +64,7 @@ class HotelModel extends BaseModel{
     			->select();
 		$count = $this->alias('a')
 		              ->join('savor_hotel_ext ext on ext.hotel_id=a.id')
+                      ->join('savor_area_info area on a.area_id=area.id','left')
 		              ->where($where)
 			          ->count();
 		$objPage = new Page($count,$size);

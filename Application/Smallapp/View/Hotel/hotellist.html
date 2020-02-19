@@ -12,14 +12,14 @@
                     <div class="form-group">
                         <div class="input-group input-group-sm">时间：</div>
                         <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
-                            <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
                             <span class="input-group-btn">
                             <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                             <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                             </span>
                         </div>
                         <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
-                            <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
                             <span class="input-group-btn">
                             <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                             <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -87,7 +87,7 @@
                         <th>法人身份证</th>
                         <th>执照</th>
                         <th>审核状态</th>
-                        <th>添加时间</th>
+                        <th>注册时间</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -118,7 +118,7 @@
                                 </volist>
                             </td>
                             <td data-title="审核状态">{$dinfo.flag_str}</td>
-                            <td data-title="添加时间">{$dinfo.create_time}</td>
+                            <td data-title="注册时间">{$dinfo.create_time}</td>
                             <td data-title="操作">
                                 <if condition="$dinfo['flag'] eq 0">
                                     <a data-tip="审核通过" target="ajaxTodo" href="{$host_url}/smallapp/hotel/changestatus?id={$dinfo.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
