@@ -73,6 +73,8 @@
                     <thead>
                     <tr id="post">
                         <th>ID</th>
+                        <th>酒楼名称</th>
+                        <th>城市</th>
                         <th>商品名称</th>
                         <th>单价</th>
                         <th>数量</th>
@@ -90,6 +92,8 @@
                     <foreach name="datalist" item="dinfo">
                         <tr target="sid_user">
                             <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+                            <td data-title="城市">{$dinfo.area_name}</td>
                             <td data-title="商品名称">{$dinfo.name}</td>
                             <td data-title="单价">{$dinfo.price}</td>
                             <td data-title="数量">{$dinfo.amount}</td>

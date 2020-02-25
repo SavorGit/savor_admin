@@ -36,18 +36,29 @@ class DishorderController extends BaseController {
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\DishorderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
-        a.address,a.remark,a.delivery_time,a.add_time,goods.name,
+        a.address,a.remark,a.delivery_time,a.add_time,
         hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_order->getOrderList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
 
         $order_status = C('DISH_ORDERSTATUS');
-        foreach ($datalist as $k=>$v){
-            $datalist[$k]['status_str'] = $order_status[$v['status']];
-            if($v['delivery_time']=='0000-00-00 00:00:00'){
-                $datalist[$k]['delivery_time'] = '';
+        if(!empty($datalist)){
+            $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
+            foreach ($datalist as $k=>$v){
+                $datalist[$k]['status_str'] = $order_status[$v['status']];
+                if($v['delivery_time']=='0000-00-00 00:00:00'){
+                    $datalist[$k]['delivery_time'] = '';
+                }
+                $res_ordergoods = $m_ordergoods->getOrdergoodsList('goods.name',array('og.order_id'=>$v['id']),'og.id asc');
+                $goods_names = array();
+                foreach ($res_ordergoods as $gv){
+                    $goods_names[]=$gv['name'];
+                }
+                $name = join(',',$goods_names);
+                $datalist[$k]['name'] = $name;
             }
         }
+
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
 
