@@ -1651,4 +1651,37 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo "finish \r\n";
         echo json_encode($error);
     }
+
+    public function hotelpy(){
+        exit;
+        $pin = new \Common\Lib\Pin();
+        $obj_pin = new \Overtrue\Pinyin\Pinyin();
+
+        $m_hotel = new \Admin\Model\HotelModel();
+        $sql ="select * from savor_hotel order by id asc limit 800,200";
+        $result =  $m_hotel->query($sql);
+        $hotels = array();
+        foreach ($result as $v){
+            $s_hotel_name = $v['name'];
+
+            $code_charter = '';
+//            $s_hotel_name = mb_substr($res_hotel['name'], 0,2,'utf8');
+            if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                $code_charter = $s_hotel_name;
+            }else {
+                $code_charter = $obj_pin->abbr($s_hotel_name);
+                $code_charter  = strtolower($code_charter);
+                if(strlen($code_charter)==1){
+                    $code_charter .=$code_charter;
+                }
+            }
+            $code_charter  = strtolower($code_charter);
+
+            $condition = array('id'=>$v['id']);
+            $m_hotel->updateData($condition,array('pinyin'=>$code_charter));
+            echo 'hotel_id:'.$v['id']."\r\n";
+        }
+        echo 'finish';
+        print_r($hotels);
+    }
 }

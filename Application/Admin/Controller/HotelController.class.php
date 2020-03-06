@@ -719,6 +719,25 @@ class HotelController extends BaseController {
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['county_id']           = I('post.county_id',0,'intval');
 		$save['media_id']             = I('post.media_id','0','intval');
+        $s_hotel_name = $save['name'];
+		if(!empty($s_hotel_name)){
+            $pin = new \Common\Lib\Pin();
+            $obj_pin = new \Overtrue\Pinyin\Pinyin();
+            $code_charter = '';
+            if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                $code_charter = $s_hotel_name;
+            }else {
+                $code_charter = $obj_pin->abbr($s_hotel_name);
+                $code_charter = strtolower($code_charter);
+                if(strlen($code_charter)==1){
+                    $code_charter .=$code_charter;
+                }
+            }
+            if($code_charter){
+                $save['pinyin'] = strtolower($code_charter);
+            }
+        }
+
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
