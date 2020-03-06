@@ -65,7 +65,7 @@
                         <th>上传者头像</th>
                         <th>酒楼名称</th>
                         <th>所在城市</th>
-                        <th>操作</th>
+                        <th class="table-tool">操作</th>
                     </tr>
                     </thead>
                     <tbody data-check="list" data-parent=".table">
@@ -79,16 +79,23 @@
                             <td data-title="上传者头像"><a href="{$dinfo.staff_url}" target="_blank"><img src="{$dinfo.staff_url}" ></a></td>
                             <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
                             <td data-title="所在城市">{$dinfo.area_name}</td>
-                            <td data-title="状态">
-                                <if condition="$dinfo['status'] eq 1">
-                                    <a data-tip="已上线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a>
-                                    <elseif condition="$dinfo['status'] eq 2"/>
-                                    <a data-tip="已下线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a>
-                                </if>
+                            <td class="table-tool" data-title="操作">
+                                <div class="tools-edit">
+                                    <!--<a title="修改菜品" data-tip="修改菜品" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/goodsedit?id={$dinfo.id}" class="btn btn-success btn-icon">-->
+                                        <!--<i class="fa fa-pencil"></i>-->
+                                    <!--</a>-->
 
+                                    <if condition="$dinfo['status'] eq 1">
+                                        <a data-tip="已上线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                                        <i class="fa fa-toggle-on"></i></span></a>
+                                    <elseif condition="$dinfo['status'] eq 2"/>
+                                        <a data-tip="已下线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                                        <i class="fa fa-toggle-off"></i></span></a>
+                                    </if>
+
+                                </div>
                             </td>
+
                         </tr>
                     </volist>
                     </tbody>

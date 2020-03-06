@@ -58,6 +58,106 @@ class DishgoodsController extends BaseController {
         $this->display('goodslist');
     }
 
+    public function goodsedit(){
+        $id = I('id', 0, 'intval');
+        $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
+        if(IS_GET){
+            $detail_img_num = 6;
+            $cover_img_num = 6;
+            $dinfo = array('media_type'=>1);
+            $detailaddr = array();
+            $coveraddr = array();
+            if($id){
+                $dinfo = $m_goods->getInfo(array('id'=>$id));
+                $oss_host = get_oss_host();
+                if($dinfo['detail_imgs']){
+                    $detail_imgs = explode(',',$dinfo['detail_imgs']);
+                    foreach ($detail_imgs as $k=>$v){
+                        if(!empty($v)){
+                            $detailaddr[$k] = array('media_id'=>$v,'oss_addr'=>$oss_host.$v);
+                        }
+                    }
+                }
+                if($dinfo['cover_imgs']){
+                    $cover_imgs = explode(',',$dinfo['cover_imgs']);
+                    foreach ($cover_imgs as $k=>$v){
+                        if(!empty($v)){
+                            $coveraddr[$k] = array('media_id'=>$v,'oss_addr'=>$oss_host.$v);
+                        }
+                    }
+                }
+            }
+            $detail_imgs = array();
+            for($i=1;$i<=$detail_img_num;$i++){
+                $img_info = array('id'=>$i,'imgid'=>'detail_id'.$i,'media_id'=>0);
+                if(isset($detailaddr[$i])){
+                    $img_info['media_id'] = $detailaddr[$i]['media_id'];
+                    $img_info['oss_addr'] = $detailaddr[$i]['oss_addr'];
+                }
+                $detail_imgs[] = $img_info;
+            }
+            $cover_imgs = array();
+            for($i=1;$i<=$cover_img_num;$i++){
+                $img_info = array('id'=>$i,'imgid'=>'cover_id'.$i,'media_id'=>0);
+                if(isset($coveraddr[$i])){
+                    $img_info['media_id'] = $coveraddr[$i]['media_id'];
+                    $img_info['oss_addr'] = $coveraddr[$i]['oss_addr'];
+                }
+                $cover_imgs[] = $img_info;
+            }
+            $this->assign('cover_imgs',$cover_imgs);
+            $this->assign('detail_imgs',$detail_imgs);
+            $this->assign('vinfo',$dinfo);
+            $this->display('goodsadd');
+        }else{
+            $name = I('post.name','','trim');
+            $price = I('post.price',0,'intval');
+            $status = I('post.status',1,'intval');
+            $detailmedia_id = I('post.detailmedia_id','');
+            $covermedia_id = I('post.covermedia_id','');
+            $intro = I('post.intro','');
+            $m_media = new \Admin\Model\MediaModel();
+            $where = array('name'=>$name,'merchant_id'=>'');
+            $tmp_goods = array();
+            if($id){
+                $tmp_goods = $m_goods->getInfo(array('id'=>$id));
+                $where['id']= array('neq',$id);
+                $res_goods = $m_goods->getInfo($where);
+            }else{
+                $res_goods = $m_goods->getInfo($where);
+            }
+            if(!empty($res_goods)){
+                $this->output('名称不能重复', "dishgoods/goodsedit", 2, 0);
+            }
+
+            $data = array('name'=>$name,'price'=>$price,$imgmedia_id,'status'=>$status);
+            $data['intro'] = $intro;
+            if(!empty($covermedia_id)){
+                $data['cover_imgmedia_ids'] = json_encode($covermedia_id,true);
+            }
+            if($detailmedia_id){
+                $data['detail_imgmedia_ids'] = json_encode($detailmedia_id);
+            }
+            if($covermedia_id){
+                $data['cover_imgmedia_ids'] = json_encode($covermedia_id);
+            }
+
+            if($id){
+                $m_goods->updateData(array('id'=>$id),$data);
+                $result = true;
+                $goods_id = $id;
+            }else{
+                $result = $m_goods->add($data);
+                $goods_id = $result;
+            }
+            if($result){
+                $this->output('操作成功', "dishgoods/goodslist");
+            }else{
+                $this->output('操作失败', "dishgoods/goodsedit",2,0);
+            }
+        }
+    }
+
     public function changestatus(){
         $id = I('get.id',0,'intval');
         $status = I('get.status',0,'intval');
