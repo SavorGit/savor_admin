@@ -3,8 +3,8 @@ namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
 use Common\Lib\Page;
 
-class CommenttagModel extends BaseModel{
-	protected $tableName='smallapp_comment_tag';
+class TagsModel extends BaseModel{
+	protected $tableName='smallapp_tags';
 
     public function getTagList($fields,$where,$order,$start=0,$size=5){
         $list = $this->alias('a')

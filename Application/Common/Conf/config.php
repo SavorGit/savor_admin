@@ -742,6 +742,10 @@ $config['WELCOME_STATUS'] = array(
     '3'=>'已结束',
     '4'=>'已删除',
 );
+$config['TAGS_CATEGORY'] = array(
+    '1'=>'评论',
+    '2'=>'下单备注',
+);
 return $config;
 
 

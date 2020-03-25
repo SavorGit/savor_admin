@@ -8,20 +8,25 @@ use Admin\Controller\BaseController ;
 class CommenttagController extends BaseController {
 
     public function taglist(){
+        $category = I('category',0,'intval');
         $status = I('status',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
 
 
-        $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
+        $m_commenttag = new \Admin\Model\Smallapp\TagsModel();
         $where = array();
         if($status){
             $where['status'] = $status;
         }
+        if($category){
+            $where['category'] = $category;
+        }
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
-        $res_list = $m_commenttag->getTagList('a.id,a.name,a.type,a.status,hotel.name as hotel_name',$where,$orderby,$start,$size);
+        $res_list = $m_commenttag->getTagList('a.id,a.name,a.type,a.category,a.status,hotel.name as hotel_name',$where,$orderby,$start,$size);
         $data_list = $res_list['list'];
+        $tags_category = C('TAGS_CATEGORY');
         foreach ($data_list as $k=>$v){
             if($v['type']==1){
                 $type_str = '公共标签';
@@ -30,6 +35,7 @@ class CommenttagController extends BaseController {
             }else{
                 $type_str = '';
             }
+            $data_list[$k]['category_str'] = $tags_category[$v['category']];
             $data_list[$k]['type_str'] = $type_str;
             if($v['status']==1){
                 $data_list[$k]['statusstr'] = '可用';
@@ -37,6 +43,7 @@ class CommenttagController extends BaseController {
                 $data_list[$k]['statusstr'] = '不可用';
             }
         }
+        $this->assign('category',$category);
         $this->assign('status',$status);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
@@ -47,12 +54,13 @@ class CommenttagController extends BaseController {
 
     public function tagadd(){
         $id = I('id',0,'intval');
-        $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
+        $m_commenttag = new \Admin\Model\Smallapp\TagsModel();
         if(IS_POST){
+            $category = I('post.category',1,'intval');
             $hotel_id = I('post.hotel_id',0,'intval');
             $status = I('post.status',0,'intval');
             $name = I('post.name','','trim');
-            $data = array('name'=>$name,'status'=>$status,'hotel_id'=>$hotel_id);
+            $data = array('name'=>$name,'status'=>$status,'hotel_id'=>$hotel_id,'category'=>$category);
             if($hotel_id){
                 $data['type'] = 2;
             }else{
@@ -108,7 +116,7 @@ class CommenttagController extends BaseController {
 
     public function tagdel(){
         $id = I('get.id',0,'intval');
-        $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
+        $m_commenttag = new \Admin\Model\Smallapp\TagsModel();
         $result = $m_commenttag->delData(array('id'=>$id));
         if($result){
             $this->output('操作成功!', 'commenttag/taglist',2);

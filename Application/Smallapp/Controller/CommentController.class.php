@@ -43,7 +43,7 @@ class CommentController extends BaseController {
         $result = $m_comment->getCommentList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
         $m_user = new \Admin\Model\Smallapp\UserModel();
-        $m_commenttag = new \Admin\Model\Smallapp\CommenttagModel();
+        $m_commenttag = new \Admin\Model\Smallapp\TagsModel();
         $m_commenttagids = new \Admin\Model\Smallapp\CommenttagidsModel();
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(15);

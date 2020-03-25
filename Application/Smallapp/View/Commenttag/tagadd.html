@@ -11,6 +11,19 @@
             </div>
 
             <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    分类:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="category" id="tag_category" class="form-control bs-select" title="请选择..." data-size="20" required>
+                        <volist name=":C('TAGS_CATEGORY')" id="tag">
+                            <option value="{$key}" <if condition="$vinfo['category'] eq $key"> selected </if> > {$tag}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row" id="choose_hotel" <if condition="$vinfo['category'] eq 2">style="display:none;"</if>>
                 <label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
                 <div class="col-xs-12 col-sm-10  form-inline">
                     <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" >
@@ -39,3 +52,14 @@
         </div>
     </form>
 </div>
+
+<script>
+    $('#tag_category').change(function() {
+        if($(this).val()==1){
+            $('#choose_hotel').show();
+        }else{
+            $('#choose_hotel').hide();
+        }
+    })
+    $('#goods_gtype').trigger('change');
+</script>
