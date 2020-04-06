@@ -506,6 +506,56 @@
                 <input name="activity_phone" type="text" class="form-control" value="{$vinfo.activity_phone}" />
             </div>
         </div>
+        <notempty name="vinfo.id">
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                法人:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="legal_name" type="text" class="form-control" value="{$vinfo.legal_name}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                法人身份证:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <volist name="vinfo.legal_idcard" id="idinfo">
+                    <a href="{$idinfo}" target="_blank" style="color:red">
+                        <img src="{$idinfo}" height="200px">
+                    </a>
+                </volist>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                法人营业执照:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <volist name="vinfo.legal_charter" id="chinfo">
+                    <a href="{$chinfo}" target="_blank" style="color:red">
+                        <img src="{$chinfo}" height="200px">
+                    </a>
+                </volist>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                营业时间:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="business_hours" type="text" class="form-control" value="{$vinfo.business_hours}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                出餐时间:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="meal_time" type="text" class="form-control" value="{$vinfo.meal_time}" />
+            </div>
+        </div>
+        </notempty>
 
     </div>
 

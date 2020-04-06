@@ -72,7 +72,15 @@ $config['DISH_STATUS'] = array(
     '1'=>'上架',
     '2'=>'下架',
 );
-
+$config['DISH_TYPE'] = array(
+    '21'=>'外卖',
+    '22'=>'售全国',
+);
+$config['DISH_FLAG'] = array(
+    '1'=>'审核中',
+    '2'=>'审核通过',
+    '3'=>'审核不通过'
+);
 $config['DISH_ORDERSTATUS'] = array(
     '1'=>'待处理',
     '2'=>'已完成',

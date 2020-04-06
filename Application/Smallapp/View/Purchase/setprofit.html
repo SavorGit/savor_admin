@@ -1,0 +1,20 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/purchase/setprofit" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="uid" type="hidden" value="{$uid}"/>
+		<div class="pageFormContent modal-body">
+
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">分润比例：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input placeholder="请输入小数" type="text" name="profit" value="{$info.profit}" min='0.01' max='0.8' class="form-control" />
+				</div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+</form>
+</div>

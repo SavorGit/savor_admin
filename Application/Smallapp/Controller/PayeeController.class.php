@@ -76,7 +76,7 @@ class PayeeController extends BaseController {
 
         $data = array('status'=>$status);
         $where = array('id'=>$id);
-        $result = $m_payee->updateInfo($where,$data);
+        $result = $m_payee->updateData($where,$data);
         if($result){
             $this->output('操作成功!', 'payee/userlist',2);
         }else{

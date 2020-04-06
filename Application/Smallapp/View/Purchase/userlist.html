@@ -69,6 +69,7 @@
                         <th>用户昵称</th>
                         <th>用户头像</th>
                         <th>审核状态</th>
+                        <th>分润比例</th>
                         <th>注册时间</th>
                         <th>操作</th>
                     </tr>
@@ -89,8 +90,13 @@
                             <td data-title="用户昵称">{$dinfo.nickname}</td>
                             <td data-title="用户头像"><a href="{$dinfo.avatarurl}" target="_blank"><img src="{$dinfo.avatarurl}" ></a></td>
                             <td data-title="审核状态">{$dinfo.status_str}</td>
+                            <td data-title="分润比例">{$dinfo.profit}</td>
                             <td data-title="注册时间">{$dinfo.create_time}</td>
                             <td data-title="操作">
+                                <a title="修改分润比例" data-tip="修改分润比例" target="dialog" mask="true" href="{$host_url}/smallapp/purchase/setprofit?uid={$dinfo.id}" class="btn btn-success btn-icon">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+
                                 <if condition="$dinfo['status'] eq 1">
                                     <a data-tip="审核通过" target="ajaxTodo" href="{$host_url}/smallapp/purchase/changestatus?id={$dinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-on"></i></span></a>

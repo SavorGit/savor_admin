@@ -34,7 +34,8 @@ class DishorderController extends BaseController {
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
         $start  = ($page-1) * $size;
-        $m_order  = new \Admin\Model\Smallapp\DishorderModel();
+        $m_order  = new \Admin\Model\Smallapp\OrderModel();
+//        $m_order  = new \Admin\Model\Smallapp\DishorderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
         a.address,a.remark,a.delivery_time,a.add_time,
         hotel.name as hotel_name,area.region_name as area_name';

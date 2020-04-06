@@ -31,4 +31,15 @@ class MerchantModel extends BaseModel{
         return $data;
     }
 
+
+    public function getMerchants($fields,$where,$order){
+        $data = $this->alias('a')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->select();
+        return $data;
+    }
+
 }

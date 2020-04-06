@@ -34,7 +34,9 @@ class PurchaseController extends BaseController {
         $start  = ($page-1) * $size;
 
         $m_user = new \Admin\Model\Smallapp\UserModel();
-        $result = $m_user->getUserList('*',$where,'id desc',$start,$size);
+        $fields = 'a.id,a.openid,a.avatarUrl,a.nickName,a.name,a.idnumber,a.idcard,a.status,a.create_time,
+        dp.profit';
+        $result = $m_user->getUserProfitList($fields,$where,'a.id desc',$start,$size);
         $datalist = $result['list'];
         $all_status = array('0'=>'审核不通过','1'=>'审核通过','2'=>'待审核');
         if(!empty($datalist)){
@@ -61,6 +63,26 @@ class PurchaseController extends BaseController {
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
         $this->display('userlist');
+    }
+
+    public function setprofit(){
+        $uid = I('uid',0,'intval');
+        $m_profit = new \Admin\Model\Smallapp\DistributionprofitModel();
+        $vinfo = $m_profit->getInfo(array('user_id'=>$uid));
+        if($_GET){
+            $this->assign('uid',$uid);
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }else{
+            $profit = I('post.profit',0);
+            if(!empty($vinfo)){
+                $m_profit->updateData(array('id'=>$vinfo['id']),array('profit'=>$profit,'update_time'=>date('Y-m-d H:i:s')));
+            }else{
+                $data = array('user_id'=>$uid,'profit'=>$profit,'update_time'=>date('Y-m-d H:i:s'));
+                $m_profit->add($data);
+            }
+            $this->output('操作成功', "purchase/userlist");
+        }
     }
 
     public function changestatus(){

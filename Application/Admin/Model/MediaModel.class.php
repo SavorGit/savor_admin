@@ -41,6 +41,7 @@ class MediaModel extends BaseModel{
 	    $oss_host = get_oss_host();
 	    $vinfo = $this->find($media_id);
 	    if($vinfo){
+            $vinfo['oss_path'] = $vinfo['oss_addr'];
 	        $vinfo['oss_addr'] = $oss_host.$vinfo['oss_addr'];
 	    }
 	    return $vinfo;

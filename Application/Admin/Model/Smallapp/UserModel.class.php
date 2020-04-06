@@ -69,4 +69,21 @@ class UserModel extends Model
         $data = array('list'=>$list,'page'=>$show);
         return $data;
     }
+
+    public function getUserProfitList($fields,$where,$order,$start,$size){
+        $list = $this->alias('a')
+            ->join('savor_smallapp_user_distributionprofit dp on a.id=dp.user_id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $count = $this->alias('a')
+            ->where($where)
+            ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 }
