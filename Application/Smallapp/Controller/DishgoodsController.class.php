@@ -51,6 +51,11 @@ class DishgoodsController extends BaseController {
             }else{
                 $flagstr = '';
             }
+            if($v['is_localsale']){
+                $datalist[$k]['localstr']='是';
+            }else{
+                $datalist[$k]['localstr']='否';
+            }
             $datalist[$k]['flagstr'] = $flagstr;
             $datalist[$k]['image'] = $image;
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
@@ -151,14 +156,15 @@ class DishgoodsController extends BaseController {
             $detailmedia_id = I('post.detailmedia_id','');
             $video_intromedia_id = I('post.media_vid',0,'intval');
             $intro = I('post.intro','');
-            $price = I('post.price',0,'intval');
+            $price = I('post.price',0);
             $amount = I('post.amount',0,'intval');
-            $supply_price = I('post.supply_price',0,'intval');
-            $line_price = I('post.line_price',0,'intval');
+            $supply_price = I('post.supply_price',0);
+            $line_price = I('post.line_price',0);
             $merchant_id = I('post.merchant_id',0,'intval');
             $type = I('post.type',0,'intval');
             $category_id = I('post.category_id',0,'intval');
             $status = I('post.status',0,'intval');
+            $is_localsale = I('post.is_localsale',0,'intval');
             $flag = I('post.flag',0,'intval');
             if(!$type){
                 $this->output('名称不能重复', "dishgoods/goodsadd", 2, 0);
@@ -182,10 +188,13 @@ class DishgoodsController extends BaseController {
             if($flag==2){
                 $status = 1;
             }else{
-                $status = 2;
+                if($status==0){
+                    $status = 2;
+                }
             }
             $data['status'] = $status;
             $data['flag'] = $flag;
+            $data['is_localsale'] = $is_localsale;
             $m_media = new \Admin\Model\MediaModel();
             $cover_imgs = array();
             if(!empty($covermedia_id)){

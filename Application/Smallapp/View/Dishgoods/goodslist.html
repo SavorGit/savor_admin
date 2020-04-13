@@ -91,11 +91,12 @@
                         <th>价格</th>
                         <th>图片</th>
                         <th>上/下架</th>
+                        <th>是否本地有售</th>
+                        <th>所在城市</th>
+                        <th>酒楼名称</th>
                         <if condition="$type eq 22"><th>审核状态</th></if>
                         <th>上传者昵称</th>
                         <th>上传者头像</th>
-                        <th>酒楼名称</th>
-                        <th>所在城市</th>
                         <th class="table-tool">操作</th>
                     </tr>
                     </thead>
@@ -107,11 +108,12 @@
                             <td data-title="价格">{$dinfo.price}</td>
                             <td data-title="图片"><a href="{$dinfo.image}" target="_blank"><img src="{$dinfo.image}" ></a></td>
                             <td data-title="上/下架">{$dinfo.statusstr}</td>
+                            <td data-title="是否本地有售">{$dinfo.localstr}</td>
+                            <td data-title="所在城市">{$dinfo.area_name}</td>
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
                             <if condition="$type eq 22"> <td data-title="审核状态">{$dinfo.flagstr}</td></if>
                             <td data-title="上传者昵称">{$dinfo.staff_name}</td>
                             <td data-title="上传者头像"><a href="{$dinfo.staff_url}" target="_blank"><img src="{$dinfo.staff_url}" ></a></td>
-                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
-                            <td data-title="所在城市">{$dinfo.area_name}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">
                                     <a title="修改菜品" data-tip="修改菜品" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
