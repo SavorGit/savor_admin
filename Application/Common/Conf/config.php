@@ -33,6 +33,7 @@ $config = array(
     'SHOW_ERROR_MSG' =>  true, //显示错误信息
     'OSS_ADDR_PATH'=>'media/resource/',
 	'SECRET_KEY' => 'sw&a-lvd0onr!',//解密接口数据key
+	'API_SECRET_KEY' => 'w&-ld0n!',//解密接口数据key
 	'SHOW_URL_APP_KEY'=>'258257010', //新浪短链接appkey
 	'BAIDU_GEO_KEY'=>'q1pQnjOG28z8xsCaoby2oqLTLaPgelyq',
     'HASH_IDS_KEY'=>'Q1xsCaoby2o',
@@ -84,6 +85,26 @@ $config['DISH_FLAG'] = array(
 $config['DISH_ORDERSTATUS'] = array(
     '1'=>'待处理',
     '2'=>'已完成',
+    '3'=>'待发货',
+);
+
+$config['ORDER_STATUS'] = array(
+    '1'=>'待处理',
+    '2'=>'已完成',
+    '10'=>'已下单',
+    '11'=>'支付失败',
+    '12'=>'支付成功',
+    '13'=>'待商家确认',
+    '14'=>'待骑手接单',
+    '15'=>'待取货',
+    '16'=>'配送中',
+    '17'=>'已完成',
+    '18'=>'商家取消',
+    '19'=>'用户取消',
+    '51'=>'待处理',
+    '52'=>'待发货',
+    '53'=>'已派送',
+    '54'=>'已取消',
 );
 
 $config['GOODS_STATUS'] = array(
@@ -116,7 +137,6 @@ $config['INVOICE_TYPE'] = array(
     '2'=>'电子发票',
 );
 
-
 $config['BUY_TYPE'] = array(
     '1'=>'店内购买',
     '2'=>'京东购买',
@@ -124,6 +144,11 @@ $config['BUY_TYPE'] = array(
 $config['ORDER_OTYPE'] = array(
     '1'=>'商品订单',
     '2'=>'兑换订单',
+);
+
+$config['MERCHANT_TYPE'] = array(
+    '1'=>'合作酒楼商家',
+    '2'=>'非合作酒楼商家',
 );
 
 $config['DEVICE_TYPE'] = array(

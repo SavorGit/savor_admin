@@ -84,7 +84,7 @@ class DishgoodsController extends BaseController {
             $detail_img_num = $cover_img_num = 6;
             $merchant_id = $category_id =0;
             $detailaddr = $coveraddr = array();
-            $dinfo = array('type'=>21,'amount'=>1);
+            $dinfo = array('type'=>22,'amount'=>1);
 
             if($id){
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
