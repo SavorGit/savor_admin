@@ -27,9 +27,9 @@
             </div>
         <foreach name="vinfo.data" item="dinfo">
             <div class="form-group row">
-                <label class="col-xs-12 col-sm-2 control-label">{$dinfo.time}</label>
+                <label class="col-xs-12 col-sm-2 control-label">{$dinfo.time}：</label>
                 <div class="col-xs-12 col-sm-10">
-                    {$dinfo.context}
+                    <label class="control-label">{$dinfo.context}</label>
                 </div>
             </div>
         </foreach>
