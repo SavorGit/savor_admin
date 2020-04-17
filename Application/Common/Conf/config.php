@@ -88,7 +88,7 @@ $config['DISH_ORDERSTATUS'] = array(
     '3'=>'待发货',
 );
 
-$config['ORDER_STATUS'] = array(
+$config['ORDER_ALLSTATUS'] = array(
     '1'=>'待处理',
     '2'=>'已完成',
     '10'=>'已下单',

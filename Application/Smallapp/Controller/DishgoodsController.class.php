@@ -86,8 +86,14 @@ class DishgoodsController extends BaseController {
             $detailaddr = $coveraddr = array();
             $dinfo = array('type'=>22,'amount'=>1);
 
+            $goods_types = C('DISH_TYPE');
             if($id){
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
+                if($dinfo['type']==21){
+                    unset($goods_types[22]);
+                }else{
+                    unset($goods_types[21]);
+                }
                 if($dinfo['amount']==0){
                     $dinfo['amount'] = 1;
                 }
@@ -98,7 +104,7 @@ class DishgoodsController extends BaseController {
                     $detail_imgs = explode(',',$dinfo['detail_imgs']);
                     foreach ($detail_imgs as $k=>$v){
                         if(!empty($v)){
-                            $detailaddr[$k] = array('media_id'=>$v,'oss_addr'=>$oss_host.$v);
+                            $detailaddr[$k+1] = array('media_id'=>$v,'oss_addr'=>$oss_host.$v);
                         }
                     }
                 }
@@ -147,6 +153,7 @@ class DishgoodsController extends BaseController {
             $this->assign('cover_imgs',$cover_imgs);
             $this->assign('detail_imgs',$detail_imgs);
             $this->assign('merchants',$merchants);
+            $this->assign('goods_types',$goods_types);
             $this->assign('categorys',$categorys);
             $this->assign('vinfo',$dinfo);
             $this->display('goodsadd');
@@ -166,9 +173,6 @@ class DishgoodsController extends BaseController {
             $status = I('post.status',0,'intval');
             $is_localsale = I('post.is_localsale',0,'intval');
             $flag = I('post.flag',0,'intval');
-            if(!$type){
-                $this->output('名称不能重复', "dishgoods/goodsadd", 2, 0);
-            }
 
             $where = array('name'=>$name,'merchant_id'=>$merchant_id);
             if($id){
@@ -185,10 +189,10 @@ class DishgoodsController extends BaseController {
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'price'=>$price,
                 'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'merchant_id'=>$merchant_id,
                 'type'=>$type,'category_id'=>$category_id,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
-            if($flag==2){
-                $status = 1;
-            }else{
-                if($status==0){
+            if($type==22){
+                if($flag==2){
+                    $status = 1;
+                }else{
                     $status = 2;
                 }
             }
@@ -254,9 +258,13 @@ class DishgoodsController extends BaseController {
     public function changestatus(){
         $id = I('get.id',0,'intval');
         $status = I('get.status',0,'intval');
-
+        if($status==1){
+            $flag = 2;
+        }else{
+            $flag = 3;
+        }
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
-        $result = $m_goods->updateData(array('id'=>$id),array('status'=>$status));
+        $result = $m_goods->updateData(array('id'=>$id),array('status'=>$status,'flag'=>$flag));
         if($result){
             $this->output('操作成功!', 'dishgoods/goodslist',2);
         }else{

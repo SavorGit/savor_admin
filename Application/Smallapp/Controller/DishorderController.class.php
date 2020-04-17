@@ -59,7 +59,7 @@ class DishorderController extends BaseController {
         $result = $m_order->getOrderList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
 
-        $order_status = C('ORDER_STATUS');
+        $order_status = C('ORDER_ALLSTATUS');
         if(!empty($datalist)){
             $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
             foreach ($datalist as $k=>$v){
@@ -107,14 +107,18 @@ class DishorderController extends BaseController {
                     $message = '接单成功';
                     break;
                 case 2://不接单
+                    $is_cancel = 0;
                     $message = '不接单成功';
                     if($res_order['pay_type']==10){
                         if(!empty($res_order['parent_oid'])){
                             $refund_oid = $res_order['parent_oid'];
+                            $res_porder = $m_order->getInfo(array('id'=>$refund_oid));
+                            $pay_fee = $res_porder['pay_fee'];
                         }else{
                             $refund_oid = $order_id;
+                            $pay_fee = $res_order['pay_fee'];
                         }
-                        $oinfo = array('order_id'=>$refund_oid,'pk_type'=>2,'pay_fee'=>$res_order['pay_fee'],'refund_money'=>$res_order['pay_fee']);
+                        $oinfo = array('order_id'=>$refund_oid,'pk_type'=>2,'pay_fee'=>$pay_fee,'refund_money'=>$res_order['pay_fee']);
                         $params = encrypt_data(json_encode($oinfo),C('API_SECRET_KEY'));
 
                         $url = 'http://'.C('SAVOR_API_URL')."/payment/wxPay/refundMoney?params=$params";
@@ -123,6 +127,7 @@ class DishorderController extends BaseController {
                         $curl::get($url,$response,5);
                         $res = json_decode($response,true);
                         if($res["code"]==10000 && $res['is_refund']==1){
+                            $is_cancel = 1;
                             $m_order->updateData(array('id'=>$order_id),array('status'=>18,'finish_time'=>date('Y-m-d H:i:s')));
                             $message = '取消订单成功,且已经退款.款项在1到7个工作日内,退还到用户的支付账户';
                         }else{
@@ -130,7 +135,20 @@ class DishorderController extends BaseController {
                         }
 
                     }else{
+                        $is_cancel = 1;
                         $m_order->updateData(array('id'=>$order_id),array('status'=>18,'finish_time'=>date('Y-m-d H:i:s')));
+                    }
+
+                    if($is_cancel && $res_order['otype']==5){
+                        $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
+                        $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
+                        $gfields = 'goods.id as goods_id,goods.status,goods.amount as all_amount,og.amount';
+                        $res_goods = $m_ordergoods->getOrdergoodsList($gfields,array('og.order_id'=>$order_id),'og.id asc');
+                        foreach ($res_goods as $v){
+                            $now_amount = $v['all_amount'] + $v['amount'];
+                            $updata = array('amount'=>$now_amount);
+                            $m_goods->updateData(array('id'=>$v['goods_id']),$updata);
+                        }
                     }
                     break;
                 default:
