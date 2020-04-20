@@ -115,10 +115,14 @@ class DishorderController extends BaseController {
                             $res_porder = $m_order->getInfo(array('id'=>$refund_oid));
                             $pay_fee = $res_porder['pay_fee'];
                         }else{
-                            $refund_oid = $order_id;
+                            $refund_oid = $res_order['id'];
                             $pay_fee = $res_order['pay_fee'];
                         }
-                        $oinfo = array('order_id'=>$refund_oid,'pk_type'=>2,'pay_fee'=>$pay_fee,'refund_money'=>$res_order['pay_fee']);
+                        $m_ordermap = new \Admin\Model\Smallapp\OrdermapModel();
+                        $res_ordermap = $m_ordermap->getDataList('id',array('order_id'=>$refund_oid),'id desc',0,1);
+                        $trade_no = $res_ordermap['list'][0]['id'];
+
+                        $oinfo = array('trade_no'=>$trade_no,'batch_no'=>$order_id,'pk_type'=>2,'pay_fee'=>$pay_fee,'refund_money'=>$res_order['pay_fee']);
                         $params = encrypt_data(json_encode($oinfo),C('API_SECRET_KEY'));
 
                         $url = 'http://'.C('SAVOR_API_URL')."/payment/wxPay/refundMoney?params=$params";

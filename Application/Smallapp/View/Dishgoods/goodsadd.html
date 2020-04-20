@@ -5,7 +5,7 @@
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">选择商家：</label>
 				<div class="col-xs-12 col-sm-10  form-inline">
-					<select name="merchant_id" class="form-control bs-select class-filter" data-live-search="true" >
+					<select name="merchant_id" class="form-control bs-select class-filter" data-live-search="true" required >
 						<option name="merchant_id" selected='selected' value="0">请选择商家</option>
 						<volist name="merchants" id="minfo">
 							<option name="merchant_id" value="{$minfo.id}" {$minfo.is_select}> {$minfo.name}</option>
@@ -64,6 +64,12 @@
 				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
 				<div class="col-xs-12 col-sm-10">
 					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group row" id="sale_distribution_profit">
+				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="distribution_profit" type="text" value="{$vinfo.distribution_profit}" min='0' max='0.8' class="form-control" />
 				</div>
 			</div>
 			<div class="form-group row" id="sale_amount">
@@ -227,11 +233,13 @@
             $('#check_flag').hide();
             $('#shop_localsale').hide();
             $('#goods_onoffline').show();
+            $('#sale_distribution_profit').hide();
         }else{
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
             $('#sale_supply_price').show();
             $('#sale_line_price').show();
+            $('#sale_distribution_profit').show();
             $('#sale_amount').show();
             $('#sale_video').show();
             $('#check_flag').show();

@@ -116,13 +116,15 @@ class DishgoodsController extends BaseController {
                         }
                     }
                 }
+            }else{
+                unset($goods_types[21]);
             }
             $m_category = new \Admin\Model\CategoryModel();
             $categorys = $m_category->getCategory($category_id,1,7);
 
             $m_merchant = new \Admin\Model\Integral\MerchantModel();
             $where = array('a.status'=>1,'hotel.state'=>1,'hotel.flag'=>0);
-            $fields = 'a.id,hotel.name';
+            $fields = 'a.id,a.is_takeout,hotel.name';
             $merchants = $m_merchant->getMerchants($fields,$where,'a.id desc');
             foreach ($merchants as $k=>$v){
                 if($merchant_id && $v['id']==$merchant_id){
@@ -167,12 +169,26 @@ class DishgoodsController extends BaseController {
             $amount = I('post.amount',0,'intval');
             $supply_price = I('post.supply_price',0);
             $line_price = I('post.line_price',0);
+            $distribution_profit = I('post.distribution_profit',0);
             $merchant_id = I('post.merchant_id',0,'intval');
             $type = I('post.type',0,'intval');
             $category_id = I('post.category_id',0,'intval');
             $status = I('post.status',0,'intval');
             $is_localsale = I('post.is_localsale',0,'intval');
             $flag = I('post.flag',0,'intval');
+
+            if($type==22){
+                if($price<$supply_price){
+                    $this->output('零售价必须大于供货价', "dishgoods/goodsadd", 2, 0);
+                }
+                if($line_price && $line_price<$price){
+                    $this->output('划线价必须大于零售价', "dishgoods/goodsadd", 2, 0);
+                }
+            }
+
+            if(!$merchant_id){
+                $this->output('请先选择商家', "dishgoods/goodsadd", 2, 0);
+            }
 
             $where = array('name'=>$name,'merchant_id'=>$merchant_id);
             if($id){
@@ -182,11 +198,11 @@ class DishgoodsController extends BaseController {
                 $res_goods = $m_goods->getInfo($where);
             }
             if(!empty($res_goods)){
-                $this->output('名称不能重复', "dishgoods/goodsedit", 2, 0);
+                $this->output('名称不能重复', "dishgoods/goodsadd", 2, 0);
             }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
-            $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'price'=>$price,
+            $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'price'=>$price,'distribution_profit'=>$distribution_profit,
                 'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'merchant_id'=>$merchant_id,
                 'type'=>$type,'category_id'=>$category_id,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             if($type==22){
@@ -247,10 +263,16 @@ class DishgoodsController extends BaseController {
                 $result = $m_goods->add($data);
                 $goods_id = $result;
             }
+            $m_merchant = new \Admin\Model\Integral\MerchantModel();
+            $res_merchant = $m_merchant->getInfo(array('id'=>$merchant_id));
+
+            if($res_merchant['is_takeout']==0){
+                $m_merchant->updateData(array('id'=>$res_merchant['id']),array('is_takeout'=>1));
+            }
             if($result){
                 $this->output('操作成功', "dishgoods/goodslist");
             }else{
-                $this->output('操作失败', "dishgoods/goodsedit",2,0);
+                $this->output('操作失败', "dishgoods/goodsadd",2,0);
             }
         }
     }
