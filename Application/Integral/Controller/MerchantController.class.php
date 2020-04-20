@@ -117,7 +117,7 @@ class MerchantController extends BaseController {
                 $mtype = $merchant_info[1]['mtype'];
                 if($mtype==1){
                     $m_hotel = new \Admin\Model\HotelModel();
-                    $res = $m_hotel->getOne($merchant_info[1]);
+                    $res = $m_hotel->getOne($merchant_info[1]['hotel_id']);
                     $merchant_info['step1'] = $res['name'];
                 }else{
                     $merchant_info['step1'] = $merchant_info[1]['hotel_name'];
@@ -182,12 +182,16 @@ class MerchantController extends BaseController {
                         if($merchant_id && $hotel_id){
                             $m_merchant->updateData(array('id'=>$merchant_id),array('hotel_id'=>$hotel_id));
                         }
+                        $merchant_info[$step] = array('hotel_id'=>$hotel_id,'hotel_name'=>'','mtype'=>$mtype);
                     }else{
+                        if(empty($hotel_name)){
+                            $this->output('请输入商家名称','merchant/merchantadd',2,0);
+                        }
                         $merchant_info[$step] = array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'mtype'=>$mtype);
                         $merchant_info[2] = 1;
                         $merchant_info[3] = array('channel_id'=>1,'rate_groupid'=>100,'cash_rate'=>1,'recharge_rate'=>1);
-                        session($id,$merchant_info);
                     }
+                    session($id,$merchant_info);
                     $this->output('操作成功', 'merchant/merchantadd');
                 }else{
                     if($merchant_id){
@@ -195,18 +199,16 @@ class MerchantController extends BaseController {
                     }else{
                         $hotel_id = $merchant_info[1]['hotel_id'];
                     }
-                    $hotels = array();
-                    if(!empty($hotel_id)){
-                        $m_hotel = new \Admin\Model\HotelModel();
-                        $where = array('state'=>1,'flag'=>0);
-                        $field = 'id,name';
-                        $hotels = $m_hotel->getWhereorderData($where,$field,'area_id asc');
-                        foreach ($hotels as $k=>$v){
-                            if($hotel_id && $v['id']==$hotel_id){
-                                $hotels[$k]['is_select'] = 'selected';
-                            }else{
-                                $hotels[$k]['is_select'] = '';
-                            }
+                    $hotel_id = intval($hotel_id);
+                    $m_hotel = new \Admin\Model\HotelModel();
+                    $where = array('state'=>1,'flag'=>0);
+                    $field = 'id,name';
+                    $hotels = $m_hotel->getWhereorderData($where,$field,'area_id asc');
+                    foreach ($hotels as $k=>$v){
+                        if($hotel_id && $v['id']==$hotel_id){
+                            $hotels[$k]['is_select'] = 'selected';
+                        }else{
+                            $hotels[$k]['is_select'] = '';
                         }
                     }
                     $mtype = $merchant_info[1]['mtype'];
@@ -301,6 +303,8 @@ class MerchantController extends BaseController {
                         }
 
                         $add_info = array('name'=>$name,'job'=>$job,'mobile'=>$mobile);
+                        $merchant_info[$step] = $add_info;
+                        session($id,$merchant_info);
                         if($merchant_id){
                             $m_merchant->updateData(array('id'=>$merchant_id),$add_info);
                             if($mobile!=$merchant_info['mobile']){
@@ -344,7 +348,7 @@ class MerchantController extends BaseController {
 
                 $mtype = $merchant_info[1]['mtype'];
                 if($mtype==1){
-                    $hotel_id = $merchant_info[1];
+                    $hotel_id = $merchant_info[1]['hotel_id'];
                 }else{
                     $res_hinfo = $m_hotel->getInfo('*',array('name'=>$merchant_info[1]['hotel_name']),'id desc','0,1');
                     if(!empty($res_hinfo)){

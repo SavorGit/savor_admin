@@ -10,7 +10,7 @@
           商家类型:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select name="mtype" id="merchant_type" class="form-control bs-select" data-size="20">
+          <select name="mtype" id="merchant_type" class="form-control bs-select" data-size="20" required>
             <volist name=":C('MERCHANT_TYPE')" id="vo">
               <option value="{$key}" <if condition="$vinfo['mtype'] eq $key"> selected </if> > {$vo}</option>
             </volist>
