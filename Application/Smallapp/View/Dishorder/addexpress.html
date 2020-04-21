@@ -39,7 +39,7 @@
 </form>
 </div>
 <script type="text/javascript">
-    $('#enum').bind('input propertychange', function() {
+        $("#enum").blur(function() {
         var express_num = $('#enum').val()
         $.ajax({
             type: 'POST',
