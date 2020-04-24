@@ -88,12 +88,19 @@ class DishgoodsController extends BaseController {
 
             $goods_types = C('DISH_TYPE');
             if($id){
+                $m_media = new \Admin\Model\MediaModel();
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
                 if($dinfo['type']==21){
                     unset($goods_types[22]);
                 }else{
                     unset($goods_types[21]);
                 }
+                $poster_oss_addr = '';
+                if(!empty($dinfo['poster_media_id'])){
+                    $res_media = $m_media->getMediaInfoById($dinfo['poster_media_id']);
+                    $poster_oss_addr = $res_media['oss_addr'];
+                }
+                $dinfo['poster_oss_addr'] = $poster_oss_addr;
                 if($dinfo['amount']==0){
                     $dinfo['amount'] = 1;
                 }
@@ -176,6 +183,7 @@ class DishgoodsController extends BaseController {
             $status = I('post.status',0,'intval');
             $is_localsale = I('post.is_localsale',0,'intval');
             $flag = I('post.flag',0,'intval');
+            $postermedia_id = I('post.postermedia_id',0,'intval');
 
             if($type==22){
                 if($price<$supply_price){
@@ -203,7 +211,7 @@ class DishgoodsController extends BaseController {
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'price'=>$price,'distribution_profit'=>$distribution_profit,
-                'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'merchant_id'=>$merchant_id,
+                'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,
                 'type'=>$type,'category_id'=>$category_id,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             if($type==22){
                 if($flag==2){

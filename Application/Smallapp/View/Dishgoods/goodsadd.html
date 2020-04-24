@@ -111,7 +111,34 @@
 				菜品介绍：
 			</label>
 			<div class="col-xs-12 col-sm-10">
-				<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="255" required>{$vinfo.intro}</textarea>
+				<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="1000" required>{$vinfo.intro}</textarea>
+			</div>
+		</div>
+
+		<div class="form-group row" id="shop_poster_img" >
+			<label class="col-xs-12 col-sm-2 control-label">
+				海报图片：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['poster_oss_addr'] eq 'NULL') OR $vinfo['poster_oss_addr'] eq ''">
+								<img id="postermedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="postermedia_idimg" src="{$vinfo.poster_oss_addr}" border="0" />
+							</if>
+							<span id="postermedia_idimgname"></span>
+						</a>
+					</div>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=postermedia_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="postermedia_id" id="postermedia_id" value="{$vinfo.postermedia_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -234,6 +261,7 @@
             $('#shop_localsale').hide();
             $('#goods_onoffline').show();
             $('#sale_distribution_profit').hide();
+            $('#shop_poster_img').hide();
         }else{
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
@@ -244,6 +272,7 @@
             $('#sale_video').show();
             $('#check_flag').show();
             $('#shop_localsale').show();
+            $('#shop_poster_img').show();
             $('#goods_onoffline').hide();
 
         }

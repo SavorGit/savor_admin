@@ -167,6 +167,15 @@ class DishorderController extends BaseController {
         $m_order  = new \Admin\Model\Smallapp\OrderModel();
         $vinfo = $m_order->getInfo(array('id'=>$order_id));
         if(IS_GET){
+            $express = new \Common\Lib\Express();
+            $all_express = $express->getCompany();
+            $result = array();
+            foreach ($all_express as $v){
+                if($v['type']==1){
+                    $result[]=$v;
+                }
+            }
+            $this->assign('express',$result);
             $this->assign('vinfo',$vinfo);
             $this->display();
         }else{
