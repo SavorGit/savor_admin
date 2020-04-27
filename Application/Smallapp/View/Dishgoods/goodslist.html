@@ -97,6 +97,7 @@
                         <if condition="$type eq 22"><th>审核状态</th></if>
                         <th>上传者昵称</th>
                         <th>上传者头像</th>
+                        <th>创建时间</th>
                         <th class="table-tool">操作</th>
                     </tr>
                     </thead>
@@ -114,6 +115,7 @@
                             <if condition="$type eq 22"> <td data-title="审核状态">{$dinfo.flagstr}</td></if>
                             <td data-title="上传者昵称">{$dinfo.staff_name}</td>
                             <td data-title="上传者头像"><a href="{$dinfo.staff_url}" target="_blank"><img src="{$dinfo.staff_url}" ></a></td>
+                            <td data-title="创建时间">{$dinfo.add_time}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">
                                     <a title="修改菜品" data-tip="修改菜品" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">

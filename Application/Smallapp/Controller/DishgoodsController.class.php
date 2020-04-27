@@ -32,7 +32,7 @@ class DishgoodsController extends BaseController {
 
         $start  = ($page-1) * $size;
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
-        $fields = 'a.id,a.name,a.cover_imgs,a.intro,a.price,a.is_top,a.status,a.flag,
+        $fields = 'a.id,a.name,a.cover_imgs,a.intro,a.price,a.is_top,a.status,a.flag,a.add_time,
         user.nickName as staff_name,user.avatarUrl as staff_url,hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_goods->getDishList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];

@@ -21,11 +21,18 @@ class DishorderController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $otypes = array('5'=>'商品订单','3'=>'外卖订单');
+        $otypes = array('5'=>'商品订单','3'=>'外卖订单','51'=>'商品销售订单');
         if($otype){
-            $where = array('a.otype'=>$otype);
+            if($otype==51){
+                $where = array('a.otype'=>5);
+                $where['a.sale_uid'] = array('gt',0);
+            }else{
+                $where = array('a.otype'=>$otype);
+            }
         }else{
-            $where = array('a.otype'=>array('in',array_keys($otypes)));
+            $all_otypes = $otypes;
+            unset($all_otypes['51']);
+            $where = array('a.otype'=>array('in',array_keys($all_otypes)));
         }
         switch ($status){
             case 1:
@@ -54,7 +61,7 @@ class DishorderController extends BaseController {
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\OrderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
-        a.address,a.remark,a.delivery_time,a.add_time,a.otype,
+        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,
         hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_order->getOrderList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
@@ -62,7 +69,15 @@ class DishorderController extends BaseController {
         $order_status = C('ORDER_ALLSTATUS');
         if(!empty($datalist)){
             $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
+            $m_user = new \Admin\Model\Smallapp\UserModel();
             foreach ($datalist as $k=>$v){
+                $sale_uname = '';
+                if($v['otype']==5 && $v['sale_uid']){
+                    $v['otype'] = 51;
+                    $res_user = $m_user->getOne('name',array('id'=>$v['sale_uid']),'');
+                    $sale_uname = $res_user['name'];
+                }
+                $datalist[$k]['sale_uname'] = $sale_uname;
                 $datalist[$k]['otype_str'] = $otypes[$v['otype']];
                 $datalist[$k]['status_str'] = $order_status[$v['status']];
                 if($v['delivery_time']=='0000-00-00 00:00:00'){
@@ -89,6 +104,8 @@ class DishorderController extends BaseController {
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
         $this->display('orderlist');
     }
 
@@ -171,9 +188,7 @@ class DishorderController extends BaseController {
             $all_express = $express->getCompany();
             $result = array();
             foreach ($all_express as $v){
-                if($v['type']==1){
-                    $result[]=$v;
-                }
+                $result[]=$v;
             }
             $this->assign('express',$result);
             $this->assign('vinfo',$vinfo);

@@ -19,7 +19,7 @@ class MerchantController extends BaseController {
 
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $start  = ($page-1) * $size;
-        $fields = 'a.id,hotel.name as hotel_name,area.region_name as city,a.rate_groupid,a.name,a.job,a.mobile,a.sysuser_id,a.status,ext.maintainer_id';
+        $fields = 'a.id,hotel.name as hotel_name,area.region_name as city,a.rate_groupid,a.name,a.job,a.mobile,a.sysuser_id,a.status,a.add_time,ext.maintainer_id';
         $where = array();
         if($area_id)    $where['area.id']=$area_id;
         if($status)    $where['a.status']=$status;

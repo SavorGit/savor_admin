@@ -12,14 +12,14 @@
                     <div class="form-group">
                         <div class="input-group input-group-sm">时间：</div>
                         <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
-                            <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
                             <span class="input-group-btn">
                             <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                             <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                             </span>
                         </div>
                         <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
-                            <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
                             <span class="input-group-btn">
                             <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                             <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -97,6 +97,7 @@
                         <if condition="$otype neq 5"><th>期望送达时间</th></if>
                         <th>备注</th>
                         <th>状态</th>
+                        <th>销售人员</th>
                         <th>下单时间</th>
                         <th>操作</th>
                     </tr>
@@ -118,12 +119,13 @@
                             <if condition="$otype neq 5"><td data-title="期望送达时间">{$dinfo.delivery_time}</td></if>
                             <td data-title="备注">{$dinfo.remark}</td>
                             <td data-title="状态">{$dinfo.status_str}</td>
+                            <td data-title="销售人员">{$dinfo.sale_uname}</td>
                             <td data-title="下单时间">{$dinfo.add_time}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">
                                     <if condition="$dinfo.otype eq 5">
-                                        <if condition="$dinfo.status eq 51">
-                                        <a data-tip="接单" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/orderreceive?id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <if condition="($dinfo.status eq 51) OR ($dinfo.status eq 52)">
+                                        <a data-tip="接单/拒单" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/orderreceive?id={$dinfo.id}" class="btn btn-success btn-icon">
                                             <i class="fa fa-pencil"></i>
                                         </a>
                                         </if>
