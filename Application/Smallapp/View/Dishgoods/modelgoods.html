@@ -1,0 +1,78 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/dishgoods/modelgoods" method="post" >
+    <input type="hidden" name="goods_id" value="{$goods_id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="form-group">
+            <h1>{$ginfo.name}-型号商品列表</h1>
+          </div>
+        </div>
+      </div>
+      <div class="form-inline">
+        <div class="tools-group">
+          <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/addmodel?goods_id={$goods_id}" title="新增型号" target="dialog" mask="true"><i class="fa fa-plus"></i>步骤一：新增型号</a>
+          <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/modelgoodsadd?goods_id={$goods_id}" title="录入价格库存" target="dialog" mask="true"><i class="fa fa-plus"></i>步骤二：录入价格库存</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="top:85px">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>ID</th>
+            <th>名称</th>
+            <th>型号图片</th>
+            <th>建议零售价</th>
+            <th>包邮供货价</th>
+            <th>库存</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="名称">{$dinfo.attr_name}</td>
+              <td data-title="型号图片"><img src="{$dinfo.model_img}"></td>
+              <td data-title="建议零售价">{$dinfo.price}</td>
+              <td data-title="包邮供货价">{$dinfo.supply_price}</td>
+              <td data-title="库存">{$dinfo.amount}</td>
+              <td data-title="创建时间">{$dinfo.add_time}</td>
+              <!--
+              <td data-title="状态">
+                <if condition="$dinfo.status eq 1">
+                  <a data-tip="启用" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/modelgoods?id={$dinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                  <else/>
+                  <a data-tip="禁用" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/modelgoods?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                </if>
+              </td>
+              -->
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/modelgoodsedit?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>

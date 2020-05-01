@@ -27,20 +27,6 @@
 				</div>
 			</div>
 
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
-				</div>
-			</div>
-
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="price" type="text" value="{$vinfo.price}" class="form-control" required/>
-				</div>
-			</div>
-
 			<div class="form-group row" id="sale_category">
 				<label class="col-xs-12 col-sm-2 control-label">
 					商品分类：
@@ -53,6 +39,42 @@
 					</select>
 				</div>
 			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">单品/多型号：</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="gtype" id="goods_modeltype" class="form-control bs-select" title="请选择">
+						<option value="1" <if condition="$vinfo.gtype eq 1">selected</if> >单品</option>
+						<option value="2" <if condition="$vinfo.gtype eq 2">selected</if> >多型号</option>
+					</select>
+					<!--<div class="inline-radio-container">-->
+						<!--<label class="radio-inline">-->
+							<!--<input type="radio" name="gtype" id="1" value='1' <if condition="$vinfo.gtype eq 1">checked</if>>-->
+							<!--<span>单品</span>-->
+						<!--</label>-->
+						<!--<label class="radio-inline">-->
+							<!--<input type="radio" name="gtype" id="2" value='2' <if condition="$vinfo.gtype eq 2">checked</if>>-->
+							<!--<span>多型号</span>-->
+						<!--</label>-->
+					<!--</div>-->
+
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_price">
+				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="price" type="text" value="{$vinfo.price}" class="form-control"/>
+				</div>
+			</div>
+
 
 			<div class="form-group row" id="sale_supply_price">
 				<label class="col-xs-12 col-sm-2 control-label">包邮供货价：</label>
@@ -278,4 +300,20 @@
         }
     })
     $('#goods_gtype').trigger('change');
+
+
+    $('#goods_modeltype').change(function() {
+        if($(this).val()==2){
+            $('#goods_price').hide();
+            $('#sale_supply_price').hide();
+            $('#sale_line_price').hide();
+        }else{
+            $('#goods_price').show();
+            $('#sale_supply_price').show();
+            $('#sale_line_price').show();
+
+        }
+    })
+    $('#goods_modeltype').trigger('change');
+
 </script>

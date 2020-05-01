@@ -1,0 +1,134 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/dishgoods/modelgoodsedit" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<div class="pageFormContent modal-body">
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">规格信息：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" value="{$vinfo.attr_name}" class="form-control" readonly/>
+				</div>
+			</div>
+
+			<div class="form-group row" id="shop_poster_img" >
+				<label class="col-xs-12 col-sm-2 control-label">
+					型号图片：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="javascript:void(0)">
+								<if condition="($vinfo['model_img'] eq 'NULL') OR $vinfo['model_img'] eq ''">
+									<img id="model_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									<else />
+									<img id="model_media_idimg" src="{$vinfo.model_img}" border="0" />
+								</if>
+								<span id="model_media_idimgname"></span>
+							</a>
+						</div>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=model_media_id&rtype=2" data-browse-file>
+								选择图片
+							</a>
+							<input type="hidden" name="model_media_id" id="model_media_id" value="{$vinfo.model_media_id}" >
+							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_price">
+				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="price" type="text" value="{$vinfo.price}" class="form-control"/>
+				</div>
+			</div>
+
+
+			<div class="form-group row" id="sale_supply_price">
+				<label class="col-xs-12 col-sm-2 control-label">包邮供货价：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="supply_price" type="text" value="{$vinfo.supply_price}" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group row" id="sale_line_price">
+				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group row" id="sale_amount">
+				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999"/>
+				</div>
+			</div>
+
+		<div class="form-group row" id="check_flag">
+			<label class="col-xs-12 col-sm-2 control-label">
+				审核状态:
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<select name="flag" class="form-control bs-select" data-size="20">
+					<volist name=":C('DISH_FLAG')" id="vo">
+						<option value="{$key}" <if condition="$vinfo['flag'] eq $key"> selected </if> > {$vo}</option>
+					</volist>
+				</select>
+			</div>
+		</div>
+
+
+	</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+	</form>
+</div>
+<script>
+    $('#goods_gtype').change(function() {
+        if($(this).val()==21){
+			$('#goods_pricelabel').text('价格：');
+            $('#sale_category').hide();
+            $('#sale_supply_price').hide();
+            $('#sale_line_price').hide();
+            $('#sale_amount').hide();
+            $('#sale_video').hide();
+            $('#check_flag').hide();
+            $('#shop_localsale').hide();
+            $('#goods_onoffline').show();
+            $('#sale_distribution_profit').hide();
+            $('#shop_poster_img').hide();
+        }else{
+            $('#goods_pricelabel').text('建议零售价：');
+            $('#sale_category').show();
+            $('#sale_supply_price').show();
+            $('#sale_line_price').show();
+            $('#sale_distribution_profit').show();
+            $('#sale_amount').show();
+            $('#sale_video').show();
+            $('#check_flag').show();
+            $('#shop_localsale').show();
+            $('#shop_poster_img').show();
+            $('#goods_onoffline').hide();
+
+        }
+    })
+    $('#goods_gtype').trigger('change');
+
+
+    $('#goods_modeltype').change(function() {
+        if($(this).val()==2){
+            $('#goods_price').hide();
+            $('#sale_supply_price').hide();
+            $('#sale_line_price').hide();
+        }else{
+            $('#goods_price').show();
+            $('#sale_supply_price').show();
+            $('#sale_line_price').show();
+
+        }
+    })
+    $('#goods_modeltype').trigger('change');
+
+</script>

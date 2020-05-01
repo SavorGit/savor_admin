@@ -63,7 +63,7 @@ class DishorderController extends BaseController {
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
         a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,
         hotel.name as hotel_name,area.region_name as area_name';
-        $result = $m_order->getOrderList($fields,$where, 'a.id desc', $start, $size);
+        $result = $m_order->getOrderList($fields,$where, 'a.add_time desc', $start, $size);
         $datalist = $result['list'];
 
         $order_status = C('ORDER_ALLSTATUS');
@@ -83,12 +83,13 @@ class DishorderController extends BaseController {
                 if($v['delivery_time']=='0000-00-00 00:00:00'){
                     $datalist[$k]['delivery_time'] = '';
                 }
-                $res_ordergoods = $m_ordergoods->getOrdergoodsList('goods.name',array('og.order_id'=>$v['id']),'og.id asc');
+                $res_ordergoods = $m_ordergoods->getOrdergoodsList('goods.name,og.amount,og.price',array('og.order_id'=>$v['id']),'og.id asc');
                 $goods_names = array();
                 foreach ($res_ordergoods as $gv){
-                    $goods_names[]=$gv['name'];
+                    $goods_names[]=$gv['name'].',数量：'.$gv['amount'].',价格：'.$gv['price'];
+//                    $goods_names[]=$gv['name'];
                 }
-                $name = join(',',$goods_names);
+                $name = join('、',$goods_names);
                 $datalist[$k]['name'] = $name;
             }
         }

@@ -3,6 +3,26 @@ use Common\Lib\Crypt3Des;
 use Common\Lib\AliyunMsn;
 use Common\Lib\SavorRedis;
 
+function getCombinationToString($val)
+{
+    // 保存上一个的值
+    static $res = array();
+    if(empty($res))
+    {
+        $res = $val;
+    }else{
+        // 临时数组保存结合的结果
+        $list = array();
+        foreach ($res as $k => $v) {
+            foreach ($val as $key => $value) {
+                $list[$k.'_'.$key] = $v.'_'.$value;
+            }
+        }
+        $res = $list;
+    }
+    return $res;
+}
+
 function jd_union_api($params,$api,$method='get'){
     $redis  =  \Common\Lib\SavorRedis::getInstance();
     $redis->select(12);

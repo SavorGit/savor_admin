@@ -90,6 +90,7 @@
                         <th>名称</th>
                         <th>价格</th>
                         <th>图片</th>
+                        <th>单品/多型号</th>
                         <th>上/下架</th>
                         <th>是否本地有售</th>
                         <th>所在城市</th>
@@ -108,6 +109,7 @@
                             <td data-title="名称">{$dinfo.name}</td>
                             <td data-title="价格">{$dinfo.price}</td>
                             <td data-title="图片"><a href="{$dinfo.image}" target="_blank"><img src="{$dinfo.image}" ></a></td>
+                            <td data-title="单品/多型号">{$dinfo.gtypestr}</td>
                             <td data-title="上/下架">{$dinfo.statusstr}</td>
                             <td data-title="是否本地有售">{$dinfo.localstr}</td>
                             <td data-title="所在城市">{$dinfo.area_name}</td>
@@ -121,6 +123,12 @@
                                     <a title="修改菜品" data-tip="修改菜品" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
                                         <i class="fa fa-pencil"></i>
                                     </a>
+                                    <if condition="$dinfo['gtype'] eq 2">
+                                    <a data-tip="多型号列表" title="{$dinfo.name}多型号列表" target="navTab" rel="dishgoods/modelgoods" href="{$host_url}/smallapp/dishgoods/modelgoods?goods_id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-list"></i>
+                                    </a>
+                                    </if>
+
 
                                     <if condition="$dinfo['status'] eq 1">
                                         <a data-tip="已上线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
