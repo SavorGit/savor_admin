@@ -177,6 +177,7 @@ class DishgoodsController extends BaseController {
             $detailmedia_id = I('post.detailmedia_id','');
             $video_intromedia_id = I('post.media_vid',0,'intval');
             $intro = I('post.intro','');
+            $notice = I('post.notice','','trim');
             $price = I('post.price',0);
             $amount = I('post.amount',0,'intval');
             $supply_price = I('post.supply_price',0);
@@ -190,6 +191,7 @@ class DishgoodsController extends BaseController {
             $is_localsale = I('post.is_localsale',0,'intval');
             $flag = I('post.flag',0,'intval');
             $postermedia_id = I('post.postermedia_id',0,'intval');
+            $is_recommend = I('post.is_recommend',0,'intval');
 
             if($type==22){
                 if($price<$supply_price){
@@ -219,9 +221,10 @@ class DishgoodsController extends BaseController {
             }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
-            $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'price'=>$price,'distribution_profit'=>$distribution_profit,
-                'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,
-                'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
+            $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
+                'distribution_profit'=>$distribution_profit,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
+                'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
+                'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend);
             if($type==22){
                 if($flag==2){
                     $status = 1;

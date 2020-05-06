@@ -130,6 +130,15 @@
 
 		<div class="form-group row">
 			<label class="col-xs-12 col-sm-2 control-label">
+				公告：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<textarea name="notice" value="{$vinfo.notice}" type="textInput" class="form-control" maxlength="1000" required>{$vinfo.notice}</textarea>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">
 				菜品介绍：
 			</label>
 			<div class="col-xs-12 col-sm-10">
@@ -226,6 +235,16 @@
 			</foreach>
 		</div>
 
+		<div class="form-group row" id="shop_isrecommend">
+			<label class="col-xs-12 col-sm-2 control-label">
+				是否推荐：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<input type="hidden" name="is_recommend" value="0">
+				<input type="checkbox" value="1" class="make-switch status" name="is_recommend" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.is_recommend eq 1" >checked</if>>
+			</div>
+		</div>
+
 		<div class="form-group row" id="shop_localsale">
 			<label class="col-xs-12 col-sm-2 control-label">
 				是否本地有售：
@@ -284,6 +303,7 @@
             $('#goods_onoffline').show();
             $('#sale_distribution_profit').hide();
             $('#shop_poster_img').hide();
+            $('#shop_isrecommend').hide();
         }else{
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
@@ -295,6 +315,7 @@
             $('#check_flag').show();
             $('#shop_localsale').show();
             $('#shop_poster_img').show();
+            $('#shop_isrecommend').show();
             $('#goods_onoffline').hide();
 
         }
