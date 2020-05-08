@@ -7,7 +7,7 @@ use Admin\Controller\BaseController ;
  *
  */
 class DishgoodsController extends BaseController {
-    
+
     public function __construct() {
         parent::__construct();
     }
@@ -60,6 +60,8 @@ class DishgoodsController extends BaseController {
                 $datalist[$k]['gtypestr']='单品';
             }else{
                 $datalist[$k]['gtypestr']='多型号';
+                $res_price = $m_goods->getDataList('*',array('parent_id'=>$v['id']),'id asc',0,1);
+                $datalist[$k]['price']=$res_price['list'][0]['price'];
             }
             $datalist[$k]['flagstr'] = $flagstr;
             $datalist[$k]['image'] = $image;
@@ -200,6 +202,9 @@ class DishgoodsController extends BaseController {
                 if($line_price && $line_price<$price){
                     $this->output('划线价必须大于零售价', "dishgoods/goodsadd", 2, 0);
                 }
+                if(empty($distribution_profit)){
+                    $distribution_profit = 0;
+                }
             }
 
             if($gtype==1 && !$price){
@@ -221,6 +226,9 @@ class DishgoodsController extends BaseController {
             }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
+            if(empty($price))   $price = 0;
+            if(empty($supply_price))   $supply_price = 0;
+            if(empty($line_price))   $line_price = 0;
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>$distribution_profit,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
@@ -229,6 +237,9 @@ class DishgoodsController extends BaseController {
                 if($flag==2){
                     $status = 1;
                 }else{
+                    $status = 2;
+                }
+                if($amount==0){
                     $status = 2;
                 }
             }
@@ -283,6 +294,12 @@ class DishgoodsController extends BaseController {
                 $result = $m_goods->add($data);
                 $goods_id = $result;
             }
+            if($type==22 && $gtype==2){
+                $res_allgoods = $m_goods->getDataList('*',array('parent_id'=>$goods_id,'status'=>1),'id desc',0,1);
+                if($res_allgoods['total']<=0){
+                    $m_goods->updateData(array('id'=>$goods_id),array('status'=>2,'flag'=>3));
+                }
+            }
             $m_merchant = new \Admin\Model\Integral\MerchantModel();
             $res_merchant = $m_merchant->getInfo(array('id'=>$merchant_id));
 
@@ -334,6 +351,40 @@ class DishgoodsController extends BaseController {
                     }
                 }
             }
+
+            $where = array('goods_id'=>$goods_id);
+            $res_attr = $m_specificationattr->getDataList('*',$where,'id asc');
+            $all_attrs = array();
+            foreach ($res_attr as $v){
+                if($v['id'] && $v['name']){
+                    $all_attrs[$v['specification_id']][$v['id']] = $v['name'];
+                }
+            }
+            $m_goodsspecification = new \Admin\Model\Smallapp\GoodsspecificationModel();
+            $where = array('category_id' => $ginfo['category_id'], 'status' => 1);
+            $result = $m_goodsspecification->getDataList('*', $where, 'sort desc,id asc');
+            $all_models = array();
+            foreach ($result as $v) {
+                $specification_id = $v['id'];
+                if(isset($all_attrs[$specification_id])){
+                    $all_models[] = $all_attrs[$specification_id];
+                }
+            }
+            $arr1 = array();
+            $result = array_shift($all_models);
+            while($arr2 = array_shift($all_models)){
+                $arr1 = $result;
+                $result = array();
+                foreach($arr1 as $k=>$v){
+                    foreach($arr2 as $k2=>$v2){
+                        $result[$k.'_'.$k2] = $v.'_'.$v2;
+                    }
+                }
+            }
+            if(count($result)>100){
+                $this->output('规格组合超过100,请修改规格', 'dishgoods/modelgoods',2,0);
+            }
+
             $this->output('操作成功!', 'dishgoods/modelgoods');
         }
     }
@@ -345,15 +396,18 @@ class DishgoodsController extends BaseController {
 
         $start = ($page-1) * $size;
         $where = array('a.parent_id'=>$goods_id);
+        $where['a.status'] = array('in',array(1,2));
         $fields = 'a.id,a.name,a.attr_name,a.model_media_id,a.price,a.supply_price,a.line_price,a.amount,a.status,a.flag,a.gtype,a.add_time';
         $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
         $result = $m_goods->getDishList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
         if(!empty($datalist)){
+            $goods_status = C('DISH_STATUS');
             $m_media = new \Admin\Model\MediaModel();
             foreach ($datalist as $k=>$v){
                 $res_media = $m_media->getMediaInfoById($v['model_media_id']);
                 $datalist[$k]['model_img'] = $res_media['oss_addr'];
+                $datalist[$k]['statusstr'] = $goods_status[$v['status']];
             }
         }
         $ginfo = $m_goods->getInfo(array('id'=>$goods_id));
@@ -380,9 +434,17 @@ class DishgoodsController extends BaseController {
         }
         $all_attrs = array();
         foreach ($res_attr as $v){
-            $all_attrs[$v['specification_id']][$v['id']] = $v['name'];
+            if($v['id'] && $v['name']){
+                $all_attrs[$v['specification_id']][$v['id']] = $v['name'];
+            }
         }
         if(IS_GET) {
+            $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+            $res_goods = $m_dishgoods->getDataList('id,name,attr_name,attr_ids',array('parent_id'=>$goods_id),'id desc');
+            $mode_attrs = array();
+            foreach ($res_goods as $v){
+                $mode_attrs[]=$v['attr_ids'];
+            }
             $m_goodsspecification = new \Admin\Model\Smallapp\GoodsspecificationModel();
             $where = array('category_id' => $ginfo['category_id'], 'status' => 1);
             $result = $m_goodsspecification->getDataList('*', $where, 'sort desc,id asc');
@@ -391,15 +453,33 @@ class DishgoodsController extends BaseController {
             foreach ($result as $v) {
                 $specification_id = $v['id'];
                 if(isset($all_attrs[$specification_id])){
-                    $all_models = getCombinationToString($all_attrs[$specification_id]);
+                    $all_models[] = $all_attrs[$specification_id];
                 }
             }
+
+            $arr1 = array();
+            $result = array_shift($all_models);
+            while($arr2 = array_shift($all_models)){
+                $arr1 = $result;
+                $result = array();
+                foreach($arr1 as $k=>$v){
+                    foreach($arr2 as $k2=>$v2){
+                        $result[$k.'_'.$k2] = $v.'_'.$v2;
+                    }
+                }
+            }
+            if(count($result)>100){
+                $this->output('规格组合超过100,请修改规格', 'dishgoods/modelgoods',2,0);
+            }
+
             $specifications = array();
-            if(!empty($all_models)){
+            if(!empty($result)){
                 $i = 0;
-                foreach ($all_models as $k=>$v){
-                    $specifications[]=array('model_key'=>$k,'name'=>$v,'media_id'=>"model{$i}media_id");
-                    $i++;
+                foreach ($result as $k=>$v){
+                    if(!in_array($k,$mode_attrs)){
+                        $specifications[]=array('model_key'=>$k,'name'=>$v,'media_id'=>"model{$i}media_id",'number'=>$i+1);
+                        $i++;
+                    }
                 }
             }
 
@@ -413,6 +493,7 @@ class DishgoodsController extends BaseController {
             $supply_price = I('supply_price');
             $line_price = I('line_price');
             $amount = I('amount');
+            $distribution_profits = I('distribution_profit');
 
             $m_goodsattr = new \Admin\Model\Smallapp\GoodsAttrModel();
             foreach ($names as $k=>$v){
@@ -423,6 +504,11 @@ class DishgoodsController extends BaseController {
                 $now_line_price = $line_price[$k];
                 $now_amount = $amount[$k];
                 $attr_ids = $model_ids[$k];
+                $distribution_profit = $distribution_profits[$k];
+                if(empty($distribution_profit)){
+                    $distribution_profit = 0;
+                }
+
                 if($now_price && $now_supply_price && $now_line_price && $now_amount){
                     if($now_price<$now_supply_price){
                         $this->output('零售价必须大于供货价', "dishgoods/modelgoodsadd", 2, 0);
@@ -431,7 +517,7 @@ class DishgoodsController extends BaseController {
                         $this->output('划线价必须大于零售价', "dishgoods/modelgoodsadd", 2, 0);
                     }
                     $add_data = array('attr_name'=>$model_name,'attr_ids'=>$attr_ids,'price'=>$now_price,'supply_price'=>$now_supply_price,
-                        'line_price'=>$now_line_price,'amount'=>$now_amount,'model_media_id'=>$model_media_id,'parent_id'=>$goods_id,
+                        'line_price'=>$now_line_price,'distribution_profit'=>$distribution_profit,'amount'=>$now_amount,'model_media_id'=>$model_media_id,'parent_id'=>$goods_id,
                         'merchant_id'=>$ginfo['merchant_id'],'gtype'=>3,'status'=>1,'flag'=>2);
                     $tmp_goods_id = $m_goods->add($add_data);
 
@@ -467,6 +553,10 @@ class DishgoodsController extends BaseController {
             $supply_price = I('post.supply_price',0);
             $line_price = I('post.line_price',0);
             $flag = I('post.flag',0,'intval');
+            $distribution_profit = I('post.distribution_profit',0);
+            if(empty($distribution_profit)){
+                $distribution_profit = 0;
+            }
 
             if($price<$supply_price){
                 $this->output('零售价必须大于供货价', "dishgoods/modelgoodsedit", 2, 0);
@@ -477,11 +567,14 @@ class DishgoodsController extends BaseController {
 
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
-            $data = array('price'=>$price,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
+            $data = array('price'=>$price,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'distribution_profit'=>$distribution_profit,
                 'model_media_id'=>$model_media_id,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             if($flag==2){
                 $status = 1;
             }else{
+                $status = 2;
+            }
+            if($amount==0){
                 $status = 2;
             }
             $data['status'] = $status;
@@ -491,7 +584,20 @@ class DishgoodsController extends BaseController {
 
     }
 
+    public function modelgoodsdel(){
+        $id = I('get.id',0,'intval');
 
+        $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
+        $userinfo = session('sysUserInfo');
+        $sysuser_id = $userinfo['id'];
+        $data = array('status'=>3,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
+        $result = $m_goods->updateData(array('id'=>$id),$data);
+        if($result){
+            $this->output('删除成功!', 'dishgoods/modelgoods',2);
+        }else{
+            $this->output('删除失败', 'dishgoods/modelgoods',2,0);
+        }
+    }
 
     public function changestatus(){
         $id = I('get.id',0,'intval');
@@ -536,5 +642,6 @@ class DishgoodsController extends BaseController {
         }
         $this->ajaxReturn($model_names);
     }
+
 
 }

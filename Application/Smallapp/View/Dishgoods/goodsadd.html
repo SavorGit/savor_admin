@@ -133,7 +133,7 @@
 				公告：
 			</label>
 			<div class="col-xs-12 col-sm-10">
-				<textarea name="notice" value="{$vinfo.notice}" type="textInput" class="form-control" maxlength="1000" required>{$vinfo.notice}</textarea>
+				<textarea name="notice" value="{$vinfo.notice}" type="textInput" class="form-control" maxlength="1000">{$vinfo.notice}</textarea>
 			</div>
 		</div>
 
@@ -162,6 +162,7 @@
 							<span id="postermedia_idimgname"></span>
 						</a>
 					</div>
+					<span class="help-block" id="img-msg">请上传1080x1920像素的jpg格式图片，展示效果最佳</span>
 					<div>
 						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=postermedia_id&rtype=2" data-browse-file>
 							选择图片
@@ -191,6 +192,7 @@
 									<span id="{$dinfo.imgid}imgname"></span>
 								</a>
 							</div>
+							<span class="help-block" id="img-msg">请上传750x420像素的jpg格式图片，展示效果最佳</span>
 							<div>
 								<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
 									选择图片
@@ -222,6 +224,7 @@
 									<span id="{$dinfo.imgid}imgname"></span>
 								</a>
 							</div>
+							<span class="help-block" id="img-msg">请上传 690x高不限 像素的jpg格式图片，展示效果最佳</span>
 							<div>
 								<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
 									选择图片
@@ -328,10 +331,14 @@
             $('#goods_price').hide();
             $('#sale_supply_price').hide();
             $('#sale_line_price').hide();
+            $('#sale_distribution_profit').hide();
+            $('#sale_amount').hide();
         }else{
             $('#goods_price').show();
             $('#sale_supply_price').show();
             $('#sale_line_price').show();
+            $('#sale_distribution_profit').show();
+            $('#sale_amount').show();
 
         }
     })

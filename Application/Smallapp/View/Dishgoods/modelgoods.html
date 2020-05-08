@@ -35,6 +35,7 @@
             <th>建议零售价</th>
             <th>包邮供货价</th>
             <th>库存</th>
+            <th>上/下架</th>
             <th>创建时间</th>
             <th>操作</th>
           </tr>
@@ -48,6 +49,7 @@
               <td data-title="建议零售价">{$dinfo.price}</td>
               <td data-title="包邮供货价">{$dinfo.supply_price}</td>
               <td data-title="库存">{$dinfo.amount}</td>
+              <td data-title="上/下架">{$dinfo.statusstr}</td>
               <td data-title="创建时间">{$dinfo.add_time}</td>
               <!--
               <td data-title="状态">
@@ -64,6 +66,9 @@
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/modelgoodsedit?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
+                  </a>
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/dishgoods/modelgoodsdel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
                   </a>
                 </div>
               </td>

@@ -5,8 +5,10 @@
 
 		<foreach name="specifications" item="sinfo" >
 
+			<hr style="height:1px;border:none;border-top:1px solid #555555;" />
+
 			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">具体型号信息：</label>
+				<label class="col-xs-12 col-sm-2 control-label">编号{$sinfo.number} 具体型号信息：</label>
 				<div class="col-xs-12 col-sm-10">
 					<input name="names[]" type="text" value="{$sinfo.name}" class="form-control" readonly/>
 					<input name="model_ids[]" type="hidden" value="{$sinfo.model_key}"/>
@@ -25,6 +27,7 @@
 								<span id="{$sinfo.media_id}imgname"></span>
 							</a>
 						</div>
+						<span class="help-block" id="img-msg">请上传160x160像素的jpg格式图片，展示效果最佳</span>
 						<div>
 							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$sinfo.media_id}&rtype=2" data-browse-file>
 								选择图片
@@ -56,6 +59,14 @@
 					<input name="line_price[]" type="text" value="" class="form-control" />
 				</div>
 			</div>
+
+			<div class="form-group row" id="sale_distribution_profit">
+				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="distribution_profit[]" type="text" value="" min='0' max='0.8' class="form-control" />
+				</div>
+			</div>
+
 			<div class="form-group row" id="sale_amount">
 				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
 				<div class="col-xs-12 col-sm-10">

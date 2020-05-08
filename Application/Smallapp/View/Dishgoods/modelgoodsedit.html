@@ -26,6 +26,7 @@
 								<span id="model_media_idimgname"></span>
 							</a>
 						</div>
+						<span class="help-block" id="img-msg">请上传160x160像素的jpg格式图片，展示效果最佳</span>
 						<div>
 							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=model_media_id&rtype=2" data-browse-file>
 								选择图片
@@ -55,6 +56,12 @@
 				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
 				<div class="col-xs-12 col-sm-10">
 					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group row" id="sale_distribution_profit">
+				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="distribution_profit" type="text" value="{$vinfo.distribution_profit}" min='0' max='0.8' class="form-control" />
 				</div>
 			</div>
 			<div class="form-group row" id="sale_amount">

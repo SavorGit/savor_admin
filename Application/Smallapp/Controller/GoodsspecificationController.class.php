@@ -72,6 +72,13 @@ class GoodsspecificationController extends BaseController {
             $sort = I('post.sort',0,'intval');
             $status = I('post.status',1,'intval');
             $data = array('name'=>$name,'category_id'=>$category_id,'sort'=>$sort,'status'=>$status);
+
+            $where = array('category_id'=>$category_id,'status'=>1);
+            $res_specification = $m_goodsspecification->getDataList('*',$where,'id desc',0,1);
+            if($res_specification['total']>=5){
+                $this->output('当前分类规格不能超过5个', "goodsspecification/specificationadd",2,0);
+            }
+
             if($id){
                 $m_goodsspecification->updateData(array('id'=>$id),$data);
             }else{

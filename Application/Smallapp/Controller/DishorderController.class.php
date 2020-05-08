@@ -68,6 +68,7 @@ class DishorderController extends BaseController {
 
         $order_status = C('ORDER_ALLSTATUS');
         if(!empty($datalist)){
+            $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
             $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
             $m_user = new \Admin\Model\Smallapp\UserModel();
             foreach ($datalist as $k=>$v){
@@ -83,10 +84,16 @@ class DishorderController extends BaseController {
                 if($v['delivery_time']=='0000-00-00 00:00:00'){
                     $datalist[$k]['delivery_time'] = '';
                 }
-                $res_ordergoods = $m_ordergoods->getOrdergoodsList('goods.name,og.amount,og.price',array('og.order_id'=>$v['id']),'og.id asc');
+                $field_goods = 'goods.name,goods.attr_name,goods.gtype,goods.parent_id,og.amount,og.price';
+                $res_ordergoods = $m_ordergoods->getOrdergoodsList($field_goods,array('og.order_id'=>$v['id']),'og.id asc');
                 $goods_names = array();
                 foreach ($res_ordergoods as $gv){
-                    $goods_names[]=$gv['name'].',数量：'.$gv['amount'].',价格：'.$gv['price'];
+                    $goods_name = $gv['name'];
+                    if($gv['gtype']==3){
+                        $res_pgoods = $m_goods->getInfo(array('id'=>$gv['parent_id']));
+                        $goods_name = $res_pgoods['name'].' '.$gv['attr_name'];
+                    }
+                    $goods_names[]=$goods_name.',数量：'.$gv['amount'].',价格：'.$gv['price'];
 //                    $goods_names[]=$gv['name'];
                 }
                 $name = join('、',$goods_names);
