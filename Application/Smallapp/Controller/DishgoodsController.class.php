@@ -593,6 +593,9 @@ class DishgoodsController extends BaseController {
         $data = array('status'=>3,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
         $result = $m_goods->updateData(array('id'=>$id),$data);
         if($result){
+            $m_goods_attr = new \Admin\Model\Smallapp\GoodsAttrModel();
+            $m_goods_attr->updateData(array('goods_id'=>$id),array('status'=>2));
+            
             $this->output('删除成功!', 'dishgoods/modelgoods',2);
         }else{
             $this->output('删除失败', 'dishgoods/modelgoods',2,0);
@@ -610,6 +613,9 @@ class DishgoodsController extends BaseController {
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
         $result = $m_goods->updateData(array('id'=>$id),array('status'=>$status,'flag'=>$flag));
         if($result){
+            if($id>0){
+                $m_goods->updateData(array('parent_id'=>$id),array('status'=>$status,'flag'=>$flag));
+            }
             $this->output('操作成功!', 'dishgoods/goodslist',2);
         }else{
             $this->output('操作失败', 'dishgoods/goodslist',2,0);
