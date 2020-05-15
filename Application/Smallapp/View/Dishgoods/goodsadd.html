@@ -40,7 +40,7 @@
 				</div>
 			</div>
 
-			<div class="form-group row">
+			<div class="form-group row" id="sale_modeltype">
 				<label class="col-xs-12 col-sm-2 control-label">单品/多型号：</label>
 				<div class="col-xs-12 col-sm-10">
 					<select name="gtype" id="goods_modeltype" class="form-control bs-select" title="请选择">
@@ -60,7 +60,19 @@
 
 				</div>
 			</div>
-
+		<if condition="$vinfo.type neq 23">
+			<div class="form-group row" id="sale_gift">
+				<label class="col-xs-12 col-sm-2 control-label">选择赠品：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="gift_goods_id" class="form-control bs-select class-filter" data-live-search="true" required >
+						<option name="gift_goods_id" selected='selected' value="0">请选择赠品</option>
+						<volist name="activity_goods" id="ginfo">
+							<option name="gift_goods_id" value="{$ginfo.id}" {$ginfo.is_select}> {$ginfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+		</if>
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
 				<div class="col-xs-12 col-sm-10">
@@ -88,6 +100,7 @@
 					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
 				</div>
 			</div>
+		<if condition="$vinfo.type neq 23">
 			<div class="form-group row" id="sale_distribution_profit">
 				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
 				<div class="col-xs-12 col-sm-10">
@@ -100,6 +113,7 @@
 					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999"/>
 				</div>
 			</div>
+		</if>
 
 			<div class="form-group row" id="sale_video"<if condition="$vinfo['type'] eq 21">style="display:none;"</if>>
 			<label class="col-xs-12 col-sm-2 control-label">
@@ -139,7 +153,7 @@
 
 		<div class="form-group row">
 			<label class="col-xs-12 col-sm-2 control-label">
-				菜品介绍：
+				商品介绍：
 			</label>
 			<div class="col-xs-12 col-sm-10">
 				<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="1000" required>{$vinfo.intro}</textarea>
@@ -167,7 +181,7 @@
 						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=postermedia_id&rtype=2" data-browse-file>
 							选择图片
 						</a>
-						<input type="hidden" name="postermedia_id" id="postermedia_id" value="{$vinfo.postermedia_id}" >
+						<input type="hidden" name="postermedia_id" id="postermedia_id" value="{$vinfo.poster_media_id}" >
 						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
 					</div>
 				</div>
@@ -178,7 +192,7 @@
 			<foreach name="cover_imgs" item="dinfo" >
 				<div class="form-group row" >
 					<label class="col-xs-12 col-sm-2 control-label">
-						菜品图{$dinfo.id}：
+						商品图{$dinfo.id}：
 					</label>
 					<div class="col-xs-12 col-sm-10">
 						<div class="fileinput fileinput-new" data-fileinput>
@@ -307,7 +321,8 @@
             $('#sale_distribution_profit').hide();
             $('#shop_poster_img').hide();
             $('#shop_isrecommend').hide();
-        }else{
+            $('#sale_gift').hide();
+        }else if($(this).val()==22){
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
             $('#sale_supply_price').show();
@@ -319,9 +334,24 @@
             $('#shop_localsale').show();
             $('#shop_poster_img').show();
             $('#shop_isrecommend').show();
+            $('#sale_gift').show();
             $('#goods_onoffline').hide();
-
-        }
+        }else{
+            $('#goods_pricelabel').text('建议零售价：');
+            $('#sale_category').show();
+            $('#sale_supply_price').show();
+            $('#sale_line_price').show();
+            $('#sale_distribution_profit').hide();
+            $('#sale_amount').hide();
+            $('#sale_video').show();
+            $('#check_flag').show();
+            $('#shop_localsale').hide();
+            $('#shop_poster_img').hide();
+            $('#shop_isrecommend').hide();
+            $('#goods_onoffline').hide();
+            $('#sale_modeltype').hide();
+            $('#sale_gift').hide();
+		}
     })
     $('#goods_gtype').trigger('change');
 
@@ -333,12 +363,15 @@
             $('#sale_line_price').hide();
             $('#sale_distribution_profit').hide();
             $('#sale_amount').hide();
+            $('#sale_gift').hide();
         }else{
             $('#goods_price').show();
             $('#sale_supply_price').show();
             $('#sale_line_price').show();
             $('#sale_distribution_profit').show();
             $('#sale_amount').show();
+            $('#sale_gift').show();
+
 
         }
     })

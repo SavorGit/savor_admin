@@ -3,6 +3,18 @@
 		<input name="id" type="hidden" value="{$vinfo.id}"/>
 		<div class="pageFormContent modal-body">
 
+			<div class="form-group row" id="sale_gift">
+				<label class="col-xs-12 col-sm-2 control-label">选择赠品：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="gift_goods_id" class="form-control bs-select class-filter" data-live-search="true" required >
+						<option name="gift_goods_id" selected='selected' value="0">请选择赠品</option>
+						<volist name="activity_goods" id="ginfo">
+							<option name="gift_goods_id" value="{$ginfo.id}" {$ginfo.is_select}> {$ginfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">规格信息：</label>
 				<div class="col-xs-12 col-sm-10">

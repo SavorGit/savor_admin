@@ -1,6 +1,7 @@
 <div class="pageContent">
     <form method="post" action="{$host_url}/smallapp/dishorder/addexpress" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <div class="pageFormContent modal-body">
+            <input name="eid" type="hidden" value="{$eid}"/>
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">订单ID：</label>
                 <div class="col-xs-12 col-sm-10">
@@ -18,7 +19,7 @@
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">快递单号：</label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="enum" id="enumno" type="text" value="{$vinfo.enum}" class="form-control" required/>
+                    <input name="enum" id="enumno" type="text" value="{$einfo.enum}" class="form-control" required/>
                 </div>
             </div>
 
@@ -28,8 +29,8 @@
                 </label>
                 <div class="col-xs-12 col-sm-10">
                     <select name="comcode" class="form-control bs-select class-filter" data-live-search="true">
-                        <volist name="express" id="einfo">
-                            <option value="{$einfo.comcode}" >{$einfo.name}</option>
+                        <volist name="express" id="epinfo">
+                            <option value="{$epinfo.comcode}" {$epinfo.is_select}>{$epinfo.name}</option>
                         </volist>
                     </select>
                 </div>

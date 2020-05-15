@@ -87,6 +87,7 @@
                         <th>酒楼名称</th>
                         <th>城市</th>
                         <th>订单商品明细</th>
+                        <th>订单赠品明细</th>
                         <!--<th>单价</th>-->
                         <th>订单数量</th>
                         <th>订单总价</th>
@@ -108,7 +109,8 @@
                             <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
                             <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
                             <td data-title="城市" width="200px">{$dinfo.area_name}</td>
-                            <td data-title="订单商品明细">{$dinfo.name}</td>
+                            <td data-title="订单商品明细">{$dinfo.details}</td>
+                            <td data-title="订单赠品明细">{$dinfo.gifts}</td>
                             <!--<td data-title="单价">{$dinfo.price}</td>-->
                             <td data-title="订单数量">{$dinfo.amount}</td>
                             <td data-title="订单总价">{$dinfo.total_fee}</td>
@@ -123,20 +125,20 @@
                             <td data-title="下单时间">{$dinfo.add_time}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">
-                                    <if condition="$dinfo.otype eq 5">
+                                    <if condition="($dinfo.otype eq 5) OR ($dinfo.otype eq 6)">
                                         <if condition="($dinfo.status eq 51) OR ($dinfo.status eq 52)">
                                         <a data-tip="接单/拒单" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/orderreceive?id={$dinfo.id}" class="btn btn-success btn-icon">
                                             <i class="fa fa-pencil"></i>
                                         </a>
                                         </if>
-                                        <if condition="$dinfo.status eq 52">
+                                        <if condition="$dinfo.is_send eq 1">
                                             <a data-tip="发货" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/addexpress?id={$dinfo.id}" class="btn btn-success btn-icon">
                                                 <i class="fa fa-send"></i>
                                             </a>
                                         </if>
                                         <if condition="$dinfo.status eq 53">
-                                            <a data-tip="查看物流信息" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/getexpress?id={$dinfo.id}" class="btn btn-success btn-icon">
-                                                <i class="fa fa-reorder"></i>
+                                            <a data-tip="查看物流信息" title="{$dinfo.id}物流信息列表" target="navTab" rel="dishorder/expresslist" href="{$host_url}/smallapp/dishorder/expresslist?order_id={$dinfo.id}" class="btn btn-success btn-icon">
+                                                <i class="fa fa-list"></i>
                                             </a>
                                         </if>
                                     </if>

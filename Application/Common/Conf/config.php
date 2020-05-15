@@ -76,6 +76,7 @@ $config['DISH_STATUS'] = array(
 $config['DISH_TYPE'] = array(
     '21'=>'外卖',
     '22'=>'售全国',
+    '23'=>'赠送商品',
 );
 $config['DISH_FLAG'] = array(
     '1'=>'审核中',
@@ -104,7 +105,10 @@ $config['ORDER_ALLSTATUS'] = array(
     '51'=>'待处理',
     '52'=>'待发货',
     '53'=>'已派送',
-    '54'=>'已取消',
+    '61'=>'赠送中',
+    '62'=>'已过期',
+    '63'=>'获赠',
+
 );
 
 $config['GOODS_STATUS'] = array(

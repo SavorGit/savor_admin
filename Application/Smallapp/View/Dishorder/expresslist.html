@@ -1,0 +1,63 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/dishorder/expresslist" method="post" >
+    <input type="hidden" name="order_id" value="{$order_id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="form-group">
+            <h1>{$order_id}-物流信息列表</h1>
+          </div>
+        </div>
+      </div>
+      <div class="form-inline">
+        <div class="tools-group"></div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="top:85px">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>ID</th>
+            <th>订单ID</th>
+            <th>快递公司</th>
+            <th>物流单号</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="订单ID">{$dinfo.order_id}</td>
+              <td data-title="快递公司">{$dinfo.company}</td>
+              <td data-title="物流单号">{$dinfo.enum}</td>
+              <td data-title="创建时间">{$dinfo.add_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/addexpress?id={$dinfo.order_id}&eid={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                  <a data-tip="查看物流信息" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/getexpress?id={$dinfo.order_id}&eid={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-info"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>

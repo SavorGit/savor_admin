@@ -32,13 +32,14 @@ class DishgoodsController extends BaseController {
 
         $start  = ($page-1) * $size;
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
-        $fields = 'a.id,a.name,a.cover_imgs,a.intro,a.price,a.is_top,a.status,a.flag,a.gtype,a.add_time,
+        $fields = 'a.id,a.name,a.cover_imgs,a.intro,a.price,a.is_top,a.status,a.flag,a.gtype,a.add_time,a.type,
         user.nickName as staff_name,user.avatarUrl as staff_url,hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_goods->getDishList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
 
         $goods_status = C('DISH_STATUS');
         $goods_flag = C('DISH_FLAG');
+        $goods_types = C('DISH_TYPE');
         $oss_host = get_oss_host();
         foreach ($datalist as $k=>$v){
             $cover_imgsinfo = explode(',',$v['cover_imgs']);
@@ -56,6 +57,8 @@ class DishgoodsController extends BaseController {
             }else{
                 $datalist[$k]['localstr']='否';
             }
+            $datalist[$k]['typestr']=$goods_types[$v['type']];
+
             if($v['gtype']==1){
                 $datalist[$k]['gtypestr']='单品';
             }else{
@@ -86,22 +89,30 @@ class DishgoodsController extends BaseController {
 
     public function goodsadd(){
         $id = I('id', 0, 'intval');
+        $type = I('type', 0, 'intval');
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
+        $m_goodsactivity = new \Admin\Model\Smallapp\GoodsActivityModel();
         if(IS_GET){
             $detail_img_num = $cover_img_num = 6;
-            $merchant_id = $category_id =0;
+            $merchant_id = $category_id = $gift_goods_id = 0;
             $detailaddr = $coveraddr = array();
-            $dinfo = array('type'=>22,'amount'=>1,'gtype'=>1);
+            if($type==0){
+                $type = 22;
+            }
+            $dinfo = array('type'=>$type,'amount'=>1,'gtype'=>1);
 
             $goods_types = C('DISH_TYPE');
             if($id){
                 $m_media = new \Admin\Model\MediaModel();
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
-                if($dinfo['type']==21){
-                    unset($goods_types[22]);
-                }else{
-                    unset($goods_types[21]);
+                $type = $dinfo['type'];
+                if($type==22){
+                    $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$id));
+                    if(!empty($res_goods_activity)){
+                        $gift_goods_id = $res_goods_activity['gift_goods_id'];
+                    }
                 }
+
                 $poster_oss_addr = '';
                 if(!empty($dinfo['poster_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['poster_media_id']);
@@ -130,9 +141,23 @@ class DishgoodsController extends BaseController {
                         }
                     }
                 }
-            }else{
-                unset($goods_types[21]);
             }
+            foreach ($goods_types as $k=>$v){
+                if($k!=$type){
+                    unset($goods_types[$k]);
+                }
+            }
+
+            $res_agoods = $m_goods->getDataList('*',array('type'=>23,'status'=>1));
+            $activity_goods = array();
+            foreach ($res_agoods as $k=>$v){
+                $info = array('id'=>$v['id'],'name'=>$v['name'],'is_select'=>'');
+                if($v['id']==$gift_goods_id){
+                    $info['is_select'] = 'selected';
+                }
+                $activity_goods[]=$info;
+            }
+
             $m_category = new \Admin\Model\CategoryModel();
             $categorys = $m_category->getCategory($category_id,1,7);
 
@@ -171,6 +196,7 @@ class DishgoodsController extends BaseController {
             $this->assign('merchants',$merchants);
             $this->assign('goods_types',$goods_types);
             $this->assign('categorys',$categorys);
+            $this->assign('activity_goods',$activity_goods);
             $this->assign('vinfo',$dinfo);
             $this->display('goodsadd');
         }else{
@@ -194,17 +220,18 @@ class DishgoodsController extends BaseController {
             $flag = I('post.flag',0,'intval');
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $is_recommend = I('post.is_recommend',0,'intval');
+            $gift_goods_id = I('post.gift_goods_id',0,'intval');
 
-            if($type==22){
+            if($type==22 || $type==23){
                 if($price<$supply_price){
                     $this->output('零售价必须大于供货价', "dishgoods/goodsadd", 2, 0);
                 }
                 if($line_price && $line_price<$price){
                     $this->output('划线价必须大于零售价', "dishgoods/goodsadd", 2, 0);
                 }
-                if(empty($distribution_profit)){
-                    $distribution_profit = 0;
-                }
+            }
+            if(empty($distribution_profit)){
+                $distribution_profit = 0;
             }
 
             if($gtype==1 && !$price){
@@ -294,10 +321,22 @@ class DishgoodsController extends BaseController {
                 $result = $m_goods->add($data);
                 $goods_id = $result;
             }
-            if($type==22 && $gtype==2){
-                $res_allgoods = $m_goods->getDataList('*',array('parent_id'=>$goods_id,'status'=>1),'id desc',0,1);
-                if($res_allgoods['total']<=0){
-                    $m_goods->updateData(array('id'=>$goods_id),array('status'=>2,'flag'=>3));
+            if($type==22){
+                if($gtype==2){
+                    $res_allgoods = $m_goods->getDataList('*',array('parent_id'=>$goods_id,'status'=>1),'id desc',0,1);
+                    if($res_allgoods['total']<=0){
+                        $m_goods->updateData(array('id'=>$goods_id),array('status'=>2,'flag'=>3));
+                    }
+                }
+                $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$goods_id));
+                if(!empty($res_goods_activity)){
+                    if($res_goods_activity['gift_goods_id']!=$gift_goods_id){
+                        $gift_goods = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$goods_id);
+                        $m_goodsactivity->updateData(array('id'=>$res_goods_activity['id']),$gift_goods);
+                    }
+                }else{
+                    $gift_add = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$goods_id);
+                    $m_goodsactivity->addData($gift_add);
                 }
             }
             $m_merchant = new \Admin\Model\Integral\MerchantModel();
@@ -518,7 +557,7 @@ class DishgoodsController extends BaseController {
                     }
                     $add_data = array('attr_name'=>$model_name,'attr_ids'=>$attr_ids,'price'=>$now_price,'supply_price'=>$now_supply_price,
                         'line_price'=>$now_line_price,'distribution_profit'=>$distribution_profit,'amount'=>$now_amount,'model_media_id'=>$model_media_id,'parent_id'=>$goods_id,
-                        'merchant_id'=>$ginfo['merchant_id'],'gtype'=>3,'status'=>1,'flag'=>2);
+                        'merchant_id'=>$ginfo['merchant_id'],'type'=>22,'gtype'=>3,'status'=>1,'flag'=>2);
                     $tmp_goods_id = $m_goods->add($add_data);
 
                     $attr_ids_arr = explode('_',$add_data['attr_ids']);
@@ -538,16 +577,33 @@ class DishgoodsController extends BaseController {
     public function modelgoodsedit(){
         $id = I('id', 0, 'intval');
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
+        $m_goodsactivity = new \Admin\Model\Smallapp\GoodsActivityModel();
         if(IS_GET){
             $vinfo = $m_goods->getInfo(array('id'=>$id));
             $m_media = new \Admin\Model\MediaModel();
             $res_media = $m_media->getMediaInfoById($vinfo['model_media_id']);
             $vinfo['model_img'] = $res_media['oss_addr'];
+            $gift_goods_id = 0;
+            $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$id));
+            if(!empty($res_goods_activity)){
+                $gift_goods_id = $res_goods_activity['gift_goods_id'];
+            }
+            $res_agoods = $m_goods->getDataList('*',array('type'=>23,'status'=>1));
+            $activity_goods = array();
+            foreach ($res_agoods as $k=>$v){
+                $info = array('id'=>$v['id'],'name'=>$v['name'],'is_select'=>'');
+                if($v['id']==$gift_goods_id){
+                    $info['is_select'] = 'selected';
+                }
+                $activity_goods[]=$info;
+            }
 
+            $this->assign('activity_goods',$activity_goods);
             $this->assign('vinfo',$vinfo);
             $this->display('modelgoodsedit');
         }else{
             $model_media_id = I('post.model_media_id',0,'intval');
+            $gift_goods_id = I('post.gift_goods_id',0,'intval');
             $price = I('post.price',0);
             $amount = I('post.amount',0,'intval');
             $supply_price = I('post.supply_price',0);
@@ -579,6 +635,18 @@ class DishgoodsController extends BaseController {
             }
             $data['status'] = $status;
             $m_goods->updateData(array('id'=>$id),$data);
+
+            $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$id));
+            if(!empty($res_goods_activity)){
+                if($res_goods_activity['gift_goods_id']!=$gift_goods_id){
+                    $gift_goods = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$id);
+                    $m_goodsactivity->updateData(array('id'=>$res_goods_activity['id']),$gift_goods);
+                }
+            }else{
+                $gift_add = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$id);
+                $m_goodsactivity->addData($gift_add);
+            }
+
             $this->output('录入完成', 'dishgoods/modelgoods');
         }
 
