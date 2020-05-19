@@ -61,7 +61,7 @@ class DishorderController extends BaseController {
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\OrderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
-        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,
+        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,
         hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_order->getOrderList($fields,$where, 'a.add_time desc', $start, $size);
         $datalist = $result['list'];
@@ -111,7 +111,7 @@ class DishorderController extends BaseController {
 
 
                 $is_send = 0;
-                if(in_array($v['status'],array(52,53,63))){
+                if(in_array($v['status'],array(52,53,63)) && !empty($v['address'])){
                     $is_send = 1;
                 }
                 $datalist[$k]['is_send'] = $is_send;
@@ -318,7 +318,7 @@ class DishorderController extends BaseController {
     public function getexpress(){
         $express_id = I('eid',0,'intval');
         $order_id = I('id',0,'intval');
-        $url = 'http://'.C('SAVOR_API_URL')."/Smallsale19/express/getExpress?order_id=$order_id&express_id=$eid";
+        $url = 'http://'.C('SAVOR_API_URL')."/Smallsale19/express/getExpress?order_id=$order_id&express_id=$express_id";
         $curl = new \Common\Lib\Curl();
         $response = json_encode(array());
         $curl::get($url,$response,5);

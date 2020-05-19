@@ -326,17 +326,25 @@ class DishgoodsController extends BaseController {
                     $res_allgoods = $m_goods->getDataList('*',array('parent_id'=>$goods_id,'status'=>1),'id desc',0,1);
                     if($res_allgoods['total']<=0){
                         $m_goods->updateData(array('id'=>$goods_id),array('status'=>2,'flag'=>3));
+                    }else{
+                        $m_goods->updateData(array('parent_id'=>$goods_id),array('is_localsale'=>$is_localsale));
                     }
                 }
                 $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$goods_id));
                 if(!empty($res_goods_activity)){
-                    if($res_goods_activity['gift_goods_id']!=$gift_goods_id){
-                        $gift_goods = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$goods_id);
-                        $m_goodsactivity->updateData(array('id'=>$res_goods_activity['id']),$gift_goods);
+                    if($gift_goods_id){
+                        if($res_goods_activity['gift_goods_id']!=$gift_goods_id){
+                            $gift_goods = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$goods_id);
+                            $m_goodsactivity->updateData(array('id'=>$res_goods_activity['id']),$gift_goods);
+                        }
+                    }else{
+                        $m_goodsactivity->delData(array('id'=>$res_goods_activity['id']));
                     }
                 }else{
-                    $gift_add = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$goods_id);
-                    $m_goodsactivity->addData($gift_add);
+                    if($gift_goods_id){
+                        $gift_add = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$goods_id);
+                        $m_goodsactivity->addData($gift_add);
+                    }
                 }
             }
             $m_merchant = new \Admin\Model\Integral\MerchantModel();
@@ -366,7 +374,6 @@ class DishgoodsController extends BaseController {
                 $specifications[]=array('id'=>$v['id'],'name'=>$v['name'],'sort'=>$v['sort'],'is_select'=>'');
             }
             $specifications[0]['is_select'] = 'selected';
-
             $this->assign('goods_id',$goods_id);
             $this->assign('specifications',$specifications);
             $this->display();
@@ -638,13 +645,19 @@ class DishgoodsController extends BaseController {
 
             $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$id));
             if(!empty($res_goods_activity)){
-                if($res_goods_activity['gift_goods_id']!=$gift_goods_id){
-                    $gift_goods = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$id);
-                    $m_goodsactivity->updateData(array('id'=>$res_goods_activity['id']),$gift_goods);
+                if($gift_goods_id){
+                    if($res_goods_activity['gift_goods_id']!=$gift_goods_id){
+                        $gift_goods = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$id);
+                        $m_goodsactivity->updateData(array('id'=>$res_goods_activity['id']),$gift_goods);
+                    }
+                }else{
+                    $m_goodsactivity->delData(array('id'=>$res_goods_activity['id']));
                 }
             }else{
-                $gift_add = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$id);
-                $m_goodsactivity->addData($gift_add);
+                if($gift_goods_id){
+                    $gift_add = array('gift_goods_id'=>$gift_goods_id,'goods_id'=>$id);
+                    $m_goodsactivity->addData($gift_add);
+                }
             }
 
             $this->output('录入完成', 'dishgoods/modelgoods');
