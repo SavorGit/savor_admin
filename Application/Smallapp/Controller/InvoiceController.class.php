@@ -20,7 +20,8 @@ class InvoiceController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $where = array('a.buy_type'=>1,'a.status'=>12);//10已下单 11支付失败 12支付成功
+//        $where = array('a.buy_type'=>1,'a.status'=>12);//10已下单 11支付失败 12支付成功
+        $where = array('o.id'=>array('gt',0));
         if($start_date && $end_date){
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
@@ -32,14 +33,14 @@ class InvoiceController extends BaseController {
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
         if($status){
-            $where['i.status'] = $status;
+            $where['a.status'] = $status;
         }
 
         $start  = ($page-1) * $size;
-        $m_order  = new \Admin\Model\Smallapp\OrderModel();
-        $fields = 'a.id,a.goods_id,a.price,a.amount,a.total_fee,i.status as invoice_status,i.type as invoice_type,
-        i.contact,i.phone,i.address,i.email,i.id as invoice_id';
-        $result = $m_order->getOrderInvoiceList($fields,$where, 'a.id desc', $start, $size);
+        $m_orderinvoice = new \Admin\Model\Smallapp\OrderinvoiceModel();
+        $fields = 'o.id,o.amount,o.total_fee,a.status as invoice_status,a.type as invoice_type,
+        a.contact,a.phone,a.address,a.email,a.id as invoice_id,a.company,a.credit_code,a.title_type';
+        $result = $m_orderinvoice->getOrderInvoiceList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
 
         $all_invoice_status = C('INVOICE_STATUS');
@@ -53,11 +54,17 @@ class InvoiceController extends BaseController {
             }else{
                 $invoice_status_str = '';
             }
-            if(!empty($v['invoice_status'])){
+            if(isset($all_invoice_type[$v['invoice_type']])){
                 $invoice_type_str = $all_invoice_type[$v['invoice_type']];
             }else{
-                $invoice_type_str = '';
+                $invoice_type_str = '电子发票';
             }
+            if($v['title_type']==1){
+                $title_str = '企业';
+            }else{
+                $title_str = '个人';
+            }
+            $datalist[$k]['title_str'] = $title_str;
             $datalist[$k]['invoice_status_str'] = $invoice_status_str;
             $datalist[$k]['invoice_type_str'] = $invoice_type_str;
         }
@@ -135,6 +142,14 @@ class InvoiceController extends BaseController {
             $this->output('操作完成', 'invoice/invoicelist');
 
         }else{
+            if($res_orderinvoice['type']==0){
+                $res_orderinvoice['type'] = 2;
+            }
+            if($res_orderinvoice['title_type']==1){
+                $res_orderinvoice['title_str'] = '企业';
+            }else{
+                $res_orderinvoice['title_str'] = '个人';
+            }
             $this->assign('vinfo',$res_orderinvoice);
             $this->display('editinvoice');
         }

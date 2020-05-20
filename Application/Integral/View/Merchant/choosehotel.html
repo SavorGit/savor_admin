@@ -6,6 +6,19 @@
     <div class="pageFormContent modal-body">
 
       <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          商家类型:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="mtype" id="merchant_type" class="form-control bs-select" data-size="20" required>
+            <volist name=":C('MERCHANT_TYPE')" id="vo">
+              <option value="{$key}" <if condition="$vinfo['mtype'] eq $key"> selected </if> > {$vo}</option>
+            </volist>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row" id="choose_hotel">
         <label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
         <div class="col-xs-12 col-sm-10  form-inline">
           <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" >
@@ -17,6 +30,14 @@
         </div>
       </div>
 
+      <div class="form-group row" id="hotel_name">
+        <label class="col-xs-12 col-sm-2 control-label">商家名称：</label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="hotel_name" type="text" value="{$vinfo.hotel_name}" class="form-control" />
+        </div>
+      </div>
+
+
     </div>
   <div class="modal-footer">
     <button class="btn btn-default close-m" type="button">取消</button>
@@ -24,3 +45,16 @@
   </div>
 </form>
 </div>
+<script>
+    $('#merchant_type').change(function() {
+        if($(this).val()==1){
+            $('#hotel_name').hide();
+            $('#choose_hotel').show();
+        }else{
+            $('#hotel_name').show();
+            $('#choose_hotel').hide();
+
+        }
+    })
+    $('#merchant_type').trigger('change');
+</script>

@@ -5,24 +5,43 @@
         <input name="step" type="hidden" value="4"/>
         <div class="pageFormContent modal-body">
 
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    是否绑定管理员:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="is_bind" id="is_bind" class="form-control bs-select" data-size="20">
+                        <option value="1" >是</option>
+                        <option value="2" >否</option>
+                    </select>
+                </div>
+            </div>
+            <div id="admin_info">
             <div class="form-group row ">
                 <label class="col-xs-12 col-sm-2 control-label">管理员姓名：</label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="name" type="text" value="{$merchant_info.name}" class="form-control"  minlength="1" maxlength="10" required />
+                    <input name="name" type="text" value="{$merchant_info.name}" class="form-control"  minlength="1" maxlength="10" />
                 </div>
             </div>
 
             <div class="form-group row ">
                 <label class="col-xs-12 col-sm-2 control-label">管理员职务：</label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="job" type="text" value="{$merchant_info.job}" class="form-control" minlength="1" maxlength="10" required />
+                    <input name="job" type="text" value="{$merchant_info.job}" class="form-control" minlength="1" maxlength="10" />
                 </div>
             </div>
 
             <div class="form-group row ">
                 <label class="col-xs-12 col-sm-2 control-label">手机号码：</label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="mobile" type="text" value="{$merchant_info.mobile}" class="form-control" maxlength="11" required />
+                    <input name="mobile" type="text" value="{$merchant_info.mobile}" class="form-control" maxlength="11" />
+                </div>
+            </div>
+            </div>
+            <div class="form-group row " id="service_tel">
+                <label class="col-xs-12 col-sm-2 control-label">客服电话：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="tel" type="text" value="{$merchant_info.tel}" class="form-control" maxlength="11" />
                 </div>
             </div>
 
@@ -34,3 +53,15 @@
         </div>
     </form>
 </div>
+<script>
+    $('#is_bind').change(function() {
+        if($(this).val()==1){
+            $('#service_tel').hide();
+            $('#admin_info').show();
+        }else{
+            $('#admin_info').hide();
+            $('#service_tel').show();
+        }
+    })
+    $('#is_bind').trigger('change');
+</script>

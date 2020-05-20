@@ -1,0 +1,156 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/dishgoods/goodslist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd?type=23" title="新增赠送商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增赠送商品</a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+            <div class="form-inline">
+
+              <div class="form-group">
+                <div class="input-group input-group-sm">城市：</div>
+                <div class="input-group">
+                    <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name="area" id="vo">
+                            <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                        </volist>
+                    </select>
+                </div>
+              </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">上架状态：</div>
+                <div class="input-group">
+                    <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name=":C('DISH_STATUS')" id="oinfo">
+                            <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">类型：</div>
+                <div class="input-group">
+                    <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name=":C('DISH_TYPE')" id="tinfo">
+                            <option value="{$key}" <if condition="$key eq $type">selected</if>>{$tinfo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+            <if condition="$type eq 22">
+            <div class="form-group">
+                <div class="input-group input-group-sm">审核状态：</div>
+                <div class="input-group">
+                    <select name="flag" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name=":C('DISH_FLAG')" id="finfo">
+                            <option value="{$key}" <if condition="$key eq $flag">selected</if>>{$finfo}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+            </if>
+
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="酒楼名称">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+              </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>价格</th>
+                        <th>图片</th>
+                        <th>商品类型</th>
+                        <th>单品/多型号</th>
+                        <th>上/下架</th>
+                        <th>是否本地有售</th>
+                        <th>所在城市</th>
+                        <th>酒楼名称</th>
+                        <if condition="$type eq 22"><th>审核状态</th></if>
+                        <th>上传者昵称</th>
+                        <th>上传者头像</th>
+                        <th>创建时间</th>
+                        <th class="table-tool">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <volist name="datalist" id="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID">{$dinfo.id}</td>
+                            <td data-title="名称">{$dinfo.name}</td>
+                            <td data-title="价格">{$dinfo.price}</td>
+                            <td data-title="图片"><a href="{$dinfo.image}" target="_blank"><img src="{$dinfo.image}" ></a></td>
+                            <td data-title="商品类型">{$dinfo.typestr}</td>
+                            <td data-title="单品/多型号">{$dinfo.gtypestr}</td>
+                            <td data-title="上/下架">{$dinfo.statusstr}</td>
+                            <td data-title="是否本地有售">{$dinfo.localstr}</td>
+                            <td data-title="所在城市">{$dinfo.area_name}</td>
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+                            <if condition="$type eq 22"> <td data-title="审核状态">{$dinfo.flagstr}</td></if>
+                            <td data-title="上传者昵称">{$dinfo.staff_name}</td>
+                            <td data-title="上传者头像"><a href="{$dinfo.staff_url}" target="_blank"><img src="{$dinfo.staff_url}" ></a></td>
+                            <td data-title="创建时间">{$dinfo.add_time}</td>
+                            <td class="table-tool" data-title="操作">
+                                <div class="tools-edit">
+                                    <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/dishgoods/goodsadd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <if condition="$dinfo['gtype'] eq 2">
+                                    <a data-tip="多型号列表" title="{$dinfo.name}多型号列表" target="navTab" rel="dishgoods/modelgoods" href="{$host_url}/smallapp/dishgoods/modelgoods?goods_id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-list"></i>
+                                    </a>
+                                    </if>
+
+
+                                    <if condition="$dinfo['status'] eq 1">
+                                        <a data-tip="已上线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                                        <i class="fa fa-toggle-on"></i></span></a>
+                                    <elseif condition="$dinfo['status'] eq 2"/>
+                                        <a data-tip="已下线" target="ajaxTodo" href="{$host_url}/smallapp/dishgoods/changestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                                        <i class="fa fa-toggle-off"></i></span></a>
+                                    </if>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>

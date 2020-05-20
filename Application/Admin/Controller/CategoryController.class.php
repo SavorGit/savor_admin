@@ -34,7 +34,7 @@ class CategoryController extends BaseController {
         $start  = ($page-1) * $size;
         $m_category  = new \Admin\Model\CategoryModel();
         $result = $m_category->getCustomList($where, 'id desc', $start, $size);
-        $all_types = array(0=>'',1=>'内容',2=>'场景',3=>'人员属性',4=>'饭局性质',5=>'内容所用软件',6=>'欢迎词背景图分类');
+        $all_types = array(0=>'',1=>'内容',2=>'场景',3=>'人员属性',4=>'饭局性质',5=>'内容所用软件',6=>'欢迎词背景图分类',7=>'商城分类');
         foreach ($result['list'] as $k=>$v){
         	$trees = $m_category->get_category_tree($v['id']);
         	if(!empty($trees)){

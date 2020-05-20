@@ -1,0 +1,100 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/goods/rdgoodslist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/goods/rdgoodsadd?type=11" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
+          </div>
+        </div>
+        
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+            <div class="form-inline">
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">时间：</div>
+                <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                    <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                    <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+                <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                    <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                    <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="商品名称">
+            <span class="input-group-btn">
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >全部</option>
+                <volist name=":C('GOODS_STATUS')" id="oinfo">
+                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$oinfo}</option><br>
+                </volist>
+              </select>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>名称</th>
+              <th>价格</th>
+              <th>资源类型</th>
+              <th>状态</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
+              <td data-title="价格">{$dinfo.price}</td>
+              <td data-title="资源类型">{$dinfo.media_typestr}</td>
+              <td data-title="状态">{$dinfo.statusstr}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a title="修改商品" data-tip="修改商品" target="dialog" mask="true" href="{$host_url}/smallapp/goods/rdgoodsadd?id={$dinfo.id}&type=11" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

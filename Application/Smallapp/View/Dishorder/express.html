@@ -1,0 +1,42 @@
+<div class="pageContent">
+    <form method="post" action="#" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">订单ID：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" value="{$vinfo.order_id}" class="form-control" readonly/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">物流单号：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" value="{$vinfo.enum}" class="form-control" readonly/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">物流公司：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" value="{$vinfo.company}" class="form-control" readonly/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">状态：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" value="{$vinfo.state_str}" class="form-control" readonly/>
+                </div>
+            </div>
+        <foreach name="vinfo.data" item="dinfo">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">{$dinfo.time}：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <label class="control-label">{$dinfo.context}</label>
+                </div>
+            </div>
+        </foreach>
+
+    </div>
+<div class="modal-footer">
+    <button class="btn btn-default close-m" type="button">确定</button>
+</div>
+</form>
+</div>

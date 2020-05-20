@@ -84,7 +84,6 @@ class WelcomeController extends BaseController {
         $this->assign('play_type',$play_type);
         $this->assign('area_id',$area_id);
         $this->assign('status',$status);
-        $this->assign('hotel_name',$hotel_name);
         $this->assign('area', $area_arr);
         $this->assign('hotel_name',$hotel_name);
         $this->assign('datalist', $datalist);

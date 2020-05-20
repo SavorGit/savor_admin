@@ -116,19 +116,47 @@ class WelcomeModel extends BaseModel{
                     }
 
                     $message['play_times'] = $playtime;
-                    $push_message = json_encode($message);
 
+                    $m_staff = new \Admin\Model\Integral\StaffModel();
+                    $m_user = new \Common\Model\Smallapp\UserModel();
                     if($v['type']==2){
                         $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1);
-                        $res_box = $m_box->getBoxByCondition('box.mac as box_mac',$box_where);
+                        $res_box = $m_box->getBoxByCondition('box.room_id,room.hotel_id,box.mac as box_mac',$box_where);
                         foreach ($res_box as $bv){
+                            $res_staff = $m_staff->getInfo(array('hotel_id'=>$bv['hotel_id'],'room_id'=>$bv['room_id']));
+                            $message['type'] = 1;
+                            $message['waiterName'] = '';
+                            $message['waiterIconUrl'] = '';
+                            if(!empty($res_staff)){
+                                $message['type'] = 2;
+                                $where_user = array('openid'=>$res_staff['openid']);
+                                $res_user = $m_user->getOne('id as user_id,avatarUrl,nickName',$where_user,'id desc');
+                                $message['waiterName'] = $res_user['nickName'];
+                                $message['waiterIconUrl'] = $res_user['avatarUrl'];
+                            }
+
+                            $push_message = json_encode($message);
                             $res_netty = $m_netty->pushBox($bv['box_mac'],$push_message);
                             if(isset($res_netty['error_code']) && $res_netty['error_code']==90109){
                                 $res_netty = $m_netty->pushBox($bv['box_mac'],$push_message);
                             }
                         }
-
                     }else{
+                        $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1);
+                        $res_box = $m_box->getInfoByCondition('box.room_id,room.hotel_id',$box_where);
+                        $res_staff = $m_staff->getInfo(array('hotel_id'=>$res_box['hotel_id'],'room_id'=>$res_box['room_id']));
+                        $message['type'] = 1;
+                        $message['waiterName'] = '';
+                        $message['waiterIconUrl'] = '';
+                        if(!empty($res_staff)){
+                            $message['type'] = 2;
+                            $where_user = array('openid'=>$res_staff['openid']);
+                            $res_user = $m_user->getOne('id as user_id,avatarUrl,nickName',$where_user,'id desc');
+                            $message['waiterName'] = $res_user['nickName'];
+                            $message['waiterIconUrl'] = $res_user['avatarUrl'];
+                        }
+
+                        $push_message = json_encode($message);
                         $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);
                         if(isset($res_netty['error_code']) && $res_netty['error_code']==90109){
                             $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);

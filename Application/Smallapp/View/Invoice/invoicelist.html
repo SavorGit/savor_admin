@@ -60,10 +60,12 @@
           <thead>
             <tr id="post">
               <th>订单编号</th>
-              <th>订单商品</th>
               <th>订单数量</th>
               <th>订单金额</th>
               <th>发票类型</th>
+              <th>抬头类型</th>
+              <th>公司</th>
+              <th>税号</th>
               <th>联系人</th>
               <th>联系电话</th>
               <th>邮寄地址</th>
@@ -76,10 +78,12 @@
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
               <td data-title="订单编号"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="订单商品">{$dinfo.goods_name}</td>
               <td data-title="订单数量">{$dinfo.amount}</td>
               <td data-title="订单金额">{$dinfo.total_fee}</td>
               <td data-title="发票类型">{$dinfo.invoice_type_str}</td>
+              <td data-title="抬头类型">{$dinfo.title_str}</td>
+              <td data-title="公司">{$dinfo.company}</td>
+              <td data-title="税号">{$dinfo.credit_code}</td>
               <td data-title="联系人">{$dinfo.contact}</td>
               <td data-title="联系电话">{$dinfo.phone}</td>
               <td data-title="邮寄地址">{$dinfo.address}</td>
@@ -87,7 +91,7 @@
               <td data-title="状态">{$dinfo.invoice_status_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                    <if condition="($dinfo.invoice_status gt 0) AND ($dinfo['invoice_status'] neq 4)">
+                    <if condition="$dinfo.invoice_status neq 4">
                     <a title="发票信息" data-tip="发票信息" target="dialog" mask="true" href="{$host_url}/smallapp/invoice/editinvoice?id={$dinfo.invoice_id}" class="btn btn-success btn-icon">
                         <i class="fa fa-money"></i>
                     </a>

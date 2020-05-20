@@ -86,7 +86,7 @@ class TaskController extends BaseController {
                     $task_content['lunch_end_time']     = I('post.activity_lunch_end_time');
                     $task_content['dinner_start_time']  = I('post.activity_dinner_start_time');
                     $task_content['dinner_end_time']    = I('post.activity_dinner_end_time');
-                    $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
+                    $task_content['max_daily_integral'] = I('post.activity_max_daily_integral',0,'intval');
                     $task_content['user_promote']['type'] = I('post.user_promote',0,'intval');
                     $task_content['user_promote']['value'] = I('post.user_promote_'.$task_content['user_promote']['type'],0,'intval');
                 }
@@ -97,15 +97,21 @@ class TaskController extends BaseController {
             $data['flag']   = 1;
             $userinfo = session('sysUserInfo');
             $data['uid'] = $userinfo['id'];
+
+            if($data['is_shareprofit']){
+                $shareprofit_level1 = I('post.shareprofit_level1',0,'intval');
+                $shareprofit_level2 = I('post.shareprofit_level2',0,'intval');
+                if($shareprofit_level1+$shareprofit_level2!=100){
+                    $this->output('分润设置不合理', "task/index",2,0);
+                }
+            }
+
             $ret = $m_task->addData($data);
             
             if($ret){
                 if($data['is_shareprofit']){
                     $shareprofit_level1 = I('post.shareprofit_level1',0,'intval');
                     $shareprofit_level2 = I('post.shareprofit_level2',0,'intval');
-                    if($shareprofit_level1+$shareprofit_level2!=100){
-                        $this->output('分润设置不合理', "task/index",2,0);
-                    }
                     $m_taskshareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
                     $add_data = array('task_id'=>$ret,'level1'=>$shareprofit_level1,'level2'=>$shareprofit_level2);
                     $m_taskshareprofit->add($add_data);

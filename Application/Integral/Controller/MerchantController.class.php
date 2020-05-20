@@ -19,7 +19,7 @@ class MerchantController extends BaseController {
 
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $start  = ($page-1) * $size;
-        $fields = 'a.id,hotel.name as hotel_name,area.region_name as city,a.rate_groupid,a.name,a.job,a.mobile,a.sysuser_id,a.status,ext.maintainer_id';
+        $fields = 'a.id,hotel.name as hotel_name,area.region_name as city,a.rate_groupid,a.name,a.job,a.mobile,a.sysuser_id,a.status,a.add_time,ext.maintainer_id';
         $where = array();
         if($area_id)    $where['area.id']=$area_id;
         if($status)    $where['a.status']=$status;
@@ -111,11 +111,17 @@ class MerchantController extends BaseController {
                 $merchant_info = session($id);
             }
         }
+        $mtype = 1;
         if(!empty($merchant_info)){
             if(!empty($merchant_info[1])){
-                $m_hotel = new \Admin\Model\HotelModel();
-                $res = $m_hotel->getOne($merchant_info[1]);
-                $merchant_info['step1'] = $res['name'];
+                $mtype = $merchant_info[1]['mtype'];
+                if($mtype==1){
+                    $m_hotel = new \Admin\Model\HotelModel();
+                    $res = $m_hotel->getOne($merchant_info[1]['hotel_id']);
+                    $merchant_info['step1'] = $res['name'];
+                }else{
+                    $merchant_info['step1'] = $merchant_info[1]['hotel_name'];
+                }
             }
             if(!empty($merchant_info[2])){
                 $m_servicemodel = new \Admin\Model\Integral\ServiceMxModel();
@@ -133,12 +139,17 @@ class MerchantController extends BaseController {
                 $merchant_info['step3'] = "渠道商：{$channel_merchant[$channel_id]}，商城汇率：{$group_rate[$rate_groupid]}，兑现汇率：{$cash_rate}，充值汇率：{$recharge_rate}";
             }
             if(!empty($merchant_info[4])){
-                $merchant_info['step4'] = "姓名：{$merchant_info[4]['name']}，职务：{$merchant_info[4]['job']}，手机号码：{$merchant_info[4]['mobile']}";
+                if($merchant_info[1]['mtype']==1){
+                    $merchant_info['step4'] = "姓名：{$merchant_info[4]['name']}，职务：{$merchant_info[4]['job']}，手机号码：{$merchant_info[4]['mobile']}";
+                }else{
+                    $merchant_info['step4'] = "客服电话：{$merchant_info[4]['tel']}";
+                }
             }
         }
         $this->assign('merchant_info',$merchant_info);
         $this->assign('id',$id);
         $this->assign('merchant_id',$merchant_id);
+        $this->assign('mtype',$mtype);
         $this->display('merchantadd');
     }
 
@@ -159,25 +170,36 @@ class MerchantController extends BaseController {
         switch ($step){
             case 1:
                 if(IS_POST){
+                    $mtype = I('mtype',1,'intval');
                     $hotel_id = I('hotel_id',0,'intval');
+                    $hotel_name = I('hotel_name','','trim');
                     $m_merchant = new \Admin\Model\Integral\MerchantModel();
                     $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
                     if(!empty($res_merchant)){
                         $this->output('该酒楼已经创建过商家','merchant/merchantadd',2,0);
                     }
-                    if($merchant_id){
-                        $m_merchant->updateData(array('id'=>$merchant_id),array('hotel_id'=>$hotel_id));
+                    if($mtype==1){
+                        if($merchant_id && $hotel_id){
+                            $m_merchant->updateData(array('id'=>$merchant_id),array('hotel_id'=>$hotel_id));
+                        }
+                        $merchant_info[$step] = array('hotel_id'=>$hotel_id,'hotel_name'=>'','mtype'=>$mtype);
                     }else{
-                        $merchant_info[$step] = $hotel_id;
-                        session($id,$merchant_info);
+                        if(empty($hotel_name)){
+                            $this->output('请输入商家名称','merchant/merchantadd',2,0);
+                        }
+                        $merchant_info[$step] = array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'mtype'=>$mtype);
+                        $merchant_info[2] = 1;
+                        $merchant_info[3] = array('channel_id'=>1,'rate_groupid'=>100,'cash_rate'=>1,'recharge_rate'=>1);
                     }
+                    session($id,$merchant_info);
                     $this->output('操作成功', 'merchant/merchantadd');
                 }else{
                     if($merchant_id){
                         $hotel_id = $merchant_info['hotel_id'];
                     }else{
-                        $hotel_id = $merchant_info[1];
+                        $hotel_id = $merchant_info[1]['hotel_id'];
                     }
+                    $hotel_id = intval($hotel_id);
                     $m_hotel = new \Admin\Model\HotelModel();
                     $where = array('state'=>1,'flag'=>0);
                     $field = 'id,name';
@@ -189,8 +211,13 @@ class MerchantController extends BaseController {
                             $hotels[$k]['is_select'] = '';
                         }
                     }
+                    $mtype = $merchant_info[1]['mtype'];
+                    $hotel_name = $merchant_info[1]['hotel_name'];
+
                     $this->assign('hotel_id',$hotel_id);
                     $this->assign('hotels',$hotels);
+                    $this->assign('mtype',$mtype);
+                    $this->assign('hotel_name',$hotel_name);
                     $this->display('choosehotel');
                 }
                 break;
@@ -262,30 +289,37 @@ class MerchantController extends BaseController {
                 break;
             case 4:
                 if(IS_POST){
-                    $name = I('name','','trim');
-                    $job = I('job','','trim');
-                    $mobile = I('mobile','','trim');
-                    if(!isMobile($mobile)){
-                        $this->output('请输入正确的手机号码', 'merchant/merchantadd',2,0);
-                    }
-                    $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile,'status'=>1));
-                    if(!empty($res_merchant_mobile)){
-                        $this->output("该手机号码已创建商家", 'merchant/merchantadd',2,0);
-                    }
+                    $minfo = session($id);
+                    if($minfo[1]['mtype']==1){
+                        $name = I('name','','trim');
+                        $job = I('job','','trim');
+                        $mobile = I('mobile','','trim');
+                        if(!isMobile($mobile)){
+                            $this->output('请输入正确的手机号码', 'merchant/merchantadd',2,0);
+                        }
+                        $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile,'status'=>1));
+                        if(!empty($res_merchant_mobile)){
+                            $this->output("该手机号码已创建商家", 'merchant/merchantadd',2,0);
+                        }
 
-                    $add_info = array('name'=>$name,'job'=>$job,'mobile'=>$mobile);
-                    if($merchant_id){
-                        $m_merchant->updateData(array('id'=>$merchant_id),$add_info);
-                        if($mobile!=$merchant_info['mobile']){
-                            $m_hotel = new \Admin\Model\HotelModel();
-                            $res_hotel = $m_hotel->getOne($merchant_info['hotel_id']);
-                            $sms_config = C('ALIYUN_SMS_CONFIG');
-                            $alisms = new \Common\Lib\AliyunSms();
-                            $params = array('hotel_name'=>$res_hotel['name'],'code'=>$merchant_info['code']);
-                            $template_code = $sms_config['merchant_login_invite_code'];
-                            $alisms::sendSms($mobile,$params,$template_code);
+                        $add_info = array('name'=>$name,'job'=>$job,'mobile'=>$mobile);
+                        $merchant_info[$step] = $add_info;
+                        session($id,$merchant_info);
+                        if($merchant_id){
+                            $m_merchant->updateData(array('id'=>$merchant_id),$add_info);
+                            if($mobile!=$merchant_info['mobile']){
+                                $m_hotel = new \Admin\Model\HotelModel();
+                                $res_hotel = $m_hotel->getOne($merchant_info['hotel_id']);
+                                $sms_config = C('ALIYUN_SMS_CONFIG');
+                                $alisms = new \Common\Lib\AliyunSms();
+                                $params = array('hotel_name'=>$res_hotel['name'],'code'=>$merchant_info['code']);
+                                $template_code = $sms_config['merchant_login_invite_code'];
+                                $alisms::sendSms($mobile,$params,$template_code);
+                            }
                         }
                     }else{
+                        $tel = I('tel','','trim');
+                        $add_info = array('name'=>'','job'=>'','mobile'=>'','tel'=>$tel);
                         $merchant_info[$step] = $add_info;
                         session($id,$merchant_info);
                     }
@@ -310,60 +344,111 @@ class MerchantController extends BaseController {
                 }
                 $userinfo = session('sysUserInfo');
                 $sysuser_id = $userinfo['id'];
-                $data = array('hotel_id'=>$merchant_info[1],'service_model_id'=>$merchant_info[2],'channel_id'=>$merchant_info[3]['channel_id'],
-                    'rate_groupid'=>$merchant_info[3]['rate_groupid'],'cash_rate'=>$merchant_info[3]['cash_rate'],'recharge_rate'=>$merchant_info[3]['recharge_rate'],
-                    'name'=>$merchant_info[4]['name'],'job'=>$merchant_info[4]['job'],'mobile'=>$merchant_info[4]['mobile'],
-                    'sysuser_id'=>$sysuser_id,'status'=>1);
-
                 $m_hotel = new \Admin\Model\HotelModel();
-                $res_hotel = $m_hotel->getOne($data['hotel_id']);
 
-                $code_charter = '';
-                $s_hotel_name = mb_substr($res_hotel['name'], 0,2,'utf8');
-                if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
-                    $code_charter = $s_hotel_name;
-                }else {
+                $mtype = $merchant_info[1]['mtype'];
+                if($mtype==1){
+                    $hotel_id = $merchant_info[1]['hotel_id'];
+                }else{
+                    $res_hinfo = $m_hotel->getInfo('*',array('name'=>$merchant_info[1]['hotel_name']),'id desc','0,1');
+                    if(!empty($res_hinfo)){
+                        $this->output('步骤一名字重复', 'merchant/merchantadd',2,0);
+                    }
                     $pin = new \Common\Lib\Pin();
                     $obj_pin = new \Overtrue\Pinyin\Pinyin();
-                    $code_charter = $obj_pin->abbr($s_hotel_name);
-                    $code_charter  = strtolower($code_charter);
-                    if(strlen($code_charter)==1){
-                        $code_charter .=$code_charter;
+                    $code_charter = '';
+                    if(preg_match('/[a-zA-Z]/', $merchant_info[1]['hotel_name'])){
+                        $code_charter = $merchant_info[1]['hotel_name'];
+                    }else {
+                        $code_charter = $obj_pin->abbr($merchant_info[1]['hotel_name']);
+                        $code_charter = strtolower($code_charter);
+                        if(strlen($code_charter)==1){
+                            $code_charter .=$code_charter;
+                        }
                     }
-                }
-                $code_charter  = strtolower($code_charter);
-                $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
-                $invite_code = '';
-                $flag = 0;
-                while ($flag <20){
-                    $code_num = generate_code(6);
-                    $invite_code = $code_charter.$code_num;
-                    $where = array('code'=>$invite_code);
-                    $nums = $m_hotel_invite_code->countNums($where);
-                    if(empty($nums)){
-                        break;
+                    $hotel_data = array('name'=>$merchant_info[1]['hotel_name'],'tel'=>$merchant_info[4]['tel'],'state'=>1,'flag'=>0,
+                        'type'=>3,'sysuser_id'=>$sysuser_id);
+                    if($code_charter){
+                        $hotel_data['pinyin'] = strtolower($code_charter);
                     }
-                    $flag ++;
+                    $hotel_id = $m_hotel->add($hotel_data);
                 }
 
-                $invite_data = array('code'=>$invite_code,'hotel_id'=>$data['hotel_id'],'bind_mobile'=>$data['mobile'],
-                    'bind_time'=>date('Y-m-d H:i:s'),'type'=>2,'creator_id'=>$sysuser_id,'state'=>1);
-                $ret = $m_hotel_invite_code->addInfo($invite_data);
-                $res_merchant = false;
-                if($ret){
-                    $data['code'] = $invite_code;
-                    $m_merchant = new \Admin\Model\Integral\MerchantModel();
+                $data = array('hotel_id'=>$hotel_id,'service_model_id'=>$merchant_info[2],'channel_id'=>$merchant_info[3]['channel_id'],
+                    'rate_groupid'=>$merchant_info[3]['rate_groupid'],'cash_rate'=>$merchant_info[3]['cash_rate'],'recharge_rate'=>$merchant_info[3]['recharge_rate'],
+                    'name'=>$merchant_info[4]['name'],'job'=>$merchant_info[4]['job'],'mobile'=>$merchant_info[4]['mobile'],'mtype'=>$mtype,
+                    'sysuser_id'=>$sysuser_id,'status'=>1);
+
+                if($mtype==1){
+                    $res_hotel = $m_hotel->getOne($data['hotel_id']);
+                    $code_charter = '';
+                    $s_hotel_name = mb_substr($res_hotel['name'], 0,2,'utf8');
+                    if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                        $code_charter = $s_hotel_name;
+                    }else {
+                        $pin = new \Common\Lib\Pin();
+                        $obj_pin = new \Overtrue\Pinyin\Pinyin();
+                        $code_charter = $obj_pin->abbr($s_hotel_name);
+                        $code_charter  = strtolower($code_charter);
+                        if(strlen($code_charter)==1){
+                            $code_charter .=$code_charter;
+                        }
+                    }
+                    $code_charter  = strtolower($code_charter);
+                    $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
+                    $invite_code = '';
+                    $flag = 0;
+                    while ($flag <20){
+                        $code_num = generate_code(6);
+                        $invite_code = $code_charter.$code_num;
+                        $where = array('code'=>$invite_code);
+                        $nums = $m_hotel_invite_code->countNums($where);
+                        if(empty($nums)){
+                            break;
+                        }
+                        $flag ++;
+                    }
+
+                    $invite_data = array('code'=>$invite_code,'hotel_id'=>$data['hotel_id'],'bind_mobile'=>$data['mobile'],
+                        'bind_time'=>date('Y-m-d H:i:s'),'type'=>2,'creator_id'=>$sysuser_id,'state'=>1);
+                    $ret = $m_hotel_invite_code->addInfo($invite_data);
+                    $res_merchant = false;
+                    if($ret){
+                        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+                        $tmp_merchant = $m_merchant->getAll('*',array('hotel_id'=>$data['hotel_id'],'status'=>2),0,1,'id desc');
+                        $tmp_merchant_id = 0;
+                        $is_takeout = 0;
+                        $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+                        if(!empty($tmp_merchant)){
+                            $res_dishgoods = $m_dishgoods->getInfo(array('merchant_id'=>$tmp_merchant[0]['id']));
+                            if(!empty($res_dishgoods)){
+                                $tmp_merchant_id = $tmp_merchant[0]['id'];
+                                $is_takeout = $tmp_merchant[0]['is_takeout'];
+                            }
+                        }
+                        $data['code'] = $invite_code;
+                        $data['is_takeout'] = $is_takeout;
+                        $res_merchant = $m_merchant->addData($data);
+                        if($tmp_merchant_id){
+                            $m_dishgoods->updateData(array('merchant_id'=>$tmp_merchant_id),array('merchant_id'=>$res_merchant));
+                        }
+                    }
+                }else{
                     $res_merchant = $m_merchant->addData($data);
                 }
                 if($res_merchant){
-                    //发送短信
-                    $sms_config = C('ALIYUN_SMS_CONFIG');
-                    $alisms = new \Common\Lib\AliyunSms();
-                    $params = array('hotel_name'=>$res_hotel['name'],'code'=>$invite_code);
-                    $template_code = $sms_config['merchant_login_invite_code'];
-                    $alisms::sendSms($data['mobile'],$params,$template_code);
+                    if($mtype==1){
+                        //发送短信
+                        $sms_config = C('ALIYUN_SMS_CONFIG');
+                        $alisms = new \Common\Lib\AliyunSms();
+                        $params = array('hotel_name'=>$res_hotel['name'],'code'=>$invite_code);
+                        $template_code = $sms_config['merchant_login_invite_code'];
+                        $alisms::sendSms($data['mobile'],$params,$template_code);
 
-                    $message = "邀请码已通过短信的方式发送给了“{$res_hotel['name']}“的管理员请提醒其注意查收！";
+                        $message = "邀请码已通过短信的方式发送给了“{$res_hotel['name']}“的管理员请提醒其注意查收！";
+                    }else{
+                        $message = "非合作酒楼商家已注册成功";
+                    }
                     $this->output($message,'merchant/merchantlist');
                 }else{
                     $this->output('商家创建失败', 'merchant/merchantadd',2,0);
@@ -376,6 +461,12 @@ class MerchantController extends BaseController {
         $merchant_id = I('merchant_id',0,'intval');
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $merchant_info = $m_merchant->getInfo(array('id'=>$merchant_id));
+        $is_modify_name = $is_modify_job = $is_modify_mobile = 0;
+        if($merchant_info['mtype']==2){
+            if(empty($merchant_info['name']))       $is_modify_name = 1;
+            if(empty($merchant_info['job']))        $is_modify_job = 1;
+            if(empty($merchant_info['mobile']))     $is_modify_mobile = 1;
+        }
         $m_servicemodel = new \Admin\Model\Integral\ServiceMxModel();
         $fields = 'id,name';
         $where = array('status'=>1);
@@ -398,17 +489,13 @@ class MerchantController extends BaseController {
             $res_user = $m_sysuser->find($res_hotel['maintainer_id']);
             $maintainer = $res_user['remark'];
         }
-
-        $m_staff = new \Admin\Model\Integral\StaffModel();
-        $filter = array('merchant_id'=>$merchant_id,'status'=>1);
-        $filter['parent_id'] = array('gt',0);
-        $res_staff = $m_staff->getAll('*',$filter,0,1000,'level asc');
-
-
         $merchant_info['maintainer'] = $maintainer;
         $merchant_info['hotel_name'] = $res_hotel['hotel_name'];
         $merchant_info['city'] = $res_hotel['city'];
 
+        $this->assign('is_modify_name',$is_modify_name);
+        $this->assign('is_modify_job',$is_modify_job);
+        $this->assign('is_modify_mobile',$is_modify_mobile);
         $this->assign('smodels',$smodels);
         $this->assign('merchant_info',$merchant_info);
         $this->display();
@@ -448,12 +535,50 @@ class MerchantController extends BaseController {
             if(!empty($res_merchant_mobile)){
                 $this->output("该手机号码已创建商家", 'merchant/editdetail',2,0);
             }
-
             $m_hotel = new \Admin\Model\HotelModel();
             $res_hotel = $m_hotel->getOne($merchant_info['hotel_id']);
+
+            if($merchant_info['type']==2){
+                $code_charter = '';
+                $s_hotel_name = mb_substr($res_hotel['name'], 0,2,'utf8');
+                if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                    $code_charter = $s_hotel_name;
+                }else {
+                    $pin = new \Common\Lib\Pin();
+                    $obj_pin = new \Overtrue\Pinyin\Pinyin();
+                    $code_charter = $obj_pin->abbr($s_hotel_name);
+                    $code_charter  = strtolower($code_charter);
+                    if(strlen($code_charter)==1){
+                        $code_charter .=$code_charter;
+                    }
+                }
+                $code_charter  = strtolower($code_charter);
+                $m_hotel_invite_code = new \Admin\Model\HotelInviteCodeModel();
+                $invite_code = '';
+                $flag = 0;
+                while ($flag <20){
+                    $code_num = generate_code(6);
+                    $invite_code = $code_charter.$code_num;
+                    $where = array('code'=>$invite_code);
+                    $nums = $m_hotel_invite_code->countNums($where);
+                    if(empty($nums)){
+                        break;
+                    }
+                    $flag ++;
+                }
+                $invite_data = array('code'=>$invite_code,'hotel_id'=>$merchant_info['hotel_id'],'bind_mobile'=>$mobile,
+                    'bind_time'=>date('Y-m-d H:i:s'),'type'=>2,'creator_id'=>$sysuser_id,'state'=>1);
+                $ret = $m_hotel_invite_code->addInfo($invite_data);
+                if($ret){
+                    $add_info['code'] = $invite_code;
+                }
+            }else{
+                $invite_code = $merchant_info['code'];
+            }
+
             $sms_config = C('ALIYUN_SMS_CONFIG');
             $alisms = new \Common\Lib\AliyunSms();
-            $params = array('hotel_name'=>$res_hotel['name'],'code'=>$merchant_info['code']);
+            $params = array('hotel_name'=>$res_hotel['name'],'code'=>$invite_code);
             $template_code = $sms_config['merchant_login_invite_code'];
             $alisms::sendSms($mobile,$params,$template_code);
         }

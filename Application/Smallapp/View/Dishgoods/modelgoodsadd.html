@@ -1,0 +1,86 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/dishgoods/modelgoodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="goods_id" type="hidden" value="{$goods_id}"/>
+		<div class="pageFormContent modal-body">
+
+		<foreach name="specifications" item="sinfo" >
+
+			<hr style="height:1px;border:none;border-top:1px solid #555555;" />
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">编号{$sinfo.number} 具体型号信息：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="names[]" type="text" value="{$sinfo.name}" class="form-control" readonly/>
+					<input name="model_ids[]" type="hidden" value="{$sinfo.model_key}"/>
+				</div>
+			</div>
+
+			<div class="form-group row" id="shop_poster_img" >
+				<label class="col-xs-12 col-sm-2 control-label">
+					型号图片：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="javascript:void(0)">
+								<img id="{$sinfo.media_id}img" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<span id="{$sinfo.media_id}imgname"></span>
+							</a>
+						</div>
+						<span class="help-block" id="img-msg">请上传160x160像素的jpg格式图片，展示效果最佳</span>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$sinfo.media_id}&rtype=2" data-browse-file>
+								选择图片
+							</a>
+							<input type="hidden" name="{$sinfo.media_id}" id="{$sinfo.media_id}" value="" >
+							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_price">
+				<label class="col-xs-12 col-sm-2 control-label">价格：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="price[]" type="text" value="" class="form-control"/>
+				</div>
+			</div>
+
+
+			<div class="form-group row" id="sale_supply_price">
+				<label class="col-xs-12 col-sm-2 control-label">包邮供货价：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="supply_price[]" type="text" value="" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group row" id="sale_line_price">
+				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="line_price[]" type="text" value="" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group row" id="sale_distribution_profit">
+				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="distribution_profit[]" type="text" value="" min='0' max='0.8' class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group row" id="sale_amount">
+				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="amount[]" type="number" value="" class="form-control" min="1" max="999"/>
+				</div>
+			</div>
+
+		</foreach>
+
+
+	</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+	</form>
+</div>

@@ -508,7 +508,31 @@ class HotelController extends BaseController {
 			$vinfo['avg_expense']   = $res_hotelext['avg_expense'];
 			$vinfo['contract_expiretime']   = $res_hotelext['contract_expiretime'];
 			$vinfo['activity_contact']   = $res_hotelext['activity_contact'];
-			$vinfo['activity_phone']   = $res_hotelext['activity_phone'];
+			$vinfo['legal_name']   = $res_hotelext['legal_name'];
+			$vinfo['business_hours']   = $res_hotelext['business_hours'];
+			$vinfo['meal_time']   = $res_hotelext['meal_time'];
+
+			$legal_idcard = $legal_charter = array();
+            $oss_host = get_oss_host();
+			if(!empty($res_hotelext['legal_idcard'])){
+                $legal_idcard_arr = explode(',',$res_hotelext['legal_idcard']);
+                foreach ($legal_idcard_arr as $v){
+                    if(!empty($v)){
+                        $legal_idcard[]=$oss_host.$v;
+                    }
+                }
+            }
+            if(!empty($res_hotelext['legal_charter'])){
+                $legal_charter_arr = explode(',',$res_hotelext['legal_charter']);
+                foreach ($legal_charter_arr as $v){
+                    if(!empty($v)){
+                        $legal_charter[]=$oss_host.$v;
+                    }
+                }
+            }
+            $vinfo['legal_idcard'] = $legal_idcard;
+            $vinfo['legal_charter'] = $legal_charter;
+
 			$navtp = I('get.navtp');
 			//获取区/县id
 			$area_id = $vinfo['area_id'];
@@ -659,6 +683,9 @@ class HotelController extends BaseController {
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
         $is_open_integral = I('post.is_open_integral',0,'intval');
+        $legal_name = I('post.legal_name','','trim');
+        $business_hours = I('post.business_hours','');
+        $meal_time = I('post.meal_time',0,'intval');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -719,6 +746,25 @@ class HotelController extends BaseController {
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['county_id']           = I('post.county_id',0,'intval');
 		$save['media_id']             = I('post.media_id','0','intval');
+        $s_hotel_name = $save['name'];
+		if(!empty($s_hotel_name)){
+            $pin = new \Common\Lib\Pin();
+            $obj_pin = new \Overtrue\Pinyin\Pinyin();
+            $code_charter = '';
+            if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                $code_charter = $s_hotel_name;
+            }else {
+                $code_charter = $obj_pin->abbr($s_hotel_name);
+                $code_charter = strtolower($code_charter);
+                if(strlen($code_charter)==1){
+                    $code_charter .=$code_charter;
+                }
+            }
+            if($code_charter){
+                $save['pinyin'] = strtolower($code_charter);
+            }
+        }
+
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
@@ -774,6 +820,15 @@ class HotelController extends BaseController {
         }
         if($is_open_integral){
             $data['is_open_integral'] = $is_open_integral;
+        }
+        if(!empty($legal_name)){
+            $data['legal_name'] = $legal_name;
+        }
+        if(!empty($business_hours)){
+            $data['business_hours'] = $business_hours;
+        }
+        if(!empty($meal_time)){
+            $data['meal_time'] = $meal_time;
         }
 		$tranDb = new Model();
 		$tranDb->startTrans();

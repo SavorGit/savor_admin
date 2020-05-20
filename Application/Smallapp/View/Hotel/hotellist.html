@@ -1,0 +1,146 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hotel/hotellist" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">时间：</div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">城市：</div>
+                        <div class="input-group">
+                            <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                                <option value=0>全部</option>
+                                <volist name="area" id="vo">
+                                    <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                                </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">审核状态：</div>
+                        <div class="input-group">
+                            <select name="flag" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value='99' >全部</option>
+                                <volist name="all_flags" id="finfo">
+                                    <option value="{$key}" <if condition="$key eq $flag">selected</if> >{$finfo}</option><br>
+                                </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>酒楼名称</th>
+                        <th>地址</th>
+                        <th>城市</th>
+                        <th>菜系</th>
+                        <th>人均消费</th>
+                        <th>联系人</th>
+                        <th>电话</th>
+                        <th>订餐电话</th>
+                        <th>logo图</th>
+                        <th>门脸图</th>
+                        <th>环境图</th>
+                        <th>法人姓名</th>
+                        <th>法人身份证</th>
+                        <th>执照</th>
+                        <th>审核状态</th>
+                        <th>注册时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                            <td data-title="酒楼名称">{$dinfo.name}</td>
+                            <td data-title="地址">{$dinfo.addr}</td>
+                            <td data-title="城市">{$dinfo.area_name}</td>
+                            <td data-title="菜系">{$dinfo.food_style}</td>
+                            <td data-title="人均消费">{$dinfo.avg_expense}</td>
+                            <td data-title="联系人">{$dinfo.contractor}</td>
+                            <td data-title="电话">{$dinfo.mobile}</td>
+                            <td data-title="订餐电话">{$dinfo.tel}</td>
+                            <td data-title="法人姓名">{$dinfo.legal_name}</td>
+                            <td data-title="logo图"><a href="{$dinfo.logoimg}" target="_blank"><img src="{$dinfo.logoimg}" ></a></td>
+                            <td data-title="门脸图"><a href="{$dinfo.faceimg}" target="_blank"><img src="{$dinfo.faceimg}" ></a></td>
+                            <td data-title="环境图"><a href="{$dinfo.envimg}" target="_blank"><img src="{$dinfo.envimg}" ></a></td>
+                            <td data-title="法人身份证">
+                                <volist name="dinfo.idcard_imgs" id="carimg">
+                                    <a href="{$carimg}" target="_blank"><img src="{$carimg}" ></a>
+                                </volist>
+                            </td>
+                            <td data-title="执照">
+                                <volist name="dinfo.charter_imgs" id="chrimg">
+                                    <a href="{$chrimg}" target="_blank"><img src="{$chrimg}" ></a>
+                                </volist>
+                            </td>
+                            <td data-title="审核状态">{$dinfo.flag_str}</td>
+                            <td data-title="注册时间">{$dinfo.create_time}</td>
+                            <td data-title="操作">
+                                <if condition="$dinfo['flag'] eq 0">
+                                    <a data-tip="审核通过" target="ajaxTodo" href="{$host_url}/smallapp/hotel/changestatus?id={$dinfo.id}&flag=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                                    <elseif condition="$dinfo['flag'] eq 1"/>
+                                    <a data-tip="审核不通过" target="ajaxTodo" href="{$host_url}/smallapp/hotel/changestatus?id={$dinfo.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                                    <elseif condition="$dinfo['flag'] eq 2"/>
+                                    <a data-tip="待审核" target="ajaxTodo" href="{$host_url}/smallapp/hotel/changestatus?id={$dinfo.id}&flag=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                                </if>
+
+                            </td>
+
+                        </tr>
+
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>

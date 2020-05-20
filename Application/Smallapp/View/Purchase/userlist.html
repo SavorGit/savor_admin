@@ -1,0 +1,122 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/purchase/userlist" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">时间：</div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">审核状态：</div>
+                        <div class="input-group">
+                            <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value='99' >全部</option>
+                                <volist name="all_status" id="finfo">
+                                    <option value="{$key}" <if condition="$key eq $status">selected</if> >{$finfo}</option><br>
+                                </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>身份证号码</th>
+                        <th>身份证照片</th>
+                        <th>手机号码</th>
+                        <th>openid</th>
+                        <th>用户昵称</th>
+                        <th>用户头像</th>
+                        <th>审核状态</th>
+                        <th>分润比例</th>
+                        <th>注册时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                            <td data-title="姓名">{$dinfo.name}</td>
+                            <td data-title="身份证号码">{$dinfo.idnumber}</td>
+                            <td data-title="身份证照片">
+                                <volist name="dinfo.idcard_imgs" id="carimg">
+                                    <a href="{$carimg}" target="_blank"><img src="{$carimg}" ></a>
+                                </volist>
+                            </td>
+                            <td data-title="手机号码">{$dinfo.mobile}</td>
+                            <td data-title="openid">{$dinfo.openid}</td>
+                            <td data-title="用户昵称">{$dinfo.nickname}</td>
+                            <td data-title="用户头像"><a href="{$dinfo.avatarurl}" target="_blank"><img src="{$dinfo.avatarurl}" ></a></td>
+                            <td data-title="审核状态">{$dinfo.status_str}</td>
+                            <td data-title="分润比例">{$dinfo.profit}</td>
+                            <td data-title="注册时间">{$dinfo.create_time}</td>
+                            <td data-title="操作">
+                                <a title="修改分润比例" data-tip="修改分润比例" target="dialog" mask="true" href="{$host_url}/smallapp/purchase/setprofit?uid={$dinfo.id}" class="btn btn-success btn-icon">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+
+                                <if condition="$dinfo['status'] eq 1">
+                                    <a data-tip="审核通过" target="ajaxTodo" href="{$host_url}/smallapp/purchase/changestatus?id={$dinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-on"></i></span></a>
+                                    <elseif condition="$dinfo['status'] eq 0"/>
+                                    <a data-tip="审核不通过" target="ajaxTodo" href="{$host_url}/smallapp/purchase/changestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                                    <elseif condition="$dinfo['status'] eq 2"/>
+                                    <a data-tip="待审核" target="ajaxTodo" href="{$host_url}/smallapp/purchase/changestatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                                </if>
+                            </td>
+
+                        </tr>
+
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>

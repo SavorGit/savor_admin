@@ -1651,4 +1651,145 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo "finish \r\n";
         echo json_encode($error);
     }
+
+    public function hotelpy(){
+        exit;
+        $pin = new \Common\Lib\Pin();
+        $obj_pin = new \Overtrue\Pinyin\Pinyin();
+
+        $m_hotel = new \Admin\Model\HotelModel();
+        $sql ="select * from savor_hotel order by id asc limit 800,200";
+        $result =  $m_hotel->query($sql);
+        $hotels = array();
+        foreach ($result as $v){
+            $s_hotel_name = $v['name'];
+
+            $code_charter = '';
+//            $s_hotel_name = mb_substr($res_hotel['name'], 0,2,'utf8');
+            if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+                $code_charter = $s_hotel_name;
+            }else {
+                $code_charter = $obj_pin->abbr($s_hotel_name);
+                $code_charter  = strtolower($code_charter);
+                if(strlen($code_charter)==1){
+                    $code_charter .=$code_charter;
+                }
+            }
+            $code_charter  = strtolower($code_charter);
+
+            $condition = array('id'=>$v['id']);
+            $m_hotel->updateData($condition,array('pinyin'=>$code_charter));
+            echo 'hotel_id:'.$v['id']."\r\n";
+        }
+        echo 'finish';
+        print_r($hotels);
+    }
+
+    public function dishorder(){
+        exit;
+//        $sql = "SELECT * from savor_smallapp_dishorder where add_time<='2020-03-24 23:59:59' order by id asc";
+        $sql = "SELECT * from savor_smallapp_dishorder where add_time>='2020-04-02 10:00:00' and add_time<='2020-04-02 22:18:00' order by id asc";
+        $model = M();
+        $res_order = $model->query($sql);
+        $m_order = new \Admin\Model\Smallapp\OrderModel();
+        $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
+        foreach ($res_order as $v){
+            $dish_order_id = $v['id'];
+            if($v['type']==1){
+                $v['otype']=3;
+            }elseif($v['type']==2){
+                $v['otype']=4;
+            }else{
+                $v['otype']=0;
+            }
+            if($v['pay_type']==1){
+                $v['pay_type']=20;
+            }
+            $v['goods_id'] = $v['dishgoods_id'];
+            unset($v['id'],$v['type'],$v['dishgoods_id']);
+            $order_id = $m_order->add($v);
+            if($order_id){
+                $res_ogoods = $m_ordergoods->getDataList('*',array('order_id'=>$dish_order_id),'id asc');
+                $ogoods = array();
+                if(!empty($res_ogoods)){
+                    foreach ($res_ogoods as $gv){
+                        unset($gv['id']);
+                        $gv['order_id'] = $order_id;
+                        $ogoods[]=$gv;
+                    }
+                    $m_ordergoods->addAll($ogoods);
+                }
+            }
+        }
+        echo 'ok';
+    }
+
+    public function address(){
+        $sql = "SELECT * FROM `savor_smallapp_address` where add_time>='2020-03-24 23:59:59' and add_time<='2020-04-02 23:59:59'";
+        $model = M();
+        $res_order = $model->query($sql);
+        $m_area = new \Admin\Model\AreaModel();
+
+        foreach ($res_order as $v){
+            $res_area = $m_area->find($v['area_id']);
+            $res_county = $m_area->find($v['county_id']);
+            $address = $res_area['region_name'].$res_county['region_name'].$v['address'];
+            $lnglat = $this->getGDgeocodeByAddress($address);
+            if(!empty($lnglat)){
+                $sql_lnglat = "UPDATE `savor_smallapp_address` SET `lng`='134.121231',`lat`='39.1212' WHERE `id`={$v['id']}";
+                $model->execute($sql_lnglat);
+            }
+        }
+        echo 'ok';
+    }
+
+    private function getGDgeocodeByAddress($address){
+        $url = "https://restapi.amap.com/v3/geocode/geo?address=$address&output=json&key=5bbbc02151b52dad229231c5fc1ac4aa";
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL=>$url,
+            CURLOPT_TIMEOUT=>2,
+            CURLOPT_HEADER=>0,
+            CURLOPT_RETURNTRANSFER=>1,
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $res = json_decode($response,true);
+        $data = array();
+        if(is_array($res) && $res['status']==1 && $res['infocode']==10000){
+            if(!empty($res['geocodes'][0]['location'])){
+                $location_arr = explode(',',$res['geocodes'][0]['location']);
+                $data['lng'] = $location_arr[0];//经度
+                $data['lat'] = $location_arr[1];//维度
+            }
+        }
+        return $data;
+    }
+
+
+    public function orderNotify(){
+//        $content = file_get_contents('php://input');
+//        $log_content = "nofity_data:$content";
+//        $this->addLog('',$log_content);
+
+        $content = '{"signature":"9daeeb2a84b0954cae9de015858716ab","client_id":"1070428388962074624","order_id":"1000504","order_status":3,"cancel_reason":"","cancel_from"
+:0,"dm_id":2535448,"dm_name":"黄晓飞","dm_mobile":"15120020991","update_time":1585540555}';
+
+        if(!empty($content)) {
+            $res = json_decode($content, true);
+            if(!empty($res) && isset($res['order_id'])){
+                $data = array('client_id'=>$res['client_id'],'order_id'=>$res['order_id'],'update_time'=>$res['update_time']);
+                asort($data, SORT_STRING);  // 按键值升序排序
+                $sign_data = array_values($data);
+                $sign = md5(join('',$sign_data));
+
+                echo $sign;
+                echo '====';
+                echo $res['signature'];
+                exit;
+
+            }
+        }
+        echo 'success';
+    }
 }

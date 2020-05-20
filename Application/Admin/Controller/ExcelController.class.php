@@ -122,7 +122,10 @@ class ExcelController extends Controller
              $tmpname = '销售端使用情况';
          }else if($filename=='sale_hotel_use2list'){
              $tmpname = '销售端酒楼使用2天以上';
+         }else if($filename=='channel_hotellist'){
+             $tmpname = '渠道部需求表';
          }
+
 
         if($filename == "heartlostinfo"){
             $fileName = $expTitle;
@@ -5753,6 +5756,63 @@ where hotel.id in($hotel_ids) and state=1 and flag=0";
         
     }
 
+    /**
+     * 渠道部酒楼需求
+     */
+    public function gethotel(){
+        $sql ="select hotel.id as hotel_id,hotel.name,hotel.contractor,hotel.hotel_box_type,hotel.is_4g,ext.mac_addr,ext.server_location,
+food.name as food_name,ext.avg_expense
+from savor_hotel as hotel left join savor_hotel_ext as ext on hotel.id=ext.hotel_id left join savor_hotel_food_style as food
+on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type=1 and hotel.id not in(7,883)";
+        $hotel_list = M()->query($sql);
+
+        $hotel_types = C('hotel_box_type');
+        $datalist = array();
+        foreach($hotel_list as $key=>$v){
+            $hotel_id = $v['hotel_id'];
+            $sql_boxnum ="select count(box.mac) as box_num from savor_box as box left join savor_room as room on box.room_id=room.id where room.hotel_id=$hotel_id and box.state=1 and box.flag=0 ";
+            $res_box = M()->query($sql_boxnum);
+            $box_num = 0;
+            if(!empty($res_box)){
+                $box_num = $res_box[0]['box_num'];
+            }
+            if(isset($hotel_types[$v['hotel_box_type']])){
+                $hotel_type_str = $hotel_types[$v['hotel_box_type']];
+            }else{
+                $hotel_type_str = '';
+            }
+            if($v['is_4g']){
+                $is_4g_str = '是';
+            }else{
+                $is_4g_str = '否';
+            }
+            if(!empty($v['mac_addr'])){
+                $v['mac_addr'] = "'{$v['mac_addr']}'";
+            }else{
+                $v['mac_addr'] = "";
+            }
+
+            $v['hotel_type_str'] = $hotel_type_str;
+            $v['box_num'] = $box_num;
+            $v['is_4g_str'] = $is_4g_str;
+            $datalist[]=$v;
+        }
+        $xlsCell = array(
+            array('name', '酒楼名称'),
+            array('food_name','菜系'),
+            array('avg_expense','人均消费'),
+            array('contractor','酒店联系人'),
+            array('hotel_type_str','酒楼机顶盒类型'),
+            array('is_4g_str','是否4G酒楼'),
+            array('mac_addr','小平台MAC地址'),
+            array('server_location','小平台存放位置'),
+            array('box_num','正常机顶盒数量'),
+        );
+        $xlsName = '渠道部需求表';
+        $filename = 'channel_hotellist';
+        $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
+
+    }
 
     private function getScore($data,$conf_arr){
         $score = 0;
