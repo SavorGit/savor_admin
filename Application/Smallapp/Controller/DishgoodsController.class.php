@@ -621,6 +621,9 @@ class DishgoodsController extends BaseController {
             if(empty($distribution_profit)){
                 $distribution_profit = 0;
             }
+            if(empty($attr_ids)){
+                $this->output('请选择型号', "dishgoods/modelgoodsadd", 2, 0);
+            }
 
             if($price<$supply_price){
                 $this->output('零售价必须大于供货价', "dishgoods/modelgoodsadd", 2, 0);
