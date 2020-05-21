@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/dishorder/orderlist" method="post">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/dishorder/dishorderlist" method="post">
         <input type="hidden" name="pageNum" value="{$pageNum}"/>
         <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
         <div class="searchBar">
@@ -34,17 +34,6 @@
                                 <option value=0>全部</option>
                                 <volist name="area" id="vo">
                                     <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
-                                </volist>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group input-group-sm">订单类型：</div>
-                        <div class="input-group">
-                            <select name="otype" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                                <option value='0' >全部</option>
-                                <volist name="otypes" id="oinfo">
-                                    <option value="{$key}" <if condition="$key eq $otype">selected</if> >{$oinfo}</option><br>
                                 </volist>
                             </select>
                         </div>
@@ -88,13 +77,14 @@
                         <th>城市</th>
                         <th>订单商品明细</th>
                         <th>订单赠品明细</th>
-                        <th>赠送订单ID</th>
+                        <!--<th>单价</th>-->
                         <th>订单数量</th>
                         <th>订单总价</th>
                         <th>联系人</th>
                         <th>电话</th>
                         <th>地址</th>
                         <th>订单类型</th>
+                        <th>期望送达时间</th>
                         <th>备注</th>
                         <th>状态</th>
                         <th>销售人员</th>
@@ -110,13 +100,14 @@
                             <td data-title="城市" width="200px">{$dinfo.area_name}</td>
                             <td data-title="订单商品明细">{$dinfo.details}</td>
                             <td data-title="订单赠品明细">{$dinfo.gifts}</td>
-                            <td data-title="赠送订单ID"><if condition="$dinfo['gift_oid'] gt 0">{$dinfo.gift_oid}</if></td>
+                            <!--<td data-title="单价">{$dinfo.price}</td>-->
                             <td data-title="订单数量">{$dinfo.amount}</td>
                             <td data-title="订单总价">{$dinfo.total_fee}</td>
                             <td data-title="联系人">{$dinfo.contact}</td>
                             <td data-title="电话">{$dinfo.phone}</td>
                             <td data-title="地址">{$dinfo.address}</td>
                             <td data-title="订单类型">{$dinfo.otype_str}</td>
+                            <td data-title="期望送达时间">{$dinfo.delivery_time}</td>
                             <td data-title="备注">{$dinfo.remark}</td>
                             <td data-title="状态">{$dinfo.status_str}</td>
                             <td data-title="销售人员">{$dinfo.sale_uname}</td>
