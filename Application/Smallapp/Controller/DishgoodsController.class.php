@@ -548,7 +548,9 @@ class DishgoodsController extends BaseController {
         }
 
         if(IS_GET) {
-            $res_goods = $m_goods->getDataList('id,name,attr_name,attr_ids',array('parent_id'=>$goods_id),'id desc');
+            $pwhere = array('parent_id'=>$goods_id);
+            $pwhere['status'] = array('in',array(1,2));
+            $res_goods = $m_goods->getDataList('id,name,attr_name,attr_ids',$pwhere,'id desc');
             $mode_attrs = array();
             foreach ($res_goods as $v){
                 $mode_attrs[]=$v['attr_ids'];
@@ -715,12 +717,15 @@ class DishgoodsController extends BaseController {
             $where = array('category_id'=>$pgoods_info['category_id'],'status'=>1);
             $result = $m_goodsspecification->getDataList('*', $where, 'sort desc,id asc');
             $all_models = array();
+            $specification_ids = '';
             foreach ($result as $v) {
                 $specification_id = $v['id'];
+                $specification_ids.='_'.$specification_id;
                 if(isset($all_attrs[$specification_id])){
                     $all_models[] = array('id'=>$v['id'],'name'=>$v['name'],'models'=>$all_attrs[$specification_id]);
                 }
             }
+            $specification_ids = ltrim($specification_ids,'_');
 
             $gift_goods_id = 0;
             $res_goods_activity = $m_goodsactivity->getInfo(array('goods_id'=>$id));
@@ -736,14 +741,16 @@ class DishgoodsController extends BaseController {
                 }
                 $activity_goods[]=$info;
             }
+            $this->assign('specification_ids',$specification_ids);
             $this->assign('goods_id',$goods_id);
             $this->assign('action_type',2);
             $this->assign('post_url','smallapp/dishgoods/modelgoodsedit');
             $this->assign('activity_goods',$activity_goods);
             $this->assign('all_models',$all_models);
             $this->assign('vinfo',$vinfo);
-            $this->display('modelgoodsaddnew');
+            $this->display('modelgoodsadd');
         }else{
+            $specification_ids = I('post.specification_ids');
             $model_ids = I('post.model_ids');
             $attr_ids = I('post.attr_ids');
             $goods_id = I('post.goods_id',0,'intval');
@@ -759,8 +766,20 @@ class DishgoodsController extends BaseController {
                 $distribution_profit = 0;
             }
             $attr_name = '';
+            $tmp_model_ids = array();
+            foreach ($model_ids as $v){
+                if(!empty($v)){
+                    $tmp_model_ids[]=$v;
+                }
+            }
+            $model_ids = $tmp_model_ids;
             $now_attr_ids = join('_',$model_ids);
             if($now_attr_ids!=$attr_ids){
+                $specification_ids_arr = explode('_',$specification_ids);
+                if(count($specification_ids_arr)!=count($model_ids)){
+                    $this->output('重新选择规格,请按照顺序依次选择', "dishgoods/modelgoodsedit", 2, 0);
+                }
+
                 $where = array('parent_id'=>$goods_id,'attr_ids'=>$now_attr_ids);
                 $where['id'] = array('neq',$id);
                 $where['status'] = array('in',array(1,2));

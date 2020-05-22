@@ -3,6 +3,7 @@
 		<input name="goods_id" type="hidden" value="{$goods_id}"/>
 		<input name="id" type="hidden" value="{$vinfo.id}"/>
 		<input name="attr_ids" type="hidden" value="{$vinfo.attr_ids}"/>
+		<input name="specification_ids" type="hidden" value="{$specification_ids}"/>
 		<div class="pageFormContent modal-body">
 			<if condition="$action_type eq 1">
 				<div class="form-group row">
@@ -55,6 +56,7 @@
 								<volist name="all_models" id="aminfo">
 									<td>
 										<select name="model_ids[]" class="form-control bs-select class-filter" data-live-search="true" required >
+											<option name="model_ids[]" value="0">请选择{$aminfo.name}</option>
 											<volist name="aminfo['models']" id ="minfo">
 												<option name="model_ids[]" value="{$minfo.id}" {$minfo.is_select}> {$minfo.name}</option>
 											</volist>
@@ -102,7 +104,7 @@
 			<div class="form-group row" id="goods_price">
 				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="price" type="text" value="{$vinfo.price}" class="form-control"/>
+					<input name="price" type="text" value="{$vinfo.price}" class="form-control" required/>
 				</div>
 			</div>
 
@@ -110,25 +112,25 @@
 			<div class="form-group row" id="sale_supply_price">
 				<label class="col-xs-12 col-sm-2 control-label">包邮供货价：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="supply_price" type="text" value="{$vinfo.supply_price}" class="form-control" />
+					<input name="supply_price" type="text" value="{$vinfo.supply_price}" class="form-control" required />
 				</div>
 			</div>
 			<div class="form-group row" id="sale_line_price">
 				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
+					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" required />
 				</div>
 			</div>
 			<div class="form-group row" id="sale_distribution_profit">
 				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="distribution_profit" type="text" value="{$vinfo.distribution_profit}" min='0' max='0.8' class="form-control" />
+					<input name="distribution_profit" type="text" value="{$vinfo.distribution_profit}" min='0' max='0.8' class="form-control" required />
 				</div>
 			</div>
 			<div class="form-group row" id="sale_amount">
 				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999"/>
+					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999" required />
 				</div>
 			</div>
 

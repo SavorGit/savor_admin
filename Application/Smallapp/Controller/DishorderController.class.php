@@ -73,11 +73,11 @@ class DishorderController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
-        $start  = ($page-1) * $size;
-        $m_order  = new \Admin\Model\Smallapp\OrderModel();
+        $start = ($page-1) * $size;
+        $m_order = new \Admin\Model\Smallapp\OrderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
         a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,a.gift_oid,
-        hotel.name as hotel_name,area.region_name as area_name';
+        hotel.name as hotel_name,area.region_name as area_name,user.nickName,user.avatarUrl';
         $result = $m_order->getOrderList($fields,$where, 'a.add_time desc', $start, $size);
         $datalist = $result['list'];
 
@@ -89,11 +89,18 @@ class DishorderController extends BaseController {
             $m_ordergift = new \Admin\Model\Smallapp\OrdergiftModel();
             foreach ($datalist as $k=>$v){
                 $sale_uname = '';
+                $gift_uname = '';
                 if($v['otype']==5 && $v['sale_uid']){
                     $v['otype'] = 51;
                     $res_user = $m_user->getOne('name',array('id'=>$v['sale_uid']),'');
                     $sale_uname = $res_user['name'];
                 }
+                if($v['otype']==6 && $v['gift_oid']){
+                    $res_order = $m_order->getInfo(array('id'=>$v['gift_oid']));
+                    $res_guser = $m_user->getOne('nickName',array('openid'=>$res_order['openid']),'');
+                    $gift_uname = $res_guser['nickname'];
+                }
+                $datalist[$k]['gift_uname'] = $gift_uname;
                 $datalist[$k]['sale_uname'] = $sale_uname;
                 $datalist[$k]['otype_str'] = $otypes[$v['otype']];
                 $datalist[$k]['status_str'] = $order_status[$v['status']];

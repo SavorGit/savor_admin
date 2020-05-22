@@ -88,7 +88,8 @@
                         <th>城市</th>
                         <th>订单商品明细</th>
                         <th>订单赠品明细</th>
-                        <th>赠送订单ID</th>
+                        <th>赠送订单号</th>
+                        <th>赠送人</th>
                         <th>订单数量</th>
                         <th>订单总价</th>
                         <th>联系人</th>
@@ -97,6 +98,8 @@
                         <th>订单类型</th>
                         <th>备注</th>
                         <th>状态</th>
+                        <th>购买人</th>
+                        <th>头像</th>
                         <th>销售人员</th>
                         <th>下单时间</th>
                         <th>操作</th>
@@ -107,10 +110,11 @@
                         <tr target="sid_user">
                             <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
                             <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
-                            <td data-title="城市" width="200px">{$dinfo.area_name}</td>
+                            <td data-title="城市">{$dinfo.area_name}</td>
                             <td data-title="订单商品明细">{$dinfo.details}</td>
                             <td data-title="订单赠品明细">{$dinfo.gifts}</td>
-                            <td data-title="赠送订单ID"><if condition="$dinfo['gift_oid'] gt 0">{$dinfo.gift_oid}</if></td>
+                            <td data-title="赠送订单号"><if condition="$dinfo['gift_oid'] gt 0">{$dinfo.gift_oid}</if></td>
+                            <td data-title="赠送人">{$dinfo.gift_uname}</td>
                             <td data-title="订单数量">{$dinfo.amount}</td>
                             <td data-title="订单总价">{$dinfo.total_fee}</td>
                             <td data-title="联系人">{$dinfo.contact}</td>
@@ -119,6 +123,8 @@
                             <td data-title="订单类型">{$dinfo.otype_str}</td>
                             <td data-title="备注">{$dinfo.remark}</td>
                             <td data-title="状态">{$dinfo.status_str}</td>
+                            <td data-title="购买人">{$dinfo.nickname}</td>
+                            <td data-title="头像"><a href="{$dinfo.avatarurl}" target="_blank"><img src="{$dinfo.avatarurl}" ></a></td>
                             <td data-title="销售人员">{$dinfo.sale_uname}</td>
                             <td data-title="下单时间">{$dinfo.add_time}</td>
                             <td class="table-tool" data-title="操作">
