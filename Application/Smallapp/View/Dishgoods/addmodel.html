@@ -1,70 +1,39 @@
 <div class="pageContent">
 	<form method="post" action="{$host_url}/smallapp/dishgoods/addmodel" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-		<input name="goods_id" id="goods_id" type="hidden" value="{$goods_id}"/>
+		<input name="goods_id" type="hidden" value="{$goods_id}"/>
+		<input name="specification_ids" type="hidden" value="{$specification_ids}"/>
 		<div class="pageFormContent modal-body">
+			<div class="tabsContent">
+				<ul class="nav nav-tabs">
+					<volist name="specifications" id="sinfo">
+						<li class="{$sinfo.is_select}"><a href="#tab{$sinfo.id}" data-toggle="tab"><span>{$sinfo.name}</span></a></li>
+					</volist>
+				</ul>
+				<div class="tab-content">
+					<volist name="specifications" id="speinfo">
 
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">
-					规格:
-				</label>
-				<div class="col-xs-12 col-sm-10">
-					<select name="specification_id" id="specification_type" class="form-control bs-select" title="请选择..." data-size="20">
-						<volist name="specifications" id="sinfo">
-							<option value="{$sinfo.id}" {$sinfo.is_select} > {$sinfo.name}</option>
+						<div id="tab{$speinfo.id}" <if condition="$speinfo['is_select']=='active'">class="tab-pane active fade in" <else/>class="tab-pane fade" </if>  >
+						<volist name="speinfo['models']" id ="minfo">
+							<div class="form-group row">
+								<label class="col-xs-12 col-sm-2 control-label">{$minfo.name}：</label>
+								<div class="col-xs-12 col-sm-10">
+									<input name="names{$speinfo.id}[]" type="text" value="{$minfo.content}" class="form-control"/>
+									<input name="attr_ids{$speinfo.id}[]" type="hidden" value="{$minfo.attr_id}" />
+								</div>
+							</div>
 						</volist>
-					</select>
-				</div>
-			</div>
 
-		<div id="specification_info">
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">内容：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="names[]" type="text" value="" class="form-control"/>
-					<input name="attr_ids[]" type="hidden" value="" />
 				</div>
+
+				</volist>
 			</div>
 		</div>
 
-	</div>
-		<div class="modal-footer">
-			<button class="btn btn-default close-m" type="button">取消</button>
-			<button class="btn btn-primary" type="submit">保存</button>
-		</div>
-	</form>
+
 </div>
-<script>
-    $('#specification_type').change(function() {
-        var specification_id = $(this).val();
-        var goods_id = $("#goods_id").val();
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '{$host_url}/smallapp/dishgoods/getspecificationinfo',
-            data: 'goods_id=' + goods_id +'&specification_id=' + specification_id,
-            success: function(msg) {
-                if (msg != null) {
-                    var option_str = '';
-                    for (var i = 0; i < msg.length; i++) {
-                    	spec_html = '<div class="form-group row">\n' +
-                            '<label class="col-xs-12 col-sm-2 control-label">'+msg[i].name+'：</label>\n' +
-                            '<div class="col-xs-12 col-sm-10">\n' +
-                            '<input name="names[]" type="text" value="' + msg[i].content + '" class="form-control"/>\n' +
-                            '<input name="attr_ids[]" type="hidden" value="' + msg[i].attr_id + '" class="form-control"/>\n' +
-                            '</div>\n' +
-                            '</div>'
-                        option_str+=spec_html;
-                    }
-                    $("#specification_info").html();
-                    $("#specification_info").html(option_str);
-                } else {
-                    $("#specification_info").html();
-                }
-            }
-        })
-
-
-    })
-    $('#specification_type').trigger('change');
-
-</script>
+<div class="modal-footer">
+	<button class="btn btn-default close-m" type="button">取消</button>
+	<button class="btn btn-primary" type="submit">保存</button>
+</div>
+</form>
+</div>

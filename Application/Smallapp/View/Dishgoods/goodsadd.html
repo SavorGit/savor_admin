@@ -1,6 +1,10 @@
 <div class="pageContent">
 	<form method="post" action="{$host_url}/smallapp/dishgoods/goodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<if condition="$vinfo.type eq 21">
+			<input name="gtype" type="hidden" value="1"/>
+		</if>
+
 		<div class="pageFormContent modal-body">
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">选择商家：</label>
@@ -39,7 +43,7 @@
 					</select>
 				</div>
 			</div>
-
+			<if condition="$vinfo.type neq 21">
 			<div class="form-group row" id="sale_modeltype">
 				<label class="col-xs-12 col-sm-2 control-label">单品/多型号：</label>
 				<div class="col-xs-12 col-sm-10">
@@ -60,7 +64,8 @@
 
 				</div>
 			</div>
-		<if condition="$vinfo.type neq 23">
+			</if>
+		<if condition="$vinfo.type eq 22">
 			<div class="form-group row" id="sale_gift">
 				<label class="col-xs-12 col-sm-2 control-label">选择赠品：</label>
 				<div class="col-xs-12 col-sm-10  form-inline">

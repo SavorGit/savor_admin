@@ -31,7 +31,12 @@ class GoodsspecificationController extends BaseController {
         if($status){
             $where['status'] = $status;
         }
-        $result = $m_goodsspecification->getDataList('*',$where,'id desc',$start,$size);
+        if($category_id){
+            $orderby = 'sort desc,id desc';
+        }else{
+            $orderby = 'id desc';
+        }
+        $result = $m_goodsspecification->getDataList('*',$where,$orderby,$start,$size);
         $datalist = $result['list'];
         foreach ($datalist as $k=>$v){
             $res_category = $m_category->getInfo(array('id'=>$v['category_id']));
@@ -71,14 +76,24 @@ class GoodsspecificationController extends BaseController {
             $category_id = I('post.category_id',0,'intval');
             $sort = I('post.sort',0,'intval');
             $status = I('post.status',1,'intval');
-            $data = array('name'=>$name,'category_id'=>$category_id,'sort'=>$sort,'status'=>$status);
 
-            $where = array('category_id'=>$category_id,'status'=>1);
-            $res_specification = $m_goodsspecification->getDataList('*',$where,'id desc',0,1);
-            if($res_specification['total']>=5){
-                $this->output('当前分类规格不能超过5个', "goodsspecification/specificationadd",2,0);
+            $sort_where = array('category_id'=>$category_id,'sort'=>$sort);
+            if($id){
+                $sort_where['id'] = array('neq',$id);
             }
-
+            $res_sort = $m_goodsspecification->getInfo($sort_where);
+            if(!empty($res_sort)){
+                $this->output('当前分类-名称排序值重复,请认真填写排序值', "goodsspecification/specificationadd",2,0);
+            }
+            if($status==1){
+                $where = array('category_id'=>$category_id,'status'=>1);
+                $res_specification = $m_goodsspecification->getDataList('*',$where,'id desc',0,1);
+                if($res_specification['total']>=5){
+                    $this->output('当前分类规格不能超过5个', "goodsspecification/specificationadd",2,0);
+                }
+            }
+            
+            $data = array('name'=>$name,'category_id'=>$category_id,'sort'=>$sort,'status'=>$status);
             if($id){
                 $m_goodsspecification->updateData(array('id'=>$id),$data);
             }else{

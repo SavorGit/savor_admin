@@ -13,6 +13,14 @@ class DishorderController extends BaseController {
     }
 
     public function orderlist() {
+        $this->orders('order');
+    }
+
+    public function dishorderlist() {
+        $this->orders('dish');
+    }
+
+    private function orders($display_type) {
         $start_date = I('start_date','');
         $end_date = I('end_date','');
         $area_id = I('area_id',0,'intval');
@@ -22,6 +30,13 @@ class DishorderController extends BaseController {
         $size   = I('numPerPage',50);
 
         $otypes = array('5'=>'商品订单','6'=>'赠送订单','3'=>'外卖订单','51'=>'商品销售订单');
+        if($display_type=='dish'){
+            $otype = 3;
+            $display_html = 'dishorderlist';
+        }else{
+            $display_html = 'orderlist';
+            unset($otypes['3']);
+        }
         if($otype){
             if($otype==51){
                 $where = array('a.otype'=>5);
@@ -58,11 +73,11 @@ class DishorderController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
-        $start  = ($page-1) * $size;
-        $m_order  = new \Admin\Model\Smallapp\OrderModel();
+        $start = ($page-1) * $size;
+        $m_order = new \Admin\Model\Smallapp\OrderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
-        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,
-        hotel.name as hotel_name,area.region_name as area_name';
+        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,a.gift_oid,
+        hotel.name as hotel_name,area.region_name as area_name,user.nickName,user.avatarUrl';
         $result = $m_order->getOrderList($fields,$where, 'a.add_time desc', $start, $size);
         $datalist = $result['list'];
 
@@ -74,11 +89,18 @@ class DishorderController extends BaseController {
             $m_ordergift = new \Admin\Model\Smallapp\OrdergiftModel();
             foreach ($datalist as $k=>$v){
                 $sale_uname = '';
+                $gift_uname = '';
                 if($v['otype']==5 && $v['sale_uid']){
                     $v['otype'] = 51;
                     $res_user = $m_user->getOne('name',array('id'=>$v['sale_uid']),'');
                     $sale_uname = $res_user['name'];
                 }
+                if($v['otype']==6 && $v['gift_oid']){
+                    $res_order = $m_order->getInfo(array('id'=>$v['gift_oid']));
+                    $res_guser = $m_user->getOne('nickName',array('openid'=>$res_order['openid']),'');
+                    $gift_uname = $res_guser['nickname'];
+                }
+                $datalist[$k]['gift_uname'] = $gift_uname;
                 $datalist[$k]['sale_uname'] = $sale_uname;
                 $datalist[$k]['otype_str'] = $otypes[$v['otype']];
                 $datalist[$k]['status_str'] = $order_status[$v['status']];
@@ -131,7 +153,7 @@ class DishorderController extends BaseController {
         $this->assign('numPerPage',$size);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
-        $this->display('orderlist');
+        $this->display($display_html);
     }
 
     public function expresslist(){
@@ -274,8 +296,10 @@ class DishorderController extends BaseController {
             if($vinfo['status']!=53){
                 $res = $m_order->updateData(array('id'=>$order_id),array('status'=>53));
             }
+            if($vinfo['add_time']>'2020-05-19 17:20:00'){
+                $res = false;
+            }
 
-            $res = false;
             if($res && $vinfo['otype']==5 && !empty($vinfo['sale_uid'])){
                 $m_config = new \Admin\Model\SysConfigModel();
                 $res_config = $m_config->getAllconfig();

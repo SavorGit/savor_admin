@@ -1,20 +1,78 @@
 <div class="pageContent">
-	<form method="post" action="{$host_url}/smallapp/dishgoods/modelgoodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+	<form method="post" action="{$host_url}/{$post_url}" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		<input name="goods_id" type="hidden" value="{$goods_id}"/>
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<input name="attr_ids" type="hidden" value="{$vinfo.attr_ids}"/>
+		<input name="specification_ids" type="hidden" value="{$specification_ids}"/>
 		<div class="pageFormContent modal-body">
+			<if condition="$action_type eq 1">
+				<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">型号信息：</label>
+					<div class="col-xs-12 col-sm-10  form-inline">
+						<select name="attr_ids" class="form-control bs-select class-filter" data-live-search="true" required >
+							<option name="attr_ids" selected='selected' value="0">请选择型号</option>
+							<volist name="specifications" id="sinfo">
+								<option name="attr_ids" value="{$sinfo.model_key}" <if condition="$vinfo['attr_ids'] eq $sinfo.model_key"> selected </if> > {$sinfo.name}</option>
+							</volist>
+						</select>
+					</div>
+				</div>
+			</if>
 
-		<foreach name="specifications" item="sinfo" >
-
-			<hr style="height:1px;border:none;border-top:1px solid #555555;" />
-
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">编号{$sinfo.number} 具体型号信息：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="names[]" type="text" value="{$sinfo.name}" class="form-control" readonly/>
-					<input name="model_ids[]" type="hidden" value="{$sinfo.model_key}"/>
+			<div class="form-group row" id="sale_gift">
+				<label class="col-xs-12 col-sm-2 control-label">选择赠品：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="gift_goods_id" class="form-control bs-select class-filter" data-live-search="true" required >
+						<option name="gift_goods_id" selected='selected' value="0">请选择赠品</option>
+						<volist name="activity_goods" id="ginfo">
+							<option name="gift_goods_id" value="{$ginfo.id}" {$ginfo.is_select}> {$ginfo.name}</option>
+						</volist>
+					</select>
 				</div>
 			</div>
+			<if condition="$action_type eq 2">
 
+				<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">当前规格信息：</label>
+					<div class="col-xs-12 col-sm-10">
+						<label class="control-label">{$vinfo.attr_name}</label>
+					</div>
+				</div>
+
+
+				<div class="form-group row">
+					<label class="col-xs-12 col-sm-2 control-label">重新选择规格：</label>
+					<div class="col-xs-12 col-sm-10" data-check="list" data-parent=".pageContent">
+						<table class="table table-striped table-bordered">
+							<thead>
+							<tr>
+								<volist name="all_models" id="ainfo">
+									<th>{$ainfo.name}</th>
+								</volist>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<volist name="all_models" id="aminfo">
+									<td>
+										<select name="model_ids[]" class="form-control bs-select class-filter" data-live-search="true" required >
+											<option name="model_ids[]" value="0">请选择{$aminfo.name}</option>
+											<volist name="aminfo['models']" id ="minfo">
+												<option name="model_ids[]" value="{$minfo.id}" {$minfo.is_select}> {$minfo.name}</option>
+											</volist>
+										</select>
+									</td>
+								</volist>
+
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+
+
+			</if>
 			<div class="form-group row" id="shop_poster_img" >
 				<label class="col-xs-12 col-sm-2 control-label">
 					型号图片：
@@ -23,16 +81,20 @@
 					<div class="fileinput fileinput-new" data-fileinput>
 						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
 							<a data-target="#modal-file" href="javascript:void(0)">
-								<img id="{$sinfo.media_id}img" src="/Public/admin/assets/img/noimage.png" border="0" />
-								<span id="{$sinfo.media_id}imgname"></span>
+								<if condition="($vinfo['model_img'] eq 'NULL') OR $vinfo['model_img'] eq ''">
+									<img id="model_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									<else />
+									<img id="model_media_idimg" src="{$vinfo.model_img}" border="0" />
+								</if>
+								<span id="model_media_idimgname"></span>
 							</a>
 						</div>
 						<span class="help-block" id="img-msg">请上传160x160像素的jpg格式图片，展示效果最佳</span>
 						<div>
-							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$sinfo.media_id}&rtype=2" data-browse-file>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=model_media_id&rtype=2" data-browse-file>
 								选择图片
 							</a>
-							<input type="hidden" name="{$sinfo.media_id}" id="{$sinfo.media_id}" value="" >
+							<input type="hidden" name="model_media_id" id="model_media_id" value="{$vinfo.model_media_id}" >
 							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
 						</div>
 					</div>
@@ -40,9 +102,9 @@
 			</div>
 
 			<div class="form-group row" id="goods_price">
-				<label class="col-xs-12 col-sm-2 control-label">价格：</label>
+				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="price[]" type="text" value="" class="form-control"/>
+					<input name="price" type="text" value="{$vinfo.price}" class="form-control" required/>
 				</div>
 			</div>
 
@@ -50,34 +112,42 @@
 			<div class="form-group row" id="sale_supply_price">
 				<label class="col-xs-12 col-sm-2 control-label">包邮供货价：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="supply_price[]" type="text" value="" class="form-control" />
+					<input name="supply_price" type="text" value="{$vinfo.supply_price}" class="form-control" required />
 				</div>
 			</div>
 			<div class="form-group row" id="sale_line_price">
 				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="line_price[]" type="text" value="" class="form-control" />
+					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" required />
 				</div>
 			</div>
-
 			<div class="form-group row" id="sale_distribution_profit">
 				<label class="col-xs-12 col-sm-2 control-label">利润比例：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="distribution_profit[]" type="text" value="" min='0' max='0.8' class="form-control" />
+					<input name="distribution_profit" type="text" value="{$vinfo.distribution_profit}" min='0' max='0.8' class="form-control" required />
 				</div>
 			</div>
-
 			<div class="form-group row" id="sale_amount">
 				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="amount[]" type="number" value="" class="form-control" min="1" max="999"/>
+					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999" required />
 				</div>
 			</div>
 
-		</foreach>
+			<div class="form-group row" id="check_flag">
+				<label class="col-xs-12 col-sm-2 control-label">
+					审核状态:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="flag" class="form-control bs-select" data-size="20">
+						<volist name=":C('DISH_FLAG')" id="vo">
+							<option value="{$key}" <if condition="$vinfo['flag'] eq $key"> selected </if> > {$vo}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
 
-
-	</div>
+		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default close-m" type="button">取消</button>
 			<button class="btn btn-primary" type="submit">保存</button>
