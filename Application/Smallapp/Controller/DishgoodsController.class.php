@@ -824,11 +824,18 @@ class DishgoodsController extends BaseController {
             if($amount==0){
                 $status = 2;
             }
+            $data['flag'] = $flag;
             $data['status'] = $status;
             $res = $m_goods->updateData(array('id'=>$id),$data);
             if($res){
+                $m_goodsattr = new \Admin\Model\Smallapp\GoodsAttrModel();
+                if($status==2){
+                    $m_goodsattr->updateData(array('goods_id'=>$id),array('status'=>2));
+                }else{
+                    $m_goodsattr->updateData(array('goods_id'=>$id),array('status'=>1));
+                }
+
                 if(!empty($attr_name) && !empty($model_ids)){
-                    $m_goodsattr = new \Admin\Model\Smallapp\GoodsAttrModel();
                     $m_goodsattr->delData(array('goods_id'=>$id));
                     foreach ($model_ids as $v){
                         if (!empty($v)) {
