@@ -5040,7 +5040,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 2001,5100";
+                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 2001,5000";
 
         $box_list = M()->query($sql);
         $start_time = '20200515';
@@ -5069,6 +5069,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('hotel_name','酒楼名称'),
             array('remark','维护人'),
             array('box_name','版位名称'),
+            array('box_mac','机顶盒编号')
         
         );
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
@@ -5081,7 +5082,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 4501,1000";
+                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 4001,2000";
         //print_r($sql);exit;
         $box_list = M()->query($sql);
         $date_arr = array(
@@ -5128,6 +5129,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('hotel_name','酒楼名称'),
             array('remark','维护人'),
             array('box_name','版位名称'),
+            array('box_mac','机顶盒编号'),
             array('sl_data_str','失联时段')
         
         );
