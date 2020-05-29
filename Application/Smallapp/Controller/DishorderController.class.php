@@ -76,7 +76,7 @@ class DishorderController extends BaseController {
         $start = ($page-1) * $size;
         $m_order = new \Admin\Model\Smallapp\OrderModel();
         $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,
-        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,a.gift_oid,
+        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,a.gift_oid,a.pay_type,
         hotel.name as hotel_name,area.region_name as area_name,user.nickName,user.avatarUrl';
         $result = $m_order->getOrderList($fields,$where, 'a.add_time desc', $start, $size);
         $datalist = $result['list'];
@@ -87,9 +87,11 @@ class DishorderController extends BaseController {
             $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
             $m_user = new \Admin\Model\Smallapp\UserModel();
             $m_ordergift = new \Admin\Model\Smallapp\OrdergiftModel();
+            $m_ordermap = new \Admin\Model\Smallapp\OrdermapModel();
             foreach ($datalist as $k=>$v){
                 $sale_uname = '';
                 $gift_uname = '';
+
                 if($v['otype']==5 && $v['sale_uid']){
                     $v['otype'] = 51;
                     $res_user = $m_user->getOne('name',array('id'=>$v['sale_uid']),'');
@@ -100,6 +102,14 @@ class DishorderController extends BaseController {
                     $res_guser = $m_user->getOne('nickName',array('openid'=>$res_order['openid']),'');
                     $gift_uname = $res_guser['nickname'];
                 }
+                $merchant_oid = 0;
+                if($v['pay_type']==10){
+                    $res_omap = $m_ordermap->getAll('*',array('order_id'=>$v['id']),0,1,'id desc','');
+                    if(!empty($res_omap)){
+                        $merchant_oid = $res_omap[0]['id'];
+                    }
+                }
+                $datalist[$k]['merchant_oid'] = $merchant_oid;
                 $datalist[$k]['gift_uname'] = $gift_uname;
                 $datalist[$k]['sale_uname'] = $sale_uname;
                 $datalist[$k]['otype_str'] = $otypes[$v['otype']];

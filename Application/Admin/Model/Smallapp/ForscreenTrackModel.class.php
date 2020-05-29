@@ -56,8 +56,23 @@ class ForscreenTrackModel extends BaseModel{
     }
 
     public function getForscreenSerialNumber($forscreen){
-        $has_img_action = array(2,4,5,12,21,22,30,31);
-        $other_action = array(8,9,11);
+	    $is_new_action = 0;
+	    if($forscreen['create_time']>='2020-05-29 09:31:00'){
+            $hotel_ids = array(7,883);
+	        $m_box = new \Admin\Model\BoxModel();
+	        $res_box = $m_box->getHotelInfoByBoxMac($forscreen['box_mac']);
+	        if(!empty($res_box) && in_array($res_box['hotel_id'],$hotel_ids)){
+                $is_new_action = 1;
+            }
+        }
+        if($is_new_action){
+            $has_img_action = array(2,5,12,21,22,30,31);
+            $other_action = array(4,8,9,11);
+        }else{
+            $has_img_action = array(2,4,5,12,21,22,30,31);
+            $other_action = array(8,9,11);
+        }
+
         if(in_array($forscreen['action'],$has_img_action)){
             $oss_addr = '';
             if(!empty($forscreen['imgs'])){
@@ -69,6 +84,7 @@ class ForscreenTrackModel extends BaseModel{
                     $forscreen['forscreen_id'] = $forscreen['resource_id'];
                 }
             }
+
             $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id'],$oss_addr);
         }elseif(in_array($forscreen['action'],$other_action)){
             if($forscreen['action']==8){

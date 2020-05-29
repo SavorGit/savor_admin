@@ -84,6 +84,7 @@
                     <thead>
                     <tr id="post">
                         <th>ID</th>
+                        <th>商户订单号</th>
                         <th>酒楼名称</th>
                         <th>城市</th>
                         <th>订单商品明细</th>
@@ -109,6 +110,7 @@
                     <foreach name="datalist" item="dinfo">
                         <tr target="sid_user">
                             <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                            <td data-title="商户订单号"><if condition="$dinfo['merchant_oid'] gt 0">{$dinfo.merchant_oid}</if></td>
                             <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
                             <td data-title="城市">{$dinfo.area_name}</td>
                             <td data-title="订单商品明细">{$dinfo.details}</td>
