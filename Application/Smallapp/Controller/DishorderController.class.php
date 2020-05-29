@@ -303,6 +303,7 @@ class DishorderController extends BaseController {
             }else{
                 $m_orderexpress->add($data);
             }
+            $res = false;
             if($vinfo['status']!=53){
                 $res = $m_order->updateData(array('id'=>$order_id),array('status'=>53));
             }
@@ -327,7 +328,7 @@ class DishorderController extends BaseController {
                     }
                     $income_fee = 0;
                     if($v['price']>$v['supply_price']){
-                        $income_fee = ($v['price']-$v['supply_price'])*$profit;
+                        $income_fee = ($v['price']-$v['supply_price'])*$profit*$v['amount'];
                         $income_fee = sprintf("%.2f",$income_fee);
                     }
                     $total_fee = sprintf("%.2f",$v['price']*$v['amount']);
