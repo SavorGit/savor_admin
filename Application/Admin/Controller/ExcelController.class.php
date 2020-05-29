@@ -124,6 +124,10 @@ class ExcelController extends Controller
              $tmpname = '销售端酒楼使用2天以上';
          }else if($filename=='channel_hotellist'){
              $tmpname = '渠道部需求表';
+         }else if($filename=='exportSl14BoxList'){
+             $tmpname = '连续14天失联版位';
+         }else if($filename=='haveSl7BoxList'){
+             $tmpname = "有失联7天的版位";
          }
 
 
@@ -5022,6 +5026,112 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             
         );
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
+    }
+    public function tolicong(){
+        /*$sql ="select area.region_name,hotel.name hotel_name ,hotel.id hotel_id,user.remark from savor_hotel hotel
+			   left join savor_area_info area on hotel.area_id=area.id
+			   left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+			   left join savor_sysuser user on user.id= ext.maintainer_id
+			   where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 ";*/
+        $sql = "select area.region_name,hotel.name hotel_name ,box.name box_name,user.remark,
+                box.mac box_mac from savor_box box
+                left join savor_room room on box.room_id= room.id
+                left join savor_hotel hotel on room.hotel_id=hotel.id
+                left join savor_area_info area on hotel.area_id= area.id
+                left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+			    left join savor_sysuser user on user.id= ext.maintainer_id
+                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 2001,5100";
+
+        $box_list = M()->query($sql);
+        $start_time = '20200515';
+        $end_time   = '20200528';
+        $sql ="select id from area_info area where id = 2 and region_name like'name'";
+        
+        
+        $data = [];
+        foreach($box_list  as $key=>$v){
+            $sql = "select count(id) as num from savor_heart_all_log where mac='".$v['box_mac']."' and type=2 and  date>='".$start_time."' and date<='".$end_time."'";
+            //echo $sql;exit;
+            $rt = M()->query($sql);
+            $num = $rt[0]['num'];
+            if(empty($num)){
+                $data[] = $v;
+            }
+            
+            
+        }
+        $xlsName = '全国网络机顶盒连续14天失联';
+        $filename = 'exportSl14BoxList';
+        
+        $xlsCell = array(
+        
+            array('region_name','区域'),
+            array('hotel_name','酒楼名称'),
+            array('remark','维护人'),
+            array('box_name','版位名称'),
+        
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function tolicong2(){
+        $sql = "select area.region_name,hotel.name hotel_name ,box.name box_name,user.remark,
+                box.mac box_mac from savor_box box
+                left join savor_room room on box.room_id= room.id
+                left join savor_hotel hotel on room.hotel_id=hotel.id
+                left join savor_area_info area on hotel.area_id= area.id
+                left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+			    left join savor_sysuser user on user.id= ext.maintainer_id
+                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 4501,1000";
+        //print_r($sql);exit;
+        $box_list = M()->query($sql);
+        $date_arr = array(
+            array('start_date'=>20200515,'end_date'=>20200521),
+            array('start_date'=>20200516,'end_date'=>20200522),
+            array('start_date'=>20200517,'end_date'=>20200523),
+            array('start_date'=>20200518,'end_date'=>20200524),
+            array('start_date'=>20200519,'end_date'=>20200525),
+            array('start_date'=>20200520,'end_date'=>20200526),
+            array('start_date'=>20200521,'end_date'=>20200527),
+            array('start_date'=>20200522,'end_date'=>20200528),
+            
+        );
+        $data = [];
+        foreach($box_list as $key=>$v){
+            $sl_date_str = '';
+            $space = '';
+            foreach($date_arr as $kk=>$vv){
+                $start_time = $vv['start_date'];
+                $end_time   = $vv['end_date'];
+                $sql = "select count(id) as num from savor_heart_all_log where mac='".$v['box_mac']."' and type=2 and  date>='".$start_time."' and date<='".$end_time."'";
+                $rt = M()->query($sql);
+                $num = $rt[0]['num'];
+                if(empty($num)){
+                    
+                    $sl_date_str .= $space . $start_time.'-'.$end_time;
+                    $space = ',';
+                    break;
+                }
+                
+            }
+            if($sl_date_str!=''){
+               $v['sl_data_str'] = $sl_date_str; 
+               $data [] = $v;
+            }
+            
+        }
+        $xlsName = '失联有7天全国网络机顶盒';
+        $filename = 'haveSl7BoxList';
+        
+        $xlsCell = array(
+        
+            array('region_name','区域'),
+            array('hotel_name','酒楼名称'),
+            array('remark','维护人'),
+            array('box_name','版位名称'),
+            array('sl_data_str','失联时段')
+        
+        );
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     public function exportEmptyWifiBoxList(){
         $sql ="select hotel.id,area.region_name ,hotel.name hotel_name ,hotel.addr,
