@@ -642,6 +642,7 @@ class TestController extends Controller {
      * @去掉某些酒楼版位的易售广告
      */
     public function removePolyadsboxHotelInfoCache(){
+        exit();
         $sql ="select box.* ,hotel.id hotel_id,hotel.area_id from savor_box box
                left join savor_room  room on box.room_id=room.id
                left join savor_hotel hotel on room.hotel_id = hotel.id
