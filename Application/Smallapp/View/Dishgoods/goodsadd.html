@@ -192,6 +192,35 @@
 				</div>
 			</div>
 		</div>
+		<if condition="$vinfo.type eq 22">
+		<div class="form-group row" id="tv_img" >
+			<label class="col-xs-12 col-sm-2 control-label">
+				大屏TV图片：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['tv_oss_addr'] eq 'NULL') OR $vinfo['tv_oss_addr'] eq ''">
+								<img id="tvmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="tvmedia_idimg" src="{$vinfo.tv_oss_addr}" border="0" />
+							</if>
+							<span id="tvmedia_idimgname"></span>
+						</a>
+					</div>
+					<span class="help-block" id="img-msg">请上传1080x1920像素的jpg格式图片，展示效果最佳</span>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=tvmedia_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="tv_media_id" id="tvmedia_id" value="{$vinfo.tv_media_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		</if>
 
 		<div id="goods_coverimg">
 			<foreach name="cover_imgs" item="dinfo" >

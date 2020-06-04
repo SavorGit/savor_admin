@@ -56,22 +56,24 @@ class ForscreenTrackModel extends BaseModel{
     }
 
     public function getForscreenSerialNumber($forscreen){
-	    $is_new_action = 0;
-	    if($forscreen['create_time']>='2020-05-29 09:31:00'){
-            $hotel_ids = array(7,883);
-	        $m_box = new \Admin\Model\BoxModel();
-	        $res_box = $m_box->getHotelInfoByBoxMac($forscreen['box_mac']);
-	        if(!empty($res_box) && in_array($res_box['hotel_id'],$hotel_ids)){
-                $is_new_action = 1;
-            }
-        }
-        if($is_new_action){
-            $has_img_action = array(2,5,12,21,22,30,31);
-            $other_action = array(4,8,9,11);
-        }else{
-            $has_img_action = array(2,4,5,12,21,22,30,31);
-            $other_action = array(8,9,11);
-        }
+//	    $is_new_action = 0;
+//	    if($forscreen['create_time']>='2020-06-01 00:00:00'){
+//	        $m_heart_log = new \Admin\Model\HeartLogModel();
+//            $where = array('box_mac'=>$forscreen['box_mac'],'type'=>2,'apk_version'=>'1.3.4.7');
+//	        $res_heart = $m_heart_log->getInfo('*',$where,'');
+//	        if(!empty($res_heart)){
+//                $is_new_action = 1;
+//            }
+//        }
+//        if($is_new_action){
+//            $has_img_action = array(2,5,12,21,22,30,31);
+//            $other_action = array(4,8,9,11);
+//        }else{
+//            $has_img_action = array(2,4,5,12,21,22,30,31);
+//            $other_action = array(8,9,11);
+//        }
+        $has_img_action = array(2,4,5,12,21,22,30,31);
+        $other_action = array(8,9,11);
 
         if(in_array($forscreen['action'],$has_img_action)){
             $oss_addr = '';
@@ -84,8 +86,16 @@ class ForscreenTrackModel extends BaseModel{
                     $forscreen['forscreen_id'] = $forscreen['resource_id'];
                 }
             }
-
             $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id'],$oss_addr);
+            if($forscreen['action']==4){
+                $redis = new \Common\Lib\SavorRedis();
+                $redis->select(5);
+                $cache_key = C('SAPP_FORSCREENTRACK');
+                $res_cache = $redis->get($cache_key.$serial_no);
+                if(empty($res_cache)){
+                    $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id']);
+                }
+            }
         }elseif(in_array($forscreen['action'],$other_action)){
             if($forscreen['action']==8){
                 if($forscreen['resource_type']==2){

@@ -1,16 +1,10 @@
 <?php
-/**
- *酒店model
- *@author  hongwei <[<email address>]>
- * 
- */
 namespace Admin\Model;
-
 use Common\Lib\Page;
 use Admin\Model\BaseModel;
 
-class ProgramMenuItemModel extends BaseModel
-{
+class ProgramMenuItemModel extends BaseModel{
+
 	protected $tableName='programmenu_item';
 
 	public function getAdInfoByAid($where, $order, $field) {
@@ -23,53 +17,33 @@ class ProgramMenuItemModel extends BaseModel
 		return $list;
 	}
 
-
 	public function getWhere($where, $order, $field){
-
 		$list = $this->where($where)->order($order)->field($field)->select();
-
-
-
 		return $list;
 	}
 
 	public function getCopyMenuInfo($where, $order, $field){
-
 		$list = $this->alias('spi')
 					 ->where($where)
 					 ->join('`savor_ads` as sads on spi.ads_id = sads.id','left')
 					 ->order($order)
 					 ->field($field)
 					 ->select();
-
-
-
 		return $list;
 	}
 
-
-	public function getList($where, $order='id desc', $start=0,$size=5)
-	{	
-		
+	public function getList($where, $order='id desc', $start=0,$size=5){
 		 $list = $this->where($where)
 					  ->order($order)
 					  ->limit($start,$size)
 					  ->select();
-
-		
 		$count = $this->where($where)
 					  ->count();
-
-		$objPage = new Page($count,$size);		  
-
+		$objPage = new Page($count,$size);
 		$show = $objPage->admin_page();
-
 		$data = array('list'=>$list,'page'=>$show);
-
         return $data;
-
-
-	}//End Function
+	}
 
     public function getMediaList($fields,$where,$order,$limit){
         $data = $this->alias('a')
@@ -82,6 +56,7 @@ class ProgramMenuItemModel extends BaseModel
                 ->select();
         return $data;             
     }
+
     /**
      * @desc 获取节目单的宣传片数据
      */
@@ -90,7 +65,6 @@ class ProgramMenuItemModel extends BaseModel
 				item.ads_name AS media_name,
                 'adv' as type";
         $sql = "select ".$field;
-         
         $sql .= " FROM savor_ads ads
         LEFT JOIN savor_programmenu_item item on ads.name like CONCAT('%',item.ads_name,'%')
         LEFT JOIN savor_media media on media.id = ads.media_id
@@ -104,5 +78,4 @@ class ProgramMenuItemModel extends BaseModel
         return $result;
     }
 
-
-}//End Class
+}
