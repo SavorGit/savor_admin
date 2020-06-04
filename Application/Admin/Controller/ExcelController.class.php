@@ -128,6 +128,12 @@ class ExcelController extends Controller
              $tmpname = '连续14天失联版位';
          }else if($filename=='haveSl7BoxList'){
              $tmpname = "有失联7天的版位";
+         }else if($filename=='user_scan_qrcode_detail'){
+             $tmpname ="用户扫码日志";
+         }else if($filename=='user_link_wifi_err_detail'){
+             $tmpname ="用户链接wifi错误日志";
+         }else if($filename =='user_wifi_forscreen_detail'){
+             $tmpname = '用户极简版投屏日志';
          }
 
 
@@ -5925,7 +5931,101 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
 
     }
-
+    public function forscreenDetail(){
+        $sql ="SELECT hotel.name hotel_name,f.create_time,f.box_mac,room.name room_name FROM `savor_smallapp_forscreen_record` f 
+               left join savor_box box on f.box_mac = box.mac 
+               left join savor_room room on box.room_id = room.id 
+               left join savor_hotel hotel on room.hotel_id= hotel.id 
+               where 1 and f.create_time>='2020-05-25 00:00:00' and f.small_app_id = 1 
+               and f.mobile_brand !='devtools' and box.flag=0 and box.state=1 
+               order by hotel.id asc ,f.create_time asc ";
+       $datalist = M()->query($sql); 
+       $xlsCell = array(
+           array('hotel_name', '酒楼名称'),
+           array('create_time','投屏时间'),
+           array('room_name','包间名称'),
+           array('box_mac','机顶盒mac')
+           
+       );
+       $xlsName = '渠道部需求表';
+       $filename = 'channel_hotellist';
+       $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
+    }
+    public function wifiForsreenDetail(){
+        $start_date = I('start_date');
+        $type       = I('type',1);   //1:扫码日志  2:wifi链接错误日志 3:wifi投屏日志 
+        $box_mac = "'00226D2FB212','00226D584193','00226D58461F','00226D6555FB','00226D584138','00226D58423B','00226D65554A'";
+        
+        if($type==1){//扫码日志
+            $sql ="SELECT hotel.name hotel_name,room.name room_name,box.name box_name,log.* FROM `savor_smallapp_qrcode_log` log 
+                   left join savor_box box on log.box_mac= box.mac
+                   left join savor_room room on box.room_id= room.id
+                   left join savor_hotel hotel on room.hotel_id=hotel.id
+                   where log.create_time>='".$start_date."' and log.box_mac in($box_mac) and hotel.flag=0 and hotel.state=1";
+            $data = M()->query($sql);
+            $xlsCell = array(
+                array('hotel_name', '酒楼名称'),
+                array('room_name','包间名称'),
+                array('box_name','版位名称'),
+                array('box_mac','机顶盒mac'),
+                array('openid','openid'),
+                array('create_time','扫码时间')
+                 
+            );
+            $xlsName = '用户扫码日志';
+            $filename = 'user_scan_qrcode_detail';
+            
+        }else if($type==2){//wifi链接错误日志
+            $sql = "SELECT hotel.name hotel_name,room.name room_name,box.name box_name,err.* FROM `savor_smallapp_wifi_err` err
+                   left join savor_box box on err.box_mac= box.mac
+                   left join savor_room room on box.room_id= room.id
+                   left join savor_hotel hotel on room.hotel_id=hotel.id
+                   where err.create_time>='".$start_date."' and err.box_mac in($box_mac) and hotel.flag=0 and hotel.state=1";
+            
+            $data = M()->query($sql);
+            $xlsCell = array(
+                array('hotel_name', '酒楼名称'),
+                array('room_name','包间名称'),
+                array('box_name','版位名称'),
+                array('box_mac','机顶盒mac'),
+                array('err_info','错误信息'),
+                array('create_time','错误时间')
+                 
+            );
+            $xlsName = '用户链接wifi错误日志';
+            $filename = 'user_link_wifi_err_detail';
+            
+        }else if($type==3){//wifi投屏日志
+            $sql ="select hotel.name hotel_name,room.name room_name,box.name box_name,log.openid,log.action,log.resource_type,log.create_time,log.box_mac from `savor_smallapp_forscreen_record` log
+                   left join savor_box box on log.box_mac=box.mac
+                   left join savor_room room on box.room_id= room.id
+                   left join savor_hotel hotel on hotel.id= room.hotel_id
+                   where log.create_time>='".$start_date."' and log.box_mac in($box_mac) and hotel.flag=0 and hotel.state=1 and log.mobile_brand!='devtools'";
+            $data = M()->query($sql);
+            foreach($data as $key=>$v){
+                if($v['action']==2 && $v['resource_type']==1){
+                    $data[$key]['action_str'] = '图片滑动';
+                }else if($v['action']==2 && $v['resource_type']==2){
+                    $data[$key]['action_str'] = '视频投屏';
+                }else if($v['action']==4){
+                    $data[$key]['action_str'] = '多图投屏';
+                }else if($v['action']==5){
+                    $data[$key]['action_str'] = '视频点播';
+                }
+            }
+            $xlsCell = array(
+                array('hotel_name', '酒楼名称'),
+                array('room_name','包间名称'),
+                array('box_name','版位名称'),
+                array('box_mac','机顶盒mac'),
+                array('action_str','投屏动作'),
+                array('create_time','投屏时间')
+            );
+            $xlsName = '用户极简版投屏日志';
+            $filename = 'user_wifi_forscreen_detail';
+        }
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
     private function getScore($data,$conf_arr){
         $score = 0;
         foreach ($conf_arr as $key=>$v){
