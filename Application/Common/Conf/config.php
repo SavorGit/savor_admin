@@ -42,6 +42,7 @@ $config = array(
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
     'SAPP_SALE'=>'smallappsale:',
     'SAPP_SALE_ACTIVITYGOODS_PROGRAM'=>'smallappsale:activitygoodsprogram',
+    'SAPP_SHOP_PROGRAM'=>'smallapp:shopprogram',
     'SAPP_SALE_WELCOME_RESOURCE'=>'smallappsale:welcomeresource',
     'SAPP_SALE_ACTIVITY_PROMOTE'=>'smallappsale:activitypromote:',
     'SAPP_FIND_TOP'=>'smallapp:findtop',
@@ -552,6 +553,10 @@ $config['ADVE_OCCU'] = array(
 );
 $config['RTBADVE_OCCU'] = array(
     'name' => 'RTB广告位',
+    'num' => '18',
+);
+$config['GOODSADVE_OCCU'] = array(
+    'name' => '商品广告位',
     'num' => '18',
 );
 $config['POLY_SCREEN_OCCU']= array(

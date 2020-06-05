@@ -136,12 +136,18 @@ class DishgoodsController extends BaseController {
                     }
                 }
 
-                $poster_oss_addr = '';
+                $poster_oss_addr = $tv_oss_addr = '';
                 if(!empty($dinfo['poster_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['poster_media_id']);
                     $poster_oss_addr = $res_media['oss_addr'];
                 }
+                if(!empty($dinfo['tv_media_id'])){
+                    $res_media = $m_media->getMediaInfoById($dinfo['tv_media_id']);
+                    $tv_oss_addr = $res_media['oss_addr'];
+                }
+
                 $dinfo['poster_oss_addr'] = $poster_oss_addr;
+                $dinfo['tv_oss_addr'] = $tv_oss_addr;
                 if($dinfo['amount']==0){
                     $dinfo['amount'] = 1;
                 }
@@ -244,6 +250,7 @@ class DishgoodsController extends BaseController {
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $is_recommend = I('post.is_recommend',0,'intval');
             $gift_goods_id = I('post.gift_goods_id',0,'intval');
+            $tv_media_id = I('post.tv_media_id',0,'intval');
 
             if($type==22 || $type==23){
                 if($price<$supply_price){
@@ -281,7 +288,7 @@ class DishgoodsController extends BaseController {
             if(empty($line_price))   $line_price = 0;
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>$distribution_profit,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
-                'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
+                'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
                 'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend);
             if($type==22){
                 if($flag==2){

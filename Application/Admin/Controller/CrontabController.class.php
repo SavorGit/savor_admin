@@ -3688,6 +3688,15 @@ class CrontabController extends Controller
         $m_forscreentrack->handle_push_rebootbox();
     }
 
+    public function forscreen4gbox(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreen4gbox start:$now_time \r\n";
+        $m_forscreentrack = new \Admin\Model\ForscreenRecordModel();
+        $m_forscreentrack->forscreen_4gbox();
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreen4gbox end:$now_time \r\n";
+    }
+
     public function sendredpacket(){
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();

@@ -2,7 +2,7 @@
 namespace Admin\Controller;
 // use Common\Lib\SavorRedis;
 /**
- * 功能测试类
+ * 网络节目单-节目列表
  */
 use Admin\Controller\BaseController;
 use Admin\Model\ArticleModel;
@@ -236,6 +236,80 @@ class ProgrammenuController extends BaseController
             $menuHoModel->rollback();
             $this->error('发布失败了!');
         }
+    }
+
+    public function selectgoods(){
+        $menuid = I('menuid',0,'intval');
+        $menuname = I('menuname','');
+        $m_programitem = new \Admin\Model\ProgramMenuItemModel();
+        if(IS_GET){
+            $where = array('menu_id'=>$menuid,'type'=>4);
+            $order = 'location_id asc';
+            $res_item = $m_programitem->getWhere($where,$order,'*');
+            if(empty($res_item)){
+                $res_item = array();
+            }
+            $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
+            $gwhere = array('status'=>1,'type'=>22);
+            $gwhere['gtype'] = array('in',array(1,2));
+            $gwhere['tv_media_id'] = array('gt',0);
+            $goods = $m_goods->getDataList('*',$gwhere,'id desc');
+
+            $this->assign('menu_items',$res_item);
+            $this->assign('goods',$goods);
+            $this->assign('menuid',$menuid);
+            $this->assign('menuname',$menuname);
+            $this->display('selectgoods');
+        }else{
+            $item_ids = I('post.item_id','');
+            $ads_ids = I('post.ads_id','');
+            $durations = I('post.duration','');
+            $is_modify = 0;
+            foreach ($item_ids as $k=>$v){
+                $id = intval($v);
+                if($id){
+                    $ads_id = $ads_ids[$k];
+                    $duration = $durations[$k];
+                    $res = $m_programitem->updateData(array('id'=>$id),array('ads_id'=>$ads_id,'duration'=>$duration));
+                    if($res){
+                        $is_modify = 1;
+                    }
+                }
+            }
+            if($is_modify){
+                $where = array('menu_id'=>$menuid,'type'=>4);
+                $order = 'id desc';
+                $res_item = $m_programitem->getWhere($where,$order,'*');
+                $goods_ids = array();
+                foreach ($res_item as $v){
+                    if(!in_array($v['ads_id'],$goods_ids)){
+                        $goods_ids[]=$v['ads_id'];
+                    }
+                }
+
+                $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
+                $gwhere = array('id'=>array('in',$goods_ids));
+                $res_goods = $m_goods->getDataList('*',$gwhere,'id desc');
+                $goods = array();
+                foreach ($res_goods as $v){
+                    $goods[$v['id']] = array('id'=>$v['id'],'tv_media_id'=>$v['tv_media_id'],'status'=>$v['status']);
+                }
+
+                $key = C('SAPP_SHOP_PROGRAM');
+                $redis = \Common\Lib\SavorRedis::getInstance();
+                $redis->select(2);
+                $program_goods_key = $key.":$menuid:goods";
+                $redis->set($program_goods_key,json_encode($goods),30*86400);
+
+                $program_period_key = $key.":$menuid:period";
+                $period = getMillisecond();
+                $period_data = array('period'=>$period,'time'=>date('Y-m-d H:i:s'));
+                $redis->set($program_period_key,json_encode($period_data),30*86400);
+            }
+            $this->output('操作成功','programmenu/getlist');
+
+        }
+
     }
 
     public function getdetail()
@@ -554,8 +628,24 @@ smlist.menu_name';
             $where .= " and sysgroup.area_city=$area_city";
         }
         $result = $mlModel->getList($where, $orders, $start, $size);
-        
-        $this->assign('list', $result['list']);
+        $datalist = $result['list'];
+        if(!empty($datalist)){
+            $m_programitem = new \Admin\Model\ProgramMenuItemModel();
+            foreach ($datalist as $k=>$v){
+                $menu_id = $v['id'];
+                $where = array('menu_id'=>$menu_id,'type'=>4);
+                $where['ads_id'] = array('gt',0);
+                $order = 'id desc';
+                $field = 'count(id) as num';
+                $res_item = $m_programitem->getAll($field,$where,0,1,$order,'');
+                $item_gnum = 0;
+                if(!empty($res_item)){
+                    $item_gnum = $res_item[0]['num'];
+                }
+                $datalist[$k]['item_gnum'] = $item_gnum;
+            }
+        }
+        $this->assign('list', $datalist);
         $this->assign('page', $result['page']);
         
         $this->display('getlist');
@@ -586,15 +676,15 @@ smlist.menu_name';
         }
     }
 
-    public function judgertbAdvOuc($name_arr)
+    public function judgegoodsAdvOuc($name_arr)
     {
         $result = array();
-        $result = $this->getRtbadsOccup($result);
+        $result = $this->getGoodsadsOccup($result);
         $adv_arr = array_column($result, 'name');
         $len = count($adv_arr);
         // 判断要有10个
         if (array_diff($adv_arr, $name_arr)) {
-            $this->error("RTB广告位必须选择{$len}个");
+            $this->error("商品广告位必须选择{$len}个");
         }
         // 取广告位数组
         $ad_arr = array_filter($name_arr, function ($result, $item) use($adv_arr)
@@ -607,7 +697,7 @@ smlist.menu_name';
         });
         // 判断恰好10个,取广告位数组反转然后比较
         if (count($ad_arr) != $len) {
-            $this->error("RTB广告位必须选择{$len}个且不能有重复");
+            $this->error("商品广告位必须选择{$len}个且不能有重复");
         }
     }
 
@@ -658,7 +748,7 @@ smlist.menu_name';
         });
         // 判断恰好10个,取广告位数组反转然后比较
         if (count($ad_arr) != $len) {
-            $this->error("RTB广告位必须选择{$len}个且不能有重复");
+            $this->error("商品广告位必须选择{$len}个且不能有重复");
         }
     }
 
@@ -695,8 +785,9 @@ smlist.menu_name';
         }
         // 判断广告位版位都有10个,
         $this->judgeAdvOuc($name_arr);
-        // 判断RTB广告位版位都有10个,
-        $this->judgertbAdvOuc($name_arr);
+
+        // 判断商品广告位版位都有18个,
+        $this->judgegoodsAdvOuc($name_arr);
 
         // 判断活动商品广告位版位都有10个,
         $this->judgeActivityGoodsAdvOuc($name_arr);
@@ -714,7 +805,7 @@ smlist.menu_name';
             // 获取广告占位符
             $res_adv = $this->getAdsOccup($res);
             // 获取rtb广告占位符
-            $rertb_adv = $this->getRtbadsOccup($res);
+            $rertb_adv = $this->getGoodsadsOccup($res);
             // 获取聚屏广告位占位符
             $poly_adv = $this->getPolyScreenOccup($res);
 
@@ -734,7 +825,7 @@ smlist.menu_name';
 
             $adv_promote_num_arr = C('ADVE_OCCU');
             $adv_name = $adv_promote_num_arr['name'];
-            $rtbadv_promote_num_arr = C('RTBADVE_OCCU');
+            $rtbadv_promote_num_arr = C('GOODSADVE_OCCU');
             $rtbadv_name = $rtbadv_promote_num_arr['name'];
             
             $polyadv_promote_num_arr = C('POLY_SCREEN_OCCU');
@@ -859,7 +950,7 @@ setEnclosure('"')
         $result_adsoc = $this->getAdsOccup($result);
         
         // 获取RTB广告占位符
-        $result_rtbadsoc = $this->getRtbadsOccup($result);
+        $result_rtbadsoc = $this->getGoodsadsOccup($result);
         // 取出name列
         $xuan_arr = array_column($result, 'name');
         $adsoc_arr = array_column($result_adsoc, 'name');
@@ -1027,9 +1118,9 @@ setEnclosure('"')
         return $result;
     }
 
-    public function getRtbadsOccup($result, $filter = '')
+    public function getGoodsadsOccup($result, $filter = '')
     {
-        $adv_promote_num_arr = C('RTBADVE_OCCU');
+        $adv_promote_num_arr = C('GOODSADVE_OCCU');
         if ($filter) {
             $filter_arr = explode(',', $filter);
         }
@@ -1179,8 +1270,8 @@ setEnclosure('"')
                 $result = $this->getAdsOccup($result, $adval);
                 break;
             case 5:
-                // 获取RTB广告占位符
-                $result = $this->getRtbadsOccup($result, $adval);
+                // 获取商品广告占位符
+                $result = $this->getGoodsadsOccup($result, $adval);
                 break;
             case 6:
                 $result = $this->getPolyScreenOccup($result, $adval);

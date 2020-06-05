@@ -46,7 +46,8 @@ class SappforscreenController extends BaseController {
 	    $where = array();
 	    $where['box.flag'] = 0;
 	    $where['box.state'] =1;
-	    $where['a.mobile_brand'] = array('neq','devtools');
+//	    $where['a.mobile_brand'] = array('neq','devtools');
+	    $where['a.mobile_brand'] = array('not in',array('devtools','dev4gtools'));
 	    if($is_valid!=2){
 	        $where['a.is_valid'] = $is_valid;
         }

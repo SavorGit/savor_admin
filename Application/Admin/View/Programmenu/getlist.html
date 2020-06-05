@@ -71,6 +71,7 @@
             <th>创建日期</th>
             <th>更新日期</th>
             <th>是否小程序节目单</th>
+            <th>选择商品</th>
             <th>是否选择洒楼</th>
             <th>节目详情</th>
 
@@ -87,12 +88,13 @@
               <td data-title="创建日期">{$vlist.create_time}</td>
               <td data-title="更新日期">{$vlist.update_time}</td>
               <td data-title="是否小程序节目单"><if condition="$vlist.is_small_app eq 1">是<else />否</if> </td>
+              <td data-title="选择商品">
+                <a data-tip="选择商品" class="btn btn-success" target="dialog" mask="true" href="{$host_name}/programmenu/selectgoods?menuid={$vlist.id}&menuname={$vlist.menu_name}">
+                  <if condition="$vlist.item_gnum gt 0">已选商品:{$vlist.item_gnum}<else/>选择商品</if>
+                </a>
+              </td>
+
               <td data-title="是否选择洒楼">
-
-
-
-
-
                 <if condition="$vlist.hotel_num eq 0"> <a data-tip="请选择酒楼" rel="programmenu/selecthotelselect" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/programmenu/selecthotel?menuid={$vlist.id}&menuname={$vlist.menu_name}">请选择酒楼</a>
                   <else/> <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="programmenu/selecthotelselect"
 href="{$host_name}/programmenu/gethotelinfo?menuid={$vlist.id}&menuname={$vlist.menu_name}">{$vlist.hotel_num}</a>
