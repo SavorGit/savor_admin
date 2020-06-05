@@ -4,7 +4,7 @@ namespace Admin\Controller;
 use Think\Controller;
 use Common\Lib\SavorRedis;
 use Behavior\AgentCheckBehavior;
-
+use \Common\Lib\MailAuto;
 // use Common\Lib\SavorRedis;
 /**
  * @desc 功能测试类
@@ -13,7 +13,7 @@ use Behavior\AgentCheckBehavior;
 class ExcelController extends Controller
 {
 
-    public function exportExcel($expTitle, $expCellName, $expTableData,$filename)
+    public function exportExcel($expTitle, $expCellName, $expTableData,$filename,$type=1,$user_path = '/temp/test.xls')
     {
         set_time_limit(90);
         ini_set("memory_limit", "512M");
@@ -194,13 +194,35 @@ class ExcelController extends Controller
             $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
             $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
         }
-        header('pragma:public');
-        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $xlsTitle . '.xls"');
-        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        $objWriter->save('php://output');
-        exit;
+        if($type==1){
+            header('pragma:public');
+            header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $xlsTitle . '.xls"');
+            header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            $objWriter->save('php://output');
+            exit;
+        }else {
+            //$objWriter = \PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel2007');
+            /*$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            $filename ='mail_box.xls';
+            //echo $user_path.$filename;exit;
+            $rts =$objWriter->save($user_path.$filename);
+            var_dump($rts);exit;*/
+            
+            
+            
+            ob_start();
+            $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            $objWriter->save('php://output');
+            $content = ob_get_contents();
+            ob_end_clean();
+            
+            return file_put_contents($user_path, $content);
+            
+        }
+        
     }
+    
     /**
      *
      * 导出内容与广告相关数据备份
@@ -6025,6 +6047,98 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $filename = 'user_wifi_forscreen_detail';
         }
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function lostBoxList(){
+        
+        $sql ="select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark, 
+               box.mac box_mac,hlog.last_heart_time 
+               from savor_box box 
+               left join savor_room room on box.room_id= room.id 
+               left join savor_hotel hotel on room.hotel_id=hotel.id 
+               left join savor_area_info area on hotel.area_id= area.id 
+               left join savor_hotel_ext ext on hotel.id = ext.hotel_id 
+               left join savor_sysuser user on user.id= ext.maintainer_id 
+               left join savor_heart_log hlog on box.mac=hlog.box_mac 
+               where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 ";
+        $data = M()->query($sql);
+        //$datalist = [];
+        foreach($data as $key=>$v){
+            if(empty($v['last_heart_time'])){
+                $data[$key]['last_heart_time'] = '';
+                $data[$key]['last_heart_time_str'] = '30天+';
+            }else {
+                $heart_time = strtotime($v['last_heart_time']);
+                $lost_time = strtotime('-7 days');
+                $now_time  = time();
+                if($heart_time<=$lost_time){
+                    $data[$key]['last_heart_time'] = $v['last_heart_time'];
+                    
+                    $diff_time = floor(($now_time - $heart_time)/86400);
+                    $data[$key]['last_heart_time_str'] = $diff_time.'天';
+                }else {
+                    unset($data[$key]);
+                }
+                
+            }
+        }
+        sort($data);
+        
+        $xlsCell = array(
+            array('region_name','区域'),
+            array('hotel_name','酒楼名称'),
+            array('remark','维护人'),
+            array('room_name','包间名称'),
+            array('box_mac','机顶盒mac'),
+            array('last_heart_time','最后一次心跳时间'),
+            array('last_heart_time_str','失联天数')
+        );
+        $xlsName = '失联超过7天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        
+        $path  = './Public/box_heart/'.date('Ym').'/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'mail.xls';
+        //echo $path;exit;
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+        if($ret){
+            $mail_config =  C('SEND_MAIL_CONF');
+            $mail_config =  $mail_config['littlehotspot'];
+            
+            $ma_auto = new MailAuto();
+            $mail = new \Mail\PHPMailer();
+            $title = date('Y-m-d').'失联超过7天的版位信息';
+            $body = '失联超过7天的版位信息';
+
+            $mail_config =  C('SEND_MAIL_CONF');
+            $mail_config =  $mail_config['littlehotspot'];
+            
+            $ma_auto = new MailAuto();
+            $mail = new \Mail\PHPMailer();
+            $mail->CharSet = "UTF-8";
+            $mail->IsSMTP();
+            $mail->Host = $mail_config['host'];
+            $mail->SMTPAuth = true;
+            $mail->Username = $mail_config['username'];
+            $mail->Password = $mail_config['password'];
+            $mail->Port=25;
+            $mail->From = $mail_config['username'];
+            $mail->FromName = $title;
+
+            $mail->AddAddress("zhang.yingtao@littlehotspot.com");
+            $mail->IsHTML(true);
+
+            $mail->Subject = $title;
+            $mail->Body = $body;
+            $mail->AddAttachment($path); // 添加附件
+            //var_dump($mail);exit;
+            if($mail->Send()){
+                echo date('Y-m-d').'发送成功';
+            }else {
+                echo date('Y-m-d').'发送失败';
+            }
+        }
     }
     private function getScore($data,$conf_arr){
         $score = 0;
