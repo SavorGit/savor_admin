@@ -420,13 +420,13 @@ class TestController extends Controller {
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=246";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=1";
         $data = M()->query($sql);
         $flag = 0;
         $data = array();
         foreach($data as $key=>$v){
 
-            $sql ="update savor_box set switch_time=999 where id=".$v['id'].' limit 1';
+            $sql ="update savor_box set switch_time=30 where id=".$v['id'].' limit 1';
             //echo $sql;exit;
             M()->execute($sql);
 
@@ -436,7 +436,7 @@ class TestController extends Controller {
             $box_info['room_id'] = $v['room_id'];
             $box_info['name']    = $v['name'];
             $box_info['mac']     = $v['mac'];
-            $box_info['switch_time'] = 999;
+            $box_info['switch_time'] = 30;
             $box_info['volum']   = $v['volum'];
             $box_info['tag']     = $v['tag'];
             $box_info['device_token'] = $v['device_token'];
