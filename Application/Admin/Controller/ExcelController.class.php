@@ -6108,7 +6108,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             
             $ma_auto = new MailAuto();
             $mail = new \Mail\PHPMailer();
-            $title = date('Y-m-d').'失联超过7天的版位信息';
+            $title = '失联超过7天的版位信息-'.date('Y-m-d');
             $body = '失联超过7天的版位信息';
 
             $mail_config =  C('SEND_MAIL_CONF');
@@ -6127,6 +6127,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->FromName = $title;
 
             $mail->AddAddress("zhang.yingtao@littlehotspot.com");
+            $mail->AddAddress("zhang.jing@littlehotspot.com");
             $mail->IsHTML(true);
 
             $mail->Subject = $title;
