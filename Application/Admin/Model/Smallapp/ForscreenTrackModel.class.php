@@ -11,6 +11,8 @@ class ForscreenTrackModel extends BaseModel{
         $end_time = "$hourtime:59:59";
 
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+
         $where = array();
         $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $where['small_app_id'] = array('in',array(1,2,3));
@@ -42,12 +44,38 @@ class ForscreenTrackModel extends BaseModel{
                         $data['is_success'] = $result['is_success'];
                         $data['total_time'] = $result['total_time'];
 
+                        $is_del = 0;
+                        if(isset($data['netty_position_result'])){
+                            $netty_position_result = json_decode($data['netty_position_result'],true);
+                            if($netty_position_result['code']==10008){
+                                $is_del = 1;
+                            }
+                        }else{
+                            if(isset($data['netty_result'])){
+                                $netty_result = json_decode($data['netty_result'],true);
+                                if($netty_result['code']==10008){
+                                    $is_del = 1;
+                                }
+                            }
+                        }
                         $res_track = $this->field('id')->where(array('forscreen_record_id'=>$v['id']))->order('id desc')->find();
                         if(!empty($res_track)){
                             $id = $res_track['id'];
                             $this->where(array('id'=>$id))->save($data);
                         }else{
                             $this->add($data);
+                        }
+                        if($is_del){
+                            $boxs = array('00226D583D92','00301BBA02DB','00226D584363','FCD5D900B3B6',
+                                '00226D65547A','00226D655299','00226D584615','00226D584281');
+                            if(!in_array($v['box_mac'],$boxs)){
+                                $v['forscreen_record_id'] = $v['id'];
+                                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status']);
+                                $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
+                                if($res_invalid){
+                                    $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
+                                }
+                            }
                         }
                     }
                 }
@@ -79,6 +107,9 @@ class ForscreenTrackModel extends BaseModel{
                 if(empty($res_cache)){
                     $serial_no = forscreen_serial($forscreen['openid'],$forscreen['forscreen_id']);
                 }
+            }
+            if($forscreen['action']==30){
+                $serial_no = $forscreen['id'];
             }
         }elseif(in_array($forscreen['action'],$other_action)){
             if($forscreen['action']==8){

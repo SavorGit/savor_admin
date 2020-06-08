@@ -48,10 +48,11 @@ class ForscreenRecordModel extends BaseModel{
         $yestoday = date('Ymd',strtotime("-1 day"));
         $now_date = date('Ymd');
         $now_hour = date('G');
-
+        $redis = new \Common\Lib\SavorRedis();
+        /*
         $yestoday_hour = 0;
         if($now_hour>3){
-            $sql_time = " log.date=$now_date and log.type=2";
+            $sql_time = " log.date=$now_date and log.type=2 and log.hour{$now_hour}>0 ";
             $begin_hour = $now_hour - 4;
             for ($i=$begin_hour;$i<$now_hour;$i++){
                 $sql_time.=" and log.hour{$i}>0";
@@ -65,18 +66,35 @@ class ForscreenRecordModel extends BaseModel{
             }
         }else{
             $yestoday_hour = 4 - $now_hour;
-            $sql_time = " log.date=$now_date and log.type=2";
+            $sql_time = " log.date=$now_date and log.type=2 and log.hour{$now_hour}>0 ";
             for ($i=0;$i<$now_hour;$i++){
                 $sql_time.=" and log.hour{$i}>0";
             }
         }
-        $sql = "SELECT log.hotel_id,log.hotel_name,log.room_id,log.room_name,log.box_id,log.mac from savor_heart_all_log as log left join savor_box as box on log.mac=box.mac where $sql_time and box.is_4g=1";
+        $sql = "SELECT log.hotel_id,log.hotel_name,log.room_id,log.room_name,log.box_id,log.mac from savor_heart_all_log as log left join savor_box as box on log.mac=box.mac where $sql_time and box.state=1 and box.flag=0 and box.is_4g=1";
         echo "sql:$sql \r\n";
         $res_box = $this->query($sql);
         $boxs = array();
         if(!empty($res_box)){
             foreach ($res_box as $v){
                 $box_mac = $v['mac'];
+
+                $is_heart = 0;
+                $redis->select(13);
+                $heartkey = "heartbeat:2:$box_mac";
+                $res_heart = $redis->get($heartkey);
+                if(!empty($res_heart)){
+                    $res_heart = json_decode($res_heart,true);
+                    $heart_time = $res_heart['date'];
+                    $now_time = date('YmdH0000');
+                    if($heart_time>$now_time){
+                        $is_heart = 1;
+                    }
+                }
+                if($is_heart==0){
+                    continue;
+                }
+
                 if($yestoday_hour){
                     $sql_time = " date=$yestoday and mac='{$box_mac}' and type=2";
                     $now_hour = 24;
@@ -94,13 +112,15 @@ class ForscreenRecordModel extends BaseModel{
                 }
             }
         }
+        */
+        $boxs = array('00226D583D92','00301BBA02DB','00226D584363','FCD5D900B3B6',
+            '00226D65547A','00226D655299','00226D584615','00226D584281');
         $message_data = array('openid'=>'ofYZG417MIHCyVZkq-RbiIddn_8s','action'=>2,'resource_type'=>2,'forscreen_char'=>'',
             'mobile_brand'=>'dev4gtools','mobile_model'=>'dev4gtools','resource_size'=>1149039,'imgs'=>'["forscreen/resource/15368043845967.mp4"]');
         echo 'boxs:'.json_encode($boxs)."\r\n";
 
         $push_boxs = array();
         if(!empty($boxs)){
-            $redis = new \Common\Lib\SavorRedis();
             foreach ($boxs as $b){
                 $now_timestamps = getMillisecond();
                 $message_data['forscreen_id'] = $now_timestamps;
@@ -110,7 +130,7 @@ class ForscreenRecordModel extends BaseModel{
                 $message_data['res_eup_time'] = $now_timestamps;
                 $message_data['create_time'] = date('Y-m-d H:i:s');
 
-                $netty_data = array('action'=>2,'resource_type'=>2,'url'=>'forscreen/resource/15368043845967.mp4','filename'=>"15368043845967.mp4",
+                $netty_data = array('action'=>2,'resource_type'=>2,'url'=>'forscreen/resource/15368043845967.mp4','filename'=>"$now_timestamps.mp4",
                     'openid'=>'ofYZG417MIHCyVZkq-RbiIddn_8s','video_id'=>$now_timestamps,'forscreen_id'=>$now_timestamps);
                 $msg = json_encode($netty_data);
                 $curl = curl_init();
