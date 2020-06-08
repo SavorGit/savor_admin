@@ -6125,9 +6125,21 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->Port=25;
             $mail->From = $mail_config['username'];
             $mail->FromName = $title;
-
-            $mail->AddAddress("zhang.yingtao@littlehotspot.com");
+            
+            $mail->AddAddress("alex.liu@littlehotspot.com");
+            $mail->AddAddress("li.zhi@littlehotspot.com");
+            $mail->AddAddress("li.cong@littlehotspot.com");         
+            $mail->AddAddress("zheng.wei@littlehotspot.com");
+            $mail->AddAddress("xin.lijuan@littlehotspot.com");
+            $mail->AddAddress("cao.jie@littlehotspot.com");
+            $mail->AddAddress("lv.yulin@littlehotspot.com");
+            $mail->AddAddress("ma.feng@littlehotspot.com");
+            $mail->AddAddress("yang.kai@littlehotspot.com");
             $mail->AddAddress("zhang.jing@littlehotspot.com");
+            $mail->AddAddress("zhang.yingtao@littlehotspot.com");
+            
+            
+            
             $mail->IsHTML(true);
 
             $mail->Subject = $title;
@@ -6141,6 +6153,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             }
         }
     }
+    
     private function getScore($data,$conf_arr){
         $score = 0;
         foreach ($conf_arr as $key=>$v){
