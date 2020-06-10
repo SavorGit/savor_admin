@@ -136,6 +136,8 @@ class ExcelController extends Controller
              $tmpname = '用户极简版投屏日志';
          }else if($filename == 'have_3day_forscreen_boxlist'){
              $tmpname = '超过三天有普通版投屏的版位信息';
+         }else if($filename =='4g_box_forscreen'){
+             $tmpname = '4G盒子投屏测试';
          }
 
 
@@ -6287,7 +6289,54 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             }
         }
     }
-    
+
+    public function forscreen4gbox(){
+        $sql ="select a.id,a.box_mac,a.create_time,hotel.name hotel_name,room.name room_name,box.name box_name from savor_smallapp_forscreen_record as a left join savor_box box on a.box_mac=box.mac left join savor_room room on box.room_id=room.id
+left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4gtools' and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 order by a.id asc ";
+        $res_data = M()->query($sql);
+
+        $data = array();
+        $m_track = new \Admin\Model\Smallapp\ForscreenTrackModel();
+        foreach($res_data as $key=>$v){
+            $dinfo = array('hotel_name'=>$v['hotel_name'],'box_name'=>$v['box_name'],'box_mac'=>$v['box_mac'],'add_time'=>$v['create_time'],
+                'size'=>'1.1');
+            $res_forscreentrack = $m_track->getInfo(array('forscreen_record_id'=>$v['id']));
+            if(!empty($res_forscreentrack)){
+                $dinfo['is_success'] = $res_forscreentrack['is_success'];
+                if($res_forscreentrack['is_success']){
+                    $dinfo['success_str'] = '成功';
+                }else{
+                    $dinfo['success_str'] = '失败';
+                    $netty_position_result = json_decode($res_forscreentrack['netty_position_result'],true);
+                    if($netty_position_result['code']!=10000){
+                        $dinfo['msg'] = $netty_position_result['msg'];
+                    }else{
+                        $netty_result = json_decode($res_forscreentrack['netty_result'],true);
+                        if($netty_position_result['code']!=10000){
+                            $dinfo['msg'] = $netty_result['msg'];
+                        }else{
+                            $dinfo['msg'] = '盒子未上报';
+                        }
+                    }
+
+                }
+                $data[]=$dinfo;
+            }
+
+        }
+        $xlsCell = array(
+            array('hotel_name', '酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','机顶盒mac'),
+            array('add_time','投屏时间'),
+            array('success_str','状态'),
+            array('msg','原因')
+        );
+        $xlsName = '4G盒子投屏测试';
+        $filename = '4g_box_forscreen';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
     private function getScore($data,$conf_arr){
         $score = 0;
         foreach ($conf_arr as $key=>$v){
