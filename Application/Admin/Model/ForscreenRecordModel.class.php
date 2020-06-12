@@ -49,7 +49,7 @@ class ForscreenRecordModel extends BaseModel{
         $now_date = date('Ymd');
         $now_hour = date('G');
         $redis = new \Common\Lib\SavorRedis();
-        /*
+
         $yestoday_hour = 0;
         if($now_hour>3){
             $sql_time = " log.date=$now_date and log.type=2 and log.hour{$now_hour}>0 ";
@@ -112,9 +112,7 @@ class ForscreenRecordModel extends BaseModel{
                 }
             }
         }
-        */
-        $boxs = array('00226D583D92','00301BBA02DB','00226D584363','FCD5D900B3B6',
-            '00226D65547A','00226D655299','00226D584615','00226D584281');
+
         $message_data = array('openid'=>'ofYZG417MIHCyVZkq-RbiIddn_8s','action'=>2,'resource_type'=>2,'forscreen_char'=>'',
             'mobile_brand'=>'dev4gtools','mobile_model'=>'dev4gtools','resource_size'=>1149039,'imgs'=>'["forscreen/resource/15368043845967.mp4"]');
         echo 'boxs:'.json_encode($boxs)."\r\n";
@@ -131,7 +129,8 @@ class ForscreenRecordModel extends BaseModel{
                 $message_data['create_time'] = date('Y-m-d H:i:s');
 
                 $netty_data = array('action'=>2,'resource_type'=>2,'url'=>'forscreen/resource/15368043845967.mp4','filename'=>"$now_timestamps.mp4",
-                    'openid'=>'ofYZG417MIHCyVZkq-RbiIddn_8s','video_id'=>$now_timestamps,'forscreen_id'=>$now_timestamps);
+                    'openid'=>'ofYZG417MIHCyVZkq-RbiIddn_8s','video_id'=>$now_timestamps,'forscreen_id'=>$now_timestamps
+                    );
                 $msg = json_encode($netty_data);
                 $curl = curl_init();
                 curl_setopt_array($curl, array(

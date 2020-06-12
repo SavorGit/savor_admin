@@ -270,6 +270,9 @@ class ProgrammenuController extends BaseController
                 if($id){
                     $ads_id = $ads_ids[$k];
                     $duration = $durations[$k];
+                    if($ads_id && $duration<5){
+                        $this->output('请输入大于5秒的播放时长','programmenu/getlist',2,0);
+                    }
                     $res = $m_programitem->updateData(array('id'=>$id),array('ads_id'=>$ads_id,'duration'=>$duration));
                     if($res){
                         $is_modify = 1;
