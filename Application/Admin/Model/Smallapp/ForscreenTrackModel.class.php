@@ -39,6 +39,10 @@ class ForscreenTrackModel extends BaseModel{
                         $data['oss_etime'] = intval($data['oss_etime']);
                         $data['forscreen_record_id'] = $v['id'];
                         $data['serial_number'] = $serial_no;
+                        if(isset($data['netty_callback_result'])){
+                            $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
+                            $data['netty_callback_time'] = intval($data['netty_callback_time']);
+                        }
 
                         $result = $this->getTrackResult($v,$data);
                         $data['is_success'] = $result['is_success'];
@@ -66,15 +70,11 @@ class ForscreenTrackModel extends BaseModel{
                             $this->add($data);
                         }
                         if($is_del){
-                            $boxs = array('00226D583D92','00301BBA02DB','00226D584363','FCD5D900B3B6',
-                                '00226D65547A','00226D655299','00226D584615','00226D584281');
-                            if(!in_array($v['box_mac'],$boxs)){
-                                $v['forscreen_record_id'] = $v['id'];
-                                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status']);
-                                $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
-                                if($res_invalid){
-                                    $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
-                                }
+                            $v['forscreen_record_id'] = $v['id'];
+                            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status']);
+                            $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
+                            if($res_invalid){
+                                $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
                             }
                         }
                     }
@@ -160,11 +160,14 @@ class ForscreenTrackModel extends BaseModel{
                 $data['oss_etime'] = intval($data['oss_etime']);
                 $data['forscreen_record_id'] = $forscreen_record_id;
                 $data['serial_number'] = $serial_no;
+                if(isset($data['netty_callback_result'])){
+                    $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
+                    $data['netty_callback_time'] = intval($data['netty_callback_time']);
+                }
 
                 $result = $this->getTrackResult($res_forscreen,$data);
                 $data['is_success'] = $result['is_success'];
                 $data['total_time'] = $result['total_time'];
-
                 $this->add($data);
                 $res_forscreentrack = $data;
             }else{
@@ -226,8 +229,19 @@ class ForscreenTrackModel extends BaseModel{
                 }
                 $netty_timeconsume = 0;
                 if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
-                    $netty_timeconsume = $track_info['netty_pushbox_time']-$track_info['netty_receive_time'];
+                    if($track_info['netty_callback_time']){
+                        $netty_timeconsume = $track_info['netty_callback_time']-$track_info['netty_receive_time'];
+                    }else{
+                        $netty_timeconsume = $track_info['netty_pushbox_time']-$track_info['netty_receive_time'];
+                    }
                 }
+                if(isset($track_info['netty_callback_result'])){
+                    $netty_callback_result = json_decode($track_info['netty_callback_result'],true);
+                    if(in_array($netty_callback_result['code'],array(10706,10006))){
+                        $is_success = 0;
+                    }
+                }
+
                 $box_down_timeconsume = 0;
                 if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
                     $box_down_timeconsume = $track_info['box_downetime']-$track_info['box_downstime'];

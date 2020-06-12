@@ -40,21 +40,27 @@
               </td>
             </tr>
             <tr target="sid_user">
-              <td>3.netty处理（netty接收到PHP请求，推送PHP请求数据到机顶盒）</td>
+              <td>3.netty处理</td>
               <td>
-                接收请求时间：{$info.netty_rtime}
+                服务端netty接收请求时间：{$info.netty_rtime}
                 <br>
-                推送盒子时间：{$info.pushbox_time}
+                服务端netty推送客户端netty时间：{$info.pushbox_time}
+                <notempty name="info.netty_callback_time">
+                <br>
+                客户端netty响应时间：{$info.netty_callback_time}
+                </notempty>
+                <br>
+                客户端netty响应数据：{$info.netty_callback_result}
                 <br>
                 总耗时：{$info.netty_timeconsume}
               </td>
             </tr>
             <tr target="sid_user">
-              <td>4.盒子处理（机顶盒接收到netty推送时间，盒子下载时间）</td>
+              <td>4.盒子处理（盒子下载时间）</td>
               <td>
-                接收netty推送时间：{$info.box_rtime}
+                盒子开始下载时间：{$info.box_rtime}
                 <br>
-                盒子下载时间：{$info.box_downtime}
+                盒子结束下载时间：{$info.box_downtime}
                 <br>
                 总耗时：{$info.box_down_timeconsume}
               </td>

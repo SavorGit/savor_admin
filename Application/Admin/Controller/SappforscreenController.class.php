@@ -676,6 +676,27 @@ class SappforscreenController extends BaseController {
                     }
                     $track_info['netty_result'] = rtrim($netty_result_str,'|');
                 }
+                if(!empty($track_info['netty_callback_result'])){
+                    $netty_callback_result = json_decode($track_info['netty_callback_result'],true);
+                    $netty_callback_result_str = '';
+                    foreach ($netty_callback_result as $k=>$v){
+                        if($k=='result'){
+                            if(is_array($v)){
+                                $v = json_encode($v);
+                            }
+                            $netty_callback_result_str.="$k:$v|";
+                        }else{
+                            $netty_callback_result_str.="$k:$v|";
+                        }
+
+                    }
+                    $track_info['netty_callback_result'] = rtrim($netty_callback_result_str,'|');
+                }
+                if($track_info['netty_callback_time']){
+                    $netty_callback_time = date('Y-m-d H:i:s',round($track_info['netty_callback_time']/1000));
+                }else{
+                    $netty_callback_time = '';
+                }
 
                 $track_info['status'] = $track_info['is_success']==1?'成功':'失败';
                 $track_info['all_timeconsume'] = $track_info['total_time'];
@@ -685,6 +706,7 @@ class SappforscreenController extends BaseController {
                 $track_info['netty_stime'] = $netty_stime;
                 $track_info['netty_rtime'] = $netty_rtime;
                 $track_info['pushbox_time'] = $pushbox_time;
+                $track_info['netty_callback_time'] = $netty_callback_time;
                 $track_info['netty_timeconsume'] = $netty_timeconsume;
                 $track_info['box_rtime'] = $box_rtime;
                 $track_info['oss_begintime'] = $oss_begintime;
