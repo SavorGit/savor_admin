@@ -649,10 +649,15 @@ class SappforscreenController extends BaseController {
                 }else{
                     $box_rtime = '';
                 }
-                if($track_info['box_downetime']){
-                    $box_downtime = date('Y-m-d H:i:s',round($track_info['box_downetime']/1000));
+                if($track_info['box_downstime']){
+                    $box_downstime = date('Y-m-d H:i:s',round($track_info['box_downstime']/1000));
                 }else{
-                    $box_downtime = '';
+                    $box_downstime = '';
+                }
+                if($track_info['box_downetime']){
+                    $box_downetime = date('Y-m-d H:i:s',round($track_info['box_downetime']/1000));
+                }else{
+                    $box_downetime = '';
                 }
                 if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
                     $box_down_timeconsume = ($track_info['box_downetime']-$track_info['box_downstime'])/1000;
@@ -680,15 +685,9 @@ class SappforscreenController extends BaseController {
                     $netty_callback_result = json_decode($track_info['netty_callback_result'],true);
                     $netty_callback_result_str = '';
                     foreach ($netty_callback_result as $k=>$v){
-                        if($k=='result'){
-                            if(is_array($v)){
-                                $v = json_encode($v);
-                            }
-                            $netty_callback_result_str.="$k:$v|";
-                        }else{
+                        if($k!='result'){
                             $netty_callback_result_str.="$k:$v|";
                         }
-
                     }
                     $track_info['netty_callback_result'] = rtrim($netty_callback_result_str,'|');
                 }
@@ -709,9 +708,10 @@ class SappforscreenController extends BaseController {
                 $track_info['netty_callback_time'] = $netty_callback_time;
                 $track_info['netty_timeconsume'] = $netty_timeconsume;
                 $track_info['box_rtime'] = $box_rtime;
+                $track_info['box_downstime'] = $box_downstime;
                 $track_info['oss_begintime'] = $oss_begintime;
                 $track_info['oss_timeconsume'] = $oss_timeconsume;
-                $track_info['box_downtime'] = $box_downtime;
+                $track_info['box_downetime'] = $box_downetime;
                 $track_info['box_down_timeconsume'] = $box_down_timeconsume;
                 $track_info['box_mac'] = $res_forscreen['box_mac'];
 

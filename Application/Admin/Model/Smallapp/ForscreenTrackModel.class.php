@@ -27,6 +27,7 @@ class ForscreenTrackModel extends BaseModel{
                     $res_cache = $redis->get($cache_key.$serial_no);
                     if(!empty($res_cache)){
                         $data = json_decode($res_cache,true);
+                        unset($data['action']);
                         if(isset($data['netty_position_result'])){
                             $data['netty_position_result'] = json_encode($data['netty_position_result']);
                         }
@@ -69,7 +70,7 @@ class ForscreenTrackModel extends BaseModel{
                         }else{
                             $this->add($data);
                         }
-                        if($is_del){
+                        if($is_del && $v['mobile_brand']!='dev4gtools'){
                             $v['forscreen_record_id'] = $v['id'];
                             unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status']);
                             $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
@@ -148,6 +149,7 @@ class ForscreenTrackModel extends BaseModel{
             $res_cache = $redis->get($cache_key.$serial_no);
             if(!empty($res_cache)){
                 $data = json_decode($res_cache,true);
+                unset($data['action']);
                 if(isset($data['netty_position_result'])){
                     $data['netty_position_result'] = json_encode($data['netty_position_result']);
                 }
@@ -164,6 +166,7 @@ class ForscreenTrackModel extends BaseModel{
                     $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
                     $data['netty_callback_time'] = intval($data['netty_callback_time']);
                 }
+
 
                 $result = $this->getTrackResult($res_forscreen,$data);
                 $data['is_success'] = $result['is_success'];
@@ -187,8 +190,6 @@ class ForscreenTrackModel extends BaseModel{
             }
             if ($begin_time && $end_time) {
                 $is_success = 1;
-//                $total_time = ($end_time - $begin_time) / 1000;
-
                 $oss_time = $track_info['oss_etime']-$track_info['oss_stime'];
                 $box_time = 0;
                 if ($track_info['box_downstime'] && $track_info['box_downetime']){
@@ -205,6 +206,9 @@ class ForscreenTrackModel extends BaseModel{
             }
             if($forscreen_info['action']==9){
                 $forscreen_info['is_exist'] = 1;
+            }
+            if($forscreen_info['action']==4){
+                $forscreen_info['is_exist'] = 0;
             }
             if($forscreen_info['is_exist']==1){
                 $begin_time = $track_info['position_nettystime'];
