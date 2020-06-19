@@ -6187,8 +6187,8 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
     public function lostBoxList(){
         
         $sql ="select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark, 
-               box.mac box_mac,hlog.last_heart_time 
-               from savor_box box 
+               box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id
+               from savor_box box  
                left join savor_room room on box.room_id= room.id 
                left join savor_hotel hotel on room.hotel_id=hotel.id 
                left join savor_area_info area on hotel.area_id= area.id 
@@ -6199,6 +6199,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $data = M()->query($sql);
         //$datalist = [];
         foreach($data as $key=>$v){
+	    if($v['box_id']==$v['hlog_box_id'] || empty($v['last_heart_time'])){
             if(empty($v['last_heart_time'])){
                 $data[$key]['last_heart_time'] = '';
                 $data[$key]['last_heart_time_str'] = '30天+';
@@ -6216,6 +6217,9 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                 }
                 
             }
+	    }else {
+	    	unset($data[$key]);
+	    }
         }
         sort($data);
         
@@ -6312,12 +6316,34 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
                         $dinfo['msg'] = $netty_position_result['msg'];
                     }else{
                         $netty_result = json_decode($res_forscreentrack['netty_result'],true);
-                        if($netty_position_result['code']!=10000){
+                        if($netty_result['code']!=10000){
                             $dinfo['msg'] = $netty_result['msg'];
                         }else{
-                            $dinfo['msg'] = '盒子未上报';
+                            if(!empty($res_forscreentrack['netty_callback_result'])){
+                                $callback_result = json_decode($res_forscreentrack['netty_callback_result'],true);
+                                if(is_array($callback_result)){
+                                    if($callback_result['code']==10000){
+                                        $dinfo['msg'] = '盒子未上报';
+                                    }elseif(in_array($callback_result['code'],array(10706,10006))){
+                                        $dinfo['msg'] = $callback_result['msg'];
+                                    }else{
+                                        $dinfo['msg'] = $callback_result['code'];
+                                    }
+                                }else {
+                                    if(strpos($res_forscreentrack['netty_callback_result'],"10302")){
+                                        $dinfo['msg'] = 'Netty [读]空闲超时';
+                                    }else{
+                                        $dinfo['msg'] = '盒子未上报';
+                                    }
+                                }
+
+                            }else{
+                                $dinfo['msg'] = '盒子未上报';
+                            }
                         }
+
                     }
+
 
                 }
                 $data[]=$dinfo;
