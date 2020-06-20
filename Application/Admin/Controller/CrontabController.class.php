@@ -3569,7 +3569,7 @@ class CrontabController extends Controller
             }
             if($is_send==1){
                 $redpacket = array('user_id'=>$op_userid,'total_fee'=>$v['total_fee'],'amount'=>$v['amount'],'surname'=>'小热点',
-                    'sex'=>1,'bless_id'=>1,'scope'=>$v['scope'],'mac'=>$v['mac'],'pay_fee'=>$v['total_fee'],
+                    'sex'=>1,'bless_id'=>1,'scope'=>$v['scope'],'area_id'=>$v['area_id'],'mac'=>$v['mac'],'pay_fee'=>$v['total_fee'],
                     'pay_time'=>date('Y-m-d H:i:s'),'pay_type'=>10,'status'=>4);
                 $trade_no = $m_redpacket->addData($redpacket);
                 if($trade_no){
@@ -3612,7 +3612,7 @@ class CrontabController extends Controller
                         'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
                     $m_netty->pushBox($redpacket['mac'],json_encode($message));
 
-                    //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视
+                    //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包
                     $scope = $redpacket['scope'];
                     if(in_array($scope,array(1,2))) {
                         //发全网红包
@@ -3628,10 +3628,16 @@ class CrontabController extends Controller
                         }
                         if ($scope == 1) {
                             $key = C('SAPP_REDPACKET') . 'smallprogramcode';
-                            $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,
+                            $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>1,
                                 'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
                             $redis->set($key, json_encode($res_data));
                         }
+                    }elseif($scope==4){
+                        $all_box = $m_netty->getPushBox(4,$box_mac,$redpacket['area_id']);
+                        $key = C('SAPP_REDPACKET') . 'smallprogramcode';
+                        $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>4,
+                            'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
+                        $redis->set($key, json_encode($res_data));
                     }
                     //end
 
@@ -3667,6 +3673,14 @@ class CrontabController extends Controller
         echo "userwelcome:$now_time \r\n";
         $m_welcome = new \Admin\Model\Smallapp\WelcomeModel();
         $m_welcome->handle_welcome();
+    }
+
+    public function welcomefail(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "welcomefail start:$now_time \r\n";
+        $m_welcome = new \Admin\Model\Smallapp\WelcomePlayfailrecordModel();
+        $m_welcome->handle_welcomefail();
+        echo "welcomefail end:$now_time \r\n";
     }
 
     public function forscreenPublicnums(){

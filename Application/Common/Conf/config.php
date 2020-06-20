@@ -537,7 +537,8 @@ $config['REDPACKET_SENDERS'] = array(
 $config['REDPACKET_SCOPE'] = array(
     '1'=>'全网餐厅电视',
     '2'=>'当前餐厅所有电视',
-    '3'=>'当前包间电视'
+    '3'=>'当前包间电视',
+    '4'=>'区域餐厅电视',
 );
 
 $config['ADV_VIDEO'] = array(
