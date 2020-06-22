@@ -14,7 +14,20 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
-    
+    public function clearCollect(){
+    	exit();
+    	$sql ="SELECT a.*,b.status pub_status FROM `savor_smallapp_collect` a left join savor_smallapp_public b on a.res_id= b.forscreen_id where a.type=2 and a.status=1 and b.status!=2 ";
+    	$data = M()->query($sql);
+    	$flag = 0;
+    	foreach($data as $key=>$v){
+    		$sql = "update `savor_smallapp_collect` set status=0 where id=".$v['id']." limit 1";
+    		$ret = M()->execute($sql);
+    		if($ret){
+    			$flag ++;
+    		}
+    	}
+    	echo $flag;
+    }
     public function pltozj(){
         exit();
         $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
