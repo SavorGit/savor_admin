@@ -3678,7 +3678,7 @@ class CrontabController extends Controller
     public function welcomefail(){
         $now_time = date('Y-m-d H:i:s');
         echo "welcomefail start:$now_time \r\n";
-        $m_welcome = new \Admin\Model\Smallapp\WelcomePlayfailrecordModel();
+        $m_welcome = new \Admin\Model\Smallapp\WelcomePlayrecordModel();
         $m_welcome->handle_welcomefail();
         echo "welcomefail end:$now_time \r\n";
     }

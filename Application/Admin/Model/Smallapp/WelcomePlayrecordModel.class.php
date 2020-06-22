@@ -2,8 +2,8 @@
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
 
-class WelcomePlayfailrecordModel extends BaseModel{
-	protected $tableName='smallapp_welcome_playfailrecord';
+class WelcomePlayrecordModel extends BaseModel{
+	protected $tableName='smallapp_welcome_playrecord';
 
 	public function handle_welcomefail(){
         $where = array('status'=>1);
@@ -52,10 +52,10 @@ class WelcomePlayfailrecordModel extends BaseModel{
                     $push_message = json_encode($message);
                     $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);
                     if($res_netty['code'] ==10000){
-                        $this->updateData(array('id'=>$v['id']),array('status'=>2));
-                        echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|ok|result|".json_encode($res_netty)."\r\n";
+//                        $this->updateData(array('id'=>$v['id']),array('status'=>2));
+                        echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push ok|result|".json_encode($res_netty)."\r\n";
                     }else{
-                        echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|fail|result|".json_encode($res_netty)."\r\n";
+                        echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push fail|result|".json_encode($res_netty)."\r\n";
                     }
                 }else{
                     $this->updateData(array('id'=>$v['id']),array('status'=>3));
