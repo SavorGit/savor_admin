@@ -25,8 +25,8 @@ class NettyModel extends Model{
         return $ret;
     }
 
-    public function getPushBox($scope,$box_mac){
-        //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视
+    public function getPushBox($scope,$box_mac,$area_id=0){
+        //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域内所有餐厅电视
         $hotel_box_type = C('HEART_HOTEL_BOX_TYPE');
         $tmp_box_type = array_keys($hotel_box_type);
         $all_box_type = join(',',$tmp_box_type);
@@ -40,6 +40,9 @@ class NettyModel extends Model{
                 $res_hotel = $this->query($sql_hotel);
                 $hotel_id = $res_hotel[0]['hotel_id'];
                 $sql_box = "SELECT box.mac box_mac FROM savor_box box LEFT JOIN savor_room room ON box.`room_id`=room.`id` LEFT JOIN savor_hotel hotel ON room.`hotel_id`=hotel.`id` WHERE hotel.`id`=$hotel_id AND hotel.`state`=1 AND hotel.`flag`=0 AND box.`state`=1 AND box.`flag`=0 AND hotel.`hotel_box_type` IN ($all_box_type)";
+                break;
+            case 4:
+                $sql_box = "SELECT box.mac box_mac FROM savor_box box LEFT JOIN savor_room room ON box.`room_id`=room.`id` LEFT JOIN savor_hotel hotel ON room.`hotel_id`=hotel.`id` WHERE hotel.`state`=1 AND hotel.`flag`=0 AND box.`state`=1 AND box.`flag`=0 AND hotel.area_id={$area_id} AND hotel.`hotel_box_type` IN ($all_box_type)";
                 break;
             default:
                 $sql_box = '';

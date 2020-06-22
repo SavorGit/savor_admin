@@ -109,6 +109,19 @@
             </div>
             </notempty>
 
+
+            <div class="form-group row" id="select_area" <if condition="$vinfo.scope neq 4"> style="display: none;"</if> >
+                <label class="col-xs-12 col-sm-2 control-label">请选择区域：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="area_id" class="form-control bs-select" title="请选择">
+                        <volist name="areas" id="ainfo">
+                            <option value="{$ainfo.id}" <if condition="$ainfo.id eq $vinfo['area_id']">selected</if>>{$ainfo.region_name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
                 <div class="col-xs-12 col-sm-10  form-inline">
@@ -196,4 +209,16 @@
             $(".send_time3").show();
         }
     });
+
+    $("input[name='scope']").click(function() {
+        var id = $(this).attr("id");
+        if (id == 4){
+            $("#select_area").show();
+        }else{
+            $("#select_area").hide();
+        }
+    });
+
+
+    select_area
 </script>

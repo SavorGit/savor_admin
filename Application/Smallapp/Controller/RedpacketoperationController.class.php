@@ -64,10 +64,11 @@ class RedpacketoperationController extends BaseController {
             $hotel_id = I('post.regiona1_id',0,'intval');
             $room_id = I('post.regiona2_id',0,'intval');
             $box_id = I('post.regiona3_id',0,'intval');
+            $area_id = I('post.area_id',0,'intval');
 
             $userInfo = session('sysUserInfo');
             $data = array('total_fee'=>$total_fee,'amount'=>$amount,'scope'=>$scope,'type'=>$type,'start_date'=>$start_date,
-                'end_date'=>$end_date,'sender'=>$sender,'sysuser_id'=>$userInfo['id'],'status'=>$status);
+                'end_date'=>$end_date,'sender'=>$sender,'area_id'=>$area_id,'sysuser_id'=>$userInfo['id'],'status'=>$status);
             if($total_fee<$amount*0.3){
                 $this->output('每个红包最小额度为0.3', 'redpacketoperation/operationadd',2,0);
             }
@@ -83,6 +84,16 @@ class RedpacketoperationController extends BaseController {
             if($type==3){
                 if(empty($end_date)){
                     $this->output('结束日期不能为空', 'redpacketoperation/operationadd',2,0);
+                }
+            }
+            if($scope==4){
+                if(empty($area_id)){
+                    $this->output('请选择发送区域', 'redpacketoperation/operationadd',2,0);
+                }
+                $m_hotel = new \Admin\Model\HotelModel();
+                $res_hotel = $m_hotel->getOne($hotel_id);
+                if($area_id!=$res_hotel['area_id']){
+                    $this->output('请选择对应区域所在的酒楼', 'redpacketoperation/operationadd',2,0);
                 }
             }
 
@@ -120,8 +131,10 @@ class RedpacketoperationController extends BaseController {
             $hours = $res['hours'];
             $minutes = $res['minutes'];
             $hlist = $res['hotels'];
+            $areas = $res['areas'];
 
             $this->assign('hlist', $hlist);
+            $this->assign('areas', $areas);
             $this->assign('vinfo',$vinfo);
             $this->assign('scopes',$all_scopes);
             $this->assign('senders',$all_senders);
@@ -163,11 +176,13 @@ class RedpacketoperationController extends BaseController {
         $hours = $res['hours'];
         $minutes = $res['minutes'];
         $hlist = $res['hotels'];
+        $areas = $res['areas'];
 
         $this->assign('macinfo',$macinfo);
         $this->assign('hour',$hour);
         $this->assign('minute',$minute);
         $this->assign('hlist', $hlist);
+        $this->assign('areas', $areas);
         $this->assign('vinfo',$vinfo);
         $this->assign('scopes',$all_scopes);
         $this->assign('senders',$all_senders);
@@ -197,10 +212,21 @@ class RedpacketoperationController extends BaseController {
         for($i=0;$i<60;$i++){
             $minutes[]=str_pad($i,2,'0',STR_PAD_LEFT);
         }
+        $m_area = new \Admin\Model\AreaModel();
+        $res_area = $m_area->getHotelAreaList();
+        $area_info = array();
+        foreach ($res_area as $v){
+            $area_info[$v['id']] = $v;
+        }
         $where = array('flag'=>0,'state'=>1);
         $m_hotel = new \Admin\Model\HotelModel();
-        $hlist = $m_hotel->getInfo('id,name',$where);
-        $res = array('hours'=>$hours,'minutes'=>$minutes,'hotels'=>$hlist);
+        $hlist = $m_hotel->getInfo('id,name,area_id',$where);
+        foreach ($hlist as $k=>$v){
+            if(isset($area_info[$v['area_id']])){
+                $hlist[$k]['name'] = $area_info[$v['area_id']]['region_name'].'-'.$v['name'];
+            }
+        }
+        $res = array('hours'=>$hours,'minutes'=>$minutes,'hotels'=>$hlist,'areas'=>$area_info);
         return $res;
     }
 
