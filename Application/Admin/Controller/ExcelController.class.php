@@ -138,6 +138,8 @@ class ExcelController extends Controller
              $tmpname = '超过三天有普通版投屏的版位信息';
          }else if($filename =='4g_box_forscreen'){
              $tmpname = '4G盒子投屏测试';
+         }else if($filename =='exportMallOrder'){
+             $tmpname ="商场订单汇总";
          }
 
 
@@ -6362,7 +6364,67 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
         $filename = '4g_box_forscreen';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
-
+    public function exportMallOrder(){
+        $sql  = "SELECT openid from savor_smallapp_order where otype=5 and status in(51,52,53) and pay_type=10 group by openid";
+        $ret1 = M()->query($sql);
+        $sql  = "SELECT openid from savor_smallapp_order where otype=6 and status in(12,61,62) and gift_oid=0 and pay_type=10 group by openid";
+        $ret2 = M()->query($sql);
+        
+        $ret = array_merge($ret1,$ret2);
+        $openid_arr = [];
+        foreach($ret as $key=>$v){
+            if(!in_array($v['openid'],$openid_arr)){
+                array_push($openid_arr,$v['openid']);
+            }
+        }
+        $data = [];
+        foreach($openid_arr as $key=> $v){
+            $data[$key]['openid']      = $v;
+            $sql ="select nickName from savor_smallapp_user where openid='".$v."' and small_app_id=1";
+            $rts = M()->query($sql);
+            $data[$key]['nickname'] = $rts[0]['nickname'];
+            
+            $total_fee = 0;
+            $total_num = 0;
+            //普通订单
+            $sql = "select pay_fee from savor_smallapp_order where otype=5 and status in(51,52,53) and pay_type=10 and openid='".$v."'";
+            $p_rts = M()->query($sql);
+            foreach($p_rts as $kk=>$vv){
+                $total_fee += $vv['pay_fee'];
+            }
+            
+            //买赠订单
+            $sql = "select pay_fee from savor_smallapp_order where otype=6 and status in(12,61,62) and gift_oid=0 and pay_type=10 and openid='".$v."'";
+            $m_rts = M()->query($sql);
+            foreach($m_rts as $kk=>$vv){
+                $total_fee += $vv['pay_fee'];
+            }
+            $common_order_num = count($p_rts);
+            $gift_order_num   = count($m_rts);
+            $total_num = $common_order_num + $gift_order_num;
+            $data[$key]['all_order_num']    = $total_num;         //总订单数
+            $data[$key]['common_order_num'] = $common_order_num;  //普通订单
+            $data[$key]['gift_order_num']   = $gift_order_num;    //买赠订单
+            
+            $avg_pay_fee = round($total_fee / $total_num,2);      //客单价
+            
+            $data[$key]['avg_pay_fee'] = $avg_pay_fee;
+            
+            
+            
+        }
+        $xlsCell = array(
+            array('openid', '微信唯一标识'),
+            array('nickname','昵称'),
+            array('all_order_num','购买次数'),
+            array('common_order_num','普通订单'),
+            array('gift_order_num','赠送订单'),
+            array('avg_pay_fee','客单价')
+        );
+        $xlsName = '商城订单数据汇总';
+        $filename = 'exportMallOrder';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
     private function getScore($data,$conf_arr){
         $score = 0;
         foreach ($conf_arr as $key=>$v){
