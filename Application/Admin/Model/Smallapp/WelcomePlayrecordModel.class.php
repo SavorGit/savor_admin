@@ -38,7 +38,6 @@ class WelcomePlayrecordModel extends BaseModel{
                     $message['type'] = 1;
                     $message['waiterName'] = '';
                     $message['waiterIconUrl'] = '';
-
                     $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1,'hotel.id'=>$v['hotel_id'],'box.mac'=>$v['box_mac']);
                     $res_box = $m_box->getInfoByCondition('box.room_id,room.hotel_id',$box_where);
                     $res_staff = $m_staff->getInfo(array('hotel_id'=>$res_box['hotel_id'],'room_id'=>$res_box['room_id']));
@@ -49,11 +48,20 @@ class WelcomePlayrecordModel extends BaseModel{
                         $message['waiterName'] = $res_user['nickName'];
                         $message['waiterIconUrl'] = $res_user['avatarUrl'];
                     }
+                    if($res_welcome[0]['status']==3){
+                        $message['action'] = 131;
+                    }
+
                     $push_message = json_encode($message);
                     $res_netty = $m_netty->pushBox($v['box_mac'],$push_message);
                     if($res_netty['code'] ==10000){
-//                        $this->updateData(array('id'=>$v['id']),array('status'=>2));
-                        echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push ok|result|".json_encode($res_netty)."\r\n";
+                        if($message['action']==131){
+                            $this->updateData(array('id'=>$v['id']),array('status'=>3));
+                            echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|stop \r\n";
+                        }else{
+                            //$this->updateData(array('id'=>$v['id']),array('status'=>2));
+                            echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push ok|result|".json_encode($res_netty)."\r\n";
+                        }
                     }else{
                         echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push fail|result|".json_encode($res_netty)."\r\n";
                     }
