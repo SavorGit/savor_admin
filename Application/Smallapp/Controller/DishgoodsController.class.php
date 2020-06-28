@@ -122,7 +122,7 @@ class DishgoodsController extends BaseController {
             if($type==0){
                 $type = 22;
             }
-            $dinfo = array('type'=>$type,'amount'=>1,'gtype'=>1);
+            $dinfo = array('type'=>$type,'amount'=>1,'gtype'=>1,'tvmedia_type'=>1);
 
             $goods_types = C('DISH_TYPE');
             if($id){
@@ -144,6 +144,9 @@ class DishgoodsController extends BaseController {
                 if(!empty($dinfo['tv_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['tv_media_id']);
                     $tv_oss_addr = $res_media['oss_addr'];
+                    $dinfo['tvmedia_type'] = $res_media['type'];
+                }else{
+                    $dinfo['tvmedia_type'] = 1;
                 }
 
                 $dinfo['poster_oss_addr'] = $poster_oss_addr;
@@ -251,6 +254,10 @@ class DishgoodsController extends BaseController {
             $is_recommend = I('post.is_recommend',0,'intval');
             $gift_goods_id = I('post.gift_goods_id',0,'intval');
             $tv_media_id = I('post.tv_media_id',0,'intval');
+            $tv_media_vid = I('post.tv_media_vid',0,'intval');
+            if($tv_media_vid){
+                $tv_media_id = $tv_media_vid;
+            }
 
             if($type==22 || $type==23){
                 if($price<$supply_price){

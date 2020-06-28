@@ -13,6 +13,7 @@ class SappforscreenController extends BaseController {
     public $all_actions = array();
     public $source_types = array('0'=>'下载成功','1'=>'盒子存在资源','2'=>'下载失败','3'=>'盒子待回执');
     public $all_invalidtypes = array('1'=>'酒楼ID','2'=>'微信openID','3'=>'机顶盒mac','4'=>'红包黑名单用户');
+    public $success_status = array('1'=>'成功','2'=>'打断','3'=>'退出','0'=>'失败');
 
 
 
@@ -40,7 +41,7 @@ class SappforscreenController extends BaseController {
 	    $pagenum = I('pageNum',1);
 	    $order = I('_order','a.id');
 	    $sort = I('_sort','desc');
-	    $orders = $order.' '.$sort;
+	    $orders = 'a.create_time desc';
 	    $start  = ( $pagenum-1 ) * $size;
 
 	    $where = array();
@@ -192,11 +193,8 @@ class SappforscreenController extends BaseController {
 	        $total_time = '';
 	        $res_track = $m_forscreentrack->getRow('is_success,total_time',array('forscreen_record_id'=>$v['id']));
 	        if(!empty($res_track)){
-	            if($res_track['is_success']){
-                    $is_success_str = '成功';
-                }else{
-                    $is_success_str = '失败';
-                }
+                $is_success = $res_track['is_success'];
+                $is_success_str = $this->success_status[$is_success];
                 $total_time = $res_track['total_time'];
             }
             $list['list'][$key]['is_success_str'] = $is_success_str;
@@ -696,8 +694,8 @@ class SappforscreenController extends BaseController {
                 }else{
                     $netty_callback_time = '';
                 }
-
-                $track_info['status'] = $track_info['is_success']==1?'成功':'失败';
+                $is_success = $track_info['is_success'];
+                $track_info['status'] = $this->success_status[$is_success];
                 $track_info['all_timeconsume'] = $track_info['total_time'];
 
                 $track_info['netty_position_stime'] = $netty_position_stime;

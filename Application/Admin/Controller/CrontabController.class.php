@@ -2730,7 +2730,7 @@ class CrontabController extends Controller
             $data = $redis->lgetrange($k,0,-1);
             if(empty($data)) $redis->remove($k);
         }
-	$cache_key = C('SAPP_UPRES_FORSCREEN')."*";
+	    $cache_key = C('SAPP_UPRES_FORSCREEN')."*";
         $keys = $redis->keys($cache_key);
         foreach($keys as $k){
             $data = $redis->lgetrange($k, 0, -1);
@@ -2739,7 +2739,7 @@ class CrontabController extends Controller
                 $where = $data = array();
                 if(!empty($upresource['resource_id']) && !empty($upresource['openid'])){
                     $where['action'] = array('neq',8);
-		    $where['resource_id'] = $upresource['resource_id'];
+		            $where['resource_id'] = $upresource['resource_id'];
                     $where['openid'] = $upresource['openid'];
                     if(!empty($upresource['box_res_sdown_time'])){
                         $data['box_res_sdown_time'] = $upresource['box_res_sdown_time'];
@@ -2753,7 +2753,7 @@ class CrontabController extends Controller
             $ret = $redis->lgetrange($k,0,-1);
             if(empty($ret)) $redis->remove($k);
         }
-	$cache_key = C('SAPP_UPDOWN_FORSCREEN')."*";
+	    $cache_key = C('SAPP_UPDOWN_FORSCREEN')."*";
         $keys = $redis->keys($cache_key);
         foreach($keys as $k){
             $data = $redis->lgetrange($k, 0, -1);
@@ -2773,29 +2773,25 @@ class CrontabController extends Controller
                 }else {
                     $redis->lpop($k);
                 }
-		
             }
             $ret = $redis->lgetrange($k,0,-1);
             if(empty($ret)) $redis->remove($k);
         }
-	$cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
+	    $cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
         $keys = $redis->keys($cache_key);
         foreach($keys as $k){
-            
             $data = $redis->lgetrange($k, 0, -1);
-            
             foreach($data as $v){
                 $netresource = json_decode($v,true);
-                
                 $search = array();
                 $search['forscreen_id'] = $netresource['forscreen_id'];
                 if($netresource['resource_id']){
                     $search['resource_id']  = $netresource['resource_id'];
                 }
                 $tmp = $m_smallapp_forscreen_record->getOne('id', $search);
-                
                 if(!empty($tmp)){
-                    if($netresource['is_exist']==0){//资源不存在
+                    //资源不存在
+                    if($netresource['is_exist']==0){
                         if(!empty($netresource['resource_id']) && !empty($netresource['openid'])){
                             $where = array();
                             $dt = array();
@@ -2812,8 +2808,25 @@ class CrontabController extends Controller
                             $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
                             $dt['is_break'] = $is_break;
                             $dt['is_exist'] = $netresource['is_exist'];
+                            if(isset($netresource['is_exit'])){
+                                $dt['is_exit'] = $netresource['is_exit'];
+                            }else{
+                                $dt['is_exit'] = 0;
+                            }
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
+
+                            $up_data = array();
+                            if($dt['is_break']==1){
+                                $up_data['is_break'] = 1;
+                            }
+                            if($dt['is_exit']==1){
+                                $up_data['is_exit'] = 1;
+                            }
+                            if(!empty($up_data)){
+                                $upwhere = array('forscreen_id'=>$netresource['forscreen_id']);
+                                $m_smallapp_forscreen_record->updateData($upwhere,$up_data);
+                            }
                             $redis->lpop($k);
                         }
                     }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
@@ -2827,9 +2840,25 @@ class CrontabController extends Controller
                         $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
                         $dt['is_break'] = $is_break;
                         $dt['is_exist'] = $netresource['is_exist'];
+                        if(isset($netresource['is_exit'])){
+                            $dt['is_exit'] = $netresource['is_exit'];
+                        }else{
+                            $dt['is_exit'] = 0;
+                        }
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
-                        
+
+                        $up_data = array();
+                        if($dt['is_break']==1){
+                            $up_data['is_break'] = 1;
+                        }
+                        if($dt['is_exit']==1){
+                            $up_data['is_exit'] = 1;
+                        }
+                        if(!empty($up_data)){
+                            $upwhere = array('forscreen_id'=>$netresource['forscreen_id']);
+                            $m_smallapp_forscreen_record->updateData($upwhere,$up_data);
+                        }
                         $tt = $redis->lpop($k);
                     }
                 }else {
