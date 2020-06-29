@@ -46,6 +46,19 @@ class ForscreenTrackModel extends BaseModel{
                             }
                             $data['netty_callback_time'] = intval($data['netty_callback_time']);
                         }
+                        $netty_key = $cache_key.$serial_no.'netty_time';
+                        if(empty($data['netty_receive_time'])){
+                            $res_nettycache = $redis->hget($netty_key,'netty_receive_time');
+                            if(!empty($res_nettycache)){
+                                $data['netty_receive_time'] = $res_nettycache;
+                            }
+                        }
+                        if(empty($data['netty_pushbox_time'])){
+                            $res_nettycache = $redis->hget($netty_key,'netty_pushbox_time');
+                            if(!empty($res_nettycache)){
+                                $data['netty_pushbox_time'] = $res_nettycache;
+                            }
+                        }
 
                         $result = $this->getTrackResult($v,$data);
                         $data['is_success'] = $result['is_success'];
@@ -168,6 +181,20 @@ class ForscreenTrackModel extends BaseModel{
                     $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
                     $data['netty_callback_time'] = intval($data['netty_callback_time']);
                 }
+                $netty_key = $cache_key.$serial_no.'netty_time';
+                if(empty($data['netty_receive_time'])){
+                    $res_nettycache = $redis->hget($netty_key,'netty_receive_time');
+                    if(!empty($res_nettycache)){
+                        $data['netty_receive_time'] = $res_nettycache;
+                    }
+                }
+                if(empty($data['netty_pushbox_time'])){
+                    $res_nettycache = $redis->hget($netty_key,'netty_pushbox_time');
+                    if(!empty($res_nettycache)){
+                        $data['netty_pushbox_time'] = $res_nettycache;
+                    }
+                }
+
                 $result = $this->getTrackResult($res_forscreen,$data);
                 $data['is_success'] = $result['is_success'];
                 $data['total_time'] = $result['total_time'];

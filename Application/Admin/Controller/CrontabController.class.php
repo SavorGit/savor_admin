@@ -2806,21 +2806,21 @@ class CrontabController extends Controller
                                 $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
                             }
                             $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
-                            $dt['is_break'] = $is_break;
+                            $is_break = intval($is_break);
                             $dt['is_exist'] = $netresource['is_exist'];
                             if(isset($netresource['is_exit'])){
-                                $dt['is_exit'] = $netresource['is_exit'];
+                                $is_exit = $netresource['is_exit'];
                             }else{
-                                $dt['is_exit'] = 0;
+                                $is_exit = 0;
                             }
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
 
                             $up_data = array();
-                            if($dt['is_break']==1){
+                            if($is_break==1){
                                 $up_data['is_break'] = 1;
                             }
-                            if($dt['is_exit']==1){
+                            if($is_exit==1){
                                 $up_data['is_exit'] = 1;
                             }
                             if(!empty($up_data)){
@@ -2838,21 +2838,21 @@ class CrontabController extends Controller
                         }
                         $where['openid'] = $netresource['openid'];
                         $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
-                        $dt['is_break'] = $is_break;
+                        $is_break = intval($is_break);
                         $dt['is_exist'] = $netresource['is_exist'];
                         if(isset($netresource['is_exit'])){
-                            $dt['is_exit'] = $netresource['is_exit'];
+                            $is_exit = $netresource['is_exit'];
                         }else{
-                            $dt['is_exit'] = 0;
+                            $is_exit = 0;
                         }
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
 
                         $up_data = array();
-                        if($dt['is_break']==1){
+                        if($is_break==1){
                             $up_data['is_break'] = 1;
                         }
-                        if($dt['is_exit']==1){
+                        if($is_exit==1){
                             $up_data['is_exit'] = 1;
                         }
                         if(!empty($up_data)){
