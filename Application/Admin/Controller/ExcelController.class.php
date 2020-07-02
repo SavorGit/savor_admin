@@ -5074,11 +5074,11 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 2001,5000";
+                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
 
         $box_list = M()->query($sql);
-        $start_time = '20200515';
-        $end_time   = '20200528';
+        $start_time = '20200621';
+        $end_time   = '20200630';
         $sql ="select id from area_info area where id = 2 and region_name like'name'";
         
         
@@ -5094,7 +5094,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             
             
         }
-        $xlsName = '全国网络机顶盒连续14天失联';
+        $xlsName = '深圳网络机顶盒连续10天失联';
         $filename = 'exportSl14BoxList';
         
         $xlsCell = array(
@@ -5106,9 +5106,19 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('box_mac','机顶盒编号')
         
         );
-        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $xlsName = '失联超过14天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202006/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'深圳失联10天.xls';
+        //echo $path;exit;
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
-    public function tolicong2(){
+    public function tolicongLx(){
         $sql = "select area.region_name,hotel.name hotel_name ,box.name box_name,user.remark,
                 box.mac box_mac from savor_box box
                 left join savor_room room on box.room_id= room.id
@@ -5116,18 +5126,27 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 limit 4001,2000";
+                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 ";
         //print_r($sql);exit;
         $box_list = M()->query($sql);
         $date_arr = array(
-            array('start_date'=>20200515,'end_date'=>20200521),
-            array('start_date'=>20200516,'end_date'=>20200522),
-            array('start_date'=>20200517,'end_date'=>20200523),
-            array('start_date'=>20200518,'end_date'=>20200524),
-            array('start_date'=>20200519,'end_date'=>20200525),
-            array('start_date'=>20200520,'end_date'=>20200526),
-            array('start_date'=>20200521,'end_date'=>20200527),
-            array('start_date'=>20200522,'end_date'=>20200528),
+            array('start_date'=>20200601,'end_date'=>20200614),
+            array('start_date'=>20200602,'end_date'=>20200615),
+            array('start_date'=>20200603,'end_date'=>20200616),
+            array('start_date'=>20200604,'end_date'=>20200617),
+            array('start_date'=>20200605,'end_date'=>20200618),
+            array('start_date'=>20200606,'end_date'=>20200619),
+            array('start_date'=>20200607,'end_date'=>20200620),
+            array('start_date'=>20200608,'end_date'=>20200621),
+            array('start_date'=>20200609,'end_date'=>20200622),
+            array('start_date'=>20200610,'end_date'=>20200623),
+            array('start_date'=>20200611,'end_date'=>20200624),
+            array('start_date'=>20200612,'end_date'=>20200625),
+            array('start_date'=>20200613,'end_date'=>20200626),
+            array('start_date'=>20200614,'end_date'=>20200627),
+            array('start_date'=>20200615,'end_date'=>20200628),
+            array('start_date'=>20200616,'end_date'=>20200629),
+            array('start_date'=>20200617,'end_date'=>20200630),
             
         );
         $data = [];
@@ -5154,7 +5173,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             }
             
         }
-        $xlsName = '失联有7天全国网络机顶盒';
+        $xlsName = '失联有14天全国网络机顶盒';
         $filename = 'haveSl7BoxList';
         
         $xlsCell = array(
@@ -5167,7 +5186,18 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('sl_data_str','失联时段')
         
         );
-        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $xlsName = '失联超过7天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202006/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'失联14天.xls';
+        //echo $path;exit;
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+        
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     public function exportEmptyWifiBoxList(){
         $sql ="select hotel.id,area.region_name ,hotel.name hotel_name ,hotel.addr,
