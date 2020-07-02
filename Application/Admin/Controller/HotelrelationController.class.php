@@ -56,6 +56,22 @@ class HotelrelationController extends BaseController {
             if($hotel_id==$rhotel_id){
                 $this->output('关联酒楼不能同为一个酒楼', 'hotelrelation/relationadd',2,0);
             }
+            $where = array();
+            $where_1 = array('hotel_id'=>array('in',array($hotel_id,$rhotel_id)));
+            $where_2 = array('rhotel_id'=>array('in',array($hotel_id,$rhotel_id)));
+            $where['_complex'] = array(
+                $where_1,
+                $where_2,
+                '_logic' => 'or'
+            );
+            if($id){
+                $where['id'] = array('neq',$id);
+            }
+            $res_data = $m_hotelrelation->getInfo($where);
+            if(!empty($res_data)){
+                $this->output('请勿重复添加', 'hotelrelation/relationadd',2,0);
+            }
+
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             $data = array('hotel_id'=>$hotel_id,'rhotel_id'=>$rhotel_id,'status'=>$status,'sysuser_id'=>$sysuser_id);
