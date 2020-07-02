@@ -853,6 +853,13 @@ class HotelController extends BaseController {
 			}
 		}
 
+        if($save['state']!=1 || $save['flag']!=0){
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(2);
+            $cache_key = C('SMALLAPP_HOTEL_RELATION');
+            $redis->remove($cache_key.$hotel_id);
+        }
+
 		$field = 'mac_addr,server_location';
 		$where = array('hotel_id'=>$hotel_id);
 		$res = $hextModel->getData($field, $where);

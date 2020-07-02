@@ -193,7 +193,27 @@
 			</div>
 		</div>
 		<if condition="$vinfo.type eq 22">
-		<div class="form-group row" id="tv_img" >
+		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">
+				大屏TV资源类型:
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="inline-radio-container">
+					<label class="radio-inline">
+						<input type="radio" name="clicktype" id="1" value='1' <if condition="1 eq $vinfo['tvmedia_type']">checked</if>>
+						<span>视频</span>
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="clicktype" id="2" value='2' <if condition="2 eq $vinfo['tvmedia_type']">checked</if>>
+						<span>图片</span>
+					</label>
+
+				</div>
+			</div>
+		</div>
+
+
+		<div class="form-group row" id="tv_img" <if condition="$vinfo['tvmedia_type'] eq 1">style="display:none;"</if> >
 			<label class="col-xs-12 col-sm-2 control-label">
 				大屏TV图片：
 			</label>
@@ -220,7 +240,36 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="form-group row" id="tv_video" <if condition="$vinfo['tvmedia_type'] eq 2">style="display:none;"</if> >
+			<label class="col-xs-12 col-sm-2 control-label">
+				大屏TV视频：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_vid&rtype=1" data-browse-file>
+							<if condition="($vinfo['tv_oss_addr'] eq 'NULL') OR $vinfo['tv_oss_addr'] eq ''">
+								<img id="tvmedia_vidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+							<else />
+								<img id="tvmedia_vidimg" src="{$vinfo.tv_oss_addr}?x-oss-process=video/snapshot,t_1000,f_jpg,w_450" border="0" />
+							</if>
+							<span id="tvmedia_vidimgname">{$vinfo.name}</span>
+						</a>
+					</div>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=tvmedia_vid&rtype=1" data-browse-file>
+							选择视频
+						</a>
+						<input type="hidden" name="tv_media_vid" id="tvmedia_vid" value="{$vinfo.tv_media_id}">
+						<a id="bntt" href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		</if>
+
 
 		<div id="goods_coverimg">
 			<foreach name="cover_imgs" item="dinfo" >
@@ -411,4 +460,15 @@
     })
     $('#goods_modeltype').trigger('change');
 
+
+    $("input[name='clicktype']").click(function() {
+        var id = $(this).attr("id");
+        if (id == 1) {
+            $("#tv_img").hide();
+            $("#tv_video").show();
+        } else {
+            $("#tv_img").show();
+            $("#tv_video").hide();
+        }
+    });
 </script>

@@ -41,8 +41,23 @@ class ForscreenTrackModel extends BaseModel{
                         $data['forscreen_record_id'] = $v['id'];
                         $data['serial_number'] = $serial_no;
                         if(isset($data['netty_callback_result'])){
-                            $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
+                            if(!empty($data['netty_callback_result'])){
+                                $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
+                            }
                             $data['netty_callback_time'] = intval($data['netty_callback_time']);
+                        }
+                        $netty_key = $cache_key.$serial_no.'netty_time';
+                        if(empty($data['netty_receive_time'])){
+                            $res_nettycache = $redis->hget($netty_key,'netty_receive_time');
+                            if(!empty($res_nettycache)){
+                                $data['netty_receive_time'] = $res_nettycache;
+                            }
+                        }
+                        if(empty($data['netty_pushbox_time'])){
+                            $res_nettycache = $redis->hget($netty_key,'netty_pushbox_time');
+                            if(!empty($res_nettycache)){
+                                $data['netty_pushbox_time'] = $res_nettycache;
+                            }
                         }
 
                         $result = $this->getTrackResult($v,$data);
@@ -166,7 +181,19 @@ class ForscreenTrackModel extends BaseModel{
                     $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
                     $data['netty_callback_time'] = intval($data['netty_callback_time']);
                 }
-
+                $netty_key = $cache_key.$serial_no.'netty_time';
+                if(empty($data['netty_receive_time'])){
+                    $res_nettycache = $redis->hget($netty_key,'netty_receive_time');
+                    if(!empty($res_nettycache)){
+                        $data['netty_receive_time'] = $res_nettycache;
+                    }
+                }
+                if(empty($data['netty_pushbox_time'])){
+                    $res_nettycache = $redis->hget($netty_key,'netty_pushbox_time');
+                    if(!empty($res_nettycache)){
+                        $data['netty_pushbox_time'] = $res_nettycache;
+                    }
+                }
 
                 $result = $this->getTrackResult($res_forscreen,$data);
                 $data['is_success'] = $result['is_success'];
@@ -245,7 +272,6 @@ class ForscreenTrackModel extends BaseModel{
                         $is_success = 0;
                     }
                 }
-
                 $box_down_timeconsume = 0;
                 if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
                     $box_down_timeconsume = $track_info['box_downetime']-$track_info['box_downstime'];
@@ -255,6 +281,12 @@ class ForscreenTrackModel extends BaseModel{
                 $is_success = 0;
                 $total_time = '';
             }
+        }
+        if(isset($forscreen_info['is_break']) && $forscreen_info['is_break']==1){
+            $is_success = 2;
+        }
+        if((isset($forscreen_info['is_exit']) && $forscreen_info['is_exit']==1)){
+            $is_success = 3;
         }
         $result = array('is_success'=>$is_success,'total_time'=>$total_time);
         return $result;

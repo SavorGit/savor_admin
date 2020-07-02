@@ -67,8 +67,8 @@ class RedpacketoperationController extends BaseController {
             $area_id = I('post.area_id',0,'intval');
 
             $userInfo = session('sysUserInfo');
-            $data = array('total_fee'=>$total_fee,'amount'=>$amount,'scope'=>$scope,'type'=>$type,'start_date'=>$start_date,
-                'end_date'=>$end_date,'sender'=>$sender,'area_id'=>$area_id,'sysuser_id'=>$userInfo['id'],'status'=>$status);
+            $data = array('total_fee'=>$total_fee,'amount'=>$amount,'scope'=>$scope,'type'=>$type,
+                'sender'=>$sender,'area_id'=>$area_id,'sysuser_id'=>$userInfo['id'],'status'=>$status);
             if($total_fee<$amount*0.3){
                 $this->output('每个红包最小额度为0.3', 'redpacketoperation/operationadd',2,0);
             }
@@ -85,6 +85,12 @@ class RedpacketoperationController extends BaseController {
                 if(empty($end_date)){
                     $this->output('结束日期不能为空', 'redpacketoperation/operationadd',2,0);
                 }
+            }
+            if(!empty($start_date)){
+                $data['start_date'] = $start_date;
+            }
+            if(!empty($end_date)){
+                $data['end_date'] = $end_date;
             }
             if($scope==4){
                 if(empty($area_id)){

@@ -242,6 +242,7 @@ class ProgrammenuController extends BaseController
         $menuid = I('menuid',0,'intval');
         $menuname = I('menuname','');
         $m_programitem = new \Admin\Model\ProgramMenuItemModel();
+        $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
         if(IS_GET){
             $where = array('menu_id'=>$menuid,'type'=>4);
             $order = 'location_id asc';
@@ -249,7 +250,6 @@ class ProgrammenuController extends BaseController
             if(empty($res_item)){
                 $res_item = array();
             }
-            $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
             $gwhere = array('status'=>1,'type'=>22);
             $gwhere['gtype'] = array('in',array(1,2));
             $gwhere['tv_media_id'] = array('gt',0);
@@ -265,13 +265,25 @@ class ProgrammenuController extends BaseController
             $ads_ids = I('post.ads_id','');
             $durations = I('post.duration','');
             $is_modify = 0;
+            $m_media = new \Admin\Model\MediaModel();
             foreach ($item_ids as $k=>$v){
                 $id = intval($v);
                 if($id){
-                    $ads_id = $ads_ids[$k];
                     $duration = $durations[$k];
+                    $ads_id = $ads_ids[$k];
+                    if($ads_id && $duration==0){
+                        $res_goods = $m_goods->getInfo(array('id'=>$ads_id));
+                        if(!empty($res_goods['tv_media_id'])){
+                            $res_media = $m_media->getMediaInfoById($res_goods['tv_media_id']);
+                            $duration = $res_media['duration'];
+                        }
+                    }
                     if($ads_id && $duration<5){
-                        $this->output('请输入大于5秒的播放时长','programmenu/getlist',2,0);
+                        $ads_num = $k+1;
+                        $this->output("商品广告位{$ads_num}-请输入大于5秒的播放时长",'programmenu/getlist',2,0);
+                    }
+                    if($ads_id==0){
+                        $duration=0;
                     }
                     $res = $m_programitem->updateData(array('id'=>$id),array('ads_id'=>$ads_id,'duration'=>$duration));
                     if($res){
