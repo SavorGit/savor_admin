@@ -421,4 +421,23 @@ class BoxModel extends BaseModel{
         return $res;
     }
 
+    public function getBoxListByHotelRelation($fields,$hotel_id){
+        $cache_key = C('SMALLAPP_HOTEL_RELATION');
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(2);
+        $res_cache = $redis->get($cache_key.$hotel_id);
+        $where_hotel_id = "hotel.id=$hotel_id";
+        if(!empty($res_cache)){
+            $relation_hotel_id = intval($res_cache);
+            $where_hotel_id = "hotel.id in($hotel_id,$relation_hotel_id) ";
+        }
+        $data = $this->alias('box')
+            ->field($fields)
+            ->join('savor_room room on box.room_id=room.id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->where($where_hotel_id.'and box.flag=0 and box.state =1 and hotel.flag=0 and hotel.state=1 ')
+            ->select();
+        return $data;
+    }
+
 }
