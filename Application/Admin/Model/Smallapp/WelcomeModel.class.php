@@ -68,14 +68,13 @@ class WelcomeModel extends BaseModel{
                     $m_user = new \Admin\Model\Smallapp\UserModel();
                     $m_welcome_playfail = new \Admin\Model\Smallapp\WelcomePlayrecordModel();
                     if($v['type']==2){
-                        $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1,'hotel.id'=>$v['hotel_id']);
-                        $res_box = $m_box->getBoxByCondition('box.room_id,room.hotel_id,box.mac as box_mac',$box_where);
+                        $res_box = $m_box->getBoxListByHotelRelation('box.room_id,room.hotel_id,box.mac as box_mac',$v['hotel_id']);
 
                         echo "boxs:".json_encode($res_box)."\r\n";
 
                         $all_push_log = array();
                         foreach ($res_box as $bv){
-                            $res_staff = $m_staff->getInfo(array('hotel_id'=>$bv['hotel_id'],'room_id'=>$bv['room_id']));
+                            $res_staff = $m_staff->getInfo(array('hotel_id'=>$v['hotel_id'],'room_id'=>$bv['room_id']));
                             $message['type'] = 1;
                             $message['waiterName'] = '';
                             $message['waiterIconUrl'] = '';
@@ -101,7 +100,7 @@ class WelcomeModel extends BaseModel{
 
                         echo "boxs:".json_encode($res_box)."\r\n";
 
-                        $res_staff = $m_staff->getInfo(array('hotel_id'=>$res_box['hotel_id'],'room_id'=>$res_box['room_id']));
+                        $res_staff = $m_staff->getInfo(array('hotel_id'=>$v['hotel_id'],'room_id'=>$res_box['room_id']));
                         $message['type'] = 1;
                         $message['waiterName'] = '';
                         $message['waiterIconUrl'] = '';

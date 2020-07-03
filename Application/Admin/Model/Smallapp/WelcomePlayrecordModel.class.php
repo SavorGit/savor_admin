@@ -28,7 +28,7 @@ class WelcomePlayrecordModel extends BaseModel{
                 $welcome_id = $v['welcome_id'];
                 $hotel_id = $v['hotel_id'];
                 if($add_time+$diff_time<$now_time){
-                    echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|expire \r\n";
+                    echo "[welcome_id]$welcome_id".'[status]expire[box_mac]'.$v['box_mac']."\r\n";
                     continue;
                 }
                 $welcome_where = array('hotel_id'=>$hotel_id,'type'=>$v['type']);
@@ -38,9 +38,9 @@ class WelcomePlayrecordModel extends BaseModel{
                     $message['type'] = 1;
                     $message['waiterName'] = '';
                     $message['waiterIconUrl'] = '';
-                    $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1,'hotel.id'=>$v['hotel_id'],'box.mac'=>$v['box_mac']);
+                    $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1,'box.mac'=>$v['box_mac']);
                     $res_box = $m_box->getInfoByCondition('box.room_id,room.hotel_id',$box_where);
-                    $res_staff = $m_staff->getInfo(array('hotel_id'=>$res_box['hotel_id'],'room_id'=>$res_box['room_id']));
+                    $res_staff = $m_staff->getInfo(array('hotel_id'=>$hotel_id,'room_id'=>$res_box['room_id']));
                     if(!empty($res_staff)){
                         $message['type'] = 2;
                         $where_user = array('openid'=>$res_staff['openid']);
@@ -57,17 +57,17 @@ class WelcomePlayrecordModel extends BaseModel{
                     if($res_netty['code'] ==10000){
                         if($message['action']==131){
                             $this->updateData(array('id'=>$v['id']),array('status'=>3));
-                            echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|stop \r\n";
+                            echo "[welcome_id]$welcome_id".'[status]stop[box_mac]'.$v['box_mac']."\r\n";
                         }else{
                             //$this->updateData(array('id'=>$v['id']),array('status'=>2));
-                            echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push ok|result|".json_encode($res_netty)."\r\n";
+                            echo "[welcome_id]$welcome_id".'[status]push ok[box_mac]'.$v['box_mac']."[result]".json_encode($res_netty)."\r\n";
                         }
                     }else{
-                        echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|push fail|result|".json_encode($res_netty)."\r\n";
+                        echo "[welcome_id]$welcome_id".'[status]push fail[box_mac]'.$v['box_mac']."[result]".json_encode($res_netty)."\r\n";
                     }
                 }else{
                     $this->updateData(array('id'=>$v['id']),array('status'=>3));
-                    echo "welcome_id:|$welcome_id|box_mac|{$v['box_mac']}|replace|result|newwelcome_id:{$res_welcome[0]['id']} \r\n";
+                    echo "[welcome_id]$welcome_id".'[status]replace[box_mac]'.$v['box_mac']."[newwelcome_id]".$res_welcome[0]['id']."\r\n";
                 }
             }
         }

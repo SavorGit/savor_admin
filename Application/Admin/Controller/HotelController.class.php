@@ -20,7 +20,6 @@ class HotelController extends BaseController {
 	 *
 	 */
 	public function manager(){
-
 		$menliModel  = new \Admin\Model\MenuListModel();
 		$menuHoModel = new \Admin\Model\MenuHotelModel();
 		$menlistModel = new \Admin\Model\MenuListModel();
@@ -54,7 +53,7 @@ class HotelController extends BaseController {
 		    $where.=" AND a.install_date<='$end_time'";
 		    $this->assign('end_time',$end_time);
 		}
-		$name = I('name');
+		$name = I('name','','trim');
 		if($name){
 		    $search_name = addslashes($name);
 			$this->assign('name',$name);
@@ -854,10 +853,25 @@ class HotelController extends BaseController {
 		}
 
         if($save['state']!=1 || $save['flag']!=0){
-            $redis = \Common\Lib\SavorRedis::getInstance();
-            $redis->select(2);
-            $cache_key = C('SMALLAPP_HOTEL_RELATION');
-            $redis->remove($cache_key.$hotel_id);
+            $where = array();
+            $where_1 = array('hotel_id'=>$hotel_id);
+            $where_2 = array('rhotel_id'=>$hotel_id);
+            $where['_complex'] = array(
+                $where_1,
+                $where_2,
+                '_logic' => 'or'
+            );
+            $where['status'] = 1;
+            $m_hotelrelation = new \Admin\Model\HotelRelationModel();
+            $res_data = $m_hotelrelation->getInfo($where);
+            if(!empty($res_data)){
+                $redis = \Common\Lib\SavorRedis::getInstance();
+                $redis->select(2);
+                $cache_key = C('SMALLAPP_HOTEL_RELATION');
+                $redis->remove($cache_key.$hotel_id);
+                $redis->remove($cache_key.$res_data['rhotel_id']);
+                $m_hotelrelation->updateData(array('id'=>$res_data['id']),array('status'=>2));
+            }
         }
 
 		$field = 'mac_addr,server_location';
