@@ -3155,8 +3155,10 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $m_hotel = new \Admin\Model\HotelModel();
         $m_box = new \Admin\Model\BoxModel();
         $where = array();
+        $hotel_box_types = getHeartBoXtypeIds(2);
+        
         //$where = " a.id not in(7,53)  and a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_type_str) and b.mac_addr !='' and b.mac_addr !='000000000000'";
-        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in(2,3,6) ";
+        $where = "  a.state=1 and a.flag =0 and a.hotel_box_type in($hotel_box_types) ";
     
         //if($city_id) $where .=" and a.area_id=".$city_id;
         $hotel_list = $m_hotel->getHotelLists($where,'','','a.id');
@@ -4706,6 +4708,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     public function qgboxdy(){
         $start_time = '2019-02-01 00:00:00';
         $end_time   = '2019-02-17 23:59:59';
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $sql = "select box.mac box_mac,box.id box_id,area.region_name,hotel.name hotel_name,hotel.addr,
                 room.type room_type,box.name box_name 
                 from savor_box box 
@@ -4713,7 +4716,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_hotel hotel on room.hotel_id = hotel.id
                 left join savor_area_info area on hotel.area_id = area.id
                 where box.state = 1 and box.flag=0 and hotel.state = 1 and hotel.flag = 0
-                and hotel.hotel_box_type in(2,3,6)";
+                and hotel.hotel_box_type in($hotel_box_types)";
         $data = M()->query($sql);
         $flag =0;
         foreach($data as $key=>$v){
@@ -4804,6 +4807,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $page = I('get.page');
         $start = ($page - 1) * 30; 
         //echo $start;exit;
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $sql ="select area.region_name,hotel.id hotel_id,hotel.name hotel_name,box.name box_name,
                ext.avg_expense, mac box_mac,box.is_4g,box.box_type from savor_box box
                left join savor_room room on box.room_id=room.id
@@ -4811,7 +4815,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                left join savor_area_info area on hotel.area_id=area.id
                left join savor_hotel_ext ext on ext.hotel_id=hotel.id
                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               and hotel.hotel_box_type in(2,3,6)  order by box.id asc limit $start, 30";
+               and hotel.hotel_box_type in($hotel_box_types)  order by box.id asc limit $start, 30";
         
         $result = M()->query($sql);
         $start_time = '2019-02-01 00:00:00';
@@ -5021,11 +5025,12 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
     public function exportSlBoxList(){
+        $hotel_box_types = getHeartBoXtypeIds(2);
 		$sql ="select area.region_name,hotel.name hotel_name ,hotel.id hotel_id,user.remark from savor_hotel hotel
 			   left join savor_area_info area on hotel.area_id=area.id
 			   left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			   left join savor_sysuser user on user.id= ext.maintainer_id
-			   where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 ";
+			   where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 ";
 		$hotel_list = M()->query($sql);
 		$sl_date = date('Y-m-d H:i:s',strtotime('-7 days')) ;
 		foreach($hotel_list  as $key=>$v){
@@ -5062,11 +5067,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
     public function tolicong(){
-        /*$sql ="select area.region_name,hotel.name hotel_name ,hotel.id hotel_id,user.remark from savor_hotel hotel
-			   left join savor_area_info area on hotel.area_id=area.id
-			   left join savor_hotel_ext ext on hotel.id = ext.hotel_id
-			   left join savor_sysuser user on user.id= ext.maintainer_id
-			   where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 ";*/
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $sql = "select area.region_name,hotel.name hotel_name ,box.name box_name,user.remark,
                 box.mac box_mac from savor_box box
                 left join savor_room room on box.room_id= room.id
@@ -5074,7 +5075,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
+                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
 
         $box_list = M()->query($sql);
         $start_time = '20200621';
@@ -5119,6 +5120,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
     public function tolicongLx(){
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $sql = "select area.region_name,hotel.name hotel_name ,box.name box_name,user.remark,
                 box.mac box_mac from savor_box box
                 left join savor_room room on box.room_id= room.id
@@ -5126,7 +5128,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 ";
+                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 ";
         //print_r($sql);exit;
         $box_list = M()->query($sql);
         $date_arr = array(
@@ -5253,13 +5255,13 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         
         $end_date = I('end_date');
         if(empty($end_date)) exit('结束日期不能为空');
-        
+        $hotel_box_types = getHeartBoXtypeIds(2);
         //获取北京地区网络版机顶盒
         $sql ="select box.mac from savor_box box
                left join savor_room room   on box.room_id=room.id
                left join savor_hotel hotel on hotel.id=room.hotel_id
                left join savor_area_info area on hotel.area_id = area.id
-               where hotel.hotel_box_type in(2,3,6) and hotel.state=1 
+               where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 
                and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=1";
         $box_list = M()->query($sql);
         //获取北京地区连续30天没日志上传
@@ -5286,7 +5288,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                left join savor_room room   on box.room_id=room.id
                left join savor_hotel hotel on hotel.id=room.hotel_id
                left join savor_area_info area on hotel.area_id = area.id
-               where hotel.hotel_box_type in(2,3,6) and hotel.state=1
+               where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1
                and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(9,236)";
         $box_list = M()->query($sql);
         
@@ -5350,6 +5352,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
     }
     //易售媒体广告模板
     public function exportDd(){
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $city_id = $_GET['city_id']  ? $_GET['city_id'] :1;
         $sql ="select box.mac box_mac, box.name box_name,tv.tv_size,city.region_name city_name,area.region_name area_name,
                hotel.addr,hotel.gps,hotel.name hotel_name from savor_tv tv
@@ -5359,7 +5362,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                left join savor_area_info city on hotel.area_id= city.id
                left join savor_area_info area on hotel.county_id=area.id
                where hotel.area_id=$city_id and  hotel.state=1 and hotel.flag = 0 and box.state=1 and box.flag=0
-               and tv.state=1 and tv.flag=0 and hotel.hotel_box_type in(2,3,6)";
+               and tv.state=1 and tv.flag=0 and hotel.hotel_box_type in($hotel_box_types)";
         $data = M()->query($sql);
         foreach($data as $key=>$v){
             $gps_arr = explode(',',$v['gps']);
@@ -5419,6 +5422,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $limit = '';
         }
         $heart_date = date('Ymd',strtotime($start_time));
+        $hotel_box_types = getHeartBoXtypeIds(2);
         /* echo $start_time."<br>";
         echo $end_time.'<br>';
         echo $heart_date;exit; */
@@ -5427,7 +5431,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                left join savor_hotel hotel on hotel.id=room.hotel_id
                left join savor_area_info area on hotel.area_id= area.id
                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0
-               and hotel.hotel_box_type in(2,3,6) and hotel.id and area.id=".$area_id." $limit";
+               and hotel.hotel_box_type in($hotel_box_types) and hotel.id and area.id=".$area_id." $limit";
         //echo $sql ;exit;
         $data = M()->query($sql);
         $redis = SavorRedis::getInstance();
@@ -5645,9 +5649,9 @@ where merchant.type=2 and merchant.status=1 and hotel.state=1 and hotel.flag=0 "
                 $hotel_gt4[$v['area_id']] = $v['num'];
             }
         }
-
+        $hotel_box_types = getHeartBoXtypeIds(2);
         //所有酒楼
-        $sql_hotel = "select area_id,count(id) as num from savor_hotel where state=1 and flag=0 and hotel_box_type in(2,3,6) group by area_id";
+        $sql_hotel = "select area_id,count(id) as num from savor_hotel where state=1 and flag=0 and hotel_box_type in($hotel_box_types) group by area_id";
         $res_hotel = $model->query($sql_hotel);
         $datalist = array();
         foreach ($res_hotel as $v){
@@ -5878,6 +5882,7 @@ where hotel.id in($hotel_ids) and state=1 and flag=0";
      * 失联版位明细表
      */
     public function lossBoxList(){
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $days = I('days');        //失联天数
         $area_id = I('area_id');  //区域
         $where = '';
@@ -5888,7 +5893,7 @@ where hotel.id in($hotel_ids) and state=1 and flag=0";
                                left join savor_room room on box.room_id=room.id
                                left join savor_hotel hotel on room.hotel_id=hotel.id
                                left join savor_area_info area on hotel.area_id= area.id
-                               where 1 and box.state=1 and box.flag=0 and hotel.state=1 and hotel.flag=0 and hotel.hotel_box_type in(2,3,6)".$where;
+                               where 1 and box.state=1 and box.flag=0 and hotel.state=1 and hotel.flag=0 and hotel.hotel_box_type in($hotel_box_types)".$where;
         $box_list = M()->query($sql);
         
         $result = [];
@@ -6217,7 +6222,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
      * @desc 超过7天失联的版位信息 每天早上8:30发送邮件
      */
     public function lostBoxList(){
-        
+        $hotel_box_types = getHeartBoXtypeIds(2);
         $sql ="select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark, 
                box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id
                from savor_box box  
@@ -6227,7 +6232,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                left join savor_hotel_ext ext on hotel.id = ext.hotel_id 
                left join savor_sysuser user on user.id= ext.maintainer_id 
                left join savor_heart_log hlog on box.mac=hlog.box_mac 
-               where hotel.hotel_box_type in(2,3,6) and hotel.state=1 and hotel.flag=0 and box.state=1 ";
+               where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 ";
         $data = M()->query($sql);
         //$datalist = [];
         foreach($data as $key=>$v){
