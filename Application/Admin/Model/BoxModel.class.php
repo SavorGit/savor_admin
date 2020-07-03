@@ -426,7 +426,7 @@ class BoxModel extends BaseModel{
         $redis = \Common\Lib\SavorRedis::getInstance();
         $redis->select(2);
         $res_cache = $redis->get($cache_key.$hotel_id);
-        $where_hotel_id = "hotel.id=$hotel_id";
+        $where_hotel_id = "hotel.id=$hotel_id ";
         if(!empty($res_cache)){
             $relation_hotel_id = intval($res_cache);
             $where_hotel_id = "hotel.id in($hotel_id,$relation_hotel_id) ";

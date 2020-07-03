@@ -361,14 +361,28 @@ class DeviceoverviewController extends BaseController {
     }
 
     private function box_apk($area_id){
-        $fields = 'count(*) as num,apk_version';
-        $where = array('type'=>2);
+//        $fields = 'count(*) as num,apk_version';
+//        $where = array('type'=>2);
+//        if($area_id){
+//            $where['area_id'] = $area_id;
+//        }
+//        $group = 'apk_version';
+        $fields = 'count(heart.box_id) as num,heart.apk_version';
+        $where = array('heart.type'=>2);
         if($area_id){
-            $where['area_id'] = $area_id;
+            $where['heart.area_id'] = $area_id;
         }
-        $group = 'apk_version';
+        $group = 'heart.apk_version';
+        $where['hotel.state'] = 1;
+        $where['hotel.flag'] = 0;
+        if($area_id){
+            $where['heart.area_id'] = $area_id;
+        }
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
         $m_heartlog = new \Admin\Model\HeartLogModel();
-        $res_log = $m_heartlog->getHotelHeartBox($where,$fields,$group);
+        $res_log = $m_heartlog->getBoxApkversionCondition($fields,$where,$group);
+//        $res_log = $m_heartlog->getHotelHeartBox($where,$fields,$group);
         $all_apk = array();
         foreach ($res_log as $v){
             $all_apk[$v['apk_version']] = array('value'=>$v['num'],'name'=>$v['apk_version']);
@@ -378,7 +392,7 @@ class DeviceoverviewController extends BaseController {
         $other_num = 0;
         foreach ($all_apk as $k=>$v){
             if($k<$apk_version[0]){
-                $other_num++;
+                $other_num = $other_num+$v['value'];
             }
         }
         $apks['other'] = array('value'=>$other_num,'name'=>'other');
