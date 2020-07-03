@@ -144,12 +144,13 @@ class SappforscreenController extends BaseController {
         $all_smallapps = $this->all_smallapps;
 	    $source_types = $this->source_types;
         $all_actions = $this->all_actions;
-	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,a.*';
+	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,box.box_type,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 
 	    $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
 	    $track_start_time = '2020-01-13 10:20:00';
+	    $all_box_types = C('hotel_box_type');
 	    foreach ($list['list'] as $key=>$v){
 	        $is_track = 0;
 	        if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121))){
@@ -157,6 +158,11 @@ class SappforscreenController extends BaseController {
                     $is_track = 1;
                 }
             }
+            $box_type_str = '';
+            if(isset($all_box_types[$v['box_type']])){
+                $box_type_str = $all_box_types[$v['box_type']];
+            }
+            $list['list'][$key]['box_type_str'] = $box_type_str;
             $list['list'][$key]['is_track'] = $is_track;
 	        if(isset($all_smallapps[$v['small_app_id']])){
                 $list['list'][$key]['small_app'] = $all_smallapps[$v['small_app_id']];
