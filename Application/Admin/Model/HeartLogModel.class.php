@@ -15,7 +15,7 @@ class HeartLogModel extends BaseModel
 
     public function getBoxApkversionCondition($fields='heart.*',$where,$group=''){
         $res = $this->alias('heart')
-            ->join('savor_box box on heart.box_id=box.id','left')
+            ->join('savor_box box on heart.box_mac=box.mac','left')
             ->join('savor_room room on room.id= box.room_id','left')
             ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
             ->field($fields)
