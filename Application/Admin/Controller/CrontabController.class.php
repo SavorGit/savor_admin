@@ -2820,6 +2820,16 @@ class CrontabController extends Controller
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
                         $redis->lpop($k);
+                    }else{
+                        if(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && !empty($netresource['box_finish_downtime'])){
+                            $where = array();
+                            $where['forscreen_id'] = $netresource['forscreen_id'];
+                            $where['resource_id'] = $netresource['resource_id'];
+                            $where['openid'] = $netresource['openid'];
+                            $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
+                            $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            $redis->lpop($k);
+                        }
                     }
 
                     $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
