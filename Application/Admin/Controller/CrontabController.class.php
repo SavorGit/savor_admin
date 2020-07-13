@@ -2805,28 +2805,8 @@ class CrontabController extends Controller
                             if(!empty($netresource['box_res_edown_time'])){
                                 $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
                             }
-                            $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
-                            $is_break = intval($is_break);
-                            $dt['is_exist'] = $netresource['is_exist'];
-                            if(isset($netresource['is_exit'])){
-                                $is_exit = $netresource['is_exit'];
-                            }else{
-                                $is_exit = 0;
-                            }
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
-
-                            $up_data = array();
-                            if($is_break==1){
-                                $up_data['is_break'] = 1;
-                            }
-                            if($is_exit==1){
-                                $up_data['is_exit'] = 1;
-                            }
-                            if(!empty($up_data)){
-                                $upwhere = array('forscreen_id'=>$netresource['forscreen_id']);
-                                $m_smallapp_forscreen_record->updateData($upwhere,$up_data);
-                            }
                             $redis->lpop($k);
                         }
                     }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
@@ -2837,30 +2817,40 @@ class CrontabController extends Controller
                             $where['resource_id'] = $netresource['resource_id'];
                         }
                         $where['openid'] = $netresource['openid'];
-                        $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
-                        $is_break = intval($is_break);
-                        $dt['is_exist'] = $netresource['is_exist'];
-                        if(isset($netresource['is_exit'])){
-                            $is_exit = $netresource['is_exit'];
-                        }else{
-                            $is_exit = 0;
-                        }
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
-
-                        $up_data = array();
-                        if($is_break==1){
-                            $up_data['is_break'] = 1;
+                        $redis->lpop($k);
+                    }else{
+                        if(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && !empty($netresource['box_finish_downtime'])){
+                            $where = array();
+                            $where['forscreen_id'] = $netresource['forscreen_id'];
+                            $where['resource_id'] = $netresource['resource_id'];
+                            $where['openid'] = $netresource['openid'];
+                            $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
+                            $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            $redis->lpop($k);
                         }
-                        if($is_exit==1){
-                            $up_data['is_exit'] = 1;
-                        }
-                        if(!empty($up_data)){
-                            $upwhere = array('forscreen_id'=>$netresource['forscreen_id']);
-                            $m_smallapp_forscreen_record->updateData($upwhere,$up_data);
-                        }
-                        $tt = $redis->lpop($k);
                     }
+
+                    $is_break =  $netresource['is_break']=='' ?0 :$netresource['is_break'];
+                    $is_break = intval($is_break);
+                    if(isset($netresource['is_exit'])){
+                        $is_exit = $netresource['is_exit'];
+                    }else{
+                        $is_exit = 0;
+                    }
+                    $up_data = array();
+                    if($is_break==1){
+                        $up_data['is_break'] = 1;
+                    }
+                    if($is_exit==1){
+                        $up_data['is_exit'] = 1;
+                    }
+                    if(!empty($up_data)){
+                        $upwhere = array('forscreen_id'=>$netresource['forscreen_id']);
+                        $m_smallapp_forscreen_record->updateData($upwhere,$up_data);
+                    }
+
                 }else {
                     $redis->lpop($k);
                 }

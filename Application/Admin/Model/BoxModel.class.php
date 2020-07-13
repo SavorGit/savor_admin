@@ -43,7 +43,7 @@ class BoxModel extends BaseModel{
                     $forscreen_type = 2;
                     break;
                 case '1-1':
-                    if(in_array($res_box['box_type'],array(3,6))){
+                    if(in_array($res_box['box_type'],array(3,6,7))){
                         $forscreen_type = 2;
                     }elseif($res_box['box_type']==2){
                         $forscreen_type = 1;

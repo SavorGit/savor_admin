@@ -275,11 +275,13 @@ $config['hotel_box_type'] = array(
     '4'=>'二代单机版',
     '5'=>'三代单机版',
     '6'=>'三代网络版',
+    '7'=>'互联网电视机',
 );
 $config['heart_hotel_box_type'] = array(
     '2'=>'二代网络版',
     '3'=>'二代5G版',
     '6'=>'三代网络版',
+    '7'=>'互联网电视机',
 );
 $config['all_smallapps'] = array(
     '1'=>'普通版',
