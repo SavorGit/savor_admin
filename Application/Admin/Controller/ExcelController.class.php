@@ -6017,14 +6017,15 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
     public function wifiForsreenDetail(){
         $start_date = I('start_date');
         $type       = I('type',1);   //1:扫码日志  2:wifi链接错误日志 3:wifi投屏日志 
-        $box_mac = "'00226D2FB212','00226D584193','00226D58461F','00226D6555FB','00226D584138','00226D58423B','00226D65554A'";
-        
+        //$box_mac = "'00226D2FB212','00226D584193','00226D58461F','00226D6555FB','00226D584138','00226D58423B','00226D65554A'";
+        $box_mac = I('box_mac');
         if($type==1){//扫码日志
             $sql ="SELECT hotel.name hotel_name,room.name room_name,box.name box_name,log.* FROM `savor_smallapp_qrcode_log` log 
                    left join savor_box box on log.box_mac= box.mac
                    left join savor_room room on box.room_id= room.id
                    left join savor_hotel hotel on room.hotel_id=hotel.id
-                   where log.create_time>='".$start_date."' and log.box_mac in($box_mac) and hotel.flag=0 and hotel.state=1";
+                   where log.create_time>='".$start_date."' and log.box_mac in(\"$box_mac\") and hotel.flag=0 and hotel.state=1";
+            
             $data = M()->query($sql);
             $xlsCell = array(
                 array('hotel_name', '酒楼名称'),
@@ -6043,7 +6044,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                    left join savor_box box on err.box_mac= box.mac
                    left join savor_room room on box.room_id= room.id
                    left join savor_hotel hotel on room.hotel_id=hotel.id
-                   where err.create_time>='".$start_date."' and err.box_mac in($box_mac) and hotel.flag=0 and hotel.state=1";
+                   where err.create_time>='".$start_date."' and err.box_mac in(\"$box_mac\") and hotel.flag=0 and hotel.state=1";
             
             $data = M()->query($sql);
             $xlsCell = array(
@@ -6052,6 +6053,11 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                 array('box_name','版位名称'),
                 array('box_mac','机顶盒mac'),
                 array('err_info','错误信息'),
+                array('mobile_brand','手机品牌'),
+                array('mobile_model','手机型号'),
+                array('platform','操作系统'),
+                array('system','系统版本'),
+                array('version','微信版本'),
                 array('create_time','错误时间')
                  
             );
