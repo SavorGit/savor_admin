@@ -6044,7 +6044,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                    left join savor_box box on err.box_mac= box.mac
                    left join savor_room room on box.room_id= room.id
                    left join savor_hotel hotel on room.hotel_id=hotel.id
-                   where err.create_time>='".$start_date."' and err.box_mac in(\"$box_mac\") and hotel.flag=0 and hotel.state=1";
+                   where err.create_time>='".$start_date."' and err.box_mac in(\"$box_mac\") and hotel.flag=0 and hotel.state=1 and box.flag=0 and box.state=1";
             
             $data = M()->query($sql);
             $xlsCell = array(
@@ -6465,6 +6465,43 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
         $xlsName = '商城订单数据汇总';
         $filename = 'exportMallOrder';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function exportForscreenDays(){
+        $sql =" SELECT hotel.id hotel_id,hotel.name hotel_name FROM savor_smallapp_forscreen_record r 
+                LEFT  JOIN savor_box box ON r.box_mac = box.mac
+                LEFT JOIN savor_room room ON box.room_id = room.id
+                LEFT JOIN savor_hotel hotel ON room.hotel_id= hotel.id
+                WHERE r.create_time >'2020-07-06 00:00:00' AND hotel.flag=0 AND hotel.state=1 AND box.flag =0 AND box.state=1 AND box.box_type=6 AND r.small_app_id IN(1,2) and r.mobile_brand!='devtools' GROUP BY hotel.id";
+        $hotel_list = M()->query($sql);
+        $date_arr = array('2020-07-06','2020-07-07','2020-07-08','2020-07-09','2020-07-10','2020-07-11','2020-07-12','2020-07-13','2020-07-14','2020-07-15');
+        
+        foreach($hotel_list as $key=>$val){
+            $hotel_list[$key]['forscreen_day'] = 0;
+            foreach($date_arr as $vv){
+                $start_time = $vv.' 00:00:00';
+                $end_time   = $vv.' 23:59:59';
+                
+                $sql ="SELECT hotel.id,r.create_time FROM savor_smallapp_forscreen_record r 
+                LEFT  JOIN savor_box box ON r.box_mac = box.mac
+                LEFT JOIN savor_room room ON box.room_id = room.id
+                LEFT JOIN savor_hotel hotel ON room.hotel_id= hotel.id
+                WHERE r.create_time >'".$start_time."' and r.create_time<'".$end_time."' AND hotel.flag=0 
+                AND hotel.state=1 AND box.flag =0 AND box.state=1 AND box.box_type=6 
+                AND r.small_app_id IN(1,2) and r.mobile_brand!='devtools' and hotel.id=".$val['hotel_id'];
+                $ret = M()->query($sql);
+                if(!empty($ret)){
+                    $hotel_list[$key]['forscreen_day'] +=1;
+                }
+            }
+        }
+        $xlsCell = array(
+            array('hotel_id', '酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('forscreen_day','互动天'),
+        );
+        $xlsName = '商城订单数据汇总';
+        $filename = 'exportMallOrder';
+        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
     private function getScore($data,$conf_arr){
         $score = 0;
