@@ -519,7 +519,8 @@ class ProgrammenuController extends BaseController
             $where .= "	AND area_id in ($pcity)";
             $pawhere = '1=1 and area_id = ' . $pcity;
         }
-        $where .= " and hotel_box_type in (2,3,6) and state=1 and flag=0 ";
+        $hotel_box_types = getHeartBoXtypeIds(2);
+        $where .= " and hotel_box_type in ($hotel_box_types) and state=1 and flag=0 ";
         
         $pafield = 'DISTINCT smh.menu_id id,
 smlist.menu_name';

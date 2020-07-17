@@ -1697,7 +1697,7 @@ class ExcelController extends Controller
         $box_arr = $boxModel->getBoxListDb();
         $htype = C('hotel_box_type');
         foreach($box_arr as $bk=>$bv) {
-            $box_arr[$bk]['hotel_box_type'] = $htype[$box_arr[$bk]['hotel_box_type']];
+            $box_arr[$bk]['box_type'] = $htype[$box_arr[$bk]['box_type']];
         }
         $filename = 'hotel';
         $xlsName = "User";
@@ -1720,7 +1720,7 @@ class ExcelController extends Controller
             //array('iskey', '重点酒楼'),
             array('maintainer', '合作维护人'),
             //array('tech_maintainer', '技术运维人'),
-            array('hotel_box_type', '设备类型'),
+            array('box_type', '设备类型'),
             array('remark','包间备注'),
             array('tag','机顶盒备注'),
             array('avg_expense','人均消费'),
@@ -6503,6 +6503,14 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
         $filename = 'exportMallOrder';
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
+    /**
+     *@desc 扫极简版码用户数据统计
+     */
+    public function topSpeedForscreen(){
+        $start_time = I('start_time');
+        $sql = "select * from ";   
+    }
+    
     private function getScore($data,$conf_arr){
         $score = 0;
         foreach ($conf_arr as $key=>$v){

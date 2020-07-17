@@ -123,7 +123,7 @@ class BoxModel extends BaseModel{
     }
     public function getBoxListDb(){
         $Model = new \Think\Model();
-        $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,box.state boxstate,hotel.hotel_box_type,
+        $sql = 'select hotel.id,hotel.install_date, hotel.state hsta, room.state rsta,box.state boxstate,hotel.hotel_box_type,box.box_type,
 	         box.mac mac,box.name bname, room.name rname, room.type rtype,
 	          hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
 	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer,
