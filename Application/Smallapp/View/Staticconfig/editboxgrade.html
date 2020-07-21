@@ -1,0 +1,48 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/smallapp/staticconfig/editboxgrade" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="score_type" value="{$score_type}">
+    <input type="hidden" name="type" value="{$type}">
+
+    <div class="pageFormContent modal-body">
+
+      <foreach name="datalist" item="dinfo">
+        <input type="hidden" name="ids[]" value="{$dinfo.id}">
+        <div class="form-group row">
+          <label class="col-xs-12 col-sm-2 control-label">
+            {$dinfo.gname}:
+          </label>
+          <div class="col-xs-12 col-sm-2">
+             <input type="text" class="form-control" name="min[]" minlength="1" maxlength="20"  value="{$dinfo.min}" required>
+          </div>
+          <div class="col-xs-12 col-sm-2">
+             <input type="text" class="form-control" name="max[]" minlength="1" maxlength="20"  value="{$dinfo.max}" required>
+          </div>
+          <label class="col-xs-12 col-sm-2 control-label">
+            得分:
+          </label>
+          <div class="col-xs-12 col-sm-2">
+             <input type="text" class="form-control" name="grade[]" minlength="1" maxlength="20"  value="{$dinfo.grade}" required>
+          </div>
+        </div>
+      </foreach>
+      <if condition="$is_sample eq 1">
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          最小样本量:
+        </label>
+        <div class="col-xs-12 col-sm-2">
+          <input type="text" class="form-control" name="sample_num" minlength="1" maxlength="1000"  value="{$sample_num}" required>
+        </div>
+      </div>
+      </if>
+      
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>

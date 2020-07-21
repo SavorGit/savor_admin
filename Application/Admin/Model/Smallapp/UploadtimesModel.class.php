@@ -7,23 +7,25 @@ class UploadtimesModel extends BaseModel{
 
     public function addUploadtimes($data){
         if($data['res_sup_time'] && $data['res_eup_time']){
+            /*
             $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
             $orderby = 'id desc';
-            $res_list = $m_invalid->getDataList('*',array('type'=>array(1,2,3)),$orderby);
+            $res_list = $m_invalid->getDataList('*',array('type'=>array('in',array(1,2,3))),$orderby);
             $all_invalidlist = array();
             foreach ($res_list as $v){
                 $all_invalidlist[$v['type']][] = $v['invalidid'];
             }
-            $hotel_ids = $all_invalidlist[1];
-            $fields = "box.mac as box_mac";
-            $where = array();
-            $where['hotel.id'] = array('in',$hotel_ids);
-
-            $m_box = new \Admin\Model\BoxModel();
-            $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
             $boxs = array();
-            foreach ($hotel_boxs as $v){
-                $boxs[]=$v['box_mac'];
+            if(isset($all_invalidlist[1]) && !empty($all_invalidlist[1])){
+                $hotel_ids = $all_invalidlist[1];
+                $fields = "box.mac as box_mac";
+                $where = array();
+                $where['hotel.id'] = array('in',$hotel_ids);
+                $m_box = new \Admin\Model\BoxModel();
+                $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
+                foreach ($hotel_boxs as $v){
+                    $boxs[]=$v['box_mac'];
+                }
             }
             if(isset($all_invalidlist[3]) && !empty($all_invalidlist[3])){
                 $boxs = array_merge($boxs,$all_invalidlist[3]);
@@ -36,7 +38,7 @@ class UploadtimesModel extends BaseModel{
             if(in_array($data['openid'],$openids) || in_array($data['box_mac'],$boxs)){
                 return true;
             }
-
+            */
             if(empty($data['create_time'])){
                 $data['create_time'] = date('Y-m-d H:i:s',$data['res_eup_time']);
             }

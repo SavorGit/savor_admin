@@ -1,0 +1,203 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<!-- <div class="pageHeader">
+  
+</div> -->
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post" style="color:#FF0000">
+            <td>标准投屏-总分数设置</td>
+            <td>标准投屏-netty重连设置</td>
+            <td>标准投屏-投屏成功率设置</td>
+            <td>标准投屏-心跳设置</td>
+            <td>标准投屏-上传网速设置</td>
+            <td>标准投屏-下载网速设置</td>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+            <tr target="sid_user">
+              <td data-title="综合评分-总分数设置">
+				  netty重连权重值:{$config[11][1]['weights']}<br />
+				  投屏成功权重值:{$config[11][2]['weights']}<br />
+				  心跳权重值:{$config[11][3]['weights']}<br />
+				  上传网速权重值:{$config[11][4]['weights']}<br />
+				  下载网速权重值:{$config[11][5]['weights']}<br />
+              		<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:90px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=11">
+              			修改
+              		    </a>
+              		    
+              		</div>
+              </td>
+              <td data-title="标准投屏-netty重连设置">
+				  netty重连次数:{$config[10][1][0]['min']}-{$config[10][1][0]['max']}	&nbsp;&nbsp;得分: {$config[10][1][0]['grade']}<br />
+				  netty重连次数:{$config[10][1][1]['min']}-{$config[10][1][1]['max']}	&nbsp;&nbsp;得分: {$config[10][1][1]['grade']}<br />
+				  netty重连次数:{$config[10][1][2]['min']}-{$config[10][1][2]['max']}	&nbsp;&nbsp;得分: {$config[10][1][2]['grade']}<br />
+				  netty重连次数:{$config[10][1][3]['min']}-{$config[10][1][3]['max']}	&nbsp;&nbsp;得分: {$config[10][1][3]['grade']}<br />
+				  netty重连次数:{$config[10][1][4]['min']}-{$config[10][1][4]['max']}	&nbsp;&nbsp;得分: {$config[10][1][4]['grade']}<br />
+              		<br />
+              		<div class="tools-edit" style="margin-left:50px">
+              			<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=10&type=1">
+              			修改
+              		    </a>
+              		</div>
+              </td>
+
+			  <td data-title="标准投屏-投屏成功率设置">
+				  投屏成功率:{$config[10][2][0]['min']}-{$config[10][2][0]['max']}&nbsp;&nbsp;得分: {$config[10][2][0]['grade']}<br />
+				  投屏成功率:{$config[10][2][1]['min']}-{$config[10][2][1]['max']}&nbsp;&nbsp;得分: {$config[10][2][1]['grade']}<br />
+				  投屏成功率:{$config[10][2][2]['min']}-{$config[10][2][2]['max']}&nbsp;&nbsp;得分: {$config[10][2][2]['grade']}<br />
+				  投屏成功率:{$config[10][2][3]['min']}-{$config[10][2][3]['max']}&nbsp;&nbsp;得分: {$config[10][2][3]['grade']}<br />
+				  投屏成功率:{$config[10][2][4]['min']}-{$config[10][2][4]['max']}&nbsp;&nbsp;得分: {$config[10][2][4]['grade']}<br />
+
+				  最小样本量:{$config[12][2]['sample_num']}<br />
+				  <br />
+				  <div class="tools-edit" style="margin-left:50px">
+					  <a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=10&type=2">
+						  修改
+					  </a>
+				  </div>
+			  </td>
+			  <td data-title="标准投屏-心跳设置">
+				  心跳次数:{$config[10][3][0]['min']}-{$config[10][3][0]['max']}&nbsp;&nbsp;得分: {$config[10][3][0]['grade']}<br />
+				  心跳次数:{$config[10][3][1]['min']}-{$config[10][3][1]['max']}&nbsp;&nbsp;得分: {$config[10][3][1]['grade']}<br />
+				  心跳次数:{$config[10][3][2]['min']}-{$config[10][3][2]['max']}&nbsp;&nbsp;得分: {$config[10][3][2]['grade']}<br />
+				  心跳次数:{$config[10][3][3]['min']}-{$config[10][3][3]['max']}&nbsp;&nbsp;得分: {$config[10][3][3]['grade']}<br />
+				  心跳次数:{$config[10][3][4]['min']}-{$config[10][3][4]['max']}&nbsp;&nbsp;得分: {$config[10][3][4]['grade']}<br />
+				  <br />
+				  <div class="tools-edit" style="margin-left:50px">
+					  <a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=10&type=3">
+						  修改
+					  </a>
+				  </div>
+			  </td>
+			  <td data-title="标准投屏-上传网速设置">
+				  上传网速:{$config[10][4][0]['min']}-{$config[10][4][0]['max']}&nbsp;&nbsp;得分: {$config[10][4][0]['grade']}<br />
+				  上传网速:{$config[10][4][1]['min']}-{$config[10][4][1]['max']}&nbsp;&nbsp;得分: {$config[10][4][1]['grade']}<br />
+				  上传网速:{$config[10][4][2]['min']}-{$config[10][4][2]['max']}&nbsp;&nbsp;得分: {$config[10][4][2]['grade']}<br />
+				  上传网速:{$config[10][4][3]['min']}-{$config[10][4][3]['max']}&nbsp;&nbsp;得分: {$config[10][4][3]['grade']}<br />
+				  上传网速:{$config[10][4][4]['min']}-{$config[10][4][4]['max']}&nbsp;&nbsp;得分: {$config[10][4][4]['grade']}<br />
+
+				  最小样本量:{$config[12][4]['sample_num']}<br />
+				  <br />
+				  <div class="tools-edit" style="margin-left:50px">
+					  <a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=10&type=4">
+						  修改
+					  </a>
+				  </div>
+			  </td>
+
+			  <td data-title="标准投屏-下载网速设置">
+				  下载网速:{$config[10][5][0]['min']}-{$config[10][5][0]['max']}&nbsp;&nbsp;得分: {$config[10][5][0]['grade']}<br />
+				  下载网速:{$config[10][5][1]['min']}-{$config[10][5][1]['max']}&nbsp;&nbsp;得分: {$config[10][5][1]['grade']}<br />
+				  下载网速:{$config[10][5][2]['min']}-{$config[10][5][2]['max']}&nbsp;&nbsp;得分: {$config[10][5][2]['grade']}<br />
+				  下载网速:{$config[10][5][3]['min']}-{$config[10][5][3]['max']}&nbsp;&nbsp;得分: {$config[10][5][3]['grade']}<br />
+				  下载网速:{$config[10][5][4]['min']}-{$config[10][5][4]['max']}&nbsp;&nbsp;得分: {$config[10][5][4]['grade']}<br />
+
+				  最小样本量:{$config[12][5]['sample_num']}<br />
+				  <br />
+				  <div class="tools-edit" style="margin-left:50px">
+					  <a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=10&type=5">
+						  修改
+					  </a>
+				  </div>
+			  </td>
+			  
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post" style="color:#9F4D95" >
+            <td>极简投屏-总分数设置</td>
+            <td>极简投屏-投屏成功率设置</td>
+            <td>极简投屏-心跳设置</td>
+            <td>极简投屏-下载网速设置</td>
+            
+            
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          
+            <tr target="sid_user">
+				<td data-title="综合评分-总分数设置">
+					投屏成功权重值:{$config[21][2]['weights']}<br />
+					心跳权重值:{$config[21][3]['weights']}<br />
+					下载网速权重值:{$config[21][5]['weights']}<br />
+					<br />
+					<br />
+					<div class="tools-edit" style="margin-left:90px">
+						<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=21">
+							修改
+						</a>
+
+					</div>
+				</td>
+
+				<td data-title="极简投屏-投屏成功率设置">
+					投屏成功率:{$config[20][2][0]['min']}-{$config[20][2][0]['max']}&nbsp;&nbsp;得分: {$config[20][2][0]['grade']}<br />
+					投屏成功率:{$config[20][2][1]['min']}-{$config[20][2][1]['max']}&nbsp;&nbsp;得分: {$config[20][2][1]['grade']}<br />
+					投屏成功率:{$config[20][2][2]['min']}-{$config[20][2][2]['max']}&nbsp;&nbsp;得分: {$config[20][2][2]['grade']}<br />
+					投屏成功率:{$config[20][2][3]['min']}-{$config[20][2][3]['max']}&nbsp;&nbsp;得分: {$config[20][2][3]['grade']}<br />
+					投屏成功率:{$config[20][2][4]['min']}-{$config[20][2][4]['max']}&nbsp;&nbsp;得分: {$config[20][2][4]['grade']}<br />
+
+					最小样本量:{$config[22][2]['sample_num']}<br />
+					<br />
+					<div class="tools-edit" style="margin-left:50px">
+						<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=20&type=2">
+							修改
+						</a>
+					</div>
+				</td>
+
+				<td data-title="极简投屏-心跳设置">
+					心跳次数:{$config[20][3][0]['min']}-{$config[20][3][0]['max']}&nbsp;&nbsp;得分: {$config[20][3][0]['grade']}<br />
+					心跳次数:{$config[20][3][1]['min']}-{$config[20][3][1]['max']}&nbsp;&nbsp;得分: {$config[20][3][1]['grade']}<br />
+					心跳次数:{$config[20][3][2]['min']}-{$config[20][3][2]['max']}&nbsp;&nbsp;得分: {$config[20][3][2]['grade']}<br />
+					心跳次数:{$config[20][3][3]['min']}-{$config[20][3][3]['max']}&nbsp;&nbsp;得分: {$config[20][3][3]['grade']}<br />
+					心跳次数:{$config[20][3][4]['min']}-{$config[20][3][4]['max']}&nbsp;&nbsp;得分: {$config[20][3][4]['grade']}<br />
+					<br />
+					<div class="tools-edit" style="margin-left:50px">
+						<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=20&type=3">
+							修改
+						</a>
+					</div>
+				</td>
+
+				<td data-title="极简投屏-下载网速设置">
+					下载网速:{$config[20][5][0]['min']}-{$config[20][5][0]['max']}&nbsp;&nbsp;得分: {$config[20][5][0]['grade']}<br />
+					下载网速:{$config[20][5][1]['min']}-{$config[20][5][1]['max']}&nbsp;&nbsp;得分: {$config[20][5][1]['grade']}<br />
+					下载网速:{$config[20][5][2]['min']}-{$config[20][5][2]['max']}&nbsp;&nbsp;得分: {$config[20][5][2]['grade']}<br />
+					下载网速:{$config[20][5][3]['min']}-{$config[20][5][3]['max']}&nbsp;&nbsp;得分: {$config[20][5][3]['grade']}<br />
+					下载网速:{$config[20][5][4]['min']}-{$config[20][5][4]['max']}&nbsp;&nbsp;得分: {$config[20][5][4]['grade']}<br />
+
+					最小样本量:{$config[22][5]['sample_num']}<br />
+					<br />
+					<div class="tools-edit" style="margin-left:50px">
+						<a class="btn btn-success btn-sm add" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/staticconfig/editboxgrade?score_type=20&type=5">
+							修改
+						</a>
+					</div>
+				</td>
+
+			  
+            </tr>
+          </tbody>
+        </table>
+      </form>
+	
+    </div>
+  </div>
+  {$page}
+</div>
