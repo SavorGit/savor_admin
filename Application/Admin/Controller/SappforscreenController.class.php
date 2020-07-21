@@ -482,7 +482,7 @@ class SappforscreenController extends BaseController {
         $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
 
         foreach ($res_boxdata as $v){
-            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status']);
+            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
             $m_smallapp_forscreen_invalidrecord->addData($v);
         }
         $delcondition = array('box_mac'=>array('in',$boxs));
@@ -494,7 +494,7 @@ class SappforscreenController extends BaseController {
             $condition['a.mobile_brand'] = array('neq','devtools');
             $res_userdata = $m_smallapp_forscreen_record->getWhere('a.*',$condition,'','');
             foreach ($res_userdata as $v){
-                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status']);
+                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
                 $m_smallapp_forscreen_invalidrecord->addData($v);
             }
             $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
