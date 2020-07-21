@@ -13,6 +13,31 @@ class BoxGradeModel extends BaseModel{
         return $res;
     }
 
+    public function getAvgGrade($mac,$start_date,$end_date){
+        $start_date = date('Ymd',strtotime($start_date));
+        $end_date = date('Ymd',strtotime($end_date));
+        $fields = "avg(total_score) as total_score,avg(mini_total_score) as mini_total_score,avg(netty_score) as netty_score,avg(heart_score) as heart_score,
+avg(upspeed_score) as upspeed_score,avg(standard_downspeed_score) as standard_downspeed_score,avg(standard_forscreen_score) as standard_forscreen_score,
+avg(mini_downspeed_score) as mini_downspeed_score,avg(mini_forscreen_score) as mini_forscreen_score,sum(standard_forscreen_num) as standard_forscreen_num,
+sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as standard_download_num";
+        $sql = "select $fields from savor_box_grade where mac='{$mac}' and date>={$start_date} and date<={$end_date}";
+        $res = $this->query($sql);
+        return $res;
+    }
+
+    public function getGrades($mac,$start_date,$end_date){
+        $fields = "grade.mac,grade.date,grade.total_score,grade.mini_total_score,grade.netty_score,grade.heart_score,grade.upspeed_score,
+        grade.standard_downspeed_score,grade.standard_forscreen_score,grade.mini_downspeed_score,grade.mini_forscreen_score,detail.netty_reconn_num,
+        detail.heart_num,detail.standard_forscreen_success_num,detail.standard_forscreen_num,detail.standard_forscreen_success_rate,detail.mini_forscreen_success_num,
+        detail.mini_forscreen_num,detail.mini_forscreen_success_rate,detail.standard_upload_speed,detail.standard_download_speed,detail.mini_download_speed";
+
+        $sql = "select {$fields} from savor_box_grade as grade left join savor_box_grade_details as detail on (grade.mac=detail.mac and grade.date=detail.date)
+        where grade.mac='{$mac}' and grade.date>={$start_date} and grade.date<={$end_date}";
+        $res = $this->query($sql);
+        return $res;
+    }
+
+
 	public function handle_boxgrade_date(){
         $m_boxstatic = new \Admin\Model\BoxStaticgradeconfigModel();
         $config = $m_boxstatic->config();
@@ -31,7 +56,7 @@ class BoxGradeModel extends BaseModel{
             $this->execute($sql);
 
             foreach ($res_dates as $v){
-                $now_date = $v;
+                $now_date = $v['date'];
                 echo "box_grade_date:$now_date start \r\n";
                 $this->addGrade($config,$now_date);
                 echo "box_grade_date:$now_date end \r\n";
@@ -53,7 +78,7 @@ class BoxGradeModel extends BaseModel{
         }
         foreach ($res_detail as $v){
             $netty_score = 0;
-            if($v['netty_reconn_num']){
+            if(isset($v['netty_reconn_num'])){
                 $condition = $config[10][1];
                 foreach ($condition as $cv){
                     if($v['netty_reconn_num']>=$cv['min'] && $v['netty_reconn_num']<=$cv['max']){

@@ -104,7 +104,17 @@ class MacdataController extends BaseController {
         }
 
         $chart_list = array();
+
+        $m_boxstatic = new \Admin\Model\BoxStaticgradeconfigModel();
+        $config = $m_boxstatic->config();
+        if($forscreen_type==1){
+            $sample_nums = $config[12];
+        }else{
+            $sample_nums = $config[22];
+        }
+
         $grades = array('total'=>0,'netty'=>0,'forscreen'=>0,'heart'=>0,'upspeed'=>0,'downspeed'=>0);
+        $samples = array('forscreen'=>1,'upspeed'=>1,'downspeed'=>1);
         if($box_mac){
             $all_score = array();
             $standard_forscreen_num = $mini_forscreen_num = $standard_download_num = 0;
@@ -155,10 +165,22 @@ class MacdataController extends BaseController {
             if($all_heart_score)    $grades['heart'] = sprintf("%.1f",$all_heart_score/$num);
             if($all_upspeed_score)  $grades['upspeed'] = sprintf("%.1f",$all_upspeed_score/$num);
             if($all_downspeed_score)$grades['downspeed'] = sprintf("%.1f",$all_downspeed_score/$num);
+
+            if($forscreen_type==1){
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[2])     $samples['forscreen'] = 0;
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[4])     $samples['upspeed'] = 0;
+                if($standard_download_num && $standard_download_num<$sample_nums[5])       $samples['downspeed'] = 0;
+            }else{
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[2])     $samples['forscreen'] = 0;
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[4])     $samples['upspeed'] = 0;
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[5])     $samples['downspeed'] = 0;
+            }
         }
         //详细数据
         $detail_list = array();
 
+
+        $this->assign('samples',$samples);
         $this->assign('grades',$grades);
         $this->assign('chart',json_encode($chart_list));
         $this->assign('detail_list',$detail_list);

@@ -48,7 +48,7 @@
                     </div>
                     <div class="input-group input-group-sm pull-right">
                         <if condition="$is_refresh eq 1">
-                        <a target="ajaxTodo" href="{$host_name}/smallapp/macdata/calculation" calback="navTabAjaxDone" class="btn btn-warning"><i class="fa fa-refresh"></i>刷新数据</a>
+                        <a target="ajaxTodo" href="{$host_url}/smallapp/macdata/calculation" calback="navTabAjaxDone" class="btn btn-warning"><i class="fa fa-refresh"></i>刷新数据</a>
                         </if>
                         <span class="text-danger">{$message}</span>
                     </div>
@@ -94,7 +94,7 @@
                     </div>
                     <div class="details">
                         <div class="number">{$grades.forscreen}</div>
-                        <div class="desc">投屏成功率评分</div>
+                        <div class="desc">投屏成功率评分<if condition="$samples.forscreen eq 0">(样本不足)</if> </div>
                     </div>
                 </div>
             </div>
@@ -117,7 +117,7 @@
                     </div>
                     <div class="details">
                         <div class="number">{$grades.upspeed}</div>
-                        <div class="desc">上传网速评分</div>
+                        <div class="desc">上传网速评分<if condition="$samples.upspeed eq 0">(样本不足)</if> </div>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                     </div>
                     <div class="details">
                         <div class="number">{$grades.downspeed}</div>
-                        <div class="desc">下载网速评分</div>
+                        <div class="desc">下载网速评分<if condition="$samples.downspeed eq 0">(样本不足)</if> </div>
                     </div>
                 </div>
             </div>
