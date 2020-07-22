@@ -1,0 +1,146 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hoteldata/grade" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">时间：</div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_time}" data-ymd="true">
+                            <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}">
+                            <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+                            <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}">
+                            <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">地区：</div>
+                        <div class="input-group">
+                            <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                                <option value=0>全部</option>
+                                <volist name="area" id="vo">
+                                    <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                                </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">设备类型：</div>
+                        <div class="input-group">
+                            <select name="box_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                                <option value=0>全部</option>
+                                <volist name=":C('heart_hotel_box_type')" id="vo">
+                                    <option value="{$key}" <if condition="$key eq $box_type">selected</if>>{$vo}</option>
+                                </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">是否是4G：</div>
+                        <div class="input-group">
+                            <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                                <option value=0>全部</option>
+                                <option value="1" <if condition="$is_4g eq 1">selected</if>>是</option>
+                                <option value="2" <if condition="$is_4g eq 2">selected</if>>否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                        </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>酒楼名称</th>
+                        <th>城市</th>
+                        <th>设备类型</th>
+                        <th>是否4G</th>
+                        <th>平均评分</th>
+                        <th>标准版评分</th>
+                        <th>极简版评分</th>
+                        <th>投屏形式</th>
+                        <th>更新时间</th>
+                        <th class="table-tool">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+                            <td data-title="城市">{$dinfo.area_name}</td>
+                            <td data-title="设备类型">{$dinfo.box_type_str}</td>
+                            <td data-title="是否4G">{$dinfo.is_4g_str}</td>
+                            <td data-title="平均评分">{$dinfo.score}</td>
+                            <td data-title="标准版评分">--</td>
+                            <td data-title="极简版评分">--</td>
+                            <td data-title="投屏形式">--</td>
+                            <td data-title="更新时间">--</td>
+                            <td class="table-tool" data-title="操作">
+                                <div class="tools-edit"></div>
+                            </td>
+                        </tr>
+                        <notempty name="dinfo.trees">
+                            <volist name="dinfo.trees" id="treeinfo">
+                                <tr target="sid_user">
+                                    <td data-title="机顶盒mac"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.mac}</td>
+                                    <td data-title="城市">{$dinfo.area_name}</td>
+                                    <td data-title="设备类型">{$treeinfo.box_type_str}</td>
+                                    <td data-title="是否4G">{$treeinfo.is_4g_str}</td>
+                                    <td data-title="平均评分">--</td>
+                                    <td data-title="标准版评分">{$treeinfo.total_score}</td>
+                                    <td data-title="极简版评分">{$treeinfo.mini_total_score}</td>
+                                    <td data-title="投屏形式">{$treeinfo.forscreen_type}</td>
+                                    <td data-title="更新时间">{$treeinfo.update_time}</td>
+
+                                    <td class="table-tool" data-title="操作">
+                                        <div class="tools-edit">
+                                            <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/macdata/changeforscreentype?mac={$treeinfo.mac}" class="btn btn-success btn-icon">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+
+                                            <a data-tip="查看版位具体分值" title="版位评分" target="navTab" rel="macdata/grade" href="{$host_url}/smallapp/macdata/grade?box_mac={$treeinfo.mac}&start_date={$start_time}&end_date={$end_time}" class="btn btn-success btn-icon">
+                                                <i class="fa fa-info"></i>
+                                            </a>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </volist>
+                        </notempty>
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>
