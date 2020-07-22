@@ -242,11 +242,15 @@
             series: [
                 {
                     type:'line',
-                    data:{$chart}
+                    data:{$chart},
+                    <if condition="$mac_x_axis neq 9999">
+                    markPoint: {
+                        data: [{name:'版位更新时间',xAxis:{$mac_x_axis},yAxis:0}]
+                    }
+                    </if>
                 }
             ]
         };
-        ;
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
         }
