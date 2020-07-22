@@ -12,7 +12,7 @@
 					<input type="checkbox" value="1" class="make-switch status" name="is_sapp_forscreen" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.is_sapp_forscreen eq 1" >checked</if>>
 				</div>
 			</div>
-
+			<if condition="$vinfo.box_type neq 2">
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
 					是否开启极简版投屏：
@@ -22,7 +22,7 @@
 					<input type="checkbox" value="1" class="make-switch status" name="is_open_simple" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.is_open_simple eq 1" >checked</if>>
 				</div>
 			</div>
-
+			</if>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default close-m" type="button">取消</button>

@@ -115,6 +115,21 @@ class MacdataController extends BaseController {
 
         $grades = array('total'=>0,'netty'=>0,'forscreen'=>0,'heart'=>0,'upspeed'=>0,'downspeed'=>0);
         $samples = array('forscreen'=>1,'upspeed'=>1,'downspeed'=>1);
+
+        $mac_x_axis = 9999;
+        if($box_mac){
+            $m_boxchange = new \Admin\Model\BoxChangeforscreenModel();
+            $box_change_fields = 'is_sapp_forscreen,is_open_simple,add_time';
+            $change_where = array('mac'=>$box_mac);
+            $res_boxchange = $m_boxchange->getAll($box_change_fields,$change_where,0,1,'id desc','');
+
+            $mac_update_date = date('Ymd',strtotime($res_boxchange[0]['add_time']));
+            $mac_update_x_axis = array_search($mac_update_date,$days);
+            if($mac_update_x_axis!=false){
+                $mac_x_axis = $mac_update_x_axis;
+            }
+        }
+
         if($box_mac){
             $all_score = array();
             $standard_forscreen_num = $mini_forscreen_num = $standard_download_num = 0;
@@ -180,6 +195,7 @@ class MacdataController extends BaseController {
         $detail_list = array();
 
 
+        $this->assign('mac_x_axis',$mac_x_axis);
         $this->assign('samples',$samples);
         $this->assign('grades',$grades);
         $this->assign('chart',json_encode($chart_list));
@@ -205,6 +221,41 @@ class MacdataController extends BaseController {
         $cache_data = json_encode(array('status'=>2,'time'=>date('Y-m-d H:i:s')));
         $redis->set($cache_key,$cache_data);
         $this->output('正在重新计算中,请稍后', '/',2);
+    }
+
+    public function changeforscreentype(){
+        $mac = I('mac','');
+        $condition = array('mac'=>$mac,'state'=>1,'flag'=>0);
+        $m_box = new \Admin\Model\BoxModel();
+        $res_box = $m_box->where($condition)->find();
+        if(IS_GET){
+            $this->assign('vinfo',$res_box);
+            $this->display();
+        }else{
+            $is_sapp_forscreen = I('post.is_sapp_forscreen',1,'intval');
+            $is_open_simple = I('post.is_open_simple',0,'intval');
+            if($res_box['is_sapp_forscreen']!=$is_sapp_forscreen || $res_box['is_open_simple']!=$is_open_simple){
+                $m_boxchange = new \Admin\Model\BoxChangeforscreenModel();
+                $old_data = array('is_sapp_forscreen'=>$res_box['is_sapp_forscreen'],'is_open_simple'=>$res_box['is_open_simple']);
+                $data = array('mac'=>$mac,'old_data'=>json_encode($old_data),'is_sapp_forscreen'=>$is_sapp_forscreen,
+                    'is_open_simple'=>$is_open_simple);
+                $res = $m_boxchange->add($data);
+
+                $box_data = array('is_sapp_forscreen'=>$is_sapp_forscreen,'is_open_simple'=>$is_open_simple);
+                $m_box->where('id='.$res_box['id'])->save($box_data);
+
+                $m_box->checkForscreenTypeByMac($mac);
+            }else{
+                $res = false;
+            }
+            if($res){
+                $this->output('操作成功!', 'hoteldata/grade');
+            }else{
+                $this->output('操作失败', 'macdata/changeforscreentype',2,0);
+            }
+
+        }
+
     }
 
     /*
