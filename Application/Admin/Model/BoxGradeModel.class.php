@@ -44,6 +44,7 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
         $date = date("Ymd", strtotime("-1 day"));
         echo "box_grade_date:$date start \r\n";
         $this->addGrade($config,$date);
+        $this->addHotelGrade($date);
         echo "box_grade_date:$date end \r\n";
     }
 
@@ -59,6 +60,7 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
                 $now_date = $v['date'];
                 echo "box_grade_date:$now_date start \r\n";
                 $this->addGrade($config,$now_date);
+                $this->addHotelGrade($now_date);
                 echo "box_grade_date:$now_date end \r\n";
             }
             $redis  =  \Common\Lib\SavorRedis::getInstance();
@@ -158,5 +160,41 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
             $this->add($data);
         }
         return true;
+    }
+
+    public function addHotelGrade($date){
+        $where = array('date'=>$date);
+        $group = 'hotel_id';
+        $fields = 'area_id,area_name,hotel_id,hotel_name';
+        $hotel_ids = $this->getDatas($fields,$where,'',$group);
+        if(!empty($hotel_ids)){
+            $m_hotel = new \Admin\Model\HotelModel();
+            $m_hotelgrade = new \Admin\Model\HotelGradeModel();
+            foreach ($hotel_ids as $v){
+                $hotel_id = $v['hotel_id'];
+                $where = "where date={$date} and hotel_id={$hotel_id} ";
+                $sql_boxgrade = "select mac,avg(total_score) as avg_total_score,avg(mini_total_score) as avg_mini_total_score from savor_box_grade {$where} group by mac";
+                $res_boxgrades = $this->query($sql_boxgrade);
+                $total_score = 0;
+                if(!empty($res_boxgrades)){
+                    $avg_num = count($res_boxgrades);
+                    $tmp_total_score = 0;
+                    foreach ($res_boxgrades as $gv){
+                        if($gv['avg_total_score']>=$gv['avg_mini_total_score']){
+                            $tmp_total_score+=$gv['avg_total_score'];
+                        }elseif($gv['avg_total_score']<=$gv['avg_mini_total_score']){
+                            $tmp_total_score+=$gv['avg_mini_total_score'];
+                        }
+                    }
+                    $total_score = sprintf("%.1f",$tmp_total_score/$avg_num);
+                }
+                $hotel_info = $m_hotel->getOne($hotel_id);
+
+                $data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
+                    'is_4g'=>$hotel_info['is_4g'],'hotel_box_type'=>$hotel_info['hotel_box_type'],'total_score'=>$total_score,'date'=>$date);
+                $m_hotelgrade->add($data);
+
+            }
+        }
     }
 }

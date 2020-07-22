@@ -302,7 +302,15 @@ class BoxModel extends BaseModel{
      */
 	public function editData($id,$data){
 	    if(!empty($id)){
+            $res_box = $this->getInfo(array('id'=>$id));
 	        $rt = $this->where('id='.$id)->save($data);
+            if($res_box['is_sapp_forscreen']!=$data['is_sapp_forscreen'] || $res_box['is_open_simple']!=$data['is_open_simple']){
+                $m_boxchange = new \Admin\Model\BoxChangeforscreenModel();
+                $old_data = array('is_sapp_forscreen'=>$res_box['is_sapp_forscreen'],'is_open_simple'=>$res_box['is_open_simple']);
+                $data = array('mac'=>$res_box['mac'],'old_data'=>json_encode($old_data),'is_sapp_forscreen'=>$data['is_sapp_forscreen'],
+                    'is_open_simple'=>$data['is_open_simple']);
+                $m_boxchange->add($data);
+            }
 	        if($rt){
                 $forscreen_type = $this->checkForscreenTypeByMac($data['mac']);
                 $data['forscreen_type'] = $forscreen_type;
