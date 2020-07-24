@@ -5,6 +5,7 @@ use Think\Controller;
 use Common\Lib\SavorRedis;
 use Behavior\AgentCheckBehavior;
 use \Common\Lib\MailAuto;
+use function GuzzleHttp\json_decode;
 // use Common\Lib\SavorRedis;
 /**
  * @desc 功能测试类
@@ -140,6 +141,8 @@ class ExcelController extends Controller
              $tmpname = '4G盒子投屏测试';
          }else if($filename =='exportMallOrder'){
              $tmpname ="商场订单汇总";
+         }else if($filename =='topSpeedForscreen'){
+             $tmpname = '扫极简版码用户链接wifi投屏数据统计';
          }
 
 
@@ -6504,11 +6507,210 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
         $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
     /**
-     *@desc 扫极简版码用户数据统计
+     *@desc 扫极简版码用户链接wifi投屏数据统计
      */
     public function topSpeedForscreen(){
         $start_time = I('start_time');
-        $sql = "select * from ";   
+        $sql = "select l.openid from savor_smallapp_qrcode_log l
+                left join savor_box box on l.box_mac= box.mac
+                left join savor_room room on box.room_id = room.id
+                left join savor_hotel hotel on room.hotel_id = hotel.id
+                where hotel.flag = 0 and hotel.state=1 and box.flag=0 and box.state=1 
+                and box.is_open_simple=1
+                and l.create_time>'".$start_time."' group by l.openid";
+        
+        $qrcode_list = M()->query($sql);
+        //print_r($qrcode_list);exit;
+        //$data = array();
+        foreach($qrcode_list as $key=>$v){
+            $sql ="select hotel.name hotel_name,room.name room_name,box.mac box_mac 
+                   from savor_smallapp_qrcode_log l
+                   left join savor_box box on l.box_mac= box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id = hotel.id
+                   where hotel.flag = 0 and hotel.state=1 and box.flag=0 and box.state=1 
+                   and  l.create_time>'".$start_time."' and box.is_open_simple=1 and l.openid='".$v['openid']."'";
+            $qrcode_data = M()->query($sql);
+               
+            $qrcode_list[$key]['hotel_name']          = $qrcode_data[0]['hotel_name']; //扫码酒楼
+            $qrcode_list[$key]['room_name']           = $qrcode_data[0]['room_name'];  //扫码包间
+            $qrcode_list[$key]['box_mac']             = $qrcode_data[0]['box_mac'];    //扫码mac
+            $qrcode_list[$key]['scan_qrcode_numbers'] = count($qrcode_data);           //扫码次数
+            
+            
+            //wifi链接报错
+            $sql ="select err_info,mobile_brand,mobile_model,platform,`system`,`version` from savor_smallapp_wifi_err
+                   where create_time>'".$start_time."' and openid='".$v['openid']."'";
+            $ret = M()->query($sql);
+            if(empty($ret)){
+                $qrcode_list[$key]['erro_info'] = '无';
+                $qrcode_list[$key]['mobile_brand'] = '';
+                $qrcode_list[$key]['mobile_model'] = '';
+                $qrcode_list[$key]['platform'] = '';
+                $qrcode_list[$key]['system'] = '';
+                $qrcode_list[$key]['version'] = '';
+            }else {
+                $space = '';
+                $e_info_str = '';
+                
+                foreach($ret as $kk=>$vv){
+                    
+                    
+                    $e_info_str .=$space .$vv['err_info'];
+                    $space = ',';
+                }
+                $qrcode_list[$key]['erro_info'] = $e_info_str;
+                $qrcode_list[$key]['mobile_brand'] = $ret[0]['mobile_brand'];
+                $qrcode_list[$key]['mobile_model'] = $ret[0]['mobile_model'];
+                $qrcode_list[$key]['platform'] = $ret[0]['platform'];
+                $qrcode_list[$key]['system'] = $ret[0]['system'];
+                $qrcode_list[$key]['version'] = $ret[0]['version'];
+            }
+            //是否有投屏
+            $sql = "select * from savor_smallapp_forscreen_record where openid='".$v['openid']."'
+                    and create_time>'".$start_time."' and small_app_id=2";
+            $ret = M()->query($sql);
+            $foscreen_num = count($ret);
+            if($foscreen_num>0){
+                $qrcode_list[$key]['froscreen_num'] = $foscreen_num.'条投屏记录';
+            }else {
+                $qrcode_list[$key]['froscreen_num'] = '无 或机顶盒未上报投屏日志';
+            }
+        }
+        
+        $xlsCell = array(
+            array('openid', 'openid'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','扫码mac'),
+            array('scan_qrcode_numbers','扫码次数'),
+            array('erro_info','链接wifi是否有报错'),
+            array('mobile_brand','手机品牌'),
+            array('mobile_model','手机型号'),
+            array('platform','手机系统'),
+            array('system','系统版本'),
+            array('version','微信版本'),
+            array('froscreen_num','是否有投屏记录'),
+            
+        );
+        $xlsName = '扫极简版码用户链接wifi投屏数据统计';
+        $filename = 'topSpeedForscreen';
+        $this->exportExcel($xlsName, $xlsCell, $qrcode_list,$filename);
+    }
+    public function isHaveForscreenBoxList(){
+        $box_list = file_get_contents('./Public/box_list.txt');
+        $box_list = explode("\r\n",$box_list);
+        $data = [];
+        foreach($box_list as $key=>$v){
+            $sql ="select count(id) as num from savor_smallapp_forscreen_record 
+                   where box_mac='".$v."' and create_time>'2020-07-01 00:00:00'";
+            
+            $ret = M()->query($sql);
+            $num = $ret[0]['num'];
+            $data[$key]['box_mac'] = $v;
+            if(empty($num)){
+                $data[$key]['is_have'] = '无';
+            }else {
+                $data[$key]['is_have'] = '有';
+            }
+        }
+        $xlsCell = array(
+            array('box_mac', '机顶盒mac'),
+            array('is_have','是否有投屏记录')
+        
+        );
+        $xlsName = '扫极简版码用户链接wifi投屏数据统计';
+        $filename = 'topSpeedForscreen';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function topForscreenByBox(){
+        $start_time = I('start_time');
+        $sql = "select l.box_mac from savor_smallapp_qrcode_log l
+                left join savor_box box on l.box_mac= box.mac
+                left join savor_room room on box.room_id = room.id
+                left join savor_hotel hotel on room.hotel_id = hotel.id
+                where hotel.flag = 0 and hotel.state=1 and box.flag=0 and box.state=1 
+                and box.is_open_simple=1
+                and l.create_time>'".$start_time."' group by l.box_mac";
+        
+        
+        $qrcode_list = M()->query($sql);
+        foreach($qrcode_list as $key=>$v){
+            $sql ="select hotel.name hotel_name,room.name room_name,box.mac box_mac
+                   from savor_smallapp_qrcode_log l
+                   left join savor_box box on l.box_mac= box.mac
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id = hotel.id
+                   where hotel.flag = 0 and hotel.state=1 and box.flag=0 and box.state=1
+                   and  l.create_time>'".$start_time."' and box.is_open_simple=1 and l.box_mac='".$v['box_mac']."'";
+            $qrcode_data = M()->query($sql);
+             
+            $qrcode_list[$key]['hotel_name']          = $qrcode_data[0]['hotel_name']; //扫码酒楼
+            $qrcode_list[$key]['room_name']           = $qrcode_data[0]['room_name'];  //扫码包间
+            $qrcode_list[$key]['box_mac']             = $qrcode_data[0]['box_mac'];    //扫码mac
+            $qrcode_list[$key]['scan_qrcode_numbers'] = count($qrcode_data);           //扫码次数
+        
+        
+            //wifi链接报错
+            $sql ="select err_info,mobile_brand,mobile_model,platform,`system`,`version` from savor_smallapp_wifi_err
+                   where create_time>'".$start_time."' and box_mac='".$v['box_mac']."'";
+            $ret = M()->query($sql);
+            if(empty($ret)){
+                $qrcode_list[$key]['erro_info'] = '无';
+                
+            }else {
+                $space = '';
+                $e_info_str = '';
+        
+                foreach($ret as $kk=>$vv){
+        
+        
+                    $e_info_str .=$space .$vv['err_info'];
+                    $space = ',';
+                }
+                $qrcode_list[$key]['erro_info'] = $e_info_str;
+                
+            }
+            //是否有投屏
+            $sql = "select * from savor_smallapp_forscreen_record where box_mac='".$v['box_mac']."'
+                    and create_time>'".$start_time."' and small_app_id=2";
+            $ret = M()->query($sql);
+            $foscreen_num = count($ret);
+            if($foscreen_num>0){
+                $qrcode_list[$key]['froscreen_num'] = $foscreen_num.'条投屏记录';
+            }else {
+                $qrcode_list[$key]['froscreen_num'] = '无 或机顶盒未上报投屏日志';
+            }
+            //最近两周有没有投屏
+            $last_time = date('Y-m-d 00:00:00',strtotime('-2 weeks')) ;
+            
+            $sql = "select * from savor_smallapp_forscreen_record where box_mac='".$v['box_mac']."'
+                    and create_time>'".$last_time."' and small_app_id=2";
+            
+            $ret = M()->query($sql);
+            $history_foscreen_num = count($ret);
+            
+            if($history_foscreen_num>0){
+                $qrcode_list[$key]['history_foscreen_num'] = $history_foscreen_num.'条投屏记录';
+            }else {
+                $qrcode_list[$key]['history_foscreen_num'] = '无 或机顶盒未上报投屏日志';
+            }
+        }
+        
+        $xlsCell = array(
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','扫码mac'),
+            array('scan_qrcode_numbers','扫码次数'),
+            array('erro_info','链接wifi是否有报错'),
+           
+            array('froscreen_num','是否有投屏记录'),
+            array('history_foscreen_num','最近两周是否有投屏记录'),
+        
+        );
+        $xlsName = '扫极简版码用户链接wifi投屏数据统计';
+        $filename = 'topSpeedForscreen';
+        $this->exportExcel($xlsName, $xlsCell, $qrcode_list,$filename);
     }
     
     private function getScore($data,$conf_arr){
