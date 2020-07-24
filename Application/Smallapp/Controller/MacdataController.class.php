@@ -118,33 +118,27 @@ class MacdataController extends BaseController {
 
         $mac_x_axis = 9999;
         if($box_mac){
-            $m_boxchange = new \Admin\Model\BoxChangeforscreenModel();
-            $box_change_fields = 'is_sapp_forscreen,is_open_simple,add_time';
-            $change_where = array('mac'=>$box_mac);
-            $res_boxchange = $m_boxchange->getAll($box_change_fields,$change_where,0,1,'id desc','');
-
-            $mac_update_date = date('Ymd',strtotime($res_boxchange[0]['add_time']));
-            $mac_update_x_axis = array_search($mac_update_date,$days);
-            if($mac_update_x_axis!=false){
-                $mac_x_axis = $mac_update_x_axis;
+            $m_box = new \Admin\Model\BoxModel();
+            $bwhere = array('mac'=>$box_mac,'state'=>1,'flag'=>0);
+            $res_box = $m_box->getInfo('*',$bwhere,'id desc','0,1');
+            if(!empty($res_box)){
+                $mac_update_date = date('Ymd',strtotime($res_box[0]['forscreen_uptime']));
+                $mac_update_x_axis = array_search($mac_update_date,$days);
+                if($mac_update_x_axis!=false){
+                    $mac_x_axis = $mac_update_x_axis;
+                }
             }
         }
 
         if($box_mac){
             $all_score = array();
-            $standard_forscreen_num = $mini_forscreen_num = $standard_download_num = 0;
+
             $m_boxgrade = new \Admin\Model\BoxGradeModel();
-            $num = 0;
             foreach ($days as $k=>$v){
                 $condition = array('date'=>$v,'mac'=>$box_mac);
                 $res_boxgrade = $m_boxgrade->getInfo($condition);
                 $total_score =$netty_score=$forscreen_score=$heart_score=$upspeed_score=$downspeed_score=0;
                 if(!empty($res_boxgrade)){
-                    $standard_forscreen_num+=$res_boxgrade['standard_forscreen_num'];
-                    $mini_forscreen_num+=$res_boxgrade['mini_forscreen_num'];
-                    $standard_download_num+=$res_boxgrade['standard_download_num'];
-                    $num++;
-
                     if($forscreen_type==1){
                         $total_score = $res_boxgrade['total_score'];
                         $forscreen_score = $res_boxgrade['standard_forscreen_score'];
@@ -167,19 +161,30 @@ class MacdataController extends BaseController {
             }
             $chart_list = $all_score[$type];
 
-            $all_total_score = array_sum($all_score['99']);
-            $all_netty_score = array_sum($all_score['1']);
-            $all_forscreen_score = array_sum($all_score['2']);
-            $all_heart_score = array_sum($all_score['3']);
-            $all_upspeed_score = array_sum($all_score['4']);
-            $all_downspeed_score = array_sum($all_score['5']);
+            $standard_forscreen_num = $mini_forscreen_num = $standard_download_num = 0;
+            $res_grades = $m_boxgrade->getAvgGrade($box_mac,$start_date,$end_date);
+            if(!empty($res_grades)){
+                $res_grades = $res_grades[0];
+                if($forscreen_type==1){
+                    $total_score = $res_grades['total_score'];
+                    $forscreen_score = $res_grades['standard_forscreen_score'];
+                    $downspeed_score = $res_grades['standard_downspeed_score'];
+                }else{
+                    $total_score = $res_grades['mini_total_score'];
+                    $forscreen_score = $res_grades['mini_forscreen_score'];
+                    $downspeed_score = $res_grades['mini_downspeed_score'];
+                }
+                $netty_score = $res_grades['netty_score'];
+                $heart_score=$res_grades['heart_score'];
+                $upspeed_score=$res_grades['upspeed_score'];
 
-            if($all_total_score)    $grades['total'] = sprintf("%.1f",$all_total_score/$num);
-            if($all_netty_score)    $grades['netty'] = sprintf("%.1f",$all_netty_score/$num);
-            if($all_forscreen_score)    $grades['forscreen'] = sprintf("%.1f",$all_forscreen_score/$num);
-            if($all_heart_score)    $grades['heart'] = sprintf("%.1f",$all_heart_score/$num);
-            if($all_upspeed_score)  $grades['upspeed'] = sprintf("%.1f",$all_upspeed_score/$num);
-            if($all_downspeed_score)$grades['downspeed'] = sprintf("%.1f",$all_downspeed_score/$num);
+                if($total_score)        $grades['total'] = sprintf("%.1f",$total_score);
+                if($netty_score)        $grades['netty'] = sprintf("%.1f",$netty_score);
+                if($forscreen_score)    $grades['forscreen'] = sprintf("%.1f",$forscreen_score);
+                if($heart_score)        $grades['heart'] = sprintf("%.1f",$heart_score);
+                if($upspeed_score)      $grades['upspeed'] = sprintf("%.1f",$upspeed_score);
+                if($downspeed_score)    $grades['downspeed'] = sprintf("%.1f",$downspeed_score);
+            }
 
             if($forscreen_type==1){
                 if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[2])     $samples['forscreen'] = 0;
@@ -235,13 +240,16 @@ class MacdataController extends BaseController {
             $is_sapp_forscreen = I('post.is_sapp_forscreen',1,'intval');
             $is_open_simple = I('post.is_open_simple',0,'intval');
             if($res_box['is_sapp_forscreen']!=$is_sapp_forscreen || $res_box['is_open_simple']!=$is_open_simple){
+                $forscreen_uptime = date('Y-m-d H:i:s');
                 $m_boxchange = new \Admin\Model\BoxChangeforscreenModel();
-                $old_data = array('is_sapp_forscreen'=>$res_box['is_sapp_forscreen'],'is_open_simple'=>$res_box['is_open_simple']);
+                $old_data = array('is_sapp_forscreen'=>$res_box['is_sapp_forscreen'],'is_open_simple'=>$res_box['is_open_simple'],
+                    'is_4g'=>$res_box['is_4g'],'box_type'=>$res_box['box_type']);
                 $data = array('mac'=>$mac,'old_data'=>json_encode($old_data),'is_sapp_forscreen'=>$is_sapp_forscreen,
-                    'is_open_simple'=>$is_open_simple);
+                    'is_open_simple'=>$is_open_simple,'is_4g'=>$res_box['is_4g'],'box_type'=>$res_box['box_type'],
+                    'forscreen_uptime'=>$forscreen_uptime);
                 $res = $m_boxchange->add($data);
 
-                $box_data = array('is_sapp_forscreen'=>$is_sapp_forscreen,'is_open_simple'=>$is_open_simple);
+                $box_data = array('is_sapp_forscreen'=>$is_sapp_forscreen,'is_open_simple'=>$is_open_simple,'forscreen_uptime'=>$forscreen_uptime);
                 $m_box->where('id='.$res_box['id'])->save($box_data);
 
                 $m_box->checkForscreenTypeByMac($mac);

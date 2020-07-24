@@ -2719,7 +2719,6 @@ class CrontabController extends Controller
         $cache_key = C('SAPP_SCRREN')."*";
         $keys = $redis->keys($cache_key);
         $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
-        $m_uploadtimes = new \Admin\Model\Smallapp\UploadtimesModel();
         foreach($keys as $k){
             $data = $redis->lgetrange($k,0,-1);
             foreach($data as $v){
@@ -2728,7 +2727,6 @@ class CrontabController extends Controller
                 $ret = $m_smallapp_forscreen_record->addInfo($forscreen_info,1);
                 if($ret){
                     $redis->lpop($k);
-                    $m_uploadtimes->addUploadtimes($forscreen_info);
                 }
             }
             $data = $redis->lgetrange($k,0,-1);
@@ -4321,5 +4319,16 @@ class CrontabController extends Controller
         $now_time = date('Y-m-d H:i:s');
         echo "boxgrade_range end:$now_time \r\n";
     }
+
+    public function smallappuploadtimes(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "smallappuploadtimes start:$now_time \r\n";
+        $m_suploadtime = new \Admin\Model\Smallapp\UploadtimesModel();
+        $m_suploadtime->handel_smallapp_upload();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "smallappuploadtimes end:$now_time \r\n";
+    }
+
     
 }

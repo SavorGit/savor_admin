@@ -16,10 +16,10 @@ class BoxGradeModel extends BaseModel{
     public function getAvgGrade($mac,$start_date,$end_date){
         $start_date = date('Ymd',strtotime($start_date));
         $end_date = date('Ymd',strtotime($end_date));
-        $fields = "avg(total_score) as total_score,avg(mini_total_score) as mini_total_score,avg(netty_score) as netty_score,avg(heart_score) as heart_score,
-avg(upspeed_score) as upspeed_score,avg(standard_downspeed_score) as standard_downspeed_score,avg(standard_forscreen_score) as standard_forscreen_score,
-avg(mini_downspeed_score) as mini_downspeed_score,avg(mini_forscreen_score) as mini_forscreen_score,sum(standard_forscreen_num) as standard_forscreen_num,
-sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as standard_download_num";
+        $fields = "avg(NULLIF(total_score,0)) as total_score,avg(NULLIF(mini_total_score,0)) as mini_total_score,avg(NULLIF(netty_score,0)) as netty_score,
+        avg(NULLIF(heart_score,0)) as heart_score,avg(NULLIF(upspeed_score,0)) as upspeed_score,avg(NULLIF(standard_downspeed_score,0)) as standard_downspeed_score,
+        avg(NULLIF(standard_forscreen_score,0)) as standard_forscreen_score,avg(NULLIF(mini_downspeed_score,0)) as mini_downspeed_score,avg(NULLIF(mini_forscreen_score,0)) as mini_forscreen_score,
+        sum(standard_forscreen_num) as standard_forscreen_num,sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as standard_download_num";
         $sql = "select $fields from savor_box_grade where mac='{$mac}' and date>={$start_date} and date<={$end_date}";
         $res = $this->query($sql);
         return $res;
@@ -51,10 +51,14 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
     public function handle_boxgrade_range(){
         $m_boxstatic = new \Admin\Model\BoxStaticgradeconfigModel();
         $config = $m_boxstatic->config();
-        $res_dates = $this->getDatas('date','','','date');
+
+        $m_boxgrade_detail = new \Admin\Model\BoxGradedetailsModel();
+        $res_dates = $m_boxgrade_detail->getDatas('date','','','date');
         if(!empty($res_dates)){
-            $sql = 'TRUNCATE TABLE savor_box_grade';
-            $this->execute($sql);
+            $sql_boxgrade = 'TRUNCATE TABLE savor_box_grade';
+            $this->execute($sql_boxgrade);
+            $sql_hotelgrade = 'TRUNCATE TABLE savor_hotel_grade';
+            $this->execute($sql_hotelgrade);
 
             foreach ($res_dates as $v){
                 $now_date = $v['date'];
@@ -81,24 +85,28 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
         foreach ($res_detail as $v){
             $netty_score = 0;
             if(isset($v['netty_reconn_num'])){
-                $condition = $config[10][1];
-                foreach ($condition as $cv){
-                    if($v['netty_reconn_num']>=$cv['min'] && $v['netty_reconn_num']<=$cv['max']){
-                        $netty_score = $cv['grade'];
+                if($v['netty_reconn_num']==0 || !empty($v['netty_reconn_num'])){
+                    $netty_reconn_num = intval($v['netty_reconn_num']);
+                    $condition = $config[10][1];
+                    foreach ($condition as $cv){
+                        if($netty_reconn_num>=$cv['min'] && $netty_reconn_num<=$cv['max']){
+                            $netty_score = $cv['grade'];
+                        }
                     }
                 }
             }
             $heart_score = 0;
             if($v['heart_num']){
+                $heart_num = intval($v['heart_num']);
                 $condition = $config[10][3];
                 foreach ($condition as $cv){
-                    if($v['heart_num']>=$cv['min'] && $v['heart_num']<=$cv['max']){
+                    if($heart_num>=$cv['min'] && $heart_num<=$cv['max']){
                         $heart_score = $cv['grade'];
                     }
                 }
             }
             $upspeed_score = 0;
-            if($v['standard_upload_speed']){
+            if($v['standard_upload_speed'] && !empty($v['standard_upload_speed'])){
                 $condition = $config[10][4];
                 foreach ($condition as $cv){
                     if($v['standard_upload_speed']>=$cv['min'] && $v['standard_upload_speed']<=$cv['max']){
@@ -107,7 +115,7 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
                 }
             }
             $standard_downspeed_score = 0;
-            if($v['standard_download_speed']){
+            if($v['standard_download_speed'] && !empty($v['standard_download_speed'])){
                 $condition = $config[10][5];
                 foreach ($condition as $cv){
                     if($v['standard_download_speed']>=$cv['min'] && $v['standard_download_speed']<=$cv['max']){
@@ -116,7 +124,7 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
                 }
             }
             $standard_forscreen_score = 0;
-            if($v['standard_forscreen_success_rate']){
+            if($v['standard_forscreen_success_rate'] && !empty($v['standard_forscreen_success_rate'])){
                 $standard_forscreen_success_rate = $v['standard_forscreen_success_rate']*100;
                 $condition = $config[10][2];
                 foreach ($condition as $cv){
@@ -127,7 +135,7 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
             }
 
             $mini_downspeed_score = 0;
-            if($v['mini_download_speed']){
+            if($v['mini_download_speed'] && !empty($v['mini_download_speed'])){
                 $condition = $config[20][5];
                 foreach ($condition as $cv){
                     if($v['mini_download_speed']>=$cv['min'] && $v['mini_download_speed']<=$cv['max']){
@@ -136,7 +144,7 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
                 }
             }
             $mini_forscreen_score = 0;
-            if($v['mini_forscreen_success_rate']){
+            if($v['mini_forscreen_success_rate'] && !empty($v['mini_forscreen_success_rate'])){
                 $mini_forscreen_success_rate = $v['mini_forscreen_success_rate']*100;
                 $condition = $config[20][2];
                 foreach ($condition as $cv){
@@ -151,11 +159,12 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
             if($total_score>0)  $total_score = sprintf("%.1f",$total_score);
             if($mini_total_score>0)  $mini_total_score = sprintf("%.1f",$mini_total_score);
             $data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
-                'room_id'=>$v['room_id'],'room_name'=>$v['room_name'],'box_id'=>$v['box_id'],'mac'=>$v['mac'],'date'=>$v['date'],'total_score'=>$total_score,
+                'room_id'=>$v['room_id'],'room_name'=>$v['room_name'],'box_id'=>$v['box_id'],'box_name'=>$v['box_name'],'mac'=>$v['mac'],
+                'is_4g'=>$v['is_4g'],'box_type'=>$v['box_type'],'date'=>$v['date'],'total_score'=>$total_score,
                 'mini_total_score'=>$mini_total_score,'netty_score'=>$netty_score,'heart_score'=>$heart_score,'upspeed_score'=>$upspeed_score,
                 'standard_downspeed_score'=>$standard_downspeed_score,'standard_forscreen_score'=>$standard_forscreen_score,'mini_downspeed_score'=>$mini_downspeed_score,
-                'mini_forscreen_score'=>$mini_forscreen_score,'standard_forscreen_num'=>$v['standard_forscreen_num'],'mini_forscreen_num'=>$v['mini_forscreen_num'],
-                'standard_download_num'=>$v['standard_download_num']
+                'mini_forscreen_score'=>$mini_forscreen_score,'standard_forscreen_num'=>intval($v['standard_forscreen_num']),'mini_forscreen_num'=>intval($v['mini_forscreen_num']),
+                'standard_download_num'=>intval($v['standard_download_num'])
             );
             $this->add($data);
         }
@@ -177,9 +186,12 @@ sum(mini_forscreen_num) as mini_forscreen_num,sum(standard_download_num) as stan
                 $res_boxgrades = $this->query($sql_boxgrade);
                 $total_score = 0;
                 if(!empty($res_boxgrades)){
-                    $avg_num = count($res_boxgrades);
+                    $avg_num = 0;
                     $tmp_total_score = 0;
                     foreach ($res_boxgrades as $gv){
+                        if($gv['avg_total_score']>0 || $gv['avg_mini_total_score']>0){
+                            $avg_num++;
+                        }
                         if($gv['avg_total_score']>=$gv['avg_mini_total_score']){
                             $tmp_total_score+=$gv['avg_total_score'];
                         }elseif($gv['avg_total_score']<=$gv['avg_mini_total_score']){

@@ -7,43 +7,13 @@ class UploadtimesModel extends BaseModel{
 
     public function addUploadtimes($data){
         if($data['res_sup_time'] && $data['res_eup_time']){
-            /*
-            $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
-            $orderby = 'id desc';
-            $res_list = $m_invalid->getDataList('*',array('type'=>array('in',array(1,2,3))),$orderby);
-            $all_invalidlist = array();
-            foreach ($res_list as $v){
-                $all_invalidlist[$v['type']][] = $v['invalidid'];
-            }
-            $boxs = array();
-            if(isset($all_invalidlist[1]) && !empty($all_invalidlist[1])){
-                $hotel_ids = $all_invalidlist[1];
-                $fields = "box.mac as box_mac";
-                $where = array();
-                $where['hotel.id'] = array('in',$hotel_ids);
-                $m_box = new \Admin\Model\BoxModel();
-                $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
-                foreach ($hotel_boxs as $v){
-                    $boxs[]=$v['box_mac'];
-                }
-            }
-            if(isset($all_invalidlist[3]) && !empty($all_invalidlist[3])){
-                $boxs = array_merge($boxs,$all_invalidlist[3]);
-                $boxs = array_unique($boxs);
-            }
-            $openids = array();
-            if(isset($all_invalidlist[2]) && !empty($all_invalidlist[2])){
-                $openids = $all_invalidlist[2];
-            }
-            if(in_array($data['openid'],$openids) || in_array($data['box_mac'],$boxs)){
-                return true;
-            }
-            */
-            if(empty($data['create_time'])){
-                $data['create_time'] = date('Y-m-d H:i:s',$data['res_eup_time']);
+            if(!empty($data['create_time'])){
+                $up_time = $data['create_time'];
+            }else{
+                $up_time = date('Y-m-d H:i:s',intval($data['res_eup_time']/1000));
             }
             $data_time = array('openid'=>$data['openid'],'box_mac'=>$data['box_mac'],'resource_size'=>$data['resource_size'],
-                'res_sup_time'=>$data['res_sup_time'],'res_eup_time'=>$data['res_eup_time'],'up_time'=>$data['create_time'],
+                'res_sup_time'=>$data['res_sup_time'],'res_eup_time'=>$data['res_eup_time'],'up_time'=>$up_time,
             );
             if(!empty($data['box_mac'])){
                 $m_box = new \Admin\Model\BoxModel();
@@ -57,6 +27,22 @@ class UploadtimesModel extends BaseModel{
             }
             $this->add($data_time);
         }
+
         return true;
+    }
+
+    public function handel_smallapp_upload(){
+        $daytime = strtotime("-1 day");
+        $start_time = date('Y-m-d 00:00:00',$daytime);
+        $end_time   = date('Y-m-d 23:59:59',$daytime);
+        $where = "create_time>='{$start_time}' and create_time<='{$end_time}' and small_app_id=1 and mobile_brand!='devtools' and res_sup_time>0 and res_sup_time>0 and resource_size>0";
+        $sql = "select openid,box_mac,resource_size,res_sup_time,res_eup_time,create_time from savor_smallapp_forscreen_record where {$where} order by id asc";
+        $res = $this->query($sql);
+        if(!empty($res)){
+            foreach ($res as $v){
+                $this->addUploadtimes($v);
+                echo "openid:{$v['openid']}-box_mac:{$v['box_mac']}-time:{$v['create_time']}-status:ok \r\n";
+            }
+        }
     }
 }

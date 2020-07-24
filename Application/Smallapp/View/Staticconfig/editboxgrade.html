@@ -10,7 +10,7 @@
         <input type="hidden" name="ids[]" value="{$dinfo.id}">
         <div class="form-group row">
           <label class="col-xs-12 col-sm-2 control-label">
-            {$dinfo.gname}:
+            {$dinfo.gname}(<if condition="$type eq 2">%<elseif condition="$type eq 4 or $type eq 5"/>k/s</if>):
           </label>
           <div class="col-xs-12 col-sm-2">
              <input type="text" class="form-control" name="min[]" minlength="1" maxlength="20"  value="{$dinfo.min}" required>

@@ -59,12 +59,29 @@
                     </div>
 
                     <div class="form-group">
+                        <div class="input-group input-group-sm">酒楼名称：</div>
+                        <div class="input-group">
+                            <input name="keyword" type="text" size="16" class="form-control" value="{$keyword}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="input-group input-group-sm pull-right">
                         <span class="input-group-btn">
                           <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
                         </span>
                         </div>
                     </div>
+
+                    <div class="input-group input-group-sm pull-right">
+                        <if condition="$is_refresh eq 1">
+                            <a target="ajaxTodo" href="{$host_url}/smallapp/macdata/calculation" calback="navTabAjaxDone" class="btn btn-warning"><i class="fa fa-refresh"></i>刷新数据</a>
+                        </if>
+                        <if condition="$is_refresh eq 2">
+                            <span class="text-danger">数据正在重新计算中,请稍后查看</span>
+                        </if>
+                    </div>
+
 
                 </div>
 
@@ -110,7 +127,7 @@
                         <notempty name="dinfo.trees">
                             <volist name="dinfo.trees" id="treeinfo">
                                 <tr target="sid_user">
-                                    <td data-title="机顶盒mac"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.mac}</td>
+                                    <td data-title="机顶盒mac"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.room_name}-{$treeinfo.mac}</td>
                                     <td data-title="城市">{$dinfo.area_name}</td>
                                     <td data-title="设备类型">{$treeinfo.box_type_str}</td>
                                     <td data-title="是否4G">{$treeinfo.is_4g_str}</td>
