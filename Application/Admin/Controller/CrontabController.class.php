@@ -2718,14 +2718,16 @@ class CrontabController extends Controller
         $redis->select(5);
         $cache_key = C('SAPP_SCRREN')."*";
         $keys = $redis->keys($cache_key);
-        $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();  
+        $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
         foreach($keys as $k){
             $data = $redis->lgetrange($k,0,-1);
             foreach($data as $v){
                 $forscreen_info = json_decode($v,true);
                 
                 $ret = $m_smallapp_forscreen_record->addInfo($forscreen_info,1);
-                if($ret) $redis->lpop($k);
+                if($ret){
+                    $redis->lpop($k);
+                }
             }
             $data = $redis->lgetrange($k,0,-1);
             if(empty($data)) $redis->remove($k);
@@ -2805,6 +2807,7 @@ class CrontabController extends Controller
                             if(!empty($netresource['box_res_edown_time'])){
                                 $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
                             }
+                            $dt['is_exist'] = $netresource['is_exist'];
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
                             $redis->lpop($k);
@@ -2817,6 +2820,7 @@ class CrontabController extends Controller
                             $where['resource_id'] = $netresource['resource_id'];
                         }
                         $where['openid'] = $netresource['openid'];
+                        $dt['is_exist'] = $netresource['is_exist'];
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
                         $redis->lpop($k);
@@ -4295,5 +4299,36 @@ class CrontabController extends Controller
             echo $error_info."[settled_status]0[message]Time is not \r\n";
         }
     }
+
+    public function boxgrade(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "boxgrade start:$now_time \r\n";
+        $m_boxgrade = new \Admin\Model\BoxGradeModel();
+        $m_boxgrade->handle_boxgrade_date();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "boxgrade end:$now_time \r\n";
+    }
+
+    public function boxgradebyrange(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "boxgrade_range start:$now_time \r\n";
+        $m_boxgrade = new \Admin\Model\BoxGradeModel();
+        $m_boxgrade->handle_boxgrade_range();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "boxgrade_range end:$now_time \r\n";
+    }
+
+    public function smallappuploadtimes(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "smallappuploadtimes start:$now_time \r\n";
+        $m_suploadtime = new \Admin\Model\Smallapp\UploadtimesModel();
+        $m_suploadtime->handel_smallapp_upload();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "smallappuploadtimes end:$now_time \r\n";
+    }
+
     
 }

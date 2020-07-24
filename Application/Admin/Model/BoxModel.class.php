@@ -302,7 +302,22 @@ class BoxModel extends BaseModel{
      */
 	public function editData($id,$data){
 	    if(!empty($id)){
-	        $rt = $this->where('id='.$id)->save($data);
+            $res_box = $this->where(array('id'=>$id))->find();
+            $forscreen_uptime = '';
+            if($res_box['is_sapp_forscreen']!=$data['is_sapp_forscreen'] || $res_box['is_open_simple']!=$data['is_open_simple'] || $res_box['is_4g']!=$data['is_4g'] || $res_box['box_type']!=$data['box_type']){
+                $forscreen_uptime = date('Y-m-d H:i:s');
+
+                $m_boxchange = new \Admin\Model\BoxChangeforscreenModel();
+                $old_data = array('is_sapp_forscreen'=>$res_box['is_sapp_forscreen'],'is_open_simple'=>$res_box['is_open_simple'],
+                    'is_4g'=>$res_box['is_4g'],'box_type'=>$res_box['box_type']);
+                $box_changedata = array('mac'=>$res_box['mac'],'old_data'=>json_encode($old_data),'is_sapp_forscreen'=>$data['is_sapp_forscreen'],
+                    'is_open_simple'=>$data['is_open_simple'],'is_4g'=>$data['is_4g'],'box_type'=>$data['box_type'],'forscreen_uptime'=>$forscreen_uptime);
+                $m_boxchange->add($box_changedata);
+            }
+            if(!empty($forscreen_uptime)){
+                $data['forscreen_uptime'] = $forscreen_uptime;
+            }
+            $rt = $this->where('id='.$id)->save($data);
 	        if($rt){
                 $forscreen_type = $this->checkForscreenTypeByMac($data['mac']);
                 $data['forscreen_type'] = $forscreen_type;

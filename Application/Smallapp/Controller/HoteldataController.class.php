@@ -115,4 +115,172 @@ class HoteldataController extends BaseController {
         return $chart;
     }
 
+
+    public function grade(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $keyword = I('keyword','','trim');
+        $area_id = I('area_id',0,'intval');
+        $box_type = I('box_type',0,'intval');
+        $is_4g = I('is_4g',0,'intval');
+
+        $where = array();
+        if(empty($start_time)){
+            $start_time = date('Ymd',strtotime("-7 day"));
+        }else{
+            $start_time = date('Ymd',strtotime($start_time));
+        }
+        if(empty($end_time)){
+            $end_time = date('Ymd',strtotime("-1 day"));
+        }else{
+            $end_time = date('Ymd',strtotime($end_time));
+        }
+        $where['date'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        if($area_id)    $where['area_id'] = $area_id;
+        if($box_type)   $where['hotel_box_type'] = $box_type;
+        if($is_4g)      $where['is_4g'] = $is_4g;
+        if(!empty($keyword)){
+            $where['hotel_name'] = array('like',"%$keyword%");
+        }
+        $m_hotelgrade = new \Admin\Model\HotelGradeModel();
+        $fields = 'area_id,area_name,hotel_id,hotel_name,is_4g,hotel_box_type,avg(NULLIF(total_score,0)) as score';
+        $order = 'score desc';
+        $group = 'hotel_id';
+        $start  = ($page-1) * $size;
+
+        $cache_key = 'cronscript:macgrade';
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $res_cache = $redis->get($cache_key);
+        $is_refresh = 0;
+        if(!empty($res_cache)){
+            $cache_data = json_decode($res_cache,true);
+            if($cache_data['status']==1){
+                $is_refresh = 1;
+            }else{
+                $is_refresh = 2;
+            }
+        }
+        if($is_refresh==2){
+            $res_data = array('list'=>array(),'total'=>0);
+        }else{
+            $res_data = $m_hotelgrade->getDatas($fields,$where,$order,$group,$start,$size);
+        }
+        $datalist = $res_data['list'];
+
+        if($res_data['total']){
+            $hotel_box_types = C('heart_hotel_box_type');
+            foreach ($datalist as $k=>$v){
+                if($v['is_4g']==1){
+                    $is_4g_str = '是';
+                }else{
+                    $is_4g_str = '否';
+                }
+                $score = 0;
+                if($v['score']>0){
+                    $score = sprintf("%.1f",$v['score']);
+                }
+                $datalist[$k]['score'] = $score;
+                $datalist[$k]['box_type_str'] = $hotel_box_types[$v['hotel_box_type']];
+                $datalist[$k]['is_4g_str'] = $is_4g_str;
+                $trees = $this->get_box_grades($v['hotel_id'],$start_time,$end_time);
+                $datalist[$k]['trees'] = $trees;
+            }
+        }
+
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+
+        $this->assign('is_refresh', $is_refresh);
+        $this->assign('keyword', $keyword);
+        $this->assign('area', $area_arr);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->assign('page',$res_data['page']);
+        $this->assign('datalist',$datalist);
+        $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
+        $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
+        $this->assign('area_id',$area_id);
+        $this->assign('box_type',$box_type);
+        $this->assign('is_4g',$is_4g);
+        $this->display();
+    }
+
+
+    public function get_box_grades($hotel_id,$start_time,$end_time){
+        $m_boxgarade = new \Admin\Model\BoxGradeModel();
+        $field = 'mac,room_name,is_4g,box_type,avg(NULLIF(total_score,0)) as total_score,avg(NULLIF(mini_total_score,0)) as mini_total_score';
+        $where = array();
+        $where['date'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $where['hotel_id'] = $hotel_id;
+        $group = 'mac';
+        $res_boxgarade = $m_boxgarade->getDatas($field,$where,'',$group);
+        $datas = array();
+        if(!empty($res_boxgarade)){
+            $html = '<em></em>';
+            $hotel_box_types = C('heart_hotel_box_type');
+            $m_box = new \Admin\Model\BoxModel();
+
+            $bfield = 'box.mac,box.is_sapp_forscreen,box.is_open_simple,box.forscreen_uptime';
+            $bwhere = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+            $res_box = $m_box->getBoxByCondition($bfield,$bwhere);
+            $all_boxs = array();
+            foreach ($res_box as $bv){
+                $update_time = '';
+                if($bv['forscreen_uptime']!='0000-00-00 00:00:00'){
+                    $update_time = $bv['forscreen_uptime'];
+                }
+                $box_forscreen = "{$bv['is_sapp_forscreen']}-{$bv['is_open_simple']}";
+                switch ($box_forscreen){
+                    case '1-0':
+                        $forscreen_type = '标准版';
+                        break;
+                    case '0-1':
+                        $forscreen_type = '极简版';
+                        break;
+                    case '1-1':
+                        $forscreen_type = '极简版';
+                        break;
+                    case '0-0':
+                        $forscreen_type = '未开启';
+                        break;
+                    default:
+                        $forscreen_type = '';
+                }
+                $bv['update_time'] = $update_time;
+                $bv['forscreen_type'] = $forscreen_type;
+                $all_boxs[$bv['mac']] = $bv;
+            }
+
+            foreach ($res_boxgarade as $k=>$v){
+                if($v['is_4g']==1){
+                    $is_4g_str = '是';
+                }else{
+                    $is_4g_str = '否';
+                }
+                $box_type_str = '';
+                if(isset($hotel_box_types[$v['box_type']])){
+                    $box_type_str = $hotel_box_types[$v['box_type']];
+                }
+                $total_score = $mini_total_score = 0;
+                if($v['total_score']>0){
+                    $total_score = sprintf("%.1f",$v['total_score']);
+                }
+                if($v['mini_total_score']>0){
+                    $mini_total_score = sprintf("%.1f",$v['mini_total_score']);
+                }
+                $forscreen_type = $update_time = '';
+                if(isset($all_boxs[$v['mac']])){
+                    $forscreen_type = $all_boxs[$v['mac']]['forscreen_type'];
+                    $update_time = $all_boxs[$v['mac']]['update_time'];
+                }
+                $dinfo = array('room_name'=>$v['room_name'],'mac'=>$v['mac'],'html'=>$html,'is_4g_str'=>$is_4g_str,'total_score'=>$total_score,'forscreen_type'=>$forscreen_type,
+                'mini_total_score'=>$mini_total_score,'box_type_str'=>$box_type_str,'update_time'=>$update_time);
+                $datas[] = $dinfo;
+            }
+        }
+        return $datas;
+    }
 }

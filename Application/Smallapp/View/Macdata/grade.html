@@ -1,0 +1,276 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/macdata/grade" method="post">
+        <input type="hidden" name="type" value="{$type}">
+        <input type="hidden" name="day" id="day" value="{$day}">
+        <div class="searchBar">
+            <div class="clearfix">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">
+                            时间：
+                            <div class="btn-group choose-hotelday">
+                                <button type="button" data-type="7" class="btn btn-sm hotelday <if condition="$day eq 7">btn-success</if>">7天</button>
+                                <button type="button" data-type="14" class="btn btn-sm hotelday <if condition="$day eq 14">btn-success</if>">14天</button>
+                                <button type="button" data-type="30" class="btn btn-sm hotelday <if condition="$day eq 30">btn-success</if>">30天</button>
+                            </div>
+                        </div>
+                        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group" >
+                            <select name="forscreen_type" class="form-control bs-select"  data-style="btn-default btn-sm" required>
+                                <option value="1" <if condition="$forscreen_type eq 1">selected="selected"</if>  >标准方式投屏</option>
+                                <option value="2" <if condition="$forscreen_type eq 2">selected="selected"</if>  >极简方式投屏</option>
+                            </select>
+                        </div>
+                        <div class="input-group" >
+                            <input type="text" class="form-control" name="box_mac" value="{$box_mac}" placeholder="请输入MAC地址" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+		                <span class="input-group-btn">
+		                    <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+		                </span>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-sm pull-right">
+                        <if condition="$is_refresh eq 1">
+                        <a target="ajaxTodo" href="{$host_url}/smallapp/macdata/calculation" calback="navTabAjaxDone" class="btn btn-warning"><i class="fa fa-refresh"></i>刷新数据</a>
+                        </if>
+                        <span class="text-danger">{$message}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent autoflow statistic">
+    <div class="indexContent">
+
+        <div class="row sm-row">
+            <div class="col-xs-6 col-sm-2">
+                <div class="dashboard-stat blue">
+                    <div class="visual">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number">{$grades.total}</div>
+                        <div class="desc">综合评分</div>
+                    </div>
+                </div>
+            </div>
+
+            <if condition="$forscreen_type eq 1">
+            <div class="col-xs-6 col-sm-2">
+                <div class="dashboard-stat blue">
+                    <div class="visual">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number">{$grades.netty}</div>
+                        <div class="desc">netty评分</div>
+                    </div>
+                </div>
+            </div>
+            </if>
+
+            <div class="col-xs-6 col-sm-2">
+                <div class="dashboard-stat blue">
+                    <div class="visual">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number">{$grades.forscreen}</div>
+                        <div class="desc">投屏成功率评分<if condition="$samples.forscreen eq 0">(样本不足)</if> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-2">
+                <div class="dashboard-stat blue">
+                    <div class="visual">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number">{$grades.heart}</div>
+                        <div class="desc">心跳评分</div>
+                    </div>
+                </div>
+            </div>
+            <if condition="$forscreen_type eq 1">
+            <div class="col-xs-6 col-sm-2">
+                <div class="dashboard-stat blue">
+                    <div class="visual">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number">{$grades.upspeed}</div>
+                        <div class="desc">上传网速评分<if condition="$samples.upspeed eq 0">(样本不足)</if> </div>
+                    </div>
+                </div>
+            </div>
+            </if>
+            <div class="col-xs-6 col-sm-2">
+                <div class="dashboard-stat blue">
+                    <div class="visual">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <div class="details">
+                        <div class="number">{$grades.downspeed}</div>
+                        <div class="desc">下载网速评分<if condition="$samples.downspeed eq 0">(样本不足)</if> </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="portlet-tab">
+            <div class="btn-group">
+                <a href="{$host_url}/smallapp/macdata/grade?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=99&forscreen_type={$forscreen_type}" target="navTab" rel="macdata/grade" title="版位数据">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 99">active</if> ">综合评分</button>
+                </a>
+                <if condition="$forscreen_type eq 1">
+                <a href="{$host_url}/smallapp/macdata/grade?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=1&forscreen_type={$forscreen_type}" target="navTab" rel="macdata/grade" title="版位数据">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 1">active</if> ">netty评分</button>
+                </a>
+                </if>
+                <a href="{$host_url}/smallapp/macdata/grade?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=2&forscreen_type={$forscreen_type}" target="navTab" rel="macdata/grade" title="版位数据">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 2">active</if> ">投屏成功评分</button>
+                </a>
+                <a href="{$host_url}/smallapp/macdata/grade?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=3&forscreen_type={$forscreen_type}" target="navTab" rel="macdata/grade" title="版位数据">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 3">active</if> ">心跳评分</button>
+                </a>
+                <if condition="$forscreen_type eq 1">
+                <a href="{$host_url}/smallapp/macdata/grade?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=4&forscreen_type={$forscreen_type}" target="navTab" rel="macdata/grade" title="版位数据">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 4">active</if> ">上传网速评分</button>
+                </a>
+                </if>
+                <a href="{$host_url}/smallapp/macdata/grade?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}&type=5&forscreen_type={$forscreen_type}" target="navTab" rel="macdata/grade" title="版位数据">
+                    <button type="button" class="btn btn-sm <if condition="$type eq 5">active</if>">下载网速评分</button>
+                </a>
+            </div>
+        </div>
+        <div class="portlet light bg-inverse portlet-table">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="fa fa-area-chart"></i>
+                    <span class="caption-subject bold font-green-haze uppercase">对比图</span>
+                    <span class="caption-helper"></span>
+                </div>
+            </div>
+            <div class="portlet-body row">
+                <div id="echart_macdata" class="chart"></div>
+            </div>
+        </div>
+        <!--
+        <div class="portlet-row row">
+                <div class="portlet-table">
+                    <table class="table-dashboard">
+                        <thead>
+                        <tr><th colspan='7'><span class="pull-left">详细数据</span><span class="pull-right"><a href="{$host_name}/excel/smallappBoxdata?box_mac={$box_mac}&day={$day}&start_date={$start_date}&end_date={$end_date}" title="导出详细数据" target="_blank" mask="true">导出</a></span></th></tr>
+                        <tr>
+                            <th>日期</th>
+                            <th>评分</th>
+                            <th>传播力</th>
+                            <th>屏幕在线率</th>
+                            <th>网络质量</th>
+                            <th>互动饭局数</th>
+                            <th>互动次数</th>
+                        </tr>
+                        </thead>
+                        <tbody data-check="list" data-parent=".table">
+                        <volist name="detail_list" id="dinfo">
+                            <tr target="sid_user">
+                                <td data-title="日期">{$key}</td>
+                                <td data-title="评分">{$dinfo.score}</td>
+                                <td data-title="传播力">{$dinfo.transmissibility}</td>
+                                <td data-title="屏幕在线率">{$dinfo.screens}%</td>
+                                <td data-title="网络质量">{$dinfo.network}%</td>
+                                <td data-title="互动饭局数">{$dinfo.fjnum}</td>
+                                <td data-title="互动次数">{$dinfo.hdnum}</td>
+                            </tr>
+                        </volist>
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+        -->
+    </div>
+    <script type="text/javascript">
+        var dom = document.getElementById("echart_macdata");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = null;
+        option = {
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: {$alldays}
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [
+                {
+                    type:'line',
+                    data:{$chart},
+                    <if condition="$mac_x_axis neq 9999">
+                    markPoint: {
+                        data: [{name:'版位更新时间',xAxis:{$mac_x_axis},yAxis:0}]
+                    }
+                    </if>
+                }
+            ]
+        };
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+
+        $('.choose-hotelday .hotelday').click(function(){
+            $(this).addClass('btn-success').siblings().removeClass('btn-success');
+            var type = $(this).data('type');
+            $("#day").val(type);
+        });
+
+        $('.date-reset').click(function(){
+            $(this).parent().prev().val('')
+        });
+        $(function(){
+            $(".form-control.date").datetimepicker({
+                minView: "month", //选择日期后，不会再跳转去选择时分秒
+                language:  'zh-CN',
+                format: 'yyyy-mm-dd',
+                todayBtn:  1,
+                autoclose: 1,
+            });
+        })
+    </script>
