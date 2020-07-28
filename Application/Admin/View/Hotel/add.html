@@ -203,6 +203,29 @@
                 <input type="text" class="form-control" name="techmaintainer" required minlength="1" maxlength="20" value="{$vinfo.tech_maintainer}" >
             </div>
         </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                是否培训过：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="hidden" name="is_train" value="0">
+                <input type="checkbox" value="1" class="make-switch status" name="is_train" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_train eq 1" >checked</if>>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">酒楼培训人：</label>
+            <div class="col-xs-12 col-sm-10  form-inline">
+                <select name="trainer_id" class="form-control bs-select class-filter" data-live-search="true" >
+                    <option value="0">请选择培训人</option>
+                    <volist name="trainers" id="tinfo">
+                        <option value="{$tinfo.id}" {$tinfo.selected_str} > {$tinfo.name}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 小平台MAC地址：

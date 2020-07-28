@@ -481,11 +481,14 @@ class HotelController extends BaseController {
             $is_lablefiter = 1;
         }
 
+        $trainer_id = 0;
 		if($id){
 			$vinfo = $hotelModel->where('id='.$id)->find();
 			$hotelextModel = new \Admin\Model\HotelExtModel();
 			$main_info = $hotelextModel->where('hotel_id='.$id)->find();
+			$vinfo['is_train'] = $main_info['is_train'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
+            $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
 				$mediaModel = new \Admin\Model\MediaModel();
 				$media_info = $mediaModel->getMediaInfoById($vinfo['media_id']);
@@ -543,10 +546,25 @@ class HotelController extends BaseController {
 			$this->assign('navtp',$navtp);
 			$this->assign('vinfo',$vinfo);
 		}else{
+            $vinfo['is_train'] = 0;
 			$vinfo['state'] = 2;
 			$vinfo['state_change_reason'] = 1;
 			$this->assign('vinfo',$vinfo);
 		}
+		$trainers = array();
+		$m_sysuser = new \Admin\Model\UserModel();
+		$uwhere = 'and id!=1';
+		$res_user = $m_sysuser->getUser($uwhere);
+		foreach ($res_user as $v){
+		    $selected_str = '';
+		    if($v['id']==$trainer_id){
+                $selected_str = 'selected';
+            }
+            $tinfo = array('id'=>$v['id'],'name'=>$v['remark'],'selected_str'=>$selected_str);
+		    $trainers[]=$tinfo;
+        }
+
+		$this->assign('trainers',$trainers);
 		$this->assign('is_lablefiter',$is_lablefiter);
 		$this->display('add');
 	}
@@ -614,6 +632,14 @@ class HotelController extends BaseController {
 		} else {
 			$vinfo['maintainer'] = '无';
 		}
+        if($main_info['trainer_id']) {
+            $m_user = new \Admin\Model\UserModel();
+            $res_user = $m_user->getUserInfo($main_info['trainer_id']);
+            $vinfo['trainer'] = $res_user['remark'];
+        } else {
+            $vinfo['trainer'] = '无';
+        }
+
 		$condition['hotel_id'] = $id;
 		$arr = $menuHoModel->where($condition)->order('id desc')->find();
 		$menuid = $arr['menu_id'];
@@ -685,6 +711,8 @@ class HotelController extends BaseController {
         $legal_name = I('post.legal_name','','trim');
         $business_hours = I('post.business_hours','');
         $meal_time = I('post.meal_time',0,'intval');
+        $is_train = I('post.is_train',0,'intval');
+        $trainer_id = I('post.trainer_id',0,'intval');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -829,6 +857,7 @@ class HotelController extends BaseController {
         if(!empty($meal_time)){
             $data['meal_time'] = $meal_time;
         }
+
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
@@ -873,17 +902,30 @@ class HotelController extends BaseController {
                 $m_hotelrelation->updateData(array('id'=>$res_data['id']),array('status'=>2));
             }
         }
+        $data['is_train'] = $is_train;
 
-		$field = 'mac_addr,server_location';
+		$field = 'mac_addr,server_location,trainer_id';
 		$where = array('hotel_id'=>$hotel_id);
 		$res = $hextModel->getData($field, $where);
 		if($res){
 			$res = $res[0];
+			if($res['trainer_id']!=$trainer_id){
+                $data['trainer_id'] = $trainer_id;
+            }
+            if($is_train && $trainer_id){
+                $data['train_time'] = date('Y-m-d H:i:s');
+            }
 			ksort($data);
 			ksort($res);
 			$hextModel->saveData($data,$where);
 		}else{
 		    $data['hotel_id'] = $hotel_id;
+		    if($trainer_id){
+		        $data['trainer_id'] = $trainer_id;
+            }
+            if($is_train){
+                $data['train_time'] = date('Y-m-d H:i:s');
+            }
 			$bool = $hextModel->addData($data);
 		}
 		if($bool){
