@@ -114,10 +114,12 @@ class StatisticsModel extends Model
         return $data;
     }
 
-    public function getOnlinnum($fields,$where){
+    public function getOnlinnum($fields,$where,$group=''){
         $data =$this->alias('s')
             ->join('savor_box b on s.box_mac=b.mac','left')
-            ->field($fields)->where($where)->select();
+            ->join('savor_room r on b.room_id=r.id','left')
+            ->join('savor_hotel_ext hext on r.hotel_id=hext.hotel_id','left')
+            ->field($fields)->where($where)->group($group)->select();
         return $data;
     }
 

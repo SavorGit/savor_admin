@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/datareport/onlinerate" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/datareport/trainonlinerate" method="post">
       <input type="hidden" name="pageNum" value="{$pageNum}"/>
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
@@ -60,20 +60,6 @@
               </select>
             </div>
           </div>
-          <div class="form-group">
-            <div class="input-group input-group-sm">合作维护人：</div>
-            <div class="input-group">
-              <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
-                <option value=0>全部</option>
-                <volist name="opusers" id="vo">
-                  <option value="" disabled="disabled">{$key}</option>
-                  <volist name="vo" id="vinfo">
-                    <option value="{$vinfo.uid}" {$vinfo.select} >{$vinfo.remark}</option>
-                  </volist>
-                </volist>
-              </select>
-            </div>
-          </div>
 
           <div class="form-group">
             <div class="input-group input-group-sm">是否培训过：</div>
@@ -118,26 +104,29 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
-              <th>饭局</th>
-              <th>在线率</th>
-              <th>在线版位</th>
+              <th>酒楼ID</th>
+              <th>酒楼名称</th>
+              <th>城市</th>
+              <th>午饭在线率</th>
+              <th>午饭在线版位</th>
+              <th>晚饭在线率</th>
+              <th>晚饭在线版位</th>
               <th>网络机顶盒版位数</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
             <tr target="sid_user">
-              <td>午饭</td>
-              <td>{$data_list.lunch.rate}%</td>
-              <td>{$data_list.lunch.zxnum}</td>
-              <td>{$data_list.lunch.wlnum}</td>
+              <td>{$dinfo.hotel_id}</td>
+              <td>{$dinfo.hotel_name}</td>
+              <td>{$dinfo.area_name}</td>
+              <td>{$dinfo.lunch_rate}</td>
+              <td>{$dinfo.lunch_zxnum}</td>
+              <td>{$dinfo.dinner_rate}</td>
+              <td>{$dinfo.dinner_zxnum}</td>
+              <td>{$dinfo.wlnum}</td>
             </tr>
-            <tr target="sid_user">
-              <td>晚饭</td>
-              <td>{$data_list.dinner.rate}%</td>
-              <td>{$data_list.dinner.zxnum}</td>
-              <td>{$data_list.dinner.wlnum}</td>
-            </tr>
-
+          </volist>
 
           </tbody>
         </table>
