@@ -83,25 +83,32 @@ class BoxGradeModel extends BaseModel{
             return true;
         }
         foreach ($res_detail as $v){
+            $heart_num = intval($v['heart_num']);
+            $standard_forscreen_success_num = intval($v['standard_forscreen_success_num']);
+            $mini_forscreen_success_num = intval($v['mini_forscreen_success_num']);
             $netty_score = 0;
-            if(isset($v['netty_reconn_num'])){
-                if($v['netty_reconn_num']==0 || !empty($v['netty_reconn_num'])){
-                    $netty_reconn_num = intval($v['netty_reconn_num']);
-                    $condition = $config[10][1];
-                    foreach ($condition as $cv){
-                        if($netty_reconn_num>=$cv['min'] && $netty_reconn_num<=$cv['max']){
-                            $netty_score = $cv['grade'];
-                        }
+            if(empty($v['netty_reconn_num'])){
+                if($heart_num>0 && ($standard_forscreen_success_num>0 || $mini_forscreen_success_num>0)){
+                    $v['netty_reconn_num'] = 0;
+                }
+            }
+            if($v['netty_reconn_num']==0 || !empty($v['netty_reconn_num'])){
+                $netty_reconn_num = intval($v['netty_reconn_num']);
+                $condition = $config[10][1];
+                foreach ($condition as $cv){
+                    if($netty_reconn_num>=$cv['min'] && $netty_reconn_num<=$cv['max']){
+                        $netty_score = $cv['grade'];
+                        break;
                     }
                 }
             }
             $heart_score = 0;
             if($v['heart_num']){
-                $heart_num = intval($v['heart_num']);
                 $condition = $config[10][3];
                 foreach ($condition as $cv){
                     if($heart_num>=$cv['min'] && $heart_num<=$cv['max']){
                         $heart_score = $cv['grade'];
+                        break;
                     }
                 }
             }
@@ -111,6 +118,7 @@ class BoxGradeModel extends BaseModel{
                 foreach ($condition as $cv){
                     if($v['standard_upload_speed']>=$cv['min'] && $v['standard_upload_speed']<=$cv['max']){
                         $upspeed_score = $cv['grade'];
+                        break;
                     }
                 }
             }
@@ -120,6 +128,7 @@ class BoxGradeModel extends BaseModel{
                 foreach ($condition as $cv){
                     if($v['standard_download_speed']>=$cv['min'] && $v['standard_download_speed']<=$cv['max']){
                         $standard_downspeed_score = $cv['grade'];
+                        break;
                     }
                 }
             }
@@ -130,6 +139,7 @@ class BoxGradeModel extends BaseModel{
                 foreach ($condition as $cv){
                     if($standard_forscreen_success_rate>=$cv['min'] && $standard_forscreen_success_rate<=$cv['max']){
                         $standard_forscreen_score = $cv['grade'];
+                        break;
                     }
                 }
             }
@@ -140,6 +150,7 @@ class BoxGradeModel extends BaseModel{
                 foreach ($condition as $cv){
                     if($v['mini_download_speed']>=$cv['min'] && $v['mini_download_speed']<=$cv['max']){
                         $mini_downspeed_score = $cv['grade'];
+                        break;
                     }
                 }
             }
@@ -150,6 +161,7 @@ class BoxGradeModel extends BaseModel{
                 foreach ($condition as $cv){
                     if($mini_forscreen_success_rate>=$cv['min'] && $mini_forscreen_success_rate<=$cv['max']){
                         $mini_forscreen_score = $cv['grade'];
+                        break;
                     }
                 }
             }
