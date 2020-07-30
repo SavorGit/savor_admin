@@ -86,13 +86,16 @@ class BoxGradeModel extends BaseModel{
             $heart_num = intval($v['heart_num']);
             $standard_forscreen_success_num = intval($v['standard_forscreen_success_num']);
             $mini_forscreen_success_num = intval($v['mini_forscreen_success_num']);
+            $forscreen_success_num = $standard_forscreen_success_num + $mini_forscreen_success_num;
+
             $netty_score = 0;
             if(empty($v['netty_reconn_num'])){
-                if($heart_num>0 && ($standard_forscreen_success_num>0 || $mini_forscreen_success_num>0)){
+                $v['netty_reconn_num'] = -1;
+                if($heart_num>0 && $forscreen_success_num>1){
                     $v['netty_reconn_num'] = 0;
                 }
             }
-            if($v['netty_reconn_num']==0 || !empty($v['netty_reconn_num'])){
+            if($v['netty_reconn_num']>=0){
                 $netty_reconn_num = intval($v['netty_reconn_num']);
                 $condition = $config[10][1];
                 foreach ($condition as $cv){
@@ -102,6 +105,7 @@ class BoxGradeModel extends BaseModel{
                     }
                 }
             }
+
             $heart_score = 0;
             if($v['heart_num']){
                 $condition = $config[10][3];
