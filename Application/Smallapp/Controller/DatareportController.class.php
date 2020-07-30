@@ -15,8 +15,9 @@ class DatareportController extends BaseController {
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
         $maintainer_id = I('maintainer_id',0,'intval');
-        $is_train = I('is_train',0,'intval');
+        $is_train = I('is_train',99,'intval');
         $trainer_id = I('trainer_id',0,'intval');
+        $fault_status = I('fault_status',0,'intval');
 
         if(empty($start_time)){
             $start_time = date('Ymd');
@@ -49,6 +50,9 @@ class DatareportController extends BaseController {
                 $where['b.is_4g'] = 0;
             }
         }
+        if($fault_status){
+            $where['b.fault_status'] = $fault_status;
+        }
         if($is_train!=99){
             $where['hext.is_train'] = $is_train;
         }
@@ -74,11 +78,23 @@ class DatareportController extends BaseController {
             $wlnum = ($day+1)*$wlnum;
         }
 
+        //故障网络屏幕数
+        $fault_wlnum = 0;
+        if($fault_status==0){
+            $fields = "count(DISTINCT s.box_mac) as faultwlnum";
+            $where_wl['b.fault_status'] = 2;
+            $ret = $m_statistics->getOnlinnum($fields, $where_wl);
+            $fault_wlnum = intval($ret[0]['faultwlnum']);
+            if($day){
+                $fault_wlnum = ($day+1)*$fault_wlnum;
+            }
+        }
+
         //在线屏幕数
 //        $where['heart_log_meal_nums'] = array('GT',12);
         $where['s.heart_log_meal_nums'] = array('GT',5);
         $where['_string'] = 'case s.static_fj when 1 then (120 div s.heart_log_meal_nums)<10  else (180 div s.heart_log_meal_nums)<10 end';
-        $fields = 'count(s.box_mac) as zxnum,s.static_fj';
+        $fields = 'count(s.box_mac) as zxnum';
         $where['s.static_fj'] = 1;//1:午饭2:晚饭
         $ret = $m_statistics->getOnlinnum($fields, $where);
         $zxnum = intval($ret[0]['zxnum']);
@@ -104,6 +120,8 @@ class DatareportController extends BaseController {
         $this->assign('box_type',$box_type);
         $this->assign('is_4g',$is_4g);
         $this->assign('is_train',$is_train);
+        $this->assign('fault_status',$fault_status);
+        $this->assign('fault_wlnum',$fault_wlnum);
         $this->assign('area', $area_arr);
         $this->assign('users', $users);
         $this->assign('opusers', $opusers);
@@ -119,8 +137,9 @@ class DatareportController extends BaseController {
         $area_id = I('area_id',0,'intval');
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
-        $is_train = I('is_train',0,'intval');
+        $is_train = I('is_train',99,'intval');
         $trainer_id = I('trainer_id',0,'intval');
+        $fault_status = I('fault_status',0,'intval');
 
         if(empty($start_time)){
             $start_time = date('Ymd');
@@ -134,17 +153,10 @@ class DatareportController extends BaseController {
         }
         $where = array('a.state'=>1,'a.flag'=>0);
         if($area_id){
-            $where_hotel['a.area_id'] = $area_id;
+            $where['a.area_id'] = $area_id;
         }
         if($box_type){
             $where['a.hotel_box_type'] = $box_type;
-        }
-        if($is_4g){
-            if($is_4g == 1){
-                $where['a.is_4g'] = 1;
-            }else{
-                $where['a.is_4g'] = 0;
-            }
         }
         if($is_train!=99){
             $where['ext.is_train'] = $is_train;
@@ -163,10 +175,6 @@ class DatareportController extends BaseController {
             $hotel_id = $v['hotel_id'];
             $where_hotel = array('s.hotel_id'=>$hotel_id);
             $where_hotel['s.static_date'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
-            $day = (strtotime($end_time) - strtotime($start_time))/86400;
-            if($area_id){
-                $where_hotel['s.area_id'] = $area_id;
-            }
             $where_hotel['b.state'] = 1;
             $where_hotel['b.flag'] = 0;
             if($is_4g){
@@ -176,12 +184,22 @@ class DatareportController extends BaseController {
                     $where_hotel['b.is_4g'] = 0;
                 }
             }
+            if($fault_status){
+                $where_hotel['b.fault_status'] = $fault_status;
+            }
+            if($is_train!=99){
+                $where_hotel['hext.is_train'] = $is_train;
+            }
+            if($trainer_id){
+                $where_hotel['hext.trainer_id'] = $trainer_id;
+            }
             if($box_type){
                 $where_hotel['s.hotel_box_type'] = $box_type;
                 $where_wl = $where_hotel;
             }else{
                 $where_wl = $where_hotel;
             }
+            $day = (strtotime($end_time) - strtotime($start_time))/86400;
             //网络屏幕数
             $fields = "count(DISTINCT s.box_mac) as wlnum";
             $ret = $m_statistics->getOnlinnum($fields, $where_wl);
@@ -189,7 +207,21 @@ class DatareportController extends BaseController {
             if($day){
                 $wlnum = ($day+1)*$wlnum;
             }
+
+            //故障网络屏幕数
+            $fault_wlnum = 0;
+            if($fault_status==0){
+                $fields = "count(DISTINCT s.box_mac) as faultwlnum";
+                $where_wl['b.fault_status'] = 2;
+                $ret_fault = $m_statistics->getOnlinnum($fields, $where_wl);
+                $fault_wlnum = intval($ret_fault[0]['faultwlnum']);
+                if($day){
+                    $fault_wlnum = ($day+1)*$fault_wlnum;
+                }
+            }
+
             $v['wlnum'] = $wlnum;
+            $v['fault_wlnum'] = $fault_wlnum;
             //在线屏幕数
             $where_hotel['s.heart_log_meal_nums'] = array('GT',5);
             $where_hotel['_string'] = 'case s.static_fj when 1 then (120 div s.heart_log_meal_nums)<10  else (180 div s.heart_log_meal_nums)<10 end';
@@ -230,6 +262,7 @@ class DatareportController extends BaseController {
         $this->assign('box_type',$box_type);
         $this->assign('is_4g',$is_4g);
         $this->assign('is_train',$is_train);
+        $this->assign('fault_status',$fault_status);
         $this->assign('area', $area_arr);
         $this->assign('users', $users);
         $this->assign('datalist', $hotel_datas);
@@ -275,8 +308,8 @@ class DatareportController extends BaseController {
         if($area_id){
             $where['area.id'] = $area_id;
         }
-        $where['box.flag'] = 0;
         $where['box.state'] = 1;
+        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
 
         $hotel_box_types = C('heart_hotel_box_type');
@@ -399,8 +432,8 @@ class DatareportController extends BaseController {
 //            $where['hotel.hotel_box_type'] = array('in',$box_types);
 //            $hotel_where['a.hotel_box_type'] = array('in',$box_types);
         }
-        $where['box.flag'] = 0;
         $where['box.state'] = 1;
+        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($is_4g){
             if($is_4g == 1){
@@ -477,7 +510,7 @@ class DatareportController extends BaseController {
 //                $a_boxnums +=$vn['boxnum'];
 //            }
 
-            $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+            $b_where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
             $all_box = $m_box->countNums($b_where);
 
             $fields = "count(DISTINCT (a.box_mac)) as boxnum";
@@ -502,7 +535,7 @@ class DatareportController extends BaseController {
                 $v['a_boxnum'] = 0;
                 $v['a_coverage'] = 0.00;
 
-                $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+                $b_where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
                 $all_box = $m_box->countNums($b_where);
 
                 $fields = "count(DISTINCT (a.box_mac)) as boxnum";
@@ -566,8 +599,8 @@ class DatareportController extends BaseController {
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }
         $where['a.is_valid'] = 1;
-        $where['box.flag'] = 0;
         $where['box.state'] = 1;
+        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($small_app_id){
             if($small_app_id == 2){
@@ -679,7 +712,7 @@ class DatareportController extends BaseController {
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
 
-        $where = array('box.flag'=>0,'box.state'=>1);
+        $where = array('box.state'=>1,'box.flag'=>0);
         if($area_id){
             $where['hotel.area_id'] = $area_id;
         }
@@ -734,6 +767,52 @@ class DatareportController extends BaseController {
         $this->assign('qrtype', $qrtype);
         $this->assign('nums',$nums);
         $this->display();
+    }
+
+    public function boxfault(){
+        $m_box = new \Admin\Model\BoxModel();
+        $where = array('state'=>1,'flag'=>0,'fault_status'=>2);
+        $res_box = $m_box->getDataList('id,mac',$where,'id desc');
+        if(!empty($res_box)){
+            $all_date = array();
+            $now_hour = date('G');
+            if($now_hour>14){
+                $all_date[]=date("Ymd");
+                $all_date[]=date("Ymd", strtotime("-1 day"));
+                $all_date[]=date("Ymd", strtotime("-2 day"));
+            }else{
+                $all_date[]=date("Ymd", strtotime("-1 day"));
+                $all_date[]=date("Ymd", strtotime("-2 day"));
+                $all_date[]=date("Ymd", strtotime("-3 day"));
+            }
+            $m_heartlog = new \Admin\Model\HeartAllLogModel();
+            foreach ($res_box as $v){
+                $box_id = $v['id'];
+                $box_mac = $v['mac'];
+                $is_ok = 1;
+                foreach ($all_date as $dv){
+                    $date = $dv;
+                    $field = 'hour11+hour12+hour13+hour14+hour19+hour20 as totalheartnum';
+                    $filter = array('date'=>$date,'mac'=>$box_mac,'type'=>2);
+                    $res_heart = $m_heartlog->getAll($field,$filter,0,1,'id desc');
+                    if(!empty($res_heart)){
+                        $heart_num = intval($res_heart[0]['totalheartnum']);
+                        if($heart_num<=0){
+                            $is_ok = 0;
+                        }
+                    }else{
+                        $is_ok = 0;
+                    }
+                    if($is_ok==0){
+                        break;
+                    }
+                }
+                if($is_ok){
+                    $m_box->updateData(array('id'=>$box_id),array('fault_status'=>1,'fault_desc'=>''));
+                }
+            }
+        }
+        $this->output('刷新成功', 'datareport/onlinerate', 2);
     }
 
     public function getOpuser($op_uid=0){

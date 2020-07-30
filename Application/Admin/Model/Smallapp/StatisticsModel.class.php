@@ -118,7 +118,8 @@ class StatisticsModel extends Model
         $data =$this->alias('s')
             ->join('savor_box b on s.box_mac=b.mac','left')
             ->join('savor_room r on b.room_id=r.id','left')
-            ->join('savor_hotel_ext hext on r.hotel_id=hext.hotel_id','left')
+            ->join('savor_hotel h on r.hotel_id=h.id','left')
+            ->join('savor_hotel_ext hext on h.id=hext.hotel_id','left')
             ->field($fields)->where($where)->group($group)->select();
         return $data;
     }

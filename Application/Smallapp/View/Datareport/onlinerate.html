@@ -75,6 +75,9 @@
             </div>
           </div>
 
+        </div>
+
+        <div class="form-inline">
           <div class="form-group">
             <div class="input-group input-group-sm">是否培训过：</div>
             <div class="input-group">
@@ -85,6 +88,18 @@
               </select>
             </div>
           </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">故障状态：</div>
+            <div class="input-group">
+              <select name="fault_status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <option value="1" <if condition="$fault_status eq 1">selected</if>>正常</option>
+              </select>
+            </div>
+          </div>
+
+
           <div class="form-group">
             <div class="input-group input-group-sm">培训人：</div>
             <div class="input-group">
@@ -98,10 +113,16 @@
           </div>
 
           <div class="form-group">
-            <div class="input-group input-group-sm pull-right">
+            <div class="input-group input-group-sm">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
             </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+              <a class="btn btn-success btn-sm"  title="故障版位实时刷新"  target="ajaxTodo" href="{$host_url}/smallapp/datareport/boxfault" calback="navTabAjaxDone"><i class="fa fa-refresh"></i>故障版位实时刷新</a>
             </div>
           </div>
 
@@ -119,8 +140,9 @@
           <thead>
             <tr id="post">
               <th>饭局</th>
-              <th>在线率</th>
+              <th>在线率<if condition="$fault_status eq 0">(包含故障屏)</if></th>
               <th>在线版位</th>
+              <th>故障版位数</th>
               <th>网络机顶盒版位数</th>
             </tr>
           </thead>
@@ -129,12 +151,14 @@
               <td>午饭</td>
               <td>{$data_list.lunch.rate}%</td>
               <td>{$data_list.lunch.zxnum}</td>
+              <td>{$fault_wlnum}</td>
               <td>{$data_list.lunch.wlnum}</td>
             </tr>
             <tr target="sid_user">
               <td>晚饭</td>
               <td>{$data_list.dinner.rate}%</td>
               <td>{$data_list.dinner.zxnum}</td>
+              <td>{$fault_wlnum}</td>
               <td>{$data_list.dinner.wlnum}</td>
             </tr>
 
