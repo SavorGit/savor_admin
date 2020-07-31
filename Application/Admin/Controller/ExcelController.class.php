@@ -5078,12 +5078,11 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
-
+                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(9)";
+        
         $box_list = M()->query($sql);
-        $start_time = '20200621';
-        $end_time   = '20200630';
-        $sql ="select id from area_info area where id = 2 and region_name like'name'";
+        $start_time = '20200720';
+        $end_time   = '20200729';
         
         
         $data = [];
@@ -5098,7 +5097,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             
             
         }
-        $xlsName = '深圳网络机顶盒连续10天失联';
+        $xlsName = '上海网络机顶盒连续10天失联';
         $filename = 'exportSl14BoxList';
         
         $xlsCell = array(
@@ -5110,17 +5109,17 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('box_mac','机顶盒编号')
         
         );
-        $xlsName = '失联超过14天的版位信息';
+        $xlsName = '失联超过10天的版位信息';
         $filename = 'user_wifi_forscreen_detail';
-        
-        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202006/';
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202007/';
         if (!is_dir($path)){
             mkdir($path,0777,true);
         }
-        $path  .= date('Ymd').'深圳失联10天.xls';
-        //echo $path;exit;
+        $path  .= date('Ymd').'上海失联10天.xls';
+      
         $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
-        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+       
     }
     public function tolicongLx(){
         $hotel_box_types = getHeartBoXtypeIds(2);
@@ -6669,7 +6668,11 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
                     $space = ',';
                 }
                 $qrcode_list[$key]['erro_info'] = $e_info_str;
-                
+                $qrcode_list[$key]['mobile_brand'] = $ret[0]['mobile_brand'];
+                $qrcode_list[$key]['mobile_model'] = $ret[0]['mobile_model'];
+                $qrcode_list[$key]['platform'] = $ret[0]['platform'];
+                $qrcode_list[$key]['system'] = $ret[0]['system'];
+                $qrcode_list[$key]['version'] = $ret[0]['version'];
             }
             //是否有投屏
             $sql = "select * from savor_smallapp_forscreen_record where box_mac='".$v['box_mac']."'
@@ -6703,7 +6706,11 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
             array('box_mac','扫码mac'),
             array('scan_qrcode_numbers','扫码次数'),
             array('erro_info','链接wifi是否有报错'),
-           
+            array('mobile_brand','手机品牌'),
+            array('mobile_model','手机型号'),
+            array('platform','手机系统'),
+            array('system','系统版本'),
+            array('version','微信版本'),
             array('froscreen_num','是否有投屏记录'),
             array('history_foscreen_num','最近两周是否有投屏记录'),
         
