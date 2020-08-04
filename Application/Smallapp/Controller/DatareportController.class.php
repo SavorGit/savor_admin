@@ -166,7 +166,7 @@ class DatareportController extends BaseController {
         }
         $m_hotel = new \Admin\Model\HotelModel();
         $start  = ($page-1) * $size;
-        $fields = 'a.id as hotel_id,a.name as hotel_name,area.region_name as area_name';
+        $fields = 'a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,ext.is_train,ext.trainer_id,ext.train_date';
         $result = $m_hotel->getListExt($where, 'a.id desc', $start,$size,$fields);
         $datalist = $result['list'];
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
@@ -248,6 +248,9 @@ class DatareportController extends BaseController {
                 $v['dinner_rate'] = $v['dinner_rate'].'%';
             }else{
                 $v['dinner_rate'] = '';
+            }
+            if($v['train_date']=='0000-00-00'){
+                $v['train_date'] = '';
             }
             $hotel_datas[]=$v;
         }

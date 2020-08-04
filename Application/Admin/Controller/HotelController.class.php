@@ -513,6 +513,10 @@ class HotelController extends BaseController {
 			$vinfo['legal_name']   = $res_hotelext['legal_name'];
 			$vinfo['business_hours']   = $res_hotelext['business_hours'];
 			$vinfo['meal_time']   = $res_hotelext['meal_time'];
+			if($res_hotelext['train_date']=='0000-00-00'){
+                $res_hotelext['train_date'] = '';
+            }
+			$vinfo['train_date'] = $res_hotelext['train_date'];
 
 			$legal_idcard = $legal_charter = array();
             $oss_host = get_oss_host();
@@ -713,6 +717,7 @@ class HotelController extends BaseController {
         $meal_time = I('post.meal_time',0,'intval');
         $is_train = I('post.is_train',0,'intval');
         $trainer_id = I('post.trainer_id',0,'intval');
+        $train_date = I('post.train_date','');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -912,8 +917,8 @@ class HotelController extends BaseController {
 			if($res['trainer_id']!=$trainer_id){
                 $data['trainer_id'] = $trainer_id;
             }
-            if($is_train && $trainer_id){
-                $data['train_time'] = date('Y-m-d H:i:s');
+            if($is_train && $trainer_id && $train_date){
+                $data['train_date'] = $train_date;
             }
 			ksort($data);
 			ksort($res);
