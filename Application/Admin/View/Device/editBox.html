@@ -153,6 +153,19 @@
           </select>
         </div>
 	  </div>
+	  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          开机是否连接netty:
+        </label>
+
+        <div class="col-xs-12 col-sm-10">
+          <select name="is_open_netty" class="form-control bs-select">
+            
+              <option value="0" <if condition="  $vinfo.is_open_netty eq 0 "> selected </if> >否</option>
+              <option value="1" <if condition="  $vinfo.is_open_netty eq 1 "> selected </if> >是</option>
+          </select>
+        </div>
+      </div>
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
           是否开启标准版投屏:

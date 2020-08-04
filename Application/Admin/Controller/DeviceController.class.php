@@ -290,6 +290,7 @@ class DeviceController extends BaseController{
 		$save['wifi_name']   = I('post.wifi_name','','trim');
 		$save['wifi_password']=I('post.wifi_password','','trim');
 		$save['wifi_mac']     =I('post.wifi_mac','','trim');
+		$save['is_open_netty'] = I('post.is_open_netty',0,'intval');
 		$save['is_open_simple']=I('post.is_open_simple',0,'intval');
 		$save['is_open_interactscreenad']=I('post.is_open_interactscreenad',0,'intval');
 		$save['is_4g']       = I('post.is_4g',0,'intval');
