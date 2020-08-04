@@ -18,8 +18,8 @@ class VersionModel extends BaseModel{
 		return $data;
 	}
 
-	public function getAllList($filed,$where,$order){
-		$data = $this->field($filed)->where($where)->order($order)->select();
+	public function getAllList($filed,$where,$order,$limit=''){
+		$data = $this->field($filed)->where($where)->order($order)->limit($limit)->select();
 	    return $data;
 	}
 }
