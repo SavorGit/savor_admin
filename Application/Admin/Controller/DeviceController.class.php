@@ -296,6 +296,8 @@ class DeviceController extends BaseController{
 		$save['is_4g']       = I('post.is_4g',0,'intval');
 		$save['box_type']    = I('post.box_type',0,'intval');
 		$save['qrcode_type'] = I('post.qrcode_type',0,'intval');
+		$save['fault_status'] = I('post.fault_status',1,'intval');
+		$save['fault_desc'] = I('post.fault_desc','','trim');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		
 		if($tpmedia_id_arr){

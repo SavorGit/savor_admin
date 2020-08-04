@@ -12,20 +12,18 @@
                         <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_time}" data-ymd="true">
                             <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}">
                             <span class="input-group-btn">
-                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-              </span>
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
                         </div>
                         <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
                             <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}">
                             <span class="input-group-btn">
-                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-              </span>
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
                         </div>
-                    </div>
 
-                    <div class="form-group">
                         <div class="input-group input-group-sm">地区：</div>
                         <div class="input-group">
                             <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
@@ -35,8 +33,7 @@
                                 </volist>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group">
+
                         <div class="input-group input-group-sm">设备类型：</div>
                         <div class="input-group">
                             <select name="box_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
@@ -46,8 +43,7 @@
                                 </volist>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group">
+
                         <div class="input-group input-group-sm">是否是4G：</div>
                         <div class="input-group">
                             <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
@@ -58,30 +54,30 @@
                         </div>
                     </div>
 
+                </div>
+
+                <div class="form-inline" style="margin-top:5px;">
                     <div class="form-group">
                         <div class="input-group input-group-sm">酒楼名称：</div>
                         <div class="input-group">
                             <input name="keyword" type="text" size="16" class="form-control" value="{$keyword}">
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <div class="input-group input-group-sm pull-right">
+                        <div class="input-group input-group-sm">
                         <span class="input-group-btn">
                           <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
                         </span>
                         </div>
-                    </div>
 
-                    <div class="input-group input-group-sm pull-right">
-                        <if condition="$is_refresh eq 1">
-                            <a target="ajaxTodo" href="{$host_url}/smallapp/macdata/calculation" calback="navTabAjaxDone" class="btn btn-warning"><i class="fa fa-refresh"></i>刷新数据</a>
-                        </if>
-                        <if condition="$is_refresh eq 2">
-                            <span class="text-danger">数据正在重新计算中,请稍后查看</span>
-                        </if>
+                        <div class="input-group input-group-sm pull-right">
+                            <if condition="$is_refresh eq 1">
+                                <a target="ajaxTodo" href="{$host_url}/smallapp/macdata/calculation" calback="navTabAjaxDone" class="btn btn-warning"><i class="fa fa-refresh"></i>刷新数据</a>
+                            </if>
+                            <if condition="$is_refresh eq 2">
+                                <span class="text-danger">数据正在重新计算中,请稍后查看</span>
+                            </if>
+                        </div>
                     </div>
-
 
                 </div>
 
@@ -89,7 +85,7 @@
         </div>
     </form>
 </div>
-<div class="pageContent" id="pagecontent">
+<div class="pageContent" id="pagecontent" style="margin-top: 30px">
     <div id="w_list_print">
         <div class="no-more-tables">
             <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
