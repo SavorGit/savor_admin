@@ -152,13 +152,17 @@ class UserSigninModel extends BaseModel{
             $type = 1;
             $begin_time = $pre_time;
             $over_time = $lunch_etime;
-        }elseif($pre_time>$lunch_etime){
+        }elseif($pre_time>$lunch_etime && $pre_time<=$dinner_stime){
             $type = 2;
             $begin_time = $dinner_stime;
             $over_time = $dinner_etime;
-        }else{
+        }elseif($pre_time>=$dinner_stime && $pre_time<=$dinner_etime){
             $type = 2;
-            $begin_time = $dinner_stime;
+            $begin_time = $pre_time;
+            $over_time = $dinner_etime;
+        }else{
+            $type = 0;
+            $begin_time = $dinner_etime;
             $over_time = $dinner_etime;
         }
         if($now_time > $over_time){
