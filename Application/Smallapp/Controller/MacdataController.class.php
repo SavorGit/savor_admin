@@ -165,6 +165,10 @@ class MacdataController extends BaseController {
             $res_grades = $m_boxgrade->getAvgGrade($box_mac,$start_date,$end_date);
             if(!empty($res_grades)){
                 $res_grades = $res_grades[0];
+                $standard_forscreen_num = intval($res_grades['standard_forscreen_num']);
+                $mini_forscreen_num = intval($res_grades['mini_forscreen_num']);
+                $standard_download_num = intval($res_grades['standard_download_num']);
+
                 if($forscreen_type==1){
                     $total_score = $res_grades['total_score'];
                     $forscreen_score = $res_grades['standard_forscreen_score'];
@@ -187,13 +191,12 @@ class MacdataController extends BaseController {
             }
 
             if($forscreen_type==1){
-                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[2])     $samples['forscreen'] = 0;
-                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[4])     $samples['upspeed'] = 0;
-                if($standard_download_num && $standard_download_num<$sample_nums[5])       $samples['downspeed'] = 0;
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[2])  $samples['forscreen'] = 0;
+                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[4])  $samples['upspeed'] = 0;
+                if($standard_download_num && $standard_download_num<$sample_nums[5])    $samples['downspeed'] = 0;
             }else{
-                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[2])     $samples['forscreen'] = 0;
-                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[4])     $samples['upspeed'] = 0;
-                if($standard_forscreen_num && $standard_forscreen_num<$sample_nums[5])     $samples['downspeed'] = 0;
+                if($mini_forscreen_num && $mini_forscreen_num<$sample_nums[2])          $samples['forscreen'] = 0;
+                if($standard_download_num && $standard_download_num<$sample_nums[5])    $samples['downspeed'] = 0;
             }
         }
         //详细数据
