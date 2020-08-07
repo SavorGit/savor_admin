@@ -20,6 +20,8 @@ class TaskUserModel extends BaseModel{
         $now_date = date('Y-m-d');
         $begin_time = $now_date." 00:00:00";
         $end_time = $now_date." 23:59:59";
+        $sign_begin_time = $now_date." 00:00:00";
+        $sign_end_time = $now_date." 21:00:00";
         $where = array();
         $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
         $res_data = $this->getDataList('*',$where,'id asc');
@@ -45,7 +47,7 @@ class TaskUserModel extends BaseModel{
             $task_content = json_decode($task_info['task_info'],true);
             $openid = $v['openid'];
             $where = array('openid'=>$openid);
-            $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
+            $where['add_time'] = array(array('egt',$sign_begin_time),array('elt',$sign_end_time), 'and');
             $res_signin = $m_usersignin->getDataList('*',$where,'id asc');
             if(empty($res_signin)){
                 echo "task_user_id:{$v['id']} $openid not sign $now_time \r\n";
