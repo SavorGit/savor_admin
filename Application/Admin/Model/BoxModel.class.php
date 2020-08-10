@@ -32,6 +32,7 @@ class BoxModel extends BaseModel{
             ->limit($limit)
             ->find();
         $forscreen_type = 1;//1外网(主干) 2直连(极简)
+        $box_forscreen = '1-0';
         if(!empty($res_box)){
             $box_id = $res_box['box_id'];
             $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
@@ -55,7 +56,7 @@ class BoxModel extends BaseModel{
         }else{
             $box_id = 0;
         }
-        $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type);
+        $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type,'forscreen_method'=>$box_forscreen);
         $redis->set($box_key,json_encode($forscreen_info));
         return $forscreen_type;
     }

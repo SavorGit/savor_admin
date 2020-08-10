@@ -83,6 +83,9 @@ class BoxGradeModel extends BaseModel{
             return true;
         }
         foreach ($res_detail as $v){
+            if(empty($v['area_id']) || empty($v['hotel_id'])){
+                continue;
+            }
             $heart_num = intval($v['heart_num']);
             $standard_forscreen_success_num = intval($v['standard_forscreen_success_num']);
             $mini_forscreen_success_num = intval($v['mini_forscreen_success_num']);
