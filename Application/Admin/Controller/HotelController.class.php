@@ -517,6 +517,7 @@ class HotelController extends BaseController {
                 $res_hotelext['train_date'] = '';
             }
 			$vinfo['train_date'] = $res_hotelext['train_date'];
+			$vinfo['train_desc'] = $res_hotelext['train_desc'];
 
 			$legal_idcard = $legal_charter = array();
             $oss_host = get_oss_host();
@@ -718,6 +719,7 @@ class HotelController extends BaseController {
         $is_train = I('post.is_train',0,'intval');
         $trainer_id = I('post.trainer_id',0,'intval');
         $train_date = I('post.train_date','');
+        $train_desc = I('post.train_desc','','trim');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -920,6 +922,7 @@ class HotelController extends BaseController {
             if($is_train && $trainer_id && $train_date){
                 $data['train_date'] = $train_date;
             }
+            $data['train_desc'] = $train_desc;
 			ksort($data);
 			ksort($res);
 			$hextModel->saveData($data,$where);
