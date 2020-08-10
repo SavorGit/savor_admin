@@ -129,6 +129,8 @@ class SappforscreenController extends BaseController {
             }else{
                 $where['a.small_app_id'] = $small_app_id;
             }
+        }else{
+            $where['a.small_app_id'] = array('in',array(1,2,3,11));
         }
 	    $box_mac    = I('box_mac','','trim');
 	    if($box_mac){
