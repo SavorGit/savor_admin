@@ -1,0 +1,233 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/datareport/sampledata" method="post">
+    <input type="hidden" name="type" value="{$type}">
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline">
+          <div class="form-group">
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+              <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+              <span class="input-group-btn">
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}">
+              <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+              <span class="input-group-btn">
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
+          <div class="input-group" >
+            <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" data-style="btn-default btn-sm">
+              <option value="">请输入酒楼名称</option>
+              <volist name="hotels" id="hinfo">
+                <option value="{$hinfo.hotel_id}" {$hinfo.is_select} > {$hinfo.hotel_name}</option>
+              </volist>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+          <div class="input-group input-group-sm pull-right">
+            <notempty name="hotel_name">
+              <span class="text-danger">当前酒楼：{$hotel_name}</span>
+            </notempty>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent autoflow statistic">
+  <div class="indexContent">
+
+    <div class="portlet light bg-inverse portlet-table">
+      <div class="portlet-title">
+        <div class="caption">
+          在线时长（单位小时）
+        </div>
+      </div>
+      <div class="portlet-body row">
+        <div id="echart_onlinetime" class="chart"></div>
+      </div>
+    </div>
+
+    <div class="portlet light bg-inverse portlet-table">
+      <div class="portlet-title">
+        <div class="caption">
+          投屏情况
+        </div>
+      </div>
+      <div class="portlet-body row">
+        <div id="echart_screen" class="chart"></div>
+      </div>
+    </div>
+
+</div>
+  <script>
+      var dom = document.getElementById("echart_onlinetime");
+      var myChart = echarts.init(dom);
+      option_onlinetime = {
+          tooltip : {
+              trigger: 'axis'
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          legend: {
+              data:['午饭在线版位','晚饭在线版位','正常版位','在线时长']
+          },
+          xAxis : [
+              {
+                  type : 'category',
+                  data : {$alldays}
+              }
+          ],
+          yAxis : [
+              {
+                  type : 'value',
+                  name : '正常版位',
+                  axisLabel : {
+                      formatter: '{value}'
+                  }
+              },
+              {
+                  type : 'value',
+                  name : '在线时长',
+                  axisLabel : {
+                      formatter: '{value}'
+                  }
+              }
+          ],
+          series : [
+
+              {
+                  name:'午饭在线版位',
+                  type:'bar',
+                  data:{$online_lunch_boxmac}
+              },
+              {
+                  name:'晚饭在线版位',
+                  type:'bar',
+                  data:{$online_dinner_boxmac}
+              },
+              {
+                  name:'正常版位',
+                  type:'bar',
+                  data:{$normal_boxmac}
+              },
+              {
+                  name:'在线时长',
+                  type:'line',
+                  yAxisIndex: 1,
+                  data:{$onlinetimes}
+              }
+          ]
+      };
+      myChart.setOption(option_onlinetime, true);
+
+
+      var dom = document.getElementById("echart_screen");
+      var myChart = echarts.init(dom);
+      option_screen = {
+          tooltip : {
+              trigger: 'axis'
+          },
+          toolbox: {
+              show : true,
+              feature : {
+                  restore : {show: true},
+                  saveAsImage : {show: true}
+              }
+          },
+          calculable : true,
+          legend: {
+              data:['扫码数量','投屏总数','标准-投屏数量','极简-投屏数量','销售-投屏数量','投屏成功率']
+          },
+          xAxis : [
+              {
+                  type : 'category',
+                  data : {$alldays}
+              }
+          ],
+          yAxis : [
+              {
+                  type : 'value',
+                  name : '扫码数量',
+                  axisLabel : {
+                      formatter: '{value}'
+                  }
+              },
+              {
+                  type : 'value',
+                  name : '投屏成功率',
+                  axisLabel : {
+                      formatter: '{value}'
+                  }
+              }
+          ],
+          series : [
+
+              {
+                  name:'扫码数量',
+                  type:'bar',
+                  data:{$scancode_nums}
+              },
+              {
+                  name:'投屏总数',
+                  type:'bar',
+                  data:{$forscreen_nums}
+              },
+              {
+                  name:'标准-投屏数量',
+                  type:'bar',
+                  data:{$standard_forscreen_nums}
+              },
+              {
+                  name:'极简-投屏数量',
+                  type:'bar',
+                  data:{$mini_forscreen_nums}
+              },
+              {
+                  name:'销售-投屏数量',
+                  type:'bar',
+                  data:{$sale_forscreen_nums}
+              },
+              {
+                  name:'投屏成功率',
+                  type:'line',
+                  yAxisIndex: 1,
+                  data:{$forscreen_rate}
+              }
+          ]
+      };
+      myChart.setOption(option_screen, true);
+
+      $('.date-reset').click(function(){
+          $(this).parent().prev().val('')
+      });
+      $(function(){
+          $(".form-control.date").datetimepicker({
+              minView: "month", //选择日期后，不会再跳转去选择时分秒
+              language:  'zh-CN',
+              format: 'yyyy-mm-dd',
+              todayBtn:  1,
+              autoclose: 1,
+          });
+      })
+  </script>

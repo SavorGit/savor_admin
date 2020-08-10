@@ -7,11 +7,23 @@
 namespace Admin\Model\Smallapp;
 use Think\Model;
 use Common\Lib\Page;
-class QrcodeLogModel extends Model
-{
+class QrcodeLogModel extends Model{
+
 	protected $tableName='smallapp_qrcode_log';
-    public function getQrcount($where,$group){
-        
+
+    public function getScanqrcodeNum($fields,$where,$group){
+        $res_data = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on box.room_id=room.id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->field($fields)
+            ->where($where)
+            ->group($group)
+            ->select();
+        return $res_data;
+    }
+
+	public function getQrcount($where,$group){
         $ret = $this->alias('a')
              ->join('savor_box box on a.box_mac=box.mac','left')
              ->join('savor_room room on box.room_id=room.id','left')
@@ -24,12 +36,11 @@ class QrcodeLogModel extends Model
              ->field('a.id')
              ->group($group)
              ->select();
-        
         $count = count($ret);
         return $count;
     }
+
     public function getList($fields,$where,$order,$start,$size,$group){
-        
         $list = $this->alias('a')
                      ->join('savor_box box on a.box_mac=box.mac','left')
                      ->join('savor_room room on box.room_id=room.id','left')
@@ -59,6 +70,5 @@ class QrcodeLogModel extends Model
         $show = $objPage->admin_page();
         $data = array('list'=>$list,'page'=>$show);
         return $data;
-        
     }
 }

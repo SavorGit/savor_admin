@@ -151,7 +151,7 @@ class DatareportController extends BaseController {
         }else{
             $end_time = date('Ymd',strtotime($end_time));
         }
-        $where = array('a.state'=>1,'a.flag'=>0);
+        $where = array('a.state'=>1,'a.flag'=>0,'a.type'=>1);
         if($area_id){
             $where['a.area_id'] = $area_id;
         }
@@ -166,7 +166,7 @@ class DatareportController extends BaseController {
         }
         $m_hotel = new \Admin\Model\HotelModel();
         $start  = ($page-1) * $size;
-        $fields = 'a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,ext.is_train,ext.trainer_id,ext.train_date';
+        $fields = 'a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,ext.is_train,ext.trainer_id,ext.train_date,ext.train_desc';
         $result = $m_hotel->getListExt($where, 'a.id desc', $start,$size,$fields);
         $datalist = $result['list'];
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
@@ -771,6 +771,251 @@ class DatareportController extends BaseController {
         $this->assign('nums',$nums);
         $this->display();
     }
+
+    public function sampledata(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $sample_hotel_ids = C('SAMPLE_HOTEL');
+        $hotel_ids = $sample_hotel_ids[236];
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        if(empty($start_date) || empty($end_date)){
+            $end_date = date('Y-m-d',strtotime('-1 day'));
+            $start_date = date('Y-m-d',strtotime("-7 day"));
+        }
+        $days = $m_statistics->getDates($start_date,$end_date,2);
+
+        //在线时长
+        $m_box = new \Admin\Model\BoxModel();
+        $box_fields = "count(box.id) as num";
+        $box_where = array('box.state'=>1,'box.flag'=>0);
+        if($hotel_id){
+            $box_where['hotel.id'] = $hotel_id;
+        }else{
+            $box_where['hotel.id'] = array('in',$hotel_ids);
+        }
+        $res_boxs = $m_box->getBoxByCondition($box_fields,$box_where);
+        $box_mormal_num = intval($res_boxs[0]['num']);
+
+        $online_where = array();
+        $online_where['static_date'] = array('in',$days);
+        if($hotel_id){
+            $online_where['hotel_id'] = $hotel_id;
+        }else{
+            $online_where['hotel_id'] = array('in',$hotel_ids);
+        }
+        $online_where['heart_log_meal_nums'] = array('GT',5);
+        $online_where['_string'] = 'case static_fj when 1 then (120 div heart_log_meal_nums)<10  else (180 div heart_log_meal_nums)<10 end';
+        $fields = 'sum(heart_log_meal_nums) as heart_nums,static_date';
+        $res_online = $m_statistics->getWhere($fields,$online_where,'','','static_date');
+        $tmp_onlinetimes = array();
+        foreach ($res_online as $v){
+            $hotel_online_time = intval($v['heart_nums'])*5;
+            $tmp_hotel_online_time = $hotel_online_time/60;
+            if($hotel_online_time){
+//                $hotel_online_time = sprintf("%01.1f",$tmp_hotel_online_time/$box_mormal_num);
+                $hotel_online_time = sprintf("%01.1f",$tmp_hotel_online_time);
+            }else{
+                $hotel_online_time = 0;
+            }
+            $tmp_onlinetimes[$v['static_date']]=$hotel_online_time;
+        }
+
+        $fields = 'count(id) as num,static_date';
+        $online_where['static_fj'] = 1;
+        $res_online = $m_statistics->getWhere($fields,$online_where,'','','static_date');
+        $tmp_online_lunchboxmac = array();
+        foreach ($res_online as $v){
+            $tmp_online_lunchboxmac[$v['static_date']]=$v['num'];
+        }
+
+        $fields = 'count(id) as num,static_date';
+        $online_where['static_fj'] = 2;
+        $res_online = $m_statistics->getWhere($fields,$online_where,'','','static_date');
+        $tmp_online_dinnerboxmac = array();
+        foreach ($res_online as $v){
+            $tmp_online_dinnerboxmac[$v['static_date']]=$v['num'];
+        }
+
+        $m_qrcodelog = new \Admin\Model\Smallapp\QrcodeLogModel();
+
+        $fields = "count(a.id) as num,DATE_FORMAT(a.create_time,'%Y%m%d') as qdate";
+        $qrcode_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days));
+        $qrcode_where['a.type'] = array('in',array(8,13));
+        $qrcode_where['box.state'] = 1;
+        $qrcode_where['box.flag'] = 0;
+        if($hotel_id){
+            $qrcode_where['hotel.id'] = $hotel_id;
+        }else{
+            $qrcode_where['hotel.id'] = array('in',$hotel_ids);
+        }
+        $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where,'qdate');
+        $tmp_scancode_nums = array();
+        foreach ($res_qrcode as $v){
+            $tmp_scancode_nums[$v['qdate']] = intval($v['num']);
+        }
+
+        $forscreen_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days));
+        if($hotel_id){
+            $forscreen_where['hotel.id'] = $hotel_id;
+        }else{
+            $forscreen_where['hotel.id'] = array('in',$hotel_ids);
+        }
+        $forscreen_where['a.is_valid'] = 1;
+        //'1普通版,2极简版,5销售端'
+        $forscreen_where['box.state'] = 1;
+        $forscreen_where['box.flag'] = 0;
+        $forscreen_where['a.mobile_brand'] = array('neq','devtools');
+        $forscreen_where['a.small_app_id'] = 1;
+        $fields = "count(a.id) as fnum,DATE_FORMAT(a.create_time,'%Y%m%d') as fdate";
+
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','fdate');
+        $tmp_standard_forscreen_nums = array();
+        foreach ($res_forscreen as $v){
+            $tmp_standard_forscreen_nums[$v['fdate']] = intval($v['fnum']);
+        }
+
+        $forscreen_where['a.small_app_id'] = 2;
+        $fields = "count(a.id) as fnum,DATE_FORMAT(a.create_time,'%Y%m%d') as fdate";
+        $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','fdate');
+        $tmp_mini_forscreen_nums = array();
+        foreach ($res_forscreen as $v){
+            $tmp_mini_forscreen_nums[$v['fdate']] = intval($v['fnum']);
+        }
+
+        $forscreen_where['a.small_app_id'] = 5;
+        $forscreen_where['a.action'] = array('neq',5);
+        $fields = "count(a.id) as fnum,DATE_FORMAT(a.create_time,'%Y%m%d') as fdate";
+        $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','fdate');
+        $tmp_sale_forscreen_nums = array();
+        foreach ($res_forscreen as $v){
+            $tmp_sale_forscreen_nums[$v['fdate']] = intval($v['fnum']);
+        }
+
+        $m_forscreen_track = new \Admin\Model\Smallapp\ForscreenTrackModel();
+        $track_where = array("DATE_FORMAT(a.add_time,'%Y%m%d')"=>array('in',$days));
+        if($hotel_id){
+            $track_where['hotel.id'] = $hotel_id;
+        }else{
+            $track_where['hotel.id'] = array('in',$hotel_ids);
+        }
+        $fields = "count(a.id) as fnum,DATE_FORMAT(a.add_time,'%Y%m%d') as fdate";
+        $res_forscreentrack = $m_forscreen_track->getWhere($fields,$track_where,'','fdate');
+        $tmp_forscreentrack = array();
+        foreach ($res_forscreentrack as $v){
+            $tmp_forscreentrack[$v['fdate']] = intval($v['fnum']);
+        }
+        $fields = "count(a.id) as fnum,DATE_FORMAT(a.add_time,'%Y%m%d') as fdate";
+        $track_where['a.is_success'] = 0;
+        $res_forscreentrack_fail = $m_forscreen_track->getWhere($fields,$track_where,'','fdate');
+        $tmp_forscreentrackfail = array();
+        foreach ($res_forscreentrack_fail as $v){
+            $tmp_forscreentrackfail[$v['fdate']] = intval($v['fnum']);
+        }
+
+        $onlinetimes = array();
+        $normal_boxmac = array();
+        $online_lunch_boxmac = array();
+        $online_dinner_boxmac = array();
+        $scancode_nums = array();
+        $forscreen_nums = array();
+        $standard_forscreen_nums = array();
+        $mini_forscreen_nums = array();
+        $sale_forscreen_nums = array();
+        $forscreen_rate = array();
+        foreach ($days as $v){
+            if(isset($tmp_onlinetimes[$v])){
+                $onlinetimes[]=$tmp_onlinetimes[$v];
+            }else{
+                $onlinetimes[] = 0;
+            }
+            if(isset($tmp_online_lunchboxmac[$v])){
+                $online_lunch_boxmac[]=$tmp_online_lunchboxmac[$v];
+            }else{
+                $online_lunch_boxmac[] = 0;
+            }
+            if(isset($tmp_online_dinnerboxmac[$v])){
+                $online_dinner_boxmac[]=$tmp_online_dinnerboxmac[$v];
+            }else{
+                $online_dinner_boxmac[] = 0;
+            }
+
+            $normal_boxmac[]=$box_mormal_num;
+
+            if(isset($tmp_scancode_nums[$v])){
+                $scancode_nums[]=$tmp_scancode_nums[$v];
+            }else{
+                $scancode_nums[] = 0;
+            }
+            $standard_forscreen_num = 0;
+            if(isset($tmp_standard_forscreen_nums[$v])){
+                $standard_forscreen_num = $tmp_standard_forscreen_nums[$v];
+            }
+            $standard_forscreen_nums[] = $standard_forscreen_num;
+            $mini_forscreen_num = 0;
+            if(isset($tmp_mini_forscreen_nums[$v])){
+                $mini_forscreen_num = $tmp_mini_forscreen_nums[$v];
+            }
+            $mini_forscreen_nums[] = $mini_forscreen_num;
+            $sale_forscreen_num = 0;
+            if(isset($tmp_sale_forscreen_nums[$v])){
+                $sale_forscreen_num = $tmp_sale_forscreen_nums[$v];
+            }
+            $sale_forscreen_nums[] = $sale_forscreen_num;
+
+            $forscreen_nums[] = $standard_forscreen_num+$mini_forscreen_num+$sale_forscreen_num;
+
+            if(isset($tmp_forscreentrack[$v])){
+                $all_forscreentrack = $tmp_forscreentrack[$v];
+                if(isset($tmp_forscreentrackfail[$v])){
+                    $success_forscreen = $all_forscreentrack - $tmp_forscreentrackfail[$v];
+                    $forscreen_rate[]= sprintf("%.2f",$success_forscreen/$all_forscreentrack);
+                }else{
+                    $forscreen_rate[]= 1;
+                }
+            }else{
+                $forscreen_rate[]=0;
+            }
+        }
+
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'id as hotel_id,name as hotel_name';
+        $where = array('state'=>1,'flag'=>0);
+        $where['id'] = array('in',$hotel_ids);
+        $hotels = $m_hotel->getWhereorderData($where, $field,'id desc');
+        $hotel_name = '';
+        foreach ($hotels as $k=>$v){
+            if($v['hotel_id']==$hotel_id){
+                $v['is_select'] = 'selected';
+                $hotel_name = $v['hotel_name'];
+            }else{
+                $v['is_select'] = '';
+            }
+            $hotels[$k] = $v;
+        }
+
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('hotels',$hotels);
+        $this->assign('alldays',json_encode($days));
+        $this->assign('onlinetimes',json_encode($onlinetimes));
+        $this->assign('online_lunch_boxmac',json_encode($online_lunch_boxmac));
+        $this->assign('online_dinner_boxmac',json_encode($online_dinner_boxmac));
+        $this->assign('normal_boxmac',json_encode($normal_boxmac));
+        $this->assign('scancode_nums',json_encode($scancode_nums));
+        $this->assign('forscreen_nums',json_encode($forscreen_nums));
+        $this->assign('standard_forscreen_nums',json_encode($standard_forscreen_nums));
+        $this->assign('mini_forscreen_nums',json_encode($mini_forscreen_nums));
+        $this->assign('sale_forscreen_nums',json_encode($sale_forscreen_nums));
+        $this->assign('forscreen_rate',json_encode($forscreen_rate));
+        $this->display();
+    }
+
+
 
     public function boxfault(){
         $m_box = new \Admin\Model\BoxModel();
