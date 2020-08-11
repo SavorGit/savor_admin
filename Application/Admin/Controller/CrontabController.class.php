@@ -4330,5 +4330,38 @@ class CrontabController extends Controller
         echo "smallappuploadtimes end:$now_time \r\n";
     }
 
+    public function forscreenhelpvideo(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreenhelpvideo start:$now_time \r\n";
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_forscreen->handel_forscreen_helpvideo();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreenhelpvideo end:$now_time \r\n";
+    }
+
+    public function forscreenimage(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreenimage start:$now_time \r\n";
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_forscreen->handel_forscreenimg();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreenimage end:$now_time \r\n";
+    }
+
+    public function statichoteldata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "statichoteldata start:$now_time \r\n";
+        $m_statichoteldata = new \Admin\Model\Smallapp\StaticHoteldataModel();
+        $m_statichoteldata->handle_hotel_data();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "statichoteldata end:$now_time \r\n";
+    }
+
+
+
+
     
 }

@@ -235,4 +235,115 @@ class ForscreenRecordModel extends BaseModel
         $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq,'md5_file'=>$md5_file);
         return $res;
     }
+
+    public function handel_forscreen_helpvideo(){
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+        if(!empty($res_box['result'])){
+            $m_box = new \Admin\Model\BoxModel();
+            $fields = 'box.mac,hotel.id as hotel_id';
+            $where = array('box.state'=>1,'box.flag'=>0);
+            $all_hotel_ids = C('SAMPLE_HOTEL');
+            $all_hotel_ids = $all_hotel_ids['236'];
+            $all_hotel_ids[]=7;
+            $all_hotel_ids[]=883;
+
+            $where['hotel.id'] = array('in',$all_hotel_ids);
+            $res_bdata = $m_box->getBoxByCondition($fields,$where,$group='');
+            $all_boxs = array();
+            foreach ($res_bdata as $v){
+                $all_boxs[]=$v['mac'];
+            }
+            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>'media/resource/h8YcE7debZ.mp4','filename'=>"h8YcE7debZ.mp4");
+            $message = json_encode($netty_data);
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if(!in_array($box_mac,$all_boxs)){
+                            continue;
+                        }
+                        $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                        $req_id  = getMillisecond();
+                        $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                        $post_data = http_build_query($box_params);
+                        $ret = $m_netty->curlPost($push_url,$post_data);
+                        $res_push = json_decode($ret,true);
+                        if($res_push['code']==10000){
+                            echo "box_mac:$box_mac push ok \r\n";
+                        }else{
+                            echo "box_mac:$box_mac push error $ret  \r\n";
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
+    public function handel_forscreenimg(){
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+        if(!empty($res_box['result'])){
+            $m_box = new \Admin\Model\BoxModel();
+            $fields = 'box.mac,hotel.id as hotel_id';
+            $where = array('box.state'=>1,'box.flag'=>0);
+            $all_hotel_ids = C('SAMPLE_HOTEL');
+            $all_hotel_ids = $all_hotel_ids['236'];
+            $all_hotel_ids[]=7;
+            $all_hotel_ids[]=883;
+
+            $where['hotel.id'] = array('in',$all_hotel_ids);
+            $res_bdata = $m_box->getBoxByCondition($fields,$where,$group='');
+            $all_boxs = array();
+            foreach ($res_bdata as $v){
+                $all_boxs[]=$v['mac'];
+            }
+
+            $forscreen_number  = rand(1001,5000);
+            $netty_data = array('action'=>133,'forscreen_number'=>$forscreen_number,'countdown'=>30);
+            $message = json_encode($netty_data);
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if(!in_array($box_mac,$all_boxs)){
+                            continue;
+                        }
+
+                        $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                        $req_id  = getMillisecond();
+                        $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                        $post_data = http_build_query($box_params);
+                        $ret = $m_netty->curlPost($push_url,$post_data);
+                        $res_push = json_decode($ret,true);
+                        if($res_push['code']==10000){
+                            echo "box_mac:$box_mac push ok \r\n";
+                        }else{
+                            echo "box_mac:$box_mac push error $ret  \r\n";
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
