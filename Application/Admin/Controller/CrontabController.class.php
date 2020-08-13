@@ -4331,20 +4331,22 @@ class CrontabController extends Controller
     }
 
     public function forscreenhelpvideo(){
+        $type = I('type',0,'intval');
         $now_time = date('Y-m-d H:i:s');
         echo "forscreenhelpvideo start:$now_time \r\n";
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-        $m_forscreen->handel_forscreen_helpvideo();
+        $m_forscreen->handel_forscreen_helpvideo($type);
 
         $now_time = date('Y-m-d H:i:s');
         echo "forscreenhelpvideo end:$now_time \r\n";
     }
 
     public function forscreenimage(){
+        $type = I('type',0,'intval');
         $now_time = date('Y-m-d H:i:s');
         echo "forscreenimage start:$now_time \r\n";
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-        $m_forscreen->handel_forscreenimg();
+        $m_forscreen->handel_forscreenimg($type);
 
         $now_time = date('Y-m-d H:i:s');
         echo "forscreenimage end:$now_time \r\n";
