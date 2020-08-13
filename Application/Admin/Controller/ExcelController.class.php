@@ -6719,6 +6719,34 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
         $filename = 'topSpeedForscreen';
         $this->exportExcel($xlsName, $xlsCell, $qrcode_list,$filename);
     }
+    public function exportSmallappTurn(){
+        $open_type = I('open_type');
+        if($open_type==1){//主干极简都开
+            $where = ' and box.is_open_simple=1 and box.is_sapp_forscreen=1';
+        }else if($open_type==2){//主干开极简关
+            $where = ' and box.is_open_simple=0 and box.is_sapp_forscreen=1';
+        }else if($open_type ==3){
+            $where = ' and box.is_open_simple=1 and box.is_sapp_forscreen=0';
+        }
+        $sql =" select hotel.name hotel_name,room.name room_name,box.mac box_mac from 
+                savor_box box 
+                left join savor_room room on box.room_id = room.id
+                left join savor_hotel hotel on room.hotel_id = hotel.id
+                where hotel.flag = 0 and hotel.state=1 and box.flag=0 and box.state=1 
+                $where";
+        //echo $sql;exit;
+        $data = M()->query($sql);
+        
+        $xlsCell = array(
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','mac'),
+        
+        );
+        $xlsName = '扫极简版码用户链接wifi投屏数据统计';
+        $filename = 'topSpeedForscreen';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
     
     private function getScore($data,$conf_arr){
         $score = 0;
