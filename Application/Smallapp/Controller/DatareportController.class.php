@@ -887,7 +887,7 @@ class DatareportController extends BaseController {
         }
 
         $forscreen_where['a.small_app_id'] = 5;
-        $forscreen_where['a.action'] = array('neq',5);
+//        $forscreen_where['a.action'] = array('neq',5);
         $fields = "count(a.id) as fnum,DATE_FORMAT(a.create_time,'%Y%m%d') as fdate";
         $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','fdate');
         $tmp_sale_forscreen_nums = array();
