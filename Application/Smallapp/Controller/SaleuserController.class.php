@@ -42,6 +42,8 @@ class SaleuserController extends BaseController {
     }
 
     public function integrallist(){
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
         $hotel_name = I('hotel_name','','trim');
         $openid = I('openid','','trim');
         $type = I('type',0,'intval');
@@ -56,6 +58,17 @@ class SaleuserController extends BaseController {
         if($type){
             $where['type'] = $type;
         }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'goods/goodsadd', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+
         $start = ($pageNum-1)*$size;
         $m_integral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
         $res_list = $m_integral_record->getDataList('*',$where,'id desc',$start,$size);
@@ -91,6 +104,8 @@ class SaleuserController extends BaseController {
             $data_list[$k]['type_str']  = $integral_types[$v['type']];
         }
 
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('type',$type);
