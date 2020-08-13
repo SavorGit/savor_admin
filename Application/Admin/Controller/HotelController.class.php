@@ -931,9 +931,6 @@ class HotelController extends BaseController {
 		    if($trainer_id){
 		        $data['trainer_id'] = $trainer_id;
             }
-            if($is_train){
-                $data['train_time'] = date('Y-m-d H:i:s');
-            }
 			$bool = $hextModel->addData($data);
 		}
 		if($bool){
