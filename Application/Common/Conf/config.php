@@ -219,7 +219,7 @@ $config['HOTEL_KEY'] = array(
 );
 
 $config['PWDPRE'] = 'SAVOR@&^2017^2030&*^';
-$config['NUMPERPAGE'] = array('50','100','200','500');
+$config['NUMPERPAGE'] = array('50','100','200','500','800','1000');
 $config['MANGER_STATUS'] = array(
     '1'=>'启用',
     '2'=>'禁用'
@@ -791,6 +791,12 @@ $config['WELCOME_STATUS'] = array(
 $config['TAGS_CATEGORY'] = array(
     '1'=>'评论',
     '2'=>'下单备注',
+);
+
+$config['SAMPLE_HOTEL'] = array(
+    236=>array(632,1064,955,427,1043,1039,1085,1077,
+        418,1097,1023,981,1038
+        ),
 );
 return $config;
 
