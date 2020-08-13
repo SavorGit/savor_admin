@@ -236,7 +236,7 @@ class ForscreenRecordModel extends BaseModel
         return $res;
     }
 
-    public function handel_forscreen_helpvideo(){
+    public function handel_forscreen_helpvideo($type=0){
         $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
         $curl = new \Common\Lib\Curl();
         $res_netty = '';
@@ -252,6 +252,9 @@ class ForscreenRecordModel extends BaseModel
             $where = array('box.state'=>1,'box.flag'=>0);
             $all_hotel_ids = C('SAMPLE_HOTEL');
             $all_hotel_ids = $all_hotel_ids['236'];
+            if($type==1){
+                $all_hotel_ids = array();
+            }
             $all_hotel_ids[]=7;
             $all_hotel_ids[]=883;
 
@@ -291,7 +294,7 @@ class ForscreenRecordModel extends BaseModel
         }
     }
 
-    public function handel_forscreenimg(){
+    public function handel_forscreenimg($type=0){
         $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
         $curl = new \Common\Lib\Curl();
         $res_netty = '';
@@ -307,6 +310,9 @@ class ForscreenRecordModel extends BaseModel
             $where = array('box.state'=>1,'box.flag'=>0);
             $all_hotel_ids = C('SAMPLE_HOTEL');
             $all_hotel_ids = $all_hotel_ids['236'];
+            if($type==1){
+                $all_hotel_ids = array();
+            }
             $all_hotel_ids[]=7;
             $all_hotel_ids[]=883;
 

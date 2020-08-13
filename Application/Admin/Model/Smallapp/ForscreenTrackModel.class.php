@@ -292,4 +292,15 @@ class ForscreenTrackModel extends BaseModel{
         return $result;
     }
 
+    public function getWhere($fields,$where,$limit,$group){
+        $data = $this->alias('a')
+            ->join('savor_smallapp_forscreen_record forscreen on a.forscreen_record_id=forscreen.id','left')
+            ->join('savor_box box on forscreen.box_mac=box.mac','left')
+            ->join('savor_room room on box.room_id=room.id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->field($fields)
+            ->where($where)->limit($limit)->group($group)->select();
+        return $data;
+    }
+
 }

@@ -60,7 +60,7 @@ class NettyModel extends Model{
         return $all_box;
     }
 
-    private function curlPost($url,$post_data){
+    public function curlPost($url,$post_data){
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $url,
