@@ -103,13 +103,19 @@ class SaleuserController extends BaseController {
             $data_list[$k]['status_str']  = $status_str;
             $data_list[$k]['type_str']  = $integral_types[$v['type']];
         }
-
+        $integral = 0;
+        if($openid){
+            $m_uintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+            $res_integral = $m_uintegral->getInfo(array('openid'=>$openid));
+            $integral = intval($res_integral['integral']);
+        }
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('type',$type);
         $this->assign('openid',$openid);
+        $this->assign('integral',$integral);
         $this->assign('hotel_name',$hotel_name);
         $this->assign('integral_types',$integral_types);
         $this->assign('numPerPage',$size);
