@@ -270,18 +270,52 @@ class TaskController extends BaseController {
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         $is_s = I('is_s');
         if(IS_POST && empty($is_s)){
-            $task_id = I('post.task_id');
-            
+            $task_id = I('post.task_id',0,'intval');
             $ids = I('post.ids');
-            $data = [];
             $userinfo = session('sysUserInfo');
             $uid = $userinfo['id'];
             $create_time = date('Y-m-d H:i:s');
+            $m_task = new \Admin\Model\Integral\TaskModel();
+            $res_task = $m_task->getInfo(array('id'=>$task_id));
+            $now_task_type = 0;
+            if(!empty($res_task)){
+                $task_info = json_decode($res_task['task_info'],true);
+                $now_task_type = $task_info['task_content_type'];
+            }
+
+            $has_task_hids = array();
+            $has_task_ids = array();
+            $data = array();
             foreach($ids as $key=> $v){
                 $data[$key]['task_id'] = $task_id;
                 $data[$key]['hotel_id']= $v;
                 $data[$key]['uid']     = $uid;
                 $data[$key]['create_time'] =$create_time;
+                $hwhere = array('hotel_id'=>$v);
+                $res_hoteltask = $m_task_hotel->getDataList('*',$hwhere,'id desc');
+                if(!empty($res_hoteltask)){
+                    foreach ($res_hoteltask as $tv){
+                        $tid = $tv['task_id'];
+                        $res_task = $m_task->getInfo(array('id'=>$tid));
+                        $task_info = json_decode($res_task['task_info'],true);
+                        $task_type = $task_info['task_content_type'];
+                        if($now_task_type == $task_type){
+                            $has_task_hids[]=$v;
+                            $has_task_ids[$tid]=$tid;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(!empty($has_task_hids)){
+                $hid_str = join(',',$has_task_hids);
+                $tid_str = join(',',array_values($has_task_ids));
+                $message = '如下酒楼ID：'.$hid_str.' 已有相似任务,任务ID为：'.$tid_str;
+                echo "<script>
+                navTab.closeTab('integral/selecthotel');
+                navTab.reloadFlag('task/index);
+                alertMsg.success('{$message}');</script>";
+                exit;
             }
             $ret = $m_task_hotel->addAll($data);
             if($ret){

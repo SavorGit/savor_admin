@@ -39,6 +39,10 @@ class TaskUserModel extends BaseModel{
 
             $task_id = $v['task_id'];
             $task_info = $m_task->getInfo(array('id'=>$task_id));
+            if(empty($task_info) || $task_info['status']==0 || $task_info['flag']==0){
+                echo "task_id:$task_id state error $now_time \r\n";
+                continue;
+            }
             if($task_info['type']!=1){
                 echo "task_id:$task_id type not systemtask $now_time \r\n";
                 continue;
