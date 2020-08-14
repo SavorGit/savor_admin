@@ -795,7 +795,7 @@ $config['TAGS_CATEGORY'] = array(
 
 $config['SAMPLE_HOTEL'] = array(
     236=>array(632,1064,955,427,1043,1039,1085,1077,
-        418,1097,1023,981,1038
+        418,1097,1023,981,1038,962
         ),
 );
 return $config;
