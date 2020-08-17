@@ -143,6 +143,8 @@ class ExcelController extends Controller
              $tmpname ="商场订单汇总";
          }else if($filename =='topSpeedForscreen'){
              $tmpname = '扫极简版码用户链接wifi投屏数据统计';
+         }else if($filename =='hotelqfdata'){
+             $tmpname = '酒楼扫码投屏统计';
          }
 
 
@@ -6747,7 +6749,87 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
         $filename = 'topSpeedForscreen';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
-    
+
+    public function sampledata(){
+        $sample_hotel_ids = C('SAMPLE_HOTEL');
+        $hotel_ids = $sample_hotel_ids[236];
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $m_qrcodelog = new \Admin\Model\Smallapp\QrcodeLogModel();
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+
+        $start_date_a = '2020-08-04';
+        $end_date_a = '2020-08-09';
+        $days_a = $m_statistics->getDates($start_date_a,$end_date_a,2);
+        $start_date_b = '2020-08-11';
+        $end_date_b = '2020-08-16';
+        $days_b = $m_statistics->getDates($start_date_b,$end_date_b,2);
+
+        $data = array();
+        foreach ($hotel_ids as $v){
+            $hotel_id = intval($v);
+            if(!$hotel_id){
+                continue;
+            }
+            $res_hotel = $m_hotel->getOne($hotel_id);
+            $hinfo = array('hotel_name'=>$res_hotel['name']);
+
+            $fields = "count(a.id) as num";
+            $qrcode_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days_a));
+            $qrcode_where['a.type'] = array('in',array(8,12,13,16,29,30));
+            $qrcode_where['box.state'] = 1;
+            $qrcode_where['box.flag'] = 0;
+            $qrcode_where['hotel.id'] = $hotel_id;
+            $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where,'');
+            $hinfo['qrcode_num_a'] = intval($res_qrcode[0]['num']);
+
+            $forscreen_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days_a));
+            $forscreen_where['hotel.id'] = $hotel_id;
+            $forscreen_where['a.is_valid'] = 1;
+            $forscreen_where['box.state'] = 1;
+            $forscreen_where['box.flag'] = 0;
+            $forscreen_where['a.mobile_brand'] = array('neq','devtools');
+            $forscreen_where['a.small_app_id'] = 1;//1普通版
+            $fields = "count(a.id) as fnum";
+            $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','');
+            $hinfo['fnum_a'] = intval($res_forscreen[0]['fnum']);
+
+            $fields = "count(a.id) as num";
+            $qrcode_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days_b));
+            $qrcode_where['a.type'] = array('in',array(8,12,13,16,29,30));
+            $qrcode_where['box.state'] = 1;
+            $qrcode_where['box.flag'] = 0;
+            $qrcode_where['hotel.id'] = $hotel_id;
+            $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where,'');
+            $hinfo['qrcode_num_b'] = intval($res_qrcode[0]['num']);
+
+            $forscreen_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days_b));
+            $forscreen_where['hotel.id'] = $hotel_id;
+            $forscreen_where['a.is_valid'] = 1;
+            $forscreen_where['box.state'] = 1;
+            $forscreen_where['box.flag'] = 0;
+            $forscreen_where['a.mobile_brand'] = array('neq','devtools');
+            $forscreen_where['a.small_app_id'] = 1;//1普通版
+            $fields = "count(a.id) as fnum";
+            $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','');
+            $hinfo['fnum_b'] = intval($res_forscreen[0]['fnum']);
+
+            $data[] = $hinfo;
+        }
+
+        $xlsCell = array(
+            array('hotel_name','酒楼名称'),
+            array('qrcode_num_a','扫码数(时间段A 8.4-8.9)'),
+            array('fnum_a','投屏数(时间段A 8.4-8.9)'),
+            array('qrcode_num_b','扫码数(时间段B 8.11-8.16)'),
+            array('fnum_b','投屏数(时间段B 8.11-8.16)'),
+        );
+        $xlsName = '酒楼扫码投屏统计';
+        $filename = 'hotelqfdata';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
     private function getScore($data,$conf_arr){
         $score = 0;
         foreach ($conf_arr as $key=>$v){
