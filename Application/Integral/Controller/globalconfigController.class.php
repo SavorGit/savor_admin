@@ -10,7 +10,7 @@ class GlobalconfigController extends BaseController {
 
     public function configdata(){
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $where = " config_key in('integral_exchange_rate','red_packet_rate')";
+        $where = " config_key in('integral_exchange_rate','red_packet_rate','integral_boxmac')";
         $volume_arr = $m_sys_config->getList($where);
         $info = array();
         foreach($volume_arr as $v){
@@ -26,12 +26,18 @@ class GlobalconfigController extends BaseController {
      */
     public function editconfig(){
         $integral_exchange_rate = I('post.integral_exchange_rate',0,'intval');
+        $integral_boxmac = I('post.integral_boxmac',0,'intval');
         $red_packet_rate = I('post.red_packet_rate');
 
         $m_sys_config = new \Admin\Model\SysConfigModel();
         if($integral_exchange_rate){
             $data = array('config_value'=>$integral_exchange_rate);
             $m_sys_config->editData($data, 'integral_exchange_rate');
+        }
+
+        if($integral_boxmac){
+            $data = array('config_value'=>$integral_boxmac);
+            $m_sys_config->editData($data, 'integral_boxmac');
         }
 
         if($red_packet_rate && $red_packet_rate>0.1){
