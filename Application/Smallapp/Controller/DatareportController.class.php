@@ -843,7 +843,7 @@ class DatareportController extends BaseController {
 
         $fields = "count(a.id) as num,DATE_FORMAT(a.create_time,'%Y%m%d') as qdate";
         $qrcode_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days));
-        $qrcode_where['a.type'] = array('in',array(8,13));
+        $qrcode_where['a.type'] = array('in',array(8,12,13,16,29,30));
         $qrcode_where['box.state'] = 1;
         $qrcode_where['box.flag'] = 0;
         if($hotel_id){
