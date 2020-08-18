@@ -79,6 +79,11 @@ class SaleuserController extends BaseController {
             switch ($v['type']){
                 case 1:
                     $info = $integral_types[$v['type']].$v['content'].'小时';
+                    if($v['fj_type']==1){
+                        $info.='--午饭';
+                    }elseif($v['fj_type']==2){
+                        $info.='--晚饭';
+                    }
                     break;
                 case 2:
                     $info = $integral_types[$v['type']].$v['content'].'人数';
