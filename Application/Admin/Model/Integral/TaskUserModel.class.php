@@ -461,15 +461,15 @@ class TaskUserModel extends BaseModel{
         if(!empty($res_cache)){
             $box_integral = $res_cache;
         }
-        if($box_integral>=$box_info['integral_boxmac']){
+        if($box_integral>=$task_info['integral_boxmac']){
             echo "{$task_info['task_user_id']} day integral uplimit $box_integral \r\n";
 
             $now_integral = 0;
             $task_info['is_shareprofit'] = 0;
         }else{
             $now_box_integral = $now_integral+$box_integral;
-            if($now_box_integral>$box_info['integral_boxmac']){
-                $now_integral = $box_info['integral_boxmac'] - $box_integral;
+            if($now_box_integral>$task_info['integral_boxmac']){
+                $now_integral = $task_info['integral_boxmac'] - $box_integral;
                 $now_integral = $now_integral>0?$now_integral:0;
 
                 echo "{$task_info['task_user_id']} day integral uplimit $now_box_integral-$now_integral \r\n";
