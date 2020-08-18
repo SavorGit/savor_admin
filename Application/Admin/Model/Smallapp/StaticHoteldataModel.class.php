@@ -16,12 +16,8 @@ class StaticHoteldataModel extends Model{
         $res_hotel = $m_hotel->getHotels($field,$where);
 
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
-//        $start = date('Y-m-d',strtotime('-1day'));
-//        $end = date('Y-m-d',strtotime('-1day'));
-
-        $start = '2020-08-12';
-        $end = '2020-08-12';
-
+        $start = date('Y-m-d',strtotime('-1day'));
+        $end = date('Y-m-d',strtotime('-1day'));
 
         $all_dates = $m_statistics->getDates($start,$end);
 

@@ -7,8 +7,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Common\Lib\SavorRedis;
 use Common\Lib\AliyunMsn;
-
 // use Common\Lib\SavorRedis;
+
 /**
  * @desc 功能测试类
  *
@@ -28,6 +28,7 @@ class TestController extends Controller {
     	}
     	echo $flag;
     }
+
     public function pltozj(){
         exit();
         $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
@@ -36,7 +37,6 @@ class TestController extends Controller {
         $ids = array(55,137,142,143,145);
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         foreach($ids as $v){
-            
             foreach($list as $key=>$vv){
                 $data['goods_id'] = $v;
                 $data['hotel_id'] = $vv['hotel_id'];
@@ -46,10 +46,10 @@ class TestController extends Controller {
         }
         echo 'ok';
     }
+
     public function tasktozj(){
         $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
         $list = M()->query($sql);
-        
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         foreach($list as $key=>$vv){
             $data['task_id']  = 5;
@@ -67,6 +67,7 @@ class TestController extends Controller {
         $hotel_list = M()->query($sql);
         print_r($hotel_list);
     }
+
     public function ttps(){
         exit();
         $sql ="SELECT user.*,ic.hotel_id,hotel.name FROM savor_hotel_invite_code ic  
@@ -109,7 +110,6 @@ class TestController extends Controller {
             }else {
                 
             }
-            
         }
         $flag = 0;
         //print_r($le_staff_arr);exit;
@@ -121,10 +121,10 @@ class TestController extends Controller {
                 $flag ++;
             }
         }
-        
         print_r($flag);
         echo "ok";exit;
     }
+
     public function pySmallSaleUser(){
         exit();
         $sql ="select a.* from `savor_hotel_invite_code` a 
@@ -138,11 +138,9 @@ class TestController extends Controller {
         foreach($user_list as $key=>$v){
             //查看当前酒楼是否有管理员
             $sql ="select * from savor_integral_merchant where hotel_id=".$v['hotel_id']." and status=1";
-            $where = [];
+            $where = array();
             $where['a.hotel_id'] = $v['hotel_id'];
             $where['a.status']   = 1;
-            
-            
             $mt_info = $m_merchant->alias('a')
                                   ->join('savor_integral_merchant_staff st on a.id=st.merchant_id','left')
                                   ->field('a.*,st.id parent_id')
@@ -174,8 +172,6 @@ class TestController extends Controller {
                 $data['sysuser_id'] =1;
                 $data['status'] = 1;
                 $staff_id = $m_staff->addData($data);
-                
-                
                 //获取该用户下的员工列表 插入员工表
                 $sql ="select * from `savor_hotel_invite_code` where openid !='' and type=2  and invite_id=".$v['id'].' and state=1 and flag=0';
                 $le_staff = M()->query($sql);
@@ -193,8 +189,7 @@ class TestController extends Controller {
                 }
                 $m_staff->addAll($le_staff_arr);
             }else {//如果已建立该商家
-                
-                $data = [];
+                $data = array();
                 $data['merchant_id'] = $mt_info['id'];
                 $data['parent_id']   = $mt_info['parent_id'];
                 $data['name'] = '';
@@ -207,7 +202,6 @@ class TestController extends Controller {
                 $staff_id = $m_staff->addData($data);
             }  
         }
-        
         /* $sql ="select a.* from `savor_hotel_invite_code` a
                left join savor_smallapp_user u on a.openid=u.openid
                where a.openid !='' and a.type=3 and a.invite_id=0
@@ -229,8 +223,7 @@ class TestController extends Controller {
         
         echo "OK";
     }
-    
-    
+
     public function rmvCache(){
         exit;
         $redis = SavorRedis::getInstance();
@@ -248,6 +241,7 @@ class TestController extends Controller {
         }
         echo $flag;exit; 
     }
+
     public function getJjInfo(){
         $box_mac =  I('box_mac');
         $redis = SavorRedis::getInstance();
@@ -260,6 +254,7 @@ class TestController extends Controller {
         }
         print_r($data);
     }
+
     public function openCloseQrcode(){
         $is_close = I('is_close','0','intval');
         //echo $is_close;exit;
@@ -315,15 +310,13 @@ class TestController extends Controller {
         }else {
             echo "北京地区已全部打开";
         }
-        
     }
+
     public function removeHotelinfoCache(){
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
-        $sql ="select * from savor_hotel hotel 
-               
-               ";
+        $sql ="select * from savor_hotel hotel";
         $data = M()->query($sql);
         $data = array();
         foreach($data  as $key=>$v){
@@ -377,8 +370,6 @@ class TestController extends Controller {
             $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
             $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
             $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); */
-
-
         }
         $sql ="select * from savor_hotel_ext 
         
@@ -654,6 +645,7 @@ class TestController extends Controller {
         }
         echo $flag;
     }
+
     /**
      * @去掉某些酒楼版位的易售广告
      */
@@ -781,8 +773,7 @@ class TestController extends Controller {
         echo $flag;
         
     }
-    
-    
+
     public function openZmtmpid(){
         exit(1);
         $m_box = new \Admin\Model\BoxModel();
@@ -803,8 +794,7 @@ class TestController extends Controller {
         } 
         echo $flag;
     }
-    
-    
+
     //全量打开网络版机顶盒的互动广告开关
     public function openHdBox(){
         exit(1);
@@ -829,8 +819,7 @@ class TestController extends Controller {
         }
         echo $flag;
     }
-    
-    
+
     //打开二代网络  主干版小程序开关
     public function openSecSmallapp(){
         exit(1);
@@ -842,7 +831,6 @@ class TestController extends Controller {
                  and hotel.state=1 and hotel.hotel_box_type in(2) 
                  and box.is_sapp_forscreen=0";
         $list = M()->query($sql);
-        
         $flag = 0;
         foreach($list as $key=>$v){
             $data['is_sapp_forscreen']  = 1;
@@ -852,12 +840,8 @@ class TestController extends Controller {
                 $flag++;
             }
         }
-        
         echo $flag;
-        
     }
-    
-    
     
     //打开二代5G、三代网络版酒楼宣传片的 小程序二维码
     public function openAdvQrcode(){
@@ -867,7 +851,6 @@ class TestController extends Controller {
         
         $hotel_list = M()->query($sql);
         $flag = 0;
-        
         foreach($hotel_list as $key=>$v){
             /* $sql ="update savor_ads set is_sapp_qrcode=1 where hotel_id=".$v['hotel_id']." and type=3";
             $ret = M()->execute($sql);
@@ -882,8 +865,7 @@ class TestController extends Controller {
         }
         print_r($ht);
     }
-    
-    
+
     public function countHdNums(){
         $date = I('date');
         $start_time = $date.' 00:00:00';
@@ -906,10 +888,6 @@ class TestController extends Controller {
         
         $forscreen_count = count($data);
         echo $date."扫码人数：".$scan_code.",互动人数:".$forscreen_count;
-        
-        
-        
-        
     }
     
     public function removeProCach(){
@@ -922,8 +900,7 @@ class TestController extends Controller {
             $redis->remove($key);
         }
     }
-    
-    
+
     public function closeSmallappJijian(){
         exit(1);
         $m_box = new \Admin\Model\BoxModel();
@@ -941,10 +918,9 @@ where box.state=1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.ho
                 $flag++;
             }
         }
-        
         echo $flag;
-        
     }
+
     public function closeSmallappJjPt(){
         exit(1);
         $m_box = new \Admin\Model\BoxModel();
@@ -964,10 +940,9 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
                 $flag++;
             }
         }
-    
         echo $flag;
-    
     }
+
     //打开三代网络酒楼盒子的极简版开关
     public function openSmallappJijian(){
         exit(1);
@@ -1001,10 +976,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo $flag;
         
     }
-    
-    
-    
-    
 
     public function operateH5game(){
         exit;
@@ -1536,7 +1507,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         $zt_list = M()->query($sql);
         $all_hotel_ids = array_column($zt_list,'hotel_id');
         //print_r($all_hotel_ids);exit;
-        
         $m_sysconfig = new \Admin\Model\SysConfigModel();
         $res_config = $m_sysconfig->getAllconfig();
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
@@ -1560,7 +1530,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
                     }
                 }
             }
-
             $redis->select(14);
             $cache_key = C('SAPP_SALE').'activitygoods:loopplay:'.$hotel_id;
             $res_cache = $redis->get($cache_key);
@@ -1630,8 +1599,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         }else{
             $md5_file = '';
         }
-
-
         $res = array('db_size'=>$res_forscreen['resource_size'],'oss_size'=>$file_size,'is_eq'=>$is_eq,
             'md5_file'=>$md5_file,'oss_addr'=>$oss_addr);
         print_r($res);
@@ -1850,7 +1817,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         return $data;
     }
 
-
     public function orderNotify(){
 //        $content = file_get_contents('php://input');
 //        $log_content = "nofity_data:$content";
@@ -1858,7 +1824,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
 
         $content = '{"signature":"9daeeb2a84b0954cae9de015858716ab","client_id":"1070428388962074624","order_id":"1000504","order_status":3,"cancel_reason":"","cancel_from"
 :0,"dm_id":2535448,"dm_name":"黄晓飞","dm_mobile":"15120020991","update_time":1585540555}';
-
         if(!empty($content)) {
             $res = json_decode($content, true);
             if(!empty($res) && isset($res['order_id'])){
@@ -1876,7 +1841,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         }
         echo 'success';
     }
-
 
     public function getjjbox(){
         exit;
@@ -1950,8 +1914,45 @@ group by openid";
         $res = array('all'=>count($res_openids),'error'=>count($error_openids),'success'=>count($success_openids));
         print_r($res);
         exit;
-
-
-
     }
+
+    public function task(){
+        $model = M();
+        $sql_task = 'select * from savor_integral_task where status=1 and flag=1';
+        $res_task = $model->query($sql_task);
+        $all_task = array();
+        foreach ($res_task as $v){
+            $type = $v['type'];
+            $task_info = json_decode($v['task_info'],true);
+            $all_task[$v['id']] = $task_info['task_content_type'];
+        }
+        $sql_hotel_task = 'select GROUP_CONCAT(task_id) as task_ids,hotel_id from savor_integral_task_hotel group by hotel_id';
+        $res_hotel_task = $model->query($sql_hotel_task);
+
+        $hotel_more_task = array();
+        $hotel_repeat_task = array();
+        foreach ($res_hotel_task as $v){
+            $tasks = explode(',',$v['task_ids']);
+            if(count($tasks)>1){
+                $res_hotel = $model->query('select name from savor_hotel where id='.$v['hotel_id']);
+                $hotel_more_task[]=$v['hotel_id'];
+                $hotel_tasks = array();
+                foreach ($tasks as $tv){
+                    if(isset($all_task[$tv])){
+                        $t_type = $all_task[$tv];
+                        $hotel_tasks[$t_type][]=$tv;
+                    }
+                }
+                foreach ($hotel_tasks as $kk=>$kv){
+                    if(count($kv)>1){
+                        $hotel_repeat_task[]=array('hotel_id'=>$v['hotel_id'],'hotel_name'=>$res_hotel[0]['name'],'task_ids'=>$kv);
+                    }
+                }
+            }
+        }
+        echo json_encode($hotel_more_task);
+        echo '====';
+        print_r($hotel_repeat_task);
+    }
+
 }

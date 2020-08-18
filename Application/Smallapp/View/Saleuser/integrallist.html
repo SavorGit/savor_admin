@@ -7,14 +7,38 @@
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-          <div class="tools-group s2">
-          用户:{$openid} 积分明细
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-5 col-lg-6 pull-right">
 
-          <div class="input-group input-group-sm pull-right">
+        <div class="col-xs-12 col-sm-6 col-md-5">
+
+          <div class="form-inline">
+            <div class="input-group input-group-sm">用户：{$openid}</div>
+            <div class="input-group input-group-sm">&nbsp;&nbsp;&nbsp;</div>
+            <div class="input-group input-group-sm">当前积分为：{$integral}</div>
+          </div>
+
+        </div>
+
+        <div class="col-xs-12 col-sm-6 col-md-7 pull-right">
+
+          <div class="form-inline">
+
+            <div class="input-group input-group-sm">时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+              <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+              <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+              <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+              <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+            </div>
+
+          <div class="input-group input-group-sm ">
             <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
             <span class="input-group-btn input-group-sm">
               <select name="type"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
@@ -31,6 +55,11 @@
           </div>
 
         </div>
+
+
+
+        </div>
+
       </div>
     </div>
   </form>
