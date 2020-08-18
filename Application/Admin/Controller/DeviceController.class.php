@@ -298,6 +298,7 @@ class DeviceController extends BaseController{
 		$save['qrcode_type'] = I('post.qrcode_type',0,'intval');
 		$save['fault_status'] = I('post.fault_status',1,'intval');
 		$save['fault_desc'] = I('post.fault_desc','','trim');
+		$save['vinfo.is_open_popcomment'] = I('post.vinfo.is_open_popcomment',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		
 		if($tpmedia_id_arr){
