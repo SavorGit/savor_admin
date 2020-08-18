@@ -18,6 +18,8 @@ class StaticHoteldataModel extends Model{
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
+//        $start = '2020-08-01';
+//        $end = '2020-08-16';
 
         $all_dates = $m_statistics->getDates($start,$end);
 
@@ -106,7 +108,7 @@ class StaticHoteldataModel extends Model{
                 //扫码数
                 $fields = "count(a.id) as num";
                 $qrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-                $qrcode_where['a.type'] = array('in',array(8,13));
+                $qrcode_where['a.type'] = array('in',array(8,12,13,16,29,30));
                 $qrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
                 $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where);
                 $scancode_num = intval($res_qrcode[0]['num']);
