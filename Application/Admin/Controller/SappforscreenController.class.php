@@ -449,60 +449,11 @@ class SappforscreenController extends BaseController {
     }
 
 	/**
-	 * @desc 删除永峰测试数据
+	 * @desc 删除测试数据
 	 */
 	public function delTestRecord(){
-        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
-        $orderby = 'id desc';
-        $res_list = $m_invalid->getDataList('*','',$orderby);
-        $all_invalidlist = array();
-        foreach ($res_list as $v){
-            $all_invalidlist[$v['type']][] = $v['invalidid'];
-        }
-	    $hotel_ids = $all_invalidlist[1];
-	    $fields = "box.mac as box_mac";
-	    $where = array();
-	    $where['hotel.id'] = array('in',$hotel_ids);
-
-	    $m_box = new \Admin\Model\BoxModel();
-	    $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
-	    $boxs = array();
-	    foreach ($hotel_boxs as $v){
-	        $boxs[]=$v['box_mac'];
-        }
-
-        if(isset($all_invalidlist[3]) && !empty($all_invalidlist[3])){
-            $boxs = array_merge($boxs,$all_invalidlist[3]);
-            $boxs = array_unique($boxs);
-        }
-
-        $condition = array();
-        $condition['a.box_mac'] = array('in',$boxs);
-        $condition['a.mobile_brand'] = array('neq','devtools');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-        $res_boxdata = $m_smallapp_forscreen_record->getWhere('a.*',$condition,'','');
-        $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
-
-        foreach ($res_boxdata as $v){
-            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
-            $m_smallapp_forscreen_invalidrecord->addData($v);
-        }
-        $delcondition = array('box_mac'=>array('in',$boxs));
-        $delcondition['mobile_brand'] = array('neq','devtools');
-        $m_smallapp_forscreen_record->where($delcondition)->delete();
-
-        if(isset($all_invalidlist[2])){
-            $condition = array('a.openid'=>array('in',$all_invalidlist[2]));
-            $condition['a.mobile_brand'] = array('neq','devtools');
-            $res_userdata = $m_smallapp_forscreen_record->getWhere('a.*',$condition,'','');
-            foreach ($res_userdata as $v){
-                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
-                $m_smallapp_forscreen_invalidrecord->addData($v);
-            }
-            $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
-            $delcondition['mobile_brand'] = array('neq','devtools');
-            $m_smallapp_forscreen_record->where($delcondition)->delete();
-        }
+        $m_smallapp_forscreen_record->cleanTestdata();
 	    $this->output('隔离成功', 'sappforscreen/index', 2);
 	}
 
