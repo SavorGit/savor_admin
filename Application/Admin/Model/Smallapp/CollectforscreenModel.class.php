@@ -1,9 +1,35 @@
 <?php
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 
 class CollectforscreenModel extends BaseModel{
 	protected $tableName='smallapp_collect_forscreen';
+
+    public function getList($fields="a.id",$where, $order='a.id desc', $start=0,$size=5){
+        $list = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on room.id= box.room_id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $count = $this->alias('a')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on room.id= box.room_id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->join('savor_area_info area on hotel.area_id=area.id','left')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->where($where)->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 
     public function collectforscreen($is_refresh=0){
         $forscreen_openids = C('COLLECT_FORSCREEN_OPENIDS');
@@ -79,7 +105,7 @@ class CollectforscreenModel extends BaseModel{
                             }
                         }
                         $res_track = $m_forscreen_track->getTrackResult($v,$data);
-                        $udata = array('is_success'=>$res_track['is_success'],'total_time'=>$res_track['total_time']);
+                        $udata = array('success_status'=>$res_track['is_success'],'total_time'=>$res_track['total_time']);
                         $this->updateData(array('id'=>$collcet_id),$udata);
                     }
                 }

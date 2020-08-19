@@ -66,7 +66,7 @@ class CollectforscreenController extends BaseController {
             $where['a.openid'] = array('not in',$openids);
         }
         $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,box.box_type,a.*';
-        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_smallapp_forscreen_record = new \Admin\Model\Smallapp\CollectforscreenModel();
         $orders = 'a.create_time desc';
         $start = ($pagenum-1) * $size;
         $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
