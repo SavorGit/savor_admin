@@ -4372,6 +4372,16 @@ class CrontabController extends Controller
         echo "cleantestdata end:$now_time \r\n";
     }
 
+    public function collectforscreen(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "collectforscreen start:$now_time \r\n";
+        $m_collectforscreen = new \Admin\Model\Smallapp\CollectforscreenModel();
+        $m_collectforscreen->collectforscreen();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "collectforscreen end:$now_time \r\n";
+    }
+
 
 
 

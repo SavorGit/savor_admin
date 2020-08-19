@@ -798,6 +798,8 @@ $config['SAMPLE_HOTEL'] = array(
         418,1097,1023,981,1038,962,1050
         ),
 );
+$config['COLLECT_FORSCREEN_OPENIDS'] = array('ofYZG4zmrApmvRSfzeA_mN-pHv2E'=>'郑伟','ofYZG42whtWOvSELbvxvnXHbzty8'=>'黄勇',
+    'ofYZG49N0yz-cCTTgfPPEoL1F7l4'=>'鲍强强','ofYZG4xt_03ADzTTtf4QIrA1lt_c'=>'甘顺山');
 return $config;
 
 
