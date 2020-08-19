@@ -105,6 +105,7 @@
             <th>酒楼名称</th>
             <th>包间名称</th>
             <th>MAC地址</th>
+            <th>是否4G</th>
             <th>机顶盒类型</th>
             <th>openid</th>
             <th>用户昵称</th>
@@ -118,7 +119,6 @@
             <th>是否成功</th>
             <th>总计时间</th>
             <th>小程序版本</th>
-            <th class="table-tool">操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -130,6 +130,7 @@
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+              <td data-title="是否4G">{$vlist.is_4g_str}</td>
               <td data-title="机顶盒类型">{$vlist.box_type_str}</td>
               <td data-title="openid">{$vlist.openid}</td>
               <td data-title="用户昵称">{$vlist.nickname}</td>
@@ -182,7 +183,7 @@
               </td>
               <td data-title="资源大小">{$vlist.resource_size}</td>
               <td data-title="投屏时间">{$vlist.create_time}</td>
-              <td data-title="是否成功">{$vlist.is_success_str}</td>
+              <td data-title="是否成功">{$vlist.success_str}</td>
               <td data-title="总计时间">{$vlist.total_time}</td>
               <td data-title="小程序版本">{$vlist.small_app}</td>
             </tr>

@@ -29,7 +29,6 @@ class CollectforscreenController extends BaseController {
         $openid = I('openid','','trim');
 
         $where = array('box.state'=>1,'box.flag'=>0);
-        $where['a.mobile_brand'] = array('not in',array('devtools','dev4gtools'));
         if($create_time && $end_time){
             $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }else{
@@ -60,12 +59,8 @@ class CollectforscreenController extends BaseController {
         }
         if($openid){
             $where['a.openid'] = $openid;
-        }else{
-            $forscreen_openids = C('COLLECT_FORSCREEN_OPENIDS');
-            $openids = array_keys($forscreen_openids);
-            $where['a.openid'] = array('not in',$openids);
         }
-        $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,box.box_type,a.*';
+        $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,box.box_type,box.is_4g,a.*';
         $m_smallapp_forscreen_record = new \Admin\Model\Smallapp\CollectforscreenModel();
         $orders = 'a.create_time desc';
         $start = ($pagenum-1) * $size;
@@ -111,8 +106,18 @@ class CollectforscreenController extends BaseController {
             }else {
                 $list['list'][$key]['box_res_edown_time'] = '';
             }
-            $success = $this->success_status;
-            $list['list'][$key]['success_str'] = $success[$v['success_status']];
+
+            if($v['is_4g']==1){
+                $is_4g_str = '是';
+            }else{
+                $is_4g_str = '否';
+            }
+            $list['list'][$key]['is_4g_str'] = $is_4g_str;
+            $success_str = '';
+            if($v['small_app_id']==1){
+                $success_str = $this->success_status[$v['success_status']];
+            }
+            $list['list'][$key]['success_str'] = $success_str;
             $list['list'][$key]['total_time'] = $v['total_time'];
             $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
             $nowaction_type = $v['action'];

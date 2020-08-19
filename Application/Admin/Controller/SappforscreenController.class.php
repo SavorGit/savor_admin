@@ -141,7 +141,11 @@ class SappforscreenController extends BaseController {
 	    if($openid){
 	        $where['a.openid'] = $openid;
 	        $this->assign('openid',$openid);
-	    }
+	    }else{
+            $forscreen_openids = C('COLLECT_FORSCREEN_OPENIDS');
+            $openids = array_keys($forscreen_openids);
+            $where['a.openid'] = array('not in',$openids);
+        }
 
         $all_smallapps = $this->all_smallapps;
 	    $source_types = $this->source_types;
