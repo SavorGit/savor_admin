@@ -43,11 +43,10 @@ class CollectforscreenModel extends BaseModel{
             $end_time = "$hourtime:59:59";
         }
 
-        $condition = array('a.openid'=>array('in',$openids));
-        $condition['a.create_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
-
+        $where = array('openid'=>array('in',$openids));
+        $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $m_smallapp_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
-        $res_userdata = $m_smallapp_forscreen->getWhere('a.*',$condition,'','');
+        $res_userdata = $m_smallapp_forscreen->field('*')->where($where)->select();
         foreach ($res_userdata as $v){
             $v['forscreen_record_id'] = $v['id'];
             unset($v['id'],$v['update_time'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
