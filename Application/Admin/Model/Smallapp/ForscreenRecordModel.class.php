@@ -264,6 +264,17 @@ class ForscreenRecordModel extends BaseModel
             foreach ($res_bdata as $v){
                 $all_boxs[]=$v['mac'];
             }
+
+            if($type==0){
+                $fields = 'box.mac,hotel.id as hotel_id';
+                $where = array('box.state'=>1,'box.flag'=>0,'box.is_4g'=>1,'hotel.area_id'=>236);
+                $where['hotel.id'] = array('not in',$all_hotel_ids);
+                $res_bdata = $m_box->getBoxByCondition($fields,$where,$group='');
+                foreach ($res_bdata as $v){
+                    $all_boxs[]=$v['mac'];
+                }
+            }
+
             $netty_data = array('action'=>134,'resource_type'=>2,'url'=>'media/resource/h8YcE7debZ.mp4','filename'=>"h8YcE7debZ.mp4");
             $message = json_encode($netty_data);
             $netty_cmd = C('SAPP_CALL_NETY_CMD');
@@ -322,6 +333,17 @@ class ForscreenRecordModel extends BaseModel
             foreach ($res_bdata as $v){
                 $all_boxs[]=$v['mac'];
             }
+
+            if($type==0){
+                $fields = 'box.mac,hotel.id as hotel_id';
+                $where = array('box.state'=>1,'box.flag'=>0,'box.is_4g'=>1,'hotel.area_id'=>236);
+                $where['hotel.id'] = array('not in',$all_hotel_ids);
+                $res_bdata = $m_box->getBoxByCondition($fields,$where,$group='');
+                foreach ($res_bdata as $v){
+                    $all_boxs[]=$v['mac'];
+                }
+            }
+
 
             $forscreen_number  = rand(1001,5000);
             $netty_data = array('action'=>133,'forscreen_number'=>$forscreen_number,'countdown'=>30);
