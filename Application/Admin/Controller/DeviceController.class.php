@@ -462,7 +462,7 @@ class DeviceController extends BaseController{
                 $where['id'] = array('neq',$id);
             }
             $res_video = $m_tvvideo->getAll($field,$where,0,1,'id desc','');
-            if(!empty($res_video) && $res_video[0]['num']>=2){
+            if(!empty($res_video) && $res_video[0]['num']>=10){
                 $this->output('添加视频已达上限', 'device/addtvvideo',2,0);
             }
             $data = array('hotel_id'=>$hotel_id,'name'=>$name,'media_id'=>$media_id,'status'=>$status);
