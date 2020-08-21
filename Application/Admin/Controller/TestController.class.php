@@ -1967,4 +1967,45 @@ group by openid";
         print_r($hotel_repeat_task);
     }
 
+    public function forscreenhelpvideo(){
+        $now_box_mac = I('mac','','trim');
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+        if(!empty($res_box['result'])){
+            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>'media/resource/h8YcE7debZ.mp4','filename'=>"h8YcE7debZ.mp4");
+            $message = json_encode($netty_data);
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if($box_mac==$now_box_mac){
+                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                            $req_id  = getMillisecond();
+                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                            $post_data = http_build_query($box_params);
+                            $ret = $m_netty->curlPost($push_url,$post_data);
+                            $res_push = json_decode($ret,true);
+                            if($res_push['code']==10000){
+                                echo "box_mac:$box_mac push ok \r\n";
+                            }else{
+                                echo "box_mac:$box_mac push error $ret  \r\n";
+                            }
+                            break;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
 }
