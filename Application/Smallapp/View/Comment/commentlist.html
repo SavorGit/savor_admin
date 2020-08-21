@@ -87,7 +87,8 @@
               <th>评论openid</th>
               <th>评分</th>
               <th>内容</th>
-              <th>评论标签</th>
+              <!--<th>评论标签</th>-->
+              <th>评论时间</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -103,7 +104,8 @@
               <td data-title="评论openid">{$dinfo.user_openid}</td>
               <td data-title="评分">{$dinfo.score}</td>
               <td data-title="内容">{$dinfo.content}</td>
-              <td data-title="评论标签">{$dinfo.tag_str}</td>
+              <td data-title="评论时间">{$dinfo.add_time}</td>
+              <!--<td data-title="评论标签">{$dinfo.tag_str}</td>-->
               <td data-title="状态">
                 <if condition="$dinfo['status'] eq 1">
                   <a data-tip="正常显示" target="ajaxTodo" href="{$host_name}/smallapp/comment/changestatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
