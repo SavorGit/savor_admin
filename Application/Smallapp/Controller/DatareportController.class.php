@@ -773,7 +773,7 @@ class DatareportController extends BaseController {
     }
 
     public function sampledata(){
-        $hotel_id = I('hotel_id',0,'intval');
+        $hotel_id = I('hotel_id',418,'intval');
         $start_date = I('start_date','');
         $end_date = I('end_date','');
 
@@ -791,6 +791,9 @@ class DatareportController extends BaseController {
         $m_box = new \Admin\Model\BoxModel();
         $box_fields = "count(box.id) as num";
         $box_where = array('box.state'=>1,'box.flag'=>0);
+        if($hotel_id==99999){
+            $hotel_id = 0;
+        }
         if($hotel_id){
             $box_where['hotel.id'] = $hotel_id;
         }else{
