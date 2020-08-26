@@ -2008,4 +2008,40 @@ group by openid";
         }
     }
 
+    public function cachehotelassess(){
+        $file_path = SITE_TP_PATH.'/Public/content/广州考核酒楼.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $other_hotel = array();
+        $hotel_info = array();
+        $redis = new \Common\Lib\SavorRedis();
+        $m_hotel = new \Admin\Model\HotelModel();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $res_hotel = $m_hotel->getInfo('*',array('name'=>$rowData[0][0],'state'=>1,'flag'=>0),'id desc','0,1');
+                if(!empty($res_hotel)){
+                    $hotel_info[$res_hotel[0]['id']] = array('hotel_id'=>$res_hotel[0]['id'],'hotel_box_type'=>$res_hotel[0]['hotel_box_type'],
+                        'hotel_name'=>$rowData[0][0],
+                        'area_id'=>236,'area_name'=>$rowData[0][1],'hotel_level'=>$rowData[0][5],'team_name'=>$rowData[0][4],'maintainer'=>$rowData[0][6]);
+                }else{
+                    $other_hotel[]=$rowData[0][0];
+                }
+            }
+        }
+        $redis->select(1);
+        $key = 'smallapp:hotelassess';
+        $redis->set($key,json_encode($hotel_info));
+        echo count($hotel_info);
+        exit;
+    }
 }
