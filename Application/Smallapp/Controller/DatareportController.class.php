@@ -283,6 +283,9 @@ class DatareportController extends BaseController {
         $hotel_level = I('level','');
         $hotel_team = I('team','');
         $all_assess = I('all_assess',0,'intval');
+        $operation_assess = I('operation_assess',0,'intval');
+        $channel_assess = I('channel_assess',0,'intval');
+        $data_assess = I('data_assess',0,'intval');
 
         if(empty($start_time)){
             $start_time = date('Ymd',strtotime('-1 day'));
@@ -300,9 +303,10 @@ class DatareportController extends BaseController {
         if($hotel_level){
             $where['hotel_level'] = $hotel_level;
         }
-        if($all_assess){
-            $where['all_assess'] = $all_assess;
-        }
+        if($all_assess)         $where['all_assess'] = $all_assess;
+        if($operation_assess)   $where['operation_assess'] = $operation_assess;
+        if($channel_assess)     $where['channel_assess'] = $channel_assess;
+        if($data_assess)        $where['data_assess'] = $data_assess;
         $teams = array(
             'Oiyoboy'=>array('吴琳','朱宇杰','欧懿'),
             '勇者队'=>array('曾峰','陈远程','甘顺山'),
@@ -341,6 +345,9 @@ class DatareportController extends BaseController {
         $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
         $this->assign('level',$hotel_level);
         $this->assign('all_assess',$all_assess);
+        $this->assign('operation_assess',$operation_assess);
+        $this->assign('channel_assess',$channel_assess);
+        $this->assign('data_assess',$data_assess);
         $this->assign('hotel_team', $hotel_team);
         $this->assign('team', $team);
         $this->assign('datalist', $datalist);

@@ -51,7 +51,7 @@
           </div>
 
           <div class="form-group">
-            <div class="input-group input-group-sm">整体考核情况：</div>
+            <div class="input-group input-group-sm">整体考核：</div>
             <div class="input-group">
               <select name="all_assess" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
                 <option value='0'>全部</option>
@@ -60,6 +60,40 @@
               </select>
             </div>
           </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">运维考核：</div>
+            <div class="input-group">
+              <select name="operation_assess" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value='0'>全部</option>
+                <option value="1" <if condition="$operation_assess eq 1">selected</if>>合格</option>
+                <option value="2" <if condition="$operation_assess eq 2">selected</if>>不合格</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">渠道考核：</div>
+            <div class="input-group">
+              <select name="channel_assess" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value='0'>全部</option>
+                <option value="1" <if condition="$channel_assess eq 1">selected</if>>合格</option>
+                <option value="2" <if condition="$channel_assess eq 2">selected</if>>不合格</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">数据考核：</div>
+            <div class="input-group">
+              <select name="data_assess" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value='0'>全部</option>
+                <option value="1" <if condition="$data_assess eq 1">selected</if>>合格</option>
+                <option value="2" <if condition="$data_assess eq 2">selected</if>>不合格</option>
+              </select>
+            </div>
+          </div>
+
 
           <div class="form-group">
             <div class="input-group input-group-sm pull-right">
