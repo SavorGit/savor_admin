@@ -166,5 +166,46 @@ class SmallappForscreenRecordModel extends Model{
         }
         return true;
     }
+    /*
+     * $time 时间戳
+     * $fj_type 0全部饭局 1午饭 2晚饭
+     */
+    public function getFeastBoxByHotelId($hotel_id,$time,$fj_type=0){
+        $feast_time = C('FEAST_TIME');
+        $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
+        $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
 
+
+        $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
+        $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:00",$time);
+
+
+        $where = array('hotel.id'=>$hotel_id);
+        $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
+        $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
+        switch ($fj_type){
+            case 0:
+                $where['_complex'] = array(
+                    $where_lunch,
+                    $where_dinner,
+                    '_logic' => 'or'
+                );
+                break;
+            case 1:
+                $where['a.create_time'] = $where_lunch['a.create_time'];
+                break;
+            case 2:
+                $where['a.create_time'] = $where_dinner['a.create_time'];
+                break;
+        }
+        $where['a.is_valid'] = 1;
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        $where['a.small_app_id'] = array('in',array(1,2));
+        $fields = 'a.box_mac';
+        $groupby = 'a.box_mac';
+        $result = $this->getWhere($fields,$where,'',$groupby);
+        return $result;
+    }
 }

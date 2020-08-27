@@ -1,8 +1,8 @@
 <?php
 
 namespace Admin\Model\Smallapp;
-use Think\Model;
-class StaticHoteldataModel extends Model{
+use Admin\Model\BaseModel;
+class StaticHoteldataModel extends BaseModel{
 
 	protected $tableName='smallapp_static_hoteldata';
 
@@ -18,8 +18,6 @@ class StaticHoteldataModel extends Model{
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
-//        $start = '2020-08-01';
-//        $end = '2020-08-20';
 
         $all_dates = $m_statistics->getDates($start,$end);
 
@@ -96,11 +94,8 @@ class StaticHoteldataModel extends Model{
                     $zxrate = sprintf("%.2f",$zxnum/$wlnum);
                 }
                 //互动饭局数
-                $fj_where = $static_where;
-                $fj_where['s.all_interact_nums'] = array('GT',0);
-                $fields = "count(DISTINCT s.box_mac) as feastnum";
-                $ret_fj = $m_statistics->getOnlinnum($fields, $fj_where);
-                $fjnum = intval($ret_fj[0]['feastnum']);
+                $fj_box = $m_smallapp_forscreen_record->getFeastBoxByHotelId($hotel_id,$time_date);
+                $fjnum = count($fj_box);
                 $fjrate = 0;
                 if($fjnum){
                     $fjrate = sprintf("%.2f",$fjnum/$wlnum);
