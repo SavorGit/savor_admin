@@ -24,9 +24,9 @@ class StaticHotelassessModel extends BaseModel{
 
 	public function handle_hotelassess(){
         $config = array(
-            'A'=>array('fault_rate'=>0.2,'zxrate'=>0.7,'fjrate'=>0.15),
-            'B'=>array('fault_rate'=>0.3,'zxrate'=>0.6,'fjrate'=>0.08),
-            'C'=>array('fault_rate'=>0.4,'zxrate'=>0.5,'fjrate'=>0.03),
+            'A'=>array('fault_rate'=>0.2,'zxrate'=>0.7,'fjrate'=>0.15,'fjsalerate'=>0.8),
+            'B'=>array('fault_rate'=>0.3,'zxrate'=>0.6,'fjrate'=>0.08,'fjsalerate'=>0.6),
+            'C'=>array('fault_rate'=>0.4,'zxrate'=>0.5,'fjrate'=>0.03,'fjsalerate'=>0.5),
         );
 
         $redis = new \Common\Lib\SavorRedis();
@@ -45,6 +45,7 @@ class StaticHotelassessModel extends BaseModel{
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();
         $m_statichoteldata = new \Admin\Model\Smallapp\StaticHoteldataModel();
+        $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
         foreach ($all_dates as $v){
             $time_date = strtotime($v);
             $static_date = date('Ymd',$time_date);
@@ -85,8 +86,20 @@ class StaticHotelassessModel extends BaseModel{
                 if($data['fjrate']<$config[$hv['hotel_level']]['fjrate']){
                     $data['data_assess'] = 2;
                 }
+                $wlnum = $res_hoteldata['wlnum'];
+                $res_box = $m_forscreen->getFeastBoxByHotelId($hotel_id,$time_date,0,5);
+                $sale_feast_boxnum = count($res_box);
+                $fjsalerate = 0;
+                if($sale_feast_boxnum){
+                    $fjsalerate = sprintf("%.2f",$sale_feast_boxnum/$wlnum);
+                }
+                $data['fjsalerate'] = $fjsalerate;
+                $data['saledata_assess'] = 1;
+                if($data['fjsalerate']<$config[$hv['hotel_level']]['fjsalerate']){
+                    $data['saledata_assess'] = 2;
+                }
                 $data['all_assess'] = 1;
-                if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2){
+                if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2 || $data['saledata_assess']==2){
                     $data['all_assess'] = 2;
                 }
                 $this->add($data);

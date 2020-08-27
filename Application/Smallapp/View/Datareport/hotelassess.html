@@ -94,6 +94,17 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <div class="input-group input-group-sm">销售数据考核：</div>
+            <div class="input-group">
+              <select name="saledata_assess" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value='0'>全部</option>
+                <option value="1" <if condition="$saledata_assess eq 1">selected</if>>合格</option>
+                <option value="2" <if condition="$saledata_assess eq 2">selected</if>>不合格</option>
+              </select>
+            </div>
+          </div>
+
 
           <div class="form-group">
             <div class="input-group input-group-sm pull-right">
@@ -130,6 +141,8 @@
               <th>渠道考核</th>
               <th>饭局转化率</th>
               <th>数据考核</th>
+              <th>销售端转化率</th>
+              <th>销售端数据考核</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -149,6 +162,8 @@
               <td><if condition="$dinfo.channel_assess eq 1">合格<else/>不合格</if></td>
               <td>{$dinfo.fjrate}</td>
               <td><if condition="$dinfo.data_assess eq 1">合格<else/>不合格</if></td>
+              <td>{$dinfo.fjsalerate}</td>
+              <td><if condition="$dinfo.saledata_assess eq 1">合格<else/>不合格</if></td>
             </tr>
           </volist>
 
