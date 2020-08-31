@@ -1,0 +1,198 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader top-filter">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/collectforscreen/datalist" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                    <div class="tools-group">
+                      <!--<a class="btn btn-success btn-sm add" id="forscreen_fresh"><i class="fa fa-refresh"></i>实时刷新</a>-->
+                      <a class="btn btn-success btn-sm" target="ajaxTodo" href="{$host_url}/smallapp/collectforscreen/refreshdata" calback="navTabAjaxDone"><i class="fa fa-refresh"></i> 实时刷新</a>
+                        <!--<a class="btn btn-success btn-sm add" href="{$host_url}/dataexport/forscreen/hotel?s_date={$create_time}&e_date={$end_time}&small_app_id={$small_app_id}&is_valid={$is_valid}" title="导出投屏酒楼统计" target="_blank" mask="true"><i class="fa fa-download"></i>酒楼</a>-->
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 pull-right">
+                    <div class="input-group input-group-sm pull-right">
+                        <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+                        <span class="input-group-btn dropdown">
+              <button class="btn btn-success dropdown-toggle dropdown-filter" type="button">
+                <span class="filter-text">过滤</span>
+                <i class="fa fa-angle-down"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right dropdown-menu-filter">
+                <div class="filter-wrap">
+                  <div class="row">
+
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>机顶盒mac:</label>
+                      <input type="text" class="form-control input-sm" style="min-width: 100px;" name="box_mac" value="{$box_mac}" placeholder="机顶盒mac">
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>用户标识:</label>
+                      <input type="text" style="min-width: 100px;" class="form-control input-sm" name="openid" value="{$openid}" placeholder="请输入用户唯一标识">
+                    </div>
+
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>开始日期:</label>
+                      <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$create_time}" data-ymd="true">
+                        <input name="create_time" type="text" size="16" style="min-width: 100px;" class="form-control date" placeholder="开始日期" value="{$create_time}">
+                        <span class="input-group-btn">
+                          <button class="btn btn-success date-set" type="button">
+                            <i class="fa fa-calendar"></i>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>结束日期:</label>
+                      <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+                        <input name="end_time" type="text" size="16" style="min-width: 100px;" class="form-control date" placeholder="结束日期" value="{$end_time}">
+                        <span class="input-group-btn">
+                          <button class="btn btn-success date-set" type="button">
+                            <i class="fa fa-calendar"></i>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>小程序版本:</label>
+                     <select name="small_app_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                       <option value=0 >所有</option>
+                       <volist name="small_apps" id="aname">
+                          <option <if condition="$small_app_id eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
+                       </volist>
+                     </select>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>投屏动作:</label>
+                     <select name="action_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                       <option value=999 >所有</option>
+                       <volist name="all_actions" id="aname">
+                          <option <if condition="$action_type eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
+                       </volist>
+                     </select>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </span>
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                  </span>
+            </div>
+          </div>
+
+        </div>
+    </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>互动序列号</th>
+            <th>城市</th>
+            <th>酒楼名称</th>
+            <th>包间名称</th>
+            <th>MAC地址</th>
+            <th>是否4G</th>
+            <th>机顶盒类型</th>
+            <th>openid</th>
+            <th>用户昵称</th>
+            <th>用户头像</th>
+            <th>手机品牌</th>
+            <th>手机型号</th>
+            <th>投屏动作</th>
+            <th>投屏内容</th>
+            <th>资源大小</th>
+            <th>投屏时间</th>
+            <th>是否成功</th>
+            <th>总计时间</th>
+            <th>小程序版本</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号"><a class="click-able-title">{$vlist.id}</a></td>
+              <td data-title="互动序列号">{$vlist.serial_number}</td>
+              <td data-title="城市">{$vlist.region_name}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.room_name}</td>
+              <td data-title="机顶盒MAC">{$vlist.box_mac}</td>
+              <td data-title="是否4G">{$vlist.is_4g_str}</td>
+              <td data-title="机顶盒类型">{$vlist.box_type_str}</td>
+              <td data-title="openid">{$vlist.openid}</td>
+              <td data-title="用户昵称">{$vlist.nickname}</td>
+              <td data-title="用户头像"><img src="{$vlist.avatarurl}"></td>
+              <td data-title="手机品牌">{$vlist.mobile_brand}</td>
+              <td data-title="手机型号">{$vlist.mobile_model}</td>
+              <td data-title="投屏动作">{$vlist.action_name}</td>
+              <td data-title="投屏内容">
+              	<if condition="$vlist.action eq 4 || $vlist.action eq 11">
+              	<volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                <elseif condition="($vlist.action eq 2)  && ($vlist.resource_type eq 1)"    />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                <elseif condition="($vlist.action eq 2) && ($vlist.resource_type eq 2)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
+                </volist>
+                <elseif condition="($vlist.action eq 8) && ($vlist.resource_type eq 1)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                <elseif condition="($vlist.action eq 8) && ($vlist.resource_type eq 2)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
+                </volist>
+                <elseif condition="$vlist.action eq 5 || $vlist.action eq 12 || $vlist.action eq 22 || $vlist.action eq 21 || $vlist.action eq 30 || $vlist.action eq 40" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
+                </volist>
+                <elseif condition="$vlist.action eq 31" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                <elseif condition="($vlist.action eq 50) && ($vlist.resource_type eq 1)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                <elseif condition="($vlist.action eq 50) && ($vlist.resource_type eq 2)" />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
+                </volist>
+                <else />
+                <volist name="vlist.imgs" id="img">
+              	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
+                </volist>
+                </if>
+              </td>
+              <td data-title="资源大小">{$vlist.resource_size}</td>
+              <td data-title="投屏时间">{$vlist.create_time}</td>
+              <td data-title="是否成功">{$vlist.success_str}</td>
+              <td data-title="总计时间">{$vlist.total_time}</td>
+              <td data-title="小程序版本">{$vlist.small_app}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

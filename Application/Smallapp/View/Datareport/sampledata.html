@@ -23,7 +23,7 @@
           </div>
           <div class="input-group" >
             <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" data-style="btn-default btn-sm">
-              <option value="">请输入酒楼名称</option>
+              <option value="99999">请输入酒楼名称</option>
               <volist name="hotels" id="hinfo">
                 <option value="{$hinfo.hotel_id}" {$hinfo.is_select} > {$hinfo.hotel_name}</option>
               </volist>

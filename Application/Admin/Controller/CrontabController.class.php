@@ -4362,6 +4362,37 @@ class CrontabController extends Controller
         echo "statichoteldata end:$now_time \r\n";
     }
 
+    public function cleantestdata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "cleantestdata start:$now_time \r\n";
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_smallapp_forscreen_record->cleanTestdata();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "cleantestdata end:$now_time \r\n";
+    }
+
+    public function collectforscreen(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "collectforscreen start:$now_time \r\n";
+        $m_collectforscreen = new \Admin\Model\Smallapp\CollectforscreenModel();
+        $m_collectforscreen->collectforscreen();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "collectforscreen end:$now_time \r\n";
+    }
+
+    public function hotelassess(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "hotelassess start:$now_time \r\n";
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $m_staticassess->handle_hotelassess();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "hotelassess end:$now_time \r\n";
+    }
+
+
 
 
 

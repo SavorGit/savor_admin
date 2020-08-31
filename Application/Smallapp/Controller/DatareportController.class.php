@@ -275,6 +275,91 @@ class DatareportController extends BaseController {
         $this->display();
     }
 
+    public function hotelassess(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $hotel_level = I('level','');
+        $hotel_team = I('team','');
+        $all_assess = I('all_assess',0,'intval');
+        $operation_assess = I('operation_assess',0,'intval');
+        $channel_assess = I('channel_assess',0,'intval');
+        $data_assess = I('data_assess',0,'intval');
+        $saledata_assess = I('saledata_assess',0,'intval');
+
+        if(empty($start_time)){
+            $start_time = date('Ymd',strtotime('-1 day'));
+        }else{
+            $start_time = date('Ymd',strtotime($start_time));
+        }
+        if(empty($end_time)){
+            $end_time = $start_time;
+        }else{
+            $end_time = date('Ymd',strtotime($end_time));
+        }
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $all_dates = $m_statistics->getDates($start_time,$end_time,2);
+        $where = array('date'=>array('in',$all_dates));
+        if($hotel_level){
+            $where['hotel_level'] = $hotel_level;
+        }
+        if($all_assess)         $where['all_assess'] = $all_assess;
+        if($operation_assess)   $where['operation_assess'] = $operation_assess;
+        if($channel_assess)     $where['channel_assess'] = $channel_assess;
+        if($data_assess)        $where['data_assess'] = $data_assess;
+        if($saledata_assess)    $where['saledata_assess'] = $saledata_assess;
+        $teams = array(
+            'Oiyoboy'=>array('吴琳','朱宇杰','欧懿'),
+            '勇者队'=>array('曾峰','陈远程','甘顺山'),
+            '超凡队'=>array('王习宗','熊静怡','何永锐'),
+        );
+        $team = $tmember = array();
+        foreach ($teams as $k=>$v){
+            $is_select = 0;
+            if($k==$hotel_team){
+                $is_select = 1;
+            }
+            $team[] = array('name'=>$k,'is_select'=>$is_select);
+            foreach ($v as $uv){
+                $tmember[$uv]=$k;
+            }
+        }
+        if($hotel_team){
+            $where['team_name'] = array('in',$teams[$hotel_team]);
+        }
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $start  = ($page-1) * $size;
+//        $fields = 'date,hotel_level,team_name,avg(all_assess) as all_assess,hotel_name,avg(box_num) as box_num,avg(lostbox_num) as lostbox_num,
+//        avg(fault_rate) as fault_rate,avg(operation_assess) as operation_assess,avg(zxrate) as zxrate,avg(channel_assess) as channel_assess,
+//        avg(fjrate) as fjrate,avg(data_assess) as data_assess';
+//        $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
+        $fields = '*';
+        $groupby = 'hotel_id';
+        $order = 'hotel_level asc';
+        $countfields = 'count(id) as tp_count';
+        $result = $m_staticassess->getCustomeList($fields,$where,$groupby,$order,$countfields,$start,$size);
+        $datalist = $result['list'];
+        foreach ($datalist as $k=>$v){
+            $datalist[$k]['team'] = $tmember[$v['team_name']];
+        }
+        $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
+        $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
+        $this->assign('level',$hotel_level);
+        $this->assign('all_assess',$all_assess);
+        $this->assign('operation_assess',$operation_assess);
+        $this->assign('channel_assess',$channel_assess);
+        $this->assign('data_assess',$data_assess);
+        $this->assign('saledata_assess',$saledata_assess);
+        $this->assign('hotel_team', $hotel_team);
+        $this->assign('team', $team);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display();
+    }
+
     public function interactnum(){
         $start_time = I('start_time','');
         $end_time = I('end_time','');
@@ -773,7 +858,7 @@ class DatareportController extends BaseController {
     }
 
     public function sampledata(){
-        $hotel_id = I('hotel_id',0,'intval');
+        $hotel_id = I('hotel_id',418,'intval');
         $start_date = I('start_date','');
         $end_date = I('end_date','');
 
@@ -791,6 +876,9 @@ class DatareportController extends BaseController {
         $m_box = new \Admin\Model\BoxModel();
         $box_fields = "count(box.id) as num";
         $box_where = array('box.state'=>1,'box.flag'=>0);
+        if($hotel_id==99999){
+            $hotel_id = 0;
+        }
         if($hotel_id){
             $box_where['hotel.id'] = $hotel_id;
         }else{
@@ -843,7 +931,7 @@ class DatareportController extends BaseController {
 
         $fields = "count(a.id) as num,DATE_FORMAT(a.create_time,'%Y%m%d') as qdate";
         $qrcode_where = array("DATE_FORMAT(a.create_time,'%Y%m%d')"=>array('in',$days));
-        $qrcode_where['a.type'] = array('in',array(8,13));
+        $qrcode_where['a.type'] = array('in',array(8,12,13,16,29,30));
         $qrcode_where['box.state'] = 1;
         $qrcode_where['box.flag'] = 0;
         if($hotel_id){

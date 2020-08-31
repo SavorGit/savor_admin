@@ -4,7 +4,6 @@
  */
 namespace Admin\Controller;
 
-use Admin\Controller\BaseController;
 use Admin\Model\BoxModel;
 use Admin\Model\RoomModel;
 use Admin\Model\TvModel;
@@ -17,8 +16,7 @@ class DeviceController extends BaseController{
      * 
      * @return [type] [description]
      */
-    public function box(){	
-
+    public function box(){
     	$boxModel = new BoxModel;
     	$size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
@@ -69,7 +67,6 @@ class DeviceController extends BaseController{
                 }
             }
             $result['list'] = $boxModel->roomIdToRoomName($result['list']);
-
         }
    		$this->assign('room_id', $room_id);
    		$this->assign('hotel_id', $hotel_id);
@@ -117,7 +114,6 @@ class DeviceController extends BaseController{
         }else{
             $result = $tvModel->getList($where,$orders,$start,$size);
         }
-		
         $result['list'] = $tvModel->boxIdToBoxName($result['list']);
         $this->assign('hotel_id',$hotel_id);
         $this->assign('box_id',$box_id);
@@ -135,7 +131,6 @@ class DeviceController extends BaseController{
 		$box_id = I('box_id',0);
 		$boxModel = new BoxModel;
 		$tvModel =  new TvModel;
-
 		if($id){
 			$vinfo = $tvModel->where('id='.$id)->find();
 			$box_id = $vinfo['box_id'];
@@ -148,10 +143,7 @@ class DeviceController extends BaseController{
 		    $vinfo['box_id'] = $box_id;
 			$vinfo['state'] = 1;
 		}
-
-
 		$this->assign('vinfo',$vinfo);
-
 		$this->display('addTv');
 	}
 
@@ -159,7 +151,6 @@ class DeviceController extends BaseController{
 	 * 新增机顶盒
 	 * 
 	 */
-
 	public function addBox(){
 		$room_id = I('get.room_id');
 		$roomModel = new RoomModel;
@@ -173,13 +164,11 @@ class DeviceController extends BaseController{
 		$this->assign('vinfo', $vinfo);
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
-		
 		//聚屏广告第三方媒体
 		$poly_screen_media_arr = C('POLY_SCREEN_MEDIA_LIST');
 		$this->assign('poly_screen_media_arr',$poly_screen_media_arr);
 		return $this->display('addBox');
 	}
-
 
 	/**
 	 * 编辑机顶盒
@@ -190,9 +179,8 @@ class DeviceController extends BaseController{
 		$hotel_id = I('get.hotel_id','0','intval');
 		$roomModel = new RoomModel;
 		$boxModel  = new BoxModel;
-		$vinfo  = [];
+		$vinfo  = array();
 		$vinfo = $boxModel->getRow('*',array('id'=>$id));
-
 		if($hotel_id){
 		    $room_list = $roomModel->where("hotel_id='$hotel_id'")->field('id,name')->select();
 		}else{
@@ -210,11 +198,8 @@ class DeviceController extends BaseController{
 		    $tpmedia_id_arr = explode(',', $vinfo['tpmedia_id']);
 		    $this->assign('tpmedia_id_arr',$tpmedia_id_arr);
 		}
-		
-		
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
-
 		$this->assign('rooms',$rooms);
 		$this->assign('vinfo',$vinfo);
 		$this->display('editBox');
@@ -238,18 +223,15 @@ class DeviceController extends BaseController{
 		$map = array();
 		$where = "1 and b.id=".$save['box_id'];
 		$hotel_info = $m_box->isHaveMac('h.id hotel_id', $where);
-		
 		if($id){
 			if($tvModel->editData($id,$save)){
 			    $redis->select(12);
 			    $cache_key = C('SMALL_TV_LIST').$hotel_info[0]['hotel_id'];
 			    $redis->remove($cache_key);
-
                 $all_hotelids = getVsmallHotelList();
                 if(in_array($hotel_info[0]['hotel_id'],$all_hotelids)){
                     sendTopicMessage($hotel_info[0]['hotel_id'],4);
                 }
-
 				$this->output('更新成功!', 'device/tv');
 			}else{
 				 $this->output('更新失败!', 'device/doAddTv');
@@ -269,7 +251,6 @@ class DeviceController extends BaseController{
 			}	
 		}		
 	}
-
 
 	/**
 	 * 保存或者更新机顶盒
@@ -300,7 +281,6 @@ class DeviceController extends BaseController{
 		$save['fault_desc'] = I('post.fault_desc','','trim');
 		$save['is_open_popcomment'] = I('post.is_open_popcomment',0,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
-		
 		if($tpmedia_id_arr){
 		    foreach($tpmedia_id_arr as $v){
 		        $tpmedia_id_str .=$space . $v;
@@ -328,7 +308,6 @@ class DeviceController extends BaseController{
 		            $this->error($str);
 		        }
 		    }
-		    
 		}
         $redis = SavorRedis::getInstance();
 		//广告机只考虑是否被删除
@@ -426,4 +405,82 @@ class DeviceController extends BaseController{
 			}	
 		}		
 	}
+
+	public function tvvideo(){
+        $page = I('pageNum',1);
+        $size  = I('numPerPage',50);//显示每页记录数
+        $hotel_id = I('hotel_id',0,'intval');
+        $keyword = I('keyword','','trim');
+
+        $where = array('hotel_id'=>$hotel_id);
+        if($keyword){
+            $where['name'] = array('LIKE',"%$keyword%");
+        }
+        $start = ($page-1) * $size;
+        $m_tvvideo = new \Admin\Model\TvswitchVideoModel();
+        $result = $m_tvvideo->getDataList('*',$where,'id desc',$start,$size);
+        foreach ($result['list'] as $k=>$v){
+            if($v['status']==1){
+                $status_str = '正常';
+            }else{
+                $status_str = '禁用';
+            }
+            $result['list'][$k]['status_str'] = $status_str;
+        }
+
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$page);
+        $this->assign('keyword',$keyword);
+        $this->assign('hotel_id',$hotel_id);
+        $this->assign('datalist', $result['list']);
+        $this->assign('page',  $result['page']);
+	    $this->display();
+    }
+
+    public function addtvvideo(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $id = I('id',0,'intval');
+        $m_tvvideo = new \Admin\Model\TvswitchVideoModel();
+        if(IS_GET){
+            if($id){
+                $vinfo = $m_tvvideo->getInfo(array('id'=>$id));
+                $hotel_id = $vinfo['hotel_id'];
+            }else{
+                $vinfo = array('status'=>1);
+            }
+            $this->assign('hotel_id',$hotel_id);
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }else{
+            $name = I('name','','trim');
+            $media_id = I('media_id',0,'intval');
+            $status = I('status',1,'intval');
+
+            $field = 'count(*) as num';
+            $where = array('hotel_id'=>$hotel_id,'status'=>1);
+            if($id){
+                $where['id'] = array('neq',$id);
+            }
+            $res_video = $m_tvvideo->getAll($field,$where,0,1,'id desc','');
+            if(!empty($res_video) && $res_video[0]['num']>=10){
+                $this->output('添加视频已达上限', 'device/addtvvideo',2,0);
+            }
+            $data = array('hotel_id'=>$hotel_id,'name'=>$name,'media_id'=>$media_id,'status'=>$status);
+            if($id){
+                $data['update_time'] = date('Y-m-d H:i:s');
+                unset($data['hotel_id']);
+                $m_tvvideo->updateData(array('id'=>$id),$data);
+            }else{
+                $m_tvvideo->add($data);
+            }
+            $this->output('操作成功!', 'device/tvvideo');
+        }
+    }
+
+    public function deltvvideo(){
+	    $id = I('get.id',0,'intval');
+        $m_tvvideo = new \Admin\Model\TvswitchVideoModel();
+        $m_tvvideo->delData(array('id'=>$id));
+        $this->output('操作成功!', 'device/tvvideo',2);
+    }
 }

@@ -1,14 +1,9 @@
 <?php
-/**
- * @desc   小程序投屏日志 
- * @author zhang.yingtao
- *
- */
 namespace Admin\Model;
 use Think\Model;
 use Common\Lib\Page;
-class SmallappForscreenRecordModel extends Model
-{
+class SmallappForscreenRecordModel extends Model{
+
 	protected $tableName='smallapp_forscreen_record';
 	
 	public function getList($fields="a.id",$where, $order='a.id desc', $start=0,$size=5){
@@ -117,4 +112,105 @@ class SmallappForscreenRecordModel extends Model
         return $result;
     }
 
+    public function cleanTestdata(){
+        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+        $orderby = 'id desc';
+        $res_list = $m_invalid->getDataList('*','',$orderby);
+        $all_invalidlist = array();
+        foreach ($res_list as $v){
+            $all_invalidlist[$v['type']][] = $v['invalidid'];
+        }
+        $hotel_ids = $all_invalidlist[1];
+        $fields = "box.mac as box_mac";
+        $where = array();
+        $where['hotel.id'] = array('in',$hotel_ids);
+
+        $m_box = new \Admin\Model\BoxModel();
+        $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
+        $boxs = array();
+        foreach ($hotel_boxs as $v){
+            $boxs[]=$v['box_mac'];
+        }
+
+        if(isset($all_invalidlist[3]) && !empty($all_invalidlist[3])){
+            $boxs = array_merge($boxs,$all_invalidlist[3]);
+            $boxs = array_unique($boxs);
+        }
+
+        $condition = array();
+        $condition['a.box_mac'] = array('in',$boxs);
+        $condition['a.mobile_brand'] = array('neq','devtools');
+        $res_boxdata = $this->getWhere('a.*',$condition,'','');
+        $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+
+        foreach ($res_boxdata as $v){
+            $v['forscreen_record_id'] = $v['id'];
+            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
+            $m_smallapp_forscreen_invalidrecord->addData($v);
+        }
+        $delcondition = array('box_mac'=>array('in',$boxs));
+        $delcondition['mobile_brand'] = array('neq','devtools');
+        $this->where($delcondition)->delete();
+
+        if(isset($all_invalidlist[2])){
+            $condition = array('a.openid'=>array('in',$all_invalidlist[2]));
+            $condition['a.mobile_brand'] = array('neq','devtools');
+            $res_userdata = $this->getWhere('a.*',$condition,'','');
+            foreach ($res_userdata as $v){
+                $v['forscreen_record_id'] = $v['id'];
+                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
+                $m_smallapp_forscreen_invalidrecord->addData($v);
+            }
+            $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
+            $delcondition['mobile_brand'] = array('neq','devtools');
+            $this->where($delcondition)->delete();
+        }
+        return true;
+    }
+    /*
+     * $time 时间戳
+     * $fj_type 0全部饭局 1午饭 2晚饭
+     */
+    public function getFeastBoxByHotelId($hotel_id,$time,$fj_type=0,$small_id=1){
+        $feast_time = C('FEAST_TIME');
+        $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
+        $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
+        $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
+        $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:00",$time);
+
+        $where = array('hotel.id'=>$hotel_id);
+        $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
+        $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
+        switch ($fj_type){
+            case 0:
+                $where['_complex'] = array(
+                    $where_lunch,
+                    $where_dinner,
+                    '_logic' => 'or'
+                );
+                break;
+            case 1:
+                $where['a.create_time'] = $where_lunch['a.create_time'];
+                break;
+            case 2:
+                $where['a.create_time'] = $where_dinner['a.create_time'];
+                break;
+        }
+        $where['a.is_valid'] = 1;
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        if($small_id==1){
+            $where['a.small_app_id'] = array('in',array(1,2));
+        }elseif($small_id==5){
+            $where['a.small_app_id'] = 5;
+        }else{
+            $where['a.small_app_id'] = array('in',array(1,2));
+        }
+
+        $fields = 'a.box_mac';
+        $groupby = 'a.box_mac';
+        $result = $this->getWhere($fields,$where,'',$groupby);
+        return $result;
+    }
 }

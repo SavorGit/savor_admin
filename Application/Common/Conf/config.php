@@ -791,13 +791,30 @@ $config['WELCOME_STATUS'] = array(
 $config['TAGS_CATEGORY'] = array(
     '1'=>'评论',
     '2'=>'下单备注',
+    '3'=>'菜品评论',
 );
 
 $config['SAMPLE_HOTEL'] = array(
     236=>array(632,1064,955,427,1043,1039,1085,1077,
-        418,1097,1023,981,1038,962,1050
-        ),
+        418,1097,1023,981,1038,962,1050,1046,1051,1037,1044,
+        714,404,925,530,395,945,421,861,1114,1091,719,
+        964,717,713,1052,420,912,
+        1090,419,898,428,1042,
+        1033,1056,1048,414,
+    ),
 );
+
+$config['COLLECT_FORSCREEN_OPENIDS'] = array('ofYZG4zmrApmvRSfzeA_mN-pHv2E'=>'郑伟','ofYZG42whtWOvSELbvxvnXHbzty8'=>'黄勇',
+    'ofYZG49N0yz-cCTTgfPPEoL1F7l4'=>'鲍强强','ofYZG4xt_03ADzTTtf4QIrA1lt_c'=>'甘顺山','ofYZG43prBncpYjkYq-XaIWRlj6o'=>'吴琳',
+    'ofYZG4-TBnXlWMTGx6afsUrjzXgk'=>'李智','ofYZG4zXTCn52wUjHPeOoNZHFKwo'=>'毕超','ofYZG4ySsM6GN8bF9bw6iWlS9a44'=>'渠道1');
+
+
+$config['ACTIVITY_KINGMEAL'] = array(
+    18=>array(
+        array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'18:00','end_time'=>'18:50','lottery_time'=>'19:00','dish_img'=>'lottery/activity/zzhx.png'),
+    ),
+);
+
 return $config;
 
 

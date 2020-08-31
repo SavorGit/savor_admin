@@ -1,8 +1,8 @@
 <?php
 
 namespace Admin\Model\Smallapp;
-use Think\Model;
-class StaticHoteldataModel extends Model{
+use Admin\Model\BaseModel;
+class StaticHoteldataModel extends BaseModel{
 
 	protected $tableName='smallapp_static_hoteldata';
 
@@ -94,11 +94,8 @@ class StaticHoteldataModel extends Model{
                     $zxrate = sprintf("%.2f",$zxnum/$wlnum);
                 }
                 //互动饭局数
-                $fj_where = $static_where;
-                $fj_where['s.all_interact_nums'] = array('GT',0);
-                $fields = "count(DISTINCT s.box_mac) as feastnum";
-                $ret_fj = $m_statistics->getOnlinnum($fields, $fj_where);
-                $fjnum = intval($ret_fj[0]['feastnum']);
+                $fj_box = $m_smallapp_forscreen_record->getFeastBoxByHotelId($hotel_id,$time_date);
+                $fjnum = count($fj_box);
                 $fjrate = 0;
                 if($fjnum){
                     $fjrate = sprintf("%.2f",$fjnum/$wlnum);
@@ -106,17 +103,17 @@ class StaticHoteldataModel extends Model{
                 //扫码数
                 $fields = "count(a.id) as num";
                 $qrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-                $qrcode_where['a.type'] = array('in',array(8,13));
+                $qrcode_where['a.type'] = array('in',array(8,12,13,16,29,30));
                 $qrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
                 $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where);
                 $scancode_num = intval($res_qrcode[0]['num']);
 
                 //互动总数
-                $interact_standard_num = $interact_mini_num = $interact_sale_num = 0;
+                $interact_standard_num = $interact_mini_num = $interact_sale_num = $interact_game_num = 0;
                 $forscreen_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0,'a.is_valid'=>1);
                 $forscreen_where['a.mobile_brand'] = array('neq','devtools');
                 $forscreen_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
-                $forscreen_where['a.small_app_id'] = array('in',array(1,2,5));//1普通版,2极简版,5销售端
+                $forscreen_where['a.small_app_id'] = array('in',array(1,2,5,11));//小程序ID 1普通版,2极简版,5销售端,11 h5互动游戏
                 $fields = "count(a.id) as fnum,a.small_app_id";
                 $res_forscreen = $m_smallapp_forscreen_record->getWhere($fields,$forscreen_where,'','a.small_app_id');
                 foreach ($res_forscreen as $fv){
@@ -130,16 +127,19 @@ class StaticHoteldataModel extends Model{
                         case 5:
                             $interact_sale_num = $fv['fnum'];
                             break;
+                        case 11:
+                            $interact_game_num = $fv['fnum'];
+                            break;
                     }
                 }
-                $interact_num = $interact_standard_num+$interact_mini_num+$interact_sale_num;
+                $interact_num = $interact_standard_num+$interact_mini_num+$interact_sale_num+$interact_game_num;
                 $add_data = array('area_id'=>$hv['area_id'],'area_name'=>$hv['area_name'],'hotel_id'=>$hv['hotel_id'],'hotel_name'=>$hv['hotel_name'],
                     'hotel_box_type'=>$hv['hotel_box_type'],'hotel_level'=>$hv['hotel_level'],'trainer_id'=>$hv['trainer_id'],'train_date'=>$hv['train_date'],
                     'maintainer_id'=>$hv['maintainer_id'],'tech_maintainer'=>$hv['tech_maintainer'],'box_num'=>$box_num,'faultbox_num'=>$faultbox_num,
                     'normalbox_num'=>$normalbox_num,'fault_rate'=>$fault_rate,'wlnum'=>$wlnum,'fault_wlnum'=>$fault_wlnum,'lunch_zxnum'=>$lunch_zxnum,
                     'dinner_zxnum'=>$dinner_zxnum,'zxnum'=>$zxnum,'lunch_rate'=>$lunch_rate,'dinner_rate'=>$dinner_rate,'zxrate'=>$zxrate,'fjnum'=>$fjnum,
                     'fjrate'=>$fjrate,'scancode_num'=>$scancode_num,'interact_num'=>$interact_num,'interact_standard_num'=>$interact_standard_num,
-                    'interact_mini_num'=>$interact_mini_num,'interact_sale_num'=>$interact_sale_num,'date'=>$static_date
+                    'interact_mini_num'=>$interact_mini_num,'interact_sale_num'=>$interact_sale_num,'interact_game_num'=>$interact_game_num,'date'=>$static_date
                     );
                 if($hv['trainer_id']){
                     $res_user = $m_sysuser->getUserInfo($hv['trainer_id']);

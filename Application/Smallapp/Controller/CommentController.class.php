@@ -38,7 +38,7 @@ class CommentController extends BaseController {
         }
         $start  = ($page-1) * $size;
         $m_comment  = new \Admin\Model\Smallapp\CommentModel();
-        $fields = 'a.staff_id,a.id,a.user_id,a.score,a.content,a.status,user.nickName as staff_name,user.avatarUrl as staff_url,
+        $fields = 'a.staff_id,a.id,a.user_id,a.score,a.content,a.status,a.add_time,user.nickName as staff_name,user.avatarUrl as staff_url,
         staff.hotel_id,staff.room_id,hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_comment->getCommentList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];

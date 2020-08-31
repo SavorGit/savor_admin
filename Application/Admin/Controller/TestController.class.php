@@ -323,6 +323,7 @@ class TestController extends Controller {
             $hotel_info = array();
             $hotel_ext_info = array();
             $hotel_id = $v['id'];
+            /*
             $hotel_info['name']      = $v['name'];
             $hotel_info['addr']      = $v['addr'];
             $hotel_info['area_id']   = $v['area_id'];
@@ -352,6 +353,8 @@ class TestController extends Controller {
             $hotel_info['bank_account'] = $v['bank_account'];
             $hotel_info['bank_name'] = $v['bank_name'];
             $hotel_info['is_4g']     = $v['is_4g'];
+            */
+            $hotel_info = $v;
             $hotel_cache_key = C('DB_PREFIX').'hotel_'.$hotel_id;
             $redis->set($hotel_cache_key, json_encode($hotel_info));
 
@@ -371,14 +374,13 @@ class TestController extends Controller {
             $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
             $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); */
         }
-        $sql ="select * from savor_hotel_ext 
-        
-               ";
+        $sql ="select * from savor_hotel_ext";
         $data = M()->query($sql);
         $data = array();
         foreach ($data as $key=>$v){
              $hotel_id = $v['hotel_id'];
              $hotel_ext_info = array();
+             /*
              $hotel_ext_info['mac_addr'] = $v['mac_addr'];
              $hotel_ext_info['ip_local'] = $v['ip_local'];
              $hotel_ext_info['ip']       = $v['ip'];
@@ -395,7 +397,9 @@ class TestController extends Controller {
              $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
              $hotel_ext_info['activity_contact']     = $v['activity_contact'];
              $hotel_ext_info['activity_phone']       = $v['activity_phone'];
+             */
              $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
+             $hotel_ext_info = $v;
              $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
         }
 
@@ -436,6 +440,7 @@ class TestController extends Controller {
 
             $box_info = array();
             $box_id = $v['id'];
+            /*
             $box_info['id']      = $v['id'];
             $box_info['room_id'] = $v['room_id'];
             $box_info['name']    = $v['name'];
@@ -460,6 +465,8 @@ class TestController extends Controller {
             $box_info['is_open_simple'] = $v['is_open_simple'];
             $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
             $box_info['is_open_signin'] = $v['is_open_signin'];
+            */
+            $box_info = $v;
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
             $flag++;
@@ -468,13 +475,14 @@ class TestController extends Controller {
     }
 
     public function forscreenboxcache(){
+        exit;
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.box_type in(6,7) and box.wifi_name!=''";
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN('40E79325362D','40E793253454','40E79325351F','40E79325348E','40E79325357A','40E793253664','40E793253450','40E793253490','40E793253557','40E79325343E','40E793253573','40E7932534BA','40E79325344D','40E793253600','40E79325354B','40E79325375E','40E79325343C','40E793253442','40E793253586','40E793253413','40E7932534DA','40E7932534C6','40E79325370D','40E793253440','40E793253555','40E7932534B7','40E79325349B','40E7932534CD','40E7932534C1','40E793253483','40E79325347D','40E793253477','40E7932534D0','40E7932535B6','40E79325365B','40E79325344E','40E79325348A','40E793253604','40E7932534A8','40E7932535B5','40E793253441','40E793253603','40E793253689','40E793253606','40E79325348D','40E793253448','40E793253648','40E793253471','40E7932534D8','40E793253479','40E793253556','40E7932534B6','40E793253486','40E793253594','40E7932535D4','40E7932534B8','40E793253426','40E793253569','40E793253481','40E7932535A9','40E7932535D8','40E79325374D','40E793253658','40E793253742','40E79325347A','40E79325374C','40E793253747','40E79325374A','40E7932536E3','40E7932536F9','40E79325368C','40E793253453','40E793253711','40E793253704','40E7932534F8','40E793253681','40E793253692','40E7932534E7','40E7932534A1','40E793253545','40E79325360A','40E793253439','40E793253412','40E79325376E','40E793253408','40E7932535FA','40E793253707','40E793253663','40E79325371D','40E793253526','40E79325376B','40E79325372E','40E7932536CF','40E7932536CB','40E793253769','40E79325364C','40E7932534D4','40E7932534E5','40E793253767','40E793253432','40E793253734','40E793253492','40E7932534D2','40E79325376A','40E79325360C','40E793253751','40E7932536CE','40E79325374F','40E79325365D','40E79325373A','40E79325371B','40E79325356D','40E7932535D0','40E793253686','40E7932534E1','40E79325350F','40E793253517','40E793253720','40E7932534B3','40E79325350B','40E793253593','40E793253553','40E7932535A1','40E793253458','40E79325345E','40E793253682','40E793253667','40E793253519','40E793253466','40E793253722','40E7932536D2','40E7932535A3','40E793253498','40E793253645','40E7932536C0','40E7932535BA','40E79325359C','40E7932536EE','40E7932535CD','40E793253616','40E793253598','40E793253693','40E793253659','40E79325372C','40E79325366A','40E79325373E','40E7932536FB','40E793253743','40E793253701','40E793253621','40E793253735','40E79325366E','40E793253730','40E7932536F7','40E793253646','40E793253731','40E793253647','40E793253705','40E793253670','40E793253629','40E793253685','40E793253497','40E793253716','40E79325375A','40E79325370E','40E793253669','40E793253675','40E7932536D3','40E7932536E7','40E7932536C9','40E7932536FC','40E79325366C','40E79325347B','40E7932536E4','40E793253650','40E7932536E8','40E793253687','40E7932535D1','40E7932536E5','40E793253662','40E79325365A','40E7932536F6','40E7932534F0','40E79325372D','40E79325362E','40E7932534C5','40E793253688','40E79325374B','40E79325344A','40E793253570','40E7932534DF','40E793253478','40E7932534E2','40E793253444','40E793253572','40E793253504','40E793253597','40E79325358A','40E7932534D6','40E793253745','40E7932535DB','40E793253746','40E793253465','40E7932535F7','40E793253451','40E79325356B','40E79325346B','40E793253580','40E7932535B4','40E7932535D2','40E793253568','40E793253732','40E7932535B0','40E7932534B0','40E7932534C4','40E7932535B1','40E79325367C','40E793253521','40E7932538B7','40E79325346A','40E7932536A1','40E7932534DC','40E793253757','40E79325371E','40E7932535D3','40E793253489','40E7932536FA','40E79325349C','40E79325375C','40E79325342A','40E793253434','40E7932535A5','40E79325350A','40E793253630','40E7932535BE','40E7932534C7','40E79325343B','40E793253480','40E793253596','40E7932534EE','40E79325340A','40E793253549','40E7932534EA','40E7932534B2','40E79325348B','40E7932534F4','40E793253409','40E7932535ED','40E793253430','40E7932533F3','40E7932535CE','40E7932535BC','40E7932535C9','40E7932536A7','40E79325356F','40E793253764','40E793253484','40E793253765','40E793253493','40E7932536B8','40E793253744','40E793253694','40E7932536AA','40E793253652','40E793253750','40E7932536B9','40E7932535C6','40E7932535E5','40E79325371A','40E793253585','40E7932535FF','40E793253763','40E7932535E4','40E793253636','40E79325366F','40E793253462','40E79325360D','40E7932536EA','40E7932536A9','40E793253627','40E7932535E0','40E79325369C','40E7932536C6','40E793253613','40E7932535CF','40E7932535E6','40E7932535C1','40E7932536AD','40E793253635','40E79325363F','40E793253634','40E79325362B','40E7932535F6','40E7932536D9','40E7932535BB','40E7932536BA','40E793253589','40E7932534F3','40E793253665','40E7932535E7','40E7932535C2','40E79325376F','40E7932535BD','40E793253487','40E7932535CB','40E7932534C8','40E793253733','40E7932535CC')";
@@ -487,17 +495,19 @@ class TestController extends Controller {
 //            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
 //                $v['is_open_simple'] = 0;
 //            }
-//            $v['is_sapp_forscreen'] = 1;
-//            $v['is_open_simple'] = 0;
-//
-//
-//            $is_open_simple = $v['is_open_simple'];
-//            $is_sapp_forscreen = $v['is_sapp_forscreen'];
-//            $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
-//            M()->execute($sql);
+            if(!empty($v['wifi_name'])){
+                $v['is_sapp_forscreen'] = 1;
+                $v['is_open_simple'] = 1;
+                $is_open_simple = $v['is_open_simple'];
+                $is_sapp_forscreen = $v['is_sapp_forscreen'];
+                $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+                M()->execute($sql);
+            }
+
 
             $box_info = array();
             $box_id = $v['id'];
+            /*
             $box_info['id']      = $v['id'];
             $box_info['room_id'] = $v['room_id'];
             $box_info['name']    = $v['name'];
@@ -522,6 +532,8 @@ class TestController extends Controller {
             $box_info['is_open_simple'] = $v['is_open_simple'];
             $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
             $box_info['is_open_signin'] = $v['is_open_signin'];
+            */
+            $box_info = $v;
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
 
@@ -1955,4 +1967,81 @@ group by openid";
         print_r($hotel_repeat_task);
     }
 
+    public function forscreenhelpvideo(){
+        $now_box_mac = I('mac','','trim');
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+        if(!empty($res_box['result'])){
+            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>'media/resource/h8YcE7debZ.mp4','filename'=>"h8YcE7debZ.mp4");
+            $message = json_encode($netty_data);
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if($box_mac==$now_box_mac){
+                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                            $req_id  = getMillisecond();
+                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                            $post_data = http_build_query($box_params);
+                            $ret = $m_netty->curlPost($push_url,$post_data);
+                            $res_push = json_decode($ret,true);
+                            if($res_push['code']==10000){
+                                echo "box_mac:$box_mac push ok \r\n";
+                            }else{
+                                echo "box_mac:$box_mac push error $ret  \r\n";
+                            }
+                            break;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    public function cachehotelassess(){
+        $file_path = SITE_TP_PATH.'/Public/content/广州考核酒楼.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $other_hotel = array();
+        $hotel_info = array();
+        $redis = new \Common\Lib\SavorRedis();
+        $m_hotel = new \Admin\Model\HotelModel();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $res_hotel = $m_hotel->getInfo('*',array('name'=>$rowData[0][0],'state'=>1,'flag'=>0),'id desc','0,1');
+                if(!empty($res_hotel)){
+                    $hotel_info[$res_hotel[0]['id']] = array('hotel_id'=>$res_hotel[0]['id'],'hotel_box_type'=>$res_hotel[0]['hotel_box_type'],
+                        'hotel_name'=>$rowData[0][0],
+                        'area_id'=>236,'area_name'=>$rowData[0][1],'hotel_level'=>$rowData[0][5],'team_name'=>$rowData[0][4],'maintainer'=>$rowData[0][6]);
+                }else{
+                    $other_hotel[]=$rowData[0][0];
+                }
+            }
+        }
+        $redis->select(1);
+        $key = 'smallapp:hotelassess';
+        $redis->set($key,json_encode($hotel_info));
+        echo count($hotel_info);
+        exit;
+    }
 }
