@@ -30,6 +30,7 @@ class SmallappForscreenRecordModel extends Model
 	                  ->join('savor_area_info area on hotel.area_id=area.id','left')
 	                  ->join('savor_smallapp_user user on a.openid=user.openid','left')
 	                  ->where($where)->count();
+	    
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();
 	    $data = array('list'=>$list,'page'=>$show);

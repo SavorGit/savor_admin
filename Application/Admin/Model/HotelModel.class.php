@@ -1,6 +1,6 @@
 <?php
 /**
- *酒店model
+ *閰掑簵model
  *@author  hongwei <[<email address>]>
  * 
  */
@@ -76,8 +76,7 @@ class HotelModel extends BaseModel{
 
 
 	/**
-	 * 酒店ID转换为酒店名称
-	 * @param  array  $result [description]
+	 * 閰掑簵ID杞崲涓洪厭搴楀悕绉�	 * @param  array  $result [description]
 	 * @return [type]         [description]
 	 */
 	public function hotelIdToName($result=[]){
