@@ -310,6 +310,8 @@ $config['all_forscreen_actions'] = array(
     '40'=>'投销售端商品',
     '41'=>'投屏欢迎词',
     '50'=>'助力好友',
+    '51'=>'扫码抢霸王餐',
+    '52'=>'评论',
     '101'=>'h5互动游戏',
     '120'=>'发红包',
     '121'=>'扫码抢红包'
@@ -800,21 +802,22 @@ $config['SAMPLE_HOTEL'] = array(
         714,404,925,530,395,945,421,861,1114,1091,719,
         964,717,713,1052,420,912,
         1090,419,898,428,1042,
-        1033,1056,1048,414,
+        1033,1056,1048
     ),
 );
 
 $config['COLLECT_FORSCREEN_OPENIDS'] = array('ofYZG4zmrApmvRSfzeA_mN-pHv2E'=>'郑伟','ofYZG42whtWOvSELbvxvnXHbzty8'=>'黄勇',
     'ofYZG49N0yz-cCTTgfPPEoL1F7l4'=>'鲍强强','ofYZG4xt_03ADzTTtf4QIrA1lt_c'=>'甘顺山','ofYZG43prBncpYjkYq-XaIWRlj6o'=>'吴琳',
-    'ofYZG4-TBnXlWMTGx6afsUrjzXgk'=>'李智','ofYZG4zXTCn52wUjHPeOoNZHFKwo'=>'毕超','ofYZG4ySsM6GN8bF9bw6iWlS9a44'=>'渠道1');
+    'ofYZG4-TBnXlWMTGx6afsUrjzXgk'=>'李智','ofYZG4zXTCn52wUjHPeOoNZHFKwo'=>'毕超','ofYZG4ySsM6GN8bF9bw6iWlS9a44'=>'王习宗',
+    'ofYZG4-geGG-WO3drWsAZetCghSc'=>'何永锐','ofYZG43zZMAYXbuOiQxIqGfz25aM'=>'玉洁','ofYZG43DyszPj-qwvP5ZutMCGC_c'=>'欧懿'
+    );
 
 
 $config['ACTIVITY_KINGMEAL'] = array(
-    18=>array(
-        array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'18:00','end_time'=>'18:50','lottery_time'=>'19:00','dish_img'=>'lottery/activity/zzhx.png'),
+    2020083118=>array(
+        array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'2020-08-31 18:25:00','end_time'=>'2020-08-31 18:30:00',
+            'lottery_time'=>'2020-08-31 18:35:00','dish_img'=>'lottery/activity/zzhx.jpg'),
     ),
 );
 
 return $config;
-
-
