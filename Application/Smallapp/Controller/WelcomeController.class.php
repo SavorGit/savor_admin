@@ -167,10 +167,10 @@ class WelcomeController extends BaseController {
 
         $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
         $where = array();
+        unset($this->welcome_resource_type[4]);
         if($type){
             $where['type'] = $type;
         }else{
-            unset($this->welcome_resource_type[4]);
             $where['type'] = array('in',array_keys($this->welcome_resource_type));
         }
         $start = ($pageNum-1)*$size;
