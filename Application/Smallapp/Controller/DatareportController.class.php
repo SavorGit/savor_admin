@@ -334,6 +334,7 @@ class DatareportController extends BaseController {
 //        avg(fault_rate) as fault_rate,avg(operation_assess) as operation_assess,avg(zxrate) as zxrate,avg(channel_assess) as channel_assess,
 //        avg(fjrate) as fjrate,avg(data_assess) as data_assess';
 //        $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
+
         $fields = '*';
         $groupby = 'hotel_id';
         $order = 'hotel_level asc';
@@ -343,8 +344,30 @@ class DatareportController extends BaseController {
         foreach ($datalist as $k=>$v){
             $datalist[$k]['team'] = $tmember[$v['team_name']];
         }
+
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate,avg(fjrate) as fjrate,avg(fjsalerate) as fjsalerate,hotel_level';
+        $avg_where = array('date'=>array('in',$all_dates));
+        if($hotel_team){
+            $avg_where['team_name'] = array('in',$teams[$hotel_team]);
+        }
+        $res_avgdata = $m_staticassess->getData($fields,$avg_where,'hotel_level','');
+        $avg_data = array();
+        foreach ($res_avgdata as $v){
+            $fault_rate = sprintf("%.2f",$v['fault_rate']);
+            $fault_rate = $fault_rate*100;
+            $zxrate = sprintf("%.2f",$v['zxrate']);
+            $zxrate = $zxrate*100;
+            $fjrate = sprintf("%.2f",$v['fjrate']);
+            $fjrate = $fjrate*100;
+            $fjsalerate = sprintf("%.2f",$v['fjsalerate']);
+            $fjsalerate = $fjsalerate*100;
+
+            $avg_data[]=array('hotel_level'=>$v['hotel_level'],'fault_rate'=>$fault_rate.'%','zxrate'=>$zxrate.'%','fjrate'=>$fjrate.'%','fjsalerate'=>$fjsalerate.'%');
+        }
+
         $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
         $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
+        $this->assign('avg_data',$avg_data);
         $this->assign('level',$hotel_level);
         $this->assign('all_assess',$all_assess);
         $this->assign('operation_assess',$operation_assess);

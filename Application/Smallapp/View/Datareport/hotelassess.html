@@ -105,9 +105,8 @@
             </div>
           </div>
 
-
           <div class="form-group">
-            <div class="input-group input-group-sm pull-right">
+            <div class="input-group input-group-sm">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
             </span>
@@ -115,12 +114,35 @@
           </div>
 
         </div>
+        <div class="form-inline">
+          <!--<span class="text-danger">{$avg_info}</span>-->
+          <table border="1">
+            <tr>
+              <th>级别</th>
+              <th>平均故障率</th>
+              <th>平均在线率</th>
+              <th>平均饭局转化率</th>
+              <th>平均销售端饭局转化率</th>
+            </tr>
+            <volist name="avg_data" id="ainfo">
+            <tr>
+              <td>{$ainfo.hotel_level}</td>
+              <td>{$ainfo.fault_rate}</td>
+              <td>{$ainfo.zxrate}</td>
+              <td>{$ainfo.fjrate}</td>
+              <td>{$ainfo.fjsalerate}</td>
+            </tr>
+            </volist>
+          </table>
+
+
+        </div>
 
       </div>
     </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+<div class="pageContent" id="pagecontent" style="margin-top:85px;">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
