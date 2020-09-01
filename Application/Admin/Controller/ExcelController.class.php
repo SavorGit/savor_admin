@@ -5080,11 +5080,11 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 left join savor_area_info area on hotel.area_id= area.id
                 left join savor_hotel_ext ext on hotel.id = ext.hotel_id
 			    left join savor_sysuser user on user.id= ext.maintainer_id
-                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(9)";
+                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
         
         $box_list = M()->query($sql);
-        $start_time = '20200720';
-        $end_time   = '20200729';
+        $start_time = '20200822';
+        $end_time   = '20200831';
         
         
         $data = [];
@@ -5099,7 +5099,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             
             
         }
-        $xlsName = '上海网络机顶盒连续10天失联';
+        $xlsName = '深圳网络机顶盒连续10天失联';
         $filename = 'exportSl14BoxList';
         
         $xlsCell = array(
@@ -5114,11 +5114,11 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $xlsName = '失联超过10天的版位信息';
         $filename = 'user_wifi_forscreen_detail';
         //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
-        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202007/';
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202008/';
         if (!is_dir($path)){
             mkdir($path,0777,true);
         }
-        $path  .= date('Ymd').'上海失联10天.xls';
+        $path  .= date('Ymd').'深圳失联10天.xls';
       
         $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
        
