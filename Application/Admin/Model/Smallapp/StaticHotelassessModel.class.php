@@ -6,6 +6,15 @@ use Common\Lib\Page;
 class StaticHotelassessModel extends BaseModel{
 	protected $tableName='smallapp_static_hotelassess';
 
+    public function getData($fields="*",$where,$groupby='',$order='level asc'){
+        $data = $this->field($fields)
+            ->where($where)
+            ->group($groupby)
+            ->order($order)
+            ->select();
+        return $data;
+    }
+
     public function getCustomeList($fields="*",$where,$groupby='',$order='level asc',$countfields='',$start=0,$size=5){
         $list = $this->field($fields)
             ->where($where)
@@ -40,8 +49,6 @@ class StaticHotelassessModel extends BaseModel{
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
-        $start = '2020-08-26';
-        $end = '2020-08-26';
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();
         $m_statichoteldata = new \Admin\Model\Smallapp\StaticHoteldataModel();
