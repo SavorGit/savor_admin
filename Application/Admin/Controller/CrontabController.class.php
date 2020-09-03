@@ -4392,6 +4392,37 @@ class CrontabController extends Controller
         echo "hotelassess end:$now_time \r\n";
     }
 
+    public function pushdishactivity(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushdishactivity start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushBoxDishActivity();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushdishactivity end:$now_time \r\n";
+    }
+
+    public function pushdishlottery(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushdishlottery start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushBoxDishLottery();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushdishlottery end:$now_time \r\n";
+    }
+
+    public function pushlotterytowx(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushlotterytowx start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushLotteryToWeixin();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushlotterytowx end:$now_time \r\n";
+    }
+
+
 
 
 
