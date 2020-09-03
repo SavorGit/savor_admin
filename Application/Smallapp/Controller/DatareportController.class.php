@@ -334,9 +334,8 @@ class DatareportController extends BaseController {
 //        avg(fault_rate) as fault_rate,avg(operation_assess) as operation_assess,avg(zxrate) as zxrate,avg(channel_assess) as channel_assess,
 //        avg(fjrate) as fjrate,avg(data_assess) as data_assess';
 //        $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
-
         $fields = '*';
-        $groupby = 'hotel_id';
+        $groupby = '';
         $order = 'hotel_level asc';
         $countfields = 'count(id) as tp_count';
         $result = $m_staticassess->getCustomeList($fields,$where,$groupby,$order,$countfields,$start,$size);
@@ -344,7 +343,6 @@ class DatareportController extends BaseController {
         foreach ($datalist as $k=>$v){
             $datalist[$k]['team'] = $tmember[$v['team_name']];
         }
-
         $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate,avg(fjrate) as fjrate,avg(fjsalerate) as fjsalerate,hotel_level';
         $avg_where = array('date'=>array('in',$all_dates));
         if($hotel_team){
