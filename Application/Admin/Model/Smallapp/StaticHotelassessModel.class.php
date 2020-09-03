@@ -33,11 +33,10 @@ class StaticHotelassessModel extends BaseModel{
 
 	public function handle_hotelassess(){
         $config = array(
-            'A'=>array('fault_rate'=>0.2,'zxrate'=>0.7,'fjrate'=>0.15,'fjsalerate'=>0.8),
-            'B'=>array('fault_rate'=>0.3,'zxrate'=>0.6,'fjrate'=>0.08,'fjsalerate'=>0.6),
-            'C'=>array('fault_rate'=>0.4,'zxrate'=>0.5,'fjrate'=>0.03,'fjsalerate'=>0.5),
+            'A'=>array('fault_rate'=>0.1,'zxrate'=>0.7,'fjrate'=>0.08,'fjsalerate'=>0.2),
+            'B'=>array('fault_rate'=>0.3,'zxrate'=>0.5,'fjrate'=>0.05,'fjsalerate'=>0.1),
+            'C'=>array('fault_rate'=>0.2,'zxrate'=>0.4,'fjrate'=>0.03,'fjsalerate'=>0.05),
         );
-
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(1);
         $key = 'smallapp:hotelassess';
@@ -49,6 +48,10 @@ class StaticHotelassessModel extends BaseModel{
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
+
+//        $start = '2020-08-24';
+//        $end = '2020-09-01';
+
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();
         $m_statichoteldata = new \Admin\Model\Smallapp\StaticHoteldataModel();
