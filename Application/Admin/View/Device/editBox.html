@@ -264,6 +264,19 @@
 
           </select>
         </div>
+      </div>  
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          是否开启服务员打赏:
+        </label>
+
+        <div class="col-xs-12 col-sm-10">
+          <select name="is_open_reward" class="form-control bs-select">
+            <option value="1" <if condition="$vinfo.is_open_reward eq 1 "> selected </if> >是</option>
+            <option value="0" <if condition="$vinfo.is_open_reward eq 0 "> selected </if>  >否</option>
+
+          </select>
+        </div>
       </div>      
     </div>
 

@@ -280,6 +280,7 @@ class DeviceController extends BaseController{
 		$save['fault_status'] = I('post.fault_status',1,'intval');
 		$save['fault_desc'] = I('post.fault_desc','','trim');
 		$save['is_open_popcomment'] = I('post.is_open_popcomment',0,'intval');
+		$save['is_open_reward'] = I('post.is_open_reward',1,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		if($tpmedia_id_arr){
 		    foreach($tpmedia_id_arr as $v){
