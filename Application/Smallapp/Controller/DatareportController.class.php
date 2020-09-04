@@ -287,6 +287,7 @@ class DatareportController extends BaseController {
         $channel_assess = I('channel_assess',0,'intval');
         $data_assess = I('data_assess',0,'intval');
         $saledata_assess = I('saledata_assess',0,'intval');
+        $is_train = I('is_train',99,'intval');
 
         if(empty($start_time)){
             $start_time = date('Ymd',strtotime('-1 day'));
@@ -300,15 +301,10 @@ class DatareportController extends BaseController {
         }
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $all_dates = $m_statistics->getDates($start_time,$end_time,2);
-        $where = array('date'=>array('in',$all_dates));
+        $where = array('a.date'=>array('in',$all_dates));
         if($hotel_level){
-            $where['hotel_level'] = $hotel_level;
+            $where['a.hotel_level'] = $hotel_level;
         }
-        if($all_assess)         $where['all_assess'] = $all_assess;
-        if($operation_assess)   $where['operation_assess'] = $operation_assess;
-        if($channel_assess)     $where['channel_assess'] = $channel_assess;
-        if($data_assess)        $where['data_assess'] = $data_assess;
-        if($saledata_assess)    $where['saledata_assess'] = $saledata_assess;
         $teams = array(
             'Oiyoboy'=>array('吴琳','朱宇杰','欧懿'),
             '勇者队'=>array('曾峰','陈远程','甘顺山'),
@@ -326,22 +322,87 @@ class DatareportController extends BaseController {
             }
         }
         if($hotel_team){
-            $where['team_name'] = array('in',$teams[$hotel_team]);
+            $where['a.team_name'] = array('in',$teams[$hotel_team]);
+        }
+        if($is_train!=99){
+            $where['ext.is_train'] = $is_train;
         }
         $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
         $start  = ($page-1) * $size;
-//        $fields = 'date,hotel_level,team_name,avg(all_assess) as all_assess,hotel_name,avg(box_num) as box_num,avg(lostbox_num) as lostbox_num,
-//        avg(fault_rate) as fault_rate,avg(operation_assess) as operation_assess,avg(zxrate) as zxrate,avg(channel_assess) as channel_assess,
-//        avg(fjrate) as fjrate,avg(data_assess) as data_assess';
-//        $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
-        $fields = '*';
-        $groupby = '';
-        $order = 'hotel_level asc';
-        $countfields = 'count(id) as tp_count';
+        $fields = 'a.hotel_id,a.hotel_name,a.hotel_level,a.team_name,ext.is_train,
+        avg(a.box_num) as box_num,avg(a.lostbox_num) as lostbox_num,avg(a.fault_rate) as fault_rate,avg(a.zxrate) as zxrate,avg(a.fjrate) as fjrate,avg(a.fjsalerate) as fjsalerate';
+        $countfields = 'count(DISTINCT(a.hotel_id)) as tp_count';
+        $groupby = 'a.hotel_id';
+        $order = 'a.hotel_level asc';
+
+        $is_all = 0;
+        if($all_assess || $operation_assess || $channel_assess || $data_assess ||$saledata_assess){
+            $is_all = 1;
+            $start = 0;
+            $size = 1000;
+        }
+        $is_all = 1;
+        $start = 0;
+        $size = 1000;
         $result = $m_staticassess->getCustomeList($fields,$where,$groupby,$order,$countfields,$start,$size);
         $datalist = $result['list'];
+        $pagestyle = $result['page'];
+        if($is_all){
+            $res_data = array();
+            foreach ($datalist as $k=>$v){
+                $assess = $m_staticassess->getHotelassessResult($v);
+                $is_del = 0;
+                if($all_assess && $assess['all_assess']!=$all_assess){
+                    $is_del = 1;
+                    unset($datalist[$k]);
+                }
+                if($operation_assess && $assess['operation_assess']!=$operation_assess){
+                    $is_del = 1;
+                    unset($datalist[$k]);
+                }
+                if($channel_assess && $assess['channel_assess']!=$channel_assess){
+                    $is_del = 1;
+                    unset($datalist[$k]);
+                }
+                if($data_assess && $assess['data_assess']!=$data_assess){
+                    $is_del = 1;
+                    unset($datalist[$k]);
+                }
+                if($saledata_assess && $assess['saledata_assess']!=$saledata_assess){
+                    $is_del = 1;
+                    unset($datalist[$k]);
+                }
+                if($is_del==0){
+                    $res_data[]=$assess;
+                }
+            }
+            $datalist = $res_data;
+            $total_count = count($datalist);
+            $objPage = new \Common\Lib\Page($total_count,$size);
+            $pagestyle = $objPage->admin_page();
+
+            $start  = ($page-1) * $size;
+            $datalist = array_slice($datalist,$start,$size);
+        }
+
+
         foreach ($datalist as $k=>$v){
             $datalist[$k]['team'] = $tmember[$v['team_name']];
+            $datalist[$k]['box_num'] = intval($v['box_num']);
+            $datalist[$k]['lostbox_num'] = intval($v['lostbox_num']);
+            $datalist[$k]['fault_rate'] = sprintf('%.2f',$v['fault_rate']);
+            $datalist[$k]['zxrate'] = sprintf('%.2f',$v['zxrate']);
+            $datalist[$k]['fjrate'] = sprintf('%.2f',$v['fjrate']);
+            $datalist[$k]['fjsalerate'] = sprintf('%.2f',$v['fjsalerate']);
+            if($v['is_train']==0){
+                $datalist[$k]['data_assess'] = 3;
+                $datalist[$k]['saledata_assess'] = 3;
+                if($v['operation_assess']==1 && $v['channel_assess']==1){
+                    $datalist[$k]['all_assess'] = 1;
+                }else{
+                    $datalist[$k]['all_assess'] = 2;
+                }
+            }
         }
         $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate,avg(fjrate) as fjrate,avg(fjsalerate) as fjsalerate,hotel_level';
         $avg_where = array('date'=>array('in',$all_dates));
@@ -367,6 +428,7 @@ class DatareportController extends BaseController {
         $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
         $this->assign('avg_data',$avg_data);
         $this->assign('level',$hotel_level);
+        $this->assign('is_train',$is_train);
         $this->assign('all_assess',$all_assess);
         $this->assign('operation_assess',$operation_assess);
         $this->assign('channel_assess',$channel_assess);
@@ -374,11 +436,67 @@ class DatareportController extends BaseController {
         $this->assign('saledata_assess',$saledata_assess);
         $this->assign('hotel_team', $hotel_team);
         $this->assign('team', $team);
-        $this->assign('datalist', $datalist);
-        $this->assign('page',  $result['page']);
+        $this->assign('datalist',$datalist);
+        $this->assign('page',$pagestyle);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
         $this->display();
+    }
+
+    public function assesschart(){
+        $hotel_id = I('hotel_id',0,'intval');
+
+
+        $begin_lastweek_time = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
+        $end_lastweek_time = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+        $begin_lastweek_date = date('Y-m-d',$begin_lastweek_time);
+        $end_lastweek_date = date('Y-m-d',$end_lastweek_time);
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $all_dates = $m_statistics->getDates($begin_lastweek_date,$end_lastweek_date,2);
+        $where = array('hotel_id'=>$hotel_id,'date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $res_data = $m_staticassess->getDataList('*',$where,'date asc');
+        $lastweek_fault = $lastweek_zx = $lastweek_fj = $lastweek_fjsale =array();
+        foreach ($res_data as $v){
+            $lastweek_fault[]=$v['fault_rate'];
+            $lastweek_zx[]=$v['zxrate'];
+            $lastweek_fj[]=$v['fjrate'];
+            $lastweek_fjsale[]=$v['fjsalerate'];
+        }
+
+        $default_date = date("Y-m-d");
+        $first=1;
+        $w = date('w');
+        $week_start=date('Y-m-d', strtotime("$default_date -".($w ? $w - $first : 6).' days'));
+        $week_end=date('Y-m-d',strtotime("$week_start +6 days"));
+        $all_dates = $m_statistics->getDates($week_start,$week_end,2);
+        $where = array('hotel_id'=>$hotel_id,'date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $res_data = $m_staticassess->getDataList('*',$where,'date asc');
+        $week_fault = $week_zx = $week_fj = $week_fjsale =array();
+        foreach ($res_data as $v){
+            $week_fault[]=$v['fault_rate'];
+            $week_zx[]=$v['zxrate'];
+            $week_fj[]=$v['fjrate'];
+            $week_fjsale[]=$v['fjsalerate'];
+        }
+
+        $legend = array('故障率(上周)','故障率(本周)','在线率(上周)','在线率(本周)','饭局转化率(上周)','饭局转化率(本周)','销售端转化率(上周)','销售端转化率(本周)');
+        $week_day = array('周一','周二','周三','周四','周五','周六','周日');
+        $this->assign('legend',$legend);
+        $this->assign('week_day',json_encode($week_day));
+        $this->assign('lastweek_fault',json_encode($lastweek_fault));
+        $this->assign('lastweek_zx',json_encode($lastweek_zx));
+        $this->assign('lastweek_fj',json_encode($lastweek_fj));
+        $this->assign('lastweek_fjsale',json_encode($lastweek_fjsale));
+        $this->assign('week_fault',json_encode($week_fault));
+        $this->assign('week_zx',json_encode($week_zx));
+        $this->assign('week_fj',json_encode($week_fj));
+        $this->assign('week_fjsale',json_encode($week_fjsale));
+
+        $this->display('assesschart');
+
     }
 
     public function interactnum(){

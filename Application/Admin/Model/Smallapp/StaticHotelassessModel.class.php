@@ -16,13 +16,16 @@ class StaticHotelassessModel extends BaseModel{
     }
 
     public function getCustomeList($fields="*",$where,$groupby='',$order='level asc',$countfields='',$start=0,$size=5){
-        $list = $this->field($fields)
+        $list = $this->alias('a')
+            ->join('savor_hotel_ext ext on a.hotel_id=ext.hotel_id','left')
+            ->field($fields)
             ->where($where)
             ->group($groupby)
             ->order($order)
             ->limit($start,$size)
             ->select();
-        $res_count = $this->field($countfields)
+        $res_count = $this->alias('a')->field($countfields)
+            ->join('savor_hotel_ext ext on a.hotel_id=ext.hotel_id','left')
             ->where($where)->select();
         $count = $res_count[0]['tp_count'];
         $objPage = new Page($count,$size);
@@ -31,12 +34,52 @@ class StaticHotelassessModel extends BaseModel{
         return $data;
     }
 
-	public function handle_hotelassess(){
+    public function assessConfig(){
         $config = array(
             'A'=>array('fault_rate'=>0.1,'zxrate'=>0.7,'fjrate'=>0.08,'fjsalerate'=>0.2),
             'B'=>array('fault_rate'=>0.3,'zxrate'=>0.5,'fjrate'=>0.05,'fjsalerate'=>0.1),
             'C'=>array('fault_rate'=>0.2,'zxrate'=>0.4,'fjrate'=>0.03,'fjsalerate'=>0.05),
         );
+        return $config;
+    }
+
+    public function getHotelassessResult($data){
+        $assess_config = $this->assessConfig();
+        $config_hotel = $assess_config[$data['hotel_level']];
+        $data['operation_assess'] = 1;
+        if($data['fault_rate']>$config_hotel['fault_rate']){
+            $data['operation_assess'] = 2;
+        }
+        $data['channel_assess'] = 1;
+        if($data['zxrate']<$config_hotel['zxrate']){
+            $data['channel_assess'] = 2;
+        }
+        $data['data_assess'] = 1;
+        if($data['fjrate']<$config_hotel['fjrate']){
+            $data['data_assess'] = 2;
+        }
+        $data['saledata_assess'] = 1;
+        if($data['fjsalerate']<$config_hotel['fjsalerate']){
+            $data['saledata_assess'] = 2;
+        }
+        $data['all_assess'] = 1;
+        if($data['is_train']==0){
+            if($data['operation_assess']==2 || $data['channel_assess']==2){
+                $data['all_assess'] = 2;
+            }
+        }else{
+            if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2 || $data['saledata_assess']==2){
+                $data['all_assess'] = 2;
+            }
+        }
+
+        return $data;
+    }
+
+
+	public function handle_hotelassess(){
+        $config = $this->assessConfig();
+
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(1);
         $key = 'smallapp:hotelassess';
@@ -50,7 +93,7 @@ class StaticHotelassessModel extends BaseModel{
         $end = date('Y-m-d',strtotime('-1day'));
 
 //        $start = '2020-08-24';
-//        $end = '2020-09-01';
+//        $end = '2020-09-02';
 
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();
