@@ -446,7 +446,6 @@ class DatareportController extends BaseController {
     public function assesschart(){
         $hotel_id = I('hotel_id',0,'intval');
 
-
         $begin_lastweek_time = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
         $end_lastweek_time = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
         $begin_lastweek_date = date('Y-m-d',$begin_lastweek_time);
@@ -496,6 +495,150 @@ class DatareportController extends BaseController {
         $this->assign('week_fjsale',json_encode($week_fjsale));
 
         $this->display('assesschart');
+
+    }
+
+    public function assesswholechart(){
+        $begin_lastweek_time = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
+        $end_lastweek_time = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+        $begin_lastweek_date = date('Y-m-d',$begin_lastweek_time);
+        $end_lastweek_date = date('Y-m-d',$end_lastweek_time);
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $all_dates = $m_statistics->getDates($begin_lastweek_date,$end_lastweek_date,2);
+        $where = array('date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $lastweek_fault = $lastweek_zx = $lastweek_fj = $lastweek_fjsale =array();
+        foreach ($res_data as $v){
+            $lastweek_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $lastweek_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+
+        $default_date = date("Y-m-d");
+        $first=1;
+        $w = date('w');
+        $week_start=date('Y-m-d', strtotime("$default_date -".($w ? $w - $first : 6).' days'));
+        $week_end=date('Y-m-d',strtotime("$week_start +6 days"));
+        $all_dates = $m_statistics->getDates($week_start,$week_end,2);
+        $where = array('date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $week_fault = $week_zx = $week_fj = $week_fjsale =array();
+        foreach ($res_data as $v){
+            $week_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $week_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+
+        $legend = array('故障率(上周)','故障率(本周)','在线率(上周)','在线率(本周)');
+        $week_day = array('周一','周二','周三','周四','周五','周六','周日');
+        $this->assign('legend',$legend);
+        $this->assign('week_day',json_encode($week_day));
+        $this->assign('lastweek_fault',json_encode($lastweek_fault));
+        $this->assign('lastweek_zx',json_encode($lastweek_zx));
+        $this->assign('week_fault',json_encode($week_fault));
+        $this->assign('week_zx',json_encode($week_zx));
+
+        $this->display('assesswholechart');
+
+    }
+
+    public function assessgroupchart(){
+        $begin_lastweek_time = mktime(0,0,0,date('m'),date('d')-date('w')+1-7,date('Y'));
+        $end_lastweek_time = mktime(23,59,59,date('m'),date('d')-date('w')+7-7,date('Y'));
+        $begin_lastweek_date = date('Y-m-d',$begin_lastweek_time);
+        $end_lastweek_date = date('Y-m-d',$end_lastweek_time);
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $all_dates = $m_statistics->getDates($begin_lastweek_date,$end_lastweek_date,2);
+        $where = array('date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $where['team_name'] = '吴琳';
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $lastweeka_fault = $lastweeka_zx = array();
+        foreach ($res_data as $v){
+            $lastweeka_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $lastweeka_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+        $where['team_name'] = '王习宗';
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $lastweekb_fault = $lastweekb_zx = array();
+        foreach ($res_data as $v){
+            $lastweekb_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $lastweekb_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+        $where['team_name'] = '曾峰';
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $lastweekc_fault = $lastweekc_zx = array();
+        foreach ($res_data as $v){
+            $lastweekc_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $lastweekc_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+
+        $default_date = date("Y-m-d");
+        $first=1;
+        $w = date('w');
+        $week_start=date('Y-m-d', strtotime("$default_date -".($w ? $w - $first : 6).' days'));
+        $week_end=date('Y-m-d',strtotime("$week_start +6 days"));
+        $all_dates = $m_statistics->getDates($week_start,$week_end,2);
+        $where = array('date'=>array('in',$all_dates));
+        $where['team_name'] = '吴琳';
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $weeka_fault = $weeka_zx = array();
+        foreach ($res_data as $v){
+            $weeka_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $weeka_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+        $where['team_name'] = '王习宗';
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $weekb_fault = $weekb_zx = array();
+        foreach ($res_data as $v){
+            $weekb_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $weekb_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+        $where['team_name'] = '曾峰';
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $weekc_fault = $weekc_zx = array();
+        foreach ($res_data as $v){
+            $weekc_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $weekc_zx[] = sprintf("%.2f",$v['zxrate']);
+        }
+
+
+        $legend = array('吴琳组-故障率(上周)','吴琳组-故障率(本周)','吴琳组-组A在线率(上周)','吴琳组-组A在线率(本周)',
+            '王习宗组-故障率(上周)','王习宗组-故障率(本周)','王习宗组-在线率(上周)','王习宗组-在线率(本周)',
+            '曾峰组-故障率(上周)','曾峰组-故障率(本周)','曾峰组-在线率(上周)','曾峰组-在线率(本周)',
+            );
+        $week_day = array('周一','周二','周三','周四','周五','周六','周日');
+        $this->assign('legend',$legend);
+        $this->assign('week_day',json_encode($week_day));
+        $this->assign('lastweeka_fault',json_encode($lastweeka_fault));
+        $this->assign('lastweeka_zx',json_encode($lastweeka_zx));
+        $this->assign('weeka_fault',json_encode($weeka_fault));
+        $this->assign('weeka_zx',json_encode($weeka_zx));
+
+        $this->assign('lastweekb_fault',json_encode($lastweekb_fault));
+        $this->assign('lastweekb_zx',json_encode($lastweekb_zx));
+        $this->assign('weekb_fault',json_encode($weekb_fault));
+        $this->assign('weekb_zx',json_encode($weekb_zx));
+
+        $this->assign('lastweekc_fault',json_encode($lastweekc_fault));
+        $this->assign('lastweekc_zx',json_encode($lastweekc_zx));
+        $this->assign('weekc_fault',json_encode($weekc_fault));
+        $this->assign('weekc_zx',json_encode($weekc_zx));
+
+        $this->display('assessgroupchart');
 
     }
 
