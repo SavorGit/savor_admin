@@ -145,6 +145,8 @@ class ExcelController extends Controller
              $tmpname = '扫极简版码用户链接wifi投屏数据统计';
          }else if($filename =='hotelqfdata'){
              $tmpname = '酒楼扫码投屏统计';
+         }else if($filename=='hotelassessdata'){
+             $tmpname = '酒楼数据考核';
          }
 
 
@@ -6849,5 +6851,65 @@ left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4
             $level = 'C';
         }
         return $level;
+    }
+
+
+    public function hotelassess(){
+        $model = M();
+        $sql = "select a.id,a.area_id,a.area_name,a.hotel_id,ext.is_train,a.hotel_name,a.hotel_box_type,a.hotel_level,a.team_name,a.maintainer,a.box_num,a.lostbox_num,a.fault_rate,a.all_assess,
+a.operation_assess,a.zxrate,a.channel_assess,a.fjrate,a.data_assess,a.fjsalerate,a.saledata_assess,DATE_FORMAT(a.date,'%Y-%m-%d') as date 
+from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on a.hotel_id=ext.hotel_id where a.date>=20200824 and a.date<=20200830";
+
+        $res = $model->query($sql);
+        $assess_money = array('A'=>10,'B'=>15,'C'=>5);
+        $data = array();
+        foreach ($res as $k=>$v){
+            $money = $assess_money[$v['hotel_level']];
+            if($v['operation_assess']==1){
+                $operation_money = $money;
+            }else{
+                $operation_money = -$money;
+            }
+            if($v['channel_assess']==1){
+                $channel_money = $money;
+            }else{
+                $channel_money = -$money;
+            }
+            if($v['is_train']==1){
+                if($v['data_assess']==1){
+                    $data_money = $money;
+                }else{
+                    $data_money = -$money;
+                }
+            }else{
+                $data_money = 0;
+            }
+            if($v['is_train']==1){
+                if($v['saledata_assess']==1){
+                    $saledata_money = $money;
+                }else{
+                    $saledata_money = -$money;
+                }
+            }else{
+                $saledata_money = 0;
+            }
+            $data[]=array('date'=>$v['date'],'team_name'=>$v['team_name'],'hotel_id'=>$v['hotel_id'],'hotel_level'=>$v['hotel_level'],
+                'operation_money'=>$operation_money,'channel_money'=>$channel_money,'data_money'=>$data_money,
+                'saledata_money'=>$saledata_money);
+        }
+
+        $xlsCell = array(
+            array('date','日期'),
+            array('team_name','组名'),
+            array('hotel_id','酒楼id'),
+            array('hotel_level','酒楼等级'),
+            array('operation_money','运维奖金'),
+            array('channel_money','渠道奖金'),
+            array('data_money','数据奖金'),
+            array('saledata_money','销售端数据奖金'),
+        );
+        $xlsName = '酒楼数据考核';
+        $filename = 'hotelassessdata';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
 }

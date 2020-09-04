@@ -2044,4 +2044,270 @@ group by openid";
         echo count($hotel_info);
         exit;
     }
+
+    public function pushdish(){
+        $now_box_mac = I('mac','','trim');
+
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            $curl::get($url,$res_netty,10);
+            $res_box = json_decode($res_netty,true);
+        }
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+
+        if(!empty($res_box['result'])){
+            $activity_info = array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'18:00','end_time'=>'18:50',
+                'lottery_time'=>'12:00','dish_img'=>'lottery/activity/zzhx.jpg');
+            $activity_info['lottery_time'] = time()+7200;
+            $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
+
+
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if($box_mac==$now_box_mac){
+
+                            $lottery_countdown = strtotime($activity_info['lottery_time']) - time();
+                            $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
+                            $dish_name_info = pathinfo($activity_info['dish_img']);
+                            $partakedish_img = $dish_name_info['dirname'].'/'.$dish_name_info['filename'].'_partake.jpg';
+                            $netty_data = array('action'=>135,'countdown'=>30,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
+                                'lottery_countdown'=>$lottery_countdown,'partakedish_img'=>$partakedish_img
+                            );
+                            $name_info = pathinfo($netty_data['partakedish_img']);
+                            $netty_data['partakedish_filename'] = $name_info['basename'];
+                            $message = json_encode($netty_data);
+
+                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                            $req_id  = getMillisecond();
+                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                            $post_data = http_build_query($box_params);
+                            $ret = $m_netty->curlPost($push_url,$post_data);
+                            $res_push = json_decode($ret,true);
+                            if($res_push['code']==10000){
+                                echo "box_mac:$box_mac push ok \r\n";
+                            }else{
+                                echo "box_mac:$box_mac push error $ret  \r\n";
+                            }
+
+                            exit;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function pushlottery(){
+        $now_box_mac = I('mac','','trim');
+
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            $curl::get($url,$res_netty,10);
+            $res_box = json_decode($res_netty,true);
+        }
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+
+        if(!empty($res_box['result'])){
+            $activity_info = array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'18:00','end_time'=>'18:50',
+                'lottery_time'=>'12:00','dish_img'=>'lottery/activity/zzhx.jpg');
+            $activity_info['lottery_time'] = time()+3600;
+            $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
+
+//            $redis = new \Common\Lib\SavorRedis();
+//            $redis->select(1);
+//            $key = 'smallapp:simulatelotteryuser';
+//            $res_cache = $redis->get($key);
+//            if(empty($res_cache)){
+//                $limit = "1000,40";
+//                $m_user = new \Admin\Model\Smallapp\UserModel();
+//                $where = array('nickName'=>array('neq',''));
+//                $res_user = $m_user->getWhere('openid,avatarUrl,nickName',$where,'id desc',$limit,'');
+//                $redis->set($key,json_encode($res_user),86400*5);
+//            }else{
+//                $res_user = json_decode($res_cache,true);
+//            }
+            $limit = "1000,40";
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $where = array('nickName'=>array('neq',''));
+            $res_user = $m_user->getWhere('openid,avatarUrl,nickName',$where,'id desc',$limit,'');
+
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if($box_mac==$now_box_mac){
+
+                            $lottery_openid_id = mt_rand(0,39);
+                            $lottery_openid = $res_user[$lottery_openid_id]['openid'];
+
+                            $partake_user = array();
+                            foreach ($res_user as $uv){
+                                $is_lottery = 0;
+                                if($uv['openid']==$lottery_openid){
+                                    $is_lottery = 1;
+                                }
+                                $uv['avatarurl'] = substr($uv['avatarurl'],0,-3);
+                                $uv['avatarurl'] = $uv['avatarurl'].'0';
+                                $uinfo = array('avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
+                                $partake_user[] = $uinfo;
+                            }
+                            $lottery = array('dish_name'=>$activity_info['dish'],'dish_image'=>$activity_info['dish_img']);
+
+                            $netty_data = array('action'=>136,'partake_user'=>$partake_user,'lottery'=>$lottery);
+                            $message = json_encode($netty_data);
+                            echo $message;
+
+                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                            $req_id  = getMillisecond();
+                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                            $post_data = http_build_query($box_params);
+                            $ret = $m_netty->curlPost($push_url,$post_data);
+                            $res_push = json_decode($ret,true);
+                            if($res_push['code']==10000){
+                                echo "box_mac:$box_mac push ok $ret \r\n";
+                            }else{
+                                echo "box_mac:$box_mac push error $ret  \r\n";
+                            }
+
+                            exit;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function pushweixin(){
+        $config = C('SMALLAPP_CONFIG');
+        $prize = '龙虾一份';
+        $tips = '请3小时内找餐厅服务员领取';
+        $push_wxurl = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token";
+        $page_url = "games/pages/activity/din_dash";
+        $token = getWxAccessToken($config);
+        $tempalte_id = 'HqNYdceqH7MAQk6dl4Gn54yZObVRNG0FJk40OIwa9x4';
+        $curl = new \Common\Lib\Curl();
+        $miniprogram_state = 'developer';//developer为开发版；trial为体验版；formal为正式版
+        $url = "$push_wxurl=$token";
+        $lottery_time = date('Y-m-d H:i:s');
+        $data=array(
+            'date2'  => array('value'=>$lottery_time),
+            'thing4'  => array('value'=>'已中奖'),
+            'thing1'  => array('value'=>$prize),
+            'thing3'  => array('value'=>$tips)
+        );
+        $openid='ofYZG4yZJHaV2h3lJHG5wOB9MzxE';
+        $box_mac = '';
+        $activity_id = 1;
+        $page_url = "$page_url?openid=$openid&box_mac=$box_mac&activity_id=$activity_id";
+        $template = array(
+            'touser' => $openid,
+            'template_id' => $tempalte_id,
+            'page' => $page_url,
+            'miniprogram_state'=>$miniprogram_state,
+            'lang'=>'zh_CN',
+            'data' => $data
+        );
+        $template =  json_encode($template);
+        $res_data = '';
+        $curl::post($url,$template,$res_data);
+        echo $res_data;
+        exit;
+    }
+
+    public function cachedishactivity(){
+        $king_meal = C('ACTIVITY_KINGMEAL');
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(1);
+        $key = 'smallapp:activity:kingmealhotel';
+        $hotels = array();
+        $now_date = date('Y-m-d 00:00:00');
+        foreach ($king_meal as $v){
+            foreach ($v as $dv){
+                if($dv['start_time']>$now_date){
+                    $hotels[$dv['hotel_id']][]=array('start_time'=>$dv['start_time'],'end_time'=>$dv['end_time']);
+                }
+            }
+
+        }
+        echo json_encode($hotels);
+
+        $redis->set($key,json_encode($hotels));
+    }
+
+    public function hotelassess(){
+        $model = M();
+        $sql = "select a.id,a.area_id,a.area_name,a.hotel_id,ext.is_train,a.hotel_name,a.hotel_box_type,a.hotel_level,a.team_name,a.maintainer,a.box_num,a.lostbox_num,a.fault_rate,a.all_assess,
+a.operation_assess,a.zxrate,a.channel_assess,a.fjrate,a.data_assess,a.fjsalerate,a.saledata_assess,DATE_FORMAT(a.date,'%Y-%m-%d') as date 
+from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on a.hotel_id=ext.hotel_id where a.date>=20200824 and a.date<=20200830";
+
+        $res = $model->query($sql);
+        $teams_money = array();
+        $assess_money = array('A'=>10,'B'=>15,'C'=>5);
+        foreach ($res as $k=>$v){
+            $money = $assess_money[$v['hotel_level']];
+            if($v['operation_assess']==1){
+                $operation_money = $money;
+            }else{
+                $operation_money = -$money;
+            }
+            if($v['channel_assess']==1){
+                $channel_money = $money;
+            }else{
+                $channel_money = -$money;
+            }
+            if($v['is_train']==1){
+                if($v['data_assess']==1){
+                    $data_money = $money;
+                }else{
+                    $data_money = -$money;
+                }
+            }else{
+                $data_money = 0;
+            }
+            if($v['is_train']==1){
+                if($v['saledata_assess']==1){
+                    $saledata_money = $money;
+                }else{
+                    $saledata_money = -$money;
+                }
+            }else{
+                $saledata_money = 0;
+            }
+
+            $teams_money[$v['team_name']]['channel_money'][]=$channel_money;
+            $teams_money[$v['team_name']]['data_money'][]=$data_money;
+            $teams_money[$v['team_name']]['operation_money'][]=$operation_money;
+            $teams_money[$v['team_name']]['saledata_money'][]=$saledata_money;
+        }
+
+        foreach ($teams_money as $k=>$v){
+            $teams_money[$k]['channel_money'] = array_sum($v['channel_money']);
+            $teams_money[$k]['data_money'] = array_sum($v['data_money']);
+            $teams_money[$k]['operation_money'] = array_sum($v['operation_money']);
+            $teams_money[$k]['saledata_money'] = array_sum($v['saledata_money']);
+        }
+
+        print_r($teams_money);
+
+    }
 }
