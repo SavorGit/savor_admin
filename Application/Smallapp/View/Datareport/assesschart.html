@@ -1,0 +1,266 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr>
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">故障率对比图</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_fault" class="chart"></div>
+                            </div>
+                        </div>
+                    </tr>
+                    <tr>
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">在线率对比图</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_zx" class="chart"></div>
+                            </div>
+                        </div>
+                    </tr>
+
+                    <tr>
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">饭局转化率对比图</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_fj" class="chart"></div>
+                            </div>
+                        </div>
+                    </tr>
+
+                    <tr>
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">销售端饭局转化率对比图</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_fjsale" class="chart"></div>
+                            </div>
+                        </div>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var dom = document.getElementById("echart_fault");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.0}','{$legend.1}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                name:'{$legend.0}',
+                type:'line',
+                data:{$lastweek_fault}
+            },
+            {
+                name:'{$legend.1}',
+                type:'line',
+                data:{$week_fault}
+            },
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+    var dom = document.getElementById("echart_zx");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.2}','{$legend.3}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                name:'{$legend.2}',
+                type:'line',
+                data:{$lastweek_zx}
+            },
+            {
+                name:'{$legend.3}',
+                type:'line',
+                data:{$week_zx}
+            },
+
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+
+    var dom = document.getElementById("echart_fj");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.4}','{$legend.5}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                name:'{$legend.4}',
+                type:'line',
+                data:{$lastweek_fj}
+            },
+            {
+                name:'{$legend.5}',
+                type:'line',
+                data:{$week_fj}
+            },
+
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+
+    var dom = document.getElementById("echart_fjsale");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.6}','{$legend.7}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
+            {
+                name:'{$legend.6}',
+                type:'line',
+                data:{$lastweek_fjsale}
+            },
+            {
+                name:'{$legend.7}',
+                type:'line',
+                data:{$week_fjsale}
+            },
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+</script>

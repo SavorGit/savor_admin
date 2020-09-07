@@ -106,12 +106,32 @@
           </div>
 
           <div class="form-group">
+            <div class="input-group input-group-sm">是否培训过：</div>
+            <div class="input-group">
+              <select name="is_train" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value='99'>全部</option>
+                <option value="1" <if condition="$is_train eq 1">selected</if>>是</option>
+                <option value="0" <if condition="$is_train eq 0">selected</if>>否</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
             <div class="input-group input-group-sm">
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
             </span>
             </div>
           </div>
+
+          <div class="form-group pull-right">
+            <div class="tools-group s2">
+              <a class="btn btn-dark btn-sm add" href="{$host_url}/smallapp/datareport/assesswholechart" title="整体趋势图" target="dialog" mask="true"><i class="fa fa-dashboard"></i><span>整体趋势图</span></a>
+              <a class="btn btn-dark btn-sm add" href="{$host_url}/smallapp/datareport/assessgroupchart" title="分组趋势图" target="dialog" mask="true"><i class="fa fa-dashboard"></i><span>分组趋势图</span></a>
+
+            </div>
+          </div>
+
 
         </div>
         <div class="form-inline">
@@ -149,12 +169,12 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
-              <th>时间</th>
               <th>客户级别</th>
               <th>组名</th>
               <th>组员</th>
               <th>考核情况</th>
               <th>酒楼名称</th>
+              <th>是否培训过</th>
               <th>版位数</th>
               <th>故障屏</th>
               <th>故障率</th>
@@ -165,17 +185,18 @@
               <th>数据考核</th>
               <th>销售端转化率</th>
               <th>销售端数据考核</th>
+              <th class="table-tool">操作</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
           <volist name="datalist" id="dinfo">
             <tr target="sid_user">
-              <td>{$dinfo.date}</td>
               <td>{$dinfo.hotel_level}</td>
               <td>{$dinfo.team}</td>
               <td>{$dinfo.team_name}</td>
               <td><if condition="$dinfo.all_assess eq 1">合格<else/>不合格</if></td>
               <td>{$dinfo.hotel_name}</td>
+              <td><if condition="$dinfo.is_train eq 1">是<else/>否</if></td>
               <td>{$dinfo.box_num}</td>
               <td>{$dinfo.lostbox_num}</td>
               <td>{$dinfo.fault_rate}</td>
@@ -183,9 +204,16 @@
               <td>{$dinfo.zxrate}</td>
               <td><if condition="$dinfo.channel_assess eq 1">合格<else/>不合格</if></td>
               <td>{$dinfo.fjrate}</td>
-              <td><if condition="$dinfo.data_assess eq 1">合格<else/>不合格</if></td>
+              <td><if condition="$dinfo.data_assess eq 1">合格<elseif condition="$dinfo.data_assess eq 2"/>不合格<elseif condition="$dinfo.data_assess eq 3"/>未培训</if></td>
               <td>{$dinfo.fjsalerate}</td>
-              <td><if condition="$dinfo.saledata_assess eq 1">合格<else/>不合格</if></td>
+              <td><if condition="$dinfo.saledata_assess eq 1">合格<elseif condition="$dinfo.saledata_assess eq 2"/>不合格<elseif condition="$dinfo.saledata_assess eq 3"/>未培训</if></td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                    <a title="{$dinfo.hotel_name}-数据趋势图" target="dialog" mask="true" href="{$host_url}/smallapp/datareport/assesschart?hotel_id={$dinfo.hotel_id}" class="btn btn-success btn-icon">
+                      <i class="fa fa-info"></i>
+                    </a>
+                </div>
+              </td>
             </tr>
           </volist>
 
