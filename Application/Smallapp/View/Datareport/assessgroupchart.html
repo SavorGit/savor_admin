@@ -12,26 +12,52 @@
                             <div class="portlet-title">
                                 <div class="caption">
                                     <i class="fa fa-area-chart"></i>
-                                    <span class="caption-subject bold font-green-haze uppercase">吴琳组</span>
+                                    <span class="caption-subject bold font-green-haze uppercase">吴琳组-故障率</span>
 
                                 </div>
                             </div>
                             <div class="portlet-body row">
-                                <div id="echart_a" class="chart"></div>
+                                <div id="echart_afault" class="chart"></div>
+                            </div>
+                        </div>
+
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">吴琳组-在线率</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_azx" class="chart"></div>
                             </div>
                         </div>
                     </tr>
+
                     <tr>
                         <div class="portlet light bg-inverse portlet-table">
                             <div class="portlet-title">
                                 <div class="caption">
                                     <i class="fa fa-area-chart"></i>
-                                    <span class="caption-subject bold font-green-haze uppercase">王习宗组</span>
+                                    <span class="caption-subject bold font-green-haze uppercase">王习宗组-故障率</span>
 
                                 </div>
                             </div>
                             <div class="portlet-body row">
-                                <div id="echart_b" class="chart"></div>
+                                <div id="echart_bfault" class="chart"></div>
+                            </div>
+                        </div>
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">王习宗组-在线率</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_bzx" class="chart"></div>
                             </div>
                         </div>
                     </tr>
@@ -41,12 +67,24 @@
                             <div class="portlet-title">
                                 <div class="caption">
                                     <i class="fa fa-area-chart"></i>
-                                    <span class="caption-subject bold font-green-haze uppercase">曾峰组</span>
+                                    <span class="caption-subject bold font-green-haze uppercase">曾峰组-故障率</span>
 
                                 </div>
                             </div>
                             <div class="portlet-body row">
-                                <div id="echart_c" class="chart"></div>
+                                <div id="echart_cfault" class="chart"></div>
+                            </div>
+                        </div>
+                        <div class="portlet light bg-inverse portlet-table">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-area-chart"></i>
+                                    <span class="caption-subject bold font-green-haze uppercase">曾峰组-在线率</span>
+
+                                </div>
+                            </div>
+                            <div class="portlet-body row">
+                                <div id="echart_czx" class="chart"></div>
                             </div>
                         </div>
                     </tr>
@@ -61,14 +99,14 @@
 </div>
 
 <script type="text/javascript">
-    var dom = document.getElementById("echart_a");
+    var dom = document.getElementById("echart_afault");
     var myChart = echarts.init(dom);
     option = {
         tooltip: {
             trigger: 'axis'
         },
         legend: {
-            data:['{$legend.0}','{$legend.1}','{$legend.2}','{$legend.3}']
+            data:['{$legend.0}','{$legend.1}']
         },
         toolbox: {
             show : true,
@@ -101,6 +139,42 @@
                 type:'line',
                 data:{$weeka_fault}
             },
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+    var dom = document.getElementById("echart_azx");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.2}','{$legend.3}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
             {
                 name:'{$legend.2}',
                 type:'line',
@@ -117,14 +191,16 @@
         myChart.setOption(option, true);
     }
 
-    var dom = document.getElementById("echart_b");
+
+
+    var dom = document.getElementById("echart_bfault");
     var myChart = echarts.init(dom);
     option = {
         tooltip: {
             trigger: 'axis'
         },
         legend: {
-            data:['{$legend.4}','{$legend.5}','{$legend.6}','{$legend.7}']
+            data:['{$legend.4}','{$legend.5}']
         },
         toolbox: {
             show : true,
@@ -157,6 +233,43 @@
                 type:'line',
                 data:{$weekb_fault}
             },
+
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+    var dom = document.getElementById("echart_bzx");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.6}','{$legend.7}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
             {
                 name:'{$legend.6}',
                 type:'line',
@@ -174,14 +287,15 @@
         myChart.setOption(option, true);
     }
 
-    var dom = document.getElementById("echart_c");
+
+    var dom = document.getElementById("echart_cfault");
     var myChart = echarts.init(dom);
     option = {
         tooltip: {
             trigger: 'axis'
         },
         legend: {
-            data:['{$legend.8}','{$legend.9}','{$legend.10}','{$legend.11}']
+            data:['{$legend.8}','{$legend.9}']
         },
         toolbox: {
             show : true,
@@ -214,6 +328,43 @@
                 type:'line',
                 data:{$weekc_fault}
             },
+
+        ]
+    };
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+
+    var dom = document.getElementById("echart_czx");
+    var myChart = echarts.init(dom);
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['{$legend.10}','{$legend.11}']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                saveAsImage : {show: true}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: {$week_day}
+        },
+        yAxis: {
+            type: 'value',
+        },
+        series: [
             {
                 name:'{$legend.10}',
                 type:'line',
