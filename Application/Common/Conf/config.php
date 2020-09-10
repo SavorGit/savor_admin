@@ -796,6 +796,12 @@ $config['TAGS_CATEGORY'] = array(
     '2'=>'下单备注',
     '3'=>'菜品评论',
 );
+$config['ACTIVITY_STATUS']=array(
+    '0'=>'待开始',
+    '1'=>'进行中',
+    '2'=>'已结束',
+    '3'=>'已取消',
+);
 
 $config['SAMPLE_HOTEL'] = array(
     236=>array(632,1064,955,427,1043,1039,1085,1077,

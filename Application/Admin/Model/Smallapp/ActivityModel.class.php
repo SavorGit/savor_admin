@@ -1,11 +1,41 @@
 <?php
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 
 class ActivityModel extends BaseModel{
 	protected $tableName='smallapp_activity';
 
+
+    public function getList($fields,$where,$orderby,$start=0,$size=0){
+        if($start >= 0 && $size){
+            $list = $this->alias('a')
+                ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+                ->field($fields)
+                ->where($where)
+                ->order($orderby)
+                ->limit($start,$size)
+                ->select();
+            $count = $this->alias('a')
+                ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+                ->where($where)
+                ->count();
+            $objPage = new Page($count,$size);
+            $show = $objPage->admin_page();
+            $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+        }else{
+            $data = $this->alias('a')
+                ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+                ->field($fields)
+                ->where($where)
+                ->order($orderby)
+                ->select();
+        }
+        return $data;
+    }
+
     public function pushBoxDishActivity(){
+        /*
         $hour = date('YmdHi');
         $activity_hotels = C('ACTIVITY_KINGMEAL');
         $start_time = date('Y-m-d 00:00:00');
@@ -44,10 +74,27 @@ class ActivityModel extends BaseModel{
                 }
             }
         }
-        if(empty($hotel_dishs)){
+        */
+        $start_time = date('Y-m-d 00:00:00');
+        $end_time = date('Y-m-d 23:59:59');
+        $where = array('status'=>array('in',array('1','0')));
+        $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $res = $this->getDataList('*',$where,'id asc');
+        if(empty($res)){
             echo "no activity \r\n";
             exit;
         }
+        $hotel_dishs = array();
+        $now_date = date('Y-m-d H:i:00');
+        foreach ($res as $v){
+            if($v['status']==1 && $v['end_time']>$now_date){
+                $hotel_dishs[$v['hotel_id']] = $v;
+            }elseif($v['status']==0 && $v['start_time']==$now_date){
+                $hotel_dishs[$v['hotel_id']] = $v;
+                $this->updateData(array('id'=>$v['id']),array('status'=>1));
+            }
+        }
+
         $all_hotel_ids = array_keys($hotel_dishs);
         $m_box = new \Admin\Model\BoxModel();
         $fields = 'box.mac,hotel.id as hotel_id';
@@ -88,14 +135,14 @@ class ActivityModel extends BaseModel{
 
                         $lottery_countdown = strtotime($activity_info['lottery_time']) - $now_time;
                         $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
-                        $dish_name_info = pathinfo($activity_info['image_url']);
-                        $partakedish_img = $dish_name_info['dirname'].'/'.$dish_name_info['filename'].'_partake.jpg';
+                        $partakedish_img = $activity_info['image_url'];
+                        $dish_name_info = pathinfo($partakedish_img);
+
                         $netty_data = array('action'=>135,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
-                            'lottery_countdown'=>$lottery_countdown,'partakedish_img'=>$partakedish_img
+                            'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partakedish_img,'partake_filename'=>$dish_name_info['basename'],
+                            'partake_name'=>$v['prize'],'activity_name'=>$v['name'],
                         );
 
-                        $name_info = pathinfo($netty_data['partakedish_img']);
-                        $netty_data['partakedish_filename'] = $name_info['basename'];
                         $message = json_encode($netty_data);
 
                         echo "message $message \r\n";
