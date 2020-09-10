@@ -1,0 +1,138 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/activity/activitylist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+     <div class="searchBar">
+      <div class="clearfix">
+          <div class="form-inline">
+              <div class="form-group">
+                  <div class="input-group input-group-sm">时间：</div>
+                  <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                      <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                      <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                  </div>
+                  <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                      <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                      <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="input-group input-group-sm"></div>
+                  <div class="input-group">
+                      <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="input-group input-group-sm">状态：</div>
+                  <div class="input-group">
+                      <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                            <option value=99>全部</option>
+                          <volist name="all_status" id="cinfo">
+                            <option value="{$key}" <if condition="$key eq $status">selected</if>> {$cinfo}</option>
+                          </volist>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="input-group input-group-sm pull-right">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                    </span>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+    
+    </div> 
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>ID</th>
+            <th>酒楼名称</th>
+            <th>活动名称</th>
+            <th>奖品</th>
+            <th>图片</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>开奖时间</th>
+            <th>状态</th>
+            <th>参与人数</th>
+            <th>创建时间</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="序号">{$dinfo.id}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="活动名称">{$dinfo.name}</td>
+              <td data-title="奖品">{$dinfo.prize}</td>
+              <td data-title="图片"><img src="{$dinfo.image_url}" /></td>
+              <td data-title="开始时间">{$dinfo.start_time}</td>
+              <td data-title="结束时间">{$dinfo.end_time}</td>
+              <td data-title="开奖时间">{$dinfo.lottery_time}</td>
+              <td data-title="状态">{$dinfo.status_str}</td>
+              <td data-title="参与人数">
+              <if condition="$dinfo.nums gt 0">
+              <a data-tip="查看详情" target="dialog" mask="true" href="{$host_url}/smallapp/activity/detail?id={$dinfo.id}" rel="activity/detail" title="参与明细"class="btn btn-success btn-icon">
+              {$dinfo.nums}
+              </a>
+              </if>
+              </td>
+              <td data-title="创建时间">{$dinfo.add_time}</td>
+            
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script type="text/javascript">
+
+  $('#redpacket_start_date_reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $('#redpacket_end_date_reset').click(function(){
+	    $(this).parent().prev().val('')
+	  });
+  $(function(){
+    $("#redpacket_start_date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+    $("#redpacket_end_date").datetimepicker({
+        minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        todayBtn:  1,
+        autoclose: 1,
+      });
+  })
+</script>

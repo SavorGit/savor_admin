@@ -1,0 +1,40 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          
+          <tr id="post">
+            <th>用户头像</th>
+            <th>用户昵称</th>
+            <th>包间名称</th>
+            <th>MAC地址</th>
+            <th>是否中奖</th>
+            <th>参与时间</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
+              <td data-title="用户昵称">{$dinfo.nickname}</td>
+              <td data-title="包间名称">{$dinfo.box_name}</td>
+              <td data-title="MAC地址">{$dinfo.box_mac}</td>
+              <td data-title="是否中奖">{$dinfo.status_str}</td>
+              <td data-title="参与时间">{$dinfo.add_time}</td>
+                    
+            </tr>
+          </volist>
+      </tbody>
+  </table>
+</form>
+
+  </div>
+</div>
+
+</div>

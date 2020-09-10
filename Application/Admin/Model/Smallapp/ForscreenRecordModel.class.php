@@ -319,14 +319,13 @@ class ForscreenRecordModel extends BaseModel
             $m_box = new \Admin\Model\BoxModel();
             $fields = 'box.mac,hotel.id as hotel_id';
             $where = array('box.state'=>1,'box.flag'=>0);
-            $all_hotel_ids = C('SAMPLE_HOTEL');
-            $all_hotel_ids = $all_hotel_ids['236'];
-            if($type==1){
-                $all_hotel_ids = array();
-            }
+//            $all_hotel_ids = C('SAMPLE_HOTEL');
+//            $all_hotel_ids = $all_hotel_ids['236'];
+//            if($type==1){
+//                $all_hotel_ids = array();
+//            }
             $all_hotel_ids[]=7;
             $all_hotel_ids[]=883;
-
             $where['hotel.id'] = array('in',$all_hotel_ids);
             $res_bdata = $m_box->getBoxByCondition($fields,$where,$group='');
             $all_boxs = array();
@@ -334,10 +333,12 @@ class ForscreenRecordModel extends BaseModel
                 $all_boxs[]=$v['mac'];
             }
 
+            $all_boxs = array();
             if($type==0){
                 $fields = 'box.mac,hotel.id as hotel_id';
-                $where = array('box.state'=>1,'box.flag'=>0,'box.is_4g'=>1,'hotel.area_id'=>236);
-                $where['hotel.id'] = array('not in',$all_hotel_ids);
+//                $where = array('box.state'=>1,'box.flag'=>0,'box.is_4g'=>1,'hotel.area_id'=>236);
+                $where = array('box.state'=>1,'box.flag'=>0,'hotel.area_id'=>236);
+//                $where['hotel.id'] = array('not in',$all_hotel_ids);
                 $res_bdata = $m_box->getBoxByCondition($fields,$where,$group='');
                 foreach ($res_bdata as $v){
                     $all_boxs[]=$v['mac'];

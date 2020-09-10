@@ -219,7 +219,7 @@ $config['HOTEL_KEY'] = array(
 );
 
 $config['PWDPRE'] = 'SAVOR@&^2017^2030&*^';
-$config['NUMPERPAGE'] = array('50','100','200','500','800','1000');
+$config['NUMPERPAGE'] = array('50','100','200','500','800','1000','2000');
 $config['MANGER_STATUS'] = array(
     '1'=>'启用',
     '2'=>'禁用'
@@ -312,6 +312,7 @@ $config['all_forscreen_actions'] = array(
     '50'=>'助力好友',
     '51'=>'扫码抢霸王餐',
     '52'=>'评论',
+    '53'=>'点击banner抢霸王餐',
     '101'=>'h5互动游戏',
     '120'=>'发红包',
     '121'=>'扫码抢红包'
@@ -795,6 +796,12 @@ $config['TAGS_CATEGORY'] = array(
     '2'=>'下单备注',
     '3'=>'菜品评论',
 );
+$config['ACTIVITY_STATUS']=array(
+    '0'=>'待开始',
+    '1'=>'进行中',
+    '2'=>'已结束',
+    '3'=>'已取消',
+);
 
 $config['SAMPLE_HOTEL'] = array(
     236=>array(632,1064,955,427,1043,1039,1085,1077,
@@ -809,15 +816,42 @@ $config['SAMPLE_HOTEL'] = array(
 $config['COLLECT_FORSCREEN_OPENIDS'] = array('ofYZG4zmrApmvRSfzeA_mN-pHv2E'=>'郑伟','ofYZG42whtWOvSELbvxvnXHbzty8'=>'黄勇',
     'ofYZG49N0yz-cCTTgfPPEoL1F7l4'=>'鲍强强','ofYZG4xt_03ADzTTtf4QIrA1lt_c'=>'甘顺山','ofYZG43prBncpYjkYq-XaIWRlj6o'=>'吴琳',
     'ofYZG4-TBnXlWMTGx6afsUrjzXgk'=>'李智','ofYZG4zXTCn52wUjHPeOoNZHFKwo'=>'毕超','ofYZG4ySsM6GN8bF9bw6iWlS9a44'=>'王习宗',
-    'ofYZG4-geGG-WO3drWsAZetCghSc'=>'何永锐','ofYZG43zZMAYXbuOiQxIqGfz25aM'=>'玉洁','ofYZG43DyszPj-qwvP5ZutMCGC_c'=>'欧懿'
+    'ofYZG4-geGG-WO3drWsAZetCghSc'=>'何永锐','ofYZG43zZMAYXbuOiQxIqGfz25aM'=>'玉洁','ofYZG43DyszPj-qwvP5ZutMCGC_c'=>'欧懿',
+    'ofYZG4zTOtj9RCaLmDXI0qfY-I34'=>'熊静怡',
     );
 
-
 $config['ACTIVITY_KINGMEAL'] = array(
-    2020083118=>array(
-        array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'2020-08-31 18:25:00','end_time'=>'2020-08-31 18:30:00',
-            'lottery_time'=>'2020-08-31 18:35:00','dish_img'=>'lottery/activity/zzhx.jpg'),
+//    202009031300=>array(
+//        array('hotel_id'=>7,'dish'=>'鲍汁香扣花胶筒1份','start_time'=>'2020-09-03 13:00:00','end_time'=>'2020-09-03 13:25:00',
+//            'lottery_time'=>'2020-09-03 13:30:00','dish_img'=>'lottery/activity/bzxkhjt.jpg'),
+//    ),
+
+    202009031200=>array(
+        array('hotel_id'=>427,'dish'=>'鲍汁香扣花胶筒1份','start_time'=>'2020-09-03 12:00:00','end_time'=>'2020-09-03 12:25:00',
+            'lottery_time'=>'2020-09-03 12:30:00','dish_img'=>'lottery/activity/bzxkhjt.jpg'),
     ),
+
+    202009031830=>array(
+        array('hotel_id'=>1077,'dish'=>'开胃四小蝶1份','start_time'=>'2020-09-03 18:30:00','end_time'=>'2020-09-03 18:55:00',
+            'lottery_time'=>'2020-09-03 19:00:00','dish_img'=>'lottery/activity/kwsxd.jpg'),
+    ),
+    202009031910=>array(
+        array('hotel_id'=>1077,'dish'=>'椒盐鲜蘑1份','start_time'=>'2020-09-03 19:10:00','end_time'=>'2020-09-03 19:35:00',
+        'lottery_time'=>'2020-09-03 19:40:00','dish_img'=>'lottery/activity/jyxm.jpg'),
+    ),
+
+    202009031900=>array(
+        array('hotel_id'=>1056,'dish'=>'煎藕饼1份','start_time'=>'2020-09-03 19:00:00','end_time'=>'2020-09-03 19:25:00',
+            'lottery_time'=>'2020-09-03 19:30:00','dish_img'=>'lottery/activity/joub.jpg'),
+    ),
+
+    202009031940=>array(
+        array('hotel_id'=>1056,'dish'=>'剁椒蒸鱼咀1份','start_time'=>'2020-09-03 19:40:00','end_time'=>'2020-09-03 20:05:00',
+            'lottery_time'=>'2020-09-03 20:10:00','dish_img'=>'lottery/activity/djzyz.jpg'),
+    ),
+
+
+
 );
 
 return $config;

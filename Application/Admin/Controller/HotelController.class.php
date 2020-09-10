@@ -487,6 +487,7 @@ class HotelController extends BaseController {
 			$hotelextModel = new \Admin\Model\HotelExtModel();
 			$main_info = $hotelextModel->where('hotel_id='.$id)->find();
 			$vinfo['is_train'] = $main_info['is_train'];
+			$vinfo['is_activity'] = $main_info['is_activity'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
             $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
@@ -552,6 +553,7 @@ class HotelController extends BaseController {
 			$this->assign('vinfo',$vinfo);
 		}else{
             $vinfo['is_train'] = 0;
+            $vinfo['is_activity'] = 0;
 			$vinfo['state'] = 2;
 			$vinfo['state_change_reason'] = 1;
 			$this->assign('vinfo',$vinfo);
@@ -717,6 +719,7 @@ class HotelController extends BaseController {
         $business_hours = I('post.business_hours','');
         $meal_time = I('post.meal_time',0,'intval');
         $is_train = I('post.is_train',0,'intval');
+        $is_activity = I('post.is_activity',0,'intval');
         $trainer_id = I('post.trainer_id',0,'intval');
         $train_date = I('post.train_date','');
         $train_desc = I('post.train_desc','','trim');
@@ -910,6 +913,7 @@ class HotelController extends BaseController {
             }
         }
         $data['is_train'] = $is_train;
+        $data['is_activity'] = $is_activity;
 
 		$field = 'mac_addr,server_location,trainer_id';
 		$where = array('hotel_id'=>$hotel_id);
