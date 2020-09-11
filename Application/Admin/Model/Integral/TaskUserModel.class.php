@@ -7,21 +7,24 @@ class TaskUserModel extends BaseModel{
 	protected $tableName='integral_task_user';
 
 	public function handle_user_task(){
+        $now_date = date('Y-m-d');
         $date_h = date('H');
         if($date_h==17){
             $dinner_type = 1;//午饭
+            $sign_begin_time = $now_date." 00:00:00";
+            $sign_end_time = $now_date." 14:00:00";
         }elseif($date_h==23){
             $dinner_type = 2;//晚饭
+            $sign_begin_time = $now_date." 14:00:01";
+            $sign_end_time = $now_date." 21:00:00";
         }else{
             echo "hour $date_h error \r\n";
             exit;
         }
 
-        $now_date = date('Y-m-d');
+
         $begin_time = $now_date." 00:00:00";
         $end_time = $now_date." 23:59:59";
-        $sign_begin_time = $now_date." 00:00:00";
-        $sign_end_time = $now_date." 21:00:00";
         $where = array();
         $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
         $res_data = $this->getDataList('*',$where,'id asc');
@@ -55,7 +58,8 @@ class TaskUserModel extends BaseModel{
             $openid = $v['openid'];
             $where = array('openid'=>$openid);
             $where['add_time'] = array(array('egt',$sign_begin_time),array('elt',$sign_end_time), 'and');
-            $res_signin = $m_usersignin->getDataList('*',$where,'id asc');
+//            $res_signin = $m_usersignin->getDataList('*',$where,'id asc');
+            $res_signin = $m_usersignin->getAll('*',$where,0,1000,'id desc','box_mac');
             if(empty($res_signin)){
                 echo "task_user_id:{$v['id']} $openid not sign $now_time \r\n";
                 continue;
