@@ -90,7 +90,7 @@ class ActivityController extends BaseController {
         $res_box = $m_box->getBoxByCondition($fields,$where,'');
         $boxs = array();
         foreach ($res_box as $v){
-            $boxs[$v['box_mac']] = $v;
+            $boxs[$v['mac']] = $v['name'];
         }
         $all_status = array('1'=>'未开奖','2'=>'已中奖','3'=>'未中奖');
         foreach ($res as $k=>$v){

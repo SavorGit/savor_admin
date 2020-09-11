@@ -135,12 +135,12 @@ class ActivityModel extends BaseModel{
 
                         $lottery_countdown = strtotime($activity_info['lottery_time']) - $now_time;
                         $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
-                        $partakedish_img = $activity_info['image_url'];
-                        $dish_name_info = pathinfo($partakedish_img);
+                        $partakedish_img = $activity_info['image_url'].'?x-oss-process=image/resize,m_mfit,h_200,w_300';
+                        $dish_name_info = pathinfo($activity_info['image_url']);
 
                         $netty_data = array('action'=>135,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
                             'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partakedish_img,'partake_filename'=>$dish_name_info['basename'],
-                            'partake_name'=>$v['prize'],'activity_name'=>$v['name'],
+                            'partake_name'=>$activity_info['prize'],'activity_name'=>$activity_info['name'],
                         );
 
                         $message = json_encode($netty_data);
