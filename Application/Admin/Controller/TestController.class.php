@@ -2068,7 +2068,6 @@ group by openid";
             $activity_info['lottery_time'] = time()+7200;
             $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
 
-
             $netty_cmd = C('SAPP_CALL_NETY_CMD');
             $m_netty = new \Admin\Model\Smallapp\NettyModel();
             foreach ($res_box['result'] as $k=>$v){
@@ -2080,12 +2079,11 @@ group by openid";
                             $lottery_countdown = strtotime($activity_info['lottery_time']) - time();
                             $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
                             $dish_name_info = pathinfo($activity_info['dish_img']);
-                            $partakedish_img = $dish_name_info['dirname'].'/'.$dish_name_info['filename'].'_partake.jpg';
+                            $partake_img = $activity_info['dish_img'].'?x-oss-process=image/resize,m_mfit,h_200,w_300';
                             $netty_data = array('action'=>135,'countdown'=>30,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
-                                'lottery_countdown'=>$lottery_countdown,'partakedish_img'=>$partakedish_img
+                                'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partake_img,'partake_filename'=>$dish_name_info['basename'],
+                                'partake_name'=>$activity_info['dish'],'activity_name'=>'霸王餐活动',
                             );
-                            $name_info = pathinfo($netty_data['partakedish_img']);
-                            $netty_data['partakedish_filename'] = $name_info['basename'];
                             $message = json_encode($netty_data);
 
                             $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
