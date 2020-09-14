@@ -282,6 +282,7 @@ class DatareportController extends BaseController {
         $end_time = I('end_time','');
         $hotel_level = I('level','');
         $hotel_team = I('team','');
+        $keyword = I('keyword','','trim');
         $all_assess = I('all_assess',0,'intval');
         $operation_assess = I('operation_assess',0,'intval');
         $channel_assess = I('channel_assess',0,'intval');
@@ -326,6 +327,9 @@ class DatareportController extends BaseController {
         }
         if($is_train!=99){
             $where['ext.is_train'] = $is_train;
+        }
+        if($keyword){
+            $where['a.hotel_name'] = array('like',"%$keyword%");
         }
         $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
         $start  = ($page-1) * $size;
@@ -404,12 +408,18 @@ class DatareportController extends BaseController {
                 }
             }
         }
-        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate,avg(fjrate) as fjrate,avg(fjsalerate) as fjsalerate,hotel_level';
-        $avg_where = array('date'=>array('in',$all_dates));
+
+        $avg_where = array('a.date'=>array('in',$all_dates));
         if($hotel_team){
-            $avg_where['team_name'] = array('in',$teams[$hotel_team]);
+            $avg_where['a.team_name'] = array('in',$teams[$hotel_team]);
         }
-        $res_avgdata = $m_staticassess->getData($fields,$avg_where,'hotel_level','');
+        if($is_train!=99){
+            $avg_where['ext.is_train'] = $is_train;
+        }
+        $fields = 'avg(a.fault_rate) as fault_rate,avg(a.zxrate) as zxrate,avg(a.fjrate) as fjrate,avg(a.fjsalerate) as fjsalerate,a.hotel_level';
+        $groupby = 'a.hotel_level';
+        $order = '';
+        $res_avgdata = $m_staticassess->getHotelassess($fields,$avg_where,$groupby,$order,0,10);
         $avg_data = array();
         foreach ($res_avgdata as $v){
             $fault_rate = sprintf("%.2f",$v['fault_rate']);
@@ -429,6 +439,7 @@ class DatareportController extends BaseController {
         $this->assign('avg_data',$avg_data);
         $this->assign('level',$hotel_level);
         $this->assign('is_train',$is_train);
+        $this->assign('keyword',$keyword);
         $this->assign('all_assess',$all_assess);
         $this->assign('operation_assess',$operation_assess);
         $this->assign('channel_assess',$channel_assess);

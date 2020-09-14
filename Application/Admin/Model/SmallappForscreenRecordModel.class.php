@@ -173,6 +173,9 @@ class SmallappForscreenRecordModel extends Model{
      */
     public function getFeastBoxByHotelId($hotel_id,$time,$fj_type=0,$small_id=1){
         $feast_time = C('FEAST_TIME');
+        if($small_id==5){
+            $feast_time = C('SALEFEAST_TIME');
+        }
         $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
         $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
         $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
