@@ -30,7 +30,7 @@ class ActivityController extends BaseController {
             $where['a.status'] = $status;
         }
         if($hotel_name){
-            $where['a.hotel_name'] = array('like',"%{$hotel_name}%");
+            $where['hotel.name'] = array('like',"%{$hotel_name}%");
         }
         $start = ($pageNum-1)*$size;
         $fields = 'a.*,hotel.name as hotel_name';
