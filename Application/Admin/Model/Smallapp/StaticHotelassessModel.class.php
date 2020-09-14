@@ -36,9 +36,9 @@ class StaticHotelassessModel extends BaseModel{
 
     public function assessConfig(){
         $config = array(
-            'A'=>array('fault_rate'=>0.1,'zxrate'=>0.7,'fjrate'=>0.08,'fjsalerate'=>0.2),
-            'B'=>array('fault_rate'=>0.3,'zxrate'=>0.5,'fjrate'=>0.05,'fjsalerate'=>0.1),
-            'C'=>array('fault_rate'=>0.2,'zxrate'=>0.4,'fjrate'=>0.03,'fjsalerate'=>0.05),
+            'A'=>array('fault_rate'=>0.1,'zxrate'=>0.6,'fjrate'=>0.06,'fjsalerate'=>0.15),
+            'B'=>array('fault_rate'=>0.2,'zxrate'=>0.45,'fjrate'=>0.03,'fjsalerate'=>0.1),
+            'C'=>array('fault_rate'=>0.3,'zxrate'=>0.4,'fjrate'=>0.02,'fjsalerate'=>0.05),
         );
         return $config;
     }
@@ -93,7 +93,7 @@ class StaticHotelassessModel extends BaseModel{
         $end = date('Y-m-d',strtotime('-1day'));
 
 //        $start = '2020-08-24';
-//        $end = '2020-09-02';
+//        $end = '2020-09-10';
 
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();

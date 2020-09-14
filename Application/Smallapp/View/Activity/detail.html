@@ -25,7 +25,7 @@
               <td data-title="用户昵称">{$dinfo.nickname}</td>
               <td data-title="包间名称">{$dinfo.box_name}</td>
               <td data-title="MAC地址">{$dinfo.box_mac}</td>
-              <td data-title="是否中奖">{$dinfo.status_str}</td>
+              <td data-title="是否中奖"><if condition="$dinfo.status eq 2"><span style="color:red;">{$dinfo.status_str}</span> <else/>{$dinfo.status_str}</if></td>
               <td data-title="参与时间">{$dinfo.add_time}</td>
                     
             </tr>

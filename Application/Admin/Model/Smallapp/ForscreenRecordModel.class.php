@@ -306,6 +306,12 @@ class ForscreenRecordModel extends BaseModel
     }
 
     public function handel_forscreenimg($type=0){
+        $hour = date('H');
+        if(!in_array($hour,array(11,12,13,14,17,18,19,20,21,22))){
+            $now_time = date('Y-m-d H:i:s');
+            echo "$now_time hour $hour error\r\n";
+            exit;
+        }
         $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
         $curl = new \Common\Lib\Curl();
         $res_netty = '';

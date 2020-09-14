@@ -30,7 +30,7 @@ class ActivityController extends BaseController {
             $where['a.status'] = $status;
         }
         if($hotel_name){
-            $where['a.hotel_name'] = array('like',"%{$hotel_name}%");
+            $where['hotel.name'] = array('like',"%{$hotel_name}%");
         }
         $start = ($pageNum-1)*$size;
         $fields = 'a.*,hotel.name as hotel_name';
@@ -90,7 +90,7 @@ class ActivityController extends BaseController {
         $res_box = $m_box->getBoxByCondition($fields,$where,'');
         $boxs = array();
         foreach ($res_box as $v){
-            $boxs[$v['box_mac']] = $v;
+            $boxs[$v['mac']] = $v['name'];
         }
         $all_status = array('1'=>'未开奖','2'=>'已中奖','3'=>'未中奖');
         foreach ($res as $k=>$v){
