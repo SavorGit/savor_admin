@@ -141,7 +141,7 @@ class BoxModel extends BaseModel{
 	         left join savor_hotel as hotel on room.hotel_id = hotel.id
 	         left join savor_hotel_ext as hext on hext.hotel_id = hotel.id
 	         left join savor_sysuser as sys on sys.id = hext.maintainer_id
-	         where 1 and hotel.flag=0 and hotel.state=1 and box.flag=0 and box.state!=3  order by hotel.id';
+	         where 1 and hotel.flag=0 and hotel.state=1 and box.flag=0 and box.state!=3 and tv.flag=0 and tv.state=1  order by hotel.id';
         $volist = $Model->query($sql);
     
         $res = $this->changeInfoName($volist);
