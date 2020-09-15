@@ -1,29 +1,43 @@
 <include file="Public/script"/>
+<!--显示列表样式1 start-->
 <div class="pageHeader">
   <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/saleuser/userlist" method="post">
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-          <div class="tools-group s2">
 
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">酒楼名称：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+            </div>
           </div>
-        </div>
-          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-6 pull-right">
 
-          <div class="input-group input-group-sm pull-right">
-            <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
+          <div class="form-group">
+            <div class="input-group input-group-sm">用户openID：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="请输入openid">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
             <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-              </span>
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
           </div>
 
         </div>
+
       </div>
     </div>
   </form>
 </div>
+
 <div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables">
@@ -37,6 +51,7 @@
             <th>手机号码</th>
             <th>用户昵称</th>
             <th>用户头像</th>
+            <th>酒楼名称</th>
             <th>创建时间</th>
             <th>用户积分</th>
             <th class="table-tool">操作</th>
@@ -50,6 +65,7 @@
               <td data-title="手机号码">{$dinfo.mobile}</td>
               <td data-title="用户昵称">{$dinfo.nickname}</td>
               <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
+              <td data-title="创建时间">{$dinfo.hotel_name}</td>
               <td data-title="创建时间">{$dinfo.create_time}</td>
               <td data-title="用户积分">{$dinfo.integral}</td>
 

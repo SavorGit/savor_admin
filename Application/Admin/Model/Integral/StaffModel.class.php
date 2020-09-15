@@ -8,6 +8,8 @@ class StaffModel extends BaseModel{
 
     public function getUserIntegralList($fields,$where,$order,$start,$size){
         $list = $this->alias('a')
+            ->join('savor_integral_merchant merchant on a.merchant_id=merchant.id','left')
+            ->join('savor_hotel hotel on merchant.hotel_id=hotel.id','left')
             ->join('savor_smallapp_user u on a.openid=u.openid','left')
             ->join('savor_smallapp_user_integral i on a.openid=i.openid','left')
             ->field($fields)
@@ -16,6 +18,10 @@ class StaffModel extends BaseModel{
             ->limit($start,$size)
             ->select();
         $count = $this->alias('a')
+            ->join('savor_integral_merchant merchant on a.merchant_id=merchant.id','left')
+            ->join('savor_hotel hotel on merchant.hotel_id=hotel.id','left')
+            ->join('savor_smallapp_user u on a.openid=u.openid','left')
+            ->join('savor_smallapp_user_integral i on a.openid=i.openid','left')
             ->where($where)
             ->count();
         $objPage = new Page($count,$size);
