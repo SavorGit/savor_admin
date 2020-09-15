@@ -5,7 +5,6 @@ use Think\Controller;
 use Common\Lib\SavorRedis;
 use Behavior\AgentCheckBehavior;
 use \Common\Lib\MailAuto;
-use function GuzzleHttp\json_decode;
 // use Common\Lib\SavorRedis;
 /**
  * @desc 功能测试类
@@ -1714,25 +1713,16 @@ class ExcelController extends Controller
             array('boxstate', '机顶盒状态'),
             array('mac', '机顶盒mac地址'),
             array('bname', '机顶盒名称'),
-            array('rname', '包间名称'),
-            array('rtype', '包间类型'),
-           
+            
             array('hname', '酒店名称'),
-            //array('level', '酒店级别'),
             array('area_id', '酒店区域'),
             array('addr', '酒店地址'),
-            //array('contractor', '酒店联系人'),
-            //array('mobile', '手机'),
-            //array('tel', '固定电话'),
-            //array('iskey', '重点酒楼'),
+            
             array('maintainer', '合作维护人'),
-            //array('tech_maintainer', '技术运维人'),
             array('box_type', '设备类型'),
             array('remark','包间备注'),
             array('tag','机顶盒备注'),
             array('avg_expense','人均消费'),
-            array('tv_brand','电视品牌'),
-            array('tv_size','电视尺寸'),
             array('is_4g','是否4G'),
         );
         
@@ -6234,9 +6224,11 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
      * @desc 超过7天失联的版位信息 每天早上8:30发送邮件
      */
     public function lostBoxList(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
         $hotel_box_types = getHeartBoXtypeIds(2);
         $sql ="select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark, 
-               box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id
+               box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period
                from savor_box box  
                left join savor_room room on box.room_id= room.id 
                left join savor_hotel hotel on room.hotel_id=hotel.id 
@@ -6247,29 +6239,67 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 ";
         $data = M()->query($sql);
         //$datalist = [];
+        $promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $promenuListModel = new \Admin\Model\ProgramMenuListModel();
+        $pro_hotel_arr = [];
         foreach($data as $key=>$v){
-	    if($v['box_id']==$v['hlog_box_id'] || empty($v['last_heart_time'])){
-            if(empty($v['last_heart_time'])){
-                $data[$key]['last_heart_time'] = '';
-                $data[$key]['last_heart_time_str'] = '30天+';
-            }else {
-                $heart_time = strtotime($v['last_heart_time']);
-                $lost_time = strtotime('-7 days');
-                $now_time  = time();
-                if($heart_time<=$lost_time){
-                    $data[$key]['last_heart_time'] = $v['last_heart_time'];
-                    
-                    $diff_time = floor(($now_time - $heart_time)/86400);
-                    $data[$key]['last_heart_time_str'] = $diff_time.'天';
+    	    if($v['box_id']==$v['hlog_box_id'] || empty($v['last_heart_time'])){
+                if(empty($v['last_heart_time'])){
+                    $data[$key]['last_heart_time'] = '';
+                    $data[$key]['last_heart_time_str'] = '30天+';
+                    $data[$key]['last_pro_update'] = '30天+';
                 }else {
-                    unset($data[$key]);
+                    $heart_time = strtotime($v['last_heart_time']);
+                    $lost_time = strtotime('-7 days');
+                    $now_time  = time();
+                    if($heart_time<=$lost_time){
+                        $data[$key]['last_heart_time'] = $v['last_heart_time'];
+                        
+                        $diff_time = floor(($now_time - $heart_time)/86400);
+                        $data[$key]['last_heart_time_str'] = $diff_time.'天';
+                        
+                        
+                        $box_info = $redis->get('savor_box_'.$v['box_id']);
+                        $box_info = json_decode($box_info,true);
+                        $room_info = $redis->get('savor_room_'.$box_info['room_id']);
+                        $room_info = json_decode($room_info,true);
+                        if(!isset($pro_hotel_arr[$room_info['hotel_id']])){
+                            $fields = 'pl.create_time';
+                            $order = 'pl.create_time desc';
+                            $limit = ' 1';
+                            $pro_arr = $promenuHoModel->getProgramByHotelId($room_info['hotel_id'],$fields,$order,$limit);
+                        
+                            if(!empty($pro_arr)){
+                                $pro_hotel_arr[$room_info['hotel_id']] = $pro_arr[0]['create_time'];
+                            }else {
+                                $pro_hotel_arr[$room_info['hotel_id']] = '';
+                            }
+                        }
+                        if($pro_hotel_arr[$room_info['hotel_id']] ==''){
+                            $data[$key]['last_pro_update'] = '30+天';
+                        }else {
+                            $map = [];
+                            $map['menu_num'] = $v['pro_period'];
+                            $pro_info = $promenuListModel->getOne('create_time', $map);
+                            $diff_time =  strtotime($pro_hotel_arr[$room_info['hotel_id']]) - strtotime($pro_info['create_time']);
+                            $diff_day = floor($diff_time/86400);
+                            $data[$key]['last_pro_update'] = $diff_day.'天';
+                        }
+                        
+                    }else {
+                        unset($data[$key]);
+                    }
+                    
                 }
                 
-            }
-	    }else {
-	    	unset($data[$key]);
-	    }
+                //获取最新的节目单
+                /*  */
+                   
+    	    }else {
+    	    	unset($data[$key]);
+    	    }
         }
+        
         sort($data);
         
         $xlsCell = array(
@@ -6279,7 +6309,8 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             array('room_name','包间名称'),
             array('box_mac','机顶盒mac'),
             array('last_heart_time','最后一次心跳时间'),
-            array('last_heart_time_str','失联天数')
+            array('last_heart_time_str','失联天数'),
+            array('last_pro_update','节目未更新天数'),
         );
         $xlsName = '失联超过7天的版位信息';
         $filename = 'user_wifi_forscreen_detail';
