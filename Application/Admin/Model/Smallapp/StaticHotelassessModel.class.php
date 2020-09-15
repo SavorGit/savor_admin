@@ -15,6 +15,18 @@ class StaticHotelassessModel extends BaseModel{
         return $data;
     }
 
+    public function getHotelassess($fields="*",$where,$groupby='',$order='',$start=0,$size=5){
+        $data = $this->alias('a')
+            ->join('savor_hotel_ext ext on a.hotel_id=ext.hotel_id','left')
+            ->field($fields)
+            ->where($where)
+            ->group($groupby)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        return $data;
+    }
+
     public function getCustomeList($fields="*",$where,$groupby='',$order='level asc',$countfields='',$start=0,$size=5){
         $list = $this->alias('a')
             ->join('savor_hotel_ext ext on a.hotel_id=ext.hotel_id','left')
@@ -93,7 +105,7 @@ class StaticHotelassessModel extends BaseModel{
         $end = date('Y-m-d',strtotime('-1day'));
 
 //        $start = '2020-08-24';
-//        $end = '2020-09-10';
+//        $end = '2020-09-13';
 
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();

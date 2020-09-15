@@ -99,11 +99,17 @@ class ActivityModel extends BaseModel{
         $m_box = new \Admin\Model\BoxModel();
         $fields = 'box.mac,hotel.id as hotel_id';
         $where = array('box.state'=>1,'box.flag'=>0);
-        $where['hotel.id'] = array('in',$all_hotel_ids);
-        $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
         $all_boxs = array();
-        foreach ($res_bdata as $v){
-            $all_boxs[$v['mac']]=$hotel_dishs[$v['hotel_id']];
+        if(!empty($all_hotel_ids)){
+            $where['hotel.id'] = array('in',$all_hotel_ids);
+            $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
+            foreach ($res_bdata as $v){
+                $all_boxs[$v['mac']]=$hotel_dishs[$v['hotel_id']];
+            }
+        }
+        if(empty($all_boxs)){
+            echo "no boxs \r\n";
+            exit;
         }
 
         $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';

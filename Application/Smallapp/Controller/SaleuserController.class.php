@@ -14,17 +14,21 @@ class SaleuserController extends BaseController {
 
     public function userlist(){
         $openid = I('openid','','trim');
+        $hotel_name = I('hotel_name','','trim');
         $small_app_id = I('small_app_id',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
 
-        $where = array('a.status'=>1);
+        $where = array('a.status'=>1,'merchant.status'=>1);
         if(!empty($openid)){
             $where['a.openid'] = $openid;
         }
+        if(!empty($hotel_name)){
+            $where['hotel.name'] = array('like',"%$hotel_name%");
+        }
         $start = ($pageNum-1)*$size;
         $m_staffuser = new \Admin\Model\Integral\StaffModel();
-        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,u.create_time,i.integral";
+        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,hotel.name as hotel_name,u.create_time,i.integral";
         $res_list = $m_staffuser->getUserIntegralList($fields,$where,'i.integral desc',$start,$size);
 
         $data_list = $res_list['list'];
@@ -32,6 +36,7 @@ class SaleuserController extends BaseController {
             $data_list[$k]['integral'] = intval($v['integral']);
         }
 
+        $this->assign('hotel_name',$hotel_name);
         $this->assign('openid',$openid);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
