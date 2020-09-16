@@ -4405,8 +4405,22 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         foreach($conf_list as $key=>$v){
             $conf_arr[$v['type']] = json_decode($v['conf_data'],true);
         }
+        $m_qrcode = new \Admin\Model\Smallapp\QrcodeLogModel();
+        $qrcode_types = array(1,2,3,5,6,7,8,9,10,11,12,13,15,16,19,20,21,29,30);
         foreach($hotel_list as $key=>$v){
-            //break;
+            //扫码数
+            $fields = 'count(a.id) as num';
+            $where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>$v['hotel_id']);
+            $where['a.type'] = array('in',$qrcode_types);
+            $qrstart_time = date("Y-m-d 00:00:00",strtotime($start_date));
+            $qrend_time = date("Y-m-d 23:59:59",strtotime($end_date));
+            $where['a.create_time'] = array(array('EGT',$qrstart_time),array('ELT',$qrend_time));
+            $res_qrcode = $m_qrcode->getScanqrcodeNum($fields,$where,'');
+            $qrcode_num = 0;
+            if(!empty($res_qrcode)){
+                $qrcode_num = intval($res_qrcode[0]['num']);
+            }
+
             //综合评分-心跳分数
             $where = array();
             $where['hotel_id'] = $v['hotel_id'];
@@ -4552,7 +4566,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $hotel_list[$key]['all_interact_nums'] = $all_interact_nums;
             $hotel_list[$key]['all_box_nums'] = $all_box_nums;
             $hotel_list[$key]['hd_box_nums']       = $hd_box_nums;
-        
+            $hotel_list[$key]['qrcode_num']       = $qrcode_num;
+
         
         }
         sortArrByOneField($hotel_list,'mylty_score',true);
@@ -4567,10 +4582,10 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('heart_log_nums','心跳次数'),
             array('avg_down_speed','平均网速'),
             array('all_interact_nums','互动次数'),
+            array('qrcode_num','扫码数'),
             array('all_box_nums','版位数量'),
             array('hd_box_nums','互动版位'),
-            
-        
+
         );
         $xlsName = '小程序酒楼评级';
         $filename = 'smallapp_hotel_level';
