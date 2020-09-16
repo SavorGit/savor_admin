@@ -4398,16 +4398,34 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         }
         $m_statics = new \Admin\Model\Smallapp\StatisticsModel();
         $hotel_list = $m_statics->getWhere('hotel_id,hotel_name', $where, '','', 'hotel_id');
+
+        $m_user = new \Admin\Model\UserModel();
+        $m_hotel = new \Admin\Model\HotelModel();
+        $all_hotel_types = C('heart_hotel_box_type');
+
+
         $m_static_config = new \Admin\Model\Smallapp\StaticConfigModel();
         $conf_list = $m_static_config->getWhere('conf_data,type',array('status'=>1));
-        
         $conf_arr = array();
         foreach($conf_list as $key=>$v){
             $conf_arr[$v['type']] = json_decode($v['conf_data'],true);
         }
         $m_qrcode = new \Admin\Model\Smallapp\QrcodeLogModel();
         $qrcode_types = array(1,2,3,5,6,7,8,9,10,11,12,13,15,16,19,20,21,29,30);
+        $datas = array();
         foreach($hotel_list as $key=>$v){
+            $res_hotel = $m_hotel->getHotelInfo('a.name as hotel_name,a.hotel_box_type,ext.maintainer_id',array('a.id'=>$v['hotel_id'],'state'=>1,'flag'=>0));
+            if(empty($res_hotel)){
+                continue;
+            }
+            $v['hotel_name'] = $res_hotel['hotel_name'];
+            $hotel_box_type = $all_hotel_types[$res_hotel['hotel_box_type']];
+            $res_user = $m_user->getUserInfo($res_hotel['maintainer_id']);
+            $maintainer_name = '';
+            if(!empty($res_user)){
+                $maintainer_name = $res_user['remark'];
+            }
+
             //扫码数
             $fields = 'count(a.id) as num';
             $where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>$v['hotel_id']);
@@ -4500,10 +4518,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 $mult_level_type = 3;
                 
             }
-        
-        
+
             //开机评分-心跳分数
-        
             $score = $this->getScore($avg_heart_log_nums,$conf_arr[13]);
             $wake_heart_score = $conf_arr[11]['heart'] * $score;
         
@@ -4550,27 +4566,29 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             $hd_hd_score = $conf_arr[31]['hd'] * $score;
         
             //互动评分-互动覆盖率分数
-        
             $score = $this->getScore($cover_rate, $conf_arr[36]);
             $hd_cover_score = $conf_arr[31]['cover'] * $score;
             $hd_score = $hd_heart_score + $hd_net_score + $hd_hd_score + $hd_cover_score;
             $hd_score = round($hd_score);
-            $hotel_list[$key]['mult_level_type'] = $mult_level_type;
-            $hotel_list[$key]['multy_level']       = $multy_level;
-            $hotel_list[$key]['mylty_score']       = $multy_score;
-            $hotel_list[$key]['net_score']         = $net_score;
-            $hotel_list[$key]['wake_score']        = $wake_score;
-            $hotel_list[$key]['hd_score']          = $hd_score;
-            $hotel_list[$key]['heart_log_nums']    = $heart_log_nums;
-            $hotel_list[$key]['avg_down_speed']    = $avg_down_speed ? $avg_down_speed.'kb/s' : '';
-            $hotel_list[$key]['all_interact_nums'] = $all_interact_nums;
-            $hotel_list[$key]['all_box_nums'] = $all_box_nums;
-            $hotel_list[$key]['hd_box_nums']       = $hd_box_nums;
-            $hotel_list[$key]['qrcode_num']       = $qrcode_num;
 
-        
+            $dinfo = $v;
+            $dinfo['mult_level_type'] = $mult_level_type;
+            $dinfo['multy_level']       = $multy_level;
+            $dinfo['mylty_score']       = $multy_score;
+            $dinfo['net_score']         = $net_score;
+            $dinfo['wake_score']        = $wake_score;
+            $dinfo['hd_score']          = $hd_score;
+            $dinfo['heart_log_nums']    = $heart_log_nums;
+            $dinfo['avg_down_speed']    = $avg_down_speed ? $avg_down_speed.'kb/s' : '';
+            $dinfo['all_interact_nums'] = $all_interact_nums;
+            $dinfo['all_box_nums'] = $all_box_nums;
+            $dinfo['hd_box_nums']       = $hd_box_nums;
+            $dinfo['qrcode_num']       = $qrcode_num;
+            $dinfo['hotel_box_type']       = $hotel_box_type;
+            $dinfo['maintainer_name']       = $maintainer_name;
+            $datas[]=$dinfo;
         }
-        sortArrByOneField($hotel_list,'mylty_score',true);
+        sortArrByOneField($datas,'mylty_score',true);
         $xlsCell = array(
             
             array('hotel_name','酒楼名称'),
@@ -4585,11 +4603,13 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             array('qrcode_num','扫码数'),
             array('all_box_nums','版位数量'),
             array('hd_box_nums','互动版位'),
+            array('hotel_box_type','酒楼机顶盒类型'),
+            array('maintainer_name','维护人'),
 
         );
         $xlsName = '小程序酒楼评级';
         $filename = 'smallapp_hotel_level';
-        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
+        $this->exportExcel($xlsName, $xlsCell, $datas,$filename);
     }
     public function sappstaticdetail(){
         ini_set("memory_limit","1024M");
