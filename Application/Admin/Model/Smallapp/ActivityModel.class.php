@@ -209,59 +209,76 @@ class ActivityModel extends BaseModel{
                 if(empty($res_apply_user)){
                     $this->updateData(array('id'=>$activity_id),array('status'=>2));
                     echo "activity_id:{$v['id']} no lottery user \r\n";
-                    continue;
-                }
-                $all_lottery_openid = array();
-                foreach ($res_apply_user as $ak=>$av){
-                    $all_lottery_openid[]=$av['openid'];
-                    if(in_array($av['openid'],$now_lottery_openids)){
-                        unset($res_apply_user[$ak]);
-                    }
-                }
-                if(!empty($res_apply_user)){
-                    $res_apply_user = array_values($res_apply_user);
-                    $user_num = count($res_apply_user) - 1;
-                    $lottery_rand = mt_rand(0,$user_num);
-                    $lottery_apply_id = $res_apply_user[$lottery_rand]['id'];
-                    $lottery_openid = $res_apply_user[$lottery_rand]['openid'];
-                }else{
-                    $lottery_apply_id = 0;
-                    $lottery_openid = 0;
-                }
-                if($lottery_apply_id){
-                    $expire_time = date('Y-m-d H:i:s',$lottery_time+10800);
-                    $adata = array('status'=>2,'expire_time'=>$expire_time);
-                    $m_activityapply->updateData(array('id'=>$lottery_apply_id),$adata);
-                }
 
-                $awhere = array('activity_id'=>$v['id']);
-                if($lottery_apply_id){
-                    $awhere['id'] = array('neq',$lottery_apply_id);
-                }
-                $m_activityapply->updateData($awhere,array('status'=>3));
-
-                $lwhere = array('openid'=>array('in',$all_lottery_openid));
-                $users = $m_user->getWhere('openid,avatarUrl,nickName',$lwhere,'id desc','','');
-                $last_user_num = $all_user_num - count($all_lottery_openid);
-                if($last_user_num>0){
+                    $last_user_num = 40;
                     $start = rand(1000,2000);
                     $limit = "$start,$last_user_num";
                     $uwhere = array('nickName'=>array('neq',''));
-                    $uwhere['openid'] = array('not in',$all_lottery_openid);
                     $res_user = $m_user->getWhere('openid,avatarUrl,nickName',$uwhere,'id desc',$limit,'');
-                    if($lottery_apply_id==0){
-                        $lottery_openid = $res_user[0]['openid'];
+                    $lottery_openid = $res_user[0]['openid'];
+
+                    $partake_user = array();
+                    foreach ($res_user as $uv){
+                        $is_lottery = 0;
+                        if($uv['openid']==$lottery_openid){
+                            $is_lottery = 1;
+                        }
+                        $partake_user[] = array('avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
                     }
-                    $users = array_merge($users,$res_user);
-                }
-                $partake_user = array();
-                foreach ($users as $uv){
-                    $is_lottery = 0;
-                    if($uv['openid']==$lottery_openid){
-                        $is_lottery = 1;
+                }else{
+                    $all_lottery_openid = array();
+                    foreach ($res_apply_user as $ak=>$av){
+                        $all_lottery_openid[]=$av['openid'];
+                        if(in_array($av['openid'],$now_lottery_openids)){
+                            unset($res_apply_user[$ak]);
+                        }
                     }
-                    $partake_user[] = array('avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
+                    if(!empty($res_apply_user)){
+                        $res_apply_user = array_values($res_apply_user);
+                        $user_num = count($res_apply_user) - 1;
+                        $lottery_rand = mt_rand(0,$user_num);
+                        $lottery_apply_id = $res_apply_user[$lottery_rand]['id'];
+                        $lottery_openid = $res_apply_user[$lottery_rand]['openid'];
+                    }else{
+                        $lottery_apply_id = 0;
+                        $lottery_openid = 0;
+                    }
+                    if($lottery_apply_id){
+                        $expire_time = date('Y-m-d H:i:s',$lottery_time+10800);
+                        $adata = array('status'=>2,'expire_time'=>$expire_time);
+                        $m_activityapply->updateData(array('id'=>$lottery_apply_id),$adata);
+                    }
+
+                    $awhere = array('activity_id'=>$v['id']);
+                    if($lottery_apply_id){
+                        $awhere['id'] = array('neq',$lottery_apply_id);
+                    }
+                    $m_activityapply->updateData($awhere,array('status'=>3));
+
+                    $lwhere = array('openid'=>array('in',$all_lottery_openid));
+                    $users = $m_user->getWhere('openid,avatarUrl,nickName',$lwhere,'id desc','','');
+                    $last_user_num = $all_user_num - count($all_lottery_openid);
+                    if($last_user_num>0){
+                        $start = rand(1000,2000);
+                        $limit = "$start,$last_user_num";
+                        $uwhere = array('nickName'=>array('neq',''));
+                        $uwhere['openid'] = array('not in',$all_lottery_openid);
+                        $res_user = $m_user->getWhere('openid,avatarUrl,nickName',$uwhere,'id desc',$limit,'');
+                        if($lottery_apply_id==0){
+                            $lottery_openid = $res_user[0]['openid'];
+                        }
+                        $users = array_merge($users,$res_user);
+                    }
+                    $partake_user = array();
+                    foreach ($users as $uv){
+                        $is_lottery = 0;
+                        if($uv['openid']==$lottery_openid){
+                            $is_lottery = 1;
+                        }
+                        $partake_user[] = array('avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
+                    }
                 }
+
                 $lottery = array('dish_name'=>$v['prize'],'dish_image'=>$v['image_url']);
 
                 $netty_data = array('action'=>136,'partake_user'=>$partake_user,'lottery'=>$lottery);
