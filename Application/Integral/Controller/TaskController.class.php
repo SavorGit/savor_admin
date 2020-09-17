@@ -46,6 +46,7 @@ class TaskController extends BaseController {
         
         $this->display();
     }
+
     public function add(){
         if(IS_POST){
             $m_task = new \Admin\Model\Integral\TaskModel();
@@ -89,7 +90,24 @@ class TaskController extends BaseController {
                     $task_content['max_daily_integral'] = I('post.activity_max_daily_integral',0,'intval');
                     $task_content['user_promote']['type'] = I('post.user_promote',0,'intval');
                     $task_content['user_promote']['value'] = I('post.user_promote_'.$task_content['user_promote']['type'],0,'intval');
+                }else if($task_content['task_content_type']==4){//邀请食客评价
+                    $task_content['lunch_start_time']   = I('post.comment_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.comment_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.comment_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.comment_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.comment_max_daily_integral',0,'intval');
+                    $task_content['user_comment']['type'] = I('post.comment_promote',0,'intval');
+                    $task_content['user_comment']['value'] = I('post.comment_promote_'.$task_content['user_comment']['type'],0,'intval');
+                }else if($task_content['task_content_type']==5){//打赏补贴
+                    $task_content['lunch_start_time']   = I('post.reward_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.reward_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.reward_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.reward_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.reward_max_daily_integral',0,'intval');
+                    $task_content['user_reward']['type'] = I('post.reward_promote',0,'intval');
+                    $task_content['user_reward']['value'] = I('post.reward_promote_'.$task_content['user_reward']['type'],0,'intval');
                 }
+
                 $this->chekInfoParam($task_content,$data);
                 $data['task_info'] = json_encode($task_content);
             }
@@ -206,6 +224,22 @@ class TaskController extends BaseController {
                     $task_content['max_daily_integral'] = I('post.max_daily_integral',0,'intval');
                     $task_content['user_promote']['type'] = I('post.user_promote',0,'intval');
                     $task_content['user_promote']['value'] = I('post.user_promote_'.$task_content['user_promote']['type'],0,'intval');
+                }else if($task_content['task_content_type']==4){//邀请食客评价
+                    $task_content['lunch_start_time']   = I('post.comment_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.comment_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.comment_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.comment_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.comment_max_daily_integral',0,'intval');
+                    $task_content['user_comment']['type'] = I('post.comment_promote',0,'intval');
+                    $task_content['user_comment']['value'] = I('post.comment_promote_'.$task_content['user_comment']['type'],0,'intval');
+                }else if($task_content['task_content_type']==5){//打赏补贴
+                    $task_content['lunch_start_time']   = I('post.reward_lunch_start_time');
+                    $task_content['lunch_end_time']     = I('post.reward_lunch_end_time');
+                    $task_content['dinner_start_time']  = I('post.reward_dinner_start_time');
+                    $task_content['dinner_end_time']    = I('post.reward_dinner_end_time');
+                    $task_content['max_daily_integral'] = I('post.reward_max_daily_integral',0,'intval');
+                    $task_content['user_reward']['type'] = I('post.reward_promote',0,'intval');
+                    $task_content['user_reward']['value'] = I('post.reward_promote_'.$task_content['user_reward']['type'],0,'intval');
                 }
                 $this->chekInfoParam($task_content);
                 $data['task_info'] = json_encode($task_content);
@@ -529,6 +563,7 @@ class TaskController extends BaseController {
         if($data['dinner_end_time']<=$data['dinner_start_time']){
             $this->error('晚饭结束时间必须大于开始时间');
         }
+
         if($data['lunch_end_time']>'17:00') $this->error('午饭结束时间不能大于17点');
         if($data['dinner_end_time']>'23:00') $this->error('晚饭结束时间不能大于23点');
         if($data['task_content_type']==1){
@@ -537,6 +572,12 @@ class TaskController extends BaseController {
         }elseif($data['task_content_type']==2){
             if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
         }elseif($data['task_content_type']==3){
+            if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
+        }elseif($data['task_content_type']==4){
+            if(empty($data['user_comment']['type'])) $this->error('请选择评价奖励类型');
+            if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
+        }elseif($data['task_content_type']==5){
+            if(empty($data['user_reward']['type'])) $this->error('请选择打赏奖励类型');
             if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
         }
         

@@ -22,7 +22,6 @@ class TaskUserModel extends BaseModel{
             exit;
         }
 
-
         $begin_time = $now_date." 00:00:00";
         $end_time = $now_date." 23:59:59";
         $where = array();
@@ -56,65 +55,317 @@ class TaskUserModel extends BaseModel{
             $task_info['task_user_id'] = $v['id'];
             $task_content = json_decode($task_info['task_info'],true);
             $openid = $v['openid'];
-            $where = array('openid'=>$openid);
-            $where['add_time'] = array(array('egt',$sign_begin_time),array('elt',$sign_end_time), 'and');
-//            $res_signin = $m_usersignin->getDataList('*',$where,'id asc');
-            $res_signin = $m_usersignin->getAll('*',$where,0,1000,'id desc','box_mac');
-            if(empty($res_signin)){
-                echo "task_user_id:{$v['id']} $openid not sign $now_time \r\n";
-                continue;
-            }
-            foreach ($res_signin as $signv){
-                $signinfo = $m_usersignin->checkSigninTime(strtotime($signv['signin_time']));
-                if($signv['signout_time']=='0000-00-00 00:00:00'){
-                    if($signinfo['is_signin']){
-                        $m_usersignin->updateData(array('id'=>$signv['id']),array('signout_time'=>$signinfo['signout_time']));
-                        $signv['signout_time'] = $signinfo['signout_time'];
-                    }
+
+            $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广 4邀请食客评价 5打赏补贴
+            if(in_array($task_type,array(4,5))){
+                switch ($dinner_type){
+                    case 1:
+                        $begin_time = date("Y-m-d {$task_content['lunch_start_time']}:00");
+                        $end_time = date("Y-m-d {$task_content['lunch_end_time']}:00");
+                        break;
+                    case 2:
+                        $begin_time = date("Y-m-d {$task_content['dinner_start_time']}:00");
+                        $end_time = date("Y-m-d {$task_content['dinner_end_time']}:00");
+                        break;
+                    default:
+                        $begin_time = '';
+                        $end_time = '';
                 }
-                if($signv['signout_time']=='0000-00-00 00:00:00'){
+                if(empty($begin_time) && empty($end_time)){
+                    echo "task_id:$task_id begin and end time error \r\n";
                     continue;
                 }
-                $tmp_dinner_type = $signinfo['type'];//1午饭 2晚饭
-                if($tmp_dinner_type==$dinner_type){
-                    switch ($tmp_dinner_type){
-                        case 1:
-                            $fj_begin_hour = $task_content['lunch_start_time'];
-                            $fj_end_hour = $task_content['lunch_end_time'];
-                            break;
-                        case 2:
-                            $fj_begin_hour = $task_content['dinner_start_time'];
-                            $fj_end_hour = $task_content['dinner_end_time'];
-                            break;
-                        default:
-                            $fj_begin_hour = '';
-                            $fj_end_hour = '';
+                $m_staff = new \Admin\Model\Integral\StaffModel();
+                $staff_info = $m_staff->getInfo(array('openid'=>$openid,'status'=>1));
+                if(empty($staff_info)){
+                    echo "task_id:$task_id staff not exist \r\n";
+                    continue;
+                }
+                $fj_bstime = strtotime($begin_time);
+                $fj_estime = strtotime($end_time);
+                $task_date = date('Ymd');
+                $task_times = array('fj_bstime'=>$fj_bstime,'fj_estime'=>$fj_estime,'task_date'=>$task_date);
+                switch ($task_type){
+                    case 4:
+                        $this->task_comment($task_times,$dinner_type,$task_info,$staff_info);
+                        break;
+                    case 5:
+                        $this->task_commentreward($task_times,$dinner_type,$task_info,$staff_info);
+                        break;
+                }
+
+            }else{
+                $where = array('openid'=>$openid);
+                $where['add_time'] = array(array('egt',$sign_begin_time),array('elt',$sign_end_time), 'and');
+                $res_signin = $m_usersignin->getAll('*',$where,0,1000,'id desc','box_mac');
+                if(empty($res_signin)){
+                    echo "task_user_id:{$v['id']} $openid not sign $now_time \r\n";
+                    continue;
+                }
+                foreach ($res_signin as $signv){
+                    $signinfo = $m_usersignin->checkSigninTime(strtotime($signv['signin_time']));
+                    if($signv['signout_time']=='0000-00-00 00:00:00'){
+                        if($signinfo['is_signin']){
+                            $m_usersignin->updateData(array('id'=>$signv['id']),array('signout_time'=>$signinfo['signout_time']));
+                            $signv['signout_time'] = $signinfo['signout_time'];
+                        }
                     }
-                    if(empty($fj_begin_hour) && empty($fj_end_hour)){
+                    if($signv['signout_time']=='0000-00-00 00:00:00'){
                         continue;
                     }
-                    $fj_begin_time = $now_date." $fj_begin_hour";
-                    $fj_end_time = $now_date." $fj_end_hour";
-                    $fj_bstime = strtotime($fj_begin_time);
-                    $fj_estime = strtotime($fj_end_time);
-                    $task_date = date('Ymd');
-                    $task_times = array('fj_bstime'=>$fj_bstime,'fj_estime'=>$fj_estime,'task_date'=>$task_date);
+                    $tmp_dinner_type = $signinfo['type'];//1午饭 2晚饭
+                    if($tmp_dinner_type==$dinner_type){
+                        switch ($tmp_dinner_type){
+                            case 1:
+                                $fj_begin_hour = $task_content['lunch_start_time'];
+                                $fj_end_hour = $task_content['lunch_end_time'];
+                                break;
+                            case 2:
+                                $fj_begin_hour = $task_content['dinner_start_time'];
+                                $fj_end_hour = $task_content['dinner_end_time'];
+                                break;
+                            default:
+                                $fj_begin_hour = '';
+                                $fj_end_hour = '';
+                        }
+                        if(empty($fj_begin_hour) && empty($fj_end_hour)){
+                            continue;
+                        }
+                        $fj_begin_time = $now_date." $fj_begin_hour";
+                        $fj_end_time = $now_date." $fj_end_hour";
+                        $fj_bstime = strtotime($fj_begin_time);
+                        $fj_estime = strtotime($fj_end_time);
+                        $task_date = date('Ymd');
+                        $task_times = array('fj_bstime'=>$fj_bstime,'fj_estime'=>$fj_estime,'task_date'=>$task_date);
 
-                    $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广
-                    switch ($task_type){
-                        case 1:
-                            $this->task_boot($task_times,$dinner_type,$task_info,$signv);
-                            break;
-                        case 2:
-                            $this->task_interact($task_times,$dinner_type,$task_info,$signv);
-                            break;
-                        case 3:
-                            $this->task_activitypromote($task_times,$dinner_type,$task_info,$signv);
-                            break;
+                        $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广
+                        switch ($task_type){
+                            case 1:
+                                $this->task_boot($task_times,$dinner_type,$task_info,$signv);
+                                break;
+                            case 2:
+                                $this->task_interact($task_times,$dinner_type,$task_info,$signv);
+                                break;
+                            case 3:
+                                $this->task_activitypromote($task_times,$dinner_type,$task_info,$signv);
+                                break;
+                        }
                     }
                 }
             }
         }
+    }
+
+    private function task_comment($task_times,$dinner_type,$task_info,$staff_info){
+        $begin_time = date('Y-m-d H:i:s',$task_times['fj_bstime']);
+        $end_time = date('Y-m-d H:i:s',$task_times['fj_estime']);
+        $task_date = $task_times['task_date'];
+
+        $where = array('staff_id'=>$staff_info['staff_id']);
+        $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
+        $m_comment = new \Admin\Model\Smallapp\CommentModel();
+        $res_comment = $m_comment->getDataList('*',$where,'id desc');
+        if(empty($res_comment)){
+            echo "task_user_id:{$task_info['task_user_id']}-task_id:{$task_info['id']} dinner_type $dinner_type no comment\r\n";
+            return true;
+        }
+
+        $m_box = new \Admin\Model\BoxModel();
+        $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+        $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+
+        $task_where = array('openid'=>$staff_info['openid'],'task_id'=>$task_info['task_user_id']);
+        $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+        $task_where['fj_type'] = $dinner_type;
+        $tmp_exist = $m_userintegralrecord->field('id,task_id,fj_type,integral')->where($task_where)->find();
+        if(!empty($tmp_exist) && $tmp_exist['integral']>0){
+            $integralrecord = json_encode($tmp_exist);
+            echo "{$task_info['task_user_id']} had getintegral integralrecord:$integralrecord \r\n";
+            return true;
+        }
+
+        $now_integral = 0;
+        $task_content = json_decode($task_info['task_info'],true);
+        $max_daily_integral = $task_content['max_daily_integral'];//每日最多积分上限
+
+        $task_type = $task_content['user_comment']['type'];
+        $comment_num = count($res_comment);
+        $ap_num = 0;
+        switch ($task_type){//1.饭点内评价 2饭点内每评价多少次奖励一次
+            case 1:
+                if($comment_num>0){
+                    $ap_num = 1;
+                    $now_integral = $task_info['integral'];
+                }
+                break;
+            case 2:
+                if($comment_num>0){
+                    $reward_num = $task_content['user_comment']['value'];
+                    $ap_num = floor($comment_num/$reward_num);
+                    $now_integral = $task_info['integral']*$ap_num;
+                }
+                break;
+        }
+        $admin_integral = 0;
+        if($now_integral){
+            $tmp_where = array('openid'=>$staff_info['openid']);
+            $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+            $tmp_where['task_id'] = $task_info['task_user_id'];
+            $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
+            $tmp_integral = intval($tmp_resintegral['total_integral']);
+
+            $staff_info['box_mac'] = $res_comment[0]['box_mac'];
+            $box_info = $m_box->getHotelInfoByBoxMac($staff_info['box_mac']);
+
+            $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$staff_info,$box_info);
+            $now_integral = $res_shareprofit['now_integral'];
+            if($tmp_integral+$now_integral>$max_daily_integral){
+                $now_integral = $max_daily_integral - $tmp_integral;
+                echo "task_user_id:{$task_info['task_user_id']}-task_id:{$task_info['id']} gt max_daily_integral $now_integral \r\n";
+            }else{
+                $admin_integral = $res_shareprofit['admin_integral'];
+            }
+        }
+
+        if($admin_integral || $now_integral){
+            $integralrecord_data = array('openid'=>$staff_info['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
+                'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
+                'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
+                'box_id'=>$box_info['box_id'],'box_mac'=>$box_info['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
+                'integral'=>$now_integral,'content'=>$ap_num,'type'=>7,'integral_time'=>$end_time);
+            $integralrecord_id = $m_userintegralrecord->add($integralrecord_data);
+
+            $res_shareprofit['integralrecord_id'] = $integralrecord_id;
+            $res_shareprofit['dinner_type'] = $dinner_type;
+            $res_shareprofit['fj_estime'] = $task_times['fj_estime'];
+            $res_shareprofit['integral_type'] = 6;
+            $res_shareprofit['task_id'] = $task_info['id'];
+            $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
+            if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
+                $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
+                $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
+                $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
+            }
+
+            $res_userintegral = $m_userintegral->getInfo(array('openid'=>$staff_info['openid']));
+            if(!empty($res_userintegral)){
+                $userintegral = $res_userintegral['integral']+$now_integral;
+                $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+            }else{
+                $integraldata = array('openid'=>$staff_info['openid'],'integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
+                $m_userintegral->add($integraldata);
+            }
+            //更新任务积分
+            $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
+        }
+        echo "{$task_info['task_user_id']} finish \r\n";
+        return true;
+    }
+
+    private function task_commentreward($task_times,$dinner_type,$task_info,$staff_info){
+        $begin_time = date('Y-m-d H:i:s',$task_times['fj_bstime']);
+        $end_time = date('Y-m-d H:i:s',$task_times['fj_estime']);
+        $task_date = $task_times['task_date'];
+
+        $where = array('staff_id'=>$staff_info['staff_id'],'reward_id'=>0);
+        $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
+        $m_comment = new \Admin\Model\Smallapp\CommentModel();
+        $res_comment = $m_comment->getDataList('*',$where,'id desc');
+        if(empty($res_comment)){
+            echo "task_user_id:{$task_info['task_user_id']}-task_id:{$task_info['id']} dinner_type $dinner_type no comment\r\n";
+            return true;
+        }
+
+        $m_box = new \Admin\Model\BoxModel();
+        $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+        $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+
+        $task_where = array('openid'=>$staff_info['openid'],'task_id'=>$task_info['task_user_id']);
+        $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+        $task_where['fj_type'] = $dinner_type;
+        $tmp_exist = $m_userintegralrecord->field('id,task_id,fj_type,integral')->where($task_where)->find();
+        if(!empty($tmp_exist) && $tmp_exist['integral']>0){
+            $integralrecord = json_encode($tmp_exist);
+            echo "{$task_info['task_user_id']} had getintegral integralrecord:$integralrecord \r\n";
+            return true;
+        }
+
+        $now_integral = 0;
+        $task_content = json_decode($task_info['task_info'],true);
+        $max_daily_integral = $task_content['max_daily_integral'];//每日最多积分上限
+
+        $task_type = $task_content['user_comment']['type'];
+        $comment_num = count($res_comment);
+        $ap_num = 0;
+        switch ($task_type){//1.饭点内评价无打赏奖励 2饭点内每评价多少次 无打赏奖励一次
+            case 1:
+                if($comment_num>0){
+                    $ap_num = 1;
+                    $now_integral = $task_info['integral'];
+                }
+                break;
+            case 2:
+                if($comment_num>0){
+                    $reward_num = $task_content['user_comment']['value'];
+                    $ap_num = floor($comment_num/$reward_num);
+                    $now_integral = $task_info['integral']*$ap_num;
+                }
+                break;
+        }
+        $admin_integral = 0;
+        if($now_integral){
+            $tmp_where = array('openid'=>$staff_info['openid']);
+            $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+            $tmp_where['task_id'] = $task_info['task_user_id'];
+            $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
+            $tmp_integral = intval($tmp_resintegral['total_integral']);
+
+            $staff_info['box_mac'] = $res_comment[0]['box_mac'];
+            $box_info = $m_box->getHotelInfoByBoxMac($staff_info['box_mac']);
+
+            $res_shareprofit = $this->calculate_shareprofit($now_integral,$task_info,$staff_info,$box_info);
+            $now_integral = $res_shareprofit['now_integral'];
+            if($tmp_integral+$now_integral>$max_daily_integral){
+                $now_integral = $max_daily_integral - $tmp_integral;
+                echo "task_user_id:{$task_info['task_user_id']}-task_id:{$task_info['id']} gt max_daily_integral $now_integral \r\n";
+            }else{
+                $admin_integral = $res_shareprofit['admin_integral'];
+            }
+        }
+
+        if($admin_integral || $now_integral){
+            $integralrecord_data = array('openid'=>$staff_info['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
+                'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
+                'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
+                'box_id'=>$box_info['box_id'],'box_mac'=>$box_info['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
+                'integral'=>$now_integral,'content'=>$ap_num,'type'=>8,'integral_time'=>$end_time);
+            $integralrecord_id = $m_userintegralrecord->add($integralrecord_data);
+
+            $res_shareprofit['integralrecord_id'] = $integralrecord_id;
+            $res_shareprofit['dinner_type'] = $dinner_type;
+            $res_shareprofit['fj_estime'] = $task_times['fj_estime'];
+            $res_shareprofit['integral_type'] = 6;
+            $res_shareprofit['task_id'] = $task_info['id'];
+            $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
+            if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
+                $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
+                $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
+                $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
+            }
+
+            $res_userintegral = $m_userintegral->getInfo(array('openid'=>$staff_info['openid']));
+            if(!empty($res_userintegral)){
+                $userintegral = $res_userintegral['integral']+$now_integral;
+                $m_userintegral->updateData(array('id'=>$res_userintegral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+            }else{
+                $integraldata = array('openid'=>$staff_info['openid'],'integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
+                $m_userintegral->add($integraldata);
+            }
+            //更新任务积分
+            $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
+        }
+        echo "{$task_info['task_user_id']} finish \r\n";
+        return true;
     }
 
     private function task_activitypromote($task_times,$dinner_type,$task_info,$signv){
@@ -218,11 +469,11 @@ class TaskUserModel extends BaseModel{
             $res_shareprofit['fj_estime'] = $fj_estime;
             $res_shareprofit['integral_type'] = 6;
             $res_shareprofit['task_id'] = $task_info['id'];
-            $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+            $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
             if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
                 $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
                 $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
-                $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+                $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
             }
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
@@ -354,11 +605,11 @@ class TaskUserModel extends BaseModel{
             $res_shareprofit['fj_estime'] = $fj_estime;
             $res_shareprofit['integral_type'] = 2;
             $res_shareprofit['task_id'] = $task_info['id'];
-            $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+            $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
             if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
                 $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
                 $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
-                $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+                $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
             }
 
             $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
@@ -431,11 +682,11 @@ class TaskUserModel extends BaseModel{
                 $res_shareprofit['fj_estime'] = $fj_estime;
                 $res_shareprofit['integral_type'] = 1;
                 $res_shareprofit['task_id'] = $task_info['id'];
-                $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+                $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
                 if(isset($res_shareprofit['middle_openid']) && isset($res_shareprofit['middle_integral'])){
                     $res_shareprofit['admin_integral'] = $res_shareprofit['middle_integral'];
                     $res_shareprofit['admin_openid'] = $res_shareprofit['middle_openid'];
-                    $this->add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral);
+                    $this->add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral);
                 }
 
                 $res_userintegral = $m_userintegral->getInfo(array('openid'=>$signv['openid']));
@@ -534,7 +785,7 @@ class TaskUserModel extends BaseModel{
         return $res_data;
     }
 
-    private function add_adminintegral($res_shareprofit,$box_info,$signv,$m_userintegralrecord,$m_userintegral){
+    private function add_adminintegral($res_shareprofit,$box_info,$m_userintegralrecord,$m_userintegral){
         if(!empty($res_shareprofit['shareprofit_config']) && !empty($res_shareprofit['admin_openid'])){
             $dinner_type = $res_shareprofit['dinner_type'];
             $fj_estime = $res_shareprofit['fj_estime'];
@@ -544,7 +795,7 @@ class TaskUserModel extends BaseModel{
             $integralrecord_data = array('openid'=>$res_shareprofit['admin_openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_id,
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
-                'box_id'=>$box_info['box_id'],'box_mac'=>$signv['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
+                'box_id'=>$box_info['box_id'],'box_mac'=>$box_info['box_mac'],'box_type'=>$box_info['box_type'],'fj_type'=>$dinner_type,
                 'integral'=>$res_shareprofit['admin_integral'],'content'=>'','type'=>$integral_type,'source'=>4,
                 'integral_time'=>date('Y-m-d H:i:s',$fj_estime));
             $m_userintegralrecord->add($integralrecord_data);
