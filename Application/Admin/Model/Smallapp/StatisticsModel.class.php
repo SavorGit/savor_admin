@@ -219,6 +219,36 @@ class StatisticsModel extends Model
         return $where;
     }
 
+    public function getWlnum($date,$area_id,$box_mac,$hotel_id,$static_fj){
+        //网络屏幕数
+        $where = $this->getRatenumDatewhere($date);
+        if($area_id){
+            $where['area_id'] = $area_id;
+        }
+        if($box_mac)    $where['box_mac'] = $box_mac;
+        if(!empty($hotel_id)){
+            if(is_array($hotel_id)){
+                $where['hotel_id'] = array('in',$hotel_id);
+            }else{
+                $where['hotel_id'] = $hotel_id;
+            }
+        }
+        if($static_fj){
+            $where['static_fj'] = $static_fj;
+        }
+        $fields = "count(id) as wlnum";
+        if(is_array($date)){
+            $fields = "count(id) as wlnum,static_date";
+            $groupby = "static_date";
+            $ret = $this->getWhere($fields, $where,'','',$groupby);
+            $wlnum = $ret;
+        }else{
+            $ret = $this->getOne($fields, $where);
+            $wlnum = intval($ret['wlnum']);
+        }
+        return $wlnum;
+    }
+
     /*
      * 获取比率对应数
      * type 0所有 1转换率 2传播率 3屏幕在线率 4网络质量 5互动饭局数,6在线屏幕数,7互动次数,8酒楼评级,9心跳次数
