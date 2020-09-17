@@ -60,7 +60,8 @@ class TaskController extends BaseController {
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
             $data['is_shareprofit'] = I('post.is_shareprofit',0,'intval');
-            
+            $data['task_type'] = I('post.task_content_type',0,'intval');
+
             $this->checkMainParam($data);
             
             if($data['type']==1){//系统任务
@@ -194,6 +195,7 @@ class TaskController extends BaseController {
             $data['is_long_time'] = I('post.is_long_time',0,'intval');
             $data['integral'] = I('post.integral',0,'intval');
             $data['is_shareprofit'] = I('post.is_shareprofit',0,'intval');
+            $data['task_type'] = I('post.task_content_type',0,'intval');
             
             $this->checkMainParam($data);
             if($data['type']==1){//系统任务
@@ -463,7 +465,7 @@ class TaskController extends BaseController {
         
         $userinfo = session('sysUserInfo');
         $uid = $userinfo['id'];
-        $fields = "name,media_id,type,desc,start_time,end_time,is_long_time,integral,separate_id,task_info";
+        $fields = "name,media_id,type,task_type,desc,start_time,end_time,is_long_time,integral,separate_id,task_info";
         $task_info = $m_task->where($where)->getRow($fields,$where);
         if(empty($task_info)) $this->error('该任务不存在');
         
