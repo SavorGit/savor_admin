@@ -109,6 +109,29 @@ function get_host_name(){
     return $http.$_SERVER['HTTP_HOST'];
 }
 
+function get_filesize($url,$user='',$pw=''){
+    ob_start();
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_NOBODY, 1);
+    if (!empty($user) && !empty($pw)){
+        $headers = array('Authorization: Basic ' . base64_encode($user.':'.$pw));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }
+    $okay = curl_exec($ch);
+    curl_close($ch);
+    $head = ob_get_contents();
+    ob_end_clean();
+    $regex = '/Content-Length:\s([0-9].+?)\s/';
+    $count = preg_match($regex, $head, $matches);
+    if (isset($matches[1])){
+        $size = $matches[1];
+    }else{
+        $size = '';
+    }
+    return $size;
+}
+
 function bonus_random($total,$num,$min,$max){
     $data = array();
     if ($min * $num > $total) {
