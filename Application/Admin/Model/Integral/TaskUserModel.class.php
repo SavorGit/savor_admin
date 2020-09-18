@@ -161,7 +161,7 @@ class TaskUserModel extends BaseModel{
         $end_time = date('Y-m-d H:i:s',$task_times['fj_estime']);
         $task_date = $task_times['task_date'];
 
-        $where = array('staff_id'=>$staff_info['staff_id']);
+        $where = array('staff_id'=>$staff_info['id']);
         $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
         $m_comment = new \Admin\Model\Smallapp\CommentModel();
         $res_comment = $m_comment->getDataList('*',$where,'id desc');
@@ -267,7 +267,7 @@ class TaskUserModel extends BaseModel{
         $end_time = date('Y-m-d H:i:s',$task_times['fj_estime']);
         $task_date = $task_times['task_date'];
 
-        $where = array('staff_id'=>$staff_info['staff_id'],'reward_id'=>0);
+        $where = array('staff_id'=>$staff_info['id'],'reward_id'=>0);
         $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
         $m_comment = new \Admin\Model\Smallapp\CommentModel();
         $res_comment = $m_comment->getDataList('*',$where,'id desc');
@@ -294,7 +294,7 @@ class TaskUserModel extends BaseModel{
         $task_content = json_decode($task_info['task_info'],true);
         $max_daily_integral = $task_content['max_daily_integral'];//每日最多积分上限
 
-        $task_type = $task_content['user_comment']['type'];
+        $task_type = $task_content['user_reward']['type'];
         $comment_num = count($res_comment);
         $ap_num = 0;
         switch ($task_type){//1.饭点内评价无打赏奖励 2饭点内每评价多少次 无打赏奖励一次
@@ -306,7 +306,7 @@ class TaskUserModel extends BaseModel{
                 break;
             case 2:
                 if($comment_num>0){
-                    $reward_num = $task_content['user_comment']['value'];
+                    $reward_num = $task_content['user_reward']['value'];
                     $ap_num = floor($comment_num/$reward_num);
                     $now_integral = $task_info['integral']*$ap_num;
                 }
