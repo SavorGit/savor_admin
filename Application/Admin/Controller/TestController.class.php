@@ -1967,6 +1967,24 @@ group by openid";
         print_r($hotel_repeat_task);
     }
 
+    public function uptasktype(){
+        $model = M();
+        $sql_task = 'select * from savor_integral_task';
+        $res_task = $model->query($sql_task);
+        foreach ($res_task as $v) {
+            $id = $v['id'];
+            $task_info = json_decode($v['task_info'], true);
+            $task_type = $task_info['task_content_type'];
+            $sql = "update savor_integral_task set task_type={$task_type} where id={$id}";
+
+            $res = $model->execute($sql);
+            if($res){
+                echo "id $id ok\r\n";
+            }
+        }
+    }
+
+
     public function forscreenhelpvideo(){
         $now_box_mac = I('mac','','trim');
         $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
@@ -2045,6 +2063,57 @@ group by openid";
         exit;
     }
 
+    public function forscreenimage(){
+        $now_box_mac = I('mac','','trim');
+
+        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
+        $curl = new \Common\Lib\Curl();
+        $res_netty = '';
+        $curl::get($url,$res_netty,10);
+        $res_box = json_decode($res_netty,true);
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            $curl::get($url,$res_netty,10);
+            $res_box = json_decode($res_netty,true);
+        }
+        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
+            echo "netty connections api error \r\n";
+            exit;
+        }
+
+        if(!empty($res_box['result'])){
+
+            $netty_cmd = C('SAPP_CALL_NETY_CMD');
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            foreach ($res_box['result'] as $k=>$v){
+                if($v['totalConn']>0){
+                    foreach ($v['connDetail'] as $cv){
+                        $box_mac = $cv['box_mac'];
+                        if($box_mac==$now_box_mac){
+
+                            $forscreen_number  = rand(1001,5000);
+                            $netty_data = array('action'=>133,'forscreen_number'=>$forscreen_number,'countdown'=>30);
+                            $message = json_encode($netty_data);
+
+                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
+                            $req_id  = getMillisecond();
+                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
+                            $post_data = http_build_query($box_params);
+                            $ret = $m_netty->curlPost($push_url,$post_data);
+                            $res_push = json_decode($ret,true);
+                            if($res_push['code']==10000){
+                                echo "box_mac:$box_mac push ok \r\n";
+                            }else{
+                                echo "box_mac:$box_mac push error $ret  \r\n";
+                            }
+
+                            exit;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public function pushdish(){
         $now_box_mac = I('mac','','trim');
 
@@ -2063,7 +2132,7 @@ group by openid";
         }
 
         if(!empty($res_box['result'])){
-            $activity_info = array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'18:00','end_time'=>'18:50',
+            $activity_info = array('hotel_id'=>7,'dish'=>'新渝城传承川渝味道精髓招牌菜水煮鱼','start_time'=>'18:00','end_time'=>'18:50',
                 'lottery_time'=>'12:00','dish_img'=>'lottery/activity/zzhx.jpg');
             $activity_info['lottery_time'] = time()+7200;
             $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
@@ -2082,7 +2151,7 @@ group by openid";
                             $partake_img = $activity_info['dish_img'].'?x-oss-process=image/resize,m_mfit,h_200,w_300';
                             $netty_data = array('action'=>135,'countdown'=>30,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
                                 'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partake_img,'partake_filename'=>$dish_name_info['basename'],
-                                'partake_name'=>$activity_info['dish'],'activity_name'=>'霸王餐活动',
+                                'partake_name'=>$activity_info['dish'],'activity_name'=>'新渝城传承川渝味优惠大酬宾抽奖活动',
                             );
                             $message = json_encode($netty_data);
 
