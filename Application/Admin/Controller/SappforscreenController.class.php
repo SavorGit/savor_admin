@@ -157,7 +157,11 @@ class SappforscreenController extends BaseController {
 	    $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
 	    $track_start_time = '2020-01-13 10:20:00';
 	    $all_box_types = C('hotel_box_type');
+	    $quality_types = array('1'=>'标清','2'=>'高清','3'=>'原图','0'=>'');
+
 	    foreach ($list['list'] as $key=>$v){
+
+            $list['list'][$key]['quality_typestr'] = $quality_types[$v['quality_type']];
 	        $is_track = 0;
 	        if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121))){
 	            if($v['create_time']>=$track_start_time){
