@@ -18,6 +18,7 @@ class ExchangeController extends BaseController {
         $end_date = I('end_date','');
         $is_audit = I('is_audit',99,'intval');
         $area_id = I('area_id',0,'intval');
+        $type = I('type',1,'intval');
         $status = I('status',0,'intval');
         $maintainer_id = I('maintainer_id',0,'intval');
         $hotel_name = I('hotel_name','','trim');
@@ -26,7 +27,8 @@ class ExchangeController extends BaseController {
 
         $where = array();
         if($area_id)    $where['area.id']=$area_id;
-        if($status)    $where['a.status']=$status;
+        if($status)     $where['a.status']=$status;
+        if($type)       $where['a.type']=$type;
         if($maintainer_id)    $where['ext.maintainer_id']=$maintainer_id;
         if(!empty($hotel_name)) $where['hotel.name'] = array('like',"%$hotel_name%");
         if($is_audit!=99){
@@ -49,6 +51,7 @@ class ExchangeController extends BaseController {
         $result = $m_order->getExchangeList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
 
+        $types = array(0=>'全部',1=>'兑换',2=>'提现');
         $audit_types = array(99=>'全部',0=>'无需审核',1=>'需审核');
         $audit_status = array(0=>'',1=>'审核通过',2=>'审核不通过');
         $order_status = C('EXCHANGE_STATUS');
@@ -97,6 +100,8 @@ class ExchangeController extends BaseController {
         $opusers = $this->getOpuser($maintainer_id);
 
         $this->assign('is_audit',$is_audit);
+        $this->assign('type',$type);
+        $this->assign('types',$types);
         $this->assign('audit_types',$audit_types);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
