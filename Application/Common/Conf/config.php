@@ -428,6 +428,11 @@ $config['WX_FWH_CONFIG'] = array(
     'key_ticket'=>'savor_wx_xiaorefu_jsticket',
     'key_token'=>'savor_wx_xiaorefu_token',
 );
+$config['WX_MP_CONFIG'] = array(
+    'cache_key'=>'wxmp',
+    'appid'=>'wxcb1e088545260931',
+    'appsecret'=>'9f1ebb78d1dc7afe73dcb22a135cfcf9'
+);
 
 $config['SMALLAPP_CONFIG'] = array(
     'cache_key'=>'smallapp_token',

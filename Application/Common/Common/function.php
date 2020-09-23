@@ -1218,4 +1218,29 @@ function getWxAccessToken($app_config){
     }
     return $token;
 }
+function curlPost($url = '',  $post_data = ''){
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 10,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "POST",
+    CURLOPT_POSTFIELDS => $post_data,
+    CURLOPT_HTTPHEADER => array(
+    "Content-Type: application/x-www-form-urlencoded",
+    ),
+    ));
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+    if ($err) {
+        return 0;
+    } else {
+
+        return $response;
+    }
+}
 ?>
