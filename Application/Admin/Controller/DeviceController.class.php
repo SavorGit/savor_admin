@@ -157,10 +157,13 @@ class DeviceController extends BaseController{
 		$temp = $roomModel->getRow('name',array('id'=>$room_id));
 		$this->assign('room_name',$temp['name']);
 		$this->assign('room_id',$room_id);
+		$vinfo = array();
 		$vinfo['state'] = 2;
 		$vinfo['name'] = $temp['name'];
 		$vinfo['switch_time'] = 30;
 		$vinfo['volum'] = 60;
+		$vinfo['is_interact'] = 1;
+		$vinfo['fault_status'] = 1;
 		$this->assign('vinfo', $vinfo);
 		$ad_machine = C('ADV_MACH');
 		$this->assign('ad_mache', $ad_machine);
@@ -278,6 +281,7 @@ class DeviceController extends BaseController{
 		$save['box_type']    = I('post.box_type',0,'intval');
 		$save['qrcode_type'] = I('post.qrcode_type',0,'intval');
 		$save['fault_status'] = I('post.fault_status',1,'intval');
+		$save['is_interact'] = I('post.is_interact',1,'intval');
 		$save['fault_desc'] = I('post.fault_desc','','trim');
 		$save['is_open_popcomment'] = I('post.is_open_popcomment',0,'intval');
 		$save['is_open_reward'] = I('post.is_open_reward',1,'intval');
@@ -349,7 +353,7 @@ class DeviceController extends BaseController{
 				$redis->select(12);
 				$cache_key = C('SMALL_BOX_LIST').$hotelid;
 				$redis->remove($cache_key);
-				$cache_key = C('SMALL_PROGRAM_LIST_KEY').hotelid;
+				$cache_key = C('SMALL_PROGRAM_LIST_KEY').$hotelid;
 				$redis->remove($cache_key);
 				$redis->select(10);
 				$cache_key = C('BOX_TPMEDIA').$save['mac'];
