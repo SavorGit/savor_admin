@@ -22,7 +22,7 @@ class HeartAllLogModel extends BaseModel{
 	}
 
     public function getLostBoxNum($hotel_id){
-        $sql_lost = "select count(id) as num from savor_heart_log where hotel_id={$hotel_id} and type=2 and TIMESTAMPDIFF(DAY,last_heart_time,now())>3 group by box_mac";
+        $sql_lost = "select count(DISTINCT(box_mac)) as num from savor_heart_log where hotel_id={$hotel_id} and type=2 and TIMESTAMPDIFF(DAY,last_heart_time,now())>3";
         $res_lost = $this->query($sql_lost);
         $lost_num = 0;
         if(!empty($res_lost)){
@@ -32,7 +32,7 @@ class HeartAllLogModel extends BaseModel{
     }
 
 	public function getHoursCondition($fj_type=0){
-        switch ($fj_type==0){
+        switch ($fj_type){
             case 0:
                 $hours_str = 'a.hour0+a.hour1+a.hour2+a.hour3+a.hour4+a.hour5+a.hour6+a.hour7+a.hour8+a.hour9+a.hour10+a.hour11+a.hour12+a.hour13+a.hour14+a.hour15+a.hour16+a.hour17+a.hour18+a.hour19+a.hour20+a.hour21+a.hour22+a.hour23';
                 break;
@@ -73,15 +73,14 @@ class HeartAllLogModel extends BaseModel{
         }else{
             $lunch_hours_str = $this->getHoursCondition(1);
             $dinner_hours_str = $this->getHoursCondition(2);
-            $hour_condition = "(($lunch_hours_str)>5 and (300 div ($lunch_hours_str))<10) or (($dinner_hours_str)>5 and (420 div ($dinner_hours_str))<10)";
+            $hour_condition = "((($lunch_hours_str)>5 and (300 div ($lunch_hours_str))<10) or (($dinner_hours_str)>5 and (420 div ($dinner_hours_str))<10))";
         }
 
-        $sql = "select count(a.mac) as box_num from savor_heart_all_log as a left join savor_box as box on a.mac=box.mac left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id
+        $sql = "select count(DISTINCT(a.mac)) as box_num from savor_heart_all_log as a left join savor_box as box on a.mac=box.mac left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id
         where a.date={$date} and a.type=2 and a.hotel_id={$hotel_id} and {$hour_condition} and box.state=1 and box.flag=0 ";
         if($is_interact){
             $sql.=" and box.is_interact=1";
         }
-        $sql.=" group by a.mac";
         $res_boxnum = $this->query($sql);
         $box_num = 0;
         if(!empty($res_boxnum)){

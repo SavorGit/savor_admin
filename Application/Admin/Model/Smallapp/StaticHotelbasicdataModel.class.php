@@ -4,7 +4,7 @@ namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
 class StaticHotelbasicdataModel extends BaseModel{
 
-    protected $tableName='savor_smallapp_static_hotelbasicdata';
+    protected $tableName='smallapp_static_hotelbasicdata';
 
     public function handle_hotel_basicdata(){
         $scan_qrcode_types = C('SCAN_QRCODE_TYPES');
@@ -20,7 +20,6 @@ class StaticHotelbasicdataModel extends BaseModel{
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
-
         $all_dates = $m_statistics->getDates($start,$end);
 
         $m_box = new \Admin\Model\BoxModel();
@@ -106,6 +105,8 @@ class StaticHotelbasicdataModel extends BaseModel{
                 $lunch_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,0);
                 $dinner_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,0);
                 $zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,0,0);
+
+
                 $lunch_zxrate = $dinner_zxrate = $zxrate = 0;
                 if($lunch_zxnum && $wlnum){
                     $lunch_zxrate = sprintf("%.2f",$lunch_zxnum/$wlnum);
@@ -125,7 +126,8 @@ class StaticHotelbasicdataModel extends BaseModel{
                 $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where);
                 $scancode_num = intval($res_qrcode[0]['num']);
 
-                $res_userqrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where,'a.openid');
+                $fields = "count(DISTINCT(a.openid)) as num";
+                $res_userqrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where);
                 $user_num = intval($res_userqrcode[0]['num']);
 
                 //互动总数
@@ -176,6 +178,7 @@ class StaticHotelbasicdataModel extends BaseModel{
                     $res_user = $m_sysuser->getUserInfo($hv['maintainer_id']);
                     $add_data['maintainer'] = $res_user['remark'];
                 }
+
                 $this->add($add_data);
 //                echo "hotel_id:$hotel_id ok \r\n";
             }
