@@ -309,8 +309,13 @@ class SmallappForscreenRecordModel extends Model{
     }
 
     public function getAvgspeedByHotelId($hotel_id,$time){
-        $start = date("Y-m-d 00:00:00",$time);
-        $end = date("Y-m-d 23:59:59",$time);
+        if(is_array($time)){
+            $start = date("Y-m-d 00:00:00",$time[0]);
+            $end = date("Y-m-d 23:59:59",$time[1]);
+        }else{
+            $start = date("Y-m-d 00:00:00",$time);
+            $end = date("Y-m-d 23:59:59",$time);
+        }
 
         $where = array('a.create_time'=>array(array('EGT',$start),array('ELT',$end)));
         $where['hotel.id'] = $hotel_id;

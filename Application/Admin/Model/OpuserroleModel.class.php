@@ -1,19 +1,21 @@
 <?php
 namespace Admin\Model;
-use Admin\Model\BaseModel;
 use Common\Lib\Page;
 
-class OpuserroleModel extends BaseModel
-{
+class OpuserroleModel extends BaseModel{
+
     protected $tableName='opuser_role';
+
     public function addInfo($data){
         $ret = $this->add($data);
         return $ret;
     }
+
     public function getList($fields,$where,$order,$limit){
         $data = $this->field($fields)->where($where)->order($order)->limit($limit)->select();
         return $data;
     }
+
     public function getPageList($fields,$where, $order='id desc', $start=0,$size=5){
         $list = $this->alias('a')
         ->join('savor_sysuser b on a.user_id=b.id','left')
@@ -31,6 +33,7 @@ class OpuserroleModel extends BaseModel
         $data = array('list'=>$list,'page'=>$show);
         return $data;
     }
+
     public function getInfo($fields,$where){
         $data = $this->alias('a')
                      ->join('savor_sysuser user on a.user_id=user.id')
@@ -39,6 +42,7 @@ class OpuserroleModel extends BaseModel
                      ->find();
         return $data;
     }
+
     public function saveInfo($where,$data){
         $ret = $this->where($where)->save($data);
         return $ret;
@@ -54,7 +58,6 @@ class OpuserroleModel extends BaseModel
             ->select();
         return $data;
     }
-
 
     public function getRelaOpHotel($fields,$where,$order,$limit){
         $data = $this->alias('a')

@@ -1,10 +1,26 @@
 <?php
-
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 class StaticHotelbasicdataModel extends BaseModel{
 
     protected $tableName='smallapp_static_hotelbasicdata';
+
+    public function getCustomeList($fields="*",$where,$groupby='',$order='',$countfields='',$start=0,$size=5){
+        $list = $this->field($fields)
+            ->where($where)
+            ->group($groupby)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $res_count = $this->field($countfields)
+            ->where($where)->select();
+        $count = $res_count[0]['tp_count'];
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+        return $data;
+    }
 
     public function handle_hotel_basicdata(){
         $scan_qrcode_types = C('SCAN_QRCODE_TYPES');
@@ -20,6 +36,10 @@ class StaticHotelbasicdataModel extends BaseModel{
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
+
+        $start = '2020-09-01';
+        $end = '2020-09-24';
+
         $all_dates = $m_statistics->getDates($start,$end);
 
         $m_box = new \Admin\Model\BoxModel();
