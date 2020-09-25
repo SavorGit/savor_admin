@@ -37,9 +37,6 @@ class StaticHotelbasicdataModel extends BaseModel{
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
 
-        $start = '2020-09-01';
-        $end = '2020-09-24';
-
         $all_dates = $m_statistics->getDates($start,$end);
 
         $m_box = new \Admin\Model\BoxModel();
@@ -85,6 +82,11 @@ class StaticHotelbasicdataModel extends BaseModel{
                 if($lost_boxnum){
                     $lostfault_rate = sprintf("%.2f",$lost_boxnum/$box_num);
                 }
+                $heart_num = $m_heartlog->getHotelAllHeart($date,$hotel_id);
+//                $avg_down_speed = $m_smallapp_forscreen_record->getAvgspeedByHotelId($hotel_id,$time_date);
+                $avg_down_speed = $m_smallapp_forscreen_record->getAvgspeedByStaticHotelId($hotel_id,$date);
+
+
                 $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
                 $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
 
@@ -125,7 +127,6 @@ class StaticHotelbasicdataModel extends BaseModel{
                 $lunch_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,0);
                 $dinner_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,0);
                 $zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,0,0);
-
 
                 $lunch_zxrate = $dinner_zxrate = $zxrate = 0;
                 if($lunch_zxnum && $wlnum){
@@ -181,7 +182,7 @@ class StaticHotelbasicdataModel extends BaseModel{
                 $add_data = array('area_id'=>$hv['area_id'],'area_name'=>$hv['area_name'],'hotel_id'=>$hv['hotel_id'],'hotel_name'=>$hv['hotel_name'],
                     'hotel_box_type'=>$hv['hotel_box_type'],'is_4g'=>$hv['is_4g'],'hotel_level'=>$hv['hotel_level'],'trainer_id'=>$hv['trainer_id'],'train_date'=>$hv['train_date'],
                     'maintainer_id'=>$hv['maintainer_id'],'tech_maintainer'=>$hv['tech_maintainer'],'box_num'=>$box_num,'faultbox_num'=>$faultbox_num,'normalbox_num'=>$normalbox_num,
-                    'fault_rate'=>$fault_rate,'lostbox_num'=>$lost_boxnum,'lostfault_rate'=>$lostfault_rate,'wlnum'=>$wlnum,'wl_hdnum'=>$wl_hdnum,
+                    'fault_rate'=>$fault_rate,'lostbox_num'=>$lost_boxnum,'lostfault_rate'=>$lostfault_rate,'wlnum'=>$wlnum,'wl_hdnum'=>$wl_hdnum,'heart_num'=>$heart_num,'avg_down_speed'=>$avg_down_speed,
                     'user_lunch_zxhdnum'=>$user_lunch_zxhdnum,'lunch_zxhdnum'=>$lunch_zxhdnum,'user_lunch_cvr'=>$user_lunch_cvr,'user_dinner_zxhdnum'=>$user_dinner_zxhdnum,
                     'dinner_zxhdnum'=>$dinner_zxhdnum,'user_dinner_cvr'=>$user_dinner_cvr,'sale_lunch_zxhdnum'=>$sale_lunch_zxhdnum,'sale_dinner_zxhdnum'=>$sale_dinner_zxhdnum,
                     'sale_lunch_cvr'=>$sale_lunch_cvr,'sale_dinner_cvr'=>$sale_dinner_cvr,'lunch_zxnum'=>$lunch_zxnum,'dinner_zxnum'=>$dinner_zxnum,

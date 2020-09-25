@@ -322,11 +322,23 @@ class SmallappForscreenRecordModel extends Model{
         $where['box.state'] = 1;
         $where['box.flag'] = 0;
         $where['_string'] = 'a.resource_size>0 and a.box_res_sdown_time>0 AND a.box_res_edown_time>0 AND (a.box_res_edown_time>a.box_res_sdown_time)';
-        $fields = 'sum(a.resource_size)/sum(a.box_res_edown_time-a.box_res_sdown_time) as avgspeed';
+        $fields = 'sum(a.resource_size) as resource_size,sum(a.box_res_edown_time-a.box_res_sdown_time) as down_time';
         $result = $this->getWhere($fields,$where,'','');
         $avgspeed = 0;
         if(!empty($result)){
-            $avgspeed = intval($result[0]['avgspeed']/1000);
+            $down_time = $result[0]['down_time']/1000;
+            $resource_size = $result[0]['resource_size']/1024;
+            $avgspeed = intval($resource_size/$down_time);
+        }
+        return $avgspeed;
+    }
+
+    public function getAvgspeedByStaticHotelId($hotel_id,$date){
+        $sql = "select avg(NULLIF(avg_down_speed,0)) as avg_speed from savor_smallapp_statistics where hotel_id={$hotel_id} and static_date={$date}";
+        $result = $this->query($sql);
+        $avgspeed = 0;
+        if(!empty($result)){
+            $avgspeed = intval($result[0]['avg_speed']/1024);
         }
         return $avgspeed;
     }
