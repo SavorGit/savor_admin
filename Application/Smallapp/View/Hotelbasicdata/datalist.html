@@ -91,6 +91,10 @@
             </div>
           </div>
 
+          <div class="input-group input-group-sm pull-right">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Dataexport/Hotelbasicdata/basicdata?start_time={$start_time}&end_time={$end_time}&area_id={$area_id}" title="导出统计数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出统计数据</a>
+          </div>
+
         </div>
 
       </div>
@@ -150,7 +154,7 @@
               <td>{$dinfo.user_dinner_interact_num}</td>
               <td>{$dinfo.dinner_unum}</td>
               <td>{$dinfo.scan_hdnum}</td>
-              <td>{$dinfo.hote_box_type_str}</td>
+              <td>{$dinfo.hotel_box_type_str}</td>
               <td>{$dinfo.network}</td>
               <td>{$dinfo.maintainer}</td>
             </tr>

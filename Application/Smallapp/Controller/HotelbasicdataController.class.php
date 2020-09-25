@@ -45,33 +45,29 @@ class HotelbasicdataController extends BaseController {
 
         $start  = ($page-1) * $size;
         $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
-        sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,sum(lunch_zxhdnum) as lunch_zxhdnum,
-        sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
+        sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
+        sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
         sum(user_dinner_interact_num) as user_dinner_interact_num";
         $groupby = 'hotel_id';
         $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
         $result = $m_hotelbasicdata->getCustomeList($fields,$where,$groupby,'',$countfields,$start,$size);
         $datalist = array();
-        $m_heart_log = new \Admin\Model\HeartAllLogModel();
-        $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
 
         $all_hotel_types = C('heart_hotel_box_type');
-        $data_start_time = strtotime($start_time);
-        $data_end_time = strtotime($end_time);
         foreach ($result['list'] as $k=>$v){
-            $hotel_id = $v['hotel_id'];
-            $hdate = array(date('Ymd',$data_start_time),date('Ymd',$data_end_time));
-            $v['heart_num'] = $m_heart_log->getHotelAllHeart($hdate,$hotel_id);
-            $v['avg_speed'] = $m_forscreen->getAvgspeedByHotelId($hotel_id,array($data_start_time,$data_end_time));
-
+            if($v['avg_speed']>0){
+                $v['avg_speed'] = intval($v['avg_speed']).'kb/s';
+            }else{
+                $v['avg_speed'] = '';
+            }
             $user_lunch_cvr = $user_dinner_cvr = 0;
             if($v['user_lunch_zxhdnum'] && $v['lunch_zxhdnum']){
                 $user_lunch_cvr = sprintf("%.2f",$v['user_lunch_zxhdnum']/$v['lunch_zxhdnum']);
-                $user_lunch_cvr = $user_lunch_cvr.'%';
+                $user_lunch_cvr = $user_lunch_cvr*100 .'%';
             }
             if($v['user_dinner_zxhdnum'] && $v['dinner_zxhdnum']){
                 $user_dinner_cvr = sprintf("%.2f",$v['user_dinner_zxhdnum']/$v['dinner_zxhdnum']);
-                $user_dinner_cvr = $user_dinner_cvr.'%';
+                $user_dinner_cvr = $user_dinner_cvr*100 .'%';
             }
             $v['user_lunch_cvr'] = $user_lunch_cvr;
             $v['user_dinner_cvr'] = $user_dinner_cvr;
@@ -89,7 +85,7 @@ class HotelbasicdataController extends BaseController {
                 $scan_hdnum = intval($v['interact_num']/$v['scancode_num']);
             }
             $v['scan_hdnum'] = $scan_hdnum;
-            $v['hote_box_type_str'] = $all_hotel_types[$v['hotel_box_type']];
+            $v['hotel_box_type_str'] = $all_hotel_types[$v['hotel_box_type']];
             if($v['is_4g']==1){
                 $v['network'] = '4G';
             }else{
