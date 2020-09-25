@@ -307,4 +307,22 @@ class SmallappForscreenRecordModel extends Model{
         }
         return $num;
     }
+
+    public function getAvgspeedByHotelId($hotel_id,$time){
+        $start = date("Y-m-d 00:00:00",$time);
+        $end = date("Y-m-d 23:59:59",$time);
+
+        $where = array('a.create_time'=>array(array('EGT',$start),array('ELT',$end)));
+        $where['hotel.id'] = $hotel_id;
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
+        $where['_string'] = 'a.resource_size>0 and a.box_res_sdown_time>0 AND a.box_res_edown_time>0 AND (a.box_res_edown_time>a.box_res_sdown_time)';
+        $fields = 'sum(a.resource_size)/sum(a.box_res_edown_time-a.box_res_sdown_time) as avgspeed';
+        $result = $this->getWhere($fields,$where,'','');
+        $avgspeed = 0;
+        if(!empty($result)){
+            $avgspeed = intval($result[0]['avgspeed']/1000);
+        }
+        return $avgspeed;
+    }
 }
