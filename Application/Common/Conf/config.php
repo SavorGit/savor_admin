@@ -50,14 +50,6 @@ $config = array(
     'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
     'SALEFEAST_TIME'=>array('lunch'=>array('11:00','14:00'),'dinner'=>array('16:45','21:00')),
 
-    'MEAL_TIME'=>array('lunch'=>array('10:00','15:00'),'dinner'=>array('17:00','23:59')),
-    'SCAN_QRCODE_TYPES'=>array(1,2,3,5,6,7,8,9,10,11,12,13,15,16,19,20,21,29,30),
-//     scan_qrcode_type 1:小码2:大码(节目)3:手机小程序呼码5:大码（新节目）6:极简版7:主干版桌牌码8:小程序二维码9:极简版节目大码
-//     10:极简版大码11:极简版呼玛12:大二维码（节目）13:小程序呼二维码 15:大二维码（新节目）16：极简版二维码19:极简版节目大二维码
-//     20:极简版大二维码21:极简版呼二维码22购物二维码 23销售二维码 24菜品商家 25单个菜品 26海报分销售卖商品 27 商城商家 28商城商品大屏购买
-//     29推广渠道投屏码 30投屏帮助视频 31活动霸王菜
-
-
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
@@ -237,6 +229,11 @@ $config['MANGER_LEVEL'] = array(
     '0'=>'一级栏目',
     '1'=>'二级栏目',
     '2'=>'三级栏目'
+);
+$config['WX_MP_CONFIG'] = array(
+    'cache_key'=>'wxmp',
+    'appid'=>'wxcb1e088545260931',
+    'appsecret'=>'9f1ebb78d1dc7afe73dcb22a135cfcf9'^M
 );
 
 $config['MANGER_STATE'] = array(
@@ -435,11 +432,6 @@ $config['WX_FWH_CONFIG'] = array(
     'appsecret'=>'8b658fc90d7105d5cf66cb2193edb7d4',
     'key_ticket'=>'savor_wx_xiaorefu_jsticket',
     'key_token'=>'savor_wx_xiaorefu_token',
-);
-$config['WX_MP_CONFIG'] = array(
-    'cache_key'=>'wxmp',
-    'appid'=>'wxcb1e088545260931',
-    'appsecret'=>'9f1ebb78d1dc7afe73dcb22a135cfcf9'
 );
 
 $config['SMALLAPP_CONFIG'] = array(
@@ -828,7 +820,6 @@ $config['SAMPLE_HOTEL'] = array(
 );
 
 $config['COLLECT_FORSCREEN_OPENIDS'] = array(
-//    'ofYZG4zmrApmvRSfzeA_mN-pHv2E'=>'郑伟','ofYZG42whtWOvSELbvxvnXHbzty8'=>'黄勇',
     'ofYZG49N0yz-cCTTgfPPEoL1F7l4'=>'鲍强强','ofYZG4xt_03ADzTTtf4QIrA1lt_c'=>'甘顺山','ofYZG43prBncpYjkYq-XaIWRlj6o'=>'吴琳',
     'ofYZG4-TBnXlWMTGx6afsUrjzXgk'=>'李智','ofYZG4zXTCn52wUjHPeOoNZHFKwo'=>'毕超','ofYZG4ySsM6GN8bF9bw6iWlS9a44'=>'王习宗',
     'ofYZG4-geGG-WO3drWsAZetCghSc'=>'何永锐','ofYZG43zZMAYXbuOiQxIqGfz25aM'=>'玉洁','ofYZG43DyszPj-qwvP5ZutMCGC_c'=>'欧懿',
