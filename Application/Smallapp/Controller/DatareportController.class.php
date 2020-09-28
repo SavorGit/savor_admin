@@ -653,6 +653,94 @@ class DatareportController extends BaseController {
 
     }
 
+    public function assessdetailchart(){
+        $begin_date = '2020-08-24';
+        $end_date = date('Y-m-d',strtotime('-1 day'));
+
+        $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
+        $all_dates = $m_statistics->getDates($begin_date,$end_date,2);
+        $where = array('date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $where['team_name'] = '吴琳';
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate,avg(fjrate) as fjrate,avg(fjsalerate) as fjsalerate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $wl_fault = $wl_zx = $wl_fj = $wl_fjsale = array();
+        foreach ($res_data as $v){
+            $wl_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $wl_zx[] = sprintf("%.2f",$v['zxrate']);
+            $wl_fj[] = sprintf("%.2f",$v['fjrate']);
+            $wl_fjsale[] = sprintf("%.2f",$v['fjsalerate']);
+        }
+
+
+        $where['team_name'] = '王习宗';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $wxz_fault = $wxz_zx = $wxz_fj = $wxz_fjsale = array();
+        foreach ($res_data as $v){
+            $wxz_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $wxz_zx[] = sprintf("%.2f",$v['zxrate']);
+            $wxz_fj[] = sprintf("%.2f",$v['fjrate']);
+            $wxz_fjsale[] = sprintf("%.2f",$v['fjsalerate']);
+        }
+
+        $where['team_name'] = '曾峰';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $zf_fault = $zf_zx = $zf_fj = $zf_fjsale = array();
+        foreach ($res_data as $v){
+            $zf_fault[] = sprintf("%.2f",$v['fault_rate']);
+            $zf_zx[] = sprintf("%.2f",$v['zxrate']);
+            $zf_fj[] = sprintf("%.2f",$v['fjrate']);
+            $zf_fjsale[] = sprintf("%.2f",$v['fjsalerate']);
+        }
+
+        $where = array('date'=>array('in',$all_dates));
+        $m_staticassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $fields = 'avg(fault_rate) as fault_rate,avg(zxrate) as zxrate,avg(fjrate) as fjrate,avg(fjsalerate) as fjsalerate';
+        $res_data = $m_staticassess->getAll($fields,$where,0,1000,'','date');
+        $fault = $zx = $fj = $fjsale = array();
+        foreach ($res_data as $v){
+            $fault[] = sprintf("%.2f",$v['fault_rate']);
+            $zx[] = sprintf("%.2f",$v['zxrate']);
+            $fj[] = sprintf("%.2f",$v['fjrate']);
+            $fjsale[] = sprintf("%.2f",$v['fjsalerate']);
+        }
+
+        $legend = array(
+            '整体-故障率','吴琳组-故障率','王习宗组-故障率','曾峰组-故障率',
+            '整体-在线率','吴琳组-在线率','王习宗组-在线率','曾峰组-在线率',
+            '整体-饭局转化率','吴琳组-饭局转化率','王习宗组-饭局转化率','曾峰组-饭局转化率',
+            '整体-销售端饭局转化率','吴琳组-销售端饭局转化率','王习宗组-销售端饭局转化率','曾峰组-销售端饭局转化率',
+
+        );
+
+        $this->assign('legend',$legend);
+        $this->assign('week_day',json_encode($all_dates));
+
+        $this->assign('fault',json_encode($fault));
+        $this->assign('wl_fault',json_encode($wl_fault));
+        $this->assign('wxz_fault',json_encode($wxz_fault));
+        $this->assign('zf_fault',json_encode($zf_fault));
+
+        $this->assign('zx',json_encode($zx));
+        $this->assign('wl_zx',json_encode($wl_zx));
+        $this->assign('wxz_zx',json_encode($wxz_zx));
+        $this->assign('zf_zx',json_encode($zf_zx));
+
+        $this->assign('fj',json_encode($fj));
+        $this->assign('wl_fj',json_encode($wl_fj));
+        $this->assign('wxz_fj',json_encode($wxz_fj));
+        $this->assign('zf_fj',json_encode($zf_fj));
+
+        $this->assign('fjsale',json_encode($fjsale));
+        $this->assign('wl_fjsale',json_encode($wl_fjsale));
+        $this->assign('wxz_fjsale',json_encode($wxz_fjsale));
+        $this->assign('zf_fjsale',json_encode($zf_fjsale));
+
+
+        $this->display('assessdetailchart');
+
+    }
+
     public function interactnum(){
         $start_time = I('start_time','');
         $end_time = I('end_time','');
