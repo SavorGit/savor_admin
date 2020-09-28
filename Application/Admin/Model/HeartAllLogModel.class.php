@@ -74,13 +74,19 @@ class HeartAllLogModel extends BaseModel{
         $hours_str = $this->getHoursCondition($fj_type);
         if($fj_type==1){
             $hour_condition = "($hours_str)>5 and (300 div ($hours_str))<10 ";
+
+            $hour_condition = "($hours_str)>24";
         }elseif($fj_type==2){
             $hour_condition = "($hours_str)>5 and (420 div ($hours_str))<10 ";
+
+            $hour_condition = "($hours_str)>24";
         }else{
             $lunch_hours_str = $this->getHoursCondition(1);
             $dinner_hours_str = $this->getHoursCondition(2);
             $hour_condition = "((($lunch_hours_str)>5 and (300 div ($lunch_hours_str))<10) or (($dinner_hours_str)>5 and (420 div ($dinner_hours_str))<10))";
+            $hour_condition = "(($lunch_hours_str)>24 or ($dinner_hours_str)>24)";
         }
+
 
         $sql = "select count(DISTINCT(a.mac)) as box_num from savor_heart_all_log as a left join savor_box as box on a.mac=box.mac left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id
         where a.date={$date} and a.type=2 and a.hotel_id={$hotel_id} and {$hour_condition} and box.state=1 and box.flag=0 ";
