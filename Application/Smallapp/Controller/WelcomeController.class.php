@@ -29,7 +29,7 @@ class WelcomeController extends BaseController {
         if($area_id)    $where['area.id']=$area_id;
         if($status)     $where['a.status']=$status;
         if($play_type)  $where['a.play_type']=$play_type;
-        if($type)       $where['type']=$type;
+        if($type)       $where['a.type']=$type;
         if(!empty($hotel_name)) $where['hotel.name'] = array('like',"%$hotel_name%");
 
         $m_welcome = new \Admin\Model\Smallapp\WelcomeModel();
