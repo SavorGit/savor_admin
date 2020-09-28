@@ -2322,6 +2322,77 @@ group by openid";
         $redis->set($key,json_encode($hotels));
     }
 
+    public function welcometime(){
+        $model = M();
+        $sql = "select * from savor_smallapp_welcome where play_type=2 and status=3 and add_time>='2020-07-01 00:00:00' order by id desc ";
+        $res_data = $model->query($sql);
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
+        foreach ($res_data as $v){
+            $play_time = "{$v['play_date']} {$v['timing']}";
+            $create_time = date('Y-m-d H:i:s',strtotime($play_time));
+
+            $user_id = $v['user_id'];
+            $res_user = $m_user->getOne('*',array('id'=>$user_id),'');
+            $openid = $res_user['openid'];
+
+            $start_time = $v['add_time'];
+            $end_time = date('Y-m-d H:i:s',strtotime($start_time)+300);
+            $time_condition = "create_time>='$start_time' and create_time<='$end_time'";
+            $sql_forscreen = "select * from savor_smallapp_forscreen_record where {$time_condition} and openid='{$openid}' and action=41";
+            if($v['type']==1){
+                $sql_forscreen.=" and box_mac='{$v['box_mac']}'";
+            }
+            $res_forscreen = $model->query($sql_forscreen);
+            if(!empty($res_forscreen)){
+                foreach ($res_forscreen as $fv){
+                    $m_forscreen->updateData(array('id'=>$fv['id']),array('create_time'=>$create_time));
+                }
+                echo "welcome_id:{$v['id']} time ok \r\n";
+            }
+
+        }
+        echo "finish";
+    }
+
+    public function welcome(){
+        $model = M();
+        $sql = "select * from savor_smallapp_forscreen_record where box_mac=2 and create_time>='2020-07-01 00:00:00' order by id desc ";
+        $res_data = $model->query($sql);
+        if(!empty($res_data)){
+            $m_staff = new \Admin\Model\Integral\StaffModel();
+            $m_box = new \Admin\Model\BoxModel();
+            $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
+
+            foreach ($res_data as $v){
+                $forscreen_id = $v['id'];
+                unset($v['id']);
+
+                $openid = $v['openid'];
+                $fields = 'm.hotel_id as hotel_id';
+                $where = array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1);
+                $res_merchant = $m_staff->getMerchantStaffInfo($fields,$where);
+                if(!empty($res_merchant)){
+                    $hotel_id = $res_merchant['hotel_id'];
+                    $where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+                    $res_boxs = $m_box->getBoxByCondition('box.mac as box_mac',$where);
+                    if(!empty($res_boxs)){
+                        foreach ($res_boxs as $bv){
+                            $v['box_mac'] = $bv['box_mac'];
+                            $forscreen_data = $v;
+                            $m_forscreen->add($forscreen_data);
+                        }
+                    }
+                    $sql_del = "delete from savor_smallapp_forscreen_record where id={$forscreen_id}";
+                    $model->execute($sql_del);
+                    echo "id:$forscreen_id hotel_id:$hotel_id ok \r\n";
+                }else{
+                    echo "id:$forscreen_id hotel_id:0 error \r\n";
+                }
+            }
+        }
+    }
+
     public function hotelassess(){
         $model = M();
         $sql = "select a.id,a.area_id,a.area_name,a.hotel_id,ext.is_train,a.hotel_name,a.hotel_box_type,a.hotel_level,a.team_name,a.maintainer,a.box_num,a.lostbox_num,a.fault_rate,a.all_assess,
