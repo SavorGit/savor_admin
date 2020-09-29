@@ -408,7 +408,7 @@ class VersionController extends BaseController{
 	        if(isset($device_condition[$name]))    $where['device_type']=$device_condition[$name];
 	
 	        $order = 'id desc';
-	        $datalist = $versionModel->getAllList($filed, $where, $order,$limit=20);
+	        $datalist = $versionModel->getAllList($filed, $where, $order,$limit=100);
 	        $android = array();
 	        $ios = array();
 	        $version = array();
