@@ -5,6 +5,30 @@ use Admin\Model\BaseModel;
 class UserSigninModel extends BaseModel{
 	protected $tableName='smallapp_user_signin';
 
+    public function removeSigncache(){
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(14);
+        $cache_key = C('SAPP_SALE').'signin:*';
+        $res = $redis->keys($cache_key);
+        if(!empty($res)){
+            $remove_time = date('Y-m-d 14:30:01');
+            $remove_time = strtotime($remove_time);
+
+            foreach ($res as $key){
+                $res = $redis->get($key);
+                if(!empty($res)){
+                    $cache_data = json_decode($res,true);
+                    $cache_time = $cache_data['nowtime'];
+                    if($cache_time<$remove_time){
+                        $sign_time = date('Y-m-d H:i:s',$cache_time);
+                        $redis->remove($key);
+                        echo "id:{$cache_data['id']} box_mac:{$cache_data['box_mac']} sign_time:{$sign_time} remove ok \r\n";
+                    }
+                }
+            }
+        }
+    }
+
 	public function userintegral(){
         $nowtime = strtotime('-1 days');
         $now_date = date('Y-m-d',$nowtime);
