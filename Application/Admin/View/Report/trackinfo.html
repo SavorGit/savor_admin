@@ -62,6 +62,10 @@
                 <br>
                 盒子结束下载时间：{$info.box_downetime}
                 <br>
+                <if condition="$info.is_play eq 1">
+                盒子结束下载时间：{$info.box_play_time}
+                <br>
+                </if>
                 总耗时：{$info.box_down_timeconsume}
               </td>
             </tr>

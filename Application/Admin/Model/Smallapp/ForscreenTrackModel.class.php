@@ -15,7 +15,7 @@ class ForscreenTrackModel extends BaseModel{
 
         $where = array();
         $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
-        $where['small_app_id'] = array('in',array(1,2,3));
+        $where['small_app_id'] = array('in',array(1,2));
         $result = $m_forscreen->getDataList('*',$where,'id desc');
         if(!empty($result)){
             $redis = new \Common\Lib\SavorRedis();
@@ -40,6 +40,9 @@ class ForscreenTrackModel extends BaseModel{
                         $data['oss_etime'] = intval($data['oss_etime']);
                         $data['forscreen_record_id'] = $v['id'];
                         $data['serial_number'] = $serial_no;
+                        if(isset($data['box_play_time'])){
+                            $data['box_play_time'] = $data['box_play_time'];
+                        }
                         if(isset($data['netty_callback_result'])){
                             if(!empty($data['netty_callback_result'])){
                                 $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
@@ -248,7 +251,16 @@ class ForscreenTrackModel extends BaseModel{
                 }
                 $end_time = $track_info['box_downetime'];
             }
-
+            if($forscreen_info['resource_type']==1){
+                $m_hearlog = new \Admin\Model\HeartAllLogModel();
+                $date = date('Ymd');
+                $res = $m_hearlog->getOne($forscreen_info['box_mac'],2,$date);
+                if(!empty($res) && $res['apk_version']>='2.1.0'){
+                    if(empty($track_info['box_play_time'])){
+                        $begin_time = $end_time = '';
+                    }
+                }
+            }
             if($begin_time && $end_time){
                 $is_success = 1;
 //                $total_time = ($end_time-$begin_time)/1000;
@@ -282,6 +294,7 @@ class ForscreenTrackModel extends BaseModel{
                 $total_time = '';
             }
         }
+
         if(isset($forscreen_info['is_break']) && $forscreen_info['is_break']==1){
             $is_success = 2;
         }

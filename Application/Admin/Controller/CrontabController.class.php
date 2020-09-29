@@ -2833,6 +2833,13 @@ class CrontabController extends Controller
                             $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
                             $m_smallapp_forscreen_record->updateInfo($where,$box_data);
                             $redis->lpop($k);
+                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['openid']) && !empty($netresource['box_play_time'])){
+                            $where = array();
+                            $where['forscreen_id'] = $netresource['forscreen_id'];
+                            $where['openid'] = $netresource['openid'];
+                            $box_data = array('box_play_time'=>$netresource['box_play_time']);
+                            $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            $redis->lpop($k);
                         }
                     }
 
