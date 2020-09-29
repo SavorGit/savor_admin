@@ -37,6 +37,7 @@ class SappforscreenController extends BaseController {
         $dinnernature_id = I('dinnernature_id',0,'intval');
         $contentsoft_id = I('contentsoft_id',0,'intval');
         $spotstatus = I('spotstatus',0,'intval');
+        $area_id = I('area_id',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $pagenum = I('pageNum',1);
 	    $order = I('_order','a.id');
@@ -123,6 +124,10 @@ class SappforscreenController extends BaseController {
 	        $where['hotel.name'] = array('like',"%$hotel_name%");
 	        $this->assign('hotel_name',$hotel_name); 
 	    }
+	    if($area_id){
+	        $where['hotel.area_id'] = $area_id;
+            $this->assign('area_id',$area_id);
+        }
 	    if($small_app_id){
 	        if($small_app_id == 2){
                 $where['a.small_app_id'] = array('in',array(2,3));
@@ -234,7 +239,10 @@ class SappforscreenController extends BaseController {
         $personattr = $m_category->getCategory($personattr_id,1,3);
         $dinnernature = $m_category->getCategory($dinnernature_id,1,4);
         $contentsoft = $m_category->getCategory($contentsoft_id,1,5);
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
 
+        $this->assign('area', $area_arr);
         $this->assign('scene',$scene);
         $this->assign('category',$category);
         $this->assign('personattr',$personattr);

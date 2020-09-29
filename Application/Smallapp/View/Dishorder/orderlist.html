@@ -131,7 +131,7 @@
                             <td data-title="下单时间">{$dinfo.add_time}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">
-                                    <if condition="($dinfo.otype eq 5) OR ($dinfo.otype eq 6)">
+                                    <if condition="($dinfo.otype eq 5) OR ($dinfo.otype eq 6) OR ($dinfo.otype eq 7)">
                                         <if condition="($dinfo.status eq 51) OR ($dinfo.status eq 52)">
                                         <a data-tip="接单/拒单" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/orderreceive?id={$dinfo.id}" class="btn btn-success btn-icon">
                                             <i class="fa fa-pencil"></i>

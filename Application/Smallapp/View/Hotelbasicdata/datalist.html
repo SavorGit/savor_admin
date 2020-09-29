@@ -1,0 +1,170 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hotelbasicdata/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_time}" data-ymd="true">
+              <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+              <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">地区：</div>
+            <div class="input-group">
+              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">酒楼设备类型：</div>
+            <div class="input-group">
+              <select name="box_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name=":C('heart_hotel_box_type')" id="vo">
+                  <option value="{$key}" <if condition="$key eq $box_type">selected</if>>{$vo}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">上网方式：</div>
+            <div class="input-group">
+              <select name="is_4g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <option value="1" <if condition="$is_4g eq 1">selected</if>>4G</option>
+                <option value="2" <if condition="$is_4g eq 2">selected</if>>wifi</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">维护人：</div>
+            <div class="input-group">
+              <select name="maintainer_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部</option>
+                <volist name="opusers" id="vo">
+                  <option value="" disabled="disabled">{$key}</option>
+                  <volist name="vo" id="vinfo">
+                    <option value="{$vinfo.uid}" {$vinfo.select} >{$vinfo.remark}</option>
+                  </volist>
+                </volist>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">酒楼名称：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="酒楼名称">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm pull-right">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Dataexport/Hotelbasicdata/basicdata?start_time={$start_time}&end_time={$end_time}&area_id={$area_id}" title="导出统计数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出统计数据</a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>酒楼ID</th>
+              <th>酒楼名称</th>
+              <th>城市</th>
+              <th>心跳次数</th>
+              <th>平均网速</th>
+              <th>互动次数</th>
+              <th>扫码数</th>
+              <th>独立用户数</th>
+              <th>午饭互动过的可互动版位</th>
+              <th>午饭在线可互动屏</th>
+              <th>午饭饭局转化率</th>
+              <th>晚饭互动过的可互动版位</th>
+              <th>晚饭在线可互动屏</th>
+              <th>晚饭饭局转化率</th>
+              <th>午饭互动次数</th>
+              <th>午饭平均饭局互动数</th>
+              <th>晚饭互动次数</th>
+              <th>晚饭平均饭局互动数</th>
+              <th>单次扫码互动数</th>
+              <th>酒楼设备类型</th>
+              <th>上网方式(wifi/4g)</th>
+              <th>维护人</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td>{$dinfo.hotel_id}</td>
+              <td>{$dinfo.hotel_name}</td>
+              <td>{$dinfo.area_name}</td>
+              <td>{$dinfo.heart_num}</td>
+              <td>{$dinfo.avg_speed}</td>
+              <td>{$dinfo.interact_num}</td>
+              <td>{$dinfo.scancode_num}</td>
+              <td>{$dinfo.user_num}</td>
+              <td>{$dinfo.user_lunch_zxhdnum}</td>
+              <td>{$dinfo.lunch_zxhdnum}</td>
+              <td>{$dinfo.user_lunch_cvr}</td>
+              <td>{$dinfo.user_dinner_zxhdnum}</td>
+              <td>{$dinfo.dinner_zxhdnum}</td>
+              <td>{$dinfo.user_dinner_cvr}</td>
+              <td>{$dinfo.user_lunch_interact_num}</td>
+              <td>{$dinfo.lunch_unum}</td>
+              <td>{$dinfo.user_dinner_interact_num}</td>
+              <td>{$dinfo.dinner_unum}</td>
+              <td>{$dinfo.scan_hdnum}</td>
+              <td>{$dinfo.hotel_box_type_str}</td>
+              <td>{$dinfo.network}</td>
+              <td>{$dinfo.maintainer}</td>
+            </tr>
+          </volist>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

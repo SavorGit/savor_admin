@@ -216,4 +216,130 @@ class SmallappForscreenRecordModel extends Model{
         $result = $this->getWhere($fields,$where,'',$groupby);
         return $result;
     }
+
+    /*
+     * 获取饭局互动过的可互动版位(饭局时间内有互动且版位标识为互动版位的)
+     * $time 时间戳
+     * $fj_type 0全部饭局 1午饭 2晚饭
+     */
+    public function getFeastInteractBoxByHotelId($hotel_id,$time,$fj_type=0,$small_id=1){
+        $feast_time = C('MEAL_TIME');
+        $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
+        $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
+        $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
+        $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:59",$time);
+
+        $where = array('hotel.id'=>$hotel_id);
+        $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
+        $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
+        switch ($fj_type){
+            case 0:
+                $where['_complex'] = array(
+                    $where_lunch,
+                    $where_dinner,
+                    '_logic' => 'or'
+                );
+                break;
+            case 1:
+                $where['a.create_time'] = $where_lunch['a.create_time'];
+                break;
+            case 2:
+                $where['a.create_time'] = $where_dinner['a.create_time'];
+                break;
+        }
+        $where['a.is_valid'] = 1;
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
+        $where['box.is_interact'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        if($small_id==1){
+            $where['a.small_app_id'] = array('in',array(1,2,11));
+        }elseif($small_id==5){
+            $where['a.small_app_id'] = 5;
+        }
+
+        $fields = 'a.box_mac';
+        $groupby = 'a.box_mac';
+        $result = $this->getWhere($fields,$where,'',$groupby);
+        return $result;
+    }
+
+    public function getFeastForscreenNumByHotelId($hotel_id,$time,$fj_type=0,$small_id=1){
+        $feast_time = C('MEAL_TIME');
+        $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
+        $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
+        $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
+        $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:59",$time);
+
+        $where = array('hotel.id'=>$hotel_id);
+        $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
+        $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
+        switch ($fj_type){
+            case 0:
+                $where['_complex'] = array(
+                    $where_lunch,
+                    $where_dinner,
+                    '_logic' => 'or'
+                );
+                break;
+            case 1:
+                $where['a.create_time'] = $where_lunch['a.create_time'];
+                break;
+            case 2:
+                $where['a.create_time'] = $where_dinner['a.create_time'];
+                break;
+        }
+        $where['a.is_valid'] = 1;
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        if($small_id==1){//1主干版 2极简版 5销售端 11游戏
+            $where['a.small_app_id'] = array('in',array(1,2,11));
+        }elseif($small_id==5){
+            $where['a.small_app_id'] = 5;
+        }
+
+        $fields = 'count(a.id) as num';
+        $result = $this->getWhere($fields,$where,'','');
+        $num = 0;
+        if(!empty($result)){
+            $num = intval($result[0]['num']);
+        }
+        return $num;
+    }
+
+    public function getAvgspeedByHotelId($hotel_id,$time){
+        if(is_array($time)){
+            $start = date("Y-m-d 00:00:00",$time[0]);
+            $end = date("Y-m-d 23:59:59",$time[1]);
+        }else{
+            $start = date("Y-m-d 00:00:00",$time);
+            $end = date("Y-m-d 23:59:59",$time);
+        }
+
+        $where = array('a.create_time'=>array(array('EGT',$start),array('ELT',$end)));
+        $where['hotel.id'] = $hotel_id;
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
+        $where['_string'] = 'a.resource_size>0 and a.box_res_sdown_time>0 AND a.box_res_edown_time>0 AND (a.box_res_edown_time>a.box_res_sdown_time)';
+        $fields = 'sum(a.resource_size) as resource_size,sum(a.box_res_edown_time-a.box_res_sdown_time) as down_time';
+        $result = $this->getWhere($fields,$where,'','');
+        $avgspeed = 0;
+        if(!empty($result)){
+            $down_time = $result[0]['down_time']/1000;
+            $resource_size = $result[0]['resource_size']/1024;
+            $avgspeed = intval($resource_size/$down_time);
+        }
+        return $avgspeed;
+    }
+
+    public function getAvgspeedByStaticHotelId($hotel_id,$date){
+        $sql = "select avg(NULLIF(avg_down_speed,0)) as avg_speed from savor_smallapp_statistics where hotel_id={$hotel_id} and static_date={$date}";
+        $result = $this->query($sql);
+        $avgspeed = 0;
+        if(!empty($result)){
+            $avgspeed = intval($result[0]['avg_speed']/1024);
+        }
+        return $avgspeed;
+    }
 }
