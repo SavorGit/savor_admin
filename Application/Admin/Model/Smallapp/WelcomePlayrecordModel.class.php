@@ -40,7 +40,9 @@ class WelcomePlayrecordModel extends BaseModel{
                     $message['waiterIconUrl'] = '';
                     $box_where = array('box.flag'=>0,'box.state'=>1,'hotel.flag'=>0,'hotel.state'=>1,'box.mac'=>$v['box_mac']);
                     $res_box = $m_box->getInfoByCondition('box.room_id,room.hotel_id',$box_where);
-                    $res_staff = $m_staff->getInfo(array('hotel_id'=>$hotel_id,'room_id'=>$res_box['room_id']));
+                    $staff_where = array('hotel_id'=>$hotel_id);
+                    $staff_where['room_ids'] = array('like',"%,{$res_box['room_id']},%");
+                    $res_staff = $m_staff->getInfo($staff_where);
                     if(!empty($res_staff)){
                         $message['type'] = 2;
                         $where_user = array('openid'=>$res_staff['openid']);
