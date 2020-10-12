@@ -5110,8 +5110,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
         
         $box_list = M()->query($sql);
-        $start_time = '20200822';
-        $end_time   = '20200831';
+        $start_time = '20200921';
+        $end_time   = '20200930';
         
         
         $data = [];
@@ -5141,7 +5141,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $xlsName = '失联超过10天的版位信息';
         $filename = 'user_wifi_forscreen_detail';
         //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
-        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202008/';
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202009/';
         if (!is_dir($path)){
             mkdir($path,0777,true);
         }
