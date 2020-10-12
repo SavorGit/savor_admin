@@ -2491,7 +2491,22 @@ group by openid";
         $redis->set($key,json_encode($hotels));
     }
 
+    public function roomstaff(){
+        $model = M();
+        $sql = "select * from savor_integral_merchant_staff where hotel_id>0 and room_id>0";
+        $res = $model->query($sql);
+        foreach ($res as $v) {
+            $id = $v['id'];
+            $room_ids = ",{$v['room_id']},";
+            $e_sql = "UPDATE savor_integral_merchant_staff SET room_ids='{$room_ids}' WHERE id={$id}";
+            $model->execute($e_sql);
+            echo "ID:$id ok \r\n";
+        }
+        exit;
+    }
+
     public function welcometime(){
+        exit;
         $model = M();
         $sql = "select * from savor_smallapp_welcome where play_type=2 and status=3 and add_time>='2020-07-01 00:00:00' order by id desc ";
         $res_data = $model->query($sql);
@@ -2525,6 +2540,7 @@ group by openid";
     }
 
     public function welcome(){
+        exit;
         $model = M();
         $sql = "select * from savor_smallapp_forscreen_record where box_mac=2 and create_time>='2020-07-01 00:00:00' order by id desc ";
         $res_data = $model->query($sql);

@@ -2833,6 +2833,13 @@ class CrontabController extends Controller
                             $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
                             $m_smallapp_forscreen_record->updateInfo($where,$box_data);
                             $redis->lpop($k);
+                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['openid']) && !empty($netresource['box_play_time'])){
+                            $where = array();
+                            $where['forscreen_id'] = $netresource['forscreen_id'];
+                            $where['openid'] = $netresource['openid'];
+                            $box_data = array('box_play_time'=>$netresource['box_play_time']);
+                            $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            $redis->lpop($k);
                         }
                     }
 
@@ -4432,6 +4439,15 @@ class CrontabController extends Controller
         echo "pushlotterytowx end:$now_time \r\n";
     }
 
+    public function removesigncache(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "removesigncache start:$now_time \r\n";
+        $m_signin = new \Admin\Model\Smallapp\UserSigninModel();
+        $m_signin->removeSigncache();
+        $now_time = date('Y-m-d H:i:s');
+        echo "removesigncache end:$now_time \r\n";
+    }
+
     public function countsmallappusetime(){
         $date = strtotime('-1 day');
         $yesterday_start_time = date('Y-m-d 00:00:00',$date);
@@ -4444,11 +4460,10 @@ class CrontabController extends Controller
                 $sql = "update savor_smallapp_user set use_time= use_time +1 where openid='".$v['openid']."' limit 1";
                 M()->execute($sql);
             }
-            
         }
         echo date('Y-m-d H:i:s').'OK'."\n";
-    
     }
+
     /**
      * @desc 推送饭点中提醒服务员引导客人评价（机顶盒弹幕） 13:00 19:00  13:30 19:30
      */
@@ -4461,37 +4476,29 @@ class CrontabController extends Controller
                 left join savor_hotel hotel on hotel.id=room.hotel_id
                 left join savor_smallapp_user user on staff.openid= user.openid
                 WHERE staff.level in(2,3) and staff.status =1 and
-                staff.hotel_id!=0 and staff.room_id!=0 and hotel.state=1
+                staff.hotel_id!=0 and staff.room_ids!='' and hotel.state=1
                 and hotel.flag=0 and box.state=1 and box.flag=0 ";
         $staff_box_list = M()->query($sql);
-        $post_data = http_build_query($netty_data);
         $nettyBalanceURL = C('NETTY_BALANCE_URL');
         //正式环境
         //$staff_box_list = array(array('room_id'=>10498,'hotel_id'=>7,'box_mac'=>'00226D583D92','nickName'=>'jet','avatarUrl'=>'https://thirdwx.qlogo.cn/mmopen/vi_32/50q6nBfu9QmWUz8vOY6ibibRM4M3fibXjUhic9d8n3bsAGzvsNMmH5BajJNu6kJbianHWCCkkc77Cnas7B41bKCrdTA/132'));
         //测试环境
         //$staff_box_list = array(array('room_id'=>990,'hotel_id'=>120,'box_mac'=>'40E793253553','nickName'=>'jet','avatarUrl'=>'https://thirdwx.qlogo.cn/mmopen/vi_32/50q6nBfu9QmWUz8vOY6ibibRM4M3fibXjUhic9d8n3bsAGzvsNMmH5BajJNu6kJbianHWCCkkc77Cnas7B41bKCrdTA/132'));
         $barrage = '亲,别忘了扫码评价哦~';
-        //print_r($staff_box_list);exit;
         foreach($staff_box_list as $key=>$v){
             $user_barrages = array();
             $box_mac = $v['box_mac'];
-    
             $req_id = getMillisecond();
-    
             $post_data = array('box_mac'=>$box_mac,'req_id'=>$req_id);
-    
             $post_data = http_build_query($post_data);
-    
             $result = curlPost($nettyBalanceURL, $post_data);
             $result_postion = json_decode($result,true);
-    
             if($result_postion['code']==10000){
                 $req_id = getMillisecond();
                 if(!empty($v['avatarurl'])){
                     $head_pic = base64_encode($v['avatarurl']);
                 }
                 $user_barrages[] = array('nickName'=>$v['nickname'],'headPic'=>$head_pic,'avatarUrl'=>$v['avatarurl'],'barrage'=>$barrage);
-                
                 $msg = array('action'=>122,'userBarrages'=>$user_barrages);
                 $netty_data = array('box_mac'=>$box_mac,'cmd'=>'call-mini-program','msg'=>json_encode($msg),'req_id'=>$req_id);
                 $post_data = http_build_query($netty_data);
@@ -4499,66 +4506,50 @@ class CrontabController extends Controller
                 $netty_push_url = 'http://'.$result_postion['result'].'/push/box';
                 $ret = curlPost($netty_push_url,$post_data);
                 $netty_result = json_decode($ret,true);
-                
             }
         }
-    
         echo date('Y-m-d H:i:s')."OK"."\n";
-    
-        
     }
+
     /**
      * 推送消息提醒服务员开机 每天12点18点执行
      */
-
     public function pushRemindPowerOn(){
-        
         $now_hour = date('H');
         $last_hour = $now_hour - 1;
         $wechat = new \Common\Lib\Wechat();
-        
         $sql = "SELECT user.wx_mpopenid,staff.room_id,staff.hotel_id,room.name room_name
                 FROM `savor_integral_merchant_staff` staff
                 left join savor_smallapp_user user on staff.openid= user.openid 
                 left join savor_room room on staff.room_id=room.id
                 WHERE staff.level in(2,3) and staff.status =1 and staff.hotel_id!=0 
-                and staff.room_id!=0 and user.wx_mpopenid!='' ";
+                and staff.room_ids!='' and user.wx_mpopenid!='' ";
         $user = M()->query($sql);
         //正式环境
         //$user = array(array('wx_mpopenid'=>'o5mZpw4cUfhsqqQRroL8oKswnLQ0','room_id'=>8824,'hotel_id'=>883,'room_name'=>'玉清宫')) ;
-        
         foreach($user as $key=>$v){
-            //$res = $wechat->getWxUserDetail($access_token ,$v['wx_mpopenid']);
             $sql ="select box.id box_id from savor_box box
                        left join savor_room room on box.room_id=room.id
                        left join savor_hotel hotel on room.hotel_id=hotel.id
                        where room.id=".$v['room_id'].' and hotel.id='.$v['hotel_id'].' and hotel.state=1 and hotel.flag=0
                        and box.state=1 and box.flag = 0';
-            
             $box_list = M()->query($sql);
             $now_date = date('Ymd');
             foreach($box_list as $kk=>$vv){
                 //判断机顶盒11:00 - 12:00有没有开机(心跳)
-                $sql ="select hour$last_hour from savor_heart_all_log where date=".$now_date.' and box_id='.$vv['box_id'].' and type=2';
-            
+                $sql ="select hour{$last_hour} from savor_heart_all_log where date=".$now_date.' and box_id='.$vv['box_id'].' and type=2';
                 $heart_list = M()->query($sql);
                 if(empty($heart_list) || $heart_list[0]['hour'.$last_hour]==0){
-                //if(1==1){
                     $data = array(
                         'touser'=>$v['wx_mpopenid'],
                         'template_id'=>"kTn7TCT1BVbSpE9JASuVgqv5iu8MQ9LgvVBLfSLMLX0",
                         'url'=>"",
-                        /*'miniprogram'=>array(
-                         'appid'=>'wxfdf0346934bb672f',
-                            'pagepath'=>'pages/index/index',
-                        ),*/
                         'data'=>array(
                             'first'=>array('value'=>'包间设备异常提醒') ,
                             'keyword1'=>array('value'=>$v['room_name'].'包间电视'),
                             'keyword2'=>array('value'=>'此包间电视未开机，为不影响食客使用及您的积分收益，请及时开机。'),
-                            'keyword3'=>array('value'=>date('Y-m-d H:i'),),
+                            'keyword3'=>array('value'=>date('Y-m-d H:i')),
                             'keyword4'=>array('value'=>'北京热点投屏科技有限公司。'),
-                            //'remark'=>array('value'=>'如有疑问，请拨打123456789.','color'=>"#FF1C2E"),
                         )
                     );
                     $data = json_encode($data);

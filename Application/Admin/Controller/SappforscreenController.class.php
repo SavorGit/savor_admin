@@ -669,6 +669,16 @@ class SappforscreenController extends BaseController {
                 }else{
                     $netty_callback_time = '';
                 }
+                $is_play = 0;
+                if($track_info['resource_type']==1){
+                    $m_hearlog = new \Admin\Model\HeartAllLogModel();
+                    $date = date('Ymd');
+                    $res = $m_hearlog->getOne($track_info['box_mac'],2,$date);
+                    if(!empty($res) && $res['apk_version']>='2.1.0'){
+                        $is_play = 1;
+                    }
+                }
+
                 $is_success = $track_info['is_success'];
                 $track_info['status'] = $this->success_status[$is_success];
                 $track_info['all_timeconsume'] = $track_info['total_time'];
@@ -687,6 +697,8 @@ class SappforscreenController extends BaseController {
                 $track_info['box_downetime'] = $box_downetime;
                 $track_info['box_down_timeconsume'] = $box_down_timeconsume;
                 $track_info['box_mac'] = $res_forscreen['box_mac'];
+                $track_info['box_play_time'] = $track_info['box_play_time'];
+                $track_info['is_play'] = $is_play;
 
                 $display_html = 'trackinfo';
             }

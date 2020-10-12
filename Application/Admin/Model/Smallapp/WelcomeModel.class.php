@@ -74,7 +74,9 @@ class WelcomeModel extends BaseModel{
 
                         $all_push_log = array();
                         foreach ($res_box as $bv){
-                            $res_staff = $m_staff->getInfo(array('hotel_id'=>$v['hotel_id'],'room_id'=>$bv['room_id']));
+                            $staff_where = array('hotel_id'=>$v['hotel_id']);
+                            $staff_where['room_ids'] = array('like',"%,{$bv['room_id']},%");
+                            $res_staff = $m_staff->getInfo($staff_where);
                             $message['type'] = 1;
                             $message['waiterName'] = '';
                             $message['waiterIconUrl'] = '';
@@ -99,8 +101,9 @@ class WelcomeModel extends BaseModel{
                         $res_box = $m_box->getInfoByCondition('box.room_id,room.hotel_id',$box_where);
 
                         echo "boxs:".json_encode($res_box)."\r\n";
-
-                        $res_staff = $m_staff->getInfo(array('hotel_id'=>$v['hotel_id'],'room_id'=>$res_box['room_id']));
+                        $staff_where = array('hotel_id'=>$v['hotel_id']);
+                        $staff_where['room_ids'] = array('like',"%,{$res_box['room_id']},%");
+                        $res_staff = $m_staff->getInfo($staff_where);
                         $message['type'] = 1;
                         $message['waiterName'] = '';
                         $message['waiterIconUrl'] = '';
