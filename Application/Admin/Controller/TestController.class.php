@@ -2578,6 +2578,103 @@ group by openid";
         }
     }
 
+    public function assess(){
+        $m_statichotelassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
+        $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
+        $res_data = $m_statichotelassess->getDataList('*',array(),'id asc');
+        $config = $m_statichotelassess->assessConfig();
+
+        foreach ($res_data as $v){
+            $time_date = strtotime($v['date']);
+            $hotel_id = $v['hotel_id'];
+
+            $res_hoteldata = $m_statichotelbasicdata->getInfo(array('static_date'=>date('Y-m-d',$time_date),'hotel_id'=>$hotel_id));
+            $zxnum = $wlnum = $user_zxhdnum = $sale_zxhdnum = $zxhdnum = 0;
+            if(!empty($res_hoteldata)){
+                $wlnum = $res_hoteldata['wlnum'];
+                $zxnum = $res_hoteldata['lunch_zxnum'] + $res_hoteldata['dinner_zxnum'];
+                $user_zxhdnum = $res_hoteldata['user_lunch_zxhdnum'] + $res_hoteldata['user_dinner_zxhdnum'];
+                $sale_zxhdnum = $res_hoteldata['sale_lunch_zxhdnum'] + $res_hoteldata['sale_dinner_zxhdnum'];
+                $zxhdnum = $res_hoteldata['lunch_zxhdnum'] + $res_hoteldata['dinner_zxhdnum'];
+            }
+            $data = array();
+            $data['zxnum'] = $zxnum;
+            $data['wlnum'] = $wlnum;
+            $data['user_zxhdnum'] = $user_zxhdnum;
+            $data['sale_zxhdnum'] = $sale_zxhdnum;
+            $data['zxhdnum'] = $zxhdnum;
+
+            $zxrate = 0;
+            if($zxnum && $wlnum){
+                $total_wlnum = $wlnum * 2;
+                $zxrate = sprintf("%.2f",$zxnum/$total_wlnum);
+            }
+            $data['zxrate'] = $zxrate;
+            $data['channel_assess'] = 1;
+            if($data['zxrate']<$config[$v['hotel_level']]['zxrate']){
+                $data['channel_assess'] = 2;
+            }
+            $fjrate = 0;
+            if($user_zxhdnum && $zxhdnum){
+                $fjrate = sprintf("%.2f",$user_zxhdnum/$zxhdnum);
+            }
+            $data['fjrate'] = $fjrate;
+            $data['data_assess'] = 1;
+            if($data['fjrate']<$config[$v['hotel_level']]['fjrate']){
+                $data['data_assess'] = 2;
+            }
+            $fjsalerate = 0;
+            if($sale_zxhdnum && $zxhdnum){
+                $fjsalerate = sprintf("%.2f",$sale_zxhdnum/$zxhdnum);
+            }
+            $data['fjsalerate'] = $fjsalerate;
+
+
+            $data['saledata_assess'] = 1;
+            if($data['fjsalerate']<$config[$v['hotel_level']]['fjsalerate']){
+                $data['saledata_assess'] = 2;
+            }
+            $data['all_assess'] = 1;
+            if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2 || $data['saledata_assess']==2){
+                $data['all_assess'] = 2;
+            }
+            $res = $m_statichotelassess->updateData(array('id'=>$v['id']),$data);
+            if($res){
+                echo "id:{$v['id']}--{$v['date']} ok \r\n";
+            }else{
+                echo "id:{$v['id']}--{$v['date']} fail \r\n";
+            }
+
+        }
+
+    }
+
+    public function comment(){
+        $box_mac = I('mac','');
+        $message = array('action'=>140,'forscreen_char'=>'感谢您的评价，您的建议是我们前进的动力～',
+            'waiterName'=>'','waiterIconUrl'=>'');
+        $where = array('openid'=>'o9GS-4nd0JFjD5K9cCoapRR3slrY');
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $res_user = $m_user->getOne('id as user_id,avatarUrl,nickName',$where,'id desc');
+        $message['waiterName'] = $res_user['nickName'];
+        $message['waiterIconUrl'] = $res_user['avatarUrl'];
+
+        $font_id = 90;
+        $message['wordsize'] = 50;
+        $message['color'] = '#666666';
+        $message['font_id'] = $font_id;
+        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
+        $m_media = new \Admin\Model\MediaModel();
+        $res_font = $m_welcomeresource->getInfo(array('id'=>$font_id));
+        $res_media = $m_media->getMediaInfoById($res_font['media_id']);
+        $message['font_oss_addr'] = $res_media['oss_addr'];
+
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        echo json_encode($res_netty);
+    }
+
+
     public function hotelassess(){
         $model = M();
         $sql = "select a.id,a.area_id,a.area_name,a.hotel_id,ext.is_train,a.hotel_name,a.hotel_box_type,a.hotel_level,a.team_name,a.maintainer,a.box_num,a.lostbox_num,a.fault_rate,a.all_assess,

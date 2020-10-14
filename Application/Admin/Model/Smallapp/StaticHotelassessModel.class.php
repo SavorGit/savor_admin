@@ -110,6 +110,7 @@ class StaticHotelassessModel extends BaseModel{
         $all_dates = $m_statistics->getDates($start,$end);
         $m_box = new \Admin\Model\BoxModel();
         $m_statichoteldata = new \Admin\Model\Smallapp\StaticHoteldataModel();
+        $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
 
         foreach ($all_dates as $v){
@@ -141,6 +142,47 @@ class StaticHotelassessModel extends BaseModel{
                 if($fault_rate>$config[$hv['hotel_level']]['fault_rate']){
                     $data['operation_assess'] = 2;
                 }
+                $res_hoteldata = $m_statichotelbasicdata->getInfo(array('static_date'=>date('Y-m-d',$time_date),'hotel_id'=>$hotel_id));
+                $zxnum = $wlnum = $user_zxhdnum = $sale_zxhdnum = $zxhdnum = 0;
+                if(!empty($res_hoteldata)){
+                    $wlnum = $res_hoteldata['wlnum'];
+                    $zxnum = $res_hoteldata['lunch_zxnum'] + $res_hoteldata['dinner_zxnum'];
+                    $user_zxhdnum = $res_hoteldata['user_lunch_zxhdnum'] + $res_hoteldata['user_dinner_zxhdnum'];
+                    $sale_zxhdnum = $res_hoteldata['sale_lunch_zxhdnum'] + $res_hoteldata['sale_dinner_zxhdnum'];
+                    $zxhdnum = $res_hoteldata['lunch_zxhdnum'] + $res_hoteldata['dinner_zxhdnum'];
+                }
+                $data['zxnum'] = $zxnum;
+                $data['wlnum'] = $wlnum;
+                $data['user_zxhdnum'] = $user_zxhdnum;
+                $data['sale_zxhdnum'] = $sale_zxhdnum;
+                $data['zxhdnum'] = $zxhdnum;
+
+                $zxrate = 0;
+                if($zxnum && $wlnum){
+                    $total_wlnum = $wlnum * 2;
+                    $zxrate = sprintf("%.2f",$zxnum/$total_wlnum);
+                }
+                $data['zxrate'] = $zxrate;
+                $data['channel_assess'] = 1;
+                if($data['zxrate']<$config[$hv['hotel_level']]['zxrate']){
+                    $data['channel_assess'] = 2;
+                }
+                $fjrate = 0;
+                if($user_zxhdnum && $zxhdnum){
+                    $fjrate = sprintf("%.2f",$user_zxhdnum/$zxhdnum);
+                }
+                $data['fjrate'] = $fjrate;
+                $data['data_assess'] = 1;
+                if($data['fjrate']<$config[$hv['hotel_level']]['fjrate']){
+                    $data['data_assess'] = 2;
+                }
+                $fjsalerate = 0;
+                if($sale_zxhdnum && $zxhdnum){
+                    $fjsalerate = sprintf("%.2f",$sale_zxhdnum/$zxhdnum);
+                }
+                $data['fjsalerate'] = $fjsalerate;
+
+                /*
                 $res_hoteldata = $m_statichoteldata->getInfo(array('date'=>$static_date,'hotel_id'=>$hotel_id));
                 $data['zxrate'] = $res_hoteldata['zxrate'];
                 $data['channel_assess'] = 1;
@@ -159,34 +201,9 @@ class StaticHotelassessModel extends BaseModel{
                 if($sale_feast_boxnum){
                     $fjsalerate = sprintf("%.2f",$sale_feast_boxnum/$wlnum);
                 }
-
-                $lunch_zxrate = 0;
-                if($res_hoteldata['lunch_zxnum']){
-                    $lunch_zxrate = sprintf("%.2f",$res_hoteldata['lunch_zxnum']/$box_num);
-                }
-                $dinner_zxrate = 0;
-                if($res_hoteldata['dinner_zxnum']){
-                    $dinner_zxrate = sprintf("%.2f",$res_hoteldata['dinner_zxnum']/$box_num);
-                }
-                $data['lunch_zxrate'] = $lunch_zxrate;
-                $data['dinner_zxrate'] = $dinner_zxrate;
-
-                $res_lunchbox = $m_forscreen->getFeastBoxByHotelId($hotel_id,$time_date,1,1);
-                $lunch_boxnum = count($res_lunchbox);
-                $lunch_fjrate = 0;
-                if($lunch_boxnum){
-                    $lunch_fjrate = sprintf("%.2f",$lunch_boxnum/$res_hoteldata['lunch_zxnum']);
-                }
-                $res_dinnerbox = $m_forscreen->getFeastBoxByHotelId($hotel_id,$time_date,2,1);
-                $dinner_boxnum = count($res_dinnerbox);
-                $dinner_fjrate = 0;
-                if($dinner_boxnum){
-                    $dinner_fjrate = sprintf("%.2f",$dinner_boxnum/$res_hoteldata['dinner_zxnum']);
-                }
-                $data['lunch_fjrate'] = $lunch_fjrate;
-                $data['dinner_fjrate'] = $dinner_fjrate;
-
                 $data['fjsalerate'] = $fjsalerate;
+                */
+
                 $data['saledata_assess'] = 1;
                 if($data['fjsalerate']<$config[$hv['hotel_level']]['fjsalerate']){
                     $data['saledata_assess'] = 2;
