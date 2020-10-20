@@ -388,6 +388,18 @@ class BoxModel extends BaseModel{
 	        }
 	    }
 	}
+	public function getDeviceInfoByBoxMac($fields,$where){
+	    $data = $this->alias('box')
+            	     ->join('savor_room room on room.id= box.room_id','left')
+            	     ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            	     ->join('savor_hotel_ext hotelext on hotel.id=hotelext.hotel_id','left')
+            	     ->join('savor_area_info area on hotel.area_id=area.id','left')
+            	     ->field($fields)
+            	     ->where($where)
+            	     ->select();
+	    return $data;
+	    
+	}
 	public function getListInfo($fields ,$where, $order,$limit){
 	    $data = $this->alias('a')
 	    ->join('savor_room as room on a.room_id = room.id ')

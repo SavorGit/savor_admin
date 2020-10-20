@@ -2719,11 +2719,35 @@ class CrontabController extends Controller
         $cache_key = C('SAPP_SCRREN')."*";
         $keys = $redis->keys($cache_key);
         $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
+        $m_box = new \Admin\Model\BoxModel();
         foreach($keys as $k){
             $data = $redis->lgetrange($k,0,-1);
             foreach($data as $v){
                 $forscreen_info = json_decode($v,true);
-                
+                $map = [];
+                $map['hotel.flag'] = 0;
+                $map['hotel.state']= 1;
+                $map['box.flag']   = 0;
+                $map['box.state']  = 1;
+                $map['box.mac']    = $forscreen_info['box_mac'];
+                $box_info = $m_box->getDeviceInfoByBoxMac('hotel.area_id,area.region_name area_name,hotel.id hotel_id,
+                                                           hotel.name hotel_name,room.id room_id,room.name room_name,box.name box_name
+                                                           box.id box_id,box.is_4g,box.box_type,hotel.hotel_box_type,hotel.is_4g hotel_is_4g',$map);
+                if($box_info){
+                    $box_info = $box_info[0];
+                    $forscreen_info['area_id']    = $box_info['area_id'];
+                    $forscreen_info['area_name']  = $box_info['area_name'];
+                    $forscreen_info['hotel_id']   = $box_info['hotel_id'];
+                    $forscreen_info['hotel_name'] = $box_info['hotel_name'];
+                    $forscreen_info['room_id']    = $box_info['room_id'];
+                    $forscreen_info['room_name']  = $box_info['room_name'];
+                    $forscreen_info['box_id']     = $box_info['box_id'];
+                    $forscreen_info['is_4g']      = $box_info['is_4g'];
+                    $forscreen_info['box_type']   = $box_info['box_type'];
+                    $forscreen_info['hotel_box_type'] = $box_info['hotel_box_type'];
+                    $forscreen_info['hotel_is_4g']= $box_info['hotel_is_4g'];    
+                    $forscreen_info['box_name']   = $box_info['box_name'];
+                }
                 $ret = $m_smallapp_forscreen_record->addInfo($forscreen_info,1);
                 if($ret){
                     $redis->lpop($k);
