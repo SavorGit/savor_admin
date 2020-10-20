@@ -335,6 +335,12 @@ class DatareportController extends BaseController {
         $start  = ($page-1) * $size;
         $fields = 'a.hotel_id,a.hotel_name,a.hotel_level,a.team_name,ext.is_train,
         avg(a.box_num) as box_num,avg(a.lostbox_num) as lostbox_num,avg(a.fault_rate) as fault_rate,avg(a.zxrate) as zxrate,avg(a.fjrate) as fjrate,avg(a.fjsalerate) as fjsalerate';
+
+        $fields = 'a.hotel_id,a.hotel_name,a.hotel_level,a.team_name,ext.is_train,
+        avg(a.box_num) as box_num,avg(a.lostbox_num) as lostbox_num,sum(a.box_num) as all_box_num,sum(a.lostbox_num) as all_lostbox_num,
+        sum(a.zxnum) as zxnum,sum(a.wlnum) as wlnum,sum(a.user_zxhdnum) as user_zxhdnum,sum(a.sale_zxhdnum) as sale_zxhdnum,sum(a.zxhdnum) as zxhdnum';
+
+
         $countfields = 'count(DISTINCT(a.hotel_id)) as tp_count';
         $groupby = 'a.hotel_id';
         $order = 'a.hotel_level asc';
@@ -354,6 +360,25 @@ class DatareportController extends BaseController {
         if($is_all){
             $res_data = array();
             foreach ($datalist as $k=>$v){
+                $fault_rate = $zxrate = $fjrate = $fjsalerate = 0;
+                if($v['all_box_num'] && $v['all_lostbox_num']){
+                    $fault_rate = $v['all_lostbox_num']/$v['all_box_num'];
+                }
+                if($v['zxnum'] && $v['wlnum']){
+                    $tmp_wlnum = $v['wlnum']*2;
+                    $zxrate = $v['zxnum']/$tmp_wlnum;
+                }
+                if($v['user_zxhdnum'] && $v['zxhdnum']){
+                    $fjrate = $v['user_zxhdnum']/$v['zxhdnum'];
+                }
+                if($v['sale_zxhdnum'] && $v['zxhdnum']){
+                    $fjsalerate = $v['sale_zxhdnum']/$v['zxhdnum'];
+                }
+                $v['fault_rate'] = $fault_rate;
+                $v['zxrate'] = $zxrate;
+                $v['fjrate'] = $fjrate;
+                $v['fjsalerate'] = $fjsalerate;
+
                 $assess = $m_staticassess->getHotelassessResult($v);
                 $is_del = 0;
                 if($all_assess && $assess['all_assess']!=$all_assess){
@@ -417,11 +442,32 @@ class DatareportController extends BaseController {
             $avg_where['ext.is_train'] = $is_train;
         }
         $fields = 'avg(a.fault_rate) as fault_rate,avg(a.zxrate) as zxrate,avg(a.fjrate) as fjrate,avg(a.fjsalerate) as fjsalerate,a.hotel_level';
+        $fields = 'avg(a.box_num) as box_num,avg(a.lostbox_num) as lostbox_num,sum(a.box_num) as all_box_num,sum(a.lostbox_num) as all_lostbox_num,sum(a.zxnum) as zxnum,sum(a.wlnum) as wlnum,sum(a.user_zxhdnum) as user_zxhdnum,sum(a.sale_zxhdnum) as sale_zxhdnum,sum(a.zxhdnum) as zxhdnum,a.hotel_level';
         $groupby = 'a.hotel_level';
         $order = '';
         $res_avgdata = $m_staticassess->getHotelassess($fields,$avg_where,$groupby,$order,0,10);
         $avg_data = array();
         foreach ($res_avgdata as $v){
+            $fault_rate = $zxrate = $fjrate = $fjsalerate = 0;
+            if($v['all_box_num'] && $v['all_lostbox_num']){
+                $fault_rate = $v['all_lostbox_num']/$v['all_box_num'];
+            }
+
+            if($v['zxnum'] && $v['wlnum']){
+                $tmp_wlnum = $v['wlnum']*2;
+                $zxrate = $v['zxnum']/$tmp_wlnum;
+            }
+            if($v['user_zxhdnum'] && $v['zxhdnum']){
+                $fjrate = $v['user_zxhdnum']/$v['zxhdnum'];
+            }
+            if($v['sale_zxhdnum'] && $v['zxhdnum']){
+                $fjsalerate = $v['sale_zxhdnum']/$v['zxhdnum'];
+            }
+            $v['fault_rate'] = $fault_rate;
+            $v['zxrate'] = $zxrate;
+            $v['fjrate'] = $fjrate;
+            $v['fjsalerate'] = $fjsalerate;
+
             $fault_rate = sprintf("%.2f",$v['fault_rate']);
             $fault_rate = $fault_rate*100;
             $zxrate = sprintf("%.2f",$v['zxrate']);
