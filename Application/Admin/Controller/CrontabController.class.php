@@ -2731,7 +2731,7 @@ class CrontabController extends Controller
                 $map['box.state']  = 1;
                 $map['box.mac']    = $forscreen_info['box_mac'];
                 $box_info = $m_box->getDeviceInfoByBoxMac('hotel.area_id,area.region_name area_name,hotel.id hotel_id,
-                                                           hotel.name hotel_name,room.id room_id,room.name room_name,box.name box_name
+                                                           hotel.name hotel_name,room.id room_id,room.name room_name,box.name box_name,
                                                            box.id box_id,box.is_4g,box.box_type,hotel.hotel_box_type,hotel.is_4g hotel_is_4g',$map);
                 if($box_info){
                     $box_info = $box_info[0];
