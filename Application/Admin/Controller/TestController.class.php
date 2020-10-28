@@ -14,6 +14,33 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+    public function getVsmallHotelList(){
+        exit();
+        $redis = SavorRedis::getInstance();
+        $redis->select(10);
+        $v_apk_key = C('VSMALL_APK');
+	    //echo $v_apk_key;exit;  
+        $ck = $v_apk_key.'*';
+        $rts = $redis->keys($ck);
+	    $v_hotel_arr = [];
+	    foreach($rts as $k=>$v){
+	        $tmp = explode(':',$v);
+	        if(!in_array($tmp[2],$v_hotel_arr)){
+
+	            $v_hotel_arr[] = $tmp[2];
+	        }
+	    }
+	    $redis->select(12);
+	    $v_h_l = $redis->get('vsmall_hotel_list');
+	    $v_h_l = json_decode($v_h_l,true);
+	    $v_h_l = array_column($v_h_l,'hotel_id');
+	    
+	    $rt = array_diff($v_hotel_arr,$v_h_l);
+	    print_r($rt);exit;
+	    
+	    
+	    print_r($v_hotel_arr);
+    }
     private function curlPost($url = '',  $post_data = ''){
         $curl = curl_init();
         curl_setopt_array($curl, array(
