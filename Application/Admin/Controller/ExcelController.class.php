@@ -146,6 +146,8 @@ class ExcelController extends Controller
              $tmpname = '酒楼扫码投屏统计';
          }else if($filename=='hotelassessdata'){
              $tmpname = '酒楼数据考核';
+         }else if($filename =='exportForVideo'){
+             $tmpname ='视频投屏数据';
          }
 
 
@@ -6976,6 +6978,26 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         );
         $xlsName = '酒楼数据考核';
         $filename = 'hotelassessdata';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+    public function exportForVideo(){
+        $start_time = I('start_time');
+        $end_time   = I('end_time');
+        $where = '';
+        if(!empty($start_time)){
+            $where .=" and create_time>='".$start_time."'";
+        }
+        if(!empty($end_time)){
+            $where .= " and create_time <='".$end_time."'";
+        }
+        $sql = "select resource_size create_time  from savor_smallapp_forscreen_record where action = '2' AND resource_type = '2' and resource_size>0 ".$where;
+        $data = M()->query($sql);
+        $xlsCell = array(
+            array('resource_size','视频资源大小'),
+            array('saledata_money','投屏时间'),
+        );
+        $xlsName = '视频投屏数据';
+        $filename = 'exportForVideo';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
 }

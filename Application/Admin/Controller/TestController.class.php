@@ -14,6 +14,25 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+    public function countForscreenNum(){
+        $start_time = I('start_time');
+        $end_time   = I('end_time');
+        $where = '';
+        if(!empty($start_time)){
+            $where .=" and create_time>='".$start_time."'";
+        }
+        if(!empty($end_time)){
+            $where .= " and create_time <='".$end_time."'";
+        }
+        
+        //视频投屏
+        $sql = "select sum(resource_size) as all_resource_size from savor_smallapp_forscreen_record where action = '2' AND resource_type = '2' ".$where;
+        //echo $sql;exit;
+        $ret  = M()->query($sql);
+        $all_resource_size = $ret[0]['all_resource_size'];
+        $all_resource_size = round(($all_resource_size/1024)/(1024*1024),2);
+        echo '视频投屏资源大小：'.$all_resource_size."G";
+    }
     public function getVsmallHotelList(){
         exit();
         $redis = SavorRedis::getInstance();
