@@ -5112,8 +5112,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
         
         $box_list = M()->query($sql);
-        $start_time = '20200921';
-        $end_time   = '20200930';
+        $start_time = '20201021';
+        $end_time   = '20201030';
         
         
         $data = [];
@@ -5143,7 +5143,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $xlsName = '失联超过10天的版位信息';
         $filename = 'user_wifi_forscreen_detail';
         //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
-        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202009/';
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202010/';
         if (!is_dir($path)){
             mkdir($path,0777,true);
         }
@@ -6990,11 +6990,11 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         if(!empty($end_time)){
             $where .= " and create_time <='".$end_time."'";
         }
-        $sql = "select resource_size create_time  from savor_smallapp_forscreen_record where action = '2' AND resource_type = '2' and resource_size>0 ".$where;
+        $sql = "select resource_size ,create_time  from savor_smallapp_forscreen_record where action = '2' AND resource_type = '2' and resource_size>0 ".$where;
         $data = M()->query($sql);
         $xlsCell = array(
             array('resource_size','视频资源大小'),
-            array('saledata_money','投屏时间'),
+            array('create_time','投屏时间'),
         );
         $xlsName = '视频投屏数据';
         $filename = 'exportForVideo';
