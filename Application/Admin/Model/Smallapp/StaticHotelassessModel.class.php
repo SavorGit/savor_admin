@@ -48,9 +48,9 @@ class StaticHotelassessModel extends BaseModel{
 
     public function assessConfig(){
         $config = array(
-            'A'=>array('fault_rate'=>0.1,'zxrate'=>0.6,'fjrate'=>0.06,'fjsalerate'=>0.25),
-            'B'=>array('fault_rate'=>0.2,'zxrate'=>0.45,'fjrate'=>0.03,'fjsalerate'=>0.15),
-            'C'=>array('fault_rate'=>0.3,'zxrate'=>0.4,'fjrate'=>0.02,'fjsalerate'=>0.05),
+            'A'=>array('fault_rate'=>0.05,'zxrate'=>0.45,'fjrate'=>0.06,'fjsalerate'=>0.30),
+            'B'=>array('fault_rate'=>0.10,'zxrate'=>0.35,'fjrate'=>0.03,'fjsalerate'=>0.20),
+            'C'=>array('fault_rate'=>0.15,'zxrate'=>0.30,'fjrate'=>0.02,'fjsalerate'=>0.15),
         );
         return $config;
     }

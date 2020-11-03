@@ -44,6 +44,68 @@ class ForscreenRecordModel extends BaseModel{
 	    return $nums;
 	}
 
+	public function syncForscreendata(){
+        ini_set("memory_limit","2024M");
+        $where = array();
+        $where['create_time'] = array(array('EGT','2020-01-01 00:00:00'),array('ELT','2020-02-31 23:59:59'));
+
+//        $where['create_time'] = array(array('EGT','2020-05-01 00:00:00'),array('ELT','2020-06-31 23:59:59'));
+
+
+        $res = $this->getDataList('*',$where,'id asc');
+        foreach ($res as $v){
+            $id = $v['id'];
+            $box_mac = $v['box_mac'];
+            $sql_box = "select * from savor_box where mac='{$box_mac}' and state=1 and flag=0";
+            $res_box = $this->query($sql_box);
+            if(!empty($res_box)){
+                $box_info = $res_box[0];
+            }else{
+                $sql_box = "select * from savor_box where mac='{$box_mac}' order by id desc limit 0,1";
+                $res_box = $this->query($sql_box);
+                $box_info = $res_box[0];
+            }
+            if(!empty($box_info)){
+                $box_id = $box_info['id'];
+                $box_name = $box_info['name'];
+                $is_4g = $box_info['is_4g'];
+                $box_type = $box_info['box_type'];
+                $room_id = $box_info['room_id'];
+                $sql_room = "select * from savor_room where id={$room_id}";
+                $res_room = $this->query($sql_room);
+                if(!empty($res_room)){
+                    $room_name = $res_room[0]['name'];
+                    $hotel_id = $res_room[0]['hotel_id'];
+
+                    $sql_hotel = "select * from savor_hotel where id={$hotel_id}";
+                    $res_hotel = $this->query($sql_hotel);
+                    if(!empty($res_hotel)){
+                        $hotel_name = $res_hotel[0]['name'];
+                        $area_id = $res_hotel[0]['area_id'];
+                        $hotel_box_type = $res_hotel[0]['hotel_box_type'];
+                        $hotel_is_4g = $res_hotel[0]['is_4g'];
+                        $sql_area = "select * from savor_area_info where id={$area_id}";
+                        $res_area = $this->query($sql_area);
+                        $area_name = '';
+                        if(!empty($res_area)){
+                            $area_name = $res_area[0]['region_name'];
+                        }
+                        $data = array('area_id'=>$area_id,'area_name'=>$area_name,'hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,
+                            'room_id'=>$room_id,'room_name'=>$room_name,'box_id'=>$box_id,'box_name'=>$box_name,'is_4g'=>$is_4g,'box_type'=>$box_type,
+                            'hotel_box_type'=>$hotel_box_type,'hotel_is_4g'=>$hotel_is_4g);
+                        $this->updateData(array('id'=>$id),$data);
+                    }
+                }
+                echo "ID: $id {$v['create_time']} ok \r\n";
+            }else{
+                echo "ID: $id {$v['create_time']} error \r\n";
+            }
+
+
+        }
+
+    }
+
 	public function forscreen_4gbox(){
         $yestoday = date('Ymd',strtotime("-1 day"));
         $now_date = date('Ymd');
