@@ -8,10 +8,6 @@ class SmallappForscreenRecordModel extends Model{
 	
 	public function getList($fields="a.id",$where, $order='a.id desc', $start=0,$size=5){
 	    $list = $this->alias('a')
-	                 ->join('savor_box box on a.box_mac=box.mac','left')
-	                 ->join('savor_room room on room.id= box.room_id','left')
-	                 ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
-	                 ->join('savor_area_info area on hotel.area_id=area.id','left')
 	                 ->join('savor_smallapp_user user on a.openid=user.openid','left')
 	                 ->field($fields)
             	     ->where($where)
@@ -19,10 +15,6 @@ class SmallappForscreenRecordModel extends Model{
             	     ->limit($start,$size)
             	     ->select();
 	    $count = $this->alias('a')
-	                  ->join('savor_box box on a.box_mac=box.mac','left')
-	                  ->join('savor_room room on room.id= box.room_id','left')
-	                  ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
-	                  ->join('savor_area_info area on hotel.area_id=area.id','left')
 	                  ->join('savor_smallapp_user user on a.openid=user.openid','left')
 	                  ->where($where)->count();
 	    

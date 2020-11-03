@@ -46,8 +46,6 @@ class SappforscreenController extends BaseController {
 	    $start  = ( $pagenum-1 ) * $size;
 
 	    $where = array();
-	    $where['box.flag'] = 0;
-	    $where['box.state'] =1;
 //	    $where['a.mobile_brand'] = array('neq','devtools');
 	    $where['a.mobile_brand'] = array('not in',array('devtools','dev4gtools'));
 	    if($is_valid!=2){
@@ -121,11 +119,11 @@ class SappforscreenController extends BaseController {
         }
 	    $hotel_name = I('hotel_name','','trim');
 	    if($hotel_name){
-	        $where['hotel.name'] = array('like',"%$hotel_name%");
+	        $where['a.hotel_name'] = array('like',"%$hotel_name%");
 	        $this->assign('hotel_name',$hotel_name); 
 	    }
 	    if($area_id){
-	        $where['hotel.area_id'] = $area_id;
+	        $where['a.area_id'] = $area_id;
             $this->assign('area_id',$area_id);
         }
 	    if($small_app_id){
@@ -155,7 +153,7 @@ class SappforscreenController extends BaseController {
         $all_smallapps = $this->all_smallapps;
 	    $source_types = $this->source_types;
         $all_actions = $this->all_actions;
-	    $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,box.box_type,a.*';
+	    $fields = 'user.avatarUrl,user.nickName,a.*';
 	    $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();  
 	    $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 
