@@ -247,6 +247,7 @@ class DishgoodsController extends BaseController {
             $type = I('post.type',0,'intval');
             $gtype = I('post.gtype',0,'intval');
             $category_id = I('post.category_id',0,'intval');
+            $sort = I('post.sort',0,'intval');
             $status = I('post.status',0,'intval');
             $is_localsale = I('post.is_localsale',0,'intval');
             $flag = I('post.flag',0,'intval');
@@ -296,7 +297,7 @@ class DishgoodsController extends BaseController {
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>$distribution_profit,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
-                'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend);
+                'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend);
             if($type==22){
                 if($flag==2){
                     $status = 1;
