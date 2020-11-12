@@ -95,6 +95,12 @@ class SmallappForscreenRecordModel extends Model{
 	                 ->where($where)->limit($limit)->group($group)->select();
         return $data;	    
 	}
+    public function getDatas($fields,$where,$limit,$group){
+        $data = $this->alias('a')
+            ->field($fields)
+            ->where($where)->limit($limit)->group($group)->select();
+        return $data;
+    }
 	public function delWhere($where,$order,$limit){
 	    $ret =  $this->where($where)->order($order)->limit($limit)->delete();
 	    return $ret;
@@ -173,7 +179,7 @@ class SmallappForscreenRecordModel extends Model{
         $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
         $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:00",$time);
 
-        $where = array('hotel.id'=>$hotel_id);
+        $where = array('a.hotel_id'=>$hotel_id);
         $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
         $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
         switch ($fj_type){
@@ -192,8 +198,6 @@ class SmallappForscreenRecordModel extends Model{
                 break;
         }
         $where['a.is_valid'] = 1;
-        $where['box.state'] = 1;
-        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($small_id==1){
             $where['a.small_app_id'] = array('in',array(1,2));
@@ -205,7 +209,7 @@ class SmallappForscreenRecordModel extends Model{
 
         $fields = 'a.box_mac';
         $groupby = 'a.box_mac';
-        $result = $this->getWhere($fields,$where,'',$groupby);
+        $result = $this->getDatas($fields,$where,'',$groupby);
         return $result;
     }
 
@@ -221,7 +225,7 @@ class SmallappForscreenRecordModel extends Model{
         $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
         $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:59",$time);
 
-        $where = array('hotel.id'=>$hotel_id);
+        $where = array('a.hotel_id'=>$hotel_id);
         $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
         $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
         switch ($fj_type){
@@ -263,7 +267,7 @@ class SmallappForscreenRecordModel extends Model{
         $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
         $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:59",$time);
 
-        $where = array('hotel.id'=>$hotel_id);
+        $where = array('a.hotel_id'=>$hotel_id);
         $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
         $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
         switch ($fj_type){
@@ -282,8 +286,6 @@ class SmallappForscreenRecordModel extends Model{
                 break;
         }
         $where['a.is_valid'] = 1;
-        $where['box.state'] = 1;
-        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($small_id==1){//1主干版 2极简版 5销售端 11游戏
             $where['a.small_app_id'] = array('in',array(1,2,11));
@@ -292,7 +294,28 @@ class SmallappForscreenRecordModel extends Model{
         }
 
         $fields = 'count(a.id) as num';
-        $result = $this->getWhere($fields,$where,'','');
+        $result = $this->getDatas($fields,$where,'','');
+        $num = 0;
+        if(!empty($result)){
+            $num = intval($result[0]['num']);
+        }
+        return $num;
+    }
+
+    public function getSaleSignForscreenNumByHotelId($hotel_id,$time){
+        $start_time = date("Y-m-d 00:00:00",$time);
+        $end_time = date("Y-m-d 23:59:59",$time);
+
+        $where = array();
+        $where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        $where['a.hotel_id'] = $hotel_id;
+        $where['a.small_app_id'] = 5;
+        $where['a.action'] = 5;
+        $where['a.mobile_brand'] = 'iPhone';
+        $where['a.mobile_model'] = 'iPhone XR';
+
+        $fields = 'count(a.id) as num';
+        $result = $this->getDatas($fields,$where,'','');
         $num = 0;
         if(!empty($result)){
             $num = intval($result[0]['num']);
@@ -310,12 +333,10 @@ class SmallappForscreenRecordModel extends Model{
         }
 
         $where = array('a.create_time'=>array(array('EGT',$start),array('ELT',$end)));
-        $where['hotel.id'] = $hotel_id;
-        $where['box.state'] = 1;
-        $where['box.flag'] = 0;
+        $where['a.hotel_id'] = $hotel_id;
         $where['_string'] = 'a.resource_size>0 and a.box_res_sdown_time>0 AND a.box_res_edown_time>0 AND (a.box_res_edown_time>a.box_res_sdown_time)';
         $fields = 'sum(a.resource_size) as resource_size,sum(a.box_res_edown_time-a.box_res_sdown_time) as down_time';
-        $result = $this->getWhere($fields,$where,'','');
+        $result = $this->getDatas($fields,$where,'','');
         $avgspeed = 0;
         if(!empty($result)){
             $down_time = $result[0]['down_time']/1000;
