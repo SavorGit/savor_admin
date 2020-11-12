@@ -7000,4 +7000,63 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'exportForVideo';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
     }
+    public function exportForVaI(){
+        $start_time = I('start_time');
+        $end_time   = I('end_time');
+        $where = '';
+        if(!empty($start_time)){
+            $where .=" and create_time>='".$start_time."'";
+        }
+        if(!empty($end_time)){
+            $where .= " and create_time <='".$end_time."'";
+        }
+        $sql = "select openid  from savor_smallapp_forscreen_record where ((action = '2' AND resource_type = '2') or action=4) and small_app_id=1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE' ".$where." group by openid";
+        
+        $user = M()->query($sql);
+        foreach($user as $key=>$v){
+            $sql = "select id from savor_smallapp_forscreen_record where (action = '2' AND resource_type = '2') and small_app_id=1 and openid ='".$v['openid']."'".$where.' group by forscreen_id';
+            $rt = M()->query($sql);
+            $v_num = count($rt);
+            $sql = "select id from savor_smallapp_forscreen_record where action = '4'  and small_app_id=1 and openid ='".$v['openid']."'".$where.' group by forscreen_id';
+            $rt = M()->query($sql);
+            $i_num = count($rt);
+            $user[$key]['v_num'] = $v_num;
+            $user[$key]['i_num'] = $i_num;
+            //echo $sql;exit;
+        }
+        $xlsCell = array(
+            array('openid','openid'),
+            array('v_num','投视频次数'),
+            array('i_num','投图片次数'),
+        );
+        $xlsName = '视频投屏数据';
+        $filename = 'exportForVideo';
+        $this->exportExcel($xlsName, $xlsCell, $user,$filename);
+        
+    }
+    public function exportForVideoUrl(){
+        $start_time = I('start_time');
+        $end_time   = I('end_time');
+        $where = '';
+        if(!empty($start_time)){
+            $where .=" and create_time>='".$start_time."'";
+        }
+        if(!empty($end_time)){
+            $where .= " and create_time <='".$end_time."'";
+        }
+        $sql ="select imgs  FROM `savor_smallapp_forscreen_record` where action=2 and `resource_type`=2 and small_app_id=1 and imgs!='[\"forscreen/resource/15368043845967.mp4\"]'".$where;
+        $data = M()->query($sql);
+        foreach($data as $key=>$v){
+            $tmp = json_decode($v['imgs'],true);
+            
+            $data[$key]['video_url'] = 'http://oss.littlehotspot.com/'.$tmp[0];
+        }
+        $xlsCell = array(
+            array('video_url','视频连接'),
+        );
+        $xlsName = '视频投屏数据';
+        $filename = 'exportForVideo';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        
+    }
 }
