@@ -7044,7 +7044,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         if(!empty($end_time)){
             $where .= " and create_time <='".$end_time."'";
         }
-        $sql ="select imgs  FROM `savor_smallapp_forscreen_record` where action=2 and `resource_type`=2 and small_app_id=1 and imgs!='[\"forscreen/resource/15368043845967.mp4\"]'".$where;
+        $sql ="select imgs,create_time  FROM `savor_smallapp_forscreen_record` where action=2 and `resource_type`=2 and small_app_id=1 and imgs!='[\"forscreen/resource/15368043845967.mp4\"]'".$where;
         $data = M()->query($sql);
         foreach($data as $key=>$v){
             $tmp = json_decode($v['imgs'],true);
@@ -7053,6 +7053,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
         $xlsCell = array(
             array('video_url','视频连接'),
+            array('create_time','播放日期')
         );
         $xlsName = '视频投屏数据';
         $filename = 'exportForVideo';
