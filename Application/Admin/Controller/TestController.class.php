@@ -14,6 +14,7 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+
     public function countForscreenNum(){
         $start_time = I('start_time');
         $end_time   = I('end_time');
@@ -24,7 +25,7 @@ class TestController extends Controller {
         if(!empty($end_time)){
             $where .= " and create_time <='".$end_time."'";
         }
-        
+
         //视频投屏
         $sql = "select sum(resource_size) as all_resource_size from savor_smallapp_forscreen_record where action = '2' AND resource_type = '2' ".$where;
         //echo $sql;exit;
@@ -33,33 +34,7 @@ class TestController extends Controller {
         $all_resource_size = round(($all_resource_size/1024)/(1024*1024),2);
         echo '视频投屏资源大小：'.$all_resource_size."G";
     }
-    public function getVsmallHotelList(){
-        exit();
-        $redis = SavorRedis::getInstance();
-        $redis->select(10);
-        $v_apk_key = C('VSMALL_APK');
-	    //echo $v_apk_key;exit;  
-        $ck = $v_apk_key.'*';
-        $rts = $redis->keys($ck);
-	    $v_hotel_arr = [];
-	    foreach($rts as $k=>$v){
-	        $tmp = explode(':',$v);
-	        if(!in_array($tmp[2],$v_hotel_arr)){
 
-	            $v_hotel_arr[] = $tmp[2];
-	        }
-	    }
-	    $redis->select(12);
-	    $v_h_l = $redis->get('vsmall_hotel_list');
-	    $v_h_l = json_decode($v_h_l,true);
-	    $v_h_l = array_column($v_h_l,'hotel_id');
-	    
-	    $rt = array_diff($v_hotel_arr,$v_h_l);
-	    print_r($rt);exit;
-	    
-	    
-	    print_r($v_hotel_arr);
-    }
     private function curlPost($url = '',  $post_data = ''){
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -1792,6 +1767,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         $imgs = json_decode($res_forscreen['imgs'],true);
         $oss_addr = $imgs[0];
 
+
         $accessKeyId = C('OSS_ACCESS_ID');
         $accessKeySecret = C('OSS_ACCESS_KEY');
         $endpoint = 'oss-cn-beijing.aliyuncs.com';
@@ -2199,9 +2175,69 @@ group by openid";
         }
     }
 
+    public function forscreen(){
+        $mac = I('mac','');
+        $f_url = I('f','');
+        $redis = new \Common\Lib\SavorRedis();
+        $boxs = array();
+        if(!empty($mac)){
+            $boxs[]=$mac;
+        }
+        $file_info = pathinfo($f_url);
+        $file_name = $file_info['basename'];
+
+        $message_data = array('openid'=>'ofYZG455VSavvB3fumKZKXlE50_Q','action'=>2,'resource_type'=>2,'forscreen_char'=>'',
+            'mobile_brand'=>'HUAWEI','mobile_model'=>'TAS-AN00','resource_size'=>7741280,'imgs'=>'["forscreen/resource/'.$file_name.'"]');
+
+        $push_boxs = array();
+        if(!empty($boxs)){
+            foreach ($boxs as $b){
+                $now_timestamps = getMillisecond();
+                $message_data['forscreen_id'] = $now_timestamps;
+                $message_data['box_mac'] = $b;
+                $message_data['resource_id'] = $now_timestamps;
+                $message_data['res_sup_time'] = $now_timestamps;
+                $message_data['res_eup_time'] = $now_timestamps;
+                $message_data['create_time'] = date('Y-m-d H:i:s');
+
+                $netty_data = array('action'=>2,'resource_type'=>2,'url'=>"forscreen/resource/$file_name",'filename'=>"$file_name",
+                    'openid'=>'ofYZG455VSavvB3fumKZKXlE50_Q','video_id'=>$now_timestamps,'forscreen_id'=>$now_timestamps
+                );
+                $msg = json_encode($netty_data);
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://mobile.littlehotspot.com/Netty/index/pushnetty",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => array('box_mac'=>$b,'msg'=>"$msg"),
+                ));
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $res = json_decode($response,true);
+                if(is_array($res) && isset($res['code'])){
+                    $push_boxs[]=$b;
+                    $cache_key = 'smallapp:forscreen:'.$b;
+                    $redis->select(5);
+                    $redis->rpush($cache_key, json_encode($message_data));
+                }
+            }
+        }
+        echo 'push box:'.json_encode($push_boxs)." OK \r\n";
+    }
 
     public function forscreenhelpvideo(){
-        $now_box_mac = I('mac','','trim');
+        $f_url = I('f','');
+        $now_box_mac = I('box','');
+
+        $log_content = date('Y-m-d H:i:s').'[box_mac]'.$now_box_mac.'[url]'.$f_url."\r\n";
+        $log_file_name = '/application_data/web/php/savor_admin/Public/content/'.'filetobox_'.date("Ymd").".log";
+        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+
         $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
         $curl = new \Common\Lib\Curl();
         $res_netty = '';
@@ -2211,8 +2247,14 @@ group by openid";
             echo "netty connections api error \r\n";
             exit;
         }
+        $code = 10001;
+        $msg = 'fail';
         if(!empty($res_box['result'])){
-            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>'media/resource/h8YcE7debZ.mp4','filename'=>"h8YcE7debZ.mp4");
+//            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>"forscreen/resource/1603457745866.mp4",'filename'=>"1603457745866.mp4");
+            $file_info = pathinfo($f_url);
+            $file_name = $file_info['basename'];
+
+            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>"$f_url",'filename'=>"{$file_name}");
             $message = json_encode($netty_data);
             $netty_cmd = C('SAPP_CALL_NETY_CMD');
             $m_netty = new \Admin\Model\Smallapp\NettyModel();
@@ -2228,9 +2270,11 @@ group by openid";
                             $ret = $m_netty->curlPost($push_url,$post_data);
                             $res_push = json_decode($ret,true);
                             if($res_push['code']==10000){
-                                echo "box_mac:$box_mac push ok \r\n";
+                                $code = 10000;
+                                $msg = 'push ok';
                             }else{
-                                echo "box_mac:$box_mac push error $ret  \r\n";
+                                $code = 10002;
+                                $msg = 'push error';
                             }
                             break;
                         }
@@ -2239,10 +2283,54 @@ group by openid";
 
             }
         }
+        $res = array('code'=>$code,'msg'=>$msg);
+        echo json_encode($res);
+        exit;
+    }
+
+    public function hotellevel(){
+        $file_path = SITE_TP_PATH.'/Public/content/酒楼更改级别1102.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $other_hotel = array();
+        $m_hotel = new \Admin\Model\HotelModel();
+        $model = M();
+        $all_hotel_level = array();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $hotel_name = trim($rowData[0][0]);
+                $res_hotel = $m_hotel->getInfo('*',array('name'=>$hotel_name,'state'=>1,'flag'=>0),'id desc','0,1');
+                if(!empty($res_hotel)){
+                    $hotel_id = $res_hotel[0]['id'];
+                    $hotel_level = $rowData[0][1];
+                    $all_hotel_level[$hotel_id] = $hotel_level;
+//                    $sql = "update savor_smallapp_static_hotelassess set hotel_level='{$hotel_level}' where hotel_id={$hotel_id}";
+//                    $res = $model->execute($sql);
+//                    if($res){
+//                        echo "hotel_id:$hotel_id ok\r\n";
+//                    }
+                }else{
+                    $other_hotel[]=$hotel_name;
+                }
+            }
+        }
+        return $all_hotel_level;
     }
 
     public function cachehotelassess(){
-        $file_path = SITE_TP_PATH.'/Public/content/广州考核酒楼0925.xlsx';
+        $all_hotel_level = $this->hotellevel();
+
+        $file_path = SITE_TP_PATH.'/Public/content/广州考核酒楼1111.xlsx';
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
 
@@ -2264,9 +2352,16 @@ group by openid";
                 $hotel_name = trim($rowData[0][0]);
                 $res_hotel = $m_hotel->getInfo('*',array('name'=>$hotel_name,'state'=>1,'flag'=>0),'id desc','0,1');
                 if(!empty($res_hotel)){
+
+                    if(isset($all_hotel_level[$res_hotel[0]['id']])){
+                        $hotel_level = $all_hotel_level[$res_hotel[0]['id']];
+                    }else{
+                        $hotel_level = $rowData[0][5];
+                    }
+
                     $hotel_info[$res_hotel[0]['id']] = array('hotel_id'=>$res_hotel[0]['id'],'hotel_box_type'=>$res_hotel[0]['hotel_box_type'],
                         'hotel_name'=>$hotel_name,
-                        'area_id'=>236,'area_name'=>$rowData[0][1],'hotel_level'=>$rowData[0][5],'team_name'=>$rowData[0][4],'maintainer'=>$rowData[0][6]);
+                        'area_id'=>236,'area_name'=>$rowData[0][1],'hotel_level'=>$hotel_level,'team_name'=>$rowData[0][4],'maintainer'=>$rowData[0][6]);
                 }else{
                     $other_hotel[]=$hotel_name;
                 }
@@ -2275,60 +2370,11 @@ group by openid";
         $redis->select(1);
         $key = 'smallapp:hotelassess';
         $redis->set($key,json_encode($hotel_info));
+        print_r($hotel_info);
         print_r($other_hotel);
         exit;
     }
 
-    public function forscreenimage(){
-        $now_box_mac = I('mac','','trim');
-
-        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
-        $curl = new \Common\Lib\Curl();
-        $res_netty = '';
-        $curl::get($url,$res_netty,10);
-        $res_box = json_decode($res_netty,true);
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            $curl::get($url,$res_netty,10);
-            $res_box = json_decode($res_netty,true);
-        }
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            echo "netty connections api error \r\n";
-            exit;
-        }
-
-        if(!empty($res_box['result'])){
-
-            $netty_cmd = C('SAPP_CALL_NETY_CMD');
-            $m_netty = new \Admin\Model\Smallapp\NettyModel();
-            foreach ($res_box['result'] as $k=>$v){
-                if($v['totalConn']>0){
-                    foreach ($v['connDetail'] as $cv){
-                        $box_mac = $cv['box_mac'];
-                        if($box_mac==$now_box_mac){
-
-                            $forscreen_number  = rand(1001,5000);
-                            $netty_data = array('action'=>133,'forscreen_number'=>$forscreen_number,'countdown'=>30);
-                            $message = json_encode($netty_data);
-
-                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
-                            $req_id  = getMillisecond();
-                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
-                            $post_data = http_build_query($box_params);
-                            $ret = $m_netty->curlPost($push_url,$post_data);
-                            $res_push = json_decode($ret,true);
-                            if($res_push['code']==10000){
-                                echo "box_mac:$box_mac push ok \r\n";
-                            }else{
-                                echo "box_mac:$box_mac push error $ret  \r\n";
-                            }
-
-                            exit;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     public function pushdish(){
         $now_box_mac = I('mac','','trim');
@@ -2413,20 +2459,6 @@ group by openid";
                 'lottery_time'=>'12:00','dish_img'=>'lottery/activity/zzhx.jpg');
             $activity_info['lottery_time'] = time()+3600;
             $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
-
-//            $redis = new \Common\Lib\SavorRedis();
-//            $redis->select(1);
-//            $key = 'smallapp:simulatelotteryuser';
-//            $res_cache = $redis->get($key);
-//            if(empty($res_cache)){
-//                $limit = "1000,40";
-//                $m_user = new \Admin\Model\Smallapp\UserModel();
-//                $where = array('nickName'=>array('neq',''));
-//                $res_user = $m_user->getWhere('openid,avatarUrl,nickName',$where,'id desc',$limit,'');
-//                $redis->set($key,json_encode($res_user),86400*5);
-//            }else{
-//                $res_user = json_decode($res_cache,true);
-//            }
             $limit = "1000,40";
             $m_user = new \Admin\Model\Smallapp\UserModel();
             $where = array('nickName'=>array('neq',''));
@@ -2478,63 +2510,6 @@ group by openid";
                 }
             }
         }
-    }
-
-    public function pushweixin(){
-        $config = C('SMALLAPP_CONFIG');
-        $prize = '龙虾一份';
-        $tips = '请3小时内找餐厅服务员领取';
-        $push_wxurl = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token";
-        $page_url = "games/pages/activity/din_dash";
-        $token = getWxAccessToken($config);
-        $tempalte_id = 'HqNYdceqH7MAQk6dl4Gn54yZObVRNG0FJk40OIwa9x4';
-        $curl = new \Common\Lib\Curl();
-        $miniprogram_state = 'developer';//developer为开发版；trial为体验版；formal为正式版
-        $url = "$push_wxurl=$token";
-        $lottery_time = date('Y-m-d H:i:s');
-        $data=array(
-            'date2'  => array('value'=>$lottery_time),
-            'thing4'  => array('value'=>'已中奖'),
-            'thing1'  => array('value'=>$prize),
-            'thing3'  => array('value'=>$tips)
-        );
-        $openid='ofYZG4yZJHaV2h3lJHG5wOB9MzxE';
-        $box_mac = '';
-        $activity_id = 1;
-        $page_url = "$page_url?openid=$openid&box_mac=$box_mac&activity_id=$activity_id";
-        $template = array(
-            'touser' => $openid,
-            'template_id' => $tempalte_id,
-            'page' => $page_url,
-            'miniprogram_state'=>$miniprogram_state,
-            'lang'=>'zh_CN',
-            'data' => $data
-        );
-        $template =  json_encode($template);
-        $res_data = '';
-        $curl::post($url,$template,$res_data);
-        echo $res_data;
-        exit;
-    }
-
-    public function cachedishactivity(){
-        $king_meal = C('ACTIVITY_KINGMEAL');
-        $redis = new \Common\Lib\SavorRedis();
-        $redis->select(1);
-        $key = 'smallapp:activity:kingmealhotel';
-        $hotels = array();
-        $now_date = date('Y-m-d 00:00:00');
-        foreach ($king_meal as $v){
-            foreach ($v as $dv){
-                if($dv['start_time']>$now_date){
-                    $hotels[$dv['hotel_id']][]=array('start_time'=>$dv['start_time'],'end_time'=>$dv['end_time']);
-                }
-            }
-
-        }
-        echo json_encode($hotels);
-
-        $redis->set($key,json_encode($hotels));
     }
 
     public function roomstaff(){
@@ -2624,7 +2599,14 @@ group by openid";
         }
     }
 
-    public function assess(){
+    public function handleforscreen(){
+        echo "start_time:".date('Y-m-d H:i:s')."\r\n";
+        $m_forscreen = new \Admin\Model\ForscreenRecordModel();
+        $m_forscreen->syncForscreendata();
+        echo "end_time:".date('Y-m-d H:i:s')."\r\n";
+    }
+
+    public function hotelassess(){
         $m_statichotelassess = new \Admin\Model\Smallapp\StaticHotelassessModel();
         $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $res_data = $m_statichotelassess->getDataList('*',array(),'id asc');
@@ -2633,6 +2615,35 @@ group by openid";
         foreach ($res_data as $v){
             $time_date = strtotime($v['date']);
             $hotel_id = $v['hotel_id'];
+            $data = array();
+            /*
+            $data['operation_assess'] = 1;
+            if($v['fault_rate']>$config[$v['hotel_level']]['fault_rate']){
+                $data['operation_assess'] = 2;
+            }
+            $data['channel_assess'] = 1;
+            if($v['zxrate']<$config[$v['hotel_level']]['zxrate']){
+                $data['channel_assess'] = 2;
+            }
+            $data['data_assess'] = 1;
+            if($v['fjrate']<$config[$v['hotel_level']]['fjrate']){
+                $data['data_assess'] = 2;
+            }
+            $data['saledata_assess'] = 1;
+            if($v['fjsalerate']<$config[$v['hotel_level']]['fjsalerate']){
+                $data['saledata_assess'] = 2;
+            }
+            $data['all_assess'] = 1;
+            if($data['operation_assess']==2 || $data['channel_assess']==2 || $data['data_assess']==2 || $data['saledata_assess']==2){
+                $data['all_assess'] = 2;
+            }
+            $res = $m_statichotelassess->updateData(array('id'=>$v['id']),$data);
+            if($res){
+                echo "id:{$v['id']}--{$v['date']} ok \r\n";
+            }else{
+                echo "id:{$v['id']}--{$v['date']} fail \r\n";
+            }
+            */
 
             $res_hoteldata = $m_statichotelbasicdata->getInfo(array('static_date'=>date('Y-m-d',$time_date),'hotel_id'=>$hotel_id));
             $zxnum = $wlnum = $user_zxhdnum = $sale_zxhdnum = $zxhdnum = 0;
@@ -2664,6 +2675,7 @@ group by openid";
             if($user_zxhdnum && $zxhdnum){
                 $fjrate = sprintf("%.2f",$user_zxhdnum/$zxhdnum);
             }
+
             $data['fjrate'] = $fjrate;
             $data['data_assess'] = 1;
             if($data['fjrate']<$config[$v['hotel_level']]['fjrate']){
@@ -2674,8 +2686,6 @@ group by openid";
                 $fjsalerate = sprintf("%.2f",$sale_zxhdnum/$zxhdnum);
             }
             $data['fjsalerate'] = $fjsalerate;
-
-
             $data['saledata_assess'] = 1;
             if($data['fjsalerate']<$config[$v['hotel_level']]['fjsalerate']){
                 $data['saledata_assess'] = 2;
@@ -2692,36 +2702,81 @@ group by openid";
             }
 
         }
-
     }
 
-    public function comment(){
-        $box_mac = I('mac','');
-        $message = array('action'=>140,'forscreen_char'=>'感谢您的评价，您的建议是我们前进的动力～',
-            'waiterName'=>'','waiterIconUrl'=>'');
-        $where = array('openid'=>'o9GS-4nd0JFjD5K9cCoapRR3slrY');
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        $res_user = $m_user->getOne('id as user_id,avatarUrl,nickName',$where,'id desc');
-        $message['waiterName'] = $res_user['nickName'];
-        $message['waiterIconUrl'] = $res_user['avatarUrl'];
+    public function hotelbasicdata(){
+        ini_set("memory_limit","2048M");
+        $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
+        $res_data = $m_statichotelbasicdata->getDataList('*',array(),'id asc');
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_heartlog = new \Admin\Model\HeartAllLogModel();
+        foreach ($res_data as $v){
+            $hotel_id = $v['hotel_id'];
+            $time_date = strtotime($v['static_date']);
+            $date = date('Ymd',$time_date);
 
-        $font_id = 90;
-        $message['wordsize'] = 50;
-        $message['color'] = '#666666';
-        $message['font_id'] = $font_id;
-        $m_welcomeresource = new \Admin\Model\Smallapp\WelcomeresourceModel();
-        $m_media = new \Admin\Model\MediaModel();
-        $res_font = $m_welcomeresource->getInfo(array('id'=>$font_id));
-        $res_media = $m_media->getMediaInfoById($res_font['media_id']);
-        $message['font_oss_addr'] = $res_media['oss_addr'];
+            $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
+            $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
 
-        $m_netty = new \Admin\Model\Smallapp\NettyModel();
-        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
-        echo json_encode($res_netty);
+            $user_lunch_zxhdnum = $v['user_lunch_zxhdnum'];
+            $user_dinner_zxhdnum = $v['user_dinner_zxhdnum'];
+
+            $user_lunch_cvr = $user_dinner_cvr = 0;
+            if($user_lunch_zxhdnum && $lunch_zxhdnum){
+                $user_lunch_cvr = sprintf("%.2f",$user_lunch_zxhdnum/$lunch_zxhdnum);
+            }
+            if($user_dinner_zxhdnum && $dinner_zxhdnum){
+                $user_dinner_cvr = sprintf("%.2f",$user_dinner_zxhdnum/$dinner_zxhdnum);
+            }
+
+            $sale_lunch_zxhdnum = $v['sale_lunch_zxhdnum'];
+            $sale_dinner_zxhdnum = $v['sale_dinner_zxhdnum'];
+
+            $sale_lunch_cvr = $sale_dinner_cvr = 0;
+            if($sale_lunch_zxhdnum && $lunch_zxhdnum){
+                $sale_lunch_cvr = sprintf("%.2f",$sale_lunch_zxhdnum/$lunch_zxhdnum);
+            }
+            if($sale_dinner_zxhdnum && $dinner_zxhdnum){
+                $sale_dinner_cvr = sprintf("%.2f",$sale_dinner_zxhdnum/$dinner_zxhdnum);
+            }
+
+            $lunch_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,0);
+            $dinner_zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,0);
+            $zxnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,0,0);
+
+            $wlnum = $v['wlnum'];
+            $lunch_zxrate = $dinner_zxrate = $zxrate = 0;
+            if($lunch_zxnum && $wlnum){
+                $lunch_zxrate = sprintf("%.2f",$lunch_zxnum/$wlnum);
+            }
+            if($dinner_zxnum && $wlnum){
+                $dinner_zxrate = sprintf("%.2f",$dinner_zxnum/$wlnum);
+            }
+            if($zxnum && $wlnum){
+                $zxrate = sprintf("%.2f",$zxnum/$wlnum);
+            }
+
+            $interact_sale_signnum = $m_smallapp_forscreen_record->getSaleSignForscreenNumByHotelId($hotel_id,$time_date);
+
+            $data = array(
+                'lunch_zxhdnum'=>$lunch_zxhdnum,'user_lunch_cvr'=>$user_lunch_cvr,'dinner_zxhdnum'=>$dinner_zxhdnum,'user_dinner_cvr'=>$user_dinner_cvr,
+                'sale_lunch_cvr'=>$sale_lunch_cvr,'sale_dinner_cvr'=>$sale_dinner_cvr,'lunch_zxnum'=>$lunch_zxnum,'dinner_zxnum'=>$dinner_zxnum,
+                'lunch_zxrate'=>$lunch_zxrate,'dinner_zxrate'=>$dinner_zxrate,'zxnum'=>$zxnum,'zxrate'=>$zxrate,
+                'interact_sale_signnum'=>$interact_sale_signnum,
+            );
+            $res = $m_statichotelbasicdata->updateData(array('id'=>$v['id']),$data);
+            if($res){
+                echo "id:{$v['id']}--{$v['static_date']} ok \r\n";
+            }else{
+                echo "id:{$v['id']}--{$v['static_date']} fail \r\n";
+            }
+        }
     }
 
 
-    public function hotelassess(){
+
+
+    public function assessmoney(){
         $model = M();
         $sql = "select a.id,a.area_id,a.area_name,a.hotel_id,ext.is_train,a.hotel_name,a.hotel_box_type,a.hotel_level,a.team_name,a.maintainer,a.box_num,a.lostbox_num,a.fault_rate,a.all_assess,
 a.operation_assess,a.zxrate,a.channel_assess,a.fjrate,a.data_assess,a.fjsalerate,a.saledata_assess,DATE_FORMAT(a.date,'%Y-%m-%d') as date 
@@ -2776,5 +2831,65 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
         print_r($teams_money);
 
+    }
+
+
+    public function cachevideo(){
+        ini_set("memory_limit","1024M");
+
+//        $key = 'cachevideo';
+//        $cache_key = $key.'_'.$file_name;
+        $file_name = $_GET['fileName'];
+        $position = $_GET['position'];
+
+        if(isset($_GET['index'])){
+            $index = $_GET['index'];
+        }else{
+            $index = 999;
+        }
+        $file = '/Applications/XAMPP/xamppfiles/htdocs/www/savorGit/savor_admin/Public/'.$file_name.'.mp4';
+        if($index==999){
+            $fp = fopen($file,'w+');
+        }else{
+            $fp = fopen($file,'r+');
+        }
+        fseek($fp,$position);
+        $mp4_file = file_get_contents('php://input');
+        fwrite($fp, base64_decode($mp4_file));
+        fclose($fp);
+//        $body = file_get_contents('php://input');
+//        $redis = new \Common\Lib\SavorRedis();
+//        $redis->select(1);
+//        $value = base64_decode($body);
+//        $redis->zAdd($cache_key,$index,$value);
+
+        echo json_encode(array('code'=>10000,'index'=>$index,'f'=>$file_name,'position'=>$position,'msg'=>'ok'));
+    }
+
+
+    public function playvideo(){
+        ini_set('memory_limit', '1024M');
+//        set_time_limit(600);
+//        header("Content-type: video/mp4");
+//        header("Accept-Ranges: bytes");
+//        ob_start();
+
+        $name = $_GET['file'];
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(1);
+        $key = 'cachevideo_'.$name;
+        $contents = '';
+        $res_info = $redis->zRange($key,0,-1);
+
+        foreach ($res_info as $v){
+            $contents.=$v;
+        }
+        $log_file_name = '/application_data/web/php/savor_admin/Public/content/'.$name.'.mp4';
+        @file_put_contents($log_file_name, $contents);
+        echo 'admin.littlehotspot.com/Public/content/'.$name.'.mp4';
+//        file_put_contents('')
+//        ob_end_clean();
+//        ob_clean();
+//        echo $contents;
     }
 }
