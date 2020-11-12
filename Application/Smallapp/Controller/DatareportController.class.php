@@ -905,6 +905,7 @@ class DatareportController extends BaseController {
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
         $maintainer_id = I('maintainer_id',0,'intval');
+        $keywords = I('keywords','','trim');
 
         $where = array();
         if($start_time && $end_time){
@@ -921,7 +922,9 @@ class DatareportController extends BaseController {
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }
         $where['a.is_valid'] = 1;
-
+        if(!empty($keywords)){
+            $where['a.hotel_name'] = array('like',"%$keywords%");
+        }
         if($small_app_id){
             if($small_app_id == 2){
                 $where['a.small_app_id'] = array('in',array(2,3));
@@ -934,28 +937,26 @@ class DatareportController extends BaseController {
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
         if($area_id){
-            $where['area.id'] = $area_id;
+            $where['a.area_id'] = $area_id;
             $hotel_where['a.area_id'] = $area_id;
         }
 
         $hotel_box_types = C('heart_hotel_box_type');
         if($box_type){
-            $where['hotel.hotel_box_type'] = $box_type;
+            $where['a.hotel_box_type'] = $box_type;
             $hotel_where['a.hotel_box_type'] = $box_type;
         }else{
 //            $box_types = array_keys($hotel_box_types);
 //            $where['hotel.hotel_box_type'] = array('in',$box_types);
 //            $hotel_where['a.hotel_box_type'] = array('in',$box_types);
         }
-        $where['box.state'] = 1;
-        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($is_4g){
             if($is_4g == 1){
-                $where['box.is_4g'] = 1;
+                $where['a.is_4g'] = 1;
                 $hotel_where['a.is_4g'] = 1;
             }else{
-                $where['box.is_4g'] = 0;
+                $where['a.is_4g'] = 0;
                 $hotel_where['a.is_4g'] = 0;
             }
         }
@@ -964,16 +965,16 @@ class DatareportController extends BaseController {
             $hotel_where['ext.maintainer_id'] = $maintainer_id;
         }
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-        $fields = 'area.region_name,hotel.id as hotel_id,hotel.name as hotel_name,count(a.id) as num,count(DISTINCT(a.box_mac)) as boxnum';
-        $countfields = 'COUNT(DISTINCT(hotel.id)) AS tp_count';
+        $fields = 'a.hotel_id,a.hotel_name,count(a.id) as num,count(DISTINCT(a.box_mac)) as boxnum';
+        $countfields = 'COUNT(DISTINCT(a.hotel_id)) AS tp_count';
         $start  = ($page-1) * $size;
-        $result = $m_smallapp_forscreen_record->getCustomeList($fields,$where,$groupby='hotel.id',$order='num desc',$countfields,$start,$size);
+        $result = $m_smallapp_forscreen_record->getAllDatas($fields,$where,'a.hotel_id','num desc',$countfields,$start,$size);
         $datalist = $result['list'];
 
         $res_ohotels = array();
-        if($result['total']>0 && $page*$size>=$result['total']){
-            $hfields = 'hotel.id as hotel_id';
-            $res_hotel = $m_smallapp_forscreen_record->getCustomeList($hfields,$where,$groupby='hotel.id',$order='',$countfields,0,10000);
+        if($result['total']>1 && $page*$size>=$result['total']){
+            $hfields = 'a.hotel_id';
+            $res_hotel = $m_smallapp_forscreen_record->getAllDatas($hfields,$where,'a.hotel_id','',$countfields,0,10000);
             $now_hotels = array();
             foreach ($res_hotel['list'] as $v){
                 $now_hotels[] = $v['hotel_id'];
@@ -1011,9 +1012,9 @@ class DatareportController extends BaseController {
         foreach ($datalist as $k=>$v){
             //计算时间段B
             $fields = 'count(a.id) as num';
-            $where['hotel.id'] = $v['hotel_id'];
-            $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
-            $datalist[$k]['numb'] = $res_info['num'];
+            $where['a.hotel_id'] = $v['hotel_id'];
+            $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+            $datalist[$k]['numb'] = $res_info[0]['num'];
 
 //            unset($where['a.create_time']);
 //            $where['_string'] = "DATE(a.create_time)>='$start_time' AND DATE(a.create_time)<='$end_time'";
@@ -1029,8 +1030,8 @@ class DatareportController extends BaseController {
             $all_box = $m_box->countNums($b_where);
 
             $fields = "count(DISTINCT (a.box_mac)) as boxnum";
-            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
-            $b_boxnums = $res_nums['boxnum'];
+            $res_nums = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+            $b_boxnums = $res_nums[0]['boxnum'];
             $datalist[$k]['b_boxnum'] = $b_boxnums;
             $datalist[$k]['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
 
@@ -1043,9 +1044,9 @@ class DatareportController extends BaseController {
         if(!empty($res_ohotels)){
             foreach ($res_ohotels['list'] as $v){
                 $fields = 'count(a.id) as num';
-                $where['hotel.id'] = $v['hotel_id'];
-                $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
-                $v['numb'] = $res_info['num'];
+                $where['a.hotel_id'] = $v['hotel_id'];
+                $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+                $v['numb'] = $res_info[0]['num'];
                 $v['num'] = 0;
                 $v['a_boxnum'] = 0;
                 $v['a_coverage'] = 0.00;
@@ -1054,8 +1055,8 @@ class DatareportController extends BaseController {
                 $all_box = $m_box->countNums($b_where);
 
                 $fields = "count(DISTINCT (a.box_mac)) as boxnum";
-                $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where);
-                $b_boxnums = $res_nums['boxnum'];
+                $res_nums = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+                $b_boxnums = $res_nums[0]['boxnum'];
                 $v['b_boxnum'] = $b_boxnums;
                 $v['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
                 $datalist[] = $v;
@@ -1081,6 +1082,7 @@ class DatareportController extends BaseController {
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
+        $this->assign('keywords',$keywords);
         $this->display('interactdiff');
     }
 
@@ -1099,7 +1101,7 @@ class DatareportController extends BaseController {
         $box_type = I('box_type',0,'intval');
         $is_4g = I('is_4g',0,'intval');
 
-        $where = array('hotel.id'=>$hotel_id);
+        $where = array('a.hotel_id'=>$hotel_id);
         if($start_time && $end_time){
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         } else if($start_time && empty($end_time)){
@@ -1114,8 +1116,6 @@ class DatareportController extends BaseController {
             $where['a.create_time'] = array(array('EGT',$start_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }
         $where['a.is_valid'] = 1;
-        $where['box.state'] = 1;
-        $where['box.flag'] = 0;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($small_app_id){
             if($small_app_id == 2){
@@ -1126,11 +1126,11 @@ class DatareportController extends BaseController {
         }
 
         if($area_id){
-            $where['area.id'] = $area_id;
+            $where['a.area_id'] = $area_id;
         }
         $hotel_box_types = C('heart_hotel_box_type');
         if($box_type){
-            $where['hotel.hotel_box_type'] = $box_type;
+            $where['a.hotel_box_type'] = $box_type;
         }else{
 //            $box_types = array_keys($hotel_box_types);
 //            $where['hotel.hotel_box_type'] = array('in',$box_types);
@@ -1138,10 +1138,10 @@ class DatareportController extends BaseController {
         $box_condition = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
         if($is_4g){
             if($is_4g == 1){
-                $where['box.is_4g'] = 1;
+                $where['a.is_4g'] = 1;
                 $box_condition['box.is_4g'] = 1;
             }else{
-                $where['box.is_4g'] = 0;
+                $where['a.is_4g'] = 0;
                 $box_condition['box.is_4g'] = 0;
             }
         }
@@ -1154,10 +1154,10 @@ class DatareportController extends BaseController {
         }
 
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
-        $fields = 'hotel.id as hotel_id,hotel.name as hotel_name,a.box_mac,box.name as box_name,count(a.id) as num';
-        $countfields = 'COUNT(DISTINCT(box_mac)) AS tp_count';
+        $fields = 'a.hotel_id,a.hotel_name,a.box_mac,a.box_name,count(a.id) as num';
+        $countfields = 'COUNT(DISTINCT(a.box_mac)) AS tp_count';
         $start  = ($page-1) * $size;
-        $result = $m_smallapp_forscreen_record->getCustomeList($fields,$where,$groupby='a.box_mac',$order='num desc',$countfields,$start,$size);
+        $result = $m_smallapp_forscreen_record->getAllDatas($fields,$where,'a.box_mac','num desc',$countfields,$start,$size);
         $datalist = $result['list'];
         if($estart_time && $eend_time){
             $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
@@ -1175,8 +1175,8 @@ class DatareportController extends BaseController {
         foreach ($datalist as $k=>$v){
             $fields = 'count(a.id) as num';
             $where['a.box_mac'] = $v['box_mac'];
-            $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
-            $datalist[$k]['numb'] = $res_info['num'];
+            $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+            $datalist[$k]['numb'] = $res_info[0]['num'];
             if(array_key_exists($v['box_mac'],$all_box)){
                 unset($all_box[$v['box_mac']]);
             }
@@ -1195,8 +1195,8 @@ class DatareportController extends BaseController {
             }
             $fields = 'count(a.id) as num';
             $where['a.box_mac'] = $v['box_mac'];
-            $res_info = $m_smallapp_forscreen_record->getInfo($fields,$where);
-            $v['numb'] = $res_info['num'];
+            $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+            $v['numb'] = $res_info[0]['num'];
             $v['num'] = 0;
             $datalist[] = $v;
         }

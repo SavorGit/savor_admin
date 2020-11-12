@@ -48,9 +48,9 @@ class StaticHotelassessModel extends BaseModel{
 
     public function assessConfig(){
         $config = array(
-            'A'=>array('fault_rate'=>0.05,'zxrate'=>0.45,'fjrate'=>0.06,'fjsalerate'=>0.30),
-            'B'=>array('fault_rate'=>0.10,'zxrate'=>0.35,'fjrate'=>0.03,'fjsalerate'=>0.20),
-            'C'=>array('fault_rate'=>0.15,'zxrate'=>0.30,'fjrate'=>0.02,'fjsalerate'=>0.15),
+            'A'=>array('fault_rate'=>0.10,'zxrate'=>0.60,'fjrate'=>0.06,'fjsalerate'=>0.25),
+            'B'=>array('fault_rate'=>0.20,'zxrate'=>0.45,'fjrate'=>0.03,'fjsalerate'=>0.15),
+            'C'=>array('fault_rate'=>0.30,'zxrate'=>0.40,'fjrate'=>0.02,'fjsalerate'=>0.15),
         );
         return $config;
     }
@@ -182,8 +182,10 @@ class StaticHotelassessModel extends BaseModel{
                 }
                 $data['fjsalerate'] = $fjsalerate;
 
-                /*
+
                 $res_hoteldata = $m_statichoteldata->getInfo(array('date'=>$static_date,'hotel_id'=>$hotel_id));
+                /*
+
                 $data['zxrate'] = $res_hoteldata['zxrate'];
                 $data['channel_assess'] = 1;
                 if($data['zxrate']<$config[$hv['hotel_level']]['zxrate']){

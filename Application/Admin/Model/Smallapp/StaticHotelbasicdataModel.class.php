@@ -178,6 +178,7 @@ class StaticHotelbasicdataModel extends BaseModel{
                 $interact_num = $interact_standard_num+$interact_mini_num+$interact_sale_num+$interact_game_num;
                 $user_lunch_interact_num = $m_smallapp_forscreen_record->getFeastForscreenNumByHotelId($hotel_id,$time_date,1,1);
                 $user_dinner_interact_num = $m_smallapp_forscreen_record->getFeastForscreenNumByHotelId($hotel_id,$time_date,2,1);
+                $interact_sale_signnum = $m_smallapp_forscreen_record->getSaleSignForscreenNumByHotelId($hotel_id,$time_date);
 
                 $add_data = array('area_id'=>$hv['area_id'],'area_name'=>$hv['area_name'],'hotel_id'=>$hv['hotel_id'],'hotel_name'=>$hv['hotel_name'],
                     'hotel_box_type'=>$hv['hotel_box_type'],'is_4g'=>$hv['is_4g'],'hotel_level'=>$hv['hotel_level'],'trainer_id'=>$hv['trainer_id'],'train_date'=>$hv['train_date'],
@@ -189,7 +190,8 @@ class StaticHotelbasicdataModel extends BaseModel{
                     'lunch_zxrate'=>$lunch_zxrate,'dinner_zxrate'=>$dinner_zxrate,'zxnum'=>$zxnum,'zxrate'=>$zxrate,
                     'scancode_num'=>$scancode_num,'user_num'=>$user_num,'interact_num'=>$interact_num,'user_lunch_interact_num'=>$user_lunch_interact_num,
                     'user_dinner_interact_num'=>$user_dinner_interact_num,'interact_standard_num'=>$interact_standard_num,
-                    'interact_mini_num'=>$interact_mini_num,'interact_sale_num'=>$interact_sale_num,'interact_game_num'=>$interact_game_num,'static_date'=>$static_date
+                    'interact_mini_num'=>$interact_mini_num,'interact_sale_num'=>$interact_sale_num,'interact_sale_signnum'=>$interact_sale_signnum,
+                    'interact_game_num'=>$interact_game_num,'static_date'=>$static_date
                 );
                 if($hv['trainer_id']){
                     $res_user = $m_sysuser->getUserInfo($hv['trainer_id']);

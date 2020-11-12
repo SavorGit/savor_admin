@@ -75,16 +75,16 @@ class HeartAllLogModel extends BaseModel{
         if($fj_type==1){
             $hour_condition = "($hours_str)>5 and (300 div ($hours_str))<10 ";
 
-            $hour_condition = "($hours_str)>24";
+            $hour_condition = "($hours_str)>12";
         }elseif($fj_type==2){
             $hour_condition = "($hours_str)>5 and (420 div ($hours_str))<10 ";
 
-            $hour_condition = "($hours_str)>24";
+            $hour_condition = "($hours_str)>16";
         }else{
             $lunch_hours_str = $this->getHoursCondition(1);
             $dinner_hours_str = $this->getHoursCondition(2);
             $hour_condition = "((($lunch_hours_str)>5 and (300 div ($lunch_hours_str))<10) or (($dinner_hours_str)>5 and (420 div ($dinner_hours_str))<10))";
-            $hour_condition = "(($lunch_hours_str)>24 or ($dinner_hours_str)>24)";
+            $hour_condition = "(($lunch_hours_str)>12 or ($dinner_hours_str)>16)";
         }
 
 

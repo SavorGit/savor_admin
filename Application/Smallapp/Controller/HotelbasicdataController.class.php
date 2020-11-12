@@ -47,19 +47,26 @@ class HotelbasicdataController extends BaseController {
         $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
         sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
-        sum(user_dinner_interact_num) as user_dinner_interact_num";
+        sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum";
         $groupby = 'hotel_id';
         $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
         $result = $m_hotelbasicdata->getCustomeList($fields,$where,$groupby,'',$countfields,$start,$size);
         $datalist = array();
 
         $all_hotel_types = C('heart_hotel_box_type');
+        $m_box = new \Admin\Model\BoxModel();
         foreach ($result['list'] as $k=>$v){
             if($v['avg_speed']>0){
                 $v['avg_speed'] = intval($v['avg_speed']).'kb/s';
             }else{
                 $v['avg_speed'] = '';
             }
+            $box_where = array('hotel.id'=>$v['hotel_id']);
+            $box_where['box.state'] = array('in',array(1,2));
+            $box_where['box.flag'] = 0;
+            $res_box_num = $m_box->countNums($box_where);
+            $v['box_num'] = $res_box_num;
+
             $user_lunch_cvr = $user_dinner_cvr = 0;
             if($v['user_lunch_zxhdnum'] && $v['lunch_zxhdnum']){
                 $user_lunch_cvr = sprintf("%.2f",$v['user_lunch_zxhdnum']/$v['lunch_zxhdnum']);
