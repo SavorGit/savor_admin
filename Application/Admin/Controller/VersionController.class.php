@@ -355,11 +355,26 @@ class VersionController extends BaseController{
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
-	                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+	                
+	                /*$v_hotel_list_key = C('VSMALL_HOTELLIST');
 	                $redis_result = $redis->get($v_hotel_list_key);
 	                $v_hotel_list = json_decode($redis_result,true);
 	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+	                */
 	                $v_apk_key = C('VSMALL_APK');
+	                
+	                //新修改
+	                $ck = $v_apk_key.'*';
+                    $rts = $redis->keys($ck);
+            	    $v_hotel_arr = [];
+            	    foreach($rts as $k=>$v){
+            	        $tmp = explode(':',$v);
+            	        if(!in_array($tmp[2],$v_hotel_arr)){
+            
+            	            $v_hotel_arr[] = $tmp[2];
+            	        }
+            	    }
+            	    //新修改结束
 	                foreach($hotel_arr as $k=>$v){
 	                    if(in_array($v, $v_hotel_arr)){
 	                        $keys_arr = $redis->keys($v_apk_key.$v."*");
@@ -379,11 +394,22 @@ class VersionController extends BaseController{
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
-	                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+	                /*$v_hotel_list_key = C('VSMALL_HOTELLIST');
 	                $redis_result = $redis->get($v_hotel_list_key);
 	                $v_hotel_list = json_decode($redis_result,true);
-	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id*/
 	                $v_apk_key = C('VSMALL_APK');
+	                //新修改
+	                $ck = $v_apk_key.'*';
+	                $rts = $redis->keys($ck);
+	                $v_hotel_arr = [];
+	                foreach($rts as $k=>$v){
+	                    $tmp = explode(':',$v);
+	                    if(!in_array($tmp[2],$v_hotel_arr)){
+	                
+	                        $v_hotel_arr[] = $tmp[2];
+	                    }
+	                }
 	                foreach($v_hotel_arr as $k=>$v){
 	                    $keys_arr = $redis->keys($v_apk_key.$v."*");
 	                    foreach($keys_arr as $vv){
@@ -734,11 +760,23 @@ class VersionController extends BaseController{
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
-	                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+	                /*$v_hotel_list_key = C('VSMALL_HOTELLIST');
 	                $redis_result = $redis->get($v_hotel_list_key);
 	                $v_hotel_list = json_decode($redis_result,true);
-	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id*/
 	                $v_apk_key = C('VSMALL_APK');
+	                //新修改
+	                $ck = $v_apk_key.'*';
+	                $rts = $redis->keys($ck);
+	                $v_hotel_arr = [];
+	                foreach($rts as $k=>$v){
+	                    $tmp = explode(':',$v);
+	                    if(!in_array($tmp[2],$v_hotel_arr)){
+	                
+	                        $v_hotel_arr[] = $tmp[2];
+	                    }
+	                }
+	                //新修改结束
 	                foreach($select_hotel_arr as $k=>$v){
 	                    if(in_array($v, $v_hotel_arr)){
 	                        $keys_arr = $redis->keys($v_apk_key.$v."*");
@@ -758,11 +796,25 @@ class VersionController extends BaseController{
 	                //新虚拟小平台接口
 	                $redis = SavorRedis::getInstance();
 	                $redis->select(10);
-	                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+	                /*$v_hotel_list_key = C('VSMALL_HOTELLIST');
 	                $redis_result = $redis->get($v_hotel_list_key);
 	                $v_hotel_list = json_decode($redis_result,true);
-	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+	                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id*/
+	                
 	                $v_apk_key = C('VSMALL_APK');
+	                
+	                //新修改
+	                $ck = $v_apk_key.'*';
+	                $rts = $redis->keys($ck);
+	                $v_hotel_arr = [];
+	                foreach($rts as $k=>$v){
+	                    $tmp = explode(':',$v);
+	                    if(!in_array($tmp[2],$v_hotel_arr)){
+	                
+	                        $v_hotel_arr[] = $tmp[2];
+	                    }
+	                }
+	                //新修改结束
 	                foreach($v_hotel_arr as $k=>$v){
 	                    $keys_arr = $redis->keys($v_apk_key.$v."*");
 	                    foreach($keys_arr as $vv){
