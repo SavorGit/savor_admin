@@ -107,6 +107,7 @@ class SmallappForscreenRecordModel extends Model{
     }
     public function getForscreenInfo($fields='a.*',$where){
         $res = $this->alias('a')
+            ->join('savor_hotel_ext hotelext on a.hotel_id=hotelext.hotel_id','left')
             ->field($fields)
             ->where($where)
             ->select();
