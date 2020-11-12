@@ -54,6 +54,25 @@ class SmallappForscreenRecordModel extends Model{
         return $data;
     }
 
+    public function getAllDatas($fields="a.id",$where,$groupby='',$order='a.id desc',$countfields='',$start=0,$size=5){
+        $list = $this->alias('a')
+            ->join('savor_hotel_ext hotelext on a.hotel_id=hotelext.hotel_id','left')
+            ->field($fields)
+            ->where($where)
+            ->group($groupby)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $res_count = $this->alias('a')
+            ->join('savor_hotel_ext hotelext on a.hotel_id=hotelext.hotel_id','left')
+            ->field($countfields)
+            ->where($where)->select();
+        $count = $res_count[0]['tp_count'];
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+        return $data;
+    }
 
     public function getInfo($fields='a.*',$where,$group='',$is_one=1){
         $res = $this->alias('a')
@@ -85,6 +104,13 @@ class SmallappForscreenRecordModel extends Model{
             $data = $res;
         }
         return $data;
+    }
+    public function getForscreenInfo($fields='a.*',$where){
+        $res = $this->alias('a')
+            ->field($fields)
+            ->where($where)
+            ->select();
+        return $res;
     }
 	public function getWhere($fields,$where,$limit,$group){
 	    $data = $this->alias('a')
