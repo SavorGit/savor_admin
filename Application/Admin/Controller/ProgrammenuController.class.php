@@ -204,16 +204,38 @@ class ProgrammenuController extends BaseController
                         //sendTopicMessage($k, 7);  //通知虚拟小平台更新节目单宣传片数据
                     }
                 }
-                sendTopicMessage($vm_hotel_arr, 6); //通知虚拟小平台更新节目单数据
-                sendTopicMessage($vm_hotel_arr, 7); //通知虚拟小平台更新节目单宣传片数据
+                //sendTopicMessage($vm_hotel_arr, 6); //通知虚拟小平台更新节目单数据
+                //sendTopicMessage($vm_hotel_arr, 7); //通知虚拟小平台更新节目单宣传片数据
                 //新虚拟小平台接口
                 $redis->select(10);
-                $v_hotel_list_key = C('VSMALL_HOTELLIST');
+                
+                /*$v_hotel_list_key = C('VSMALL_HOTELLIST');
                 $redis_result = $redis->get($v_hotel_list_key);
                 $v_hotel_list = json_decode($redis_result,true);
-                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
+                $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id*/
+                
+                
+                
+                
+                
                 $v_pro_key = C('VSMALL_PRO');
                 $v_adv_key = C('VSMALL_ADV');
+                
+                
+                //新修改
+                $ck = $v_pro_key.'*';
+                $rts = $redis->keys($ck);
+                $v_hotel_arr = [];
+                foreach($rts as $k=>$v){
+                    $tmp = explode(':',$v);
+                    if(!in_array($tmp[2],$v_hotel_arr)){
+                
+                        $v_hotel_arr[] = $tmp[2];
+                    }
+                }
+                
+                
+                
                 foreach($com_arr as $k=>$v){
                     if(in_array($k, $v_hotel_arr)){
                         $keys_arr = $redis->keys($v_pro_key.$k."*");
