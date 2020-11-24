@@ -15,6 +15,23 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
 
+    
+    public function removeAdsCache(){
+        exit();
+        $redis = SavorRedis::getInstance();
+        $redis->select(10);
+        $keys = "vsmall:ads:*";
+        $keys_arr = $redis->keys($keys);
+        $flag = 0;
+        foreach($keys_arr as $key=>$v){
+            $ret = $redis->remove($v);
+            if($ret){
+                $flag++;
+            }
+        }
+        echo $flag;exit;
+    }
+    
     public function countForscreenNum(){
         $start_time = I('start_time');
         $end_time   = I('end_time');
