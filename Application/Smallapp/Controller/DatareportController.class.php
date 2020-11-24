@@ -358,8 +358,15 @@ class DatareportController extends BaseController {
         $datalist = $result['list'];
         $pagestyle = $result['page'];
         if($is_all){
+            $m_box = new \Admin\Model\BoxModel();
             $res_data = array();
             foreach ($datalist as $k=>$v){
+                $box_where = array('hotel.id'=>$v['hotel_id']);
+                $box_where['box.state'] = array('in',array(1,2));
+                $box_where['box.flag'] = 0;
+                $res_box_num = $m_box->countNums($box_where);
+                $v['box_num'] = $res_box_num;
+
                 $fault_rate = $zxrate = $fjrate = $fjsalerate = 0;
                 if($v['all_box_num'] && $v['all_lostbox_num']){
                     $fault_rate = $v['all_lostbox_num']/$v['all_box_num'];

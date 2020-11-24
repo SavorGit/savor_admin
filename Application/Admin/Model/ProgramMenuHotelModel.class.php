@@ -17,7 +17,7 @@ class ProgramMenuHotelModel extends BaseModel
 	public function getPrvMenu($field, $where) {
 		$data  = array();
 		$sql = "SELECT $field FROM savor_programmenu_hotel smh JOIN savor_programmenu_list
-smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel WHERE $where) order by smlist.id desc limit 50";
+smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel WHERE $where) order by smlist.id desc limit 200";
 		$InfoData    = $this->query($sql);
 		$data        = !empty($InfoData)? $InfoData : $data;
 		return $data;

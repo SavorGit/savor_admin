@@ -833,7 +833,7 @@ $config['COLLECT_FORSCREEN_OPENIDS'] = array(
     'ofYZG49N0yz-cCTTgfPPEoL1F7l4'=>'鲍强强','ofYZG4xt_03ADzTTtf4QIrA1lt_c'=>'甘顺山','ofYZG43prBncpYjkYq-XaIWRlj6o'=>'吴琳',
     'ofYZG4-TBnXlWMTGx6afsUrjzXgk'=>'李智','ofYZG4ySsM6GN8bF9bw6iWlS9a44'=>'王习宗',
     'ofYZG4-geGG-WO3drWsAZetCghSc'=>'何永锐','ofYZG43zZMAYXbuOiQxIqGfz25aM'=>'玉洁','ofYZG43DyszPj-qwvP5ZutMCGC_c'=>'欧懿',
-    'ofYZG4zTOtj9RCaLmDXI0qfY-I34'=>'熊静怡',
+    'ofYZG4zTOtj9RCaLmDXI0qfY-I34'=>'熊静怡','ofYZG45GWNg7k9CLVHoRdUqQVPJ4'=>'黎晓欣'
     );
 
 $config['ACTIVITY_KINGMEAL'] = array(
