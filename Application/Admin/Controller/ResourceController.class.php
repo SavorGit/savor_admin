@@ -233,6 +233,7 @@ class ResourceController extends BaseController{
              */
 			$hidden_filed = I('get.filed','media_id');
             $autofill = I('get.autofill',0);
+            $source = I('get.source','');
             $where = ' flag=0';
             if($rtype){
                 $where.=" and type='$rtype'";
@@ -250,9 +251,19 @@ class ResourceController extends BaseController{
 			$this->assign('hidden_filed',$hidden_filed);
 			$this->assign('oss_host',$oss_host);
 			if($rtype==1){
-                $this->display('uploaddeliveryresource');
+			    if($source=='ads'){
+                    $display_html = 'uploaddeliveryresourcenew';
+                }else{
+                    $display_html = 'uploaddeliveryresource';
+                }
+                $this->display($display_html);
             }elseif($rtype==2){
-                $this->display('uploaddeliveryimgresource');
+                if($source=='ads'){
+                    $display_html = 'uploaddeliveryimgresourcenew';
+                }else{
+                    $display_html = 'uploaddeliveryimgresource';
+                }
+                $this->display($display_html);
             }
 		}
 	}

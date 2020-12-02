@@ -3,13 +3,7 @@ namespace Admin\Controller;
 
 /**
  *@desc 专题组控制器,对专题组添加或者修改
- * @Package Name: SpecialgroupController
- *
- * @author      白玉涛
- * @version     3.0.1
- * @copyright www.baidu.com
  */
-use Admin\Controller\BaseController;
 use Common\Lib\Page;
 use Common\Lib\SavorRedis;
 
@@ -26,7 +20,6 @@ class AdvdeliveryController extends BaseController {
         $map['state'] = array(array('eq',3),array('eq',0), 'or') ;
         $field = 'type,state';
         $p_data = $pubadsModel->getWhere($map,$field);
-        //$p_data = false;
         if($p_data) {
             foreach( $p_data as $pk=>$pv) {
                 if($pv['state']== 3 && $pv['type'] == 2) {
@@ -39,21 +32,45 @@ class AdvdeliveryController extends BaseController {
             }
 
         }
-
-
-
-
         $now_date = date("Y-m-d H:i:s");
         $h_b_arr = $_POST['hbarr'];
         $h_b_arr = json_decode($h_b_arr, true);
 
         $now_date = date("Y-m-d H:i:s");
         $now_day = date("Y-m-d");
-        $save['ads_id'] = I('post.marketid','237');
-        if ( empty($save['ads_id']) ) {
+        $clicktype = I('post.clicktype',1,'intval');
+        $is_sapp_qrcode = I('post.is_sapp_qrcode',0,'intval');
+        if($clicktype==1){
+            $m_ads_id = I('post.media_vid',0,'intval');
+        }else{
+            $m_ads_id = I('post.media_id',0,'intval');
+        }
+        if(empty($m_ads_id) ) {
             $msg = '上传广告视频失败请重新上传';
             $this->error($msg);
         }
+        $m_ads = new \Admin\Model\AdsModel();
+        $res_ads = $m_ads->where(array('id'=>$m_ads_id))->find();
+        if(!empty($res_ads)){
+            $ads_id = $m_ads_id;
+        }else{
+            $m_media = new \Admin\Model\MediaModel();
+            $res_media = $m_media->getInfo(array('id'=>$m_ads_id));
+            if(empty($res_media)){
+                $msg = '上传广告视频资源有误请重新上传';
+                $this->error($msg);
+            }
+            $userInfo = session('sysUserInfo');
+            $ads_data = array('media_id'=>$m_ads_id,'name'=>$res_media['name'],'duration'=>$res_media['duration'],
+                'type'=>1,'create_time'=>date("Y-m-d H:i:s"),'state'=>1,'creator_name'=>'',
+                'creator_id'=>$userInfo['id'],'resource_type'=>$res_media['type']);
+            $ads_id = $m_ads->add($ads_data);
+        }
+        if($is_sapp_qrcode==1){
+            $m_ads->updateData(array('id'=>$ads_id),array('is_sapp_qrcode'=>$is_sapp_qrcode));
+        }
+
+        $save['ads_id'] = $ads_id;
         $save['start_date'] = I('post.start_time', '');
         $save['end_date'] = I('post.end_time', '');
         $save['play_times'] = I('post.play_times', '');
@@ -87,7 +104,6 @@ class AdvdeliveryController extends BaseController {
         }
         $save['cover_img_media_id'] = I('post.cover_img_media_id',0,'intval');
         $res = $pubadsModel->addData($save, 0);
-        //var_export($res);
         $tmp[] = array();
         if($res) {
             if($screen_type == 2) {
@@ -156,14 +172,7 @@ class AdvdeliveryController extends BaseController {
             $pubadsModel->rollback();
             $this->error('添加失败');
         }
-
-
-
-
     }
-
-
-
 
     public function getAllBox($hotel_id) {
         $hotel_box_type_str = $this->getNetHotelTypeStr();
@@ -175,8 +184,6 @@ class AdvdeliveryController extends BaseController {
         $field = 'box.id bid,box.name bname';
         $order = ' box.id asc ';
         $box_arr = $hotelModel->getBoxOrderMacByHid($field, $where, $order);
-       // $rs = $hotelModel->getLastSql();
-       // file_put_contents(LOG_PATH.'baiyutao.log',$rs.PHP_EOL,  FILE_APPEND);
         $box_arr = assoc_unique($box_arr,'bid');
         return $box_arr;
     }
@@ -214,7 +221,7 @@ class AdvdeliveryController extends BaseController {
     }
 
 
-        /*
+    /*
      * @desc 获取全选过的酒楼
      * @method getcheckadsHotel
      * @access public
@@ -226,7 +233,6 @@ class AdvdeliveryController extends BaseController {
     public function getcheckadsHotel() {
         $hotel_arr = $_POST['devilerychds'];
         $hotel_arr = json_decode($hotel_arr, true);
-        //城市
         //根据hotelid获取版位
         $boxModel = new \Admin\Model\BoxModel();
         $field = 'count(distinct (b.id)) num';
@@ -239,7 +245,6 @@ class AdvdeliveryController extends BaseController {
             $where .= ' and h.id in ('.$hotel_str.') ';
         }
         $b_arr = $boxModel->isHaveMac($field, $where);
-        //var_export($boxModel->getLastSql());
         $res = array('num'=>empty($b_arr[0]['num'])?0:$b_arr[0]['num']);
         echo json_encode($res);
     }
@@ -309,12 +314,9 @@ class AdvdeliveryController extends BaseController {
         //$where .= ' and '.$h_str;
         $orders = 'convert(sht.name using gbk) asc';
         $result = $hotelModel->getHotelidByArea($where, $field, $orders);
-        //var_export($hotelModel->getLastSql());
         $msg = '';
         $res = array('code'=>1,'msg'=>$msg,'data'=>$result);
         echo json_encode($res);
-        /*var_dump($hotelModel->getLastSql());
-        var_dump($result);*/
     }
 
     public function getAllHotel() {
@@ -397,9 +399,6 @@ class AdvdeliveryController extends BaseController {
             'play_times'=>$play_times,
         );
         $box_arr = $this->getAllBox($hotel_id);
-
-        //file_put_contents(LOG_PATH.'baiyutao.log', json_encode($box_arr).PHP_EOL,  FILE_APPEND);
-
         if ($box_arr) {
             foreach ($box_arr as $bk=> $bv) {
                 //获取是否有效
@@ -408,7 +407,6 @@ class AdvdeliveryController extends BaseController {
                 if( !($res) ) {
                     $box_arr[$bk]['btype'] = 0;
                 } else {
-
                     if($res === 'wrongwrong') {
                         //错误输出找我们
                         echo $bv['bid'];
@@ -427,7 +425,6 @@ class AdvdeliveryController extends BaseController {
             $res = array('code'=>1,'data'=>array());
         }
         //有可能变成非从0开始
-
         echo json_encode($res);
         die;
     }
@@ -494,7 +491,7 @@ class AdvdeliveryController extends BaseController {
         $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
         
         
-        $field = 'm.oss_addr image_cover,ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date, pads.type type,pads.state stap,pads.state estate';
+        $field = 'm.oss_addr image_cover,ads.name,pads.is_remove,pads.id,pads.ads_id,pads.start_date,pads.end_date,pads.create_time,pads.type type,pads.state stap,pads.state estate';
         $group = 'pads.id';
         $result = $pubadsModel->getList($field, $where,$group, $orders,$start,$size);
 
@@ -623,7 +620,7 @@ class AdvdeliveryController extends BaseController {
         }
         if(4 == $tou_state) {
             $where .=" AND (sbox.box_id IS NULL OR  sbox.box_id = 0) ";
-    }
+        }
         if($tou_state == 0) {
             $where .=" AND ( ( pads.end_date < '$now_date' AND sbox.box_id > 0 )";
             $where .=" or (sbox.box_id IS NULL OR  sbox.box_id = 0) ) ";
@@ -697,11 +694,13 @@ class AdvdeliveryController extends BaseController {
         }
         
         $this->assign('areainfo', $area_arr);
-        $adv_tou_num = C('ADVE_OCCU')['num'];
+        $adve_occu = C('ADVE_OCCU');
+        $adv_tou_num = $adve_occu['num'];
         for($i=1;$i<=$adv_tou_num;$i++) {
             $touci_arr[$i] = $i.'次';
         }
         $this->assign('touci_arr', $touci_arr);
+        $this->assign('media_type', 1);
         $this->display('adddevilery');
     }
 
@@ -800,17 +799,13 @@ class AdvdeliveryController extends BaseController {
                 $result['list'] = $not_normal_arr['list'];
             }
         } else if ($send_state == 1) {
-                //成功
             $field = "sht.name hname,sht.id hid,room.name rname,room.id
             rid, box.id bid,box.name bname, 0 error_type,count(adbox.box_id) boxnum  ";
             $where = '1=1 and pub_ads_id='.$adsid;
             $order='adbox.id desc';
             $group = 'adbox.box_id';
             $pub_ads_box_Model = new \Admin\Model\PubAdsBoxModel();
-            $normal_box_arr = $pub_ads_box_Model->getBoxInfoBySize
-            ($field, $where, $order,$group, $start, $size);
-            //var_dump($pub_ads_box_Model->getLastSql());
-
+            $normal_box_arr = $pub_ads_box_Model->getBoxInfoBySize($field, $where, $order,$group, $start, $size);
             if(empty($normal_box_arr['list'])) {
                 $count = 0;
             } else {
@@ -877,7 +872,6 @@ class AdvdeliveryController extends BaseController {
     }
 
     public function showadverjiulou(){
-
         $adsid = I('deliveryid','0','intval');
         $pubadsModel = new \Admin\Model\PubAdsModel();
         $field = ' pads.id,pads.start_date,pads.end_date,pads.state state,
@@ -920,8 +914,7 @@ class AdvdeliveryController extends BaseController {
         $field = 'hid';
         $where = ' 1=1 and bid = 0 and pub_ads_id='.$adsid;
         $group = '';
-        $box_empty_arr = $pub_ads_box_error->getWhere($where, $field,
-            $group);
+        $box_empty_arr = $pub_ads_box_error->getWhere($where, $field,$group);
         $box_empty_arr = array_column($box_empty_arr,'hid');
         $box_empty_arr = array_unique($box_empty_arr);
         $not_hotel_arr = array_merge($not_hotel_arr,$box_empty_arr);
@@ -961,17 +954,6 @@ class AdvdeliveryController extends BaseController {
                 $rep[$nv['hid']][$nv['bid']]  = 1;
                 return $rep;
             });
-
-
-
-
-
-
-
-
-
-
-
             $rea = array();
             $mp = array_walk($rep, function($rv, $rk)use($not_normal_arr) {
                 foreach($not_normal_arr as $nk=>$nv) {
@@ -1011,7 +993,6 @@ class AdvdeliveryController extends BaseController {
 
 
     public function showadverhisjiulou(){
-
         $adsid = I('deliveryid','0','intval');
         $pubadsModel = new \Admin\Model\PubAdsModel();
         $field = ' pads.id,pads.start_date,pads.end_date,pads.state state,
@@ -1095,17 +1076,6 @@ class AdvdeliveryController extends BaseController {
                 $rep[$nv['hid']][$nv['bid']]  = 1;
                 return $rep;
             });
-
-
-
-
-
-
-
-
-
-
-
             $rea = array();
             $mp = array_walk($rep, function($rv, $rk)use($not_normal_arr) {
                 foreach($not_normal_arr as $nk=>$nv) {
@@ -1144,7 +1114,6 @@ class AdvdeliveryController extends BaseController {
     }
 
     public function showhisdelivery() {
-
         $adsid = I('deliveryid','0','intval');
         $pubadsModel = new \Admin\Model\PubAdsModel();
         $field = ' pads.id,pads.start_date,pads.end_date,
@@ -1220,9 +1189,7 @@ class AdvdeliveryController extends BaseController {
             // $field = 'box.id bid';
             $pub_ads_hotel_Model = new \Admin\Model\PubAdsHotelModel();
             $group = '';
-            $total_arr = $pub_ads_hotel_Model->getCurrentBox($field, $where,         $group);
-
-
+            $total_arr = $pub_ads_hotel_Model->getCurrentBox($field, $where,$group);
             $count = $total_arr[0]['total'];
             //机顶盒为空的情况
             $pub_ads_boxhis_error = new \Admin\Model\PubAdsBoxErrorHisModel();
@@ -1268,10 +1235,7 @@ class AdvdeliveryController extends BaseController {
                 $order='adbox.id desc';
                 $group = 'adbox.box_id';
                 $pub_ads_boxhis_Model = new \Admin\Model\PubAdsBoxHistoryModel();
-                $normal_box_arr = $pub_ads_boxhis_Model->getBoxInfoBySize
-                ($field, $where, $order,$group, 0, $left);
-                //var_dump($pub_ads_box_Model->getLastSql());
-
+                $normal_box_arr = $pub_ads_boxhis_Model->getBoxInfoBySize($field, $where, $order,$group, 0, $left);
                 $result['list'] = array_merge($not_normal_arr['list'],
                     $normal_box_arr['list']);
             }else{
@@ -1285,10 +1249,7 @@ class AdvdeliveryController extends BaseController {
             $order='adbox.id desc';
             $group = 'adbox.box_id';
             $pub_ads_boxhis_Model = new \Admin\Model\PubAdsBoxHistoryModel();
-            $normal_box_arr = $pub_ads_boxhis_Model->getBoxInfoBySize
-            ($field, $where, $order,$group, $start, $size);
-            //var_dump($pub_ads_box_Model->getLastSql());
-
+            $normal_box_arr = $pub_ads_boxhis_Model->getBoxInfoBySize($field, $where, $order,$group, $start, $size);
             if(empty($normal_box_arr['list'])) {
                 $count = 0;
             } else {
@@ -1297,10 +1258,8 @@ class AdvdeliveryController extends BaseController {
                 $count = $pub_ads_boxhis_Model->getWhere($where, $field);
                 $count = $count[0]['bnum'];
             }
-
             $objPage = new Page($count,$size);
             $show = $objPage->admin_page();
-            //var_dump($pub_ads_box_Model->getLastSql());
             $result['list'] = $normal_box_arr['list'];
         } else if ($send_state == 2) {
             //失败
@@ -1313,10 +1272,8 @@ class AdvdeliveryController extends BaseController {
             } else {
                 $not_normal_total = $not_normal_arr['count'];
             }
-
             $objPage = new Page($not_normal_total,$size);
             $show = $objPage->admin_page();
-            //var_dump($pub_ads_box_Model->getLastSql());
             $result['list'] = $not_normal_arr['list'];
         }
 
@@ -1355,7 +1312,6 @@ class AdvdeliveryController extends BaseController {
     }
 
     public function showdelivery() {
-
         $adsid = I('deliveryid','0','intval');
         $pubadsModel = new \Admin\Model\PubAdsModel();
         $field = ' pads.id,pads.start_date,pads.end_date,
@@ -1453,11 +1409,8 @@ class AdvdeliveryController extends BaseController {
         if(IS_POST){
             //获取该广告之前选择的酒楼id
             $original_hotel_list = $m_pubads_hotel->getAdsHotelId($id);
-            //print_r($original_hotel_list);exit;
             $original_ids = array();
             $original_ids = array_column($original_hotel_list, 'hotel_id');
-            
-            
             $ids = I('ids'); //所选酒楼
             if(empty($ids)){
                 $this->error('所选酒楼不能为空');
@@ -1474,8 +1427,7 @@ class AdvdeliveryController extends BaseController {
                 $where['hotel_id'] = array('in',$del_hotel_list);
                 $where['pub_ads_id'] = $id;
                 $del_hotel_ret = $m_pubads_hotel->delData($where);
-                
-                
+
                 //删除pub_ads_box表
                 $del_box_arr = [];
                 foreach($del_hotel_list as $v){
@@ -1492,10 +1444,7 @@ class AdvdeliveryController extends BaseController {
                 }
                 $where = [];
                 $where['id'] = array('in',$del_box_arr);
-                
                 $del_box_ret = $m_pubads_box->delData($where);
-                
-                
                 if($del_hotel_ret && $del_box_ret){
                     $m_pubads_hotel->commit();
                     $redis = SavorRedis::getInstance();
@@ -1583,7 +1532,6 @@ class AdvdeliveryController extends BaseController {
         }
     }
     public function selectHotel_bac(){
-        //navTab.reloadFlag("task/index");
         $id = I('id',0,'intval');
         $m_pubads = new \Admin\Model\PubAdsModel();
         $m_pubads_hotel = new \Admin\Model\PubAdsHotelModel();
@@ -1720,24 +1668,15 @@ class AdvdeliveryController extends BaseController {
         }
         
     }
-    public static  function array_group_by($arr, $key)
-    {
+    public static  function array_group_by($arr, $key){
         $grouped = [];
         foreach ($arr as $value) {
             $grouped[$value[$key]][] = $value;
         }
-        // Recursively build a nested grouping if more parameters are supplied
-        // Each grouped array value is grouped according to the next sequential key
-
         if (func_num_args() > 2) {
             $args = func_get_args();
-            //[0]=>hname
-            //var_dump(array_slice($args, 2, func_num_args()));
-
             foreach ($grouped as $key => $value) {
                 $parms = array_merge([$value], array_slice($args, 2, func_num_args()));
-
-               // $grouped[$key] = call_user_func_array('array_group_by', $parms);
                 $grouped[$key] = call_user_func(array('AdvdeliveryController','array_group_by'), $parms);
             }
         }

@@ -150,41 +150,113 @@
 	<input type="hidden" name="hbarr" id="hbars" />
 	<input type="hidden" name="screenadv_type" id="scree_type" value="2"/>
 	<div class="form-group row">
-		<input type="hidden" name="marketid" id="marketid" value="" />
-		<div class="form-group row" id="sp" style="margin-top: 40px;margin-left: 17px;display: ;">
+		<!--<input type="hidden" name="marketid" id="marketid" value="" />-->
+		<!--<div class="form-group row" id="sp" style="margin-top: 40px;margin-left: 17px;display: ;">-->
+			<!--<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">-->
+				<!--广告素材：-->
+			<!--</label>-->
+			<!--<a class="btn btn-success btn-file" style="margin-left: 14px;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_id&rtype=1" data-browse-file>-->
+				<!--选择视频-->
+			<!--</a>-->
+			<!--<a class="btn btn-success btn-file" style="margin-left: 14px;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_id&rtype=2" data-browse-file>-->
+				<!--选择图片-->
+			<!--</a>-->
+		<!--</div>-->
+		<!--<div class="form-group row" id="newsp" style="margin-top: 40px;margin-left: 17px;display: none;">-->
+			<!--<div class="form-group row">-->
+				<!--<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">-->
+					<!--广告名称：-->
+				<!--</label>-->
+				<!--<label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">钛晶手机，你值得拥有</label>-->
+				<!--<a class="" style="margin-left: 14px;color: blue;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_id&rtype=1" data-browse-file>-->
+					<!--重新选择-->
+				<!--</a>-->
+			<!--</div>-->
+			<!--<div class="form-group row">-->
+				<!--<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">-->
+					<!--广告时长：-->
+				<!--</label>-->
+				<!--<label class="col-xs-12 col-sm-2 control-label" id="sp_time" style="width: auto;">60秒</label>-->
+			<!--</div>-->
+			<!--<div class="form-group row">-->
+				<!--<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">-->
+					<!--URL：-->
+				<!--</label>-->
+				<!--<label class="col-xs-12 col-sm-2 control-label" id="sp_url" style="width: auto;">https://pro.modao.cc/app/cdY3v0DbsenVjHAR04WvTjycLUTjsWu?#screen=s3EA34B3A4B1506394954112</label>-->
+			<!--</div>-->
+		<!--</div>-->
+			<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
+				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+					广告素材:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="inline-radio-container">
+						<label class="radio-inline">
+							<input type="radio" name="clicktype" id="1" value='1' <if condition="$media_type eq 1">checked</if>>
+							<span>视频</span>
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="clicktype" id="2" value='2' <if condition="$media_type eq 2">checked</if>>
+							<span>图片</span>
+						</label>
+
+					</div>
+				</div>
+			</div>
+
+
+			<div class="form-group row" style="margin-top: 40px;margin-left: 17px;<if condition="$media_type eq 1">display:none;</if>" id="tv_img" >
 			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
-				广告素材：
+				选择图片：
 			</label>
-			<a class="btn btn-success btn-file" style="margin-left: 14px;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
-				选择视频
-			</a>
-			<a class="btn btn-success btn-file" style="margin-left: 14px;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=2" data-browse-file>
-				选择图片
-			</a>
-		</div>
-		<div class="form-group row" id="newsp" style="margin-top: 40px;margin-left: 17px;display: none;">
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
-					广告名称：
-				</label>
-				<label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">钛晶手机，你值得拥有</label>
-				<a class="" style="margin-left: 14px;color: blue;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
-					重新选择
-				</a>
-			</div>
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
-					广告时长：
-				</label>
-				<label class="col-xs-12 col-sm-2 control-label" id="sp_time" style="width: auto;">60秒</label>
-			</div>
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
-					URL：
-				</label>
-				<label class="col-xs-12 col-sm-2 control-label" id="sp_url" style="width: auto;">https://pro.modao.cc/app/cdY3v0DbsenVjHAR04WvTjycLUTjsWu?#screen=s3EA34B3A4B1506394954112</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['img_oss_addr'] eq 'NULL') OR $vinfo['img_oss_addr'] eq ''">
+								<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="media_idimg" src="{$vinfo.img_oss_addr}" border="0" />
+							</if>
+							<span id="media_idimgname"></span>
+						</a>
+					</div>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+					</div>
+				</div>
 			</div>
 		</div>
+
+		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;<if condition="$media_type eq 2">display:none;</if>" id="tv_video" >
+		<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+			选择视频：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<div class="fileinput fileinput-new" data-fileinput>
+				<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+					<a data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_vid&rtype=1" data-browse-file>
+						<if condition="($vinfo['video_oss_addr'] eq 'NULL') OR $vinfo['video_oss_addr'] eq ''">
+							<img id="media_vidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+							<else />
+							<img id="media_vidimg" src="{$vinfo.video_oss_addr}?x-oss-process=video/snapshot,t_1000,f_jpg,w_450" border="0" />
+						</if>
+						<span id="media_vidimgname">{$vinfo.name}</span>
+					</a>
+				</div>
+				<div>
+					<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_vid&rtype=1" data-browse-file>
+						选择视频
+					</a>
+					<input type="hidden" name="media_vid" id="media_vid" value="{$vinfo.media_vid}">
+				</div>
+			</div>
+		</div>
+		</div>
+
 		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
 			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
 				视频封面：
@@ -212,6 +284,25 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
+			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+				小程序二维码:
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="inline-radio-container">
+					<label class="radio-inline">
+						<input type="radio" required name="is_sapp_qrcode" value="1" >
+						<span>显示</span>
+					</label>
+					<label class="radio-inline">
+						<input type="radio" required name="is_sapp_qrcode"  value="0" checked="checked">
+						<span>不显示</span>
+					</label>
+				</div>
+			</div>
+		</div>
+
 		<div class="form-group row" style="margin-top: 20px;margin-left: 17px;background-color:#c7c7c7;padding-top: 13px;">
 			<label class="col-xs-12 control-label">投放方式</label>
 			<div class="form-group row" style="margin-top: 33px;">
@@ -969,4 +1060,15 @@
             }
         });
     }
+
+    $("input[name='clicktype']").click(function() {
+        var id = $(this).attr("id");
+        if (id == 1) {
+            $("#tv_img").hide();
+            $("#tv_video").show();
+        } else {
+            $("#tv_img").show();
+            $("#tv_video").hide();
+        }
+    });
 </script>
