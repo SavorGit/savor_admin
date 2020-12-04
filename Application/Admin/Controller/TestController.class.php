@@ -686,13 +686,14 @@ class TestController extends Controller {
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
+        $close_forscreen_boxs = $this->closeboxforscreen();
+
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.box_type in(6,7) and box.wifi_name!=''";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
-//        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN('40E79325362D','40E793253454','40E79325351F','40E79325348E','40E79325357A','40E793253664','40E793253450','40E793253490','40E793253557','40E79325343E','40E793253573','40E7932534BA','40E79325344D','40E793253600','40E79325354B','40E79325375E','40E79325343C','40E793253442','40E793253586','40E793253413','40E7932534DA','40E7932534C6','40E79325370D','40E793253440','40E793253555','40E7932534B7','40E79325349B','40E7932534CD','40E7932534C1','40E793253483','40E79325347D','40E793253477','40E7932534D0','40E7932535B6','40E79325365B','40E79325344E','40E79325348A','40E793253604','40E7932534A8','40E7932535B5','40E793253441','40E793253603','40E793253689','40E793253606','40E79325348D','40E793253448','40E793253648','40E793253471','40E7932534D8','40E793253479','40E793253556','40E7932534B6','40E793253486','40E793253594','40E7932535D4','40E7932534B8','40E793253426','40E793253569','40E793253481','40E7932535A9','40E7932535D8','40E79325374D','40E793253658','40E793253742','40E79325347A','40E79325374C','40E793253747','40E79325374A','40E7932536E3','40E7932536F9','40E79325368C','40E793253453','40E793253711','40E793253704','40E7932534F8','40E793253681','40E793253692','40E7932534E7','40E7932534A1','40E793253545','40E79325360A','40E793253439','40E793253412','40E79325376E','40E793253408','40E7932535FA','40E793253707','40E793253663','40E79325371D','40E793253526','40E79325376B','40E79325372E','40E7932536CF','40E7932536CB','40E793253769','40E79325364C','40E7932534D4','40E7932534E5','40E793253767','40E793253432','40E793253734','40E793253492','40E7932534D2','40E79325376A','40E79325360C','40E793253751','40E7932536CE','40E79325374F','40E79325365D','40E79325373A','40E79325371B','40E79325356D','40E7932535D0','40E793253686','40E7932534E1','40E79325350F','40E793253517','40E793253720','40E7932534B3','40E79325350B','40E793253593','40E793253553','40E7932535A1','40E793253458','40E79325345E','40E793253682','40E793253667','40E793253519','40E793253466','40E793253722','40E7932536D2','40E7932535A3','40E793253498','40E793253645','40E7932536C0','40E7932535BA','40E79325359C','40E7932536EE','40E7932535CD','40E793253616','40E793253598','40E793253693','40E793253659','40E79325372C','40E79325366A','40E79325373E','40E7932536FB','40E793253743','40E793253701','40E793253621','40E793253735','40E79325366E','40E793253730','40E7932536F7','40E793253646','40E793253731','40E793253647','40E793253705','40E793253670','40E793253629','40E793253685','40E793253497','40E793253716','40E79325375A','40E79325370E','40E793253669','40E793253675','40E7932536D3','40E7932536E7','40E7932536C9','40E7932536FC','40E79325366C','40E79325347B','40E7932536E4','40E793253650','40E7932536E8','40E793253687','40E7932535D1','40E7932536E5','40E793253662','40E79325365A','40E7932536F6','40E7932534F0','40E79325372D','40E79325362E','40E7932534C5','40E793253688','40E79325374B','40E79325344A','40E793253570','40E7932534DF','40E793253478','40E7932534E2','40E793253444','40E793253572','40E793253504','40E793253597','40E79325358A','40E7932534D6','40E793253745','40E7932535DB','40E793253746','40E793253465','40E7932535F7','40E793253451','40E79325356B','40E79325346B','40E793253580','40E7932535B4','40E7932535D2','40E793253568','40E793253732','40E7932535B0','40E7932534B0','40E7932534C4','40E7932535B1','40E79325367C','40E793253521','40E7932538B7','40E79325346A','40E7932536A1','40E7932534DC','40E793253757','40E79325371E','40E7932535D3','40E793253489','40E7932536FA','40E79325349C','40E79325375C','40E79325342A','40E793253434','40E7932535A5','40E79325350A','40E793253630','40E7932535BE','40E7932534C7','40E79325343B','40E793253480','40E793253596','40E7932534EE','40E79325340A','40E793253549','40E7932534EA','40E7932534B2','40E79325348B','40E7932534F4','40E793253409','40E7932535ED','40E793253430','40E7932533F3','40E7932535CE','40E7932535BC','40E7932535C9','40E7932536A7','40E79325356F','40E793253764','40E793253484','40E793253765','40E793253493','40E7932536B8','40E793253744','40E793253694','40E7932536AA','40E793253652','40E793253750','40E7932536B9','40E7932535C6','40E7932535E5','40E79325371A','40E793253585','40E7932535FF','40E793253763','40E7932535E4','40E793253636','40E79325366F','40E793253462','40E79325360D','40E7932536EA','40E7932536A9','40E793253627','40E7932535E0','40E79325369C','40E7932536C6','40E793253613','40E7932535CF','40E7932535E6','40E7932535C1','40E7932536AD','40E793253635','40E79325363F','40E793253634','40E79325362B','40E7932535F6','40E7932536D9','40E7932535BB','40E7932536BA','40E793253589','40E7932534F3','40E793253665','40E7932535E7','40E7932535C2','40E79325376F','40E7932535BD','40E793253487','40E7932535CB','40E7932534C8','40E793253733','40E7932535CC')";
 
         $data = M()->query($sql);
         $flag = 0;
@@ -702,44 +703,21 @@ class TestController extends Controller {
 //            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
 //                $v['is_open_simple'] = 0;
 //            }
-            if(!empty($v['wifi_name'])){
-                $v['is_sapp_forscreen'] = 1;
-                $v['is_open_simple'] = 1;
+            if(isset($close_forscreen_boxs[$v['mac']])){
+                $v['is_interact'] = 0;
+                $v['is_sapp_forscreen'] = 0;
+                $v['is_open_simple'] = 0;
                 $is_open_simple = $v['is_open_simple'];
                 $is_sapp_forscreen = $v['is_sapp_forscreen'];
-                $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+                $is_interact = $v['is_interact'];
+                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
                 M()->execute($sql);
+                echo $v['mac']." close ok \n";
             }
 
 
             $box_info = array();
             $box_id = $v['id'];
-            /*
-            $box_info['id']      = $v['id'];
-            $box_info['room_id'] = $v['room_id'];
-            $box_info['name']    = $v['name'];
-            $box_info['mac']     = $v['mac'];
-            $box_info['switch_time'] = $v['switch_time'];
-            $box_info['volum']   = $v['volum'];
-            $box_info['tag']     = $v['tag'];
-            $box_info['device_token'] = $v['device_token'];
-            $box_info['state']   = $v['state'];
-            $box_info['flag']    = $v['flag'];
-            $box_info['create_time'] = $v['create_time'];
-            $box_info['update_time'] = $v['update_time'];
-            $box_info['adv_mach']    = $v['adv_mach'];
-            $box_info['tpmedia_id']  = $v['tpmedia_id'];
-            $box_info['qrcode_type'] = $v['qrcode_type'];
-            $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
-            $box_info['is_4g']       = $v['is_4g'];
-            $box_info['box_type']    = $v['box_type'];
-            $box_info['wifi_name']   = $v['wifi_name'];
-            $box_info['wifi_password']=$v['wifi_password'];
-            $box_info['wifi_mac']    = $v['wifi_mac'];
-            $box_info['is_open_simple'] = $v['is_open_simple'];
-            $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
-            $box_info['is_open_signin'] = $v['is_open_signin'];
-            */
             $box_info = $v;
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
@@ -2529,19 +2507,6 @@ group by openid";
         }
     }
 
-    public function roomstaff(){
-        $model = M();
-        $sql = "select * from savor_integral_merchant_staff where hotel_id>0 and room_id>0";
-        $res = $model->query($sql);
-        foreach ($res as $v) {
-            $id = $v['id'];
-            $room_ids = ",{$v['room_id']},";
-            $e_sql = "UPDATE savor_integral_merchant_staff SET room_ids='{$room_ids}' WHERE id={$id}";
-            $model->execute($e_sql);
-            echo "ID:$id ok \r\n";
-        }
-        exit;
-    }
 
     public function welcometime(){
         exit;
@@ -2850,63 +2815,94 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
     }
 
-
-    public function cachevideo(){
-        ini_set("memory_limit","1024M");
-
-//        $key = 'cachevideo';
-//        $cache_key = $key.'_'.$file_name;
-        $file_name = $_GET['fileName'];
-        $position = $_GET['position'];
-
-        if(isset($_GET['index'])){
-            $index = $_GET['index'];
-        }else{
-            $index = 999;
+    public function closeboxforscreen(){
+        $start_time = '2020-10-03 00:00:00';
+        $end_time = '2020-12-03 00:00:00';
+        $boxs = array('40E793253499','00226D8BCD91','00226D8BCD46','00226D8BCA02','00226D8BCCDC','00226D8BCB45','00226D8BCE5B','00226D8BCE3B','00226D8BCE41','00226D8BCE2A','00226D8BCC73','00226D8BCDB2','40E79325345D','00226D583CB3','00226D5844E1','00226D8BCCD3','00226D8BCE7A','GZXWJD001482 ','GZXWJD001494','GZXWJD001495','40E793253706','00226D8BCD1F ','00226D8BCE52','00226D584045','00226D5846E6','00226D583FB0','00226D65557A','00226D655625','00226D65565D','00226D655266','00226D6552FF ','00226D655529','00226D655422','00226D6554FA','00226D6554D7 ','40E79325351C','00226D8BCABC','00226D583D16','00226D8BCBC7','GZXWJD000045','GZXWJD000038','00226D583ED7','00226D6553D4','00226D583DC3','00226D583E04','00226D583FB9','00226D583DBD','00226D583D30','00226D5843AC','40E793253682','40E793253686','00226D6554CE','40E793253412','40E793253715','40E793253408','40E7932535FA','00226D8BCBD2','00226D583CDF','00226D6554C0','00226D6552D6','00226D8BCD88','00226D583F65','00226D8BCDA2','00226D8BCDBC','00226D8BCD52','00226D8BCAE2','00226D8BCC49','00226D8BCAD7','00226D8BC97B','00226D8BCDC1','00226D8BC950','40E7932536C6','00226D65551C','00226D8BC944','00226D6551FA','00226D8BCCEF','00226D8BCBC4','00226D8BC995','00226D8BCC56','00226D6551D4','00226D58468F','00226D6554A5','00226D655183','00226D8BC9F1','00226D8BCA1D','00226D8BCAE3','00226D8BCD10','00226D8BCC96','00226D8BCA13','00226D8BCE6A','00226D8BCADA','00226D655607','00226D8BCD7B','00226D584330','00226D8BCB3F','00226D8BCCE1','00226D8BCD65','00226D8BCBC8','00226D583D13','00226D655398','00226D583F3C','40E793253511','00226D8BCDFA','00226D583ED4','00226D8BCC30','00226D8BCB7B','00226D8BC970','00226D8BCD1F','00226D5844DF','40E79325340E','00226D8BCE0B','00226D8BCAF2','40E7932536C2','40E7932533FF','00226D8BCA27','40E79325373B','40E79325345F','40E7932535F5','00226D8BC94D','00226D8BCBBF','00226D8BCAEA','00226D8BCB06','00226D8BCDBE','00226D8BCC89','00226D8BCE37','00226D8BCDBF','00226D8BCB3E','00226D8BCDA6','00226D8BCAF5','00226D8BCCB1','00226D8BCDD1','00226D8BCD9B','00226D8BCC3B','00226D8BCE7E','00226D8BCC7F','40E793253726','00226D8BCCF7','00226D58407F','40E793253614','00226D8BCD5B','00226D8BCB9C','00226D8BCE67','00226D584446','00226D8BC987','40E793253751','00226D583F3B','00226D584725','00226D583F41','00226D583F4A','00226D5841FB','00226D583F47','40E7932536CE','40E79325374F','00226D583DAC','00226D8BCC01','00226D583E10','00226D58418E','00226D584670','00226D584709','40E7932534B6','00226D584711','00226D583F85','00226D5846DD','00226D584710','40E7932534B8','00226D583F01','00226D5846A1','00226D58466A','00226D8BCC5E','00226D655415','40E7932534B3','00226D5846EF','00226D583E22','00226D584707','00226D58431D','00226D583E23','00226D5842B1','00226D65543F','40E7932536B0','40E793253607','00226D8BCC9C','00226D583D4E','00226D8BC9E0','00226D5840EE','40E793253764','40E7932535C9','40E793253765','00226D6554F6','00226D6553F9','00226D6554ED','00226D655594','00226D655657','40E7932535A9','40E793253481','00226D65510C','00226D65525D','00226D6554CD','00226D65531D','00226D6551ED','00226D655640','00226D65549E','00226D655130','00226D6555B0','00226D58409A','00226D655649','40E79325344C','00226D5845C0','00226D6553D8','00226D583EEE','00226D583EF4','40E793253515','00226D8BCC4D','00226D8BCA12','00226D8BCD37','00226D8BCDB4','00226D8BCE8C','00226D8BCD42','40E7932534A7','40E7932535BF','40E7932533F5','00226D8BCC92','00226D8BCE2C','00226D8BCA05','00226D8BCBFE','00226D8BCC5F','00226D8BCC43','00226D8BC9DD','00226D8BCE93','00226D8BC982','00226D8BCC75','40E79325789D','40E7932534CB','00226D8BCD7D','00226D8BCC23','00226D8BCC23','00226D65565B','00226D8BCB52','40E7932534E8','40E7932534E8','00226D8BC9F3','00226D8BCD57','00226D5840F3','00226D58460F','00226D655417','00226D655542','00226D655617','00226D8BC9BC','00226D583DDC','00226D8BCAFC','00226D8BC9C0','40E79325369D','40E793253612','40E79325363C','40E7932535B8','00226D8BCA1E','40E7932534A9','00226D8BCCBE','40E7932534FE','40E79325341D','40E7932536F8','40E79325368D','40E793253723','00226D8BCB86','00226D8BCE0A','00226D8BCE10','00226D8BCB4E','00226D8BCA61','00226D8BCB1E','00226D8BCC8A','00226D8BC9E1','00226D8BC98B','00226D655509','00226D6555D7','00226D6554DD','00226D6551B4','00226D8BC9DF','00226D6555F7','00226D8BCE6B','40E79325361C','00226D8BCB6E','40E7932536C1','00226D8BCA24','40E79325357C','00226D8BC942','00226D8BC94B','00226D583FBD','40E793253730','00226D5844AA','00226D65515F','00226D5846E9','00226D8BC9AD','00226D655571','00226D8BCB21','00226D8BC983','00226D8BC9F9','00226D8BC94C','00226D8BCD62','40E79325787C','00226D8BCBA0','00226D8BCCB8','00226D8BCE72','00226D8BCB22','40E793253713','00226D8BCD7A','00226D8BCAB0','00226D5846CB','00226D584673','00226D5840C2','00226D8BCE91','40E7932534FA','00226D8BCDA7','00226D8BCE8B','00226D8BCE89','00226D8BCE96','00226D8BCE85','00226D8BC985','40E79325350E','00226D8BCBBD','00226D8BC962','40E79325349A','40E79325368B','40E793253601','40E7932534F2','40E79325355D','40E7932536D1','00226D8BCC34','40E793253414','00226D8BCC2D','40E793253495','40E793253619','00226D8BC967','00226D8BCBEF','40E79325788F','40E793257895','40E7932578B8','40E79325787E','00226D584567','00226D58476B','00226D583C92','00226D583EC4','00226D584588','00226D5846E3','40E79325345A','40E79325360E','40E793257876','40E7932535C8','40E793257867','40E793257889','40E79325786D','40E7932535F4','40E793257874','40E793253618','40E79325786A','40E79325787A','00226D5840AB','00226D584462','00226D8BCC18','00226D8BCD41','00226D8BCC05','00226D8BCA15','00226D8BCDD9','00226D8BCB54','40E79325371B','00226D655351','00226D655281','40E79325363B','40E793253537','40E79325370A','00226D583F81','00226D583FB1','00226D584560','00226D583E0E','00226D5840BA','00226D583D1C','00226D584288','00226D58442B','00226D584278','00226D5845D0','00226D583D18','00226D58428C','00226D584622','00226D583F5C','00226D58460D','00226D5841CD','00226D584239','00226D583E0D','00226D583E0F','40E793253659','40E79325372C','00226D8BCA43','00226D8BCD89','00226D8BCD8E','00226D8BCC14','00226D583E31','00226D8BCB58','40E79325362A','00226D8BCD2E','40E79325340C','00226D8BCB43','00226D8BCC95','00226D8BCC54','40E7932536FE','00226D8BCCCD','00226D8BCD2B','00226D584216','00226D584770','00226D584631','00226D583F0B','00226D583F3F','00226D5843F6','00226D583D79','40E7932536F7','40E793253646','40E7932535FC','40E793253642','40E793253758','40E793253655','40E793253428','40E79325373C','40E7932536D3','00226D8BCD9F','00226D8BCB07','00226D8BCCC4','40E79325346B','40E793253568','40E793253465','40E7932535B4','40E793253451','40E7932535F7','40E793253580','40E7932535D2','40E793253732','00226D8BC95C','00226D8BC9B4','40E7932536CA','00226D584310','40E79325372D','40E7932536F6','40E79325365A','40E793253662','40E79325362E','40E793253656','40E7932534C5','40E793253687','40E79325364B','40E7932536E5','40E7932536E8','40E7932535D1','40E79325374B','40E793253650','40E793253688','40E7932578B0','40E7932534F0','40E7932536E4','40E7932535DC','40E7932536F3','40E7932536A5','40E7932534E6','40E79325369E','40E7932535F8','00226D58424F','00226D583C8F','00226D584614','00226D5841E2','00226D584253','00226D5845D2','00226D6553FA','00226D5845B4','00226D655632','40E793253562','00226D8BCBB0','40E7932534ED','40E793253415','40E79325372B','40E7932536C8','40E793253474','00226D8BCCE5','40E79325350C','40E79325786F','00226D8BCAE1','40E7932578B1','00226D8BC9D6','40E793253756');
+        $model = M();
+        $forscreen_boxs = array();
+        $handle_boxs = array();
+        foreach ($boxs as $v){
+            $time_where = "create_time>='{$start_time}' and create_time<='{$end_time}'";
+            $sql = "select count(*) as num from savor_smallapp_forscreen_record where box_mac='{$v}' and {$time_where} and small_app_id in(1,2)";
+            $res_num = $model->query($sql);
+            $num = intval($res_num[0]['num']);
+            if(!empty($res_num) && $num>20){
+                $forscreen_boxs[]=array('box'=>$v,'num'=>$num);
+            }else{
+                $handle_boxs[$v]=array('box'=>$v,'num'=>$num);
+            }
         }
-        $file = '/Applications/XAMPP/xamppfiles/htdocs/www/savorGit/savor_admin/Public/'.$file_name.'.mp4';
-        if($index==999){
-            $fp = fopen($file,'w+');
-        }else{
-            $fp = fopen($file,'r+');
-        }
-        fseek($fp,$position);
-        $mp4_file = file_get_contents('php://input');
-        fwrite($fp, base64_decode($mp4_file));
-        fclose($fp);
-//        $body = file_get_contents('php://input');
-//        $redis = new \Common\Lib\SavorRedis();
-//        $redis->select(1);
-//        $value = base64_decode($body);
-//        $redis->zAdd($cache_key,$index,$value);
+        return $handle_boxs;
+    }
 
-        echo json_encode(array('code'=>10000,'index'=>$index,'f'=>$file_name,'position'=>$position,'msg'=>'ok'));
+    public function staticmealuser(){
+        $start_time = '2020-08-01 00:00:00';
+        $end_time = '2020-11-31 23:59:59';
+        $user_sql = "SELECT openid FROM savor_smallapp_forscreen_record 
+        WHERE create_time >= '$start_time' AND create_time <= '$end_time' and area_id=236
+        and mobile_brand!='devtools' AND is_valid = 1 AND small_app_id in(1,2) AND openid not in (
+        select u.openid from (
+        (select openid from savor_smallapp_user where unionId in(
+        select unionId from savor_smallapp_user where openid in(select openid from savor_smallapp_user_signin group by openid) 
+        and unionId!='' group by unionId
+        ) and small_app_id=1) union (select invalidid as openid from savor_smallapp_forscreen_invalidlist where type=2)
+        ) as u
+        ) 
+        group by openid";
+        $model = M();
+        $res_user = $model->query($user_sql);
+        $meal_1 = $meal_2 = $meal_3 = $meal_4 = $meal_egt5 = array();
+        foreach ($res_user as $v){
+            $openid = $v['openid'];
+            $forscreen_sql = "SELECT DISTINCT DATE(create_time) as forscreen_date FROM savor_smallapp_forscreen_record 
+            WHERE create_time >= '$start_time' AND create_time <= '$end_time' and openid='$openid'";
+            $res_forscreen_date = $model->query($forscreen_sql);
+            $meal_num = 0;
+            foreach ($res_forscreen_date as $dv){
+                $forscreen_date = $dv['forscreen_date'];
+                $lunch_start_time = date("$forscreen_date 10:00:00");
+                $lunch_end_time = date("$forscreen_date 14:59:59");
+                $sql_lunch = "SELECT id,box_mac,hotel_id,hotel_name,create_time FROM savor_smallapp_forscreen_record 
+                WHERE create_time >= '$lunch_start_time' AND create_time <= '$lunch_end_time' and openid='$openid'";
+                $res_lunch = $model->query($sql_lunch);
+                if(!empty($res_lunch)){
+                    $meal_num++;
+                }
+                $dinner_start_time = date("$forscreen_date 17:00:00");
+                $dinner_end_time = date("$forscreen_date 23:59:59");
+                $sql_lunch = "SELECT id,box_mac,hotel_id,hotel_name,create_time FROM savor_smallapp_forscreen_record 
+                WHERE create_time >= '$dinner_start_time' AND create_time <= '$dinner_end_time' and openid='$openid'";
+                $res_lunch = $model->query($sql_lunch);
+                if(!empty($res_lunch)){
+                    $meal_num++;
+                }
+            }
+            echo "openid: $openid  num: $meal_num \n";
+            if($meal_num==1){
+                $meal_1[]=$openid;
+            }elseif($meal_num==2){
+                $meal_2[]=$openid;
+            }elseif($meal_num==3){
+                $meal_3[]=$openid;
+            }elseif($meal_num==4){
+                $meal_4[]=$openid;
+            }elseif($meal_num>=5){
+                $meal_egt5[]=$openid;
+            }
+        }
+        $res = array(
+            'meal_1'=>array('num'=>count($meal_1),'openids'=>$meal_1),
+            'meal_2'=>array('num'=>count($meal_2),'openids'=>$meal_2),
+            'meal_3'=>array('num'=>count($meal_3),'openids'=>$meal_3),
+            'meal_4'=>array('num'=>count($meal_3),'openids'=>$meal_4),
+            'meal_egt5'=>array('num'=>count($meal_egt5),'openids'=>$meal_egt5),
+        );
+        print_r($res);
+        $user = array('all'=>count($res_user),'meal_1'=>count($meal_1),'meal_2'=>count($meal_2),'meal_3'=>count($meal_3),
+        'meal_4'=>count($meal_4),'meal_egt5'=>count($meal_egt5));
+        print_r($user);
     }
 
 
-    public function playvideo(){
-        ini_set('memory_limit', '1024M');
-//        set_time_limit(600);
-//        header("Content-type: video/mp4");
-//        header("Accept-Ranges: bytes");
-//        ob_start();
-
-        $name = $_GET['file'];
-        $redis = new \Common\Lib\SavorRedis();
-        $redis->select(1);
-        $key = 'cachevideo_'.$name;
-        $contents = '';
-        $res_info = $redis->zRange($key,0,-1);
-
-        foreach ($res_info as $v){
-            $contents.=$v;
-        }
-        $log_file_name = '/application_data/web/php/savor_admin/Public/content/'.$name.'.mp4';
-        @file_put_contents($log_file_name, $contents);
-        echo 'admin.littlehotspot.com/Public/content/'.$name.'.mp4';
-//        file_put_contents('')
-//        ob_end_clean();
-//        ob_clean();
-//        echo $contents;
-    }
 }
