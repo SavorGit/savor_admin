@@ -933,8 +933,8 @@ class DatareportController extends BaseController {
             $where['a.hotel_name'] = array('like',"%$keywords%");
         }
         if($small_app_id){
-            if($small_app_id == 2){
-                $where['a.small_app_id'] = array('in',array(2,3));
+            if($small_app_id == 1){
+                $where['a.small_app_id'] = array('in',array(1,2,11));
             }else{
                 $where['a.small_app_id'] = $small_app_id;
             }
@@ -977,8 +977,12 @@ class DatareportController extends BaseController {
         $start  = ($page-1) * $size;
         $result = $m_smallapp_forscreen_record->getAllDatas($fields,$where,'a.hotel_id','num desc',$countfields,$start,$size);
         $datalist = $result['list'];
-
+        $hotel_ids = array();
+        foreach ($datalist as $v){
+            $hotel_ids[]=$v['hotel_id'];
+        }
         $res_ohotels = array();
+        $ohotel_ids = array();
         if($result['total']>1 && $page*$size>=$result['total']){
             $hfields = 'a.hotel_id';
             $res_hotel = $m_smallapp_forscreen_record->getAllDatas($hfields,$where,'a.hotel_id','',$countfields,0,10000);
@@ -998,9 +1002,12 @@ class DatareportController extends BaseController {
             foreach ($res_ohotels['list'] as $k=>$v){
                 if(in_array($v['hotel_id'],$now_hotels)){
                     unset($res_ohotels['list'][$k]);
+                }else{
+                    $ohotel_ids[]=$v['hotel_id'];
                 }
             }
         }
+
 
         if($estart_time && $eend_time){
             $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
@@ -1015,30 +1022,27 @@ class DatareportController extends BaseController {
             $eend_time = date('Y-m-d');
             $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
         }
+        $fields = 'a.hotel_id,count(a.id) as num,count(DISTINCT (a.box_mac)) as boxnum';
+        $where['a.hotel_id'] = array('in',$hotel_ids);
+        $res_datalist_b = $m_smallapp_forscreen_record->getDatas($fields,$where,'','a.hotel_id');
+
+        $datalist_b = array();
+        foreach ($res_datalist_b as $v){
+            $datalist_b[$v['hotel_id']] = $v;
+        }
+
         $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
-            //计算时间段B
-            $fields = 'count(a.id) as num';
-            $where['a.hotel_id'] = $v['hotel_id'];
-            $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-            $datalist[$k]['numb'] = $res_info[0]['num'];
-
-//            unset($where['a.create_time']);
-//            $where['_string'] = "DATE(a.create_time)>='$start_time' AND DATE(a.create_time)<='$end_time'";
-//            $fields = "DATE(a.create_time) as screen_createtime,count(DISTINCT (a.box_mac)) as boxnum";
-//            $group = 'screen_createtime';
-//            $res_nums = $m_smallapp_forscreen_record->getInfo($fields,$where,$group,0);
-//            $a_boxnums = 0;
-//            foreach ($res_nums as $vn){
-//                $a_boxnums +=$vn['boxnum'];
-//            }
-
             $b_where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
             $all_box = $m_box->countNums($b_where);
 
-            $fields = "count(DISTINCT (a.box_mac)) as boxnum";
-            $res_nums = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-            $b_boxnums = $res_nums[0]['boxnum'];
+            //计算时间段B
+            $numb = $b_boxnums = 0;
+            if(isset($datalist_b[$v['hotel_id']])){
+                $numb = $datalist_b[$v['hotel_id']]['num'];
+                $b_boxnums = $datalist_b[$v['hotel_id']]['boxnum'];
+            }
+            $datalist[$k]['numb'] = $numb;
             $datalist[$k]['b_boxnum'] = $b_boxnums;
             $datalist[$k]['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
 
@@ -1049,29 +1053,35 @@ class DatareportController extends BaseController {
         }
 
         if(!empty($res_ohotels)){
-            foreach ($res_ohotels['list'] as $v){
-                $fields = 'count(a.id) as num';
-                $where['a.hotel_id'] = $v['hotel_id'];
-                $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-                $v['numb'] = $res_info[0]['num'];
-                $v['num'] = 0;
-                $v['a_boxnum'] = 0;
-                $v['a_coverage'] = 0.00;
+            $fields = 'a.hotel_id,count(a.id) as num,count(DISTINCT (a.box_mac)) as boxnum';
+            $where['a.hotel_id'] = array('in',$ohotel_ids);
+            $res_ohters = $m_smallapp_forscreen_record->getDatas($fields,$where,'','a.hotel_id');
+            $other_hotels = array();
+            foreach ($res_ohters as $v){
+                $other_hotels[$v['hotel_id']] = $v;
+            }
 
+            foreach ($res_ohotels['list'] as $v){
                 $b_where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
                 $all_box = $m_box->countNums($b_where);
 
-                $fields = "count(DISTINCT (a.box_mac)) as boxnum";
-                $res_nums = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-                $b_boxnums = $res_nums[0]['boxnum'];
+                $numb = $b_boxnums = 0;
+                if(isset($other_hotels[$v['hotel_id']])){
+                    $numb = $other_hotels[$v['hotel_id']]['num'];
+                    $b_boxnums = $other_hotels[$v['hotel_id']]['boxnum'];
+                }
+                $v['numb'] = $numb;
+                $v['num'] = 0;
+                $v['a_boxnum'] = 0;
+                $v['a_coverage'] = 0.00;
                 $v['b_boxnum'] = $b_boxnums;
                 $v['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
                 $datalist[] = $v;
             }
         }
 
-        $all_smallapps = C('all_smallapps');
-        unset($all_smallapps[3]);
+
+        $all_smallapps = array('1'=>'用户端','5'=>'销售端');
         $opusers = $this->getOpuser($maintainer_id);
         $this->assign('opusers', $opusers);
         $this->assign('maintainer_id', $maintainer_id);
