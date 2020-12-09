@@ -36,18 +36,36 @@ class CommentController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
         $start  = ($page-1) * $size;
         $m_comment  = new \Admin\Model\Smallapp\CommentModel();
-        $fields = 'a.staff_id,a.id,a.user_id,a.score,a.content,a.status,a.add_time,user.nickName as staff_name,user.avatarUrl as staff_url,
-        staff.hotel_id,staff.room_id,hotel.name as hotel_name,area.region_name as area_name';
+        $fields = 'a.staff_id,a.id,a.user_id,a.score,a.content,a.status,a.add_time,a.box_mac,a.label,a.satisfaction,
+        hotel.id as hotel_id,room.name as room_name,hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_comment->getCommentList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_commenttag = new \Admin\Model\Smallapp\TagsModel();
         $m_commenttagids = new \Admin\Model\Smallapp\CommenttagidsModel();
-        $redis = new \Common\Lib\SavorRedis();
-        $redis->select(15);
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $comment_cacsi = array(
+            '1'=>'很糟糕',
+            '2'=>'一般般',
+            '3'=>'太赞了',
+        );
         foreach ($datalist as $k=>$v){
+            $staff_name = $staff_url = '';
+            if($v['staff_id']>0){
+                $res_staff = $m_staff->getInfo(array('id'=>$v['staff_id']));
+                if(!empty($res_staff)){
+                    $res_user = $m_user->getOne('avatarUrl,nickName',array('openid'=>$res_staff['openid']));
+                    $staff_name = $res_user['nickname'];
+                    $staff_url = $res_user['avatarurl'];
+                }
+            }
+            $datalist[$k]['satisfaction_str'] = $comment_cacsi[$v['satisfaction']];
+            $datalist[$k]['staff_name'] = $staff_name;
+            $datalist[$k]['staff_url'] = $staff_url;
             $res_user = $m_user->getOne('openid',array('id'=>$v['user_id']),'id desc');
             $datalist[$k]['user_openid'] = $res_user['openid'];
             if($v['status']==1){
@@ -55,11 +73,6 @@ class CommentController extends BaseController {
             }else{
                 $datalist[$k]['status_str'] = '禁止显示';
             }
-            $cache_key = 'savor_room_'.$v['room_id'];
-            $redis_room_info = $redis->get($cache_key);
-            $room_info = json_decode($redis_room_info, true);
-            $datalist[$k]['room_name'] = $room_info['name'];
-
             $res_tagids = $m_commenttagids->getDataList('tag_id',array('comment_id'=>$v['id']),'id asc');
             $tag_str = '';
             if(!empty($res_tagids)){

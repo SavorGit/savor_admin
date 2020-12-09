@@ -8,9 +8,9 @@ class CommentModel extends BaseModel{
 
     public function getCommentList($fields,$where,$order,$start=0,$size=5){
         $list = $this->alias('a')
-            ->join('savor_integral_merchant_staff staff on a.staff_id=staff.id','left')
-            ->join('savor_smallapp_user user on staff.openid=user.openid','left')
-            ->join('savor_hotel hotel on staff.hotel_id=hotel.id','left')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on box.room_id=room.id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
             ->join('savor_area_info area on hotel.area_id=area.id','left')
             ->field($fields)
             ->where($where)
@@ -19,9 +19,9 @@ class CommentModel extends BaseModel{
             ->select();
 
         $count = $this->alias('a')
-            ->join('savor_integral_merchant_staff staff on a.staff_id=staff.id','left')
-            ->join('savor_smallapp_user user on staff.openid=user.openid','left')
-            ->join('savor_hotel hotel on staff.hotel_id=hotel.id','left')
+            ->join('savor_box box on a.box_mac=box.mac','left')
+            ->join('savor_room room on box.room_id=room.id','left')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
             ->join('savor_area_info area on hotel.area_id=area.id','left')
             ->field('a.id')
             ->where($where)
