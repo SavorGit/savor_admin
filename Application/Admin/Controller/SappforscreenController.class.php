@@ -210,12 +210,20 @@ class SappforscreenController extends BaseController {
 	        }
 	        $is_success_str = '';
 	        $total_time = '';
-	        $res_track = $m_forscreentrack->getRow('is_success,total_time',array('forscreen_record_id'=>$v['id']));
-	        if(!empty($res_track)){
-                $is_success = $res_track['is_success'];
-                $is_success_str = $this->success_status[$is_success];
-                $total_time = $res_track['total_time'];
+	        if($v['small_app_id']==1){
+                $res_track = $m_forscreentrack->getRow('is_success,total_time',array('forscreen_record_id'=>$v['id']));
+                if(!empty($res_track)){
+                    $is_success = $res_track['is_success'];
+                    $is_success_str = $this->success_status[$is_success];
+                    $total_time = $res_track['total_time'];
+                }
+            }elseif($v['small_app_id']==2){
+	            if(!empty($list['list'][$key]['res_eup_time'])){
+                    $total_time = $list['list'][$key]['res_eup_time'];
+                    $is_success_str = '成功';
+                }
             }
+
             $list['list'][$key]['is_success_str'] = $is_success_str;
             $list['list'][$key]['total_time'] = $total_time;
 	        $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
