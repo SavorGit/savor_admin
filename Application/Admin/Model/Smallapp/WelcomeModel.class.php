@@ -136,6 +136,9 @@ class WelcomeModel extends BaseModel{
 
 
     public function welcome_message($welcome,$playtime){
+        if(in_array($welcome['hotel_id'],array(1100,1029))){
+            $playtime = 50*60;
+        }
         $wordsize_id = $welcome['wordsize_id'];
         $color_id = $welcome['color_id'];
         $backgroundimg_id = $welcome['backgroundimg_id'];
