@@ -15,32 +15,28 @@ class TaskController extends BaseController {
         $this->system_task_content = C('system_task_content');  
     }
     public function index(){
-        
+        $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
-        $this->assign('numPerPage',$size);
-        $start = I('pageNum',1);
-        $this->assign('pageNum',$start);
         $order = I('_order','id');
-        $this->assign('_order',$order);
         $sort = I('_sort','desc');
-        $this->assign('_sort',$sort);
-        $orders = $order.' '.$sort;
-        $start  = ( $start-1 ) * $size;
-        
-        $where = [];
-        $where['flag'] = 1;
+
+        $where = array('a.flag'=>1);
         
         $fields = 'a.id,a.name,a.type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
+        $orders = $order.' '.$sort;
+        $start = ($page-1 ) * $size;
         $list = $m_integral_task->getList($fields, $where, $orders, $start, $size);
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         foreach($list['list'] as $key=>$v){
             $count = $m_task_hotel->where(array('task_id'=>$v['id']))->count();
             $list['list'][$key]['hotel_num'] = $count;
         }
-        //print_r($list['list']);exit;
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->assign('_order',$order);
+        $this->assign('_sort',$sort);
         $this->assign('integral_task_type',$this->integral_task_type);
-        
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
         
