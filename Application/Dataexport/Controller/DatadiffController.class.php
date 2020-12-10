@@ -31,8 +31,8 @@ class DatadiffController extends BaseController{
         $where['a.is_valid'] = 1;
 
         if($small_app_id){
-            if($small_app_id == 2){
-                $where['a.small_app_id'] = array('in',array(2,3));
+            if($small_app_id == 1){
+                $where['a.small_app_id'] = array('in',array(1,2,11));
             }else{
                 $where['a.small_app_id'] = $small_app_id;
             }
@@ -72,8 +72,13 @@ class DatadiffController extends BaseController{
         $countfields = 'COUNT(DISTINCT(a.hotel_id)) AS tp_count';
         $result = $m_smallapp_forscreen_record->getAllDatas($fields,$where,'a.hotel_id','num desc',$countfields,0,10000);
         $datalist = $result['list'];
+        $hotel_ids = array();
+        foreach ($datalist as $v){
+            $hotel_ids[]=$v['hotel_id'];
+        }
 
         $res_ohotels = array();
+        $ohotel_ids = array();
         if($result['total']>0){
             $hfields = 'a.hotel_id';
             $res_hotel = $m_smallapp_forscreen_record->getAllDatas($hfields,$where,'a.hotel_id','',$countfields,0,10000);
@@ -93,6 +98,8 @@ class DatadiffController extends BaseController{
             foreach ($res_ohotels['list'] as $k=>$v){
                 if(in_array($v['hotel_id'],$now_hotels)){
                     unset($res_ohotels['list'][$k]);
+                }else{
+                    $ohotel_ids[]=$v['hotel_id'];
                 }
             }
         }
@@ -110,20 +117,39 @@ class DatadiffController extends BaseController{
             $eend_time = date('Y-m-d');
             $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
         }
+        $fields = 'a.hotel_id,count(a.id) as num,count(DISTINCT (a.box_mac)) as boxnum';
+        $where['a.hotel_id'] = array('in',$hotel_ids);
+        $res_datalist_b = $m_smallapp_forscreen_record->getDatas($fields,$where,'','a.hotel_id');
+
+        $datalist_b = array();
+        foreach ($res_datalist_b as $v){
+            $datalist_b[$v['hotel_id']] = $v;
+        }
+
         $users = array();
         $m_sysuser = new \Admin\Model\UserModel();
         $m_hotelext = new \Admin\Model\HotelExtModel();
         $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
-            $fields = 'count(a.id) as num,a.hotel_id,hotelext.maintainer_id';
-            $where['a.hotel_id'] = $v['hotel_id'];
-            $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
+            $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+            $all_box = $m_box->countNums($b_where);
 
-            $uid = $res_info[0]['maintainer_id'];
-            if(empty($uid)){
-                $res_hotelinfo = $m_hotelext->getInfo(array('hotel_id'=>$v['hotel_id']));
-                $uid = $res_hotelinfo['maintainer_id'];
+            $numb = $b_boxnums = 0;
+            if(isset($datalist_b[$v['hotel_id']])){
+                $numb = $datalist_b[$v['hotel_id']]['num'];
+                $b_boxnums = $datalist_b[$v['hotel_id']]['boxnum'];
             }
+            $datalist[$k]['numb'] = $numb;
+            $datalist[$k]['b_boxnum'] = $b_boxnums;
+            $datalist[$k]['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
+            //时间段A
+            $a_boxnums = $v['boxnum'];
+            $datalist[$k]['a_boxnum'] = $a_boxnums;
+            $datalist[$k]['a_coverage'] = sprintf("%0.2f",$a_boxnums/$all_box);
+
+            $res_hotelinfo = $m_hotelext->getInfo(array('hotel_id'=>$v['hotel_id']));
+            $uid = $res_hotelinfo['maintainer_id'];
+
             if(array_key_exists($uid,$users)){
                 $datalist[$k]['opname'] = $users[$uid]['remark'];
             }else{
@@ -131,35 +157,35 @@ class DatadiffController extends BaseController{
                 $users[$uid] = $res_uinfo;
                 $datalist[$k]['opname'] = $res_uinfo['remark'];
             }
-            $datalist[$k]['numb'] = $res_info[0]['num'];
-
-            $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
-            $all_box = $m_box->countNums($b_where);
-
-            $fields = "count(DISTINCT (a.box_mac)) as boxnum";
-            $res_nums = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-            $b_boxnums = $res_nums[0]['boxnum'];
-            $datalist[$k]['b_boxnum'] = $b_boxnums;
-            $datalist[$k]['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
-
-            //时间段A
-            $a_boxnums = $v['boxnum'];
-            $datalist[$k]['a_boxnum'] = $a_boxnums;
-            $datalist[$k]['a_coverage'] = sprintf("%0.2f",$a_boxnums/$all_box);
-
-
         }
-        if(!empty($res_ohotels)){
-            foreach ($res_ohotels['list'] as $v){
-                $fields = 'count(a.id) as num,hotelext.maintainer_id';
-                $where['a.hotel_id'] = $v['hotel_id'];
-                $res_info = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-                $uid = $res_info[0]['maintainer_id'];
-                if(empty($uid)){
-                    $res_hotelinfo = $m_hotelext->getInfo(array('hotel_id'=>$v['hotel_id']));
-                    $uid = $res_hotelinfo['maintainer_id'];
-                }
 
+        if(!empty($res_ohotels)){
+            $fields = 'a.hotel_id,count(a.id) as num,count(DISTINCT (a.box_mac)) as boxnum';
+            $where['a.hotel_id'] = array('in',$ohotel_ids);
+            $res_ohters = $m_smallapp_forscreen_record->getDatas($fields,$where,'','a.hotel_id');
+            $other_hotels = array();
+            foreach ($res_ohters as $v){
+                $other_hotels[$v['hotel_id']] = $v;
+            }
+
+            foreach ($res_ohotels['list'] as $v){
+                $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
+                $all_box = $m_box->countNums($b_where);
+
+                $numb = $b_boxnums = 0;
+                if(isset($other_hotels[$v['hotel_id']])){
+                    $numb = $other_hotels[$v['hotel_id']]['num'];
+                    $b_boxnums = $other_hotels[$v['hotel_id']]['boxnum'];
+                }
+                $v['numb'] = $numb;
+                $v['num'] = 0;
+                $v['a_boxnum'] = 0;
+                $v['a_coverage'] = 0.00;
+                $v['b_boxnum'] = $b_boxnums;
+                $v['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
+
+                $res_hotelinfo = $m_hotelext->getInfo(array('hotel_id'=>$v['hotel_id']));
+                $uid = $res_hotelinfo['maintainer_id'];
                 if(array_key_exists($uid,$users)){
                     $v['opname'] = $users[$uid]['remark'];
                 }else{
@@ -167,20 +193,6 @@ class DatadiffController extends BaseController{
                     $users[$uid] = $res_uinfo;
                     $v['opname'] = $res_uinfo['remark'];
                 }
-                $v['numb'] = $res_info[0]['num'];
-                $v['num'] = 0;
-                $v['a_boxnum'] = 0;
-                $v['a_coverage'] = 0.00;
-
-                $b_where = array('hotel.id'=>$v['hotel_id'],'box.flag'=>0,'box.state'=>1);
-                $all_box = $m_box->countNums($b_where);
-
-                $fields = "count(DISTINCT (a.box_mac)) as boxnum";
-                $res_nums = $m_smallapp_forscreen_record->getForscreenInfo($fields,$where);
-                $b_boxnums = $res_nums[0]['boxnum'];
-                $v['b_boxnum'] = $b_boxnums;
-                $v['b_coverage'] = sprintf("%0.2f",$b_boxnums/$all_box);
-                
                 $datalist[] = $v;
             }
         }
