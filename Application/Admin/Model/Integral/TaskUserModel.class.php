@@ -55,7 +55,6 @@ class TaskUserModel extends BaseModel{
             $task_info['task_user_id'] = $v['id'];
             $task_content = json_decode($task_info['task_info'],true);
             $openid = $v['openid'];
-
             $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广 4邀请食客评价 5打赏补贴
             if(in_array($task_type,array(4,5))){
                 switch ($dinner_type){
@@ -224,10 +223,11 @@ class TaskUserModel extends BaseModel{
                 echo "task_user_id:{$task_info['task_user_id']}-task_id:{$task_info['id']} gt max_daily_integral $now_integral \r\n";
             }else{
                 $admin_integral = $res_shareprofit['admin_integral'];
+                echo "task_user_id:{$task_info['task_user_id']}-task_id:{$task_info['id']} dinner_type $dinner_type comment_integral $now_integral \r\n";
             }
         }
 
-        if($admin_integral || $now_integral){
+        if($admin_integral>0 || $now_integral>0){
             $integralrecord_data = array('openid'=>$staff_info['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
@@ -333,7 +333,7 @@ class TaskUserModel extends BaseModel{
             }
         }
 
-        if($admin_integral || $now_integral){
+        if($admin_integral>0 || $now_integral>0){
             $integralrecord_data = array('openid'=>$staff_info['openid'],'area_id'=>$box_info['area_id'],'task_id'=>$task_info['id'],
                 'area_name'=>$box_info['area_name'],'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],
                 'hotel_box_type'=>$box_info['hotel_box_type'],'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],
