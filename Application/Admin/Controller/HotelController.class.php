@@ -514,6 +514,9 @@ class HotelController extends BaseController {
 			$vinfo['legal_name']   = $res_hotelext['legal_name'];
 			$vinfo['business_hours']   = $res_hotelext['business_hours'];
 			$vinfo['meal_time']   = $res_hotelext['meal_time'];
+            $vinfo['is_comment']   = $res_hotelext['is_comment'];
+            $vinfo['is_reward']   = $res_hotelext['is_reward'];
+
 			if($res_hotelext['train_date']=='0000-00-00'){
                 $res_hotelext['train_date'] = '';
             }
@@ -723,6 +726,8 @@ class HotelController extends BaseController {
         $trainer_id = I('post.trainer_id',0,'intval');
         $train_date = I('post.train_date','');
         $train_desc = I('post.train_desc','','trim');
+        $is_comment = I('post.is_comment',0,'intval');
+        $is_reward = I('post.is_reward',0,'intval');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -867,6 +872,9 @@ class HotelController extends BaseController {
         if(!empty($meal_time)){
             $data['meal_time'] = $meal_time;
         }
+        $data['is_comment'] = $is_comment;
+        $data['is_reward'] = $is_reward;
+
 
 		$tranDb = new Model();
 		$tranDb->startTrans();
