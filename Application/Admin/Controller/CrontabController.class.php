@@ -3722,6 +3722,15 @@ class CrontabController extends Controller
         $m_task->handle_user_task();
     }
 
+    public function hoteltask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "hoteltask start:$now_time \r\n";
+        $m_task = new \Admin\Model\Integral\TaskHotelModel();
+        $m_task->handle_hotel_task();
+        $now_time = date('Y-m-d H:i:s');
+        echo "hoteltask end:$now_time \r\n";
+    }
+
     public function userwelcome(){
         $now_time = date('Y-m-d H:i:s');
         echo "userwelcome:$now_time \r\n";
