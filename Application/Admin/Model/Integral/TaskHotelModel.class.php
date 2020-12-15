@@ -57,7 +57,7 @@ class TaskHotelModel extends BaseModel{
             $task_info = $v;
             $task_info['integral_boxmac'] = $integral_boxmac;
             $task_content = json_decode($task_info['task_info'],true);
-            $task_type = $task_content['task_type'];//1开机 2互动 3活动推广 4邀请食客评价 5打赏补贴
+            $task_type = $task_info['task_type'];//1开机 2互动 3活动推广 4邀请食客评价 5打赏补贴
 
             switch ($dinner_type){
                 case 1:
