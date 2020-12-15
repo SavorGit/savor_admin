@@ -26,12 +26,8 @@ class TaskHotelModel extends BaseModel{
         $date_h = date('H');
         if($date_h==17){
             $dinner_type = 1;//午饭
-            $sign_begin_time = $now_date." 00:00:00";
-            $sign_end_time = $now_date." 14:00:00";
         }elseif($date_h==23){
             $dinner_type = 2;//晚饭
-            $sign_begin_time = $now_date." 14:00:01";
-            $sign_end_time = $now_date." 21:00:00";
         }else{
             echo "hour $date_h error \r\n";
             exit;
@@ -56,15 +52,11 @@ class TaskHotelModel extends BaseModel{
         $all_config = $m_sysconfig->getAllconfig();
         $integral_boxmac = $all_config['integral_boxmac'];
 
-        $m_task = new \Admin\Model\Integral\TaskModel();
-        $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
         foreach ($res_data as $v){
-            $now_time = date('Y-m-d H:i:s');
             $task_id = $v['id'];
             $task_info = $v;
             $task_info['integral_boxmac'] = $integral_boxmac;
             $task_content = json_decode($task_info['task_info'],true);
-            $hotel_id = $v['hotel_id'];
             $task_type = $task_content['task_type'];//1开机 2互动 3活动推广 4邀请食客评价 5打赏补贴
 
             switch ($dinner_type){
@@ -81,7 +73,7 @@ class TaskHotelModel extends BaseModel{
                     $end_time = '';
             }
             if(empty($begin_time) && empty($end_time)){
-                echo "task_id:$task_id begin and end time error \r\n";
+                echo "hotel_id:{$v['hotel_id']} task_id:$task_id begin and end time error \r\n";
                 continue;
             }
             $fj_bstime = strtotime($begin_time);
@@ -148,10 +140,9 @@ class TaskHotelModel extends BaseModel{
                 break;
         }
         if($now_integral){
-            $tmp_where = array('openid'=>$task_info['hotel_id']);
-            $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
-            $tmp_where['task_id'] = $task_info['id'];
-            $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
+            $task_where = array('openid'=>$task_info['hotel_id'],'task_id'=>$task_info['id']);
+            $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+            $tmp_resintegral = $m_userintegralrecord->field('sum(integral) as total_integral')->where($task_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = $max_daily_integral - $tmp_integral;
@@ -182,7 +173,6 @@ class TaskHotelModel extends BaseModel{
     private function task_commentreward($task_times,$dinner_type,$task_info){
         $begin_time = date('Y-m-d H:i:s',$task_times['fj_bstime']);
         $end_time = date('Y-m-d H:i:s',$task_times['fj_estime']);
-        $task_date = $task_times['task_date'];
 
         $where = array('hotel_id'=>$task_info['hotel_id'],'staff_id'=>0);
         $where['add_time'] = array(array('egt',$begin_time),array('elt',$end_time), 'and');
@@ -236,10 +226,9 @@ class TaskHotelModel extends BaseModel{
                 break;
         }
         if($now_integral){
-            $tmp_where = array('openid'=>$task_info['hotel_id']);
-            $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
-            $tmp_where['task_id'] = $task_info['id'];
-            $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
+            $task_where = array('openid'=>$task_info['hotel_id'],'task_id'=>$task_info['id']);
+            $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
+            $tmp_resintegral = $m_userintegralrecord->field('sum(integral) as total_integral')->where($task_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             if($tmp_integral+$now_integral>$max_daily_integral){
                 $now_integral = $max_daily_integral - $tmp_integral;
