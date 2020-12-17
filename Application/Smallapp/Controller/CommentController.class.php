@@ -48,11 +48,7 @@ class CommentController extends BaseController {
         $m_commenttag = new \Admin\Model\Smallapp\TagsModel();
         $m_commenttagids = new \Admin\Model\Smallapp\CommenttagidsModel();
         $m_staff = new \Admin\Model\Integral\StaffModel();
-        $comment_cacsi = array(
-            '1'=>'很糟糕',
-            '2'=>'一般般',
-            '3'=>'太赞了',
-        );
+        $comment_cacsi = C('COMMENT_SATISFACTION');
         foreach ($datalist as $k=>$v){
             $staff_name = $staff_url = '';
             if($v['staff_id']>0){

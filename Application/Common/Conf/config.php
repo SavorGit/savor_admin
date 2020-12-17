@@ -327,7 +327,11 @@ $config['all_forscreen_actions'] = array(
     '120'=>'发红包',
     '121'=>'扫码抢红包'
 );
-
+$config['COMMENT_SATISFACTION'] = array(
+    '1'=>'很糟糕',
+    '2'=>'一般般',
+    '3'=>'太赞了',
+);
 $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'1','name'=>'主干版小码'),
     array('id'=>'2','name'=>'节目大码'),

@@ -1135,8 +1135,8 @@ class DatareportController extends BaseController {
         $where['a.is_valid'] = 1;
         $where['a.mobile_brand'] = array('neq','devtools');
         if($small_app_id){
-            if($small_app_id == 2){
-                $where['a.small_app_id'] = array('in',array(2,3));
+            if($small_app_id == 1){
+                $where['a.small_app_id'] = array('in',array(1,2,11));
             }else{
                 $where['a.small_app_id'] = $small_app_id;
             }
