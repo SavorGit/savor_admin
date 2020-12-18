@@ -37,6 +37,7 @@ class SappforscreenController extends BaseController {
         $dinnernature_id = I('dinnernature_id',0,'intval');
         $contentsoft_id = I('contentsoft_id',0,'intval');
         $spotstatus = I('spotstatus',0,'intval');
+        $resource_type = I('resource_type',0,'intval');
         $area_id = I('area_id',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $pagenum = I('pageNum',1);
@@ -89,7 +90,9 @@ class SappforscreenController extends BaseController {
                 $where['a.category_id'] = $category_id;
             }
         }
-
+        if($resource_type){
+            $where['a.resource_type'] = $resource_type;
+        }
         if($scene_id){
             $where['a.scene_id'] = $scene_id;
         }
@@ -264,6 +267,7 @@ class SappforscreenController extends BaseController {
 	    $this->assign('is_lablefiter',$is_lablefiter);
 	    $this->assign('all_actions',$all_actions);
 	    $this->assign('source_types',$source_types);
+	    $this->assign('resource_type',$resource_type);
 	    $this->assign('small_apps',$all_smallapps);
 	    $this->assign('small_app_id',$small_app_id);
 	    $this->assign('list',$list['list']);

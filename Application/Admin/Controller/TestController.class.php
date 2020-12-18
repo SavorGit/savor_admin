@@ -2922,5 +2922,40 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($user);
     }
 
+    public function upcommenthotel(){
+        $m_comment = new \Admin\Model\Smallapp\CommentModel();
+        $res_comment = $m_comment->getDataList('*',array());
+        $m_box = new \Admin\Model\BoxModel();
+        foreach ($res_comment as $k=>$v){
+            $fields='hotel.id as hotel_id,box.mac';
+            $where = array('box.mac'=>$v['box_mac'],'box.state'=>1,'box.flag'=>0);
+            $res_box = $m_box->getBoxByCondition($fields,$where);
+            if(!empty($res_box)){
+                $hotel_id = $res_box[0]['hotel_id'];
+                $res = $m_comment->updateData(array('id'=>$v['id']),array('hotel_id'=>$hotel_id));
+                if($res){
+                    echo "comment_id {$v['id']} ok \r\n";
+                }
+            }
+        }
+    }
+
+    public function uprewardhotel(){
+        $m_reward = new \Admin\Model\Smallapp\RewardModel();
+        $res_reward = $m_reward->getDataList('*',array());
+        $m_box = new \Admin\Model\BoxModel();
+        foreach ($res_reward as $v){
+            $fields='hotel.id as hotel_id,box.mac';
+            $where = array('box.mac'=>$v['box_mac'],'box.state'=>1,'box.flag'=>0);
+            $res_box = $m_box->getBoxByCondition($fields,$where);
+            if(!empty($res_box)){
+                $hotel_id = $res_box[0]['hotel_id'];
+                $res = $m_reward->updateData(array('id'=>$v['id']),array('hotel_id'=>$hotel_id));
+                if($res){
+                    echo "reward_id {$v['id']} ok \r\n";
+                }
+            }
+        }
+    }
 
 }
