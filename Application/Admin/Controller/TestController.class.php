@@ -15,7 +15,25 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
 
-    
+    public function pushSapp(){
+        $wechat = new \Common\Lib\Wechat();
+        $data = array(
+            'touser'=>'o5mZpw4cUfhsqqQRroL8oKswnLQ0',
+            'template_id'=>"kTn7TCT1BVbSpE9JASuVgqv5iu8MQ9LgvVBLfSLMLX0",
+            'url'=>"",
+            'miniprogram'=>array('appid'=>'wxfdf0346934bb672f','pagepath'=>'/pages/index/index'),
+            'data'=>array(
+                'first'=>array('value'=>'包间设备异常提醒') ,
+                'keyword1'=>array('value'=>'测试包间电视'),
+                'keyword2'=>array('value'=>'此包间电视未开机，为不影响食客使用及您的积分收益，请及时开机。'),
+                'keyword3'=>array('value'=>date('Y-m-d H:i')),
+                'keyword4'=>array('value'=>'北京热点投屏科技有限公司。'),
+            )
+        );
+        $data = json_encode($data);
+        $res = $wechat->templatesend($data);
+        var_dump($res);
+    }
     public function removeAdsCache(){
         exit();
         $redis = SavorRedis::getInstance();
