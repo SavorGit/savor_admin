@@ -1022,15 +1022,16 @@ class DatareportController extends BaseController {
             $eend_time = date('Y-m-d');
             $where['a.create_time'] = array(array('EGT',$estart_time.' 00:00:00'),array('ELT',$eend_time.' 23:59:59'));
         }
-        $fields = 'a.hotel_id,count(a.id) as num,count(DISTINCT (a.box_mac)) as boxnum';
-        $where['a.hotel_id'] = array('in',$hotel_ids);
-        $res_datalist_b = $m_smallapp_forscreen_record->getDatas($fields,$where,'','a.hotel_id');
-
         $datalist_b = array();
-        foreach ($res_datalist_b as $v){
-            $datalist_b[$v['hotel_id']] = $v;
+        if(!empty($hotel_ids)){
+            $fields = 'a.hotel_id,count(a.id) as num,count(DISTINCT (a.box_mac)) as boxnum';
+            $where['a.hotel_id'] = array('in',$hotel_ids);
+            $res_datalist_b = $m_smallapp_forscreen_record->getDatas($fields,$where,'','a.hotel_id');
+            foreach ($res_datalist_b as $v){
+                $datalist_b[$v['hotel_id']] = $v;
+            }
         }
-
+        
         $m_box = new \Admin\Model\BoxModel();
         foreach ($datalist as $k=>$v){
             $b_where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
