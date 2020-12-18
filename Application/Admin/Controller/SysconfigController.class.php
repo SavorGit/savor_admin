@@ -21,7 +21,7 @@ class SysconfigController extends BaseController {
         //$volume_info = $m_sys_config->getOne('system_default_volume');
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
        
-        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_award_time')";
+        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_award_time','system_for_screen_volume')";
         $volume_arr = $m_sys_config->getList($where);
        
         foreach($volume_arr as $key=>$v){
@@ -29,6 +29,8 @@ class SysconfigController extends BaseController {
                 $info['system_ad_volume'] = $v['config_value'];
             }else if($v['config_key']=='system_pro_screen_volume'){
                 $info['system_pro_screen_volume'] = $v['config_value'];
+            }else if($v['config_key']=='system_for_screen_volume'){
+                $info['system_for_screen_volume'] = $v['config_value'];
             }else if($v['config_key']=='system_demand_video_volume'){
                 $info['system_demand_video_volume'] = $v['config_value'];
             }else if($v['config_key']=='system_tv_volume'){
@@ -130,7 +132,8 @@ class SysconfigController extends BaseController {
         $data['system_pro_screen_volume']   = I('post.system_pro_screen_volume','','trim');    //投屏音量
         $data['system_demand_video_volume'] = I('post.system_demand_video_volume','','trim');   //点播音量
         $data['system_tv_volume']           = I('post.system_tv_volume','','trim');             //电视音量
-        
+        $data['system_for_screen_volume']   = I('post.system_for_screen_volume','','trim');    //夏新电视投屏音量
+
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $ret = $m_sys_config->updateInfo($data);
         
