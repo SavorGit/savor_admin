@@ -89,6 +89,14 @@
                      </select>
                     </div>
                     <div class="form-group col-sm-6 col-xs-12">
+                      <label>资源类型:</label>
+                      <select name="resource_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                        <option <if condition="$resource_type eq 0">selected="selected"</if> value='0' >全部</option>
+                        <option <if condition="$resource_type eq 1">selected="selected"</if>value="1" >图片</option>
+                        <option <if condition="$resource_type eq 2">selected="selected"</if>value="2" >视频</option>
+                      </select>
+                    </div>
+                    <div class="form-group col-sm-6 col-xs-12">
                       <label>投屏动作:</label>
                      <select name="action_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                        <option value=999 >所有</option>
