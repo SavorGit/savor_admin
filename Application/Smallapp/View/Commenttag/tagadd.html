@@ -23,6 +23,20 @@
                 </div>
             </div>
 
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">满意度：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="inline-radio-container">
+                        <volist name=":C('COMMENT_SATISFACTION')" id="vo">
+                            <label class="radio-inline">
+                                <input type="radio" name="satisfaction" id="{$key}" value='{$key}' <if condition="$key eq $vinfo['satisfaction']">checked</if>>
+                                <span>{$vo}</span>
+                            </label>
+                        </volist>
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group row" id="choose_hotel" <if condition="$vinfo['category'] eq 2">style="display:none;"</if>>
                 <label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
                 <div class="col-xs-12 col-sm-10  form-inline">
