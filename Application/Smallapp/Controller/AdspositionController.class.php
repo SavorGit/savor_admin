@@ -1,6 +1,7 @@
 <?php
 namespace Smallapp\Controller;
 use Admin\Controller\BaseController ;
+use Common\Lib\SavorRedis;
 /**
  * @desc 广告位管理
  *
@@ -62,6 +63,13 @@ class AdspositionController extends BaseController {
                 $result = $m_adsposition->addData($data);
             }
             if($result){
+                $redis = SavorRedis::getInstance();
+                $redis->select(1);
+                $keys = "smallapp:adsposition:*";
+                $keys_arr = $redis->keys($keys);
+                foreach($keys_arr as $key=>$v){
+                    $redis->del($v);
+                }
                 $this->output('操作成功!', 'adsposition/adspositionlist');
             }else{
                 $this->output('操作失败', 'adsposition/adspositionadd',2,0);
