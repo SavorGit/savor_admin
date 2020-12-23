@@ -256,8 +256,12 @@ class DishgoodsController extends BaseController {
             $gift_goods_id = I('post.gift_goods_id',0,'intval');
             $tv_media_id = I('post.tv_media_id',0,'intval');
             $tv_media_vid = I('post.tv_media_vid',0,'intval');
-            if($tv_media_vid){
+            if($tv_media_vid>0){
                 $tv_media_id = $tv_media_vid;
+            }elseif($tv_media_id>0){
+                $tv_media_id = $tv_media_id;
+            }else{
+                $tv_media_id = 0;
             }
 
             if($type==22 || $type==23){
