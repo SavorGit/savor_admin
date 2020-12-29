@@ -1,165 +1,157 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/user/index" method="post" >
-    <input type="hidden" name="pageNum" value="{$pageNum}"/>
-    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
-    <input type="hidden" name="_order" value="{$_order}"/>
-    <input type="hidden" name="_sort" value="{$_sort}"/>
-    <div class="searchBar">
-      <div class="clearfix">
-        <div class="form-inline" style="margin-top:3px;">
-        <div class="form-group">
-        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
-          		<input id="sapp_user_s_date" style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
-                <span class="input-group-btn">
-                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-                </span>
-       	 	</div>
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/user/index" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
 
-        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
+                <div class="form-inline">
 
-          		<input id="sapp_user_e_date"    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
-                <span class="input-group-btn"  >
-                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-                </span>
-        	</div>
-        </div>
-        
-        
-        
-          <div class="form-group">
-          <div class="input-group input-group-sm">
-            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
-              	是否授权：
-            </label>
-                <span class="input-group-btn">
-               <select name="is_wx_auth" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                 <option value='-1' >全部</option>
-	                
-	             <option value="0" <if condition="$is_wx_auth eq 0">selected</if>>未授权</option><br>
-	             <option value="1" <if condition="$is_wx_auth eq 1">selected</if>>拒绝授权</option><br>   
-               	 <option value="2" <if condition="$is_wx_auth eq 2">selected</if>>已授权</option><br>
-               </select>
-          </div>
-          </div>
-          <div class="form-group">
-          <div class="input-group input-group-sm">
-            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
-              	小程序类型：
-            </label>
-                <span class="input-group-btn">
-               <select name="small_app_id" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                 <option value=0 >全部</option>
-	                <volist name="small_app_id_arr"  id="vo">
-	                  <option value="{$vo.id}" <if condition="$vo.id eq $small_app_id">selected</if>>{$vo.name}</option><br>
-	                </volist>
-               </select>
-          </div>
-          </div>
-		  <div class="form-group">
-          <div class="input-group input-group-sm">
-            <label style="margin-left: 3px;" class="col-xs-1 col-sm-1 control-label">
-              	性别：
-            </label>
-                <span class="input-group-btn">
-               <select name="gender" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                 <option value='-1' >全部</option>
-	                
-	             <option value="0" <if condition="$gender eq 0">selected</if>>未知</option><br>
-	             <option value="1" <if condition="$gender eq 1">selected</if>>男</option><br>   
-               	 <option value="2" <if condition="$gender eq 2">selected</if>>女</option><br>
-               </select>
-          </div>
-          </div>
-            <div class="form-group" >
-	              <div class="input-group input-group-sm pull-right">
-	                
-		            
-		            <span class="input-group-btn">
-		              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-		            </span>
-	              </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">注册时间：</div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">是否授权：</div>
+                        <div class="input-group">
+                            <select name="is_wx_auth" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value='-1' >全部</option>
+                                <option value="0" <if condition="$is_wx_auth eq 0">selected</if>>未授权</option>
+                                <option value="1" <if condition="$is_wx_auth eq 1">selected</if>>拒绝授权</option>
+                                <option value="2" <if condition="$is_wx_auth eq 2">selected</if>>已授权</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">小程序类型：</div>
+                        <div class="input-group">
+                            <select name="small_app_id" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value='0' >全部</option>
+                                <volist name="small_app_id_arr" id="aname">
+                                    <option <if condition="$small_app_id eq $key">selected="selected"</if>value="{$key}" >{$aname}</option>
+                                </volist>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">性别：</div>
+                        <div class="input-group">
+                            <select name="gender" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value='-1' >全部</option>
+                                <option value="0" <if condition="$gender eq 0">selected</if>>未知</option>
+                                <option value="1" <if condition="$gender eq 1">selected</if>>男</option>
+                                <option value="2" <if condition="$gender eq 2">selected</if>>女</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">是否关注公众号：</div>
+                        <div class="input-group">
+                            <select name="is_subscribe" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value='-1' >全部</option>
+                                <option value="1" <if condition="$is_subscribe eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$is_subscribe eq 0">selected</if>>否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">关注时间：</div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$subscribe_start_date}" data-ymd="true">
+                            <input name="subscribe_start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$subscribe_start_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$subscribe_end_date}" data-ymd="true">
+                            <input name="subscribe_end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$subscribe_end_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
-            
-            
-          <!--   <div class="input-group input-group-sm pull-right">
-              <a id="exportheartlistlog" class="btn btn-success btn-sm add" href="{$host_name}/excel/expheartlost" title="导出心跳数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出心跳数据</a>
-              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
-            </div> -->
-          
         </div>
-      </div>
-    </div>
-  </form>
+    </form>
 </div>
+
 <div class="pageContent" id="pagecontent" style="margin-top:25px;">
-  <div id="w_list_print">
-    <div class="no-more-tables">
-      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
-          <thead>
-          <tr id="post">
-            <th>id</th>
-            <th>小程序版本</th>
-            <th>是否微信授权登陆</th>
-            <th>openid</th>
-            <th>unionid</th>
-            <!-- <th>餐厅人员手机号</th> -->
-            <th>用户头像</th>
-            <th>用户昵称</th>
-            <th>性别</th>
-            <th>创建时间</th>
-            <th>微信服务号openid</th>
-          </tr>
-          </thead>
-          <tbody data-check="list" data-parent=".table">
-            <volist name="data"  id="vlist">
-            <tr target="sid_user">
-              <td data-title="id">{$vlist.id}</td>
-              <td data-title="小程序版本"><if condition="$vlist.small_app_id eq 1">普通版<elseif condition="$vlist.small_app_id eq 2" />老极简版<elseif condition="$vlist.small_app_id eq 3" />极简版<elseif condition="$vlist.small_app_id eq 4" />餐厅版</if></td>
-              <td data-title="是否微信授权登陆"><if condition="$vlist.is_wx_auth eq 1">授权但拒绝<elseif condition="$vlist.is_wx_auth eq 2"  />是<elseif condition="$vlist.is_wx_auth eq 3" />是<else />否</if></td>
-              <td data-title="openid">{$vlist.openid}</td>
-              <td data-title="unionid">{$vlist.unionid}</td>
-              <!-- <td data-title="餐厅人员手机号">{$vlist.mobile}</td> -->
-              <td data-title="用户头像"><img src="{$vlist.avatarurl}" /></td>
-              <td data-title="用户头像">{$vlist.nickname}</td>
-              <td data-title="性别"><if condition="$vlist.gender eq 1">男<elseif condition="$vlist.gender eq 2"  />女<else />未知</if></td>
-              <td data-title="创建时间">{$vlist.create_time}</td>
-              <td data-title="微信服务号openid">{$vlist.mpopenid}</td>
-            </tr>
-            </volist>
-          </tbody>
-        </table>
-      </form>
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>小程序版本</th>
+                        <th>是否微信授权登陆</th>
+                        <th>openid</th>
+                        <th>unionid</th>
+                        <th>用户头像</th>
+                        <th>用户昵称</th>
+                        <th>性别</th>
+                        <th>微信公众号openid</th>
+                        <th>关注时间</th>
+                        <th>创建时间</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="id">{$dinfo.id}</td>
+                            <td data-title="小程序版本">{$dinfo.small_app_id_str}</td>
+                            <td data-title="是否微信授权登陆"><if condition="$dinfo.is_wx_auth eq 1">授权但拒绝<elseif condition="$dinfo.is_wx_auth eq 2"  />是<elseif condition="$dinfo.is_wx_auth eq 3" />是<else />否</if></td>
+                            <td data-title="openid">{$dinfo.openid}</td>
+                            <td data-title="unionid">{$dinfo.unionid}</td>
+                            <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
+                            <td data-title="用户头像">{$dinfo.nickname}</td>
+                            <td data-title="性别"><if condition="$dinfo.gender eq 1">男<elseif condition="$dinfo.gender eq 2"  />女<else />未知</if></td>
+                            <td data-title="微信公众号openid">{$dinfo.wx_mpopenid}</td>
+                            <td data-title="关注时间">{$dinfo.subscribe_time}</td>
+                            <td data-title="创建时间">{$dinfo.create_time}</td>
+                        </tr>
 
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
     </div>
-  </div>
-  {$page}
+    {$page}
 </div>
-<script type="text/javascript">
-
-  $('.date-reset').click(function(){
-    $(this).parent().prev().val('')
-  });
-  $(function(){
-    
-
-    $("#sapp_user_s_date").datetimepicker({
-      minView: "month", //选择日期后，不会再跳转去选择时分秒
-      language:  'zh-CN',
-      format: 'yyyy-mm-dd',
-      todayBtn:  1,
-      autoclose: 1,
-    });
-    $("#sapp_user_e_date").datetimepicker({
-        minView: "month", //选择日期后，不会再跳转去选择时分秒
-        language:  'zh-CN',
-        format: 'yyyy-mm-dd',
-        todayBtn:  1,
-        autoclose: 1,
-      });
-  })
-</script>
