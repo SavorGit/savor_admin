@@ -15,6 +15,21 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
 
+    public function checkOutIp(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(13);
+        $keys = 'heartbeat:*';
+        $keys_arr = $redis->keys($keys);
+  
+        foreach($keys_arr as $key=>$v){
+            $info = $redis->get($v);
+            $info = json_decode($info,true);
+
+            if($info['outside_ip']=='182.18.10.238'){
+                print_r($info);
+            }
+        }
+    }
     public function pushSapp(){
         $wechat = new \Common\Lib\Wechat();
         $data = array(
