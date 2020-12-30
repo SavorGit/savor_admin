@@ -5112,8 +5112,8 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
                 where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id in(246)";
         
         $box_list = M()->query($sql);
-        $start_time = '20201121';
-        $end_time   = '20201130';
+        $start_time = '20201221';
+        $end_time   = '20201230';
         
         
         $data = [];
