@@ -60,7 +60,7 @@ class DishorderController extends BaseController {
                 $where['a.status'] = array('in',array(52,63));
                 break;
             default:
-                $where['a.status'] = array('not in',array(10,11,12));
+                $where['a.status'] = array('not in',array(10,11));
         }
         if($area_id)    $where['area.id']=$area_id;
         if($start_date && $end_date){
