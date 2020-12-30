@@ -367,4 +367,83 @@ class ForscreenController extends BaseController{
         $redis->select(1);
         $redis->set($cache_key,$path,3600);
     }
+
+
+    public function statichotelmealuser(){
+        $start_time = '2019-10-01 00:00:00';
+        $end_time = '2020-11-30 23:59:59';
+        $user_sql = "SELECT openid FROM savor_smallapp_forscreen_record 
+        WHERE create_time >= '$start_time' AND create_time <= '$end_time'
+        and mobile_brand!='devtools' AND is_valid = 1 AND small_app_id in(1,2) AND openid not in (
+        select u.openid from (
+        (select openid from savor_smallapp_user where unionId in(
+        select unionId from savor_smallapp_user where openid in(select openid from savor_integral_merchant_staff group by openid) 
+        and unionId!='' group by unionId
+        ) and small_app_id=1) union (select invalidid as openid from savor_smallapp_forscreen_invalidlist where type=2)
+        ) as u
+        ) 
+        group by openid";
+        $model = M();
+        $res_user = $model->query($user_sql);
+
+        $meal_user = array();
+        foreach ($res_user as $v){
+            $openid = $v['openid'];
+            $forscreen_sql = "SELECT DISTINCT hotel_id FROM savor_smallapp_forscreen_record 
+            WHERE create_time >= '$start_time' AND create_time <= '$end_time' and openid='$openid' AND small_app_id in(1,2)";
+            $res_forscreen_hotel = $model->query($forscreen_sql);
+
+            foreach ($res_forscreen_hotel as $hv){
+                $meal_num = 0;
+                $forscreen_hotel_id = $hv['hotel_id'];
+
+                $forscreen_sql = "SELECT DISTINCT DATE(create_time) as forscreen_date FROM savor_smallapp_forscreen_record 
+            WHERE create_time >= '$start_time' AND create_time <= '$end_time' and openid='$openid' and hotel_id={$forscreen_hotel_id} AND small_app_id in(1,2)";
+                $res_forscreen_date = $model->query($forscreen_sql);
+                foreach ($res_forscreen_date as $dv){
+                    $forscreen_date = $dv['forscreen_date'];
+
+                    $lunch_start_time = date("$forscreen_date 10:00:00");
+                    $lunch_end_time = date("$forscreen_date 14:59:59");
+                    $sql_lunch = "SELECT id,box_mac,hotel_id,hotel_name,create_time FROM savor_smallapp_forscreen_record 
+                WHERE create_time >= '$lunch_start_time' AND create_time <= '$lunch_end_time' and openid='$openid' and hotel_id={$forscreen_hotel_id} AND small_app_id in(1,2)";
+                    $res_lunch = $model->query($sql_lunch);
+                    if(!empty($res_lunch)){
+                        $meal_num++;
+                    }
+                    $dinner_start_time = date("$forscreen_date 17:00:00");
+                    $dinner_end_time = date("$forscreen_date 23:59:59");
+                    $sql_lunch = "SELECT id,box_mac,hotel_id,hotel_name,create_time FROM savor_smallapp_forscreen_record 
+                WHERE create_time >= '$dinner_start_time' AND create_time <= '$dinner_end_time' and openid='$openid' and hotel_id={$forscreen_hotel_id} AND small_app_id in(1,2)";
+                    $res_lunch = $model->query($sql_lunch);
+                    if(!empty($res_lunch)){
+                        $meal_num++;
+                    }
+                }
+                if($meal_num>=2){
+                    $meal_user[$openid][] = array('hotel_id'=>$forscreen_hotel_id,'meal_num'=>$meal_num);
+                    echo "openid: $openid  num: $meal_num \n";
+                }
+            }
+
+        }
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $data = array();
+        foreach ($meal_user as $k=>$v){
+            $res_user = $m_user->getOne('nickName',array('openid'=>$k),'id desc');
+            $meal_num = 0;
+            foreach ($v as $mv){
+                $meal_num = $mv['meal_num'] + $meal_num;
+            }
+            $data[] = array('openid'=>$k,'user_name'=>$res_user['nickname'],'meal_num'=>$meal_num);
+
+        }
+
+        $cell = array(
+            array('openid','用户openid'),
+            array('user_name','昵称'),
+            array('meal_num','使用次数'),
+        );
+        $this->exportToExcel($cell,$data,'同一个酒楼使用过两次以上(两顿饭以上)的用户',2);
+    }
 }
