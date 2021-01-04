@@ -3455,7 +3455,8 @@ class CrontabController extends Controller
         ->where($where)
         ->select();
         
-        $m_forscreen_log = new \Admin\Model\Smallapp\ForscreenRecordModel(); 
+        $m_forscreen_log = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_box = new \Admin\Model\BoxModel();
         $flag = 0;
         foreach($list as $key=>$v){
             $data = array();
@@ -3468,6 +3469,27 @@ class CrontabController extends Controller
             $data['resource_id'] = 0;
             $data['resource_size'] = 0;
             $data['create_time'] = $v['create_time'];
+
+            $bwhere = array('box.mac'=>$v['box_mac'],'box.state'=>1,'box.flag'=>1,'hotel.state'=>1,'hotel.flag'=>0);
+            $bfields = 'hotel.area_id,area.region_name area_name,hotel.id hotel_id,hotel.name hotel_name,room.id room_id,room.name room_name,
+            box.name box_name,box.id box_id,box.is_4g,box.box_type,hotel.hotel_box_type,hotel.is_4g hotel_is_4g';
+            $box_info = $m_box->getDeviceInfoByBoxMac($bfields,$bwhere);
+            if(!empty($box_info)){
+                $box_info = $box_info[0];
+                $data['area_id']    = $box_info['area_id'];
+                $data['area_name']  = $box_info['area_name'];
+                $data['hotel_id']   = $box_info['hotel_id'];
+                $data['hotel_name'] = $box_info['hotel_name'];
+                $data['room_id']    = $box_info['room_id'];
+                $data['room_name']  = $box_info['room_name'];
+                $data['box_id']     = $box_info['box_id'];
+                $data['is_4g']      = $box_info['is_4g'];
+                $data['box_type']   = $box_info['box_type'];
+                $data['hotel_box_type'] = $box_info['hotel_box_type'];
+                $data['hotel_is_4g']= $box_info['hotel_is_4g'];
+                $data['box_name']   = $box_info['box_name'];
+            }
+
             $ret =$m_forscreen_log->addInfo($data,1);
             if($ret){
                 $flag++;
@@ -4400,6 +4422,16 @@ class CrontabController extends Controller
 
         $now_time = date('Y-m-d H:i:s');
         echo "statichoteldata end:$now_time \r\n";
+    }
+
+    public function staticboxdata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticboxdata start:$now_time \r\n";
+        $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $m_staticboxdata->handle_box_data();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticboxdata end:$now_time \r\n";
     }
 
     public function statichotelbasicdata(){
