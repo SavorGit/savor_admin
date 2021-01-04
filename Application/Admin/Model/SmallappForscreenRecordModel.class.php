@@ -382,4 +382,46 @@ class SmallappForscreenRecordModel extends Model{
         }
         return $avgspeed;
     }
+
+    public function getFeastForscreenNumByBox($hotel_id,$box_mac,$time,$fj_type=0,$small_id=1){
+        $feast_time = C('MEAL_TIME');
+        $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
+        $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
+        $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
+        $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:59",$time);
+
+        $where = array('a.hotel_id'=>$hotel_id,'a.box_mac'=>$box_mac);
+        $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
+        $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
+        switch ($fj_type){
+            case 0:
+                $where['_complex'] = array(
+                    $where_lunch,
+                    $where_dinner,
+                    '_logic' => 'or'
+                );
+                break;
+            case 1:
+                $where['a.create_time'] = $where_lunch['a.create_time'];
+                break;
+            case 2:
+                $where['a.create_time'] = $where_dinner['a.create_time'];
+                break;
+        }
+        $where['a.is_valid'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        if($small_id==1){//1主干版 2极简版 5销售端 11游戏
+            $where['a.small_app_id'] = array('in',array(1,2,11));
+        }elseif($small_id==5){
+            $where['a.small_app_id'] = 5;
+        }
+
+        $fields = 'count(a.id) as num';
+        $result = $this->getDatas($fields,$where,'','');
+        $num = 0;
+        if(!empty($result)){
+            $num = intval($result[0]['num']);
+        }
+        return $num;
+    }
 }
