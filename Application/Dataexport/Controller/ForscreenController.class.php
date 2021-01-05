@@ -446,4 +446,43 @@ class ForscreenController extends BaseController{
         );
         $this->exportToExcel($cell,$data,'同一个酒楼使用过两次以上(两顿饭以上)的用户',2);
     }
+
+
+    public function boxinteractnum(){
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $area_id = I('area_id',0,'intval');
+
+        $where = array();
+        if($start_time && $end_time){
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        } else if($start_time && empty($end_time)){
+            $end_time = date('Y-m-d');
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else if(empty($start_time) && !empty($end_time)){
+            $start_time = '2021-01-01';
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else{
+            $start_time = date('Y-m-d',strtotime('-1day'));
+            $end_time = date('Y-m-d',strtotime('-1day'));
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }
+        if($area_id){
+            $where['area_id'] = $area_id;
+        }
+        $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num';
+        $data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','box_mac');
+
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','城市名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('user_lunch_interact_num','午饭互动量'),
+            array('user_dinner_interact_num','晚饭互动量'),
+        );
+        $this->exportToExcel($cell,$data,'版位午饭晚饭互动量统计',1);
+    }
 }

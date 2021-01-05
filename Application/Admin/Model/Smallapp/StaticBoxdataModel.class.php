@@ -1,13 +1,25 @@
 <?php
-
 namespace Admin\Model\Smallapp;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 class StaticBoxdataModel extends BaseModel{
 
 	protected $tableName='smallapp_static_boxdata';
 
-	public function handle_box_data(){
+    public function getCustomDataList($fields,$where,$orderby,$groupby,$start=0,$size=0){
+        if($start >= 0 && $size){
+            $list = $this->field($fields)->where($where)->order($orderby)->group($groupby)->limit($start,$size)->select();
+            $count = $this->where($where)->count();
+            $objPage = new Page($count,$size);
+            $show = $objPage->admin_page();
+            $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+        }else{
+            $data = $this->field($fields)->where($where)->order($orderby)->group($groupby)->select();
+        }
+        return $data;
+    }
 
+	public function handle_box_data(){
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
