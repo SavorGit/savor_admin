@@ -1622,8 +1622,8 @@ class DatareportController extends BaseController {
         }
         $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
         $start = ($page - 1)*$size;
-        $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num';
-        $res_data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','box_mac',$start,$size);
+        $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num,static_date';
+        $res_data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','',$start,$size);
         $datalist = $res_data['list'];
 
         $m_area  = new \Admin\Model\AreaModel();
