@@ -715,16 +715,16 @@ class TestController extends Controller {
     }
 
     public function forscreenboxcache(){
-        exit;
+
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
-        $close_forscreen_boxs = $this->closeboxforscreen();
+//        $close_forscreen_boxs = $this->closeboxforscreen();
 
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.is_open_simple=0 and hotel.id in(372,610,262,281,332,871,251,849,675,818,277,383,618,950,1191,611,870,1192,327,312,330,249,384,271,321,367,1193,952,907,378)";
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
 
@@ -736,17 +736,21 @@ class TestController extends Controller {
 //            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
 //                $v['is_open_simple'] = 0;
 //            }
-            if(isset($close_forscreen_boxs[$v['mac']])){
-                $v['is_interact'] = 0;
-                $v['is_sapp_forscreen'] = 0;
-                $v['is_open_simple'] = 0;
-                $is_open_simple = $v['is_open_simple'];
-                $is_sapp_forscreen = $v['is_sapp_forscreen'];
-                $is_interact = $v['is_interact'];
-                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
-                M()->execute($sql);
-                echo $v['mac']." close ok \n";
-            }
+//            if(isset($close_forscreen_boxs[$v['mac']])){
+//                $v['is_interact'] = 0;
+//                $v['is_sapp_forscreen'] = 0;
+//                $v['is_open_simple'] = 1;
+//                $is_open_simple = $v['is_open_simple'];
+//                $is_sapp_forscreen = $v['is_sapp_forscreen'];
+//                $is_interact = $v['is_interact'];
+//                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+//                M()->execute($sql);
+//                echo $v['mac']." close ok \n";
+//            }
+            $v['is_open_simple'] = 1;
+            $is_open_simple = $v['is_open_simple'];
+            $sql ="update savor_box set is_open_simple={$is_open_simple} where id=".$v['id'].' limit 1';
+            M()->execute($sql);
 
 
             $box_info = array();
@@ -2722,14 +2726,15 @@ group by openid";
     public function hotelbasicdata(){
         ini_set("memory_limit","2048M");
         $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $res_data = $m_statichotelbasicdata->getDataList('*',array(),'id asc');
+        $res_data = $m_statichotelbasicdata->getDataList('id,hotel_id,static_date',array(),'id asc');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $m_heartlog = new \Admin\Model\HeartAllLogModel();
         foreach ($res_data as $v){
             $hotel_id = $v['hotel_id'];
             $time_date = strtotime($v['static_date']);
             $date = date('Ymd',$time_date);
-
+            $meal_heart_num = $m_heartlog->getHotelMealHeart($date,$hotel_id);
+            /*
             $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
             $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
 
@@ -2779,6 +2784,8 @@ group by openid";
                 'lunch_zxrate'=>$lunch_zxrate,'dinner_zxrate'=>$dinner_zxrate,'zxnum'=>$zxnum,'zxrate'=>$zxrate,
                 'interact_sale_signnum'=>$interact_sale_signnum,
             );
+            */
+            $data = array('meal_heart_num'=>$meal_heart_num);
             $res = $m_statichotelbasicdata->updateData(array('id'=>$v['id']),$data);
             if($res){
                 echo "id:{$v['id']}--{$v['static_date']} ok \r\n";
