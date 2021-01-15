@@ -112,6 +112,7 @@
               <th>酒楼名称</th>
               <th>城市</th>
               <th>心跳次数</th>
+              <if condition="$is_admin eq 1"><th>饭点心跳次数</th></if>
               <th>平均网速</th>
               <th>互动次数</th>
               <th>扫码数</th>
@@ -141,6 +142,7 @@
               <td>{$dinfo.hotel_name}</td>
               <td>{$dinfo.area_name}</td>
               <td>{$dinfo.heart_num}</td>
+              <if condition="$is_admin eq 1"><td>{$dinfo.meal_heart_num}</td></if>
               <td>{$dinfo.avg_speed}</td>
               <td>{$dinfo.interact_num}</td>
               <td>{$dinfo.scancode_num}</td>

@@ -44,7 +44,7 @@ class HotelbasicdataController extends BaseController {
         }
 
         $start  = ($page-1) * $size;
-        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
+        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,sum(meal_heart_num) as meal_heart_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
         sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
         sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum";
@@ -105,6 +105,12 @@ class HotelbasicdataController extends BaseController {
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
 
+        $sysuserInfo = session('sysUserInfo');
+        $is_admin = 0;
+        if($sysuserInfo['groupid']==1){
+            $is_admin = 1;
+        }
+
         $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
         $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
         $this->assign('area_id',$area_id);
@@ -116,6 +122,7 @@ class HotelbasicdataController extends BaseController {
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
         $this->assign('opusers',$opusers);
+        $this->assign('is_admin',$is_admin);
         $this->display();
     }
 
