@@ -31,7 +31,7 @@
           <div class="form-group">
             <div class="input-group input-group-sm">用户openid：</div>
             <div class="input-group">
-              <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="酒楼名称">
+              <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="用户openid">
             </div>
           </div>
 
@@ -50,7 +50,7 @@
     </div>
   </form>
 </div>
-<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+<div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables">
       <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
@@ -63,7 +63,7 @@
               <th>投屏版位数</th>
               <th>投屏饭局数</th>
               <th>投屏酒楼数</th>
-              <th>投屏酒楼</th>
+              <!--<th>投屏酒楼</th>-->
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -75,7 +75,7 @@
               <td>{$dinfo.box_num}</td>
               <td>{$dinfo.meal_num}</td>
               <td>{$dinfo.hotel_num}</td>
-              <td>{$dinfo.hotel_names}</td>
+              <!--<td>{$dinfo.hotel_names}</td>-->
             </tr>
           </volist>
 
