@@ -33,8 +33,6 @@ class StaticUserdataModel extends BaseModel{
 	    $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
-        $start = '2021-01-01';
-        $end = '2021-01-13';
         $all_dates = $m_statistics->getDates($start,$end);
 
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
