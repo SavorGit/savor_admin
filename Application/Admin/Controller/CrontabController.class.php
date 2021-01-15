@@ -4444,6 +4444,16 @@ class CrontabController extends Controller
         echo "statichotelbasicdata end:$now_time \r\n";
     }
 
+    public function staticuserdata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticuserdata start:$now_time \r\n";
+        $m_staticuserdata = new \Admin\Model\Smallapp\StaticUserdataModel();
+        $m_staticuserdata->handle_user_data();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticuserdata end:$now_time \r\n";
+    }
+
     public function cleantestdata(){
         $now_time = date('Y-m-d H:i:s');
         echo "cleantestdata start:$now_time \r\n";
