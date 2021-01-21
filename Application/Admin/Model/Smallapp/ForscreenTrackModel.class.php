@@ -103,7 +103,11 @@ class ForscreenTrackModel extends BaseModel{
     }
 
     public function getForscreenSerialNumber($forscreen){
-        $has_img_action = array(2,4,5,12,21,22,30,31);
+	    $map_action = array(46=>4,48=>4,47=>2,49=>2);
+	    if(isset($map_action[$forscreen['action']])){
+            $forscreen['action'] = $map_action[$forscreen['action']];
+        }
+        $has_img_action = array(2,4,5,12,21,22,30,31,32);
         $other_action = array(8,9,11);
 
         if(in_array($forscreen['action'],$has_img_action)){
@@ -112,7 +116,7 @@ class ForscreenTrackModel extends BaseModel{
                 $oss_info = json_decode($forscreen['imgs'],true);
                 $oss_addr = $oss_info[0];
             }
-            if($forscreen['action']==31){
+            if($forscreen['action']==31 || $forscreen['action']==32){
                 if(!empty($forscreen['resource_id'])){
                     $forscreen['forscreen_id'] = $forscreen['resource_id'];
                 }
@@ -234,7 +238,8 @@ class ForscreenTrackModel extends BaseModel{
             if($forscreen_info['action']==5 && $forscreen_info['forscreen_char']=='Happy Birthday'){
                 $forscreen_info['is_exist'] = 1;
             }
-            if($forscreen_info['action']==9){
+
+            if(in_array($forscreen_info['action'],array(9,32,46,47,48,49))){
                 $forscreen_info['is_exist'] = 1;
             }
             if($forscreen_info['action']==4){
@@ -251,7 +256,7 @@ class ForscreenTrackModel extends BaseModel{
                 }
                 $end_time = $track_info['box_downetime'];
             }
-            if($forscreen_info['resource_type']==1){
+            if($forscreen_info['resource_type']==1 && !in_array($forscreen_info['action'],array(32,46,47,48,49))){
                 $m_hearlog = new \Admin\Model\HeartAllLogModel();
                 $date = date('Ymd');
                 $res = $m_hearlog->getOne($forscreen_info['box_mac'],2,$date);
