@@ -3614,8 +3614,6 @@ class CrontabController extends Controller
         $m_redpacket = new \Admin\Model\Smallapp\RedpacketModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
         $m_user = new \Admin\Model\Smallapp\UserModel();
-        $redis  =  \Common\Lib\SavorRedis::getInstance();
-
         $nowdate = date('Y-m-d');
         $nowtime = date('H:i');
         $nowdatetime = date("Y-m-d H:i:s");
@@ -3660,6 +3658,7 @@ class CrontabController extends Controller
                     $money = $redpacket['total_fee'];
                     $num = $redpacket['amount'];
                     $all_money = bonus_random($money,$num,0.3,$money);
+                    $redis  =  \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);
                     $key = C('SAPP_REDPACKET').$trade_no.':bonus';
                     $all_moneys = array('unused'=>$all_money,'used'=>array());
@@ -3719,9 +3718,8 @@ class CrontabController extends Controller
 
 //                    $nowdatetime = date('Y-m-d H:i:s');
 //                    $log_content = $nowdatetime.'[redpacket_id]'.$trade_no."\n";
-//                    $log_fil1 `e_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
+//                    $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
 //                    @file_put_contents($log_file_name, $log_content, FILE_APPEND);
-
                 }
 
             }
