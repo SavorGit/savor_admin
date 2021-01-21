@@ -3043,4 +3043,53 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    public function rewardintegral(){
+        $openid = I('get.oid','','trim');
+        $integral = I('get.integral',0,'intval');
+        $key = I('get.key','');
+        $sign_key = 're@94e20op43eldian';
+        if($key==$sign_key){
+            $m_user_integral = new \Admin\Model\Smallapp\UserIntegralModel();
+            $res = $m_user_integral->getInfo(array('openid'=>$openid));
+            if(!empty($res)){
+                echo '当前积分:'.$res['integral'];
+                echo '===';
+                $now_integral = $res['integral'] + $integral;
+                $data = array('integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
+                $is_up = $m_user_integral->updateData(array('id'=>$res['id']),$data);
+                if($is_up){
+                    echo '更新完积分:'.$now_integral;
+                }
+            }else{
+                $data = array('openid'=>$openid,'integral'=>$integral,'add_time'=>date('Y-m-d H:i:s'));
+                $is_up = $m_user_integral->add($data);
+                if($is_up){
+                    echo '第一次增加积分:'.$integral;
+                }
+            }
+        }
+    }
+
+    public function pushFileToBox(){
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = 'smallapp:fileforscreen:845db8bb98b4b0e3d2bd9d7abbf96b47';
+        $res_cache = $redis->get($cache_key);
+        $resource_list = array();
+        $imgs = json_decode($res_cache, true);
+        if(!empty($imgs)){
+            foreach ($imgs as $v){
+                $filename = str_replace(array('forscreen/','/'),array('','_'),$v);
+                $resource_list[]=array('url'=>$v,'filename'=>$filename);
+            }
+        }
+        $resource_type  = 3;//1视频 2图片 3文件
+        $box_mac = '00226D583F40';
+        $message = array('action'=>171,'resource_type'=>$resource_type,'resource_list'=>$resource_list);
+        echo json_encode($message);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        print_r($res_netty);
+    }
+
 }
