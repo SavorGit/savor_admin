@@ -90,7 +90,112 @@ class ForscreenTrackModel extends BaseModel{
                         }
                         if($is_del && $v['mobile_brand']!='dev4gtools'){
                             $v['forscreen_record_id'] = $v['id'];
-                            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number']);
+                            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
+                                $v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],
+                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
+                            $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
+                            if($res_invalid){
+                                $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function handle_noforscreen_track(){
+        $start_time = date("Y-m-d 00:00:00");
+        $hourtime = date("Y-m-d H", strtotime("-2 hour"));
+        $end_time = "$hourtime:59:59";
+
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+
+        $where = array();
+        $where['create_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $where['small_app_id'] = array('in',array(1,2));
+        $where['mobile_brand'] = array('neq','dev4gtools');
+        $result = $m_forscreen->getDataList('*',$where,'id desc');
+        if(!empty($result)){
+            $redis = new \Common\Lib\SavorRedis();
+            $redis->select(5);
+            $cache_key = C('SAPP_FORSCREENTRACK');
+            foreach ($result as $v){
+                $serial_no = $this->getForscreenSerialNumber($v);
+                if(!empty($serial_no)){
+                    $res_cache = $redis->get($cache_key.$serial_no);
+                    if(!empty($res_cache)){
+                        $data = json_decode($res_cache,true);
+                        unset($data['action']);
+                        if(isset($data['netty_position_result'])){
+                            $data['netty_position_result'] = json_encode($data['netty_position_result']);
+                        }
+                        if(isset($data['netty_result'])){
+                            $data['netty_result'] = json_encode($data['netty_result']);
+                        }
+                        $data['netty_position_url'] = urldecode($data['netty_position_url']);
+                        $data['netty_url'] = str_replace('\\', '',urldecode($data['netty_url']));
+                        $data['oss_stime'] = intval($data['oss_stime']);
+                        $data['oss_etime'] = intval($data['oss_etime']);
+                        $data['forscreen_record_id'] = $v['id'];
+                        $data['serial_number'] = $serial_no;
+                        if(isset($data['box_play_time'])){
+                            $data['box_play_time'] = $data['box_play_time'];
+                        }
+                        if(isset($data['netty_callback_result'])){
+                            if(!empty($data['netty_callback_result'])){
+                                $data['netty_callback_result'] = json_encode($data['netty_callback_result']);
+                            }
+                            $data['netty_callback_time'] = intval($data['netty_callback_time']);
+                        }
+                        $netty_key = $cache_key.$serial_no.'netty_time';
+                        if(empty($data['netty_receive_time'])){
+                            $res_nettycache = $redis->hget($netty_key,'netty_receive_time');
+                            if(!empty($res_nettycache)){
+                                $data['netty_receive_time'] = $res_nettycache;
+                            }
+                        }
+                        if(empty($data['netty_pushbox_time'])){
+                            $res_nettycache = $redis->hget($netty_key,'netty_pushbox_time');
+                            if(!empty($res_nettycache)){
+                                $data['netty_pushbox_time'] = $res_nettycache;
+                            }
+                        }
+
+                        $result = $this->getTrackResult($v,$data);
+                        $data['is_success'] = $result['is_success'];
+                        $data['total_time'] = $result['total_time'];
+                        $res_track = $this->field('id')->where(array('forscreen_record_id'=>$v['id']))->order('id desc')->find();
+                        if(empty($res_track)){
+                            $this->add($data);
+                            echo "ID: {$v['id']} time:{$v['create_time']} track is_success:{$result['is_success']} ok \r\n";
+                        }
+                        /*if(!empty($res_track)){
+                            $id = $res_track['id'];
+                            $this->where(array('id'=>$id))->save($data);
+                        }else{
+                            $this->add($data);
+                        }*/
+                        $is_del = 0;
+                        if(isset($data['netty_position_result'])){
+                            $netty_position_result = json_decode($data['netty_position_result'],true);
+                            if($netty_position_result['code']==10008){
+                                $is_del = 1;
+                            }
+                        }else{
+                            if(isset($data['netty_result'])){
+                                $netty_result = json_decode($data['netty_result'],true);
+                                if($netty_result['code']==10008){
+                                    $is_del = 1;
+                                }
+                            }
+                        }
+                        if($is_del && $v['mobile_brand']!='dev4gtools'){
+                            $v['forscreen_record_id'] = $v['id'];
+                            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
+                                $v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],
+                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
                             $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
                             if($res_invalid){
                                 $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
@@ -256,16 +361,16 @@ class ForscreenTrackModel extends BaseModel{
                 }
                 $end_time = $track_info['box_downetime'];
             }
-            if($forscreen_info['resource_type']==1 && !in_array($forscreen_info['action'],array(32,46,47,48,49))){
-                $m_hearlog = new \Admin\Model\HeartAllLogModel();
-                $date = date('Ymd');
-                $res = $m_hearlog->getOne($forscreen_info['box_mac'],2,$date);
-                if(!empty($res) && $res['apk_version']>='2.1.0'){
-                    if(empty($track_info['box_play_time'])){
-                        $begin_time = $end_time = '';
-                    }
-                }
-            }
+//            if($forscreen_info['resource_type']==1 && !in_array($forscreen_info['action'],array(32,46,47,48,49))){
+//                $m_hearlog = new \Admin\Model\HeartAllLogModel();
+//                $date = date('Ymd');
+//                $res = $m_hearlog->getOne($forscreen_info['box_mac'],2,$date);
+//                if(!empty($res) && $res['apk_version']>='2.1.0'){
+//                    if(empty($track_info['box_play_time'])){
+//                        $begin_time = $end_time = '';
+//                    }
+//                }
+//            }
             if($begin_time && $end_time){
                 $is_success = 1;
 //                $total_time = ($end_time-$begin_time)/1000;

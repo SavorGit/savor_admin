@@ -3778,6 +3778,15 @@ class CrontabController extends Controller
         $m_forscreentrack->handle_forscreen_track();
     }
 
+    public function forscreennotrack(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreennotrack start:$now_time \r\n";
+        $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
+        $m_forscreentrack->handle_noforscreen_track();
+        echo "forscreennotrack end:$now_time \r\n";
+    }
+
+
     public function pushrebootbox(){
         $now_time = date('Y-m-d H:i:s');
         echo "pushrebootbox:$now_time \r\n";
