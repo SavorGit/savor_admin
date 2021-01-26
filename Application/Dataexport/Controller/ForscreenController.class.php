@@ -486,4 +486,74 @@ class ForscreenController extends BaseController{
         );
         $this->exportToExcel($cell,$data,'版位午饭晚饭互动量统计',1);
     }
+
+    public function boxforscreenerror(){
+        $sql = "SELECT * FROM savor_smallapp_forscreen_record WHERE 
+          create_time >= '2021-01-25 00:00:00' AND create_time <= '2021-01-25 23:59:59'";
+
+        $model = M();
+        $res = $model->query($sql);
+        $data = array();
+        $all_box_type = C('hotel_box_type');
+        $error_num = array();
+        $no_error_num = array();
+        $fail_error_num = array();
+        $fail_error_wifi_num = array();
+        foreach ($res as $v){
+            $sql_track = "select * FROM `savor_smallapp_forscreen_track` where forscreen_record_id={$v['id']} order by id asc ";
+            $res_track = $model->query($sql_track);
+            if(!empty($res_track) && $res_track[0]['is_success']==0){
+                $error_num[]=$v['id'];
+                $track_info = $res_track[0];
+
+                if($track_info['position_nettystime']>0 && $track_info['position_nettystime']>0 && $track_info['request_nettytime']>0 && $track_info['netty_receive_time']>0
+                    && $track_info['netty_pushbox_time']>0 && $track_info['box_receivetime']>0 && $track_info['box_downstime']>0 && $track_info['box_downetime']>0) {
+                    $netty_result = json_decode($track_info['netty_result'], true);
+                    if ($netty_result['code'] == 10000) {
+                        $no_error_num[] = $v['id'];
+                    }else{
+                        $fail_error_num[]=$v['id'];
+                        if($v['is_4g']==0){
+                            $fail_error_wifi_num[$v['box_mac']][]=$v['id'];
+                        }
+                    }
+//                $info = array('hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],
+//                    'box_name'=>$v['box_name'],'box_mac'=>$v['box_mac']);
+//                if($v['is_4g']==1){
+//                    $info['is_4gstr'] = '是';
+//                }else{
+//                    $info['is_4gstr'] = '否';
+//                }
+//                $info['box_type_str'] = $all_box_type[$v['box_type']];
+//                $data[$v['box_mac']] = $info;
+                }else{
+                    $fail_error_num[]=$v['id'];
+                    if($v['is_4g']==0){
+//                        $fail_error_wifi_num[]=$v['id'];
+                        $fail_error_wifi_num[$v['box_mac']][]=$v['id'];
+                    }
+                }
+            }
+        }
+        echo count($error_num);
+        echo '====';
+        echo count($no_error_num);
+        echo '====';
+        echo count($fail_error_wifi_num);
+        echo '====';
+        print_r($fail_error_wifi_num);
+        exit;
+//        $data = array_values($data);
+//        $cell = array(
+//            array('hotel_name','酒楼名称'),
+//            array('area_name','城市名称'),
+//            array('box_name','版位名称'),
+//            array('box_mac','版位MAC'),
+//            array('is_4gstr','是否4G'),
+//            array('box_type_str','版位类型')
+//        );
+//        $this->exportToExcel($cell,$data,'投屏错误版位统计',1);
+    }
+
+
 }
