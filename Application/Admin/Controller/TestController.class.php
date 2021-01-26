@@ -3092,4 +3092,53 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($res_netty);
     }
 
+    public function track(){
+        $time_str = "add_time>='2021-01-25 00:00:00' and add_time<='2021-01-26 23:59:59' and is_success=0";
+        $sql = "SELECT * FROM `savor_smallapp_forscreen_track` where {$time_str}";
+        $model = M();
+        $res = $model->query($sql);
+        foreach ($res as $v){
+            $forscreen_record_id = $v['forscreen_record_id'];
+            $sql_f = "select * from savor_smallapp_forscreen_record where id={$forscreen_record_id}";
+            $res_f = $model->query($sql_f);
+            if(!empty($res_f) && $res_f[0]['is_exist']==1){
+                $v['box_downstime'] = 1;
+                $v['box_downetime'] = 1;
+            }
+
+            if($v['position_nettystime']>0 && $v['position_nettystime']>0 && $v['request_nettytime']>0 && $v['netty_receive_time']>0
+            && $v['netty_pushbox_time']>0 && $v['box_receivetime']>0 && $v['box_downstime']>0 && $v['box_downetime']>0){
+                $netty_result = json_decode($v['netty_result'],true);
+                if($netty_result['code']==10000){
+                    $track_info = $v;
+                    $oss_timeconsume = $track_info['oss_etime']-$track_info['oss_stime'];
+                    $netty_position_timeconsume = 0;
+                    if($track_info['request_nettytime']){
+                        $netty_position_timeconsume = $track_info['request_nettytime']-$track_info['position_nettystime'];
+                    }
+                    $netty_timeconsume = 0;
+                    if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
+                        if($track_info['netty_callback_time']){
+                            $netty_timeconsume = $track_info['netty_callback_time']-$track_info['netty_receive_time'];
+                        }else{
+                            $netty_timeconsume = $track_info['netty_pushbox_time']-$track_info['netty_receive_time'];
+                        }
+                    }
+                    $box_down_timeconsume = 0;
+                    if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
+                        $box_down_timeconsume = $track_info['box_downetime']-$track_info['box_downstime'];
+                    }
+                    $total_time = ($oss_timeconsume+$netty_position_timeconsume+$netty_timeconsume+$box_down_timeconsume)/1000;
+
+                    $sql_up = "update savor_smallapp_forscreen_track set is_success=1,total_time='{$total_time}' where id={$v['id']}";
+                    $res_up = $model->execute($sql_up);
+                    if($res_up){
+                        echo "ID: {$v['id']} ok \r\n";
+                    }
+                }
+
+            }
+        }
+    }
+
 }
