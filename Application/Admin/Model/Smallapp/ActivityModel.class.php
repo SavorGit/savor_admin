@@ -77,7 +77,7 @@ class ActivityModel extends BaseModel{
         */
         $start_time = date('Y-m-d 00:00:00');
         $end_time = date('Y-m-d 23:59:59');
-        $where = array('status'=>array('in',array('1','0')));
+        $where = array('status'=>array('in',array('1','0')),'type'=>1);
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $res = $this->getDataList('*',$where,'id asc');
         if(empty($res)){
