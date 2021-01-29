@@ -138,6 +138,7 @@ class SmallappForscreenRecordModel extends Model{
     }
 
     public function cleanTestdata(){
+        ini_set("memory_limit","2048M");
         $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
         $orderby = 'id desc';
         $res_list = $m_invalid->getDataList('*','',$orderby);

@@ -114,9 +114,10 @@ class CollectforscreenController extends BaseController {
             }
             $list['list'][$key]['is_4g_str'] = $is_4g_str;
             $success_str = '';
-            if($v['small_app_id']==1){
+            if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121,42,43,44,45,52))){
                 $success_str = $this->success_status[$v['success_status']];
             }
+
             $list['list'][$key]['success_str'] = $success_str;
             $list['list'][$key]['total_time'] = $v['total_time'];
             $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
