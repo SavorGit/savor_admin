@@ -699,6 +699,7 @@ $config['SAPP_PAGEVIEW_LOG']     ='smallap:pageview:log:';
 $config['VM_HOTEL_LIST']         ='vsmall_hotel_list';
 $config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
 $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
+$config['SMALLAPP_MARQUEE_ADS']   = 'smallapp:marquee:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
