@@ -177,7 +177,7 @@ class ActivityModel extends BaseModel{
 
         $start_time = date('Y-m-d 00:00:00');
         $end_time = date('Y-m-d 23:59:59');
-        $where = array('status'=>1);
+        $where = array('status'=>1,'type'=>1);
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $res = $this->getDataList('*',$where,'id desc');
         if(empty($res)){
@@ -390,7 +390,7 @@ class ActivityModel extends BaseModel{
     public function pushLotteryToWeixin(){
         $now_endtime = time() - 300;
         $now_endtime = date('Y-m-d H:i:s',$now_endtime);
-        $where = array('status'=>2);
+        $where = array('status'=>2,'type'=>1);
         $where['lottery_time'] = array('egt',$now_endtime);
         $res = $this->getDataList('*',$where,'id desc');
         if(empty($res)){
