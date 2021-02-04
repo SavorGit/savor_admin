@@ -555,5 +555,163 @@ class ForscreenController extends BaseController{
 //        $this->exportToExcel($cell,$data,'投屏错误版位统计',1);
     }
 
+    public function boxforscreen(){
+        ini_set("memory_limit","2048M");
+        $sql = "SELECT * FROM `savor_smallapp_forscreen_record` where create_time>='2021-01-25 00:00:00' and create_time<='2021-01-30 23:59:59' 
+        and (action in(4,30,31) or (action=2 and resource_type=2))";
+        $model = M();
+        $res = $model->query($sql);
+        $data = array();
+        $all_box_type = C('hotel_box_type');
+        $all_actions = array(
+            '2-2'=>'视频',
+            '4'=>'图片',
+            '30'=>'文件',
+            '31'=>'文件图片',
+        );
+        $all_forscreen_status = array('0'=>'失败','1'=>'成功','2'=>'打断','3'=>'退出');
+        foreach ($res as $v){
+            $aciton = $v['action'];
+            if($aciton==2){
+                $aciton = $v['action'].'-'.$v['resource_type'];
+            }
+            $sql_track = "select * FROM `savor_smallapp_forscreen_track` where forscreen_record_id={$v['id']} order by id asc limit 1";
+            $res_track = $model->query($sql_track);
+            if(!empty($res_track)){
+                $track_info = $res_track[0];
+                $box_mac = $v['box_mac'];
+
+                $info = array('area_name'=>$v['area_name'],'hotel_name'=>$v['hotel_name'],'box_name'=>$v['box_name'],'box_mac'=>$v['box_mac']);
+                if($v['is_4g']==1){
+                    $info['is_4gstr'] = '4G';
+                }else{
+                    $info['is_4gstr'] = 'wifi';
+                }
+                $info['box_type_str'] = $all_box_type[$v['box_type']];
+                if(!empty($v['resource_size'])){
+                    $info['resource_size'] = formatBytes($v['resource_size']);
+                }else {
+                    $info['resource_size'] = '';
+                }
+                $info['action_str'] = $all_actions[$aciton];
+                $info['success_str'] = $all_forscreen_status[$track_info['is_success']];
+                $info['oss_time'] = '';
+                if(!empty($track_info['oss_stime']) && !empty($track_info['oss_etime'])){
+                    $info['oss_time'] = ($track_info['oss_etime'] - $track_info['oss_stime']) /1000 ;
+                }
+                $info['total_time'] = $track_info['total_time'];
+                $sql_12 = "SELECT count(*) as num FROM `savor_smallapp_forscreen_record` where create_time>='2020-12-01 00:00:00' and create_time<='2020-12-31 23:59:59' 
+                and box_mac='{$box_mac}'";
+                $num12 = 0;
+                $res_nums = $model->query($sql_12);
+                if(!empty($res_nums)){
+                    $num12 = intval($res_nums[0]['num']);
+                }
+                $info['num12'] = $num12;
+                $sql_11 = "SELECT count(*) as num FROM `savor_smallapp_forscreen_record` where create_time>='2020-11-01 00:00:00' and create_time<='2020-11-31 23:59:59' 
+                and box_mac='{$box_mac}'";
+                $num11 = 0;
+                $res_nums = $model->query($sql_11);
+                if(!empty($res_nums)){
+                    $num11 = intval($res_nums[0]['num']);
+                }
+                $info['num11'] = $num11;
+                $data[] = $info;
+            }
+        }
+        $cell = array(
+            array('area_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('is_4gstr','版位属性'),
+            array('box_type_str','版位类型'),
+            array('action_str','投屏资源类型'),
+            array('resource_size','文件大小'),
+            array('success_str','是否失败'),
+            array('oss_time','上传用时'),
+            array('total_time','总体用时'),
+            array('num12','12月互动数'),
+            array('num11','11月互动数'),
+        );
+        $this->exportToExcel($cell,$data,'投屏数据统计',2);
+    }
+
+    public function forscreenbox(){
+        $file_path = SITE_TP_PATH.'/Public/content/副本实验组不可投屏投屏版位.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_smallapp_boxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $data = array();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $row_info = $rowData[0];
+                $info = array('id'=>$row_info[0],'status'=>$row_info[1],'box_mac'=>$row_info[2],
+                    'box_name'=>$row_info[3],'tv_status'=>$row_info[4],'hotel_name'=>$row_info[5],
+                    'tv_type'=>$row_info[6]
+                    );
+
+                $fields = 'count(a.id) as num';
+                $start_time = '2021-01-01 00:00:00';
+                $end_time = '2021-01-31 23:59:59';
+                $where = array('a.create_time'=>array(array('EGT',$start_time),array('ELT',$end_time)),'a.box_mac'=>$info['box_mac']);
+                $where['a.small_app_id'] = array('in',array(1,2,11));
+                $where['a.is_valid'] = 1;
+                $where['a.mobile_brand'] = array('neq','devtools');
+                $res_forscreen = $m_smallapp_forscreen_record->getDatas($fields,$where,'','');
+                $hd_num = 0;
+                if(!empty($res_forscreen)){
+                    $hd_num = intval($res_forscreen[0]['num']);
+                }
+                $fj_lunch_num = $fj_dinner_num = 0;
+                $fj_fields = 'count(id) as num';
+                $start_date = '2021-01-01';
+                $end_date = '2021-01-31';
+                $fj_lunch_where = array('box_mac'=>$info['box_mac'],'static_date'=>array(array('EGT',$start_date),array('ELT',$end_date)),
+                    'user_lunch_interact_num'=>array('gt',0));
+                $res_lunchfj = $m_smallapp_boxdata->getDataList($fj_fields,$fj_lunch_where,'id desc');
+                if(!empty($res_lunchfj)){
+                    $fj_lunch_num = intval($res_lunchfj[0]['num']);
+                }
+
+                $fj_dinner_where = array('box_mac'=>$info['box_mac'],'static_date'=>array(array('EGT',$start_date),array('ELT',$end_date)),
+                    'user_dinner_interact_num'=>array('gt',0));
+                $res_dinnerfj = $m_smallapp_boxdata->getDataList($fj_fields,$fj_dinner_where,'id desc');
+                if(!empty($res_dinnerfj)){
+                    $fj_dinner_num = intval($res_dinnerfj[0]['num']);
+                }
+                $fj_num = $fj_lunch_num + $fj_dinner_num;
+                $info['hd_num'] = $hd_num;
+                $info['fj_num'] = $fj_num;
+                $data[]=$info;
+            }
+        }
+
+        $cell = array(
+            array('id','ID'),
+            array('status','状态'),
+            array('box_mac','mac地址'),
+            array('box_name','版位名称'),
+            array('tv_status','电视状态'),
+            array('hotel_name','酒楼名称'),
+            array('tv_type','屏幕类型'),
+            array('hd_num','1月互动数'),
+            array('fj_num','1月互动饭局数'),
+        );
+        $this->exportToExcel($cell,$data,'副本实验组不可投屏投屏版位',1);
+
+    }
+
 
 }
