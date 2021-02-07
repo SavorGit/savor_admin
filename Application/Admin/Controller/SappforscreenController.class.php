@@ -169,7 +169,7 @@ class SappforscreenController extends BaseController {
 
             $list['list'][$key]['quality_typestr'] = $quality_types[$v['quality_type']];
 	        $is_track = 0;
-	        if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121,42,43,44,45,52,54))){
+	        if($v['small_app_id']==1 && !in_array($v['action'],array(13,14,21,50,101,120,121,42,43,44,45,52,54))){
 	            if($v['create_time']>=$track_start_time){
                     $is_track = 1;
                 }
