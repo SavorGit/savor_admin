@@ -7053,17 +7053,24 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
     public function exportBoxinteract(){
         $area_id = I('aid',236,'intval');
-        $sql = "select box.mac as box_mac,box.name as box_name,room.name as room_name,hotel.name as hotel_name,hotel.id as hotel_id,area.region_name as area_name
-        from savor_box as box left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id 
-        left join savor_area_info as area on hotel.area_id=area.id where hotel.area_id={$area_id} and box.state=1 and box.flag=0 and box.is_interact=1";
-        $data = M()->query($sql);
-
+        $sql = "select box.mac as box_mac,box.name as box_name,room.name as room_name,hotel.name as hotel_name,hotel.id as hotel_id,area.region_name as area_name,ext.maintainer_id
+        from savor_box as box left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id left join savor_hotel_ext as ext
+        on hotel.id=ext.hotel_id left join savor_area_info as area on hotel.area_id=area.id where hotel.area_id={$area_id} and box.state=1 and box.flag=0 and box.is_interact=1";
+        $res_data = M()->query($sql);
+        $data = array();
+        foreach ($res_data as $v){
+            $sql_u = "select * from savor_sysuser where id={$v['maintainer_id']}";
+            $res_u = M()->query($sql_u);
+            $v['maintainer_name'] = $res_u[0]['remark'];
+            $data[]=$v;
+        }
         $xlsCell = array(
             array('box_mac','版位MAC'),
             array('box_name','版位名称'),
             array('room_name','包间名称'),
             array('hotel_name','酒楼名称'),
             array('area_name','地区'),
+            array('maintainer_name','合作维护人'),
         );
         $xlsName = '正常互动屏版位明细';
         $filename = 'boxinteract';

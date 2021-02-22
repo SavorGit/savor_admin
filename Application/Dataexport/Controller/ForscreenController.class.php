@@ -713,5 +713,47 @@ class ForscreenController extends BaseController{
 
     }
 
+    public function boxforscreennum(){
+        ini_set("memory_limit","2048M");
+        $start_time = '2020-08-21 00:00:00';
+        $end_time = '2021-02-21 23:59:59';
+        $sql = "select area_id,area_name,hotel_id,hotel_name from savor_smallapp_forscreen_record where create_time>='$start_time' and create_time<='$end_time' and small_app_id in(1,2,11) and hotel_id>0 and mobile_brand!='devtools' group by hotel_id";
+        $model = M();
+        $res = $model->query($sql);
+        $data = array();
+        foreach ($res as $v){
+            $hotel_id = $v['hotel_id'];
+            $hotel_name = $v['hotel_name'];
+            $area_name = $v['area_name'];
+            $sql_maintainer = "select ext.maintainer_id,user.remark as uname from savor_hotel_ext as ext left join savor_sysuser as user on ext.maintainer_id=user.id where ext.hotel_id={$hotel_id}";
+            $res_maintainer = $model->query($sql_maintainer);
+            $maintainer_name = '';
+            if(!empty($res_maintainer)){
+                $maintainer_name = $res_maintainer[0]['uname'];
+            }
+            $sql_box = "select box_mac,box_name,count(*) as num,count(DISTINCT DATE(create_time)) as date_num from savor_smallapp_forscreen_record where hotel_id={$hotel_id} and create_time>='{$start_time}' and create_time<='{$end_time}'
+            and small_app_id in(1,2,11) and mobile_brand!='devtools' group by box_mac";
+            $res_boxs = $model->query($sql_box);
+            if(!empty($res_boxs)){
+                foreach ($res_boxs as $bv){
+                    $info = array('area_name'=>$area_name,'hotel_name'=>$hotel_name,'maintainer_name'=>$maintainer_name,'box_name'=>$bv['box_name'],
+                        'box_mac'=>$bv['box_mac'],'forscreen_num'=>$bv['num'],'forscreen_date_num'=>$bv['date_num']);
+                    $data[]=$info;
+                }
+                echo "hotel_id: $hotel_id ok \r\n";
+            }
+        }
+
+        $cell = array(
+            array('area_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('forscreen_num','互动量'),
+            array('forscreen_date_num','互动天数'),
+            array('maintainer_name','维护人'),
+        );
+        $this->exportToExcel($cell,$data,'投屏版位数据统计',2);
+    }
 
 }
