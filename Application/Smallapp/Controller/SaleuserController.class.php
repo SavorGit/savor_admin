@@ -55,7 +55,6 @@ class SaleuserController extends BaseController {
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
 
-        $integral_types = array('1'=>'开机','2'=>'互动','3'=>'销售','4'=>'兑换');
         $where = array('openid'=>$openid);
         if($hotel_name){
             $where['hotel_name'] = array('like',"%$hotel_name%");
@@ -79,6 +78,7 @@ class SaleuserController extends BaseController {
         $res_list = $m_integral_record->getDataList('*',$where,'id desc',$start,$size);
         $data_list = $res_list['list'];
         $m_goods = new \Admin\Model\Smallapp\GoodsModel();
+        $integral_types = C('INTEGRAL_TYPES');
         foreach ($data_list as $k=>$v){
             $info = '';
             switch ($v['type']){
@@ -95,9 +95,12 @@ class SaleuserController extends BaseController {
                     break;
                 case 3:
                 case 4:
+                case 5:
                     $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
                     $info = $integral_types[$v['type']].'商品：'.$goods_info['name'].' 数量：'.$v['content'];
                     break;
+                default:
+                    $info = $integral_types[$v['type']];;
             }
             $data_list[$k]['info'] = $info;
             $status_str = '';
@@ -119,6 +122,7 @@ class SaleuserController extends BaseController {
             $res_integral = $m_uintegral->getInfo(array('openid'=>$openid));
             $integral = intval($res_integral['integral']);
         }
+        unset($integral_types[5]);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('data',$data_list);

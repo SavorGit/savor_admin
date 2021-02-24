@@ -883,9 +883,18 @@ $config['ACTIVITY_KINGMEAL'] = array(
         array('hotel_id'=>1056,'dish'=>'剁椒蒸鱼咀1份','start_time'=>'2020-09-03 19:40:00','end_time'=>'2020-09-03 20:05:00',
             'lottery_time'=>'2020-09-03 20:10:00','dish_img'=>'lottery/activity/djzyz.jpg'),
     ),
+);
 
-
-
+$config['INTEGRAL_TYPES'] = array(
+    1=>'开机',
+    2=>'互动',
+    3=>'销售',
+    4=>'兑换',
+    5=>'退回',
+    6=>'活动促销',
+    7=>'评价奖励',
+    8=>'评价补贴',
+    9=>'分配',
 );
 
 return $config;
