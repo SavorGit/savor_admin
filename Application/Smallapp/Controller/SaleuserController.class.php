@@ -133,5 +133,53 @@ class SaleuserController extends BaseController {
         $this->display('integrallist');
     }
 
+    public function addintegral(){
+        $max_integral = 300000;
+        $openid = I('openid','','trim');
+        $m_user_integral = new \Admin\Model\Smallapp\UserIntegralModel();
+        $res = $m_user_integral->getInfo(array('openid'=>$openid));
+        if(IS_POST){
+            $integral = I('post.integral',0,'intval');
+            $msg = '更新成功';
+            if($integral>$max_integral){
+                $this->output('请输入小于'.$max_integral.'积分', 'saleuser/addintegral',2,0);
+            }
+            if($integral>0){
+                if(!empty($res)){
+                    $now_integral = $res['integral'] + $integral;
+                    $data = array('integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
+                    $is_up = $m_user_integral->updateData(array('id'=>$res['id']),$data);
+                    if($is_up){
+                        $msg =  '更新完积分:'.$now_integral;
+                    }
+                }else{
+                    $data = array('openid'=>$openid,'integral'=>$integral,'add_time'=>date('Y-m-d H:i:s'));
+                    $is_up = $m_user_integral->add($data);
+                    if($is_up){
+                        $msg =  '第一次增加积分:'.$integral;
+                    }
+                }
+            }
+            $this->output($msg, 'saleuser/userlist');
+
+        }else{
+            $integral = 0;
+            if(!empty($res)){
+                $integral = $res['integral'];
+            }
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $fields = "id,avatarUrl,nickName";
+            $userinfo = $m_user->getOne($fields,array('openid'=>$openid),'id desc');
+
+            $this->assign('userinfo',$userinfo);
+            $this->assign('openid',$openid);
+            $this->assign('integral',$integral);
+            $this->assign('max_integral',$max_integral);
+            $this->display('addintegral');
+        }
+
+
+    }
+
 
 }
