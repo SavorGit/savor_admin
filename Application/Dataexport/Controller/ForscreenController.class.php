@@ -717,15 +717,26 @@ class ForscreenController extends BaseController{
         ini_set("memory_limit","2048M");
         $start_time = '2020-08-21 00:00:00';
         $end_time = '2021-02-21 23:59:59';
-        $sql = "select area_id,area_name,hotel_id,hotel_name from savor_smallapp_forscreen_record where create_time>='$start_time' and create_time<='$end_time' and small_app_id in(1,2,11) and hotel_id>0 and mobile_brand!='devtools' group by hotel_id";
+
+        $all_hotel_types = C('heart_hotel_box_type');
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'a.id as hotel_id,a.name as hotel_name,area.id as area_id,area.region_name as area_name,a.hotel_box_type,a.level as hotel_level,
+	    a.is_4g,ext.trainer_id,ext.train_date,ext.maintainer_id,a.tech_maintainer';
+        $where = array('a.state'=>1,'a.flag'=>0,'a.type'=>1);
+        $where['a.hotel_box_type'] = array('in',array_keys($all_hotel_types));
+        $res_hotel = $m_hotel->getHotels($field,$where);
         $model = M();
-        $res = $model->query($sql);
         $data = array();
-        foreach ($res as $v){
+        foreach ($res_hotel as $v){
             $hotel_id = $v['hotel_id'];
+            if(in_array($hotel_id,array(7,883))){
+                continue;
+            }
             $hotel_name = $v['hotel_name'];
             $area_name = $v['area_name'];
-            $sql_maintainer = "select ext.maintainer_id,user.remark as uname from savor_hotel_ext as ext left join savor_sysuser as user on ext.maintainer_id=user.id where ext.hotel_id={$hotel_id}";
+            $maintainer_id = $v['maintainer_id'];
+
+            $sql_maintainer = "select remark as uname from savor_sysuser where id={$maintainer_id}";
             $res_maintainer = $model->query($sql_maintainer);
             $maintainer_name = '';
             if(!empty($res_maintainer)){
@@ -734,14 +745,26 @@ class ForscreenController extends BaseController{
             $sql_box = "select box_mac,box_name,count(*) as num,count(DISTINCT DATE(create_time)) as date_num from savor_smallapp_forscreen_record where hotel_id={$hotel_id} and create_time>='{$start_time}' and create_time<='{$end_time}'
             and small_app_id in(1,2,11) and mobile_brand!='devtools' group by box_mac";
             $res_boxs = $model->query($sql_box);
+            $box_nums = array();
             if(!empty($res_boxs)){
                 foreach ($res_boxs as $bv){
-                    $info = array('area_name'=>$area_name,'hotel_name'=>$hotel_name,'maintainer_name'=>$maintainer_name,'box_name'=>$bv['box_name'],
-                        'box_mac'=>$bv['box_mac'],'forscreen_num'=>$bv['num'],'forscreen_date_num'=>$bv['date_num']);
-                    $data[]=$info;
+                    $box_nums[$bv['box_mac']] = array('box_name'=>$bv['box_name'],'box_mac'=>$bv['box_mac'],'forscreen_num'=>$bv['num'],'forscreen_date_num'=>$bv['date_num']);
                 }
-                echo "hotel_id: $hotel_id ok \r\n";
             }
+            $box_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+            $m_box = new \Admin\Model\BoxModel();
+            $res_box = $m_box->getBoxByCondition('box.*',$box_where,'');
+            foreach ($res_box as $box){
+                $info = array('area_name'=>$area_name,'hotel_name'=>$hotel_name,'maintainer_name'=>$maintainer_name,'box_name'=>$box['name'],
+                    'box_mac'=>$box['mac'],'forscreen_num'=>0,'forscreen_date_num'=>0);
+                if(isset($box_nums[$box['mac']])){
+                    $info['forscreen_num'] = $box_nums[$box['mac']]['forscreen_num'];
+                    $info['forscreen_date_num'] = $box_nums[$box['mac']]['forscreen_date_num'];
+                }
+                $data[]=$info;
+            }
+            echo "hotel_id: $hotel_id ok \r\n";
+
         }
 
         $cell = array(
