@@ -70,14 +70,8 @@ class HotplayController extends BaseController {
                     $redis = \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);
                     $key_demand = C('SAPP_HOTPLAYDEMAND');
-                    $res_demand = $redis->get($key_demand);
-                    if(!empty($res_demand)){
-                        $demand = json_decode($res_demand,true);
-                    }else{
-                        $demand = array();
-                    }
-                    $demand['period'] = getMillisecond();
-                    $redis->set($key_demand,json_encode($demand));
+                    $period = getMillisecond();
+                    $redis->set($key_demand,$period);
 
                     $this->output('操作成功!', 'hotplay/datalist');
                 }else{
