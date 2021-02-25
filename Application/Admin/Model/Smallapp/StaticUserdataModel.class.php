@@ -8,24 +8,34 @@ class StaticUserdataModel extends BaseModel{
 	protected $tableName='smallapp_static_userdata';
 
     public function getCustomeList($fields="*",$where,$groupby='',$order='',$countfields='',$start=0,$size=5){
-        $list = $this->alias('a')
-            ->join('savor_smallapp_user user on a.openid=user.openid','left')
-            ->field($fields)
-            ->where($where)
-            ->group($groupby)
-            ->order($order)
-            ->limit($start,$size)
-            ->select();
+        if($start >= 0 && $size){
+            $list = $this->alias('a')
+                ->join('savor_smallapp_user user on a.openid=user.openid','left')
+                ->field($fields)
+                ->where($where)
+                ->group($groupby)
+                ->order($order)
+                ->limit($start,$size)
+                ->select();
 
-        $res_count = $this->alias('a')
-            ->join('savor_smallapp_user user on a.openid=user.openid','left')
-            ->field($countfields)
-            ->where($where)
-            ->select();
-        $count = $res_count[0]['tp_count'];
-        $objPage = new Page($count,$size);
-        $show = $objPage->admin_page();
-        $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+            $res_count = $this->alias('a')
+                ->join('savor_smallapp_user user on a.openid=user.openid','left')
+                ->field($countfields)
+                ->where($where)
+                ->select();
+            $count = $res_count[0]['tp_count'];
+            $objPage = new Page($count,$size);
+            $show = $objPage->admin_page();
+            $data = array('list'=>$list,'page'=>$show,'total'=>$count);
+        }else{
+            $data = $this->alias('a')
+                ->join('savor_smallapp_user user on a.openid=user.openid','left')
+                ->field($fields)
+                ->where($where)
+                ->group($groupby)
+                ->order($order)
+                ->select();
+        }
         return $data;
     }
 

@@ -487,6 +487,29 @@ class ForscreenController extends BaseController{
         $this->exportToExcel($cell,$data,'版位午饭晚饭互动量统计',1);
     }
 
+    public function userdata(){
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+
+        $where = array('a.static_date'=>array(array('EGT',$start_time),array('ELT',$end_time)));
+        $m_userdata = new \Admin\Model\Smallapp\StaticUserdataModel();
+        $fields = 'a.openid,a.static_date,sum(a.box_num) as box_num,sum(a.meal_num) as meal_num,
+        count(DISTINCT a.hotel_id) as hotel_num,GROUP_CONCAT(DISTINCT hotel_name) as hotel_names,
+        user.avatarUrl,user.nickName';
+        $order = 'hotel_num desc';
+        $groupby = 'a.openid';
+        $data = $m_userdata->getCustomeList($fields,$where,$groupby,$order,'',0,0);
+
+        $cell = array(
+            array('openid','openid'),
+            array('nickname','用户昵称'),
+            array('box_num','投屏版位数'),
+            array('meal_num','投屏饭局数'),
+            array('hotel_num','投屏酒楼数'),
+        );
+        $this->exportToExcel($cell,$data,'用户投屏统计',1);
+    }
+
     public function boxforscreenerror(){
         $sql = "SELECT * FROM savor_smallapp_forscreen_record WHERE 
           create_time >= '2021-01-25 00:00:00' AND create_time <= '2021-01-25 23:59:59'";
