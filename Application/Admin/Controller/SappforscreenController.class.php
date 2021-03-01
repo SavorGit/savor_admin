@@ -621,7 +621,9 @@ class SappforscreenController extends BaseController {
                 }else{
                     $pushbox_time = '';
                 }
-                if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
+                if($track_info['netty_callback_time'] && $track_info['netty_receive_time']){
+                    $netty_timeconsume = ($track_info['netty_callback_time']-$track_info['netty_receive_time'])/1000;
+                }elseif($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
                     $netty_timeconsume = ($track_info['netty_pushbox_time']-$track_info['netty_receive_time'])/1000;
                 }else{
                     $netty_timeconsume = '';
