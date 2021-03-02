@@ -502,6 +502,7 @@ class ForscreenController extends BaseController{
 
         $cell = array(
             array('openid','openid'),
+            array('nickname','用户昵称'),
             array('box_num','投屏版位数'),
             array('meal_num','投屏饭局数'),
             array('hotel_num','投屏酒楼数'),
