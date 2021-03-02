@@ -83,9 +83,17 @@ class CategoryModel extends BaseModel{
         $category = array();
         foreach ($res_category as $v){
             $category_info = array('id'=>$v['id'],'name'=>$v['name'],'is_select'=>'','html'=>'');
-            if($v['id']==$category_id){
-                $category_info['is_select'] = 'selected';
+            if($type==3){
+                $category_ids = explode(',',$category_id);
+                if(in_array($v['id'],$category_ids)){
+                    $category_info['is_select'] = 'selected';
+                }
+            }else{
+                if($v['id']==$category_id){
+                    $category_info['is_select'] = 'selected';
+                }
             }
+
             if(isset($v['html'])){
                 $category_info['html'] = $v['html'];
             }
