@@ -57,6 +57,7 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
+              <th>ID</th>
               <th>名称</th>
               <th>状态</th>
               <th>类型</th>
@@ -67,6 +68,7 @@
           <tbody data-check="list" data-parent=".table">
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
               <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
               <td data-title="状态">
                   <if condition="$dinfo['status'] eq 1">
