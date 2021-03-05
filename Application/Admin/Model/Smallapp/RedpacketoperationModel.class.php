@@ -20,6 +20,7 @@ class RedpacketoperationModel extends BaseModel{
         $m_redpacket = new \Admin\Model\Smallapp\RedpacketModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
         $m_user = new \Admin\Model\Smallapp\UserModel();
+        $m_mac = new \Admin\Model\BoxModel();
         $nowdate = date('Y-m-d');
         $nowtime = date('H:i');
         $nowdatetime = date("Y-m-d H:i:s");
@@ -51,7 +52,6 @@ class RedpacketoperationModel extends BaseModel{
                 //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包 5运营红包
                 $scope = $v['scope'];
                 if($scope==5){
-                    $m_mac = new \Admin\Model\BoxModel();
                     $fields = 'box.mac';
                     $where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
                     $res_boxs = $m_mac->getBoxByCondition($fields,$where);
@@ -96,7 +96,7 @@ class RedpacketoperationModel extends BaseModel{
                                 $where_user = array('id'=>$op_userid);
                                 $m_user->updateInfo($where_user,array('nickName'=>$user_info['nickName'],'avatarUrl'=>$user_info['avatarUrl']));
 
-                                $message = array('action'=>121,'nickName'=>$user_info['nickName'],
+                                $message = array('action'=>121,'nickName'=>$user_info['nickName'],'content'=>'快，使用热点投屏，大屏分享更快乐！',
                                     'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
                                 $m_netty->pushBox($redpacket['mac'],json_encode($message));
 
@@ -129,7 +129,6 @@ class RedpacketoperationModel extends BaseModel{
 
                         //推送红包小程序码到电视
                         $http_host = 'https://mobile.littlehotspot.com';
-
                         $box_mac = $redpacket['mac'];
                         $qrinfo =  $trade_no.'_'.$box_mac;
                         $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
