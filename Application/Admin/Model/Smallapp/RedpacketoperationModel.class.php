@@ -25,7 +25,8 @@ class RedpacketoperationModel extends BaseModel{
         $nowtime = date('H:i');
         $nowdatetime = date("Y-m-d H:i:s");
         foreach ($res_list as $v){
-            switch ($v['type']){//类型 1立即发送,2单次定时,3多次定时
+            $redpacket_type = $v['type'];//类型 1立即发送,2单次定时,3多次定时
+            switch ($redpacket_type){
                 case 1:
                     $is_send = 1;
                     break;
@@ -99,7 +100,9 @@ class RedpacketoperationModel extends BaseModel{
                                 $message = array('action'=>121,'nickName'=>$user_info['nickName'],'content'=>'快，使用热点投屏，大屏分享更快乐！',
                                     'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
                                 $m_netty->pushBox($redpacket['mac'],json_encode($message));
-
+                                if($redpacket_type!=1){
+                                    echo "redpacket_id: $trade_no send ok \r\n";
+                                }
                             }
                         }
                     }
@@ -174,6 +177,9 @@ class RedpacketoperationModel extends BaseModel{
                             $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>4,
                                 'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
                             $redis->set($key, json_encode($res_data));
+                        }
+                        if($redpacket_type!=1){
+                            echo "redpacket_id: $trade_no send ok \r\n";
                         }
                         //end
 
