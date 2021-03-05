@@ -510,6 +510,105 @@ class ForscreenController extends BaseController{
         $this->exportToExcel($cell,$data,'用户投屏统计',1);
     }
 
+    public function taguser(){
+        $start_date = I('start_time','');
+        $end_date = I('end_time','');
+        $type = I('type',0,'intval');//1重度 2多餐厅 3销售用户
+        if($start_date<'2020-10-01'){
+            $start_date = '2020-10-01';
+        }
+        /*
+        $start_date = '2020-10-01';
+        $end_date = '2021-02-28';
+        $type = 3;
+        $personattr_id = 115;//112重度 113多餐厅 115销售
+        */
+
+        $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
+        $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
+        if(in_array($type,array(1,2,3))){
+            if(in_array($type,array(1,2))){
+                $static_sdate = date('Y-m-d',strtotime($start_time));
+                $static_edate = date('Y-m-d',strtotime($end_time));
+                $where = array('a.static_date'=>array(array('EGT',$static_sdate),array('ELT',$static_edate)));
+                $m_userdata = new \Admin\Model\Smallapp\StaticUserdataModel();
+                $fields = 'a.openid,a.static_date,sum(a.box_num) as box_num,sum(a.meal_num) as meal_num,
+                count(DISTINCT a.hotel_id) as hotel_num,GROUP_CONCAT(DISTINCT hotel_name) as hotel_names,
+                user.avatarUrl,user.nickName';
+                $order = 'hotel_num desc';
+                $groupby = 'a.openid';
+                $data = $m_userdata->getCustomeList($fields,$where,$groupby,$order,'',0,0);
+                if($type==1){
+                    $file_name = '重度用户统计';
+                }else{
+                    $file_name = '多餐厅用户统计';
+                }
+                $resp_data = array();
+                foreach ($data as $v){
+                    if($type==1 && $v['meal_num']>=2){
+                        $resp_data[]=$v;
+                    }elseif($type==2 && $v['hotel_num']>=2){
+                        $resp_data[]=$v;
+                    }
+                }
+            }else{
+                $model = M();
+                $time_condition = "a.create_time>='{$start_time}' and a.create_time<='{$end_time}'";
+                $sql = "select a.openid,user.avatarUrl,user.nickName from savor_smallapp_forscreen_record as a left join savor_smallapp_user as user on a.openid=user.openid where {$time_condition} 
+                  and a.small_app_id in(1,2) and a.action in(30,31,32) group by a.openid";
+                $resp_data = $model->query($sql);
+                $file_name = '销售用户统计';
+            }
+            /*
+            $model = M();
+            $time_condition = "create_time>='{$start_time}' and create_time<='{$end_time}' and small_app_id in(1,2)";
+            foreach ($resp_data as $v){
+                $openid = $v['openid'];
+                $cron_sql = "select id,personattr_id from savor_smallapp_forscreen_record where {$time_condition} and openid='{$openid}'";
+                if($type==3){
+                    $cron_sql.=" and action in(30,31,32)";
+                }
+                $res_udata = $model->query($cron_sql);
+                if(!empty($res_udata)){
+                    echo "openid: $openid bengin \r\n";
+                    foreach ($res_udata as $uv){
+                        if(!empty($uv['personattr_id'])){
+                            $now_personattr_id = $uv['personattr_id'].','.$personattr_id;
+                        }else{
+                            $now_personattr_id = $personattr_id;
+                        }
+                        $sql_up = "UPDATE savor_smallapp_forscreen_record SET personattr_id='{$now_personattr_id}' WHERE id={$uv['id']}";
+                        $res = $model->execute($sql_up);
+                        if($res){
+                            echo "openid: $openid-{$uv['id']} upok \r\n";
+                        }
+                    }
+                }
+                echo "openid: $openid ok \r\n";
+            }
+            */
+            $cell = array(
+                array('openid','openid'),
+                array('nickname','用户昵称'),
+            );
+            $this->exportToExcel($cell,$resp_data,$file_name,1);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function boxforscreenerror(){
         $sql = "SELECT * FROM savor_smallapp_forscreen_record WHERE 
           create_time >= '2021-01-25 00:00:00' AND create_time <= '2021-01-25 23:59:59'";
