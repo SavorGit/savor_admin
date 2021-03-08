@@ -314,16 +314,28 @@ $config['all_forscreen_actions'] = array(
     '11'=>'发现点播图片',
     '12'=>'发现点播视频',
     '13'=>'点播商城商品',
+    '14'=>'点播banner商城商品',
     '21'=>'查看点播视频',
     '22'=>'查看发现视频',
     '30'=>'投屏文件',
     '31'=>'投屏文件图片',
     '40'=>'投销售端商品',
     '41'=>'投屏欢迎词',
+    '42'=>'商务宴请欢迎词',
+    '43'=>'生日聚会欢迎词',
+    '44'=>'分享文件到电视',
+    '45'=>'分享名片到电视',
+    '32'=>'商务宴请投屏文件图片',
+    '46'=>'商务宴请图片投屏',
+    '47'=>'商务宴请视频投屏',
+    '48'=>'生日聚会图片投屏',
+    '49'=>'生日聚会视频投屏',
     '50'=>'助力好友',
     '51'=>'扫码抢霸王餐',
     '52'=>'评论',
     '53'=>'点击banner抢霸王餐',
+    '54'=>'扫码抽奖',
+    '55'=>'首页致欢迎词',
     '101'=>'h5互动游戏',
     '120'=>'发红包',
     '121'=>'扫码抢红包'
@@ -564,6 +576,7 @@ $config['REDPACKET_SCOPE'] = array(
     '2'=>'当前餐厅所有电视',
     '3'=>'当前包间电视',
     '4'=>'区域餐厅电视',
+    '5'=>'运营-所选餐厅单个包间单个红包',
 );
 
 $config['ADV_VIDEO'] = array(
@@ -688,7 +701,9 @@ $config['SAPP_HISTORY_SCREEN']   = 'smallapp:history:forscreen:';
 $config['SAPP_PAGEVIEW_LOG']     ='smallap:pageview:log:';
 $config['VM_HOTEL_LIST']         ='vsmall_hotel_list';
 $config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
+$config['SAPP_HOTPLAYDEMAND']   = 'smallapp:hotplaydemand';
 $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
+$config['SMALLAPP_MARQUEE_ADS']   = 'smallapp:marquee:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
@@ -870,9 +885,18 @@ $config['ACTIVITY_KINGMEAL'] = array(
         array('hotel_id'=>1056,'dish'=>'剁椒蒸鱼咀1份','start_time'=>'2020-09-03 19:40:00','end_time'=>'2020-09-03 20:05:00',
             'lottery_time'=>'2020-09-03 20:10:00','dish_img'=>'lottery/activity/djzyz.jpg'),
     ),
+);
 
-
-
+$config['INTEGRAL_TYPES'] = array(
+    1=>'开机',
+    2=>'互动',
+    3=>'销售',
+    4=>'兑换',
+    5=>'退回',
+    6=>'活动促销',
+    7=>'评价奖励',
+    8=>'评价补贴',
+    9=>'分配',
 );
 
 return $config;

@@ -1,0 +1,40 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/saleuser/addintegral" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="openid" type="hidden" value="{$openid}"/>
+		<div class="pageFormContent modal-body">
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">昵称：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" value="{$userinfo.nickname}" class="form-control" readonly/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">头像：</label>
+				<div class="col-xs-12 col-sm-10">
+					<img src="{$userinfo.avatarurl}" />
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">当前积分：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" value="{$integral}" class="form-control" readonly/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">增加积分：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="number" name="integral" value="" min="0" max="{$max_integral}" class="form-control" required/>
+				</div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+</form>
+</div>

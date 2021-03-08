@@ -282,8 +282,7 @@ class BoxModel extends BaseModel{
      */
 	public function addData($data){
 	    if(!empty($data)){
-	        $this->add($data);
-	        $insert_id = $this->getLastInsID();
+            $insert_id = $this->add($data);
 	        if($insert_id){
                 $forscreen_type = $this->checkForscreenTypeByMac($data['mac']);
 

@@ -3455,7 +3455,8 @@ class CrontabController extends Controller
         ->where($where)
         ->select();
         
-        $m_forscreen_log = new \Admin\Model\Smallapp\ForscreenRecordModel(); 
+        $m_forscreen_log = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_box = new \Admin\Model\BoxModel();
         $flag = 0;
         foreach($list as $key=>$v){
             $data = array();
@@ -3468,6 +3469,27 @@ class CrontabController extends Controller
             $data['resource_id'] = 0;
             $data['resource_size'] = 0;
             $data['create_time'] = $v['create_time'];
+
+            $bwhere = array('box.mac'=>$v['box_mac'],'box.state'=>1,'box.flag'=>1,'hotel.state'=>1,'hotel.flag'=>0);
+            $bfields = 'hotel.area_id,area.region_name area_name,hotel.id hotel_id,hotel.name hotel_name,room.id room_id,room.name room_name,
+            box.name box_name,box.id box_id,box.is_4g,box.box_type,hotel.hotel_box_type,hotel.is_4g hotel_is_4g';
+            $box_info = $m_box->getDeviceInfoByBoxMac($bfields,$bwhere);
+            if(!empty($box_info)){
+                $box_info = $box_info[0];
+                $data['area_id']    = $box_info['area_id'];
+                $data['area_name']  = $box_info['area_name'];
+                $data['hotel_id']   = $box_info['hotel_id'];
+                $data['hotel_name'] = $box_info['hotel_name'];
+                $data['room_id']    = $box_info['room_id'];
+                $data['room_name']  = $box_info['room_name'];
+                $data['box_id']     = $box_info['box_id'];
+                $data['is_4g']      = $box_info['is_4g'];
+                $data['box_type']   = $box_info['box_type'];
+                $data['hotel_box_type'] = $box_info['hotel_box_type'];
+                $data['hotel_is_4g']= $box_info['hotel_is_4g'];
+                $data['box_name']   = $box_info['box_name'];
+            }
+
             $ret =$m_forscreen_log->addInfo($data,1);
             if($ret){
                 $flag++;
@@ -3577,137 +3599,12 @@ class CrontabController extends Controller
     }
 
     public function operationRedpacket($id=0){
+        $now_time = date('Y-m-d H:i:s');
+        echo "operation_redpacket start:$now_time \r\n";
         $m_redpacketoperation = new \Admin\Model\Smallapp\RedpacketoperationModel();
-        if($id){
-            $data = $m_redpacketoperation->getInfo(array('id'=>$id));
-            $res_list = array($data);
-        }else{
-            $orderby = 'id asc';
-            $where = array('status'=>1);
-            $res_list = $m_redpacketoperation->getDataList('*',$where,$orderby);
-        }
-        $all_senders = C('REDPACKET_SENDERS');
-        $op_userid = C('REDPACKET_OPERATIONERID');
-        unset($all_senders[0]);
-        $m_redpacket = new \Admin\Model\Smallapp\RedpacketModel();
-        $m_netty = new \Admin\Model\Smallapp\NettyModel();
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        $redis  =  \Common\Lib\SavorRedis::getInstance();
-
-        $nowdate = date('Y-m-d');
-        $nowtime = date('H:i');
-        $nowdatetime = date("Y-m-d H:i:s");
-        foreach ($res_list as $v){
-            switch ($v['type']){//类型 1立即发送,2单次定时,3多次定时
-                case 1:
-                    $is_send = 1;
-                    break;
-                case 2:
-                    $optime = date('H:i',strtotime($v['timing']));
-                    if($v['start_date']==$nowdate && $nowtime==$optime){
-                        $is_send = 1;
-                    }else{
-                        $is_send = 0;
-                    }
-                    break;
-                case 3:
-                    $optime = date('H:i',strtotime($v['timing']));
-                    if($nowdate>=$v['start_date'] && $nowdate<=$v['end_date'] && $nowtime==$optime){
-                        $is_send = 1;
-                    }else{
-                        $is_send = 0;
-                    }
-                    break;
-                default:
-                    $is_send = 0;
-            }
-            if($is_send==1){
-                $redpacket = array('user_id'=>$op_userid,'total_fee'=>$v['total_fee'],'amount'=>$v['amount'],'surname'=>'小热点',
-                    'sex'=>1,'bless_id'=>1,'scope'=>$v['scope'],'area_id'=>$v['area_id'],'mac'=>$v['mac'],'pay_fee'=>$v['total_fee'],
-                    'pay_time'=>date('Y-m-d H:i:s'),'pay_type'=>10,'status'=>4);
-                $trade_no = $m_redpacket->addData($redpacket);
-                if($trade_no){
-                    if($v['type']==1 || $v['type']==2){
-                        $m_redpacketoperation->updateData(array('id'=>$v['id']),array('status'=>0));
-                    }else{
-                        if($nowdate==$v['end_date'] && $nowtime==$optime){
-                            $m_redpacketoperation->updateData(array('id'=>$v['id']),array('status'=>0));
-                        }
-                    }
-                    //根据红包总金额和人数进行分配红包
-                    $money = $redpacket['total_fee'];
-                    $num = $redpacket['amount'];
-                    $all_money = bonus_random($money,$num,0.3,$money);
-                    $redis->select(5);
-                    $key = C('SAPP_REDPACKET').$trade_no.':bonus';
-                    $all_moneys = array('unused'=>$all_money,'used'=>array());
-                    $redis->set($key,json_encode($all_moneys),86400);
-                    //end
-
-                    //推送红包小程序码到电视
-                    $http_host = 'https://mobile.littlehotspot.com';
-
-                    $box_mac = $redpacket['mac'];
-                    $qrinfo =  $trade_no.'_'.$box_mac;
-                    $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
-
-                    if($v['sender']){
-                        $user_info = $all_senders[$v['sender']];
-                    }else{
-                        shuffle($all_senders);
-                        $user_info = $all_senders[0];//随机
-                    }
-                    $user_info['avatarUrl'] = 'http://oss.littlehotspot.com/WeChat/MiniProgram/LaunchScreen/source/images/avatar/'.$user_info['id'].'.jpg';
-
-                    $where_user = array('id'=>$op_userid);
-                    $m_user->updateInfo($where_user,array('nickName'=>$user_info['nickName'],'avatarUrl'=>$user_info['avatarUrl']));
-
-                    $message = array('action'=>121,'nickName'=>$user_info['nickName'],
-                        'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
-                    $m_netty->pushBox($redpacket['mac'],json_encode($message));
-
-                    //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包
-                    $scope = $redpacket['scope'];
-                    if(in_array($scope,array(1,2))) {
-                        //发全网红包
-                        $all_box = $m_netty->getPushBox(2, $box_mac);
-                        if (!empty($all_box)) {
-                            foreach ($all_box as $v) {
-                                $qrinfo = $trade_no.'_'.$v;
-                                $mpcode = $http_host . '/h5/qrcode/mpQrcode?qrinfo=' . $qrinfo;
-                                $message = array('action' => 121, 'nickName' => $user_info['nickName'],
-                                    'avatarUrl' => $user_info['avatarUrl'], 'codeUrl' => $mpcode);
-                                $m_netty->pushBox($v, json_encode($message));
-                            }
-                        }
-                        if ($scope == 1) {
-                            $key = C('SAPP_REDPACKET') . 'smallprogramcode';
-                            $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>1,
-                                'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
-                            $redis->set($key, json_encode($res_data));
-                        }
-                    }elseif($scope==4){
-                        $all_box = $m_netty->getPushBox(4,$box_mac,$redpacket['area_id']);
-                        $key = C('SAPP_REDPACKET') . 'smallprogramcode';
-                        $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>4,
-                            'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
-                        $redis->set($key, json_encode($res_data));
-                    }
-                    //end
-
-//                    $nowdatetime = date('Y-m-d H:i:s');
-//                    $log_content = $nowdatetime.'[redpacket_id]'.$trade_no."\n";
-//                    $log_fil1 `e_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
-//                    @file_put_contents($log_file_name, $log_content, FILE_APPEND);
-
-                }
-
-            }
-        }
-//        $nowdatetime = date('Y-m-d H:i:s');
-//        $log_content = $nowdatetime.'[redpacket_list]'.json_encode($res_list)."\n";
-//        $log_file_name = '/application/logs/smallapp/'.'operationbonus_'.date("Ymd").".log";
-//        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
+        $m_redpacketoperation->operationRedpacket($id);
+        $now_time = date('Y-m-d H:i:s');
+        echo "operation_redpacket end:$now_time \r\n";
     }
 
     public function userintegral(){
@@ -3757,6 +3654,15 @@ class CrontabController extends Controller
         $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
         $m_forscreentrack->handle_forscreen_track();
     }
+
+    public function forscreennotrack(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "forscreennotrack start:$now_time \r\n";
+        $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
+        $m_forscreentrack->handle_noforscreen_track();
+        echo "forscreennotrack end:$now_time \r\n";
+    }
+
 
     public function pushrebootbox(){
         $now_time = date('Y-m-d H:i:s');
@@ -4402,6 +4308,16 @@ class CrontabController extends Controller
         echo "statichoteldata end:$now_time \r\n";
     }
 
+    public function staticboxdata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticboxdata start:$now_time \r\n";
+        $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $m_staticboxdata->handle_box_data();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticboxdata end:$now_time \r\n";
+    }
+
     public function statichotelbasicdata(){
         $now_time = date('Y-m-d H:i:s');
         echo "statichotelbasicdata start:$now_time \r\n";
@@ -4410,6 +4326,16 @@ class CrontabController extends Controller
 
         $now_time = date('Y-m-d H:i:s');
         echo "statichotelbasicdata end:$now_time \r\n";
+    }
+
+    public function staticuserdata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticuserdata start:$now_time \r\n";
+        $m_staticuserdata = new \Admin\Model\Smallapp\StaticUserdataModel();
+        $m_staticuserdata->handle_user_data();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticuserdata end:$now_time \r\n";
     }
 
     public function cleantestdata(){

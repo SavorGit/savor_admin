@@ -1,0 +1,70 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/hotplay/datalist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-10">
+          <div class="tools-group s2">
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+
+          <div class="input-group input-group-sm">
+            <!--<input type="text" class="form-control" value="" placeholder="">-->
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>ID</th>
+            <th>昵称</th>
+            <th>头像</th>
+            <th>资源类型</th>
+            <th>显示图</th>
+            <th>播放次数</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="data" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="用户昵称">{$dinfo.nickname}</td>
+              <td data-title="用户头像"><img src="{$dinfo.avatarurl}"></td>
+              <td data-title="资源类型">{$dinfo.resource_type_str}</td>
+              <td data-title="显示图"><a href="{$dinfo.img}" target="_blank"><img src="{$dinfo.img}" ></a></td>
+              <td data-title="播放次数">{$dinfo.nums}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" title="序号{$dinfo.id}-修改" target="dialog" mask="true" href="{$host_url}/smallapp/hotplay/edit?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  <!--{$page}-->
+</div>

@@ -25,6 +25,7 @@ class DishgoodsController extends BaseController {
         $status   = I('status',0,'intval');
         $type   = I('type',0,'intval');
         $flag   = I('flag',0,'intval');
+        $is_scenegift  = I('is_scenegift',99,'intval');
         $keyword = I('keyword','','trim');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
@@ -49,12 +50,13 @@ class DishgoodsController extends BaseController {
         if($status)     $where['a.status'] = $status;
         if($flag)       $where['a.flag'] = $flag;
         if($area_id)    $where['area.id']=$area_id;
+        if($is_scenegift!=99)   $where['a.is_scenegift'] = $is_scenegift;
         if(!empty($keyword)){
             $where['hotel.name'] = array('like',"%$keyword%");
         }
         $start  = ($page-1) * $size;
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
-        $fields = 'a.id,a.name,a.cover_imgs,a.intro,a.price,a.is_top,a.status,a.flag,a.gtype,a.add_time,a.type,
+        $fields = 'a.id,a.name,a.cover_imgs,a.intro,a.price,a.is_top,a.status,a.flag,a.gtype,a.add_time,a.type,a.is_scenegift,
         user.nickName as staff_name,user.avatarUrl as staff_url,hotel.name as hotel_name,area.region_name as area_name';
         $result = $m_goods->getDishList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
@@ -79,6 +81,11 @@ class DishgoodsController extends BaseController {
             }else{
                 $datalist[$k]['localstr']='否';
             }
+            if($v['is_scenegift']){
+                $datalist[$k]['scenegiftstr']='是';
+            }else{
+                $datalist[$k]['scenegiftstr']='否';
+            }
             $datalist[$k]['typestr']=$goods_types[$v['type']];
 
             if($v['gtype']==1){
@@ -96,6 +103,7 @@ class DishgoodsController extends BaseController {
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
 
+        $this->assign('is_scenegift',$is_scenegift);
         $this->assign('area_id',$area_id);
         $this->assign('area',$area_arr);
         $this->assign('status',$status);
@@ -253,6 +261,7 @@ class DishgoodsController extends BaseController {
             $flag = I('post.flag',0,'intval');
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $is_recommend = I('post.is_recommend',0,'intval');
+            $is_scenegift = I('post.is_scenegift',0,'intval');
             $gift_goods_id = I('post.gift_goods_id',0,'intval');
             $tv_media_id = I('post.tv_media_id',0,'intval');
             $tv_media_vid = I('post.tv_media_vid',0,'intval');
@@ -301,7 +310,7 @@ class DishgoodsController extends BaseController {
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>$distribution_profit,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
-                'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend);
+                'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend,'is_scenegift'=>$is_scenegift);
             if($type==22){
                 if($flag==2){
                     $status = 1;

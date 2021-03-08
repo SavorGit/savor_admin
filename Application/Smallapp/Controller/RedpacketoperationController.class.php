@@ -69,6 +69,9 @@ class RedpacketoperationController extends BaseController {
             $userInfo = session('sysUserInfo');
             $data = array('total_fee'=>$total_fee,'amount'=>$amount,'scope'=>$scope,'type'=>$type,
                 'sender'=>$sender,'area_id'=>$area_id,'sysuser_id'=>$userInfo['id'],'status'=>$status);
+            if($hotel_id){
+                $data['hotel_id'] = $hotel_id;
+            }
             if($total_fee<$amount*0.3){
                 $this->output('每个红包最小额度为0.3', 'redpacketoperation/operationadd',2,0);
             }
@@ -111,7 +114,9 @@ class RedpacketoperationController extends BaseController {
                 $res_box = $m_box->find($box_id);
                 $data['mac'] = $res_box['mac'];
             }
-
+            if($type==1 && $scope==5){
+                $this->output('请定时发送运营红包', 'redpacketoperation/operationadd',2,0);
+            }
             $m_redpacketoperation = new \Admin\Model\Smallapp\RedpacketoperationModel();
             if($id){
                 $result = $m_redpacketoperation->updateData(array('id'=>$id),$data);
@@ -215,8 +220,8 @@ class RedpacketoperationController extends BaseController {
             $hours[]=str_pad($i,2,'0',STR_PAD_LEFT);
         }
         $minutes = array();
-        for($i=0;$i<60;$i++){
-            $minutes[]=str_pad($i,2,'0',STR_PAD_LEFT);
+        for($i=0;$i<4;$i++){
+            $minutes[]=str_pad($i*15,2,'0',STR_PAD_LEFT);
         }
         $m_area = new \Admin\Model\AreaModel();
         $res_area = $m_area->getHotelAreaList();

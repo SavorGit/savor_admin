@@ -719,14 +719,20 @@ class TestController extends Controller {
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
-        $close_forscreen_boxs = $this->closeboxforscreen();
+//        $close_forscreen_boxs = $this->closeboxforscreen();
+
+//        $sql = "select box.* from savor_box box
+//                left join savor_room room on box.room_id=room.id
+//                left join savor_hotel hotel on room.hotel_id=hotel.id
+//                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.is_open_simple=0 and hotel.id in(372,610,262,281,332,871,251,849,675,818,277,383,618,950,1191,611,870,1192,327,312,330,249,384,271,321,367,1193,952,907,378)";
+
+//                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+//        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
 
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
-//                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
-//        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
+                where box.state=1 and box.flag=0 and box.mac in('00226D8BCC87','00226D583D1E','00226D5841A1','00226D8BCAD9','00226D8BCE36','00226D8BCA81','00226D8BCA67','00226D58473F','00226D8BC963','00226D8BCE8E','00226D8BCE87','00226D8BCCBA','40E7932536F8','00226D655107','00226D5844AD','00226D655239','00226D8BCD72','00226D655464','00226D584717','00226D8BC9AD','00226D65515F','00226D5846E9','00226D655571','00226D6553DC','00226D65548E','00226D8BC969','00226D5840F0','00226D8BCC3D','00226D8BCD39','00226D8BCB37','00226D8BCA03','00226D8BC956','00226D8BCDB1','00226D655398','40E7932533FB','40E793253755','40E793253563','40E7932533FA','40E793253410','00226D8BCB0D','00226D8BCD60','00226D8BCCF6','00226D8BCD0B','00226D8BCC2A','00226D8BCD35','00226D8BCC64','00226D8BCE62','00226D8BC9EA','00226D8BCB42','00226D8BCD04','00226D8BCBE7','00226D8BCD2F','00226D8BCCE0','00226D8BCC33','00226D8BCB63','00226D8BCD1A','00226D8BC9DC','00226D8BCDF9','00226D8BCE88','00226D8BCE95','00226D8BCAD5','00226D8BCB16','00226D8BC959','00226D8BCDF7','00226D8BCDEE','00226D8BCA04','40E79325342F')";
 
         $data = M()->query($sql);
         $flag = 0;
@@ -736,17 +742,26 @@ class TestController extends Controller {
 //            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
 //                $v['is_open_simple'] = 0;
 //            }
-            if(isset($close_forscreen_boxs[$v['mac']])){
-                $v['is_interact'] = 0;
-                $v['is_sapp_forscreen'] = 0;
-                $v['is_open_simple'] = 0;
-                $is_open_simple = $v['is_open_simple'];
-                $is_sapp_forscreen = $v['is_sapp_forscreen'];
-                $is_interact = $v['is_interact'];
-                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
-                M()->execute($sql);
-                echo $v['mac']." close ok \n";
-            }
+//            if(isset($close_forscreen_boxs[$v['mac']])){
+//                $v['is_interact'] = 0;
+//                $v['is_sapp_forscreen'] = 0;
+//                $v['is_open_simple'] = 1;
+//                $is_open_simple = $v['is_open_simple'];
+//                $is_sapp_forscreen = $v['is_sapp_forscreen'];
+//                $is_interact = $v['is_interact'];
+//                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+//                M()->execute($sql);
+//                echo $v['mac']." close ok \n";
+//            }
+            $v['is_interact'] = 0;
+            $v['is_sapp_forscreen'] = 0;
+            $v['is_open_simple'] = 0;
+            $is_open_simple = $v['is_open_simple'];
+            $is_sapp_forscreen = $v['is_sapp_forscreen'];
+            $is_interact = $v['is_interact'];
+            $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+            M()->execute($sql);
+            echo $v['mac']." close ok \n";
 
 
             $box_info = array();
@@ -2722,14 +2737,15 @@ group by openid";
     public function hotelbasicdata(){
         ini_set("memory_limit","2048M");
         $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $res_data = $m_statichotelbasicdata->getDataList('*',array(),'id asc');
+        $res_data = $m_statichotelbasicdata->getDataList('id,hotel_id,static_date',array(),'id asc');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $m_heartlog = new \Admin\Model\HeartAllLogModel();
         foreach ($res_data as $v){
             $hotel_id = $v['hotel_id'];
             $time_date = strtotime($v['static_date']);
             $date = date('Ymd',$time_date);
-
+            $meal_heart_num = $m_heartlog->getHotelMealHeart($date,$hotel_id);
+            /*
             $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
             $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
 
@@ -2779,6 +2795,8 @@ group by openid";
                 'lunch_zxrate'=>$lunch_zxrate,'dinner_zxrate'=>$dinner_zxrate,'zxnum'=>$zxnum,'zxrate'=>$zxrate,
                 'interact_sale_signnum'=>$interact_sale_signnum,
             );
+            */
+            $data = array('meal_heart_num'=>$meal_heart_num);
             $res = $m_statichotelbasicdata->updateData(array('id'=>$v['id']),$data);
             if($res){
                 echo "id:{$v['id']}--{$v['static_date']} ok \r\n";
@@ -3034,6 +3052,143 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 }
             }
         }
+    }
+
+    public function rewardintegral(){
+        $openid = I('get.oid','','trim');
+        $integral = I('get.integral',0,'intval');
+        $key = I('get.key','');
+        $sign_key = 're@94e20op43eldian';
+        if($key==$sign_key){
+            $m_user_integral = new \Admin\Model\Smallapp\UserIntegralModel();
+            $res = $m_user_integral->getInfo(array('openid'=>$openid));
+            if(!empty($res)){
+                echo '当前积分:'.$res['integral'];
+                echo '===';
+                $now_integral = $res['integral'] + $integral;
+                $data = array('integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
+                $is_up = $m_user_integral->updateData(array('id'=>$res['id']),$data);
+                if($is_up){
+                    echo '更新完积分:'.$now_integral;
+                }
+            }else{
+                $data = array('openid'=>$openid,'integral'=>$integral,'add_time'=>date('Y-m-d H:i:s'));
+                $is_up = $m_user_integral->add($data);
+                if($is_up){
+                    echo '第一次增加积分:'.$integral;
+                }
+            }
+        }
+    }
+
+    public function pushFileToBox(){
+        $redis = \Common\Lib\SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = 'smallapp:fileforscreen:845db8bb98b4b0e3d2bd9d7abbf96b47';
+        $res_cache = $redis->get($cache_key);
+        $resource_list = array();
+        $imgs = json_decode($res_cache, true);
+        if(!empty($imgs)){
+            foreach ($imgs as $v){
+                $filename = str_replace(array('forscreen/','/'),array('','_'),$v);
+                $resource_list[]=array('url'=>$v,'filename'=>$filename);
+            }
+        }
+        $resource_type  = 3;//1视频 2图片 3文件
+        $box_mac = '00226D583F40';
+        $message = array('action'=>171,'resource_type'=>$resource_type,'resource_list'=>$resource_list);
+        echo json_encode($message);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        print_r($res_netty);
+    }
+
+    public function track(){
+        $time_str = "add_time>='2021-01-25 00:00:00' and add_time<='2021-01-26 23:59:59' and is_success=0";
+        $sql = "SELECT * FROM `savor_smallapp_forscreen_track` where {$time_str}";
+        $model = M();
+        $res = $model->query($sql);
+        foreach ($res as $v){
+            $forscreen_record_id = $v['forscreen_record_id'];
+            $sql_f = "select * from savor_smallapp_forscreen_record where id={$forscreen_record_id}";
+            $res_f = $model->query($sql_f);
+            if(!empty($res_f) && $res_f[0]['is_exist']==1){
+                $v['box_downstime'] = 1;
+                $v['box_downetime'] = 1;
+            }
+
+            if($v['position_nettystime']>0 && $v['position_nettystime']>0 && $v['request_nettytime']>0 && $v['netty_receive_time']>0
+            && $v['netty_pushbox_time']>0 && $v['box_receivetime']>0 && $v['box_downstime']>0 && $v['box_downetime']>0){
+                $netty_result = json_decode($v['netty_result'],true);
+                if($netty_result['code']==10000){
+                    $track_info = $v;
+                    $oss_timeconsume = $track_info['oss_etime']-$track_info['oss_stime'];
+                    $netty_position_timeconsume = 0;
+                    if($track_info['request_nettytime']){
+                        $netty_position_timeconsume = $track_info['request_nettytime']-$track_info['position_nettystime'];
+                    }
+                    $netty_timeconsume = 0;
+                    if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
+                        if($track_info['netty_callback_time']){
+                            $netty_timeconsume = $track_info['netty_callback_time']-$track_info['netty_receive_time'];
+                        }else{
+                            $netty_timeconsume = $track_info['netty_pushbox_time']-$track_info['netty_receive_time'];
+                        }
+                    }
+                    $box_down_timeconsume = 0;
+                    if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
+                        $box_down_timeconsume = $track_info['box_downetime']-$track_info['box_downstime'];
+                    }
+                    $total_time = ($oss_timeconsume+$netty_position_timeconsume+$netty_timeconsume+$box_down_timeconsume)/1000;
+
+                    $sql_up = "update savor_smallapp_forscreen_track set is_success=1,total_time='{$total_time}' where id={$v['id']}";
+                    $res_up = $model->execute($sql_up);
+                    if($res_up){
+                        echo "ID: {$v['id']} ok \r\n";
+                    }
+                }
+
+            }
+        }
+    }
+
+    public function hotelteam(){
+        $file_path = SITE_TP_PATH.'/Public/content/酒楼维护人变更名单.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $team_ids = array("Oiyoboy"=>309,"超凡组"=>310,"勇者组"=>311);
+        $data = array();
+        $model = M();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $row_info = $rowData[0];
+                $hotel_id = $row_info[0];
+                $team_name = $row_info[2];
+                if(!empty($hotel_id) && !empty($team_name)){
+                    $team_name = trim($team_name);
+                    $maintainer_id = $team_ids["$team_name"];
+                    $data[]=array('hotel_id'=>$hotel_id,'team_name'=>$team_name,'maintainer_id'=>$maintainer_id);
+                    $sql = "UPDATE savor_hotel_ext SET maintainer_id=$maintainer_id WHERE hotel_id=$hotel_id";
+                    $res = $model->execute($sql);
+                    if($res){
+                        echo 'hotel_id:'.$hotel_id." ok \r\n";
+                    }
+                }
+
+            }
+        }
+
+
     }
 
 }

@@ -446,4 +446,459 @@ class ForscreenController extends BaseController{
         );
         $this->exportToExcel($cell,$data,'同一个酒楼使用过两次以上(两顿饭以上)的用户',2);
     }
+
+
+    public function boxinteractnum(){
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $area_id = I('area_id',0,'intval');
+
+        $where = array();
+        if($start_time && $end_time){
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        } else if($start_time && empty($end_time)){
+            $end_time = date('Y-m-d');
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else if(empty($start_time) && !empty($end_time)){
+            $start_time = '2021-01-01';
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else{
+            $start_time = date('Y-m-d',strtotime('-1day'));
+            $end_time = date('Y-m-d',strtotime('-1day'));
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }
+        if($area_id){
+            $where['area_id'] = $area_id;
+        }
+        $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num,static_date';
+        $data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','');
+
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','城市名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('user_lunch_interact_num','午饭互动量'),
+            array('user_dinner_interact_num','晚饭互动量'),
+            array('static_date','投屏日期'),
+        );
+        $this->exportToExcel($cell,$data,'版位午饭晚饭互动量统计',1);
+    }
+
+    public function userdata(){
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+
+        $where = array('a.static_date'=>array(array('EGT',$start_time),array('ELT',$end_time)));
+        $m_userdata = new \Admin\Model\Smallapp\StaticUserdataModel();
+        $fields = 'a.openid,a.static_date,sum(a.box_num) as box_num,sum(a.meal_num) as meal_num,
+        count(DISTINCT a.hotel_id) as hotel_num,GROUP_CONCAT(DISTINCT hotel_name) as hotel_names,
+        user.avatarUrl,user.nickName';
+        $order = 'hotel_num desc';
+        $groupby = 'a.openid';
+        $data = $m_userdata->getCustomeList($fields,$where,$groupby,$order,'',0,0);
+
+        $cell = array(
+            array('openid','openid'),
+            array('nickname','用户昵称'),
+            array('box_num','投屏版位数'),
+            array('meal_num','投屏饭局数'),
+            array('hotel_num','投屏酒楼数'),
+        );
+        $this->exportToExcel($cell,$data,'用户投屏统计',1);
+    }
+
+    public function taguser(){
+        $start_date = I('start_time','');
+        $end_date = I('end_time','');
+        $type = I('type',0,'intval');//1重度 2多餐厅 3销售用户
+        if($start_date<'2020-10-01'){
+            $start_date = '2020-10-01';
+        }
+        /*
+        $start_date = '2020-10-01';
+        $end_date = '2021-02-28';
+        $type = 3;
+        $personattr_id = 115;//112重度 113多餐厅 115销售
+        */
+
+        $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
+        $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
+        if(in_array($type,array(1,2,3))){
+            if(in_array($type,array(1,2))){
+                $static_sdate = date('Y-m-d',strtotime($start_time));
+                $static_edate = date('Y-m-d',strtotime($end_time));
+                $where = array('a.static_date'=>array(array('EGT',$static_sdate),array('ELT',$static_edate)));
+                $m_userdata = new \Admin\Model\Smallapp\StaticUserdataModel();
+                $fields = 'a.openid,a.static_date,sum(a.box_num) as box_num,sum(a.meal_num) as meal_num,
+                count(DISTINCT a.hotel_id) as hotel_num,GROUP_CONCAT(DISTINCT hotel_name) as hotel_names,
+                user.avatarUrl,user.nickName';
+                $order = 'hotel_num desc';
+                $groupby = 'a.openid';
+                $data = $m_userdata->getCustomeList($fields,$where,$groupby,$order,'',0,0);
+                if($type==1){
+                    $file_name = '重度用户统计';
+                }else{
+                    $file_name = '多餐厅用户统计';
+                }
+                $resp_data = array();
+                foreach ($data as $v){
+                    if($type==1 && $v['meal_num']>=2){
+                        $resp_data[]=$v;
+                    }elseif($type==2 && $v['hotel_num']>=2){
+                        $resp_data[]=$v;
+                    }
+                }
+            }else{
+                $model = M();
+                $time_condition = "a.create_time>='{$start_time}' and a.create_time<='{$end_time}'";
+                $sql = "select a.openid,user.avatarUrl,user.nickName from savor_smallapp_forscreen_record as a left join savor_smallapp_user as user on a.openid=user.openid where {$time_condition} 
+                  and a.small_app_id in(1,2) and a.action in(30,31,32) group by a.openid";
+                $resp_data = $model->query($sql);
+                $file_name = '销售用户统计';
+            }
+            /*
+            $model = M();
+            $time_condition = "create_time>='{$start_time}' and create_time<='{$end_time}' and small_app_id in(1,2)";
+            foreach ($resp_data as $v){
+                $openid = $v['openid'];
+                $cron_sql = "select id,personattr_id from savor_smallapp_forscreen_record where {$time_condition} and openid='{$openid}'";
+                if($type==3){
+                    $cron_sql.=" and action in(30,31,32)";
+                }
+                $res_udata = $model->query($cron_sql);
+                if(!empty($res_udata)){
+                    echo "openid: $openid bengin \r\n";
+                    foreach ($res_udata as $uv){
+                        if(!empty($uv['personattr_id'])){
+                            $now_personattr_id = $uv['personattr_id'].','.$personattr_id;
+                        }else{
+                            $now_personattr_id = $personattr_id;
+                        }
+                        $sql_up = "UPDATE savor_smallapp_forscreen_record SET personattr_id='{$now_personattr_id}' WHERE id={$uv['id']}";
+                        $res = $model->execute($sql_up);
+                        if($res){
+                            echo "openid: $openid-{$uv['id']} upok \r\n";
+                        }
+                    }
+                }
+                echo "openid: $openid ok \r\n";
+            }
+            */
+            $cell = array(
+                array('openid','openid'),
+                array('nickname','用户昵称'),
+            );
+            $this->exportToExcel($cell,$resp_data,$file_name,1);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function boxforscreenerror(){
+        $sql = "SELECT * FROM savor_smallapp_forscreen_record WHERE 
+          create_time >= '2021-01-25 00:00:00' AND create_time <= '2021-01-25 23:59:59'";
+
+        $model = M();
+        $res = $model->query($sql);
+        $data = array();
+        $all_box_type = C('hotel_box_type');
+        $error_num = array();
+        $no_error_num = array();
+        $fail_error_num = array();
+        $fail_error_wifi_num = array();
+        foreach ($res as $v){
+            $sql_track = "select * FROM `savor_smallapp_forscreen_track` where forscreen_record_id={$v['id']} order by id asc ";
+            $res_track = $model->query($sql_track);
+            if(!empty($res_track) && $res_track[0]['is_success']==0){
+                $error_num[]=$v['id'];
+                $track_info = $res_track[0];
+
+                if($track_info['position_nettystime']>0 && $track_info['position_nettystime']>0 && $track_info['request_nettytime']>0 && $track_info['netty_receive_time']>0
+                    && $track_info['netty_pushbox_time']>0 && $track_info['box_receivetime']>0 && $track_info['box_downstime']>0 && $track_info['box_downetime']>0) {
+                    $netty_result = json_decode($track_info['netty_result'], true);
+                    if ($netty_result['code'] == 10000) {
+                        $no_error_num[] = $v['id'];
+                    }else{
+                        $fail_error_num[]=$v['id'];
+                        if($v['is_4g']==0){
+                            $fail_error_wifi_num[$v['box_mac']][]=$v['id'];
+                        }
+                    }
+//                $info = array('hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],
+//                    'box_name'=>$v['box_name'],'box_mac'=>$v['box_mac']);
+//                if($v['is_4g']==1){
+//                    $info['is_4gstr'] = '是';
+//                }else{
+//                    $info['is_4gstr'] = '否';
+//                }
+//                $info['box_type_str'] = $all_box_type[$v['box_type']];
+//                $data[$v['box_mac']] = $info;
+                }else{
+                    $fail_error_num[]=$v['id'];
+                    if($v['is_4g']==0){
+//                        $fail_error_wifi_num[]=$v['id'];
+                        $fail_error_wifi_num[$v['box_mac']][]=$v['id'];
+                    }
+                }
+            }
+        }
+        echo count($error_num);
+        echo '====';
+        echo count($no_error_num);
+        echo '====';
+        echo count($fail_error_wifi_num);
+        echo '====';
+        print_r($fail_error_wifi_num);
+        exit;
+//        $data = array_values($data);
+//        $cell = array(
+//            array('hotel_name','酒楼名称'),
+//            array('area_name','城市名称'),
+//            array('box_name','版位名称'),
+//            array('box_mac','版位MAC'),
+//            array('is_4gstr','是否4G'),
+//            array('box_type_str','版位类型')
+//        );
+//        $this->exportToExcel($cell,$data,'投屏错误版位统计',1);
+    }
+
+    public function boxforscreen(){
+        ini_set("memory_limit","2048M");
+        $sql = "SELECT * FROM `savor_smallapp_forscreen_record` where create_time>='2021-01-25 00:00:00' and create_time<='2021-01-30 23:59:59' 
+        and (action in(4,30,31) or (action=2 and resource_type=2))";
+        $model = M();
+        $res = $model->query($sql);
+        $data = array();
+        $all_box_type = C('hotel_box_type');
+        $all_actions = array(
+            '2-2'=>'视频',
+            '4'=>'图片',
+            '30'=>'文件',
+            '31'=>'文件图片',
+        );
+        $all_forscreen_status = array('0'=>'失败','1'=>'成功','2'=>'打断','3'=>'退出');
+        foreach ($res as $v){
+            $aciton = $v['action'];
+            if($aciton==2){
+                $aciton = $v['action'].'-'.$v['resource_type'];
+            }
+            $sql_track = "select * FROM `savor_smallapp_forscreen_track` where forscreen_record_id={$v['id']} order by id asc limit 1";
+            $res_track = $model->query($sql_track);
+            if(!empty($res_track)){
+                $track_info = $res_track[0];
+                $box_mac = $v['box_mac'];
+
+                $info = array('area_name'=>$v['area_name'],'hotel_name'=>$v['hotel_name'],'box_name'=>$v['box_name'],'box_mac'=>$v['box_mac']);
+                if($v['is_4g']==1){
+                    $info['is_4gstr'] = '4G';
+                }else{
+                    $info['is_4gstr'] = 'wifi';
+                }
+                $info['box_type_str'] = $all_box_type[$v['box_type']];
+                if(!empty($v['resource_size'])){
+                    $info['resource_size'] = formatBytes($v['resource_size']);
+                }else {
+                    $info['resource_size'] = '';
+                }
+                $info['action_str'] = $all_actions[$aciton];
+                $info['success_str'] = $all_forscreen_status[$track_info['is_success']];
+                $info['oss_time'] = '';
+                if(!empty($track_info['oss_stime']) && !empty($track_info['oss_etime'])){
+                    $info['oss_time'] = ($track_info['oss_etime'] - $track_info['oss_stime']) /1000 ;
+                }
+                $info['total_time'] = $track_info['total_time'];
+                $sql_12 = "SELECT count(*) as num FROM `savor_smallapp_forscreen_record` where create_time>='2020-12-01 00:00:00' and create_time<='2020-12-31 23:59:59' 
+                and box_mac='{$box_mac}'";
+                $num12 = 0;
+                $res_nums = $model->query($sql_12);
+                if(!empty($res_nums)){
+                    $num12 = intval($res_nums[0]['num']);
+                }
+                $info['num12'] = $num12;
+                $sql_11 = "SELECT count(*) as num FROM `savor_smallapp_forscreen_record` where create_time>='2020-11-01 00:00:00' and create_time<='2020-11-31 23:59:59' 
+                and box_mac='{$box_mac}'";
+                $num11 = 0;
+                $res_nums = $model->query($sql_11);
+                if(!empty($res_nums)){
+                    $num11 = intval($res_nums[0]['num']);
+                }
+                $info['num11'] = $num11;
+                $data[] = $info;
+            }
+        }
+        $cell = array(
+            array('area_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('is_4gstr','版位属性'),
+            array('box_type_str','版位类型'),
+            array('action_str','投屏资源类型'),
+            array('resource_size','文件大小'),
+            array('success_str','是否失败'),
+            array('oss_time','上传用时'),
+            array('total_time','总体用时'),
+            array('num12','12月互动数'),
+            array('num11','11月互动数'),
+        );
+        $this->exportToExcel($cell,$data,'投屏数据统计',2);
+    }
+
+    public function forscreenbox(){
+        $file_path = SITE_TP_PATH.'/Public/content/副本实验组不可投屏投屏版位.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_smallapp_boxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $data = array();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $row_info = $rowData[0];
+                $info = array('id'=>$row_info[0],'status'=>$row_info[1],'box_mac'=>$row_info[2],
+                    'box_name'=>$row_info[3],'tv_status'=>$row_info[4],'hotel_name'=>$row_info[5],
+                    'tv_type'=>$row_info[6]
+                    );
+
+                $fields = 'count(a.id) as num';
+                $start_time = '2021-01-01 00:00:00';
+                $end_time = '2021-01-31 23:59:59';
+                $where = array('a.create_time'=>array(array('EGT',$start_time),array('ELT',$end_time)),'a.box_mac'=>$info['box_mac']);
+                $where['a.small_app_id'] = array('in',array(1,2,11));
+                $where['a.is_valid'] = 1;
+                $where['a.mobile_brand'] = array('neq','devtools');
+                $res_forscreen = $m_smallapp_forscreen_record->getDatas($fields,$where,'','');
+                $hd_num = 0;
+                if(!empty($res_forscreen)){
+                    $hd_num = intval($res_forscreen[0]['num']);
+                }
+                $fj_lunch_num = $fj_dinner_num = 0;
+                $fj_fields = 'count(id) as num';
+                $start_date = '2021-01-01';
+                $end_date = '2021-01-31';
+                $fj_lunch_where = array('box_mac'=>$info['box_mac'],'static_date'=>array(array('EGT',$start_date),array('ELT',$end_date)),
+                    'user_lunch_interact_num'=>array('gt',0));
+                $res_lunchfj = $m_smallapp_boxdata->getDataList($fj_fields,$fj_lunch_where,'id desc');
+                if(!empty($res_lunchfj)){
+                    $fj_lunch_num = intval($res_lunchfj[0]['num']);
+                }
+
+                $fj_dinner_where = array('box_mac'=>$info['box_mac'],'static_date'=>array(array('EGT',$start_date),array('ELT',$end_date)),
+                    'user_dinner_interact_num'=>array('gt',0));
+                $res_dinnerfj = $m_smallapp_boxdata->getDataList($fj_fields,$fj_dinner_where,'id desc');
+                if(!empty($res_dinnerfj)){
+                    $fj_dinner_num = intval($res_dinnerfj[0]['num']);
+                }
+                $fj_num = $fj_lunch_num + $fj_dinner_num;
+                $info['hd_num'] = $hd_num;
+                $info['fj_num'] = $fj_num;
+                $data[]=$info;
+            }
+        }
+
+        $cell = array(
+            array('id','ID'),
+            array('status','状态'),
+            array('box_mac','mac地址'),
+            array('box_name','版位名称'),
+            array('tv_status','电视状态'),
+            array('hotel_name','酒楼名称'),
+            array('tv_type','屏幕类型'),
+            array('hd_num','1月互动数'),
+            array('fj_num','1月互动饭局数'),
+        );
+        $this->exportToExcel($cell,$data,'副本实验组不可投屏投屏版位',1);
+
+    }
+
+    public function boxforscreennum(){
+        ini_set("memory_limit","2048M");
+        $start_time = '2020-08-21 00:00:00';
+        $end_time = '2021-02-21 23:59:59';
+
+        $all_hotel_types = C('heart_hotel_box_type');
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'a.id as hotel_id,a.name as hotel_name,area.id as area_id,area.region_name as area_name,a.hotel_box_type,a.level as hotel_level,
+	    a.is_4g,ext.trainer_id,ext.train_date,ext.maintainer_id,a.tech_maintainer';
+        $where = array('a.state'=>1,'a.flag'=>0,'a.type'=>1);
+        $where['a.hotel_box_type'] = array('in',array_keys($all_hotel_types));
+        $res_hotel = $m_hotel->getHotels($field,$where);
+        $model = M();
+        $data = array();
+        foreach ($res_hotel as $v){
+            $hotel_id = $v['hotel_id'];
+            if(in_array($hotel_id,array(7,883))){
+                continue;
+            }
+            $hotel_name = $v['hotel_name'];
+            $area_name = $v['area_name'];
+            $maintainer_id = $v['maintainer_id'];
+
+            $sql_maintainer = "select remark as uname from savor_sysuser where id={$maintainer_id}";
+            $res_maintainer = $model->query($sql_maintainer);
+            $maintainer_name = '';
+            if(!empty($res_maintainer)){
+                $maintainer_name = $res_maintainer[0]['uname'];
+            }
+            $sql_box = "select box_mac,box_name,count(*) as num,count(DISTINCT DATE(create_time)) as date_num from savor_smallapp_forscreen_record where hotel_id={$hotel_id} and create_time>='{$start_time}' and create_time<='{$end_time}'
+            and small_app_id in(1,2,11) and mobile_brand!='devtools' group by box_mac";
+            $res_boxs = $model->query($sql_box);
+            $box_nums = array();
+            if(!empty($res_boxs)){
+                foreach ($res_boxs as $bv){
+                    $box_nums[$bv['box_mac']] = array('box_name'=>$bv['box_name'],'box_mac'=>$bv['box_mac'],'forscreen_num'=>$bv['num'],'forscreen_date_num'=>$bv['date_num']);
+                }
+            }
+            $box_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+            $m_box = new \Admin\Model\BoxModel();
+            $res_box = $m_box->getBoxByCondition('box.*',$box_where,'');
+            foreach ($res_box as $box){
+                $info = array('area_name'=>$area_name,'hotel_name'=>$hotel_name,'maintainer_name'=>$maintainer_name,'box_name'=>$box['name'],
+                    'box_mac'=>$box['mac'],'forscreen_num'=>0,'forscreen_date_num'=>0);
+                if(isset($box_nums[$box['mac']])){
+                    $info['forscreen_num'] = $box_nums[$box['mac']]['forscreen_num'];
+                    $info['forscreen_date_num'] = $box_nums[$box['mac']]['forscreen_date_num'];
+                }
+                $data[]=$info;
+            }
+            echo "hotel_id: $hotel_id ok \r\n";
+
+        }
+
+        $cell = array(
+            array('area_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('forscreen_num','互动量'),
+            array('forscreen_date_num','互动天数'),
+            array('maintainer_name','维护人'),
+        );
+        $this->exportToExcel($cell,$data,'投屏版位数据统计',2);
+    }
+
 }

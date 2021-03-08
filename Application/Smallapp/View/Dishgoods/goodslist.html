@@ -51,6 +51,18 @@
                     </select>
                 </div>
             </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">是否场景化礼物：</div>
+                <div class="input-group">
+                    <select name="is_scenegift" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=99 <if condition="$is_scenegift eq 99">selected</if> >全部</option>
+                        <option value=0 <if condition="$is_scenegift eq 0">selected</if> >否</option>
+                        <option value=1 <if condition="$is_scenegift eq 1">selected</if> >是</option>
+                    </select>
+                </div>
+            </div>
+
             <if condition="$type eq 22">
             <div class="form-group">
                 <div class="input-group input-group-sm">审核状态：</div>
@@ -95,6 +107,7 @@
                         <th>单品/多型号</th>
                         <th>上/下架</th>
                         <th>是否本地有售</th>
+                        <th>是否场景化礼物</th>
                         <th>所在城市</th>
                         <th>酒楼名称</th>
                         <th>创建时间</th>
@@ -112,6 +125,7 @@
                             <td data-title="单品/多型号">{$dinfo.gtypestr}</td>
                             <td data-title="上/下架">{$dinfo.statusstr}</td>
                             <td data-title="是否本地有售">{$dinfo.localstr}</td>
+                            <td data-title="是否场景化礼物">{$dinfo.scenegiftstr}</td>
                             <td data-title="所在城市">{$dinfo.area_name}</td>
                             <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
                             <td data-title="创建时间">{$dinfo.add_time}</td>

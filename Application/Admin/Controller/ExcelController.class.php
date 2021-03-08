@@ -148,6 +148,10 @@ class ExcelController extends Controller
              $tmpname = '酒楼数据考核';
          }else if($filename =='exportForVideo'){
              $tmpname ='视频投屏数据';
+         }else if($filename=='exportRewardmoney'){
+             $tmpname = '打赏明细';
+         }else if($filename=='boxinteract'){
+             $tmpname = '正常互动屏版位明细';
          }
 
 
@@ -216,15 +220,6 @@ class ExcelController extends Controller
             $objWriter->save('php://output');
             exit;
         }else {
-            //$objWriter = \PHPExcel_IOFactory::createWriter($this->objPHPExcel, 'Excel2007');
-            /*$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $filename ='mail_box.xls';
-            //echo $user_path.$filename;exit;
-            $rts =$objWriter->save($user_path.$filename);
-            var_dump($rts);exit;*/
-            
-            
-            
             ob_start();
             $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
             $objWriter->save('php://output');
@@ -249,11 +244,6 @@ class ExcelController extends Controller
         $hidden_adsid = I('hadsid');
         $yesday =  date("Y-m-d",strtotime("-1 day"));
         $tmp_box_tv = array();
-        //$hidden_adsid = 98;//429
-       // $adsname = '刺客信条';
-        //$starttime = '2017-08-02';
-        //$endtime = '2017-08-08';
-      //  $hidden_adsid = 98;
         $where = "1=1";
         if ( $adsname ) {
             $adModel = new \Admin\Model\AdsModel();
@@ -385,7 +375,6 @@ class ExcelController extends Controller
      * 导出内容与广告相关数据
      */
     public function expcontentads(){
-
         $starttime = I('starttime','');
         $endtime = I('endtime','');
         $adsname = I('adsname');
@@ -404,7 +393,6 @@ class ExcelController extends Controller
             if(empty($ads_info)){
                 $tmp_box_tv = array();
             }else{
-                
                 $hotel_box_type_arr = C('heart_hotel_box_type');
                 $hotel_box_type_arr = array_keys($hotel_box_type_arr);
                 $space = '';
@@ -413,8 +401,6 @@ class ExcelController extends Controller
                     $hotel_box_type_str .= $space .$v;
                     $space = ',';
                 }
-                
-                
                 $ads_media_id = $ads_info['media_id'];
                 $mhotelModel = new \Admin\Model\MenuHotelModel();
                 $hotelModel = new \Admin\Model\HotelModel();
@@ -451,9 +437,6 @@ class ExcelController extends Controller
                 //二维数组合并
                 $mp = array_column($me_sta_arr, 'mac');
                 $me_sta_arr = array_combine($mp, $me_sta_arr);
-                //var_dump($mestaModel->getLastSql());
-                //dump($box_info);
-                //dump($me_sta_arr);
                 //获取电视数量
                 //进行比较
                 foreach ($box_info as $bk=>$bv) {
@@ -565,9 +548,7 @@ class ExcelController extends Controller
         }else{
             $field = 'b.mac, h.id hotel_id, h.name,h.hotel_box_type,h.remark,h.maintainer ';
             $xlsName = date("Ymd Hi",$time).$arname.' 机顶盒心跳情况';
-
         }
-
         if ($main_v) {
             $where .= "	AND sht.maintainer LIKE '%{$main_v}%' ";
         }
@@ -834,10 +815,7 @@ class ExcelController extends Controller
                             }
                         }
                         $nsp[$nk]['rate'] = $nsp[$nk]['rate'] .'%';
-
-
                     }
-
                     $hboxlist = $nsp;
                 }else{
                     foreach($hboxlist as $hbv){
@@ -894,8 +872,6 @@ class ExcelController extends Controller
                             }
                         }
                         $nsp[$nk]['rate'] = $nsp[$nk]['rate'] .'%';
-
-
                     }
                     $hboxlist = $nsp;
                 }
@@ -956,7 +932,6 @@ class ExcelController extends Controller
         }
         foreach($hboxlist as $hkk=>$hv){
             if(strstr ($hv['name'],'永峰') || strstr ($hv['name'],'茶室')){
-
                 //小平台
                 if($type == 1) {
                     if ($hv['lost_time'] == '正常'){
@@ -973,11 +948,9 @@ class ExcelController extends Controller
                 unset($hboxlist[$hkk]);
             }else{
                 if($type == 1) {
-
                 }
             }
         }
-
 
         $len = count($hboxlist) - 1;
         $hboxlist[0]['name'] = '总计'.$len.'家酒楼';
@@ -1015,7 +988,6 @@ class ExcelController extends Controller
                     "days" => 0, "hours" => 0,
                     "minutes" => 0, "seconds" => 0,
                 );
-
             if($time >= 86400){
                 $value["days"] = floor($time/86400);
                 $time = ($time%86400);
@@ -1070,9 +1042,7 @@ class ExcelController extends Controller
             if($endtime){
                 $where .= "	AND time <=  '{$endtime}'";
             }
-
         } else {
-
                 $where .= "	AND time= '{$time}' ";
 
         }
@@ -1107,7 +1077,6 @@ class ExcelController extends Controller
             array('type', '类型'),
             array('time', '时间'),
         );
-
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
 
     }
@@ -1151,7 +1120,6 @@ class ExcelController extends Controller
             array('time', '时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
-
     }
 
 
@@ -1247,14 +1215,10 @@ class ExcelController extends Controller
         $box_arr = $rea['list'];
         $xlsName = "screencastreport";
         $xlsCell = array(
-
             array('box_mac', '机顶盒MAC'),
             array('box_name', '机顶盒名称'),
-
             array('room_name', '包间名称'),
-
             array('hotel_name', '酒楼名称'),
-
             array('area_name', '区域名称'),
             array('mobile_id', '手机标识'),
             array('project_count', '投屏次数'),
@@ -1262,7 +1226,6 @@ class ExcelController extends Controller
             array('time', '时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
-
     }
 
 
@@ -1331,7 +1294,6 @@ class ExcelController extends Controller
             array('add_time', '添加时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
-
     }
 
     function expappscreen(){
@@ -1348,26 +1310,18 @@ class ExcelController extends Controller
             $etime = strtotime($endtime);
             $where .= "	AND substring(`timestamps`,0,-3) <=  '{$etime}'";
         }
-
-
         $orders = 'timestamps desc';
         $rea = $downloadModel->getAllList($where,$orders);
         foreach($rea['list'] as &$val){
             $val['addtime'] = date("Y-m-d",substr($val['timestamps'],0,-3));
-
         }
-
-
         $box_arr = $rea['list'];
         $xlsName = "appcreenreport";
         $xlsCell = array(
             array('area_name', '区域名称'),
             array('hotel_name', '酒楼名称'),
-
             array('room_name', '包间名称'),
-
             array('box_name', '机顶盒名称'),
-
             array('box_mac', '机顶盒mac'),
             array('mobile_id', '手机唯一标识id'),
             array('vcount', '点播次数'),
@@ -1377,11 +1331,9 @@ class ExcelController extends Controller
             array('addtime', '添加时间'),
         );
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);
-
     }
 
     function expdeviceinfo(){
-
         //设备故障数
         $hotel_box_type = C('hotel_box_type');
         $box_state = C('HOTEL_STATE');
@@ -1391,12 +1343,10 @@ class ExcelController extends Controller
         );
         $boxModel = new \Admin\Model\BoxModel();
         foreach($hotel_box_type as $hb=>$hv) {
-
             $map = array();
             $map['sht.hotel_box_type'] = $hb;
             $asm = array();
             foreach($box_fl as $k=>$v) {
-
                 $map['box.flag'] = $k;
                 foreach($box_state as $bk=>$bv) {
                     $map['box.state'] = $bk;
@@ -1407,12 +1357,9 @@ class ExcelController extends Controller
                     echo $hv.' '.'冻结状态'.$bv.' 删除状态'.$v.'  机顶盒'.$box_count.'个'.'<br/>';
                     $asm[] = $box_count;
                 }
-
             }
             echo $hv.'机顶盒'.array_sum($asm).'个'.'<br/>';
         }
-
-
         $map['sht.flag'] = 0;
         $map['sht.state'] = 1;
         $map['rom.flag'] = 0;
@@ -1433,16 +1380,8 @@ class ExcelController extends Controller
             $map = array();
             $map['type'] = $bt;
             $lo_arr = array();
-            /*foreach($dat_diff as $dk=>$dv) {
-
-                $map['DATE_FORMAT(`last_heart_time`,"%Y-%m-%d")'] = $dv;
-
-                $box_num = $heartLogModel->where($map)->count();
-                $lo_arr[] = $box_num;
-            }*/
             $box_num = $heartLogModel->where($map)->count();
             echo $bv.'每日开机数'.$box_num.'个'.'<br/>';
-
         }
 
         ob_end_clean();
@@ -7060,6 +6999,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
         
     }
+<<<<<<< HEAD
     public function exportForscreenLogs(){
         $start_time = "2020-08-01 00:00:00";
         $end_time   = "2020-08-20 23:59:59";
@@ -7138,5 +7078,83 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $path  .= date('Ymd').'投屏明细.xls';
         
         $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+=======
+
+    public function exportReward(){
+        $start_time = I('start_time');
+        $end_time   = I('end_time');
+        $where = '';
+        if(!empty($start_time)){
+            $start_time = date('Y-m-d 00:00:00',strtotime($start_time));
+            $where .=" and add_time>='".$start_time."'";
+        }
+        if(!empty($end_time)){
+            $end_time = date('Y-m-d 23:59:59',strtotime($end_time));
+            $where .= " and add_time<='".$end_time."'";
+        }
+        $sql = "select * from savor_smallapp_reward where hotel_id not in(7,925) and status in(2,3) {$where}";
+        $res_data = M()->query($sql);
+        $data = array();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_hotel = new \Admin\Model\HotelModel();
+
+        foreach($res_data as $key=>$v){
+            $hotel_id = $v['hotel_id'];
+            $box_mac = $v['box_mac'];
+            $fields = 'box.name as box_name,hotel.name as hotel_name,area.region_name as area_name';
+            $where = array('box.state'=>1,'box.flag'=>0,'box.mac'=>$box_mac,'hotel.id'=>$hotel_id);
+            $res_box = $m_box->getDeviceInfoByBoxMac($fields,$where);
+            if(!empty($res_box)){
+                $b_info = $res_box[0];
+            }else{
+                $field = 'a.name as hotel_name,area.region_name as area_name';
+                $where = array('a.id'=>$hotel_id);
+                $b_info = $m_hotel->getHotelInfo($field,$where);
+                $b_info['box_name'] = '';
+            }
+
+            $info = array('area_name'=>$b_info['area_name'],'hotel_name'=>$b_info['hotel_name'],'box_mac'=>$v['box_mac'],
+                'box_name'=>$b_info['box_name'],'money'=>$v['money'],'add_time'=>$v['add_time']);
+            $data[]=$info;
+        }
+
+        $xlsCell = array(
+            array('area_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_mac','版位MAC'),
+            array('box_name','版位名称'),
+            array('money','打赏金额'),
+            array('add_time','打赏时间'),
+        );
+        $xlsName = '打赏明细';
+        $filename = 'exportRewardmoney';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+    }
+
+    public function exportBoxinteract(){
+        $area_id = I('aid',236,'intval');
+        $sql = "select box.mac as box_mac,box.name as box_name,room.name as room_name,hotel.name as hotel_name,hotel.id as hotel_id,area.region_name as area_name,ext.maintainer_id
+        from savor_box as box left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id left join savor_hotel_ext as ext
+        on hotel.id=ext.hotel_id left join savor_area_info as area on hotel.area_id=area.id where hotel.area_id={$area_id} and box.state=1 and box.flag=0 and box.is_interact=1";
+        $res_data = M()->query($sql);
+        $data = array();
+        foreach ($res_data as $v){
+            $sql_u = "select * from savor_sysuser where id={$v['maintainer_id']}";
+            $res_u = M()->query($sql_u);
+            $v['maintainer_name'] = $res_u[0]['remark'];
+            $data[]=$v;
+        }
+        $xlsCell = array(
+            array('box_mac','版位MAC'),
+            array('box_name','版位名称'),
+            array('room_name','包间名称'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','地区'),
+            array('maintainer_name','合作维护人'),
+        );
+        $xlsName = '正常互动屏版位明细';
+        $filename = 'boxinteract';
+        $this->exportExcel($xlsName, $xlsCell, $data,$filename);
+>>>>>>> 075889174c989c883d3ab7173b57c3c976c0a741
     }
 }

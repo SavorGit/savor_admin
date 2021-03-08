@@ -1,0 +1,60 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+	<div id="w_list_print">
+		<div class="no-more-tables">
+			<form method="post" action="{$host_url}/smallapp/hotplay/edit" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+				<input type="hidden" name="id" value="{$id}" />
+				<table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+					<thead>
+
+					<tr id="post">
+						<!-- <th>资源</th> -->
+					</tr>
+					</thead>
+					<tbody data-check="list" data-parent=".table">
+
+					<volist name="list" id="vlist">
+
+						<tr>
+
+							<if condition="$res_type  eq 1">
+								<a href="{$vlist.res_url}" target="_blank" style="color:red">
+									<img src="{$vlist.res_url}" height="200px">
+								</a>
+								<else />
+								<a href="{$vlist.res_url}" target="_blank" style="color:red">
+									预览
+								</a>
+							</if>
+
+						</tr>
+
+						</tr>
+					</volist>
+					<tr>
+						<td>
+							内容审核序号:
+							<input type="text" name="pub_id" value="" />
+
+
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<button class="btn btn-default close-m" type="button">取消</button>
+							<button class="btn btn-primary" type="submit">保存</button>
+
+						</td>
+					</tr>
+
+					</tbody>
+				</table>
+			</form>
+
+		</div>
+	</div>
+
+</div>

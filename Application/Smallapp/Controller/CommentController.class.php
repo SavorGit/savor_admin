@@ -117,4 +117,38 @@ class CommentController extends BaseController {
         }
     }
 
+    /**
+     * @desc 删除测试数据
+     */
+    public function delTestComment(){
+        $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+        $orderby = 'id desc';
+        $res_list = $m_invalid->getDataList('*',array('type'=>2),$orderby);
+        $all_invalidopenids = array();
+        foreach ($res_list as $v){
+            $all_invalidopenids[] = $v['invalidid'];
+        }
+        if(!empty($all_invalidopenids)){
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $where = array('openid'=>array('in',$all_invalidopenids));
+            $res_user = $m_user->getWhere('id',$where,'id desc','','');
+            $u_ids = array();
+            foreach ($res_user as $v){
+                $u_ids[]=$v['id'];
+            }
+            $m_comment  = new \Admin\Model\Smallapp\CommentModel();
+            $res_comment = $m_comment->getDataList('id',array('user_id'=>array('in',$u_ids)),'id desc');
+            if(!empty($res_comment)){
+                $comment_ids = array();
+                foreach ($res_comment as $v){
+                    $comment_ids[]=$v['id'];
+                }
+                $m_comment->delData(array('id'=>array('in',$comment_ids)));
+                $m_comment_tag = new \Admin\Model\Smallapp\CommenttagidsModel();
+                $m_comment_tag->delData(array('comment_id'=>array('in',$comment_ids)));
+            }
+        }
+        $this->output('清除无效数据成功', 'comment/commentlist', 2);
+    }
+
 }

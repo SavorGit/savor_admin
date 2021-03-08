@@ -97,7 +97,7 @@ class SappforscreenController extends BaseController {
             $where['a.scene_id'] = $scene_id;
         }
         if($personattr_id){
-            $where['a.personattr_id'] = $personattr_id;
+            $where['_string']="FIND_IN_SET(".$personattr_id.",a.personattr_id)";
         }
         if($dinnernature_id){
             $where['a.dinnernature_id'] = $dinnernature_id;
@@ -169,7 +169,7 @@ class SappforscreenController extends BaseController {
 
             $list['list'][$key]['quality_typestr'] = $quality_types[$v['quality_type']];
 	        $is_track = 0;
-	        if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121))){
+	        if($v['small_app_id']==1 && !in_array($v['action'],array(13,14,21,50,101,120,121,42,43,44,45,52,54))){
 	            if($v['create_time']>=$track_start_time){
                     $is_track = 1;
                 }
@@ -283,15 +283,18 @@ class SappforscreenController extends BaseController {
 	    if(IS_POST){
 	        $category_id = I('post.category_id',0,'intval');
 	        $scene_id = I('post.scene_id',0,'intval');
-	        $personattr_id = I('post.personattr_id',0,'intval');
+	        $personattr_ids = I('post.personattr_ids','');
 	        $dinnernature_id = I('post.dinnernature_id',0,'intval');
 	        $contentsoft_id = I('post.contentsoft_id',0,'intval');
 	        $spotstatus = I('post.spotstatus',0,'intval');
             $remark = I('post.remark','','trim');
             $condition = array('id'=>$id);
             $data = array('remark'=>$remark,'category_id'=>$category_id,'scene_id'=>$scene_id,
-                'personattr_id'=>$personattr_id,'dinnernature_id'=>$dinnernature_id,'contentsoft_id'=>$contentsoft_id,
+                'dinnernature_id'=>$dinnernature_id,'contentsoft_id'=>$contentsoft_id,
                 'spotstatus'=>$spotstatus);
+            if(!empty($personattr_ids)){
+                $data['personattr_id'] = join(',',$personattr_ids);
+            }
             $m_smallapp_forscreen_record->updateData($condition,$data);
             $this->output('操作成功!', 'Report/sappforscreen');
         }else{
@@ -621,7 +624,9 @@ class SappforscreenController extends BaseController {
                 }else{
                     $pushbox_time = '';
                 }
-                if($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
+                if($track_info['netty_callback_time'] && $track_info['netty_receive_time']){
+                    $netty_timeconsume = ($track_info['netty_callback_time']-$track_info['netty_receive_time'])/1000;
+                }elseif($track_info['netty_receive_time'] && $track_info['netty_pushbox_time']){
                     $netty_timeconsume = ($track_info['netty_pushbox_time']-$track_info['netty_receive_time'])/1000;
                 }else{
                     $netty_timeconsume = '';

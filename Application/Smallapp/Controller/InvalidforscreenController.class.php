@@ -3,12 +3,14 @@ namespace Smallapp\Controller;
 use Admin\Controller\BaseController;
 
 /**
- * @desc 采集投屏
+ * @desc 无效投屏
  *
  */
-class CollectforscreenController extends BaseController {
+class InvalidforscreenController extends BaseController {
 
     public $success_status = array('1'=>'成功','2'=>'打断','3'=>'退出','0'=>'失败');
+    public $all_smallapps = array();
+    public $all_actions = array();
 
     public function __construct() {
         parent::__construct();
@@ -20,7 +22,6 @@ class CollectforscreenController extends BaseController {
         $size   = I('numPerPage',50);//显示每页记录数
         $pagenum = I('pageNum',1);
         $small_app_id = I('small_app_id',0,'intval');
-        $is_exist = I('is_exist',99,'intval');
         $action_type = I('action_type',999);
         $create_time = I('create_time','','trim');
         $end_time    = I('end_time','','trim');
@@ -28,16 +29,12 @@ class CollectforscreenController extends BaseController {
         $box_mac    = I('box_mac','','trim');
         $openid = I('openid','','trim');
 
-        $where = array('box.state'=>1,'box.flag'=>0);
         if($create_time && $end_time){
             $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
         }else{
             $create_time = date('Y-m-d');
             $end_time = date('Y-m-d');
             $where['a.create_time'] = array(array('EGT',$create_time.' 00:00:00'),array('ELT',$end_time.' 23:59:59'));
-        }
-        if($is_exist!=99){
-            $where['a.is_exist'] = $is_exist;
         }
         if($action_type!=999){
             $action_type_arr = explode('-',$action_type);
@@ -49,7 +46,7 @@ class CollectforscreenController extends BaseController {
             }
         }
         if($hotel_name){
-            $where['hotel.name'] = array('like',"%$hotel_name%");
+            $where['a.hotel_name'] = array('like',"%$hotel_name%");
         }
         if($small_app_id){
             $where['a.small_app_id'] = $small_app_id;
@@ -60,8 +57,8 @@ class CollectforscreenController extends BaseController {
         if($openid){
             $where['a.openid'] = $openid;
         }
-        $fields = 'user.avatarUrl,user.nickName,area.region_name,hotel.name hotel_name,room.name room_name,box.box_type,box.is_4g,a.*';
-        $m_smallapp_forscreen_record = new \Admin\Model\Smallapp\CollectforscreenModel();
+        $fields = 'user.avatarUrl,user.nickName,a.*';
+        $m_smallapp_forscreen_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
         $orders = 'a.create_time desc';
         $start = ($pagenum-1) * $size;
         $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
@@ -113,13 +110,6 @@ class CollectforscreenController extends BaseController {
                 $is_4g_str = '否';
             }
             $list['list'][$key]['is_4g_str'] = $is_4g_str;
-            $success_str = '';
-            if($v['small_app_id']==1 && !in_array($v['action'],array(21,50,101,120,121,42,43,44,45,52))){
-                $success_str = $this->success_status[$v['success_status']];
-            }
-
-            $list['list'][$key]['success_str'] = $success_str;
-            $list['list'][$key]['total_time'] = $v['total_time'];
             $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);
             $nowaction_type = $v['action'];
             if($nowaction_type==2){
@@ -136,7 +126,6 @@ class CollectforscreenController extends BaseController {
         $this->assign('pageNum',$pagenum);
         $this->assign('numPerPage',$size);
         $this->assign('action_type',$action_type);
-        $this->assign('is_exist',$is_exist);
         $this->assign('all_actions',$all_actions);
         $this->assign('small_apps',$all_smallapps);
         $this->assign('small_app_id',$small_app_id);
@@ -144,12 +133,6 @@ class CollectforscreenController extends BaseController {
         $this->assign('oss_host',C('OSS_HOST_NEW'));
         $this->assign('page',$list['page']);
         $this->display('datalist');
-    }
-
-    public function refreshdata(){
-        $m_collectforscreen = new \Admin\Model\Smallapp\CollectforscreenModel();
-        $m_collectforscreen->collectforscreen(1);
-        $this->output('刷新数据成功', 'collectforscreen/datalist',2);
     }
 
 

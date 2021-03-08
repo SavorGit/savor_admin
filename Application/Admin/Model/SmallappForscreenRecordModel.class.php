@@ -138,6 +138,7 @@ class SmallappForscreenRecordModel extends Model{
     }
 
     public function cleanTestdata(){
+        ini_set("memory_limit","2048M");
         $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
         $orderby = 'id desc';
         $res_list = $m_invalid->getDataList('*','',$orderby);
@@ -170,7 +171,7 @@ class SmallappForscreenRecordModel extends Model{
 
         foreach ($res_boxdata as $v){
             $v['forscreen_record_id'] = $v['id'];
-            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type']);
+            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
             $m_smallapp_forscreen_invalidrecord->addData($v);
         }
         $delcondition = array('box_mac'=>array('in',$boxs));
@@ -183,7 +184,7 @@ class SmallappForscreenRecordModel extends Model{
             $res_userdata = $this->getWhere('a.*',$condition,'','');
             foreach ($res_userdata as $v){
                 $v['forscreen_record_id'] = $v['id'];
-                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type']);
+                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
                 $m_smallapp_forscreen_invalidrecord->addData($v);
             }
             $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
@@ -381,5 +382,47 @@ class SmallappForscreenRecordModel extends Model{
             $avgspeed = intval($result[0]['avg_speed']/1024);
         }
         return $avgspeed;
+    }
+
+    public function getFeastForscreenNumByBox($hotel_id,$box_mac,$time,$fj_type=0,$small_id=1){
+        $feast_time = C('MEAL_TIME');
+        $lunch_start = date("Y-m-d {$feast_time['lunch'][0]}:00",$time);
+        $lunch_end = date("Y-m-d {$feast_time['lunch'][1]}:00",$time);
+        $dinner_start = date("Y-m-d {$feast_time['dinner'][0]}:00",$time);
+        $dinner_end = date("Y-m-d {$feast_time['dinner'][1]}:59",$time);
+
+        $where = array('a.hotel_id'=>$hotel_id,'a.box_mac'=>$box_mac);
+        $where_lunch = array('a.create_time'=>array(array('EGT',$lunch_start),array('ELT',$lunch_end)));
+        $where_dinner = array('a.create_time'=>array(array('EGT',$dinner_start),array('ELT',$dinner_end)));
+        switch ($fj_type){
+            case 0:
+                $where['_complex'] = array(
+                    $where_lunch,
+                    $where_dinner,
+                    '_logic' => 'or'
+                );
+                break;
+            case 1:
+                $where['a.create_time'] = $where_lunch['a.create_time'];
+                break;
+            case 2:
+                $where['a.create_time'] = $where_dinner['a.create_time'];
+                break;
+        }
+        $where['a.is_valid'] = 1;
+        $where['a.mobile_brand'] = array('neq','devtools');
+        if($small_id==1){//1主干版 2极简版 5销售端 11游戏
+            $where['a.small_app_id'] = array('in',array(1,2,11));
+        }elseif($small_id==5){
+            $where['a.small_app_id'] = 5;
+        }
+
+        $fields = 'count(a.id) as num';
+        $result = $this->getDatas($fields,$where,'','');
+        $num = 0;
+        if(!empty($result)){
+            $num = intval($result[0]['num']);
+        }
+        return $num;
     }
 }

@@ -1596,6 +1596,51 @@ class DatareportController extends BaseController {
         $this->output('刷新成功', 'datareport/onlinerate', 2);
     }
 
+    public function boxinteractnum(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',200);//显示每页记录数
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $area_id = I('area_id',0,'intval');
+
+        $where = array();
+        if($start_time && $end_time){
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        } else if($start_time && empty($end_time)){
+            $end_time = date('Y-m-d');
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else if(empty($start_time) && !empty($end_time)){
+            $start_time = '2021-01-01';
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }else{
+            $start_time = date('Y-m-d',strtotime('-1day'));
+            $end_time = date('Y-m-d',strtotime('-1day'));
+            $where['static_date'] = array(array('EGT',$start_time),array('ELT',$end_time));
+        }
+        if($area_id){
+            $where['area_id'] = $area_id;
+        }
+        $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
+        $start = ($page - 1)*$size;
+        $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num,static_date';
+        $res_data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','',$start,$size);
+        $datalist = $res_data['list'];
+
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+
+        $this->assign('pageNum',$page);
+        $this->assign('start_time',$start_time);
+        $this->assign('end_time',$end_time);
+        $this->assign('area_id',$area_id);
+        $this->assign('area', $area_arr);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $res_data['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('boxinteractnum');
+    }
+
     public function getOpuser($op_uid=0){
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $fields = 'a.user_id uid,user.remark ';
