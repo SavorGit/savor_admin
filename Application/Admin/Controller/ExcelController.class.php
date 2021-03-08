@@ -5143,7 +5143,7 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
         $xlsName = '失联超过10天的版位信息';
         $filename = 'user_wifi_forscreen_detail';
         //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
-        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202011/';
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202012/';
         if (!is_dir($path)){
             mkdir($path,0777,true);
         }
@@ -7059,5 +7059,84 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'exportForVideo';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
         
+    }
+    public function exportForscreenLogs(){
+        $start_time = "2020-08-01 00:00:00";
+        $end_time   = "2020-08-20 23:59:59";
+        $all_actions = C('all_forscreen_actions');
+        $sql ="select log.id,log.area_name,log.hotel_name,log.box_name,log.box_mac,
+                case log.box_type
+				when 2 then '二代网络版'
+				when 3 then '二代5G'
+				when 6 then '三代网络'
+                when 7 then   '互联网电视'
+                END AS box_type, log.mobile_brand,log.mobile_model,log.action,
+                log.resource_size,log.create_time,log.res_sup_time,log.res_eup_time,log.small_app_id,
+                track.is_success,track.total_time
+                from savor_smallapp_forscreen_record log
+                left join savor_smallapp_forscreen_track track on log.id=track.forscreen_record_id
+                where  log.create_time>='".$start_time."' and log.create_time<='".$end_time."' and  log.small_app_id in(1,2) and log.mobile_brand!='devtools'";
+        //echo $sql;exit;
+        $data = M()->query($sql);
+        foreach($data as $key=>$v){
+            $nowaction_type = $v['action'];
+            if($nowaction_type==2){
+                $nowaction_type = $nowaction_type.'-'.$v['resource_type'];
+            }
+            $data[$key]['action_name'] = $all_actions[$nowaction_type];
+            
+            if(!empty($v['resource_size'])){
+                $data[$key]['resource_size'] = formatBytes($v['resource_size']);
+            }else {
+                $data[$key]['resource_size'] = '';
+            }
+            //是否成功
+            if($v['small_app_id']==2){//如果是极简版
+                if(!empty($v['res_sup_time']) && !empty($v['res_eup_time'])){
+                    $data[$key]['is_success'] = '成功';
+                    $diff_time = ($v['res_eup_time'] - $v['res_sup_time']) /1000;
+                    $data[$key]['total_time'] = $diff_time;
+                }else {
+                    $data[$key]['is_success'] = '失败';
+                    $data[$key]['total_time'] = '';
+                }
+                
+            }else if($v['small_app_id']==1){
+                $data[$key]['is_success'] = $v['is_success']==1? '成功': '失败';
+            }
+            $data[$key]['small_app_id'] = $v['small_app_id']==1?'普通版':'极简版';
+        }
+        //print_r($data);exit;
+        $xlsName = '投屏日志明细';
+        $filename = 'exportSl14BoxList';
+        
+        $xlsCell = array(
+        
+            array('id','互动id'),
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','机顶盒名称'),
+            array('box_mac','机顶盒编号'),
+            array('box_type','设备类型'),
+            array('mobile_brand','手机品牌'),
+            array('mobile_model','手机型号'),
+            array('action_name','投屏动作'),
+            array('resource_size','资源大小'),
+            array('create_time','投屏时间'),
+            array('is_success','是否成功'),
+            array('total_time','总计时间'),
+            array('small_app_id','小程序版本')
+        
+        );
+        $xlsName = '失联超过10天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202103/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'投屏明细.xls';
+        
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
     }
 }
