@@ -15,8 +15,8 @@ class ExcelController extends Controller
 
     public function exportExcel($expTitle, $expCellName, $expTableData,$filename,$type=1,$user_path = '/temp/test.xls')
     {
-        set_time_limit(90);
-        ini_set("memory_limit", "512M");
+        set_time_limit(9000);
+        ini_set("memory_limit", "8018M");
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
         $xlsTitle = iconv('utf-8', 'gb2312', $expTitle);//文件名称
@@ -6999,18 +6999,19 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
         
     }
-<<<<<<< HEAD
     public function exportForscreenLogs(){
-        $start_time = "2020-08-01 00:00:00";
-        $end_time   = "2020-08-20 23:59:59";
+        set_time_limit(36000);
+        ini_set("memory_limit","8018M");
+        $start_time = "2021-02-26 00:00:00";
+        $end_time   = "2021-03-05 23:59:59";
         $all_actions = C('all_forscreen_actions');
-        $sql ="select log.id,log.area_name,log.hotel_name,log.box_name,log.box_mac,
+        $sql ="select log.id,track.id t_id,log.area_name,log.hotel_name,log.box_name,log.box_mac,
                 case log.box_type
 				when 2 then '二代网络版'
 				when 3 then '二代5G'
 				when 6 then '三代网络'
                 when 7 then   '互联网电视'
-                END AS box_type, log.mobile_brand,log.mobile_model,log.action,
+                END AS box_type, log.mobile_brand,log.mobile_model,log.action,log.resource_type,
                 log.resource_size,log.create_time,log.res_sup_time,log.res_eup_time,log.small_app_id,
                 track.is_success,track.total_time
                 from savor_smallapp_forscreen_record log
@@ -7019,10 +7020,21 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         //echo $sql;exit;
         $data = M()->query($sql);
         foreach($data as $key=>$v){
+            if(empty($v['t_id']) && $v['small_app_id']==1){
+                unset($data[$key]);
+                continue;
+            }
+            
             $nowaction_type = $v['action'];
             if($nowaction_type==2){
                 $nowaction_type = $nowaction_type.'-'.$v['resource_type'];
             }
+            if($v['small_app_id']==2 && $nowaction_type=='2-1'){
+                unset($data[$key]);
+                continue;
+            }
+            
+            
             $data[$key]['action_name'] = $all_actions[$nowaction_type];
             
             if(!empty($v['resource_size'])){
@@ -7042,14 +7054,20 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 }
                 
             }else if($v['small_app_id']==1){
-                $data[$key]['is_success'] = $v['is_success']==1? '成功': '失败';
+                if($v['is_success']==1){
+                    $data[$key]['is_success'] ='成功';
+                }else if($v['is_success']==2){
+                    $data[$key]['is_success'] ='打断';
+                }else if($v['is_success']==3){
+                    $data[$key]['is_success'] ='退出投屏';
+                }
             }
             $data[$key]['small_app_id'] = $v['small_app_id']==1?'普通版':'极简版';
         }
         //print_r($data);exit;
         $xlsName = '投屏日志明细';
         $filename = 'exportSl14BoxList';
-        
+        $data = array_values($data);
         $xlsCell = array(
         
             array('id','互动id'),
@@ -7075,11 +7093,207 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         if (!is_dir($path)){
             mkdir($path,0777,true);
         }
-        $path  .= date('Ymd').'投屏明细.xls';
+        $path  .= date('Ymd').'投屏明细4.xls';
         
         $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
-=======
-
+    }
+    public function exportForscreenLogsByHotel(){
+        set_time_limit(36000);
+        ini_set("memory_limit","8018M");
+        $start_time = "2020-08-01 00:00:00";
+        $end_time   = "2021-03-05 23:59:59";
+        $sql = "select hotel.id hotel_id,area.region_name area_name,hotel.name hotel_name,hotel.addr,user.remark,
+                case hotel.is_4g
+				when 1 then '是'
+				when 2 then '否'
+                END AS is_4g  
+                from savor_hotel hotel
+                left join savor_area_info area on hotel.area_id=area.id
+                left join savor_hotel_ext ext on hotel.id= ext.hotel_id
+                left join savor_sysuser user on ext.maintainer_id = user.id
+                where hotel.state=1 and hotel.flag=0";
+        $hotel_data = M()->query($sql);
+        //print_r(hotel_data);
+        $data = array();
+        $flag = 0;
+        foreach($hotel_data as $key=>$v){
+            
+            
+            //互动数量
+            $sql ="select count(id) as count from savor_smallapp_forscreen_record 
+                   where create_time>='".$start_time."' and create_time<='".$end_time."' and small_app_id in(1,2)
+                   and hotel_id=".$v['hotel_id'];
+            
+            $rt = M()->query($sql);
+            //echo 'hotel_id_'.$v['hotel_id'].'_'.$rt[0]['count']."<br />";
+            if($rt[0]['count']==0){
+                $sql ="select count(box.id) as count from savor_box box
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id = hotel.id
+                   where box.state=1 and box.flag=0 and hotel.id=".$v['hotel_id'];
+                
+                $rt = M()->query($sql);
+                //版位数量
+                $hotel_data[$key]['box_num'] = $rt[0]['count'];
+                $data[$flag]= $hotel_data[$key];
+                $flag ++;
+            }
+            
+        }
+        $xlsCell = array(
+        
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('box_num','版位数量'),
+            array('remark','维护人'),
+            array('is_4g','是否4g'),
+        
+        );
+        $xlsName = '失联超过10天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202103/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'互动数为0的酒楼.xls';
+        
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+    }
+    public function exportForscreenLogsByBox(){
+        set_time_limit(36000);
+        ini_set("memory_limit","8018M");
+        $start_time = "2020-08-01 00:00:00";
+        $end_time   = "2021-03-05 23:59:59";
+        $sql = "select area.region_name area_name,hotel.name hotel_name,hotel.addr,user.remark,box.name box_name,
+                   box.mac,
+                    case box.box_type
+        				when 2 then '二代网络版'
+        				when 3 then '二代5G'
+        				when 6 then '三代网络'
+                        when 7 then   '互联网电视' 
+                        END AS box_type
+                   from savor_box box
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id = hotel.id
+                   left join savor_area_info area on hotel.area_id=area.id
+                   left join savor_hotel_ext ext on hotel.id= ext.hotel_id
+                   left join savor_sysuser user on ext.maintainer_id = user.id
+                   where box.state=1 and box.flag=0 and hotel.state= 1 and hotel.flag=0";
+        $box_data = M()->query($sql);
+        $data = array();
+        $flag = 0;
+        foreach($box_data as $key=>$v){
+            $sql ="select count(id) as count from savor_smallapp_forscreen_record 
+                   where create_time>='".$start_time."' and create_time<='".$end_time."' and small_app_id in(1,2)
+                   and box_mac='".$v['mac']."'";
+            $rt = M()->query($sql);
+            if($rt[0]['count']==0){
+                $data[$flag] = $box_data[$key];
+                $flag ++;
+            }
+            
+        }
+        $xlsCell = array(
+        
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('box_name','机顶盒名称'),
+            array('mac','设备mac'),
+            array('box_type','设备类型'),
+            array('remark','维护人'),
+        
+        );
+        $xlsName = '失联超过10天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202103/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'互动数为0的版位.xls';
+        
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+    }
+    public function exportForscreenLogsByTime(){
+        set_time_limit(36000);
+        ini_set("memory_limit","8018M");
+        $start_time = "2020-08-01 00:00:00";
+        $end_time   = "2021-03-05 23:59:59";
+        $sql ="select box_mac from savor_smallapp_forscreen_record 
+               where create_time>='".$start_time."' and create_time<='".$end_time."'
+               and action in(4,3) and small_app_id=2 and res_sup_time>0 and res_eup_time>0 group by box_mac";
+        
+        $box_data = M()->query($sql);
+        $data = array();
+        $flag = 0; 
+        foreach($box_data as $key=>$v){
+            $sql = "select area.region_name area_name,hotel.name hotel_name,hotel.addr,user.remark,box.name box_name,
+                   box.mac,
+                    case box.box_type
+        				when 2 then '二代网络版'
+        				when 3 then '二代5G'
+        				when 6 then '三代网络'
+                        when 7 then   '互联网电视' 
+                        END AS box_type
+                   from savor_box box
+                   left join savor_room room on box.room_id = room.id
+                   left join savor_hotel hotel on room.hotel_id = hotel.id
+                   left join savor_area_info area on hotel.area_id=area.id
+                   left join savor_hotel_ext ext on hotel.id= ext.hotel_id
+                   left join savor_sysuser user on ext.maintainer_id = user.id
+                   where box.state=1 and box.flag=0 and hotel.state= 1 and hotel.flag=0 and box.mac='".$v['box_mac']."'";
+            $hotel_info = M()->query($sql);
+         
+            //$data[$key] = $rt[0];
+            $sql ="select sum(`res_sup_time`) as res_sup_time,sum(`res_eup_time`) as res_eup_time from savor_smallapp_forscreen_record 
+               where create_time>='".$start_time."' and create_time<='".$end_time."'
+               and action in(4,3) and small_app_id=2 and res_sup_time>0 and res_eup_time>0 and box_mac='".$v['box_mac']."'";
+            $rt = M()->query($sql);
+            
+            $res_sup_time = $rt[0]['res_sup_time'];
+            $res_eup_time = $rt[0]['res_eup_time'];
+            $diff_time = ($res_eup_time - $res_sup_time) / 1000;
+            $sql ="select count(id) as count from savor_smallapp_forscreen_record 
+               where create_time>='".$start_time."' and create_time<='".$end_time."'
+               and action in(4,3) and small_app_id=2 and res_sup_time>0 and res_eup_time>0 and box_mac='".$v['box_mac']."'";
+            $rt = M()->query($sql);
+            $count = $rt[0]['count'];
+            $avg_time = round($diff_time/$count,2);
+            if($avg_time>6){
+                $hotel_info = $hotel_info[0];
+                $hotel_info['avg_time'] = $avg_time;
+                $data[$flag] = $hotel_info;
+                $flag ++;
+            } 
+        
+        }
+        $xlsCell = array(
+        
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('box_name','机顶盒名称'),
+            array('mac','设备mac'),
+            array('box_type','设备类型'),
+            array('avg_time','极简平均耗时'),
+            array('remark','维护人'),
+        
+        );
+        $xlsName = '失联超过10天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202103/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'极简版慢test.xls';
+        
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+    }
+    
     public function exportReward(){
         $start_time = I('start_time');
         $end_time   = I('end_time');
@@ -7155,6 +7369,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $xlsName = '正常互动屏版位明细';
         $filename = 'boxinteract';
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
->>>>>>> 075889174c989c883d3ab7173b57c3c976c0a741
+
     }
 }
