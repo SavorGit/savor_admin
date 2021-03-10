@@ -79,6 +79,11 @@ class RedpacketoperationModel extends BaseModel{
                                 $key = C('SAPP_REDPACKET').$trade_no.':bonus';
                                 $all_moneys = array('unused'=>$all_money,'used'=>array());
                                 $redis->set($key,json_encode($all_moneys),86400);
+
+                                $key_queue = C('SAPP_REDPACKET').$trade_no.':bonusqueue';
+                                foreach ($all_money as $mv){
+                                    $redis->rpush($key_queue,$mv);
+                                }
                                 //end
 
                                 //推送红包小程序码到电视
@@ -128,6 +133,10 @@ class RedpacketoperationModel extends BaseModel{
                         $key = C('SAPP_REDPACKET').$trade_no.':bonus';
                         $all_moneys = array('unused'=>$all_money,'used'=>array());
                         $redis->set($key,json_encode($all_moneys),86400);
+                        $key_queue = C('SAPP_REDPACKET').$trade_no.':bonusqueue';
+                        foreach ($all_money as $mv){
+                            $redis->rpush($key_queue,$mv);
+                        }
                         //end
 
                         //推送红包小程序码到电视
