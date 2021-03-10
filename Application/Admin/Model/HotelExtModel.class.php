@@ -1,9 +1,4 @@
 <?php
-/**
- *酒店model
- *@author  hongwei <[<email address>]>
- *
- */
 namespace Admin\Model;
 
 use Common\Lib\Page;
@@ -22,6 +17,15 @@ class HotelExtModel extends BaseModel{
 		$result = $this->add($data);
 		return $result;
 	}
+
+    public function getHotelMaintainer($field,$where){
+        $list = $this->alias('a')
+            ->field($field)
+            ->where($where)
+            ->join('left join savor_sysuser user on a.maintainer_id=user.id')
+            ->select();
+        return $list;
+    }
 
 	public function saveStRedis($data, $id){
 		$redis  =  \Common\Lib\SavorRedis::getInstance();

@@ -1625,6 +1625,21 @@ class DatareportController extends BaseController {
         $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num,static_date';
         $res_data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','',$start,$size);
         $datalist = $res_data['list'];
+        $m_hotelext = new \Admin\Model\HotelExtModel();
+        $hotel_maintainers = array();
+        foreach ($datalist as $k=>$v){
+            $hotel_id = $v['hotel_id'];
+            if(!isset($hotel_maintainers[$hotel_id])){
+                $res_main = $m_hotelext->getHotelMaintainer('user.id as user_id,user.remark',array('a.hotel_id'=>$hotel_id));
+                $hotel_maintainers[$hotel_id]= array('user_id'=>$res_main[0]['user_id'],'username'=>$res_main[0]['remark']);
+            }
+        }
+        foreach ($datalist as $k=>$v){
+            $hotel_id = $v['hotel_id'];
+            if(isset($hotel_maintainers[$hotel_id])){
+                $datalist[$k]['maintainer'] = $hotel_maintainers[$hotel_id]['username'];
+            }
+        }
 
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();

@@ -473,7 +473,21 @@ class ForscreenController extends BaseController{
         $m_staticboxdata = new \Admin\Model\Smallapp\StaticBoxdataModel();
         $fields = 'hotel_id,hotel_name,area_name,box_name,box_mac,user_lunch_interact_num,user_dinner_interact_num,static_date';
         $data = $m_staticboxdata->getCustomDataList($fields,$where,'hotel_id desc','');
-
+        $m_hotelext = new \Admin\Model\HotelExtModel();
+        $hotel_maintainers = array();
+        foreach ($data as $k=>$v){
+            $hotel_id = $v['hotel_id'];
+            if(!isset($hotel_maintainers[$hotel_id])){
+                $res_main = $m_hotelext->getHotelMaintainer('user.id as user_id,user.remark',array('a.hotel_id'=>$hotel_id));
+                $hotel_maintainers[$hotel_id]= array('user_id'=>$res_main[0]['user_id'],'username'=>$res_main[0]['remark']);
+            }
+        }
+        foreach ($data as $k=>$v){
+            $hotel_id = $v['hotel_id'];
+            if(isset($hotel_maintainers[$hotel_id])){
+                $data[$k]['maintainer'] = $hotel_maintainers[$hotel_id]['username'];
+            }
+        }
         $cell = array(
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
@@ -482,6 +496,7 @@ class ForscreenController extends BaseController{
             array('box_mac','版位MAC'),
             array('user_lunch_interact_num','午饭互动量'),
             array('user_dinner_interact_num','晚饭互动量'),
+            array('maintainer','维护人'),
             array('static_date','投屏日期'),
         );
         $this->exportToExcel($cell,$data,'版位午饭晚饭互动量统计',1);
