@@ -714,25 +714,26 @@ class TestController extends Controller {
         echo "ok";
     }
 
-    public function forscreenboxcache(){
+    public function updateboxcache(){
         exit;
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
 //        $close_forscreen_boxs = $this->closeboxforscreen();
 
-//        $sql = "select box.* from savor_box box
-//                left join savor_room room on box.room_id=room.id
-//                left join savor_hotel hotel on room.hotel_id=hotel.id
-//                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.is_open_simple=0 and hotel.id in(372,610,262,281,332,871,251,849,675,818,277,383,618,950,1191,611,870,1192,327,312,330,249,384,271,321,367,1193,952,907,378)";
+        $sql = "select box.* from savor_box box
+                left join savor_room room on box.room_id=room.id
+                left join savor_hotel hotel on room.hotel_id=hotel.id
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.id in(select hotel.id from savor_box as box left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id 
+where box.state=1 and box.flag=0 and box.box_type=2 group by hotel.id )";
 
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
 
-        $sql = "select box.* from savor_box box
-                left join savor_room room on box.room_id=room.id
-                left join savor_hotel hotel on room.hotel_id=hotel.id
-                where box.state=1 and box.flag=0 and box.mac in('00226D8BCC87','00226D583D1E','00226D5841A1','00226D8BCAD9','00226D8BCE36','00226D8BCA81','00226D8BCA67','00226D58473F','00226D8BC963','00226D8BCE8E','00226D8BCE87','00226D8BCCBA','40E7932536F8','00226D655107','00226D5844AD','00226D655239','00226D8BCD72','00226D655464','00226D584717','00226D8BC9AD','00226D65515F','00226D5846E9','00226D655571','00226D6553DC','00226D65548E','00226D8BC969','00226D5840F0','00226D8BCC3D','00226D8BCD39','00226D8BCB37','00226D8BCA03','00226D8BC956','00226D8BCDB1','00226D655398','40E7932533FB','40E793253755','40E793253563','40E7932533FA','40E793253410','00226D8BCB0D','00226D8BCD60','00226D8BCCF6','00226D8BCD0B','00226D8BCC2A','00226D8BCD35','00226D8BCC64','00226D8BCE62','00226D8BC9EA','00226D8BCB42','00226D8BCD04','00226D8BCBE7','00226D8BCD2F','00226D8BCCE0','00226D8BCC33','00226D8BCB63','00226D8BCD1A','00226D8BC9DC','00226D8BCDF9','00226D8BCE88','00226D8BCE95','00226D8BCAD5','00226D8BCB16','00226D8BC959','00226D8BCDF7','00226D8BCDEE','00226D8BCA04','40E79325342F')";
+//        $sql = "select box.* from savor_box box
+//                left join savor_room room on box.room_id=room.id
+//                left join savor_hotel hotel on room.hotel_id=hotel.id
+//                where box.state=1 and box.flag=0 and box.mac in('00226D8BCC87','00226D583D1E','00226D5841A1','00226D8BCAD9','00226D8BCE36','00226D8BCA81','00226D8BCA67','00226D58473F','00226D8BC963','00226D8BCE8E','00226D8BCE87','00226D8BCCBA','40E7932536F8','00226D655107','00226D5844AD','00226D655239','00226D8BCD72','00226D655464','00226D584717','00226D8BC9AD','00226D65515F','00226D5846E9','00226D655571','00226D6553DC','00226D65548E','00226D8BC969','00226D5840F0','00226D8BCC3D','00226D8BCD39','00226D8BCB37','00226D8BCA03','00226D8BC956','00226D8BCDB1','00226D655398','40E7932533FB','40E793253755','40E793253563','40E7932533FA','40E793253410','00226D8BCB0D','00226D8BCD60','00226D8BCCF6','00226D8BCD0B','00226D8BCC2A','00226D8BCD35','00226D8BCC64','00226D8BCE62','00226D8BC9EA','00226D8BCB42','00226D8BCD04','00226D8BCBE7','00226D8BCD2F','00226D8BCCE0','00226D8BCC33','00226D8BCB63','00226D8BCD1A','00226D8BC9DC','00226D8BCDF9','00226D8BCE88','00226D8BCE95','00226D8BCAD5','00226D8BCB16','00226D8BC959','00226D8BCDF7','00226D8BCDEE','00226D8BCA04','40E79325342F')";
 
         $data = M()->query($sql);
         $flag = 0;
@@ -761,7 +762,7 @@ class TestController extends Controller {
             $is_interact = $v['is_interact'];
             $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
             M()->execute($sql);
-            echo $v['mac']." close ok \n";
+            echo $v['mac']." ok \n";
 
 
             $box_info = array();
