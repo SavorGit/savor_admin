@@ -99,11 +99,14 @@ class RedpacketoperationModel extends BaseModel{
                                 }
                                 $user_info['avatarUrl'] = 'http://oss.littlehotspot.com/WeChat/MiniProgram/LaunchScreen/source/images/avatar/'.$user_info['id'].'.jpg';
 
+                                $user_info['nickName'] = '热点投屏';
+                                $user_info['avatarUrl'] = 'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg';
                                 $where_user = array('id'=>$op_userid);
                                 $m_user->updateInfo($where_user,array('nickName'=>$user_info['nickName'],'avatarUrl'=>$user_info['avatarUrl']));
 
-                                $message = array('action'=>121,'nickName'=>$user_info['nickName'],'content'=>'快，使用热点投屏，大屏分享更快乐！',
+                                $message = array('action'=>121,'nickName'=>$user_info['nickName'],'content'=>'靓照上电视，大屏分享更快乐',
                                     'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
+                                $message['headPic'] = base64_encode($user_info['avatarUrl']);
                                 $m_netty->pushBox($redpacket['mac'],json_encode($message));
                                 if($redpacket_type!=1){
                                     echo "redpacket_id: $trade_no send ok \r\n";
@@ -158,6 +161,7 @@ class RedpacketoperationModel extends BaseModel{
 
                         $message = array('action'=>121,'nickName'=>$user_info['nickName'],
                             'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
+                        $message['headPic'] = base64_encode($user_info['avatarUrl']);
                         $m_netty->pushBox($redpacket['mac'],json_encode($message));
 
                         //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包
@@ -171,6 +175,7 @@ class RedpacketoperationModel extends BaseModel{
                                     $mpcode = $http_host . '/h5/qrcode/mpQrcode?qrinfo=' . $qrinfo;
                                     $message = array('action' => 121, 'nickName' => $user_info['nickName'],
                                         'avatarUrl' => $user_info['avatarUrl'], 'codeUrl' => $mpcode);
+                                    $message['headPic'] = base64_encode($user_info['avatarUrl']);
                                     $m_netty->pushBox($v, json_encode($message));
                                 }
                             }
@@ -178,6 +183,7 @@ class RedpacketoperationModel extends BaseModel{
                                 $key = C('SAPP_REDPACKET') . 'smallprogramcode';
                                 $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>1,
                                     'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
+                                $res_data['headPic'] = base64_encode($res_data['avatarUrl']);
                                 $redis->set($key, json_encode($res_data));
                             }
                         }elseif($scope==4){
@@ -185,6 +191,7 @@ class RedpacketoperationModel extends BaseModel{
                             $key = C('SAPP_REDPACKET') . 'smallprogramcode';
                             $res_data = array('order_id' => $trade_no, 'box_list' => $all_box,'scope'=>4,
                                 'nickName' => $user_info['nickName'], 'avatarUrl' => $user_info['avatarUrl']);
+                            $res_data['headPic'] = base64_encode($res_data['avatarUrl']);
                             $redis->set($key, json_encode($res_data));
                         }
                         if($redpacket_type!=1){
