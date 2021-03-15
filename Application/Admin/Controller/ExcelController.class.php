@@ -1665,6 +1665,8 @@ class ExcelController extends Controller
             array('tag','机顶盒备注'),
             array('avg_expense','人均消费'),
             array('is_4g','是否4G'),
+            array('wifi_name','wifi名称'),
+            array('wifi_password','wifi密码')
         );
         
         $this->exportExcel($xlsName, $xlsCell, $box_arr,$filename);

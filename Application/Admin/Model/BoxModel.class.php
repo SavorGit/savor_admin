@@ -132,6 +132,7 @@ class BoxModel extends BaseModel{
 	          hotel.name hname, hotel.level, hotel.area_id, hotel.addr, hotel.contractor,
 	         hotel.mobile, hotel.tel, hotel.iskey, sys.remark as maintainer, hotel.tech_maintainer,
              room.remark,box.tag,hext.avg_expense,
+             box.wifi_name,box.wifi_password,
              case box.`is_4g`
                 when 0 then "否"
 				when 1 then "是" END AS is_4g
