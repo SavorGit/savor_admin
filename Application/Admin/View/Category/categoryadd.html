@@ -19,7 +19,7 @@
 		        </div>
 		      </div>
 
-			<if condition="$dinfo.type eq 1">
+			<if condition="($dinfo.type eq 1) OR ($dinfo.type eq 8)">
 		      <div class="form-group row">
 		        <label class="col-xs-12 col-sm-2 control-label">
 		          所属分类：
@@ -32,6 +32,34 @@
 		          </select>
 		        </div>
 		      </div>
+			</if>
+		    <if condition="$dinfo.type eq 8">
+			  <div class="form-group row" id="defaultpic">
+				  <label class="col-xs-12 col-sm-2 control-label">
+					  图标：
+				  </label>
+				  <div class="col-xs-12 col-sm-10">
+					  <div class="fileinput fileinput-new" data-fileinput>
+						  <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							  <a data-target="#modal-file" href="javascript:void(0)">
+								  <if condition="($dinfo['oss_addr'] eq 'NULL') OR $dinfo['oss_addr'] eq ''">
+									  <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									  <else />
+									  <img id="media_idimg" src="{$dinfo.oss_addr}" border="0" />
+								  </if>
+								  <span id="media_idimgname"></span>
+							  </a>
+						  </div>
+						  <div>
+							  <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+								  选择图片
+							  </a>
+							  <input type="hidden" name="media_id" id="media_id" value="{$dinfo.media_id}" >
+							  <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						  </div>
+					  </div>
+				  </div>
+			  </div>
 			</if>
 		      
 		      <div class="form-group row">

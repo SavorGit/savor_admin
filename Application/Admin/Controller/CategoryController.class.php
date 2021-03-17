@@ -34,7 +34,7 @@ class CategoryController extends BaseController {
         $start  = ($page-1) * $size;
         $m_category  = new \Admin\Model\CategoryModel();
         $result = $m_category->getCustomList($where, 'id desc', $start, $size);
-        $all_types = array(0=>'',1=>'内容',2=>'场景',3=>'人员属性',4=>'饭局性质',5=>'内容所用软件',6=>'欢迎词背景图分类',7=>'商城分类');
+        $all_types = array(0=>'',1=>'内容',2=>'场景',3=>'人员属性',4=>'饭局性质',5=>'内容所用软件',6=>'欢迎词背景图',7=>'商城',8=>'本地生活');
         foreach ($result['list'] as $k=>$v){
         	$trees = $m_category->get_category_tree($v['id']);
         	if(!empty($trees)){
@@ -61,19 +61,26 @@ class CategoryController extends BaseController {
         $type = I('type',0,'intval');
         $m_category  = new \Admin\Model\CategoryModel();
         if(IS_GET){
-        	$dinfo = array('status'=>1,'sort'=>1,'type'=>$type);
+        	$dinfo = array('status'=>1,'sort'=>1,'type'=>$type,'oss_addr'=>'');
         	if($id){
-        		$dinfo = $m_category->getInfo(array('id'=>$id));
+                $dinfo = $m_category->getInfo(array('id'=>$id));
         		if(!empty($dinfo['parent_id'])){
         			$id = $dinfo['parent_id'];
         		}
+                $dinfo['oss_addr'] = array();
+        		if(!empty($dinfo['media_id'])){
+                    $m_media = new \Admin\Model\MediaModel();
+                    $media_info = $m_media->getMediaInfoById($dinfo['media_id']);
+                    $dinfo['oss_addr'] = $media_info['oss_addr'];
+                }
         	}
-        	$category = $m_category->getCategory($id);
+        	$category = $m_category->getCategory($id,0,$type);
         	$this->assign('category',$category);
         	$this->assign('dinfo',$dinfo);
         	$this->display('categoryadd');
         }else{
         	$name = I('post.name','','trim');
+        	$media_id = I('post.media_id',0,'intval');
         	$category_id = I('post.category_id',0,'intval');
         	$sort = I('post.sort',1,'intval');
         	$type = I('post.type',0,'intval');
@@ -93,7 +100,7 @@ class CategoryController extends BaseController {
         		$this->output('名称不能重复', 'category/categoryadd', 2, 0);
         	}
 
-        	$data = array('name'=>$name,'sort'=>$sort,'type'=>$type,'status'=>$status);
+        	$data = array('name'=>$name,'sort'=>$sort,'type'=>$type,'status'=>$status,'media_id'=>$media_id);
         	if($id){
         		if(empty($category_id)){
         			$data['level'] = 1;

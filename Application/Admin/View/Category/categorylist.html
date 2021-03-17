@@ -8,13 +8,14 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-98">
           <div class="tools-group">
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=1" title="新增内容分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容分类</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=2" title="新增场景" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增场景</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=3" title="新增人员属性" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增人员属性</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=4" title="新增饭局性质" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增饭局性质</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=5" title="新增内容所用软件" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增内容所用软件</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=6" title="新增欢迎词分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增欢迎词分类</a>
-            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=7" title="新增商城分类" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商城分类</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=1" title="内容" target="dialog" mask="true"><i class="fa fa-plus"></i> 内容</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=2" title="场景" target="dialog" mask="true"><i class="fa fa-plus"></i> 场景</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=3" title="人员属性" target="dialog" mask="true"><i class="fa fa-plus"></i> 人员属性</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=4" title="饭局性质" target="dialog" mask="true"><i class="fa fa-plus"></i> 饭局性质</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=5" title="所用软件" target="dialog" mask="true"><i class="fa fa-plus"></i> 所用软件</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=6" title="欢迎词" target="dialog" mask="true"><i class="fa fa-plus"></i> 欢迎词</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=7" title="商城" target="dialog" mask="true"><i class="fa fa-plus"></i> 商城</a>
+            <a class="btn btn-success btn-sm add" href="{$host_name}/category/categoryadd?type=8" title="本地生活" target="dialog" mask="true"><i class="fa fa-plus"></i> 本地生活</a>
 
           </div>
         </div>
@@ -94,7 +95,8 @@
             <notempty name="dinfo.trees">
             	<volist name="dinfo.trees" id="treeinfo">
 	            <tr target="sid_user">
-	              <td data-title="名称"><a class="click-able-title"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.name}</a></td>
+	              <td data-title="ID"><a class="click-able-title"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.id}</a></td>
+	              <td data-title="名称">{$treeinfo.name}</td>
                 <td data-title="状态">
                 <if condition="$treeinfo['status'] eq 1">
                     <a data-tip="可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$treeinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
@@ -104,7 +106,7 @@
                         <i class="fa fa-toggle-off"></i></span></a>
                 </if>
                 </td>
-                 <td data-title="类型">内容</td>
+                 <td data-title="类型">{$treeinfo.typestr}</td>
 	             <td data-title="排序值">{$treeinfo.sort}</td>
 	              <td class="table-tool" data-title="操作">
 	                <div class="tools-edit">
