@@ -37,7 +37,7 @@ class HotplayController extends BaseController {
                 $img_url = $forscreen_url."?x-oss-process=image/quality,Q_50";
             }else{
                 $resource_type_str = '视频';
-                $img_url = $forscreen_url.'?x-oss-process=video/snapshot,t_10000,f_jpg,w_450,m_fast';
+                $img_url = $forscreen_url.'?x-oss-process=video/snapshot,t_3000,f_jpg,w_450,m_fast';
             }
             $data_list[$k]['resource_type_str'] = $resource_type_str;
             $data_list[$k]['img'] = $img_url;
