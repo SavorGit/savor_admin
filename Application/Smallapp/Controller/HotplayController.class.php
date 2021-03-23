@@ -65,7 +65,9 @@ class HotplayController extends BaseController {
                     $this->output('请重新选择内容审核序号ID', 'hotplay/datalist',2,0);
                 }
                 $res_id = $all_forscreen[0]['id'];
-                $res = $m_playlog->updateData(array('id'=>$id),array('res_id'=>$res_id));
+                $updata = array('res_id'=>$res_id,'create_time'=>date('Y-m-d H:i:s'),
+                    'update_time'=>date('Y-m-d H:i:s'));
+                $res = $m_playlog->updateData(array('id'=>$id),$updata);
                 if($res){
                     $redis = \Common\Lib\SavorRedis::getInstance();
                     $redis->select(5);

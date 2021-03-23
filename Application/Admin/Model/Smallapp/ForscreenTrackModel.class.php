@@ -395,7 +395,7 @@ class ForscreenTrackModel extends BaseModel{
                     }
                 }
                 $box_down_timeconsume = 0;
-                if($track_info['box_receivetime'] && $track_info['box_downstime'] && $track_info['box_downetime']){
+                if($track_info['box_downstime'] && $track_info['box_downetime']){
                     $box_down_timeconsume = $track_info['box_downetime']-$track_info['box_downstime'];
                 }
                 $total_time = ($oss_timeconsume+$netty_position_timeconsume+$netty_timeconsume+$box_down_timeconsume)/1000;
