@@ -704,6 +704,7 @@ $config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
 $config['SAPP_HOTPLAYDEMAND']   = 'smallapp:hotplaydemand';
 $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
 $config['SMALLAPP_MARQUEE_ADS']   = 'smallapp:marquee:ads:';
+$config['SMALLAPP_LIFE_ADS']   = 'smallapp:life:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['BOX_TPMEDIA']  = 'box:tpmedia:';
