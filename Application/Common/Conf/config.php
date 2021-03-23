@@ -610,6 +610,10 @@ $config['SELECTCONTENT_GOODS_OCCU']= array(
     'name'=>'精选内容广告位',
     'num' => '20',
 );
+$config['LIFE_OCCU']= array(
+    'name'=>'本地生活广告位',
+    'num' => '20',
+);
 $config['POLY_SCREEN_MEDIA_LIST'] = array(
     '1'=>'百度聚屏',
     '2'=>'钛镁聚屏',

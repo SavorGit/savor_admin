@@ -1,6 +1,5 @@
 <?php
 namespace Admin\Controller;
-// use Common\Lib\SavorRedis;
 /**
  * 网络节目单-节目列表
  */
@@ -19,16 +18,13 @@ use Admin\Model\AreaModel;
 use Admin\Model\MenuListOpeModel;
 use Common\Lib\SavorRedis;
 
-class ProgrammenuController extends BaseController
-{
+class ProgrammenuController extends BaseController{
 
-    public function __construct()
-    {
+    public function __construct(){
         parent::__construct();
     }
 
-    public function getsessionHotel()
-    {
+    public function getsessionHotel(){
         $get_hotel_arr = json_decode($_POST['seshot'], true);
         $key = 'select_programmenuhotel_key';
         $h_arr = empty(session($key)) ? array() : session($key);
@@ -42,8 +38,7 @@ class ProgrammenuController extends BaseController
         session($key, $h_arr);
     }
 
-    public function copynew()
-    {
+    public function copynew(){
         $menuid = I('get.menuid', 0, 'int');
         $promenuliModel = new \Admin\Model\ProgramMenuListModel();
         $now_date = date('Y-m-d H:i:s');
@@ -96,8 +91,7 @@ class ProgrammenuController extends BaseController
         }
     }
 
-    public function hotelconfirm()
-    {
+    public function hotelconfirm(){
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         // 2是新增
@@ -119,8 +113,7 @@ class ProgrammenuController extends BaseController
         $this->display('hotelconfirm');
     }
 
-    public function publishMenu()
-    {
+    public function publishMenu(){
         $putime = I('logtime');
         $is_small_app = I('is_small_app', '0', 'intval');
         
@@ -213,15 +206,10 @@ class ProgrammenuController extends BaseController
                 $redis_result = $redis->get($v_hotel_list_key);
                 $v_hotel_list = json_decode($redis_result,true);
                 $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id*/
-                
-                
-                
-                
-                
+
                 $v_pro_key = C('VSMALL_PRO');
                 $v_adv_key = C('VSMALL_ADV');
-                
-                
+
                 //新修改
                 $ck = $v_pro_key.'*';
                 $rts = $redis->keys($ck);
@@ -233,9 +221,7 @@ class ProgrammenuController extends BaseController
                         $v_hotel_arr[] = $tmp[2];
                     }
                 }
-                
-                
-                
+
                 foreach($com_arr as $k=>$v){
                     if(in_array($k, $v_hotel_arr)){
                         $keys_arr = $redis->keys($v_pro_key.$k."*");
@@ -349,8 +335,7 @@ class ProgrammenuController extends BaseController
 
     }
 
-    public function getdetail()
-    {
+    public function getdetail(){
         $id = I('get.id' . '');
         $menu_name = I('get.name' . '');
         if ($id) {
@@ -370,8 +355,7 @@ class ProgrammenuController extends BaseController
         $this->display('getdetailmenu');
     }
 
-    public function getfile()
-    {
+    public function getfile(){
         $upload = new \Think\Upload();
         $upload->exts = array(
             'xls',
@@ -397,9 +381,7 @@ class ProgrammenuController extends BaseController
         die();
     }
 
-    public function gethotelmanager()
-    {
-        // //var_dump($_POST);
+    public function gethotelmanager(){
         $hotelModel = new HotelModel();
         $areaModel = new AreaModel();
         
@@ -413,27 +395,20 @@ class ProgrammenuController extends BaseController
         $this->assign('_sort', $sort);
         $orders = $order . ' ' . $sort;
         $start = ($start - 1) * $size;
-        
         $where = "1=1";
-        
         $name = I('name');
-        
         if ($name) {
             $this->assign('name', $name);
             $where .= "	AND name LIKE '%{$name}%'";
         }
-        
         $result = $hotelModel->getList($where, $orders, $start, $size);
-        
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
-        // print_r($result);die;
         $this->assign('list', $result['list']);
         $this->assign('page', $result['page']);
         $this->display('index');
     }
- // End Function
-    public function selectHotel()
-    {
+
+    public function selectHotel(){
         $areaModel = new AreaModel();
         $menliModel = new \Admin\Model\ProgramMenuListModel();
         // 城市
@@ -500,13 +475,11 @@ class ProgrammenuController extends BaseController
         $include_ak = array();
         if (! empty($include_a)) {
             foreach ($include_a as $key => $v) {
-                
                 $area_strs .= $space . $v;
                 $space = ',';
                 $include_ak[] = $v;
             }
-            if ($area_strs)
-                $where .= " AND area_id in($area_strs)";
+            if ($area_strs) $where .= " AND area_id in($area_strs)";
             $this->assign('include_ak', $include_ak);
         }
         // 级别
@@ -544,8 +517,7 @@ class ProgrammenuController extends BaseController
         $hotel_box_types = getHeartBoXtypeIds(2);
         $where .= " and hotel_box_type in ($hotel_box_types) and state=1 and flag=0 ";
         
-        $pafield = 'DISTINCT smh.menu_id id,
-smlist.menu_name';
+        $pafield = 'DISTINCT smh.menu_id id,smlist.menu_name';
         $men_arr = $prHoModel->getPrvMenu($pafield, $pawhere);
         
         // 获取包含有该地区酒楼
@@ -594,7 +566,6 @@ smlist.menu_name';
         $result = $hotelModel->getList($where, $orders, $start, $size);
         
         $result['list'] = $areaModel->areaIdToAareName($result['list']);
-        // print_r($result);die;
         $hotel_box_type = C('hotel_box_type');
         $hotel_box_type = array(
             '2' => '二代网络版',
@@ -609,8 +580,7 @@ smlist.menu_name';
         $this->display('selecthotel');
     }
 
-    public function getHotelInfo()
-    {
+    public function getHotelInfo(){
         $menu_id = I('menuid');
         $menu_name = I('menuname');
         $data = array();
@@ -626,16 +596,11 @@ smlist.menu_name';
         $this->display('gethotelinfo');
     }
 
-    public function manager()
-    {
-        // 实例化redis
-        // $redis = SavorRedis::getInstance();
-        // $redis->set($cache_key, json_encode(array()));
+    public function manager(){
         $this->display('index');
     }
 
-    public function getlist()
-    {
+    public function getlist(){
         $mlModel = new \Admin\Model\ProgramMenuListModel();
         $size = I('numPerPage', 50); // 显示每页记录数
         $this->assign('numPerPage', $size);
@@ -689,8 +654,7 @@ smlist.menu_name';
         $this->display('getlist');
     }
 
-    public function judgeAdvOuc($name_arr)
-    {
+    public function judgeAdvOuc($name_arr){
         $result = array();
         $result = $this->getAdsOccup($result);
         $adv_arr = array_column($result, 'name');
@@ -714,8 +678,7 @@ smlist.menu_name';
         }
     }
 
-    public function judgegoodsAdvOuc($name_arr)
-    {
+    public function judgegoodsAdvOuc($name_arr){
         $result = array();
         $result = $this->getGoodsadsOccup($result);
         $adv_arr = array_column($result, 'name');
@@ -739,8 +702,7 @@ smlist.menu_name';
         }
     }
 
-    public function judgeActivityGoodsAdvOuc($name_arr)
-    {
+    public function judgeActivityGoodsAdvOuc($name_arr){
         return true;
         $result = array();
         $result = $this->getActivityGoodsOccup($result);
@@ -765,8 +727,7 @@ smlist.menu_name';
         }
     }
 
-    public function judgePolyScreenOuc($name_arr)
-    {
+    public function judgePolyScreenOuc($name_arr){
         $result = array();
         $result = $this->getPolyScreenOccup($result);
         $adv_arr = array_column($result, 'name');
@@ -790,9 +751,7 @@ smlist.menu_name';
         }
     }
 
-    public function doaddnewMenu()
-    {
-        // 表单提交即是新增和导入ajax区分以及与修改进行区分
+    public function doaddnewMenu(){
         $now_date = date('Y-m-d H:i:s');
         $id = I('post.id', '');
         // 添加到menu_list 表
@@ -853,6 +812,9 @@ smlist.menu_name';
             // 获取活动商品广告占位符
             $res_selectcontent_adv = $this->getSelectcontentOccup($res);
 
+            // 获取本地生活广告占位符
+            $res_life_adv = $this->getLifeOccup($res);
+
             // 取出name列
             $res_adv = array_column($res_adv, 'name');
             $res_xuan = array_column($res_xuan, 'name');
@@ -860,6 +822,7 @@ smlist.menu_name';
             $poly_adv = array_column($poly_adv, 'name');
             $activitygoods_adv = array_column($res_activitygoods_adv, 'name');
             $selectcontent_adv = array_column($res_selectcontent_adv, 'name');
+            $life_adv = array_column($res_life_adv, 'name');
 
             $adv_promote_num_arr = C('ADVE_OCCU');
             $adv_name = $adv_promote_num_arr['name'];
@@ -875,9 +838,11 @@ smlist.menu_name';
             $selectcontent_promote_num_arr = C('SELECTCONTENT_GOODS_OCCU');
             $selectcontentadv_name = $selectcontent_promote_num_arr['name'];
 
+            $life_promote_num_arr = C('LIFE_OCCU');
+            $lifeadv_name = $life_promote_num_arr['name'];
 
             foreach ($id_arr as $k => $v) {
-                // 判断type类型 1广告位 2节目 3宣传片 4rtb广告 5聚屏广告位 6活动商品广告位
+                // 判断type类型 1广告位 2节目 3宣传片 4rtb广告 5聚屏广告位 6活动商品广告位 7精选内容广告位 8本地生活广告
                 $ad_name = $name_arr[$k];
                 if (in_array($ad_name, $res_adv)) {
                     $type = 1;//广告位
@@ -897,6 +862,9 @@ smlist.menu_name';
                 } elseif (in_array($ad_name, $selectcontent_adv)) {
                     $type = 7;//精选内容广告位
                     $lo = str_replace($selectcontentadv_name, "", $ad_name);
+                } elseif (in_array($ad_name, $life_adv)) {
+                    $type = 8;//本地生活广告
+                    $lo = str_replace($lifeadv_name, "", $ad_name);
                 } else {
                     $type = 2;//节目
                     $lo = 0;
@@ -929,8 +897,7 @@ smlist.menu_name';
     /*
      * 处理excel数据
      */
-    public function analyseExcel()
-    {
+    public function analyseExcel(){
         $adsModel = new \Admin\Model\AdsModel();
         $path = $_POST['excelpath'];
         if ($path == '') {
@@ -948,8 +915,7 @@ smlist.menu_name';
         } elseif ($type == 'csv') {
             $objReader = \PHPExcel_IOFactory::createReader('CSV')->setDelimiter(',')
                 ->setInputEncoding('GBK')
-                -> // 不设置将导致中文列内容返回boolean(false)或乱码
-setEnclosure('"')
+                ->setEnclosure('"') // 不设置将导致中文列内容返回boolean(false)或乱码
                 ->setLineEnding("\r\n")
                 ->setSheetIndex(0);
             $objPHPExcel = $objReader->load($path);
@@ -1054,10 +1020,7 @@ setEnclosure('"')
         echo json_encode($res);
     }
 
-    public function addnewmenu()
-    {
-        
-        // 左边表单提交，右边表单提交，导入ajax,id修改
+    public function addnewmenu(){
         $userInfo = session('sysUserInfo');
         $menu_name = I('get.name' . '');
         $type = I('type');
@@ -1102,13 +1065,11 @@ setEnclosure('"')
         }
     }
 
-    public function addtest()
-    {
+    public function addtest(){
         $this->output('操作成功', 'menu/getlist');
     }
 
-    public function getAdsAcccounce($result)
-    {
+    public function getAdsAcccounce($result){
         $adv_promote_num_arr = C('ADV_VIDEO');
         $adv_promote_num = $adv_promote_num_arr['num'];
         $now_date_time = date("Y-m-d H:i:s");
@@ -1132,8 +1093,7 @@ setEnclosure('"')
         return $result;
     }
 
-    public function getAdsOccup($result, $filter = '')
-    {
+    public function getAdsOccup($result, $filter = ''){
         $adv_promote_num_arr = C('ADVE_OCCU');
         if ($filter) {
             $filter_arr = explode(',', $filter);
@@ -1156,8 +1116,7 @@ setEnclosure('"')
         return $result;
     }
 
-    public function getGoodsadsOccup($result, $filter = '')
-    {
+    public function getGoodsadsOccup($result, $filter = ''){
         $adv_promote_num_arr = C('GOODSADVE_OCCU');
         if ($filter) {
             $filter_arr = explode(',', $filter);
@@ -1183,8 +1142,7 @@ setEnclosure('"')
     /**
      * 获取聚屏类广告位
      */
-    public function getPolyScreenOccup($result, $filter = '')
-    {
+    public function getPolyScreenOccup($result, $filter = ''){
         $adv_promote_num_arr = C('POLY_SCREEN_OCCU');
         if ($filter) {
             $filter_arr = explode(',', $filter);
@@ -1210,8 +1168,7 @@ setEnclosure('"')
     /**
      * 获取活动商品广告位
      */
-    public function getActivityGoodsOccup($result, $filter = '')
-    {
+    public function getActivityGoodsOccup($result, $filter = ''){
         $adv_activitygoods_num_arr = C('ACTIVITY_GOODS_OCCU');
         if ($filter) {
             $filter_arr = explode(',', $filter);
@@ -1237,8 +1194,7 @@ setEnclosure('"')
     /**
      * 获取精选内容广告位
      */
-    public function getSelectcontentOccup($result, $filter = '')
-    {
+    public function getSelectcontentOccup($result, $filter = ''){
         $adv_selectcontent_num_arr = C('SELECTCONTENT_GOODS_OCCU');
         if ($filter) {
             $filter_arr = explode(',', $filter);
@@ -1261,8 +1217,33 @@ setEnclosure('"')
         return $result;
     }
 
-    public function get_se_left()
-    {
+    /**
+     * 获取本地生活广告位
+     */
+    public function getLifeOccup($result, $filter = ''){
+        $adv_selectcontent_num_arr = C('LIFE_OCCU');
+        if ($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_selectcontent_num = $adv_selectcontent_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i = 1; $i <= $adv_selectcontent_num; $i ++) {
+            if (in_array($adv_selectcontent_num_arr['name'] . $i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array(
+                    'id' => 0,
+                    'name' => $adv_selectcontent_num_arr['name'] . $i,
+                    'create_time' => $now_date_time,
+                    'duration' => 0,
+                    'type' => '33'
+                );
+            }
+        }
+        return $result;
+    }
+
+    public function get_se_left(){
         $m_type = I('post.m_type', '0');
         
         $where = "1=1";
@@ -1298,6 +1279,8 @@ setEnclosure('"')
                 $result = $this->getActivityGoodsOccup($result);
 
                 $result = $this->getSelectcontentOccup($result);
+
+                $result = $this->getLifeOccup($result);
                 break;
             case 3:
                 // 获取宣传片
@@ -1319,6 +1302,9 @@ setEnclosure('"')
                 break;
             case 8:
                 $result = $this->getSelectcontentOccup($result);
+                break;
+            case 9:
+                $result = $this->getLifeOccup($result);
                 break;
             default:
                 $where .= "	AND type = '{$m_type}'";
