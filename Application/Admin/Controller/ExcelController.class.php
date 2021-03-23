@@ -6352,6 +6352,168 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         }
     }
 
+    /**
+     * 超过7天失联的版位信息 每天早上8:30发送邮件
+     */
+    public function lostBoxListForTwo()
+    {
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        $hotel_box_types = getHeartBoXtypeIds(2);
+        $not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53';
+        $sql = "select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark,
+        box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period
+        from savor_box box
+        left join savor_room room on box.room_id= room.id
+        left join savor_hotel hotel on room.hotel_id=hotel.id
+        left join savor_area_info area on hotel.area_id= area.id
+        left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+        left join savor_sysuser user on user.id= ext.maintainer_id
+        left join savor_heart_log hlog on box.mac=hlog.box_mac
+        where hotel.id not in($not_hotel_in) and  hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+        $data = M()->query($sql);
+        // $datalist = [];
+        $promenuHoModel = new \Admin\Model\ProgramMenuHotelModel();
+        $promenuListModel = new \Admin\Model\ProgramMenuListModel();
+        $pro_hotel_arr = [];
+        foreach ($data as $key => $v) {
+            
+            if (empty($v['last_heart_time'])) {
+                $data[$key]['last_heart_time'] = '';
+                $data[$key]['last_heart_time_str'] = '30';
+                $data[$key]['last_pro_update'] = '否';
+            } else {
+                $heart_time = strtotime($v['last_heart_time']);
+                $now_time = time();
+                $data[$key]['last_heart_time'] = $v['last_heart_time'];
+                $diff_time = floor(($now_time - $heart_time) / 86400);
+                $data[$key]['last_heart_time_str'] = $diff_time ;
+        
+                $box_info = $redis->get('savor_box_' . $v['box_id']);
+                $box_info = json_decode($box_info, true);
+                $room_info = $redis->get('savor_room_' . $box_info['room_id']);
+                $room_info = json_decode($room_info, true);
+
+                $fields = 'pl.create_time,pl.menu_num';
+                $order = 'pl.create_time desc';
+                $limit = ' 2';
+                $pro_arr = $promenuHoModel->getProgramByHotelId($room_info['hotel_id'], $fields, $order, $limit);
+
+                $tmp_pro_arr = [];
+                foreach($pro_arr as $kk=>$vv){
+                    $tmp_pro_arr[] = $vv['menu_num'];
+                }
+                if(in_array($v['pro_period'], $tmp_pro_arr)){
+                    $data[$key]['last_pro_update'] =  '是';
+                }else {
+                    $data[$key]['last_pro_update'] =  '否';
+                }
+                
+                    
+                    
+                    
+                
+            }
+                
+            
+        }
+        //sort($data);
+        
+        $xlsCell = array(
+            array(
+                'region_name',
+                '区域'
+            ),
+            array(
+                'hotel_name',
+                '酒楼名称'
+            ),
+            array(
+                'remark',
+                '维护人'
+            ),
+            array(
+                'room_name',
+                '包间名称'
+            ),
+            array(
+                'box_mac',
+                '机顶盒mac'
+            ),
+            array(
+                'last_heart_time',
+                '最后一次心跳时间'
+            ),
+            array(
+                'last_heart_time_str',
+                '失联天数(天)'
+            ),
+            array(
+                'last_pro_update',
+                '是否为最新节目单'
+            )
+        );
+        $xlsName = '网络版位节目单更新状态表';
+        $filename = 'user_wifi_forscreen_detail';
+        
+        $path = './Public/box_heart/' . date('Ym') . '/';
+        if (! is_dir($path)) {
+            mkdir($path, 0777, true);
+        }
+        $path .= date('Ymd') . 'mail.xls';
+        // echo $path;exit;
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data, $filename, 2, $path);
+        if ($ret) {
+            $mail_config = C('SEND_MAIL_CONF');
+            $mail_config = $mail_config['littlehotspot'];
+            
+            $ma_auto = new MailAuto();
+            $mail = new \Mail\PHPMailer();
+            $title = '设备心跳与节目单更新状态表-' . date('Y-m-d');
+            $body = '设备心跳与节目单更新状态表';
+            
+            $mail_config = C('SEND_MAIL_CONF');
+            $mail_config = $mail_config['littlehotspot'];
+            
+            $ma_auto = new MailAuto();
+            $mail = new \Mail\PHPMailer();
+            $mail->CharSet = "UTF-8";
+            $mail->IsSMTP();
+            $mail->Host = $mail_config['host'];
+            $mail->SMTPAuth = true;
+            $mail->Username = $mail_config['username'];
+            $mail->Password = $mail_config['password'];
+            $mail->Port = 25;
+            $mail->From = $mail_config['username'];
+            $mail->FromName = $title;
+            
+            $mail->AddAddress("alex.liu@littlehotspot.com");
+            $mail->AddAddress("li.zhi@littlehotspot.com");
+            $mail->AddAddress("li.cong@littlehotspot.com");
+            $mail->AddAddress("zheng.wei@littlehotspot.com");
+            $mail->AddAddress("xin.lijuan@littlehotspot.com");
+            $mail->AddAddress("cao.jie@littlehotspot.com");
+            $mail->AddAddress("lv.yulin@littlehotspot.com");
+            $mail->AddAddress("ma.feng@littlehotspot.com");
+            $mail->AddAddress("wang.xizong@littlehotspot.com");
+            $mail->AddAddress("zhang.lijuan@littlehotspot.com");
+            $mail->AddAddress("zhang.jing@littlehotspot.com");
+            $mail->AddAddress("zhang.yingtao@littlehotspot.com");
+            
+            $mail->IsHTML(true);
+            
+            $mail->Subject = $title;
+            $mail->Body = $body;
+            $mail->AddAttachment($path); // 添加附件
+                                         // var_dump($mail);exit;
+            if ($mail->Send()) {
+                echo date('Y-m-d') . '发送成功';
+            } else {
+                    echo date('Y-m-d').'发送失败';
+                    }
+                    }
+    }
+
     public function forscreen4gbox(){
         $sql ="select a.id,a.box_mac,a.create_time,hotel.name hotel_name,room.name room_name,box.name box_name from savor_smallapp_forscreen_record as a left join savor_box box on a.box_mac=box.mac left join savor_room room on box.room_id=room.id
 left join savor_hotel hotel on room.hotel_id=hotel.id where a.mobile_brand='dev4gtools' and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 order by a.id asc ";
