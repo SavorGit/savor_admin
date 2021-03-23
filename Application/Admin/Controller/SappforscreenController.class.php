@@ -619,8 +619,12 @@ class SappforscreenController extends BaseController {
                 }else{
                     $netty_rtime = '';
                 }
+
                 if($track_info['netty_pushbox_time']){
                     $pushbox_time = date('Y-m-d H:i:s',round($track_info['netty_pushbox_time']/1000));
+                    if(!empty($track_info['netty_pushbox_chaid'])){
+                        $pushbox_time.=" 通道号：{$track_info['netty_pushbox_chaid']}";
+                    }
                 }else{
                     $pushbox_time = '';
                 }
@@ -681,10 +685,14 @@ class SappforscreenController extends BaseController {
                 }
                 if($track_info['netty_callback_time']){
                     $netty_callback_time = date('Y-m-d H:i:s',round($track_info['netty_callback_time']/1000));
+                    if(!empty($track_info['netty_callback_chaid'])){
+                        $netty_callback_time.=" 通道号：{$track_info['netty_callback_chaid']}";
+                    }
                 }else{
                     $netty_callback_time = '';
                 }
                 $is_play = 0;
+                /*
                 if($track_info['resource_type']==1){
                     $m_hearlog = new \Admin\Model\HeartAllLogModel();
                     $date = date('Ymd');
@@ -693,6 +701,7 @@ class SappforscreenController extends BaseController {
                         $is_play = 1;
                     }
                 }
+                */
 
                 $is_success = $track_info['is_success'];
                 $track_info['status'] = $this->success_status[$is_success];
