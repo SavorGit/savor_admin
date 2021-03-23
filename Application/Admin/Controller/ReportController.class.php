@@ -80,12 +80,7 @@ class ReportController extends BaseController{
     }
 
 
-	/**
-	 * 分类列表
-	 * @return [type] [description]
-	 */
 	public function heart(){
-
 		$heartModel = new \Admin\Model\HeartLogModel();
 		$areaModel  = new \Admin\Model\AreaModel();
 		$size   = I('numPerPage',50);//显示每页记录数
@@ -99,7 +94,9 @@ class ReportController extends BaseController{
 		$orders = $order.' '.$sort;
 		$start  = ( $start-1 ) * $size;
 		$where = "1=1";
-		$name = I('he_name');
+		$name = I('he_name','','trim');
+		$apk_version = I('apk_version','','trim');
+		$pro_period = I('pro_period','','trim');
 		$type = I('baotype');
 		//城市
 		$area_arr = $areaModel->getAllArea();
@@ -112,12 +109,18 @@ class ReportController extends BaseController{
 			$this->assign('name',$name);
 			$where .= "	AND shlog.hotel_name LIKE '%{$search_name}%' ";
 		}
+        if($apk_version){
+            $this->assign('apk_version',$apk_version);
+            $where .= "	AND shlog.apk_version='$apk_version' ";
+        }
+        if($pro_period){
+            $this->assign('pro_period',$pro_period);
+            $where .= "	AND shlog.pro_period='$pro_period' ";
+        }
 		//城市
-		 $area_v = I('he_area_bv');
+        $area_v = I('he_area_bv');
 		if ($area_v) {
-		    
-		        $where .= "	AND shlog.area_id = $area_v ";
-		    
+		    $where .= "	AND shlog.area_id = $area_v ";
 			$this->assign('area_k',$area_v);
 		}
 		//查询类型
@@ -143,21 +146,19 @@ class ReportController extends BaseController{
 		    $where .= " and sht.is_4g=".$is_4g;
 		    $this->assign('is_4g',$is_4g);
 		}
-		
         //城市
         $userinfo = session('sysUserInfo');
         $is_city_search = 0;
-        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])  ) {
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])){
             $is_city_search = 1;
 			$this->assign('is_city_search',$is_city_search);
             $this->assign('hightest', 0);
             $this->assign('pusera', $userinfo);
-        }else {
+        }else{
             $this->assign('is_city_search',$is_city_search);
-            $where .= "	AND shlog.area_id in ($userinfo[area_city])";
+            $where .= "	AND shlog.area_id in ({$userinfo['area_city']})";
             $this->assign('hightest', $userinfo['area_city']);
         }
-
 		$result = $heartModel->getList($where,$orders,$start,$size);
 		$time = time();
 		$ind = $start;
@@ -168,8 +169,6 @@ class ReportController extends BaseController{
         $redis->select(13);
         $cache_key = "heartbeat:";
 		foreach ($result['list'] as $key=> &$val) {
-
-            
 			//$val['indnum'] = ++$ind;
 			/* //$d_time = strtotime($val['last_heart_time']);
 
@@ -208,10 +207,7 @@ class ReportController extends BaseController{
 			    $hour = floor($diff%86400/3600);
 			    $val['last_heart_time'] = $day.'天'.$hour.'小时';
 			}
-			
-			
 			if($val['type']==1){
-			    
 			    $hotel_ext_info = $m_hotel->getHotelInfoByMac($val['box_mac']);
 			    $val['tag'] = $hotel_ext_info['tag'];
                 $val['bstate'] = $box_state[$hotel_ext_info['state']];
@@ -242,8 +238,6 @@ class ReportController extends BaseController{
 					$val['hotel_box_type'] = $kv;
 				}
 			}
-			
-			
 		}
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);

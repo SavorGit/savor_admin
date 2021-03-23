@@ -68,9 +68,7 @@ class HeartLogModel extends BaseModel
 	}
 
 
-	public function getList($where, $order='id desc', $start=0,$size=5)
-	{
-
+	public function getList($where, $order='id desc', $start=0,$size=5){
 		$list = $this->alias('shlog')
 			->join(' savor_hotel sht on sht.id = shlog.hotel_id', 'LEFT')
 			->join('savor_hotel_ext ext on sht.id=ext.hotel_id','left')
@@ -81,8 +79,7 @@ class HeartLogModel extends BaseModel
 			shlog.ads_period,shlog.demand_period,shlog.apk_version,
 			shlog.war_version,shlog.logo_period,shlog.hotel_name,
 			user.remark maintainer,sht.hotel_box_type,shlog.pro_period,shlog.adv_period,
-			shlog.pro_download_period,shlog.ads_download_period,shlog.net_speed'
-	              )
+			shlog.pro_download_period,shlog.ads_download_period,shlog.net_speed')
 			->where($where)
 			->order($order)
 			->limit($start,$size)
@@ -91,28 +88,13 @@ class HeartLogModel extends BaseModel
 			->join(' savor_hotel sht on sht.id = shlog.hotel_id', 'LEFT')
 			->where($where)
 			->count();
-
 		$objPage = new Page($count,$size);
-
 		$show = $objPage->admin_page();
-
-
 		$data = array('list'=>$list,'page'=>$show);
-
-
 		return $data;
+	}
 
-	}//End Function
-
-
-
-	/**
-	 * [areaIdToAareName description]
-	 * @param  array  $result [description]
-	 * @return [type]         [description]
-	 */
-	public function areaIdToAareName($result=[])
-	{
+	public function areaIdToAareName($result=[]){
 		if(!$result || !is_array($result))
 		{
 			return [];
