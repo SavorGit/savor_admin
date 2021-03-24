@@ -6362,7 +6362,8 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $hotel_box_types = getHeartBoXtypeIds(2);
         $not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53';
         $sql = "select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark,
-        box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period
+        box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period,
+        hlog.apk_version
         from savor_box box
         left join savor_room room on box.room_id= room.id
         left join savor_hotel hotel on room.hotel_id=hotel.id
@@ -6451,6 +6452,10 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             array(
                 'last_pro_update',
                 '是否为最新节目单'
+            ),
+            array(
+                'apk_version',
+                'apk版本号'
             )
         );
         $xlsName = '网络版位节目单更新状态表';
