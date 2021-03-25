@@ -1651,6 +1651,7 @@ class ExcelController extends Controller
         $xlsCell = array(
             array('id', '酒楼id'),
             array('install_date', '安装日期'),
+            array('hsta','酒楼状态'),
             array('boxstate', '机顶盒状态'),
             array('mac', '机顶盒mac地址'),
             array('bname', '机顶盒名称'),
