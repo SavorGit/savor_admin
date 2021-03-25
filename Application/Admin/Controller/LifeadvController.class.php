@@ -62,30 +62,29 @@ class LifeadvController extends BaseController {
             $end_date = I('post.end_date', '');
             $start_hour = I('post.start_hour', '');
             $end_hour = I('post.end_hour', '');
-            $description = I('post.description','','trim');
             if (empty($ads_id)){
-                $this->output('上传广告视频失败请重新上传', 'marqueeadv/advlist',2,0);
+                $this->output('上传广告视频失败请重新上传', 'lifeadv/advlist',2,0);
             }
             $now_date = date("Y-m-d H:i:s");
             $now_day = date("Y-m-d");
             if($start_date > $end_date){
-                $this->output('投放开始时间必须小于等于结束时间', 'marqueeadv/advlist',2,0);
+                $this->output('投放开始时间必须小于等于结束时间', 'lifeadv/advlist',2,0);
             }
             if($start_date < $now_day){
-                $this->output('投放开始时间必须大于等于今天', 'marqueeadv/advlist',2,0);
+                $this->output('投放开始时间必须大于等于今天', 'lifeadv/advlist',2,0);
             }
-            $userInfo = session('sysUserInfo');
+            $m_ads = new \Admin\Model\AdsModel();
+            $m_ads->updateData(array('id'=>$ads_id),array('type'=>8));
 
+            $userInfo = session('sysUserInfo');
             $hotel_arr = json_decode($h_b_arr, true);
             $save_data = array('ads_id'=>$ads_id,'start_date'=>$start_date,'end_date'=>$end_date,'add_time'=>$now_date,
                 'creator_id'=>$userInfo['id'],'state'=>1
             );
-            $ads_id = $m_lifeads->addData($save_data);
-            if(!$ads_id){
-                $this->output('添加失败','marqueeadv/advlist',2,0);
+            $life_ads_id = $m_lifeads->addData($save_data);
+            if(!$life_ads_id){
+                $this->output('添加失败','lifeadv/advlist',2,0);
             }
-            $m_ads = new \Admin\Model\AdsModel();
-            $m_ads->updateData(array('id'=>$ads_id),array('description'=>$description));
 
             $m_life_adshotel = new \Admin\Model\LifeAdsHotelModel();
             $data_hotel = array();
@@ -96,7 +95,7 @@ class LifeadvController extends BaseController {
                     continue;
                 }
                 $tmp_hb[$hotel_id] = 1;
-                $data_hotel[] = array('hotel_id'=>$hotel_id,'life_ads_id'=>$ads_id);
+                $data_hotel[] = array('hotel_id'=>$hotel_id,'life_ads_id'=>$life_ads_id);
             }
             $res = $m_life_adshotel->addAll($data_hotel);
             if($res){
@@ -107,7 +106,6 @@ class LifeadvController extends BaseController {
                     $period = getMillisecond();
                     $redis->set($cache_key_pre.$v['hotel_id'],$period,86400*14);
                 }
-
                 $this->output('添加成功','lifeadv/advlist');
             }else {
                 $this->output('添加失败','lifeadv/advlist',2,0);
