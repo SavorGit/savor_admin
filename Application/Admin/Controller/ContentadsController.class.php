@@ -22,7 +22,7 @@ class ContentadsController extends BaseController{
 	public function getads_ajax(){
 		$searchtitle = I('adsname','');
 		$where = "1=1";
-		$where .= " AND type in(2,1)";
+		$where .= " AND type in(1,2,8)";
 		$field = "id,name,media_id";
 		if ($searchtitle) {
 			$where .= "	AND name LIKE '%{$searchtitle}%'";
@@ -387,9 +387,7 @@ class ContentadsController extends BaseController{
                 );
                 $hotel_id_str = substr($hotel_id_str,1);
                 $where .= " AND sht.id in ( ".$hotel_id_str.')';
-                $field = 'sht.id hotelid,sht.name,room.id
-							          rid,room.name rname,box.name box_name, box.mac,sari
-							          .region_name cname';
+                $field = 'sht.id hotelid,sht.name,room.id rid,room.name rname,box.name box_name, box.mac,sari.region_name cname';
                 $box_info = $hotelModel->getBoxMacByHid($field, $where);
                 //求出在规定时间内满足的机顶盒
                 $field = 'sum(play_count) plc,sum(play_time) plt,mac,group_concat(`play_date`) pld';
