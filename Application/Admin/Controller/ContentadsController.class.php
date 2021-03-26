@@ -346,189 +346,148 @@ class ContentadsController extends BaseController{
 		$this->display('showlist');
 	}
 
-
-
-
-	/**
-	 * 所有数据
-	 * @return [type] [description]
-	 */
 	public function listAll(){
 		$starttime = I('adsstarttime','');
 		$endtime = I('adsendtime','');
 		$size   = I('numPerPage',50);//显示每页记录数
-		$this->assign('numPerPage',$size);
 		$start = I('pageNum',1);
-		$this->assign('pageNum',$start);
-		$order = I('_order',' shlog.last_heart_time ');
-		$adsname = I('contentast','');
-		$adsname = str_replace(array('amp;'),array(''),$adsname);
-		//echo $adsname;exit;
-		$hidden_adsid = I('hadsid','',0);
-		$where = "1=1";
-		//$hidden_adsid = 98;//429
-		//$adsname = '刺客信条';
-		//$starttime = '2017-08-02';
-		//$endtime = '2017-08-08';
+		$adsname = I('contentast','','trim');
+		$hidden_adsid = I('hadsid',0,'intval');
+
 		$yesday =  date("Y-m-d",strtotime("-1 day"));
-		if ( $adsname ) {
-			$this->assign('adsname', $adsname);
-			$this->assign('contentast', $adsname);
-			$this->assign('hidden_adsid', $hidden_adsid);
-			//判断时间
-			if(empty($starttime) || empty($endtime)){
-				$this->error('请选择开始时间与结束时间');
-			}
-			if($starttime <= $endtime) {
-				if ( $endtime > $yesday){
-					$this->error('时间筛选范围有误');
-				}
-				$this->assign('s_time',$starttime);
-				$this->assign('e_time',$endtime);
-
-			}else{
-				$this->error('开始时间必须小于等于结束时间');
-			}
-
-			$adModel = new \Admin\Model\AdsModel();
-			$ads_info = $adModel->find($hidden_adsid);
-			if ($ads_info['name'] != $adsname) {
-				$this->error('请输入后选择内容与广告');
-			}else{
-				if(!$hidden_adsid){
-					$this->error('请输入后选择内容与广告');
-				}
-				if(empty($ads_info)){
-					$result = $this->emptyData($size);
-				}else{
-				    $hotel_box_type_str =  $this->getNetHotelTypeStr();
-				    
-				    
-					//判断是否在节目单中发布过
-					$ads_media_id = $ads_info['media_id'];
-					$hotelModel = new \Admin\Model\HotelModel();
-					$field = "distinct(`id`) hotel_id";
-					$order = 'id asc';
-					$where .= " and name not like '%永峰%' ";
-					$where .= " and hotel_box_type in ($hotel_box_type_str) ";
-					$hotel_id_arr = $hotelModel->getWhereorderData($where,  $field, $order);
-						if($hotel_id_arr){
-							//根据hotelid得出box
-							$where = '1=1 and box.state = 1 and box.flag = 0 ';
-							$hotel_id_str =  array_reduce($hotel_id_arr ,
-								function($result , $v){
-									Return $result.','.$v['hotel_id'];
-								}
-							);
-							$hotel_id_str = substr($hotel_id_str,1);
-							$where .= " AND sht.id in ( ".$hotel_id_str.')';
-							$field = 'sht.id hotelid,sht.name,room.id
+        if(empty($starttime) || empty($endtime)){
+            $starttime = date("Y-m-d",strtotime("-2 day"));
+            $endtime = $yesday;
+        }
+        if ($endtime>$yesday || $starttime>$endtime){
+            $this->error('时间筛选范围有误');
+        }
+        $m_ads = new \Admin\Model\AdsModel();
+		if(!empty($adsname) && !empty($hidden_adsid)){
+            $ads_info = $m_ads->find($hidden_adsid);
+            if($ads_info['name'] != $adsname){
+                $this->error('请输入后选择内容与广告');
+            }
+            $hotel_box_type_str = $this->getNetHotelTypeStr();
+            //判断是否在节目单中发布过
+            $ads_media_id = $ads_info['media_id'];
+            $hotelModel = new \Admin\Model\HotelModel();
+            $field = "distinct(`id`) hotel_id";
+            $order = 'id asc';
+            $where = "name not like '%永峰%' ";
+            $where .= " and hotel_box_type in ($hotel_box_type_str) ";
+            $hotel_id_arr = $hotelModel->getWhereorderData($where,  $field, $order);
+            if($hotel_id_arr){
+                //根据hotelid得出box
+                $where = 'box.state = 1 and box.flag = 0 ';
+                $hotel_id_str =  array_reduce($hotel_id_arr ,
+                    function($result , $v){
+                        Return $result.','.$v['hotel_id'];
+                    }
+                );
+                $hotel_id_str = substr($hotel_id_str,1);
+                $where .= " AND sht.id in ( ".$hotel_id_str.')';
+                $field = 'sht.id hotelid,sht.name,room.id
 							          rid,room.name rname,box.name box_name, box.mac,sari
 							          .region_name cname';
-							$box_info = $hotelModel->getBoxMacByHid($field, $where);
-							//求出在规定时间内满足的机顶盒
-							$field = 'sum(play_count) plc,
-							sum(play_time) plt,mac,group_concat(`play_date`) pld';
-							$starttime = date("Ymd", strtotime($starttime));
-							$endtime = date("Ymd", strtotime($endtime));
-							$where = '1=1';
-							$mestaModel = new \Admin\Model\MediaStaModel();
-							$where .= " AND media_id = ".$ads_media_id;
-							$where .= "	AND play_date >= '{$starttime}'";
-							$where .= "	AND play_date <= '{$endtime} '";
-							$group = 'mac';
-							$me_sta_arr = $mestaModel->getWhere($where, $field, $group);
-							//二维数组合并
-							//var_dump($mestaModel->getLastSql());
-							//die;
-							$mp = array_column($me_sta_arr, 'mac');
-							$me_sta_arr = array_combine($mp, $me_sta_arr);
-							//获取电视数量
-							//进行比较
-							$tmp_box_tv = array();
-							foreach ($box_info as $bk=>$bv) {
-								$map_mac = $bv['mac'];
-								//先判断是否存在
-								if(array_key_exists($map_mac, $tmp_box_tv)) {
-									$tmp_box_tv[$map_mac]['tv_count'] +=1;
-									continue;
-								}else {
-									if(array_key_exists($map_mac, $me_sta_arr)) {
-										$mv = $me_sta_arr[$map_mac];
-										$mv['pld'] = preg_replace('/(\s)*/','', $mv['pld']);
-										$day_arr = explode(',',$mv['pld']);
+                $box_info = $hotelModel->getBoxMacByHid($field, $where);
+                //求出在规定时间内满足的机顶盒
+                $field = 'sum(play_count) plc,sum(play_time) plt,mac,group_concat(`play_date`) pld';
+                $start_time = date("Ymd", strtotime($starttime));
+                $end_time = date("Ymd", strtotime($endtime));
+                $mestaModel = new \Admin\Model\MediaStaModel();
+                $where = " media_id =$ads_media_id AND play_date>='{$start_time}' AND play_date<='{$end_time}'";
+                $group = 'mac';
+                $me_sta_arr = $mestaModel->getWhere($where, $field, $group);
+                //二维数组合并
+                $mp = array_column($me_sta_arr, 'mac');
+                $me_sta_arr = array_combine($mp, $me_sta_arr);
+                //获取电视数量
+                //进行比较
+                $tmp_box_tv = array();
+                foreach ($box_info as $bk=>$bv) {
+                    $map_mac = $bv['mac'];
+                    //先判断是否存在
+                    if(array_key_exists($map_mac, $tmp_box_tv)) {
+                        $tmp_box_tv[$map_mac]['tv_count'] +=1;
+                        continue;
+                    }else {
+                        if(array_key_exists($map_mac, $me_sta_arr)) {
+                            $mv = $me_sta_arr[$map_mac];
+                            $mv['pld'] = preg_replace('/(\s)*/','', $mv['pld']);
+                            $day_arr = explode(',',$mv['pld']);
 
-										$day_arr = array_unique($day_arr);
-										sort($day_arr);
-										$day_str = implode(',', $day_arr);
-										$day_len = count($day_arr);
-										$tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
-										$tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
-										$tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
-										$tmp_box_tv[$map_mac]['play_count'] = $mv['plc'];
-										$tmp_box_tv[$map_mac]['play_time'] = $mv['plt'];
-										$tmp_box_tv[$map_mac]['play_days'] = $day_len;
-										$tmp_box_tv[$map_mac]['publication'] = $day_str;
-										$tmp_box_tv[$map_mac]['tv_count'] = 1;
+                            $day_arr = array_unique($day_arr);
+                            sort($day_arr);
+                            $day_str = implode(',', $day_arr);
+                            $day_len = count($day_arr);
+                            $tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
+                            $tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
+                            $tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
+                            $tmp_box_tv[$map_mac]['play_count'] = $mv['plc'];
+                            $tmp_box_tv[$map_mac]['play_time'] = $mv['plt'];
+                            $tmp_box_tv[$map_mac]['play_days'] = $day_len;
+                            $tmp_box_tv[$map_mac]['publication'] = $day_str;
+                            $tmp_box_tv[$map_mac]['tv_count'] = 1;
 
-										$tmp_box_tv[$map_mac]['mac'] = $map_mac;
-										$tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
-									}else{
-										$tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
-										$tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
-										$tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
-										$tmp_box_tv[$map_mac]['play_count'] = '';
-										$tmp_box_tv[$map_mac]['play_time'] = '';
-										$tmp_box_tv[$map_mac]['play_days'] = '';
-										$tmp_box_tv[$map_mac]['publication'] = '';
-										$tmp_box_tv[$map_mac]['tv_count'] = 1;
-										$tmp_box_tv[$map_mac]['mac'] = $map_mac;
-										$tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
-										$tmp_box_tv[$map_mac]['hotel_id'] = $bv['hotelid'];
-									}
-									unset($me_sta_arr[$map_mac]);
-								}
-
-							}
-							$tmp_box_tv = array_reduce($tmp_box_tv, function($result, $item){
-							 $result[$item['hotel_id']][] = $item;
-								return $result;
-							});
-							ksort($tmp_box_tv);
-							$tmp_box_tv = array_reduce($tmp_box_tv, function($result, $item){
-								foreach($item as $k=>$vp){
-									$result[$vp['mac']] = $vp;
-								}
-								return $result;
-							});
-							$tmp_box_tv = array_values($tmp_box_tv);
-                            $all_play_nums = 0;
-							if($tmp_box_tv){
-								$limit = ($start-1)*$size;
-                                foreach ($tmp_box_tv as $v){
-                                    if(!empty($v['play_count'])){
-                                        $all_play_nums+=intval($v['play_count']);
-                                    }
-                                }
-								$tmp_box_tvt = array_slice($tmp_box_tv, $limit , $size,true);
-								$result['list']  = $tmp_box_tvt;
-								$totals=count($tmp_box_tv);
-								$objPage = new Page($totals,$size);
-								$result['page']  = $objPage->admin_page();
-								$this->assign('all_play_nums',$all_play_nums);
-							}else{
-								$result = $this->emptyData($size);
-							}
-						}
-				}
-			}
-		}else{
-			if(IS_POST){
-				$this->error('请输入后选择内容与广告');
-			}else{
-				$result = $this->emptyData($size);
-			}
-		}
+                            $tmp_box_tv[$map_mac]['mac'] = $map_mac;
+                            $tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
+                        }else{
+                            $tmp_box_tv[$map_mac]['cityname'] = $bv['cname'];
+                            $tmp_box_tv[$map_mac]['rname'] = $bv['rname'];
+                            $tmp_box_tv[$map_mac]['hotel_name'] = $bv['name'];
+                            $tmp_box_tv[$map_mac]['play_count'] = '';
+                            $tmp_box_tv[$map_mac]['play_time'] = '';
+                            $tmp_box_tv[$map_mac]['play_days'] = '';
+                            $tmp_box_tv[$map_mac]['publication'] = '';
+                            $tmp_box_tv[$map_mac]['tv_count'] = 1;
+                            $tmp_box_tv[$map_mac]['mac'] = $map_mac;
+                            $tmp_box_tv[$map_mac]['box_name'] = $bv['box_name'];
+                            $tmp_box_tv[$map_mac]['hotel_id'] = $bv['hotelid'];
+                        }
+                        unset($me_sta_arr[$map_mac]);
+                    }
+                }
+                $tmp_box_tv = array_reduce($tmp_box_tv, function($result, $item){
+                    $result[$item['hotel_id']][] = $item;
+                    return $result;
+                });
+                ksort($tmp_box_tv);
+                $tmp_box_tv = array_reduce($tmp_box_tv, function($result, $item){
+                    foreach($item as $k=>$vp){
+                        $result[$vp['mac']] = $vp;
+                    }
+                    return $result;
+                });
+                $tmp_box_tv = array_values($tmp_box_tv);
+                $all_play_nums = 0;
+                if($tmp_box_tv){
+                    $limit = ($start-1)*$size;
+                    foreach ($tmp_box_tv as $v){
+                        if(!empty($v['play_count'])){
+                            $all_play_nums+=intval($v['play_count']);
+                        }
+                    }
+                    $tmp_box_tvt = array_slice($tmp_box_tv, $limit , $size,true);
+                    $result['list']  = $tmp_box_tvt;
+                    $totals=count($tmp_box_tv);
+                    $objPage = new Page($totals,$size);
+                    $result['page']  = $objPage->admin_page();
+                    $this->assign('all_play_nums',$all_play_nums);
+                }else{
+                    $result = $this->emptyData($size);
+                }
+            }
+        }else{
+            $result = $this->emptyData($size);
+        }
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$start);
+        $this->assign('adsname', $adsname);
+        $this->assign('contentast', $adsname);
+        $this->assign('hidden_adsid', $hidden_adsid);
+        $this->assign('s_time',$starttime);
+        $this->assign('e_time',$endtime);
 		$this->assign('list', $result['list']);
 		$this->assign('page',  $result['page']);
 		$this->display('showlist');
