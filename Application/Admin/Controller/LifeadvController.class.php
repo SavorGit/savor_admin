@@ -78,7 +78,9 @@ class LifeadvController extends BaseController {
 
             $userInfo = session('sysUserInfo');
             $hotel_arr = json_decode($h_b_arr, true);
-            $save_data = array('ads_id'=>$ads_id,'start_date'=>$start_date,'end_date'=>$end_date,'add_time'=>$now_date,
+            $start_datetime = date('Y-m-d 00:00:00',strtotime($start_date));
+            $end_datetime = date('Y-m-d 23:59:59',strtotime($end_date));
+            $save_data = array('ads_id'=>$ads_id,'start_date'=>$start_datetime,'end_date'=>$end_datetime,'add_time'=>$now_date,
                 'creator_id'=>$userInfo['id'],'state'=>1
             );
             $life_ads_id = $m_lifeads->addData($save_data);
