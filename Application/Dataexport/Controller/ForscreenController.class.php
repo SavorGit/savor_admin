@@ -611,87 +611,6 @@ class ForscreenController extends BaseController{
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function boxforscreenerror(){
-        $sql = "SELECT * FROM savor_smallapp_forscreen_record WHERE 
-          create_time >= '2021-01-25 00:00:00' AND create_time <= '2021-01-25 23:59:59'";
-
-        $model = M();
-        $res = $model->query($sql);
-        $data = array();
-        $all_box_type = C('hotel_box_type');
-        $error_num = array();
-        $no_error_num = array();
-        $fail_error_num = array();
-        $fail_error_wifi_num = array();
-        foreach ($res as $v){
-            $sql_track = "select * FROM `savor_smallapp_forscreen_track` where forscreen_record_id={$v['id']} order by id asc ";
-            $res_track = $model->query($sql_track);
-            if(!empty($res_track) && $res_track[0]['is_success']==0){
-                $error_num[]=$v['id'];
-                $track_info = $res_track[0];
-
-                if($track_info['position_nettystime']>0 && $track_info['position_nettystime']>0 && $track_info['request_nettytime']>0 && $track_info['netty_receive_time']>0
-                    && $track_info['netty_pushbox_time']>0 && $track_info['box_receivetime']>0 && $track_info['box_downstime']>0 && $track_info['box_downetime']>0) {
-                    $netty_result = json_decode($track_info['netty_result'], true);
-                    if ($netty_result['code'] == 10000) {
-                        $no_error_num[] = $v['id'];
-                    }else{
-                        $fail_error_num[]=$v['id'];
-                        if($v['is_4g']==0){
-                            $fail_error_wifi_num[$v['box_mac']][]=$v['id'];
-                        }
-                    }
-//                $info = array('hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],
-//                    'box_name'=>$v['box_name'],'box_mac'=>$v['box_mac']);
-//                if($v['is_4g']==1){
-//                    $info['is_4gstr'] = '是';
-//                }else{
-//                    $info['is_4gstr'] = '否';
-//                }
-//                $info['box_type_str'] = $all_box_type[$v['box_type']];
-//                $data[$v['box_mac']] = $info;
-                }else{
-                    $fail_error_num[]=$v['id'];
-                    if($v['is_4g']==0){
-//                        $fail_error_wifi_num[]=$v['id'];
-                        $fail_error_wifi_num[$v['box_mac']][]=$v['id'];
-                    }
-                }
-            }
-        }
-        echo count($error_num);
-        echo '====';
-        echo count($no_error_num);
-        echo '====';
-        echo count($fail_error_wifi_num);
-        echo '====';
-        print_r($fail_error_wifi_num);
-        exit;
-//        $data = array_values($data);
-//        $cell = array(
-//            array('hotel_name','酒楼名称'),
-//            array('area_name','城市名称'),
-//            array('box_name','版位名称'),
-//            array('box_mac','版位MAC'),
-//            array('is_4gstr','是否4G'),
-//            array('box_type_str','版位类型')
-//        );
-//        $this->exportToExcel($cell,$data,'投屏错误版位统计',1);
-    }
-
     public function boxforscreen(){
         ini_set("memory_limit","2048M");
         $sql = "SELECT * FROM `savor_smallapp_forscreen_record` where create_time>='2021-01-25 00:00:00' and create_time<='2021-01-30 23:59:59' 
@@ -914,6 +833,151 @@ class ForscreenController extends BaseController{
             array('maintainer_name','维护人'),
         );
         $this->exportToExcel($cell,$data,'投屏版位数据统计',2);
+    }
+
+    public function staticboxforscreenheart(){
+        $s_date = I('sdate','');
+        $e_date = I('edate','');
+
+        $cache_key = 'cronscript:staticboxforscreenheart'.$s_date.$e_date;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $res = $redis->get($cache_key);
+        if(!empty($res)){
+            if($res == 1){
+                $this->success('数据正在生成中,请稍后','',10);
+            }else{
+                //下载
+                $file_name = $res;
+                $file_path = SITE_TP_PATH.$file_name;
+                $file_size = filesize($file_path);
+                header("Content-type:application/octet-tream");
+                header('Content-Transfer-Encoding: binary');
+                header("Content-Length:$file_size");
+                $file_name = '投屏版位心跳数据统计'.date('YmdHis').'.xls';
+                header("Content-Disposition:attachment;filename=".$file_name);
+                @readfile($file_path);
+            }
+        }else{
+            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/forscreen/staticboxforscreenheartscript/sdate/$s_date/edate/$e_date > /tmp/null &";
+            system($shell);
+            $redis->set($cache_key,1,3600);
+            $this->success('数据正在生成中,请稍后','',10);
+        }
+    }
+
+    public function staticboxforscreenheartscript(){
+        ini_set("memory_limit","2048M");
+        $start_date = I('sdate','');
+        $end_date = I('edate','');
+        $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
+        $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
+
+        $all_hotel_types = C('heart_hotel_box_type');
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'a.id as hotel_id,a.name as hotel_name,area.id as area_id,area.region_name as area_name,a.hotel_box_type,a.level as hotel_level,
+	    a.is_4g,ext.trainer_id,ext.train_date,ext.maintainer_id,a.tech_maintainer';
+        $where = array('a.state'=>1,'a.flag'=>0,'a.type'=>1);
+        $where['a.hotel_box_type'] = array('in',array_keys($all_hotel_types));
+        $res_hotel = $m_hotel->getHotels($field,$where);
+        $model = M();
+        $data = array();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_heratlog = new \Admin\Model\HeartLogModel();
+        $m_heartalllog = new \Admin\Model\HeartAllLogModel();
+        foreach ($res_hotel as $v){
+            $hotel_id = $v['hotel_id'];
+            if(in_array($hotel_id,array(7,883))){
+                continue;
+            }
+            $hotel_name = $v['hotel_name'];
+            $area_name = $v['area_name'];
+            $maintainer_id = $v['maintainer_id'];
+            $sql_maintainer = "select remark as uname from savor_sysuser where id={$maintainer_id}";
+            $res_maintainer = $model->query($sql_maintainer);
+            $maintainer_name = '';
+            if(!empty($res_maintainer)){
+                $maintainer_name = $res_maintainer[0]['uname'];
+            }
+            $sql_box = "select box_mac,box_name,count(*) as num from savor_smallapp_forscreen_record where hotel_id={$hotel_id} and create_time>='{$start_time}' and create_time<='{$end_time}'
+            and small_app_id=1 and mobile_brand!='devtools' group by box_mac";
+            $res_boxs = $model->query($sql_box);
+            $standard_box_nums = array();
+            if(!empty($res_boxs)){
+                foreach ($res_boxs as $bv){
+                    $standard_box_nums[$bv['box_mac']] = array('box_name'=>$bv['box_name'],'box_mac'=>$bv['box_mac'],'forscreen_num'=>$bv['num'],'forscreen_date_num'=>$bv['date_num']);
+                }
+            }
+
+            $sql_box = "select box_mac,box_name,count(*) as num from savor_smallapp_forscreen_record where hotel_id={$hotel_id} and create_time>='{$start_time}' and create_time<='{$end_time}'
+            and small_app_id=2 and mobile_brand!='devtools' group by box_mac";
+            $res_boxs = $model->query($sql_box);
+            $mini_box_nums = array();
+            if(!empty($res_boxs)){
+                foreach ($res_boxs as $bv){
+                    $mini_box_nums[$bv['box_mac']] = array('box_name'=>$bv['box_name'],'box_mac'=>$bv['box_mac'],'forscreen_num'=>$bv['num'],'forscreen_date_num'=>$bv['date_num']);
+                }
+            }
+
+            $box_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+            $res_box = $m_box->getBoxByCondition('box.*',$box_where,'');
+            foreach ($res_box as $box){
+                $info = array('area_name'=>$area_name,'hotel_name'=>$hotel_name,'box_name'=>$box['name'],'box_mac'=>$box['mac'],
+                    'is_4g'=>$box['is_4g'],'is_open_simple'=>$box['is_open_simple'],'maintainer_name'=>$maintainer_name,
+                    'standard_box_num'=>0,'mini_box_num'=>0,'heart_num'=>0,'apk_version'=>'');
+                if($info['is_4g']==1){
+                    $info['is_4g_str'] = '是';
+                }else{
+                    $info['is_4g_str'] = '否';
+                }
+                if($info['is_open_simple']==1){
+                    $info['is_open_simple_str'] = '是';
+                }else{
+                    $info['is_open_simple_str'] = '否';
+                }
+                if(isset($standard_box_nums[$box['mac']])){
+                    $info['standard_box_num'] = $standard_box_nums[$box['mac']]['forscreen_num'];
+                }
+                if(isset($mini_box_nums[$box['mac']])){
+                    $info['mini_box_num'] = $mini_box_nums[$box['mac']]['forscreen_num'];
+                }
+                $apk_where = array('hotel_id'=>$hotel_id,'box_mac'=>$box['mac']);
+                $res_apk = $m_heratlog->getInfo('apk_version',$apk_where,'');
+                if(!empty($res_apk)){
+                    $info['apk_version'] = $res_apk['apk_version'];
+                }
+                $h_fields = 'sum(hour0+hour1+hour2+hour3+hour4+hour5+hour6+hour7+hour8+hour9+hour10+hour11+hour12+hour13+hour14+hour15+hour16+hour17+hour18+hour19+hour20+hour21+hour22+hour23) as heart_num';
+                $h_where = array('date'=>array(array('EGT',$start_date),array('ELT',$end_date)),'mac'=>$box['mac'],'type'=>2);
+                $res_heart = $m_heartalllog->getDataList($h_fields,$h_where,'');
+                if(!empty($res_heart)){
+                    $info['heart_num'] = intval($res_heart[0]['heart_num']);
+                }else{
+                    $info['heart_num'] = 0;
+                }
+                $data[]=$info;
+            }
+            echo "hotel_id: $hotel_id ok \r\n";
+
+        }
+
+        $cell = array(
+            array('area_name','地区'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位MAC'),
+            array('apk_version','apk版本号'),
+            array('is_4g_str','是否是4G'),
+            array('is_open_simple_str','是否开启极简'),
+            array('mini_box_num','极简版互动数'),
+            array('standard_box_num','普通版互动数'),
+            array('heart_num','心跳数'),
+            array('maintainer_name','维护人'),
+        );
+        $path = $this->exportToExcel($cell,$data,'投屏版位心跳数据统计',2);
+        $cache_key = 'cronscript:staticboxforscreenheart'.$start_date.$end_date;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $redis->set($cache_key,$path,3600);
     }
 
 }
