@@ -7542,4 +7542,47 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $this->exportExcel($xlsName, $xlsCell, $data,$filename);
 
     }
+    public function  epBoxNetLog(){
+        set_time_limit(36000);
+        ini_set("memory_limit","8018M");
+        $sql ="SELECT st.area_name,st.hotel_name,box.name box_name,st.box_mac, 
+               case box.box_type 
+                when 2 then '二代网络' 
+                when 3 then '二代5G' 
+                when 6 then '三代网络' 
+                when 7 then '互联网电视' end  as box_type, 
+               case st.`static_fj` when 1 then '午饭' when 2 then '晚饭' end as  static_fj,
+               st.`avg_down_speed`,st.create_time,
+               case box.is_4g when 0 then '否' when 1 then '是' end as is_4g
+               FROM `savor_smallapp_statistics` st 
+               left join savor_box box on st.box_mac = box.mac 
+               WHERE st.`create_time`>'2021-03-01 00:00:00' and st.`create_time`<'2021-04-01 00:00:00' and st.avg_down_speed>0 and box.flag=0 and box.state=1 order by st.box_id asc,st.create_time asc ";
+        $data = M()->query($sql);
+        
+        $xlsName = '版位测速明细';
+        $filename = 'exportSl14BoxList';
+        
+        $xlsCell = array(
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('box_name','版位名称'),
+            array('box_mac','版位mac'),
+            array('box_type','版位类型'),
+            array('static_fj','饭点'),
+            array('avg_down_speed','平均下载速度'),
+            array('create_time','测速时间'),
+            array('is_4g','是否4G')
+            
+        );
+        $xlsName = '失联超过10天的版位信息';
+        $filename = 'user_wifi_forscreen_detail';
+        //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+        $path  = '/application_data/web/php/savor_admin/Public/box_heart/202104/';
+        if (!is_dir($path)){
+            mkdir($path,0777,true);
+        }
+        $path  .= date('Ymd').'版位测速明细.xls';
+      
+        $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
+    }
 }
