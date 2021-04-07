@@ -538,6 +538,11 @@ $config['REDPACKET_SENDTYPES'] = array(
     '2'=>'单次定时',
     '3'=>'多次定时'
 );
+$config['TASK_CATEGORY'] = array(
+    'meal'=>'互动饭局数',
+    'interact'=>'互动数',
+    'comment'=>'点评数'
+);
 $config['REDPACKET_OPERATIONERID'] = 42996;
 $config['REDPACKET_SENDERS'] = array(
     '0'=>array('id'=>0,'nickName'=>'随机'),

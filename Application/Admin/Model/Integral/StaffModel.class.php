@@ -39,4 +39,13 @@ class StaffModel extends BaseModel{
         $res_data = !empty($data)?$data[0]:array();
         return $res_data;
     }
+
+    public function getMerchantStaffList($fields,$where){
+        $res_data = $this->alias('a')
+            ->join('savor_integral_merchant m on a.merchant_id=m.id','left')
+            ->field($fields)
+            ->where($where)
+            ->select();
+        return $res_data;
+    }
 }

@@ -5,6 +5,17 @@ use Common\Lib\Page;
 class TaskHotelModel extends BaseModel{
 	
 	protected $tableName='integral_task_hotel';
+
+	public function getHoteltasks($fields,$where,$group){
+        $res_data = $this->alias('hoteltask')
+            ->join('savor_integral_task task on hoteltask.task_id=task.id ','left')
+            ->field($fields)
+            ->where($where)
+            ->group($group)
+            ->select();
+        return $res_data;
+    }
+
 	public function getList($fields,$where,$order,$start,$size){
 	    $list = $this->alias('a')
 	                 ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')

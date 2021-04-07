@@ -11,8 +11,10 @@ class TaskController extends BaseController {
     protected $system_task_content;
     public function __construct() {
         parent::__construct();
-        $this->integral_task_type = C('integral_task_type');  
-        $this->system_task_content = C('system_task_content');  
+        $all_task_types = C('integral_task_type');
+        unset($all_task_types['2']);
+        $this->integral_task_type = $all_task_types;
+        $this->system_task_content = C('system_task_content');
     }
     public function index(){
         $page = I('pageNum',1);
@@ -36,11 +38,65 @@ class TaskController extends BaseController {
         $this->assign('numPerPage',$size);
         $this->assign('_order',$order);
         $this->assign('_sort',$sort);
-        $this->assign('integral_task_type',$this->integral_task_type);
+        $this->assign('integral_task_type',C('integral_task_type'));
         $this->assign('list',$list['list']);
         $this->assign('page',$list['page']);
         
         $this->display();
+    }
+
+    public function addactivitymoney(){
+        $id = I('id',0,'intval');
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        if(IS_POST){
+            $name = I('post.name','','trim');
+            $media_id = I('post.media_id',0,'intval');
+            $money = I('post.money',0,'intval');
+            $cvr = I('post.cvr',0);
+            $activity_day = I('post.activity_day',0,'intval');
+            $interact_num = I('post.interact_num',0,'intval');
+            $comment_num = I('post.comment_num',0,'intval');
+            $task_info = I('post.task_info','');
+            if(empty($task_info)){
+                $this->output('请勾选任务种类', "task/addactivitymoney",2,0);
+            }
+            $desc = I('post.desc','','trim');
+            $start_time = I('post.start_time','0000-00-00 00:00:00','trim');
+            $end_time = I('post.end_time','0000-00-00 00:00:00','trim');
+
+            $type = 2;
+            $task_type = 21;
+            $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'money'=>$money,
+                'cvr'=>$cvr,'activity_day'=>$activity_day,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'task_info'=>json_encode($task_info),
+                'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
+            $userinfo = session('sysUserInfo');
+            $data['uid'] = $userinfo['id'];
+            if(!empty($desc)){
+                $data['desc'] = $desc;
+            }
+            if($id){
+                $data['update_time'] = date('Y-m-d H:i:s');
+                $data['e_uid'] = $userinfo['id'];
+                $m_task->updateData(array('id'=>$id),$data);
+            }else{
+                $m_task->add($data);
+            }
+            $this->output('添加成功', "task/index");
+        }else{
+            $vinfo = array('task_info'=>'','md5'=>'');
+            if($id){
+                $vinfo = $m_task->getInfo(array('id'=>$id));
+                $m_media = new \Admin\Model\MediaModel();
+                if($vinfo['media_id']){
+                    $res_media = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $vinfo['oss_addr'] = $res_media['oss_addr'];
+                }
+                $vinfo['task_info'] = join(',',json_decode($vinfo['task_info'],true));
+            }
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
+
     }
 
     public function add(){
@@ -131,7 +187,6 @@ class TaskController extends BaseController {
                     $add_data = array('task_id'=>$ret,'level1'=>$shareprofit_level1,'level2'=>$shareprofit_level2);
                     $m_taskshareprofit->add($add_data);
                 }
-
                 $this->output('添加成功', "task/index");
             }else {
                 $this->output('添加失败', "task/index",2,0);
@@ -143,6 +198,7 @@ class TaskController extends BaseController {
             $this->display();
         }
     }
+
     public function delete(){
         $id = I('get.id');
         $m_task = new \Admin\Model\Integral\TaskModel();
@@ -169,6 +225,18 @@ class TaskController extends BaseController {
         if($ret){
             if($status==1) $msg = '上线成功';
             else $msg = '下线成功';
+            $res_task = $m_task->getInfo(array('id'=>$id));
+            if($res_task['type']==2 && $res_task['task_type']==21){
+                $redis  =  \Common\Lib\SavorRedis::getInstance();
+                $redis->select(14);
+                $cache_key = C('SAPP_SALE').'openmoneytask:'.date('Ymd').':*';
+                $keys_arr = $redis->keys($cache_key);
+                if(!empty($keys_arr)){
+                    foreach($keys_arr as $key=>$v){
+                        $redis->remove($v);
+                    }
+                }
+            }
             $this->output($msg, "task/index",2);
         }else {
             if($status==1) $msg = '上线失败';
@@ -298,6 +366,7 @@ class TaskController extends BaseController {
             $this->display();
         }
     }
+
     public function selecthotel(){
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         $is_s = I('is_s');
@@ -309,44 +378,64 @@ class TaskController extends BaseController {
             $create_time = date('Y-m-d H:i:s');
             $m_task = new \Admin\Model\Integral\TaskModel();
             $res_task = $m_task->getInfo(array('id'=>$task_id));
-            $now_task_type = 0;
-            if(!empty($res_task)){
-                $task_info = json_decode($res_task['task_info'],true);
-                $now_task_type = $task_info['task_content_type'];
-            }
+            $task_info = json_decode($res_task['task_info'],true);
+            $now_task_type = $task_info['task_type'];
 
+            $m_box = new \Admin\Model\BoxModel();
             $has_task_hids = array();
             $has_task_ids = array();
             $data = array();
             foreach($ids as $key=> $v){
-                $data[$key]['task_id'] = $task_id;
-                $data[$key]['hotel_id']= $v;
-                $data[$key]['uid']     = $uid;
-                $data[$key]['create_time'] =$create_time;
-                $hwhere = array('hotel_id'=>$v);
-                $res_hoteltask = $m_task_hotel->getDataList('*',$hwhere,'id desc');
-                if(!empty($res_hoteltask)){
-                    foreach ($res_hoteltask as $tv){
-                        $tid = $tv['task_id'];
-                        $res_task = $m_task->getInfo(array('id'=>$tid));
-                        $task_info = json_decode($res_task['task_info'],true);
-                        $task_type = $task_info['task_content_type'];
-                        if($now_task_type == $task_type){
-                            $has_task_hids[]=$v;
-                            $has_task_ids[$tid]=$tid;
-                            break;
+                $t_info = array('task_id'=>$task_id,'hotel_id'=>$v,'uid'=>$uid,'create_time'=>$create_time);
+                if($res_task['type']==2 && $res_task['task_type']==21){
+                    $b_field = 'count(box.id) as boxnum';
+                    $b_where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>$t_info['hotel_id']);
+                    $res_box = $m_box->getBoxByCondition($b_field,$b_where);
+                    $box_num = intval($res_box[0]['boxnum']);
+
+                    $activity_day = $res_task['activity_day'];
+                    if($v['money']>100){
+                        $activity_day = $activity_day - 1;
+                    }
+                    if(in_array('meal',$task_info)){
+                        $meal_num = $box_num * $res_task['cvr'] * 2 * $activity_day;
+                        $t_info['meal_num'] = $meal_num;
+                    }
+                    if(in_array('interact',$task_info)){
+                        $interact_num = $box_num * $res_task['cvr'] * 2 * $activity_day * $res_task['interact_num'];
+                        $t_info['interact_num'] = $interact_num;
+                    }
+                    if(in_array('comment',$task_info)){
+                        $comment_num = $box_num * $res_task['cvr'] * 2 * $activity_day * $res_task['comment_num'];
+                        $t_info['comment_num'] = $comment_num;
+                    }
+                }else{
+                    $hwhere = array('hotel_id'=>$v);
+                    $res_hoteltask = $m_task_hotel->getDataList('*',$hwhere,'id desc');
+                    if(!empty($res_hoteltask)){
+                        foreach ($res_hoteltask as $tv){
+                            $tid = $tv['task_id'];
+                            $res_task = $m_task->getInfo(array('id'=>$tid));
+                            $task_info = json_decode($res_task['task_info'],true);
+                            $task_type = $task_info['task_content_type'];
+                            if($now_task_type == $task_type){
+                                $has_task_hids[]=$v;
+                                $has_task_ids[$tid]=$tid;
+                                break;
+                            }
                         }
                     }
                 }
+                $data[] = $t_info;
             }
             if(!empty($has_task_hids)){
                 $hid_str = join(',',$has_task_hids);
                 $tid_str = join(',',array_values($has_task_ids));
                 $message = '如下酒楼ID：'.$hid_str.' 已有相似任务,任务ID为：'.$tid_str;
-                echo "<script>
-                navTab.closeTab('integral/selecthotel');
-                navTab.reloadFlag('task/index);
-                alertMsg.success('{$message}');</script>";
+                echo '<script>
+                navTab.closeTab("integral/selecthotel");
+                navTab.reloadFlag("integral/selecthotel");
+                alertMsg.error("'.$message.'");</script>';
                 exit;
             }
             $ret = $m_task_hotel->addAll($data);
@@ -355,18 +444,15 @@ class TaskController extends BaseController {
                 navTab.closeTab("integral/selecthotel");
                 navTab.reloadFlag("task/index");
                 alertMsg.correct("发布成功！");</script>';
-                //$this->output('发布成功了!', 'task/index');
             }else {
                 echo '<script>
                 navTab.closeTab("integral/selecthotel");
                 navTab.reloadFlag("task/index");
                 alertMsg.success("发布失败！");</script>';
-                //$this->output('发布失败!', 'task/index');
             }
         }else{
             $area_id_arr = I('include_a');
             $in_task_id  = I('in_task_id',0,'intval');//所选任务包含酒楼
-            
             $task_id = I('task_id',0,'intval');
             $where = [];
             $where['task_id'] = $task_id;
@@ -376,12 +462,10 @@ class TaskController extends BaseController {
                 navTab.closeTab("integral/selecthotel");
                 alertMsg.error("该任务已选择酒楼！");</script>';
             }
-            
-            
+
             if($in_task_id){
                 $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type';
                 $where = [];
-               
                 $where['hotel.state'] = 1;
                 $where['hotel.flag']  = 0;
                 $where['a.task_id']   = $in_task_id;
@@ -391,7 +475,6 @@ class TaskController extends BaseController {
                 }
                 $order = 'convert(hotel.name using gbk) asc';
                 $hotel_list = $m_task_hotel->alias('a')
-                                           
                                            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
                                            ->join('savor_area_info area on area.id=hotel.area_id','left')
                                            ->field($fields)
@@ -421,8 +504,6 @@ class TaskController extends BaseController {
                 ->order($order)
                 ->select();
             }
-            
-            
             //城市列表
             $m_area_info = new \Admin\Model\AreaModel();
             $area_list = $m_area_info->getHotelAreaList();
@@ -439,8 +520,6 @@ class TaskController extends BaseController {
                 $nums = $m_task_hotel->where(array('task_id'=>$v['id']))->count();
                 $task_list[$key]['name'] .='('.$nums.'家酒楼)';
             }
-            
-            
             $this->assign('hotel_box_type',$hotel_box_type);
             $this->assign('area_list',$area_list);
             $this->assign('task_list',$task_list);
@@ -449,8 +528,8 @@ class TaskController extends BaseController {
             $this->assign('task_id',$task_id);
             $this->display();
         }
-        
     }
+
     public function copy(){
         $task_id = I('get.task_id');
         $m_task = new \Admin\Model\Integral\TaskModel();
@@ -486,7 +565,6 @@ class TaskController extends BaseController {
                 $hotel_list[$key]['task_id'] = $ret;
                 $hotel_list[$key]['uid'] = $uid;
             }
-            
             $rts = $m_task_hotel->addAll($hotel_list);
             if($ret && $rts){
                 $m_task->commit();
@@ -508,6 +586,7 @@ class TaskController extends BaseController {
             
         }  */
     }
+
     public function gethotelinfo(){
         $task_id = I('get.task_id',0,'intval');
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
@@ -527,8 +606,8 @@ class TaskController extends BaseController {
         $this->assign('hotel_list',$hotel_list);             
         $this->display();
     }
+
     private function checkMainParam($data){
-        //print_r($data);exit;
         if(empty($data['name'])) $this->error('请输入任务名称');
         if(empty($data['media_id'])) $this->error('请上传任务图标');
         if(empty($data['type'])) $this->error('请选择任务类型');
@@ -538,19 +617,17 @@ class TaskController extends BaseController {
                 $this->error('任务开始、结束时间不能为空');
             }
             if($data['end_time']<=$data['start_time']){
-                
                 $this->error('任务结束时间不能小于开始时间');
             }
-            //if($data['end_time']<$now_time) $this->error('任务结束时间不能小于当前时间');
         }
         if(empty($data['integral'])) $this->error('请输入奖励积分');
     }
+
     private function chekInfoParam($data,$map){
         if($map['type']==1){
             if(empty($data['task_content_type'])) $this->error('请选择任务内容');
         }
         if(empty($data['lunch_end_time']) ||empty($data['lunch_start_time'])) $this->error('午饭开始时间和午饭结束时间不能为空');
-        
         if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['lunch_start_time'])) $this->error('午饭开始时间格式错误');
         if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['lunch_end_time'])) $this->error('午饭结束时间格式错误');
         if(!preg_match('/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/',$data['dinner_start_time'])) $this->error('晚饭开始时间格式错误');

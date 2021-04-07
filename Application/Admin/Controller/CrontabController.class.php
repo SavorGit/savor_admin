@@ -4407,6 +4407,24 @@ class CrontabController extends Controller
         echo "removesigncache end:$now_time \r\n";
     }
 
+    public function boxincome(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "boxincome start:$now_time \r\n";
+        $m_boxincome = new \Admin\Model\Smallapp\BoxincomeModel();
+        $m_boxincome->handle_boxincome();
+        $now_time = date('Y-m-d H:i:s');
+        echo "boxincome end:$now_time \r\n";
+    }
+
+    public function usermoneytask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "usermoneytask start:$now_time \r\n";
+        $m_usertask = new \Admin\Model\Smallapp\UsertaskModel();
+        $m_usertask->handle_usertask();
+        $now_time = date('Y-m-d H:i:s');
+        echo "usermoneytask end:$now_time \r\n";
+    }
+
     public function countsmallappusetime(){
         $date = strtotime('-1 day');
         $yesterday_start_time = date('Y-m-d 00:00:00',$date);

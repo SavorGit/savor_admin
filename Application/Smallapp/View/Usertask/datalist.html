@@ -1,0 +1,98 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/usertask/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+            <div class="form-inline">
+            <div class="form-group">
+                <div class="input-group input-group-sm">用户openid：</div>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="openid" value="{$openid}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">酒楼名称：</div>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">状态：</div>
+                <div class="input-group">
+                    <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name="all_status" id="sname">
+                            <option value="{$key}" <if condition="$key eq $status">selected</if>>{$sname}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group input-group-sm">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>openid</th>
+                        <th>用户头像</th>
+                        <th>酒楼名称</th>
+                        <th>任务金额</th>
+                        <th>到手金额</th>
+                        <th>状态</th>
+                        <th>领取时间</th>
+                        <th>完成时间</th>
+                        <th>提现时间</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <volist name="datalist" id="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID">{$dinfo.id}</td>
+                            <td data-title="openid">{$dinfo.openid}</td>
+                            <td data-title="用户头像"><img src="{$dinfo.avatar_url}"></td>
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+                            <td data-title="任务金额">{$dinfo.money}</td>
+                            <td data-title="到手金额">{$dinfo.get_money}</td>
+                            <td data-title="状态">{$dinfo.status_str}</td>
+                            <td data-title="领取时间">{$dinfo.add_time}</td>
+                            <td data-title="完成时间">{$dinfo.finish_time}</td>
+                            <td data-title="提现时间">{$dinfo.withdraw_time}</td>
+
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>
