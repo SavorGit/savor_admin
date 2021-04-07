@@ -29,7 +29,6 @@ class UsertaskModel extends BaseModel{
 
 	public function handle_usertask(){
         $date_h = date('H');
-        $date_h = 17;
         if($date_h==17){
             $dinner_type = 'lunch';//午饭
         }elseif($date_h==23){
@@ -67,10 +66,6 @@ class UsertaskModel extends BaseModel{
                 "ID:{$v['id']} task_id:{$task_id} has overtime {$res_task['end_time']} \r\n";
                 continue;
             }
-	        if($res_task['status']==2){
-                "ID:{$v['id']} task_id:{$task_id} has finish \r\n";
-                continue;
-            }
 	        $hotel_task_info = $m_hoteltask->getInfo(array('id'=>$task_hotel_id));
 	        $hotel_id = $hotel_task_info['hotel_id'];
 	        $res_staff = $m_staff->getInfo(array('openid'=>$v['openid'],'status'=>1));
@@ -95,6 +90,11 @@ class UsertaskModel extends BaseModel{
                 $task_comment_num = $hotel_task_info['comment_num'];
 
                 foreach ($res_box as $bv){
+                    $u_task = $this->getInfo(array('id'=>$v['id']));
+                    if($u_task['status']==2){
+                        "ID:{$v['id']} task_id:{$task_id} has finish \r\n";
+                        break;
+                    }
                     $meal_num = $interact_num = $comment_num = 0;
                     $forscreen_where = array('a.hotel_id'=>$hotel_id,'a.box_mac'=>$bv['box_mac'],'a.is_valid'=>1);
                     $forscreen_where['a.mobile_brand'] = array('neq','devtools');
@@ -130,33 +130,43 @@ class UsertaskModel extends BaseModel{
                     }
                     //计算用户获得现金
                     $meal_money = $interact_money = $comment_money = 0;
-                    if($res_task['meal_num']>0 && $meal_num>0){
-                        $meal_money = 0.3/$task_num/$res_task['meal_num'] * $meal_num;
+                    $last_money = 0.3*$u_task['money'];
+                    if($task_meal_num>0 && $meal_num>0){
+                        if($u_task['meal_num']+$meal_num>$task_meal_num){
+                            $meal_num = $task_meal_num-$u_task['meal_num'];
+                        }
+                        $meal_money = $last_money/$task_num/$res_task['meal_num'] * $meal_num;
                     }
-                    if($res_task['interact_num']>0 && $interact_num>0){
-                        $interact_money = 0.3/$task_num/$res_task['interact_num'] * $interact_num;
+                    if($task_interact_num>0 && $interact_num>0){
+                        if($u_task['interact_num']+$interact_num>$task_interact_num){
+                            $interact_num = $task_interact_num-$u_task['interact_num'];
+                        }
+                        $interact_money = $last_money/$task_num/$res_task['interact_num'] * $interact_num;
                     }
-                    if($res_task['comment_num']>0 && $comment_num>0){
-                        $comment_money = 0.3/$task_num/$res_task['comment_num'] * $comment_num;
+                    if($task_comment_num>0 && $comment_num>0){
+                        if($u_task['comment_num']+$comment_num>$task_comment_num){
+                            $comment_num = $task_comment_num-$u_task['comment_num'];
+                        }
+                        $comment_money = $last_money/$task_num/$res_task['comment_num'] * $comment_num;
                     }
-                    $get_money = $res_task['get_money'] + $meal_money + $interact_money + $comment_money;
+                    $get_money = $u_task['get_money'] + $meal_money + $interact_money + $comment_money;
                     $get_money = sprintf("%.2f",$get_money);
-                    $up_usertask_data = array('meal_num'=>$res_task['meal_num']+$meal_num,
-                        'interact_num'=>$res_task['interact_num']+$interact_num,
-                        'comment_num'=>$res_task['comment_num']+$comment_num,'get_money'=>$get_money
+                    $up_usertask_data = array('meal_num'=>$u_task['meal_num']+$meal_num,
+                        'interact_num'=>$u_task['interact_num']+$interact_num,
+                        'comment_num'=>$u_task['comment_num']+$comment_num,'get_money'=>$get_money
                     );
                     if($res_task['money']==$get_money){
                         $up_usertask_data['finish_time'] = date('Y-m-d H:i:s');
                         $up_usertask_data['status'] = 2;
                     }
-                    $this->updateData(array('id'=>$res_task['id']),$up_usertask_data);
+                    $this->updateData(array('id'=>$u_task['id']),$up_usertask_data);
                     //end
 
                     //记录日志
                     $add_record_data = array('openid'=>$v['openid'],'hotel_id'=>$bv['hotel_id'],'hotel_name'=>$bv['hotel_name'],
                         'room_id'=>$bv['room_id'],'room_name'=>$bv['room_name'],'box_id'=>$bv['box_id'],'box_name'=>$bv['box_name'],
-                        'box_mac'=>$bv['box_mac'],'task_hotel_id'=>$task_hotel_id,'meal_num'=>$meal_num,'interact_num'=>$interact_num,
-                        'comment_num'=>$comment_num,'type'=>1
+                        'box_mac'=>$bv['box_mac'],'task_hotel_id'=>$task_hotel_id,'usertask_id'=>$u_task['id'],
+                        'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'type'=>1
                     );
                     if($dinner_type=='lunch'){
                         $m_usetaskrecord->add($add_record_data);
