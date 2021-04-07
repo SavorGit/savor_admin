@@ -28,7 +28,11 @@ class ExchangeController extends BaseController {
         $where = array();
         if($area_id)    $where['area.id']=$area_id;
         if($status)     $where['a.status']=$status;
-        if($type)       $where['a.type']=$type;
+        if($type){
+            $where['a.type']=$type;
+        }else{
+            $where['a.type']=array('in',array(1,2));
+        }
         if($maintainer_id)    $where['ext.maintainer_id']=$maintainer_id;
         if(!empty($hotel_name)) $where['hotel.name'] = array('like',"%$hotel_name%");
         if($is_audit!=99){
