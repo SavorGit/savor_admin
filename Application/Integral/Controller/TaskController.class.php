@@ -540,7 +540,8 @@ class TaskController extends BaseController {
         
         $userinfo = session('sysUserInfo');
         $uid = $userinfo['id'];
-        $fields = "name,media_id,type,task_type,desc,start_time,end_time,is_long_time,integral,separate_id,task_info";
+        $fields = "name,media_id,type,task_type,money,cvr,activity_day,interact_num,comment_num,
+        desc,start_time,end_time,is_long_time,integral,separate_id,task_info";
         $task_info = $m_task->where($where)->getRow($fields,$where);
         if(empty($task_info)) $this->error('该任务不存在');
         
@@ -589,13 +590,14 @@ class TaskController extends BaseController {
 
     public function gethotelinfo(){
         $task_id = I('get.task_id',0,'intval');
-        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        $res_task = $m_task->getInfo(array('id'=>$task_id));
+        $task_type = $res_task['task_type'];
         
-        $where = [] ; 
-        $where['a.task_id'] = $task_id;
-        $fields = 'area.region_name,hotel.name hotel_name,hotel.addr,hotel.state';
-        
+        $where = array('a.task_id'=>$task_id);
+        $fields = 'a.meal_num,a.interact_num,a.comment_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state';
         $order = 'convert(hotel.name using gbk) asc';
+        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         $hotel_list = $m_task_hotel->alias('a')
                                    ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
                                    ->join('savor_area_info area on hotel.area_id = area.id','left')
@@ -603,7 +605,8 @@ class TaskController extends BaseController {
                                    ->field($fields)
                                    ->order($order)
                                    ->select();
-        $this->assign('hotel_list',$hotel_list);             
+        $this->assign('task_type',$task_type);
+        $this->assign('hotel_list',$hotel_list);
         $this->display();
     }
 
