@@ -14,7 +14,7 @@ class BoxincomeModel extends BaseModel{
             echo "no hotel has money \r\n";
             exit;
         }
-        $time_date = time();
+        $time_date = strtotime("-1 day");
         $all_meal_time = C('MEAL_TIME');
         $all_box_types = C('heart_hotel_box_type');
         $m_staff = new \Admin\Model\Integral\StaffModel();
@@ -29,7 +29,7 @@ class BoxincomeModel extends BaseModel{
             $room_ids = array();
             if(!empty($res_staff)){
                 foreach ($res_staff as $sv){
-                    $tmp_room_ids = explode(',',trim($sv['room_ids']));
+                    $tmp_room_ids = explode(',',trim($sv['room_ids'],','));
                     foreach ($tmp_room_ids as $rid){
                         $room_ids[]=$rid;
                     }
@@ -38,7 +38,7 @@ class BoxincomeModel extends BaseModel{
             $bfields = 'hotel.id as hotel_id,hotel.name as hotel_name,room.id as room_id,room.name as room_name,
             box.id as box_id,box.name as box_name,box.mac as box_mac';
             $bwhere = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-            if(!empty($room_ids)>1){
+            if(!empty($room_ids)){
                 $bwhere['box.room_id'] = array('not in',$room_ids);
             }
             $bwhere['box.box_type'] = array('in',array_keys($all_box_types));
@@ -54,7 +54,6 @@ class BoxincomeModel extends BaseModel{
                     $forscreen_where['a.mobile_brand'] = array('neq','devtools');
                     $forscreen_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
                     $forscreen_where['a.small_app_id'] = array('in',array(1,2));//小程序ID 1普通版,2极简版,5销售端,11 h5互动游戏
-
                     //统计互动数
                     $fields = "count(a.id) as interact_num";
                     $res_forscreen = $m_smallapp_forscreen_record->getDatas($fields,$forscreen_where,'','');
@@ -110,9 +109,11 @@ class BoxincomeModel extends BaseModel{
                     $interact_num = $lunch_interact_num + $dinner_interact_num;
                     $comment_num = $lunch_comment_num + $dinner_comment_num;
                     if($meal_num>0 || $interact_num>0 || $comment_num>0){
+                        echo "hotel_id:{$bv['hotel_id']}  box_mac:{$bv['box_mac']} meal_num:$meal_num,interact_num:$interact_num,comment_num:$comment_num \r\n";
+                        $static_date = date('Y-m-d',$time_date);
                         $add_data = array('hotel_id'=>$bv['hotel_id'],'hotel_name'=>$bv['hotel_name'],'room_id'=>$bv['room_id'],
                             'room_name'=>$bv['room_name'],'box_id'=>$bv['box_id'],'box_name'=>$bv['box_name'],'box_mac'=>$bv['box_mac'],
-                            'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num
+                            'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'static_date'=>$static_date
                         );
                         $this->add($add_data);
                     }else{
