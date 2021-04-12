@@ -48,6 +48,7 @@ class TaskController extends BaseController {
     public function addactivitymoney(){
         $id = I('id',0,'intval');
         $m_task = new \Admin\Model\Integral\TaskModel();
+        $is_edit = 0;
         if(IS_POST){
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
@@ -56,6 +57,7 @@ class TaskController extends BaseController {
             $activity_day = I('post.activity_day',0,'intval');
             $interact_num = I('post.interact_num',0,'intval');
             $comment_num = I('post.comment_num',0,'intval');
+            $people_num = I('post.people_num',1,'intval');
             $task_info = I('post.task_info','');
             if(empty($task_info)){
                 $this->output('请勾选任务种类', "task/addactivitymoney",2,0);
@@ -67,14 +69,23 @@ class TaskController extends BaseController {
             $type = 2;
             $task_type = 21;
             $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'money'=>$money,
-                'cvr'=>$cvr,'activity_day'=>$activity_day,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'task_info'=>json_encode($task_info),
-                'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
+                'cvr'=>$cvr,'activity_day'=>$activity_day,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'people_num'=>$people_num,
+                'task_info'=>json_encode($task_info),'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
             $userinfo = session('sysUserInfo');
             $data['uid'] = $userinfo['id'];
             if(!empty($desc)){
                 $data['desc'] = $desc;
             }
             if($id){
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0){
+                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                    if($data['task_info']!=$res_task_info['task_info']){
+                        $this->output('任务已下发,请勿修改任务种类', "task/addactivitymoney",2,0);
+                    }
+                }
+                unset($data['uid']);
                 $data['update_time'] = date('Y-m-d H:i:s');
                 $data['e_uid'] = $userinfo['id'];
                 $m_task->updateData(array('id'=>$id),$data);
@@ -83,7 +94,7 @@ class TaskController extends BaseController {
             }
             $this->output('添加成功', "task/index");
         }else{
-            $vinfo = array('task_info'=>'','md5'=>'');
+            $vinfo = array('task_info'=>'','md5'=>'','people_num'=>1);
             if($id){
                 $vinfo = $m_task->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
@@ -92,7 +103,13 @@ class TaskController extends BaseController {
                     $vinfo['oss_addr'] = $res_media['oss_addr'];
                 }
                 $vinfo['task_info'] = join(',',json_decode($vinfo['task_info'],true));
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0) {
+                    $is_edit = 1;
+                }
             }
+            $this->assign('is_edit',$is_edit);
             $this->assign('vinfo',$vinfo);
             $this->display();
         }
@@ -399,14 +416,23 @@ class TaskController extends BaseController {
                     }
                     if(in_array('meal',$task_info)){
                         $meal_num = $box_num * $res_task['cvr'] * 2 * $activity_day;
+                        if($res_task['people_num']>1){
+                            $meal_num = round($meal_num/$res_task['people_num']);
+                        }
                         $t_info['meal_num'] = $meal_num;
                     }
                     if(in_array('interact',$task_info)){
                         $interact_num = $box_num * $res_task['cvr'] * 2 * $activity_day * $res_task['interact_num'];
+                        if($res_task['people_num']>1){
+                            $interact_num = round($interact_num/$res_task['people_num']);
+                        }
                         $t_info['interact_num'] = $interact_num;
                     }
                     if(in_array('comment',$task_info)){
                         $comment_num = $box_num * $res_task['cvr'] * 2 * $activity_day * $res_task['comment_num'];
+                        if($res_task['people_num']>1){
+                            $comment_num = round($comment_num/$res_task['people_num']);
+                        }
                         $t_info['comment_num'] = $comment_num;
                     }
                 }else{

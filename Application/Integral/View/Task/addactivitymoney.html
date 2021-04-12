@@ -44,7 +44,7 @@
                 金额
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="number" class="form-control" name="money" min="1" max="10000" value="{$vinfo.money}" required>
+                <input type="number" class="form-control" name="money" min="1" max="10000" value="{$vinfo.money}" <if condition="$is_edit gt 0">readonly<else/>required</if> >
             </div>
         </div>
 
@@ -53,7 +53,7 @@
                 转化率
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="number" class="form-control" name="cvr" min="0" max="1" value="{$vinfo.cvr}" required>
+                <input type="number" class="form-control" name="cvr" min="0" max="1" value="{$vinfo.cvr}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
             </div>
         </div>
 
@@ -62,7 +62,7 @@
                 活动天数
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="number" class="form-control" name="activity_day" min="1" max="365" value="{$vinfo.activity_day}" required>
+                <input type="number" class="form-control" name="activity_day" min="1" max="365" value="{$vinfo.activity_day}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
             </div>
         </div>
 
@@ -71,7 +71,7 @@
                 单次互动数
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="number" class="form-control" name="interact_num" min="1" max="500" value="{$vinfo.interact_num}" required>
+                <input type="number" class="form-control" name="interact_num" min="1" max="500" value="{$vinfo.interact_num}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
             </div>
         </div>
 
@@ -80,7 +80,16 @@
                 单次饭局评论数
             </label>
             <div class="col-xs-12 col-sm-10">
-                <input type="number" class="form-control" name="comment_num" min="1" max="500" value="{$vinfo.comment_num}" required>
+                <input type="number" class="form-control" name="comment_num" min="1" max="500" value="{$vinfo.comment_num}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                负责人数
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="number" class="form-control" name="people_num" min="1" max="365" value="{$vinfo.people_num}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
             </div>
         </div>
 
@@ -99,36 +108,37 @@
         </div>
 
         <div class="form-group row">
-            <label class="col-xs-12 col-sm-2 control-label">
-              任务描述:
-            </label>
-            <div class="col-xs-12 col-sm-10">
-              <textarea name="desc" placeholder="请输入描述，允许为空"rows="7"cols="120">{$vinfo.desc}</textarea>
-            </div>
-        </div>
-        <div class="form-group row">
             <label class="col-xs-6 col-sm-2 control-label">
                 任务时段-开始时间:
             </label>
             <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
-          		<input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="任务开始时间" value="{$vinfo.start_time}" readonly>
+                <input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="任务开始时间" value="{$vinfo.start_time}" readonly>
                 <span class="input-group-btn"  >
                   <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                   <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                 </span>
-        	</div>
+            </div>
         </div>
         <div class="form-group row">
             <label class="col-xs-6 col-sm-2 control-label">
                 任务时段-结束时间:
             </label>
             <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
-          		<input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="任务结束时间" value="{$vinfo.end_time}" readonly>
+                <input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="任务结束时间" value="{$vinfo.end_time}" readonly>
                 <span class="input-group-btn"  >
                   <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
                   <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                 </span>
-        	</div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+              任务描述:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+              <textarea name="desc" placeholder="请输入描述，允许为空"rows="7"cols="120">{$vinfo.desc}</textarea>
+            </div>
         </div>
 
     </div>
