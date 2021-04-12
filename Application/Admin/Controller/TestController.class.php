@@ -556,7 +556,7 @@ class TestController extends Controller {
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
-        $sql ="select * from savor_hotel hotel";
+        $sql ="select * from savor_hotel where state=1 and flag=0";
         $data = M()->query($sql);
         $data = array();
         foreach($data  as $key=>$v){
@@ -724,8 +724,7 @@ class TestController extends Controller {
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.id in(select hotel.id from savor_box as box left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id 
-where box.state=1 and box.flag=0 and box.box_type=2 group by hotel.id )";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
@@ -738,22 +737,22 @@ where box.state=1 and box.flag=0 and box.box_type=2 group by hotel.id )";
         $data = M()->query($sql);
         $flag = 0;
         foreach($data as $key=>$v){
-//            if($v['is_open_simple']==1 && $v['is_sapp_forscreen']==0){
-//                $v['is_sapp_forscreen'] = 1;
-//            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
-//                $v['is_open_simple'] = 0;
-//            }
-//            if(isset($close_forscreen_boxs[$v['mac']])){
-//                $v['is_interact'] = 0;
-//                $v['is_sapp_forscreen'] = 0;
-//                $v['is_open_simple'] = 1;
-//                $is_open_simple = $v['is_open_simple'];
-//                $is_sapp_forscreen = $v['is_sapp_forscreen'];
-//                $is_interact = $v['is_interact'];
-//                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
-//                M()->execute($sql);
-//                echo $v['mac']." close ok \n";
-//            }
+            if($v['is_open_simple']==1 && $v['is_sapp_forscreen']==0){
+                $v['is_sapp_forscreen'] = 1;
+            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
+                $v['is_open_simple'] = 0;
+            }
+            if(isset($close_forscreen_boxs[$v['mac']])){
+                $v['is_interact'] = 0;
+                $v['is_sapp_forscreen'] = 0;
+                $v['is_open_simple'] = 1;
+                $is_open_simple = $v['is_open_simple'];
+                $is_sapp_forscreen = $v['is_sapp_forscreen'];
+                $is_interact = $v['is_interact'];
+                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+                M()->execute($sql);
+                echo $v['mac']." close ok \n";
+            }
             $v['is_interact'] = 0;
             $v['is_sapp_forscreen'] = 0;
             $v['is_open_simple'] = 0;
@@ -774,36 +773,38 @@ where box.state=1 and box.flag=0 and box.box_type=2 group by hotel.id )";
             if(empty($v['mac'])){
                 continue;
             }
-            $res_box = $v;
-            $forscreen_type = 1;//1外网(主干) 2直连(极简)
-            $box_forscreen = '1-0';
-            if(!empty($res_box)){
-                $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
-                switch ($box_forscreen){
-                    case '1-0':
-                        $forscreen_type = 1;
-                        break;
-                    case '0-1':
-                        $forscreen_type = 2;
-                        break;
-                    case '1-1':
-                        /* if(in_array($res_box['box_type'],array(3,6,7))){
-                            $forscreen_type = 2;
-                        }elseif($res_box['box_type']==2){
-                            $forscreen_type = 1;
-                        } */
-                        $forscreen_type = 1;
-                        break;
-                    default:
-                        $forscreen_type = 1;
-                }
-                $redis->select(14);
-                $box_mac = $res_box['mac'];
-                $box_key = "box:forscreentype:$box_mac";
-                $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type,'forscreen_method'=>$box_forscreen);
-                $redis->set($box_key,json_encode($forscreen_info));
-                echo "box_id:$box_id \r\n";
-            }
+
+//            $res_box = $v;
+//            $forscreen_type = 1;//1外网(主干) 2直连(极简)
+//            $box_forscreen = '1-0';
+//            if(!empty($res_box)){
+//                $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
+//                switch ($box_forscreen){
+//                    case '1-0':
+//                        $forscreen_type = 1;
+//                        break;
+//                    case '0-1':
+//                        $forscreen_type = 2;
+//                        break;
+//                    case '1-1':
+//                        /* if(in_array($res_box['box_type'],array(3,6,7))){
+//                            $forscreen_type = 2;
+//                        }elseif($res_box['box_type']==2){
+//                            $forscreen_type = 1;
+//                        } */
+//                        $forscreen_type = 1;
+//                        break;
+//                    default:
+//                        $forscreen_type = 1;
+//                }
+//                $redis->select(14);
+//                $box_mac = $res_box['mac'];
+//                $box_key = "box:forscreentype:$box_mac";
+//                $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type,'forscreen_method'=>$box_forscreen);
+//                $redis->set($box_key,json_encode($forscreen_info));
+//                echo "box_id:$box_id \r\n";
+//            }
+
             $flag++;
         }
         echo "total:$flag ok";
@@ -1720,7 +1721,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     }
 
     public function exchangerecord(){
-        $start = I('get.start',1000,'intval');
+        $start = I('get.start',100,'intval');
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
         $res = array();
@@ -1729,12 +1730,12 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
             $area_id = $v['id'];
             $area_name = $v['region_name'];
             $offset = $start+($k*50);
-            $sql = "select avatarUrl,nickName from savor_smallapp_user where small_app_id=1 and nickName!='' and unionId='' order by id asc limit $offset,50";
+            $sql = "select avatarUrl,nickName from savor_smallapp_user where small_app_id=1 and nickName!='' and unionId='' order by id desc limit $offset,50";
             $res_user = $m_area->query($sql);
             foreach ($res_user as $uv){
                 shuffle($money);
                 $u_money = $money[0];
-                $info = array('area_id'=>$area_id,'area_name'=>$area_name,'name'=>$uv['nickname'],'money'=>$u_money);
+                $info = array('area_id'=>$area_id,'area_name'=>$area_name,'avatar_url'=>$uv['avatarurl'],'name'=>$uv['nickname'],'money'=>$u_money);
                 $res[]=$info;
             }
         }
@@ -2125,100 +2126,6 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         echo $all_box;
     }
 
-    public function tjjj(){
-        exit;
-        $sql_openid = "select openid from savor_smallapp_qrcode_log where type=8 and create_time>'2020-06-15 13:57:24' and box_mac in('00226D584378','FCD5D900B33A','00226D8BC9F0','00226D8BCC5D','00226D8BCDB1','F4285389498D','00226D5843BC','00226D584109','00226D58434E','00226D8BCCFD','00226D8BCDC2','111111111111','FCD5D900B2E0','00226D8BCE0F','00226D65542E','00226D6554A7','00226D583FC6','00226D655155','00226D8BCD40','00226D655557','00226D65524C','00226D583E8E','00226D584754','00226D58421F','00226D8BCA99','00226D584751','00226D6554FC','00226D5843B7','00226D8BCB5A','00226D6555EF','00226D583DB7','00226D655423','00226D5843EB','00226D5842A9','00226D5843A2','00226D8BC98F','00226D584043','00226D650002','FCD5D900B6C9','00226D8BCADE','00226D58451B','00226D5846D5','00226D8BCA9D','00226D583DF1','00226D6550EE','00226D584655','00226D8BCE47','00226D655308','00226D8BCACB','00226D2FB26F','00226D655260','00226D583E28','00226D584607','00226D650004','00226D651111','00226D2FB212','00226D655404','00226D583CC0','00226D2FB112','00226D655276','FCD5D900B4E9','00226D8BCAFD','00226D8BCC2E','00226D8BCBC6','00226D584311','00226D5841B7','00226D583FC9','00226D584187','00226D58461F','00226D584578','00226D65556F','00226D5845B7','00226D6554D7','00226D2FB24A','00226D8BCD79','00226D58406A','00226D655437','00226D6552E1','00226D5840C6','00226D655236','00226D6554F0','00226D58458A','00226D655628','00226D583E2D','00226D8BC9DA','00226D8BCBC9','00226D8BCA93','00226D583E1E','00226D6551B3','00226D583F94','00226D6555F3','00226D584540','00226D655218','00226D583C9B','00226D8BCA63','00226D8BCE0E','00226D8BCA98','00226D5843EF','00226D655389','00226D8BCC24','00226D583F87','00226D5841EC','00226D58448C','00226D584436','00226D2FB256','00226D8BCAAD','00226D6555BA','00226D65561C','00226D583E56','00226D8BC943','00226D8BCD56','00226D65549D','00226D583D77','00226D5843AB','00226D651000','00226D6554C2','00226D8BCDEF','00226D5842EA','00226D655455','00226D584253','00226D5842E1','00226D655171','00226D584730','00226D8BCCC2','00226D583E52','00226D65545A','00226D65521C','00226D655397','00226D5843D9','00226D65543A','00226D58421B','00226D5846D7','00226D65516C','00226D8BCDD3','00226D583F23','00226D65527F','00226D6554A3','00226D584764','00226D584281','00226D58409D','00226D584480','00226D6555AE','FCD5D900B19A','00226D583F30','00226D8BCBB3','00226D6555DD','00226D65523F','00226D6553CC','00226D584312','00226D584674','00226D583EF3','00226D6552C5','00226D8BCBD9','00226D6551BA','00226D6555E9','00226D584355','00226D58407A','00226D8BCC21','00226D58436C','00226D8BCAB5','00226D5840C7','00226D58474B','00226D8BCA51','00226D5845C2','00226D58472D','00226D655363','00226D6553A8','00226D5841E4','00226D584739','00226D65521B','00226D650001','00226D58452E','00226D5846AC','00226D6551E7','FCD5D900B412','00226D8BCB49','00226D65533D','00226D65514F','00226D655530','00226D8BCB47','00226D584584','00226D584359','00226D8BCDC7','00226D584548','00226D5845F1','00226D5843E5','00226D584170','00226D58415B','00226D8BCE1E','00226D6553D0','00226D5840D0','00226D655488','00226D6552D7','00226D8BCA9C','00226D655368','00226D8BCA6E','00226D584347','00226D584671','00226D583CF8','00226D8BCB0B','00226D583D33','00226D58411E','00226D5846BD','00226D655206','00226D58423C','00226D584511','00226D584229','00226D8BCDA0','00226D5843C9','00226D584492','00226D8BCA5E','00226D5841BC','00226D8BCA78','00226D584428','00226D655413','00226D655570','FCD5D900B693','00226D655603','00226D2FB237','00226D583D7C','00226D6554BC','00226D65563F','00226D655381','00226D8BCAC8','00226D8BCE61','00226D655515','F428538931C9','00226D65558C','00226D583F03','00226D58412A','00226D5840A1','00226D584009','00226D65548F','00226D5843D3','00226D5846B9','00226D5845BA','00226D8BCB0F','00226D5842D0','00226D8BCC20','00226D580002','00226D584429','00226D583E21','00226D65519D','00226D583FFC','00226D65511E','00226D8BCCA8','00226D6551DE','00226D584517','00226D8BCC94','00226D583FDF','00226D58466D','00226D58427A','00226D8BCABC','00226D583CF0','00226D58474A','00226D584701','00226D2FB216','00226D2FB222','00226D58475C','00226D8BCD73','FCD5D900B492','00226D8BCBF1','00226D583CCE','00226D5846E4','00226D584026','00226D655120','00226D655593','00226D5845E8','00226D583FDE','00226D583F92','00226D8BCE48','FCD5D900B7BC','00226D655395','00226D655222','00226D5846D6','00226D655270','00226D584447','00226D8BC991','00226D583D6E','00226D655169','00226D8BCE53','00226D5844F3','00226D65520F','00226D8BCB21','00226D5843FD','00226D6551AB','FCD5D900B70A','00226D655627','00226D8BCBB5','00226D8BCB64','00226D8BCA9A','00226D65521E','00226D6555C1','00226D655151','00226D5843FB','00226D583FC8','00226D8BCC37','00226D583FBA','00226D65511A','00226D583E2C','00226D584193','40E793253583','00226D584063','00226D6550F7','00226D583F1D','00226D8BCA4D','00226D584272','00226D655523','00226D8BC9D2','00226D58400E','00226D8BCBC2','00226D584376','00226D583EDC','00226D584225','00226D584090','00226D584661','00226D6553FB','00226D58477C','00226D8BCD1E','00226D8BCCB9','00226D583F64','00226D584395','00226D584430','00226D65537C','00226D65561A','00226D584309','00226D581111','00226D5840FE','00226D8BCAA1','00226D655370','00226D8BCDDA','00226D655226','00226D583D80','00226D655237','00226D58431A','00226D6554E5','00226D65522C','0022600120F3','00226D8BCAF1','00226D58464F','00226D583F32','00226D584761','00226D655540','00226D8BCB28','00226D655561','00226D584463','00226D650000','00226D655522','00226D655119','00226D584551','00226D655297','00226D583FF9','00226D655103','00226D65541C','00226D5843E8','00226D8BC951','00226D584338','00226D8BC940','00226D8BCA08','00226D58426D','00226D583C9E','00226D58473B','00226D2FB24D','00226D583EE9','00226D655223','00226D6551F3','00226D8BCA74','00226D65532A','00226D655124','00226D655510','00226D655631','00226D6554F9','00226D655460','00226D655498','00226D580001','00226D583D31','00226D584489','00226D6553C8','00226D8BCAE2','00226D583FA1','00226D8BCC41','00226D5845D2','00226D655116','00226D8BCA60','00226D5843CB','00226D6550FD','00226D584241','00226D58453A','00226D583F39','00226D65525C','00226D584379','00226D58460A','00226D8BC9E6','00226D584030','00226D6554BE','00226D58457A','00226D8BCA80','00226D583CE8','00226D583FD4','00226D655303','00226D5843AA','00226D8BCE19','00226D8BC979','00226D584297','00226D5841C1','00226D6555D4','00226D58423B','FCD5D900B390','00226D8BC9F7','00226D584145','00226D2F1223','00226D8BCAA4','00226D65535F','00226D2FB252','00226D58403E','00226D5846D8','00226D6555FB','00226D584415','00226D655629','00226D655256','00226D584367','00226D8BCA94','00226D5845BE','00226D65550C','00226D8BCDDF','00226D655367','00226D58405E','00226D8BC929','00226D6552FB','00226D8BCD9C','00226D8BCB97','00226D5845CB','00226D655362','00226D584464','00226D655250','00226D584507','00226D8BCA00','00226D583F45','00226D6551C0','00226D8BCC6E','00226D8BCC4E','00226D5841BB','00226D584757','00226D584058','00226D584490','00226D8BCE32','00226D584XXX','00226D8BCE59','00226D6553B1','00226D58437F','00226D584072','00226D58462D','00226D584104','00226D8BCA18','00226D58409C','00226D65520B','00226D584435','00226D8BCA5D','00226D655550','00226D6553BF','00226D6555CC','00226D583C9F','00226D8BCB8A','00226D584539','00226D8BCB13','00226D65511D','00226D58465E','00226D583FCB','00226D584541','00226D8BCBED','00226D655563','00226D5844A9','00226D8BCA16','00226D65537D','00226D5842F4','00226D5841AF','00226D583EBB','00226D5841D4','00226D584138','00226D6554B7','00226D58451D','00226D2FB24C','00226D650003','00226D58444F','00226D5841A8','00226D584224','00226D65512C','FCD5D900B829','00226D5845E1','00226D655387','00226D584332','00226D583CBC','00226D583E8C','00226D655211','00226D583EEC','00226D655366','00226D8BCAB9','00226D8BCA25','00226D655193','FCD5D900B347','00226D6554C4','00226D583D74','00226D655338','00226D8BCAA5','00226D6552BA','00226D6552BC','00226D655526','00226D583F9F','00226D6555BB','00226D8BCA4E','00226D6551FC','00226D655157','00226D8BCA76','00226D584418','00226D8BCACC','00226D8BCDE0','00226D655188','00226D5846A6','00226D8BCD83','00226D58444E','00226D8BC9BE','00226D8BCBFF','00226D583F22','00226D6552F0','00226D583FEE','00226D58456C','00226D8BCC06','00226D58401A','00226D583E98','00226D8BCB57','00226D5841C2','00226D8BCA79','00226D8BC93A','00226D584366','00226D2FB257','00226D6555E5','00226D6553D2','00226D65546D','00226D8BCAD0','00226D65554A','00226D5844C4','00226D583CED','00226D2FB231','00226D58450E','00226D6553D5','00226D58456D','00226D8BCDFD','00226D5846B8','00226D8BC992','00226D8BC946','00226D8BC99A','00226D8BCA4F','00226D5840B2','00226D583FDB','00226D8BCC0D','00226D584594','00226D655289','00226D5845AA','00226D655408','00226D58451C','00226D584547','00226D583E87','00226D5844AB','00226D2FB262','00226D584210','00226D5847E6','00226D6553FA','00226D8BCB85','00226D584089','00226D5845B6','00226D655271','00226D584076','00226D5845A0','00226D8BC9D0','00226D584042','00226D5845B4','00226D58476E','00226D583CDE','00226D8BCAA3','00226D6551D3','00226D583ED0','00226D6555A2','00226D655400','00226D8BCAC5','00226D655588','00226D58434F','00226D655632','00226D65532F','00226D655330','00226D8BCBD2','00226D583DE4','00226D583D5D','00226D65534C','00226D6554F5','00226D65564F','00226D65538D','00226D8BCCF2','FCD5D900B909','00226D8BCCA1','00226D583D29','00226D8BCBA4','00226D6554CF','00226D584427','00226D655601','00226D8BC928')
-group by openid";
-        $sql_wifierror_openids = "select openid from savor_smallapp_wifi_err where create_time>'2020-06-15 13:57:24' and openid in($sql_openid) group by openid";
-        $res_error_openids = M()->query($sql_wifierror_openids);
-        $error_openids = array();
-        foreach ($res_error_openids as $v){
-            $open_id = $v['openid'];
-            $sql_record = "select openid,mobile_brand,mobile_model from savor_smallapp_forscreen_record where openid='$open_id' and small_app_id in(2,3) and create_time>'2020-06-15 13:57:24'";
-            $res_record = M()->query($sql_record);
-            if(empty($res_record)){
-                $error_openids[]=$v;
-            }
-        }
-        $all_openids = array();
-        $res_openids = M()->query($sql_openid);
-        $success_openids = array();
-        $success_brandopenids = array();
-        foreach ($res_openids as $v){
-            $open_id = $v['openid'];
-            if(!in_array($open_id,$error_openids)){
-                $sql_record = "select openid,mobile_brand,mobile_model from savor_smallapp_forscreen_record where openid='$open_id' and small_app_id in(2,3) and create_time>'2020-06-15 13:57:24'";
-                $res_record = M()->query($sql_record);
-                if(!empty($res_record)){
-                    $success_openids[]=$v;
-                    $mobile_brand = $res_record[0]['mobile_brand'];
-                    $mobile_model = $res_record[0]['mobile_model'];
-
-                    $success_brandopenids[$mobile_brand][]=$v;
-                }
-            }
-        }
-        $res = array('all'=>count($res_openids),'error'=>count($error_openids),'success'=>count($success_openids));
-        print_r($res);
-        exit;
-    }
-
-    public function task(){
-        $model = M();
-        $sql_task = 'select * from savor_integral_task where status=1 and flag=1';
-        $res_task = $model->query($sql_task);
-        $all_task = array();
-        foreach ($res_task as $v){
-            $type = $v['type'];
-            $task_info = json_decode($v['task_info'],true);
-            $all_task[$v['id']] = $task_info['task_content_type'];
-        }
-        $sql_hotel_task = 'select GROUP_CONCAT(task_id) as task_ids,hotel_id from savor_integral_task_hotel group by hotel_id';
-        $res_hotel_task = $model->query($sql_hotel_task);
-
-        $hotel_more_task = array();
-        $hotel_repeat_task = array();
-        foreach ($res_hotel_task as $v){
-            $tasks = explode(',',$v['task_ids']);
-            if(count($tasks)>1){
-                $res_hotel = $model->query('select name from savor_hotel where id='.$v['hotel_id']);
-                $hotel_more_task[]=$v['hotel_id'];
-                $hotel_tasks = array();
-                foreach ($tasks as $tv){
-                    if(isset($all_task[$tv])){
-                        $t_type = $all_task[$tv];
-                        $hotel_tasks[$t_type][]=$tv;
-                    }
-                }
-                foreach ($hotel_tasks as $kk=>$kv){
-                    if(count($kv)>1){
-                        $hotel_repeat_task[]=array('hotel_id'=>$v['hotel_id'],'hotel_name'=>$res_hotel[0]['name'],'task_ids'=>$kv);
-                    }
-                }
-            }
-        }
-        echo json_encode($hotel_more_task);
-        echo '====';
-        print_r($hotel_repeat_task);
-    }
-
-    public function uptasktype(){
-        $model = M();
-        $sql_task = 'select * from savor_integral_task';
-        $res_task = $model->query($sql_task);
-        foreach ($res_task as $v) {
-            $id = $v['id'];
-            $task_info = json_decode($v['task_info'], true);
-            $task_type = $task_info['task_content_type'];
-            $sql = "update savor_integral_task set task_type={$task_type} where id={$id}";
-
-            $res = $model->execute($sql);
-            if($res){
-                echo "id $id ok\r\n";
-            }
-        }
-    }
-
     public function forscreen(){
         $mac = I('mac','');
         $f_url = I('f','');
@@ -2272,64 +2179,6 @@ group by openid";
             }
         }
         echo 'push box:'.json_encode($push_boxs)." OK \r\n";
-    }
-
-    public function forscreenhelpvideo(){
-        $f_url = I('f','');
-        $now_box_mac = I('box','');
-
-        $log_content = date('Y-m-d H:i:s').'[box_mac]'.$now_box_mac.'[url]'.$f_url."\r\n";
-        $log_file_name = '/application_data/web/php/savor_admin/Public/content/'.'filetobox_'.date("Ymd").".log";
-        @file_put_contents($log_file_name, $log_content, FILE_APPEND);
-
-        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
-        $curl = new \Common\Lib\Curl();
-        $res_netty = '';
-        $curl::get($url,$res_netty,10);
-        $res_box = json_decode($res_netty,true);
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            echo "netty connections api error \r\n";
-            exit;
-        }
-        $code = 10001;
-        $msg = 'fail';
-        if(!empty($res_box['result'])){
-//            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>"forscreen/resource/1603457745866.mp4",'filename'=>"1603457745866.mp4");
-            $file_info = pathinfo($f_url);
-            $file_name = $file_info['basename'];
-
-            $netty_data = array('action'=>134,'resource_type'=>2,'url'=>"$f_url",'filename'=>"{$file_name}");
-            $message = json_encode($netty_data);
-            $netty_cmd = C('SAPP_CALL_NETY_CMD');
-            $m_netty = new \Admin\Model\Smallapp\NettyModel();
-            foreach ($res_box['result'] as $k=>$v){
-                if($v['totalConn']>0){
-                    foreach ($v['connDetail'] as $cv){
-                        $box_mac = $cv['box_mac'];
-                        if($box_mac==$now_box_mac){
-                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
-                            $req_id  = getMillisecond();
-                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
-                            $post_data = http_build_query($box_params);
-                            $ret = $m_netty->curlPost($push_url,$post_data);
-                            $res_push = json_decode($ret,true);
-                            if($res_push['code']==10000){
-                                $code = 10000;
-                                $msg = 'push ok';
-                            }else{
-                                $code = 10002;
-                                $msg = 'push error';
-                            }
-                            break;
-                        }
-                    }
-                }
-
-            }
-        }
-        $res = array('code'=>$code,'msg'=>$msg);
-        echo json_encode($res);
-        exit;
     }
 
     public function hotellevel(){
@@ -2417,217 +2266,6 @@ group by openid";
         print_r($hotel_info);
         print_r($other_hotel);
         exit;
-    }
-
-
-    public function pushdish(){
-        $now_box_mac = I('mac','','trim');
-
-        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
-        $curl = new \Common\Lib\Curl();
-        $res_netty = '';
-        $curl::get($url,$res_netty,10);
-        $res_box = json_decode($res_netty,true);
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            $curl::get($url,$res_netty,10);
-            $res_box = json_decode($res_netty,true);
-        }
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            echo "netty connections api error \r\n";
-            exit;
-        }
-
-        if(!empty($res_box['result'])){
-            $activity_info = array('hotel_id'=>7,'dish'=>'新渝城传承川渝味道精髓招牌菜水煮鱼','start_time'=>'18:00','end_time'=>'18:50',
-                'lottery_time'=>'12:00','dish_img'=>'lottery/activity/zzhx.jpg');
-            $activity_info['lottery_time'] = time()+7200;
-            $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
-
-            $netty_cmd = C('SAPP_CALL_NETY_CMD');
-            $m_netty = new \Admin\Model\Smallapp\NettyModel();
-            foreach ($res_box['result'] as $k=>$v){
-                if($v['totalConn']>0){
-                    foreach ($v['connDetail'] as $cv){
-                        $box_mac = $cv['box_mac'];
-                        if($box_mac==$now_box_mac){
-
-                            $lottery_countdown = strtotime($activity_info['lottery_time']) - time();
-                            $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
-                            $dish_name_info = pathinfo($activity_info['dish_img']);
-                            $partake_img = $activity_info['dish_img'].'?x-oss-process=image/resize,m_mfit,h_200,w_300';
-                            $netty_data = array('action'=>135,'countdown'=>30,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
-                                'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partake_img,'partake_filename'=>$dish_name_info['basename'],
-                                'partake_name'=>$activity_info['dish'],'activity_name'=>'新渝城传承川渝味优惠大酬宾抽奖活动',
-                            );
-                            $message = json_encode($netty_data);
-
-                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
-                            $req_id  = getMillisecond();
-                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
-                            $post_data = http_build_query($box_params);
-                            $ret = $m_netty->curlPost($push_url,$post_data);
-                            $res_push = json_decode($ret,true);
-                            if($res_push['code']==10000){
-                                echo "box_mac:$box_mac push ok \r\n";
-                            }else{
-                                echo "box_mac:$box_mac push error $ret  \r\n";
-                            }
-
-                            exit;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public function pushlottery(){
-        $now_box_mac = I('mac','','trim');
-
-        $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
-        $curl = new \Common\Lib\Curl();
-        $res_netty = '';
-        $curl::get($url,$res_netty,10);
-        $res_box = json_decode($res_netty,true);
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            $curl::get($url,$res_netty,10);
-            $res_box = json_decode($res_netty,true);
-        }
-        if(empty($res_box) || !is_array($res_box) || $res_box['code']!=10000){
-            echo "netty connections api error \r\n";
-            exit;
-        }
-
-        if(!empty($res_box['result'])){
-            $activity_info = array('hotel_id'=>7,'dish'=>'至尊海鲜大咖1份','start_time'=>'18:00','end_time'=>'18:50',
-                'lottery_time'=>'12:00','dish_img'=>'lottery/activity/zzhx.jpg');
-            $activity_info['lottery_time'] = time()+3600;
-            $activity_info['lottery_time'] = date('Y-m-d H:i:s',$activity_info['lottery_time']);
-            $limit = "1000,40";
-            $m_user = new \Admin\Model\Smallapp\UserModel();
-            $where = array('nickName'=>array('neq',''));
-            $res_user = $m_user->getWhere('openid,avatarUrl,nickName',$where,'id desc',$limit,'');
-
-            $netty_cmd = C('SAPP_CALL_NETY_CMD');
-            $m_netty = new \Admin\Model\Smallapp\NettyModel();
-            foreach ($res_box['result'] as $k=>$v){
-                if($v['totalConn']>0){
-                    foreach ($v['connDetail'] as $cv){
-                        $box_mac = $cv['box_mac'];
-                        if($box_mac==$now_box_mac){
-
-                            $lottery_openid_id = mt_rand(0,39);
-                            $lottery_openid = $res_user[$lottery_openid_id]['openid'];
-
-                            $partake_user = array();
-                            foreach ($res_user as $uv){
-                                $is_lottery = 0;
-                                if($uv['openid']==$lottery_openid){
-                                    $is_lottery = 1;
-                                }
-                                $uv['avatarurl'] = substr($uv['avatarurl'],0,-3);
-                                $uv['avatarurl'] = $uv['avatarurl'].'0';
-                                $uinfo = array('avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
-                                $partake_user[] = $uinfo;
-                            }
-                            $lottery = array('dish_name'=>$activity_info['dish'],'dish_image'=>$activity_info['dish_img']);
-
-                            $netty_data = array('action'=>136,'partake_user'=>$partake_user,'lottery'=>$lottery);
-                            $message = json_encode($netty_data);
-                            echo $message;
-
-                            $push_url = 'http://'.$cv['http_host'].':'.$cv['http_port'].'/push/box';
-                            $req_id  = getMillisecond();
-                            $box_params = array('box_mac'=>$box_mac,'msg'=>$message,'req_id'=>$req_id,'cmd'=>$netty_cmd);
-                            $post_data = http_build_query($box_params);
-                            $ret = $m_netty->curlPost($push_url,$post_data);
-                            $res_push = json_decode($ret,true);
-                            if($res_push['code']==10000){
-                                echo "box_mac:$box_mac push ok $ret \r\n";
-                            }else{
-                                echo "box_mac:$box_mac push error $ret  \r\n";
-                            }
-
-                            exit;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    public function welcometime(){
-        exit;
-        $model = M();
-        $sql = "select * from savor_smallapp_welcome where play_type=2 and status=3 and add_time>='2020-07-01 00:00:00' order by id desc ";
-        $res_data = $model->query($sql);
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
-        foreach ($res_data as $v){
-            $play_time = "{$v['play_date']} {$v['timing']}";
-            $create_time = date('Y-m-d H:i:s',strtotime($play_time));
-
-            $user_id = $v['user_id'];
-            $res_user = $m_user->getOne('*',array('id'=>$user_id),'');
-            $openid = $res_user['openid'];
-
-            $start_time = $v['add_time'];
-            $end_time = date('Y-m-d H:i:s',strtotime($start_time)+300);
-            $time_condition = "create_time>='$start_time' and create_time<='$end_time'";
-            $sql_forscreen = "select * from savor_smallapp_forscreen_record where {$time_condition} and openid='{$openid}' and action=41";
-            if($v['type']==1){
-                $sql_forscreen.=" and box_mac='{$v['box_mac']}'";
-            }
-            $res_forscreen = $model->query($sql_forscreen);
-            if(!empty($res_forscreen)){
-                foreach ($res_forscreen as $fv){
-                    $m_forscreen->updateData(array('id'=>$fv['id']),array('create_time'=>$create_time));
-                }
-                echo "welcome_id:{$v['id']} time ok \r\n";
-            }
-
-        }
-        echo "finish";
-    }
-
-    public function welcome(){
-        exit;
-        $model = M();
-        $sql = "select * from savor_smallapp_forscreen_record where box_mac=2 and create_time>='2020-07-01 00:00:00' order by id desc ";
-        $res_data = $model->query($sql);
-        if(!empty($res_data)){
-            $m_staff = new \Admin\Model\Integral\StaffModel();
-            $m_box = new \Admin\Model\BoxModel();
-            $m_forscreen = new \Admin\Model\SmallappForscreenRecordModel();
-
-            foreach ($res_data as $v){
-                $forscreen_id = $v['id'];
-                unset($v['id']);
-
-                $openid = $v['openid'];
-                $fields = 'm.hotel_id as hotel_id';
-                $where = array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1);
-                $res_merchant = $m_staff->getMerchantStaffInfo($fields,$where);
-                if(!empty($res_merchant)){
-                    $hotel_id = $res_merchant['hotel_id'];
-                    $where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-                    $res_boxs = $m_box->getBoxByCondition('box.mac as box_mac',$where);
-                    if(!empty($res_boxs)){
-                        foreach ($res_boxs as $bv){
-                            $v['box_mac'] = $bv['box_mac'];
-                            $forscreen_data = $v;
-                            $m_forscreen->add($forscreen_data);
-                        }
-                    }
-                    $sql_del = "delete from savor_smallapp_forscreen_record where id={$forscreen_id}";
-                    $model->execute($sql_del);
-                    echo "id:$forscreen_id hotel_id:$hotel_id ok \r\n";
-                }else{
-                    echo "id:$forscreen_id hotel_id:0 error \r\n";
-                }
-            }
-        }
     }
 
     public function handleforscreen(){
@@ -3019,68 +2657,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo 'user: '.count($meal_user);
     }
 
-    public function upcommenthotel(){
-        $m_comment = new \Admin\Model\Smallapp\CommentModel();
-        $res_comment = $m_comment->getDataList('*',array());
-        $m_box = new \Admin\Model\BoxModel();
-        foreach ($res_comment as $k=>$v){
-            $fields='hotel.id as hotel_id,box.mac';
-            $where = array('box.mac'=>$v['box_mac'],'box.state'=>1,'box.flag'=>0);
-            $res_box = $m_box->getBoxByCondition($fields,$where);
-            if(!empty($res_box)){
-                $hotel_id = $res_box[0]['hotel_id'];
-                $res = $m_comment->updateData(array('id'=>$v['id']),array('hotel_id'=>$hotel_id));
-                if($res){
-                    echo "comment_id {$v['id']} ok \r\n";
-                }
-            }
-        }
-    }
-
-    public function uprewardhotel(){
-        $m_reward = new \Admin\Model\Smallapp\RewardModel();
-        $res_reward = $m_reward->getDataList('*',array());
-        $m_box = new \Admin\Model\BoxModel();
-        foreach ($res_reward as $v){
-            $fields='hotel.id as hotel_id,box.mac';
-            $where = array('box.mac'=>$v['box_mac'],'box.state'=>1,'box.flag'=>0);
-            $res_box = $m_box->getBoxByCondition($fields,$where);
-            if(!empty($res_box)){
-                $hotel_id = $res_box[0]['hotel_id'];
-                $res = $m_reward->updateData(array('id'=>$v['id']),array('hotel_id'=>$hotel_id));
-                if($res){
-                    echo "reward_id {$v['id']} ok \r\n";
-                }
-            }
-        }
-    }
-
-    public function rewardintegral(){
-        $openid = I('get.oid','','trim');
-        $integral = I('get.integral',0,'intval');
-        $key = I('get.key','');
-        $sign_key = 're@94e20op43eldian';
-        if($key==$sign_key){
-            $m_user_integral = new \Admin\Model\Smallapp\UserIntegralModel();
-            $res = $m_user_integral->getInfo(array('openid'=>$openid));
-            if(!empty($res)){
-                echo '当前积分:'.$res['integral'];
-                echo '===';
-                $now_integral = $res['integral'] + $integral;
-                $data = array('integral'=>$now_integral,'update_time'=>date('Y-m-d H:i:s'));
-                $is_up = $m_user_integral->updateData(array('id'=>$res['id']),$data);
-                if($is_up){
-                    echo '更新完积分:'.$now_integral;
-                }
-            }else{
-                $data = array('openid'=>$openid,'integral'=>$integral,'add_time'=>date('Y-m-d H:i:s'));
-                $is_up = $m_user_integral->add($data);
-                if($is_up){
-                    echo '第一次增加积分:'.$integral;
-                }
-            }
-        }
-    }
 
     public function pushFileToBox(){
         $redis = \Common\Lib\SavorRedis::getInstance();
@@ -3188,8 +2764,22 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
             }
         }
+    }
 
+    public function setsalewxtest(){
+        //清除线上销售端微信测试人员测试信息
+        $sql_staff = 'delete from savor_integral_merchant_staff where merchant_id=92';
+        $model = M();
+        $model->execute($sql_staff);
 
+        $sql_user = 'delete from savor_smallapp_user where mobile=15810260493';
+        $model->execute($sql_user);
+
+        $redis = SavorRedis::getInstance();
+        $redis->select(14);
+        $key = 'smallappdinner_vcode_15810260493';
+        $redis->set($key,1234);
+        echo 'set wxtest ok';
     }
 
 }
