@@ -534,9 +534,7 @@ class TaskController extends BaseController {
         $task_id = I('get.task_id');
         $m_task = new \Admin\Model\Integral\TaskModel();
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
-        $where = [];
-        $where['id'] = $task_id;
-        $where['flag']    = 1;
+        $where = array('id'=>$task_id,'flag'=>1);
         
         $userinfo = session('sysUserInfo');
         $uid = $userinfo['id'];
