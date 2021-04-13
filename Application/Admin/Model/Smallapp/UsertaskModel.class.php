@@ -165,8 +165,9 @@ class UsertaskModel extends BaseModel{
                             && $up_usertask_data['comment_num']==$task_comment_num){
                             $task_num_eq = 1;
                         }
+                        echo "ID:{$v['id']} task_id:{$task_id} money:{$res_task['money']} get_money:$get_money task_num_eq:$task_num_eq \r\n";
 
-                        if($res_task['money']>=$get_money || $task_num_eq==1){
+                        if($get_money>=$res_task['money'] || $task_num_eq==1){
                             $up_usertask_data['get_money'] = $u_task['money'];
                             $up_usertask_data['finish_time'] = date('Y-m-d H:i:s');
                             $up_usertask_data['status'] = 2;
