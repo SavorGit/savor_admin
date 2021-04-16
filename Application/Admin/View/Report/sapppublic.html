@@ -38,9 +38,10 @@
             </span>
             <span class="input-group-btn input-group-sm">
               <select name="status"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                <option value="99">审核状态</option>
+                <option value="99">状态</option>
                 <option value="1" <if condition="$status eq 1">selected="selected"</if> >待审核</option>
                 <option value="2" <if condition="$status eq 2">selected="selected"</if> >已审核</option>
+                <option value="0" <if condition="$status eq 0">selected="selected"</if> >已删除</option>
               </select>
             </span>
             <span class="input-group-btn input-group-sm">
@@ -108,8 +109,10 @@
                 	已审核
                   <!-- <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-on"></i></span></a> -->
+                  <elseif condition="$vlist['status'] eq 1"/>
+                  未审核
                   <else/>
-                  	未审核
+                  已删除
                   <!-- <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
                 <i class="fa fa-toggle-off"></i></span></a> -->
                 </if>
