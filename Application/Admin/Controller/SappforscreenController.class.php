@@ -39,6 +39,7 @@ class SappforscreenController extends BaseController {
         $spotstatus = I('spotstatus',0,'intval');
         $resource_type = I('resource_type',0,'intval');
         $area_id = I('area_id',0,'intval');
+        $size_type = I('size_type',0,'intval');
 	    $size   = I('numPerPage',50);//显示每页记录数
 	    $pagenum = I('pageNum',1);
 	    $order = I('_order','a.id');
@@ -107,6 +108,14 @@ class SappforscreenController extends BaseController {
         }
         if($spotstatus){
             $where['a.spotstatus'] = $spotstatus;
+        }
+        if($size_type){
+            $unit_size = 50*1021*1024;
+            if($size_type==1){
+                $where['a.resource_size'] = array('elt',$unit_size);
+            }else{
+                $where['a.resource_size'] = array('gt',$unit_size);
+            }
         }
         if($is_exist!=99){
             $where['a.is_exist'] = $is_exist;
@@ -1463,9 +1472,7 @@ class SappforscreenController extends BaseController {
 	    $m_public = new \Admin\Model\Smallapp\PublicModel();
 	    $fields = 'user.nickName,a.id,a.forscreen_id,a.openid,a.box_mac,a.res_type,a.is_pub_hotelinfo,a.create_time,a.status,a.is_recommend,a.create_time';
 	    $where = array();
-	    if($status==99){
-            $where['a.status'] = array('in','1,2');
-        }else{
+	    if($status!=99){
             $where['a.status'] = $status;
         }
         if($is_recommend!=99){
