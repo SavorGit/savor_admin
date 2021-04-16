@@ -138,31 +138,31 @@
           <tbody data-check="list" data-parent=".table">
           <volist name="datalist" id="dinfo">
             <tr target="sid_user">
-              <td>{$dinfo.hotel_id}</td>
-              <td>{$dinfo.hotel_name}</td>
-              <td>{$dinfo.area_name}</td>
-              <td>{$dinfo.heart_num}</td>
-              <if condition="$is_admin eq 1"><td>{$dinfo.meal_heart_num}</td></if>
-              <td>{$dinfo.avg_speed}</td>
-              <td>{$dinfo.interact_num}</td>
-              <td>{$dinfo.scancode_num}</td>
-              <td>{$dinfo.user_num}</td>
-              <td>{$dinfo.user_lunch_zxhdnum}</td>
-              <td>{$dinfo.lunch_zxhdnum}</td>
-              <td>{$dinfo.user_lunch_cvr}</td>
-              <td>{$dinfo.user_dinner_zxhdnum}</td>
-              <td>{$dinfo.dinner_zxhdnum}</td>
-              <td>{$dinfo.user_dinner_cvr}</td>
-              <td>{$dinfo.user_lunch_interact_num}</td>
-              <td>{$dinfo.lunch_unum}</td>
-              <td>{$dinfo.user_dinner_interact_num}</td>
-              <td>{$dinfo.dinner_unum}</td>
-              <td>{$dinfo.scan_hdnum}</td>
-              <td>{$dinfo.box_num}</td>
-              <td>{$dinfo.interact_sale_nosignnum}</td>
-              <td>{$dinfo.hotel_box_type_str}</td>
-              <td>{$dinfo.network}</td>
-              <td>{$dinfo.maintainer}</td>
+              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="城市">{$dinfo.area_name}</td>
+              <td data-title="心跳次数">{$dinfo.heart_num}</td>
+              <if data-title="饭点心跳次数" condition="$is_admin eq 1"><td>{$dinfo.meal_heart_num}</td></if>
+              <td data-title="平均网速">{$dinfo.avg_speed}</td>
+              <td data-title="互动次数">{$dinfo.interact_num}</td>
+              <td data-title="扫码数">{$dinfo.scancode_num}</td>
+              <td data-title="独立用户数">{$dinfo.user_num}</td>
+              <td data-title="午饭互动过的可互动版位">{$dinfo.user_lunch_zxhdnum}</td>
+              <td data-title="午饭在线可互动屏">{$dinfo.lunch_zxhdnum}</td>
+              <td data-title="午饭饭局转化率">{$dinfo.user_lunch_cvr}</td>
+              <td data-title="晚饭互动过的可互动版位">{$dinfo.user_dinner_zxhdnum}</td>
+              <td data-title="晚饭在线可互动屏">{$dinfo.dinner_zxhdnum}</td>
+              <td data-title="晚饭饭局转化率">{$dinfo.user_dinner_cvr}</td>
+              <td data-title="午饭互动次数">{$dinfo.user_lunch_interact_num}</td>
+              <td data-title="午饭平均饭局互动数">{$dinfo.lunch_unum}</td>
+              <td data-title="晚饭互动次数">{$dinfo.user_dinner_interact_num}</td>
+              <td data-title="晚饭平均饭局互动数">{$dinfo.dinner_unum}</td>
+              <td data-title="单次扫码互动数">{$dinfo.scan_hdnum}</td>
+              <td data-title="版位数">{$dinfo.box_num}</td>
+              <td data-title="销售端非签到互动数">{$dinfo.interact_sale_nosignnum}</td>
+              <td data-title="酒楼设备类型">{$dinfo.hotel_box_type_str}</td>
+              <td data-title="上网方式(wifi/4g)">{$dinfo.network}</td>
+              <td data-title="维护人">{$dinfo.maintainer}</td>
             </tr>
           </volist>
 
