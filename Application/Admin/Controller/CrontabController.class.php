@@ -2747,6 +2747,9 @@ class CrontabController extends Controller
                     $forscreen_info['hotel_box_type'] = $box_info['hotel_box_type'];
                     $forscreen_info['hotel_is_4g']= $box_info['hotel_is_4g'];    
                     $forscreen_info['box_name']   = $box_info['box_name'];
+                    if($forscreen_info['resource_size']=='undefined'){
+                        $forscreen_info['resource_size'] = 0;
+                    }
                 }
                 $ret = $m_smallapp_forscreen_record->addInfo($forscreen_info,1);
                 if($ret){
@@ -2769,7 +2772,8 @@ class CrontabController extends Controller
                     $where['openid'] = $upresource['openid'];
                     if(!empty($upresource['box_res_sdown_time'])){
                         $data['box_res_sdown_time'] = $upresource['box_res_sdown_time'];
-                    }else if(!empty($upresource['box_res_edown_time'])){
+                    }
+                    if(!empty($upresource['box_res_edown_time'])){
                         $data['box_res_edown_time'] = $upresource['box_res_edown_time'];
                     }
                     $ret = $m_smallapp_forscreen_record->updateInfo($where, $data);
@@ -4423,6 +4427,15 @@ class CrontabController extends Controller
         $m_usertask->handle_usertask();
         $now_time = date('Y-m-d H:i:s');
         echo "usermoneytask end:$now_time \r\n";
+    }
+
+    public function proplaynum(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "proplaynum start:$now_time \r\n";
+        $m_mediasta = new \Admin\Model\MediaStaModel();
+        $m_mediasta->handle_proplaynum();
+        $now_time = date('Y-m-d H:i:s');
+        echo "proplaynum end:$now_time \r\n";
     }
 
     public function countsmallappusetime(){
