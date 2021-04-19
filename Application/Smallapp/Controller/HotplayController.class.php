@@ -28,17 +28,27 @@ class HotplayController extends BaseController {
             $res_user = $m_user->getOne($fields, $where);
             $data_list[$k]['nickname'] = $res_user['nickname'];
             $data_list[$k]['avatarurl'] = $res_user['avatarurl'];
-            $fields_forscreen = 'imgs,duration,resource_size,resource_id';
+            $fields_forscreen = 'imgs,duration,resource_size,resource_id,md5_file';
             $all_forscreen = $m_forscreen->getDataList($fields_forscreen,array('forscreen_id'=>$res_forscreen['forscreen_id']),'id asc');
             $imgs_info = json_decode($all_forscreen[0]['imgs'],true);
             $forscreen_url = $oss_host.$imgs_info[0];
+            $md5_str = '正常';
             if($res_forscreen['resource_type']==1){
                 $resource_type_str = '图片';
                 $img_url = $forscreen_url."?x-oss-process=image/quality,Q_50";
+                foreach ($all_forscreen as $av){
+                    if(empty($av['md5_file'])){
+                        $md5_str = '异常';
+                    }
+                }
             }else{
+                if(empty($all_forscreen[0]['md5_file'])){
+                    $md5_str = '异常';
+                }
                 $resource_type_str = '视频';
                 $img_url = $forscreen_url.'?x-oss-process=video/snapshot,t_3000,f_jpg,w_450,m_fast';
             }
+            $data_list[$k]['md5_str'] = $md5_str;
             $data_list[$k]['resource_type_str'] = $resource_type_str;
             $data_list[$k]['img'] = $img_url;
         }
