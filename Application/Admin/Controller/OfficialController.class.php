@@ -19,6 +19,7 @@ class officialController extends Controller {
             $map['area_id'] = $areaid;
         }
         $map['state'] =1;
+		$map['flag']  = 0;
          
         $list = $HotelModel->getInfo('id,name,gps,addr,hotel_box_type,area_id',$map);
         
