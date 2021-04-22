@@ -312,7 +312,6 @@ class ForscreenTrackModel extends BaseModel{
 
     public function getForscreenTrack($forscreen_record_id){
 	    $res_forscreentrack = $this->getInfo(array('forscreen_record_id'=>$forscreen_record_id));
-        $res_forscreentrack = array();
 	    if(empty($res_forscreentrack)){
             $m_heart_log = new \Admin\Model\HeartLogModel();
             $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
@@ -382,9 +381,6 @@ class ForscreenTrackModel extends BaseModel{
                 }
                 $data['oss_stime'] = intval($data['oss_stime']);
                 $data['oss_etime'] = intval($data['oss_etime']);
-                print_r($data);
-                exit;
-
                 $result = $this->getTrackResult($res_forscreen,$data);
                 $data['is_success'] = $result['is_success'];
                 $data['total_time'] = $result['total_time'];
