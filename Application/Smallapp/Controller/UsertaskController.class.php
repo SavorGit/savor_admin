@@ -29,6 +29,8 @@ class UsertaskController extends BaseController {
         }
 
         $fields = 'a.id,a.openid,a.money,a.get_money,a.status,a.finish_time,a.withdraw_time,a.add_time,
+        a.meal_num,a.interact_num,a.comment_num,taskhotel.meal_num as task_meal_num,taskhotel.interact_num as task_interact_num,
+        taskhotel.comment_num as task_comment_num,
         user.avatarUrl as avatar_url,hotel.name as hotel_name';
         $orderby = 'a.id desc';
         $result = $m_usertask->getList($fields,$where, $orderby, $start,$size);
@@ -43,6 +45,19 @@ class UsertaskController extends BaseController {
                 if($v['withdraw_time']=='0000-00-00 00:00:00'){
                     $datalist[$k]['withdraw_time'] = '';
                 }
+                $task_meal = $task_interact = $task_comment = '';
+                if($v['task_meal_num']){
+                    $task_meal = "{$v['meal_num']}/{$v['task_meal_num']}";
+                }
+                if($v['task_interact_num']){
+                    $task_interact = "{$v['interact_num']}/{$v['task_interact_num']}";
+                }
+                if($v['task_comment_num']){
+                    $task_comment = "{$v['comment_num']}/{$v['task_comment_num']}";
+                }
+                $datalist[$k]['task_meal'] = $task_meal;
+                $datalist[$k]['task_interact'] = $task_interact;
+                $datalist[$k]['task_comment'] = $task_comment;
             }
         }
         $this->assign('openid',$openid);
