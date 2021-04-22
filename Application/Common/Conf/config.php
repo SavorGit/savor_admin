@@ -346,6 +346,7 @@ $config['COMMENT_SATISFACTION'] = array(
     '2'=>'一般般',
     '3'=>'太赞了',
 );
+
 $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'1','name'=>'主干版小码'),
     array('id'=>'2','name'=>'节目大码'),
@@ -363,8 +364,9 @@ $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'16','name'=>'极简版二维码'),
     array('id'=>'19','name'=>'极简版新节目大二维码'),
     array('id'=>'20','name'=>'极简版节目大二维码'),
-    array('id'=>'21','name'=>'极简版呼二维码')
-    
+    array('id'=>'21','name'=>'极简版呼二维码'),
+    array('id'=>'33','name'=>'主干版公众号二维码')
+
     
 );
 $config['all_spotstatus'] = array(

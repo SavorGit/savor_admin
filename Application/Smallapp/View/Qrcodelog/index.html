@@ -50,7 +50,7 @@
                <select name="hbt_v" style="width: 20px" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
                  <option value=0 >全部</option>
                  <volist name="hotel_box_type" key="k" id="vo">
-	                  <option value="{$vo.id}" <if condition="$vo.id eq $hbt_v">selected</if>>{$vo.name}</option><br>
+	                  <option value="{$k}" <if condition="$k eq $hbt_v">selected</if>>{$vo}</option><br>
 	             </volist>
                </select>
           </div>
