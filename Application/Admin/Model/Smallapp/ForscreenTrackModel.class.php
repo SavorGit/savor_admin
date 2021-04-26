@@ -61,13 +61,20 @@ class ForscreenTrackModel extends BaseModel{
                                 $data['netty_pushbox_time'] = $res_nettycache;
                             }
                         }
-                        if($v['action']==4 || $v['action']==11){
+                        if($v['action']==4 || $v['action']==11 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
                             $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$v['box_id']),'');
                             if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
                                 $data['oss_stime'] = $v['res_sup_time'];
                                 $data['oss_etime'] = $v['res_eup_time'];
 
                                 $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$v['resource_id'];
+                                if($v['action']==2 && $v['resource_type']==1){
+                                    $imgs = json_decode($v['imgs'],true);
+                                    $img_file_info = pathinfo($imgs[0]);
+                                    $img_id = $img_file_info['filename'];
+                                    $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$img_id;
+                                }
+
                                 $res_cache = $redis->get($cache_key.$req_id);
                                 if(!empty($res_cache)){
                                     $cache_data = json_decode($res_cache,true);
@@ -186,13 +193,19 @@ class ForscreenTrackModel extends BaseModel{
                                 $data['netty_pushbox_time'] = $res_nettycache;
                             }
                         }
-                        if($v['action']==4 || $v['action']==11){
+                        if($v['action']==4 || $v['action']==11 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
                             $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$v['box_id']),'');
                             if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
                                 $data['oss_stime'] = $v['res_sup_time'];
                                 $data['oss_etime'] = $v['res_eup_time'];
 
                                 $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$v['resource_id'];
+                                if($v['action']==2 && $v['resource_type']==1){
+                                    $imgs = json_decode($v['imgs'],true);
+                                    $img_file_info = pathinfo($imgs[0]);
+                                    $img_id = $img_file_info['filename'];
+                                    $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$img_id;
+                                }
                                 $res_cache = $redis->get($cache_key.$req_id);
                                 if(!empty($res_cache)){
                                     $cache_data = json_decode($res_cache,true);
@@ -355,13 +368,19 @@ class ForscreenTrackModel extends BaseModel{
                         $data['netty_pushbox_time'] = $res_nettycache;
                     }
                 }
-                if($res_forscreen['action']==4 || $res_forscreen['action']==11){
+                if($res_forscreen['action']==4 || $res_forscreen['action']==11 || ($res_forscreen['action']==2 && $res_forscreen['resource_type']==1) || ($res_forscreen['action']==8 && $res_forscreen['resource_type']==1)){
                     $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$res_forscreen['box_id']),'');
                     if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
                         $data['oss_stime'] = $res_forscreen['res_sup_time'];
                         $data['oss_etime'] = $res_forscreen['res_eup_time'];
 
                         $req_id = $serial_no.'subdata:'.$res_forscreen['forscreen_id'].'-'.$res_forscreen['resource_id'];
+                        if($res_forscreen['action']==2 && $res_forscreen['resource_type']==1){
+                            $imgs = json_decode($res_forscreen['imgs'],true);
+                            $img_file_info = pathinfo($imgs[0]);
+                            $img_id = $img_file_info['filename'];
+                            $req_id = $serial_no.'subdata:'.$res_forscreen['forscreen_id'].'-'.$img_id;
+                        }
                         $res_cache = $redis->get($cache_key.$req_id);
                         if(!empty($res_cache)){
                             $cache_data = json_decode($res_cache,true);
