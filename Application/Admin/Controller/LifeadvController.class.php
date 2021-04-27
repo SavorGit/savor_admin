@@ -117,14 +117,26 @@ class LifeadvController extends BaseController {
             //城市
             $areaModel  = new \Admin\Model\AreaModel();
             $area_arr = $areaModel->getAllArea();
+            $m_store = new \Admin\Model\Smallapp\StoreModel();
+            $fields = 'a.id as store_id,a.name as store_name,ads.id as ads_id,ads.name as ads_name';
+            $where = array('a.ads_id'=>array('gt',0),'ads.state'=>1,'ads.is_online'=>1,'ads.flag'=>0);
+            $res_store_ads = $m_store->getStoreAdsList($fields,$where);
+            $store_ads = array();
+            if(!empty($res_store_ads)){
+                foreach ($res_store_ads as $v){
+                    $info = array('ads_id'=>$v['ads_id'],'name'=>$v['store_name'].'--'.$v['ads_name']);
+                    $store_ads[]=$info;
+                }
+            }
             $hours = array();
             for($i=0;$i<24;$i++){
                 $hours[]=str_pad($i,2,'0',STR_PAD_LEFT);
             }
+            $this->assign('store_ads',$store_ads);
             $this->assign('hours',$hours);
             $this->assign('is_city_search',1);
             $this->assign('areainfo', $area_arr);
-            $this->display('adddevilery');
+            $this->display('addstoredevilery');
         }
     }
 
