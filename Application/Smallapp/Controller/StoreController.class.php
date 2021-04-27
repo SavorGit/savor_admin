@@ -65,20 +65,57 @@ class StoreController extends BaseController {
         $id = I('id', 0, 'intval');
         $m_store = new \Admin\Model\Smallapp\StoreModel();
         $m_category = new \Admin\Model\CategoryModel();
+        $m_media = new \Admin\Model\MediaModel();
         if(IS_GET){
+            $ads_info = array('id'=>0,'cover_img'=>'','choose_ads_style'=>'','ads_info_style'=>'display: none;');
+            $detail_img_num = 6;
+            $detailaddr = array();
             if($id){
+                $oss_host = get_oss_host();
                 $dinfo = $m_store->getInfo(array('id'=>$id));
+
                 $category_id = $dinfo['category_id'];
                 $maintainer_id = $dinfo['maintainer_id'];
                 $area_id = $dinfo['area_id'];
-                $m_media = new \Admin\Model\MediaModel();
                 $res_media = $m_media->getMediaInfoById($dinfo['cover_media_id']);
                 $dinfo['oss_addr'] = $res_media['oss_addr'];
+                $coupon_oss_addr = '';
+                if(!empty($dinfo['coupon_media_id'])){
+                    $res_media = $m_media->getMediaInfoById($dinfo['coupon_media_id']);
+                    $coupon_oss_addr = $res_media['oss_addr'];
+                }
+                $dinfo['couponoss_addr'] = $coupon_oss_addr;
+                if($dinfo['ads_id']){
+                    $m_ads = new \Admin\Model\AdsModel();
+                    $ads_info = $m_ads->getInfo(array('id'=>$dinfo['ads_id']));
+                    $res_ads_media = $m_media->getMediaInfoById($dinfo['media_id']);
+                    $ads_info['ads_oss_addr'] = $res_ads_media['oss_addr'];
+                    $ads_info['cover_img'] = $oss_host.$ads_info['img_url'];
+                    $ads_info['choose_ads_style'] = "display: none;";
+                    $ads_info['ads_info_style'] = "";
+                }
+                if($dinfo['detail_imgs']){
+                    $detail_imgs = explode(',',$dinfo['detail_imgs']);
+                    foreach ($detail_imgs as $k=>$v){
+                        if(!empty($v)){
+                            $detailaddr[$k+1] = array('media_id'=>$v,'oss_addr'=>$oss_host.$v);
+                        }
+                    }
+                }
             }else{
                 $category_id = 0;
                 $maintainer_id = 0;
                 $area_id = 1;
                 $dinfo = array('status'=>1,'area_id'=>$area_id);
+            }
+            $detail_imgs = array();
+            for($i=1;$i<=$detail_img_num;$i++){
+                $img_info = array('id'=>$i,'imgid'=>'detail_id'.$i,'media_id'=>0);
+                if(isset($detailaddr[$i])){
+                    $img_info['media_id'] = $detailaddr[$i]['media_id'];
+                    $img_info['oss_addr'] = $detailaddr[$i]['oss_addr'];
+                }
+                $detail_imgs[] = $img_info;
             }
 
             $categorys = $m_category->getCategory($category_id,0,8);
@@ -89,6 +126,8 @@ class StoreController extends BaseController {
 
             $m_opuser_role = new \Admin\Model\OpuserroleModel();
             $opusers = $m_opuser_role->getOpuser($maintainer_id);
+            $this->assign('detail_imgs',$detail_imgs);
+            $this->assign('ads_info',$ads_info);
             $this->assign('county_list',$county_list);
             $this->assign('opusers', $opusers);
             $this->assign('area', $all_area);
@@ -97,7 +136,7 @@ class StoreController extends BaseController {
             $this->display('addstore');
         }else{
             $name = I('post.name','','trim');
-            $media_id = I('post.media_id',0,'intval');
+            $cover_media_id = I('post.logomedia_id',0,'intval');
             $addr = I('post.addr','','trim');
             $area_id = I('post.area_id',0,'intval');
             $county_id = I('post.county_id',0,'intval');
@@ -109,6 +148,10 @@ class StoreController extends BaseController {
             $gps = I('post.gps','','trim');
             $maintainer_id = I('post.maintainer_id',0,'intval');
             $status = I('post.status',1,'intval');
+            $ads_id = I('post.marketid',0,'intval');
+            $ads_img_media_id = I('post.ads_img_media_id',0,'intval');
+            $detailmedia_id = I('post.detailmedia_id','');
+            $couponmedia_id = I('post.couponmedia_id','');
 
             $res_category = $m_category->getInfo(array('id'=>$category_id));
             if($res_category['level']==1){
@@ -116,10 +159,39 @@ class StoreController extends BaseController {
             }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
+            $data = array('name'=>$name,'addr'=>$addr,'cover_media_id'=>$cover_media_id,'category_id'=>$category_id,'avg_expense'=>$avg_expense,
+                'coupon_media_id'=>$couponmedia_id,'mobile'=>$mobile,'tel'=>$tel,'contractor'=>$contractor,'maintainer_id'=>$maintainer_id,'area_id'=>$area_id,'county_id'=>$county_id,
+                'gps'=>$gps,'ads_id'=>$ads_id,'status'=>$status,'sysuser_id'=>$sysuser_id);
+            $detail_imgs = array();
+            if(!empty($detailmedia_id)){
+                foreach ($detailmedia_id as $v){
+                    if(!empty($v)){
+                        if(is_numeric($v)){
+                            $res_m = $m_media->getMediaInfoById($v);
+                            $img = $res_m['oss_path'];
+                        }else{
+                            $img = $v;
+                        }
+                        $detail_imgs[]=$img;
+                    }
+                }
+            }
+            if(!empty($detail_imgs)){
+                $data['detail_imgs'] = join(',',$detail_imgs);
+            }else{
+                $data['detail_imgs'] = '';
+            }
 
-            $data = array('name'=>$name,'addr'=>$addr,'cover_media_id'=>$media_id,'category_id'=>$category_id,'avg_expense'=>$avg_expense,
-                'mobile'=>$mobile,'tel'=>$tel,'contractor'=>$contractor,'maintainer_id'=>$maintainer_id,'area_id'=>$area_id,'county_id'=>$county_id,
-                'gps'=>$gps,'status'=>$status,'sysuser_id'=>$sysuser_id);
+            if($ads_id){
+                $ads_updata = array('type'=>8);
+                if($ads_img_media_id){
+                    $m_media = new \Admin\Model\MediaModel();
+                    $media_info = $m_media->field('oss_addr')->where('id='.$ads_img_media_id)->find();
+                    $ads_updata['img_url'] = $media_info['oss_addr'];
+                }
+                $m_ads = new \Admin\Model\AdsModel();
+                $m_ads->updateData(array('id'=>$ads_id),$ads_updata);
+            }
             if($id){
                 $data['update_time'] = date('Y-m-d H:i:s');
                 $m_store->updateData(array('id'=>$id),$data);

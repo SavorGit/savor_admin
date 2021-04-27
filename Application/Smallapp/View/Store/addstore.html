@@ -2,6 +2,7 @@
   <form method="post" action="{$host_url}/smallapp/store/addstore" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
     <input type="hidden" name="id" value="{$vinfo.id}">
     <input type="hidden" id="honame" value="{$host_name}">
+    <input type="hidden" name="marketid" id="marketid" value="{$ads_info.id}" />
     <div class="pageFormContent modal-body">
 
       <div class="form-group row">
@@ -21,19 +22,19 @@
                   <div class="fileinput-preview thumbnail" data-trigger="fileinput">
                     <a data-target="#modal-file" href="javascript:void(0)">
                       <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
-                        <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
-                        <span id="media_idimgname"></span>
+                        <img id="logomedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                        <span id="logomedia_idimgname"></span>
                       <else />
-                        <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+                        <img id="logomedia_idimg" src="{$vinfo.oss_addr}" border="0" />
                       </if>
-                      <span id="media_idimgname"></span>
+                      <span id="logomedia_idimgname"></span>
                     </a>
                   </div>
                   <div>
-                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=logomedia_id&rtype=2" data-browse-file>
                       选择图片
                     </a>
-                    <input type="hidden" name="media_id" id="media_id" value="{$vinfo.cover_media_id}" required>
+                    <input type="hidden" name="logomedia_id" id="logomedia_id" value="{$vinfo.cover_media_id}" required>
                     <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
                     删除 </a>
                   </div>
@@ -155,6 +156,128 @@
 
         </div>
       </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          优惠券图片：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <div class="fileinput fileinput-new" data-fileinput>
+            <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+              <a data-target="#modal-file" href="javascript:void(0)">
+                <if condition="($vinfo['couponoss_addr'] eq 'NULL') OR $vinfo['couponoss_addr'] eq ''">
+                  <img id="couponmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                  <span id="couponmedia_idimgname"></span>
+                  <else />
+                  <img id="couponmedia_idimg" src="{$vinfo.couponoss_addr}" border="0" />
+                </if>
+                <span id="couponmedia_idimgname"></span>
+              </a>
+            </div>
+            <div>
+              <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=couponmedia_id&rtype=2" data-browse-file>
+                选择图片
+              </a>
+              <input type="hidden" name="couponmedia_id" id="couponmedia_id" value="{$vinfo.coupon_media_id}">
+              <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                删除 </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="goods_detailimg">
+        <foreach name="detail_imgs" item="dinfo" >
+          <div class="form-group row" >
+            <label class="col-xs-12 col-sm-2 control-label">
+              详情图片{$dinfo.id}：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+              <div class="fileinput fileinput-new" data-fileinput>
+                <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                  <a data-target="#modal-file" href="javascript:void(0)">
+                    <if condition="($dinfo['oss_addr'] eq 'NULL') OR $dinfo['oss_addr'] eq ''">
+                      <img id="{$dinfo.imgid}img" src="/Public/admin/assets/img/noimage.png" border="0" />
+                      <else />
+                      <img id="{$dinfo.imgid}img" src="{$dinfo.oss_addr}" border="0" />
+                    </if>
+                    <span id="{$dinfo.imgid}imgname"></span>
+                  </a>
+                </div>
+                <span class="help-block" id="img-msg">请上传 690x高不限 像素的jpg格式图片，展示效果最佳</span>
+                <div>
+                  <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
+                    选择图片
+                  </a>
+                  <input type="hidden" name="detailmedia_id[{$dinfo.id}]" id="{$dinfo.imgid}" value="{$dinfo.media_id}" >
+                  <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </foreach>
+      </div>
+
+      <div class="form-group row" id="sp" style="{$ads_info.choose_ads_style}">
+        <label class="col-xs-12 col-sm-2 control-label" >
+          广告素材：
+        </label>
+        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
+          选择视频
+        </a>
+      </div>
+      <div class="form-group row" id="newsp" style="{$ads_info.ads_info_style}">
+        <div class="form-group row">
+          <label class="col-xs-12 col-sm-2 control-label">
+            广告名称：
+          </label>
+          <label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">{$ads_info.name}</label>
+          <a class="" style="color: blue;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
+            重新选择
+          </a>
+        </div>
+        <div class="form-group row">
+          <label class="col-xs-12 col-sm-2 control-label">
+            广告时长：
+          </label>
+          <label class="col-xs-12 col-sm-2 control-label" id="sp_time" style="width: auto;">{$ads_info.duration}秒</label>
+        </div>
+        <div class="form-group row">
+          <label class="col-xs-12 col-sm-2 control-label">
+            URL：
+          </label>
+          <label class="col-xs-12 col-sm-2 control-label" id="sp_url" style="width: auto;">{$ads_info.ads_oss_addr}</label>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          广告视频封面：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <div class="fileinput fileinput-new" data-fileinput>
+            <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+              <a  href="javascript:void(0)" >
+                <if condition="($ads_info['cover_img'] eq 'NULL') OR $ads_info['cover_img'] eq ''">
+                  <img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
+                  <else />
+                  <img src="{$ads_info.cover_img}" id="covervideo_idimg" border="0" />
+                </if>
+                <span id="covervideo_idimgname"></span>
+              </a>
+            </div>
+            <div>
+              <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
+                选择封面
+              </a>
+              <input type="hidden" name="ads_img_media_id" id="covervideo_id" value="" >
+              <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                删除 </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
