@@ -6371,7 +6371,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         left join savor_area_info area on hotel.area_id= area.id
         left join savor_hotel_ext ext on hotel.id = ext.hotel_id
         left join savor_sysuser user on user.id= ext.maintainer_id
-        left join savor_heart_log hlog on box.mac=hlog.box_mac
+        left join savor_heart_log hlog on box.id=hlog.box_id
         where hotel.id not in($not_hotel_in) and  hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
         $data = M()->query($sql);
         // $datalist = [];
