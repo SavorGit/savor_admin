@@ -346,6 +346,7 @@ $config['COMMENT_SATISFACTION'] = array(
     '2'=>'一般般',
     '3'=>'太赞了',
 );
+
 $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'1','name'=>'主干版小码'),
     array('id'=>'2','name'=>'节目大码'),
@@ -363,8 +364,9 @@ $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'16','name'=>'极简版二维码'),
     array('id'=>'19','name'=>'极简版新节目大二维码'),
     array('id'=>'20','name'=>'极简版节目大二维码'),
-    array('id'=>'21','name'=>'极简版呼二维码')
-    
+    array('id'=>'21','name'=>'极简版呼二维码'),
+    array('id'=>'33','name'=>'主干版公众号二维码')
+
     
 );
 $config['all_spotstatus'] = array(
@@ -910,5 +912,109 @@ $config['INTEGRAL_TYPES'] = array(
     8=>'评价补贴',
     9=>'分配',
 );
+
+$config['RD_TEST_HOTEL'] =
+    array (
+        1064 =>
+            array (
+                'hotel_id' => 1064,
+                'hotel_name' => '海门渔港(棠下店)',
+            ),
+        420 =>
+            array (
+                'hotel_id' => 420,
+                'hotel_name' => '山东老家（科韵分店）',
+            ),
+        1051 =>
+            array (
+                'hotel_id' => 1051,
+                'hotel_name' => '陇上荟·老兰州味道(天河公园店)',
+            ),
+        1038 =>
+            array (
+                'hotel_id' => 1038,
+                'hotel_name' => '广东道至正餐厅(保利·时光里店)',
+            ),
+        1047 =>
+            array (
+                'hotel_id' => 1047,
+                'hotel_name' => '四季小馆·北京菜·烤鸭(越秀公园店)',
+            ),
+        395 =>
+            array (
+                'hotel_id' => 395,
+                'hotel_name' => '江山享味酒家(白云万达店)',
+            ),
+        1065 =>
+            array (
+                'hotel_id' => 1065,
+                'hotel_name' => '新泰乐·宴会厅(江南店)',
+            ),
+        1059 =>
+            array (
+                'hotel_id' => 1059,
+                'hotel_name' => '御彩酒家(东风东路店)',
+            ),
+        1077 =>
+            array (
+                'hotel_id' => 1077,
+                'hotel_name' => '新粤新疆菜(佳兆业广场店)',
+            ),
+        1023 =>
+            array (
+                'hotel_id' => 1023,
+                'hotel_name' => '新渝城·川菜·火锅(区庄店)',
+            ),
+        1007 =>
+            array (
+                'hotel_id' => 1007,
+                'hotel_name' => '峨嵋酒家广渠路店',
+            ),
+        85 =>
+            array (
+                'hotel_id' => 85,
+                'hotel_name' => '花家怡园(王府井店)',
+            ),
+        436 =>
+            array (
+                'hotel_id' => 436,
+                'hotel_name' => '江仙雅居（苏州桥店）',
+            ),
+        55 =>
+            array (
+                'hotel_id' => 55,
+                'hotel_name' => '1949-全鸭季(金宝街店)',
+            ),
+        47 =>
+            array (
+                'hotel_id' => 47,
+                'hotel_name' => '孔乙己尚宴(8号公馆店)',
+            ),
+        787 =>
+            array (
+                'hotel_id' => 787,
+                'hotel_name' => '湘江宴',
+            ),
+        48 =>
+            array (
+                'hotel_id' => 48,
+                'hotel_name' => '江仙雅居(东直门店)',
+            ),
+        46 =>
+            array (
+                'hotel_id' => 46,
+                'hotel_name' => '辉哥火锅（8号公馆店）',
+            ),
+        911 =>
+            array (
+                'hotel_id' => 911,
+                'hotel_name' => '花家怡园（京广桥店）',
+            ),
+        222 =>
+            array (
+                'hotel_id' => 222,
+                'hotel_name' => '新荣记(银泰店)',
+            ),
+    );
 
 return $config;

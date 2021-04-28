@@ -18,6 +18,7 @@ class ForscreenTrackModel extends BaseModel{
         $where['small_app_id'] = array('in',array(1,2));
         $result = $m_forscreen->getDataList('*',$where,'id desc');
         if(!empty($result)){
+            $m_heart_log = new \Admin\Model\HeartLogModel();
             $redis = new \Common\Lib\SavorRedis();
             $redis->select(5);
             $cache_key = C('SAPP_FORSCREENTRACK');
@@ -36,8 +37,6 @@ class ForscreenTrackModel extends BaseModel{
                         }
                         $data['netty_position_url'] = urldecode($data['netty_position_url']);
                         $data['netty_url'] = str_replace('\\', '',urldecode($data['netty_url']));
-                        $data['oss_stime'] = intval($data['oss_stime']);
-                        $data['oss_etime'] = intval($data['oss_etime']);
                         $data['forscreen_record_id'] = $v['id'];
                         $data['serial_number'] = $serial_no;
                         if(isset($data['box_play_time'])){
@@ -62,6 +61,39 @@ class ForscreenTrackModel extends BaseModel{
                                 $data['netty_pushbox_time'] = $res_nettycache;
                             }
                         }
+                        if($v['action']==4 || $v['action']==11 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
+                            $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$v['box_id']),'');
+                            if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
+                                $data['oss_stime'] = $v['res_sup_time'];
+                                $data['oss_etime'] = $v['res_eup_time'];
+
+                                $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$v['resource_id'];
+                                if($v['action']==2 && $v['resource_type']==1){
+                                    $imgs = json_decode($v['imgs'],true);
+                                    $img_file_info = pathinfo($imgs[0]);
+                                    $img_id = $img_file_info['filename'];
+                                    $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$img_id;
+                                }
+
+                                $res_cache = $redis->get($cache_key.$req_id);
+                                if(!empty($res_cache)){
+                                    $cache_data = json_decode($res_cache,true);
+                                    if(isset($cache_data['box_play_time'])){
+                                        $data['box_play_time'] = $cache_data['box_play_time'];
+                                    }
+                                    if(isset($cache_data['box_finish_downtime'])){
+                                        $data['box_finish_downtime'] = $cache_data['box_finish_downtime'];
+                                    }
+                                    if(isset($cache_data['box_downstime']) && isset($cache_data['box_downetime'])){
+                                        $data['box_downstime'] = $cache_data['box_downstime'];
+                                        $data['box_downetime'] = $cache_data['box_downetime'];
+                                    }
+                                }
+                            }
+
+                        }
+                        $data['oss_stime'] = intval($data['oss_stime']);
+                        $data['oss_etime'] = intval($data['oss_etime']);
 
                         $result = $this->getTrackResult($v,$data);
                         $data['is_success'] = $result['is_success'];
@@ -110,6 +142,7 @@ class ForscreenTrackModel extends BaseModel{
         $end_time = "$hourtime:59:59";
 
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        $m_heart_log = new \Admin\Model\HeartLogModel();
         $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
 
         $where = array();
@@ -136,8 +169,6 @@ class ForscreenTrackModel extends BaseModel{
                         }
                         $data['netty_position_url'] = urldecode($data['netty_position_url']);
                         $data['netty_url'] = str_replace('\\', '',urldecode($data['netty_url']));
-                        $data['oss_stime'] = intval($data['oss_stime']);
-                        $data['oss_etime'] = intval($data['oss_etime']);
                         $data['forscreen_record_id'] = $v['id'];
                         $data['serial_number'] = $serial_no;
                         if(isset($data['box_play_time'])){
@@ -162,6 +193,38 @@ class ForscreenTrackModel extends BaseModel{
                                 $data['netty_pushbox_time'] = $res_nettycache;
                             }
                         }
+                        if($v['action']==4 || $v['action']==11 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
+                            $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$v['box_id']),'');
+                            if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
+                                $data['oss_stime'] = $v['res_sup_time'];
+                                $data['oss_etime'] = $v['res_eup_time'];
+
+                                $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$v['resource_id'];
+                                if($v['action']==2 && $v['resource_type']==1){
+                                    $imgs = json_decode($v['imgs'],true);
+                                    $img_file_info = pathinfo($imgs[0]);
+                                    $img_id = $img_file_info['filename'];
+                                    $req_id = $serial_no.'subdata:'.$v['forscreen_id'].'-'.$img_id;
+                                }
+                                $res_cache = $redis->get($cache_key.$req_id);
+                                if(!empty($res_cache)){
+                                    $cache_data = json_decode($res_cache,true);
+                                    if(isset($cache_data['box_play_time'])){
+                                        $data['box_play_time'] = $cache_data['box_play_time'];
+                                    }
+                                    if(isset($cache_data['box_finish_downtime'])){
+                                        $data['box_finish_downtime'] = $cache_data['box_finish_downtime'];
+                                    }
+                                    if(isset($cache_data['box_downstime']) && isset($cache_data['box_downetime'])){
+                                        $data['box_downstime'] = $cache_data['box_downstime'];
+                                        $data['box_downetime'] = $cache_data['box_downetime'];
+                                    }
+                                }
+                            }
+
+                        }
+                        $data['oss_stime'] = intval($data['oss_stime']);
+                        $data['oss_etime'] = intval($data['oss_etime']);
 
                         $result = $this->getTrackResult($v,$data);
                         $data['is_success'] = $result['is_success'];
@@ -263,6 +326,7 @@ class ForscreenTrackModel extends BaseModel{
     public function getForscreenTrack($forscreen_record_id){
 	    $res_forscreentrack = $this->getInfo(array('forscreen_record_id'=>$forscreen_record_id));
 	    if(empty($res_forscreentrack)){
+            $m_heart_log = new \Admin\Model\HeartLogModel();
             $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
             $res_forscreen = $m_forscreen->getInfo(array('id'=>$forscreen_record_id));
             if($res_forscreen['action']==30){
@@ -285,8 +349,6 @@ class ForscreenTrackModel extends BaseModel{
                 }
                 $data['netty_position_url'] = urldecode($data['netty_position_url']);
                 $data['netty_url'] = str_replace('\\', '',urldecode($data['netty_url']));
-                $data['oss_stime'] = intval($data['oss_stime']);
-                $data['oss_etime'] = intval($data['oss_etime']);
                 $data['forscreen_record_id'] = $forscreen_record_id;
                 $data['serial_number'] = $serial_no;
                 if(isset($data['netty_callback_result'])){
@@ -306,7 +368,38 @@ class ForscreenTrackModel extends BaseModel{
                         $data['netty_pushbox_time'] = $res_nettycache;
                     }
                 }
+                if($res_forscreen['action']==4 || $res_forscreen['action']==11 || ($res_forscreen['action']==2 && $res_forscreen['resource_type']==1) || ($res_forscreen['action']==8 && $res_forscreen['resource_type']==1)){
+                    $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$res_forscreen['box_id']),'');
+                    if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
+                        $data['oss_stime'] = $res_forscreen['res_sup_time'];
+                        $data['oss_etime'] = $res_forscreen['res_eup_time'];
 
+                        $req_id = $serial_no.'subdata:'.$res_forscreen['forscreen_id'].'-'.$res_forscreen['resource_id'];
+                        if($res_forscreen['action']==2 && $res_forscreen['resource_type']==1){
+                            $imgs = json_decode($res_forscreen['imgs'],true);
+                            $img_file_info = pathinfo($imgs[0]);
+                            $img_id = $img_file_info['filename'];
+                            $req_id = $serial_no.'subdata:'.$res_forscreen['forscreen_id'].'-'.$img_id;
+                        }
+                        $res_cache = $redis->get($cache_key.$req_id);
+                        if(!empty($res_cache)){
+                            $cache_data = json_decode($res_cache,true);
+                            if(isset($cache_data['box_play_time'])){
+                                $data['box_play_time'] = $cache_data['box_play_time'];
+                            }
+                            if(isset($cache_data['box_finish_downtime'])){
+                                $data['box_finish_downtime'] = $cache_data['box_finish_downtime'];
+                            }
+                            if(isset($cache_data['box_downstime']) && isset($cache_data['box_downetime'])){
+                                $data['box_downstime'] = $cache_data['box_downstime'];
+                                $data['box_downetime'] = $cache_data['box_downetime'];
+                            }
+                        }
+                    }
+
+                }
+                $data['oss_stime'] = intval($data['oss_stime']);
+                $data['oss_etime'] = intval($data['oss_etime']);
                 $result = $this->getTrackResult($res_forscreen,$data);
                 $data['is_success'] = $result['is_success'];
                 $data['total_time'] = $result['total_time'];

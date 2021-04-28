@@ -36,6 +36,7 @@
             <th>昵称</th>
             <th>头像</th>
             <th>资源类型</th>
+            <th>md5是否正常</th>
             <th>显示图</th>
             <th>播放次数</th>
             <th>操作</th>
@@ -48,6 +49,7 @@
               <td data-title="用户昵称">{$dinfo.nickname}</td>
               <td data-title="用户头像"><img src="{$dinfo.avatarurl}"></td>
               <td data-title="资源类型">{$dinfo.resource_type_str}</td>
+              <td data-title="md5是否正常">{$dinfo.md5_str}</td>
               <td data-title="显示图"><a href="{$dinfo.img}" target="_blank"><img src="{$dinfo.img}" ></a></td>
               <td data-title="播放次数">{$dinfo.nums}</td>
               <td class="table-tool" data-title="操作">

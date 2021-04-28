@@ -42,7 +42,7 @@ class HotelbasicdataController extends BaseController {
         if(!empty($keyword)){
             $where['hotel_name'] = array('like',"%$keyword%");
         }
-
+        $rd_testhotel = C('RD_TEST_HOTEL');
         $start  = ($page-1) * $size;
         $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,sum(meal_heart_num) as meal_heart_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
@@ -60,6 +60,9 @@ class HotelbasicdataController extends BaseController {
                 $v['avg_speed'] = intval($v['avg_speed']).'kb/s';
             }else{
                 $v['avg_speed'] = '';
+            }
+            if(isset($rd_testhotel[$v['hotel_id']])){
+                $v['area_name'] = $v['area_name'].'实验';
             }
             $box_where = array('hotel.id'=>$v['hotel_id']);
             $box_where['box.state'] = array('in',array(1,2));

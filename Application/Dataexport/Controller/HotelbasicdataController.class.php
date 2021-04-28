@@ -33,6 +33,7 @@ class HotelbasicdataController extends BaseController{
         $result = $m_hotelbasicdata->getCustomeList($fields,$where,$groupby,'',$countfields,0,10000);
         $datalist = array();
 
+        $rd_testhotel = C('RD_TEST_HOTEL');
         $all_hotel_types = C('heart_hotel_box_type');
         $m_box = new \Admin\Model\BoxModel();
         foreach ($result['list'] as $k=>$v){
@@ -40,6 +41,9 @@ class HotelbasicdataController extends BaseController{
                 $v['avg_speed'] = intval($v['avg_speed']).'kb/s';
             }else{
                 $v['avg_speed'] = '';
+            }
+            if(isset($rd_testhotel[$v['hotel_id']])){
+                $v['area_name'] = $v['area_name'].'实验';
             }
             $box_where = array('hotel.id'=>$v['hotel_id']);
             $box_where['box.state'] = array('in',array(1,2));

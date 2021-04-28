@@ -2766,6 +2766,31 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    public function rdtesthotel(){
+        $file_path = SITE_TP_PATH.'/Public/content/20210423研发部实验酒楼.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $data = array();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $row_info = $rowData[0];
+                $hotel_id = $row_info[0];
+                $hotel_name = $row_info[1];
+                $data[$hotel_id]=array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name);
+            }
+        }
+        var_export($data);
+    }
+
     public function setsalewxtest(){
         //清除线上销售端微信测试人员测试信息
         $sql_staff = 'delete from savor_integral_merchant_staff where merchant_id=92';
