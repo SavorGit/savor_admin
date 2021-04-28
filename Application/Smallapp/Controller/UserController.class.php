@@ -25,6 +25,7 @@ class UserController extends BaseController {
         $gender     = I('gender',-1,'intval');
         $small_app_id = I('small_app_id');
         $is_subscribe = I('is_subscribe',-1,'intval');
+        $nickname = I('nickname','','trim');
 
         $where = array();
         if($start_date && $end_date){
@@ -63,6 +64,9 @@ class UserController extends BaseController {
         if($is_subscribe>=0){
             $where['is_subscribe'] = $is_subscribe;
         }
+        if(!empty($nickname)){
+            $where['nickName'] = array('like',"%$nickname%");
+        }
         $start = ($pagenum-1)* $size;
         $limit ="$start,$size";
         
@@ -82,6 +86,7 @@ class UserController extends BaseController {
         $objPage = new Page($count,$size);
         $page = $objPage->admin_page();
 
+        $this->assign('nickname',$nickname);
         $this->assign('is_subscribe',$is_subscribe);
         $this->assign('is_wx_auth',$is_wx_auth);
         $this->assign('small_app_id',$small_app_id);
