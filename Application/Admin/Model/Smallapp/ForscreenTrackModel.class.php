@@ -275,7 +275,7 @@ class ForscreenTrackModel extends BaseModel{
 	    if(isset($map_action[$forscreen['action']])){
             $forscreen['action'] = $map_action[$forscreen['action']];
         }
-        $has_img_action = array(2,4,5,12,13,21,22,30,31,32);
+        $has_img_action = array(2,4,5,12,13,15,21,22,30,31,32);
         $other_action = array(8,9,11);
 
         if(in_array($forscreen['action'],$has_img_action)){

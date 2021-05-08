@@ -185,6 +185,7 @@ class ActivityModel extends BaseModel{
             exit;
         }
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
+        unset($where['type']);
         $where['status']=2;
         $res_lotteryuser = $m_activityapply->getDataList('openid',$where,'id desc');
         $now_lottery_openids = array();
