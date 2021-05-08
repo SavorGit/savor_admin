@@ -162,7 +162,11 @@ class RedpacketoperationModel extends BaseModel{
                         $message = array('action'=>121,'nickName'=>$user_info['nickName'],
                             'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
                         $message['headPic'] = base64_encode($user_info['avatarUrl']);
-                        $m_netty->pushBox($redpacket['mac'],json_encode($message));
+                        $res_netty = $m_netty->pushBox($redpacket['mac'],json_encode($message));
+                        if($redpacket_type!=1){
+                            $netty_data = json_encode($res_netty);
+                            echo "redpacket_id: $trade_no box:$box_mac message:".json_encode($message)."netty:$netty_data \r\n";
+                        }
 
                         //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包
                         $scope = $redpacket['scope'];
@@ -176,7 +180,11 @@ class RedpacketoperationModel extends BaseModel{
                                     $message = array('action' => 121, 'nickName' => $user_info['nickName'],
                                         'avatarUrl' => $user_info['avatarUrl'], 'codeUrl' => $mpcode);
                                     $message['headPic'] = base64_encode($user_info['avatarUrl']);
-                                    $m_netty->pushBox($v, json_encode($message));
+                                    $res_netty_box = $m_netty->pushBox($v, json_encode($message));
+                                    if($redpacket_type!=1){
+                                        $netty_data = json_encode($res_netty_box);
+                                        echo "redpacket_id: $trade_no box:$box_mac message:".json_encode($message)."netty:$netty_data \r\n";
+                                    }
                                 }
                             }
                             if ($scope == 1) {
