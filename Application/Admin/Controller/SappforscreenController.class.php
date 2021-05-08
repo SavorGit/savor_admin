@@ -1,10 +1,4 @@
 <?php
-/**
- *@author hongwei
- *
- *
- *
- */
 namespace Admin\Controller;
 
 class SappforscreenController extends BaseController {
@@ -1488,13 +1482,34 @@ class SappforscreenController extends BaseController {
             $where['a.openid'] = $openid;
         }
 	    $list = $m_public->getList($fields,$where, $orders, $start,$size);
-
+        $datalist = $list['list'];
+        $all_status = C('PUBLIC_AUDIT_STATUS');
+        $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
+        $m_publicplay_hotel = new \Admin\Model\Smallapp\PublicplayHotelModel();
+        foreach ($datalist as $k=>$v){
+            $datalist[$k]['status_str'] = $all_status[$v['status']];
+            $hotel_num = 0;
+            $publicplay_id = 0;
+            if($v['status']==2){
+                $res_play = $m_publicplay->getInfo(array('public_id'=>$v['id'],'status'=>1));
+                if(!empty($res_play)){
+                    $publicplay_id = $res_play['id'];
+                    $hwhere = array('publicplay_id'=>$publicplay_id);
+                    $res_play_hotel = $m_publicplay_hotel->getDataList('count(id) as num',$hwhere,'id desc');
+                    if(!empty($res_play_hotel)){
+                        $hotel_num = $res_play_hotel[0]['num'];
+                    }
+                }
+            }
+            $datalist[$k]['hotel_num'] = $hotel_num;
+            $datalist[$k]['publicplay_id'] = $publicplay_id;
+        }
         $this->assign('is_recommend',$is_recommend);
         $this->assign('is_top',$is_top);
         $this->assign('res_type',$res_type);
         $this->assign('status',$status);
         $this->assign('openid',$openid);
-	    $this->assign('list',$list['list']);
+	    $this->assign('list',$datalist);
 	    $this->assign('page',$list['page']);
 	    $this->display('Report/sapppublic');
 	}
@@ -1511,14 +1526,268 @@ class SappforscreenController extends BaseController {
 	    $where = array();
 	    $where['forscreen_id'] = $forscreen_id;
 	    $list = $m_pubdetail->getWhere($fields,$where);
-	     
-	     
 	    $this->assign('res_type',$res_type);
 	    $this->assign('list',$list);
 	    $this->assign('info',$info); 
 	    $this->assign('id',$info['id']);
 	    $this->display('Report/pubdetail');
 	}
+
+    public function publicaudit(){
+        if(IS_GET){
+            $id = I('get.id',0,'trim');
+            $forscreen_id = I('get.forscreen_id',0,'trim');
+            $res_type = I('get.res_type');
+            $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
+            $m_public    = new \Admin\Model\Smallapp\PublicModel();
+
+            $info = $m_public->getOne('*',array('id'=>$id));
+
+            $oss_host = 'http://'. C('OSS_HOST_NEW').'/';
+            $fields = "concat('".$oss_host."',`res_url`) res_url";
+            $list = $m_pubdetail->getWhere($fields,array('forscreen_id'=>$forscreen_id));
+            $hours = array();
+            for($i=0;$i<24;$i++){
+                $hours[]=str_pad($i,2,'0',STR_PAD_LEFT);
+            }
+            $areaModel  = new \Admin\Model\AreaModel();
+            $area_arr = $areaModel->getAllArea();
+            $now_frequency = array();
+            $all_frequency = C('PUBLIC_PLAY_FREQUENCY');
+            foreach ($all_frequency as $k=>$v){
+                $f_str = $k.'次,分钟:';
+                foreach ($v as $f){
+                    $f_str.=$f.',';
+                }
+                $now_frequency[$k] = rtrim($f_str,',');
+            }
+            $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
+            $res_public_play = $m_publicplay->getInfo(array('public_id'=>$id));
+            if(!empty($res_public_play)){
+                $res_public_play['start_date'] = date('Y-m-d',strtotime($res_public_play['start_date']));
+                $res_public_play['end_date'] = date('Y-m-d',strtotime($res_public_play['end_date']));
+                $res_public_play['start_hour'] = str_pad($res_public_play['start_hour'],2,'0',STR_PAD_LEFT);
+                $res_public_play['end_hour'] = str_pad($res_public_play['end_hour'],2,'0',STR_PAD_LEFT);
+            }
+
+            $this->assign('playinfo', $res_public_play);
+            $this->assign('areainfo', $area_arr);
+            $this->assign('hours',$hours);
+            $this->assign('all_frequency',$now_frequency);
+            $this->assign('res_type',$res_type);
+            $this->assign('list',$list);
+            $this->assign('info',$info);
+            $this->display('Smallapppublic/publicaudit');
+        }else{
+            $public_id = I('post.public_id',0,'intval');
+            $forscreen_id = I('post.forscreen_id',0,'intval');
+            $h_b_arr = $_POST['hbarr'];
+            $is_recommend = I('post.is_recommend',0,'intval');
+            $status = I('post.status',0,'intval');
+            $is_top = I('post.is_top',0,'intval');
+
+            $start_date = I('post.start_date', '');
+            $end_date = I('post.end_date', '');
+            $start_hour = I('post.start_hour', 0,'intval');
+            $end_hour = I('post.end_hour', 0,'intval');
+            $frequency = I('post.frequency', 0,'intval');
+
+            $m_public    = new \Admin\Model\Smallapp\PublicModel();
+            $res_publicdata = $m_public->getOne('*',array('id'=>$public_id));
+            $now_time = time();
+            $public_time = strtotime($res_publicdata['create_time']);
+            $is_has_notify_time = 0;
+            if($now_time - $public_time<=7200){
+                $is_has_notify_time = 1;
+            }
+            $is_audit = 0;
+            if($is_has_notify_time && $res_publicdata['status']==1 && $status==2){
+                $is_audit = 1;
+            }
+
+            if($res_publicdata['res_type']==2){
+                $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+                $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id']);
+                if($res_forscreen['is_eq']==0 && ($res_forscreen['oss_size']==0 || empty($res_forscreen['md5_file']))){
+                    $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id']);
+                }
+                if($res_forscreen['is_eq']==0 && $res_forscreen['oss_size'] && $res_forscreen['md5_file']){
+                    $where = array('forscreen_id'=>$res_publicdata['forscreen_id']);
+                    $data = array('resource_size'=>$res_forscreen['oss_size'],'md5_file'=>$res_forscreen['md5_file']);
+                    $m_forscreen->updateInfo($where,$data);
+                }
+            }
+
+            $pdata = array('status'=>$status,'is_recommend'=>$is_recommend);
+            if($status==2 && $is_recommend==1){
+                $pdata['is_top'] = $is_top;
+            }
+            if($is_top){
+                $all_topnum = 3;
+                $res_public = $m_public->getWhere('id',array('status'=>2,'is_recommend'=>1,'is_top'=>1),'id asc','','');
+                $last_topnum = count($res_public) - $all_topnum;
+                if($last_topnum>=0){
+                    $last_public = array_slice($res_public,0,$last_topnum+1);
+                    $ids = array();
+                    foreach ($last_public as $v){
+                        $ids[] = $v['id'];
+                    }
+                    $upwhere = array('id'=>array('in',$ids));
+                    $m_public->updateInfo($upwhere,array('is_top'=>0));
+                }
+            }
+            $ret = $m_public->updateInfo(array('id'=>$public_id), $pdata);
+            $key_findtop = C('SAPP_FIND_TOP');
+            $redis  =  \Common\Lib\SavorRedis::getInstance();
+            $redis->select(5);
+            $res_public = $m_public->getWhere('id',array('status'=>2,'is_recommend'=>1,'is_top'=>1),'id asc','','');
+            $top_ids = array();
+            foreach ($res_public as $v){
+                $top_ids[]=$v['id'];
+            }
+            $redis->set($key_findtop,json_encode($top_ids));
+
+            $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
+            $res_public_play = $m_publicplay->getInfo(array('public_id'=>$public_id));
+            $is_play = 0;
+            $hotel_ids = array();
+            if($status==2 && !empty($start_date) && !empty($end_date)){
+                $now_day = date("Y-m-d");
+                if($start_date > $end_date){
+                    $this->output('投放开始时间必须小于等于结束时间', 'sappforscreen/publicaudit',2,0);
+                }
+                if($start_date < $now_day){
+                    $this->output('投放开始时间必须大于等于今天', 'sappforscreen/publicaudit',2,0);
+                }
+                if(empty($start_hour) || empty($end_hour)){
+                    $this->output('请选择播放时段', 'sappforscreen/publicaudit',2,0);
+                }
+                if(empty($frequency)){
+                    $this->output('请选择播放频次', 'sappforscreen/publicaudit',2,0);
+                }
+                if($start_hour>$end_hour){
+                    $this->output('投放开始时段必须小于等于结束时段', 'sappforscreen/publicaudit',2,0);
+                }
+                $sysuserInfo = session('sysUserInfo');
+                $start_date_time = date('Y-m-d 00:00:00',strtotime($start_date));
+                $end_date_time = date('Y-m-d 23:59:59',strtotime($end_date));
+                $add_data = array('public_id'=>$public_id,'forscreen_id'=>$forscreen_id,
+                    'start_date'=>$start_date_time,'end_date'=>$end_date_time,'start_hour'=>$start_hour,
+                    'end_hour'=>$end_hour,'frequency'=>$frequency,'status'=>1,'sysuser_id'=>$sysuserInfo['id'],
+                );
+
+                if($is_has_notify_time && empty($res_public_play)){
+                    $is_play = 1;
+                }
+                if(empty($res_public_play)){
+                    $public_play_id = $m_publicplay->add($add_data);
+                }else{
+                    $add_data['update_time'] = date('Y-m-d H:i:s');
+                    $m_publicplay->updateData(array('id'=>$res_public_play['id']),$add_data);
+                    $public_play_id = $res_public_play['id'];
+                }
+                $m_publicplay_hotel = new \Admin\Model\Smallapp\PublicplayHotelModel();
+                $res_hotel = $m_publicplay_hotel->getInfo(array('publicplay_id'=>$public_play_id));
+                $hotel_arr = json_decode($h_b_arr, true);
+                if(empty($res_hotel) && empty($hotel_arr)){
+                    $this->output('请选择投放的酒楼', 'sappforscreen/publicaudit',2,0);
+                }
+                if(!empty($hotel_arr)){
+                    $add_hotel_data = array();
+                    foreach ($hotel_arr as $v){
+                        $hotel_id = intval($v['hotel_id']);
+                        if(!empty($hotel_id)){
+                            $hotel_ids[]=$hotel_id;
+                            if(!empty($res_hotel)){
+                                $res_add_hotel = $m_publicplay_hotel->getInfo(array('publicplay_id'=>$public_play_id,'hotel_id'=>$hotel_id));
+                                if(empty($res_add_hotel)){
+                                    $add_hotel_data[]=array('hotel_id'=>$hotel_id,'publicplay_id'=>$public_play_id);
+                                }
+                            }else{
+                                $add_hotel_data[]=array('hotel_id'=>$hotel_id,'publicplay_id'=>$public_play_id);
+                            }
+                        }
+                    }
+                    $m_publicplay_hotel->addAll($add_hotel_data);
+                }
+            }
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            $head_pic = 'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg';
+            $now_barrages = array('nickName'=>'小热点','headPic'=>$head_pic,'avatarUrl'=>$head_pic);
+            if($is_play){
+                $hotel_num = count($hotel_ids);
+                $m_box = new \Admin\Model\BoxModel();
+                $where = array('box.state'=>1,'box.flag'=>0);
+                $where['hotel.id'] = array('in',$hotel_ids);
+                $fields = 'count(box.id) as num';
+                $res_box = $m_box->getBoxByCondition($fields,$where);
+                $box_num = count($res_box[0]['num']);
+                $date_time1 = new \DateTime($start_date);
+                $date_time2 = new \DateTime($end_date);
+                $interval = $date_time1->diff($date_time2);
+                $day = $interval->format('%d');
+
+                $day_num = $day+1;
+                $hour_num = ($end_hour-$start_hour)+1;
+                $all_frequency = C('PUBLIC_PLAY_FREQUENCY');
+                $frequency_num = count($all_frequency[$frequency]);
+                $play_num = $day_num * $hour_num * $frequency_num * $box_num;
+
+                $now_barrages['barrage'] = "您的内容已经通过审核，即将在{$hotel_num}酒楼进行播放，预计播放{$play_num}次";
+                $user_barrages = array($now_barrages);
+                $message = array('action'=>122,'userBarrages'=>$user_barrages);
+                $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
+            }elseif($is_audit){
+                $now_barrages['barrage'] = '您的内容已经通过审核，在小程序发现页面可以看到';
+                $user_barrages = array($now_barrages);
+                $message = array('action'=>122,'userBarrages'=>$user_barrages);
+                $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
+            }
+
+            if($status!=2 && !empty($res_public_play)){
+                $sysuserInfo = session('sysUserInfo');
+                $add_data = array('status'=>2,'sysuser_id'=>$sysuserInfo['id'],'update_time'=>date('Y-m-d H:i:s'));
+                $m_publicplay->updateData(array('id'=>$res_public_play['id']),$add_data);
+            }
+            $this->output("操作成功{$now_barrages['barrage']}", 'sappforscreen/publiccheck');
+        }
+    }
+
+    public function publichotellist(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+        $publicplay_id = I('publicplay_id',0,'intval');
+        $keyword = I('keyword','','trim');
+
+        $m_publicplay_hotel = new \Admin\Model\Smallapp\PublicplayHotelModel();
+        $where = array('a.publicplay_id'=>$publicplay_id);
+        if(!empty($keyword)){
+            $where['h.name'] = array('like',"%$keyword%");
+        }
+        $start  = ($page-1) * $size;
+        $fields = 'a.id,a.add_time,h.id as hotel_id,h.name as hotel_name';
+        $result = $m_publicplay_hotel->getHotelList($fields,$where,'a.id desc',$start,$size);
+        $datalist = $result['list'];
+
+        $this->assign('publicplay_id', $publicplay_id);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('Smallapppublic/publichotellist');
+    }
+
+    public function publichoteldel(){
+        $id = I('get.id',0,'intval');
+        $m_publicplay_hotel = new \Admin\Model\Smallapp\PublicplayHotelModel();
+        $result = $m_publicplay_hotel->delData(array('id'=>$id));
+        if($result){
+            $this->output('操作成功!', 'sappforscreen/publichotellist',2);
+        }else{
+            $this->output('操作失败', 'sappforscreen/publichotellist',2,0);
+        }
+    }
+
 	/**
 	 * @desc 审核通过
 	 */
@@ -1584,11 +1853,8 @@ class SappforscreenController extends BaseController {
 
 	    if($ret){
 	        echo "1";
-	        ///$this->error('s')
-	        //$this->outputNew('审核成功', 'sappforscreen/publiccheck',3);
 	    }else {
 	        echo '0';
-	       // $this->outputNew('审核失败', 'sappforscreen/publiccheck',3);
 	    }
 	    
 	}
@@ -1603,7 +1869,6 @@ class SappforscreenController extends BaseController {
 	    $data['is_recommend'] = $is_recommend;
 	    
 	    $ret = $m_public->updateInfo($where, $data);
-	    
 	    if(empty($callbacktype)){
 	        $callback = 2;
 	    }else {
@@ -1615,6 +1880,7 @@ class SappforscreenController extends BaseController {
 	        $this->output('修改失败', 'sappforscreen/publiccheck',$callback);
 	    }
 	}
+
 	public function delpublic(){
 	   $id     = I('get.id',0,'intval');
 	   $m_public = new \Admin\Model\Smallapp\PublicModel();
@@ -1623,6 +1889,14 @@ class SappforscreenController extends BaseController {
 	   $data['status'] = 0;
 	   $ret = $m_public->updateInfo($where, $data);
 	   if($ret){
+           $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
+           $res_public_play = $m_publicplay->getInfo(array('public_id'=>$id));
+           if(!empty($res_public_play)){
+               $sysuserInfo = session('sysUserInfo');
+               $add_data = array('status'=>2,'sysuser_id'=>$sysuserInfo['id'],'update_time'=>date('Y-m-d H:i:s'));
+               $m_publicplay->updateData(array('id'=>$res_public_play['id']),$add_data);
+           }
+
 	       $this->output('删除成功', 'sappforscreen/publiccheck',2);
 	   }else {
 	       $this->output('删除失败', 'sappforscreen/publiccheck',2);

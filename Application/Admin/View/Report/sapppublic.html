@@ -76,6 +76,7 @@
             <th>是否系统推荐</th>
             <th>是否置顶</th>
             <th>状态</th>
+            <th>投放酒楼</th>
             <th>发布时间</th>
             <th class="table-tool">操作</th>
           </tr>
@@ -104,25 +105,19 @@
               <td data-title="是否置顶">
                 <if condition="$vlist.is_top eq 1">是<else />否</if>
               </td>
-			  <td data-title="状态">
-                <if condition="$vlist['status'] eq 2">
-                	已审核
-                  <!-- <a data-tip="已审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-on"></i></span></a> -->
-                  <elseif condition="$vlist['status'] eq 1"/>
-                  未审核
-                  <else/>
-                  已删除
-                  <!-- <a data-tip="未审核" target="ajaxTodo" href="{$host_name}/sappforscreen/operateStatus?id={$vlist.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
-                <i class="fa fa-toggle-off"></i></span></a> -->
-                </if>
+			  <td data-title="状态">{$vlist.status_str}</td>
 
+              <td data-title="投放酒楼">
+                <if condition="$vlist.hotel_num gt 0">
+                  <a class="btn btn-success " title="酒楼数:{$vlist.hotel_num}" target="navTab" mask="true" rel="sappforscreen/publichotellist" href="{$host_url}/sappforscreen/publichotellist?publicplay_id={$vlist.publicplay_id}" >
+                    {$vlist.hotel_num}</a>
+                </if>
               </td>
 			  
-			  <td data-title="资源类型">{$vlist.create_time}</td>
+			  <td data-title="发布时间">{$vlist.create_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="查看详情" title="序号{$vlist.id}-查看详情" target="dialog" mask="true" href="{$host_name}/sappforscreen/pubdetail?id={$vlist.id}&res_type={$vlist.res_type}&forscreen_id={$vlist.forscreen_id}" rel="sappforscreen/pubdetail" class="btn btn-success btn-icon">
+                  <a data-tip="查看详情" title="序号{$vlist.id}-查看详情" target="dialog" mask="true" href="{$host_name}/sappforscreen/publicaudit?id={$vlist.id}&res_type={$vlist.res_type}&forscreen_id={$vlist.forscreen_id}" rel="sappforscreen/pubdetail" class="btn btn-success btn-icon">
                     <i class="fa fa-search-minus"></i>
                   </a>
                	  <a data-tip="删除" target="ajaxTodo" href="{$host_name}/sappforscreen/delpublic?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon">
