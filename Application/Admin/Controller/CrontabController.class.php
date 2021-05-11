@@ -3177,38 +3177,50 @@ class CrontabController extends Controller
         $redis->select(5);
         $cache_key = C('SAPP_SCRREN_SHARE')."*";
         $keys = $redis->keys($cache_key);
-        $m_pub = new \Admin\Model\Smallapp\PublicModel(); 
-        $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
-        foreach($keys as $k){
-            $data = $redis->lgetrange($k,0,-1);
-            $infos = json_decode($data[0],true);
-            $k_arr = explode(':', $k);
-            $map = array();
-            $map['box_mac'] = $k_arr[3];
-            $map['openid']  = $k_arr[4];
-            $map['forscreen_id'] = $k_arr[5];
-            $map['public_text']  = $infos['public_text'];
-            $map['public_text']  = $infos['public_text']? $infos['public_text']:'';
-            $map['forscreen_char']   = $infos['forscreen_char'] ? $infos['forscreen_char'] :'';
-	        $map['res_type'] = $infos['res_type'];
-            $map['res_nums'] = count($data);
-            $map['status']   = 1;
-            $m_pub->addInfo($map,1);
-            $ret = array();
-            foreach($data as $kk=>$vv){
-                $vv = json_decode($vv,true);
-                $ret[$kk]['forscreen_id'] = $vv['forscreen_id'];
-                $ret[$kk]['resource_id']  = $vv['resource_id'];
-                $ret[$kk]['res_url']      = $vv['res_url'];
-	        $ret[$kk]['duration']     = $infos['duration'] ?$infos['duration'] : '0.00';
-	        $ret[$kk]['resource_size']= $infos['resource_size'] ? $infos['resource_size'] :0;
-	    }
-            $m_pubdetail->addInfo($ret,2);
-            $redis->remove($k);
+
+        if(!empty($keys)){
+            $m_pub = new \Admin\Model\Smallapp\PublicModel();
+            $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
+            foreach($keys as $k){
+                $data = $redis->lgetrange($k,0,-1);
+                $infos = json_decode($data[0],true);
+                $k_arr = explode(':', $k);
+                $map = array();
+                $map['box_mac'] = $k_arr[3];
+                $map['openid']  = $k_arr[4];
+                $map['forscreen_id'] = $k_arr[5];
+                $map['public_text']  = $infos['public_text'];
+                $map['public_text']  = $infos['public_text']? $infos['public_text']:'';
+                $map['forscreen_char']   = $infos['forscreen_char'] ? $infos['forscreen_char'] :'';
+                $map['res_type'] = $infos['res_type'];
+                $map['res_nums'] = count($data);
+                $map['status']   = 1;
+                $m_pub->addInfo($map,1);
+                $ret = array();
+                foreach($data as $kk=>$vv){
+                    $vv = json_decode($vv,true);
+                    $ret[$kk]['forscreen_id'] = $vv['forscreen_id'];
+                    $ret[$kk]['resource_id']  = $vv['resource_id'];
+                    $ret[$kk]['res_url']      = $vv['res_url'];
+                    $ret[$kk]['duration']     = $infos['duration'] ?$infos['duration'] : '0.00';
+                    $ret[$kk]['resource_size']= $infos['resource_size'] ? $infos['resource_size'] :0;
+                }
+                $m_pubdetail->addInfo($ret,2);
+                $redis->remove($k);
+            }
+//            $sms_config = C('ALIYUN_SMS_CONFIG');
+//            $alisms = new \Common\Lib\AliyunSms();
+//            $params = array();
+//            $template_code = $sms_config['public_audit_templateid'];
+//            $send_mobiles = C('PUBLIC_AUDIT_MOBILE');
+//            foreach ($send_mobiles as $v){
+//                $alisms::sendSms($v,$params,$template_code);
+//            }
+            echo "ok";
         }
-        echo "ok";
-    
+        echo "nodata ok";
     }
+
     //生成好友关系
     public function smallappFriends(){
         $hour = date('H');
@@ -3603,12 +3615,25 @@ class CrontabController extends Controller
     }
 
     public function operationRedpacket($id=0){
-        $now_time = date('Y-m-d H:i:s');
-        echo "operation_redpacket start:$now_time \r\n";
+        if($id==0){
+            $now_time = date('Y-m-d H:i:s');
+            echo "operation_redpacket start:$now_time \r\n";
+        }
         $m_redpacketoperation = new \Admin\Model\Smallapp\RedpacketoperationModel();
         $m_redpacketoperation->operationRedpacket($id);
+        if($id==0){
+            $now_time = date('Y-m-d H:i:s');
+            echo "operation_redpacket end:$now_time \r\n";
+        }
+    }
+
+    public function againpushoperationRedpacket(){
         $now_time = date('Y-m-d H:i:s');
-        echo "operation_redpacket end:$now_time \r\n";
+        echo "againpush_operation_redpacket start:$now_time \r\n";
+        $m_redpacketoperation = new \Admin\Model\Smallapp\RedpacketoperationModel();
+        $m_redpacketoperation->againpush_redpacket();
+        $now_time = date('Y-m-d H:i:s');
+        echo "againpush_operation_redpacket end:$now_time \r\n";
     }
 
     public function userintegral(){
@@ -3667,12 +3692,19 @@ class CrontabController extends Controller
         echo "forscreennotrack end:$now_time \r\n";
     }
 
-
     public function pushrebootbox(){
         $now_time = date('Y-m-d H:i:s');
         echo "pushrebootbox:$now_time \r\n";
         $m_forscreentrack = new \Admin\Model\PushLogModel();
         $m_forscreentrack->handle_push_rebootbox();
+    }
+
+    public function pushpublicplay(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushpublicplay start:$now_time \r\n";
+        $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
+        $m_publicplay->handle_public_play();
+        echo "pushpublicplay end:$now_time \r\n";
     }
 
     public function forscreen4gbox(){
