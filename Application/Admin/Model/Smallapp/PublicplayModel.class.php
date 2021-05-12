@@ -22,12 +22,14 @@ class PublicplayModel extends BaseModel{
         $m_public_playhotel = new \Admin\Model\Smallapp\PublicplayHotelModel();
         $m_box = new \Admin\Model\BoxModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(5);
         $all_play_frequency = C('PUBLIC_PLAY_FREQUENCY');
         $all_box_types = C('heart_hotel_box_type');
         $now_hour = date('G');
         $now_minute = date('i');
         foreach ($res as $v){
-            if($now_hour>=$v['start_hour'] && $now_hour<=$v['end_hour']){
+            if($now_hour>=$v['start_hour'] && $now_hour<$v['end_hour']){
                 if(in_array($now_minute,$all_play_frequency[$v['frequency']])){
                     $publicplay_id = $v['id'];
                     $res_playhotel = $m_public_playhotel->getDataList('*',array('publicplay_id'=>$publicplay_id),'id asc');
@@ -75,12 +77,20 @@ class PublicplayModel extends BaseModel{
                     $bwhere['hotel.id'] = array('in',$hotel_ids);
                     $res_boxs = $m_box->getBoxByCondition('box.mac,hotel.id as hotel_id',$bwhere);
                     foreach ($res_boxs as $bv){
+                        $p_box_cache_key = "smallapp:pushpublicplay:{$bv['mac']}";
+                        $res_cache = $redis->get($p_box_cache_key);
+                        if(!empty($res_cache)){
+                            echo "ID:{$v['id']} box:{$bv['mac']}-hotel_id{$bv['hotel_id']} had push \r\n";
+                            continue;
+                        }
+                        $redis->set($p_box_cache_key,1,10);
                         $netty_message['headPic'] = base64_encode($netty_message['avatarUrl']);
                         $res_netty_box = $m_netty->pushBox($bv['mac'],json_encode($netty_message));
 
                         $netty_data = json_encode($res_netty_box);
                         echo "ID:{$v['id']} box:{$bv['mac']}-hotel_id{$bv['hotel_id']} message:".json_encode($netty_message)."netty:$netty_data \r\n";
                     }
+                    sleep(2);
                 }else{
                     echo "ID:{$v['id']} hour:{$now_hour} not in minute \r\n";
                 }
