@@ -198,7 +198,7 @@ class RedpacketoperationModel extends BaseModel{
                                     $res_netty_box = $m_netty->pushBox($v, json_encode($message));
                                     if($redpacket_type!=1){
                                         $netty_data = json_encode($res_netty_box);
-                                        echo "redpacket_id: $trade_no box:$box_mac message:".json_encode($message)."netty:$netty_data \r\n";
+                                        echo "redpacket_id: $trade_no box:$v message:".json_encode($message)."netty:$netty_data \r\n";
                                     }
                                 }
                             }

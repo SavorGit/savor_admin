@@ -157,6 +157,11 @@ class StoreController extends BaseController {
             if($res_category['level']==1){
                 $this->output('请选择子分类', "store/addstore",2,0);
             }
+            if(!empty($ads_id) || !empty($detailmedia_id) || !empty($couponmedia_id)){
+                if(empty($ads_id) || empty($detailmedia_id) || empty($couponmedia_id)){
+                    $this->output('请完善优惠券,详情,广告信息', "store/addstore",2,0);
+                }
+            }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             $data = array('name'=>$name,'addr'=>$addr,'cover_media_id'=>$cover_media_id,'category_id'=>$category_id,'avg_expense'=>$avg_expense,
