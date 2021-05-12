@@ -114,6 +114,7 @@ class LifeadvController extends BaseController {
             }
 
         }else{
+            $type = I('type','');
             //城市
             $areaModel  = new \Admin\Model\AreaModel();
             $area_arr = $areaModel->getAllArea();
@@ -132,11 +133,16 @@ class LifeadvController extends BaseController {
             for($i=0;$i<24;$i++){
                 $hours[]=str_pad($i,2,'0',STR_PAD_LEFT);
             }
+            if($type=='store'){
+                $display_html = 'addstoredevilery';
+            }else{
+                $display_html = 'adddevilery';
+            }
             $this->assign('store_ads',$store_ads);
             $this->assign('hours',$hours);
             $this->assign('is_city_search',1);
             $this->assign('areainfo', $area_arr);
-            $this->display('addstoredevilery');
+            $this->display($display_html);
         }
     }
 
