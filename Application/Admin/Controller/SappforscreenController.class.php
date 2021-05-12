@@ -1646,6 +1646,19 @@ class SappforscreenController extends BaseController {
                 $top_ids[]=$v['id'];
             }
             $redis->set($key_findtop,json_encode($top_ids));
+            $audit_key = C('SAPP_PUBLIC_AUDITNUM').$res_publicdata['openid'];
+            $res_audit = $redis->get($audit_key);
+            if(!empty($res_audit)){
+                $audit_num = $res_audit;
+            }else{
+                $audit_num = 0;
+            }
+            if($status==2){
+                $audit_num = $audit_num+1;
+            }else{
+                $audit_num = $audit_num-1>0?$audit_num-1:0;
+            }
+            $redis->set($audit_key,$audit_num,86400*30);
 
             $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
             $res_public_play = $m_publicplay->getInfo(array('public_id'=>$public_id));
@@ -1889,6 +1902,15 @@ class SappforscreenController extends BaseController {
 	   $data['status'] = 0;
 	   $ret = $m_public->updateInfo($where, $data);
 	   if($ret){
+           $res_publicdata = $m_public->getOne('*',array('id'=>$id));
+	       $redis = new \Common\Lib\SavorRedis();
+	       $redis->select(5);
+           $audit_key = C('SAPP_PUBLIC_AUDITNUM').$res_publicdata['openid'];
+           $res_audit = $redis->get($audit_key);
+           if(!empty($res_audit)){
+               $audit_num = $res_audit-1>0?$res_audit-1:0;
+               $redis->set($audit_key,$audit_num,86400*30);
+           }
            $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
            $res_public_play = $m_publicplay->getInfo(array('public_id'=>$id));
            if(!empty($res_public_play)){
