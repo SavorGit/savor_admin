@@ -3208,17 +3208,19 @@ class CrontabController extends Controller
                 $m_pubdetail->addInfo($ret,2);
                 $redis->remove($k);
             }
-//            $sms_config = C('ALIYUN_SMS_CONFIG');
-//            $alisms = new \Common\Lib\AliyunSms();
-//            $params = array();
-//            $template_code = $sms_config['public_audit_templateid'];
-//            $send_mobiles = C('PUBLIC_AUDIT_MOBILE');
-//            foreach ($send_mobiles as $v){
-//                $alisms::sendSms($v,$params,$template_code);
-//            }
-            echo "ok";
+            $sms_config = C('ALIYUN_SMS_CONFIG');
+            $alisms = new \Common\Lib\AliyunSms();
+            $template_code = $sms_config['public_audit_templateid'];
+            $send_mobiles = C('PUBLIC_AUDIT_MOBILE');
+            foreach ($send_mobiles as $v){
+                $alisms::sendSms($v,'',$template_code);
+                echo "send mobile:$v ok \r\n";
+            }
+            $now_time = date('Y-m-d H:i:s');
+            echo "$now_time ok \r\n";
         }
-        echo "nodata ok";
+        $now_time = date('Y-m-d H:i:s');
+        echo "$now_time nodata ok \r\n";
     }
 
     //生成好友关系
