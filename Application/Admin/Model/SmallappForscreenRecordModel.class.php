@@ -150,6 +150,8 @@ class SmallappForscreenRecordModel extends Model{
         $fields = "box.mac as box_mac";
         $where = array();
         $where['hotel.id'] = array('in',$hotel_ids);
+        $where['box.state'] = 1;
+        $where['box.flag'] = 0;
 
         $m_box = new \Admin\Model\BoxModel();
         $hotel_boxs = $m_box->getBoxByCondition($fields,$where);
@@ -177,6 +179,10 @@ class SmallappForscreenRecordModel extends Model{
         $delcondition = array('box_mac'=>array('in',$boxs));
         $delcondition['mobile_brand'] = array('neq','devtools');
         $this->where($delcondition)->delete();
+        $m_public = new \Admin\Model\Smallapp\PublicModel();
+        $pwhere = array('box_mac'=>array('in',$boxs));
+        $pdata = array('status'=>0);
+        $m_public->updateInfo($pwhere,$pdata);
 
         if(isset($all_invalidlist[2])){
             $condition = array('a.openid'=>array('in',$all_invalidlist[2]));
@@ -190,6 +196,10 @@ class SmallappForscreenRecordModel extends Model{
             $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
             $delcondition['mobile_brand'] = array('neq','devtools');
             $this->where($delcondition)->delete();
+
+            $pwhere = array('openid'=>array('in',$all_invalidlist[2]));
+            $pdata = array('status'=>0);
+            $m_public->updateInfo($pwhere,$pdata);
         }
         return true;
     }
