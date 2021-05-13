@@ -1617,6 +1617,14 @@ class SappforscreenController extends BaseController {
                     $m_forscreen->updateInfo($where,$data);
                 }
             }
+            if($status==2){
+                $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
+                $res_invalid = $m_invalid->getInfo(array('invalidid'=>$res_publicdata['openid'],'type'=>2));
+                if(!empty($res_invalid)){
+                    $m_public->updateInfo(array('id'=>$public_id), array('status'=>0));
+                    $this->output('当前审核内容,用户为无效名单数据,不能审核通过', 'sappforscreen/publicaudit',2,0);
+                }
+            }
 
             $pdata = array('status'=>$status,'is_recommend'=>$is_recommend);
             if($status==2 && $is_recommend==1){
@@ -1681,6 +1689,9 @@ class SappforscreenController extends BaseController {
                 if($start_hour>$end_hour){
                     $this->output('投放开始时段必须小于等于结束时段', 'sappforscreen/publicaudit',2,0);
                 }
+                if($end_hour-$start_hour==0){
+                    $this->output('投放时段间隔1小时以上', 'sappforscreen/publicaudit',2,0);
+                }
                 $sysuserInfo = session('sysUserInfo');
                 $start_date_time = date('Y-m-d 00:00:00',strtotime($start_date));
                 $end_date_time = date('Y-m-d 23:59:59',strtotime($end_date));
@@ -1726,7 +1737,7 @@ class SappforscreenController extends BaseController {
             }
             $m_netty = new \Admin\Model\Smallapp\NettyModel();
             $head_pic = 'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg';
-            $now_barrages = array('nickName'=>'小热点','headPic'=>$head_pic,'avatarUrl'=>$head_pic);
+            $now_barrages = array('nickName'=>'小热点','headPic'=>base64_encode($head_pic),'avatarUrl'=>$head_pic);
             if($is_play){
                 $hotel_num = count($hotel_ids);
                 $m_box = new \Admin\Model\BoxModel();
@@ -1741,12 +1752,12 @@ class SappforscreenController extends BaseController {
                 $day = $interval->format('%d');
 
                 $day_num = $day+1;
-                $hour_num = ($end_hour-$start_hour)+1;
+                $hour_num = $end_hour-$start_hour;
                 $all_frequency = C('PUBLIC_PLAY_FREQUENCY');
                 $frequency_num = count($all_frequency[$frequency]);
                 $play_num = $day_num * $hour_num * $frequency_num * $box_num;
 
-                $now_barrages['barrage'] = "您的内容已经通过审核，即将在{$hotel_num}酒楼进行播放，预计播放{$play_num}次";
+                $now_barrages['barrage'] = "您的内容已经通过审核，即将在{$hotel_num}家酒楼进行播放，预计播放{$play_num}次";
                 $user_barrages = array($now_barrages);
                 $message = array('action'=>122,'userBarrages'=>$user_barrages);
                 $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
