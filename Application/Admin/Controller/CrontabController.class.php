@@ -3638,6 +3638,15 @@ class CrontabController extends Controller
         echo "againpush_operation_redpacket end:$now_time \r\n";
     }
 
+    public function pushsyslottery(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushsyslottery start:$now_time \r\n";
+        $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
+        $m_syslottery->push_syslottery();
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushsyslottery end:$now_time \r\n";
+    }
+
     public function userintegral(){
         $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
         $m_usersignin->userintegral();

@@ -45,8 +45,11 @@ class ActivityController extends BaseController {
             foreach ($data_list as $k=>$v){
                 $data_list[$k]['image_url'] = $oss_host.'/'.$v['image_url'];
                 $data_list[$k]['status_str'] = $all_status[$v['status']];
+                if($v['type']==3){
+                    $data_list[$k]['status_str'] = '';
+                }
                 $nums = 0;
-                if(in_array($v['status'],array(1,2))){
+                if($v['type']==3 || in_array($v['status'],array(1,2))){
                     $where = array('activity_id'=>$v['id']);
                     $res_num = $m_activityapply->getAll('count(id) as num',$where,0,1,'','');
                     if(!empty($res_num)){
@@ -92,7 +95,7 @@ class ActivityController extends BaseController {
         foreach ($res_box as $v){
             $boxs[$v['mac']] = $v['name'];
         }
-        $all_status = array('1'=>'未开奖','2'=>'已中奖','3'=>'未中奖');
+        $all_status = array('1'=>'未开奖','2'=>'已中奖','3'=>'未中奖','4'=>'已中奖未完成','5'=>'已中奖已完成待领取');
         foreach ($res as $k=>$v){
             $res[$k]['box_name'] = $boxs[$v['box_mac']];
             $res[$k]['status_str'] = $all_status[$v['status']];
