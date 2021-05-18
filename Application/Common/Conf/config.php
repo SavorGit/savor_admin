@@ -317,6 +317,8 @@ $config['all_forscreen_actions'] = array(
     '13'=>'点播商城商品',
     '14'=>'点播banner商城商品',
     '15'=>'点播本地生活店铺视频',
+    '16'=>'热播内容点播图片',
+    '17'=>'热播内容点播视频',
     '21'=>'查看点播视频',
     '22'=>'查看发现视频',
     '30'=>'投屏文件',
@@ -861,8 +863,6 @@ $config['PUBLIC_AUDIT_STATUS']=array(
     '3'=>'审核不通过',
 );
 $config['PUBLIC_AUDIT_MOBILE']=array(
-    18612132811,
-    13716111670,
     13810910309
 );
 $config['PUBLIC_PLAY_FREQUENCY']=array(

@@ -61,7 +61,7 @@ class ForscreenTrackModel extends BaseModel{
                                 $data['netty_pushbox_time'] = $res_nettycache;
                             }
                         }
-                        if($v['action']==4 || $v['action']==11 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
+                        if($v['action']==4 || $v['action']==11 || $v['action']==16 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
                             $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$v['box_id']),'');
                             if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
                                 $data['oss_stime'] = $v['res_sup_time'];
@@ -193,7 +193,7 @@ class ForscreenTrackModel extends BaseModel{
                                 $data['netty_pushbox_time'] = $res_nettycache;
                             }
                         }
-                        if($v['action']==4 || $v['action']==11 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
+                        if($v['action']==4 || $v['action']==11 || $v['action']==16 || ($v['action']==2 && $v['resource_type']==1) || ($v['action']==8 && $v['resource_type']==1)){
                             $res_heart = $m_heart_log->getInfo('*',array('box_id'=>$v['box_id']),'');
                             if(!empty($res_heart) && $res_heart['type']==2 && $res_heart['apk_version']>'2.2.6'){
                                 $data['oss_stime'] = $v['res_sup_time'];
@@ -275,8 +275,8 @@ class ForscreenTrackModel extends BaseModel{
 	    if(isset($map_action[$forscreen['action']])){
             $forscreen['action'] = $map_action[$forscreen['action']];
         }
-        $has_img_action = array(2,4,5,12,13,15,21,22,30,31,32);
-        $other_action = array(8,9,11);
+        $has_img_action = array(2,4,5,12,13,15,17,21,22,30,31,32);
+        $other_action = array(8,9,11,16);
 
         if(in_array($forscreen['action'],$has_img_action)){
             $oss_addr = '';
