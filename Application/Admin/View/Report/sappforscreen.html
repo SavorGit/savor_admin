@@ -257,7 +257,7 @@
               <td data-title="投屏动作">{$vlist.action_name}</td>
               <td data-title="投屏清晰度">{$vlist.quality_typestr}</td>
               <td data-title="投屏内容">
-              	<if condition="$vlist.action eq 4 || $vlist.action eq 11 || $vlist.action eq 46 || $vlist.action eq 48">
+              	<if condition="$vlist.action eq 4 || $vlist.action eq 11 || $vlist.action eq 16  || $vlist.action eq 46 || $vlist.action eq 48">
               
               	<volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank"><img src="http://{$oss_host}/{$img}" ></a>
@@ -282,7 +282,7 @@
                 <volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
                 </volist>
-                <elseif condition="$vlist.action eq 5 || $vlist.action eq 12 ||  $vlist.action eq 22 || $vlist.action eq 13 || $vlist.action eq 14 || $vlist.action eq 15"  />
+                <elseif condition="$vlist.action eq 5 || $vlist.action eq 12 || $vlist.action eq 17 || $vlist.action eq 22 || $vlist.action eq 13 || $vlist.action eq 14 || $vlist.action eq 15"  />
                 <volist name="vlist.imgs" id="img">
               	 <a href="http://{$oss_host}/{$img}" target="_blank">预览</a>
                 </volist>

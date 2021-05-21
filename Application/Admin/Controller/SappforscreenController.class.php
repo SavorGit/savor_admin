@@ -1550,6 +1550,12 @@ class SappforscreenController extends BaseController {
             for($i=0;$i<24;$i++){
                 $hours[]=str_pad($i,2,'0',STR_PAD_LEFT);
             }
+            $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+            $res_f = $m_forscreen->getInfo(array('forscreen_id'=>$forscreen_id));
+            if(!empty($res_f)){
+                $info['hotel_name'] = $res_f['hotel_name'];
+            }
+
             $areaModel  = new \Admin\Model\AreaModel();
             $area_arr = $areaModel->getAllArea();
             $now_frequency = array();
