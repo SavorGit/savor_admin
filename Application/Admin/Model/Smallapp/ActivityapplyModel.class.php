@@ -33,4 +33,16 @@ class ActivityapplyModel extends BaseModel{
         return $data;
     }
 
+    public function getApplyDatas($fields,$where,$order,$limit,$group){
+        $data = $this->alias('a')
+            ->join('savor_smallapp_activity activity on a.activity_id=activity.id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($limit)
+            ->group($group)
+            ->select();
+        return $data;
+    }
+
 }

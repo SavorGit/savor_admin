@@ -4425,6 +4425,17 @@ class CrontabController extends Controller
         echo "pushdishactivity end:$now_time \r\n";
     }
 
+    public function pushhoteldishactivity(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushhoteldishactivity start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\HotellotteryModel();
+        $m_activity->push_hotellottery();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushhoteldishactivity end:$now_time \r\n";
+    }
+
+
     public function pushdishlottery(){
         $now_time = date('Y-m-d H:i:s');
         echo "pushdishlottery start:$now_time \r\n";

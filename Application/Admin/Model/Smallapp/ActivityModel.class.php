@@ -77,7 +77,7 @@ class ActivityModel extends BaseModel{
         */
         $start_time = date('Y-m-d 00:00:00');
         $end_time = date('Y-m-d 23:59:59');
-        $where = array('status'=>array('in',array('1','0')),'type'=>1);
+        $where = array('status'=>array('in',array('1','0')),'type'=>array('in',array(1,4)));
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $res = $this->getDataList('*',$where,'id asc');
         if(empty($res)){
@@ -177,7 +177,7 @@ class ActivityModel extends BaseModel{
 
         $start_time = date('Y-m-d 00:00:00');
         $end_time = date('Y-m-d 23:59:59');
-        $where = array('status'=>1,'type'=>1);
+        $where = array('status'=>1,'type'=>array('in',array(1,4)));
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $res = $this->getDataList('*',$where,'id desc');
         if(empty($res)){
@@ -194,6 +194,9 @@ class ActivityModel extends BaseModel{
                 $now_lottery_openids[]=$v['openid'];
             }
         }
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $res_config = $m_sys_config->getAllconfig();
+        $hotellottery_people_num = $res_config['hotellottery_people_num'];
 
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_box = new \Admin\Model\BoxModel();
@@ -210,7 +213,7 @@ class ActivityModel extends BaseModel{
                 if(empty($res_apply_user)){
                     $this->updateData(array('id'=>$activity_id),array('status'=>2));
                     echo "activity_id:{$v['id']} no lottery user \r\n";
-
+                    /*
                     $last_user_num = 40;
                     $start = rand(1000,2000);
                     $limit = "$start,$last_user_num";
@@ -226,6 +229,7 @@ class ActivityModel extends BaseModel{
                         }
                         $partake_user[] = array('avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
                     }
+                    */
                 }else{
                     $all_lottery_openid = array();
                     foreach ($res_apply_user as $ak=>$av){
@@ -233,6 +237,12 @@ class ActivityModel extends BaseModel{
                         if(in_array($av['openid'],$now_lottery_openids)){
                             unset($res_apply_user[$ak]);
                         }
+                    }
+                    if(count($all_lottery_openid)<$hotellottery_people_num){
+                        $lottery_user_num =  count($all_lottery_openid);
+                        $this->updateData(array('id'=>$activity_id),array('status'=>2));
+                        echo "activity_id:{$v['id']} lottery_user_num:$lottery_user_num lt $hotellottery_people_num \r\n";
+                        continue;
                     }
                     if(!empty($res_apply_user)){
                         $res_apply_user = array_values($res_apply_user);
@@ -331,57 +341,6 @@ class ActivityModel extends BaseModel{
                     }
                 }
                 $this->updateData(array('id'=>$activity_id),array('status'=>2));
-
-                /*
-                $now_time = date('Y-m-d H:i:s');
-                $res_apply_user = $m_activityapply->getDataList('*',array('activity_id'=>$activity_id),'id asc');
-                if(!empty($res_apply_user)){
-                    $this->updateData(array('id'=>$activity_id),array('status'=>2));
-                    sleep(30);
-                    $config = C('SMALLAPP_CONFIG');
-                    $tempalte_id = 'HqNYdceqH7MAQk6dl4Gn54yZObVRNG0FJk40OIwa9x4';
-                    $miniprogram_state = 'formal';//developer为开发版；trial为体验版；formal为正式版
-                    $push_wxurl = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token";
-                    $page_dish = "games/pages/activity/din_dash";
-                    $page_index = "pages/index/index";
-                    $token = getWxAccessToken($config);
-                    $curl = new \Common\Lib\Curl();
-                    foreach ($res_apply_user as $auv){
-                        if($auv['openid']==$lottery_openid){
-                            $prize = $v['prize'];
-                            $desc = '已中奖';
-                            $tips = '请3小时内找餐厅服务员领取';
-                            $page_url = "$page_dish?openid={$auv['openid']}&box_mac={$auv['box_mac']}&activity_id=$activity_id";
-                        }else{
-                            $prize = '未中奖';
-                            $desc = '未中奖';
-                            $tips = '请等待下一轮抽奖';
-                            $page_url = $page_index;
-                        }
-                        $url = "$push_wxurl=$token";
-                        $data=array(
-                            'date2'  => array('value'=>$v['lottery_time']),
-                            'thing4'  => array('value'=>$desc),
-                            'thing1'  => array('value'=>$prize),
-                            'thing3'  => array('value'=>$tips)
-                        );
-                        $template = array(
-                            'touser' => $auv['openid'],
-                            'template_id' => $tempalte_id,
-                            'page' => $page_url,
-                            'miniprogram_state'=>$miniprogram_state,
-                            'lang'=>'zh_CN',
-                            'data' => $data
-                        );
-                        $template =  json_encode($template);
-                        $res_data = '';
-                        $curl::post($url,$template,$res_data);
-                        echo "activity_id|$activity_id|openid|{$auv['openid']}|wxres|$res_data \r\n";
-                    }
-                }
-                $now_time = date('Y-m-d H:i:s');
-                echo "pushlotterytowx end:$now_time \r\n";
-                */
             }
         }
 
@@ -391,7 +350,7 @@ class ActivityModel extends BaseModel{
     public function pushLotteryToWeixin(){
         $now_endtime = time() - 300;
         $now_endtime = date('Y-m-d H:i:s',$now_endtime);
-        $where = array('status'=>2,'type'=>1);
+        $where = array('status'=>2,'type'=>array('in',array(1,4)));
         $where['lottery_time'] = array('egt',$now_endtime);
         $res = $this->getDataList('*',$where,'id desc');
         if(empty($res)){
