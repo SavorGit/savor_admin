@@ -16,7 +16,7 @@ class SyslotteryModel extends BaseModel{
             echo "time:$now_time no lottery \r\n";
             exit;
         }
-        $host_name = C('HOST_NAME');
+        $host_name = 'https://mobile.littlehotspot.com';
         $m_lotteryprize = new \Admin\Model\Smallapp\SyslotteryPrizeModel();
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
         $m_activityprize = new \Admin\Model\Smallapp\ActivityprizeModel();
@@ -38,7 +38,7 @@ class SyslotteryModel extends BaseModel{
                     continue;
                 }
                 $start_time = date('Y-m-d H:i:s');
-                $end_time = date('Y-m-d H:i:s',time()+7200);
+                $end_time = date('Y-m-d H:i:s',time()+1800);
                 $add_activity_data = array('hotel_id'=>$hotel_id,'name'=>'系统抽奖','prize'=>$v['prize'],
                     'start_time'=>$start_time,'end_time'=>$end_time,'type'=>3);
                 $activity_id = $m_activity->add($add_activity_data);
@@ -74,7 +74,9 @@ class SyslotteryModel extends BaseModel{
                         echo "activity_id:$activity_id box:{$bv['mac']} message:" . json_encode($message) . "netty:$netty_data \r\n";
                     }
                 }
-
+                if($now_date==$v['end_date']){
+                    $this->updateData(array('id'=>$v['id']),array('status'=>2));
+                }
             }else{
                 echo "ID:{$v['id']} not in time $optime \r\n";
             }

@@ -169,11 +169,23 @@ class SyslotteryController extends BaseController {
             $money = I('post.money',0,'intval');
             $probability = I('post.probability',0,'intval');
             $type = I('post.type',0,'intval');
+            $status = I('post.status',0,'intval');
             $interact_num = I('post.interact_num',0,'intval');
             $demand_hotplay_num = I('post.demand_hotplay_num',0,'intval');
             $demand_banner_num = I('post.demand_banner_num',0,'intval');
+            if($type==1){
+                if(empty($money)){
+                    $this->output('请输入中奖金额', "syslottery/prizeadd", 2, 0);
+                }
+                if(empty($interact_num) && empty($demand_hotplay_num) && empty($demand_banner_num)){
+                    $this->output('请输入需要完成的任务次数', "syslottery/prizeadd", 2, 0);
+                }
+            }else{
+                $money = 0;
+            }
+
             $data = array('syslottery_id'=>$syslottery_id,'name'=>$name,'money'=>$money,'probability'=>$probability,'type'=>$type,
-                'interact_num'=>$interact_num,'demand_hotplay_num'=>$demand_hotplay_num,'demand_banner_num'=>$demand_banner_num);
+                'interact_num'=>$interact_num,'demand_hotplay_num'=>$demand_hotplay_num,'demand_banner_num'=>$demand_banner_num,'status'=>$status);
             if($media_id){
                 $m_media = new \Admin\Model\MediaModel();
                 $res_media = $m_media->getMediaInfoById($media_id);
