@@ -715,7 +715,6 @@ class TestController extends Controller {
     }
 
     public function updateboxcache(){
-        exit;
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
@@ -724,7 +723,7 @@ class TestController extends Controller {
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.box_type in(2,3,4)";
 
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
@@ -737,29 +736,29 @@ class TestController extends Controller {
         $data = M()->query($sql);
         $flag = 0;
         foreach($data as $key=>$v){
-            if($v['is_open_simple']==1 && $v['is_sapp_forscreen']==0){
-                $v['is_sapp_forscreen'] = 1;
-            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
-                $v['is_open_simple'] = 0;
-            }
-            if(isset($close_forscreen_boxs[$v['mac']])){
-                $v['is_interact'] = 0;
-                $v['is_sapp_forscreen'] = 0;
-                $v['is_open_simple'] = 1;
-                $is_open_simple = $v['is_open_simple'];
-                $is_sapp_forscreen = $v['is_sapp_forscreen'];
-                $is_interact = $v['is_interact'];
-                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
-                M()->execute($sql);
-                echo $v['mac']." close ok \n";
-            }
-            $v['is_interact'] = 0;
+//            if($v['is_open_simple']==1 && $v['is_sapp_forscreen']==0){
+//                $v['is_sapp_forscreen'] = 1;
+//            }elseif($v['is_open_simple']==1 && $v['is_sapp_forscreen']==1){
+//                $v['is_open_simple'] = 0;
+//            }
+//            if(isset($close_forscreen_boxs[$v['mac']])){
+//                $v['is_interact'] = 0;
+//                $v['is_sapp_forscreen'] = 0;
+//                $v['is_open_simple'] = 1;
+//                $is_open_simple = $v['is_open_simple'];
+//                $is_sapp_forscreen = $v['is_sapp_forscreen'];
+//                $is_interact = $v['is_interact'];
+//                $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+//                M()->execute($sql);
+//                echo $v['mac']." close ok \n";
+//            }
+//            $v['is_interact'] = 0;
             $v['is_sapp_forscreen'] = 0;
             $v['is_open_simple'] = 0;
             $is_open_simple = $v['is_open_simple'];
             $is_sapp_forscreen = $v['is_sapp_forscreen'];
             $is_interact = $v['is_interact'];
-            $sql ="update savor_box set is_interact=$is_interact,is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+            $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
             M()->execute($sql);
             echo $v['mac']." ok \n";
 
@@ -774,36 +773,36 @@ class TestController extends Controller {
                 continue;
             }
 
-//            $res_box = $v;
-//            $forscreen_type = 1;//1外网(主干) 2直连(极简)
-//            $box_forscreen = '1-0';
-//            if(!empty($res_box)){
-//                $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
-//                switch ($box_forscreen){
-//                    case '1-0':
-//                        $forscreen_type = 1;
-//                        break;
-//                    case '0-1':
-//                        $forscreen_type = 2;
-//                        break;
-//                    case '1-1':
-//                        /* if(in_array($res_box['box_type'],array(3,6,7))){
-//                            $forscreen_type = 2;
-//                        }elseif($res_box['box_type']==2){
-//                            $forscreen_type = 1;
-//                        } */
-//                        $forscreen_type = 1;
-//                        break;
-//                    default:
-//                        $forscreen_type = 1;
-//                }
-//                $redis->select(14);
-//                $box_mac = $res_box['mac'];
-//                $box_key = "box:forscreentype:$box_mac";
-//                $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type,'forscreen_method'=>$box_forscreen);
-//                $redis->set($box_key,json_encode($forscreen_info));
-//                echo "box_id:$box_id \r\n";
-//            }
+            $res_box = $v;
+            $forscreen_type = 1;//1外网(主干) 2直连(极简)
+            $box_forscreen = '1-0';
+            if(!empty($res_box)){
+                $box_forscreen = "{$res_box['is_sapp_forscreen']}-{$res_box['is_open_simple']}";
+                switch ($box_forscreen){
+                    case '1-0':
+                        $forscreen_type = 1;
+                        break;
+                    case '0-1':
+                        $forscreen_type = 2;
+                        break;
+                    case '1-1':
+                        /* if(in_array($res_box['box_type'],array(3,6,7))){
+                            $forscreen_type = 2;
+                        }elseif($res_box['box_type']==2){
+                            $forscreen_type = 1;
+                        } */
+                        $forscreen_type = 1;
+                        break;
+                    default:
+                        $forscreen_type = 1;
+                }
+                $redis->select(14);
+                $box_mac = $res_box['mac'];
+                $box_key = "box:forscreentype:$box_mac";
+                $forscreen_info = array('box_id'=>$box_id,'forscreen_type'=>$forscreen_type,'forscreen_method'=>$box_forscreen);
+                $redis->set($box_key,json_encode($forscreen_info));
+                echo "box_id:$box_id \r\n";
+            }
 
             $flag++;
         }
@@ -2767,7 +2766,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function rdtesthotel(){
-        $file_path = SITE_TP_PATH.'/Public/content/20210423研发部实验酒楼.xlsx';
+        $file_path = SITE_TP_PATH.'/Public/content/20210511研发部实验酒楼.xlsx';
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
 
@@ -2785,10 +2784,38 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 $row_info = $rowData[0];
                 $hotel_id = $row_info[0];
                 $hotel_name = $row_info[1];
-                $data[$hotel_id]=array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name);
+                $short_name = $row_info[2];
+                $data[$hotel_id]=array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'short_name'=>$short_name);
             }
         }
         var_export($data);
+    }
+
+    public function hotplay(){
+        $model = M();
+        $sql = "select * from savor_smallapp_play_log where type=4 order by nums desc limit 0,8";
+        $res = $model->query($sql);
+        $m_hotplay = new \Admin\Model\Smallapp\HotplayModel();
+        $sort = 100;
+        foreach ($res as $k=>$v){
+            $forscreen_record_id = $v['res_id'];
+            $sql_forscreen = "select * from savor_smallapp_forscreen_record where id={$forscreen_record_id}";
+            $res_forscreen = $model->query($sql_forscreen);
+            $forscreen_id = $res_forscreen[0]['forscreen_id'];
+            if(!empty($forscreen_id)){
+                $sql_public = "select * from savor_smallapp_public where forscreen_id={$forscreen_id} order by id asc";
+                $res_public = $model->query($sql_public);
+                $public_id = $res_public[0]['id'];
+                $sort--;
+                $data = array('public_id'=>$public_id,'forscreen_record_id'=>$forscreen_record_id,'update_time'=>$v['update_time'],
+                    'add_time'=>$v['create_time'],'sort'=>$sort);
+                $m_hotplay->add($data);
+                echo "res_id:$forscreen_record_id ok \r\n";
+            }else{
+                echo "res_id:$forscreen_record_id fail \r\n";
+            }
+        }
+
     }
 
     public function setsalewxtest(){
@@ -2805,6 +2832,41 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $key = 'smallappdinner_vcode_15810260493';
         $redis->set($key,1234);
         echo 'set wxtest ok';
+    }
+
+    public function testrdpush(){
+        $box_mac = '00226D583ECD';
+        $hotel_id = 7;
+        $rd_hotel = C('RD_TEST_HOTEL');
+
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $m_media = new \Admin\Model\MediaModel();
+        $res_hotel_ext = $m_hotel_ext->getInfo(array('hotel_id'=>$hotel_id));
+        $hotel_logo = '';
+        if($res_hotel_ext['hotel_cover_media_id']>0){
+            $res_media = $m_media->getMediaInfoById($res_hotel_ext['hotel_cover_media_id']);
+            $hotel_logo = $res_media['oss_addr'];
+        }
+        $user_info = array('nickName'=>$rd_hotel[$hotel_id]['short_name'],'avatarUrl'=>$hotel_logo);
+        $mpcode = 'http://dev-mobile.littlehotspot.com/Smallapp46/qrcode/getBoxQrcode?box_id=1101&box_mac=40E793253553&data_id=6&type=38';
+        $message = array('action'=>138,'countdown'=>120,'nickName'=>$user_info['nickName'],
+            'avatarUrl'=>$user_info['avatarUrl'], 'codeUrl'=>$mpcode);
+        $message['headPic'] = base64_encode($user_info['avatarUrl']);
+        $res_netty = $m_netty->pushBox($box_mac, json_encode($message));
+        echo json_encode($res_netty);
+    }
+
+    public function sendsms(){
+        $sms_config = C('ALIYUN_SMS_CONFIG');
+        $alisms = new \Common\Lib\AliyunSms();
+        $template_code = $sms_config['public_audit_templateid'];
+        $send_mobiles = C('PUBLIC_AUDIT_MOBILE');
+        foreach ($send_mobiles as $v){
+            $res = $alisms::sendSms($v,'',$template_code);
+            print_r($res);
+        }
+        echo "ok";
     }
 
 }
