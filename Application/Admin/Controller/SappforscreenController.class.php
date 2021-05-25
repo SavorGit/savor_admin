@@ -1766,12 +1766,20 @@ class SappforscreenController extends BaseController {
                 $now_barrages['barrage'] = "您的内容已经通过审核，即将在{$hotel_num}家酒楼进行播放，预计播放{$play_num}次";
                 $user_barrages = array($now_barrages);
                 $message = array('action'=>122,'userBarrages'=>$user_barrages);
-                $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
+                $res_netty = $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
+
+                $log_content = date("Y-m-d H:i:s").'[box_mac]'.$res_publicdata['box_mac'].'[message]'.json_encode($message).'[netty]'.json_encode($res_netty)."\r\n";
+                $log_file_name = SITE_TP_PATH.'/Public/content/'.'publicaudit_'.date("Ymd").".log";
+                @file_put_contents($log_file_name, $log_content, FILE_APPEND);
             }elseif($is_audit){
                 $now_barrages['barrage'] = '您的内容已经通过审核，在小程序发现页面可以看到';
                 $user_barrages = array($now_barrages);
                 $message = array('action'=>122,'userBarrages'=>$user_barrages);
-                $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
+                $res_netty = $m_netty->pushBox($res_publicdata['box_mac'],json_encode($message));
+
+                $log_content = date("Y-m-d H:i:s").'[box_mac]'.$res_publicdata['box_mac'].'[message]'.json_encode($message).'[netty]'.json_encode($res_netty)."\r\n";
+                $log_file_name = SITE_TP_PATH.'/Public/content/'.'publicaudit_'.date("Ymd").".log";
+                @file_put_contents($log_file_name, $log_content, FILE_APPEND);
             }
 
             if($status!=2 && !empty($res_public_play)){
