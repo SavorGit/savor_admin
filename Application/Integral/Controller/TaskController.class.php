@@ -58,6 +58,7 @@ class TaskController extends BaseController {
             $interact_num = I('post.interact_num',0,'intval');
             $comment_num = I('post.comment_num',0,'intval');
             $people_num = I('post.people_num',1,'intval');
+            $lottery_num = I('post.lottery_num',0,'intval');
             $task_info = I('post.task_info','');
             if(empty($task_info)){
                 $this->output('请勾选任务种类', "task/addactivitymoney",2,0);
@@ -70,11 +71,14 @@ class TaskController extends BaseController {
             $task_type = 21;
             $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'money'=>$money,
                 'cvr'=>$cvr,'activity_day'=>$activity_day,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'people_num'=>$people_num,
-                'task_info'=>json_encode($task_info),'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
+                'lottery_num'=>$lottery_num,'task_info'=>json_encode($task_info),'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
             $userinfo = session('sysUserInfo');
             $data['uid'] = $userinfo['id'];
             if(!empty($desc)){
                 $data['desc'] = $desc;
+            }
+            if(in_array('lottery',$task_info) && $lottery_num==0){
+                $this->output('已勾选邀请抽奖，请填写抽奖参与抽奖人数', "task/addactivitymoney",2,0);
             }
             if($id){
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
@@ -226,6 +230,8 @@ class TaskController extends BaseController {
         $data['e_uid'] = $userinfo['id'];
         $ret = $m_task->updateData($where, $data);
         if($ret){
+            $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+            $m_task_hotel->delData(array('task_id'=>$id));
             $this->output('删除成功', "task/index",2);
         }else {
             $this->output('删除失败', "task/index",2,0);
@@ -396,7 +402,7 @@ class TaskController extends BaseController {
             $m_task = new \Admin\Model\Integral\TaskModel();
             $res_task = $m_task->getInfo(array('id'=>$task_id));
             $task_info = json_decode($res_task['task_info'],true);
-            $now_task_type = $task_info['task_type'];
+            $now_task_type = $res_task['task_type'];
 
             $m_box = new \Admin\Model\BoxModel();
             $has_task_hids = array();
@@ -435,6 +441,13 @@ class TaskController extends BaseController {
                         }
                         $t_info['comment_num'] = $comment_num;
                     }
+                    if(in_array('lottery',$task_info)){
+                        $lottery_num = $res_task['lottery_num'];
+                        if($res_task['people_num']>1){
+                            $lottery_num = round($lottery_num/$res_task['people_num']);
+                        }
+                        $t_info['lottery_num'] = $lottery_num;
+                    }
                 }else{
                     $hwhere = array('hotel_id'=>$v);
                     $res_hoteltask = $m_task_hotel->getDataList('*',$hwhere,'id desc');
@@ -442,9 +455,8 @@ class TaskController extends BaseController {
                         foreach ($res_hoteltask as $tv){
                             $tid = $tv['task_id'];
                             $res_task = $m_task->getInfo(array('id'=>$tid));
-                            $task_info = json_decode($res_task['task_info'],true);
-                            $task_type = $task_info['task_content_type'];
-                            if($now_task_type == $task_type){
+                            $task_type = $res_task['task_type'];
+                            if($res_task['type']==1 && $now_task_type==$task_type){
                                 $has_task_hids[]=$v;
                                 $has_task_ids[$tid]=$tid;
                                 break;
@@ -619,7 +631,7 @@ class TaskController extends BaseController {
         $task_type = $res_task['task_type'];
         
         $where = array('a.task_id'=>$task_id);
-        $fields = 'a.meal_num,a.interact_num,a.comment_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state';
+        $fields = 'a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state';
         $order = 'convert(hotel.name using gbk) asc';
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         $hotel_list = $m_task_hotel->alias('a')

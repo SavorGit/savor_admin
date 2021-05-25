@@ -547,7 +547,8 @@ $config['REDPACKET_SENDTYPES'] = array(
 $config['TASK_CATEGORY'] = array(
     'meal'=>'互动饭局数',
     'interact'=>'互动数',
-    'comment'=>'点评数'
+    'comment'=>'点评数',
+    'lottery'=>'邀请抽奖'
 );
 $config['REDPACKET_OPERATIONERID'] = 42996;
 $config['REDPACKET_SENDERS'] = array(

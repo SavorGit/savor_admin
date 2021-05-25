@@ -55,6 +55,7 @@ class UsertaskModel extends BaseModel{
 	    $m_box = new \Admin\Model\BoxModel();
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $m_usetaskrecord = new \Admin\Model\Smallapp\UsertaskrecordModel();
+        $m_activity_apply = new \Admin\Model\Smallapp\ActivityapplyModel();
 	    $all_box_types = C('heart_hotel_box_type');
 	    foreach ($res_usertask as $v){
 	        $task_id = $v['task_id'];
@@ -89,6 +90,7 @@ class UsertaskModel extends BaseModel{
                 $task_meal_num = $hotel_task_info['meal_num'];
                 $task_interact_num = $hotel_task_info['interact_num'];
                 $task_comment_num = $hotel_task_info['comment_num'];
+                $task_lottery_num = $hotel_task_info['lottery_num'];
 
                 foreach ($res_box as $bv){
                     $u_task = $this->getInfo(array('id'=>$v['id']));
@@ -96,7 +98,7 @@ class UsertaskModel extends BaseModel{
                         echo "ID:{$v['id']} task_id:{$task_id} has finish \r\n";
                         break;
                     }
-                    $meal_num = $interact_num = $comment_num = 0;
+                    $meal_num = $interact_num = $comment_num = $lottery_num = 0;
                     $forscreen_where = array('a.hotel_id'=>$hotel_id,'a.box_mac'=>$bv['box_mac'],'a.is_valid'=>1);
                     $forscreen_where['a.mobile_brand'] = array('neq','devtools');
                     $forscreen_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
@@ -129,8 +131,18 @@ class UsertaskModel extends BaseModel{
                             $meal_num = 1;
                         }
                     }
+                    if($task_lottery_num>0){
+                        $task_num++;
+                        $apply_fields = 'count(a.id) as num';
+                        $apply_where = array('activity.hotel_id'=>$hotel_id,'activity.type'=>1,'a.box_mac'=>$bv['box_mac']);
+                        $apply_where['a.add_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+                        $res_apply = $m_activity_apply->getApplyDatas($apply_fields,$apply_where,'a.id desc','0，1','');
+                        if(!empty($res_apply)){
+                            $lottery_num = intval($res_apply[0]['num']);
+                        }
+                    }
                     //计算用户获得现金
-                    $meal_money = $interact_money = $comment_money = 0;
+                    $meal_money = $interact_money = $comment_money = $lottery_money = 0;
                     $last_money = 0.3*$u_task['money'];
                     if($task_meal_num>0 && $meal_num>0){
                         if($u_task['meal_num']+$meal_num>$task_meal_num){
@@ -150,19 +162,27 @@ class UsertaskModel extends BaseModel{
                         }
                         $comment_money = $last_money/$task_num/$task_comment_num * $comment_num;
                     }
-                    if($meal_num>0 || $interact_num>0 || $comment_num>0){
-                        echo "ID:{$v['id']} task_id:{$task_id} box_mac:{$bv['box_mac']} meal_num:$meal_num,interact_num:$interact_num,comment_num:$comment_num \r\n";
+                    if($task_lottery_num>0 && $lottery_num>0){
+                        if($u_task['lottery_num']+$lottery_num>$task_lottery_num){
+                            $lottery_num = $task_lottery_num-$u_task['lottery_num'];
+                        }
+                        $lottery_money = $last_money/$task_num/$task_lottery_num * $lottery_num;
+                    }
 
-                        $get_money = $u_task['get_money'] + $meal_money + $interact_money + $comment_money;
+                    if($meal_num>0 || $interact_num>0 || $comment_num>0 || $lottery_money>0){
+                        echo "ID:{$v['id']} task_id:{$task_id} box_mac:{$bv['box_mac']} meal_num:$meal_num,interact_num:$interact_num,comment_num:$comment_num,lottery_num:$lottery_num \r\n";
+
+                        $get_money = $u_task['get_money'] + $meal_money + $interact_money + $comment_money + $lottery_money;
                         $get_money = sprintf("%.2f",$get_money);
                         $up_usertask_data = array('meal_num'=>$u_task['meal_num']+$meal_num,
                             'interact_num'=>$u_task['interact_num']+$interact_num,
-                            'comment_num'=>$u_task['comment_num']+$comment_num,'get_money'=>$get_money
+                            'comment_num'=>$u_task['comment_num']+$comment_num,'lottery_num'=>$u_task['lottery_num']+$lottery_num,
+                            'get_money'=>$get_money
                         );
 
                         $task_num_eq = 0;
                         if($up_usertask_data['meal_num']==$task_meal_num && $up_usertask_data['interact_num']==$task_interact_num
-                            && $up_usertask_data['comment_num']==$task_comment_num){
+                            && $up_usertask_data['comment_num']==$task_comment_num && $up_usertask_data['lottery_num']==$task_lottery_num){
                             $task_num_eq = 1;
                         }
                         echo "ID:{$v['id']} task_id:{$task_id} money:{$res_task['money']} get_money:$get_money task_num_eq:$task_num_eq \r\n";
@@ -179,7 +199,7 @@ class UsertaskModel extends BaseModel{
                         $add_record_data = array('openid'=>$v['openid'],'hotel_id'=>$bv['hotel_id'],'hotel_name'=>$bv['hotel_name'],
                             'room_id'=>$bv['room_id'],'room_name'=>$bv['room_name'],'box_id'=>$bv['box_id'],'box_name'=>$bv['box_name'],
                             'box_mac'=>$bv['box_mac'],'task_hotel_id'=>$task_hotel_id,'usertask_id'=>$u_task['id'],
-                            'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'type'=>1
+                            'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'lottery_num'=>$lottery_num,'type'=>1
                         );
                         if($dinner_type=='lunch'){
                             $m_usetaskrecord->add($add_record_data);
@@ -190,7 +210,8 @@ class UsertaskModel extends BaseModel{
                             if(!empty($res_ur)){
                                 $add_record_data['meal_num'] = $res_ur['meal_num'] + $add_record_data['meal_num'];
                                 $add_record_data['interact_num'] = $res_ur['interact_num'] + $add_record_data['interact_num'];
-                                $add_record_data['interact_num'] = $res_ur['interact_num'] + $add_record_data['interact_num'];
+                                $add_record_data['comment_num'] = $res_ur['comment_num'] + $add_record_data['comment_num'];
+                                $add_record_data['lottery_num'] = $res_ur['lottery_num'] + $add_record_data['lottery_num'];
                                 $m_usetaskrecord->updateData(array('id'=>$res_ur['id']),$add_record_data);
                             }else{
                                 $m_usetaskrecord->add($add_record_data);

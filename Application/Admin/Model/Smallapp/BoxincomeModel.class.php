@@ -45,9 +45,10 @@ class BoxincomeModel extends BaseModel{
             $res_box = $m_box->getBoxByCondition($bfields,$bwhere);
             if(!empty($res_box)){
                 $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+                $m_activity_apply = new \Admin\Model\Smallapp\ActivityapplyModel();
                 foreach ($res_box as $bv){
                     $dinner_type = 'lunch';
-                    $lunch_meal_num = $lunch_interact_num = $lunch_comment_num = 0;
+                    $lunch_meal_num = $lunch_interact_num = $lunch_comment_num = $lunch_lottery_num = 0;
                     $start_time = date("Y-m-d {$all_meal_time["$dinner_type"][0]}:00",$time_date);
                     $end_time = date("Y-m-d {$all_meal_time["$dinner_type"][1]}:00",$time_date);
                     $forscreen_where = array('a.hotel_id'=>$hotel_id,'a.box_mac'=>$bv['box_mac'],'a.is_valid'=>1);
@@ -75,8 +76,17 @@ class BoxincomeModel extends BaseModel{
                         $lunch_meal_num = 1;
                     }
 
+                    //统计参与抽奖人数
+                    $apply_fields = 'count(a.id) as num';
+                    $apply_where = array('activity.hotel_id'=>$hotel_id,'activity.type'=>1,'a.box_mac'=>$bv['box_mac']);
+                    $apply_where['a.add_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+                    $res_apply = $m_activity_apply->getApplyDatas($apply_fields,$apply_where,'a.id desc','0，1','');
+                    if(!empty($res_apply)){
+                        $lunch_lottery_num = intval($res_apply[0]['num']);
+                    }
+
                     $dinner_type = 'dinner';
-                    $dinner_meal_num = $dinner_interact_num = $dinner_comment_num = 0;
+                    $dinner_meal_num = $dinner_interact_num = $dinner_comment_num = $dinner_lottery_num = 0;
                     $start_time = date("Y-m-d {$all_meal_time["$dinner_type"][0]}:00",$time_date);
                     $end_time = date("Y-m-d {$all_meal_time["$dinner_type"][1]}:00",$time_date);
                     $forscreen_where = array('a.hotel_id'=>$hotel_id,'a.box_mac'=>$bv['box_mac'],'a.is_valid'=>1);
@@ -105,15 +115,23 @@ class BoxincomeModel extends BaseModel{
                         $dinner_meal_num = 1;
                     }
 
+                    //统计参与抽奖人数
+                    $apply_where['a.add_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+                    $res_apply = $m_activity_apply->getApplyDatas($apply_fields,$apply_where,'a.id desc','0，1','');
+                    if(!empty($res_apply)){
+                        $dinner_lottery_num = intval($res_apply[0]['num']);
+                    }
+
                     $meal_num = $lunch_meal_num + $dinner_meal_num;
                     $interact_num = $lunch_interact_num + $dinner_interact_num;
                     $comment_num = $lunch_comment_num + $dinner_comment_num;
-                    if($meal_num>0 || $interact_num>0 || $comment_num>0){
-                        echo "hotel_id:{$bv['hotel_id']}  box_mac:{$bv['box_mac']} meal_num:$meal_num,interact_num:$interact_num,comment_num:$comment_num \r\n";
+                    $lottery_num = $lunch_lottery_num + $dinner_lottery_num;
+                    if($meal_num>0 || $interact_num>0 || $comment_num>0 || $lottery_num>0){
+                        echo "hotel_id:{$bv['hotel_id']}  box_mac:{$bv['box_mac']} meal_num:$meal_num,interact_num:$interact_num,comment_num:$comment_num,lottery_num:$lottery_num \r\n";
                         $static_date = date('Y-m-d',$time_date);
                         $add_data = array('hotel_id'=>$bv['hotel_id'],'hotel_name'=>$bv['hotel_name'],'room_id'=>$bv['room_id'],
                             'room_name'=>$bv['room_name'],'box_id'=>$bv['box_id'],'box_name'=>$bv['box_name'],'box_mac'=>$bv['box_mac'],
-                            'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'static_date'=>$static_date
+                            'meal_num'=>$meal_num,'interact_num'=>$interact_num,'comment_num'=>$comment_num,'lottery_num'=>$lottery_num,'static_date'=>$static_date
                         );
                         $this->add($add_data);
                     }else{
