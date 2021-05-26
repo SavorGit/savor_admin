@@ -25,9 +25,9 @@ class HotellotteryModel extends BaseModel{
             $optime = date('H:i',strtotime($v['timing']));
             if($now_date>=$v['start_date'] && $now_date<=$v['end_date'] && $nowtime==$optime){
                 $now_time_stamp = time();
-                $start_time = date('Y-m-d H:i:s');
-                $end_time = date('Y-m-d H:i:s',$now_time_stamp + (($v['wait_time']-5)*60));
-                $lottery_time = date('Y-m-d H:i:s',$now_time_stamp + ($v['wait_time']*60));
+                $start_time = date('Y-m-d H:i:00');
+                $end_time = date('Y-m-d H:i:00',$now_time_stamp + (($v['wait_time']-5)*60));
+                $lottery_time = date('Y-m-d H:i:00',$now_time_stamp + ($v['wait_time']*60));
 
                 $add_activity_data = array('hotel_id'=>$hotel_id,'name'=>$v['name'],'prize'=>$v['prize'],'image_url'=>$v['image_url'],
                     'start_time'=>$start_time,'end_time'=>$end_time,'lottery_time'=>$lottery_time,'status'=>1,'type'=>4);
@@ -39,10 +39,11 @@ class HotellotteryModel extends BaseModel{
                 $res_box = $m_box->getBoxByCondition('box.id as box_id,box.mac',$bwhere);
                 if(!empty($res_box)){
                     $now_time = time();
-                    $lottery_countdown = strtotime($v['lottery_time']) - $now_time;
+                    $lottery_countdown = strtotime($lottery_time) - $now_time;
                     $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
                     $partakedish_img = $v['image_url'].'?x-oss-process=image/resize,m_mfit,h_200,w_300';
                     $dish_name_info = pathinfo($v['image_url']);
+
                     $netty_msg = array('action'=>135,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($lottery_time)),
                         'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partakedish_img,'partake_filename'=>$dish_name_info['basename'],
                         'partake_name'=>$v['prize'],'activity_name'=>$v['name'],
