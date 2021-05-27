@@ -185,21 +185,30 @@ class SmallappForscreenRecordModel extends Model{
         $m_public->updateInfo($pwhere,$pdata);
 
         if(isset($all_invalidlist[2])){
-            $condition = array('a.openid'=>array('in',$all_invalidlist[2]));
-            $condition['a.mobile_brand'] = array('neq','devtools');
-            $res_userdata = $this->getWhere('a.*',$condition,'','');
-            foreach ($res_userdata as $v){
-                $v['forscreen_record_id'] = $v['id'];
-                unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
-                $m_smallapp_forscreen_invalidrecord->addData($v);
-            }
-            $delcondition = array('openid'=>array('in',$all_invalidlist[2]));
-            $delcondition['mobile_brand'] = array('neq','devtools');
-            $this->where($delcondition)->delete();
+            $all_openids = $all_invalidlist[2];
+            $num = 500;
+            for ($i=0;$i<20;$i++){
+                $offset = $i*$num;
+                $openids = array_slice($all_openids,$offset,$num);
+                if(empty($openids)){
+                    break;
+                }
+                $condition = array('a.openid'=>array('in',$openids));
+                $condition['a.mobile_brand'] = array('neq','devtools');
+                $res_userdata = $this->getWhere('a.*',$condition,'','');
+                foreach ($res_userdata as $v){
+                    $v['forscreen_record_id'] = $v['id'];
+                    unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
+                    $m_smallapp_forscreen_invalidrecord->addData($v);
+                }
+                $delcondition = array('openid'=>array('in',$openids));
+                $delcondition['mobile_brand'] = array('neq','devtools');
+                $this->where($delcondition)->delete();
 
-            $pwhere = array('openid'=>array('in',$all_invalidlist[2]));
-            $pdata = array('status'=>0);
-            $m_public->updateInfo($pwhere,$pdata);
+                $pwhere = array('openid'=>array('in',$openids));
+                $pdata = array('status'=>0);
+                $m_public->updateInfo($pwhere,$pdata);
+            }
         }
         return true;
     }
