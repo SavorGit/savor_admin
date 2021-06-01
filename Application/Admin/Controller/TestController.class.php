@@ -715,6 +715,7 @@ class TestController extends Controller {
     }
 
     public function updateboxcache(){
+        exit;
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
@@ -723,8 +724,7 @@ class TestController extends Controller {
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and box.box_type in(2,3,4)";
-
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //                where hotel.area_id=236 and hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
 //        $sql = "SELECT box.* FROM savor_box box LEFT JOIN savor_room room ON box.room_id=room.id LEFT JOIN savor_hotel hotel ON room.hotel_id=hotel.id WHERE hotel.state=1 AND hotel.flag=0 AND box.state=1 AND box.flag=0 AND box.mac IN (SELECT box_mac FROM savor_smallapp_forscreen_record WHERE small_app_id IN (2,3) AND create_time>='2019-10-01 00:00:00' AND create_time<='2019-12-10 13:00:00' GROUP BY box_mac)";
 
@@ -753,14 +753,14 @@ class TestController extends Controller {
 //                echo $v['mac']." close ok \n";
 //            }
 //            $v['is_interact'] = 0;
-            $v['is_sapp_forscreen'] = 0;
-            $v['is_open_simple'] = 0;
-            $is_open_simple = $v['is_open_simple'];
-            $is_sapp_forscreen = $v['is_sapp_forscreen'];
-            $is_interact = $v['is_interact'];
-            $sql ="update savor_box set is_open_simple=$is_open_simple,is_sapp_forscreen=$is_sapp_forscreen where id=".$v['id'].' limit 1';
+//            $v['is_sapp_forscreen'] = 0;
+//            $v['is_open_simple'] = 0;
+//            $is_open_simple = $v['is_open_simple'];
+//            $is_sapp_forscreen = $v['is_sapp_forscreen'];
+//            $is_interact = $v['is_interact'];
+            $sql ="update savor_box set is_4g={$is_4g} where id=".$v['id'].' limit 1';
             M()->execute($sql);
-            echo $v['mac']." ok \n";
+            echo $v['mac']." is_4g:$is_4g ok \n";
 
 
             $box_info = array();
@@ -2855,6 +2855,23 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $message['headPic'] = base64_encode($user_info['avatarUrl']);
         $res_netty = $m_netty->pushBox($box_mac, json_encode($message));
         echo json_encode($res_netty);
+    }
+
+    public function pushactivity(){
+        $box_mac = '00226D583ECD';
+        $now_time = time();
+        $lottery_time = date('Y-m-d H:i:s',$now_time+3600);
+        $lottery_countdown = strtotime($lottery_time) - $now_time;
+        $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
+
+        $netty_msg = array('action'=>135,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($lottery_time)),
+            'lottery_countdown'=>$lottery_countdown,'partake_img'=>'','partake_filename'=>'',
+            'partake_name'=>'奖品','activity_name'=>'测试霸王餐',
+        );
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac, json_encode($netty_msg));
+        print_r($res_netty);
+        exit;
     }
 
     public function sendsms(){
