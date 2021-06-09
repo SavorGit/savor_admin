@@ -31,7 +31,7 @@ class ExchangeController extends BaseController {
         if($type){
             $where['a.type']=$type;
         }else{
-            $where['a.type']=array('in',array(1,2));
+            $where['a.type']=array('in',array(1,2,3,4));
         }
         if($maintainer_id)    $where['ext.maintainer_id']=$maintainer_id;
         if(!empty($hotel_name)) $where['hotel.name'] = array('like',"%$hotel_name%");
@@ -55,7 +55,7 @@ class ExchangeController extends BaseController {
         $result = $m_order->getExchangeList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
 
-        $types = array(0=>'全部',1=>'兑换',2=>'提现');
+        $types = array(0=>'全部',1=>'兑换',2=>'提现','3'=>'现金任务','4'=>'系统抽奖任务');
         $audit_types = array(99=>'全部',0=>'无需审核',1=>'需审核');
         $audit_status = array(0=>'',1=>'审核通过',2=>'审核不通过');
         $order_status = C('EXCHANGE_STATUS');
