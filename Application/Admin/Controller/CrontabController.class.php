@@ -2717,6 +2717,7 @@ class CrontabController extends Controller
         $redis = SavorRedis::getInstance();
         $redis->select(5);
         $cache_key = C('SAPP_SCRREN')."*";
+        $cancel_forscreen_key = C('SAPP_CANCEL_FORSCREEN');
         $keys = $redis->keys($cache_key);
         $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
         $m_box = new \Admin\Model\BoxModel();
@@ -2750,6 +2751,11 @@ class CrontabController extends Controller
                     if($forscreen_info['resource_size']=='undefined'){
                         $forscreen_info['resource_size'] = 0;
                     }
+                }
+                $cancel_forscreen = $cancel_forscreen_key.$forscreen_info['openid'].'-'.$forscreen_info['forscreen_id'];
+                $res_cancel = $redis->get($cancel_forscreen);
+                if(!empty($res_cancel)){
+                    $forscreen_info['is_cancel_forscreen'] = 1;
                 }
                 $ret = $m_smallapp_forscreen_record->addInfo($forscreen_info,1);
                 if($ret){

@@ -173,7 +173,7 @@ class SmallappForscreenRecordModel extends Model{
 
         foreach ($res_boxdata as $v){
             $v['forscreen_record_id'] = $v['id'];
-            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
+            unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
             $m_smallapp_forscreen_invalidrecord->addData($v);
         }
         $delcondition = array('box_mac'=>array('in',$boxs));
@@ -198,7 +198,7 @@ class SmallappForscreenRecordModel extends Model{
                 $res_userdata = $this->getWhere('a.*',$condition,'','');
                 foreach ($res_userdata as $v){
                     $v['forscreen_record_id'] = $v['id'];
-                    unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
+                    unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],$v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],$v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
                     $m_smallapp_forscreen_invalidrecord->addData($v);
                 }
                 $delcondition = array('openid'=>array('in',$openids));

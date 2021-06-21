@@ -169,20 +169,12 @@ class SappforscreenController extends BaseController {
 	    $quality_types = array('1'=>'标清','2'=>'高清','3'=>'原图','0'=>'');
 
 	    foreach ($list['list'] as $key=>$v){
-
             $list['list'][$key]['quality_typestr'] = $quality_types[$v['quality_type']];
-	        $is_track = 0;
-	        if($v['small_app_id']==1 && !in_array($v['action'],array(13,14,21,50,101,120,121,42,43,44,45,52,54))){
-	            if($v['create_time']>=$track_start_time){
-                    $is_track = 1;
-                }
-            }
             $box_type_str = '';
             if(isset($all_box_types[$v['box_type']])){
                 $box_type_str = $all_box_types[$v['box_type']];
             }
             $list['list'][$key]['box_type_str'] = $box_type_str;
-            $list['list'][$key]['is_track'] = $is_track;
 	        if(isset($all_smallapps[$v['small_app_id']])){
                 $list['list'][$key]['small_app'] = $all_smallapps[$v['small_app_id']];
             }else{
@@ -214,6 +206,12 @@ class SappforscreenController extends BaseController {
 	        }else {
 	            $list['list'][$key]['box_res_edown_time'] = '';
 	        }
+            $is_track = 0;
+            if($v['small_app_id']==1 && !in_array($v['action'],array(13,14,21,50,101,120,121,42,43,44,45,52,54))){
+                if($v['create_time']>=$track_start_time){
+                    $is_track = 1;
+                }
+            }
 	        $is_success_str = '';
 	        $total_time = '';
 	        if($v['small_app_id']==1){
@@ -223,13 +221,17 @@ class SappforscreenController extends BaseController {
                     $is_success_str = $this->success_status[$is_success];
                     $total_time = $res_track['total_time'];
                 }
+                if($v['is_cancel_forscreen']==1){
+                    $is_track = 0;
+                    $is_success_str = '取消投屏';
+                }
             }elseif($v['small_app_id']==2){
 	            if(!empty($list['list'][$key]['res_eup_time'])){
                     $total_time = $list['list'][$key]['res_eup_time'];
                     $is_success_str = '成功';
                 }
             }
-
+            $list['list'][$key]['is_track'] = $is_track;
             $list['list'][$key]['is_success_str'] = $is_success_str;
             $list['list'][$key]['total_time'] = $total_time;
 	        $list['list'][$key]['imgs'] = json_decode(str_replace('\\', '', $v['imgs']),true);

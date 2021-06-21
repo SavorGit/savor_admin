@@ -50,7 +50,7 @@ $config = array(
     'SAPP_FORSCREENTRACK'=>'smallapp:trackforscreen:',
     'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
     'SALEFEAST_TIME'=>array('lunch'=>array('11:00','14:00'),'dinner'=>array('16:45','21:00')),
-
+    'SAPP_CANCEL_FORSCREEN'=>'smallapp:cancelforscreen:',
     'MEAL_TIME'=>array('lunch'=>array('10:00','15:00'),'dinner'=>array('17:00','23:59')),
     'SCAN_QRCODE_TYPES'=>array(1,2,3,5,6,7,8,9,10,11,12,13,15,16,19,20,21,29,30),
 //     scan_qrcode_type 1:小码2:大码(节目)3:手机小程序呼码5:大码（新节目）6:极简版7:主干版桌牌码8:小程序二维码9:极简版节目大码
@@ -325,7 +325,7 @@ $config['all_forscreen_actions'] = array(
     '31'=>'投屏文件图片',
     '40'=>'投销售端商品',
     '41'=>'投屏欢迎词',
-    '42'=>'商务宴请欢迎词',
+    '42'=>'欢迎词',
     '43'=>'生日聚会欢迎词',
     '44'=>'分享文件到电视',
     '45'=>'分享名片到电视',
