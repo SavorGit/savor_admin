@@ -442,7 +442,12 @@ class GoodsController extends BaseController {
                     $dinfo['label2'] = $labels[1];
                     $dinfo['label3'] = $labels[2];
                 }
-
+                $imgoss_addr = '';
+                if($dinfo['imgmedia_id']){
+                    $img_media_info = $m_media->getMediaInfoById($dinfo['imgmedia_id']);
+                    $imgoss_addr = $img_media_info['oss_addr'];
+                }
+                $dinfo['imgoss_addr'] = $imgoss_addr;
                 $dinfo['oss_addr'] = $media_info['oss_addr'];
                 $dinfo['media_type'] = $media_info['type'];
                 $dinfo['start_date'] = date('Y-m-d',strtotime($dinfo['start_time']));
@@ -483,8 +488,10 @@ class GoodsController extends BaseController {
             $name = I('post.name','','trim');
             $wx_category = I('post.wx_category','','trim');
             $price = I('post.price',0,'intval');
+            $line_price = I('post.line_price',0,'intval');
             $rebate_integral = I('post.rebate_integral',0,'intval');
             $jd_url = I('post.jd_url','','trim');
+            $page_url = I('post.page_url','','trim');
             $start_date = I('post.start_date','');
             $end_date = I('post.end_date','');
             $media_id = I('post.media_id',0);
@@ -523,7 +530,6 @@ class GoodsController extends BaseController {
                 $this->output('名称不能重复', "goods/$template_html", 2, 0);
             }
 
-            $page_url = '';
             $item_id = 0;
             if($appid){
                 $m_sysconfig = new \Admin\Model\SysConfigModel();
@@ -571,7 +577,7 @@ class GoodsController extends BaseController {
                     $page_url = $jd_url;
                 }
             }
-            $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
+            $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'line_price'=>$line_price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
                 'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'imgmedia_id'=>$imgmedia_id,'show_status'=>$show_status,'status'=>$status,'is_storebuy'=>$is_storebuy);
             if($appid){
                 $data['appid'] = $appid;
@@ -648,11 +654,32 @@ class GoodsController extends BaseController {
                     $m_hotelgoods->HandleGoodsperiod($goods_id);
                     break;
                 case 40:
+                    /*
                     $m_urlmap  = new \Admin\Model\UrlmapModel();
                     $where = array('short_link'=>$jd_url);
                     $res_url = $m_urlmap->getInfo($where);
                     if(!empty($res_url)){
                         $m_urlmap->updateData(array('id'=>$res_url['id']),array('goods_id'=>$goods_id));
+                    }
+                    */
+                    $cover_imgs = '';
+                    if($imgmedia_id){
+                        $m_media = new \Admin\Model\MediaModel();
+                        $media_info = $m_media->getMediaInfoById($imgmedia_id);
+                        $cover_imgs = $media_info['oss_path'];
+                    }
+                    $d_data = array('name'=>$name,'price'=>$price,'line_price'=>$line_price,'cover_imgs'=>$cover_imgs,'tv_media_id'=>$media_id,'amount'=>999,'type'=>40,'status'=>1,'flag'=>2);
+                    if($status!=2){
+                        $d_data['status'] = 2;
+                        $d_data['flag'] = 3;
+                    }
+                    $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+                    $res_dishgoods = $m_dishgoods->getInfo(array('id'=>$goods_id));
+                    if(empty($res_dishgoods)){
+                        $d_data['id'] = $goods_id;
+                        $m_dishgoods->add($d_data);
+                    }else{
+                        $m_dishgoods->updateData(array('id'=>$goods_id),$d_data);
                     }
                     $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
                     $m_hotelgoods->HandleGoodsperiod($goods_id);

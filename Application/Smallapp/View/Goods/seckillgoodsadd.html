@@ -22,9 +22,36 @@
 				</div>
 			</div>
 
-			<div class="form-group row" id="defaultpic"  >
+			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
 					图片：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="javascript:void(0)">
+								<if condition="($vinfo['imgoss_addr'] eq 'NULL') OR $vinfo['imgoss_addr'] eq ''">
+									<img id="imgmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									<else />
+									<img id="imgmedia_idimg" src="{$vinfo.imgoss_addr}" border="0" />
+								</if>
+								<span id="imgmedia_idimgname"></span>
+							</a>
+						</div>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=imgmedia_id&rtype=2" data-browse-file>
+								选择图片
+							</a>
+							<input type="hidden" name="imgmedia_id" id="imgmedia_id" value="{$vinfo.imgmedia_id}" >
+							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" >
+				<label class="col-xs-12 col-sm-2 control-label">
+					大屏图片：
 				</label>
 				<div class="col-xs-12 col-sm-10">
 					<div class="fileinput fileinput-new" data-fileinput>
@@ -49,7 +76,7 @@
 				</div>
 			</div>
 
-			<div class="form-group row" id="goods_price">
+			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">价格：</label>
 				<div class="col-xs-12 col-sm-10">
 					<input name="price" type="text" value="{$vinfo.price}" class="form-control" />
@@ -57,9 +84,16 @@
 			</div>
 
 			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">链接URL：</label>
+				<label class="col-xs-12 col-sm-2 control-label">京东价格：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="jd_url" type="text" value="{$vinfo.jd_url}" class="form-control"/>
+					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">京东比价小程序地址：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="page_url" type="text" value="{$vinfo.page_url}" class="form-control"/>
 				</div>
 			</div>
 
