@@ -11,6 +11,7 @@ class ActivityController extends BaseController {
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
         $status = I('status',99,'intval');
+        $type = I('type',0,'intval');
         $hotel_name = I('hotel_name','','trim');
         $start_date = I('start_date','');
         $end_date = I('end_date','');
@@ -32,6 +33,9 @@ class ActivityController extends BaseController {
         if($hotel_name){
             $where['hotel.name'] = array('like',"%{$hotel_name}%");
         }
+        if($type){
+            $where['a.type'] = $type;
+        }
         $start = ($pageNum-1)*$size;
         $fields = 'a.*,hotel.name as hotel_name';
         $orderby = 'a.id desc';
@@ -39,17 +43,27 @@ class ActivityController extends BaseController {
         $res_list = $m_activity->getList($fields,$where,$orderby,$start,$size);
         $data_list = $res_list['list'];
         $all_status = C('ACTIVITY_STATUS');
+        $all_activity = array('1'=>'霸王餐抽奖','2'=>'普通抽奖','3'=>'系统抽奖','4'=>'系统霸王餐抽奖','5'=>'聚划算活动');
         if(!empty($data_list)){
             $oss_host = 'http://'.C('OSS_HOST_NEW');
+            $now_time = time();
             $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
             foreach ($data_list as $k=>$v){
-                $data_list[$k]['image_url'] = $oss_host.'/'.$v['image_url'];
-                $data_list[$k]['status_str'] = $all_status[$v['status']];
                 if($v['type']==3){
                     $data_list[$k]['status_str'] = '';
                 }
+                if($v['type']==5){
+                    $data_list[$k]['prize'] = "1.{$v['prize']} 2.{$v['attach_prize']}";
+                    if($v['status']==1){
+                        $expire_time = strtotime($v['add_time']) + 3600;
+                        if($now_time>$expire_time){
+                            $v['status'] = 2;
+                            $m_activity->updateData(array('id'=>$v['id']),array('status'=>2));
+                        }
+                    }
+                }
                 $nums = 0;
-                if($v['type']==3 || in_array($v['status'],array(1,2))){
+                if(in_array($v['type'],array(3,5)) || in_array($v['status'],array(1,2))){
                     $where = array('activity_id'=>$v['id']);
                     $res_num = $m_activityapply->getAll('count(id) as num',$where,0,1,'','');
                     if(!empty($res_num)){
@@ -57,10 +71,13 @@ class ActivityController extends BaseController {
                     }
                 }
                 $data_list[$k]['nums'] = $nums;
+                $data_list[$k]['image_url'] = $oss_host.'/'.$v['image_url'];
+                $data_list[$k]['status_str'] = $all_status[$v['status']];
             }
         }
 
-
+        $this->assign('type',$type);
+        $this->assign('all_activity',$all_activity);
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('hotel_name',$hotel_name);

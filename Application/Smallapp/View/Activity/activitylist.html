@@ -47,6 +47,18 @@
               </div>
 
               <div class="form-group">
+                  <div class="input-group input-group-sm">类型：</div>
+                  <div class="input-group">
+                      <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                          <option value=0>全部</option>
+                          <volist name="all_activity" id="ainfo">
+                              <option value="{$key}" <if condition="$key eq $type">selected</if>> {$ainfo}</option>
+                          </volist>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="form-group">
                   <div class="input-group input-group-sm pull-right">
                     <span class="input-group-btn">
                       <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
