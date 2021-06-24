@@ -1636,7 +1636,14 @@ class HotelController extends BaseController {
 			        sendTopicMessage($save['hotel_id'], 7);
 			    }
 			     
+			    //新虚拟小平台接口
+			    $redis->select(10);
+			    $v_adv_key = C('VSMALL_ADV');
+			    $keys_arr = $redis->keys($v_adv_key.$save['hotel_id']."*");
 			    
+			    foreach($keys_arr as $vv){
+			        $redis->remove($vv);
+			    }
 			    
 			    //期刊
 			    $mbperModel = new \Admin\Model\MbPeriodModel();
@@ -1678,6 +1685,15 @@ class HotelController extends BaseController {
 			    //如果该酒楼在虚拟小平台 通知更新虚拟小平台该酒楼的宣传片
 			    if(in_array($save['hotel_id'], $tmp_hotel_arr)){
 			        sendTopicMessage($save['hotel_id'], 7);
+			    }
+			    
+			    //新虚拟小平台接口
+			    $redis->select(10);
+			    $v_adv_key = C('VSMALL_ADV');
+			    $keys_arr = $redis->keys($v_adv_key.$save['hotel_id']."*");
+			    
+			    foreach($keys_arr as $vv){
+			        $redis->remove($vv);
 			    }
 			    
 			    //期刊
