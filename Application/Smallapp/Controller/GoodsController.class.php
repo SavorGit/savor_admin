@@ -447,6 +447,12 @@ class GoodsController extends BaseController {
                     $img_media_info = $m_media->getMediaInfoById($dinfo['imgmedia_id']);
                     $imgoss_addr = $img_media_info['oss_addr'];
                 }
+                $saleoss_addr = '';
+                if($dinfo['salemedia_id']){
+                    $sale_media_info = $m_media->getMediaInfoById($dinfo['salemedia_id']);
+                    $saleoss_addr = $sale_media_info['oss_addr'];
+                }
+                $dinfo['saleoss_addr'] = $saleoss_addr;
                 $dinfo['imgoss_addr'] = $imgoss_addr;
                 $dinfo['oss_addr'] = $media_info['oss_addr'];
                 $dinfo['media_type'] = $media_info['type'];
@@ -496,6 +502,7 @@ class GoodsController extends BaseController {
             $end_date = I('post.end_date','');
             $media_id = I('post.media_id',0);
             $imgmedia_id = I('post.imgmedia_id',0);
+            $salemedia_id = I('post.salemedia_id',0);
             $status = I('post.status',1,'intval');
             $is_storebuy = I('post.is_storebuy',0,'intval');
             $clicktype = I('post.clicktype',0,'intval');
@@ -578,7 +585,7 @@ class GoodsController extends BaseController {
                 }
             }
             $data = array('type'=>$type,'name'=>$name,'wx_category'=>$wx_category,'price'=>$price,'line_price'=>$line_price,'rebate_integral'=>$rebate_integral,'jd_url'=>$jd_url,
-                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'imgmedia_id'=>$imgmedia_id,'show_status'=>$show_status,'status'=>$status,'is_storebuy'=>$is_storebuy);
+                'item_id'=>$item_id,'page_url'=>$page_url,'media_id'=>$media_id,'imgmedia_id'=>$imgmedia_id,'salemedia_id'=>$salemedia_id,'show_status'=>$show_status,'status'=>$status,'is_storebuy'=>$is_storebuy);
             if($appid){
                 $data['appid'] = $appid;
             }
@@ -668,7 +675,8 @@ class GoodsController extends BaseController {
                         $media_info = $m_media->getMediaInfoById($imgmedia_id);
                         $cover_imgs = $media_info['oss_path'];
                     }
-                    $d_data = array('name'=>$name,'price'=>$price,'line_price'=>$line_price,'cover_imgs'=>$cover_imgs,'tv_media_id'=>$media_id,'amount'=>999,'type'=>40,'status'=>1,'flag'=>2);
+                    $d_data = array('name'=>$name,'price'=>$price,'line_price'=>$line_price,'cover_imgs'=>$cover_imgs,
+                        'tv_media_id'=>$media_id,'merchant_id'=>92,'amount'=>999,'type'=>40,'status'=>1,'flag'=>2);
                     if($status!=2){
                         $d_data['status'] = 2;
                         $d_data['flag'] = 3;
