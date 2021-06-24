@@ -15,6 +15,7 @@ class SaleuserController extends BaseController {
     public function userlist(){
         $openid = I('openid','','trim');
         $hotel_name = I('hotel_name','','trim');
+        $uname = I('uname','','trim');
         $small_app_id = I('small_app_id',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
@@ -26,6 +27,9 @@ class SaleuserController extends BaseController {
         if(!empty($hotel_name)){
             $where['hotel.name'] = array('like',"%$hotel_name%");
         }
+        if(!empty($uname)){
+            $where['u.nickName'] = array('like',"%$uname%");
+        }
         $start = ($pageNum-1)*$size;
         $m_staffuser = new \Admin\Model\Integral\StaffModel();
         $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,hotel.name as hotel_name,u.create_time,i.integral";
@@ -36,6 +40,7 @@ class SaleuserController extends BaseController {
             $data_list[$k]['integral'] = intval($v['integral']);
         }
 
+        $this->assign('uname',$uname);
         $this->assign('hotel_name',$hotel_name);
         $this->assign('openid',$openid);
         $this->assign('data',$data_list);
@@ -181,9 +186,55 @@ class SaleuserController extends BaseController {
             $this->assign('max_integral',$max_integral);
             $this->display('addintegral');
         }
-
-
     }
+
+    public function changemerchant(){
+        $openid = I('openid','','trim');
+        $m_staffuser = new \Admin\Model\Integral\StaffModel();
+        $fields = 'a.id,a.merchant_id,a.level';
+        $where = array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1);
+        $res_staff = $m_staffuser->getMerchantStaffInfo($fields,$where);
+        if(IS_POST){
+            $merchant_id = I('post.merchant_id',0,'intval');
+            $level = I('post.level',0,'intval');
+            $msg = '修改成功';
+            if($res_staff['level']!=$level || $res_staff['merchant_id']!=$merchant_id){
+                $res_pstaff = array();
+                if($level==2){
+                    $where = array('m.id'=>$merchant_id,'a.status'=>1,'a.level'=>1);
+                    $res_pstaff = $m_staffuser->getMerchantStaffInfo('a.id',$where);
+                }elseif($level==3){
+                    $where = array('m.id'=>$merchant_id,'a.status'=>1,'a.level'=>2);
+                    $res_pstaff = $m_staffuser->getMerchantStaffInfo('a.id',$where);
+                }
+                if(!empty($res_pstaff)){
+                    $parent_id = $res_pstaff['id'];
+                    $updata = array('parent_id'=>$parent_id,'merchant_id'=>$merchant_id,'level'=>$level,'hotel_id'=>0,'room_ids'=>'');
+                    $m_staffuser->updateData(array('id'=>$res_staff['id']),$updata);
+                    $msg = '修改级别成功';
+                }
+            }
+            $this->output($msg, 'saleuser/userlist');
+        }else{
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $fields = "id,avatarUrl,nickName";
+            $userinfo = $m_user->getOne($fields,array('openid'=>$openid),'id desc');
+            $userinfo['level'] = $res_staff['level'];
+            $userinfo['merchant_id'] = $res_staff['merchant_id'];
+
+            $m_merchant = new \Admin\Model\Integral\MerchantModel();
+            $fields = 'a.id as merchant_id,hotel.name as name';
+            $where = array('a.type'=>2,'a.mtype'=>1,'a.status'=>1);
+            $res_merchant = $m_merchant->getMerchants($fields,$where,'a.id desc');
+
+            $this->assign('mlist',$res_merchant);
+            $this->assign('userinfo',$userinfo);
+            $this->assign('openid',$openid);
+            $this->display('changemerchant');
+        }
+    }
+
+
 
 
 }
