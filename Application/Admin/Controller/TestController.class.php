@@ -2857,19 +2857,79 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo json_encode($res_netty);
     }
 
-    public function pushactivity(){
+    public function startju(){
         $box_mac = '00226D583ECD';
-        $now_time = time();
-        $lottery_time = date('Y-m-d H:i:s',$now_time+3600);
-        $lottery_countdown = strtotime($lottery_time) - $now_time;
-        $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'a.name as hotel_name,ext.hotel_cover_media_id';
+        $res_hotel_ext = $m_hotel->getHotelInfo($field,array('a.id'=>7));
+        $m_media = new \Admin\Model\MediaModel();
+        $res_media = $m_media->getMediaInfoById($res_hotel_ext['hotel_cover_media_id']);
+        $headPic = base64_encode($res_media['oss_addr']);
 
-        $netty_msg = array('action'=>135,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($lottery_time)),
-            'lottery_countdown'=>$lottery_countdown,'partake_img'=>'','partake_filename'=>'',
-            'partake_name'=>'奖品','activity_name'=>'测试霸王餐',
-        );
+        $m_box = new \Admin\Model\BoxModel();
+        $res_box = $m_box->getHotelInfoByBoxMac($box_mac);
+        $code_url = "http://mobile.littlehotspot.com//Smallapp46/qrcode/getBoxQrcode?box_id={$res_box['box_id']}&box_mac={$box_mac}&data_id=10557&type=39";
+        $message = array('action'=>151,'countdown'=>120,'nickName'=>$res_hotel_ext['hotel_name'],'headPic'=>$headPic,'codeUrl'=>$code_url);
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
-        $res_netty = $m_netty->pushBox($box_mac, json_encode($netty_msg));
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        echo json_encode($message);
+        print_r($res_netty);
+        exit;
+    }
+
+    public function pushgoods(){
+        $box_mac = '00226D583ECD';
+        $code_url = 'http://mobile.littlehotspot.com/smallapp46/qrcode/getBoxQrcode?box_mac=00226D583D92&box_id=13384&data_id=622&type=24';
+        $message = array('action'=>40,'goods_id'=>622,'qrcode_url'=>$code_url);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        print_r($res_netty);
+    }
+
+    public function pushjuactivity(){
+        $all_boxs = array('00226D584189','00226D583D92');
+        $m_box = new \Admin\Model\BoxModel();
+        $fields = 'box.id as box_id,box.mac as box_mac,hotel.id as hotel_id,hotel.name as hotel_name';
+        $where = array('box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
+        $where['box.mac'] = array('in',$all_boxs);
+        $res_boxs = $m_box->getBoxByCondition($fields,$where);
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $m_media = new \Admin\Model\MediaModel();
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        foreach ($res_boxs as $v){
+            $res_hotel_ext = $m_hotel_ext->getInfo(array('hotel_id'=>$v['hotel_id']));
+            $res_media = $m_media->getMediaInfoById($res_hotel_ext['hotel_cover_media_id']);
+            $headPic = base64_encode($res_media['oss_addr']);
+
+            $awhere = array('hotel_id'=>$v['hotel_id'],'box_mac'=>$v['box_mac'],'status'=>0,'type'=>5);
+            $res_activity = $m_activity->getAll('*',$awhere,0,1,'id desc');
+            if(!empty($res_activity)){
+                $activity_id = $res_activity[0]['id'];
+            }else{
+                $add_data = array('hotel_id'=>$v['hotel_id'],'box_mac'=>$v['box_mac'],'name'=>'幸运大奖',
+                    'prize'=>'免费品鉴赖茅生肖酒一次','attach_prize'=>'厂家直销价9.5折优惠并赠送100元菜品',
+                    'type'=>5);
+                $activity_id = $m_activity->add($add_data);
+            }
+            $code_url = "http://mobile.littlehotspot.com//Smallapp46/qrcode/getBoxQrcode?box_id={$v['box_id']}&box_mac={$v['box_mac']}&data_id={$activity_id}&type=39";
+            $message = array('action'=>151,'countdown'=>120,'nickName'=>$v['hotel_name'],'headPic'=>$headPic,'codeUrl'=>$code_url);
+            $res_netty = $m_netty->pushBox($v['box_mac'],json_encode($message));
+            $now_time = date('Y-m-d H:i:s');
+            echo "$now_time box_mac:{$v['box_mac']} activity_id:$activity_id netty_result:".json_encode($res_netty)." \r\n";
+        }
+
+    }
+
+    public function endju(){
+        $box_mac = '00226D583ECD';
+        $prize_list = array('1.赖茅生肖酒试喝120ml','2.赖茅生肖酒购买9.5折');
+        $price = '854';
+        $jd_price = '898';
+        $message = array('action'=>152,'countdown'=>60,'prize_list'=>$prize_list,'price'=>$price,'jd_price'=>$jd_price);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        echo json_encode($message);
         print_r($res_netty);
         exit;
     }
@@ -2884,6 +2944,17 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             print_r($res);
         }
         echo "ok";
+    }
+
+    public function resetlaimaogoods(){
+        $goods_id = 622;
+        $m_goods = new \Admin\Model\Smallapp\GoodsModel();
+        $d_data = array('start_time'=>date('Y-m-d 00:00:00'),'end_time'=>date('Y-m-d 23:59:59'));
+
+        $m_goods->updateData(array('id'=>$goods_id),$d_data);
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $m_hotelgoods->HandleGoodsperiod($goods_id);
+        echo 'now_time:'.date('Y-m-d H:i:s')."\r\n";
     }
 
 }
