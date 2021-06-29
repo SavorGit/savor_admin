@@ -934,6 +934,7 @@ $config['INTEGRAL_TYPES'] = array(
     8=>'评价补贴',
     9=>'分配',
 );
+$config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目',"2"=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
 
 $config['RD_TEST_HOTEL'] =
     array (
