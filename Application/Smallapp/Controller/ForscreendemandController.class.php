@@ -34,7 +34,7 @@ class ForscreendemandController extends BaseController {
         if(IS_POST){
             $area_id = I('post.area_id',0,'intval');
             $resource_cate = I('post.resource_cate',0,'intval');
-            $resource_name = I('post.resource_name','');
+            $resource_name = I('post.resource_name','trim');
             $start_date = I('post.start_date');
             $end_date   = I('post.end_date');
             if($start_date>$end_date){
@@ -146,6 +146,8 @@ class ForscreendemandController extends BaseController {
         
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
+        $this->assign('sta_start_date','2021-06-01');
+        $this->assign('sta_end_date',$yesday);
         $this->display();
     }
     
