@@ -15,6 +15,76 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
 
+    public function clearFnums(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $cache_key = C('SAPP_FORSCREEN_NUMS')."*";
+        $keys = $redis->keys($cache_key);
+        foreach($keys as $v){
+            $k_arr = explode(':', $v);
+            $openid = $k_arr[3];
+            $user_info = $m_user->getOne('is_interact', array('openid'=>$openid));
+            if(!empty($user_info) && $user_info['is_interact']==1){
+                $redis->remove($v);
+            }else {
+                
+                
+                $forscreen_nums_list = $redis->lgetrange($v,0,-1);
+                $nums_data = array();
+                foreach($forscreen_nums_list as $kk=>$vv){
+                    $vv = json_decode($vv,true);
+                    $nums_data[] = $vv['forscreen_id'];
+                }
+                
+                
+                
+                $forscreen_nums = count($nums_data);
+                if($forscreen_nums>=5){
+                    $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>1));
+                    $redis->remove($v);
+                }
+            }
+        }
+        
+        echo "ok";exit;
+        exit;
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        
+        $forscreen_nums_cache_key = C('SAPP_FORSCREEN_NUMS').'ofYZG4yZJHaV2h3lJHG5wOB9MzxE';
+        $forscreen_nums_list = $redis->lgetrange($forscreen_nums_cache_key,0,-1);
+        $nums_data = array();
+        foreach($forscreen_nums_list as $key=>$v){
+            $v = json_decode($v,true);
+            $nums_data[] = $v['forscreen_id'];
+        }
+        print_r($nums_data);exit;
+        $forscreen_nums = count($nums_data);
+        print_r($forscreen_nums);exit;
+        
+        
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $cache_key = C('SAPP_FORSCREEN_NUMS')."*";
+        $keys = $redis->keys($cache_key);
+        foreach($keys as $v){
+            $k_arr = explode(':', $v);
+            $openid = $k_arr[3];
+            $user_info = $m_user->getOne('is_interact', array('openid'=>$openid));
+            
+            if(!empty($user_info) && $user_info['is_interact']==1){
+                $redis->remove($v);
+            }else {
+                $forscreen_nums = $redis->get($v);
+                if($forscreen_nums>=5){
+                    $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>1));
+                    $redis->remove($v);
+                }
+            }
+        }
+        echo 'ok';
+    }
     public function checkOutIp(){
         $redis = SavorRedis::getInstance();
         $redis->select(13);

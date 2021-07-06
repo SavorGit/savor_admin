@@ -715,6 +715,7 @@ $config['SAPP_WANT_GAME']        = 'smallapp:wantgame';
 $config['SAPP_SUNCODE_LOG']      = 'smallapp:suncodelog:';
 $config['SAPP_SCRREN_SHARE']     = 'smallapp:public:forscreen:';
 $config['SAPP_HISTORY_SCREEN']   = 'smallapp:history:forscreen:';
+$config['SAPP_FORSCREEN_NUMS']   = 'smallapp:interact:nums:';
 $config['SAPP_PAGEVIEW_LOG']     ='smallap:pageview:log:';
 $config['VM_HOTEL_LIST']         ='vsmall_hotel_list';
 $config['SAPP_BIRTHDAYDEMAND']   = 'smallapp:birthdaydemand';
