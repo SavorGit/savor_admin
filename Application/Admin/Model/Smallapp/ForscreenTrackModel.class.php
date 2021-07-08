@@ -124,7 +124,7 @@ class ForscreenTrackModel extends BaseModel{
                             $v['forscreen_record_id'] = $v['id'];
                             unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
                                 $v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],
-                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
+                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
                             $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
                             if($res_invalid){
                                 $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
@@ -140,7 +140,6 @@ class ForscreenTrackModel extends BaseModel{
         $start_time = date("Y-m-d 00:00:00");
         $hourtime = date("Y-m-d H", strtotime("-2 hour"));
         $end_time = "$hourtime:59:59";
-
         $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
         $m_heart_log = new \Admin\Model\HeartLogModel();
         $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
@@ -258,7 +257,7 @@ class ForscreenTrackModel extends BaseModel{
                             $v['forscreen_record_id'] = $v['id'];
                             unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
                                 $v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],
-                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time']);
+                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
                             $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
                             if($res_invalid){
                                 $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));

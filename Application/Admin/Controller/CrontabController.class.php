@@ -2746,7 +2746,7 @@ class CrontabController extends Controller
                     $forscreen_info['is_4g']      = $box_info['is_4g'];
                     $forscreen_info['box_type']   = $box_info['box_type'];
                     $forscreen_info['hotel_box_type'] = $box_info['hotel_box_type'];
-                    $forscreen_info['hotel_is_4g']= $box_info['hotel_is_4g'];    
+                    $forscreen_info['hotel_is_4g']= $box_info['hotel_is_4g'];
                     $forscreen_info['box_name']   = $box_info['box_name'];
                     if($forscreen_info['resource_size']=='undefined'){
                         $forscreen_info['resource_size'] = 0;
@@ -2765,7 +2765,7 @@ class CrontabController extends Controller
             $data = $redis->lgetrange($k,0,-1);
             if(empty($data)) $redis->remove($k);
         }
-	    $cache_key = C('SAPP_UPRES_FORSCREEN')."*";
+        $cache_key = C('SAPP_UPRES_FORSCREEN')."*";
         $keys = $redis->keys($cache_key);
         foreach($keys as $k){
             $data = $redis->lgetrange($k, 0, -1);
@@ -2774,7 +2774,7 @@ class CrontabController extends Controller
                 $where = $data = array();
                 if(!empty($upresource['resource_id']) && !empty($upresource['openid'])){
                     $where['action'] = array('neq',8);
-		            $where['resource_id'] = $upresource['resource_id'];
+                    $where['resource_id'] = $upresource['resource_id'];
                     $where['openid'] = $upresource['openid'];
                     if(!empty($upresource['box_res_sdown_time'])){
                         $data['box_res_sdown_time'] = $upresource['box_res_sdown_time'];
@@ -2784,12 +2784,12 @@ class CrontabController extends Controller
                     }
                     $ret = $m_smallapp_forscreen_record->updateInfo($where, $data);
                     if($ret) $redis->lpop($k);
-                } 
+                }
             }
             $ret = $redis->lgetrange($k,0,-1);
             if(empty($ret)) $redis->remove($k);
         }
-	    $cache_key = C('SAPP_UPDOWN_FORSCREEN')."*";
+        $cache_key = C('SAPP_UPDOWN_FORSCREEN')."*";
         $keys = $redis->keys($cache_key);
         foreach($keys as $k){
             $data = $redis->lgetrange($k, 0, -1);
@@ -2813,7 +2813,7 @@ class CrontabController extends Controller
             $ret = $redis->lgetrange($k,0,-1);
             if(empty($ret)) $redis->remove($k);
         }
-	    $cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
+        $cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
         $keys = $redis->keys($cache_key);
         foreach($keys as $k){
             $data = $redis->lgetrange($k, 0, -1);
@@ -2841,6 +2841,8 @@ class CrontabController extends Controller
                             if(!empty($netresource['box_res_edown_time'])){
                                 $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
                             }
+                            if(!empty($netresource['box_playstime']))  $dt['box_playstime'] = $netresource['box_playstime'];
+                            if(!empty($netresource['box_playetime']))  $dt['box_playetime'] = $netresource['box_playetime'];
                             $dt['is_exist'] = intval($netresource['is_exist']);
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
@@ -2848,24 +2850,34 @@ class CrontabController extends Controller
                         }
                     }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
                         $where = $dt = array();
-                        //$where['action'] = array('neq',8);
                         $where['forscreen_id'] = $netresource['forscreen_id'];
                         if($netresource['resource_id']){
                             $where['resource_id'] = $netresource['resource_id'];
                         }
                         $where['openid'] = $netresource['openid'];
+
+                        if(!empty($netresource['box_playstime']))  $dt['box_playstime'] = $netresource['box_playstime'];
+                        if(!empty($netresource['box_playetime']))  $dt['box_playetime'] = $netresource['box_playetime'];
                         $dt['is_exist'] = intval($netresource['is_exist']);
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
                         $redis->lpop($k);
                     }else{
                         if(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && !empty($netresource['box_finish_downtime'])){
-                            $where = array();
-                            $where['forscreen_id'] = $netresource['forscreen_id'];
-                            $where['resource_id'] = $netresource['resource_id'];
-                            $where['openid'] = $netresource['openid'];
+                            $where = array('forscreen_id'=>$netresource['forscreen_id'],'resource_id'=>$netresource['resource_id'],'openid'=>$netresource['openid']);
                             $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
                             $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            $redis->lpop($k);
+                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && (!empty($netresource['box_play_stime']) || !empty($netresource['box_play_etime']))){
+                            $where = array('forscreen_id'=>$netresource['forscreen_id'],'resource_id'=>$netresource['resource_id'],'openid'=>$netresource['openid']);
+                            if(!empty($netresource['box_play_stime'])){
+                                $box_data = array('box_play_stime'=>$netresource['box_play_stime']);
+                                $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            }
+                            if(!empty($netresource['box_play_etime'])){
+                                $box_data = array('box_play_etime'=>$netresource['box_play_etime']);
+                                $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            }
                             $redis->lpop($k);
                         }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['openid']) && !empty($netresource['box_play_time'])){
                             $where = array();
@@ -2904,7 +2916,6 @@ class CrontabController extends Controller
             }
         }
         echo "OK";
-        
     }
     public function recordPlayGameTime(){
         $redis = SavorRedis::getInstance();
@@ -3750,6 +3761,14 @@ class CrontabController extends Controller
         $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
         $m_publicplay->handle_public_play();
         echo "pushpublicplay end:$now_time \r\n";
+    }
+
+    public function pushpublicnowplay(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushpublicplaynow start:$now_time \r\n";
+        $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
+        $m_publicplay->handle_publicnow_play();
+        echo "pushpublicplaynow end:$now_time \r\n";
     }
 
     public function forscreen4gbox(){

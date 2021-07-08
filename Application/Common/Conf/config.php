@@ -369,8 +369,18 @@ $config['SAPP_QRCODE_TYPE_ARR'] = array(
     array('id'=>'20','name'=>'极简版节目大二维码'),
     array('id'=>'21','name'=>'极简版呼二维码'),
     array('id'=>'33','name'=>'主干版公众号二维码')
-
-    
+);
+$config['PUBLIC_PLAY_PROMPTLY']=array(
+    3=>'连续播放3次(每次间隔5分钟)',
+    5=>'连续播放5次(每次间隔5分钟)',
+);
+$config['HOTEL_KM'] = array(
+    10001=>array('id'=>10001,'name'=>'1km','km'=>'1'),
+    10003=>array('id'=>10003,'name'=>'3km','km'=>'3'),
+    10005=>array('id'=>10005,'name'=>'5km','km'=>'5'),
+    10010=>array('id'=>10010,'name'=>'10km','km'=>'10'),
+    10020=>array('id'=>10020,'name'=>'20km','km'=>'20'),
+    10050=>array('id'=>10050,'name'=>'50km','km'=>'50'),
 );
 $config['all_spotstatus'] = array(
     '1'=>'现场',

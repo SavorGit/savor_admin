@@ -208,9 +208,21 @@
                 </div>
             </div>
         </div>
+        <div class="form-group row" style="margin-top: 20px;margin-left: 17px;background-color:#c7c7c7;padding-top: 13px;">
+            <label class="col-xs-12 control-label">投放方式一</label>
+            <div class="form-group row" style="margin-top: 33px;">
+                <label style="float: left;margin-top: 8px;">立即播放</label>
+                <select name="playnow_num" id="cishu" style="float: left;width: 170px;height: 30px;margin-left: 11px;">
+                    <option value="0" >无</option>
+                    <volist name=":C('PUBLIC_PLAY_PROMPTLY')" id="pp">
+                        <option value="{$key}" <if condition="$playinfo.playnow_num eq $key">selected</if> >{$pp}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
 
         <div class="form-group row" style="margin-top: 20px;margin-left: 17px;background-color:#c7c7c7;padding-top: 13px;">
-            <label class="col-xs-12 control-label">投放方式</label>
+            <label class="col-xs-12 control-label">投放方式二</label>
             <div class="form-group row" style="margin-top: 33px;">
                 <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 8px;">播放日期</label>
                 <div class="input-group input-group-sm date form_datetime" id="datetimepicker" data-ymd="true"  data-date="{$playinfo.start_date}" style="width:250px; float: left;">
@@ -294,7 +306,10 @@
                         <select name="" class="cityId">
                             <option value=0>所有城市</option>
                             <volist name="areainfo" id="vo">
-                                <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                                <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                            </volist>
+                            <volist name=":C('HOTEL_KM')" id="hk">
+                                <option value="{$hk.id}" <if condition="$hk.id eq $area_id">selected</if>>附近-{$hk.name}</option>
                             </volist>
                         </select>
                     </div>
@@ -777,16 +792,15 @@
         $('.position-list').html('');
         $.ajax({
             type:"post",
-            url:honame+"/advdelivery/getOcupHotel",
+            url:honame+"/commondata/getHotels",
             dataType:"json",
-            data:"area_id="+city_id+"&hotel_name="+serch_name,
+            data:"area_id="+city_id+"&hotel_name="+serch_name+"&hotel_id={$info.hotel_id}",
             async:true,
             success:function(calls){
-                console.log(calls)
                 if(calls.code==1){
                     var call = calls.data;
                     for(var i=0;i<call.length;i++){
-                        var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div nnum="" class="position-two"></div>';
+                        var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hotel_id+'"/><label class="position-ones-name" id="'+call[i].hotel_id+'">'+call[i].hotel_name+'</label></div><div nnum="" class="position-two"></div>';
                         $('.position-list').append(jiu_name);
                     }
                     if($('#rad_jiulou').prop('checked')==true){
@@ -831,7 +845,7 @@
     function boiteName(){  //酒楼名称
         $.ajax({
             type:"post",
-            url:honame+"/advdelivery/getOcupHotel",
+            url:honame+"/commondata/getHotels",
             dataType:"json",
             async:true,
             success:function(calls){
@@ -839,7 +853,7 @@
                 if(calls.code==1){
                     var call = calls.data;
                     for(var i=0;i<call.length;i++){
-                        var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hid+'"/><label class="position-ones-name" id="'+call[i].hid+'">'+call[i].hname+'</label></div><div class="position-two"></div>';
+                        var jiu_name = '<div class="position-one"><input type="checkbox" class="position-ones" id="'+call[i].hotel_id+'"/><label class="position-ones-name" id="'+call[i].hotel_id+'">'+call[i].hotel_name+'</label></div><div class="position-two"></div>';
                         $('.position-list').append(jiu_name);
                     }
                     if($('#rad_jiulou').prop('checked')==true){

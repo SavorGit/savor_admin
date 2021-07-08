@@ -1556,6 +1556,7 @@ class SappforscreenController extends BaseController {
             $res_f = $m_forscreen->getInfo(array('forscreen_id'=>$forscreen_id));
             if(!empty($res_f)){
                 $info['hotel_name'] = $res_f['hotel_name'];
+                $info['hotel_id'] = $res_f['hotel_id'];
             }
 
             $areaModel  = new \Admin\Model\AreaModel();
@@ -1572,10 +1573,17 @@ class SappforscreenController extends BaseController {
             $m_publicplay = new \Admin\Model\Smallapp\PublicplayModel();
             $res_public_play = $m_publicplay->getInfo(array('public_id'=>$id));
             if(!empty($res_public_play)){
-                $res_public_play['start_date'] = date('Y-m-d',strtotime($res_public_play['start_date']));
-                $res_public_play['end_date'] = date('Y-m-d',strtotime($res_public_play['end_date']));
-                $res_public_play['start_hour'] = str_pad($res_public_play['start_hour'],2,'0',STR_PAD_LEFT);
-                $res_public_play['end_hour'] = str_pad($res_public_play['end_hour'],2,'0',STR_PAD_LEFT);
+                if($res_public_play['playnow_num']>0){
+                    $res_public_play['start_date'] = '';
+                    $res_public_play['end_date'] = '';
+                    $res_public_play['start_hour'] = '';
+                    $res_public_play['end_hour'] = '';
+                }else{
+                    $res_public_play['start_date'] = date('Y-m-d',strtotime($res_public_play['start_date']));
+                    $res_public_play['end_date'] = date('Y-m-d',strtotime($res_public_play['end_date']));
+                    $res_public_play['start_hour'] = str_pad($res_public_play['start_hour'],2,'0',STR_PAD_LEFT);
+                    $res_public_play['end_hour'] = str_pad($res_public_play['end_hour'],2,'0',STR_PAD_LEFT);
+                }
             }
 
             $this->assign('playinfo', $res_public_play);
@@ -1599,6 +1607,7 @@ class SappforscreenController extends BaseController {
             $start_hour = I('post.start_hour', 0,'intval');
             $end_hour = I('post.end_hour', 0,'intval');
             $frequency = I('post.frequency', 0,'intval');
+            $playnow_num = I('post.playnow_num', 0,'intval');
 
             $m_public    = new \Admin\Model\Smallapp\PublicModel();
             $res_publicdata = $m_public->getOne('*',array('id'=>$public_id));
@@ -1680,33 +1689,42 @@ class SappforscreenController extends BaseController {
             $res_public_play = $m_publicplay->getInfo(array('public_id'=>$public_id));
             $is_play = 0;
             $hotel_ids = array();
-            if($status==2 && !empty($start_date) && !empty($end_date)){
-                $now_day = date("Y-m-d");
-                if($start_date > $end_date){
-                    $this->output('投放开始时间必须小于等于结束时间', 'sappforscreen/publicaudit',2,0);
-                }
-                if($start_date < $now_day){
-                    $this->output('投放开始时间必须大于等于今天', 'sappforscreen/publicaudit',2,0);
-                }
-                if(empty($start_hour) || empty($end_hour)){
-                    $this->output('请选择播放时段', 'sappforscreen/publicaudit',2,0);
-                }
-                if(empty($frequency)){
-                    $this->output('请选择播放频次', 'sappforscreen/publicaudit',2,0);
-                }
-                if($start_hour>$end_hour){
-                    $this->output('投放开始时段必须小于等于结束时段', 'sappforscreen/publicaudit',2,0);
-                }
-                if($end_hour-$start_hour==0){
-                    $this->output('投放时段间隔1小时以上', 'sappforscreen/publicaudit',2,0);
-                }
+            if($status==2 && ((!empty($start_date) && !empty($end_date)) || $playnow_num>0)){
                 $sysuserInfo = session('sysUserInfo');
-                $start_date_time = date('Y-m-d 00:00:00',strtotime($start_date));
-                $end_date_time = date('Y-m-d 23:59:59',strtotime($end_date));
-                $add_data = array('public_id'=>$public_id,'forscreen_id'=>$forscreen_id,
-                    'start_date'=>$start_date_time,'end_date'=>$end_date_time,'start_hour'=>$start_hour,
-                    'end_hour'=>$end_hour,'frequency'=>$frequency,'status'=>1,'sysuser_id'=>$sysuserInfo['id'],
-                );
+                if($playnow_num>0){
+                    $add_data = array('public_id'=>$public_id,'forscreen_id'=>$forscreen_id,
+                        'start_date'=>'0000-00-00 00:00:00','end_date'=>'0000-00-00 00:00:00','start_hour'=>0,
+                        'end_hour'=>0,'frequency'=>0,'status'=>1,'sysuser_id'=>$sysuserInfo['id'],
+                        'playnow_num'=>$playnow_num,'playnow_time'=>date('Y-m-d H:i:s'),
+                    );
+                }else{
+                    $now_day = date("Y-m-d");
+                    if($start_date > $end_date){
+                        $this->output('投放开始时间必须小于等于结束时间', 'sappforscreen/publicaudit',2,0);
+                    }
+                    if($start_date < $now_day){
+                        $this->output('投放开始时间必须大于等于今天', 'sappforscreen/publicaudit',2,0);
+                    }
+                    if(empty($start_hour) || empty($end_hour)){
+                        $this->output('请选择播放时段', 'sappforscreen/publicaudit',2,0);
+                    }
+                    if(empty($frequency)){
+                        $this->output('请选择播放频次', 'sappforscreen/publicaudit',2,0);
+                    }
+                    if($start_hour>$end_hour){
+                        $this->output('投放开始时段必须小于等于结束时段', 'sappforscreen/publicaudit',2,0);
+                    }
+                    if($end_hour-$start_hour==0){
+                        $this->output('投放时段间隔1小时以上', 'sappforscreen/publicaudit',2,0);
+                    }
+                    $start_date_time = date('Y-m-d 00:00:00',strtotime($start_date));
+                    $end_date_time = date('Y-m-d 23:59:59',strtotime($end_date));
+                    $add_data = array('public_id'=>$public_id,'forscreen_id'=>$forscreen_id,
+                        'start_date'=>$start_date_time,'end_date'=>$end_date_time,'start_hour'=>$start_hour,
+                        'end_hour'=>$end_hour,'frequency'=>$frequency,'status'=>1,'sysuser_id'=>$sysuserInfo['id'],
+                        'playnow_num'=>0,'playnow_time'=>'0000-00-00 00:00:00',
+                    );
+                }
 
                 if($is_has_notify_time && empty($res_public_play)){
                     $is_play = 1;
@@ -1714,6 +1732,9 @@ class SappforscreenController extends BaseController {
                 if(empty($res_public_play)){
                     $public_play_id = $m_publicplay->add($add_data);
                 }else{
+                    if($playnow_num==$res_public_play['playnow_num']){
+                        unset($add_data['playnow_time']);
+                    }
                     $add_data['update_time'] = date('Y-m-d H:i:s');
                     $m_publicplay->updateData(array('id'=>$res_public_play['id']),$add_data);
                     $public_play_id = $res_public_play['id'];
