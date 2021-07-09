@@ -50,7 +50,7 @@ class CollectforscreenModel extends BaseModel{
         foreach ($res_userdata as $v){
             $v['forscreen_record_id'] = $v['id'];
             unset($v['id'],$v['update_time'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
-                $v['personattr_id'],$v['remark'],$v['quality_type'],$v['box_play_time']);
+                $v['personattr_id'],$v['remark'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
             $this->addData($v);
         }
         $delcondition = array('openid'=>array('in',$openids));

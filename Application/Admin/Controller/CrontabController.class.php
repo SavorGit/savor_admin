@@ -4438,6 +4438,16 @@ class CrontabController extends Controller
         echo "staticuserdata end:$now_time \r\n";
     }
 
+    public function staticforscreenplay(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticforscreenplay start:$now_time \r\n";
+        $m_staticforscreen = new \Admin\Model\Smallapp\StaticForscreenplayModel();
+        $m_staticforscreen->handle_forscreenplay_data();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "staticforscreenplay end:$now_time \r\n";
+    }
+
     public function cleantestdata(){
         $now_time = date('Y-m-d H:i:s');
         echo "cleantestdata start:$now_time \r\n";
