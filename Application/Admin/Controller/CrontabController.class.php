@@ -3931,9 +3931,8 @@ class CrontabController extends Controller
         $cache_key = C('SAPP_SIMPLE_UPLOAD_RESOUCE')."*";
         $keys = $redis->keys($cache_key);
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
-        $m_forscreen_invalid_record      = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+        $m_forscreen_invalid_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
         foreach($keys as $k){
-            
             $rets = $redis->lgetrange($k,0,-1);
             foreach($rets as $v){
                 $map = $data = array();
@@ -3949,22 +3948,52 @@ class CrontabController extends Controller
                     if($ret) $redis->lpop($k);
                 }else {
                     $f_i_info = $m_forscreen_invalid_record->where($map)->select();
-                    
                     if($f_i_info){
                         $ret = $m_forscreen_invalid_record->updateData($map, $data);
                         if($ret) $redis->lpop($k);
-                        
                     }
                 }
-                
             }
             $list = $redis->lgetrange($k,0,-1);
             if(empty($list)){
                 $redis->remove($k);
             }
-            
         }
-        echo   date('Y-m-d H:i:s'). "数据处理完成";
+        echo date('Y-m-d H:i:s'). "数据处理完成";
+    }
+
+    public function updateSimpleUploadPlaytime(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "updatesimpleuploadplaytime start:$now_time \r\n";
+
+        $redis = SavorRedis::getInstance();
+        $redis->select(5);
+        $cache_key = C('SAPP_SIMPLE_UPLOAD_PLAYTIME')."*";
+        $keys = $redis->keys($cache_key);
+        $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        foreach($keys as $k){
+            $rets = $redis->lgetrange($k,0,-1);
+            foreach($rets as $v){
+                $simple_resource = json_decode($v,true);
+                $where = array('forscreen_id'=>intval($simple_resource['forscreen_id']),'resource_id'=>intval($simple_resource['resource_id']),
+                    'box_mac'=>$simple_resource['box_mac']);
+                $updata = array('update_time'=>date('Y-m-d H:i:s'));
+                if(!empty($simple_resource['box_playstime']))  $updata['box_playstime'] = $simple_resource['box_playstime'];
+                if(!empty($simple_resource['box_playetime']))  $updata['box_playetime'] = $simple_resource['box_playetime'];
+                $f_info = $m_forscreen_record->where($where)->select();
+                if($f_info){
+                    $up_where = array('id'=>$f_info[0]['id']);
+                    $ret = $m_forscreen_record->updateInfo($up_where, $updata);
+                    if($ret) $redis->lpop($k);
+                }
+            }
+            $list = $redis->lgetrange($k,0,-1);
+            if(empty($list)){
+                $redis->remove($k);
+            }
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "updatesimpleuploadplaytime end:$now_time \r\n";
     }
 
     public function forscreenimgSecCheck(){
