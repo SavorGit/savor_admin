@@ -2841,8 +2841,8 @@ class CrontabController extends Controller
                             if(!empty($netresource['box_res_edown_time'])){
                                 $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
                             }
-                            if(!empty($netresource['box_playstime']))  $dt['box_playstime'] = $netresource['box_playstime'];
-                            if(!empty($netresource['box_playetime']))  $dt['box_playetime'] = $netresource['box_playetime'];
+                            if(!empty($netresource['box_playstime']))  $dt['box_play_stime'] = $netresource['box_playstime'];
+                            if(!empty($netresource['box_playetime']))  $dt['box_play_etime'] = $netresource['box_playetime'];
                             $dt['is_exist'] = intval($netresource['is_exist']);
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
@@ -2856,8 +2856,8 @@ class CrontabController extends Controller
                         }
                         $where['openid'] = $netresource['openid'];
 
-                        if(!empty($netresource['box_playstime']))  $dt['box_playstime'] = $netresource['box_playstime'];
-                        if(!empty($netresource['box_playetime']))  $dt['box_playetime'] = $netresource['box_playetime'];
+                        if(!empty($netresource['box_playstime']))  $dt['box_play_stime'] = $netresource['box_playstime'];
+                        if(!empty($netresource['box_playetime']))  $dt['box_play_etime'] = $netresource['box_playetime'];
                         $dt['is_exist'] = intval($netresource['is_exist']);
                         $dt['update_time'] = date('Y-m-d H:i:s');
                         $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
@@ -2868,14 +2868,14 @@ class CrontabController extends Controller
                             $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
                             $m_smallapp_forscreen_record->updateInfo($where,$box_data);
                             $redis->lpop($k);
-                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && (!empty($netresource['box_play_stime']) || !empty($netresource['box_play_etime']))){
+                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && (!empty($netresource['box_playstime']) || !empty($netresource['box_playetime']))){
                             $where = array('forscreen_id'=>$netresource['forscreen_id'],'resource_id'=>$netresource['resource_id'],'openid'=>$netresource['openid']);
-                            if(!empty($netresource['box_play_stime'])){
-                                $box_data = array('box_play_stime'=>$netresource['box_play_stime']);
+                            if(!empty($netresource['box_playstime'])){
+                                $box_data = array('box_play_stime'=>$netresource['box_playstime']);
                                 $m_smallapp_forscreen_record->updateInfo($where,$box_data);
                             }
-                            if(!empty($netresource['box_play_etime'])){
-                                $box_data = array('box_play_etime'=>$netresource['box_play_etime']);
+                            if(!empty($netresource['box_playetime'])){
+                                $box_data = array('box_play_etime'=>$netresource['box_playetime']);
                                 $m_smallapp_forscreen_record->updateInfo($where,$box_data);
                             }
                             $redis->lpop($k);
@@ -3978,8 +3978,8 @@ class CrontabController extends Controller
                 $where = array('forscreen_id'=>intval($simple_resource['forscreen_id']),'resource_id'=>intval($simple_resource['resource_id']),
                     'box_mac'=>$simple_resource['box_mac']);
                 $updata = array('update_time'=>date('Y-m-d H:i:s'));
-                if(!empty($simple_resource['box_playstime']))  $updata['box_playstime'] = $simple_resource['box_playstime'];
-                if(!empty($simple_resource['box_playetime']))  $updata['box_playetime'] = $simple_resource['box_playetime'];
+                if(!empty($simple_resource['box_playstime']))  $updata['box_play_stime'] = $simple_resource['box_playstime'];
+                if(!empty($simple_resource['box_playetime']))  $updata['box_play_etime'] = $simple_resource['box_playetime'];
                 $f_info = $m_forscreen_record->where($where)->select();
                 if($f_info){
                     $up_where = array('id'=>$f_info[0]['id']);
