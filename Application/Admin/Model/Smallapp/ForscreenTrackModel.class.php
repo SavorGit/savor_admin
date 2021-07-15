@@ -124,7 +124,7 @@ class ForscreenTrackModel extends BaseModel{
                             $v['forscreen_record_id'] = $v['id'];
                             unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
                                 $v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],
-                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
+                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen'],$v['file_imgnum']);
                             $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
                             if($res_invalid){
                                 $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
@@ -257,7 +257,7 @@ class ForscreenTrackModel extends BaseModel{
                             $v['forscreen_record_id'] = $v['id'];
                             unset($v['id'],$v['category_id'],$v['spotstatus'],$v['scene_id'],$v['contentsoft_id'],$v['dinnernature_id'],
                                 $v['personattr_id'],$v['remark'],$v['resource_name'],$v['md5_file'],$v['save_type'],$v['file_conversion_status'],
-                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen']);
+                                $v['box_finish_downtime'],$v['serial_number'],$v['quality_type'],$v['box_play_time'],$v['is_cancel_forscreen'],$v['file_imgnum']);
                             $res_invalid = $m_smallapp_forscreen_invalidrecord->addData($v);
                             if($res_invalid){
                                 $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));

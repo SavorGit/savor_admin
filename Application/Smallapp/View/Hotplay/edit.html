@@ -5,7 +5,7 @@
 	<div id="w_list_print">
 		<div class="no-more-tables">
 			<form method="post" action="{$host_url}/smallapp/hotplay/edit" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
-				<input type="hidden" name="id" value="{$id}" />
+				<input type="hidden" name="id" value="{$vinfo.id}" />
 				<table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
 					<thead>
 
@@ -18,7 +18,6 @@
 					<volist name="list" id="vlist">
 
 						<tr>
-
 							<if condition="$res_type  eq 1">
 								<a href="{$vlist.res_url}" target="_blank" style="color:red">
 									<img src="{$vlist.res_url}" height="200px">
@@ -28,20 +27,98 @@
 									预览
 								</a>
 							</if>
-
 						</tr>
 
 						</tr>
 					</volist>
 					<tr>
 						<td>
-							内容审核序号:
-							<input type="text" name="pub_id" value="" />
-
+							<label class="col-xs-12 col-sm-2 control-label">
+								类型:
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<select name="type" class="form-control bs-select" data-size="20" required>
+									<volist name=":C('hot_play_types')" id="hinfo">
+										<option value="{$key}" <if condition="$key eq $vinfo['type']">selected</if> >{$hinfo}</option><br>
+									</volist>
+								</select>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label class="col-xs-12 col-sm-2 control-label">
+								封面图：
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<div class="fileinput fileinput-new" data-fileinput>
+									<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+										<a data-target="#modal-file" href="javascript:void(0)">
+											<if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+												<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+												<else />
+												<img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+											</if>
+											<span id="media_idimgname"></span>
+										</a>
+									</div>
+									<div>
+										<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+											选择图片
+										</a>
+										<input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+										<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+									</div>
+								</div>
+							</div>
 
 						</td>
 					</tr>
 
+					<tr>
+						<td>
+							<label class="col-xs-12 col-sm-2 control-label">
+								内容ID：
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<input name="data_id" type="text" class="form-control" placeholder="内容审核ID/广告节目ID" value="{$vinfo.data_id}"/>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<label class="col-xs-12 col-sm-2 control-label">
+								初始播放次数：
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<input name="init_playnum" type="text" class="form-control digits" value="{$vinfo.init_playnum}"/>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<label class="col-xs-12 col-sm-2 control-label">
+								显示顺序：
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<input name="sort" type="text" class="form-control digits" value="{$vinfo.sort}"/>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<label class="col-xs-12 col-sm-2 control-label">
+								状态：
+							</label>
+							<div class="col-xs-12 col-sm-10">
+								<input type="hidden" name="status" value="2">
+								<input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.status eq 1" >checked</if>>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<button class="btn btn-default close-m" type="button">取消</button>

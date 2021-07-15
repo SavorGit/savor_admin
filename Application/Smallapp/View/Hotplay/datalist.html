@@ -7,13 +7,27 @@
       <div class="clearfix">
         <div class="col-xs-12 col-sm-6 col-md-10">
           <div class="tools-group s2">
-
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/hotplay/addhotplay" title="新增热播内容" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增热播内容</a>
           </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
 
           <div class="input-group input-group-sm">
-            <!--<input type="text" class="form-control" value="" placeholder="">-->
+            <span class="input-group-btn">
+              <select name="type" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >类型</option>
+                <volist name=":C('hot_play_types')" id="hinfo">
+                    <option value="{$key}" <if condition="$key eq $type">selected</if> >{$hinfo}</option>
+                </volist>
+              </select>
+            </span>
+            <span class="input-group-btn">
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >全部</option>
+                <option value="1" <if condition="$status eq 1">selected</if> >正常</option>
+                <option value="2" <if condition="$status eq 2">selected</if> >禁用</option>
+              </select>
+            </span>
             <span class="input-group-btn">
               <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
             </span>
@@ -38,7 +52,8 @@
             <th>资源类型</th>
             <th>md5是否正常</th>
             <th>显示图</th>
-            <th>播放次数</th>
+            <th>排序值</th>
+            <th>内容类型</th>
             <th>操作</th>
           </tr>
           </thead>
@@ -51,7 +66,8 @@
               <td data-title="资源类型">{$dinfo.resource_type_str}</td>
               <td data-title="md5是否正常">{$dinfo.md5_str}</td>
               <td data-title="显示图"><a href="{$dinfo.img}" target="_blank"><img src="{$dinfo.img}" ></a></td>
-              <td data-title="播放次数">{$dinfo.nums}</td>
+              <td data-title="排序值">{$dinfo.sort}</td>
+              <td data-title="内容类型">{$dinfo.type_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" title="序号{$dinfo.id}-修改" target="dialog" mask="true" href="{$host_url}/smallapp/hotplay/edit?id={$dinfo.id}" class="btn btn-success btn-icon">
@@ -68,5 +84,5 @@
 
     </div>
   </div>
-  <!--{$page}-->
+  {$page}
 </div>

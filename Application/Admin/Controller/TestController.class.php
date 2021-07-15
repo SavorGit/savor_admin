@@ -3027,4 +3027,32 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo 'now_time:'.date('Y-m-d H:i:s')."\r\n";
     }
 
+    public function syshotplay(){
+        $model = M();
+        $sql = "select * from savor_smallapp_play_log where type=4 order by nums desc limit 0,8";
+        $res_hotplay = $model->query($sql);
+        $sort_num = 1000;
+        $m_hoteplay = new \Admin\Model\Smallapp\HotplayModel();
+        $all_data = array();
+        foreach ($res_hotplay as $v){
+            $forscreen_record_id = $v['res_id'];
+            $sql_forscreen = "select * from savor_smallapp_forscreen_record where id={$forscreen_record_id}";
+            $res_forscreen = $model->query($sql_forscreen);
+            $forscreen_id = $res_forscreen[0]['forscreen_id'];
+
+            if(!empty($forscreen_id)){
+                $sql_public = "select * from savor_smallapp_public where forscreen_id={$forscreen_id} order by id asc limit 0,1";
+                $res_public = $model->query($sql_public);
+                $data_id = $res_public[0]['id'];
+                $sort = $sort_num --;
+                $add_data = array('data_id'=>$data_id,'forscreen_record_id'=>$forscreen_record_id,'sort'=>$sort,'type'=>1,'status'=>1);
+                $all_data[]=$add_data;
+            }
+        }
+        $m_hoteplay->addAll($all_data);
+
+
+
+    }
+
 }
