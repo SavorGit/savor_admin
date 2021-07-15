@@ -30,12 +30,7 @@ class ForscreenplayController extends BaseController {
         $datalist = $res_data['list'];
         $all_type = array('1'=>'视频','2'=>'图片','3'=>'文件','4'=>'点播图片','5'=>'点播视频');
         foreach ($datalist as $k=>$v){
-            if($v['type']==3){
-                $play_num = $v['forscreen_num'];
-            }else{
-                $play_num = $v['play_num'];
-            }
-            $one_play_duration = round($v['play_duration']/$play_num);
+            $one_play_duration = round($v['play_duration']/$v['forscreen_num']);
             if(in_array($v['type'],array(1,5))){
                 $play_rate = round($v['full_play_num']/$v['forscreen_num'],2) * 100;
                 $play_rate = $play_rate.'%';

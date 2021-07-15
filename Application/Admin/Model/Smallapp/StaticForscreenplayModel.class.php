@@ -25,8 +25,7 @@ class StaticForscreenplayModel extends BaseModel{
         $end_time = date('Y-m-d 23:59:59',strtotime('-1day'));
         $time_condition = array(array('EGT',$start_time),array('ELT',$end_time));
         $static_date = date('Y-m-d',strtotime('-1day'));
-
-        $common_where = array('create_time'=>$time_condition,'small_app_id'=>array('in',array(1,2)),'mobile_brand'=>array('neq','devtools'));
+        $common_where = array('hotel_id'=>7,'create_time'=>$time_condition,'small_app_id'=>array('in',array(1,2)),'mobile_brand'=>array('neq','devtools'));
         //视频：(视频投屏、切片视频投屏,重投)
         $where = $common_where;
         $where['action'] = array('in',array(2,3,8));
@@ -48,12 +47,14 @@ class StaticForscreenplayModel extends BaseModel{
             foreach ($res_hotel_record as $rv){
                 $play_time = $rv['box_play_etime']-$rv['box_play_stime'];
                 if($play_time>0){
+                    $play_time_sec = round($play_time/1000, 2);
                     $play_duration+=$play_time;
-                    if($play_time==$rv['duration']){
+                    if($play_time_sec>=$rv['duration']){
                         $full_play_num++;
                     }
                 }
             }
+            $play_duration = round($play_duration/1000, 2);
             $one_duration = round($play_duration/$play_num, 2);
             $add_data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
                 'hotel_box_type'=>$v['hotel_box_type'],'hotel_is_4g'=>$v['hotel_is_4g'],'forscreen_num'=>$v['num'],'total_duration'=>$v['total_duration'],
@@ -86,6 +87,7 @@ class StaticForscreenplayModel extends BaseModel{
                     $play_duration+=$play_time;
                 }
             }
+            $play_duration = round($play_duration/1000, 2);
             $one_duration = round($play_duration/$play_num, 2);
             $add_data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
                 'hotel_box_type'=>$v['hotel_box_type'],'hotel_is_4g'=>$v['hotel_is_4g'],'forscreen_num'=>$v['num'],
@@ -119,6 +121,7 @@ class StaticForscreenplayModel extends BaseModel{
                     }
                 }
             }
+            $play_duration = round($play_duration/1000, 2);
             $one_duration = round($play_duration/$v['num'], 2);
             $add_data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
                 'hotel_box_type'=>$v['hotel_box_type'],'hotel_is_4g'=>$v['hotel_is_4g'],'forscreen_num'=>$v['num'],
@@ -149,6 +152,7 @@ class StaticForscreenplayModel extends BaseModel{
                     $play_duration+=$play_time;
                 }
             }
+            $play_duration = round($play_duration/1000, 2);
             $one_duration = round($play_duration/$play_num, 2);
             $add_data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
                 'hotel_box_type'=>$v['hotel_box_type'],'hotel_is_4g'=>$v['hotel_is_4g'],'forscreen_num'=>$v['num'],
@@ -177,12 +181,14 @@ class StaticForscreenplayModel extends BaseModel{
             foreach ($res_hotel_record as $rv){
                 $play_time = $rv['box_play_etime']-$rv['box_play_stime'];
                 if($play_time>0){
+                    $play_time_sec = round($play_time/1000, 2);
                     $play_duration+=$play_time;
-                    if($play_time==$rv['duration']){
+                    if($play_time_sec>=$rv['duration']){
                         $full_play_num++;
                     }
                 }
             }
+            $play_duration = round($play_duration/1000, 2);
             $one_duration = round($play_duration/$play_num, 2);
             $add_data = array('area_id'=>$v['area_id'],'area_name'=>$v['area_name'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
                 'hotel_box_type'=>$v['hotel_box_type'],'hotel_is_4g'=>$v['hotel_is_4g'],'forscreen_num'=>$v['num'],'total_duration'=>$v['total_duration'],

@@ -54,6 +54,9 @@ class MediaStaModel extends BaseModel{
                         if($dv['type']=='pro'){
                             $media_ids[$dv['media_id']] = $dv['media_id'];
                         }
+                        if($dv['type']=='ads'){
+                            $media_ids[$dv['media_id']] = $dv['media_id'];
+                        }
                     }
                 }
             }

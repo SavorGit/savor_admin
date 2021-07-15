@@ -50,23 +50,23 @@
         <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
             <tr id="post">
+              <th>类型</th>
               <th>投屏次数</th>
               <th>理论总时长</th>
               <th>播放总时长</th>
               <th>单次播放时长</th>
               <th>完播率</th>
-              <th>类型</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
           <volist name="datalist" id="dinfo">
             <tr target="sid_user">
+              <td>{$dinfo.type_str}</td>
               <td>{$dinfo.forscreen_num}</td>
               <td>{$dinfo.total_duration}</td>
               <td>{$dinfo.play_duration}</td>
               <td>{$dinfo.one_play_duration}</td>
               <td>{$dinfo.play_rate}</td>
-              <td>{$dinfo.type_str}</td>
             </tr>
           </volist>
 

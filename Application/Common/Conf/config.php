@@ -393,6 +393,11 @@ $config['source_type'] = array(
     '4'=>'节目',
     '5'=>'服务员扫码',
 );
+$config['hot_play_types'] = array(
+    '1'=>'用户内容',
+    '2'=>'广告',
+    '3'=>'节目',
+);
 $config['fee_type'] = array(
     '1'=>'开机费',
     '2'=>'APP推广',
@@ -740,6 +745,7 @@ $config['BOX_TPMEDIA']  = 'box:tpmedia:';
 $config['SAPP_SELECTCONTENT_CONTENT']='smallapp:selectcontent:content';
 $config['SAPP_SELECTCONTENT_PUSH']='smallapp:selectcontent:wxpush';
 $config['SAPP_SIMPLE_UPLOAD_RESOUCE'] = 'smallapp:simple:upload:';
+$config['SAPP_SIMPLE_UPLOAD_PLAYTIME'] = 'smallapp:simple:uploadplaytime:';
 $config['SAPP_OPTIMIZE_PROGRAM']='smallapp:optimize:program';
 $config['SMALLAPP_HOTEL_RELATION']='smallapp:hotelrelation:';
 
