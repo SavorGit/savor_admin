@@ -25,7 +25,7 @@ class StaticForscreenplayModel extends BaseModel{
         $end_time = date('Y-m-d 23:59:59',strtotime('-1day'));
         $time_condition = array(array('EGT',$start_time),array('ELT',$end_time));
         $static_date = date('Y-m-d',strtotime('-1day'));
-        $common_where = array('hotel_id'=>7,'create_time'=>$time_condition,'small_app_id'=>array('in',array(1,2)),'mobile_brand'=>array('neq','devtools'));
+        $common_where = array('create_time'=>$time_condition,'small_app_id'=>array('in',array(1,2)),'mobile_brand'=>array('neq','devtools'));
         //视频：(视频投屏、切片视频投屏,重投)
         $where = $common_where;
         $where['action'] = array('in',array(2,3,8));
