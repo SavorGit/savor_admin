@@ -23,6 +23,7 @@ class StaticForscreenplayModel extends BaseModel{
 	public function handle_forscreenplay_data(){
         $start_time = date('Y-m-d 00:00:00',strtotime('-1day'));
         $end_time = date('Y-m-d 23:59:59',strtotime('-1day'));
+
         $time_condition = array(array('EGT',$start_time),array('ELT',$end_time));
         $static_date = date('Y-m-d',strtotime('-1day'));
         $common_where = array('create_time'=>$time_condition,'small_app_id'=>array('in',array(1,2)),'mobile_brand'=>array('neq','devtools'));
@@ -48,10 +49,14 @@ class StaticForscreenplayModel extends BaseModel{
                 $play_time = $rv['box_play_etime']-$rv['box_play_stime'];
                 if($play_time>0){
                     $play_time_sec = round($play_time/1000, 2);
-                    $play_duration+=$play_time;
                     if($play_time_sec>=$rv['duration']){
                         $full_play_num++;
+                        $full_duration = $rv['duration']*1000;
+                        $play_duration+=$full_duration;
+                    }else{
+                        $play_duration+=$play_time;
                     }
+
                 }
             }
             $play_duration = round($play_duration/1000, 2);
@@ -110,10 +115,10 @@ class StaticForscreenplayModel extends BaseModel{
             $res_hotel_record = $m_forscreen_record->getAll('*',$where,0,10000,$order);
             $play_duration = 0;
             foreach ($res_hotel_record as $rv){
-                $where['forscreen_id'] = $rv['id'];
-                $where['box_play_stime'] = array('gt',0);
-                $where['box_play_etime'] = array('gt',0);
-                $res_file_record = $m_forscreen_record->getAll('*',$where,0,10000,$order);
+                $file_where = array('forscreen_id'=>$rv['id']);
+                $file_where['box_play_stime'] = array('gt',0);
+                $file_where['box_play_etime'] = array('gt',0);
+                $res_file_record = $m_forscreen_record->getAll('*',$file_where,0,10000,$order);
                 foreach ($res_file_record as $fv){
                     $play_time = $fv['box_play_etime']-$fv['box_play_stime'];
                     if($play_time>0){
@@ -182,9 +187,12 @@ class StaticForscreenplayModel extends BaseModel{
                 $play_time = $rv['box_play_etime']-$rv['box_play_stime'];
                 if($play_time>0){
                     $play_time_sec = round($play_time/1000, 2);
-                    $play_duration+=$play_time;
                     if($play_time_sec>=$rv['duration']){
                         $full_play_num++;
+                        $full_duration = $rv['duration']*1000;
+                        $play_duration+=$full_duration;
+                    }else{
+                        $play_duration+=$play_time;
                     }
                 }
             }

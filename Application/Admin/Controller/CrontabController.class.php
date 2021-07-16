@@ -2824,6 +2824,9 @@ class CrontabController extends Controller
                 if($netresource['resource_id']){
                     $search['resource_id']  = $netresource['resource_id'];
                 }
+                if(!empty($netresource['file_img'])){
+                    $search['file_img']=$netresource['file_img'];
+                }
                 $tmp = $m_smallapp_forscreen_record->getOne('id', $search);
                 if(!empty($tmp)){
                     //资源不存在
@@ -2847,15 +2850,36 @@ class CrontabController extends Controller
                             $dt['update_time'] = date('Y-m-d H:i:s');
                             $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
                             $redis->lpop($k);
+                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['openid']) && (!empty($netresource['box_playstime']) || !empty($netresource['box_playetime']))){
+                            $where = array('forscreen_id'=>$netresource['forscreen_id'],'openid'=>$netresource['openid']);
+                            if(!empty($netresource['file_img'])){
+                                $where['file_img']=$netresource['file_img'];
+                            }else{
+                                if(!empty($netresource['resource_id'])){
+                                    $where['resource_id']=$netresource['resource_id'];
+                                }
+                            }
+                            if(!empty($netresource['box_playstime'])){
+                                $box_data = array('box_play_stime'=>$netresource['box_playstime']);
+                                $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            }
+                            if(!empty($netresource['box_playetime'])){
+                                $box_data = array('box_play_etime'=>$netresource['box_playetime']);
+                                $m_smallapp_forscreen_record->updateInfo($where,$box_data);
+                            }
+                            $redis->lpop($k);
                         }
                     }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
                         $where = $dt = array();
                         $where['forscreen_id'] = $netresource['forscreen_id'];
-                        if($netresource['resource_id']){
-                            $where['resource_id'] = $netresource['resource_id'];
-                        }
                         $where['openid'] = $netresource['openid'];
-
+                        if(!empty($netresource['file_img'])){
+                            $where['file_img']=$netresource['file_img'];
+                        }else{
+                            if($netresource['resource_id']){
+                                $where['resource_id'] = $netresource['resource_id'];
+                            }
+                        }
                         if(!empty($netresource['box_playstime']))  $dt['box_play_stime'] = $netresource['box_playstime'];
                         if(!empty($netresource['box_playetime']))  $dt['box_play_etime'] = $netresource['box_playetime'];
                         $dt['is_exist'] = intval($netresource['is_exist']);
@@ -2868,8 +2892,15 @@ class CrontabController extends Controller
                             $box_data = array('box_finish_downtime'=>$netresource['box_finish_downtime']);
                             $m_smallapp_forscreen_record->updateInfo($where,$box_data);
                             $redis->lpop($k);
-                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['resource_id']) && !empty($netresource['openid']) && (!empty($netresource['box_playstime']) || !empty($netresource['box_playetime']))){
-                            $where = array('forscreen_id'=>$netresource['forscreen_id'],'resource_id'=>$netresource['resource_id'],'openid'=>$netresource['openid']);
+                        }elseif(!empty($netresource['forscreen_id']) && !empty($netresource['openid']) && (!empty($netresource['box_playstime']) || !empty($netresource['box_playetime']))){
+                            $where = array('forscreen_id'=>$netresource['forscreen_id'],'openid'=>$netresource['openid']);
+                            if(!empty($netresource['file_img'])){
+                                $where['file_img']=$netresource['file_img'];
+                            }else{
+                                if(!empty($netresource['resource_id'])){
+                                    $where['resource_id']=$netresource['resource_id'];
+                                }
+                            }
                             if(!empty($netresource['box_playstime'])){
                                 $box_data = array('box_play_stime'=>$netresource['box_playstime']);
                                 $m_smallapp_forscreen_record->updateInfo($where,$box_data);
