@@ -209,7 +209,7 @@ class SappforscreenController extends BaseController {
 	        $play_duration = '';
             if(!empty($v['box_play_stime']) && !empty($v['box_play_etime']) && $v['box_play_etime']>$v['box_play_stime']){
                 $play_duration = round(($v['box_play_etime'] - $v['box_play_stime']) /1000,2);
-                if($play_duration>$v['duration'] && $v['resource_type']==2){
+                if($play_duration>$v['duration'] && $v['resource_type']!=1){
                     $play_duration = $v['duration'];
                 }
             }
