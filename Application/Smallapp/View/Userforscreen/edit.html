@@ -1,0 +1,93 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/userforscreen/edit" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="id" type="hidden" value="{$userinfo.id}"/>
+        <div class="pageFormContent modal-body">
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">昵称：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" value="{$userinfo.nickname}" class="form-control" readonly/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">头像：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <img src="{$userinfo.avatarurl}" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    多餐厅投屏用户：
+                </label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="morehotel_user" class="form-control bs-select class-filter" data-live-search="true" >
+                        <option value="0" <if condition="$userinfo.morehotel_user eq 0">selected</if>>否</option>
+                        <option value="1" <if condition="$userinfo.morehotel_user eq 1">selected</if>>是</option>
+                    </select>
+                    <input type="number" class="form-control" placeholder="请输入分数" name="morehotel_score" value="{$userinfo.morehotel_score}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    重度用户：
+                </label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="heavy_user" class="form-control bs-select class-filter" data-live-search="true" >
+                        <option value="0" <if condition="$userinfo.heavy_user eq 0">selected</if>>否</option>
+                        <option value="1" <if condition="$userinfo.heavy_user eq 1">selected</if>>是</option>
+                    </select>
+                    <input type="number" class="form-control" placeholder="请输入分数" name="heavy_score" value="{$userinfo.heavy_score}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    销售用户：
+                </label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="sale_user" class="form-control bs-select class-filter" data-live-search="true" >
+                        <option value="0" <if condition="$userinfo.sale_user eq 0">selected</if>>否</option>
+                        <option value="1" <if condition="$userinfo.sale_user eq 1">selected</if>>是</option>
+                    </select>
+                    <input type="number" class="form-control" placeholder="请输入分数" name="sale_score" value="{$userinfo.sale_score}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    内容贡献者：
+                </label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="content_user" class="form-control bs-select class-filter" data-live-search="true" >
+                        <option value="0" <if condition="$userinfo.content_user eq 0">selected</if>>否</option>
+                        <option value="1" <if condition="$userinfo.content_user eq 1">selected</if>>是</option>
+                    </select>
+                    <input type="number" class="form-control" placeholder="请输入分数" name="content_score" value="{$userinfo.content_score}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    普通用户：
+                </label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="common_user" class="form-control bs-select class-filter" data-live-search="true" >
+                        <option value="0" <if condition="$userinfo.common_user eq 0">selected</if>>否</option>
+                        <option value="1" <if condition="$userinfo.common_user eq 1">selected</if>>是</option>
+                    </select>
+                    <input type="number" class="form-control" placeholder="请输入分数" name="common_score" value="{$userinfo.common_score}">
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>

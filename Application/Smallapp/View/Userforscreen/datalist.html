@@ -1,0 +1,144 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/userforscreen/datalist" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">多餐厅投屏用户：</div>
+                        <div class="input-group">
+                            <select name="morehotel_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="0" <if condition="$morehotel_user eq 0">selected</if>>否</option>
+                                <option value="1" <if condition="$morehotel_user eq 1">selected</if>>是</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">重度用户：</div>
+                        <div class="input-group">
+                            <select name="heavy_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="0" <if condition="$heavy_user eq 0">selected</if>>否</option>
+                                <option value="1" <if condition="$heavy_user eq 1">selected</if>>是</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">销售用户：</div>
+                        <div class="input-group">
+                            <select name="sale_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="0" <if condition="$sale_user eq 0">selected</if>>否</option>
+                                <option value="1" <if condition="$sale_user eq 1">selected</if>>是</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">内容贡献者：</div>
+                        <div class="input-group">
+                            <select name="content_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="0" <if condition="$content_user eq 0">selected</if>>否</option>
+                                <option value="1" <if condition="$content_user eq 1">selected</if>>是</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">普通用户：</div>
+                        <div class="input-group">
+                            <select name="common_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="0" <if condition="$common_user eq 0">selected</if>>否</option>
+                                <option value="1" <if condition="$common_user eq 1">selected</if>>是</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">用户openid：</div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="用户openid">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!--
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+                -->
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>openid</th>
+                        <th>用户头像</th>
+                        <th>用户昵称</th>
+                        <th>餐厅数</th>
+                        <th>互动数</th>
+                        <th>投文件数</th>
+                        <th>公开内容通过审核数</th>
+                        <th>用户标签</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="id">{$dinfo.id}</td>
+                            <td data-title="openid">{$dinfo.openid}</td>
+                            <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
+                            <td data-title="用户昵称">{$dinfo.nickname}</td>
+                            <td data-title="餐厅数">{$dinfo.hotel_num}</td>
+                            <td data-title="互动数">{$dinfo.forscreen_num}</td>
+                            <td data-title="投文件数">{$dinfo.file_num}</td>
+                            <td data-title="公开内容通过审核数">{$dinfo.public_num}</td>
+                            <td data-title="用户标签">{$dinfo.label}</td>
+                            <td data-title="更新时间">{$dinfo.update_time}</td>
+                            <td class="table-tool" data-title="操作">
+                                <div class="tools-edit">
+                                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/userforscreen/edit?id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a data-tip="用户轨迹" title="用户轨迹" target="navTab" rel="userforscreen/track" href="{$host_url}/smallapp/userforscreen/track?openid={$dinfo.openid}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-info"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>

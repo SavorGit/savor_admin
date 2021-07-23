@@ -1,0 +1,58 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/userforscreen/ondaytrack" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <input type="hidden" name="tdate" value="{$tdate}"/>
+        <input type="hidden" name="openid" value="{$openid}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>api</th>
+                        <th>时间</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="id">{$dinfo.id}</td>
+                            <td data-title="名称">{$dinfo.api_name}</td>
+                            <td data-title="api">{$dinfo.api}</td>
+                            <td data-title="时间">{$dinfo.add_time}</td>
+                        </tr>
+
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>
