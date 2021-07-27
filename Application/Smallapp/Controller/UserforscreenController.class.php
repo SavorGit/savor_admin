@@ -187,19 +187,30 @@ class UserforscreenController extends BaseController {
 
         $m_acceslog = new \Admin\Model\Smallapp\AccesslogModel();
         $start  = ($page-1) * $size;
-        $fields = 'id,api,add_time';
+        $fields = 'id,api,params,add_time';
         $where = array('openid'=>$openid);
         $where['add_time'] = array(array('EGT',date('Y-m-d 00:00:00',strtotime($tdate))),array('ELT',date('Y-m-d 23:59:59',strtotime($tdate))));
         $res_data = $m_acceslog->getDataList($fields,$where,'id asc',$start,$size);
         $datalist = $res_data['list'];
         $all_apis = C('ALL_API');
+        $all_actions = C('all_forscreen_actions');
         foreach ($datalist as $k=>$v){
             $api = trim($v['api'],'/');
             $api_name = '';
             if(isset($all_apis[$api])){
                 $api_name = $all_apis[$api];
             }
+            if($api=='index/recordforscreenpics'){
+                $params_info = json_decode($v['params'],true);
+                if($params_info['action']==2){
+                    $action = $params_info['action'].'-'.$params_info['resource_type'];
+                }else{
+                    $action = $params_info['action'];
+                }
+                $api_name = $api_name."({$all_actions[$action]})";
+            }
             $datalist[$k]['api_name'] = $api_name;
+
         }
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
