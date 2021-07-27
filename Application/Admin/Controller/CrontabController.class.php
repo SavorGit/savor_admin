@@ -4508,6 +4508,16 @@ class CrontabController extends Controller
         echo "staticforscreenplay end:$now_time \r\n";
     }
 
+    public function userforscreen(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "userforscreen start:$now_time \r\n";
+        $m_userforscreen = new \Admin\Model\Smallapp\UserForscreenModel();
+        $m_userforscreen->handle_user_forscreen();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "userforscreen end:$now_time \r\n";
+    }
+
     public function cleantestdata(){
         $now_time = date('Y-m-d H:i:s');
         echo "cleantestdata start:$now_time \r\n";

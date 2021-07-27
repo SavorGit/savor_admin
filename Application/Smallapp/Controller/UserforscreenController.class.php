@@ -8,27 +8,60 @@ class UserforscreenController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
         $openid = I('openid','','trim');
-        $morehotel_user = I('morehotel_user',0,'intval');
-        $heavy_user = I('heavy_user',0,'intval');
-        $sale_user = I('sale_user',0,'intval');
-        $content_user = I('content_user',0,'intval');
-        $common_user = I('common_user',0,'intval');
+        $morehotel_user = I('morehotel_user',99,'intval');
+        $heavy_user = I('heavy_user',99,'intval');
+        $sale_user = I('sale_user',99,'intval');
+        $content_user = I('content_user',99,'intval');
+        $common_user = I('common_user',99,'intval');
+        $label_num = I('label_num',0,'intval');
+        $is_upscore = I('is_upscore',0,'intval');
 
         $where = array();
         if(!empty($openid)){
             $where['user.openid'] = $openid;
         }
         $orderby = '';
-        if($morehotel_user==1)  $orderby.='a.hotel_num desc,';
-        if($heavy_user==1)      $orderby.='a.forscreen_num desc,';
-        if($sale_user==1)       $orderby.='a.file_num desc,';
-        if($content_user==1)    $orderby.='a.public_num desc';
+        if($morehotel_user==1 || $morehotel_user==0){
+            $where['a.morehotel_user'] = $morehotel_user;
+            if($morehotel_user==1){
+                $orderby.='a.hotel_num desc,';
+            }
+        }
+        if($heavy_user==1 || $heavy_user==0){
+            $where['a.heavy_user'] = $heavy_user;
+            if($heavy_user==1){
+                $orderby.='a.forscreen_num desc,';
+            }
+        }
+        if($sale_user==1 || $sale_user==0){
+            $where['a.sale_user'] = $sale_user;
+            if($sale_user==1){
+                $orderby.='a.file_num desc,';
+            }
+        }
+        if($content_user==1 || $content_user==0){
+            $where['a.content_user'] = $content_user;
+            if($content_user==1){
+                $orderby.='a.public_num desc';
+            }
+        }
+        if($common_user==1){
+            $where['a.morehotel_user+a.heavy_user+a.sale_user+a.content_user'] = 0;
+            $orderby.='a.forscreen_num desc';
+        }
+        if($label_num){
+            $where['a.morehotel_user+a.heavy_user+a.sale_user+a.content_user'] = $label_num;
+        }
+        if($is_upscore!=99){
+            $where['a.is_upscore'] = $is_upscore;
+        }
         if(empty($orderby))     $orderby ='a.forscreen_num desc';
         $orderby =  rtrim($orderby,",");
-        $fields = 'a.*,user.avatarUrl,user.nickName';
+        $fields = 'a.*,user.openid,user.avatarUrl,user.nickName';
+        $count_fields = 'count(a.id) as tp_count';
         $start  = ($page-1) * $size;
         $m_userforscreen = new \Admin\Model\Smallapp\UserForscreenModel();
-        $res_data = $m_userforscreen->getCustomeList($fields,$where,$orderby,$start,$size);
+        $res_data = $m_userforscreen->getCustomeList($fields,$count_fields,$where,$orderby,$start,$size);
         $datalist = $res_data['list'];
         foreach ($datalist as $k=>$v){
             $update_time = $v['update_time'];
@@ -48,14 +81,15 @@ class UserforscreenController extends BaseController {
         $this->assign('sale_user',$sale_user);
         $this->assign('content_user',$content_user);
         $this->assign('common_user',$common_user);
+        $this->assign('label_num',$label_num);
+        $this->assign('is_upscore',$is_upscore);
         $this->assign('page',  $res_data['page']);
-
         $this->display();
     }
 
     public function edit(){
         $id = I('id',0,'intval');
-        $m_user = new \Admin\Model\Smallapp\UserForscreenModel();
+        $m_userforscreen = new \Admin\Model\Smallapp\UserForscreenModel();
         if(IS_POST){
             $morehotel_user = I('post.morehotel_user',0,'intval');
             $morehotel_score = I('post.morehotel_score',0,'intval');
@@ -65,22 +99,47 @@ class UserforscreenController extends BaseController {
             $sale_score = I('post.sale_score',0,'intval');
             $content_user = I('post.content_user',0,'intval');
             $content_score = I('post.content_score',0,'intval');
-            $common_user = I('post.common_user',0,'intval');
-            $common_score = I('post.common_score',0,'intval');
+
+            if($morehotel_user==1 && $morehotel_score==0){
+                $this->output('请输入多餐厅投屏分数', 'userforscreen/datalist', 2, 0);
+            }
+            if($heavy_user==1 && $heavy_score==0){
+                $this->output('请输入重度分数', 'userforscreen/datalist', 2, 0);
+            }
+            if($sale_user==1 && $sale_score==0){
+                $this->output('请输入销售分数', 'userforscreen/datalist', 2, 0);
+            }
+            if($content_user==1 && $content_score==0){
+                $this->output('请输入内容屏分数', 'userforscreen/datalist', 2, 0);
+            }
+            if($morehotel_score+$heavy_score+$sale_score+$content_score>10){
+                $this->output('总分为10分', 'userforscreen/datalist', 2, 0);
+            }
 
             $data = array('morehotel_user'=>$morehotel_user,'morehotel_score'=>$morehotel_score,
                 'heavy_user'=>$heavy_user,'heavy_score'=>$heavy_score,
                 'sale_user'=>$sale_user,'sale_score'=>$sale_score,
                 'content_user'=>$content_user,'content_score'=>$content_score,
-                'common_user'=>$common_user,'common_score'=>$common_score,'update_time'=>date('Y-m-d H:i:s')
-                );
-            $m_user->updateData(array('id'=>$id),$data);
+            );
+            $info = $m_userforscreen->getInfo(array('id'=>$id));
+            $is_upscore = 0;
+            foreach($data as $k=>$v){
+                if($info[$k]!=$v){
+                    $is_upscore = 1;
+                }
+            }
+            if($is_upscore==1){
+                $data['is_upscore'] = 0;
+                $data['upscore_time'] = date('Y-m-d H:i:s');
+            }
+            $data['update_time'] = date('Y-m-d H:i:s');
+            $m_userforscreen->updateData(array('id'=>$id),$data);
             $msg = '修改成功';
             $this->output($msg, 'userforscreen/datalist');
         }else{
             $fields = 'a.*,user.avatarUrl,user.nickName';
             $where = array('a.id'=>$id);
-            $res_userinfo = $m_user->getUserForscreenInfo($fields,$where);
+            $res_userinfo = $m_userforscreen->getUserForscreenInfo($fields,$where);
             $userinfo = $res_userinfo[0];
             $this->assign('userinfo',$userinfo);
             $this->display();
@@ -95,7 +154,7 @@ class UserforscreenController extends BaseController {
         $end_time = I('end_time','');
 
         if(empty($start_time)){
-            $start_time = date('Y-m-d');
+            $start_time = '2021-01-01';
         }
         if(empty($end_time)){
             $end_time = date('Y-m-d');

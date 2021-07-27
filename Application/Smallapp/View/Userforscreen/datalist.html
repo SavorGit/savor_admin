@@ -13,8 +13,9 @@
                         <div class="input-group input-group-sm">多餐厅投屏用户：</div>
                         <div class="input-group">
                             <select name="morehotel_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                                <option value="0" <if condition="$morehotel_user eq 0">selected</if>>否</option>
+                                <option value="99">全部</option>
                                 <option value="1" <if condition="$morehotel_user eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$morehotel_user eq 0">selected</if>>否</option>
                             </select>
                         </div>
                     </div>
@@ -22,8 +23,9 @@
                         <div class="input-group input-group-sm">重度用户：</div>
                         <div class="input-group">
                             <select name="heavy_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                                <option value="0" <if condition="$heavy_user eq 0">selected</if>>否</option>
+                                <option value="99">全部</option>
                                 <option value="1" <if condition="$heavy_user eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$heavy_user eq 0">selected</if>>否</option>
                             </select>
                         </div>
                     </div>
@@ -31,8 +33,9 @@
                         <div class="input-group input-group-sm">销售用户：</div>
                         <div class="input-group">
                             <select name="sale_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                                <option value="0" <if condition="$sale_user eq 0">selected</if>>否</option>
+                                <option value="99">全部</option>
                                 <option value="1" <if condition="$sale_user eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$sale_user eq 0">selected</if>>否</option>
                             </select>
                         </div>
                     </div>
@@ -40,8 +43,9 @@
                         <div class="input-group input-group-sm">内容贡献者：</div>
                         <div class="input-group">
                             <select name="content_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                                <option value="0" <if condition="$content_user eq 0">selected</if>>否</option>
+                                <option value="99">全部</option>
                                 <option value="1" <if condition="$content_user eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$content_user eq 0">selected</if>>否</option>
                             </select>
                         </div>
                     </div>
@@ -49,28 +53,44 @@
                         <div class="input-group input-group-sm">普通用户：</div>
                         <div class="input-group">
                             <select name="common_user" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
-                                <option value="0" <if condition="$common_user eq 0">selected</if>>否</option>
+                                <option value="99">全部</option>
                                 <option value="1" <if condition="$common_user eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$common_user eq 0">selected</if>>否</option>
                             </select>
                         </div>
                     </div>
+                </div>
+
+
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">多标签用户：</div>
+                        <div class="input-group">
+                            <select name="label_num" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="0">全部</option>
+                                <option value="2" <if condition="$label_num eq 2">selected</if>>2个标签</option>
+                                <option value="3" <if condition="$label_num eq 3">selected</if>>3个标签</option>
+                                <option value="4" <if condition="$label_num eq 4">selected</if>>4个标签</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">是否需更新：</div>
+                        <div class="input-group">
+                            <select name="is_upscore" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                                <option value="99">全部</option>
+                                <option value="1" <if condition="$is_upscore eq 1">selected</if>>是</option>
+                                <option value="0" <if condition="$is_upscore eq 0">selected</if>>否</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <div class="input-group input-group-sm">用户openid：</div>
                         <div class="input-group">
                             <input type="text" class="form-control" name="openid" value="{$openid}" placeholder="用户openid">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="input-group input-group-sm pull-right">
-                            <span class="input-group-btn">
-                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!--
-                <div class="form-inline">
 
                     <div class="form-group">
                         <div class="input-group input-group-sm pull-right">
@@ -81,7 +101,7 @@
                     </div>
 
                 </div>
-                -->
+
 
             </div>
         </div>
