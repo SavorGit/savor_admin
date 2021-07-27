@@ -2877,8 +2877,8 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 $res_public = $model->query($sql_public);
                 $public_id = $res_public[0]['id'];
                 $sort--;
-                $data = array('public_id'=>$public_id,'forscreen_record_id'=>$forscreen_record_id,'update_time'=>$v['update_time'],
-                    'add_time'=>$v['create_time'],'sort'=>$sort);
+                $data = array('data_id'=>$public_id,'forscreen_record_id'=>$forscreen_record_id,'update_time'=>$v['update_time'],
+                    'add_time'=>$v['create_time'],'sort'=>$sort,'type'=>1,'status'=>1);
                 $m_hotplay->add($data);
                 echo "res_id:$forscreen_record_id ok \r\n";
             }else{
