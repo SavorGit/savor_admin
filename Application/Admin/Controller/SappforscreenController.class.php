@@ -206,6 +206,20 @@ class SappforscreenController extends BaseController {
 	        }else {
 	            $list['list'][$key]['box_res_edown_time'] = '';
 	        }
+	        $play_duration = '';
+            if(!empty($v['box_play_stime']) && !empty($v['box_play_etime']) && $v['box_play_etime']>$v['box_play_stime']){
+                $play_duration = round(($v['box_play_etime'] - $v['box_play_stime']) /1000,2);
+                if($play_duration>$v['duration'] && $v['resource_type']!=1){
+                    $play_duration = $v['duration'];
+                }
+            }
+            $duration = '';
+            if(!empty($v['duration']) && $v['duration']>0){
+                $duration = $v['duration'];
+            }
+            $list['list'][$key]['duration'] = $duration;
+            $list['list'][$key]['play_duration'] = $play_duration;
+
             $is_track = 0;
             if($v['small_app_id']==1 && !in_array($v['action'],array(13,14,21,50,101,120,121,42,43,44,45,52,54))){
                 if($v['create_time']>=$track_start_time){
