@@ -4729,7 +4729,7 @@ class CrontabController extends Controller
     //统计点播数据（1、节目单节目2、banner商城商品视频3、商品视频4、星座 5、生日歌）
     public function statDemandData(){
         set_time_limit(0);
-        ini_set("memory_limit", "102400M");
+        ini_set("memory_limit", "10240M");
         $yesterday = date('Y-m-d',strtotime('-1 day'));
         $start_date = $yesterday.' 00:00:00';
         $end_date   = $yesterday.' 23:59:59';
@@ -4743,7 +4743,7 @@ class CrontabController extends Controller
                 left join savor_ads a on r.resource_id = a.id
 
                 where r.action in(17) and small_app_id =1 and r.create_time>='".$start_date."' and r.create_time<='".$end_date."' and a.id>0 ";
-        
+
         $data_one = M()->query($sql);
         
         
@@ -4860,6 +4860,61 @@ class CrontabController extends Controller
         $forscreen_demand = new \Admin\Model\Smallapp\ForscreendemandModel();
         $ret = $forscreen_demand->addAll($data);
         echo $start_date."\n";
+    }
+    
+    public function statDemandDataFor(){
+        
+        set_time_limit(0);
+        ini_set("memory_limit", "10240M");
+        $yesterday = date('Y-m-d',strtotime('-1 day'));
+        $start_date = $yesterday.' 00:00:00';
+        $end_date   = $yesterday.' 23:59:59';
+        
+        
+        $sql ="select id area_id,region_name from savor_area_info where is_in_hotel= 1";
+        $area_info = M()->query($sql);
+        
+        
+        
+        //$config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目',"2"=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
+        
+        //节目
+        
+        
+        //热播内容节目
+        
+        //热播内容-用户
+        
+        //商品
+        
+        
+        //banner商品
+        $sql ="SELECT linkcontent FROM savor_smallapp_adsposition WHERE linkcontent LIKE '/pages/hotel/goods/detail?goods_id%' AND `status`=1 ";
+        
+        $rt = M()->query($sql);
+        
+        
+        $goods_id_str = '';
+        foreach($rt as $v){
+            $url_info = explode('=', $v['linkcontent']);
+            $goods_id = $url_info[1];
+            
+            $goods_id_str .= $space.$goods_id;
+            $space = ',';
+        }
+        $sql ="select d.id resource_id,d.video_intromedia_id media_id,m.oss_addr,d.name resource_name from savor_smallapp_dishgoods d
+               left join savor_media m on d.video_intromedia_id = m.id
+               where  d.id in($goods_id_str)";
+        
+        
+        
+        
+        //生日歌
+        
+        
+        
+        
+        
     }
     
 }
