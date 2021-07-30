@@ -160,7 +160,7 @@ class InvalidforscreenController extends BaseController {
         $source_types = $this->source_types;
         $all_actions = $this->all_actions;
         $fields = 'user.avatarUrl,user.nickName,a.*';
-        $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_smallapp_forscreen_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
         $list = $m_smallapp_forscreen_record->getList($fields,$where,$orders,$start,$size);
 
         $m_forscreentrack = new \Admin\Model\Smallapp\ForscreenTrackModel();
