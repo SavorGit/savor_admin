@@ -375,12 +375,15 @@ class WelcomeController extends BaseController {
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
             $color = I('post.color','');
+            $forscreen_music_name = I('post.forscreen_music_name','','trim');
+            $music_type = I('post.music_type',0,'intval');
             $small_wordsize = I('post.small_wordsize',0,'intval');
             $tv_wordsize = I('post.tv_wordsize',0,'intval');
             $status = I('post.status',0,'intval');
+            $sort = I('post.sort',0,'intval');
 
-            $data = array('name'=>$name,'small_wordsize'=>$small_wordsize,'tv_wordsize'=>$tv_wordsize,
-                'media_id'=>$media_id,'color'=>$color,'type'=>$type,'status'=>$status);
+            $data = array('name'=>$name,'forscreen_music_name'=>$forscreen_music_name,'small_wordsize'=>$small_wordsize,'tv_wordsize'=>$tv_wordsize,
+                'media_id'=>$media_id,'color'=>$color,'music_type'=>$music_type,'type'=>$type,'status'=>$status,'sort'=>$sort);
             if($id){
                 $result = $m_welcomeresource->updateData(array('id'=>$id),$data);
             }else{
