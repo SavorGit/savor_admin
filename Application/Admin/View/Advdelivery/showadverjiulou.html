@@ -172,6 +172,19 @@
 							<div class="input-group input-group-sm" style="float: left;padding: 0;">
 								<span class="end_time">{$vinfo.end_date}</span>
 							</div>
+							
+							<if condition=" $vinfo['is_stop'] eq 1">
+							<label class="col-xs-12 col-sm-2 control-label" style="width: 90px;margin-top: -10px;margin-left: 10px;">
+					实际播放：
+				</label>
+							<div class="input-group input-group-sm" style="float: left;padding: 0;">
+								<span class="str_time">{$vinfo.start_date}-</span>
+							</div>
+
+							<div class="input-group input-group-sm" style="float: left;padding: 0;">
+								<span class="end_time">{$vinfo.update_time}</span>
+							</div>
+							</if>
 							<label style="float: left;margin-left: 55px;">播放次数：{$vinfo.play_times}次</label>
 
 						</div>

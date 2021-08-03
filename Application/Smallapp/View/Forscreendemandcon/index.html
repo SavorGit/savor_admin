@@ -1,0 +1,165 @@
+<include file="Public/script"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/admin/assets/css/horsey.css"/>
+
+
+
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/forscreendemandcon/index" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="form-inline">
+
+          <div class="form-group">
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$start_date}">
+          		<input style="margin-left: 6px;" name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}" readonly>
+                <span class="input-group-btn">
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+       	 	</div>
+
+        	<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$end_date}" >
+
+          		<input    name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}" readonly>
+                <span class="input-group-btn"  >
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+        	</div>
+        </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">城市：</div>
+            <div class="input-group">
+              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name="area" id="vo">
+                  <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">播放类型：</div>
+            <div class="input-group">
+              <select name="resource_cate" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name="forscreen_resource_cate" id="f_cate">
+                  <option value="{$key}" <if condition="$key eq $resource_cate">selected</if>>{$f_cate}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+          
+
+          
+
+          <div class="form-group">
+            <div class="input-group input-group-sm"></div>
+            <div class="input-group">
+              <!-- <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="resource_name" value="{$resource_name}" placeholder="请输入完整资源名称"><span class="inputDel" <notempty name="contentast"> <else /> style="display: none;" </notempty> >X</span>-->
+              <input type="text" class="form-control" name="resource_name" value="{$resource_name}" placeholder="请输入完整的资源名称"> 
+              
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span class="input-group">
+            
+            </div>
+          </div>
+		  
+		  <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            
+            <span class="input-group" style="color:red">(说明:统计数据为{$sta_start_date}---{$sta_end_date})</span>
+            </div>
+          </div>
+		  
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>资源id</th>
+              <th>资源名称</th>
+              <th>资源地址</th>
+              <th>资源类型</th>
+              <th>播放次数</th>
+              <th>点播次数</th>
+              <th>点播饭局数</th>
+              <th>小程序展示次数</th>
+              <!--<th>播放类型</th>
+              <th>播放状态</th>
+              <th>类型</th>
+              <th>MAC地址</th>
+              <th>包间名称</th>
+              <th>酒楼名称</th>
+              <th>所在城市</th>
+              <th>操作</th> -->
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.resource_id}</td>
+              <td data-title="资源名称">{$dinfo.resource_name}</td>
+              <td data-title="资源名称"><a href="http://{$oss_host}/{$dinfo.oss_addr}" target="_blank">预览</a></td>
+              <td data-title="资源类型">{$dinfo.resource_cate_name}</td>
+              <td data-title="播放次数">{$dinfo.play_nums}</td>
+              <td data-title="播放次数">{$dinfo.demand_nums}</td>
+              <td data-title="点播饭局数">{$dinfo.demand_fj}</td>
+              <td data-title="小程序展示次数">{$dinfo.display_num}</td>
+              <!-- <td data-title="图片"><a href="{$dinfo.img}" target="_blank"><img src="{$dinfo.img}" ></a></td>
+              <td data-title="播放时间">{$dinfo.play_time}</td>
+              <td data-title="播放类型">{$dinfo.play_str}</td>
+              <td data-title="播放状态">{$dinfo.status_str}</td>
+              <td data-title="类型">{$dinfo.type_str}</td>
+              <td data-title="MAC地址">{$dinfo.box_mac}</td>
+              <td data-title="包间名称">{$dinfo.room}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="所在城市">{$dinfo.city}</td> -->
+              
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    
+
+    $(".form-control.date").datetimepicker({
+      minView: "month", //选择日期后，不会再跳转去选择时分秒
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+</script>

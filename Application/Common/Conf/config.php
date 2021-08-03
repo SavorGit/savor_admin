@@ -952,7 +952,7 @@ $config['INTEGRAL_TYPES'] = array(
     9=>'分配',
 );
 $config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目',"2"=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
-
+$config['FORSCREEN_CONTENT_RECOURCE_CATE'] = array('1'=>'热播内容节目','2'=>'热播用户内容','3'=>'节目','4'=>'商城商品','5'=>'banner商品','6'=>'生日歌','7'=>'星座视频');
 $config['RD_TEST_HOTEL'] =
     array (
         1064 =>

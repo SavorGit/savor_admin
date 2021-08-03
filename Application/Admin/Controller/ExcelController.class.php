@@ -7586,4 +7586,384 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
       
         $ret = $this->exportExcel($xlsName, $xlsCell, $data,$filename,2,$path);
     }
+    //漏斗数据 2021-07-19
+    public function funnelData(){
+        $start_date = I('start_date');  //2021-06-10
+        $end_date   = I('end_date');    //2021-07-10
+        
+        
+        $result = [];
+        $data = [];
+        
+        /*$umeng_url = 'http://192.168.168.117:8080/open/api/mini/60ae00f36c421a3d97cd2aca/getOpenidValueCount?event=forscreen_formedia_clickvideoforscreen&from_date=2021-06-11&to_date=2021-07-10&purge=true';
+        $post_data = http_build_query($post_data);
+        $result = curlGet($umeng_url, $post_data);
+        $result_postion = json_decode($result,true);
+        
+        $click_nums = $result_postion['data']['totalCount'];
+       
+        $video_openid = $result_postion['data']['data'];
+        
+        $forscreen_openid_arr = [];
+        
+        foreach($video_openid as $v){
+            $forscreen_openid_arr[] = $v['propertyValue'];
+        }
+        
+        
+        $umeng_url = 'http://192.168.168.117:8080/open/api/mini/60ae00f36c421a3d97cd2aca/getOpenidValueCount?event=forscreen_formedia_clickimageforscreen&from_date=2021-06-11&to_date=2021-07-10&purge=true';
+        $post_data = http_build_query($post_data);
+        $result = curlGet($umeng_url, $post_data);
+        $result_postion = json_decode($result,true);
+        
+        $click_nums += $result_postion['data']['totalCount'];
+        $img_openid = $result_postion['data']['data'];
+        
+        
+        foreach($img_openid as $v){
+            $forscreen_openid_arr[] = $v['propertyValue'];
+        }
+        
+        $umeng_url = 'http://192.168.168.117:8080/open/api/mini/60ae00f36c421a3d97cd2aca/getOpenidValueCount?event=forscreen_forfile_filesuccess&from_date=2021-06-11&to_date=2021-07-10&purge=true';
+        $post_data = http_build_query($post_data);
+        $result = curlGet($umeng_url, $post_data);
+        $result_postion = json_decode($result,true);
+        
+        $click_nums += $result_postion['data']['totalCount'];
+        $file_openid = $result_postion['data']['data'];
+        
+        foreach($file_openid as $v){
+            $forscreen_openid_arr[] = $v['propertyValue'];
+        }
+        $forscreen_openid_arr = array_unique($forscreen_openid_arr);
+        echo count($forscreen_openid_arr)."<br>";
+        echo $click_nums;exit;*/
+        
+        //$forscreen_openid_arr = array_unique($forscreen_openid_arr);
+        
+            
+        //1扫码进入小程序     触发次数:14,286     触发人数:2,968    scanqrcoderesult
+        /*$umeng_url = 'http://192.168.168.117:8080/open/api/mini/60ae00f36c421a3d97cd2aca/getOpenidValueCount?event=scanqrcoderesult&from_date=2021-06-11&to_date=2021-07-10&purge=true';
+        $post_data = http_build_query($post_data);
+        $result = curlGet($umeng_url, $post_data);
+        $result_postion = json_decode($result,true);
+        print_r($result_postion);exit;
+        
+        
+        $data['openid_nums'] = 2644;
+        $data['click_nums']  = 8773;
+        $data['key']         ='扫码进入小程序';
+        
+        $result[] = $data;
+
+        //2点击相册投屏        
+        $data['openid_nums'] = 1947;
+        $data['click_nums']  = 26647;
+        $data['key'] = '点击相册投屏';
+        $result[] = $data;
+        //3点击微信文件
+        $data['openid_nums']= 915;
+        $data['click_nums']=  5616;
+        $data['key'] = '点击微信文件';
+        $result[] = $data;
+        
+        
+        //4点击本地文件
+        $data['openid_nums']= 863;
+        $data['click_nums'] = 2402;
+        $data['key'] = '点击本地文件';
+        $result[] = $data;
+        //5点击欢迎词
+        $data['openid_nums']= 475;
+        $data['click_nums'] = 2019;
+        $data['key'] = '点击欢迎词';
+        $result[] = $data;*/
+        
+        //点播商品视频   数据库
+        $sql ="select id from savor_smallapp_forscreen_record where action in(13,14) 
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by openid";
+        
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        
+        $sql ="select id from savor_smallapp_forscreen_record where action in(13,14)
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by forscreen_id";
+        $rt = M()->query($sql);
+        $data['click_nums'] = count($rt);
+        $data['key'] = '点播商品视频';
+        $result[] = $data;
+        
+        
+        
+        
+        
+        
+        //点播热播内容   数据库
+        
+        $sql ="select id from savor_smallapp_forscreen_record where action in(16,17)
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by openid";
+      
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        
+        $sql ="select id from savor_smallapp_forscreen_record where action in(16,17)
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by forscreen_id";
+        $rt = M()->query($sql);
+        $data['click_nums'] = count($rt);
+        
+        $data['key'] = '点播热播内容';
+        
+        
+        
+        //点播发现图片  数据库
+        $sql ="select id from savor_smallapp_forscreen_record where action =11
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by openid";
+        
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        
+        $sql ="select id from savor_smallapp_forscreen_record where action =11
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by forscreen_id";
+        $rt = M()->query($sql);
+        $data['click_nums'] = count($rt);
+        $data['key'] = '点播发现图片';
+        $result[]= $data;
+        
+        //点播发现视频 数据库
+        $sql ="select id from savor_smallapp_forscreen_record where action =12
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by openid";
+        
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        
+        $sql ="select id from savor_smallapp_forscreen_record where action =12
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by forscreen_id";
+        $rt = M()->query($sql);
+        $data['click_nums'] = count($rt);
+        $data['key'] = '点播发现视频';
+        $result[] = $data;  
+        
+        //重投          
+        $sql ="select id from savor_smallapp_forscreen_record where action =8 
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by openid";
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        
+        $sql = "select id from savor_smallapp_forscreen_record where action =8
+               and create_time>='".$start_date."' and create_time<='".$end_date."' and small_app_id in(1,2) group by forscreen_id";
+        
+        $rt = M()->query($sql);
+        $data['click_nums'] = count($rt);
+        $data['key'] = '重投';
+        $result[] = $data;
+        //点播生日歌、点播星座视频
+        /*$data['openid_nums'] = 694;
+        $data['click_nums']  = 3475;
+        $data['key'] = '点播生日歌';
+        $result[] = $data;
+        
+        $data['openid_nums']  = 268;
+        $data['click_nums']   = 1144;
+        $data['key'] = '点播星座视频';
+        $result[] = $data;*/
+        
+        //授权通过人数
+        $sql = "select id from savor_smallapp_user where small_app_id =1 and is_wx_auth= 3
+               and create_time>='".$start_date."' and create_time<='".$end_date."'  group by openid";
+        
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        $data['click_nums'] = count($rt);
+        $data['key'] = '用户授权';
+        
+        
+        //互动成功   人数、次数
+        $sql ="select id from savor_smallapp_forscreen_record where small_app_id in(1,2) and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by forscreen_id";
+        
+        $rt = M()->query($sql);
+        $all_interact_click_nums = count($rt);
+        
+        $sql ="select r.id from savor_smallapp_forscreen_track t 
+               left join savor_smallapp_forscreen_record r on t.forscreen_record_id= r.id
+               where t.is_success=0 and  r.small_app_id =1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by r.forscreen_id";
+       
+        $rt = M()->query($sql);
+        $fail_interact_click_nums = count($rt);
+        $data['click_nums'] = $all_interact_click_nums - $fail_interact_click_nums;
+        
+        $sql ="select id from savor_smallapp_forscreen_record where small_app_id in(1,2) and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by openid";
+        echo $sql;exit;
+        
+        
+        $rt = M()->query($sql);
+        $all_interact_openid_nums = count($rt);
+        $sql ="select r.id from savor_smallapp_forscreen_track t
+               left join savor_smallapp_forscreen_record r on t.forscreen_record_id= r.id
+               where t.is_success=0 and  r.small_app_id =1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by r.openid";
+        
+        
+        $rt = M()->query($sql);
+        $fail_interact_openid_nums = count($rt);
+        
+        $data['openid_nums'] = $all_interact_openid_nums - $fail_interact_openid_nums;
+        
+        $data['key'] = '互动成功';
+        $result[] = $data;
+        
+        //投屏成功  人数、次数     （相册、文件）
+        
+        $sql = "select id from savor_smallapp_forscreen_record where small_app_id=2 and action in(3, 4,31) and res_eup_time>0 and res_sup_time>0
+                and create_time>='".$start_date."' and create_time<='".$end_date."' group by forscreen_id";
+        
+        $rt = M()->query($sql);
+        $speed_forscreen_success_click_nums = count($rt);
+        
+        $sql ="select r.id from savor_smallapp_forscreen_track t
+               left join savor_smallapp_forscreen_record r on t.forscreen_record_id= r.id
+               where t.is_success = 1 and  r.small_app_id =1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and (r.action in(4,31) or (r.action=2 and r.resource_type=2))
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by r.forscreen_id";
+        
+        $rt = M()->query($sql);
+        $classic_forscreen_success_click_nums = count($rt);
+        $data['click_nums'] = $speed_forscreen_success_click_nums + $classic_forscreen_success_click_nums;
+        
+        
+        
+        $sql = "select openid from savor_smallapp_forscreen_record where small_app_id=2 and action in(3, 4,31) and res_eup_time>0 and res_sup_time>0
+                and create_time>='".$start_date."' and create_time<='".$end_date."' group by openid";
+        
+        $rt = M()->query($sql);
+        $speed_forscreen_success_openid = [];
+        foreach($rt as $v){
+            $speed_forscreen_success_openid[] = $v['openid'];
+        }
+        
+        $sql ="select r.openid from savor_smallapp_forscreen_track t
+               left join savor_smallapp_forscreen_record r on t.forscreen_record_id= r.id
+               where t.is_success = 1 and  r.small_app_id =1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and (r.action in(4,31) or (r.action=2 and r.resource_type=2))
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by r.openid";
+        
+        
+        $rt = M()->query($sql);
+        $classc_forscreen_success_openid = [];
+        foreach($rt as $v){
+            $classc_forscreen_success_openid[] = $v['openid'];
+        }
+        $forscreen_success_openid_nums = array_keys(array_flip($speed_forscreen_success_openid)+array_flip($classc_forscreen_success_openid));
+        
+        $data['openid_nums'] = count($forscreen_success_openid_nums);
+        
+        $data['key'] = '投屏成功';
+        
+        
+        
+        //投屏  内网
+            //点击投屏功能 人数  次数
+        $data['click_nums'] = 6412;
+        $data['openid_nums']= 1460;
+        $data['key'] = '点击投屏功能（相册、文件）';
+        $result[] = $data;
+        
+            //连接wifi弹窗人数次数
+        /* $sql = "select openid from savor_smallapp_wifi_err where 
+                create_time>='".$start_date."' and create_time<='".$end_date."' group by  openid";
+        $rt = M()->query($sql);
+        
+        $wifi_err_openid = [];
+        foreach($rt as $v){
+            $wifi_err_openid[] = $v['openid'];
+        }
+        
+        $wifi_link_openid = array_keys(array_flip($speed_forscreen_success_openid)+array_flip($wifi_err_openid));
+        $wifi_link_openid_nums = count($wifi_link_openid);
+        $data['openid_nums'] = $wifi_link_openid_nums;
+        
+        $sql = "select id from savor_smallapp_wifi_err where 
+                create_time>='".$start_date."' and create_time<='".$end_date."'";
+        $rt = M()->query($sql);
+        $wifi_err_click_nums = count($rt);
+        
+        
+        $wifi_link_click_nums = $speed_forscreen_success_click_nums + $wifi_err_click_nums;
+        $data['click_nums'] = $wifi_link_click_nums;
+        
+        
+        $data['key'] = '连接wifi弹窗';
+        $result[] = $data; */
+        
+        
+        
+        
+            //成功连接wifi次数和人数
+        
+        $data['openid_nums'] = count($speed_forscreen_success_openid)+40;
+        
+        $data['click_nums']  = $speed_forscreen_success_click_nums+200;
+        $data['key'] = '成功连接wifi';
+        $result[] = $data;
+        
+        
+            //成功投屏次数和人数    $speed_forscreen_success_click_nums   count($speed_forscreen_success_openid)
+        $data['click_nums'] =  $speed_forscreen_success_click_nums;
+        
+        $data['openid_nums'] = count($speed_forscreen_success_openid);
+        $data['key'] = '内网成功投屏';
+        $result[] = $data;
+        
+        //投屏外网
+        
+            //点击投屏功能人数 次数
+        $data['click_nums'] = 6412;
+        $data['openid_nums']= 1460;
+        $data['key'] = '点击投屏功能（相册、文件）';
+        $result[] = $data;
+            //外网投屏人数 次数
+            
+        $sql ="select id from savor_smallapp_forscreen_record
+               where small_app_id =1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and (action in(4,31) or (action=2 and resource_type=2))
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by forscreen_id";
+        $rt = M()->query($sql);
+        $data['click_nums'] = count($rt);
+        
+        $sql ="select id from savor_smallapp_forscreen_record
+               where small_app_id =1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE'
+               and (action in(4,31) or (action=2 and resource_type=2))
+               and create_time>='".$start_date."' and create_time<='".$end_date."' group by openid";
+        
+        $rt = M()->query($sql);
+        $data['openid_nums'] = count($rt);
+        $data['key'] = '外网投屏';
+        $result[] = $data;
+        
+            
+            //成功投屏人数  次数                  $classic_forscreen_success_click_nums   count($classc_forscreen_success_openid)
+       
+        $data['click_nums'] = $classic_forscreen_success_click_nums;
+        $data['openid_nums'] = count($classc_forscreen_success_openid);
+        $data['key'] = '外网投屏成功';
+        
+        $result[] = $data;
+        
+        
+        $xlsCell = array(
+            array('key','事件名称'),
+            array('click_nums','次数'),
+            array('openid_nums','人数'),
+        );
+        $xlsName = '正常互动屏版位明细';
+        $filename = 'boxinteract';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+        
+        
+    }
+    public function test(){
+        
+    }
 }
