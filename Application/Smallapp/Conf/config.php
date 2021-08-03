@@ -114,7 +114,7 @@ $config = array(
         'syslottery/getprizemoney' => '领取奖品现金(系统抽奖)',
         'syslottery/getresult' => '获取领取结果(系统抽奖)',
         'syslottery/join' => '参加抽奖(系统抽奖)',
-        'user/bindoffiaccount' => '绑定公众号',
+        'user/bindoffiaccount' => '从公众号进入小程序',
         'user/delmypublic' => '删除公开内容',
         'user/getmycollect' => '查看我的收藏',
         'user/getmypublic' => '查看我的公开',
@@ -125,7 +125,6 @@ $config = array(
         'user/registercom' => '注册用户',
         'welcome/addwelcome' => '添加欢迎词',
         'welcome/checkwelcome' => '检查当前是否有已添加的欢迎词',
-        'welcome/config' => '进入欢迎词',
         'welcome/demandplay' => '点播欢迎词',
         'welcome/detail' => '查看欢迎词详情',
     )

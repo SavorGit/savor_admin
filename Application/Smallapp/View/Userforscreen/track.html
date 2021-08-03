@@ -47,6 +47,9 @@
                     <thead>
                     <tr id="post">
                         <th>openid</th>
+                        <th>酒楼名称</th>
+                        <th>版位名称</th>
+                        <th>版位MAC</th>
                         <th>操作记录日期</th>
                         <th>操作</th>
                     </tr>
@@ -55,6 +58,9 @@
                     <foreach name="datalist" item="dinfo">
                         <tr target="sid_user">
                             <td data-title="openid">{$dinfo.openid}</td>
+                            <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+                            <td data-title="版位名称">{$dinfo.box_name}</td>
+                            <td data-title="版位MAC">{$dinfo.box_mac}</td>
                             <td data-title="操作记录日期">{$dinfo.add_date}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">

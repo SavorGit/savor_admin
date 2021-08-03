@@ -14,7 +14,7 @@ class UserforscreenController extends BaseController {
         $content_user = I('content_user',99,'intval');
         $common_user = I('common_user',99,'intval');
         $label_num = I('label_num',0,'intval');
-        $is_upscore = I('is_upscore',0,'intval');
+        $is_upscore = I('is_upscore',99,'intval');
 
         $where = array();
         if(!empty($openid)){
@@ -45,8 +45,12 @@ class UserforscreenController extends BaseController {
                 $orderby.='a.public_num desc';
             }
         }
-        if($common_user==1){
-            $where['a.morehotel_user+a.heavy_user+a.sale_user+a.content_user'] = 0;
+        if($common_user==1 || $common_user==0){
+            if($common_user==1){
+                $where['a.morehotel_user+a.heavy_user+a.sale_user+a.content_user'] = 0;
+            }else{
+                $where['a.morehotel_user+a.heavy_user+a.sale_user+a.content_user'] = array('gt',0);
+            }
             $orderby.='a.forscreen_num desc';
         }
         if($label_num){
@@ -168,6 +172,22 @@ class UserforscreenController extends BaseController {
         $where['add_time'] = array(array('EGT',date('Y-m-d 00:00:00',strtotime($start_time))),array('ELT',date('Y-m-d 23:59:59',strtotime($end_time))));
         $res_data = $m_acceslog->getCustomeList($fields,$count_field,$where,$group,'',$start,$size);
         $datalist = $res_data['list'];
+        $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+        foreach ($datalist as $k=>$v){
+            $fwhere = array('openid'=>$v['openid']);
+            $fwhere['create_time'] = array(array('EGT',date('Y-m-d 00:00:00',strtotime($v['add_date']))),array('ELT',date('Y-m-d 23:59:59',strtotime($v['add_date']))));
+            $fwhere['hotel_id'] = array('gt',0);
+            $res_forscreen = $m_forscreen->getAll('hotel_name,box_name,box_mac',$fwhere,0,1,'id asc');
+            $hotel_name = $box_name = $box_mac = '';
+            if(!empty($res_forscreen)){
+                $hotel_name = $res_forscreen[0]['hotel_name'];
+                $box_name = $res_forscreen[0]['box_name'];
+                $box_mac = $res_forscreen[0]['box_mac'];
+            }
+            $datalist[$k]['hotel_name'] = $hotel_name;
+            $datalist[$k]['box_name'] = $box_name;
+            $datalist[$k]['box_mac'] = $box_mac;
+        }
 
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
