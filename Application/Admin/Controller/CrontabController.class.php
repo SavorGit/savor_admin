@@ -4890,7 +4890,7 @@ class CrontabController extends Controller
         
         
         //热播内容节目
-        $sql = "SELECT resource_name,media_id as resource_id ,oss_addr
+        $sql = "SELECT resource_name,ads_id as resource_id ,oss_addr
                 FROM savor_smallapp_datadisplay
                 WHERE `type`=1  AND add_date='".$yesterday."' GROUP BY media_id";
         $hot_program_list = M()->query($sql);
@@ -4905,12 +4905,13 @@ class CrontabController extends Controller
             }
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
-                where resource_id=".$v['resource_id']." and r.action =5 and small_app_id =1 and r.create_time>='".$start_date.
+                where resource_id=".$v['resource_id']." and r.action =17 and small_app_id =1 and r.create_time>='".$start_date.
                 "' and r.create_time<='".$end_date."'";
             
             $rt = M()->query($sql);
             $lunch_temp = [];
             $dinner_temp = [];
+            
             foreach($rt as $vv){
                 $hot_program_list[$key]['demand_nums_'.$vv['area_id']] +=1;
                 $f_time = date('H:i',strtotime($vv['create_time']));
@@ -4921,6 +4922,7 @@ class CrontabController extends Controller
                     $dinner_temp[$vv['area_id']][$vv['box_id']] = $vv['box_id'];
                 }
             }
+            
             foreach($lunch_temp as $kk=>$vv){
                 $hot_program_list[$key]['demand_fj_'.$kk] += count($lunch_temp[$kk]);
             }
@@ -4931,6 +4933,7 @@ class CrontabController extends Controller
             $hot_program_list[$key]['resource_cate'] = 1;  //热播节目
             $hot_program_list[$key]['sta_date'] = $yesterday;
         }
+        //print_r($hot_program_list);exit;
         //热播内容-用户
         $sql = "SELECT resource_name, resource_id ,oss_addr
                 FROM savor_smallapp_datadisplay

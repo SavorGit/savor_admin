@@ -1448,6 +1448,17 @@ class AdvdeliveryController extends BaseController {
             $m_pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
             $box_list = $m_pub_ads_box->getBoxArrByPubAdsId($pub_ads_id);
             $hotel_list = $m_pub_ads_hotel->getAdsHotelId($pub_ads_id);
+            
+            //$m_pub_ads->updateData($condition, $data)
+            /* $now_date = date('Y-m-d H:i:s');
+            $p_info = $m_pub_ads->field('id,create_time')->where("end_date>'".$now_date."' and state=1")->order('id desc')->find();
+            $update_p_info_time = date('Y-m-d H:i:s',strtotime($p_info['create_time'])+1);
+            $m_pub_ads->updateInfo(array('id'=>$p_info['id']), array('create_time'=>$update_p_info_time)); */
+            
+            
+            
+            
+            
             foreach($box_list as $key=>$v){
                 $redis->remove($cache_key_pre.$v['box_id']);
             }
