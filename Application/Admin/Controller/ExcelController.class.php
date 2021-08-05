@@ -7121,14 +7121,14 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         if(!empty($end_time)){
             $where .= " and create_time <='".$end_time."'";
         }
-        $sql = "select openid  from savor_smallapp_forscreen_record where ((action = '2' AND resource_type = '2') or action=4) and small_app_id=1 and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE' ".$where." group by openid";
+        $sql = "select openid  from savor_smallapp_forscreen_record where ((action = '2' AND resource_type = '2') or action=4) and small_app_id in(1,2) and openid!='ofYZG4yZJHaV2h3lJHG5wOB9MzxE' ".$where." group by openid";
         
         $user = M()->query($sql);
         foreach($user as $key=>$v){
-            $sql = "select id from savor_smallapp_forscreen_record where (action = '2' AND resource_type = '2') and small_app_id=1 and openid ='".$v['openid']."'".$where.' group by forscreen_id';
+            $sql = "select id from savor_smallapp_forscreen_record where (action = '2' AND resource_type = '2') and small_app_id in(1,2) and openid ='".$v['openid']."'".$where.' group by forscreen_id';
             $rt = M()->query($sql);
             $v_num = count($rt);
-            $sql = "select id from savor_smallapp_forscreen_record where action = '4'  and small_app_id=1 and openid ='".$v['openid']."'".$where.' group by forscreen_id';
+            $sql = "select id from savor_smallapp_forscreen_record where action = '4'  and  small_app_id in(1,2) and openid ='".$v['openid']."'".$where.' group by forscreen_id';
             $rt = M()->query($sql);
             $i_num = count($rt);
             $user[$key]['v_num'] = $v_num;
