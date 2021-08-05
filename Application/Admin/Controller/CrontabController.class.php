@@ -4890,7 +4890,7 @@ class CrontabController extends Controller
         
         
         //热播内容节目
-        $sql = "SELECT resource_name,ads_id as resource_id ,oss_addr
+        $sql = "SELECT resource_name,ads_id as resource_id ,media_id,oss_addr
                 FROM savor_smallapp_datadisplay
                 WHERE `type`=1  AND add_date='".$yesterday."' GROUP BY media_id";
         $hot_program_list = M()->query($sql);
@@ -4899,7 +4899,7 @@ class CrontabController extends Controller
                 $hot_program_list[$key]['demand_nums_'.$vv['area_id']] =0;
                 $hot_program_list[$key]['demand_fj_'.$vv['area_id']] =0;
                 $sql = "select sum(display_num) as display_num from savor_smallapp_datadisplay
-                        where media_id =".$v['resource_id']." and area_id=".$vv['area_id']." and type=1 AND add_date='".$yesterday."'";
+                        where media_id =".$v['media_id']." and area_id=".$vv['area_id']." and type=1 AND add_date='".$yesterday."'";
                 $rts = M()->query($sql);
                 $hot_program_list[$key]['display_num_'.$vv['area_id']] = intval($rts[0]['display_num']);
             }
@@ -4932,6 +4932,7 @@ class CrontabController extends Controller
             }
             $hot_program_list[$key]['resource_cate'] = 1;  //热播节目
             $hot_program_list[$key]['sta_date'] = $yesterday;
+            //unset($hot_program_list[$key]['media_id']);
         }
         //print_r($hot_program_list);exit;
         //热播内容-用户
@@ -4980,10 +4981,11 @@ class CrontabController extends Controller
             $hot_user_list[$key]['resource_cate'] = 2;  //热播用户内容
             $hot_user_list[$key]['sta_date'] = $yesterday;
             $hot_user_list[$key]['resource_name'] = '热播用户内容';
+            
         }
         
         //节目    首先获取展示的节目
-        $sql = "SELECT resource_name,media_id as resource_id ,oss_addr
+        $sql = "SELECT resource_name,media_id as resource_id ,media_id,oss_addr
                 FROM savor_smallapp_datadisplay 
                 WHERE `type`=3  AND add_date='".$yesterday."' GROUP BY media_id";
         
@@ -4994,7 +4996,7 @@ class CrontabController extends Controller
                 $program_list[$key]['demand_fj_'.$vv['area_id']] =0;
                 
                 $sql = "select sum(display_num) as display_num from savor_smallapp_datadisplay
-                        where media_id =".$v['resource_id']." and area_id=".$vv['area_id']." and type=3 AND add_date='".$yesterday."'";
+                        where media_id =".$v['media_id']." and area_id=".$vv['area_id']." and type=3 AND add_date='".$yesterday."'";
                 $rts = M()->query($sql);
                 $program_list[$key]['display_num_'.$vv['area_id']] = intval($rts[0]['display_num']);
             }
@@ -5027,6 +5029,7 @@ class CrontabController extends Controller
             }
             $program_list[$key]['resource_cate'] = 3;
             $program_list[$key]['sta_date'] = $yesterday;
+            //unset($program_list[$key]['media_id']);
         }
         
         
@@ -5039,7 +5042,7 @@ class CrontabController extends Controller
             $goods_id_str .= $spacei.$v['id'];
             $spacei = ',';
         }
-        $sql ="select d.id resource_id,m.oss_addr,d.name resource_name from savor_smallapp_dishgoods d
+        $sql ="select d.id resource_id,m.oss_addr,d.name resource_name,m.id media_id from savor_smallapp_dishgoods d
         left join savor_media m on d.video_intromedia_id = m.id
         where  d.id in($goods_id_str) and m.id>0";
         
@@ -5096,7 +5099,7 @@ class CrontabController extends Controller
             $goods_id_str .= $space.$goods_id;
             $space = ',';
         }
-        $sql ="select d.id resource_id,m.oss_addr,d.name resource_name from savor_smallapp_dishgoods d
+        $sql ="select d.id resource_id,m.oss_addr,d.name resource_name,m.id media_id from savor_smallapp_dishgoods d
                left join savor_media m on d.video_intromedia_id = m.id
                where  d.id in($goods_id_str)";
         
@@ -5143,7 +5146,7 @@ class CrontabController extends Controller
             $banner_goods_list[$key]['sta_date'] = $yesterday;
         }
         //生日歌
-        $sql ="select b.media_id resource_id,b.name resource_name,oss_addr from savor_smallapp_birthday b 
+        $sql ="select b.media_id resource_id,b.name resource_name,oss_addr,m.id media_id from savor_smallapp_birthday b 
                left join savor_media m on b.media_id=m.id ";
         
         $happy_list = M()->query($sql);
@@ -5191,7 +5194,8 @@ class CrontabController extends Controller
             $happy_list[$key]['sta_date'] = $yesterday;
         }
         //星座
-        $sql ="select m.name resource_name,v.media_id resource_id,c.start_month,c.start_day,c.end_month,c.end_day,m.oss_addr
+        $sql ="select m.name resource_name,v.media_id resource_id,c.start_month,c.start_day,
+               c.end_month,c.end_day,m.oss_addr,m.id media_id
                from savor_smallapp_constellation c
                left join savor_smallapp_constellation_video v on c.id=v.constellation_id
                left join savor_media m  on v.media_id = m.id

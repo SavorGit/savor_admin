@@ -61,7 +61,7 @@ class ForscreendemandconController extends BaseController {
                 $where .=' and resource_name ="'.$resource_name.'"';
             }
             
-            $fields = ' resource_id,resource_name,resource_cate,oss_addr';
+            $fields = ' resource_id,resource_name,resource_cate,oss_addr,media_id';
             
             $where .=" and  sta_date>='".$start_date."' and sta_date<='".$end_date."'";
             $group = 'resource_id,resource_cate';
@@ -81,7 +81,7 @@ class ForscreendemandconController extends BaseController {
             /* if($resource_name!=''){
              $where .=' and resource_name like "%'.$resource_name.'%"';
              } */
-            $fields = ' resource_id,resource_name,resource_cate,oss_addr';
+            $fields = ' resource_id,resource_name,resource_cate,oss_addr,media_id';
             $where .=" and  sta_date>='".$start_date."' and sta_date<='".$end_date."'";
             $group = 'resource_id,resource_cate';
             $result = $m_forscreen_demandcontent->getList($fields,$where,$group, $order, $start,$size);
@@ -98,7 +98,7 @@ class ForscreendemandconController extends BaseController {
             if($v['resource_cate'] ==1 || $v['resource_cate']==3){ //热播节目/节目
                 //播放次数
                 $play_where = ' 1 ';
-                $play_where .= ' and media_id='.$v['resource_id'];
+                $play_where .= ' and media_id='.$v['media_id'];
                 if($area_id){
                     $paly_where .=" and area_id=$area_id";
                 }
@@ -157,7 +157,7 @@ class ForscreendemandconController extends BaseController {
         
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
-        $this->assign('sta_start_date','2021-06-01');
+        $this->assign('sta_start_date','2021-08-04');
         $this->assign('sta_end_date',$yesday);
         $this->display();
     }
