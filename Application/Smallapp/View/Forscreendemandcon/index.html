@@ -82,7 +82,11 @@
             <span class="input-group" style="color:red">(说明:统计数据为{$sta_start_date}---{$sta_end_date})</span>
             </div>
           </div>
-		  
+		  <div class="input-group input-group-sm pull-right">
+              <a  class="btn btn-success btn-sm add"  title="导出点播内容统计数据"  target="_blank" mask="true" href="{$host_name}/excel/forscreendemandcon?start_date={$start_date}&end_date={$end_date}&area_id={$area_id}&resource_cate={$resource_cate}&resource_name={$resource_name}" ><i class="fa fa-plus"></i> 导出点播内容统计数据</a>
+              <input type="hidden" id="xiaohref" value="{$host_name}/excel/forscreendemandcon"/>
+          </div>
+          
         </div>
 
       </div>

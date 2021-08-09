@@ -152,6 +152,8 @@ class ExcelController extends Controller
              $tmpname = '打赏明细';
          }else if($filename=='boxinteract'){
              $tmpname = '正常互动屏版位明细';
+         }else if($filename=='forscreendemandcon'){
+             $tmpname = '导出点播内容统计数据';
          }
 
 
@@ -7962,6 +7964,119 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
         
         
+    }
+    public function forscreendemandcon(){
+        $area_id = I('get.area_id',0,'intval');
+        $resource_cate = I('get.resource_cate',0,'intval');
+        $resource_name = I('get.resource_name','','trim');
+        $start_date = I('get.start_date');
+        $end_date   = I('get.end_date');
+        if($start_date>$end_date){
+            $this->error('开始时间不能大于结束时间');
+        }
+        
+        $where =  ' 1 ';
+        /* if($area_id){
+         $where .=" and area_id =$area_id";
+         } */
+        if($resource_cate){
+            $where .=" and resource_cate=$resource_cate";
+        }
+        
+        if($resource_name!=''){
+            $where .=' and resource_name ="'.$resource_name.'"';
+        }
+        
+        $fields = ' resource_id,resource_name,resource_cate,oss_addr,media_id';
+        
+        $where .=" and  sta_date>='".$start_date."' and sta_date<='".$end_date."'";
+        $group = 'resource_id,resource_cate';
+        
+        
+        $m_forscreen_demandcontent = new \Admin\Model\Smallapp\ForscreendemandcontentModel();
+        $datalist = $m_forscreen_demandcontent->field($fields)->where($where)->group($group)->select();
+        //echo $m_forscreen_demandcontent->getLastSql();exit;
+        $m_sta = new \Admin\Model\MediaStaModel();
+        $play_where = ' 1';
+        
+        $oss_host = C('OSS_HOST_NEW');
+        $start_date_str = str_replace('-', '', $start_date);
+        $end_date_str   = str_replace('-', '', $end_date);
+        //资源类型
+        $forscreen_resource_cate = C('FORSCREEN_CONTENT_RECOURCE_CATE');
+        
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getAllArea();
+        foreach($datalist as $key=>$v){
+            $datalist[$key]['resource_cate_name'] = $forscreen_resource_cate[$v['resource_cate']];
+            
+            if($v['resource_cate'] ==1 || $v['resource_cate']==3){ //热播节目/节目
+                //播放次数
+                $play_where = ' 1 ';
+                $play_where .= ' and media_id='.$v['media_id'];
+                if($area_id){
+                    $paly_where .=" and area_id=$area_id";
+                }
+                $play_where .= " and play_date>=".$start_date_str." and play_date<=".$end_date_str;
+                
+                $fields = " sum(play_count) as pc";
+                $rt = $m_sta->field($fields)->where($play_where)->select();
+                if(empty($rt[0]['pc'])){
+                    $datalist[$key]['play_nums'] = 0;
+                }else {
+                    $datalist[$key]['play_nums'] = $rt[0]['pc'];
+                }
+            }else {
+                $datalist[$key]['play_nums'] = 0;
+            }
+            
+            
+            //点播次数
+            if(empty($area_id)){
+                $fields = " sum(`demand_nums_1` + `demand_nums_9`+ `demand_nums_236`+`demand_nums_246`)  dumand_nums ,
+                            sum(`demand_fj_1`+`demand_fj_9`+`demand_fj_236`+`demand_fj_246`) demand_fj,
+                            sum(`display_num_1`+`display_num_9`+`display_num_236`+`display_num_246`) display_num";
+                
+            }else {
+                foreach($area_arr as $vv){
+                    if($area_id == $vv['id']){
+                        $fields = " sum(demand_nums_".$vv['id'].")  dumand_nums ,sum(demand_fj_".$vv['id'].") demand_fj,
+                            sum(display_num_".$vv['id'].") display_num";
+                        break;
+                    }
+                }
+            }
+            
+            
+            
+            $dm_where = '1';
+            
+            $dm_where .= ' and resource_id='.$v['resource_id'];
+            $dm_where .= ' and resource_cate='.$v['resource_cate'];
+            
+            
+            $dm_where .= " and sta_date>='".$start_date."' and sta_date<='".$end_date."'";
+            $rt = $m_forscreen_demandcontent->field($fields)->where($dm_where)->find();
+            
+            $datalist[$key]['demand_nums'] = $rt['dumand_nums'];
+            $datalist[$key]['demand_fj'] = $rt['demand_fj'];
+            $datalist[$key]['display_num'] = $rt['display_num'];
+            $datalist[$key]['oss_addr'] = 'http://'.$oss_host.'/'.$datalist[$key]['oss_addr'];
+            
+        }
+        $xlsCell = array(
+            array('resource_id','资源id'),
+            array('resource_name','资源名称'),
+            array('oss_addr','资源地址'),
+            array('resource_cate','资源类型'),
+            array('play_nums','播放次数'),
+            array('demand_nums','点播次数'),
+            array('demand_fj','点播饭局数'),
+            array('display_num','小程序展示次数')
+        );
+        $xlsName = '导出点播内容统计数据';
+        $filename = 'forscreendemandcon';
+        $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
     }
     public function test(){
         
