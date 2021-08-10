@@ -3050,9 +3050,128 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             }
         }
         $m_hoteplay->addAll($all_data);
+    }
 
+    public function hoteldrinksimg() {
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = 'oss-cn-beijing.aliyuncs.com';
+        $bucket = C('OSS_BUCKET');
+        $aliyunoss = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+        $aliyunoss->setBucket($bucket);
 
+        $dir = '/application_data/web/php/savor_admin/Public/content/hotel_drinks_img';
+        $all_hotel_img = array();
+        $objects = scandir($dir);
+        $m_hotel_drinks = new \Admin\Model\HoteldrinksModel();
+        $m_media = new \Admin\Model\MediaModel();
+        foreach ($objects as $object) {
+            if ($object != "." && $object != "..") {
+                $hotel_id = $object;
+                $res_hotelimgs = scandir($dir."/".$object);
+                $hotel_img = array();
+                foreach ($res_hotelimgs as $img){
+                    if ($img != "." && $img != "..") {
+                        $file_path = $dir.'/'.$object.'/'.$img;
+                        $hotel_img[] = $file_path;
 
+                        $tempInfo = pathinfo($file_path);
+                        $surfix = $tempInfo['extension'];
+                        if($surfix){
+                            $surfix = strtolower($surfix);
+                        }
+                        $typeinfo = C('RESOURCE_TYPEINFO');
+                        if(isset($typeinfo[$surfix])){
+                            $type = $typeinfo[$surfix];
+                        }else{
+                            $type = 3;
+                        }
+                        $file_size = 0;
+                        $oss_addr = 'media/resource/'.getMillisecond().".$surfix";
+                        $res_upload = $aliyunoss->uploadFile($oss_addr,$file_path);
+                        if(!empty($res_upload['info']['url'])){
+                            $file_info = $aliyunoss->getObject($oss_addr,'');
+                            $md5_str = md5($file_info);
+                            $res_object = $aliyunoss->getObjectMeta($oss_addr);
+                            if(isset($res_object['content-length']) && $res_object['content-length']>0 && isset($res_object['oss-request-url'])){
+                                $tmp_file = explode("$endpoint/",$res_object['oss-request-url']);
+                                if($tmp_file[1]==$oss_addr){
+                                    $file_size = $res_object['content-length'];
+                                }
+                            }
+                            $add_mediadata = array('name'=>$tempInfo['filename'],'oss_addr'=>$oss_addr,'oss_filesize'=>$file_size,
+                                'md5'=>$md5_str,'surfix'=>$surfix,'create_time'=>date('Y-m-d H:i:s'),'type'=>$type);
+                            $media_id = $m_media->add($add_mediadata);
+                            $add_drinks_data = array('hotel_id'=>$hotel_id,'media_id'=>$media_id,'type'=>2);
+                            $res_drinks = $m_hotel_drinks->add($add_drinks_data);
+                            if($res_drinks){
+                                echo "hotel_id:$hotel_id  $oss_addr ok \r\n";
+                            }
+                        }
+                    }
+                }
+                $all_hotel_img[] = array('hotel_id'=>$hotel_id,'imgs'=>$hotel_img);
+            }
+        }
+        print_r($all_hotel_img);
+    }
+
+    public function hoteldrinksprice(){
+        $file_path = SITE_TP_PATH.'/Public/content/酒楼白酒种类清单-0809.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $m_hotel_drinks = new \Admin\Model\HoteldrinksModel();
+        for ($row = 3; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $hotel_id = $rowData[0][0];
+                $hotel_name = $rowData[0][1];
+                $tmp_drinks = array_slice($rowData[0],2);
+                if(!empty($tmp_drinks)){
+                    $d_num = ceil(count($tmp_drinks) / 2);
+                    for ($i=0;$i<$d_num;$i++){
+                        $offset = $i*2;
+                        $now_drinks = array_slice($tmp_drinks,$offset,2);
+                        if(empty($now_drinks[0]) && empty($now_drinks[1])){
+                            break;
+                        }
+                        $name = $now_drinks[0];
+                        $price = $now_drinks[1];
+                        $add_drinks = array('hotel_id'=>$hotel_id,'name'=>$name,'price'=>$price,'type'=>1);
+                        $res_drinks = $m_hotel_drinks->add($add_drinks);
+                        if($res_drinks){
+                            echo "hotel_id:$hotel_id name:$name price:$price ok \r\n";
+                        }
+                    }
+                }
+                exit;
+            }
+        }
+    }
+
+    public function getheart(){
+        $mac = I('get.mac','');
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(20);
+        $params_cache_key = $mac.':'.date('Ymd');
+        $res = $redis->get($params_cache_key);
+        if(!empty($res)){
+            $result = json_decode($res,true);
+            $str = "机顶盒：$mac 心跳上报如下：<br>";
+            foreach ($result as $v){
+                $str.="序号：{$v['serial_no']}，时间：{$v['time']}<br>";
+            }
+            echo $str;
+        }
     }
 
 }
