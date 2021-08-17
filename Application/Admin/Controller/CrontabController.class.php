@@ -3787,6 +3787,15 @@ class CrontabController extends Controller
         echo "forscreen4gbox end:$now_time \r\n";
     }
 
+    public function publicwidthheight(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "publicwidthheight start:$now_time \r\n";
+        $m_public = new \Admin\Model\Smallapp\PublicModel();
+        $m_public->handle_widthheight();
+        $now_time = date('Y-m-d H:i:s');
+        echo "publicwidthheight end:$now_time \r\n";
+    }
+
     public function sendredpacket(){
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();
