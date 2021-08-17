@@ -1,14 +1,8 @@
 <?php
-/**
- * @desc   小程序用户公开资源
- * @author zhang.yingtao
- *
- */
 namespace Admin\Model\Smallapp;
 use Think\Model;
 use Common\Lib\Page;
-class PublicModel extends Model
-{
+class PublicModel extends Model{
 	protected $tableName='smallapp_public';
 	public function addInfo($data,$type=1){
 	    if($type==1){
@@ -73,5 +67,62 @@ class PublicModel extends Model
         }else{
 	        echo "no data \r\n";
         }
+    }
+
+    public function handle_widthheight(){
+        $start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
+        $end_time = date('Y-m-d 23:59:59',strtotime('-1 day'));
+//        $where = array('status'=>array('in',array(1,2,3)));
+        $where['create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+	    $res_data = $this->getWhere('*',$where,'id desc','','');
+	    if(!empty($res_data)){
+            $host_name = C('OSS_HOST_NEW');
+	        $m_pubdetail = new \Admin\Model\Smallapp\PubdetailModel();
+            foreach ($res_data as $v){
+                $res_type = $v['res_type'];//1图片2视频
+                $where = array('forscreen_id'=>$v['forscreen_id']);
+                $res_pdetail = $m_pubdetail->getWhere('*',$where,'id asc','','');
+                foreach ($res_pdetail as $pv){
+                    $file_path = $pv['res_url'];
+                    if($res_type==1){
+                        $url = "http://$host_name/$file_path?x-oss-process=image/info";
+                        $res = '';
+                        $http_curl = new \Common\Lib\Curl();
+                        $http_curl::get($url,$res);
+                        if(!empty($res)){
+                            $res_img = json_decode($res,true);
+                            $width = $res_img['ImageWidth']['value'];
+                            $height = $res_img['ImageHeight']['value'];
+                            $up_data = array('width'=>$width,'height'=>$height);
+                            $m_pubdetail->updateInfo(array('id'=>$pv['id']),$up_data);
+                            echo "pubdetail_id: {$pv['id']} image width:$width height:$height ok \r\n";
+                        }
+                    }else{
+                        $url = "http://$host_name/$file_path?x-oss-process=video/snapshot,t_1000,f_jpg,m_fast";
+                        $curl = curl_init();
+                        curl_setopt($curl, CURLOPT_URL, $url);
+                        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+
+                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                        $info = curl_exec($curl);
+                        curl_close($curl);
+                        $file_info = pathinfo($file_path);
+                        $newFileName = SITE_TP_PATH.'/Public/content/img/'.$file_info['filename'].'.jpg';
+                        $fp2 = @fopen($newFileName, "a");
+                        fwrite($fp2, $info);
+                        fclose($fp2);
+                        $res_imgsize = getimagesize($newFileName);
+
+                        $width = $res_imgsize[0];
+                        $height = $res_imgsize[1];
+                        $up_data = array('width'=>$width,'height'=>$height);
+                        $m_pubdetail->updateInfo(array('id'=>$pv['id']),$up_data);
+                        echo "pubdetail_id: {$pv['id']} video width:$width height:$height ok \r\n";
+                    }
+                }
+            }
+        }
+
     }
 }
