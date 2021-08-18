@@ -741,6 +741,7 @@ class HotelController extends BaseController {
         }
 
 		$save['is_4g']               = I('post.is_4g',0,'intval');  //是否为4G酒楼
+		$save['is_5g']               = I('post.is_5g',0,'intval');  //是否为5G酒楼
 		if(mb_strlen($save['collection_company'])>50 || mb_strlen($save['bank_account'])>50 || mb_strlen($save['bank_name'])>50){
 			$this->error('收款公司名称，银行账号以及开户行名称最多50个字');
 		}
