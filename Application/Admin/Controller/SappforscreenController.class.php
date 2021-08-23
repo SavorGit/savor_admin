@@ -1480,7 +1480,7 @@ class SappforscreenController extends BaseController {
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
 	    $m_public = new \Admin\Model\Smallapp\PublicModel();
-	    $fields = 'user.nickName,a.id,a.forscreen_id,a.openid,a.box_mac,a.res_type,a.is_pub_hotelinfo,a.create_time,a.status,a.is_recommend,a.create_time';
+	    $fields = 'user.nickName,a.id,a.forscreen_id,a.openid,a.box_mac,a.res_type,a.is_pub_hotelinfo,a.create_time,a.status,a.is_recommend,a.is_top,a.create_time';
 	    $where = array();
 	    if($status!=99){
             $where['a.status'] = $status;
@@ -1781,7 +1781,7 @@ class SappforscreenController extends BaseController {
             $m_netty = new \Admin\Model\Smallapp\NettyModel();
             $head_pic = 'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg';
             $now_barrages = array('nickName'=>'小热点','headPic'=>base64_encode($head_pic),'avatarUrl'=>$head_pic);
-            if($is_play){
+            if($is_play && $playnow_num==0){
                 $hotel_num = count($hotel_ids);
                 $m_box = new \Admin\Model\BoxModel();
                 $where = array('box.state'=>1,'box.flag'=>0);
@@ -1980,6 +1980,16 @@ class SappforscreenController extends BaseController {
                $add_data = array('status'=>2,'sysuser_id'=>$sysuserInfo['id'],'update_time'=>date('Y-m-d H:i:s'));
                $m_publicplay->updateData(array('id'=>$res_public_play['id']),$add_data);
            }
+
+           $key_findtop = C('SAPP_FIND_TOP');
+           $redis  =  \Common\Lib\SavorRedis::getInstance();
+           $redis->select(5);
+           $res_public = $m_public->getWhere('id',array('status'=>2,'is_recommend'=>1,'is_top'=>1),'id asc','','');
+           $top_ids = array();
+           foreach ($res_public as $v){
+               $top_ids[]=$v['id'];
+           }
+           $redis->set($key_findtop,json_encode($top_ids));
 
 	       $this->output('删除成功', 'sappforscreen/publiccheck',2);
 	   }else {
