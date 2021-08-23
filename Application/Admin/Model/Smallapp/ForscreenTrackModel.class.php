@@ -237,6 +237,7 @@ class ForscreenTrackModel extends BaseModel{
                         }else{
                             $this->add($data);
                         }*/
+                        /*
                         $is_del = 0;
                         if(isset($data['netty_position_result'])){
                             $netty_position_result = json_decode($data['netty_position_result'],true);
@@ -259,6 +260,7 @@ class ForscreenTrackModel extends BaseModel{
                                 $m_forscreen->delData(array('id'=>$v['forscreen_record_id']));
                             }
                         }
+                        */
                     }
                 }
             }
