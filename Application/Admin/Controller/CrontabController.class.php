@@ -3350,17 +3350,12 @@ class CrontabController extends Controller
             if(!empty($user_info) && $user_info['is_interact']==1){
                 $redis->remove($v);
             }else {
-                
-                
                 $forscreen_nums_list = $redis->lgetrange($v,0,-1);
                 $nums_data = array();
                 foreach($forscreen_nums_list as $kk=>$vv){
                     $vv = json_decode($vv,true);
                     $nums_data[] = $vv['forscreen_id'];
                 }
-                
-                
-                
                 $forscreen_nums = count($nums_data);
                 if($forscreen_nums>=5){
                     $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>1));
@@ -3370,6 +3365,7 @@ class CrontabController extends Controller
         }
         echo "ok";
     }
+
     /**
      * @desc 记录用户切换页面日志
      */
