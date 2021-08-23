@@ -395,8 +395,8 @@ $config['source_type'] = array(
 );
 $config['hot_play_types'] = array(
     '1'=>'用户内容',
-    '2'=>'广告',
-    '3'=>'节目',
+//    '2'=>'广告',
+//    '3'=>'节目',
 );
 $config['fee_type'] = array(
     '1'=>'开机费',
