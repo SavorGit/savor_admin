@@ -3117,7 +3117,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function hoteldrinksprice(){
-        $file_path = SITE_TP_PATH.'/Public/content/酒楼白酒种类清单-0809.xlsx';
+        $file_path = SITE_TP_PATH.'/Public/content/副本酒楼白酒种类清单-0817.xlsx';
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
 
@@ -3130,12 +3130,27 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $highestColumn = $sheet->getHighestColumn();
 
         $m_hotel_drinks = new \Admin\Model\HoteldrinksModel();
+        $m_room = new \Admin\Model\RoomModel();
+        $m_box = new \Admin\Model\BoxModel();
+        $data = array();
         for ($row = 3; $row <= $highestRow; $row++){
             $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
             if(!empty($rowData[0][0])){
-                $hotel_id = $rowData[0][0];
+                $city = $rowData[0][0];
                 $hotel_name = $rowData[0][1];
-                $tmp_drinks = array_slice($rowData[0],2);
+                $hotel_id = $rowData[0][2];
+
+                $rfields = 'count(*) as num';
+                $rwhere = array('hotel_id'=>$hotel_id,'state'=>array('in',array(1,2)),'flag'=>0);
+                $res_room = $m_room->getInfo($rfields,$rwhere,'id desc','');
+                $room_num = intval($res_room[0]['num']);
+
+                $bfields = 'count(box.id) as num';
+                $bwhere = array('hotel.id'=>$hotel_id,'box.state'=>array('in',array(1,2)),'box.flag'=>0);
+                $res_box = $m_box->getBoxByCondition($bfields,$bwhere,'');
+                $box_num = intval($res_box[0]['num']);
+
+                $tmp_drinks = array_slice($rowData[0],5);
                 if(!empty($tmp_drinks)){
                     $d_num = ceil(count($tmp_drinks) / 2);
                     for ($i=0;$i<$d_num;$i++){
@@ -3144,18 +3159,39 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                         if(empty($now_drinks[0]) && empty($now_drinks[1])){
                             break;
                         }
-                        $name = $now_drinks[0];
+                        $name_info = explode('、',$now_drinks[0]);
+
+                        $name = join('',$name_info);
                         $price = $now_drinks[1];
-                        $add_drinks = array('hotel_id'=>$hotel_id,'name'=>$name,'price'=>$price,'type'=>1);
-                        $res_drinks = $m_hotel_drinks->add($add_drinks);
-                        if($res_drinks){
-                            echo "hotel_id:$hotel_id name:$name price:$price ok \r\n";
-                        }
+                        $brand = $name_info[0];
+                        $series = $name_info[1];
+                        $degree = $name_info[2];
+                        $capacity = $name_info[3];
+                        $dinfo = array('city'=>$city,'hotel_name'=>$hotel_name,'hotel_id'=>$hotel_id,'room_num'=>$room_num,
+                            'box_num'=>$box_num,'brand'=>$brand,'series'=>$series,'degree'=>$degree,'capacity'=>$capacity,
+                            'price'=>$price,'name'=>$name);
+                        $data[]=$dinfo;
+
+
+//                        $res_drinks = $m_hotel_drinks->getInfo(array('hotel_id'=>$hotel_id,'name'=>$name,'type'=>1));
+//                        if(empty($res_drinks)){
+//                            $add_drinks = array('hotel_id'=>$hotel_id,'name'=>$name,'price'=>$price,'type'=>1);
+//                            $row_id = $m_hotel_drinks->add($add_drinks);
+//                        }else{
+//                            if($res_drinks['price']==$price){
+//                                $row_id = true;
+//                            }else{
+//                                $up_drinks = array('price'=>$price,'update_time'=>date('Y-m-d H:i:s'));
+//                                $row_id = $m_hotel_drinks->updateData(array('id'=>$res_drinks['id']),$up_drinks);
+//                            }
+//                        }
+//                        echo "hotel_id:$hotel_id name:$name price:$price ok \r\n";
                     }
                 }
-                exit;
             }
         }
+        print_r($data);
+
     }
 
     public function getheart(){
@@ -3172,6 +3208,11 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             }
             echo $str;
         }
+    }
+
+    public function publicwh(){
+        $m_public = new \Admin\Model\Smallapp\PublicModel();
+        $m_public->handle_widthheight();
     }
 
 }
