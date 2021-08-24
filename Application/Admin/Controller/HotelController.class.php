@@ -474,7 +474,7 @@ class HotelController extends BaseController {
 		$food_style_list = $m_food_style->getWhere('id,name', array('status'=>1));
 		$this->assign('food_style_list',$food_style_list);
 
-        $groups = array(1,56);
+        $groups = array(1,56,62);
         $sysuserInfo = session('sysUserInfo');
         $is_lablefiter = 0;
         if(in_array($sysuserInfo['groupid'],$groups)){
