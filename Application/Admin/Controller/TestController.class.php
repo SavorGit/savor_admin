@@ -2443,16 +2443,20 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     }
 
     public function hotelbasicdata(){
-        ini_set("memory_limit","2048M");
+        $where = array();
+        $where['static_date'] = array(array('EGT','2021-08-01'),array('ELT','2021-08-23'));
         $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $res_data = $m_statichotelbasicdata->getDataList('id,hotel_id,static_date',array(),'id asc');
+        $res_data = $m_statichotelbasicdata->getDataList('id,hotel_id,static_date',$where,'id asc');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
         $m_heartlog = new \Admin\Model\HeartAllLogModel();
         foreach ($res_data as $v){
             $hotel_id = $v['hotel_id'];
             $time_date = strtotime($v['static_date']);
             $date = date('Ymd',$time_date);
-            $meal_heart_num = $m_heartlog->getHotelMealHeart($date,$hotel_id);
+
+
+            $room_heart_num = $m_heartlog->getHotelAllHeart($date,$hotel_id,1);
+            $room_meal_heart_num = $m_heartlog->getHotelMealHeart($date,$hotel_id,1);
             /*
             $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
             $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
@@ -2504,7 +2508,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
                 'interact_sale_signnum'=>$interact_sale_signnum,
             );
             */
-            $data = array('meal_heart_num'=>$meal_heart_num);
+            $data = array('room_heart_num'=>$room_heart_num,'room_meal_heart_num'=>$room_meal_heart_num);
             $res = $m_statichotelbasicdata->updateData(array('id'=>$v['id']),$data);
             if($res){
                 echo "id:{$v['id']}--{$v['static_date']} ok \r\n";
