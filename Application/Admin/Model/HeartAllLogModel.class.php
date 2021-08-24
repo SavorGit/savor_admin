@@ -48,9 +48,8 @@ class HeartAllLogModel extends BaseModel{
         return $hours_str;
     }
 
-    public function getHotelAllHeart($date,$hotel_id){
+    public function getHotelAllHeart($date,$hotel_id,$room_type=0){
         $hours_str = $this->getHoursCondition();
-        $date_condition = '';
         if(is_array($date)){
             $date_condition = "a.date>={$date[0]} and a.date<={$date[1]}";
         }else{
@@ -58,6 +57,9 @@ class HeartAllLogModel extends BaseModel{
         }
         $sql = "select sum({$hours_str}) as heart_num from savor_heart_all_log as a left join savor_box as box on a.mac=box.mac left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id 
         where {$date_condition} and a.type=2 and a.hotel_id={$hotel_id} and ({$hours_str})>0 and box.state=1 and box.flag=0";
+        if($room_type==1){
+            $sql.=" and room.type=$room_type and room.state=1 and room.flag=0";
+        }
         $res_heart = $this->query($sql);
         $heart_num = 0;
         if(!empty($res_heart)){
@@ -66,12 +68,11 @@ class HeartAllLogModel extends BaseModel{
         return $heart_num;
     }
 
-    public function getHotelMealHeart($date,$hotel_id){
+    public function getHotelMealHeart($date,$hotel_id,$room_type=0){
         $hours_lunch_str = $this->getHoursCondition(1);
         $hours_dinner_str = $this->getHoursCondition(2);
 
         $hours_str = $hours_lunch_str.'+'.$hours_dinner_str;
-        $date_condition = '';
         if(is_array($date)){
             $date_condition = "a.date>={$date[0]} and a.date<={$date[1]}";
         }else{
@@ -79,6 +80,9 @@ class HeartAllLogModel extends BaseModel{
         }
         $sql = "select sum({$hours_str}) as heart_num from savor_heart_all_log as a left join savor_box as box on a.mac=box.mac left join savor_room as room on box.room_id=room.id left join savor_hotel as hotel on room.hotel_id=hotel.id 
         where {$date_condition} and a.type=2 and a.hotel_id={$hotel_id} and ({$hours_str})>0 and box.state=1 and box.flag=0";
+        if($room_type==1){
+            $sql.=" and room.type=$room_type and room.state=1 and room.flag=0";
+        }
         $res_heart = $this->query($sql);
         $heart_num = 0;
         if(!empty($res_heart)){
