@@ -3944,6 +3944,7 @@ class CrontabController extends Controller
         $keys = $redis->keys($cache_key);
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
         $m_forscreen_invalid_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+        $m_publicdetail = new \Common\Model\Smallapp\PubdetailModel();
         foreach($keys as $k){
             $rets = $redis->lgetrange($k,0,-1);
             foreach($rets as $v){
@@ -3965,6 +3966,14 @@ class CrontabController extends Controller
                         if($ret) $redis->lpop($k);
                     }
                 }
+                $pwhere = array('forscreen_id'=>$map['forscreen_id'],'resource_id'=>$map['resource_id']);
+                $res_p = $m_publicdetail->getWhere('*',$pwhere,'id desc','0,1','');
+                if(!empty($res_p)){
+                    $imgs = json_decode($simple_resource['imgs'],true);
+                    $m_publicdetail->updateInfo($pwhere,array('res_url'=>$imgs[0]));
+                }
+
+
             }
             $list = $redis->lgetrange($k,0,-1);
             if(empty($list)){
