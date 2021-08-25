@@ -3944,7 +3944,7 @@ class CrontabController extends Controller
         $keys = $redis->keys($cache_key);
         $m_forscreen_record = new \Admin\Model\Smallapp\ForscreenRecordModel();
         $m_forscreen_invalid_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
-        $m_publicdetail = new \Common\Model\Smallapp\PubdetailModel();
+        $m_publicdetail = new \Admin\Model\Smallapp\PubdetailModel();
         foreach($keys as $k){
             $rets = $redis->lgetrange($k,0,-1);
             foreach($rets as $v){
