@@ -38,10 +38,10 @@
             </span>
             <span class="input-group-btn input-group-sm">
               <select name="status"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
-                <option value="99">状态</option>
-                <option value="1" <if condition="$status eq 1">selected="selected"</if> >待审核</option>
-                <option value="2" <if condition="$status eq 2">selected="selected"</if> >已审核</option>
-                <option value="0" <if condition="$status eq 0">selected="selected"</if> >已删除</option>
+                  <option value="99">状态</option>
+                <volist name=":C('PUBLIC_AUDIT_STATUS')" id="vo">
+                  <option value="{$key}" <if condition="$status eq $key"> selected="selected" </if> > {$vo}</option>
+                </volist>
               </select>
             </span>
             <span class="input-group-btn input-group-sm">
