@@ -72,7 +72,8 @@ class PublicModel extends Model{
     public function handle_widthheight(){
         $start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
         $end_time = date('Y-m-d 23:59:59',strtotime('-1 day'));
-//        $where = array('status'=>array('in',array(1,2,3)));
+        $where = array('status'=>array('in',array(1,2,3)));
+        $where = array();
         $where['create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
 	    $res_data = $this->getWhere('*',$where,'id desc','','');
 	    if(!empty($res_data)){
@@ -98,7 +99,7 @@ class PublicModel extends Model{
                             echo "pubdetail_id: {$pv['id']} image width:$width height:$height ok \r\n";
                         }
                     }else{
-                        $url = "http://$host_name/$file_path?x-oss-process=video/snapshot,t_1000,f_jpg,m_fast";
+                        $url = "http://$host_name/$file_path?x-oss-process=video/snapshot,t_1000,f_jpg,m_fast,ar_auto";
                         $curl = curl_init();
                         curl_setopt($curl, CURLOPT_URL, $url);
                         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
