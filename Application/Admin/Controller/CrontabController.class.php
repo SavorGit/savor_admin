@@ -4975,7 +4975,7 @@ class CrontabController extends Controller
         }
         
         //节目    首先获取展示的节目
-        $sql = "SELECT resource_name,media_id as resource_id ,media_id,oss_addr
+        $sql = "SELECT resource_name,ads_id as resource_id ,media_id,oss_addr
                 FROM savor_smallapp_datadisplay 
                 WHERE `type`=3  AND add_date='".$yesterday."' GROUP BY media_id";
         
