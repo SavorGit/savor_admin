@@ -133,7 +133,6 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         );
         $filename = '酒楼酒水单';
         $this->exportToExcel($cell,$datalist,$filename,1);
-        print_r($data);
 
     }
 }
