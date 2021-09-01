@@ -154,6 +154,8 @@ class ExcelController extends Controller
              $tmpname = '正常互动屏版位明细';
          }else if($filename=='forscreendemandcon'){
              $tmpname = '导出点播内容统计数据';
+         }else if($filename=='exportsaleuserintegral'){
+             $tmpname = '销售人员积分列表';
          }
 
 
@@ -8080,5 +8082,34 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
     public function test(){
         
+    }
+    /**
+     * @desc  导出销售人员积分列表
+     */
+    public function exportSaleUser(){
+        $m_staffuser = new \Admin\Model\Integral\StaffModel();
+        $where = array('a.status'=>1,'merchant.status'=>1);
+        $order = 'i.integral desc';
+        $fields = "u.id,u.openid,u.nickName,hotel.name as hotel_name,IFNULL(i.integral ,0) as integral";
+        $datalist = $m_staffuser->alias('a')
+                                ->join('savor_integral_merchant merchant on a.merchant_id=merchant.id','left')
+                                ->join('savor_hotel hotel on merchant.hotel_id=hotel.id','left')
+                                ->join('savor_smallapp_user u on a.openid=u.openid','left')
+                                ->join('savor_smallapp_user_integral i on a.openid=i.openid','left')
+                                ->field($fields)
+                                ->where($where)
+                                ->order($order)
+                                ->select();
+        
+        $xlsCell = array(
+            array('id','用户id'),
+            array('openid','用户openid'),
+            array('nickname','用户昵称'),
+            array('hotel_name','酒楼名称'),
+            array('integral','剩余积分'),
+        );
+        $xlsName = '导出销售人员积分列表';
+        $filename = 'exportsaleuserintegral';
+        $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
     }
 }

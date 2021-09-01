@@ -32,13 +32,13 @@ class SaleuserController extends BaseController {
         }
         $start = ($pageNum-1)*$size;
         $m_staffuser = new \Admin\Model\Integral\StaffModel();
-        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,hotel.name as hotel_name,u.create_time,i.integral";
+        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,hotel.name as hotel_name,u.create_time,IFNULL(i.integral ,0) as integral";
         $res_list = $m_staffuser->getUserIntegralList($fields,$where,'i.integral desc',$start,$size);
 
         $data_list = $res_list['list'];
-        foreach ($data_list as $k=>$v){
+        /*foreach ($data_list as $k=>$v){
             $data_list[$k]['integral'] = intval($v['integral']);
-        }
+        }*/
 
         $this->assign('uname',$uname);
         $this->assign('hotel_name',$hotel_name);
