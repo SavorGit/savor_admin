@@ -8090,10 +8090,11 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $m_staffuser = new \Admin\Model\Integral\StaffModel();
         $where = array('a.status'=>1,'merchant.status'=>1);
         $order = 'i.integral desc';
-        $fields = "u.id,u.openid,u.nickName,hotel.name as hotel_name,IFNULL(i.integral ,0) as integral";
+        $fields = "u.id,u.openid,u.nickName,hotel.name as hotel_name,IFNULL(i.integral ,0) as integral,area.region_name";
         $datalist = $m_staffuser->alias('a')
                                 ->join('savor_integral_merchant merchant on a.merchant_id=merchant.id','left')
                                 ->join('savor_hotel hotel on merchant.hotel_id=hotel.id','left')
+                                ->join('savor_area_info area on hotel.area_id=area.id','left')
                                 ->join('savor_smallapp_user u on a.openid=u.openid','left')
                                 ->join('savor_smallapp_user_integral i on a.openid=i.openid','left')
                                 ->field($fields)
@@ -8106,6 +8107,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             array('openid','用户openid'),
             array('nickname','用户昵称'),
             array('hotel_name','酒楼名称'),
+            array('region_name','城市'),
             array('integral','剩余积分'),
         );
         $xlsName = '导出销售人员积分列表';
