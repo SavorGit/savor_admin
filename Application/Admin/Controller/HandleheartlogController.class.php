@@ -93,7 +93,7 @@ class HandleheartlogController extends Controller
                 }
             }
         }
-        echo 'OK';
+        echo date('Y-m-d H:i:s')."\n";
     }
     
 }
