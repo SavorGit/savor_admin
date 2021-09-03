@@ -15,7 +15,7 @@ class BoxController extends BaseController{
             $m_hotel = new \Admin\Model\HotelModel();
             foreach ($result as $k=>$v){
                 $hotel_id = $v['hotel_id'];
-                $res_hotel = $m_hotel->getInfo(array('id'=>$hotel_id));
+                $res_hotel = $m_hotel->getOne($hotel_id);
                 $hotel_name = $res_hotel['name'];
                 $apk_version = $v['apk_version'];
                 $add_time = $v['add_time'];

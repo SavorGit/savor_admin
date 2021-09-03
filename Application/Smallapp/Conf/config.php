@@ -64,6 +64,7 @@ $config = array(
         'find/redpacketjx' => '抢红包结果页-推荐投屏内容',
         'find/showpic' => '发现-图片详情',
         'find/videos' => '发现-视频列表',
+        'find/datalist' => '发现页',
         'foodstyle/getlist' => '好店-美食列表',
         'forscreen/cancelforscreen' => '投屏-取消投屏',
         'forscreen/collectforscreen' => '采集投屏',
