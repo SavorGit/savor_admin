@@ -113,7 +113,7 @@
               <th>城市</th>
               <th>心跳次数</th>
               <if condition="$is_admin eq 1"><th>饭点心跳次数</th></if>
-              <if condition="$is_admin eq 1"><th>包间心跳数</th></if>
+              <th>包间心跳数</th>
               <if condition="$is_admin eq 1"><th>包间饭点心跳数</th></if>
 <!--              <th>平均网速</th>-->
               <th>互动次数</th>
@@ -144,9 +144,9 @@
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
               <td data-title="城市">{$dinfo.area_name}</td>
               <td data-title="心跳次数">{$dinfo.heart_num}</td>
-              <if data-title="饭点心跳次数" condition="$is_admin eq 1"><td>{$dinfo.meal_heart_num}</td></if>
-              <if data-title="包间心跳数" condition="$is_admin eq 1"><td>{$dinfo.room_heart_num}</td></if>
-              <if data-title="包间饭点心跳数" condition="$is_admin eq 1"><td>{$dinfo.room_meal_heart_num}</td></if>
+              <if condition="$is_admin eq 1"><td data-title="饭点心跳次数">{$dinfo.meal_heart_num}</td></if>
+              <td data-title="包间心跳数" >{$dinfo.room_heart_num}</td>
+              <if condition="$is_admin eq 1"><td data-title="包间饭点心跳数" >{$dinfo.room_meal_heart_num}</td></if>
 <!--              <td data-title="平均网速">{$dinfo.avg_speed}</td>-->
               <td data-title="互动次数">{$dinfo.interact_num}</td>
 <!--              <td data-title="扫码数">{$dinfo.scancode_num}</td>-->

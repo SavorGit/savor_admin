@@ -27,7 +27,7 @@ class HotelbasicdataController extends BaseController{
         $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
         sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
-        sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum";
+        sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum,sum(room_heart_num) as room_heart_num,sum(room_meal_heart_num) as room_meal_heart_num";
         $groupby = 'hotel_id';
         $countfields = 'count(DISTINCT(hotel_id)) as tp_count';
         $result = $m_hotelbasicdata->getCustomeList($fields,$where,$groupby,'',$countfields,0,10000);
@@ -89,6 +89,8 @@ class HotelbasicdataController extends BaseController{
             array('hotel_name','酒楼名称'),
             array('area_name','城市'),
             array('heart_num','心跳次数'),
+            array('room_heart_num','包间心跳数'),
+//            array('room_meal_heart_num','包间饭点心跳数'),
 //            array('avg_speed','平均网速'),
             array('interact_num','互动次数'),
 //            array('scancode_num','扫码数'),
