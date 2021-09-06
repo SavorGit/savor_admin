@@ -286,6 +286,10 @@ class DeviceController extends BaseController{
 		$save['is_open_popcomment'] = I('post.is_open_popcomment',0,'intval');
 		$save['is_open_reward'] = I('post.is_open_reward',1,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
+		$lanip = I('post.lanip','','trim');
+		if(!empty($lanip)){
+		    $save['lanip'] = $lanip;
+        }
 		if($tpmedia_id_arr){
 		    foreach($tpmedia_id_arr as $v){
 		        $tpmedia_id_str .=$space . $v;
