@@ -138,6 +138,9 @@ class HotplayController extends BaseController {
                 $key_demand = C('SAPP_HOTPLAYDEMAND');
                 $period = getMillisecond();
                 $redis->set($key_demand,$period);
+
+                $m_hotel = new \Admin\Model\HotelModel();
+                $m_hotel->cleanWanHotelCache(array());
             }
             $this->output('操作成功', 'hotplay/datalist');
         }else{
@@ -195,6 +198,8 @@ class HotplayController extends BaseController {
                 $period = getMillisecond();
                 $redis->set($key_demand,$period);
 
+                $m_hotel = new \Admin\Model\HotelModel();
+                $m_hotel->cleanWanHotelCache(array());
                 $this->output('操作成功!', 'hotplay/datalist');
             }else{
                 $this->output('操作失败', 'hotplay/datalist',2,0);

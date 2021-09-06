@@ -1658,6 +1658,8 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
+			    $m_hotel = new \Admin\Model\HotelModel();
+			    $m_hotel->cleanWanHotelCache(array($save['hotel_id']));
 				$this->output('操作成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
@@ -1709,6 +1711,8 @@ class HotelController extends BaseController {
 			    }else{
 			        $mbperModel->add($dat);
 			    }
+                $m_hotel = new \Admin\Model\HotelModel();
+                $m_hotel->cleanWanHotelCache(array($save['hotel_id']));
 				$this->output('添加宣传片成功!', 'hotel/pubmanager');
 			}else{
 				$this->output('操作失败!', 'hotel/doAddPub');
@@ -1772,7 +1776,8 @@ class HotelController extends BaseController {
 		    }else{
 		        $mbperModel->add($dat);
 		    }
-		    
+            $m_hotel = new \Admin\Model\HotelModel();
+            $m_hotel->cleanWanHotelCache(array($infos['hotel_id']));
 			$this->output($message, 'hotel/pubmanager',2);
 		}else{
 			$this->output('操作失败', 'hotel/pubmanager');

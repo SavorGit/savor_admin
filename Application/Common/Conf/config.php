@@ -748,6 +748,9 @@ $config['SAPP_SIMPLE_UPLOAD_RESOUCE'] = 'smallapp:simple:upload:';
 $config['SAPP_SIMPLE_UPLOAD_PLAYTIME'] = 'smallapp:simple:uploadplaytime:';
 $config['SAPP_OPTIMIZE_PROGRAM']='smallapp:optimize:program';
 $config['SMALLAPP_HOTEL_RELATION']='smallapp:hotelrelation:';
+$config['BOX_LANHOTEL_DOWNLOAD']='lanhotel:download:';
+$config['BOX_LANHOTEL_DOWNLOADQUEUE']='lanhotel:queuedownload:';
+$config['BOX_LANHOTEL_DOWNLOAD_FAIL']='lanhotel:faildownload:';
 
 //新虚拟小平台接口缓存key
 $config['VSMALL_HOTELLIST'] = "vsmall:hotellist";
@@ -951,7 +954,7 @@ $config['INTEGRAL_TYPES'] = array(
     8=>'评价补贴',
     9=>'分配',
 );
-$config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目',"2"=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
+$config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目','2'=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
 $config['FORSCREEN_CONTENT_RECOURCE_CATE'] = array('1'=>'热播内容节目','2'=>'热播用户内容','3'=>'节目','4'=>'商城商品','5'=>'banner商品','6'=>'生日歌','7'=>'星座视频');
 $config['RD_TEST_HOTEL'] =
     array (

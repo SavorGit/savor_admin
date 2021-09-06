@@ -1408,22 +1408,24 @@ class AdvdeliveryController extends BaseController {
             $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
             
             $cache_key = C('VSMALL_ADS');
+            $all_hotel_ids = array();
             foreach ($hotel_list as $key=>$v){
                 if(in_array($v['hotel_id'], $v_hotel_arr)){
-                
                     $keys_arr = $redis->keys($cache_key.$v['hotel_id']."*");
                     foreach($keys_arr as $vv){
                             $redis->remove($vv);
                     }
                 }
+                $all_hotel_ids[]=$v['hotel_id'];
             }
+            $m_hotel = new \Admin\Model\HotelModel();
+            $m_hotel->cleanWanHotelCache($all_hotel_ids);
             $this->output('删除成功', 'advdelivery/getlist', 2);
         }else {
             $this->error('删除失败');
         }
-        
-        
     }
+
     public function pauseAds(){
         $redis = SavorRedis::getInstance();
         $redis->select(12);
@@ -1448,17 +1450,7 @@ class AdvdeliveryController extends BaseController {
             $m_pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
             $box_list = $m_pub_ads_box->getBoxArrByPubAdsId($pub_ads_id);
             $hotel_list = $m_pub_ads_hotel->getAdsHotelId($pub_ads_id);
-            
-            //$m_pub_ads->updateData($condition, $data)
-            /* $now_date = date('Y-m-d H:i:s');
-            $p_info = $m_pub_ads->field('id,create_time')->where("end_date>'".$now_date."' and state=1")->order('id desc')->find();
-            $update_p_info_time = date('Y-m-d H:i:s',strtotime($p_info['create_time'])+1);
-            $m_pub_ads->updateInfo(array('id'=>$p_info['id']), array('create_time'=>$update_p_info_time)); */
-            
-            
-            
-            
-            
+
             foreach($box_list as $key=>$v){
                 $redis->remove($cache_key_pre.$v['box_id']);
             }
@@ -1467,17 +1459,20 @@ class AdvdeliveryController extends BaseController {
             $redis_result = $redis->get($v_hotel_list_key);
             $v_hotel_list = json_decode($redis_result,true);
             $v_hotel_arr = array_column($v_hotel_list, 'hotel_id');  //虚拟小平台酒楼id
-            
+
+            $all_hotel_ids = array();
             $cache_key = C('VSMALL_ADS');
             foreach ($hotel_list as $key=>$v){
                 if(in_array($v['hotel_id'], $v_hotel_arr)){
-                    
                     $keys_arr = $redis->keys($cache_key.$v['hotel_id']."*");
                     foreach($keys_arr as $vv){
                         $redis->remove($vv);
                     }
                 }
+                $all_hotel_ids[]=$v['hotel_id'];
             }
+            $m_hotel = new \Admin\Model\HotelModel();
+            $m_hotel->cleanWanHotelCache($all_hotel_ids);
             $this->output('暂停成功', 'advdelivery/getlist', 2);
         }else {
             $this->error('暂停失败');

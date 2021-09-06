@@ -899,13 +899,10 @@ class CrontabController extends Controller
         $tmp_hotel_arr = getVsmallHotelList();
         $redis = new SavorRedis();
         $redis->select(12);
-        
+        $all_hotel_ids = array();
         foreach($pub_ads_list as $key=>$val){//循环每一个发布但未执行添加位置脚本的广告
-            
             $pub_ads_box_arr = $m_pub_ads_box->getBoxArrByPubAdsId($val['id']);   //获取当前广告发布到的盒子ID
-            
             foreach($pub_ads_box_arr as $k=>$v){//循环该发布的广告对应的机顶盒
-                
                 $all_have_location_arr = array();
                 //取出该机顶盒所有未填写位置的列表
                 $all_empty_location_info = $m_pub_ads_box->getEmptyLocation('id',$val['id'],$v['box_id']);
@@ -972,11 +969,12 @@ class CrontabController extends Controller
                 foreach($keys_arr as $vv){
                     $redis->remove($vv);
                 }
+                $all_hotel_ids[$tv['hotel_id']]=$tv['hotel_id'];
             }
-            
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
-        
         }
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_hotel->cleanWanHotelCache(array_values($all_hotel_ids));
         echo "OK";
     }
 

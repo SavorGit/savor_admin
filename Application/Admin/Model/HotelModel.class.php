@@ -1,17 +1,9 @@
 <?php
-/**
- *閰掑簵model
- *@author  hongwei <[<email address>]>
- * 
- */
 namespace Admin\Model;
-
 use Common\Lib\Page;
-use Admin\Model\BaseModel;
 
 class HotelModel extends BaseModel{
 	protected $tableName = 'hotel';
-
 
 	public function gethotellogoInfo($hotelid){
 		$sql = "SELECT
@@ -73,12 +65,6 @@ class HotelModel extends BaseModel{
 		return $data;
 	}
 
-
-
-	/**
-	 * 閰掑簵ID杞崲涓洪厭搴楀悕绉�	 * @param  array  $result [description]
-	 * @return [type]         [description]
-	 */
 	public function hotelIdToName($result=[]){
 		if(!$result || !is_array($result)){
 			return [];
@@ -150,6 +136,7 @@ class HotelModel extends BaseModel{
 	    $nums = array('room_num'=>$room_num,'box_num'=>$box_num,'tv_num'=>$tv_num);
 	    return $nums;
 	}
+
 	public function getStatisticalNumByHotelIdNew($hotel_id,$type=''){
 	    $sql = "select id as room_id,hotel_id from savor_room where hotel_id='$hotel_id'";
 	    $res = $this->query($sql);
@@ -197,6 +184,7 @@ class HotelModel extends BaseModel{
 	    $data = !empty($result)?$result[0]:array();
 	    return $data;
 	}
+
     public function getInfo($field ='*',$where,$order,$limit){
         $result = $this->field($field)->where($where)->order($order)->limit($limit)->select();
         return $result;
@@ -212,7 +200,6 @@ class HotelModel extends BaseModel{
 		return $result;
 	}
 
-
 	public function getOne($id){
 		if ($id) {
 			$res = $this->find($id);
@@ -227,9 +214,11 @@ class HotelModel extends BaseModel{
 		$cache_key = C('DB_PREFIX').$this->tableName.'_'.$id;
 		$redis->set($cache_key, json_encode($data));
 	}
+
 	public function getHotelCount($where){
 	    return $this->where($where)->count();
 	}
+
 	public function getHotelCountNums($where){
 	    $count =$this->alias('a')
 	    ->join('savor_hotel_ext b on a.id=b.hotel_id','left')
@@ -237,6 +226,7 @@ class HotelModel extends BaseModel{
 	    ->count();
 	    return $count;
 	}
+
 	public function getWhereData($where, $field='') {
 		$result = $this->where($where)->field($field)->select();
 		return  $result;
@@ -246,7 +236,6 @@ class HotelModel extends BaseModel{
 		$result = $this->where($where)->field($field)->order($order)->select();
 		return  $result;
 	}
-
 
 	public function getHotelidByArea($where, $field='', $order='') {
 		$result = $this->alias('sht')
@@ -279,7 +268,6 @@ class HotelModel extends BaseModel{
 		return $list;
 	}
 
-
 	public function getBoxMacByHid($field, $where){
 		$list = $this->alias('sht')
 			->join('savor_room room on sht.id = room.hotel_id')
@@ -291,6 +279,7 @@ class HotelModel extends BaseModel{
 			->select();
 		return $list;
 	}
+
 	public function getHotelInfoByMac($mac){
 	    $sql ="select he.tag, he.mac_addr,h.name as hotel_name,a.id as area_id,a.region_name as area_name,h.flag,h.state
                from savor_hotel as h
@@ -303,10 +292,12 @@ class HotelModel extends BaseModel{
 	        return false;
 	    }
 	}
+
 	public function getHotelList($where,$order,$limit,$fields = '*'){
 	    $data = $this->field($fields)->where($where)->order($order)->limit($limit)->select();
 	    return $data;
 	}
+
 	public function getHotelLists($where,$order,$limit,$fields = '*'){
 	    $data = $this->alias('a')
 	    ->join('savor_hotel_ext b on a.id=b.hotel_id')
@@ -322,5 +313,32 @@ class HotelModel extends BaseModel{
             ->where($where)
             ->select();
         return $result;
+    }
+
+    public function cleanWanHotelCache($hotel_ids){
+	    $where = array('is_5g'=>1);
+	    if(!empty($hotel_ids)){
+	        $where['id'] = array('in',$hotel_ids);
+        }
+        $res_hotels = $this->getDataList('id,is_5g',$where,'id desc');
+        if(!empty($res_hotels)){
+            $redis = new \Common\Lib\SavorRedis();
+            $redis->select(21);
+            $download_key = C('BOX_LANHOTEL_DOWNLOAD');
+            $fail_key = C('BOX_LANHOTEL_DOWNLOAD_FAIL');
+            $queue_key = C('BOX_LANHOTEL_DOWNLOADQUEUE');
+            foreach ($res_hotels as $v){
+                if($v['is_5g']==1){
+                    $redis->remove($download_key.$v['id']);
+                    $redis->remove($fail_key.$v['id']);
+
+                    $keys_arr = $redis->keys($queue_key.$v['id'].":*");
+                    foreach($keys_arr as $vv){
+                        $redis->remove($vv);
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

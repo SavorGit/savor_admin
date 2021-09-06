@@ -234,7 +234,8 @@ class ProgrammenuController extends BaseController{
                         }
                     }
                 }
-                
+                $m_hotel = new \Admin\Model\HotelModel();
+                $m_hotel->cleanWanHotelCache($hotel_id_arr);
                 $this->output('发布成功了!', 'programmenu/getlist');
             } else {
                 $menuHoModel->rollback();
@@ -328,6 +329,9 @@ class ProgrammenuController extends BaseController{
                 $period = getMillisecond();
                 $period_data = array('period'=>$period,'time'=>date('Y-m-d H:i:s'));
                 $redis->set($program_period_key,json_encode($period_data),30*86400);
+
+                $m_hotel = new \Admin\Model\HotelModel();
+                $m_hotel->cleanWanHotelCache(array());
             }
             $this->output('操作成功','programmenu/getlist');
 
