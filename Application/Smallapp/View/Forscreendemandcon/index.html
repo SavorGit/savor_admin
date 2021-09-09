@@ -48,7 +48,7 @@
               <select name="resource_cate" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                 <option value=0>全部</option>
                 <volist name="forscreen_resource_cate" id="f_cate">
-                  <option value="{$key}" <if condition="$key eq $resource_cate">selected</if>>{$f_cate}</option>
+                  <if condition="$key neq 1"><option value="{$key}" <if condition="$key eq $resource_cate">selected</if>>{$f_cate}</option></if>
                 </volist>
               </select>
             </div>
