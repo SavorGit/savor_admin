@@ -32,7 +32,7 @@ class SdkerrorController extends BaseController {
         $m_sdk_error = new \Admin\Model\SdkErrorModel(); 
         
         $fields = "a.id,hotel.name hotel_name,hotel.addr,room.name room_name,
-                   box.name box_name ,a.erro_count,a.last_report_date,area.region_name,box.mac";
+                   box.name box_name ,a.erro_count,a.full_count,a.last_report_date,area.region_name,box.mac";
         $where  = array();
         $where['hotel.state'] = 1;
         $where['hotel.flag']  = 0;
