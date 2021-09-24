@@ -328,13 +328,63 @@ class HotelModel extends BaseModel{
             $fail_key = C('BOX_LANHOTEL_DOWNLOAD_FAIL');
             $queue_key = C('BOX_LANHOTEL_DOWNLOADQUEUE');
             foreach ($res_hotels as $v){
-                if($v['is_5g']==1){
-                    $redis->remove($download_key.$v['id']);
-                    $redis->remove($fail_key.$v['id']);
+                $redis->remove($download_key.$v['id']);
+                $redis->remove($fail_key.$v['id']);
 
-                    $keys_arr = $redis->keys($queue_key.$v['id'].":*");
-                    foreach($keys_arr as $vv){
-                        $redis->remove($vv);
+                $keys_arr = $redis->keys($queue_key.$v['id'].":*");
+                foreach($keys_arr as $vv){
+                    $redis->remove($vv);
+                }
+            }
+        }
+        return true;
+    }
+
+    public function handle_timeout_download(){
+        $where = array('is_5g'=>1);
+        $res_hotels = $this->getDataList('id',$where,'id desc');
+        if(!empty($res_hotels)){
+            $redis = new \Common\Lib\SavorRedis();
+            $redis->select(21);
+            $download_key = C('BOX_LANHOTEL_DOWNLOAD');
+            $fail_key = C('BOX_LANHOTEL_DOWNLOAD_FAIL');
+            $queue_key = C('BOX_LANHOTEL_DOWNLOADQUEUE');
+            foreach ($res_hotels as $v){
+                $hotel_id  = $v['id'];
+                $res_download = $redis->get($download_key.$hotel_id);
+                if(!empty($res_download)){
+                    $res_download = json_decode($res_download,true);
+                    $is_change = 0;
+                    foreach ($res_download as $dk=>$dv){
+                        if($dv['status']==1){
+                            $now_time = time();
+                            $start_time = strtotime($dv['start_time']);
+                            if($now_time-$start_time>3600){
+                                $box_mac = $dk;
+
+                                if(!empty($dv['from_box'])){
+                                    $lan_box = $dv['from_box'];
+                                    $download_queuecache_key = $queue_key."$hotel_id:$lan_box";
+                                    $redis->lrem($download_queuecache_key,$box_mac,0);
+                                }
+                                $res_fail = $redis->get($fail_key.$hotel_id);
+                                if(!empty($res_fail)){
+                                    $fail_info = json_decode($res_fail,true);
+                                }else{
+                                    $fail_info = array();
+                                }
+                                $dv['status'] = 2;
+                                $fail_info[$box_mac] = $dv;
+                                $redis->set($fail_key.$hotel_id,json_encode($fail_info),86400*14);
+                                unset($res_download[$dk]);
+                                $is_change = 1;
+                                $now_datetime = date('Y-m-d H:i:s');
+                                echo "$now_datetime hotel_id:$hotel_id,box_mac:$box_mac,time:{$dv['start_time']} timeout \r\n";
+                            }
+                        }
+                    }
+                    if($is_change){
+                        $redis->set($download_key.$hotel_id,json_encode($res_download),86400*14);
                     }
                 }
             }

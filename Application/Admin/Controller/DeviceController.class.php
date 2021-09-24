@@ -287,9 +287,7 @@ class DeviceController extends BaseController{
 		$save['is_open_reward'] = I('post.is_open_reward',1,'intval');
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		$lanip = I('post.lanip','','trim');
-		if(!empty($lanip)){
-		    $save['lanip'] = $lanip;
-        }
+        $save['lanip'] = $lanip;
 		if($tpmedia_id_arr){
 		    foreach($tpmedia_id_arr as $v){
 		        $tpmedia_id_str .=$space . $v;
@@ -362,6 +360,24 @@ class DeviceController extends BaseController{
 				$redis->select(10);
 				$cache_key = C('BOX_TPMEDIA').$save['mac'];
 				$redis->remove($cache_key);
+				if(in_array($save['state'],array(2,3))){
+                    $redis->select(21);
+                    $download_cache_key = C('BOX_LANHOTEL_DOWNLOAD').$hotelid;
+                    $res_download = $redis->get($download_cache_key);
+                    if(!empty($res_download)){
+                        $download_info = json_decode($res_download,true);
+                        $rm_box_mac = $save['mac'];
+                        if(isset($download_info[$rm_box_mac])){
+                            $queue_key = C('BOX_LANHOTEL_DOWNLOADQUEUE');
+                            $lan_box = $download_info[$rm_box_mac]['from_box'];
+                            $download_queuecache_key = $queue_key."$hotelid:$lan_box";
+                            $redis->lrem($download_queuecache_key,$rm_box_mac,0);
+
+                            unset($download_info[$rm_box_mac]);
+                            $redis->set($download_cache_key,json_encode($download_info),86400*14);
+                        }
+                    }
+                }
 				/*
                 $all_hotelids = getVsmallHotelList();
                 if(in_array($hotelid,$all_hotelids)){

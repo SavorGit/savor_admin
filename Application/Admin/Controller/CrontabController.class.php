@@ -973,8 +973,10 @@ class CrontabController extends Controller
             }
             $m_pub_ads->updateInfo(array('id'=>$val['id']),array('state'=>1,'update_time'=>date('Y-m-d H:i:s')));
         }
-        $m_hotel = new \Admin\Model\HotelModel();
-        $m_hotel->cleanWanHotelCache(array_values($all_hotel_ids));
+        if(!empty($all_hotel_ids)){
+            $m_hotel = new \Admin\Model\HotelModel();
+            $m_hotel->cleanWanHotelCache(array_values($all_hotel_ids));
+        }
         echo "OK";
     }
 
@@ -3788,6 +3790,15 @@ class CrontabController extends Controller
         $m_public->handle_widthheight();
         $now_time = date('Y-m-d H:i:s');
         echo "publicwidthheight end:$now_time \r\n";
+    }
+
+    public function cleanboxlandownload(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "cleanboxlandownload start:$now_time \r\n";
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_hotel->handle_timeout_download();
+        $now_time = date('Y-m-d H:i:s');
+        echo "cleanboxlandownload end:$now_time \r\n";
     }
 
     public function sendredpacket(){
