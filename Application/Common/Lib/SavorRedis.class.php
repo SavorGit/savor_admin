@@ -718,6 +718,13 @@ class SavorRedis   {
         return $hash;
     }
 
+    public function lset($key,$index,$value){
+        return $this->getRedis()->lset($key,$index,$value);
+    }
+    public function lrem($key,$value,$count){
+        return $this->getRedis()->lrem($key,$value,$count);
+    }
+
     function __destruct()
 	{
 		$this->close();
