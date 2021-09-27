@@ -22,13 +22,18 @@ class ContentadsController extends BaseController{
 	public function getads_ajax(){
 		$searchtitle = I('adsname','');
 		$where = "1=1";
-		$where .= " AND type in(1,2,8)";
-		$field = "id,name,media_id";
+		$where .= " AND a.type in(1,2,8)";
+		$field = "a.id,a.name,a.media_id";
 		if ($searchtitle) {
-			$where .= "	AND name LIKE '%{$searchtitle}%'";
+			$where .= "	AND a.name LIKE '%{$searchtitle}%' and pads.state=1 ";
 		}
 		$adModel = new \Admin\Model\AdsModel();
-		$result = $adModel->getWhere($where, $field);
+		$result = $adModel->alias('a')
+		        ->field($field)
+		        ->join('savor_pub_ads pads on a.id=pads.ads_id','left')
+		        ->where($where)
+		        ->select();
+		//$result = $adModel->getWhere($where, $field);
 		echo json_encode($result);
 		die;
 	}
