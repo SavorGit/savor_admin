@@ -18,7 +18,7 @@ class SdkerrorController extends BaseController {
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','last_report_date');
+        $order = I('_order','full_report_date');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
@@ -32,7 +32,7 @@ class SdkerrorController extends BaseController {
         $m_sdk_error = new \Admin\Model\SdkErrorModel(); 
         
         $fields = "a.id,hotel.name hotel_name,hotel.addr,room.name room_name,
-                   box.name box_name ,a.erro_count,a.full_count,a.last_report_date,area.region_name,box.mac";
+                   box.name box_name ,a.erro_count,a.full_count,a.last_report_date,area.region_name,box.mac,a.full_report_date";
         $where  = array();
         $where['hotel.state'] = 1;
         $where['hotel.flag']  = 0;

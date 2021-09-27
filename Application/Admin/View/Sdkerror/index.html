@@ -58,7 +58,8 @@
             <th>机顶盒mac</th>
             <th>异常上报次数</th>
             <th>卡满上报次数</th>
-            <th>最后上报时间</th>
+            <th>卡异常最后上报时间</th>
+            <th>卡满最后上报时间</th>
             
           </tr>
           </thead>
@@ -76,6 +77,8 @@
               <td data-title="异常上报次数">{$vlist.erro_count}</td>
               <td data-title="卡满上报次数">{$vlist.full_count}</td>
               <td data-title="最后上报时间">{$vlist.last_report_date}</td>
+              <td data-title="最后上报时间">{$vlist.full_report_date}</td>
+              
               
             </tr>
           </volist>
