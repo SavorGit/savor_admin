@@ -6505,7 +6505,8 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->AddAddress("cao.jie@littlehotspot.com");
             $mail->AddAddress("lv.yulin@littlehotspot.com");
             $mail->AddAddress("ma.feng@littlehotspot.com");
-            $mail->AddAddress("wang.xizong@littlehotspot.com");
+            //$mail->AddAddress("wang.xizong@littlehotspot.com");
+            $mail->AddAddress("zhang.song@littlehotspot.com");
             $mail->AddAddress("zhang.lijuan@littlehotspot.com");
             $mail->AddAddress("he.yongrui@littlehotspot.com");
             $mail->AddAddress("yang.kai@littlehotspot.com");
