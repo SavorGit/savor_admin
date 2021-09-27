@@ -622,6 +622,30 @@ class TestController extends Controller {
         }
     }
 
+    public function updatehotelcache(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+
+        $sql ="select * from savor_hotel";
+        $data = M()->query($sql);
+        foreach($data  as $key=>$v){
+            $hotel_id = $v['id'];
+            $hotel_info = $v;
+            $hotel_cache_key = C('DB_PREFIX').'hotel_'.$hotel_id;
+            $redis->set($hotel_cache_key, json_encode($hotel_info));
+            echo "hotel_id:{$v['id']} ok \r\n";
+        }
+//        $sql ="select * from savor_hotel_ext";
+//        $data = M()->query($sql);
+//        foreach ($data as $key=>$v){
+//            $hotel_id = $v['hotel_id'];
+//            $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
+//            $hotel_ext_info = $v;
+//            $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
+//        }
+
+    }
+
     public function removeHotelinfoCache(){
         $redis = SavorRedis::getInstance();
         $redis->select(15);
@@ -3217,6 +3241,12 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     public function publicwh(){
         $m_public = new \Admin\Model\Smallapp\PublicModel();
         $m_public->handle_widthheight();
+    }
+
+    public function cleandownload(){
+        $m_hotel = new \Admin\Model\HotelModel();
+//        $m_hotel->cleanWanHotelCache(array(7));
+        $m_hotel->handle_timeout_download();
     }
 
 }
