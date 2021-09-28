@@ -42,14 +42,7 @@ class ContentadsController extends BaseController{
 		    unset($result[$key]['type']);
 		}
 		
-		
-		
-		/*$result = $adModel->alias('a')
-		        ->field($field)
-		        ->join('savor_pub_ads pads on a.id=pads.ads_id','left')
-		        ->where($where)
-		        ->select();*/
-		//
+		$result = array_merge($result);
 		echo json_encode($result);
 		die;
 	}
