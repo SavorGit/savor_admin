@@ -359,7 +359,7 @@ class HotelModel extends BaseModel{
                         if($dv['status']==1){
                             $now_time = time();
                             $start_time = strtotime($dv['start_time']);
-                            if($now_time-$start_time>3600){
+                            if($now_time-$start_time>600){
                                 $box_mac = $dk;
 
                                 if(!empty($dv['from_box'])){
