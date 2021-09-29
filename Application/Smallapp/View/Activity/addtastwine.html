@@ -1,0 +1,117 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/activity/addtastwine" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<div class="pageFormContent modal-body">
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+				</div>
+			</div>
+
+
+			<div class="form-group row" id="goods_price">
+				<label class="col-xs-12 col-sm-2 control-label">每桌最大参与人数：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="people_num" type="number" value="{$vinfo.people_num}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row send_time1" id="goods_start_date">
+				<label class="col-xs-12 col-sm-2 control-label">开始日期：</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="input-group date form_datetime" data-date="{$vinfo.start_date}" data-ymd="true">
+						<input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$vinfo.start_date}">
+						<span class="input-group-btn">
+								<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+								<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+							</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row send_time2" id="goods_end_date">
+				<label class="col-xs-12 col-sm-2 control-label">结束日期：</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="input-group date form_datetime" data-date="{$vinfo.end_date}" data-ymd="true">
+						<input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$vinfo.end_date}" >
+						<span class="input-group-btn">
+							<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+							<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" >
+				<label class="col-xs-12 col-sm-2 control-label">
+					酒品横图：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="javascript:void(0)">
+								<if condition="($vinfo['image_url'] eq 'NULL') OR $vinfo['image_url'] eq ''">
+									<img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									<else />
+									<img id="media_idimg" src="{$vinfo.image_url}" border="0" />
+								</if>
+								<span id="media_idimgname"></span>
+							</a>
+						</div>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+								选择图片
+							</a>
+							<input type="hidden" name="media_id" id="media_id" value="" >
+							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" >
+				<label class="col-xs-12 col-sm-2 control-label">
+					酒品竖图：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="fileinput fileinput-new" data-fileinput>
+						<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+							<a data-target="#modal-file" href="javascript:void(0)">
+								<if condition="($vinfo['portrait_image_url'] eq 'NULL') OR $vinfo['portrait_image_url'] eq ''">
+									<img id="portraitmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+									<else />
+									<img id="portraitmedia_idimg" src="{$vinfo.portrait_image_url}" border="0" />
+								</if>
+								<span id="portraitmedia_idimgname"></span>
+							</a>
+						</div>
+						<div>
+							<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=portraitmedia_id&rtype=2" data-browse-file>
+								选择图片
+							</a>
+							<input type="hidden" name="portraitmedia_id" id="portraitmedia_id" value="" >
+							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					状态：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="hidden" name="status" value="2">
+					<input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="正常" data-off-text="禁用" <if condition="$vinfo.status eq 1" >checked</if>>
+				</div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+	</form>
+</div>

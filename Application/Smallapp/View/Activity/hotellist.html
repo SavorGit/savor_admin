@@ -1,0 +1,65 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/activity/hotellist" method="post">
+    <input type="hidden" name="activity_id" value="{$activity_id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-10">
+          <div class="tools-group s2">
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="请输入酒楼名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>酒楼ID</th>
+              <th>酒楼名称</th>
+              <th>添加时间</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="酒楼ID"><a class="click-able-title">{$dinfo.hotel_id}</a></td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="添加时间">{$dinfo.add_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/activity/hoteldel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
