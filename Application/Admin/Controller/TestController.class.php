@@ -3249,4 +3249,16 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $m_hotel->handle_timeout_download();
     }
 
+    public function cleanbox(){
+        $mac = I('mac','','trim');
+        $type = I('type',0,'intval');
+        $message = array('action'=>998,'type'=>$type);
+        //1.删除当前正在下载的一期视频内容，腾出空间
+        //2.删除正在播放的广告数据
+        //3.删除生日歌
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($mac,json_encode($message));
+        print_r($res_netty);
+    }
+
 }
