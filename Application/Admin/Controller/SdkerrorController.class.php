@@ -24,11 +24,7 @@ class SdkerrorController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        
-        
-        $hotel_name = I('hotel_name');
-        
-        
+        $hotel_name = I('hotel_name','','trim');
         $m_sdk_error = new \Admin\Model\SdkErrorModel(); 
         
         $fields = "a.id,hotel.name hotel_name,hotel.addr,room.name room_name,
@@ -47,10 +43,9 @@ class SdkerrorController extends BaseController {
         $this->assign('page',$data['page']);
         $this->display('index');
     }
+
     public function deldata(){
-        
         $del_date = date("Y-m-d H:i:s",strtotime('-1 month'));
-        
         $m_sdk_error = new \Admin\Model\SdkErrorModel();
         $where = array();
         $where['last_report_date'] = array('ELT',"$del_date");
@@ -60,6 +55,23 @@ class SdkerrorController extends BaseController {
         }else {
             $this->output('删除成功', 'sdkerror/index', 2);
         }
-        
+    }
+
+    public function cleanmac(){
+        $mac = I('mac');
+        if(IS_POST){
+            $type = I('post.type');
+            $message = array('action'=>998,'type'=>$type);
+            $m_netty = new \Admin\Model\Smallapp\NettyModel();
+            $res_netty = $m_netty->pushBox($mac,json_encode($message));
+            if(isset($res_netty['error_code'])){
+                $this->output('netty推送失败,稍后重试', "sdkerror/index",2,0);
+            }else{
+                $this->output('netty推送失败,稍后重试', "sdkerror/index");
+            }
+        }else{
+            $this->assign('mac',$mac);
+            $this->display();
+        }
     }
 }
