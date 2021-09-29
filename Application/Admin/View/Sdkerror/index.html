@@ -9,35 +9,33 @@
     <input type="hidden" id="high" value="{$hightest}"/>
     <div class="searchBar">
       <div class="clearfix">
-        
-       
-         
-		
-          <div class="form-inline" style="margin-top:10px;">
-          <div class="form-group">
-            <div class="input-group-sm input-group">
-              <label class="control-label" style="">
-                                         酒楼名称：
-              </label>
-                <span class="input-group-btn input-group-sm">
-                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称" >
-            </span>
-            </div>
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+            <a  class="btn btn-success btn-sm add"  title="一键删除无效数据"  target="ajaxTodo" href="{$host_name}/Sdkerror/deldata" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a>
+            <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
           </div>
-		 <div class="input-group">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="sdkers"><i class="fa fa-search"></i></button>
-            </span>
-		</div>
-           
-            <div class="input-group input-group-sm pull-right">
-              <a  class="btn btn-success btn-sm add"  title="一键删除无效数据"  target="ajaxTodo" href="{$host_name}/Sdkerror/deldata" calback="navTabAjaxDone"><i class="fa fa-plus"></i> 一键删除无效数据</a>
-              <input type="hidden" id="xiaohref" value="{$host_name}/excel/expheartlost"/>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+          <div class="form-inline">
+
+            <div class="form-group">
+              <div class="input-group input-group-sm">酒楼名称：</div>
+              <div class="input-group">
+                <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}">
+              </div>
             </div>
 
+            <div class="input-group input-group-sm">
+              <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
 
           </div>
-      
+
+        </div>
+
       </div>
     </div>
   </form>
@@ -60,7 +58,7 @@
             <th>卡满上报次数</th>
             <th>卡异常最后上报时间</th>
             <th>卡满最后上报时间</th>
-            
+            <th class="table-tool">操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -69,7 +67,7 @@
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="酒楼名称">{$vlist.hotel_name}</td>
               <td data-title="所在城市">{$vlist.region_name}</td>
-              
+
               <td data-title="酒楼地址">{$vlist.addr}</td>
               <td data-title="包间名称">{$vlist.room_name}</td>
               <td data-title="机顶盒名称">{$vlist.box_name}</td>
@@ -78,8 +76,14 @@
               <td data-title="卡满上报次数">{$vlist.full_count}</td>
               <td data-title="最后上报时间">{$vlist.last_report_date}</td>
               <td data-title="最后上报时间">{$vlist.full_report_date}</td>
-              
-              
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a title="清理空间" data-tip="清理空间" target="dialog" mask="true" href="{$host_name}/sdkerror/cleanmac?mac={$vlist.mac}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+
             </tr>
           </volist>
           </tbody>
