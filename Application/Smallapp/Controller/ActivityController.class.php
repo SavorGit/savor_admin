@@ -193,6 +193,7 @@ class ActivityController extends BaseController {
     public function addtastwine(){
         $id = I('id',0,'intval');
         $name = I('post.name','','trim');
+        $prize = I('post.prize','','trim');
         $people_num = I('post.people_num',0,'intval');
         $start_date = I('post.start_date');
         $end_date = I('post.end_date');
@@ -204,7 +205,7 @@ class ActivityController extends BaseController {
         if(IS_POST){
             $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
             $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
-            $add_data = array('name'=>$name,'start_time'=>$start_time,'end_time'=>$end_time,
+            $add_data = array('name'=>$name,'prize'=>$prize,'start_time'=>$start_time,'end_time'=>$end_time,
                 'people_num'=>$people_num,'status'=>$status,'type'=>6
             );
             $m_media = new \Admin\Model\MediaModel();
@@ -315,7 +316,7 @@ class ActivityController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $where = array('a.type'=>6);
+        $where = array('activity.type'=>6);
         if($activity_id){
             $where['a.activity_id'] = $activity_id;
         }
