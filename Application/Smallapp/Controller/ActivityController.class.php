@@ -315,6 +315,8 @@ class ActivityController extends BaseController {
         $keyword = I('keyword','','trim');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
 
         $where = array('activity.type'=>6);
         if($activity_id){
@@ -323,15 +325,30 @@ class ActivityController extends BaseController {
         if(!empty($keyword)){
             $where['a.hotel_name'] = array('like',"%$keyword%");
         }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'activity/activitylist', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $all_activity = $m_activity->getDataList('id,name,prize',array('type'=>6),'id asc');
         $start  = ($page-1) * $size;
         $fields = 'a.id,activity.name as activity_name,a.hotel_name,a.box_name,a.box_mac,a.openid,user.nickName,user.avatarUrl,a.add_time';
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
         $result = $m_activityapply->gettastwineList($fields,$where,'a.id desc', $start,$size);
         $datalist = $result['list'];
 
+        $this->assign('all_activity',$all_activity);
         $this->assign('activity_id',$activity_id);
         $this->assign('keyword',$keyword);
         $this->assign('datalist', $datalist);
+        $this->assign('start_date', $start_date);
+        $this->assign('end_date', $end_date);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);

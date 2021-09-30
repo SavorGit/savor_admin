@@ -37,7 +37,7 @@
               <div class="form-group">
                   <div class="input-group input-group-sm">活动：</div>
                   <div class="input-group">
-                      <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                      <select name="activity_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                           <option value=0>全部</option>
                           <volist name="all_activity" id="ainfo">
                               <option value="{$ainfo.id}" <if condition="$ainfo.id eq $activity_id">selected</if>> {$ainfo.name}</option>
