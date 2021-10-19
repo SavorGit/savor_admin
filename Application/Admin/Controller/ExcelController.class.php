@@ -4835,14 +4835,14 @@ ELSE awarn.report_adsPeriod END ) AS reportadsPeriod ';
             //点播次数
             $sql ="select count(id) as nums from savor_smallapp_forscreen_record
                    where  box_mac='".$v['box_mac']."'   
-                   and create_time>='".$start_time."' and create_time<='".$end_time."' and action=5 and forscreen_char!='Happy Birthday'";
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and action=5";
             $rt = M()->query($sql);
             $result[$key]['demand'] = $rt[0]['nums'];
             
             //生日歌点播
             $sql ="select count(id) as nums from savor_smallapp_forscreen_record
                    where    box_mac='".$v['box_mac']."'
-                   and create_time>='".$start_time."' and create_time<='".$end_time."' and  action=5 and forscreen_char='Happy Birthday'";
+                   and create_time>='".$start_time."' and create_time<='".$end_time."' and  action=56";
             $rt = M()->query($sql);
             $result[$key]['happy']  = $rt[0]['nums'];
             

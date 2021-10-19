@@ -272,7 +272,7 @@ class ForscreenTrackModel extends BaseModel{
 	    if(isset($map_action[$forscreen['action']])){
             $forscreen['action'] = $map_action[$forscreen['action']];
         }
-        $has_img_action = array(2,4,5,12,13,15,17,21,22,30,31,32);
+        $has_img_action = array(2,4,5,12,13,15,17,21,22,30,31,32,56,57);
         $other_action = array(8,9,11,16);
 
         if(in_array($forscreen['action'],$has_img_action)){
@@ -430,7 +430,7 @@ class ForscreenTrackModel extends BaseModel{
                 $total_time = '';
             }
         }else{
-            if($forscreen_info['action']==5 && $forscreen_info['forscreen_char']=='Happy Birthday'){
+            if($forscreen_info['action']==56 || $forscreen_info['action']==57){
                 $forscreen_info['is_exist'] = 1;
             }
 
