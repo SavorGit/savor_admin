@@ -1,0 +1,109 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/admin/assets/css/horsey.css"/>
+
+
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/mcontentads/listall" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+    <input type="hidden" class="strid" name="hadsid" value="{$hidden_adsid}"/>
+    <!-- <input type="hidden" value="{$contentast}" id="contenseid" name="contentast" class="sachHtml" /> -->
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="form-inline" style="margin-top:3px;">
+
+          <div class="form-group" id="timegiy" style="">
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="adsstarttime" type="text" size="14" class="form-control date" placeholder="开始日期" value="{$s_time}" readonly>
+                        <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button  class="btn btn-success date-set  btn-sm" type="submit"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+
+            <div class="input-group input-group-sm date form_datetime" data-date="{$vinfo.log_time}" data-ymd="true">
+              <input name="adsendtime" type="text" size="14" class="form-control date" placeholder="结束日期" value="{$e_time}" readonly>
+                     <span class="input-group-btn" style="padding:0px;margin:0px;" >
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                  </span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-left:50px;">
+            <div class="input-group input-group-sm pull-right">
+              <!-- <input type="text" id="keysearch" autocomplete="off" style="width:200px" class="form-control" name="he_name" value="{$adsname}" placeholder="广告节目名称模糊搜索"><span class="inputDel" <notempty name="contentast"> <else /> style="display: none;" </notempty> >X</span> -->
+            	<select class="form-control bs-select" name="contentast">
+            		<option value="">==请选择广告名称==</option>
+            		<volist name="ads_list" id="vlist">
+            			<option <if condition="$adsname eq $vlist['name']">selected</if> value="{$vlist.name}">{$vlist.name}</option>
+            		</volist>
+            		
+            		
+            		<!-- <option <if condition="$adsname eq '456'">selected</if> value="456">456</option> -->
+            	</select>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+              <span style="color:red">总播放次数:{$all_play_nums}      </span>
+            </div>
+          </div>
+
+          <!-- <div class="input-group input-group-sm pull-right">
+            <a id="exportcontentads" class="btn btn-success btn-sm add" href="javascript:void(0)"  title="导出内容与广告统计" target="_blank" mask="true"  onclick="clickcontentads(this)"><i class="fa fa-plus"></i> 导出内容与广告统计</a>
+            <input type="hidden" id="contentxiaohref" value="{$host_name}/excel/expcontentads"/>
+          </div> -->
+
+          <div class="form-inline" style="margin-top:10px;">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>地区</th>
+            <th>酒楼名称</th>
+            <th>包间名称</th>
+            <th>机顶盒名称</th>
+            <th>mac地址</th>
+            <th>电视数量</th>
+            <th>播出次数</th>
+            <th>播出时长</th>
+            <th>播出天数</th>
+            <th>上刊日期</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="list" id="vlist">
+            <tr target="sid_user">
+              <td data-title="序号">{$key+1}</td>
+              <td data-title="地区">{$vlist.cityname}</td>
+              <td data-title="酒楼名称">{$vlist.hotel_name}</td>
+              <td data-title="包间名称">{$vlist.rname}</td>
+              <td data-title="机顶盒名称">{$vlist.box_name}</td>
+              <td data-title="mac地址">{$vlist.mac}</td>
+              <td data-title="电视数量">{$vlist.tv_count}</td>
+              <td data-title="播出次数">{$vlist.play_count}</td>
+              <td data-title="播出时长">{$vlist.play_time}</td>
+              <td data-title="播出天数">{$vlist.play_days}</td>
+              <td data-title="上刊日期">{$vlist.publication}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  {$page}
+</div>
