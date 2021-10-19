@@ -338,7 +338,7 @@ class ActivityController extends BaseController {
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
         $all_activity = $m_activity->getDataList('id,name,prize',array('type'=>6),'id asc');
         $start  = ($page-1) * $size;
-        $fields = 'a.id,activity.name as activity_name,a.hotel_name,a.box_name,a.box_mac,a.openid,user.nickName,user.avatarUrl,a.add_time';
+        $fields = 'a.id,activity.name as activity_name,a.hotel_name,a.box_name,a.box_mac,a.openid,a.mobile,user.nickName,user.avatarUrl,a.add_time';
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
         $result = $m_activityapply->gettastwineList($fields,$where,'a.id desc', $start,$size);
         $datalist = $result['list'];
