@@ -5160,7 +5160,7 @@ class CrontabController extends Controller
             //["forscreen/resource/1625401544424.png"]
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
-                where imgs='[\"".$v['oss_addr']."\"]' and r.action =5 and small_app_id =1 and r.create_time>='".$start_date.
+                where imgs='[\"".$v['oss_addr']."\"]' and r.action =56 and small_app_id =1 and r.create_time>='".$start_date.
                 "' and r.create_time<='".$end_date."'";
             
             
@@ -5231,7 +5231,7 @@ class CrontabController extends Controller
             }
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
-                where imgs='[\"".$v['oss_addr']."\"]' and r.action =5 and small_app_id =1 and r.create_time>='".$start_date.
+                where imgs='[\"".$v['oss_addr']."\"]' and r.action =57 and small_app_id =1 and r.create_time>='".$start_date.
                 "' and r.create_time<='".$end_date."'";
             
             
