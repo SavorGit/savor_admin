@@ -1158,9 +1158,9 @@ class SappforscreenController extends BaseController {
 	                    $lunch_pic_num ++;
 	                }else if($rv['action']==2 && $rv['resource_type']==2){//视频
 	                    $lunch_video_num ++;
-	                }else if($rv['action']==5 && $rv['forscreen_char']!='Happy Birthday'){
+	                }else if($rv['action']==5){
 	                    $lunch_db_num ++;
-	                }else if($rv['action']==5 && $rv['forscreen_char'] =='Happy Birthday'){
+	                }else if($rv['action']==56){
 	                    $lunch_birthday_num ++;
 	                }
 	            }
@@ -1274,9 +1274,9 @@ class SappforscreenController extends BaseController {
 	                    $dinner_pic_num ++;
 	                }else if($rv['action']==2 && $rv['resource_type']==2){//视频
 	                    $dinner_video_num ++;
-	                }else if($rv['action']==5 && $rv['forscreen_char']!='Happy Birthday'){
+	                }else if($rv['action']==5){
 	                    $dinner_db_num ++;
-	                }else if($rv['action']==5 && $rv['forscreen_char'] =='Happy Birthday'){
+	                }else if($rv['action']==56){
 	                    $dinner_birthday_num ++;
 	                }
 	            }

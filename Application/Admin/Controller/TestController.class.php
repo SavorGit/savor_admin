@@ -181,114 +181,6 @@ class TestController extends Controller {
         }
     }
     /**
-     * @desc 推送饭点中提醒服务员引导客人评价（机顶盒弹幕）
-     */
-    public function pushRemindComment(){
-        exit();
-        $sql = "SELECT staff.room_id,staff.hotel_id,box.mac box_mac,
-                user.nickName,user.avatarUrl
-                FROM `savor_integral_merchant_staff` staff
-                left join savor_room room on staff.room_id=room.id
-                left join savor_box box on room.id = box.room_id
-                left join savor_hotel hotel on hotel.id=room.hotel_id
-                left join savor_smallapp_user user on staff.openid= user.openid
-                WHERE staff.level in(2,3) and staff.status =1 and 
-                staff.hotel_id!=0 and staff.room_id!=0 and hotel.state=1 
-                and hotel.flag=0 and box.state=1 and box.flag=0";
-        $staff_box_list = M()->query($sql);
-        $post_data = http_build_query($netty_data);
-        $nettyBalanceURL = C('NETTY_BALANCE_URL');
-        
-        $staff_box_list = array(array('room_id'=>10498,'hotel_id'=>7,'box_mac'=>'00226D583D92','nickName'=>'jet','avatarUrl'=>'https://thirdwx.qlogo.cn/mmopen/vi_32/50q6nBfu9QmWUz8vOY6ibibRM4M3fibXjUhic9d8n3bsAGzvsNMmH5BajJNu6kJbianHWCCkkc77Cnas7B41bKCrdTA/132'));
-        $barrage = '亲,别忘了扫码评价哦~';
-        foreach($staff_box_list as $key=>$v){
-            
-            $box_mac = $v['box_mac'];
-            
-            $req_id = getMillisecond();
-            
-            $post_data = array('box_mac'=>$box_mac,'req_id'=>$req_id);
-            
-            $post_data = http_build_query($post_data);
-            
-            $result = $this->curlPost($nettyBalanceURL, $post_data);
-            $result_postion = json_decode($result,true);
-            
-            if($result_postion['code']==10000){
-                $req_id = getMillisecond();
-                if(!empty($v['avatarUrl'])){
-                    $head_pic = base64_encode($v['avatarUrl']);
-                }
-                $user_barrages[] = array('nickName'=>$v['nickName'],'headPic'=>$head_pic,'avatarUrl'=>$v['avatarUrl'],'barrage'=>$barrage);
-                $msg = array('action'=>122,'userBarrages'=>$user_barrages);
-                
-                
-                $netty_data = array('box_mac'=>$box_mac,'cmd'=>'call-mini-program','msg'=>json_encode($msg),'req_id'=>$req_id);   
-                $post_data = http_build_query($netty_data);
-                
-                $netty_push_url = 'http://'.$result_postion['result'].'/push/box';
-                $ret = $this->curlPost($netty_push_url,$post_data);
-                $netty_result = json_decode($ret,true);
-                print_r($netty_result);exit;
-            }
-        }
-        
-        echo "OK";
-        
-        #redis_conn.set('hello','world')
-        //rets = requests.post('https://api-nzb.littlehotspot.com/netty/box/connections',data='showFields=box_mac,http_host,http_port',headers=headers);
-    }
-    public function pushRemindPowerOn(){
-        exit();
-        $wechat = new \Common\Lib\Wechat();
-        $access_token = $wechat->getWxAccessToken();
-        
-        $sql = "SELECT user.wx_mpopenid,staff.room_id,staff.hotel_id 
-                FROM `savor_integral_merchant_staff` staff 
-                left join savor_smallapp_user user on staff.openid= user.openid WHERE staff.level in(2,3) and staff.status =1 and staff.hotel_id!=0 and staff.room_id!=0 and user.mpopenid!='' ";
-        $user = M()->query($sql);
-        
-        foreach($user as $key=>$v){
-            $res = $wechat->getWxUserDetail($access_token ,$v['wx_mpopenid']);
-            if($res['subscribe']){
-                
-                $sql ="select box.id box_id from savor_box box
-                       left join savor_room room on box.room_id=room.id
-                       left join savor_hotel hotel on room.hotel_id=hotel.id
-                       where room.id=".$v['room_id'].' and hotel.id='.$v['hotel_id'].' and hotel.state=1 and hotel.flag=0
-                       and box.state=1 and box.flag = 0';
-                $box_list = M()->query($sql);
-                $now_date = date('Ymd');
-                foreach($box_list as $kk=>$vv){
-                    //判断机顶盒11:00 - 12:00有没有开机(心跳)
-                    $sql ="select hour11 from savor_heart_all_log where date=".$now_date.' and box_id='.$vv['box_id'].' and type=2';
-                    $heart_list = M()->query($sql);
-                    if(empty($heart_list) || $heart_list[0]['hour11']==0){
-                        $data = array(
-                            'touser'=>$v['wx_mpopenid'],
-                            'template_id'=>"8HdJeBWn7ZmpKWYQgH17A5ZaD75CxL8zrFcNoTzmDqg",
-                            'url'=>"",
-                            /*'miniprogram'=>array(
-                             'appid'=>'wxfdf0346934bb672f',
-                                'pagepath'=>'pages/index/index',
-                            ),*/
-                            'data'=>array(
-                                'first'=>array('value'=>'您好，您的会员积分信息有了新的变更。') ,
-                                'keyword1'=>array('value'=>'jet'),
-                                'keyword2'=>array('value'=>6009891111),
-                                'keyword3'=>array('value'=>300,),
-                                'keyword4'=>array('value'=>1200),
-                                'remark'=>array('value'=>'如有疑问，请拨打123456789.','color'=>"#FF1C2E"),
-                            )
-                        );
-                        $data = json_encode($data);
-                        $res = $wechat->templatesend($data);
-                    }    
-                }
-            } 
-        }
-    }
-    /**
      * @desc 计算用户使用了多少次(一天内有扫码有一次)
      */
     public function countUseSmall(){
@@ -337,201 +229,6 @@ class TestController extends Controller {
     		}
     	}
     	echo $flag;
-    }
-
-    public function pltozj(){
-        exit();
-        $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
-        $list = M()->query($sql);
-        
-        $ids = array(55,137,142,143,145);
-        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        foreach($ids as $v){
-            foreach($list as $key=>$vv){
-                $data['goods_id'] = $v;
-                $data['hotel_id'] = $vv['hotel_id'];
-                $ret = $m_hotelgoods->addData($data);
-                
-            }
-        }
-        echo 'ok';
-    }
-
-    public function tasktozj(){
-        $sql ="SELECT hotel_id FROM `savor_smallapp_hotelgoods` WHERE goods_id=144 ";
-        $list = M()->query($sql);
-        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
-        foreach($list as $key=>$vv){
-            $data['task_id']  = 5;
-            $data['hotel_id'] = $vv['hotel_id'];
-            $data['uid']      = 1;
-            
-            $m_task_hotel->addData($data);
-        }
-        echo "ok";exit;
-    }
-    
-    //销售端用户数据平移
-    public function getSmallSaleHotel(){
-        $sql ="SELECT * FROM `savor_hotel_invite_code` WHERE openid!='' and type=2 group by hotel_id";
-        $hotel_list = M()->query($sql);
-        print_r($hotel_list);
-    }
-
-    public function ttps(){
-        exit();
-        $sql ="SELECT user.*,ic.hotel_id,hotel.name FROM savor_hotel_invite_code ic  
-            left join `savor_smallapp_user` user
-             on user.openid=ic.openid
-               left join savor_hotel hotel on ic.hotel_id=hotel.id WHERE `small_app_id`=5 and ic.state=1 and ic.flag=0";
-        $user_list = M()->query($sql);
-        $tmp = $aps = [];
-        foreach($user_list as $key=>$v){
-            if($v['hotel_id']){
-                $sql ="select mt.*,staff.id parent_id from savor_integral_merchant mt
-                        left join savor_integral_merchant_staff staff on mt.id=staff.merchant_id
-                       where mt.hotel_id=".$v['hotel_id'].' and mt.status=1 and mt.id !=92';
-                
-                $mt_info = M()->query($sql);
-                //print_r($mt_info);exit;
-                //print_r($v);exit;
-                
-                if(empty($mt_info)){
-                    $tmp[$key]['name'] = $v['name'];
-                    $tmp[$key]['hotel_id'] = $v['hotel_id'];
-                    $tmp[$key]['nickname'] = $v['nickname'];
-                    $tmp[$key]['openid'] = $v['openid'];
-                }else {
-                    $sql ="select * from savor_integral_merchant_staff where openid='".$v['openid']."'";
-                    $s_info = M()->query($sql);
-                    if(empty($s_info)){
-                        $le_staff_arr[$key]['merchant_id'] = $mt_info[0]['id'];
-                        $le_staff_arr[$key]['parent_id']   = $mt_info[0]['parent_id'];
-                        $le_staff_arr[$key]['name']        = '';
-                        $le_staff_arr[$key]['openid']      = $v['openid'];
-                        $le_staff_arr[$key]['beinvited_time'] = date('Y-m-d H:i:s');
-                        $le_staff_arr[$key]['trees']       = '';
-                        $le_staff_arr[$key]['level']       = 2;
-                        $le_staff_arr[$key]['sysuser_id']  = 1;
-                        $le_staff_arr[$key]['status']      = 1;
-                    }
-                    
-                }
-            }else {
-                
-            }
-        }
-        $flag = 0;
-        //print_r($le_staff_arr);exit;
-        $m_staff = new \Admin\Model\Integral\StaffModel();
-        foreach($le_staff_arr as $key=>$v){
-            //print_r($v);exit;
-            $ret = $m_staff->addData($v);
-            if($ret){
-                $flag ++;
-            }
-        }
-        print_r($flag);
-        echo "ok";exit;
-    }
-
-    public function pySmallSaleUser(){
-        exit();
-        $sql ="select a.* from `savor_hotel_invite_code` a 
-               left join savor_smallapp_user u on a.openid=u.openid 
-               where a.openid !='' and a.type=2 and a.invite_id=0 
-               and a.state=1 and a.flag=0 and u.small_app_id=5 ";
-        $user_list = M()->query($sql);
-        $m_merchant = new \Admin\Model\Integral\MerchantModel();
-        $m_staff = new \Admin\Model\Integral\StaffModel();
-        
-        foreach($user_list as $key=>$v){
-            //查看当前酒楼是否有管理员
-            $sql ="select * from savor_integral_merchant where hotel_id=".$v['hotel_id']." and status=1";
-            $where = array();
-            $where['a.hotel_id'] = $v['hotel_id'];
-            $where['a.status']   = 1;
-            $mt_info = $m_merchant->alias('a')
-                                  ->join('savor_integral_merchant_staff st on a.id=st.merchant_id','left')
-                                  ->field('a.*,st.id parent_id')
-                                  ->where($where)->find();
-            if(empty($mt_info)){
-                $data = [];
-                $data['hotel_id'] = $v['hotel_id'];
-                $data['service_model_id'] = 1;
-                $data['channel_id'] = 1;
-                $data['rate_groupid'] = 100;
-                $data['cash_rate'] = 1.0;
-                $data['recharge_rate'] = 1.0;
-                $data['name'] = '';
-                $data['job']  = '';
-                $data['code'] = $v['code'];
-                $data['mobile'] = $v['bind_mobile'];
-                $data['type'] = 2;
-                $data['sysuser_id'] = 1;
-                $data['status'] = 1;
-                $mt_id = $m_merchant->addData($data);
-                $data = [];
-                $data['merchant_id'] = $mt_id;
-                $data['parent_id']   = 0;
-                $data['name'] = '';
-                $data['openid'] = $v['openid'];
-                $data['beinvited_time'] = date('Y-m-d H:i:s');
-                $data['trees'] = '';
-                $data['level'] = 1;
-                $data['sysuser_id'] =1;
-                $data['status'] = 1;
-                $staff_id = $m_staff->addData($data);
-                //获取该用户下的员工列表 插入员工表
-                $sql ="select * from `savor_hotel_invite_code` where openid !='' and type=2  and invite_id=".$v['id'].' and state=1 and flag=0';
-                $le_staff = M()->query($sql);
-                $le_staff_arr = [];
-                foreach($le_staff  as $kk=>$vv){
-                    $le_staff_arr[$kk]['merchant_id'] = $mt_id;
-                    $le_staff_arr[$kk]['parent_id']   = $staff_id;
-                    $le_staff_arr[$kk]['name']        = '';
-                    $le_staff_arr[$kk]['openid']      = $vv['openid'];
-                    $le_staff_arr[$kk]['beinvited_time'] = date('Y-m-d H:i:s');
-                    $le_staff_arr[$kk]['trees']       = '';
-                    $le_staff_arr[$kk]['level']       = 2;
-                    $le_staff_arr[$kk]['sysuser_id']  = 1;
-                    $le_staff_arr[$kk]['status']      = 1;
-                }
-                $m_staff->addAll($le_staff_arr);
-            }else {//如果已建立该商家
-                $data = array();
-                $data['merchant_id'] = $mt_info['id'];
-                $data['parent_id']   = $mt_info['parent_id'];
-                $data['name'] = '';
-                $data['openid'] = $v['openid'];
-                $data['beinvited_time'] = date('Y-m-d H:i:s');
-                $data['trees'] = '';
-                $data['level'] = 2;
-                $data['sysuser_id'] =1;
-                $data['status'] = 1;
-                $staff_id = $m_staff->addData($data);
-            }  
-        }
-        /* $sql ="select a.* from `savor_hotel_invite_code` a
-               left join savor_smallapp_user u on a.openid=u.openid
-               where a.openid !='' and a.type=3 and a.invite_id=0
-               and a.state=1 and a.flag=0 and u.small_app_id=5 ";
-        $user_list = M()->query($sql);
-        foreach($user_list as $key=>$v){
-            $data = [];
-            $data['merchant_id'] = 3;
-            $data['parent_id']   = 1;
-            $data['name'] = '';
-            $data['openid'] = $v['openid'];
-            $data['beinvited_time'] = date('Y-m-d H:i:s');
-            $data['trees'] = '';
-            $data['level'] = 0;
-            $data['sysuser_id'] =1;
-            $data['status'] = 1;
-            $staff_id = $m_staff->addData($data);
-        } */
-        
-        echo "OK";
     }
 
     public function rmvCache(){
@@ -3260,5 +2957,92 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $res_netty = $m_netty->pushBox($mac,json_encode($message));
         print_r($res_netty);
     }
+
+    public function testpush(){
+        $box_mac = I('mac','','trim');
+        $activity_id = 11254;
+        $openid='ofYZG4zXTCn52wUjHPeOoNZHFKwo';
+
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $where = array('openid' => $openid, 'status' => 1);
+        $user_info = $m_user->getOne('id,openid,avatarUrl,nickName,mpopenid', $where, '');
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $res_activity = $m_activity->getInfo(array('id'=>$activity_id));
+
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $message = array('action'=>153,'nickName'=>$user_info['nickname'],'headPic'=>base64_encode($user_info['avatarurl']),
+            'url'=>$res_activity['image_url']);
+        $ret = $m_netty->pushBox($box_mac,json_encode($message));
+        print_r($ret);
+    }
+
+    public function sceneadvpush(){
+        $day = date('w');
+        if($day==0 || $day==6){//周六周日
+            $url = 'media/resource/kzZsH5pPHT.jpg';
+            $filename = 'kzZsH5pPHT.jpg';
+            $resource_size = 239687;
+        }else{
+            $url = 'media/resource/5bZDJpFsJJ.jpg';
+            $filename = '5bZDJpFsJJ.jpg';
+            $resource_size = 179965;
+        }
+        $all_hotel = array(7);
+
+        $m_box = new \Admin\Model\BoxModel();
+        $where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>array('in',$all_hotel));
+        $res_box = $m_box->getBoxByCondition('hotel.id as hotel_id,box.mac',$where);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        foreach ($res_box as $v){
+            $forscreen_id = getMillisecond();
+            $message = array('forscreen_id'=>$forscreen_id,'action'=>4,'resource_type'=>2,
+                'openid'=>'','avatarUrl'=>'','nickName'=>'',
+                'img_list'=>array(array('url'=>$url,'filename'=>$filename,'img_id'=>$forscreen_id,'resource_size'=>$resource_size))
+            );
+            $box_mac = $v['mac'];
+            $ret = $m_netty->pushBox($box_mac,json_encode($message));
+            echo "hotel_id:{$v['hotel_id']} mac:$box_mac result:".json_encode($ret)."\r\n";
+        }
+    }
+
+    public function updatebirthday(){
+        $model = M();
+        $sql_constellation_video = 'select m.oss_addr from savor_smallapp_constellation_video as v left join savor_media as m on v.media_id=m.id';
+        $res_video = $model->query($sql_constellation_video);
+        $all_constellation_video = array();
+        foreach ($res_video as $v){
+            $all_constellation_video[]=$v['oss_addr'];
+        }
+        $time = '2021-01-01 00:00:00';
+        $pagesize = 500;
+        for($i=1;$i<100;$i++){
+            $offset = ($i-1)*$pagesize;
+            $sql = "select id,imgs,create_time from savor_smallapp_forscreen_record where create_time>='{$time}' and action=5 and forscreen_char='Happy birthday' order by id desc limit {$offset},{$pagesize}";
+            $res_forscreen = $model->query($sql);
+            if(empty($res_forscreen)){
+                echo "no forscreen data \r\n";
+                break;
+            }
+            foreach ($res_forscreen as $v){
+                $id = $v['id'];
+                $imgs = json_decode($v['imgs']);
+                if(!empty($imgs)){
+                    $oss_addr = $imgs[0];
+                    if(in_array($oss_addr,$all_constellation_video)){
+                        $action = 57;//星座点播
+                    }else{
+                        $action = 56;//生日点播
+                    }
+                    $sql_up = "UPDATE savor_smallapp_forscreen_record SET action={$action} WHERE id={$id}";
+                    $res_update = $model->execute($sql_up);
+                    if($res_update){
+                        echo "id:$id action:$action ok \r\n";
+                    }
+                }
+            }
+        }
+    }
+
+
 
 }
