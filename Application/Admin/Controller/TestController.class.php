@@ -15,6 +15,28 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
 
+    public function resetNewSmallappUser(){
+        $openid = I('openid','');
+        if(!empty($openid)){
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $user_info = $m_user->getOne('is_interact', array('openid'=>$openid));
+            if(!empty($user_info)){
+                $redis = SavorRedis::getInstance();
+                $redis->select(5);
+                $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
+                
+                $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0));
+                $redis->remove($cache_key);
+                echo "OK";
+            }else {
+                echo 'user empty';
+            }
+            
+            
+        }else {
+            echo "openid empty";
+        }
+    }
     public function clearFnums(){
         $redis = SavorRedis::getInstance();
         $redis->select(5);
