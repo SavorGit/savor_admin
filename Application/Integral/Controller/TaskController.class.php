@@ -24,7 +24,7 @@ class TaskController extends BaseController {
 
         $where = array('a.flag'=>1);
         
-        $fields = 'a.id,a.name,a.type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
+        $fields = 'a.id,a.name,a.type,a.task_type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
         $orders = $order.' '.$sort;
         $start = ($page-1 ) * $size;
@@ -118,6 +118,81 @@ class TaskController extends BaseController {
             $this->display();
         }
 
+    }
+
+    public function addactivitysale(){
+        $id = I('id',0,'intval');
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        $is_edit = 0;
+        if(IS_POST){
+            $name = I('post.name','','trim');
+            $media_id = I('post.media_id',0,'intval');
+            $goods_id = I('post.goods_id',0,'intval');
+            $task_integral = I('post.task_integral',0,'intval');
+            $integral = I('post.integral',0,'intval');
+            $people_num = I('post.people_num',0,'intval');
+            $desc = I('post.desc','','trim');
+            $start_time = I('post.start_time','0000-00-00 00:00:00','trim');
+            $end_time = I('post.end_time','0000-00-00 00:00:00','trim');
+
+            $type = 2;
+            $task_type = 22;
+            $data = array('name'=>$name,'goods_id'=>$goods_id,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'task_integral'=>$task_integral,
+                'integral'=>$integral,'people_num'=>$people_num,'start_time'=>$start_time,'end_time'=>$end_time,
+                'status'=>0,'flag'=>1);
+            $userinfo = session('sysUserInfo');
+            $data['uid'] = $userinfo['id'];
+            if(!empty($desc)){
+                $data['desc'] = $desc;
+            }
+            if($id){
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0){
+                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                    if($data['task_info']!=$res_task_info['task_info']){
+                        $this->output('任务已下发,请勿修改任务种类', "task/addactivitymoney",2,0);
+                    }
+                }
+                unset($data['uid']);
+                $data['update_time'] = date('Y-m-d H:i:s');
+                $data['e_uid'] = $userinfo['id'];
+                $m_task->updateData(array('id'=>$id),$data);
+            }else{
+                $m_task->add($data);
+            }
+            $this->output('添加成功', "task/index");
+        }else{
+            $vinfo = array('task_info'=>'','md5'=>'','people_num'=>3);
+            $goods_id = 0;
+            if($id){
+                $vinfo = $m_task->getInfo(array('id'=>$id));
+                $m_media = new \Admin\Model\MediaModel();
+                if($vinfo['media_id']){
+                    $res_media = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $vinfo['oss_addr'] = $res_media['oss_addr'];
+                }
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0) {
+                    $is_edit = 1;
+                }
+                $goods_id = $vinfo['goods_id'];
+            }
+            $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+            $all_goods = $m_dishgoods->getDataList('id,name',array('type'=>41,'status'=>1),'id desc');
+            foreach ($all_goods as $k=>$v){
+                if($v['id']==$goods_id){
+                    $all_goods[$k]['is_select'] = 'selected';
+                }else{
+                    $all_goods[$k]['is_select'] = '';
+                }
+            }
+            $this->assign('all_goods',$all_goods);
+            $this->assign('is_edit',$is_edit);
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
     }
 
     public function add(){
@@ -408,6 +483,9 @@ class TaskController extends BaseController {
             $has_task_hids = array();
             $has_task_ids = array();
             $data = array();
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(14);
+            $goods_program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
             foreach($ids as $key=> $v){
                 $t_info = array('task_id'=>$task_id,'hotel_id'=>$v,'uid'=>$uid,'create_time'=>$create_time);
                 if($res_task['type']==2 && $res_task['task_type']==21){
@@ -462,6 +540,12 @@ class TaskController extends BaseController {
                                 break;
                             }
                         }
+                    }
+                    if($res_task['task_type']==22){
+                        $program_key = $goods_program_key.":{$v}";
+                        $period = getMillisecond();
+                        $period_data = array('period'=>$period);
+                        $redis->set($program_key,json_encode($period_data));
                     }
                 }
                 $data[] = $t_info;
