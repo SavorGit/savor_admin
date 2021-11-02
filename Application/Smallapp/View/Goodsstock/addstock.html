@@ -1,0 +1,46 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/goodsstock/addstock" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="goods_id" type="hidden" value="{$vinfo.goods_id}"/>
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+
+		<div class="pageFormContent modal-body">
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">商品名称：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="text" value="{$vinfo.goods_name}" class="form-control" readonly/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" required >
+						<option name="hotel_id" selected='selected' value="0">请选择酒楼</option>
+						<volist name="merchants" id="minfo">
+							<option name="hotel_id" value="{$minfo.hotel_id}" {$minfo.is_select}> {$minfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">库存：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">试饮份数：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="drink_copies" type="number" value="{$vinfo.drink_copies}" class="form-control" min="1" max="999" required/>
+				</div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+	</form>
+</div>

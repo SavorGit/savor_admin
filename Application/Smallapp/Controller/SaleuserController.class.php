@@ -60,12 +60,15 @@ class SaleuserController extends BaseController {
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
 
-        $where = array('openid'=>$openid);
+        $where = array();
+        if(!empty($openid)){
+            $where['a.openid'] = $openid;
+        }
         if($hotel_name){
-            $where['hotel_name'] = array('like',"%$hotel_name%");
+            $where['a.hotel_name'] = array('like',"%$hotel_name%");
         }
         if($type){
-            $where['type'] = $type;
+            $where['a.type'] = $type;
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -75,15 +78,16 @@ class SaleuserController extends BaseController {
             }
             $start_time = date('Y-m-d 00:00:00',$stime);
             $end_time = date('Y-m-d 23:59:59',$etime);
-            $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+            $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
 
         $start = ($pageNum-1)*$size;
         $m_integral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
-        $res_list = $m_integral_record->getDataList('*',$where,'id desc',$start,$size);
+        $res_list = $m_integral_record->getList('a.*,user.avatarUrl,user.nickName',$where,'a.id desc',$start,$size);
         $data_list = $res_list['list'];
         $m_goods = new \Admin\Model\Smallapp\GoodsModel();
         $integral_types = C('INTEGRAL_TYPES');
+
         foreach ($data_list as $k=>$v){
             $info = '';
             switch ($v['type']){

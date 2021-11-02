@@ -312,7 +312,7 @@ class ActivityController extends BaseController {
 
     public function tastwineuserlist(){
         $activity_id = I('activity_id',0,'intval');
-        $keyword = I('keyword','','trim');
+        $hotel_name = I('hotel_name','','trim');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
         $start_date = I('start_date','');
@@ -322,8 +322,8 @@ class ActivityController extends BaseController {
         if($activity_id){
             $where['a.activity_id'] = $activity_id;
         }
-        if(!empty($keyword)){
-            $where['a.hotel_name'] = array('like',"%$keyword%");
+        if(!empty($hotel_name)){
+            $where['a.hotel_name'] = array('like',"%$hotel_name%");
         }
         if($start_date && $end_date){
             $stime = strtotime($start_date);
@@ -345,7 +345,7 @@ class ActivityController extends BaseController {
 
         $this->assign('all_activity',$all_activity);
         $this->assign('activity_id',$activity_id);
-        $this->assign('keyword',$keyword);
+        $this->assign('hotel_name',$hotel_name);
         $this->assign('datalist', $datalist);
         $this->assign('start_date', $start_date);
         $this->assign('end_date', $end_date);

@@ -8,17 +8,15 @@
     <div class="searchBar">
       <div class="clearfix">
 
-        <div class="col-xs-12 col-sm-6 col-md-5">
-
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <notempty name='openid'>
           <div class="form-inline">
-            <div class="input-group input-group-sm">用户：{$openid}</div>
-            <div class="input-group input-group-sm">&nbsp;&nbsp;&nbsp;</div>
             <div class="input-group input-group-sm">当前积分为：{$integral}</div>
           </div>
-
+          </notempty>
         </div>
 
-        <div class="col-xs-12 col-sm-6 col-md-7 pull-right">
+        <div class="col-xs-12 col-sm-6 col-md-10 pull-right">
 
           <div class="form-inline">
 
@@ -37,7 +35,12 @@
                     <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
                     </span>
             </div>
-
+          <div class="form-group">
+            <div class="input-group input-group-sm">用户openid：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="openid" value="{$openid}">
+            </div>
+          </div>
           <div class="input-group input-group-sm ">
             <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
             <span class="input-group-btn input-group-sm">
@@ -75,6 +78,9 @@
             <th>酒楼名称</th>
             <th>包间名称</th>
             <th>MAC地址</th>
+            <th>openid</th>
+            <th>用户昵称</th>
+            <th>用户头像</th>
             <th>积分信息</th>
             <th>所得积分</th>
             <th>积分状态</th>
@@ -89,6 +95,9 @@
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
               <td data-title="包间名称">{$dinfo.room_name}</td>
               <td data-title="MAC地址">{$dinfo.box_mac}</td>
+              <td data-title="openid">{$dinfo.openid}</td>
+              <td data-title="用户昵称">{$dinfo.nickname}</td>
+              <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
               <td data-title="积分信息">{$dinfo.info}</td>
               <td data-title="所得积分">{$dinfo.integral}</td>
               <td data-title="积分状态">{$dinfo.status_str}</td>
