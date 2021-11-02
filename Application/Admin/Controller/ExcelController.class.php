@@ -156,6 +156,9 @@ class ExcelController extends Controller
              $tmpname = '导出点播内容统计数据';
          }else if($filename=='exportsaleuserintegral'){
              $tmpname = '销售人员积分列表';
+         }else if($filename=='whnetboxroomnums'){
+             $tmpname = '三代机+网络电视包间版位数统计';
+             $filename = '';
          }
 
 
@@ -8114,5 +8117,172 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $xlsName = '导出销售人员积分列表';
         $filename = 'exportsaleuserintegral';
         $this->exportExcel($xlsName, $xlsCell, $datalist,$filename);
+    }
+    /**
+     * 2021-11-01 to licong
+     */
+    public function ycHeartLog(){
+        $start_date = I('start_date','20211001');
+        $end_date   = I('end_date','20211031');
+        $type = I('type','fzy');
+        $sql ="select area_name,hotel_name,room_name,mac,hotel_id  from `savor_heart_all_log` where type=2 and date>=$start_date and date<=$end_date
+        group by mac ";
+        
+        $result = M()->query($sql);
+        if($type=='zy'){
+            foreach($result as $key=>$v){
+                $flag   = $start_date;
+                $is_all = 1;
+                while($flag<=$end_date){
+                    $sql ="select id from `savor_heart_all_log` where mac='".$v['mac']."' and  type=2 and date=$flag
+                           and hour0>0 and hour1>0 and hour2>0 and hour3>0 and hour4>0 and hour5>0 and hour6>0 and hour7>0
+                           and hour8>0 and hour9>0 and hour10>0 and hour11>0 and hour12>0 and hour13>0 and hour14>0 and hour15>0
+                           and hour16>0 and hour17>0 and hour18>0 and hour19>0 and hour20>0 and hour21>0 and hour22>0 and hour23>0";
+                    
+                    $rt = M()->query($sql);
+                    if(empty($rt)){
+                        $is_all = 0;
+                        break;   
+                        
+                    }else {
+                        
+                        $flag ++;
+                    }
+                }
+                if($is_all==0){
+                    unset($result[$key]);
+                    
+                }else{
+                    $sql ="select u.remark from savor_sysuser u
+                           left join savor_hotel_ext e on u.id=e.maintainer_id
+                           left join savor_hotel h on e.hotel_id= h.id where u.status=1 and h.id=".$v['hotel_id'];
+                   
+                    $rts = M()->query($sql);
+                    $result[$key]['uname'] = $rts[0]['remark'];
+                }
+            }
+        }else {
+            
+            foreach($result as $key=>$v){
+                $flag   = $start_date;
+                $flag   = $start_date;
+                $is_all = 1;
+                $result[$key]['etime'] = '';
+                $space = '';
+                while($flag<=$end_date){
+                    $sql ="select id from `savor_heart_all_log` where mac='".$v['mac']."' and  type=2 and date=$flag
+                    and hour0>0 and hour1>0 and hour2>0 and hour3>0 and hour4>0 and hour5>0 and hour6>0 and hour7>0
+                    and hour8>0 and hour9>0 and hour10>0 and hour11>0 and hour12>0 and hour13>0 and hour14>0 and hour15>0
+                    and hour16>0 and hour17>0 and hour18>0 and hour19>0 and hour20>0 and hour21>0 and hour22>0 and hour23>0";
+                    
+                    $rt = M()->query($sql);
+                    if(!empty($rt)){
+                        $result[$key]['etime'] .=$space .$flag;
+                        $space = '-';
+                    }
+                    $flag ++;
+                }
+                if($result[$key]['etime']==''){
+                    unset($result[$key]);
+                    
+                }else{
+                    $sql ="select u.remark from savor_sysuser u
+                           left join savor_hotel_ext e on u.id=e.maintainer_id
+                           left join savor_hotel h on e.hotel_id= h.id where u.status=1 and h.id=".$v['hotel_id'];
+                    
+                    $rts = M()->query($sql);
+                    $result[$key]['uname'] = $rts[0]['remark'];
+                }
+            }
+            
+            
+        }
+        
+        
+        
+        if($type=='zy'){
+            $xlsName = '整月异常心跳统计';
+            $filename = 'exportSl14BoxList';
+            
+            $xlsCell = array(
+                
+                array('area_name','区域'),
+                array('hotel_name','酒楼名称'),
+                array('room_name','包间名称'),
+                array('mac','mac'),
+                array('uname','维护人')
+                
+            );
+            $xlsName = '失联超过10天的版位信息';
+            $filename = 'user_wifi_forscreen_detail';
+            //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+            $path  = '/application_data/web/php/savor_admin/Public/box_heart/202111/';
+            if (!is_dir($path)){
+                mkdir($path,0777,true);
+            }
+            $path  .= $start_date.'-'.$end_date.'整月异常心跳统计.xls';
+            
+            
+        }else{
+            $xlsName = '整月异常心跳统计';
+            $filename = 'exportSl14BoxList';
+            
+            $xlsCell = array(
+                
+                array('area_name','区域'),
+                array('hotel_name','酒楼名称'),
+                array('room_name','包间名称'),
+                array('mac','mac'),
+                array('uname','维护人'),
+                array('etime','时间')
+            );
+            $xlsName = '失联超过10天的版位信息';
+            $filename = 'user_wifi_forscreen_detail';
+            //$this->exportExcel($xlsName, $xlsCell, $data,$filename);
+            $path  = '/application_data/web/php/savor_admin/Public/box_heart/202111/';
+            if (!is_dir($path)){
+                mkdir($path,0777,true);
+            }
+            $path  .= $start_date.'-'.$end_date.'非整月异常心跳统计.xls';
+        }
+        
+        $result = array_merge($result);
+        $ret = $this->exportExcel($xlsName, $xlsCell, $result,$filename,2,$path);
+        
+    }
+    public function whNetBoxRoomNums(){
+        $sql ="select ext.maintainer_id,user.remark,area.region_name from savor_hotel hotel
+               left join savor_area_info area on hotel.area_id = area.id
+               left join savor_hotel_ext ext on hotel.id=ext.hotel_id 
+               left join savor_sysuser user on ext.maintainer_id = user.id
+               where hotel.state in(1,2) and hotel.flag=0 and ext.maintainer_id>0 group by ext.maintainer_id";
+        
+        $result = M()->query($sql);
+        foreach($result as $key=>$v){
+            
+            $sql = "select box.id from savor_box box
+                    left join savor_room room on box.room_id = room.id
+                    left join savor_hotel hotel on room.hotel_id = hotel.id
+                    left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+                    where hotel.state in(1,2) and hotel.flag=0 and box.state in(1,2) and box.flag=0
+                    and ext.maintainer_id=".$v['maintainer_id']." and box.box_type in(6,7) and room.type=1";
+            
+            $ret = M()->query($sql);
+            $nums = count($ret);
+            $result[$key]['nums'] = $nums;
+            
+            
+            
+        }
+        
+        $xlsCell = array(
+            array('region_name','地区'),
+            array('remark','维护人'),
+            array('nums','三代机+网络电视包间版位数'),
+            
+        );
+        $xlsName = '三代机+网络电视包间版位数统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
 }
