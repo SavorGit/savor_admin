@@ -17,16 +17,26 @@ class TestController extends Controller {
 
     public function resetNewSmallappUser(){
         $openid = I('openid','');
+        $type = I('type',1,'intval');
         if(!empty($openid)){
             $m_user = new \Admin\Model\Smallapp\UserModel();
             $user_info = $m_user->getOne('is_interact', array('openid'=>$openid));
             if(!empty($user_info)){
-                $redis = SavorRedis::getInstance();
-                $redis->select(5);
-                $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
-                
-                $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0));
-                $redis->remove($cache_key);
+                switch ($type){
+                    case 1:
+                        $redis = SavorRedis::getInstance();
+                        $redis->select(5);
+                        $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
+
+                        $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0));
+                        $redis->remove($cache_key);
+                        break;
+                    case 2:
+                        $m_staff = new \Admin\Model\Integral\StaffModel();
+                        $m_staff->delData(array('openid'=>$openid));
+                        break;
+                }
+
                 echo "OK";
             }else {
                 echo 'user empty';
