@@ -3,10 +3,10 @@ namespace Admin\Model\Integral;
 use Admin\Model\BaseModel;
 
 class TaskUserModel extends BaseModel{
-	
-	protected $tableName='integral_task_user';
 
-	public function handle_user_task(){
+    protected $tableName='integral_task_user';
+
+    public function handle_user_task(){
         $now_date = date('Y-m-d');
         $date_h = date('H');
         if($date_h==17){
@@ -173,7 +173,7 @@ class TaskUserModel extends BaseModel{
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
 
-        $task_where = array('openid'=>$staff_info['openid'],'task_id'=>$task_info['task_user_id']);
+        $task_where = array('openid'=>$staff_info['openid'],'task_id'=>$task_info['id']);
         $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
         $task_where['fj_type'] = $dinner_type;
         $tmp_exist = $m_userintegralrecord->field('id,task_id,fj_type,integral')->where($task_where)->find();
@@ -209,7 +209,7 @@ class TaskUserModel extends BaseModel{
         if($now_integral){
             $tmp_where = array('openid'=>$staff_info['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
-            $tmp_where['task_id'] = $task_info['task_user_id'];
+            $tmp_where['task_id'] = $task_info['id'];
             $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
 
@@ -280,7 +280,7 @@ class TaskUserModel extends BaseModel{
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
 
-        $task_where = array('openid'=>$staff_info['openid'],'task_id'=>$task_info['task_user_id']);
+        $task_where = array('openid'=>$staff_info['openid'],'task_id'=>$task_info['id']);
         $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
         $task_where['fj_type'] = $dinner_type;
         $tmp_exist = $m_userintegralrecord->field('id,task_id,fj_type,integral')->where($task_where)->find();
@@ -316,7 +316,7 @@ class TaskUserModel extends BaseModel{
         if($now_integral){
             $tmp_where = array('openid'=>$staff_info['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
-            $tmp_where['task_id'] = $task_info['task_user_id'];
+            $tmp_where['task_id'] = $task_info['id'];
             $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
 
@@ -390,7 +390,7 @@ class TaskUserModel extends BaseModel{
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
 
-        $task_where = array('openid'=>$signv['openid'],'task_id'=>$task_info['task_user_id']);
+        $task_where = array('openid'=>$signv['openid'],'task_id'=>$task_info['id']);
         $task_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
         $task_where['fj_type'] = $dinner_type;
         $tmp_exist = $m_userintegralrecord->field('id,task_id,fj_type,integral')->where($task_where)->find();
@@ -442,7 +442,7 @@ class TaskUserModel extends BaseModel{
         if($now_integral){
             $tmp_where = array('openid'=>$signv['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
-            $tmp_where['task_id'] = $task_info['task_user_id'];
+            $tmp_where['task_id'] = $task_info['id'];
             $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
             $box_info = $m_box->getHotelInfoByBoxMac($signv['box_mac']);
@@ -577,7 +577,7 @@ class TaskUserModel extends BaseModel{
         if($now_integral){
             $tmp_where = array('openid'=>$signv['openid']);
             $tmp_where["DATE_FORMAT(add_time,'%Y-%m-%d')"]=date('Y-m-d');
-            $tmp_where['task_id'] = $task_info['task_user_id'];
+            $tmp_where['task_id'] = $task_info['id'];
 
             $tmp_resintegral = $this->field('integral as total_integral')->where($tmp_where)->find();
             $tmp_integral = intval($tmp_resintegral['total_integral']);
@@ -621,7 +621,6 @@ class TaskUserModel extends BaseModel{
                 $m_userintegral->add($integraldata);
             }
             //更新任务积分
-            $this->setInc('integral',$now_integral);
             $this->where(array('id'=>$task_info['task_user_id']))->setInc('integral',$now_integral);
         }
         echo "{$task_info['task_user_id']} finish \r\n";
@@ -707,10 +706,10 @@ class TaskUserModel extends BaseModel{
 
 
     private function calculate_shareprofit($now_integral,$task_info,$signv,$box_info){
-	    $redis = new \Common\Lib\SavorRedis();
-	    $redis->select(3);
-	    $nowdate = date('Ymd');
-	    $cache_key = "smallapp:integralboxmac:$nowdate:{$box_info['box_mac']}";
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(3);
+        $nowdate = date('Ymd');
+        $cache_key = "smallapp:integralboxmac:$nowdate:{$box_info['box_mac']}";
         $res_cache = $redis->get($cache_key);
         $box_integral = 0;
         if(!empty($res_cache)){
@@ -812,7 +811,7 @@ class TaskUserModel extends BaseModel{
             $data = array('integralrecord_id'=>$res_shareprofit['integralrecord_id'],'original_integral'=>$res_shareprofit['integral'],
                 'openid'=>$res_shareprofit['admin_openid'],'shareprofit_integral'=>$res_shareprofit['admin_integral'],
                 'shareprofit_config'=>$res_shareprofit['shareprofit_config']
-                );
+            );
             $m_shareprofitrecord = new \Admin\Model\Integral\ShareprofitrecordModel();
             $m_shareprofitrecord->add($data);
 
