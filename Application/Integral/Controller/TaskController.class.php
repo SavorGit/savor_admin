@@ -120,6 +120,199 @@ class TaskController extends BaseController {
 
     }
 
+    public function addactivitylottery(){
+        $id = I('id',0,'intval');
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        if(IS_POST){
+            $name = I('post.name','','trim');
+            $media_id = I('post.media_id',0,'intval');
+            $wmedia_id = I('post.wmedia_id',0,'intval');
+            $tv_media_id = I('post.tv_media_id',0,'intval');
+            $portraitmedia_id = I('post.portraitmedia_id',0,'intval');
+            $task_integral = I('post.task_integral',0,'intval');
+            $integral = I('post.integral',0,'intval');
+            $people_num = I('post.people_num',0,'intval');
+            $boot_num = I('post.boot_num',0,'intval');
+            $hotel_id = I('post.hotel_id',0,'intval');
+            $staff_id = I('post.staff_id',0,'intval');
+            $is_test = I('post.is_test',0,'intval');
+            $desc = I('post.desc','','trim');
+            $start_time = I('post.start_time','0000-00-00 00:00:00','trim');
+            $end_time = I('post.end_time','0000-00-00 00:00:00','trim');
+
+            $type = 2;
+            $task_type = 23;
+            $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'task_integral'=>$task_integral,
+                'integral'=>$integral,'people_num'=>$people_num,'start_time'=>$start_time,'end_time'=>$end_time,
+                'status'=>0,'flag'=>1,'is_test'=>$is_test);
+            $m_media = new \Admin\Model\MediaModel();
+            if($wmedia_id){
+                $res_media = $m_media->getMediaInfoById($wmedia_id);
+                $data['image_url'] = $res_media['oss_path'];
+            }
+            if($portraitmedia_id){
+                $res_media = $m_media->getMediaInfoById($portraitmedia_id);
+                $data['portrait_image_url'] = $res_media['oss_path'];
+            }
+            if($tv_media_id){
+                $res_media = $m_media->getMediaInfoById($tv_media_id);
+                $data['tv_image_url'] = $res_media['oss_path'];
+            }
+
+            $userinfo = session('sysUserInfo');
+            $data['uid'] = $userinfo['id'];
+            if(!empty($desc)){
+                $data['desc'] = $desc;
+            }
+            $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+            if($id){
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0){
+                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                    if($res_task_info['status']==1 && $res_task_info['flag'==1]){
+                        $this->output('任务已下发,请勿修改酒楼', "task/addactivitymoney",2,0);
+                    }
+                }
+                unset($data['uid']);
+                $data['update_time'] = date('Y-m-d H:i:s');
+                $data['e_uid'] = $userinfo['id'];
+                $m_task->updateData(array('id'=>$id),$data);
+            }else{
+                $task_id = $m_task->add($data);
+                $hotel_data = array('task_id'=>$task_id,'hotel_id'=>$hotel_id,'staff_id'=>$staff_id,'boot_num'=>$boot_num);
+                $m_task_hotel->add($hotel_data);
+            }
+            $this->output('添加成功', "task/index");
+        }else{
+            $vinfo = array('task_info'=>'','people_num'=>3,'is_test'=>0);
+            $hotel_id = 0;
+            $is_edit = 0;
+            if($id){
+                $vinfo = $m_task->getInfo(array('id'=>$id));
+                $m_media = new \Admin\Model\MediaModel();
+                $oss_host = get_oss_host();
+                if($vinfo['media_id']){
+                    $res_media = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $vinfo['oss_addr'] = $res_media['oss_addr'];
+                }
+                if($vinfo['image_url']){
+                    $vinfo['image_url'] = $oss_host.$vinfo['image_url'];
+                }
+                if($vinfo['portrait_image_url']){
+                    $vinfo['portrait_image_url'] = $oss_host.$vinfo['portrait_image_url'];
+                }
+                if($vinfo['tv_image_url']){
+                    $vinfo['tv_image_url'] = $oss_host.$vinfo['tv_image_url'];
+                }
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc');
+                if(!empty($res_task_hotel)){
+                    $is_edit = 1;
+                    $hotel_id = $res_task_hotel[0]['hotel_id'];
+                    $vinfo['staff_id'] = $res_task_hotel[0]['staff_id'];
+                    $vinfo['boot_num'] = $res_task_hotel[0]['boot_num'];
+                }
+            }
+            $m_merchant = new \Admin\Model\Integral\MerchantModel();
+            $where = array('a.status'=>1,'hotel.state'=>1,'hotel.flag'=>0);
+            $fields = 'hotel.id as hotel_id,hotel.name';
+            $merchants = $m_merchant->getMerchants($fields,$where,'a.id desc');
+            foreach ($merchants as $k=>$v){
+                if($hotel_id == $v['hotel_id']){
+                    $merchants[$k]['is_select'] = 'selected';
+                }else{
+                    $merchants[$k]['is_select'] = '';
+                }
+            }
+            $staff_list = array();
+            if($hotel_id){
+                $m_staff = new \Admin\Model\Integral\StaffModel();
+                $where = array('m.hotel_id'=>$hotel_id,'m.status'=>1,'a.status'=>1);
+                $fields = 'a.id,u.nickName as uname';
+                $staff_list = $m_staff->getMerchantStaffUserList($fields,$where);
+            }
+            $this->assign('merchants',$merchants);
+            $this->assign('staff_list',$staff_list);
+            $this->assign('is_edit',$is_edit);
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
+    }
+
+    public function prizelist(){
+        $task_id = I('task_id',0,'intval');
+        $status = I('status',0,'intval');
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+
+        $m_prize = new \Admin\Model\Integral\TaskprizeModel();
+        $where = array('task_id'=>$task_id);
+        if($status){
+            $where['status'] = $status;
+        }
+        $start = ($pageNum-1)*$size;
+        $orderby = 'id desc';
+        $res_list = $m_prize->getDataList('*',$where,$orderby,$start,$size);
+        $data_list = $res_list['list'];
+        $oss_host = get_oss_host();
+        foreach ($data_list as $k=>$v){
+            if($v['status']==1){
+                $data_list[$k]['statusstr'] = '可用';
+            }else{
+                $data_list[$k]['statusstr'] = '不可用';
+            }
+            $data_list[$k]['name'] = $v['level'].'、'.$v['name'];
+            $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
+        }
+        $this->assign('data',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->assign('status',$status);
+        $this->assign('task_id',$task_id);
+        $this->display();
+    }
+
+    public function prizeadd(){
+        $id = I('id',0,'intval');
+        $task_id = I('task_id',0,'intval');
+        $m_prize = new \Admin\Model\Integral\TaskprizeModel();
+        if(IS_POST){
+            $name = I('post.name','','trim');
+            $media_id = I('post.media_id',0,'intval');
+            $amount = I('post.amount',0,'intval');
+            $status = I('post.status',1,'intval');
+            $level = I('post.level',1,'intval');
+
+            $data = array('task_id'=>$task_id,'name'=>$name,'amount'=>$amount,'level'=>$level,'status'=>$status);
+            if($media_id){
+                $m_media = new \Admin\Model\MediaModel();
+                $res_media = $m_media->getMediaInfoById($media_id);
+                $data['image_url'] = $res_media['oss_path'];
+            }
+            if($id){
+                $m_prize->updateData(array('id'=>$id),$data);
+            }else{
+                $m_prize->add($data);
+            }
+            $this->output('操作成功!', 'task/prizelist');
+        }else{
+            if($id){
+                $oss_host = get_oss_host();
+                $vinfo = $m_prize->getInfo(array('id'=>$id));
+                $vinfo['oss_addr'] = $oss_host.$vinfo['image_url'];
+                $task_id = $vinfo['task_id'];
+            }else{
+                $vinfo = array('status'=>1);
+            }
+            $all_levels = array('1'=>'一等奖','2'=>'二等奖','3'=>'三等奖');
+            $this->assign('vinfo',$vinfo);
+            $this->assign('all_levels',$all_levels);
+            $this->assign('task_id',$task_id);
+            $this->display();
+        }
+    }
+
     public function addactivitysale(){
         $id = I('id',0,'intval');
         $m_task = new \Admin\Model\Integral\TaskModel();

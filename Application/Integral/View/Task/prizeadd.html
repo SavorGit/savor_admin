@@ -1,0 +1,99 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/integral/task/prizeadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+    <input type="hidden" name="task_id" value="{$task_id}">
+
+    <div class="pageFormContent modal-body">
+		<div class="form-group row">
+	        <label class="col-xs-12 col-sm-2 control-label">
+	          名称:
+	        </label>
+	        <div class="col-xs-12 col-sm-10">
+	           <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
+	        </div>
+      	</div>
+      	<div class="form-group row" id="defaultpic">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    图片：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                            <a data-target="#modal-file" href="javascript:void(0)">
+                                <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                                    <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                    <else />
+                                    <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+                                </if>
+                                <span id="media_idimgname"></span>
+                            </a>
+                        </div>
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+                            <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                奖品数量
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="number" class="form-control" name="amount" min="0" max="100" value="{$vinfo.amount}" required >
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                奖品等级:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select name="level" id="level" class="form-control bs-select" required>
+                    <volist name="all_levels" id="ainfo">
+                    <option value="{$key}" <if condition="$key eq $vinfo['level']"> selected </if> >{$ainfo}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                状态：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="hidden" name="status" value="2">
+                <input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.status eq 1" >checked</if>>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    $(".form-control.date").datetimepicker({
+      //minView: "month", //选择日期后，不会再跳转去选择时分秒
+      minView:"0",
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd hh:ii:00',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+</script>

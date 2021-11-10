@@ -1830,6 +1830,15 @@ class HotelController extends BaseController {
         $list = $m_area_info->getWhere($fields, $where);
         echo json_encode($list);
     }
+
+    public function getStafflist(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $where = array('m.hotel_id'=>$hotel_id,'m.status'=>1,'a.status'=>1);
+        $fields = 'a.id,u.nickName as uname';
+        $res_staff = $m_staff->getMerchantStaffUserList($fields,$where);
+        die(json_encode($res_staff));
+    }
     /**
      * @desc 酒楼菜系
      */

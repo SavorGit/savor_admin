@@ -15,6 +15,7 @@
               <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/add" title="创建任务" target="dialog" mask="true"><i class="fa fa-plus"></i> 创建任务</a>
               <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitymoney" title="创建活动现金任务" target="dialog" mask="true"><i class="fa fa-money"></i> 创建活动现金任务</a>
               <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitysale" title="创建活动售卖任务" target="dialog" mask="true"><i class="fa fa-plus"></i> 创建活动售卖任务</a>
+              <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitylottery" title="创建活动抽奖任务" target="dialog" mask="true"><i class="fa fa-plus"></i> 创建活动抽奖任务</a>
             </div>
           </div>
         </div>
@@ -73,17 +74,17 @@ href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_
                 <div class="tools-edit">
 
                   <if condition="$vlist['type'] eq 1">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/edit?id={$vlist.id}" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/edit?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
                   <elseif condition="$vlist['type'] eq 2" />
                     <if condition="$vlist['task_type'] eq 21">
-                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitymoney?id={$vlist.id}" class="btn btn-success btn-icon">
+                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitymoney?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
+                    <elseif condition="$vlist['task_type'] eq 22"/>
+                      <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitysale?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
                     <else/>
-                    <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitysale?id={$vlist.id}" class="btn btn-success btn-icon">
+                      <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitylottery?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
+                      <a data-tip="奖品信息" title="奖品信息" target="navTab" rel="task/prizelist" href="{$host_url}/Integral/task/prizelist?task_id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-list"></i></a>
                     </if>
                   </if>
-                    <i class="fa fa-pencil"></i>
-                  </a>
-
 
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/Integral/task/delete?id={$vlist.id}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>

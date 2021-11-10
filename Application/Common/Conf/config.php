@@ -853,6 +853,9 @@ $config['ALIYUN_SMS_CONFIG'] = array(
     'activity_goods_send_salemanager'=>'SMS_176527162',
     'merchant_login_invite_code'=>'SMS_183767419',
     'public_audit_templateid'=>'SMS_216374893',
+    'public_audit_templateid'=>'SMS_216374893',
+    'send_tasklottery_user_templateid'=>'SMS_227740798',
+    'send_tasklottery_sponsor_templateid'=>'SMS_227745754',
 );
 
 $config['CHANNEL_MERCHANT'] = array(

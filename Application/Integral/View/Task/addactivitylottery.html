@@ -1,0 +1,281 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/integral/task/addactivitylottery" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+      <input type="hidden" id="honame" value="{$host_name}">
+
+    <div class="pageFormContent modal-body">
+		<div class="form-group row">
+	        <label class="col-xs-12 col-sm-2 control-label">
+	          任务名称:
+	        </label>
+	        <div class="col-xs-12 col-sm-10">
+	           <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
+	        </div>
+      	</div>
+      	<div class="form-group row" id="defaultpic">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    任务图标(必填)：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                            <a data-target="#modal-file" href="javascript:void(0)">
+                                <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                                    <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                    <else />
+                                    <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+                                </if>
+                                <span id="media_idimgname"></span>
+                            </a>
+                        </div>
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+                            <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="form-group row" >
+            <label class="col-xs-12 col-sm-2 control-label">
+                横图：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                        <a data-target="#modal-file" href="javascript:void(0)">
+                            <if condition="($vinfo['image_url'] eq 'NULL') OR $vinfo['image_url'] eq ''">
+                                <img id="wmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                <else />
+                                <img id="wmedia_idimg" src="{$vinfo.image_url}" border="0" />
+                            </if>
+                            <span id="wmedia_idimgname"></span>
+                        </a>
+                    </div>
+                    <span class="help-block" id="img-msg">请上传506x696像素的jpg格式图片，展示效果最佳</span>
+                    <div>
+                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=wmedia_id&rtype=2" data-browse-file>
+                            选择图片
+                        </a>
+                        <input type="hidden" name="wmedia_id" id="wmedia_id" value="" >
+                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row" >
+            <label class="col-xs-12 col-sm-2 control-label">
+                竖图：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                        <a data-target="#modal-file" href="javascript:void(0)">
+                            <if condition="($vinfo['portrait_image_url'] eq 'NULL') OR $vinfo['portrait_image_url'] eq ''">
+                                <img id="portraitmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                <else />
+                                <img id="portraitmedia_idimg" src="{$vinfo.portrait_image_url}" border="0" />
+                            </if>
+                            <span id="portraitmedia_idimgname"></span>
+                        </a>
+                    </div>
+                    <span class="help-block" id="img-msg">请上传506x283像素的jpg格式图片，展示效果最佳</span>
+                    <div>
+                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=portraitmedia_id&rtype=2" data-browse-file>
+                            选择图片
+                        </a>
+                        <input type="hidden" name="portraitmedia_id" id="portraitmedia_id" value="" >
+                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                大屏TV图片：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                    <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                        <a data-target="#modal-file" href="javascript:void(0)">
+                            <if condition="($vinfo['tv_image_url'] eq 'NULL') OR $vinfo['tv_image_url'] eq ''">
+                                <img id="tvmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                <else />
+                                <img id="tvmedia_idimg" src="{$vinfo.tv_image_url}" border="0" />
+                            </if>
+                            <span id="tvmedia_idimgname"></span>
+                        </a>
+                    </div>
+                    <span class="help-block" id="img-msg">请上传1100x600像素的jpg格式图片，展示效果最佳</span>
+                    <div>
+                        <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=tvmedia_id&rtype=2" data-browse-file>
+                            选择图片
+                        </a>
+                        <input type="hidden" name="tv_media_id" id="tvmedia_id" >
+                        <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                领取任务积分:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="task_integral" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.task_integral}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                奖励积分:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input name="integral" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.integral}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                最少参与人数
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="number" class="form-control" name="people_num" min="1" max="365" value="{$vinfo.people_num}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                最少开机数
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="number" class="form-control" name="boot_num" min="1" max="365" value="{$vinfo.boot_num}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                选择酒楼:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select id="choose_hotel_id" name="hotel_id" class="form-control bs-select" data-live-search="true" title="请选择..." data-size="20" required>
+                    <volist name="merchants" id="minfo">
+                        <option value="{$minfo['hotel_id']}" {$minfo.is_select} > {$minfo['name']} </option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                选择销售人员:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select id="hotel_staff_id" name="staff_id" class="form-control " title="请选择..." data-size="20" required>
+                    <volist name="staff_list" id="sinfo">
+                        <option value="{$sinfo['id']}" <if condition="$sinfo['id'] eq $vinfo['staff_id']"> selected </if> > {$sinfo['uname']} </option>
+                    </volist>
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-6 col-sm-2 control-label">
+                任务时段-开始时间:
+            </label>
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
+                <input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="任务开始时间" value="{$vinfo.start_time}" readonly>
+                <span class="input-group-btn"  >
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-6 col-sm-2 control-label">
+                任务时段-结束时间:
+            </label>
+            <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
+                <input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="任务结束时间" value="{$vinfo.end_time}" readonly>
+                <span class="input-group-btn"  >
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                任务描述：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <script id="editor" type="text/plain" class="ueditor-init" name="desc" style="height: 250px; width: 100%" data-html-content='{$vinfo.desc}'></script>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                是否为测试演示任务：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="hidden" name="is_test" value="0">
+                <input type="checkbox" value="1" class="make-switch status" name="is_test" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_test eq 1" >checked</if>>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    $(".form-control.date").datetimepicker({
+      //minView: "month", //选择日期后，不会再跳转去选择时分秒
+      minView:"0",
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd hh:ii:00',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+
+  $(function(){
+      $('#choose_hotel_id').change(function(){
+          var hotel_id = $(this).val();
+          honame = $('#honame').val();
+          $.ajax({
+              type:"post",
+              url:honame+"/hotel/getStafflist",
+              dataType:"json",
+              data:"hotel_id="+hotel_id,
+              async:true,
+              success:function(calls){
+                  var staff_str = '';
+                  for(var i=0;i<calls.length;i++){
+                      staff_str +="<option value="+calls[i].id+">"+calls[i].uname+"</option>";
+                  }
+                  $('#hotel_staff_id').html(staff_str);
+              }
+          });
+      });
+  });
+
+</script>
