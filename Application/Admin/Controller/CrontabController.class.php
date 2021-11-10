@@ -4588,6 +4588,36 @@ class CrontabController extends Controller
         echo "pushlotterytowx end:$now_time \r\n";
     }
 
+    public function pushboxlotteryactivity(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushboxlotteryactivity start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushBoxLotteryActivity();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushboxlotteryactivity end:$now_time \r\n";
+    }
+
+    public function pushboxtasklottery(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushboxtasklottery start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushBoxTaskLottery();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushboxtasklottery end:$now_time \r\n";
+    }
+
+    public function pushtasklotterytomobile(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushtasklotterytomobile start:$now_time \r\n";
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushTaskLotteryToMobile();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushtasklotterytomobile end:$now_time \r\n";
+    }
+
     public function removesigncache(){
         $now_time = date('Y-m-d H:i:s');
         echo "removesigncache start:$now_time \r\n";
