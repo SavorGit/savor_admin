@@ -475,7 +475,7 @@ class ActivityModel extends BaseModel{
                     }
                 }
                 $res_usertask = $m_usertask->getInfo(array('id'=>$v['task_user_id']));
-                $where = array('a.task_id'=>$res_usertask['task_id'],'task.status'=>1,'task.flag'=>1);
+                $where = array('hoteltask.task_id'=>$res_usertask['task_id'],'task.status'=>1,'task.flag'=>1);
                 $fields = 'task.id as task_id,task.name,hoteltask.boot_num';
                 $res_task = $m_hoteltask->getHoteltasks($fields,$where,'');
                 if($res_task[0]['boot_num']<$now_boot_num){
