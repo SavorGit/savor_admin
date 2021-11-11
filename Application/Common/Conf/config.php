@@ -856,6 +856,7 @@ $config['ALIYUN_SMS_CONFIG'] = array(
     'public_audit_templateid'=>'SMS_216374893',
     'send_tasklottery_user_templateid'=>'SMS_227740798',
     'send_tasklottery_sponsor_templateid'=>'SMS_227745754',
+    'send_tasklottery_bootnum_templateid'=>'SMS_227737155',
 );
 
 $config['CHANNEL_MERCHANT'] = array(

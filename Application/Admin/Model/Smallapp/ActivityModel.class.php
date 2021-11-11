@@ -432,6 +432,14 @@ class ActivityModel extends BaseModel{
         $now_date = date('Y-m-d H:i:00');
         $m_box = new \Admin\Model\BoxModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $m_hoteltask = new \Admin\Model\Integral\TaskHotelModel();
+        $m_usertask = new \Admin\Model\Integral\TaskUserModel();
+        $m_account_sms_log = new \Admin\Model\AccountMsgLogModel();
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(13);
+        $ucconfig = C('ALIYUN_SMS_CONFIG');
+        $alisms = new \Common\Lib\AliyunSms();
         $host_name = 'http://'.C('SAVOR_API_URL');
         foreach ($res as $v){
             $activity_id = $v['id'];
@@ -454,6 +462,37 @@ class ActivityModel extends BaseModel{
                     $where['room.type'] = 1;
                 }
                 $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
+                $now_boot_num = 0;
+                foreach ($res_bdata as $bmv){
+                    $heart_key = "heartbeat:2:{$bmv['mac']}";
+                    $res_heart = $redis->get($heart_key);
+                    if(!empty($res_heart)){
+                        $heart_info = json_decode($res_heart,true);
+                        $heart_diff_time = time() - strtotime($heart_info['date']);
+                        if($heart_diff_time<1800){
+                            $now_boot_num++;
+                        }
+                    }
+                }
+                $res_usertask = $m_usertask->getInfo(array('id'=>$v['task_user_id']));
+                $where = array('a.task_id'=>$res_usertask['task_id'],'task.status'=>1,'task.flag'=>1);
+                $fields = 'task.id as task_id,task.name,hoteltask.boot_num';
+                $res_task = $m_hoteltask->getHoteltasks($fields,$where,'');
+                if($res_task[0]['boot_num']<$now_boot_num){
+                    //发送短信
+                    $res_user = $m_user->getOne('mobile',array('openid'=>$res_usertask['openid'],'status'=>1),'id desc');
+                    $staff_mobile = $res_user['mobile'];
+                    $params = array('name'=>date('H:i',strtotime($activity_info['lottery_time'])));
+                    $template_code = $ucconfig['send_tasklottery_bootnum_templateid'];
+                    $res_data = $alisms::sendSms($staff_mobile,$params,$template_code);
+                    $data = array('type'=>14,'status'=>1,'create_time'=>date('Y-m-d H:i:s'),'update_time'=>date('Y-m-d H:i:s'),
+                        'url'=>join(',',$params),'tel'=>$staff_mobile,'resp_code'=>$res_data->Code,'msg_type'=>3
+                    );
+                    $m_account_sms_log->addData($data);
+                    echo "activity_id:{$v['id']} boot_num:$now_boot_num lt {$res_task[0]['boot_num']} \r\n";
+                    continue;
+                }
+
                 foreach ($res_bdata as $bv){
                     $netty_data['qrcode_url'] = $host_name."/smallapp46/qrcode/getBoxQrcode?box_mac={$bv['box_mac']}&box_id={$bv['box_id']}&data_id=$activity_id&type=42";
                     $message = json_encode($netty_data);
@@ -484,10 +523,9 @@ class ActivityModel extends BaseModel{
         }
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
         $m_activityprize = new \Admin\Model\Smallapp\ActivityprizeModel();
-        $m_user = new \Admin\Model\Smallapp\UserModel();
         $m_box = new \Admin\Model\BoxModel();
-        $netty_cmd = C('SAPP_CALL_NETY_CMD');
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $m_user = new \Admin\Model\Smallapp\UserModel();
         $now_time = date('Y-m-d H:i:00');
         foreach ($res as $v){
             $activity_id = $v['id'];
@@ -503,9 +541,28 @@ class ActivityModel extends BaseModel{
                     foreach ($res_apply_user as $ak=>$av){
                         $all_lottery_openid[]=$av['openid'];
                     }
+                    $pwhere = array('box.state'=>1,'box.flag'=>0);
+                    $pwhere['hotel.id'] = $v['hotel_id'];
+                    if($v['scope']==2){
+                        $pwhere['room.type'] = 1;
+                    }
+                    $res_pdata = $m_box->getBoxByCondition('box.mac,hotel.id as hotel_id',$pwhere,'');
+
                     if(count($all_lottery_openid)<$v['people_num']){
                         $lottery_user_num =  count($all_lottery_openid);
                         $this->updateData(array('id'=>$activity_id),array('status'=>2));
+
+                        $netty_data = array('action'=>157,'content'=>'参与人数不足，无法开奖');
+                        $message = json_encode($netty_data);
+                        foreach ($res_pdata as $ppv){
+                            $ret = $m_netty->pushBox($ppv['mac'],$message);
+                            if(isset($ret['error_code'])){
+                                $ret_str = json_encode($ret);
+                                echo "box_mac:{$ppv['mac']} push error $ret_str \r\n";
+                            }else{
+                                echo "box_mac:{$ppv['mac']} push ok \r\n";
+                            }
+                        }
                         echo "activity_id:{$v['id']} lottery_user_num:$lottery_user_num lt {$v['people_num']} \r\n";
                         continue;
                     }
@@ -566,14 +623,7 @@ class ActivityModel extends BaseModel{
                     $message = json_encode($netty_data);
                     echo "box message $message \r\n";
 
-                    $fields = 'box.mac,hotel.id as hotel_id';
-                    $where = array('box.state'=>1,'box.flag'=>0);
-                    $where['hotel.id'] = $v['hotel_id'];
-                    if($v['scope']==2){
-                        $where['room.type'] = 1;
-                    }
-                    $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
-                    foreach ($res_bdata as $bv){
+                    foreach ($res_pdata as $bv){
                         $ret = $m_netty->pushBox($bv['mac'],$message);
                         if(isset($ret['error_code'])){
                             $ret_str = json_encode($ret);
@@ -631,7 +681,8 @@ class ActivityModel extends BaseModel{
                 $staff_sms = array();
                 foreach ($res_apply_user as $uv){
                     $user_sms[] = array('mobile'=>$uv['mobile'],'content'=>"{$all_prizes[$uv['level']]}（{$uv['prize_name']}）");
-                    $staff_sms[$uv['level']][]=array('content'=>"{$uv['box_name']}包间（{$uv['prize_name']}）");
+                    $mobile_str = substr($uv['mobile'],-4);
+                    $staff_sms[$uv['level']][]=array('content'=>"{$uv['box_name']}包间手机尾号{$mobile_str}（{$uv['prize_name']}）");
                 }
 
                 $staff_content = '';
