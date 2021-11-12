@@ -168,10 +168,17 @@ class TaskController extends BaseController {
             if($id){
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
                 if($res_task_hotel['total']>0){
+                    $hotel_data = array('task_id'=>$id,'hotel_id'=>$hotel_id,'staff_id'=>$staff_id,'boot_num'=>$boot_num);
+                    $m_task_hotel->updateData(array('id'=>$res_task_hotel['list'][0]['id']),$hotel_data);
+                    /*
                     $res_task_info = $m_task->getInfo(array('id'=>$id));
                     if($res_task_info['status']==1 && $res_task_info['flag'==1]){
                         $this->output('任务已下发,请勿修改酒楼', "task/addactivitymoney",2,0);
                     }
+                    */
+                }else{
+                    $hotel_data = array('task_id'=>$id,'hotel_id'=>$hotel_id,'staff_id'=>$staff_id,'boot_num'=>$boot_num);
+                    $m_task_hotel->add($hotel_data);
                 }
                 unset($data['uid']);
                 $data['update_time'] = date('Y-m-d H:i:s');
@@ -207,7 +214,6 @@ class TaskController extends BaseController {
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc');
                 if(!empty($res_task_hotel)){
-                    $is_edit = 1;
                     $hotel_id = $res_task_hotel[0]['hotel_id'];
                     $vinfo['staff_id'] = $res_task_hotel[0]['staff_id'];
                     $vinfo['boot_num'] = $res_task_hotel[0]['boot_num'];
@@ -509,6 +515,14 @@ class TaskController extends BaseController {
         $id = I('get.id');
         $status = I('get.status');
         $m_task = new \Admin\Model\Integral\TaskModel();
+        $res_task = $m_task->getInfo(array('id'=>$id));
+        if($status==1 && $res_task['task_type']==23){
+            $m_taskprize = new \Admin\Model\Integral\TaskprizeModel();
+            $res_prizes = $m_taskprize->getDataList('id',array('task_id'=>$id),'id desc');
+            if(empty($res_prizes)){
+                $this->output('请先配置奖项再次领取', "task/index",2,0);
+            }
+        }
         $where['id'] = $id;
         $data['status'] = $status;
         $data['update_time'] = date('Y-m-d H:i:s');
@@ -516,7 +530,6 @@ class TaskController extends BaseController {
         if($ret){
             if($status==1) $msg = '上线成功';
             else $msg = '下线成功';
-            $res_task = $m_task->getInfo(array('id'=>$id));
             if($res_task['type']==2 && $res_task['task_type']==21){
                 $redis  =  \Common\Lib\SavorRedis::getInstance();
                 $redis->select(14);
@@ -854,7 +867,7 @@ class TaskController extends BaseController {
         $userinfo = session('sysUserInfo');
         $uid = $userinfo['id'];
         $fields = "name,media_id,type,task_type,money,cvr,activity_day,interact_num,comment_num,
-        desc,start_time,end_time,is_long_time,integral,separate_id,task_info";
+        desc,start_time,end_time,is_long_time,integral,separate_id,task_info,goods_id,image_url,portrait_image_url,tv_image_url";
         $task_info = $m_task->where($where)->getRow($fields,$where);
         if(empty($task_info)) $this->error('该任务不存在');
         
