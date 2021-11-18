@@ -18,25 +18,16 @@ class SysconfigController extends BaseController {
      */
     public function configData(){
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        //$volume_info = $m_sys_config->getOne('system_default_volume');
         $switch_time_info = $m_sys_config->getOne('system_switch_time');
        
-        $where = " config_key in('system_ad_volume','system_pro_screen_volume','system_demand_video_volume','system_tv_volume','system_award_time','system_for_screen_volume')";
+        $where = array();
         $volume_arr = $m_sys_config->getList($where);
        
         foreach($volume_arr as $key=>$v){
-            if($v['config_key']=='system_ad_volume'){
-                $info['system_ad_volume'] = $v['config_value'];
-            }else if($v['config_key']=='system_pro_screen_volume'){
-                $info['system_pro_screen_volume'] = $v['config_value'];
-            }else if($v['config_key']=='system_for_screen_volume'){
-                $info['system_for_screen_volume'] = $v['config_value'];
-            }else if($v['config_key']=='system_demand_video_volume'){
-                $info['system_demand_video_volume'] = $v['config_value'];
-            }else if($v['config_key']=='system_tv_volume'){
-                $info['system_tv_volume'] = $v['config_value'];
-            }else if($v['config_key']=='system_award_time'){
+            if($v['config_key']=='system_award_time'){
                 $info['award_time'] = json_decode($v['config_value'],true);
+            }else{
+                $info[$v['config_key']] = $v['config_value'];
             }
         }
         $info['mid'] = $info['award_time'][0];
@@ -126,25 +117,45 @@ class SysconfigController extends BaseController {
      * @desc 音量设置
      */
     public function doConfigVolume(){
+        $system_ad_volume = I('post.system_ad_volume','','trim');             //广告轮播音量
+        $system_pro_screen_volume   = I('post.system_pro_screen_volume','','trim');    //投屏音量
+        $system_demand_video_volume = I('post.system_demand_video_volume','','trim');   //点播音量
+        $system_tv_volume           = I('post.system_tv_volume','','trim');             //电视音量
+        $system_for_screen_volume   = I('post.system_for_screen_volume','','trim');    //夏新电视投屏音量
+
+        $box_carousel_volume   = I('post.box_carousel_volume','','trim');    //机顶盒轮播音量
+        $box_pro_demand_volume   = I('post.box_pro_demand_volume','','trim');    //机顶盒公司节目点播音量
+        $box_content_demand_volume   = I('post.box_content_demand_volume','','trim');    //机顶盒用户内容点播音量
+        $box_video_froscreen_volume   = I('post.box_video_froscreen_volume','','trim');    //机顶盒视频投屏音量
+        $box_img_froscreen_volume   = I('post.box_img_froscreen_volume','','trim');    //机顶盒图片投屏音量
+        $box_tv_volume   = I('post.box_tv_volume','','trim');    //机顶盒电视音量
+
+        $tv_carousel_volume   = I('post.tv_carousel_volume','','trim');    //电视轮播音量
+        $tv_pro_demand_volume   = I('post.tv_pro_demand_volume','','trim');    //电视公司节目点播音量
+        $tv_content_demand_volume   = I('post.tv_content_demand_volume','','trim');    //电视用户内容点播音量
+        $tv_video_froscreen_volume   = I('post.tv_video_froscreen_volume','','trim');    //电视视频投屏音量
+        $tv_img_froscreen_volume   = I('post.tv_img_froscreen_volume','','trim');    //电视图片投屏音量
+
         $data = array();
-        $data['system_ad_volume'] = I('post.system_ad_volume','','trim');             //广告轮播音量
-        $data['system_pro_screen_volume']   = I('post.system_pro_screen_volume','','trim');    //投屏音量
-        $data['system_demand_video_volume'] = I('post.system_demand_video_volume','','trim');   //点播音量
-        $data['system_tv_volume']           = I('post.system_tv_volume','','trim');             //电视音量
-        $data['system_for_screen_volume']   = I('post.system_for_screen_volume','','trim');    //夏新电视投屏音量
+        if(!empty($system_ad_volume))   $data['system_ad_volume'] = $system_ad_volume;
+        if(!empty($system_pro_screen_volume))   $data['system_pro_screen_volume'] = $system_pro_screen_volume;
+        if(!empty($system_demand_video_volume))   $data['system_demand_video_volume'] = $system_demand_video_volume;
+        if(!empty($system_tv_volume))   $data['system_tv_volume'] = $system_tv_volume;
+        if(!empty($system_for_screen_volume))   $data['system_for_screen_volume'] = $system_for_screen_volume;
+
+        if(!empty($box_carousel_volume))   $data['box_carousel_volume'] = $box_carousel_volume;
+        if(!empty($box_pro_demand_volume))   $data['box_pro_demand_volume'] = $box_pro_demand_volume;
+        if(!empty($box_content_demand_volume))   $data['box_content_demand_volume'] = $box_content_demand_volume;
+        if(!empty($box_video_froscreen_volume))   $data['box_video_froscreen_volume'] = $box_video_froscreen_volume;
+        if(!empty($box_img_froscreen_volume))   $data['box_img_froscreen_volume'] = $box_img_froscreen_volume;
+        if(!empty($box_tv_volume))   $data['box_tv_volume'] = $box_tv_volume;
+        if(!empty($tv_carousel_volume))   $data['tv_carousel_volume'] = $tv_carousel_volume;
+        if(!empty($tv_pro_demand_volume))   $data['tv_pro_demand_volume'] = $tv_pro_demand_volume;
+        if(!empty($tv_content_demand_volume))   $data['tv_content_demand_volume'] = $tv_content_demand_volume;
+        if(!empty($tv_video_froscreen_volume))   $data['tv_video_froscreen_volume'] = $tv_video_froscreen_volume;
+        if(!empty($tv_img_froscreen_volume))   $data['tv_img_froscreen_volume'] = $tv_img_froscreen_volume;
 
 
-        $data['box_carousel_volume']   = I('post.box_carousel_volume','','trim');    //机顶盒轮播音量
-        $data['box_pro_demand_volume']   = I('post.box_pro_demand_volume','','trim');    //机顶盒公司节目点播音量
-        $data['box_content_demand_volume']   = I('post.box_content_demand_volume','','trim');    //机顶盒用户内容点播音量
-        $data['box_video_froscreen_volume']   = I('post.box_video_froscreen_volume','','trim');    //机顶盒视频投屏音量
-        $data['box_img_froscreen_volume']   = I('post.box_img_froscreen_volume','','trim');    //机顶盒图片投屏音量
-
-        $data['tv_carousel_volume']   = I('post.tv_carousel_volume','','trim');    //电视轮播音量
-        $data['tv_pro_demand_volume']   = I('post.tv_pro_demand_volume','','trim');    //电视公司节目点播音量
-        $data['tv_content_demand_volume']   = I('post.tv_content_demand_volume','','trim');    //电视用户内容点播音量
-        $data['tv_video_froscreen_volume']   = I('post.tv_video_froscreen_volume','','trim');    //电视视频投屏音量
-        $data['tv_img_froscreen_volume']   = I('post.tv_img_froscreen_volume','','trim');    //电视图片投屏音量
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $ret = $m_sys_config->updateInfo($data);
         
