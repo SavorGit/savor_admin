@@ -120,9 +120,18 @@
                       <label>资源大小:</label>
                        <select name="size_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="资源大小">
                           <option value=0>全部</option>
-                          <option value=1>小于等于50M</option>
-                          <option value=2>大于50M</option>
+                          <option value=1 <if condition="$size_type eq 1">selected</if>>小于等于50M</option>
+                          <option value=2 <if condition="$size_type eq 2">selected</if>>大于50M</option>
 
+                       </select>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-xs-12">
+                      <label>是否5G酒楼:</label>
+                       <select name="is_5g" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="资源大小">
+                          <option value=0>全部</option>
+                          <option value=1 <if condition="$is_5g eq 1">selected</if> >是</option>
+                          <option value=2 <if condition="$is_5g eq 2">selected</if> >否</option>
                        </select>
                     </div>
 

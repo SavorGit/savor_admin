@@ -24,7 +24,7 @@ class HotelbasicdataController extends BaseController{
         if($area_id)    $where['area_id'] = $area_id;
         if($maintainer_id)    $where['maintainer_id'] = $maintainer_id;
 
-        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
+        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,is_5g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
         sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
         sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum,sum(room_heart_num) as room_heart_num,sum(room_meal_heart_num) as room_meal_heart_num";
@@ -79,6 +79,8 @@ class HotelbasicdataController extends BaseController{
             $v['hotel_box_type_str'] = $all_hotel_types[$v['hotel_box_type']];
             if($v['is_4g']==1){
                 $v['network'] = '4G';
+            }elseif($v['is_5g']==1){
+                $v['network'] = '5G';
             }else{
                 $v['network'] = 'wifi';
             }
@@ -109,7 +111,7 @@ class HotelbasicdataController extends BaseController{
             array('box_num','版位数'),
 //            array('interact_sale_nosignnum','销售端非签到互动数'),
             array('hotel_box_type_str','酒楼设备类型'),
-            array('network','上网方式(wifi/4g)'),
+            array('network','上网方式(wifi/4g/5g)'),
             array('maintainer','维护人'),
         );
         $filename = '酒楼数据统计';

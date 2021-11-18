@@ -24,6 +24,7 @@ class SappforscreenController extends BaseController {
 	    $ajaxversion   = I('ajaxversion',0,'intval');//1 版本升级酒店列表
         $is_valid = I('is_valid',1,'intval');
         $is_exist = I('is_exist',99,'intval');
+        $is_5g = I('is_5g',0,'intval');
         $action_type = I('action_type',999);
         $category_id = I('category_id',0,'intval');
         $scene_id = I('scene_id',0,'intval');
@@ -154,6 +155,13 @@ class SappforscreenController extends BaseController {
             $forscreen_openids = C('COLLECT_FORSCREEN_OPENIDS');
             $openids = array_keys($forscreen_openids);
             $where['a.openid'] = array('not in',$openids);
+        }
+	    if($is_5g){
+	        if($is_5g==1){
+	            $where['a.is_5g'] = 1;
+            }else{
+                $where['a.is_5g'] = 2;
+            }
         }
 
         $all_smallapps = $this->all_smallapps;
@@ -293,6 +301,8 @@ class SappforscreenController extends BaseController {
 	   	$this->assign('oss_host',C('OSS_HOST_NEW'));
 	   	$this->assign('page',$list['page']);
 	   	$this->assign('is_valid',$is_valid);
+	   	$this->assign('size_type',$size_type);
+	   	$this->assign('is_5g',$is_5g);
 	    $this->display('Report/sappforscreen');
 	}
 
@@ -1623,7 +1633,11 @@ class SappforscreenController extends BaseController {
             $frequency = I('post.frequency', 0,'intval');
             $playnow_num = I('post.playnow_num', 0,'intval');
 
-            $m_public    = new \Admin\Model\Smallapp\PublicModel();
+            if($status!=2 && ($is_recommend==1 || $is_top==1)){
+                $this->output('请先审核通过', 'sappforscreen/publicaudit',2,0);
+            }
+
+            $m_public = new \Admin\Model\Smallapp\PublicModel();
             $res_publicdata = $m_public->getOne('*',array('id'=>$public_id));
             $now_time = time();
             $public_time = strtotime($res_publicdata['create_time']);
@@ -1778,6 +1792,21 @@ class SappforscreenController extends BaseController {
                     $m_publicplay_hotel->addAll($add_hotel_data);
                 }
             }
+
+            $m_message = new \Admin\Model\Smallapp\MessageModel();
+            if(in_array($status,array(2,3))){
+                $m_message->recordMessage($res_publicdata['openid'],$public_id,2,$status);
+            }
+            $hotel_nums = count($hotel_ids);
+            if($is_recommend || $hotel_nums>0){
+                if($hotel_nums>0){
+                    $m_message->recordMessage($res_publicdata['openid'],$public_id,3,2,$hotel_nums);
+                }else{
+                    $m_message->recordMessage($res_publicdata['openid'],$public_id,3,1,0);
+                }
+
+            }
+
             $m_netty = new \Admin\Model\Smallapp\NettyModel();
             $head_pic = 'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg';
             $now_barrages = array('nickName'=>'小热点','headPic'=>base64_encode($head_pic),'avatarUrl'=>$head_pic);
