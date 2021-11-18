@@ -311,6 +311,9 @@ class DishorderController extends BaseController {
                 $res = false;
             }
 
+            $m_message = new \Admin\Model\Smallapp\MessageModel();
+            $m_message->recordMessage($vinfo['openid'],$order_id,6);
+
             if($res && $vinfo['otype']==5 && !empty($vinfo['sale_uid'])){
                 $m_config = new \Admin\Model\SysConfigModel();
                 $res_config = $m_config->getAllconfig();
