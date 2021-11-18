@@ -158,9 +158,9 @@ class SappforscreenController extends BaseController {
         }
 	    if($is_5g){
 	        if($is_5g==1){
-	            $where['a.is_5g'] = 1;
+	            $where['a.hotel_is_5g'] = 1;
             }else{
-                $where['a.is_5g'] = 2;
+                $where['a.hotel_is_5g'] = 2;
             }
         }
 
