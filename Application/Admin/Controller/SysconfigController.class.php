@@ -128,12 +128,23 @@ class SysconfigController extends BaseController {
     public function doConfigVolume(){
         $data = array();
         $data['system_ad_volume'] = I('post.system_ad_volume','','trim');             //广告轮播音量
-        
         $data['system_pro_screen_volume']   = I('post.system_pro_screen_volume','','trim');    //投屏音量
         $data['system_demand_video_volume'] = I('post.system_demand_video_volume','','trim');   //点播音量
         $data['system_tv_volume']           = I('post.system_tv_volume','','trim');             //电视音量
         $data['system_for_screen_volume']   = I('post.system_for_screen_volume','','trim');    //夏新电视投屏音量
 
+
+        $data['box_carousel_volume']   = I('post.box_carousel_volume','','trim');    //机顶盒轮播音量
+        $data['box_pro_demand_volume']   = I('post.box_pro_demand_volume','','trim');    //机顶盒公司节目点播音量
+        $data['box_content_demand_volume']   = I('post.box_content_demand_volume','','trim');    //机顶盒用户内容点播音量
+        $data['box_video_froscreen_volume']   = I('post.box_video_froscreen_volume','','trim');    //机顶盒视频投屏音量
+        $data['box_img_froscreen_volume']   = I('post.box_img_froscreen_volume','','trim');    //机顶盒图片投屏音量
+
+        $data['tv_carousel_volume']   = I('post.tv_carousel_volume','','trim');    //电视轮播音量
+        $data['tv_pro_demand_volume']   = I('post.tv_pro_demand_volume','','trim');    //电视公司节目点播音量
+        $data['tv_content_demand_volume']   = I('post.tv_content_demand_volume','','trim');    //电视用户内容点播音量
+        $data['tv_video_froscreen_volume']   = I('post.tv_video_froscreen_volume','','trim');    //电视视频投屏音量
+        $data['tv_img_froscreen_volume']   = I('post.tv_img_froscreen_volume','','trim');    //电视图片投屏音量
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $ret = $m_sys_config->updateInfo($data);
         

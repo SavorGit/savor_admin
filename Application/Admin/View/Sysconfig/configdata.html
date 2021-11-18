@@ -100,6 +100,39 @@
         </table>
         
       </form>
+
+    <form method="post" action="{$host_name}/sysconfig/doConfigVolume" id="configboxtvvolume" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+            <thead>
+            <th colspan="5">机顶盒电视音量设置</th>
+            <tr >
+                <td>机顶盒-轮播音量：<input  placeholder="请输入数字" type="text" name="box_carousel_volume" value="{$info.box_carousel_volume}" min='0' max='100'  /></td>
+                <td>机顶盒-公司节目点播音量：<input  placeholder="请输入数字" type="text" name="box_pro_demand_volume" value="{$info.box_pro_demand_volume}" min='0' max='100'  /></td>
+                <td>机顶盒-用户内容点播音量：<input  placeholder="请输入数字" type="text" name="box_content_demand_volume" value="{$info.box_content_demand_volume}" min='0' max='100'  /></td>
+                <td>机顶盒-视频投屏音量：<input  placeholder="请输入数字" type="text" name="box_video_froscreen_volume" value="{$info.box_video_froscreen_volume}" min='0' max='100'  /></td>
+                <td>机顶盒-图片投屏音量：<input  placeholder="请输入数字" type="text" name="box_img_froscreen_volume" value="{$info.box_img_froscreen_volume}" min='0' max='100'  /></td>
+                <td>
+                    <button class="btn btn-primary" type="submit">保存</button>
+                </td>
+            </tr>
+            <tr >
+                <td>夏新电视-轮播音量：<input  placeholder="请输入数字" type="text" name="tv_carousel_volume" value="{$info.tv_carousel_volume}" min='0' max='100'  /></td>
+                <td>夏新电视-公司节目点播音量：<input  placeholder="请输入数字" type="text" name="tv_pro_demand_volume" value="{$info.tv_pro_demand_volume}" min='0' max='100'  /></td>
+                <td>夏新电视-用户内容点播音量：<input  placeholder="请输入数字" type="text" name="tv_content_demand_volume" value="{$info.tv_content_demand_volume}" min='0' max='100'  /></td>
+                <td>夏新电视-视频投屏音量：<input  placeholder="请输入数字" type="text" name="tv_video_froscreen_volume" value="{$info.tv_video_froscreen_volume}" min='0' max='100'  /></td>
+                <td>夏新电视-图片投屏音量：<input  placeholder="请输入数字" type="text" name="tv_img_froscreen_volume" value="{$info.tv_img_froscreen_volume}" min='0' max='100'  /></td>
+                <td>
+                    <button class="btn btn-primary" type="submit">保存</button>
+                </td>
+            </tr>
+
+            </thead>
+
+            </tbody>
+        </table>
+
+    </form>
+
 <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
           <thead>
           
