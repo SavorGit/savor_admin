@@ -85,4 +85,115 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
         $filename = '积分餐厅名录';
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
+
+    public function datalist(){
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $cache_key = 'cronscript:integral:datalist'.$start_date.$end_date;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $res = $redis->get($cache_key);
+        if(!empty($res)){
+            if($res == 1){
+                $this->success('数据正在生成中,请稍后点击下载');
+            }else{
+                //下载
+                $file_name = $res;
+                $file_path = SITE_TP_PATH.$file_name;
+                $file_size = filesize($file_path);
+                header("Content-type:application/octet-tream");
+                header('Content-Transfer-Encoding: binary');
+                header("Content-Length:$file_size");
+                header("Content-Disposition:attachment;filename=".$file_name);
+                @readfile($file_path);
+            }
+        }else{
+            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/integral/datalistscript/start_date/$start_date/end_date/$end_date > /tmp/null &";
+            system($shell);
+            $redis->set($cache_key,1,3600);
+            $this->success('数据正在生成中,请稍后点击下载');
+        }
+    }
+
+    public function datalistscript(){
+        set_time_limit(360);
+        ini_set("memory_limit","1024M");
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $where = array();
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+        }else{
+            $start_time = date('Y-m-01 00:00:00',strtotime("-1 month"));
+            $end_time = date('Y-m-31 23:59:59',strtotime("-1 month"));
+        }
+        $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+
+        $m_integral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $data_list = $m_integral_record->getList('a.*,user.avatarUrl,user.nickName',$where,'a.id desc');
+        $m_goods = new \Admin\Model\Smallapp\GoodsModel();
+        $integral_types = C('INTEGRAL_TYPES');
+        foreach ($data_list as $k=>$v){
+            switch ($v['type']){
+                case 1:
+                    $info = $integral_types[$v['type']].$v['content'].'小时';
+                    if($v['fj_type']==1){
+                        $info.='--午饭';
+                    }elseif($v['fj_type']==2){
+                        $info.='--晚饭';
+                    }
+                    break;
+                case 2:
+                    $info = $integral_types[$v['type']].$v['content'].'人数';
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                    $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
+                    $info = $integral_types[$v['type']].'商品：'.$goods_info['name'].' 数量：'.$v['content'];
+                    break;
+                default:
+                    $info = $integral_types[$v['type']];
+            }
+            $data_list[$k]['info'] = $info;
+            $status_str = '';
+            if($v['type']==4){
+                $status_str = '已使用';
+            }else{
+                if($v['status']==1){
+                    $status_str = '可用';
+                }elseif($v['status']==2){
+                    $status_str = '未结算不可用';
+                }
+            }
+            $data_list[$k]['status_str']  = $status_str;
+            $data_list[$k]['type_str']  = $integral_types[$v['type']];
+        }
+        $cell = array(
+            array('id','ID'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','MAC地址'),
+            array('openid','用户openid'),
+            array('nickname','用户昵称'),
+            array('info','积分信息'),
+            array('integral','所得积分'),
+            array('status_str','积分状态'),
+            array('type_str','类型'),
+            array('integral_time','积分时间'),
+
+        );
+        $filename = '积分明细表';
+        $path = $this->exportToExcel($cell,$data_list,$filename,2);
+        $cache_key = 'cronscript:integral:datalist'.$start_date.$end_date;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $redis->set($cache_key,$path,3600);
+
+    }
 }
