@@ -49,6 +49,7 @@ class SdkerrorController extends BaseController {
         $m_sdk_error = new \Admin\Model\SdkErrorModel();
         $where = array();
         $where['last_report_date'] = array('ELT',"$del_date");
+        $where['full_report_date'] = array('ELT',$del_date);
         $ret = $m_sdk_error->delData($where);
         if($ret){
             $this->output('删除成功', 'sdkerror/index', 2);
