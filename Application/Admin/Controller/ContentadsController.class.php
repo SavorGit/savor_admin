@@ -36,7 +36,7 @@ class ContentadsController extends BaseController{
 		        $rt = $pub_ads->where(array('ads_id'=>$v['id'],'state'=>1))->count();
 		        
 		        if(empty($rt)){
-		            unset($result[$key]);
+		            //unset($result[$key]);
 		        }
 		    }
 		    unset($result[$key]['type']);

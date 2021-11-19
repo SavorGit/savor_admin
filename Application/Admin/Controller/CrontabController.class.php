@@ -4781,7 +4781,7 @@ class CrontabController extends Controller
                 from savor_smallapp_forscreen_record r
                 left join savor_ads a on r.resource_id = a.id
 
-                where r.action in(17) and small_app_id =1 and r.create_time>='".$start_date."' and r.create_time<='".$end_date."' and a.id>0 ";
+                where r.action in(17) and small_app_id =1 and r.create_time>='".$start_date."' and r.create_time<='".$end_date."' and a.id>0 and r.mobile_brand !='devtools'";
 
         $data_one = M()->query($sql);
         
@@ -4791,7 +4791,7 @@ class CrontabController extends Controller
                 r.box_id,r.box_name,r.box_mac,r.is_4g,r.box_type,r.hotel_box_type,r.hotel_is_4g,r.action,
                 r.resource_type,r.imgs,r.forscreen_char,r.duration,r.mobile_brand,r.mobile_model,
                 r.create_time from savor_smallapp_forscreen_record r
-                where r.action=5 and small_app_id =1 and r.create_time>='".$start_date."'and r.create_time<='".$end_date."'";
+                where r.action=5 and small_app_id =1 and r.create_time>='".$start_date."'and r.create_time<='".$end_date."' and r.mobile_brand !='devtools'";
         
         $data_two = M()->query($sql);
         foreach($data_two as $key=>$v){
@@ -4823,7 +4823,7 @@ class CrontabController extends Controller
                 left join savor_media m on dg.tv_media_id= m.id 
                 left join savor_media pm on pdg.tv_media_id = pm.id
                 where r.action in(13,14) and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand !='devtools'";
         
         $data_three = M()->query($sql);
         foreach($data_three as $key=>$v){
