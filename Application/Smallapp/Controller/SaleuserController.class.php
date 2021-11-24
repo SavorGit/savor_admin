@@ -201,7 +201,7 @@ class SaleuserController extends BaseController {
         if(IS_POST){
             $merchant_id = I('post.merchant_id',0,'intval');
             $level = I('post.level',0,'intval');
-            $msg = '修改成功';
+            $msg = '无修改数据';
             if($res_staff['level']!=$level || $res_staff['merchant_id']!=$merchant_id){
                 $res_pstaff = array();
                 if($level==2){
