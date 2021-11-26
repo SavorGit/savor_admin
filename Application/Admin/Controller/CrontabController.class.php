@@ -4654,6 +4654,33 @@ class CrontabController extends Controller
         echo "proplaynum end:$now_time \r\n";
     }
 
+    public function opsstathotel(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstathotel start:$now_time \r\n";
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $m_opsstaff->handle_stats_hotel_data();
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstathotel end:$now_time \r\n";
+    }
+
+    public function opsstatversionup(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatversionup start:$now_time \r\n";
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $m_opsstaff->handle_stats_versionup_data();
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatversionup end:$now_time \r\n";
+    }
+
+    public function opsstatresourceup(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatresourceup start:$now_time \r\n";
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $m_opsstaff->handle_stats_resourceup_data();
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatresourceup end:$now_time \r\n";
+    }
+
     public function countsmallappusetime(){
         $date = strtotime('-1 day');
         $yesterday_start_time = date('Y-m-d 00:00:00',$date);

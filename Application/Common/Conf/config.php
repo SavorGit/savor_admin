@@ -41,6 +41,7 @@ $config = array(
 
     'SAPP_CALL_NETY_CMD'=>'call-mini-program',
     'SAPP_SALE'=>'smallappsale:',
+    'SAPP_OPS'=>'smallappops:',
     'SAPP_SALE_ACTIVITYGOODS_PROGRAM'=>'smallappsale:activitygoodsprogram',
     'SAPP_SHOP_PROGRAM'=>'smallapp:shopprogram',
     'SAPP_SALE_WELCOME_RESOURCE'=>'smallappsale:welcomeresource',
