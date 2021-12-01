@@ -307,6 +307,29 @@ class OpsstaffModel extends BaseModel{
         $boot24_time = $now_time-86400;
         $day7_time = $now_time-(7*86400);
         $day30_time = $now_time-(30*86400);
+        foreach ($res_box as $v){
+            $box_num++;
+            $hotel_ids[$v['hotel_id']] = $v['mac_addr'];
+            $ckey = 'heartbeat:2:'.$v['mac'];
+            $res_cache = $redis->get($ckey);
+            if(empty($res_cache)){
+                $box_30day_num++;
+            }else{
+                $cache_data = json_decode($res_cache,true);
+                $report_time = strtotime($cache_data['date']);
+                if($report_time>=$online_time){
+                    $box_online_num++;
+                }elseif($report_time>=$boot24_time){
+                    $box_24_num++;
+                }elseif($report_time<=$day7_time){
+                    $box_7day_num++;
+                }elseif($report_time<=$day30_time){
+                    $box_30day_num++;
+                }else{
+                    $box_30day_num++;
+                }
+            }
+        }
 
         foreach ($hotel_ids as $k=>$m){
             if($m!='000000000000'){
@@ -329,30 +352,6 @@ class OpsstaffModel extends BaseModel{
                     }else{
                         $small_platform_30day_num++;
                     }
-                }
-            }
-        }
-
-        foreach ($res_box as $v){
-            $box_num++;
-            $hotel_ids[$v['hotel_id']] = $v['mac_addr'];
-            $ckey = 'heartbeat:2:'.$v['mac'];
-            $res_cache = $redis->get($ckey);
-            if(empty($res_cache)){
-                $box_30day_num++;
-            }else{
-                $cache_data = json_decode($res_cache,true);
-                $report_time = strtotime($cache_data['date']);
-                if($report_time>=$online_time){
-                    $box_online_num++;
-                }elseif($report_time>=$boot24_time){
-                    $box_24_num++;
-                }elseif($report_time<=$day7_time){
-                    $box_7day_num++;
-                }elseif($report_time<=$day30_time){
-                    $box_30day_num++;
-                }else{
-                    $box_30day_num++;
                 }
             }
         }
