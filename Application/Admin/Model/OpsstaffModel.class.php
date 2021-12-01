@@ -183,6 +183,7 @@ class OpsstaffModel extends BaseModel{
         }
         $box_num = 0;
         $adv_up_num = $pro_up_num = $ads_up_num = 0;
+        $adv_notup_hotels = $pro_notup_hotels = $ads_notup_hotels = array();
         foreach ($res_box as $v){
             $box_num++;
             $ckey = 'heartbeat:2:'.$v['mac'];
@@ -191,14 +192,23 @@ class OpsstaffModel extends BaseModel{
                 $cache_data = json_decode($res_cache,true);
                 if($hotel_versions[$v['hotel_id']]['adv'].$cache_data['pro_download_period']==$cache_data['adv_period']){
                     $adv_up_num++;
+                }else{
+                    $adv_notup_hotels[$v['hotel_id']][]=$v['mac'];
                 }
                 if($cache_data['pro_download_period']==$cache_data['pro_period']){
                     $pro_up_num++;
+                }else{
+                    $pro_notup_hotels[$v['hotel_id']][]=$v['mac'];
                 }
                 if($cache_data['ads_download_period']==$cache_data['period']){
                     $ads_up_num++;
+                }else{
+                    $ads_notup_hotels[$v['hotel_id']][]=$v['mac'];
                 }
-
+            }else{
+                $adv_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                $pro_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                $ads_notup_hotels[$v['hotel_id']][]=$v['mac'];
             }
         }
         $adv_notup_num = $box_num-$adv_up_num>0?$box_num-$adv_up_num:0;
@@ -209,6 +219,7 @@ class OpsstaffModel extends BaseModel{
             'adv_up_num'=>$adv_up_num,'adv_notup_num'=>$adv_notup_num,
             'pro_up_num'=>$pro_up_num,'pro_notup_num'=>$pro_notup_num,
             'ads_up_num'=>$ads_up_num,'ads_notup_num'=>$ads_notup_num,
+            'adv_notup_hotels'=>$adv_notup_hotels,'pro_notup_hotels'=>$pro_notup_hotels,'ads_notup_hotels'=>$ads_notup_hotels
         );
         $redis->select(22);
         switch ($type){
@@ -238,6 +249,7 @@ class OpsstaffModel extends BaseModel{
         foreach ($res_box as $v){
             $hotels[$v['hotel_id']] = $v['mac_addr'];
         }
+        $small_platform_notup_hotels=array();
         foreach ($hotels as $k=>$m){
             $sql_hotel_version = "select id,version,update_type from savor_device_upgrade where device_type=2 and (hotel_id LIKE '%,{$k},%' OR hotel_id IS NULL) order by id desc limit 0,1";
             $res_hotel_version = $this->query($sql_hotel_version);
@@ -254,11 +266,15 @@ class OpsstaffModel extends BaseModel{
                     $res_version = $this->query($sql_version);
                     if($cache_data['war']==$res_version[0]['version']){
                         $small_platform_up_num++;
+                    }else{
+                        $small_platform_notup_hotels[$k]=$k;
                     }
+                }else{
+                    $small_platform_notup_hotels[$k]=$k;
                 }
             }
         }
-
+        $box_notup_hotels=array();
         foreach ($res_box as $v){
             $box_num++;
             $ckey = 'heartbeat:2:'.$v['mac'];
@@ -267,14 +283,19 @@ class OpsstaffModel extends BaseModel{
                 $cache_data = json_decode($res_cache,true);
                 if(isset($hotel_versions[$v['hotel_id']]) && $cache_data['apk_time']==$hotel_versions[$v['hotel_id']]){
                     $box_up_num++;
+                }else{
+                    $box_notup_hotels[$v['hotel_id']][]=$v['mac'];
                 }
+            }else{
+                $box_notup_hotels[$v['hotel_id']][]=$v['mac'];
             }
         }
         $small_platform_notup_num = $small_platform_num-$small_platform_up_num>0?$small_platform_num-$small_platform_up_num:0;
         $box_notup_num = $box_num-$box_up_num>0?$box_num-$box_up_num:0;
         $res_data = array('up_time'=>date('Y-m-d H:i:s'),
             'small_platform_num'=>$small_platform_num,'small_platform_up_num'=>$small_platform_up_num,'small_platform_notup_num'=>$small_platform_notup_num,
-            'box_num'=>$box_num,'box_up_num'=>$box_up_num,'box_notup_num'=>$box_notup_num
+            'box_num'=>$box_num,'box_up_num'=>$box_up_num,'box_notup_num'=>$box_notup_num,
+            'small_platform_notup_hotels'=>$small_platform_notup_hotels,'box_notup_hotels'=>$box_notup_hotels,
         );
         $redis->select(22);
         switch ($type){
@@ -307,6 +328,7 @@ class OpsstaffModel extends BaseModel{
         $boot24_time = $now_time-86400;
         $day7_time = $now_time-(7*86400);
         $day30_time = $now_time-(30*86400);
+        $box_online_hotels=$box_24_hotels=$box_7day_hotels=$box_30day_hotels=array();
         foreach ($res_box as $v){
             $box_num++;
             $hotel_ids[$v['hotel_id']] = $v['mac_addr'];
@@ -314,23 +336,29 @@ class OpsstaffModel extends BaseModel{
             $res_cache = $redis->get($ckey);
             if(empty($res_cache)){
                 $box_30day_num++;
+                $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
             }else{
                 $cache_data = json_decode($res_cache,true);
                 $report_time = strtotime($cache_data['date']);
                 if($report_time>=$online_time){
                     $box_online_num++;
+                    $box_online_hotels[$v['hotel_id']][]=$v['mac'];
                 }elseif($report_time>=$boot24_time){
                     $box_24_num++;
+                    $box_24_hotels[$v['hotel_id']][]=$v['mac'];
                 }elseif($report_time<=$day7_time){
                     $box_7day_num++;
+                    $box_7day_hotels[$v['hotel_id']][]=$v['mac'];
                 }elseif($report_time<=$day30_time){
                     $box_30day_num++;
+                    $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
                 }else{
+                    $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
                     $box_30day_num++;
                 }
             }
         }
-
+        $small_platform_online_hotels=$small_platform_24_hotels=$small_platform_7day_hotels=$small_platform_30day_hotels=array();
         foreach ($hotel_ids as $k=>$m){
             if($m!='000000000000'){
                 $small_platform_num++;
@@ -338,19 +366,25 @@ class OpsstaffModel extends BaseModel{
                 $res_cache = $redis->get($ckey);
                 if(empty($res_cache)){
                     $small_platform_30day_num++;
+                    $small_platform_30day_hotels[$k]=$k;
                 }else{
                     $cache_data = json_decode($res_cache,true);
                     $report_time = strtotime($cache_data['date']);
                     if($report_time>=$online_time){
                         $small_platform_online_num++;
+                        $small_platform_online_hotels[$k]=$k;
                     }elseif($report_time>=$boot24_time){
                         $small_platform_24_num++;
+                        $small_platform_24_hotels[$k]=$k;
                     }elseif($report_time<=$day7_time){
                         $small_platform_7day_num++;
+                        $small_platform_7day_hotels[$k]=$k;
                     }elseif($report_time<=$day30_time){
                         $small_platform_30day_num++;
+                        $small_platform_30day_hotels[$k]=$k;
                     }else{
                         $small_platform_30day_num++;
+                        $small_platform_30day_hotels[$k]=$k;
                     }
                 }
             }
@@ -358,6 +392,9 @@ class OpsstaffModel extends BaseModel{
         $res_data = array('up_time'=>date('Y-m-d H:i:s'),'hotel_nums'=>count($hotel_ids),
             'small_platform_num'=>$small_platform_num,'small_platform_online_num'=>$small_platform_online_num,'small_platform_24_num'=>$small_platform_24_num,'small_platform_7day_num'=>$small_platform_7day_num,'small_platform_30day_num'=>$small_platform_30day_num,
             'box_num'=>$box_num,'box_online_num'=>$box_online_num,'box_24_num'=>$box_24_num,'box_7day_num'=>$box_7day_num,'box_30day_num'=>$box_30day_num,
+            'small_platform_online_hotels'=>$small_platform_online_hotels,'small_platform_24_hotels'=>$small_platform_24_hotels,
+            'small_platform_7day_hotels'=>$small_platform_7day_hotels,'small_platform_30day_hotels'=>$small_platform_30day_hotels,
+            'box_online_hotels'=>$box_online_hotels,'box_24_hotels'=>$box_24_hotels,'box_7day_hotels'=>$box_7day_hotels,'box_30day_hotels'=>$box_30day_hotels
         );
         $redis->select(22);
         switch ($type){
