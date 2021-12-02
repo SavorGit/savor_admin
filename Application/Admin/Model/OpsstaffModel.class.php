@@ -251,10 +251,13 @@ class OpsstaffModel extends BaseModel{
         }
         $small_platform_notup_hotels=array();
         foreach ($hotels as $k=>$m){
-            $sql_hotel_version = "select id,version,update_type from savor_device_upgrade where device_type=2 and (hotel_id LIKE '%,{$k},%' OR hotel_id IS NULL) order by id desc limit 0,1";
+            $sql_hotel_version = "select du.id,du.version,du.update_type,dv.version_name from savor_device_upgrade du
+            left join savor_device_version dv on du.version=dv.version_code
+            where du.device_type=2 and dv.device_type=2 and (du.hotel_id LIKE '%,{$k},%' OR du.hotel_id IS NULL) and du.state=1 
+            order by du.id desc  limit 0,1";
             $res_hotel_version = $this->query($sql_hotel_version);
             if(!empty($res_hotel_version)){
-                $hotel_versions[$k] = $res_hotel_version[0]['version'];
+                $hotel_versions[$k] = $res_hotel_version[0]['version_name'];
             }
             if($m!='000000000000'){
                 $small_platform_num++;
@@ -281,7 +284,7 @@ class OpsstaffModel extends BaseModel{
             $res_cache = $redis->get($ckey);
             if(!empty($res_cache)){
                 $cache_data = json_decode($res_cache,true);
-                if(isset($hotel_versions[$v['hotel_id']]) && $cache_data['apk_time']==$hotel_versions[$v['hotel_id']]){
+                if(isset($hotel_versions[$v['hotel_id']]) && $cache_data['apk']==$hotel_versions[$v['hotel_id']]){
                     $box_up_num++;
                 }else{
                     $box_notup_hotels[$v['hotel_id']][]=$v['mac'];
@@ -346,10 +349,10 @@ class OpsstaffModel extends BaseModel{
                 }elseif($report_time>=$boot24_time){
                     $box_24_num++;
                     $box_24_hotels[$v['hotel_id']][]=$v['mac'];
-                }elseif($report_time<=$day7_time){
+                }elseif($report_time>=$day7_time && $report_time<$boot24_time){
                     $box_7day_num++;
                     $box_7day_hotels[$v['hotel_id']][]=$v['mac'];
-                }elseif($report_time<=$day30_time){
+                }elseif($report_time>=$day30_time && $report_time<$day7_time){
                     $box_30day_num++;
                     $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
                 }else{
@@ -376,10 +379,10 @@ class OpsstaffModel extends BaseModel{
                     }elseif($report_time>=$boot24_time){
                         $small_platform_24_num++;
                         $small_platform_24_hotels[$k]=$k;
-                    }elseif($report_time<=$day7_time){
+                    }elseif($report_time>=$day7_time && $report_time<$boot24_time){
                         $small_platform_7day_num++;
                         $small_platform_7day_hotels[$k]=$k;
-                    }elseif($report_time<=$day30_time){
+                    }elseif($report_time>=$day30_time && $report_time<$day7_time){
                         $small_platform_30day_num++;
                         $small_platform_30day_hotels[$k]=$k;
                     }else{
