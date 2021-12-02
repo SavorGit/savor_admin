@@ -327,10 +327,10 @@ class OpsstaffModel extends BaseModel{
         $box_online_num=$box_24_num=$box_7day_num=$box_30day_num=0;
 
         $now_time = time();
-        $online_time = $now_time-900;
-        $boot24_time = $now_time-86400;
-        $day7_time = $now_time-(7*86400);
-        $day30_time = $now_time-(30*86400);
+        $online_time = 900;
+        $boot24_time = 86400;
+        $day7_time = 7*86400;
+        $day30_time = 30*86400;
         $box_online_hotels=$box_24_hotels=$box_7day_hotels=$box_30day_hotels=array();
         foreach ($res_box as $v){
             $box_num++;
@@ -343,16 +343,17 @@ class OpsstaffModel extends BaseModel{
             }else{
                 $cache_data = json_decode($res_cache,true);
                 $report_time = strtotime($cache_data['date']);
-                if($report_time>=$online_time){
+                $diff_time = $now_time - $report_time;
+                if($diff_time<=$online_time){
                     $box_online_num++;
                     $box_online_hotels[$v['hotel_id']][]=$v['mac'];
-                }elseif($report_time>=$boot24_time){
+                }elseif($diff_time<=$boot24_time){
                     $box_24_num++;
                     $box_24_hotels[$v['hotel_id']][]=$v['mac'];
-                }elseif($report_time>=$day7_time && $report_time<$boot24_time){
+                }elseif($diff_time>=$day7_time && $diff_time<$day30_time){
                     $box_7day_num++;
                     $box_7day_hotels[$v['hotel_id']][]=$v['mac'];
-                }elseif($report_time>=$day30_time && $report_time<$day7_time){
+                }elseif($diff_time>=$day30_time){
                     $box_30day_num++;
                     $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
                 }else{
