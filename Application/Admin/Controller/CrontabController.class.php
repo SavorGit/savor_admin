@@ -5258,6 +5258,7 @@ class CrontabController extends Controller
                where c.status=1  order by end_month asc,end_day asc";
         
         $res = M()->query($sql);
+        
         $month = date('n',strtotime($start_date));
         $day = date('j',strtotime($start_date));
         $now_constellation = 0;
@@ -5270,15 +5271,22 @@ class CrontabController extends Controller
                 break;
             }
         }
-        $total = count($res);
+        $total = count($res) ;
         $next_constellation = $now_constellation+1;
+        
         if($next_constellation>=$total){
             $next_constellation = 0;
         }
         $n_next_constellation  = $next_constellation+1;
+        if($n_next_constellation>=$total){
+            $n_next_constellation = 0;
+        }
         $nn_next_constellation = $n_next_constellation +1;
-        $constellations = array($res[$now_constellation],$res[$next_constellation],$res[$n_next_constellation],$res[$nn_next_constellation]);
         
+        
+        
+        $constellations = array($res[$now_constellation],$res[$next_constellation],$res[$n_next_constellation],$res[$nn_next_constellation]);
+        //print_r($constellations);exit;
         foreach($constellations as $key=>$v){
             
             foreach($area_info as $vv){
