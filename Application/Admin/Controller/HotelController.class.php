@@ -462,6 +462,7 @@ class HotelController extends BaseController {
 		$map['state']   = 1;
 		$map['role_id']   = 1;
 		$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
+		
 		$l_c = count($user_info);
 		$user_info[$l_c] = array(
 			'main_id'=>0,
