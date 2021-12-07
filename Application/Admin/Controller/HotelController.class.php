@@ -842,8 +842,8 @@ class HotelController extends BaseController {
 		    }
 		}else if(!empty($mac_addr) && $mac_addr=='000000000000'){
 		    if($hotel_id){
-		          $m_heart_log = new \Admin\Model\HeartLogModel();
-		          $m_heart_log->deleteInfo(array('hotel_id'=>$hotel_id,'type'=>1), '1');
+		        $m_heart_log = new \Admin\Model\HeartLogModel();
+		        $m_heart_log->deleteInfo(array('hotel_id'=>$hotel_id,'type'=>1), '1');
 		    }
 		}
 		
