@@ -796,7 +796,8 @@ class HotelController extends BaseController {
             $obj_pin = new \Overtrue\Pinyin\Pinyin();
             $code_charter = '';
             if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
-                $code_charter = $s_hotel_name;
+                $code_first = getfirstchar($s_hotel_name);
+                $code_charter = $code_first.$s_hotel_name;
             }else {
                 $code_charter = $obj_pin->abbr($s_hotel_name);
                 $code_charter = strtolower($code_charter);
