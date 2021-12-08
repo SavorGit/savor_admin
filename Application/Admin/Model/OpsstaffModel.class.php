@@ -32,7 +32,7 @@ class OpsstaffModel extends BaseModel{
         array_unshift($area_arr,$tmp_area);
 
         $m_box = new \Admin\Model\BoxModel();
-        $fileds = 'box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
+        $fileds = 'box.id as box_id,box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
         $hotel_box_types = array_keys(C('HEART_HOTEL_BOX_TYPE'));
         $where = array('box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
         $where['hotel.hotel_box_type'] = array('in',$hotel_box_types);
@@ -78,7 +78,7 @@ class OpsstaffModel extends BaseModel{
         array_unshift($area_arr,$tmp_area);
 
         $m_box = new \Admin\Model\BoxModel();
-        $fileds = 'box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
+        $fileds = 'box.id as box_id,box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
         $where = array('box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
         $hotel_box_types = array_keys(C('HEART_HOTEL_BOX_TYPE'));
         $where['hotel.hotel_box_type'] = array('in',$hotel_box_types);
@@ -125,7 +125,7 @@ class OpsstaffModel extends BaseModel{
         array_unshift($area_arr,$tmp_area);
 
         $m_box = new \Admin\Model\BoxModel();
-        $fileds = 'box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
+        $fileds = 'box.id as box_id,box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
         $where = array('box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
         $hotel_box_types = array_keys(C('HEART_HOTEL_BOX_TYPE'));
         $where['hotel.hotel_box_type'] = array('in',$hotel_box_types);
@@ -193,22 +193,22 @@ class OpsstaffModel extends BaseModel{
                 if($hotel_versions[$v['hotel_id']]['adv'].$cache_data['pro_download_period']==$cache_data['adv_period']){
                     $adv_up_num++;
                 }else{
-                    $adv_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                    $adv_notup_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
                 if($cache_data['pro_download_period']==$cache_data['pro_period']){
                     $pro_up_num++;
                 }else{
-                    $pro_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                    $pro_notup_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
                 if($cache_data['ads_download_period']==$cache_data['period']){
                     $ads_up_num++;
                 }else{
-                    $ads_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                    $ads_notup_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
             }else{
-                $adv_notup_hotels[$v['hotel_id']][]=$v['mac'];
-                $pro_notup_hotels[$v['hotel_id']][]=$v['mac'];
-                $ads_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                $adv_notup_hotels[$v['hotel_id']][]=$v['box_id'];
+                $pro_notup_hotels[$v['hotel_id']][]=$v['box_id'];
+                $ads_notup_hotels[$v['hotel_id']][]=$v['box_id'];
             }
         }
         $adv_notup_num = $box_num-$adv_up_num>0?$box_num-$adv_up_num:0;
@@ -287,10 +287,10 @@ class OpsstaffModel extends BaseModel{
                 if(isset($hotel_versions[$v['hotel_id']]) && $cache_data['apk']==$hotel_versions[$v['hotel_id']]){
                     $box_up_num++;
                 }else{
-                    $box_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                    $box_notup_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
             }else{
-                $box_notup_hotels[$v['hotel_id']][]=$v['mac'];
+                $box_notup_hotels[$v['hotel_id']][]=$v['box_id'];
             }
         }
         $small_platform_notup_num = $small_platform_num-$small_platform_up_num>0?$small_platform_num-$small_platform_up_num:0;
@@ -338,26 +338,26 @@ class OpsstaffModel extends BaseModel{
             $res_cache = $redis->get($ckey);
             if(empty($res_cache)){
                 $box_30day_num++;
-                $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
+                $box_30day_hotels[$v['hotel_id']][]=$v['box_id'];
             }else{
                 $cache_data = json_decode($res_cache,true);
                 $report_time = strtotime($cache_data['date']);
                 $diff_time = $now_time - $report_time;
                 if($diff_time<=$online_time){
                     $box_online_num++;
-                    $box_online_hotels[$v['hotel_id']][]=$v['mac'];
+                    $box_online_hotels[$v['hotel_id']][]=$v['box_id'];
                 }elseif($diff_time<=$boot24_time){
                     $box_24_num++;
-                    $box_24_hotels[$v['hotel_id']][]=$v['mac'];
+                    $box_24_hotels[$v['hotel_id']][]=$v['box_id'];
                 }elseif($diff_time>$boot24_time && $diff_time<=$day7_time){
                     $box_24_7_num++;
-                    $box_24_7_hotels[$v['hotel_id']][]=$v['mac'];
+                    $box_24_7_hotels[$v['hotel_id']][]=$v['box_id'];
                 }elseif($diff_time>$day7_time && $diff_time<$day30_time){
                     $box_7day_num++;
-                    $box_7day_hotels[$v['hotel_id']][]=$v['mac'];
+                    $box_7day_hotels[$v['hotel_id']][]=$v['box_id'];
                 }else{
                     $box_30day_num++;
-                    $box_30day_hotels[$v['hotel_id']][]=$v['mac'];
+                    $box_30day_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
             }
         }
