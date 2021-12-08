@@ -1191,79 +1191,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         }
         echo 'ok';
     }
-    public function test(){
-        exit('非法进入');
-        /* $is_support_netty  = $_GET['is_support_netty'];
-        $redis = SavorRedis::getInstance();
-        $redis->select(5);
-        $redis->set('support_netty_balance',$is_support_netty); */
-        $redis = SavorRedis::getInstance();
-        $redis->select(5);
-        $m_smallapp_forscreen_record = new \Admin\Model\ForscreenRecordModel();
-        
-        $cache_key = C('SAPP_BOX_FORSCREEN_NET')."*";
-        $keys = $redis->keys($cache_key);
-        $flag = 0;
-        foreach($keys as $k){
-            
-            $data = $redis->lgetrange($k, 0, -1);
-            
-            foreach($data as $v){
-                $flag ++;
-                $netresource = json_decode($v,true);
-                
-                $search = array();
-                $search['forscreen_id'] = $netresource['forscreen_id'];
-                $search['resource_id']  = $netresource['resource_id'];
-                $tmp = $m_smallapp_forscreen_record->getOne('id', $search);
-                
-                if(!empty($tmp)){
-                    if($netresource['is_exist']==0){//资源不存在
-                        if(!empty($netresource['resource_id']) && !empty($netresource['openid'])){
-                            $where = array();
-                            $dt = array();
-                            //$where['action'] = array('neq',8);
-                            $where['forscreen_id'] = $netresource['forscreen_id'];
-                            $where['resource_id'] = $netresource['resource_id'];
-                            $where['openid'] = $netresource['openid'];
-                            if(!empty($netresource['box_res_sdown_time'])){
-                                $dt['box_res_sdown_time'] = $netresource['box_res_sdown_time'];
-                            }
-                            if(!empty($netresource['box_res_edown_time'])){
-                                $dt['box_res_edown_time'] = $netresource['box_res_edown_time'];
-                            }
-                            $dt['is_break'] = $netresource['is_break'];
-                            $dt['is_exist'] = $netresource['is_exist'];
-                            $dt['update_time'] = date('Y-m-d H:i:s');
-                            $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
-                            $redis->lpop($k);
-                        }
-                    }else if($netresource['is_exist']==1 || $netresource['is_exist']==2){//资源存在 //资源下载失败
-                        $where = $dt = array();
-                        //$where['action'] = array('neq',8);
-                        $where['forscreen_id'] = $netresource['forscreen_id'];
-                        $where['resource_id'] = $netresource['resource_id'];
-                        $where['openid'] = $netresource['openid'];
-                        $dt['is_break'] = $netresource['is_break'];
-                        $dt['is_exist'] = $netresource['is_exist'];
-                        $dt['update_time'] = date('Y-m-d H:i:s');
-                        $ret = $m_smallapp_forscreen_record->updateInfo($where, $dt);
-                        
-                        $tt = $redis->lpop($k);
-                    }
-                }else {
-                    $redis->lpop($k);
-                }
-                $ret = $redis->lgetrange($k,0,-1);
-                if(empty($ret)) $redis->remove($k);
-            }
-        }
-        echo $flag ."ddd";
-    }
-    
-    
-    
-   
+
     //生成好友关系
     public function smallappFriends(){
         exit('非法进入');
@@ -2661,6 +2589,20 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo 'set wxtest ok';
     }
 
+    public function setopswxtest(){
+        $model = M();
+        $sql_staff = "UPDATE savor_ops_staff SET openid='' WHERE id=7";
+        $model->execute($sql_staff);
+        $sql_user = 'delete from savor_smallapp_user where mobile=15810260493';
+        $model->execute($sql_user);
+
+        $redis = SavorRedis::getInstance();
+        $redis->select(14);
+        $cache_key = C('SAPP_OPS').'register:15810260493';
+        $redis->set($cache_key,1234);
+        echo 'set wxtest ok';
+    }
+
     public function testrdpush(){
         $box_mac = '00226D583ECD';
         $hotel_id = 7;
@@ -2782,31 +2724,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         $m_hotelgoods->HandleGoodsperiod($goods_id);
         echo 'now_time:'.date('Y-m-d H:i:s')."\r\n";
-    }
-
-    public function syshotplay(){
-        $model = M();
-        $sql = "select * from savor_smallapp_play_log where type=4 order by nums desc limit 0,8";
-        $res_hotplay = $model->query($sql);
-        $sort_num = 1000;
-        $m_hoteplay = new \Admin\Model\Smallapp\HotplayModel();
-        $all_data = array();
-        foreach ($res_hotplay as $v){
-            $forscreen_record_id = $v['res_id'];
-            $sql_forscreen = "select * from savor_smallapp_forscreen_record where id={$forscreen_record_id}";
-            $res_forscreen = $model->query($sql_forscreen);
-            $forscreen_id = $res_forscreen[0]['forscreen_id'];
-
-            if(!empty($forscreen_id)){
-                $sql_public = "select * from savor_smallapp_public where forscreen_id={$forscreen_id} order by id asc limit 0,1";
-                $res_public = $model->query($sql_public);
-                $data_id = $res_public[0]['id'];
-                $sort = $sort_num --;
-                $add_data = array('data_id'=>$data_id,'forscreen_record_id'=>$forscreen_record_id,'sort'=>$sort,'type'=>1,'status'=>1);
-                $all_data[]=$add_data;
-            }
-        }
-        $m_hoteplay->addAll($all_data);
     }
 
     public function hoteldrinksimg() {
@@ -3037,42 +2954,68 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
-    public function updatebirthday(){
-        $model = M();
-        $sql_constellation_video = 'select m.oss_addr from savor_smallapp_constellation_video as v left join savor_media as m on v.media_id=m.id';
-        $res_video = $model->query($sql_constellation_video);
-        $all_constellation_video = array();
-        foreach ($res_video as $v){
-            $all_constellation_video[]=$v['oss_addr'];
-        }
-        $time = '2021-01-01 00:00:00';
-        $pagesize = 500;
-        for($i=1;$i<100;$i++){
-            $offset = ($i-1)*$pagesize;
-            $sql = "select id,imgs,create_time from savor_smallapp_forscreen_record where create_time>='{$time}' and action=5 and forscreen_char='Happy birthday' order by id desc limit {$offset},{$pagesize}";
-            $res_forscreen = $model->query($sql);
-            if(empty($res_forscreen)){
-                echo "no forscreen data \r\n";
-                break;
-            }
-            foreach ($res_forscreen as $v){
-                $id = $v['id'];
-                $imgs = json_decode($v['imgs']);
-                if(!empty($imgs)){
-                    $oss_addr = $imgs[0];
-                    if(in_array($oss_addr,$all_constellation_video)){
-                        $action = 57;//星座点播
-                    }else{
-                        $action = 56;//生日点播
-                    }
-                    $sql_up = "UPDATE savor_smallapp_forscreen_record SET action={$action} WHERE id={$id}";
-                    $res_update = $model->execute($sql_up);
-                    if($res_update){
-                        echo "id:$id action:$action ok \r\n";
-                    }
+    public function testlottery(){
+        $box_mac = I('mac','','trim');
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $users = $m_user->getWhere('openid,avatarUrl,nickName',array('small_app_id'=>1,'nickName'=>array('neq','')),'id desc','0,30','');
+        $lottery_nums = array(1,5,10);
+        $partake_user = array();
+        $lottery_users = array();
+        foreach ($users as $k=>$uv){
+            $is_lottery = 0;
+            if(in_array($k,$lottery_nums)){
+                $is_lottery = 1;
+                if($k==1){
+                    $level=1;
+                    $dish_name = '古奢清香酒';
+                    $dish_image = 'media/resource/nDPfaQ8Bh2.jpg';
+                }else{
+                    $level = 2;
+                    $dish_name = '冰清酒';
+                    $dish_image = 'media/resource/nDZKJKRbRx.jpg';
                 }
+
+                $lottery_users[] = array('openid'=>$uv['openid'],'dish_name'=>$dish_name,
+                    'dish_image'=>$dish_image,'level'=>$level,'room_name'=>'兜率宫');
             }
+            $partake_user[] = array('openid'=>$uv['openid'],'avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
         }
+        $netty_data = array('action'=>156,'partake_user'=>$partake_user,'lottery'=>$lottery_users);
+        $message = json_encode($netty_data);
+        echo $message;
+
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $ret = $m_netty->pushBox($box_mac,$message);
+    }
+
+    public function testactivity(){
+        $activity_id = 11369;
+        $box_mac = I('mac','','trim');
+        $fields = 'box.id as box_id,box.mac as box_mac,hotel.id as hotel_id';
+        $where = array('box.state'=>1,'box.flag'=>0,'box.mac'=>$box_mac);
+        $m_box = new \Admin\Model\BoxModel();
+        $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
+
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $activity_info = $m_activity->getInfo(array('id'=>$activity_id));
+        $image_url = $activity_info['image_url'];
+        $name_info = pathinfo($image_url);
+        $activity_info['lottery_time'] = '2021-11-08 18:30:00';
+        $host_name = 'http://'.C('SAVOR_API_URL');
+
+        $qrcode_url = $host_name."/smallapp46/qrcode/getBoxQrcode?box_mac={$res_bdata[0]['box_mac']}&box_id={$res_bdata[0]['box_id']}&data_id=$activity_id&type=42";
+        $netty_data = array('action'=>155,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
+            'activity_name'=>$activity_info['name'],'url'=>$image_url,'filename'=>$name_info['basename'],'qrcode_url'=>$qrcode_url
+        );
+        $message = json_encode($netty_data);
+        echo $message;
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $ret = $m_netty->pushBox($box_mac,$message);
+    }
+
+    public function pushBoxLotteryActivity(){
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $m_activity->pushBoxLotteryActivity();
     }
 
 
