@@ -10,6 +10,34 @@
                     <input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
                 </div>
             </div>
+
+            <div class="form-group row" id="shop_poster_img" >
+                <label class="col-xs-12 col-sm-2 control-label">
+                    视频图片：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                            <a data-target="#modal-file" href="javascript:void(0)">
+                                <if condition="($vinfo['img_oss_addr'] eq 'NULL') OR $vinfo['img_oss_addr'] eq ''">
+                                    <img id="vimgmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                    <else />
+                                    <img id="vimgmedia_idimg" src="{$vinfo.img_oss_addr}" border="0" />
+                                </if>
+                                <span id="vimgmedia_idimgname"></span>
+                            </a>
+                        </div>
+<!--                        <span class="help-block" id="img-msg">请上传1080x1920像素的jpg格式图片，展示效果最佳</span>-->
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=vimgmedia_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="vimgmedia_id" id="vimgmedia_id" value="{$vinfo.imgmedia_id}" >
+                            <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="form-group row" id="defaultpic">
                 <label class="col-xs-12 col-sm-2 control-label">
                     视频：

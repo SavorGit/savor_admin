@@ -156,9 +156,10 @@ class ConstellationController extends BaseController {
         if(IS_POST){
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
+            $imgmedia_id = I('post.vimgmedia_id',0,'intval');
             $sort = I('post.sort',1,'intval');
             $status = I('post.status',0,'intval');
-            $data = array('name'=>$name,'media_id'=>$media_id,'sort'=>$sort,'status'=>$status,'constellation_id'=>$constellation_id);
+            $data = array('name'=>$name,'media_id'=>$media_id,'imgmedia_id'=>$imgmedia_id,'sort'=>$sort,'status'=>$status,'constellation_id'=>$constellation_id);
             if($id){
                 $result = $m_constellvideo->updateData(array('id'=>$id),$data);
             }else{
@@ -208,12 +209,18 @@ class ConstellationController extends BaseController {
         $id = I('get.id',0,'intval');
         $m_constellvideo = new \Admin\Model\Smallapp\ConstellationvideoModel();
         $vinfo = $m_constellvideo->getInfo(array('id'=>$id));
-        $oss_addr = '';
+        $oss_addr = $img_oss_addr = '';
         if(!empty($vinfo['media_id'])){
             $m_media = new \Admin\Model\MediaModel();
             $res_addr = $m_media->getMediaInfoById($vinfo['media_id']);
             $oss_addr = $res_addr['oss_addr'];
         }
+        if(!empty($vinfo['imgmedia_id'])){
+            $m_media = new \Admin\Model\MediaModel();
+            $res_imgaddr = $m_media->getMediaInfoById($vinfo['imgmedia_id']);
+            $img_oss_addr = $res_imgaddr['oss_addr'];
+        }
+        $vinfo['img_oss_addr'] = $img_oss_addr;
         $vinfo['oss_addr'] = $oss_addr;
         $constellation_id = $vinfo['constellation_id'];
         $this->assign('constellation_id',$constellation_id);
