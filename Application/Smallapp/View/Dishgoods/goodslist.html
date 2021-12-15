@@ -6,13 +6,14 @@
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">
           <div class="tools-group">
             <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd" title="新增商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增商品</a>
-            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd?type=23" title="新增赠送商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增赠送商品</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd?type=23" title="赠送商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 赠送商品</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/dishgoods/goodsadd?type=42" title="团购商品" target="dialog" mask="true"><i class="fa fa-plus"></i> 团购商品</a>
           </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
 
             <div class="form-inline">
 
@@ -29,7 +30,7 @@
               </div>
 
             <div class="form-group">
-                <div class="input-group input-group-sm">上架状态：</div>
+                <div class="input-group input-group-sm">状态：</div>
                 <div class="input-group">
                     <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                         <option value=0>全部</option>
@@ -53,7 +54,7 @@
             </div>
 
             <div class="form-group">
-                <div class="input-group input-group-sm">是否场景化礼物：</div>
+                <div class="input-group input-group-sm">场景化礼物：</div>
                 <div class="input-group">
                     <select name="is_scenegift" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                         <option value=99 <if condition="$is_scenegift eq 99">selected</if> >全部</option>

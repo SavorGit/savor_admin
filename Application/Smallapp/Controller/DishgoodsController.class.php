@@ -43,7 +43,7 @@ class DishgoodsController extends BaseController {
             if($type){
                 $where['a.type'] = $type;
             }else{
-                $where['a.type'] = array('in',array(22,23));
+                $where['a.type'] = array('in',array(22,23,42));
             }
         }
 
@@ -130,7 +130,7 @@ class DishgoodsController extends BaseController {
             if($type==0){
                 $type = 22;
             }
-            $dinfo = array('type'=>$type,'amount'=>1,'gtype'=>1,'tvmedia_type'=>1);
+            $dinfo = array('type'=>$type,'amount'=>1,'gtype'=>1,'tvmedia_type'=>1,'sort'=>1);
 
             $goods_types = C('DISH_TYPE');
             if($id){

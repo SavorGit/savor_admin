@@ -1,6 +1,7 @@
 <div class="pageContent">
 	<form method="post" action="{$host_url}/smallapp/dishgoods/goodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 		<input name="id" type="hidden" value="{$vinfo.id}"/>
+		<input id="now_goods_type" type="hidden" value="{$vinfo.type}"/>
 		<if condition="$vinfo.type eq 21">
 			<input name="gtype" type="hidden" value="1"/>
 		</if>
@@ -51,17 +52,6 @@
 						<option value="1" <if condition="$vinfo.gtype eq 1">selected</if> >单品</option>
 						<option value="2" <if condition="$vinfo.gtype eq 2">selected</if> >多型号</option>
 					</select>
-					<!--<div class="inline-radio-container">-->
-						<!--<label class="radio-inline">-->
-							<!--<input type="radio" name="gtype" id="1" value='1' <if condition="$vinfo.gtype eq 1">checked</if>>-->
-							<!--<span>单品</span>-->
-						<!--</label>-->
-						<!--<label class="radio-inline">-->
-							<!--<input type="radio" name="gtype" id="2" value='2' <if condition="$vinfo.gtype eq 2">checked</if>>-->
-							<!--<span>多型号</span>-->
-						<!--</label>-->
-					<!--</div>-->
-
 				</div>
 			</div>
 			</if>
@@ -69,7 +59,7 @@
 			<div class="form-group row" id="sale_gift">
 				<label class="col-xs-12 col-sm-2 control-label">选择赠品：</label>
 				<div class="col-xs-12 col-sm-10  form-inline">
-					<select name="gift_goods_id" class="form-control bs-select class-filter" data-live-search="true" required >
+					<select name="gift_goods_id" class="form-control bs-select class-filter" data-live-search="true" >
 						<option name="gift_goods_id" selected='selected' value="0">请选择赠品</option>
 						<volist name="activity_goods" id="ginfo">
 							<option name="gift_goods_id" value="{$ginfo.id}" {$ginfo.is_select}> {$ginfo.name}</option>
@@ -161,7 +151,7 @@
 				商品介绍：
 			</label>
 			<div class="col-xs-12 col-sm-10">
-				<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="1000" required>{$vinfo.intro}</textarea>
+				<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="1000">{$vinfo.intro}</textarea>
 			</div>
 		</div>
 
@@ -334,7 +324,7 @@
 				</div>
 			</foreach>
 		</div>
-		<div class="form-group row" >
+		<div class="form-group row" id="goods_sort">
 			<label class="col-xs-12 col-sm-2 control-label">排序值：</label>
 			<div class="col-xs-12 col-sm-10">
 				<input name="sort" type="number" value="{$vinfo.sort}" class="form-control" min="1" max="999999"/>
@@ -360,7 +350,7 @@
 			</div>
 		</div>
 
-		<div class="form-group row">
+		<div class="form-group row" id="goods_scenegift">
 			<label class="col-xs-12 col-sm-2 control-label">
 				是否场景化礼物：
 			</label>
@@ -434,7 +424,18 @@
             $('#shop_isrecommend').show();
             $('#sale_gift').show();
             $('#goods_onoffline').hide();
-        }else{
+        }else if($(this).val()==42){
+			$('#goods_pricelabel').text('价格：');
+			$('#sale_category').hide();
+			$('#sale_supply_price').hide();
+			$('#shop_localsale').hide();
+			$('#goods_scenegift').hide();
+			$('#sale_distribution_profit').hide();
+			$('#shop_isrecommend').hide();
+			$('#sale_gift').hide();
+			$('#goods_sort').hide();
+			$('#goods_onoffline').show();
+		}else{
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
             $('#sale_supply_price').show();
@@ -464,13 +465,17 @@
             $('#sale_gift').hide();
         }else{
             $('#goods_price').show();
-            $('#sale_supply_price').show();
             $('#sale_line_price').show();
-            $('#sale_distribution_profit').show();
             $('#sale_amount').show();
             $('#sale_gift').show();
-
-
+            var now_goods_type = $('#now_goods_type').val();
+            if(now_goods_type==42){
+				$('#sale_supply_price').hide();
+				$('#sale_distribution_profit').hide();
+			}else{
+				$('#sale_supply_price').show();
+				$('#sale_distribution_profit').show();
+			}
         }
     })
     $('#goods_modeltype').trigger('change');
