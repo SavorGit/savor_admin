@@ -4933,7 +4933,6 @@ class CrontabController extends Controller
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         $yesterday = date('Y-m-d',strtotime('-1 day'));
-        $yesterday = '2021-12-15';
         $start_date = $yesterday.' 00:00:00';
         $end_date   = $yesterday.' 23:59:59';
         
