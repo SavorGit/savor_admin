@@ -4933,6 +4933,7 @@ class CrontabController extends Controller
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         $yesterday = date('Y-m-d',strtotime('-1 day'));
+        $yesterday = '2021-12-15';
         $start_date = $yesterday.' 00:00:00';
         $end_date   = $yesterday.' 23:59:59';
         
@@ -4962,7 +4963,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where resource_id=".$v['resource_id']." and r.action =17 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             $rt = M()->query($sql);
             $lunch_temp = [];
@@ -5012,7 +5013,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where resource_id=".$v['resource_id']." and r.action in(16,17) and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             $rt = M()->query($sql);
             $lunch_temp = [];
@@ -5059,7 +5060,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where resource_id=".$v['resource_id']." and r.action =5 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             $rt = M()->query($sql);
             $lunch_temp = [];
@@ -5114,7 +5115,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where resource_id=".$v['resource_id']." and r.action =13 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             $rt = M()->query($sql);
             $lunch_temp = [];
@@ -5171,7 +5172,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where resource_id=".$v['resource_id']." and r.action =14 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             $rt = M()->query($sql);
             
@@ -5218,7 +5219,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where imgs='[\"".$v['oss_addr']."\"]' and r.action =56 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             
             $rt = M()->query($sql);
@@ -5297,7 +5298,7 @@ class CrontabController extends Controller
             $sql = "select r.id ,r.area_id,r.create_time,box_id
                 from savor_smallapp_forscreen_record r
                 where imgs='[\"".$v['oss_addr']."\"]' and r.action =57 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."'";
+                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
             
             
             $rt = M()->query($sql);
