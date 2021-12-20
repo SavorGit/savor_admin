@@ -603,14 +603,30 @@ class TaskController extends BaseController {
         if($ret){
             if($status==1) $msg = '上线成功';
             else $msg = '下线成功';
-            if($res_task['type']==2 && $res_task['task_type']==21){
+            if($res_task['type']==2){
                 $redis  =  \Common\Lib\SavorRedis::getInstance();
                 $redis->select(14);
-                $cache_key = C('SAPP_SALE').'openmoneytask:'.date('Ymd').':*';
-                $keys_arr = $redis->keys($cache_key);
-                if(!empty($keys_arr)){
-                    foreach($keys_arr as $key=>$v){
-                        $redis->remove($v);
+                if($res_task['task_type']==21){
+                    $cache_key = C('SAPP_SALE').'openmoneytask:'.date('Ymd').':*';
+                    $keys_arr = $redis->keys($cache_key);
+                    if(!empty($keys_arr)){
+                        foreach($keys_arr as $key=>$v){
+                            $redis->remove($v);
+                        }
+                    }
+                }
+                if($res_task['task_type']==24){
+                    $m_taskgoods = new \Admin\Model\Integral\TaskHotelModel();
+                    $twhere = array('task.goods_id'=>$res_task['goods_id'],'task.task_type'=>24);
+                    $res_hotelgoods = $m_taskgoods->getHotelTaskGoodsList('a.hotel_id',$twhere,'a.id asc');
+                    if(!empty($res_hotelgoods)){
+                        $goods_program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
+                        foreach ($res_hotelgoods as $v){
+                            $program_key = $goods_program_key.":{$v['hotel_id']}";
+                            $period = getMillisecond();
+                            $period_data = array('period'=>$period);
+                            $redis->set($program_key,json_encode($period_data));
+                        }
                     }
                 }
             }
@@ -820,7 +836,7 @@ class TaskController extends BaseController {
                             }
                         }
                     }
-                    if($res_task['task_type']==22){
+                    if($res_task['task_type']==22 || $res_task['task_type']==24){
                         $program_key = $goods_program_key.":{$v}";
                         $period = getMillisecond();
                         $period_data = array('period'=>$period);
