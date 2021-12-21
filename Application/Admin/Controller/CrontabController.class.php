@@ -4681,6 +4681,15 @@ class CrontabController extends Controller
         echo "opsstatresourceup end:$now_time \r\n";
     }
 
+    public function opsstatdevice(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatresourceup start:$now_time \r\n";
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $m_opsstaff->handle_stats_device_data();
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatresourceup end:$now_time \r\n";
+    }
+
     public function countsmallappusetime(){
         $date = strtotime('-1 day');
         $yesterday_start_time = date('Y-m-d 00:00:00',$date);

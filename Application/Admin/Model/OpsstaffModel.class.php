@@ -164,6 +164,90 @@ class OpsstaffModel extends BaseModel{
         echo "resourceup stat staff ok $now_time \r\n";
     }
 
+    public function handle_stats_device_data(){
+        $m_area  = new \Admin\Model\AreaModel();
+        $area_arr = $m_area->getHotelAreaList();
+        $areas = $area_arr;
+        $tmp_area = array('id'=>0,'region_name'=>'全国');
+        array_unshift($area_arr,$tmp_area);
+
+        $m_box = new \Admin\Model\BoxModel();
+        $fileds = 'box.id as box_id,box.mac,ext.hotel_id,ext.mac_addr,ext.maintainer_id';
+        $where = array('box.state'=>1,'box.flag'=>0,'hotel.state'=>1,'hotel.flag'=>0);
+        $hotel_box_types = array_keys(C('HEART_HOTEL_BOX_TYPE'));
+        $where['hotel.hotel_box_type'] = array('in',$hotel_box_types);
+        $area_staff_where = $where;
+        $staff_where = $where;
+        foreach ($area_arr as $v){
+            if($v['id']>0){
+                $where['hotel.area_id'] = $v['id'];
+            }
+            $res_box = $m_box->getBoxByCondition($fileds,$where);
+            $this->stats_device($res_box,1,$v['id'],0);
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "device stat area ok $now_time \r\n";
+        $res_staff = $this->getDataList('sysuser_id',array('status'=>1),'id asc');
+        foreach ($areas as $v){
+            $area_id = $v['id'];
+            foreach ($res_staff as $sv){
+                $staff_id = $sv['sysuser_id'];
+                $area_staff_where['hotel.area_id'] = $area_id;
+                $area_staff_where['ext.maintainer_id'] = $staff_id;
+                $res_box = $m_box->getBoxByCondition($fileds,$area_staff_where);
+
+                $this->stats_device($res_box,2,$area_id,$staff_id);
+            }
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "device stat area_staff ok $now_time \r\n";
+        foreach ($res_staff as $sv){
+            $staff_id = $sv['sysuser_id'];
+            $staff_where['ext.maintainer_id'] = $staff_id;
+            $res_box = $m_box->getBoxByCondition($fileds,$staff_where);
+            $this->stats_device($res_box,3,0,$staff_id);
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "device stat staff ok $now_time \r\n";
+    }
+
+    private function stats_device($res_box,$type,$area_id,$staff_id){
+        $box_num = $box_normal_num = $box_abnormal_num = 0;
+        $abnormal_hotels = array();
+        $m_sdkerror = new \Admin\Model\SdkErrorModel();
+        foreach ($res_box as $v){
+            $box_num++;
+            $res_sdkerror = $m_sdkerror->getInfo(array('box_id'=>$v['box_id']));
+            if(!empty($res_sdkerror) && $res_sdkerror['full_report_date']>$res_sdkerror['clean_report_date']){
+                $box_abnormal_num++;
+                $abnormal_hotels[$v['hotel_id']][]=$v['box_id'];
+            }
+        }
+        $box_normal_num = $box_num-$box_abnormal_num>0?$box_num-$box_abnormal_num:0;
+
+        $res_data = array('up_time'=>date('Y-m-d H:i:s'),'box_num'=>$box_num,
+            'box_normal_num'=>$box_normal_num,'box_abnormal_num'=>$box_abnormal_num,
+            'abnormal_hotels'=>$abnormal_hotels
+        );
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(22);
+        switch ($type){
+            case 1:
+                $cache_key = C('SAPP_OPS').'stat:device:area:'.$area_id;
+                $redis->set($cache_key,json_encode($res_data),86400*7);
+                break;
+            case 2:
+                $cache_key = C('SAPP_OPS').'stat:device:area_staff:'.$staff_id.':'.$area_id;
+                $redis->set($cache_key,json_encode($res_data),86400*7);
+                break;
+            case 3:
+                $cache_key = C('SAPP_OPS').'stat:device:staff:'.$staff_id;
+                $redis->set($cache_key,json_encode($res_data),86400*7);
+                break;
+        }
+        return true;
+    }
+
     private function stats_resourceupdate($res_box,$type,$area_id,$staff_id){
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(13);
