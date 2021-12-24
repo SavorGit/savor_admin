@@ -53,7 +53,7 @@
 				</div>
 			</div>
 
-			<div class="form-group row" id="select_area" <if condition="$vinfo.hscope neq 2"> style="display: none;"</if> >
+			<div class="form-group row" id="select_area" <if condition="$vinfo.is_show_area eq 0"> style="display: none;"</if> >
 				<label class="col-xs-12 col-sm-2 control-label">权限-酒楼区域：</label>
 				<div class="col-xs-12 col-sm-10">
 					<select name="hotel_area_id[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple">
@@ -86,7 +86,7 @@
 
 	$("input[name='hscope']").click(function() {
 		var id = $(this).attr("id");
-		if (id == 2){
+		if (id==2 || id==4){
 			$("#select_area").show();
 		}else{
 			$("#select_area").hide();
