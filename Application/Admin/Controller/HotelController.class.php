@@ -489,6 +489,7 @@ class HotelController extends BaseController {
 			$main_info = $hotelextModel->where('hotel_id='.$id)->find();
 			$vinfo['is_train'] = $main_info['is_train'];
 			$vinfo['is_activity'] = $main_info['is_activity'];
+			$vinfo['is_annualmeeting'] = $main_info['is_annualmeeting'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
             $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
@@ -729,6 +730,7 @@ class HotelController extends BaseController {
         $train_desc = I('post.train_desc','','trim');
         $is_comment = I('post.is_comment',0,'intval');
         $is_reward = I('post.is_reward',0,'intval');
+        $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -877,6 +879,7 @@ class HotelController extends BaseController {
         }
         $data['is_comment'] = $is_comment;
         $data['is_reward'] = $is_reward;
+        $data['is_annualmeeting'] = $is_annualmeeting;
 
 
 		$tranDb = new Model();
