@@ -209,7 +209,7 @@ class StaticHotelbasicdataModel extends BaseModel{
                 }
                 $restaurant_user_lunch_zxhdnum = $restaurant_user_dinner_zxhdnum = 0;
                 $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,1,1);
-                if(!empty($res_forscreen_box)){
+                if(!empty($res_iforscreen_box)){
                     $restaurant_user_lunch_zxhdnum = count($res_iforscreen_box);
                 }
                 $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,2,1);
