@@ -228,7 +228,7 @@ class SaleuserController extends BaseController {
 
             $m_merchant = new \Admin\Model\Integral\MerchantModel();
             $fields = 'a.id as merchant_id,hotel.name as name';
-            $where = array('a.type'=>2,'a.mtype'=>1,'a.status'=>1);
+            $where = array('a.type'=>array('in',array(2,3)),'a.mtype'=>1,'a.status'=>1);
             $res_merchant = $m_merchant->getMerchants($fields,$where,'a.id desc');
 
             $this->assign('mlist',$res_merchant);
