@@ -3792,6 +3792,15 @@ class CrontabController extends Controller
         echo "publicwidthheight end:$now_time \r\n";
     }
 
+    public function hotelcommonforscreen(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "hotelcommonforscreen start:$now_time \r\n";
+        $m_public = new \Admin\Model\Smallapp\StaticHotelcommonforscreenModel();
+        $m_public->handle_hotelcommonforscreen();
+        $now_time = date('Y-m-d H:i:s');
+        echo "hotelcommonforscreen end:$now_time \r\n";
+    }
+
     public function cleanboxlandownload(){
         $now_time = date('Y-m-d H:i:s');
         echo "cleanboxlandownload start:$now_time \r\n";
