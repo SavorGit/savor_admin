@@ -1649,17 +1649,30 @@ class SappforscreenController extends BaseController {
             if($is_has_notify_time && $res_publicdata['status']==1 && $status==2){
                 $is_audit = 1;
             }
-
+            $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
             if($res_publicdata['res_type']==2){
-                $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
-                $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id']);
+                $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id'],$res_publicdata['res_type']);
                 if($res_forscreen['is_eq']==0 && ($res_forscreen['oss_size']==0 || empty($res_forscreen['md5_file']))){
-                    $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id']);
+                    $res_forscreen = $m_forscreen->getFileMd5($res_publicdata['forscreen_id'],$res_publicdata['res_type']);
                 }
                 if($res_forscreen['is_eq']==0 && $res_forscreen['oss_size'] && $res_forscreen['md5_file']){
                     $where = array('forscreen_id'=>$res_publicdata['forscreen_id']);
                     $data = array('resource_size'=>$res_forscreen['oss_size'],'md5_file'=>$res_forscreen['md5_file']);
                     $m_forscreen->updateInfo($where,$data);
+                }
+            }else{
+                $m_forscreen = new \Admin\Model\Smallapp\ForscreenRecordModel();
+                $res_img_forscreen = $m_forscreen->getDataList('*',array('forscreen_id'=>$res_publicdata['forscreen_id']),'id asc');
+                foreach($res_img_forscreen as $iv){
+                    $res_forscreen = $m_forscreen->getFileMd5($iv['id'],$res_publicdata['res_type']);
+                    if($res_forscreen['is_eq']==0 && ($res_forscreen['oss_size']==0 || empty($res_forscreen['md5_file']))){
+                        $res_forscreen = $m_forscreen->getFileMd5($iv['id'],$res_publicdata['res_type']);
+                    }
+                    if($res_forscreen['is_eq']==0 && $res_forscreen['oss_size'] && $res_forscreen['md5_file']){
+                        $where = array('id'=>$iv['id']);
+                        $data = array('resource_size'=>$res_forscreen['oss_size'],'md5_file'=>$res_forscreen['md5_file']);
+                        $m_forscreen->updateInfo($where,$data);
+                    }
                 }
             }
             if($status==2){
