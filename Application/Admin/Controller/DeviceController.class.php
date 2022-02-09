@@ -378,15 +378,14 @@ class DeviceController extends BaseController{
                         }
                     }
                 }
-				/*
-                $all_hotelids = getVsmallHotelList();
-                if(in_array($hotelid,$all_hotelids)){
-                    sendTopicMessage($hotelid,3);
-                    sendTopicMessage($hotelid,6);
-                    sendTopicMessage($hotelid,7);
-                    sendTopicMessage($hotelid,8);
+                $cost_status = 2;
+				if($save['state']==1 && $save['flag']==0){
+                    $cost_status = 1;
                 }
-                */
+                $boxinfo = array('room_id'=>$save['room_id'],'box_id'=>$id,'box_mac'=>$save['mac'],'cost_status'=>$cost_status);
+                $m_boxcost = new \Admin\Model\BoxcostModel();
+                $m_boxcost->setBoxcost($hotelid,$boxinfo);
+
 				$this->output('更新成功!', 'device/box');
 			}else{
 				 $this->output('更新失败!', 'device/doAddBox');
@@ -414,16 +413,33 @@ class DeviceController extends BaseController{
 				$redis->remove($cache_key);
 				$cache_key = C('PROGRAM_ADV_CACHE_PRE').$hotelid;
 				$redis->remove($cache_key);
-                /*
-				if($is_sendtopic){
-                    $all_hotelids = getVsmallHotelList();
-                    if(in_array($hotelid,$all_hotelids)){
-                        sendTopicMessage($hotelid,3);
-                        sendTopicMessage($hotelid, 6);
-                        sendTopicMessage($hotelid, 7);
+
+                if(in_array($save['state'],array(2,3))){
+                    $redis->select(21);
+                    $download_cache_key = C('BOX_LANHOTEL_DOWNLOAD').$hotelid;
+                    $res_download = $redis->get($download_cache_key);
+                    if(!empty($res_download)){
+                        $download_info = json_decode($res_download,true);
+                        $rm_box_mac = $save['mac'];
+                        if(isset($download_info[$rm_box_mac])){
+                            $queue_key = C('BOX_LANHOTEL_DOWNLOADQUEUE');
+                            $lan_box = $download_info[$rm_box_mac]['from_box'];
+                            $download_queuecache_key = $queue_key."$hotelid:$lan_box";
+                            $redis->lrem($download_queuecache_key,$rm_box_mac,0);
+
+                            unset($download_info[$rm_box_mac]);
+                            $redis->set($download_cache_key,json_encode($download_info),86400*14);
+                        }
                     }
                 }
-                */
+                $cost_status = 2;
+                if($save['state']==1 && $save['flag']==0){
+                    $cost_status = 1;
+                }
+                $boxinfo = array('room_id'=>$save['room_id'],'box_id'=>$box_id,'box_mac'=>$save['mac'],'cost_status'=>$cost_status);
+                $m_boxcost = new \Admin\Model\BoxcostModel();
+                $m_boxcost->setBoxcost($hotelid,$boxinfo);
+
 				$this->output('添加成功!', 'hotel/room');
 			}else{
 				 $this->output('添加失败!', 'device/doAddBox');
