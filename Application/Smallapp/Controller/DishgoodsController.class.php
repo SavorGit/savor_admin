@@ -39,11 +39,11 @@ class DishgoodsController extends BaseController {
         }else{
             $display_html = 'goodslist';
             $goods_types = C('DISH_TYPE');
-            unset($goods_types[21]);
+            unset($goods_types[21],$goods_types[40],$goods_types[43]);
             if($type){
                 $where['a.type'] = $type;
             }else{
-                $where['a.type'] = array('in',array(22,23,42));
+                $where['a.type'] = array('in',array(22,23,42,44));
             }
         }
 

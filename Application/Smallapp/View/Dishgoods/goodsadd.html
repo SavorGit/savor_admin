@@ -424,7 +424,7 @@
             $('#shop_isrecommend').show();
             $('#sale_gift').show();
             $('#goods_onoffline').hide();
-        }else if($(this).val()==42){
+        }else if($(this).val()==42 || $(this).val()==44){
 			$('#goods_pricelabel').text('价格：');
 			$('#sale_category').hide();
 			$('#sale_supply_price').hide();
@@ -435,6 +435,9 @@
 			$('#sale_gift').hide();
 			$('#goods_sort').hide();
 			$('#goods_onoffline').show();
+			if($(this).val()==44){
+				$('#sale_video').hide();
+			}
 		}else{
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
@@ -469,7 +472,7 @@
             $('#sale_amount').show();
             $('#sale_gift').show();
             var now_goods_type = $('#now_goods_type').val();
-            if(now_goods_type==42){
+            if(now_goods_type==42 || now_goods_type==44){
 				$('#sale_supply_price').hide();
 				$('#sale_distribution_profit').hide();
 			}else{
