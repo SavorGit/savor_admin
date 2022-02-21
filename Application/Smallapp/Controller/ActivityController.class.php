@@ -33,7 +33,8 @@ class ActivityController extends BaseController {
         if($hotel_name){
             $where['hotel.name'] = array('like',"%{$hotel_name}%");
         }
-        $all_activity = array('1'=>'霸王餐抽奖','2'=>'普通抽奖','3'=>'系统抽奖','4'=>'系统霸王餐抽奖','5'=>'聚划算活动','8'=>'销售人员发起抽奖活动');
+        $all_activity = array('1'=>'霸王餐抽奖','2'=>'普通抽奖','3'=>'系统抽奖','4'=>'系统霸王餐抽奖','5'=>'聚划算活动',
+            '8'=>'销售人员发起抽奖活动','10'=>'售酒抽奖');
         if($type){
             $where['a.type'] = $type;
         }else{

@@ -60,9 +60,10 @@ class HotellotteryController extends BaseController {
             $wait_time = I('post.wait_time',0,'intval');
             $hotel_id = I('post.hotel_id',0,'intval');
             $status = I('post.status',0,'intval');
+            $type = I('post.type',0,'intval');
 
             $userInfo = session('sysUserInfo');
-            $data = array('name'=>$name,'prize'=>$prize,'wait_time'=>$wait_time,'hotel_id'=>$hotel_id,
+            $data = array('name'=>$name,'prize'=>$prize,'wait_time'=>$wait_time,'hotel_id'=>$hotel_id,'type'=>$type,
                 'start_date'=>$start_date,'end_date'=>$end_date,'sysuser_id'=>$userInfo['id'],'status'=>$status);
             if(empty($hour) || empty($minute)){
                 $this->output('发送时间不能为空', 'syslottery/syslotteryadd',2,0);
@@ -81,7 +82,7 @@ class HotellotteryController extends BaseController {
             }
             $this->output('操作成功!', 'hotellottery/datalist');
         }else{
-            $vinfo = array('status'=>0,'wait_time'=>30);
+            $vinfo = array('status'=>0,'wait_time'=>30,'type'=>2);
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_hotellottery->getInfo(array('id'=>$id));
