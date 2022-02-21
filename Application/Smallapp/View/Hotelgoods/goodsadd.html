@@ -192,32 +192,31 @@
 				</div>
 			</foreach>
 		</div>
-
-		<div class="form-group row send_time1" id="goods_start_date">
-			<label class="col-xs-12 col-sm-2 control-label">开始日期：</label>
-			<div class="col-xs-12 col-sm-10">
-				<div class="input-group date form_datetime" data-date="{$vinfo.start_time}" data-ymd="true">
-					<input name="start_time" type="text" size="16" class="form-control date" value="{$vinfo.start_time}">
-					<span class="input-group-btn">
-						<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
-						<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
-					</span>
-				</div>
+		<div class="form-group row" id="goods_start_date">
+			<label class="col-xs-6 col-sm-2 control-label">
+				开始时间:
+			</label>
+			<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
+				<input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="开始时间" value="{$vinfo.start_time}" readonly>
+				<span class="input-group-btn"  >
+			  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+			  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+			</span>
+			</div>
+		</div>
+		<div class="form-group row" id="goods_end_date">
+			<label class="col-xs-6 col-sm-2 control-label">
+				结束时间:
+			</label>
+			<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
+				<input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="结束时间" value="{$vinfo.end_time}" readonly>
+				<span class="input-group-btn"  >
+			  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+			  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+			</span>
 			</div>
 		</div>
 
-		<div class="form-group row send_time2" id="goods_end_date">
-			<label class="col-xs-12 col-sm-2 control-label">结束日期：</label>
-			<div class="col-xs-12 col-sm-10">
-				<div class="input-group date form_datetime" data-date="{$vinfo.end_time}" data-ymd="true">
-					<input name="end_time" type="text" size="16" class="form-control date" value="{$vinfo.end_time}" >
-					<span class="input-group-btn">
-						<button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
-						<button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
-					</span>
-				</div>
-			</div>
-		</div>
 <div id="goods_roll_content">
 	<foreach name="roll_contents" item="rinfo" >
 		<div class="form-group row">
@@ -286,4 +285,14 @@
 		}
 	})
 	$('#goods_seckill').trigger('change');
+
+	$(".form-control.date").datetimepicker({
+		//minView: "month", //选择日期后，不会再跳转去选择时分秒
+		minView:"0",
+		language:  'zh-CN',
+		format: 'yyyy-mm-dd hh:ii:00',
+		todayBtn:  1,
+		autoclose: 1,
+	});
+
 </script>

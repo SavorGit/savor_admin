@@ -90,6 +90,9 @@ $config['DISH_TYPE'] = array(
     '22'=>'售全国',
     '23'=>'赠送商品',
     '42'=>'团购商品',
+    '40'=>'秒杀商品',
+    '43'=>'本店有售商品',
+    '44'=>'线上团购商品',
 );
 $config['DISH_FLAG'] = array(
     '1'=>'审核中',
@@ -609,7 +612,7 @@ $config['REDPACKET_SCOPE'] = array(
     '2'=>'当前餐厅所有电视',
     '3'=>'当前包间电视',
     '4'=>'区域餐厅电视',
-    '5'=>'运营-所选餐厅单个包间单个红包',
+//    '5'=>'运营-所选餐厅单个包间单个红包',
 );
 
 $config['ADV_VIDEO'] = array(
@@ -969,134 +972,14 @@ $config['INTEGRAL_TYPES'] = array(
 );
 $config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目','2'=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
 $config['FORSCREEN_CONTENT_RECOURCE_CATE'] = array('1'=>'热播内容节目','2'=>'热播用户内容','3'=>'节目','4'=>'商城商品','5'=>'banner商品','6'=>'生日歌','7'=>'星座视频');
+$config['BONUS_OPERATION_INFO'] = array(
+    'nickName'=>'热点酒水超市',
+    'avatarUrl'=>'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg',
+    'popout_img'=>'WeChat/resource/popout-bonus.png'
+);
 $config['RD_TEST_HOTEL'] =
     array (
-        1064 =>
-            array (
-                'hotel_id' => 1064,
-                'hotel_name' => '海门渔港(棠下店)',
-                'short_name' => '海门渔港',
-            ),
-        420 =>
-            array (
-                'hotel_id' => 420,
-                'hotel_name' => '山东老家（科韵分店）',
-                'short_name' => '山东老家',
-            ),
-        1051 =>
-            array (
-                'hotel_id' => 1051,
-                'hotel_name' => '陇上荟·老兰州味道(天河公园店)',
-                'short_name' => '陇上荟',
-            ),
-        1038 =>
-            array (
-                'hotel_id' => 1038,
-                'hotel_name' => '广东道至正餐厅(保利·时光里店)',
-                'short_name' => '广东道',
-            ),
-        1047 =>
-            array (
-                'hotel_id' => 1047,
-                'hotel_name' => '四季小馆·北京菜·烤鸭(越秀公园店)',
-                'short_name' => '四季小馆',
-            ),
-        395 =>
-            array (
-                'hotel_id' => 395,
-                'hotel_name' => '江山享味酒家(白云万达店)',
-                'short_name' => '江山享味',
-            ),
-        1065 =>
-            array (
-                'hotel_id' => 1065,
-                'hotel_name' => '新泰乐·宴会厅(江南店)',
-                'short_name' => '新泰乐',
-            ),
-        1059 =>
-            array (
-                'hotel_id' => 1059,
-                'hotel_name' => '御彩酒家(东风东路店)',
-                'short_name' => '御彩酒家',
-            ),
-        1077 =>
-            array (
-                'hotel_id' => 1077,
-                'hotel_name' => '新粤新疆菜(佳兆业广场店)',
-                'short_name' => '新粤新疆菜',
-            ),
-        1023 =>
-            array (
-                'hotel_id' => 1023,
-                'hotel_name' => '新渝城·川菜·火锅(区庄店)',
-                'short_name' => '新渝城',
-            ),
-        1007 =>
-            array (
-                'hotel_id' => 1007,
-                'hotel_name' => '峨嵋酒家广渠路店',
-                'short_name' => '峨嵋酒家',
-            ),
-        85 =>
-            array (
-                'hotel_id' => 85,
-                'hotel_name' => '花家怡园(王府井店)',
-                'short_name' => '花家怡园',
-            ),
-        436 =>
-            array (
-                'hotel_id' => 436,
-                'hotel_name' => '江仙雅居（苏州桥店）',
-                'short_name' => '江仙雅居',
-            ),
-        55 =>
-            array (
-                'hotel_id' => 55,
-                'hotel_name' => '1949-全鸭季(金宝街店)',
-                'short_name' => '1949-全鸭季',
-            ),
-        47 =>
-            array (
-                'hotel_id' => 47,
-                'hotel_name' => '孔乙己尚宴(8号公馆店)',
-                'short_name' => '孔乙己尚宴',
-            ),
-        787 =>
-            array (
-                'hotel_id' => 787,
-                'hotel_name' => '湘江宴',
-                'short_name' => '湘江宴',
-            ),
-        48 =>
-            array (
-                'hotel_id' => 48,
-                'hotel_name' => '江仙雅居(东直门店)',
-                'short_name' => '江仙雅居',
-            ),
-        46 =>
-            array (
-                'hotel_id' => 46,
-                'hotel_name' => '辉哥火锅（8号公馆店）',
-                'short_name' => '辉哥火锅',
-            ),
-        911 =>
-            array (
-                'hotel_id' => 911,
-                'hotel_name' => '花家怡园（京广桥店）',
-                'short_name' => '花家怡园',
-            ),
-        222 =>
-            array (
-                'hotel_id' => 222,
-                'hotel_name' => '新荣记(银泰店)',
-                'short_name' => '新荣记',
-            ),
-        7 =>
-            array (
-                'hotel_id' => 7,
-                'hotel_name' => '永峰写字楼(正式)	',
-                'short_name' => '永峰写字楼',
-            ),
+
     );
 
 return $config;
