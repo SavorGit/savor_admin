@@ -22,6 +22,8 @@ class HotelgoodsController extends BaseController {
 
         $goods_types = C('DISH_TYPE');
         unset($goods_types[21],$goods_types[22],$goods_types[23],$goods_types[42]);
+        $where = array();
+        $where['id'] = array('neq',622);
         if($type){
             $where['type'] = $type;
         }else{
