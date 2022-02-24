@@ -538,7 +538,6 @@ class TestController extends Controller {
     }
 
     public function updateboxcache(){
-        exit;
         $redis = SavorRedis::getInstance();
         $redis->select(15);
 
@@ -581,9 +580,13 @@ class TestController extends Controller {
 //            $is_open_simple = $v['is_open_simple'];
 //            $is_sapp_forscreen = $v['is_sapp_forscreen'];
 //            $is_interact = $v['is_interact'];
-            $sql ="update savor_box set is_4g={$is_4g} where id=".$v['id'].' limit 1';
+//            $sql ="update savor_box set is_4g={$is_4g} where id=".$v['id'].' limit 1';
+//            M()->execute($sql);
+//            echo $v['mac']." is_4g:$is_4g ok \n";
+
+            $sql ="update savor_box set switch_time=999 where id=".$v['id'].' limit 1';
             M()->execute($sql);
-            echo $v['mac']." is_4g:$is_4g ok \n";
+            echo $v['mac']." switch_time:999 ok \n";
 
 
             $box_info = array();
@@ -592,10 +595,10 @@ class TestController extends Controller {
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
 
+            /*
             if(empty($v['mac'])){
                 continue;
             }
-
             $res_box = $v;
             $forscreen_type = 1;//1外网(主干) 2直连(极简)
             $box_forscreen = '1-0';
@@ -609,11 +612,11 @@ class TestController extends Controller {
                         $forscreen_type = 2;
                         break;
                     case '1-1':
-                        /* if(in_array($res_box['box_type'],array(3,6,7))){
-                            $forscreen_type = 2;
-                        }elseif($res_box['box_type']==2){
-                            $forscreen_type = 1;
-                        } */
+//                        if(in_array($res_box['box_type'],array(3,6,7))){
+//                            $forscreen_type = 2;
+//                        }elseif($res_box['box_type']==2){
+//                            $forscreen_type = 1;
+//                        }
                         $forscreen_type = 1;
                         break;
                     default:
@@ -626,6 +629,7 @@ class TestController extends Controller {
                 $redis->set($box_key,json_encode($forscreen_info));
                 echo "box_id:$box_id \r\n";
             }
+            */
 
             $flag++;
         }
@@ -2124,21 +2128,28 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     }
 
     public function hotelbasicdata(){
+        $scan_qrcode_types = C('SCAN_QRCODE_TYPES');
+        $all_hotel_types = C('heart_hotel_box_type');
         $where = array();
-        $where['static_date'] = array(array('EGT','2021-08-01'),array('ELT','2021-08-23'));
+        $where['static_date'] = array(array('EGT','2022-01-01'),array('ELT','2022-01-12'));
         $m_statichotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $res_data = $m_statichotelbasicdata->getDataList('id,hotel_id,static_date',$where,'id asc');
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_qrcodelog = new \Admin\Model\Smallapp\QrcodeLogModel();
+        $m_smallapp_iforscreen_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
+
         $m_heartlog = new \Admin\Model\HeartAllLogModel();
         foreach ($res_data as $v){
             $hotel_id = $v['hotel_id'];
             $time_date = strtotime($v['static_date']);
             $date = date('Ymd',$time_date);
+            $start_time = date('Y-m-d 00:00:00',$time_date);
+            $end_time = date('Y-m-d 23:59:59',$time_date);
 
-
+            /*
             $room_heart_num = $m_heartlog->getHotelAllHeart($date,$hotel_id,1);
             $room_meal_heart_num = $m_heartlog->getHotelMealHeart($date,$hotel_id,1);
-            /*
+
             $lunch_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,1,1);
             $dinner_zxhdnum = $m_heartlog->getHotelOnlineBoxnum($date,$hotel_id,2,1);
 
@@ -2188,8 +2199,44 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
                 'lunch_zxrate'=>$lunch_zxrate,'dinner_zxrate'=>$dinner_zxrate,'zxnum'=>$zxnum,'zxrate'=>$zxrate,
                 'interact_sale_signnum'=>$interact_sale_signnum,
             );
-            */
             $data = array('room_heart_num'=>$room_heart_num,'room_meal_heart_num'=>$room_meal_heart_num);
+            */
+            //餐厅扫码数
+//            $fields = "count(a.id) as num";
+//            $restaurantqrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+//            $restaurantqrcode_where['a.type'] = array('in',$scan_qrcode_types);
+//            $restaurantqrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+//            $restaurantqrcode_where['_string'] = 'a.openid in(select invalidid from savor_smallapp_forscreen_invalidlist where type=2)';
+//            $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);
+//            $restaurant_scancode_num = intval($res_qrcode[0]['num']);
+//
+//            $fields = "count(DISTINCT(a.openid)) as num";
+//            $res_userqrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);
+//            $restaurant_user_num = intval($res_userqrcode[0]['num']);
+//
+//            $restaurant_interact_standard_num = 0;
+//            $iforscreen_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0,'a.is_valid'=>1);
+//            $iforscreen_where['a.mobile_brand'] = array('neq','devtools');
+//            $iforscreen_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+//            $iforscreen_where['a.small_app_id'] = array('in',array(1,2,11));//小程序ID 1普通版,2极简版,5销售端,11 h5互动游戏
+//            $fields = 'count(a.id) as fnum';
+//            $res_iforscreen = $m_smallapp_iforscreen_record->getWhere($fields,$iforscreen_where,'','');
+//            if(!empty($res_iforscreen)){
+//                $restaurant_interact_standard_num = $res_iforscreen[0]['fnum'];
+//            }
+            $restaurant_user_lunch_zxhdnum = $restaurant_user_dinner_zxhdnum = 0;
+            $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,1,1);
+            if(!empty($res_iforscreen_box)){
+                $restaurant_user_lunch_zxhdnum = count($res_iforscreen_box);
+            }
+            $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,2,1);
+            if(!empty($res_iforscreen_box)){
+                $restaurant_user_dinner_zxhdnum = count($res_iforscreen_box);
+            }
+            $data = array(
+//                'restaurant_user_num'=>$restaurant_user_num,'restaurant_scancode_num'=>$restaurant_scancode_num,'restaurant_interact_standard_num'=>$restaurant_interact_standard_num,
+                'restaurant_user_lunch_zxhdnum'=>$restaurant_user_lunch_zxhdnum,'restaurant_user_dinner_zxhdnum'=>$restaurant_user_dinner_zxhdnum,
+            );
             $res = $m_statichotelbasicdata->updateData(array('id'=>$v['id']),$data);
             if($res){
                 echo "id:{$v['id']}--{$v['static_date']} ok \r\n";
@@ -2715,15 +2762,17 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo "ok";
     }
 
-    public function resetlaimaogoods(){
-        $goods_id = 622;
-        $m_goods = new \Admin\Model\Smallapp\GoodsModel();
-        $d_data = array('start_time'=>date('Y-m-d 00:00:00'),'end_time'=>date('Y-m-d 23:59:59'));
-
-        $m_goods->updateData(array('id'=>$goods_id),$d_data);
-        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        $m_hotelgoods->HandleGoodsperiod($goods_id);
+    public function resetseckilltimegoods(){
         echo 'now_time:'.date('Y-m-d H:i:s')."\r\n";
+        $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
+        $res_goods = $m_goods->getDataList('id',array('type'=>43,'is_seckill'=>1),'id desc');
+        $d_data = array('start_time'=>date('Y-m-d 00:00:00'),'end_time'=>date('Y-m-d 23:59:59'));
+        foreach ($res_goods as $v){
+            if(!empty($v['id'])){
+                $m_goods->updateData(array('id'=>$v['id']),$d_data);
+                echo "goods_id: {$v['id']} reset ok \r\n";
+            }
+        }
     }
 
     public function hoteldrinksimg() {
@@ -2907,24 +2956,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($res_netty);
     }
 
-    public function testpush(){
-        $box_mac = I('mac','','trim');
-        $activity_id = 11254;
-        $openid='ofYZG4zXTCn52wUjHPeOoNZHFKwo';
-
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        $where = array('openid' => $openid, 'status' => 1);
-        $user_info = $m_user->getOne('id,openid,avatarUrl,nickName,mpopenid', $where, '');
-        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
-        $res_activity = $m_activity->getInfo(array('id'=>$activity_id));
-
-        $m_netty = new \Admin\Model\Smallapp\NettyModel();
-        $message = array('action'=>153,'nickName'=>$user_info['nickname'],'headPic'=>base64_encode($user_info['avatarurl']),
-            'url'=>$res_activity['image_url']);
-        $ret = $m_netty->pushBox($box_mac,json_encode($message));
-        print_r($ret);
-    }
-
     public function sceneadvpush(){
         $day = date('w');
         if($day==0 || $day==6){//周六周日
@@ -2954,29 +2985,30 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
-    public function testlottery(){
+    public function testopenlottery(){
         $box_mac = I('mac','','trim');
         $m_user = new \Admin\Model\Smallapp\UserModel();
-        $users = $m_user->getWhere('openid,avatarUrl,nickName',array('small_app_id'=>1,'nickName'=>array('neq','')),'id desc','0,30','');
-        $lottery_nums = array(1,5,10);
+        $users = $m_user->getWhere('openid,avatarUrl,nickName',array('small_app_id'=>1,'nickName'=>array('neq','')),'id desc','0,20','');
+        $lottery_nums = array(1,5);
         $partake_user = array();
         $lottery_users = array();
         foreach ($users as $k=>$uv){
             $is_lottery = 0;
             if(in_array($k,$lottery_nums)){
                 $is_lottery = 1;
-                if($k==1){
-                    $level=1;
-                    $dish_name = '古奢清香酒';
-                    $dish_image = 'media/resource/nDPfaQ8Bh2.jpg';
-                }else{
-                    $level = 2;
-                    $dish_name = '冰清酒';
-                    $dish_image = 'media/resource/nDZKJKRbRx.jpg';
-                }
-
+//                if($k==1){
+//                    $level=1;
+//                    $dish_name = '古奢清香酒';
+//                    $dish_image = 'media/resource/nDPfaQ8Bh2.jpg';
+//                }else{
+//                    $level = 2;
+//                    $dish_name = '冰清酒';
+//                    $dish_image = 'media/resource/nDZKJKRbRx.jpg';
+//                }
+                $dish_name = '古奢清香酒';
+                $dish_image = 'media/resource/nDPfaQ8Bh2.jpg';
                 $lottery_users[] = array('openid'=>$uv['openid'],'dish_name'=>$dish_name,
-                    'dish_image'=>$dish_image,'level'=>$level,'room_name'=>'兜率宫');
+                    'dish_image'=>$dish_image,'level'=>0,'room_name'=>'');
             }
             $partake_user[] = array('openid'=>$uv['openid'],'avatarUrl'=>base64_encode($uv['avatarurl']),'nickName'=>$uv['nickname'],'is_lottery'=>$is_lottery);
         }
@@ -2988,34 +3020,122 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $ret = $m_netty->pushBox($box_mac,$message);
     }
 
-    public function testactivity(){
-        $activity_id = 11369;
+    public function testlottery(){
         $box_mac = I('mac','','trim');
-        $fields = 'box.id as box_id,box.mac as box_mac,hotel.id as hotel_id';
-        $where = array('box.state'=>1,'box.flag'=>0,'box.mac'=>$box_mac);
+        $bwhere = array('box.mac'=>$box_mac,'box.state'=>1,'box.flag'=>0);
         $m_box = new \Admin\Model\BoxModel();
-        $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
+        $res_box = $m_box->getBoxByCondition('box.id as box_id,box.mac',$bwhere);
 
+        $activity_id = 11719;
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
-        $activity_info = $m_activity->getInfo(array('id'=>$activity_id));
-        $image_url = $activity_info['image_url'];
-        $name_info = pathinfo($image_url);
-        $activity_info['lottery_time'] = '2021-11-08 18:30:00';
-        $host_name = 'http://'.C('SAVOR_API_URL');
+        $res_activity = $m_activity->getInfo(array('id'=>$activity_id));
+        $host_name = 'https://mobile.littlehotspot.com';
 
-        $qrcode_url = $host_name."/smallapp46/qrcode/getBoxQrcode?box_mac={$res_bdata[0]['box_mac']}&box_id={$res_bdata[0]['box_id']}&data_id=$activity_id&type=42";
-        $netty_data = array('action'=>155,'countdown'=>180,'lottery_time'=>date('H:i',strtotime($activity_info['lottery_time'])),
-            'activity_name'=>$activity_info['name'],'url'=>$image_url,'filename'=>$name_info['basename'],'qrcode_url'=>$qrcode_url
+        $dish_name_info = pathinfo($res_activity['image_url']);
+        $lottery_countdown = 60;
+        $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
+
+        $message = array('action'=>158,
+            'lottery_countdown'=>$lottery_countdown,'partake_img'=>$res_activity['image_url'],'partake_filename'=>$dish_name_info['basename'],
+            'partake_name'=>$res_activity['prize'],'activity_name'=>$res_activity['name'],
         );
+        $code_url = $host_name."/Smallapp46/qrcode/getBoxQrcode?box_id={$res_box['box_id']}&box_mac={$res_box['mac']}&data_id={$activity_id}&type=45";
+        $message['codeUrl']=$code_url;
+        $now_message = json_encode($message);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $ret = $m_netty->pushBox($box_mac,$now_message);
+        echo $now_message;
+        print_r($ret);
+    }
+
+    public function testok(){
+        $m_prize = new \Admin\Model\Smallapp\SyslotteryPrizeModel();
+        $activity_id = 40;
+        $res_prize = $m_prize->getDataList('*',array('syslottery_id'=>$activity_id),'probability asc');
+        $success_rate=$fail_rate=$success_num=$fail_num = 0;
+        $all_probability = array();
+        foreach ($res_prize as $v){
+            if($v['type']==3){
+                $fail_rate+=$v['probability'];
+                $fail_num++;
+            }else{
+                $success_rate+=$v['probability'];
+                $success_num++;
+            }
+            $all_probability[$v['id']]=array('probability'=>$v['probability'],'type'=>$v['type']);
+        }
+        $is_lottery = 0;
+        if($is_lottery){
+            $amount = $success_num;
+            $rate = $fail_rate;
+        }else{
+            $amount = $fail_num;
+            $rate = $success_rate;
+        }
+        $avg_num = intval($rate/$amount);
+        $last_num = fmod($rate,$amount);
+        $all_nums = array();
+        for($i=1;$i<=$amount;$i++){
+            $all_nums[]=$avg_num;
+        }
+        if($last_num){
+            $all_nums[$amount-1] = $all_nums[$amount-1]+$last_num;
+        }
+        foreach ($all_probability as $k=>$v){
+            if($is_lottery){
+                if($v['type']==3){
+                    $all_probability[$k]['probability']=0;
+                }else{
+                    $now_avg_num = array_shift($all_nums);
+                    $all_probability[$k]['probability'] = $v['probability'] + intval($now_avg_num);
+                }
+            }else{
+                if($v['type']==3){
+                    $now_avg_num = array_shift($all_nums);
+                    $all_probability[$k]['probability'] = $v['probability'] + intval($now_avg_num);
+                }else{
+                    $all_probability[$k]['probability']=0;
+                }
+            }
+        }
+        print_r($all_probability);
+    }
+
+    public function senduserbonus(){
+        $orderid= I('oid',0,'intval');
+        $box_mac = I('mac','','trim');
+        $op_info = C('BONUS_OPERATION_INFO');
+
+        $http_host = 'https://mobile.littlehotspot.com';
+        $trade_no = $orderid;
+        $qrinfo =  $trade_no.'_'.$box_mac;
+        $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
+        $netty_data = array('action'=>121,'nickName'=>$op_info['nickName'],
+            'avatarUrl'=>$op_info['avatarUrl'],'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img']);
+        $netty_data['headPic'] = base64_encode($netty_data['avatarUrl']);
         $message = json_encode($netty_data);
         echo $message;
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
         $ret = $m_netty->pushBox($box_mac,$message);
+        print_r($ret);
     }
 
-    public function pushBoxLotteryActivity(){
-        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
-        $m_activity->pushBoxLotteryActivity();
+    public function sendbonus(){
+        $box_mac = I('mac','','trim');
+        $op_info = C('BONUS_OPERATION_INFO');
+
+        $http_host = 'https://mobile.littlehotspot.com';
+        $trade_no = 16455;
+        $qrinfo =  $trade_no.'_'.$box_mac;
+        $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
+        $netty_data = array('action'=>121,'nickName'=>$op_info['nickName'],
+            'avatarUrl'=>$op_info['avatarUrl'],'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img']);
+        $netty_data['headPic'] = base64_encode($netty_data['avatarUrl']);
+        $message = json_encode($netty_data);
+        echo $message;
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $ret = $m_netty->pushBox($box_mac,$message);
+        print_r($ret);
     }
 
 
