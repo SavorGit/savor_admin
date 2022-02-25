@@ -246,8 +246,6 @@ class RedpacketoperationModel extends BaseModel{
 
     public function againpush_redpacket(){
         $nowdtime = date('Y-m-d H:i:s');
-        echo $nowdtime.' no send redpacket'."\r\n";
-        exit;
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();
         $where = array('user_id'=>$operation_uid,'status'=>array('in','4,6'),'scope'=>array('in','2,3'));
@@ -263,6 +261,7 @@ class RedpacketoperationModel extends BaseModel{
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $m_media = new \Admin\Model\MediaModel();
         $rd_hotel = C('RD_TEST_HOTEL');
+        $op_info = C('BONUS_OPERATION_INFO');
         foreach ($res_order as $v) {
             //推送红包小程序码到电视
             $trade_no = $v['id'];
@@ -272,6 +271,7 @@ class RedpacketoperationModel extends BaseModel{
                 echo "redpacket_id: $trade_no agagin finish \r\n";
                 continue;
             }
+            /*
             $bwhere = array('box.mac'=>$v['mac'],'box.state'=>1,'box.flag'=>0);
             $res_box = $m_box->getBoxByCondition('hotel.id as hotel_id',$bwhere);
             $hotel_id = intval($res_box[0]['hotel_id']);
@@ -279,12 +279,13 @@ class RedpacketoperationModel extends BaseModel{
                 echo "redpacket_id: $trade_no hotel_id:$hotel_id not rdtest hotel \r\n";
                 continue;
             }
+            */
             $redpacket = $v;
             $http_host = 'https://mobile.littlehotspot.com';
             $box_mac = $redpacket['mac'];
             $qrinfo = $trade_no . '_' . $box_mac;
             $mpcode = $http_host . '/h5/qrcode/mpQrcode?qrinfo=' . $qrinfo;
-
+            /*
             $res_hotel_ext = $m_hotel_ext->getInfo(array('hotel_id'=>$hotel_id));
             $hotel_logo = '';
             if($res_hotel_ext['hotel_cover_media_id']>0){
@@ -292,8 +293,10 @@ class RedpacketoperationModel extends BaseModel{
                 $hotel_logo = $res_media['oss_addr'];
             }
             $user_info = array('nickName'=>$rd_hotel[$hotel_id]['short_name'],'avatarUrl'=>$hotel_logo);
+            */
+            $user_info = array('nickName'=>$op_info['nickName'],'avatarUrl'=>$op_info['avatarUrl']);
             $message = array('action'=>121, 'nickName'=>$user_info['nickName'],
-                'avatarUrl'=>$user_info['avatarUrl'], 'codeUrl'=>$mpcode,'rtype'=>2);
+                'avatarUrl'=>$user_info['avatarUrl'], 'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img']);
             $message['headPic'] = base64_encode($user_info['avatarUrl']);
             $res_netty = $m_netty->pushBox($redpacket['mac'], json_encode($message));
             $netty_data = json_encode($res_netty);
