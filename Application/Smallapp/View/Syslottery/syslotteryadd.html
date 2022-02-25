@@ -2,6 +2,17 @@
     <form method="post" action="{$host_url}/smallapp/syslottery/syslotteryadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <input name="id" type="hidden" value="{$vinfo.id}"/>
         <div class="pageFormContent modal-body">
+
+            <div class="form-group row" >
+                <label class="col-xs-12 col-sm-2 control-label">抽奖类型：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="type" id="lottery_type" class="form-control bs-select" title="请选择">
+                        <option value="1" <if condition="$vinfo.type eq 1">selected</if> >系统抽奖</option>
+                        <option value="2" <if condition="$vinfo.type eq 2">selected</if> >幸运抽奖</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
                     名称:
@@ -39,11 +50,11 @@
         </div>
         -->
 
-        <div class="form-group row send_time1">
+        <div class="form-group row send_time1" id="lottery_sdate">
             <label class="col-xs-12 col-sm-2 control-label">发送日期：</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group date form_datetime" data-date="{$vinfo.start_date}" data-ymd="true">
-                    <input name="start_date" type="text" size="16" class="form-control date" placeholder="发送日期" value="{$vinfo.start_date}" required>
+                    <input name="start_date" type="text" size="16" class="form-control date" placeholder="发送日期" value="{$vinfo.start_date}">
                     <span class="input-group-btn">
                             <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
                             <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
@@ -52,11 +63,11 @@
             </div>
         </div>
 
-        <div class="form-group row send_time2">
+        <div class="form-group row send_time2" id="lottery_edate">
             <label class="col-xs-12 col-sm-2 control-label">结束日期：</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group date form_datetime" data-date="{$vinfo.end_date}" data-ymd="true">
-                    <input name="end_date" type="text" size="16" class="form-control date" placeholder="发送日期" value="{$vinfo.end_date}" required>
+                    <input name="end_date" type="text" size="16" class="form-control date" placeholder="发送日期" value="{$vinfo.end_date}">
                     <span class="input-group-btn">
                             <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
                             <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
@@ -66,16 +77,16 @@
         </div>
 
 
-        <div class="form-group row send_time3">
+        <div class="form-group row send_time3" id="lottery_time">
             <label class="col-xs-12 col-sm-2 control-label">发送时间：</label>
             <div class="col-xs-12 col-sm-10 form-inline">
-                <select name="hour" class="form-control" required>
+                <select name="hour" class="form-control">
                     <option value="0">请选择小时</option>
                     <volist name="hours" id="h">
                         <option value="{$h}" <if condition="$h eq $vinfo['hour']">selected</if> >{$h}:</option>
                     </volist>
                 </select>
-                <select name="minute" class="form-control" required>
+                <select name="minute" class="form-control">
                     <option value="0">请选择分钟</option>
                     <volist name="minutes" id="m">
                         <option value="{$m}" <if condition="$m eq $vinfo['minute']">selected</if> >{$m}</option>
@@ -113,3 +124,19 @@
         </div>
     </form>
 </div>
+
+<script>
+    $('#lottery_type').change(function() {
+        if($(this).val()==1){
+            $('#lottery_sdate').show();
+            $('#lottery_edate').show();
+            $('#lottery_time').show();
+        }else{
+            $('#lottery_sdate').hide();
+            $('#lottery_edate').hide();
+            $('#lottery_time').hide();
+        }
+    })
+    $('#lottery_type').trigger('change');
+
+</script>

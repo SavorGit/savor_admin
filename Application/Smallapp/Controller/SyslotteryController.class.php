@@ -28,7 +28,12 @@ class SyslotteryController extends BaseController {
             $res_hotel = $m_hotel->getOne($v['hotel_id']);
             $data_list[$k]['hotel_name'] = $res_hotel['name'];
             $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
-            $send_time = $v['start_date'].'至'.$v['end_date']." {$v['timing']}";
+            if($v['type']==1){
+                $send_time = $v['start_date'].'至'.$v['end_date']." {$v['timing']}";
+            }else{
+                $send_time = '';
+            }
+
             $data_list[$k]['send_time'] = $send_time;
             $res_user = $m_sysuser->getUserInfo($v['sysuser_id']);
             $data_list[$k]['username'] = $res_user['remark'];
@@ -52,6 +57,7 @@ class SyslotteryController extends BaseController {
         if(IS_POST){
             $prize = I('post.prize','');
             $media_id = I('post.media_id',0,'intval');
+            $type = I('post.type',0,'intval');
             $start_date = I('post.start_date','');
             $end_date = I('post.end_date','');
             $hour = I('post.hour','');
@@ -60,15 +66,19 @@ class SyslotteryController extends BaseController {
             $status = I('post.status',0,'intval');
 
             $userInfo = session('sysUserInfo');
-            $data = array('prize'=>$prize,'hotel_id'=>$hotel_id,'start_date'=>$start_date,'end_date'=>$end_date,'sysuser_id'=>$userInfo['id']);
-            if(empty($hour) || empty($minute)){
-                $this->output('发送时间不能为空', 'syslottery/syslotteryadd',2,0);
-            }
-            $data['timing'] = $hour.':'.$minute;
-            if(!empty($media_id)){
-                $m_media = new \Admin\Model\MediaModel();
-                $res_media = $m_media->getMediaInfoById($media_id);
-                $data['image_url'] = $res_media['oss_path'];
+            $data = array('prize'=>$prize,'hotel_id'=>$hotel_id,'sysuser_id'=>$userInfo['id'],'type'=>$type);
+            if($type==1){
+                $data['start_date'] = $start_date;
+                $data['end_date'] = $end_date;
+                if(empty($hour) || empty($minute)){
+                    $this->output('发送时间不能为空', 'syslottery/syslotteryadd',2,0);
+                }
+                $data['timing'] = $hour.':'.$minute;
+                if(!empty($media_id)){
+                    $m_media = new \Admin\Model\MediaModel();
+                    $res_media = $m_media->getMediaInfoById($media_id);
+                    $data['image_url'] = $res_media['oss_path'];
+                }
             }
             if($id){
                 $m_syslottery_prize = new \Admin\Model\Smallapp\SyslotteryPrizeModel();
@@ -93,7 +103,7 @@ class SyslotteryController extends BaseController {
             }
             $this->output('操作成功!', 'syslottery/datalist');
         }else{
-            $vinfo = array('status'=>0);
+            $vinfo = array('status'=>0,'type'=>2);
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_syslottery->getInfo(array('id'=>$id));
@@ -150,12 +160,16 @@ class SyslotteryController extends BaseController {
             }
             $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
         }
+        $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
+        $lottery_info = $m_syslottery->getInfo(array('id'=>$syslottery_id));
+
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
         $this->assign('pageNum',$pageNum);
         $this->assign('status',$status);
         $this->assign('syslottery_id',$syslottery_id);
+        $this->assign('lottery_type',$lottery_info['type']);
         $this->display();
     }
 
@@ -163,6 +177,8 @@ class SyslotteryController extends BaseController {
         $id = I('id',0,'intval');
         $syslottery_id = I('syslottery_id',0,'intval');
         $m_syslottery_prize = new \Admin\Model\Smallapp\SyslotteryPrizeModel();
+        $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
+        $lottery_info = $m_syslottery->getInfo(array('id'=>$syslottery_id));
         if(IS_POST){
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
@@ -173,15 +189,13 @@ class SyslotteryController extends BaseController {
             $interact_num = I('post.interact_num',0,'intval');
             $demand_hotplay_num = I('post.demand_hotplay_num',0,'intval');
             $demand_banner_num = I('post.demand_banner_num',0,'intval');
-            if($type==1){
+            if($lottery_info['type']==1 && $type==1){
                 if(empty($money)){
                     $this->output('请输入中奖金额', "syslottery/prizeadd", 2, 0);
                 }
                 if(empty($interact_num) && empty($demand_hotplay_num) && empty($demand_banner_num)){
                     $this->output('请输入需要完成的任务次数', "syslottery/prizeadd", 2, 0);
                 }
-            }else{
-                $money = 0;
             }
 
             $data = array('syslottery_id'=>$syslottery_id,'name'=>$name,'money'=>$money,'probability'=>$probability,'type'=>$type,
@@ -212,6 +226,7 @@ class SyslotteryController extends BaseController {
                 }
                 $vinfo = array('probability'=>$all_probability-$now_probability,'interact_num'=>0,'demand_hotplay_num'=>0,'demand_banner_num'=>0,'type'=>1);
             }
+            $vinfo['lottery_type'] = $lottery_info['type'];
             $this->assign('vinfo',$vinfo);
             $this->assign('syslottery_id',$syslottery_id);
             $this->display();
