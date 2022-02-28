@@ -141,7 +141,8 @@ class SmallappForscreenRecordModel extends Model{
         ini_set("memory_limit","1024M");
         $m_invalid = new \Admin\Model\ForscreenInvalidlistModel();
         $orderby = 'id desc';
-        $res_list = $m_invalid->getDataList('*','',$orderby);
+        $where = array('type'=>array('in',array(1,3)));
+        $res_list = $m_invalid->getDataList('*',$where,$orderby);
         $all_invalidlist = array();
         foreach ($res_list as $v){
             $all_invalidlist[$v['type']][] = $v['invalidid'];
@@ -184,31 +185,34 @@ class SmallappForscreenRecordModel extends Model{
         $pdata = array('status'=>0);
         $m_public->updateInfo($pwhere,$pdata);
 
-        if(isset($all_invalidlist[2])){
-            $all_openids = $all_invalidlist[2];
-            $num = 500;
-            for ($i=0;$i<20;$i++){
-                $offset = $i*$num;
-                $openids = array_slice($all_openids,$offset,$num);
-                if(empty($openids)){
-                    break;
-                }
-                $condition = array('a.openid'=>array('in',$openids));
-                $condition['a.mobile_brand'] = array('neq','devtools');
-                $res_userdata = $this->getWhere('a.*',$condition,'','');
-                foreach ($res_userdata as $v){
-                    $v['forscreen_record_id'] = $v['id'];
-                    unset($v['id']);
-                    $m_smallapp_forscreen_invalidrecord->addData($v);
-                }
-                $delcondition = array('openid'=>array('in',$openids));
-                $delcondition['mobile_brand'] = array('neq','devtools');
-                $this->where($delcondition)->delete();
-
-                $pwhere = array('openid'=>array('in',$openids));
-                $pdata = array('status'=>0);
-                $m_public->updateInfo($pwhere,$pdata);
+        $open_field='invalidid as openid';
+        $open_where = array('type'=>array('in',array(2,4)));
+        $limit = 500;
+        for ($i=0;$i<21;$i++){
+            $offset = $i*$limit;
+            $res_invalidopenids = $m_invalid->getAll($open_field,$open_where,$offset,$limit,'id desc');
+            if(empty($res_invalidopenids)){
+                break;
             }
+            $openids = array();
+            foreach ($res_invalidopenids as $ov){
+                $openids[]=$ov['openid'];
+            }
+            $condition = array('a.openid'=>array('in',$openids));
+            $condition['a.mobile_brand'] = array('neq','devtools');
+            $res_userdata = $this->getWhere('a.*',$condition,'','');
+            foreach ($res_userdata as $v){
+                $v['forscreen_record_id'] = $v['id'];
+                unset($v['id']);
+                $m_smallapp_forscreen_invalidrecord->addData($v);
+            }
+            $delcondition = array('openid'=>array('in',$openids));
+            $delcondition['mobile_brand'] = array('neq','devtools');
+            $this->where($delcondition)->delete();
+
+            $pwhere = array('openid'=>array('in',$openids));
+            $pdata = array('status'=>0);
+            $m_public->updateInfo($pwhere,$pdata);
         }
         return true;
     }
