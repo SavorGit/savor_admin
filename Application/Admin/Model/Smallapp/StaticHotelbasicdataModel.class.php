@@ -24,6 +24,7 @@ class StaticHotelbasicdataModel extends BaseModel{
 
     public function handle_hotel_basicdata(){
         $scan_qrcode_types = C('SCAN_QRCODE_TYPES');
+        $scan_qrcode_types = array();
         $all_hotel_types = C('heart_hotel_box_type');
 
         $m_hotel = new \Admin\Model\HotelModel();
@@ -146,7 +147,9 @@ class StaticHotelbasicdataModel extends BaseModel{
                 //扫码数
                 $fields = "count(a.id) as num";
                 $qrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-                $qrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                if(!empty($scan_qrcode_types)){
+                    $qrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                }
                 $qrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
                 $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where);
                 $scancode_num = intval($res_qrcode[0]['num']);
@@ -187,7 +190,9 @@ class StaticHotelbasicdataModel extends BaseModel{
                 //餐厅扫码数
                 $fields = "count(a.id) as num";
                 $restaurantqrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-                $restaurantqrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                if(!empty($scan_qrcode_types)){
+                    $restaurantqrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                }
                 $restaurantqrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
                 $restaurantqrcode_where['_string'] = 'a.openid in(select invalidid from savor_smallapp_forscreen_invalidlist where type=2)';
                 $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);

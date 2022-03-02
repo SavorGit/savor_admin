@@ -185,6 +185,17 @@ class SmallappForscreenRecordModel extends Model{
         $pdata = array('status'=>0);
         $m_public->updateInfo($pwhere,$pdata);
 
+        $m_qrcode_log = new \Admin\Model\Smallapp\QrcodeLogModel();
+        $m_invalidqrcode_log = new \Admin\Model\Smallapp\InvalidQrcodeLogModel();
+        $res_qrcodeboxdata = $m_qrcode_log->field('*')->where(array('box_mac'=>array('in',$boxs)))->select();
+        foreach ($res_qrcodeboxdata as $v){
+            $v['qrcode_log_id'] = $v['id'];
+            unset($v['id']);
+            $m_invalidqrcode_log->add($v);
+        }
+        $m_qrcode_log->where(array('box_mac'=>array('in',$boxs)))->delete();
+
+        $m_smallapp_forscreen_invalidrecord = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
         $open_field='invalidid as openid';
         $open_where = array('type'=>array('in',array(2,4)));
         $limit = 500;
@@ -213,6 +224,16 @@ class SmallappForscreenRecordModel extends Model{
             $pwhere = array('openid'=>array('in',$openids));
             $pdata = array('status'=>0);
             $m_public->updateInfo($pwhere,$pdata);
+
+            $qrwhere = array('openid'=>array('in',$openids));
+            $res_qrcodeuserdata = $m_qrcode_log->field('*')->where($qrwhere)->select();
+            foreach ($res_qrcodeuserdata as $qv){
+                $qv['qrcode_log_id'] = $qv['id'];
+                unset($qv['id']);
+                $m_invalidqrcode_log->add($qv);
+            }
+            $m_qrcode_log->where($qrwhere)->delete();
+
         }
         return true;
     }
