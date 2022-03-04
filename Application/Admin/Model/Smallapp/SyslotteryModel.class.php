@@ -7,7 +7,7 @@ class SyslotteryModel extends BaseModel{
 
     public function push_syslottery(){
         $now_date = date('Y-m-d');
-        $where = array('status'=>1);
+        $where = array('status'=>1,'type'=>1);
         $where['start_date'] = array('ELT',$now_date);
         $where['end_date'] = array('EGT',$now_date);
         $res = $this->getDataList('*',$where,'id asc');
@@ -82,5 +82,50 @@ class SyslotteryModel extends BaseModel{
             }
         }
 
+    }
+
+    public function push_saleluckylottery(){
+        $start_time = date('Y-m-d 00:00:00');
+        $end_time = date('Y-m-d 23:59:59');
+        $where = array('status'=>0,'type'=>11);
+        $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $res = $m_activity->getDataList('*',$where,'id asc');
+        if(empty($res)){
+            echo "no activity \r\n";
+            exit;
+        }
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_media = new \Admin\Model\MediaModel();
+        $host_name = 'https://mobile.littlehotspot.com';
+        $nowtime = date('H:i');
+        foreach ($res as $v){
+            $optime = date('H:i',strtotime($v['start_time']));
+            if($nowtime==$optime){
+                $activity_id = $v['id'];
+                $hotel_id = $v['hotel_id'];
+                $box_mac = $v['box_mac'];
+
+                $where = array('box.mac'=>$box_mac,'box.state'=>1,'box.flag'=>0,'hotel.id'=>$hotel_id);
+                $fields = 'box.id as box_id,hotel.name as hotel_name,hotelext.hotel_cover_media_id';
+                $res_box = $m_box->getInfoByCondition($fields,$where);
+                $hotel_logo = '';
+                if($res_box['hotel_cover_media_id']>0){
+                    $res_media = $m_media->getMediaInfoById($res_box['hotel_cover_media_id']);
+                    $hotel_logo = $res_media['oss_addr'];
+                }
+                $headPic = base64_encode($hotel_logo);
+                $code_url = $host_name."/Smallapp46/qrcode/getBoxQrcode?box_id={$res_box['box_id']}&box_mac={$box_mac}&data_id={$activity_id}&type=46";
+                $message = array('action'=>138,'countdown'=>120,'nickName'=>$res_box['hotel_name'],'headPic'=>$headPic,'codeUrl'=>$code_url);
+                $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+                $netty_data = json_encode($res_netty);
+                echo "activity_id:$activity_id box:{$box_mac} message:" . json_encode($message) . "netty:$netty_data \r\n";
+
+                $m_activity->updateData(array('id'=>$v['id']),array('status'=>2));
+            }else{
+                echo "activity_id:{$v['id']} not in time $optime \r\n";
+            }
+        }
     }
 }

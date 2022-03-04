@@ -33,7 +33,8 @@ class ActivityController extends BaseController {
         if($hotel_name){
             $where['hotel.name'] = array('like',"%{$hotel_name}%");
         }
-        $all_activity = array('1'=>'霸王餐抽奖','2'=>'普通抽奖','3'=>'系统抽奖','4'=>'系统霸王餐抽奖','5'=>'聚划算活动','8'=>'销售人员发起抽奖活动');
+        $all_activity = array('1'=>'霸王餐抽奖','2'=>'普通抽奖','3'=>'系统抽奖','4'=>'系统霸王餐抽奖','5'=>'聚划算活动',
+            '8'=>'销售人员发起抽奖活动','10'=>'售酒抽奖','11'=>'幸运抽奖');
         if($type){
             $where['a.type'] = $type;
         }else{
@@ -94,6 +95,13 @@ class ActivityController extends BaseController {
 
     public function detail(){
         $activity_id = I('id',0,'intval');
+
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $res_activity = $m_activity->getInfo(array('id'=>$activity_id));
+        $prize = '';
+        if(!empty($res_activity['prize'])){
+            $prize = $res_activity['prize'];
+        }
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
         $fields = 'a.*,user.nickName,user.avatarUrl';
         $where = array('activity_id'=>$activity_id);
@@ -118,7 +126,6 @@ class ActivityController extends BaseController {
         $all_prizes = array('1'=>'一等奖','2'=>'二等奖','3'=>'三等奖');
         $m_activityprize = new \Admin\Model\Smallapp\ActivityprizeModel();
         foreach ($res as $k=>$v){
-            $prize = '';
             if($v['prize_id']){
                 $res_prize = $m_activityprize->getInfo(array('id'=>$v['prize_id']));
                 $prize = $res_prize['name'];

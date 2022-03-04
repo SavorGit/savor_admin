@@ -1,0 +1,298 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/smallapp/hotelgoods/goodsadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="id" type="hidden" value="{$vinfo.id}"/>
+
+		<div class="pageFormContent modal-body">
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					商品类型:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="type" id="goods_gtype" class="form-control bs-select" title="请选择..." data-size="20" required>
+						<volist name="goods_types" id="gtype">
+							<option value="{$key}" <if condition="$vinfo['type'] eq $key"> selected </if> > {$gtype}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">名称：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="name" type="text" value="{$vinfo.name}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row" id="goods_price">
+				<label class="col-xs-12 col-sm-2 control-label" id="goods_pricelabel">价格：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="price" type="text" value="{$vinfo.price}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row" id="sale_line_price">
+				<label class="col-xs-12 col-sm-2 control-label">划线价：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="line_price" type="text" value="{$vinfo.line_price}" class="form-control" />
+				</div>
+			</div>
+
+			<div class="form-group row" id="sale_amount">
+				<label class="col-xs-12 col-sm-2 control-label">库存数量：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="amount" type="number" value="{$vinfo.amount}" class="form-control" min="1" max="999"/>
+				</div>
+			</div>
+
+			<div class="form-group row" >
+				<label class="col-xs-12 col-sm-2 control-label">是否为秒杀商品：</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="is_seckill" id="goods_seckill" class="form-control bs-select" title="请选择">
+						<option value="0" <if condition="$vinfo.is_seckill eq 0">selected</if> >否</option>
+						<option value="1" <if condition="$vinfo.is_seckill eq 1">selected</if> >是</option>
+					</select>
+				</div>
+			</div>
+
+		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">
+				公告：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<textarea name="notice" value="{$vinfo.notice}" type="textInput" class="form-control" maxlength="1000">{$vinfo.notice}</textarea>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">
+				商品介绍：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="1000">{$vinfo.intro}</textarea>
+			</div>
+		</div>
+
+		<div class="form-group row" id="tv_leftimg">
+		<label class="col-xs-12 col-sm-2 control-label">
+			大屏左侧小图：
+		</label>
+		<div class="col-xs-12 col-sm-10">
+			<div class="fileinput fileinput-new" data-fileinput>
+				<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+					<a data-target="#modal-file" href="javascript:void(0)">
+						<if condition="($vinfo['model_oss_addr'] eq 'NULL') OR $vinfo['model_oss_addr'] eq ''">
+							<img id="modelmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+							<else />
+							<img id="modelmedia_idimg" src="{$vinfo.model_oss_addr}" border="0" />
+						</if>
+						<span id="modelmedia_idimgname"></span>
+					</a>
+				</div>
+				<span class="help-block" id="img-msg">请上传50x50像素的jpg格式图片，展示效果最佳</span>
+				<div>
+					<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=modelmedia_id&rtype=2" data-browse-file>
+						选择图片
+					</a>
+					<input type="hidden" name="model_media_id" id="modelmedia_id" value="{$vinfo.model_media_id}" >
+					<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+				</div>
+			</div>
+		</div>
+		</div>
+
+		<div class="form-group row" id="goods_poster_img" >
+			<label class="col-xs-12 col-sm-2 control-label">
+				小程序弹框图片：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['poster_oss_addr'] eq 'NULL') OR $vinfo['poster_oss_addr'] eq ''">
+								<img id="postermedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="postermedia_idimg" src="{$vinfo.poster_oss_addr}" border="0" />
+							</if>
+							<span id="postermedia_idimgname"></span>
+						</a>
+					</div>
+					<span class="help-block" id="img-msg">请上传750x420像素的jpg格式图片，展示效果最佳</span>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=postermedia_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="postermedia_id" id="postermedia_id" value="{$vinfo.poster_media_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="goods_coverimg">
+			<foreach name="cover_imgs" item="dinfo" >
+				<div class="form-group row" >
+					<label class="col-xs-12 col-sm-2 control-label">
+						商品图{$dinfo.id}：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<div class="fileinput fileinput-new" data-fileinput>
+							<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+								<a data-target="#modal-file" href="javascript:void(0)">
+									<if condition="($dinfo['oss_addr'] eq 'NULL') OR $dinfo['oss_addr'] eq ''">
+										<img id="{$dinfo.imgid}img" src="/Public/admin/assets/img/noimage.png" border="0" />
+										<else />
+										<img id="{$dinfo.imgid}img" src="{$dinfo.oss_addr}" border="0" />
+									</if>
+									<span id="{$dinfo.imgid}imgname"></span>
+								</a>
+							</div>
+							<span class="help-block" id="img-msg">请上传750x420像素的jpg格式图片，展示效果最佳</span>
+							<div>
+								<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
+									选择图片
+								</a>
+								<input type="hidden" name="covermedia_id[{$dinfo.id}]" id="{$dinfo.imgid}" value="{$dinfo.media_id}" >
+								<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</foreach>
+		</div>
+
+		<div id="goods_detailimg">
+			<foreach name="detail_imgs" item="dinfo" >
+				<div class="form-group row" >
+					<label class="col-xs-12 col-sm-2 control-label">
+						详情图片{$dinfo.id}：
+					</label>
+					<div class="col-xs-12 col-sm-10">
+						<div class="fileinput fileinput-new" data-fileinput>
+							<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+								<a data-target="#modal-file" href="javascript:void(0)">
+									<if condition="($dinfo['oss_addr'] eq 'NULL') OR $dinfo['oss_addr'] eq ''">
+										<img id="{$dinfo.imgid}img" src="/Public/admin/assets/img/noimage.png" border="0" />
+										<else />
+										<img id="{$dinfo.imgid}img" src="{$dinfo.oss_addr}" border="0" />
+									</if>
+									<span id="{$dinfo.imgid}imgname"></span>
+								</a>
+							</div>
+							<span class="help-block" id="img-msg">请上传 690x高不限 像素的jpg格式图片，展示效果最佳</span>
+							<div>
+								<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
+									选择图片
+								</a>
+								<input type="hidden" name="detailmedia_id[{$dinfo.id}]" id="{$dinfo.imgid}" value="{$dinfo.media_id}" >
+								<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</foreach>
+		</div>
+		<div class="form-group row" id="goods_start_date">
+			<label class="col-xs-6 col-sm-2 control-label">
+				开始时间:
+			</label>
+			<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
+				<input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="开始时间" value="{$vinfo.start_time}" readonly>
+				<span class="input-group-btn"  >
+			  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+			  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+			</span>
+			</div>
+		</div>
+		<div class="form-group row" id="goods_end_date">
+			<label class="col-xs-6 col-sm-2 control-label">
+				结束时间:
+			</label>
+			<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
+				<input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="结束时间" value="{$vinfo.end_time}" readonly>
+				<span class="input-group-btn"  >
+			  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+			  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+			</span>
+			</div>
+		</div>
+
+<div id="goods_roll_content">
+	<foreach name="roll_contents" item="rinfo" >
+		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">滚动内容{$rinfo.id}：</label>
+			<div class="col-xs-12 col-sm-10">
+				<input name="roll_content[]" type="text" value="{$rinfo.content}" class="form-control" />
+			</div>
+		</div>
+	</foreach>
+</div>
+		<div class="form-group row" id="goods_onoffline">
+			<label class="col-xs-12 col-sm-2 control-label">
+				上/下线状态:
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<select name="status" class="form-control bs-select" data-size="20">
+					<volist name=":C('DISH_STATUS')" id="vo">
+						<option value="{$key}" <if condition="$vinfo['status'] eq $key"> selected </if> > {$vo}</option>
+					</volist>
+				</select>
+			</div>
+		</div>
+
+	</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+	</form>
+</div>
+<script>
+    $('#goods_gtype').change(function() {
+        if($(this).val()==40){
+            $('#goods_start_date').show();
+            $('#goods_end_date').show();
+            $('#goods_roll_content').show();
+            $('#tv_leftimg').show();
+            $('#goods_poster_img').show();
+            $('#sale_amount').hide();
+        }else{
+			$('#goods_start_date').hide();
+			$('#goods_end_date').hide();
+			$('#goods_roll_content').hide();
+			$('#tv_leftimg').hide();
+			$('#goods_poster_img').hide();
+			$('#sale_amount').show();
+		}
+    })
+    $('#goods_gtype').trigger('change');
+
+	$('#goods_seckill').change(function() {
+		if($(this).val()==1){
+			$('#goods_start_date').show();
+			$('#goods_end_date').show();
+			$('#goods_roll_content').show();
+			$('#tv_leftimg').show();
+			$('#goods_poster_img').show();
+			$('#sale_amount').hide();
+		}else{
+			$('#goods_start_date').hide();
+			$('#goods_end_date').hide();
+			$('#goods_roll_content').hide();
+			$('#tv_leftimg').hide();
+			$('#goods_poster_img').hide();
+			$('#sale_amount').show();
+		}
+	})
+	$('#goods_seckill').trigger('change');
+
+	$(".form-control.date").datetimepicker({
+		//minView: "month", //选择日期后，不会再跳转去选择时分秒
+		minView:"0",
+		language:  'zh-CN',
+		format: 'yyyy-mm-dd hh:ii:00',
+		todayBtn:  1,
+		autoclose: 1,
+	});
+
+</script>

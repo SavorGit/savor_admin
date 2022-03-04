@@ -52,7 +52,7 @@ class OpsstaffController extends BaseController {
         if(IS_GET){
             $m_area  = new \Admin\Model\AreaModel();
             $area_arr = $m_area->getAllArea();
-        	$vinfo = array('area_id'=>1,'status'=>1,'hscope'=>3);
+        	$vinfo = array('area_id'=>1,'status'=>1,'hscope'=>3,'is_show_area'=>0);
             $sysuser_id = 0;
         	if($id){
                 $vinfo = $m_opsstaff->getInfo(array('id'=>$id));
@@ -67,6 +67,9 @@ class OpsstaffController extends BaseController {
                     }
                     $area_arr[$k]['is_select'] = $select_str;
                 }
+                if(in_array($vinfo['hscope'],array(2,4))){
+                    $vinfo['is_show_area'] = 1;
+                }
         	}
             $sysusers = array();
             $m_sysuser = new \Admin\Model\UserModel();
@@ -80,7 +83,7 @@ class OpsstaffController extends BaseController {
                 $tinfo = array('id'=>$v['id'],'name'=>$v['remark'],'selected_str'=>$selected_str);
                 $sysusers[]=$tinfo;
             }
-            $hotel_scopes = array('1'=>'全国','2'=>'城市','3'=>'个人');
+            $hotel_scopes = array('1'=>'全国','2'=>'城市','3'=>'个人','4'=>'城市+个人');
             $this->assign('hotel_scopes', $hotel_scopes);
             $this->assign('areas', $area_arr);
             $this->assign('sysusers',$sysusers);
@@ -97,7 +100,8 @@ class OpsstaffController extends BaseController {
         	if(empty($area_id) || ($hscope==2 && empty($hotel_area_id))){
         		$this->output('缺少必要参数!', 'opsstaff/staffadd', 2, 0);
         	}
-        	$data = array('sysuser_id'=>$sysuser_id,'area_id'=>$area_id,'job'=>$job,'mobile'=>$mobile,'status'=>$status);
+        	$data = array('sysuser_id'=>$sysuser_id,'area_id'=>$area_id,'job'=>$job,'mobile'=>$mobile,'status'=>$status,
+                'hotel_role_type'=>$hscope);
             $permission = array('hotel_info'=>array('type'=>$hscope,'area_ids'=>$hotel_area_id));
             $data['permission'] = json_encode($permission);
         	if($id){

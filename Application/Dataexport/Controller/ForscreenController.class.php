@@ -867,13 +867,15 @@ class ForscreenController extends BaseController{
     }
 
     public function staticboxforscreenheartscript(){
-        ini_set("memory_limit","2048M");
+        ini_set("memory_limit","1048M");
         $start_date = I('sdate','');
         $end_date = I('edate','');
         $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
         $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
 
         $all_hotel_types = C('heart_hotel_box_type');
+        unset($all_hotel_types['2'],$all_hotel_types['3']);
+
         $m_hotel = new \Admin\Model\HotelModel();
         $field = 'a.id as hotel_id,a.name as hotel_name,area.id as area_id,area.region_name as area_name,a.hotel_box_type,a.level as hotel_level,
 	    a.is_4g,ext.trainer_id,ext.train_date,ext.maintainer_id,a.tech_maintainer';
@@ -924,7 +926,8 @@ class ForscreenController extends BaseController{
             foreach ($res_box as $box){
                 $info = array('area_name'=>$area_name,'hotel_name'=>$hotel_name,'box_name'=>$box['name'],'box_mac'=>$box['mac'],
                     'is_4g'=>$box['is_4g'],'is_open_simple'=>$box['is_open_simple'],'maintainer_name'=>$maintainer_name,
-                    'standard_box_num'=>0,'mini_box_num'=>0,'heart_num'=>0,'apk_version'=>'');
+                    'standard_box_num'=>0,'mini_box_num'=>0,'heart_num'=>0,'apk_version'=>'',
+                    'box_type_str'=>$all_hotel_types[$box['box_type']],'wifi_name'=>$box['wifi_name']);
                 if($info['is_4g']==1){
                     $info['is_4g_str'] = '是';
                 }else{
@@ -965,9 +968,11 @@ class ForscreenController extends BaseController{
             array('hotel_name','酒楼名称'),
             array('box_name','版位名称'),
             array('box_mac','版位MAC'),
+            array('box_type_str','设备类型'),
             array('apk_version','apk版本号'),
             array('is_4g_str','是否是4G'),
             array('is_open_simple_str','是否开启极简'),
+            array('wifi_name','内网WIFI名称'),
             array('mini_box_num','极简版互动数'),
             array('standard_box_num','普通版互动数'),
             array('heart_num','心跳数'),

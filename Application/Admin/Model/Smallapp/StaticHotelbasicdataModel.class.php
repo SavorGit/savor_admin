@@ -24,6 +24,7 @@ class StaticHotelbasicdataModel extends BaseModel{
 
     public function handle_hotel_basicdata(){
         $scan_qrcode_types = C('SCAN_QRCODE_TYPES');
+        $scan_qrcode_types = array();
         $all_hotel_types = C('heart_hotel_box_type');
 
         $m_hotel = new \Admin\Model\HotelModel();
@@ -42,6 +43,7 @@ class StaticHotelbasicdataModel extends BaseModel{
         $m_box = new \Admin\Model\BoxModel();
         $m_qrcodelog = new \Admin\Model\Smallapp\QrcodeLogModel();
         $m_smallapp_forscreen_record = new \Admin\Model\SmallappForscreenRecordModel();
+        $m_smallapp_iforscreen_record = new \Admin\Model\Smallapp\ForscreeninvalidrecordModel();
         $m_heartlog = new \Admin\Model\HeartAllLogModel();
 
         $m_sysuser = new \Admin\Model\UserModel();
@@ -145,7 +147,9 @@ class StaticHotelbasicdataModel extends BaseModel{
                 //扫码数
                 $fields = "count(a.id) as num";
                 $qrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
-                $qrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                if(!empty($scan_qrcode_types)){
+                    $qrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                }
                 $qrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
                 $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$qrcode_where);
                 $scancode_num = intval($res_qrcode[0]['num']);
@@ -183,6 +187,41 @@ class StaticHotelbasicdataModel extends BaseModel{
                 $user_dinner_interact_num = $m_smallapp_forscreen_record->getFeastForscreenNumByHotelId($hotel_id,$time_date,2,1);
                 $interact_sale_signnum = $m_smallapp_forscreen_record->getSaleSignForscreenNumByHotelId($hotel_id,$time_date);
 
+                //餐厅扫码数
+                $fields = "count(a.id) as num";
+                $restaurantqrcode_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+                if(!empty($scan_qrcode_types)){
+                    $restaurantqrcode_where['a.type'] = array('in',$scan_qrcode_types);
+                }
+                $restaurantqrcode_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+                $restaurantqrcode_where['_string'] = 'a.openid in(select invalidid from savor_smallapp_forscreen_invalidlist where type=2)';
+                $res_qrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);
+                $restaurant_scancode_num = intval($res_qrcode[0]['num']);
+
+                $fields = "count(DISTINCT(a.openid)) as num";
+                $res_userqrcode = $m_qrcodelog->getScanqrcodeNum($fields,$restaurantqrcode_where);
+                $restaurant_user_num = intval($res_userqrcode[0]['num']);
+
+                $restaurant_interact_standard_num = 0;
+                $iforscreen_where = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0,'a.is_valid'=>1);
+                $iforscreen_where['a.mobile_brand'] = array('neq','devtools');
+                $iforscreen_where['a.create_time'] = array(array('EGT',$start_time),array('ELT',$end_time));
+                $iforscreen_where['a.small_app_id'] = array('in',array(1,2,11));//小程序ID 1普通版,2极简版,5销售端,11 h5互动游戏
+                $fields = 'count(a.id) as fnum';
+                $res_iforscreen = $m_smallapp_iforscreen_record->getWhere($fields,$iforscreen_where,'','');
+                if(!empty($res_iforscreen)){
+                    $restaurant_interact_standard_num = $res_iforscreen[0]['fnum'];
+                }
+                $restaurant_user_lunch_zxhdnum = $restaurant_user_dinner_zxhdnum = 0;
+                $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,1,1);
+                if(!empty($res_iforscreen_box)){
+                    $restaurant_user_lunch_zxhdnum = count($res_iforscreen_box);
+                }
+                $res_iforscreen_box = $m_smallapp_iforscreen_record->getFeastInteractBoxByHotelId($hotel_id,$time_date,2,1);
+                if(!empty($res_iforscreen_box)){
+                    $restaurant_user_dinner_zxhdnum = count($res_iforscreen_box);
+                }
+
                 $add_data = array('area_id'=>$hv['area_id'],'area_name'=>$hv['area_name'],'hotel_id'=>$hv['hotel_id'],'hotel_name'=>$hv['hotel_name'],
                     'hotel_box_type'=>$hv['hotel_box_type'],'is_4g'=>$hv['is_4g'],'is_5g'=>$hv['is_5g'],'hotel_level'=>$hv['hotel_level'],'trainer_id'=>$hv['trainer_id'],'train_date'=>$hv['train_date'],
                     'maintainer_id'=>$hv['maintainer_id'],'tech_maintainer'=>$hv['tech_maintainer'],'box_num'=>$box_num,'faultbox_num'=>$faultbox_num,'normalbox_num'=>$normalbox_num,
@@ -195,6 +234,8 @@ class StaticHotelbasicdataModel extends BaseModel{
                     'user_dinner_interact_num'=>$user_dinner_interact_num,'interact_standard_num'=>$interact_standard_num,
                     'interact_mini_num'=>$interact_mini_num,'interact_sale_num'=>$interact_sale_num,'interact_sale_signnum'=>$interact_sale_signnum,
                     'interact_game_num'=>$interact_game_num,'meal_heart_num'=>$meal_heart_num,'room_heart_num'=>$room_heart_num,'room_meal_heart_num'=>$room_meal_heart_num,
+                    'restaurant_user_num'=>$restaurant_user_num,'restaurant_scancode_num'=>$restaurant_scancode_num,'restaurant_interact_standard_num'=>$restaurant_interact_standard_num,
+                    'restaurant_user_lunch_zxhdnum'=>$restaurant_user_lunch_zxhdnum,'restaurant_user_dinner_zxhdnum'=>$restaurant_user_dinner_zxhdnum,
                     'static_date'=>$static_date
                 );
                 if($hv['trainer_id']){

@@ -330,6 +330,8 @@
 				<input name="sort" type="number" value="{$vinfo.sort}" class="form-control" min="1" max="999999"/>
 			</div>
 		</div>
+
+
 		<div class="form-group row" id="shop_isrecommend">
 			<label class="col-xs-12 col-sm-2 control-label">
 				是否推荐：
@@ -360,6 +362,15 @@
 			</div>
 		</div>
 
+		<div class="form-group row" id="goods_usecoupon">
+			<label class="col-xs-12 col-sm-2 control-label">
+				是否可用优惠券：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<input type="hidden" name="is_usecoupon" value="0">
+				<input type="checkbox" value="1" class="make-switch status" name="is_usecoupon" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.is_usecoupon eq 1" >checked</if>>
+			</div>
+		</div>
 		<div class="form-group row" id="goods_onoffline">
 			<label class="col-xs-12 col-sm-2 control-label">
 				上/下线状态:
@@ -410,6 +421,7 @@
             $('#shop_poster_img').hide();
             $('#shop_isrecommend').hide();
             $('#sale_gift').hide();
+			$('#goods_usecoupon').hide();
         }else if($(this).val()==22){
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
@@ -424,7 +436,8 @@
             $('#shop_isrecommend').show();
             $('#sale_gift').show();
             $('#goods_onoffline').hide();
-        }else if($(this).val()==42){
+			$('#goods_usecoupon').hide();
+        }else if($(this).val()==42 || $(this).val()==44){
 			$('#goods_pricelabel').text('价格：');
 			$('#sale_category').hide();
 			$('#sale_supply_price').hide();
@@ -435,6 +448,11 @@
 			$('#sale_gift').hide();
 			$('#goods_sort').hide();
 			$('#goods_onoffline').show();
+			$('#goods_usecoupon').hide();
+			if($(this).val()==44){
+				$('#sale_video').hide();
+				$('#goods_usecoupon').show();
+			}
 		}else{
             $('#goods_pricelabel').text('建议零售价：');
             $('#sale_category').show();
@@ -450,6 +468,7 @@
             $('#goods_onoffline').hide();
             $('#sale_modeltype').hide();
             $('#sale_gift').hide();
+			$('#goods_usecoupon').hide();
 		}
     })
     $('#goods_gtype').trigger('change');
@@ -469,7 +488,7 @@
             $('#sale_amount').show();
             $('#sale_gift').show();
             var now_goods_type = $('#now_goods_type').val();
-            if(now_goods_type==42){
+            if(now_goods_type==42 || now_goods_type==44){
 				$('#sale_supply_price').hide();
 				$('#sale_distribution_profit').hide();
 			}else{

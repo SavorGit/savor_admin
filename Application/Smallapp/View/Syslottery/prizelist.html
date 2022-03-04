@@ -40,9 +40,11 @@
             <th>奖品图片</th>
             <th>金额</th>
             <th>概率</th>
+            <if condition="$lottery_type eq 1">
             <th>任务-投屏功能次数</th>
             <th>任务-点播热播内容次数</th>
             <th>任务-点播banner次数</th>
+            </if>
             <th>状态</th>
             <th>创建时间</th>
             <th>操作</th>
@@ -56,14 +58,16 @@
               <td data-title="奖品图片"><a href="{$dinfo.image_url}" target="_blank"><img src="{$dinfo.image_url}" ></a></td>
               <td data-title="金额">{$dinfo.money}</td>
               <td data-title="概率">{$dinfo.probability}</td>
+              <if condition="$lottery_type eq 1">
               <td data-title="任务-投屏功能次数">{$dinfo.interact_num}</td>
               <td data-title="任务-点播热播内容次数">{$dinfo.demand_hotplay_num}</td>
               <td data-title="任务-点播banner次数">{$dinfo.demand_banner_num}</td>
+              </if>
               <td data-title="状态">{$dinfo.statusstr}</td>
               <td data-title="创建时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/syslottery/prizeadd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/syslottery/prizeadd?id={$dinfo.id}&syslottery_id={$syslottery_id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
                 </div>

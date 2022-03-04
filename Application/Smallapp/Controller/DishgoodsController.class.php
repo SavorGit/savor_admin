@@ -39,11 +39,11 @@ class DishgoodsController extends BaseController {
         }else{
             $display_html = 'goodslist';
             $goods_types = C('DISH_TYPE');
-            unset($goods_types[21]);
+            unset($goods_types[21],$goods_types[40],$goods_types[43]);
             if($type){
                 $where['a.type'] = $type;
             }else{
-                $where['a.type'] = array('in',array(22,23,42));
+                $where['a.type'] = array('in',array(22,23,42,44));
             }
         }
 
@@ -262,6 +262,7 @@ class DishgoodsController extends BaseController {
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $is_recommend = I('post.is_recommend',0,'intval');
             $is_scenegift = I('post.is_scenegift',0,'intval');
+            $is_usecoupon = I('post.is_usecoupon',0,'intval');
             $gift_goods_id = I('post.gift_goods_id',0,'intval');
             $tv_media_id = I('post.tv_media_id',0,'intval');
             $tv_media_vid = I('post.tv_media_vid',0,'intval');
@@ -310,7 +311,8 @@ class DishgoodsController extends BaseController {
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>$distribution_profit,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'merchant_id'=>$merchant_id,'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'type'=>$type,'gtype'=>$gtype,'category_id'=>$category_id,
-                'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),'is_recommend'=>$is_recommend,'is_scenegift'=>$is_scenegift);
+                'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),
+                'is_recommend'=>$is_recommend,'is_scenegift'=>$is_scenegift,'is_usecoupon'=>$is_usecoupon);
             if($type==22){
                 if($flag==2){
                     $status = 1;

@@ -27,6 +27,7 @@ class RedpacketoperationModel extends BaseModel{
         $nowdate = date('Y-m-d');
         $nowtime = date('H:i');
         $nowdatetime = date("Y-m-d H:i:s");
+        $op_info = C('BONUS_OPERATION_INFO');
         foreach ($res_list as $v){
             $redpacket_type = $v['type'];//类型 1立即发送,2单次定时,3多次定时
             switch ($redpacket_type){
@@ -53,8 +54,9 @@ class RedpacketoperationModel extends BaseModel{
                     $is_send = 0;
             }
             if($is_send==1){
-                //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包 5运营红包
+                //发送范围 1全网餐厅电视,2当前餐厅所有电视,3当前包间电视 4区域红包 5运营所选餐厅单个包间单个红包
                 $scope = $v['scope'];
+                $operate_type = 2;//0正常,1程序自动重发未发完的餐厅和包间红包,2后台运营酒水红包
                 if($scope==5){
                     $fields = 'box.mac';
                     $where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
@@ -120,7 +122,7 @@ class RedpacketoperationModel extends BaseModel{
                 }else{
                     $redpacket = array('user_id'=>$op_userid,'total_fee'=>$v['total_fee'],'amount'=>$v['amount'],'surname'=>'小热点',
                         'sex'=>1,'bless_id'=>1,'scope'=>$v['scope'],'area_id'=>$v['area_id'],'mac'=>$v['mac'],'pay_fee'=>$v['total_fee'],
-                        'pay_time'=>date('Y-m-d H:i:s'),'pay_type'=>10,'status'=>4);
+                        'pay_time'=>date('Y-m-d H:i:s'),'pay_type'=>10,'status'=>4,'operate_type'=>$operate_type);
                     $trade_no = $m_redpacket->addData($redpacket);
                     if($trade_no){
                         if($v['type']==1 || $v['type']==2){
@@ -159,11 +161,15 @@ class RedpacketoperationModel extends BaseModel{
                         }
                         $user_info['avatarUrl'] = 'http://oss.littlehotspot.com/WeChat/MiniProgram/LaunchScreen/source/images/avatar/'.$user_info['id'].'.jpg';
 
+                        $user_info['nickName'] = $op_info['nickName'];
+                        $user_info['avatarUrl'] = $op_info['avatarUrl'];
+
                         $where_user = array('id'=>$op_userid);
                         $m_user->updateInfo($where_user,array('nickName'=>$user_info['nickName'],'avatarUrl'=>$user_info['avatarUrl']));
 
                         $message = array('action'=>121,'nickName'=>$user_info['nickName'],
-                            'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode);
+                            'avatarUrl'=>$user_info['avatarUrl'],'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img']);
+                        /*
                         $bwhere = array('box.mac'=>$box_mac,'box.state'=>1,'box.flag'=>0);
                         $res_box = $m_mac->getBoxByCondition('hotel.id as hotel_id',$bwhere);
                         $hotel_id = intval($res_box[0]['hotel_id']);
@@ -178,6 +184,7 @@ class RedpacketoperationModel extends BaseModel{
                             }
                             $message['avatarUrl'] = $hotel_logo;
                         }
+                        */
                         $message['headPic'] = base64_encode($message['avatarUrl']);
                         $res_netty = $m_netty->pushBox($redpacket['mac'],json_encode($message));
                         if($redpacket_type!=1){
@@ -238,13 +245,13 @@ class RedpacketoperationModel extends BaseModel{
     }
 
     public function againpush_redpacket(){
+        $nowdtime = date('Y-m-d H:i:s');
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();
         $where = array('user_id'=>$operation_uid,'status'=>array('in','4,6'),'scope'=>array('in','2,3'));
         $again_time = date('Y-m-d H:i:s',time()-3600);
         $where['add_time'] = array('egt',$again_time);
         $res_order = $m_order->getDataList('*',$where,'id asc');
-        $nowdtime = date('Y-m-d H:i:s');
         if(empty($res_order)){
             echo $nowdtime.' no send redpacket'."\r\n";
             exit;
@@ -254,6 +261,7 @@ class RedpacketoperationModel extends BaseModel{
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $m_media = new \Admin\Model\MediaModel();
         $rd_hotel = C('RD_TEST_HOTEL');
+        $op_info = C('BONUS_OPERATION_INFO');
         foreach ($res_order as $v) {
             //推送红包小程序码到电视
             $trade_no = $v['id'];
@@ -263,6 +271,7 @@ class RedpacketoperationModel extends BaseModel{
                 echo "redpacket_id: $trade_no agagin finish \r\n";
                 continue;
             }
+            /*
             $bwhere = array('box.mac'=>$v['mac'],'box.state'=>1,'box.flag'=>0);
             $res_box = $m_box->getBoxByCondition('hotel.id as hotel_id',$bwhere);
             $hotel_id = intval($res_box[0]['hotel_id']);
@@ -270,12 +279,13 @@ class RedpacketoperationModel extends BaseModel{
                 echo "redpacket_id: $trade_no hotel_id:$hotel_id not rdtest hotel \r\n";
                 continue;
             }
+            */
             $redpacket = $v;
             $http_host = 'https://mobile.littlehotspot.com';
             $box_mac = $redpacket['mac'];
             $qrinfo = $trade_no . '_' . $box_mac;
             $mpcode = $http_host . '/h5/qrcode/mpQrcode?qrinfo=' . $qrinfo;
-
+            /*
             $res_hotel_ext = $m_hotel_ext->getInfo(array('hotel_id'=>$hotel_id));
             $hotel_logo = '';
             if($res_hotel_ext['hotel_cover_media_id']>0){
@@ -283,8 +293,10 @@ class RedpacketoperationModel extends BaseModel{
                 $hotel_logo = $res_media['oss_addr'];
             }
             $user_info = array('nickName'=>$rd_hotel[$hotel_id]['short_name'],'avatarUrl'=>$hotel_logo);
+            */
+            $user_info = array('nickName'=>$op_info['nickName'],'avatarUrl'=>$op_info['avatarUrl']);
             $message = array('action'=>121, 'nickName'=>$user_info['nickName'],
-                'avatarUrl'=>$user_info['avatarUrl'], 'codeUrl'=>$mpcode,'rtype'=>2);
+                'avatarUrl'=>$user_info['avatarUrl'], 'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img']);
             $message['headPic'] = base64_encode($user_info['avatarUrl']);
             $res_netty = $m_netty->pushBox($redpacket['mac'], json_encode($message));
             $netty_data = json_encode($res_netty);

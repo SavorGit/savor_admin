@@ -3695,6 +3695,15 @@ class CrontabController extends Controller
         echo "pushsyslottery end:$now_time \r\n";
     }
 
+    public function pushsaleluckylottery(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushsalesyslottery start:$now_time \r\n";
+        $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
+        $m_syslottery->push_saleluckylottery();
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushsalesyslottery end:$now_time \r\n";
+    }
+
     public function userintegral(){
         $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
         $m_usersignin->userintegral();
@@ -3790,6 +3799,15 @@ class CrontabController extends Controller
         $m_public->handle_widthheight();
         $now_time = date('Y-m-d H:i:s');
         echo "publicwidthheight end:$now_time \r\n";
+    }
+
+    public function hotelcommonforscreen(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "hotelcommonforscreen start:$now_time \r\n";
+        $m_public = new \Admin\Model\Smallapp\StaticHotelcommonforscreenModel();
+        $m_public->handle_hotelcommonforscreen();
+        $now_time = date('Y-m-d H:i:s');
+        echo "hotelcommonforscreen end:$now_time \r\n";
     }
 
     public function cleanboxlandownload(){
@@ -4677,6 +4695,15 @@ class CrontabController extends Controller
         echo "opsstatresourceup start:$now_time \r\n";
         $m_opsstaff = new \Admin\Model\OpsstaffModel();
         $m_opsstaff->handle_stats_resourceup_data();
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatresourceup end:$now_time \r\n";
+    }
+
+    public function opsstatdevice(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsstatresourceup start:$now_time \r\n";
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $m_opsstaff->handle_stats_device_data();
         $now_time = date('Y-m-d H:i:s');
         echo "opsstatresourceup end:$now_time \r\n";
     }
