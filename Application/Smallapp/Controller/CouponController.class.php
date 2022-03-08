@@ -39,8 +39,9 @@ class CouponController extends BaseController {
     }
 
     public function couponadd(){
+        $id = I('id',0,'intval');
+        $m_coupon = new \Admin\Model\Smallapp\CouponModel();
         if(IS_POST){
-            $id = I('post.id',0,'intval');
             $name = I('post.name','','trim');
             $money = I('post.money',0,'intval');
             $min_price = I('post.min_price',0,'intval');
@@ -51,8 +52,6 @@ class CouponController extends BaseController {
 
             $data = array('name'=>$name,'money'=>$money,'min_price'=>$min_price,'remark'=>$remark,
                 'start_time'=>$start_time,'end_time'=>$end_time,'status'=>$status);
-
-            $m_coupon = new \Admin\Model\Smallapp\CouponModel();
             if($id){
                 $result = $m_coupon->updateData(array('id'=>$id),$data);
             }else{
@@ -65,6 +64,9 @@ class CouponController extends BaseController {
             }
         }else{
             $vinfo = array('status'=>1);
+            if($id){
+                $vinfo = $m_coupon->getInfo(array('id'=>$id));
+            }
             $this->assign('vinfo',$vinfo);
             $this->display();
         }
