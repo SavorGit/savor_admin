@@ -143,12 +143,12 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         }else{
             $static_date = date('Y-m-d',strtotime($static_date));
         }
-        $hotel_ids = array(395,962,1056,964,955,1064,1257,898,1250,1284,810,1033,1110,1107,
-            1124,1125,1211,1259,1262,1287,1321,847,970,1240,1271,1289);
+        $hotel_ids = array(962,964,1056,955,1064,1257,912,898,1250,1284,810,941,720,1110,
+            1211,1287,1321,847,970,1240,1271,1289,1033,1049,1062,1107,1124,1031,1029,920);
         $m_basicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $fields = 'hotel_id,hotel_name,static_date,dinner_zxrate as zxrate,wlnum,scancode_num,user_num';
         $where = array('hotel_id'=>array('in',$hotel_ids),'static_date'=>$static_date);
-        $res_datas = $m_basicdata->getDataList($fields,$where,'hotel_id asc');
+        $res_datas = $m_basicdata->getDataList($fields,$where,'dinner_zxrate asc');
         $m_order = new \Admin\Model\Smallapp\OrderModel();
         $datalist = array();
         foreach ($res_datas as $v){
