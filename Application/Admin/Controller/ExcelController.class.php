@@ -8289,10 +8289,47 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $hotel_ids = '395,962,964,1056,955,1064,1257,912,898,1250,1284,810,941,
                       720,1110,1211,1287,1321,847,970,1240,1271,1289,1033,1049,
                       1062,1107,1124,1031,1029,920';
-        $sql = "select hotel.id hotel_id,hotel.name hotel_name,ext.avg_expense savor_hotel hotel left join savor_hotel_ext ext
-                on hotel.id = ext.hotel_id where hotel.id in($hotel_ids) and hotel.flag=0 and hotel.status=1";
+        $sql = "select hotel.id hotel_id,hotel.name hotel_name,ext.avg_expense 
+                from savor_hotel hotel left join savor_hotel_ext ext
+                on hotel.id = ext.hotel_id where hotel.id in($hotel_ids) and hotel.flag=0 and hotel.state=1";
         $result = M()->query($sql);
-        print_r($result);
-        
+        $m_HotelgoodsModel =  new \Admin\Model\Smallapp\HotelGoodsModel();
+        foreach($result as $key=>$v){
+            //版位数
+            $sql ="select count(tv.id) as nums from savor_tv as tv
+                   left join savor_box box on tv.box_id=box.id
+                   left join savor_room room on box.room_id=room.id
+                   left join savor_hotel hotel on room.hotel_id=hotel.id
+                   where hotel.id=".$v['hotel_id']." and box.flag=0 and box.state=1 and tv.flag=0 and tv.state=1";
+            
+            $ret = M()->query($sql);
+            $result[$key]['tv_nums'] = $ret[0]['nums'];
+            
+            //上了那几款酒
+            $where = array('h.hotel_id'=>$v['hotel_id'],'g.type'=>43,'g.status'=>1);
+            $g_ret = $m_HotelgoodsModel->getGoodsList('g.name goods_name',$where,'g.id desc');
+            $wine_str = '';
+            $space    = '';
+            foreach($g_ret as $kk=>$vv){
+                $wine_str .=$space.$vv['goods_name'];
+                $space = ',';
+            }
+            $result[$key]['wine_str'] = $wine_str;
+            if($v['avg_expense']==0){
+                $result[$key]['avg_expense'] = '';
+            }
+            
+        }
+        $xlsCell = array(
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('tv_nums','正常版位数量'),
+            array('avg_expense','人均消费'),
+            array('wine_str','本店售酒')
+            
+        );
+        $xlsName = '三代机+网络电视包间版位数统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
 }
