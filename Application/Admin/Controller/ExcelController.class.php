@@ -8285,4 +8285,14 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'whnetboxroomnums';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
+    public function tjBxHotel(){
+        $hotel_ids = '395,962,964,1056,955,1064,1257,912,898,1250,1284,810,941,
+                      720,1110,1211,1287,1321,847,970,1240,1271,1289,1033,1049,
+                      1062,1107,1124,1031,1029,920';
+        $sql = "select hotel.id hotel_id,hotel.name hotel_name,ext.avg_expense savor_hotel hotel left join savor_hotel_ext ext
+                on hotel.id = ext.hotel_id where hotel.id in($hotel_ids) and hotel.flag=0 and hotel.status=1";
+        $result = M()->query($sql);
+        print_r($result);
+        
+    }
 }
