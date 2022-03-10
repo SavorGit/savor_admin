@@ -1,0 +1,83 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/sellwine/datalist" method="post" >
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <input type="hidden" name="_order" value="{$_order}"/>
+    <input type="hidden" name="_sort" value="{$_sort}"/>
+     <div class="searchBar">
+      <div class="clearfix">
+          <div class="form-inline">
+              <div class="form-group">
+                  <div class="input-group input-group-sm">统计时间：</div>
+                  <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$date}" data-ymd="true">
+                      <input name="date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$date}">
+                      <span class="input-group-btn">
+                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="input-group input-group-sm"></div>
+                  <div class="input-group">
+                      <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="input-group input-group-sm pull-right">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                    </span>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+    
+    </div> 
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" >
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>序号</th>
+            <th>日期</th>
+            <th>酒楼ID</th>
+            <th>酒楼名称</th>
+            <th>开机率</th>
+            <th>屏幕数</th>
+            <th>扫码数</th>
+            <th>用户数</th>
+            <th>下单数</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="序号">{$i}</td>
+              <td data-title="日期">{$dinfo.static_date}</td>
+              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="开机率">{$dinfo.zxrate}</td>
+              <td data-title="屏幕数">{$dinfo.wlnum}</td>
+              <td data-title="扫码数">{$dinfo.scancode_num}</td>
+              <td data-title="用户数">{$dinfo.user_num}</td>
+              <td data-title="下单数">{$dinfo.order_num}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+<!--  {$page}-->
+</div>
