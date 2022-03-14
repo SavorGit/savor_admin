@@ -7,8 +7,9 @@
                 <label class="col-xs-12 col-sm-2 control-label">抽奖类型：</label>
                 <div class="col-xs-12 col-sm-10">
                     <select name="type" id="lottery_type" class="form-control bs-select" title="请选择">
-                        <option value="1" <if condition="$vinfo.type eq 1">selected</if> >系统抽奖</option>
-                        <option value="2" <if condition="$vinfo.type eq 2">selected</if> >幸运抽奖</option>
+                        <volist name="lottery_types" id="lname">
+                            <option value="{$key}" <if condition="$key eq $vinfo['type']">selected</if> >{$lname}</option>
+                        </volist>
                     </select>
                 </div>
             </div>

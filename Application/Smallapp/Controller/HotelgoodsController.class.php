@@ -236,9 +236,9 @@ class HotelgoodsController extends BaseController {
             }else{
                 $res_goods = $m_goods->getInfo($where);
             }
-            if(!empty($res_goods)){
-                $this->output('名称不能重复', "hotelgoods/goodsadd", 2, 0);
-            }
+//            if(!empty($res_goods)){
+//                $this->output('名称不能重复', "hotelgoods/goodsadd", 2, 0);
+//            }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             if(empty($price))   $price = 0;

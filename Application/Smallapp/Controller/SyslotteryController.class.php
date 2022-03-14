@@ -7,15 +7,21 @@ use Admin\Controller\BaseController ;
  */
 class SyslotteryController extends BaseController {
 
+    public $lottery_types = array('1'=>'系统抽奖','2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)');
+
     public function datalist(){
         $status = I('status',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
+        $type = I('type',0,'intval');
 
         $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
         $where = array();
         if($status){
             $where['status'] = $status;
+        }
+        if($type){
+            $where['type'] = $type;
         }
         $start = ($pageNum-1)*$size;
         $orderby = 'id desc';
@@ -28,6 +34,7 @@ class SyslotteryController extends BaseController {
             $res_hotel = $m_hotel->getOne($v['hotel_id']);
             $data_list[$k]['hotel_name'] = $res_hotel['name'];
             $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
+            $data_list[$k]['type_str'] = $this->lottery_types[$v['type']];
             if($v['type']==1){
                 $send_time = $v['start_date'].'至'.$v['end_date']." {$v['timing']}";
             }else{
@@ -43,6 +50,8 @@ class SyslotteryController extends BaseController {
                 $data_list[$k]['statusstr'] = '不可用';
             }
         }
+        $this->assign('lottery_types',$this->lottery_types);
+        $this->assign('type',$type);
         $this->assign('status',$status);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
@@ -127,6 +136,7 @@ class SyslotteryController extends BaseController {
             $hlist = $res['hotels'];
             $areas = $res['areas'];
 
+            $this->assign('lottery_types', $this->lottery_types);
             $this->assign('hlist', $hlist);
             $this->assign('areas', $areas);
             $this->assign('vinfo',$vinfo);
