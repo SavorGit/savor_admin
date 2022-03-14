@@ -21,7 +21,7 @@ class SellwineController extends BaseController {
         $end_time = "$static_date 23:59:59";
 
         $m_basicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $fields = 'hotel_id,hotel_name,static_date,dinner_zxrate as zxrate,wlnum,scancode_num,user_num';
+        $fields = 'hotel_id,hotel_name,static_date,dinner_zxrate as zxrate,wlnum,scancode_num,user_num,heart_num';
         $where = array('hotel_id'=>array('in',$hotel_ids),'static_date'=>$static_date);
         if(!empty($hotel_name)){
             $where['hotel_name'] = array('like',"%{$hotel_name}%");
@@ -40,7 +40,8 @@ class SellwineController extends BaseController {
                 $order_num = $res_orders[0]['num'];
             }
             $info = array('static_date'=>$v['static_date'],'hotel_name'=>$v['hotel_name'],'hotel_id'=>$v['hotel_id'],'zxrate'=>$v['zxrate'],
-                'wlnum'=>$v['wlnum'],'scancode_num'=>$v['scancode_num'],'user_num'=>$v['user_num'],'order_num'=>$order_num
+                'wlnum'=>$v['wlnum'],'scancode_num'=>$v['scancode_num'],'user_num'=>$v['user_num'],'heart_num'=>$v['heart_num'],
+                'order_num'=>$order_num
             );
             $datalist[]=$info;
         }

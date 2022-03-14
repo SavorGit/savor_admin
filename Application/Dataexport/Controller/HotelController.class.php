@@ -149,7 +149,7 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         $hotel_ids = array(395,962,964,1056,955,1064,1257,912,898,1250,1284,810,941,720,1110,
             1211,1287,1321,847,970,1240,1271,1289,1033,1049,1062,1107,1124,1031,1029,920);
         $m_basicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
-        $fields = 'hotel_id,hotel_name,static_date,dinner_zxrate as zxrate,wlnum,scancode_num,user_num';
+        $fields = 'hotel_id,hotel_name,static_date,dinner_zxrate as zxrate,wlnum,scancode_num,user_num,heart_num';
         $where = array('hotel_id'=>array('in',$hotel_ids),'static_date'=>$static_date);
         $res_datas = $m_basicdata->getDataList($fields,$where,'dinner_zxrate asc');
         $m_order = new \Admin\Model\Smallapp\OrderModel();
@@ -165,7 +165,8 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
                 $order_num = $res_orders[0]['num'];
             }
             $info = array('static_date'=>$v['static_date'],'hotel_name'=>$v['hotel_name'],'hotel_id'=>$v['hotel_id'],'zxrate'=>$v['zxrate'],
-                'wlnum'=>$v['wlnum'],'scancode_num'=>$v['scancode_num'],'user_num'=>$v['user_num'],'order_num'=>$order_num
+                'wlnum'=>$v['wlnum'],'scancode_num'=>$v['scancode_num'],'user_num'=>$v['user_num'],'heart_num'=>$v['heart_num'],
+                'order_num'=>$order_num
             );
             $datalist[]=$info;
         }
@@ -173,6 +174,7 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
             array('static_date','日期'),
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
+            array('heart_num','心跳数'),
             array('zxrate','开机率'),
             array('wlnum','屏幕数'),
             array('scancode_num','扫码数'),
