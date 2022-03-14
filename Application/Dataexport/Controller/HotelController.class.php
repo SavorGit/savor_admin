@@ -143,7 +143,10 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         }else{
             $static_date = date('Y-m-d',strtotime($static_date));
         }
-        $hotel_ids = array(962,964,1056,955,1064,1257,912,898,1250,1284,810,941,720,1110,
+        $start_time = "$static_date 00:00:00";
+        $end_time = "$static_date 23:59:59";
+
+        $hotel_ids = array(395,962,964,1056,955,1064,1257,912,898,1250,1284,810,941,720,1110,
             1211,1287,1321,847,970,1240,1271,1289,1033,1049,1062,1107,1124,1031,1029,920);
         $m_basicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $fields = 'hotel_id,hotel_name,static_date,dinner_zxrate as zxrate,wlnum,scancode_num,user_num';
@@ -154,6 +157,8 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         foreach ($res_datas as $v){
             $order_num = 0;
             $where = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
+            $where['a.status'] = array('not in',array(10,11));
+            $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
             $ofields = 'count(a.id) as num';
             $res_orders = $m_order->getOrderinfoList($ofields,$where,'a.id desc');
             if(!empty($res_orders)){
