@@ -53,7 +53,15 @@ class GlobalconfigController extends BaseController {
         $data_hotellottery_people_num = array('config_value'=>$hotellottery_people_num);
         $rts = $m_sys_config->editData($data_hotellottery_people_num, 'hotellottery_people_num');
 
-        $data_seckill_roll_content = array('config_value'=>json_encode($seckill_roll_content));
+        $now_seckill_roll_content = array();
+        if(!empty($seckill_roll_content)){
+            foreach ($seckill_roll_content as $v){
+                if(!empty($v)){
+                    $now_seckill_roll_content[]=trim($v);
+                }
+            }
+        }
+        $data_seckill_roll_content = array('config_value'=>json_encode($now_seckill_roll_content));
         $rts = $m_sys_config->editData($data_seckill_roll_content, 'seckill_roll_content');
 
         $sys_list = $m_sys_config->getList(array('status'=>1));
