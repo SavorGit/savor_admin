@@ -6,7 +6,7 @@ use Common\Lib\Page;
 class HotelPrizepoolModel extends BaseModel{
 	protected $tableName='smallapp_hotel_prizepool';
 
-    public function getHotelprizeList($fields,$where,$order, $start=0,$size=5){
+    public function getHotelpoolprizeList($fields,$where,$order, $start=0,$size=5){
         $list = $this->alias('a')
             ->join('savor_hotel h on a.hotel_id=h.id','left')
             ->field($fields)
@@ -26,4 +26,6 @@ class HotelPrizepoolModel extends BaseModel{
         $data = array('list'=>$list,'page'=>$show);
         return $data;
     }
+
+
 }

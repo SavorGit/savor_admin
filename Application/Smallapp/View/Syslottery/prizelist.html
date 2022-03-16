@@ -38,6 +38,7 @@
             <th>ID</th>
             <th>名称</th>
             <th>奖品图片</th>
+            <th>类型</th>
             <th>金额</th>
             <th>概率</th>
             <if condition="$lottery_type eq 1">
@@ -56,6 +57,7 @@
               <td data-title="ID">{$dinfo.id}</td>
               <td data-title="名称">{$dinfo.name}</td>
               <td data-title="奖品图片"><a href="{$dinfo.image_url}" target="_blank"><img src="{$dinfo.image_url}" ></a></td>
+              <td data-title="类型">{$dinfo.typestr}</td>
               <td data-title="金额">{$dinfo.money}</td>
               <td data-title="概率">{$dinfo.probability}</td>
               <if condition="$lottery_type eq 1">

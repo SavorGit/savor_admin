@@ -8,6 +8,7 @@ use Admin\Controller\BaseController ;
 class SyslotteryController extends BaseController {
 
     public $lottery_types = array('1'=>'系统抽奖','2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)');
+    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖');
 
     public function datalist(){
         $status = I('status',0,'intval');
@@ -169,6 +170,7 @@ class SyslotteryController extends BaseController {
                 $data_list[$k]['statusstr'] = '不可用';
             }
             $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
+            $data_list[$k]['typestr'] = $this->lottery_prize_types[$v['type']];
         }
         $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
         $lottery_info = $m_syslottery->getInfo(array('id'=>$syslottery_id));
@@ -194,6 +196,7 @@ class SyslotteryController extends BaseController {
             $media_id = I('post.media_id',0,'intval');
             $money = I('post.money',0,'intval');
             $probability = I('post.probability',0,'intval');
+            $prizepool_prize_id = I('post.prizepool_prize_id',0,'intval');
             $type = I('post.type',0,'intval');
             $status = I('post.status',0,'intval');
             $interact_num = I('post.interact_num',0,'intval');
@@ -208,13 +211,22 @@ class SyslotteryController extends BaseController {
                 }
             }
 
-            $data = array('syslottery_id'=>$syslottery_id,'name'=>$name,'money'=>$money,'probability'=>$probability,'type'=>$type,
+            $data = array('syslottery_id'=>$syslottery_id,'name'=>$name,'money'=>$money,'probability'=>$probability,'prizepool_prize_id'=>$prizepool_prize_id,'type'=>$type,
                 'interact_num'=>$interact_num,'demand_hotplay_num'=>$demand_hotplay_num,'demand_banner_num'=>$demand_banner_num,'status'=>$status);
             if($media_id){
                 $m_media = new \Admin\Model\MediaModel();
                 $res_media = $m_media->getMediaInfoById($media_id);
                 $data['image_url'] = $res_media['oss_path'];
             }
+            if($prizepool_prize_id){
+                $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
+                $res_prizepool = $m_prizepool->getInfo(array('id'=>$prizepool_prize_id));
+                $data['name'] = $res_prizepool['name'];
+                $data['money'] = $res_prizepool['money'];
+                $data['image_url'] = $res_prizepool['image_url'];
+                $data['type'] = $res_prizepool['type'];
+            }
+
             if($id){
                 $m_syslottery_prize->updateData(array('id'=>$id),$data);
             }else{
@@ -236,9 +248,21 @@ class SyslotteryController extends BaseController {
                 }
                 $vinfo = array('probability'=>$all_probability-$now_probability,'interact_num'=>0,'demand_hotplay_num'=>0,'demand_banner_num'=>0,'type'=>1);
             }
+            $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
+            $fields = 'a.id,a.name as prize_name,a.type,p.name';
+            $where = array('hp.hotel_id'=>$lottery_info['hotel_id'],'p.status'=>1,'a.status'=>1);
+            $res_prizelist = $m_prizepool->getHotelpoolprizeList($fields,$where,'p.id asc');
+            $prizepools = array();
+            foreach ($res_prizelist as $v){
+                $name = $v['name'].'-'.$v['prize_name']."({$this->lottery_prize_types[$v['type']]})";
+                $prizepools[]=array('prizepool_prize_id'=>$v['id'],'name'=>$name);
+            }
+
             $vinfo['lottery_type'] = $lottery_info['type'];
             $this->assign('vinfo',$vinfo);
             $this->assign('syslottery_id',$syslottery_id);
+            $this->assign('prizepools',$prizepools);
+            $this->assign('prize_types',$this->lottery_prize_types);
             $this->display();
         }
     }

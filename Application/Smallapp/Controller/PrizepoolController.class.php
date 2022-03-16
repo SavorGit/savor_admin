@@ -215,7 +215,7 @@ class PrizepoolController extends BaseController {
         $start  = ($page-1) * $size;
         $fields = 'a.id,a.add_time,h.id as hotel_id,h.name as hotel_name';
         $m_hotelpools = new \Admin\Model\Smallapp\HotelPrizepoolModel();
-        $result = $m_hotelpools->getHotelprizeList($fields,$where,'a.id desc', $start,$size);
+        $result = $m_hotelpools->getHotelpoolprizeList($fields,$where,'a.id desc', $start,$size);
         $datalist = $result['list'];
 
         $this->assign('prizepool_id',$prizepool_id);
