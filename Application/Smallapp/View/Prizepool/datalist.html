@@ -1,0 +1,98 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/prizepool/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/prizepool/pooladd" title="新增奖池" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增奖池</a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
+
+            <div class="form-inline">
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">状态：</div>
+                <div class="input-group">
+                    <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                        <option value=0>全部</option>
+                        <volist name="pool_status" id="pinfo">
+                            <option value="{$key}" <if condition="$key eq $status">selected</if> >{$pinfo}</option><br>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="名称">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+              </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>状态</th>
+                        <th>所在酒楼数</th>
+                        <th>创建时间</th>
+                        <th class="table-tool">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <volist name="datalist" id="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID">{$dinfo.id}</td>
+                            <td data-title="名称">{$dinfo.name}</td>
+                            <td data-title="状态">{$dinfo.statusstr}</td>
+                            <td data-title="所在酒楼数">
+                                <if condition="$dinfo.hotels gt 0">
+                                    <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="prizepool/hotelpools" href="{$host_url}/smallapp/prizepool/hotelpools?prizepool_id={$dinfo.id}" >
+                                        {$dinfo.hotels}</a>
+                                    <else/>
+                                    {$dinfo.hotels}
+                                </if>
+                            </td>
+                            <td data-title="创建时间">{$dinfo.add_time}</td>
+                            <td class="table-tool" data-title="操作">
+                                <div class="tools-edit">
+                                    <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/prizepool/pooladd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a data-tip="奖品信息" title="奖品信息" target="navTab" rel="prizepool/prizelist" href="{$host_url}/smallapp/prizepool/prizelist?prizepool_id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-list"></i>
+                                    </a>
+                                    <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/prizepool/hoteladd?prizepool_id={$dinfo.id}" class="btn btn-warning btn-icon">
+                                        <i class="fa fa-hotel"></i>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>
