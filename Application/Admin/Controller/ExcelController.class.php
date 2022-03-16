@@ -8332,4 +8332,77 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'whnetboxroomnums';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
+    public function yanghesj(){
+        $hotel_ids = "395,390,393,404,411,415,427,459,632,663,
+                      701,720,810,847,863,898,912,920,928,931,
+                      941,955,962,964,970,1023,1029,1029,1031,1033,
+                      1038,1041,1047,1048,1049,1052,1056,1062,1064,1065,
+                      1107,1110,1114,1123,1124,1125,1126,1176,1197,1211,
+                      1221,1230,1232,1240,1250,1257,1259,1262,1271,1284,
+                      1286,1287,1289,1304,1313,1321";
+        $sql = "select hotel.id hotel_id,hotel.name hotel_name,ext.avg_expense,area.region_name,hotel.addr,
+                food.name food_name
+                from savor_hotel hotel 
+                left join savor_area_info area on area.id=hotel.area_id
+                left join savor_hotel_ext ext
+                left join savor_hotel_food_style    food  on ext.food_style_id= food.id
+                on hotel.id = ext.hotel_id where hotel.id in($hotel_ids) and hotel.flag=0 and hotel.state=1";
+        echo $sql;exit;
+        
+        $sql = "select hotel.id hotel_id,hotel.name hotel_name,ext.avg_expense
+        from savor_hotel hotel left join savor_hotel_ext ext
+        on hotel.id = ext.hotel_id where hotel.id in($hotel_ids) and hotel.flag=0 and hotel.state=1";
+        
+        $result = M()->query($sql);
+        
+        foreach($result as $key=>$v){
+            //版位数
+            $sql ="select count(tv.id) as nums from savor_tv as tv
+                   left join savor_box box on tv.box_id=box.id
+                   left join savor_room room on box.room_id=room.id
+                   left join savor_hotel hotel on room.hotel_id=hotel.id
+                   where hotel.id=".$v['hotel_id']." and box.flag=0 and box.state=1 and tv.flag=0 and tv.state=1";
+            
+            $ret = M()->query($sql);
+            $result[$key]['tv_nums'] = $ret[0]['nums'];
+            
+            //包间数量 
+            $sql ="select box.id from savor_box box
+                   left join savor_room room on box.room_id=room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where hotel.id=".$v['hotel_id']." and box.state=1 and box.flag=0 and room.type=1 group by room.id";
+            $ret = M()->query($sql);
+            $result[$key]['room_nums'] = count($ret);
+            //大厅数量
+            
+            $sql ="select box.id from savor_box box
+                   left join savor_room room on box.room_id=room.id
+                   left join savor_hotel hotel on room.hotel_id= hotel.id
+                   where hotel.id=".$v['hotel_id']." and box.state=1 and box.flag=0 and room.type=2 group by room.id";
+            $ret = M()->query($sql);
+            $result[$key]['dt_nums'] = count($ret);
+            
+            if($v['avg_expense']==0){
+                $result[$key]['avg_expense'] = '';
+            }
+            
+            
+        }
+        
+        $xlsCell = array(
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('region_name','所属区域'),
+            array('addr','地址'),
+            array('avg_expense','人均消费'),
+            array('food_name','特色菜'),
+            array('tv_nums','屏幕数量'),
+            array('room_nums','包间数量'),
+            array('dt_nums','大厅数量'),
+            
+        );
+        $xlsName = '三代机+网络电视包间版位数统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
 }
