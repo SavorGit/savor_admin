@@ -129,12 +129,14 @@ class PrizepoolController extends BaseController {
             $type = I('post.type',0,'intval');
             $status = I('post.status',0,'intval');
 
-            if($type==1 && empty($money)){
-                $this->output('请输入中奖金额', "prizepool/prizeadd", 2, 0);
-            }
-            $avg_money = 0.3;
-            if($avg_money*$amount>$money){
-                $this->output('请输入合适的数量', "prizepool/prizeadd", 2, 0);
+            if($type==1){
+                if(empty($money)){
+                    $this->output('请输入中奖金额', "prizepool/prizeadd", 2, 0);
+                }
+                $avg_money = 0.3;
+                if($avg_money*$amount>$money){
+                    $this->output('请输入合适的数量', "prizepool/prizeadd", 2, 0);
+                }
             }
             $data = array('prizepool_id'=>$prizepool_id,'name'=>$name,'money'=>$money,'type'=>$type,
                 'amount'=>$amount,'status'=>$status);
@@ -153,6 +155,7 @@ class PrizepoolController extends BaseController {
                 $redis = \Common\Lib\SavorRedis::getInstance();
                 $redis->select(1);
                 $money_queue = C('SAPP_PRIZEPOOL_MONEYQUEUE').$id;
+                $redis->del($money_queue);
                 foreach ($all_money as $mv){
                     $redis->rpush($money_queue,$mv);
                 }
