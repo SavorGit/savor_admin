@@ -132,7 +132,10 @@ class PrizepoolController extends BaseController {
             if($type==1 && empty($money)){
                 $this->output('请输入中奖金额', "prizepool/prizeadd", 2, 0);
             }
-
+            $avg_money = 0.3;
+            if($avg_money*$amount>$money){
+                $this->output('请输入合适的数量', "prizepool/prizeadd", 2, 0);
+            }
             $data = array('prizepool_id'=>$prizepool_id,'name'=>$name,'money'=>$money,'type'=>$type,
                 'amount'=>$amount,'status'=>$status);
             if($media_id){
@@ -143,7 +146,16 @@ class PrizepoolController extends BaseController {
             if($id){
                 $m_prizepoolprize->updateData(array('id'=>$id),$data);
             }else{
-                $m_prizepoolprize->add($data);
+                $id = $m_prizepoolprize->add($data);
+            }
+            if($type==1){
+                $all_money = bonus_random($money,$amount,$avg_money,$money);
+                $redis = \Common\Lib\SavorRedis::getInstance();
+                $redis->select(1);
+                $money_queue = C('SAPP_PRIZEPOOL_MONEYQUEUE').$id;
+                foreach ($all_money as $mv){
+                    $redis->rpush($money_queue,$mv);
+                }
             }
             $this->output('操作成功!', 'prizepool/prizelist');
         }else{

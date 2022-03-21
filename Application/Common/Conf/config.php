@@ -49,6 +49,8 @@ $config = array(
     'SAPP_FIND_TOP'=>'smallapp:findtop',
     'SAPP_HOTPLAY_PRONUM'=>'smallapp:hotplaypronum',
     'SAPP_FORSCREENTRACK'=>'smallapp:trackforscreen:',
+    'SAPP_PRIZEPOOL'=>'smallapp:prizepool:',
+    'SAPP_PRIZEPOOL_MONEYQUEUE'=>'smallapp:prizepool:moneyqueue:',
     'FEAST_TIME'=>array('lunch'=>array('11:30','14:30'),'dinner'=>array('18:00','21:00')),
     'SALEFEAST_TIME'=>array('lunch'=>array('11:00','14:00'),'dinner'=>array('16:45','21:00')),
     'SAPP_CANCEL_FORSCREEN'=>'smallapp:cancelforscreen:',
