@@ -704,6 +704,7 @@ class HotelController extends BaseController {
 		$hotel_id                    = I('post.id');
 		$save                        = [];
 		$save['name']                = I('post.name','','trim');
+		$save['short_name']          = I('post.short_name','','trim');
 		$save['addr']                = I('post.addr','','trim');
 		$save['contractor']          = I('post.contractor','','trim');
 
