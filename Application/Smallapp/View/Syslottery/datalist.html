@@ -75,7 +75,7 @@
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/syslottery/syslotteryadd?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a data-tip="奖品信息" title="奖品信息" target="navTab" rel="syslottery/prizelist" href="{$host_url}/smallapp/syslottery/prizelist?syslottery_id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <a data-tip="奖品信息" title="奖品信息-{$dinfo.id}" target="navTab" rel="syslottery/prizelist" href="{$host_url}/smallapp/syslottery/prizelist?syslottery_id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-list"></i>
                   </a>
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/syslottery/syslotterydel?id={$dinfo.id}"  class="btn btn-danger btn-icon">
