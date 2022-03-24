@@ -17,7 +17,7 @@ class PrizepoolprizeModel extends BaseModel{
         return $datas;
     }
 
-    public function handle_notclaime_money(){
+    public function handle_notclaime_prize(){
         $res_data = $this->getDataList('*',array('status'=>1),'id asc');
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(1);

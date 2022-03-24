@@ -3704,6 +3704,15 @@ class CrontabController extends Controller
         echo "pushsalesyslottery end:$now_time \r\n";
     }
 
+    public function resetnotclaimeprize(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "resetnotclaimeprize start:$now_time \r\n";
+        $m_syslottery = new \Admin\Model\Smallapp\PrizepoolprizeModel();
+        $m_syslottery->handle_notclaime_prize();
+        $now_time = date('Y-m-d H:i:s');
+        echo "resetnotclaimeprize end:$now_time \r\n";
+    }
+
     public function userintegral(){
         $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
         $m_usersignin->userintegral();
