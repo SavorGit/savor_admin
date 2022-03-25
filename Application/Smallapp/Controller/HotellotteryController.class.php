@@ -7,6 +7,9 @@ use Admin\Controller\BaseController ;
  */
 class HotellotteryController extends BaseController {
 
+    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖');
+    public $lottery_prize_level = array('1'=>'一等奖','2'=>'二等奖','3'=>'三等奖');
+
     public function datalist(){
         $status = I('status',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
@@ -27,7 +30,9 @@ class HotellotteryController extends BaseController {
         foreach ($data_list as $k=>$v){
             $res_hotel = $m_hotel->getOne($v['hotel_id']);
             $data_list[$k]['hotel_name'] = $res_hotel['name'];
-            $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
+            if(!empty($v['image_url'])){
+                $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
+            }
             $send_time = $v['start_date'].'至'.$v['end_date']." {$v['timing']}";
             $data_list[$k]['send_time'] = $send_time;
             $res_user = $m_sysuser->getUserInfo($v['sysuser_id']);
@@ -66,7 +71,11 @@ class HotellotteryController extends BaseController {
             $data = array('name'=>$name,'prize'=>$prize,'wait_time'=>$wait_time,'hotel_id'=>$hotel_id,'type'=>$type,
                 'start_date'=>$start_date,'end_date'=>$end_date,'sysuser_id'=>$userInfo['id'],'status'=>$status);
             if(empty($hour) || empty($minute)){
-                $this->output('发送时间不能为空', 'syslottery/syslotteryadd',2,0);
+                $this->output('发送时间不能为空', 'hotellottery/lotteryadd',2,0);
+            }
+            $now_date = date('Y-m-d');
+            if($now_date>$start_date){
+                $this->output('请选择正确的日期', 'hotellottery/lotteryadd',2,0);
             }
             $data['timing'] = $hour.':'.$minute;
             if(!empty($media_id)){
@@ -75,14 +84,85 @@ class HotellotteryController extends BaseController {
                 $data['image_url'] = $res_media['oss_path'];
             }
             if($id){
-                $result = $m_hotellottery->updateData(array('id'=>$id),$data);
+                $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+                $res_send_activity = $m_activity->getInfo(array('syslottery_id'=>$id,'type'=>10));
+                if(!empty($res_send_activity)){
+                    $this->output('活动已发起不能重复使用', 'hotellottery/lotteryadd',2,0);
+                }
+                $m_hotellottery_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
+                $fields = '*';
+                $res_prize = $m_hotellottery_prize->getDataList($fields,array('hotellottery_id'=>$id,'status'=>1),'id desc');
+                $redis = new \Common\Lib\SavorRedis();
+                $redis->select(1);
+                $key_pool = C('SAPP_PRIZEPOOL');
+                if($status==1){
+                    $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
+                    $total_amount = 0;
+                    foreach ($res_prize as $v){
+                        $total_amount+=$v['amount'];
+                        $prizepool_prize_id = $v['prizepool_prize_id'];
+                        $res_pool = $m_prizepool->getInfo(array('id'=>$prizepool_prize_id));
+                        $db_last_num = $res_pool['amount'] - ($res_pool['send_amount']+$v['amount']);
+
+                        $lucky_pool_key = $key_pool.$prizepool_prize_id;
+                        $res_cachepool = $redis->get($lucky_pool_key);
+                        $cache_num = 0;
+                        if(!empty($res_cachepool)){
+                            $res_cachepool = json_decode($res_cachepool,true);
+                            $cache_num = count($res_cachepool);
+                        }
+                        $cache_last_num = $res_pool['amount'] - ($cache_num+$v['amount']);
+                        if($db_last_num<0 || $cache_last_num<0){
+                            $this->output("奖品:{$res_pool['name']}中奖池数量不够", 'hotellottery/lotteryadd',2,0);
+                        }
+                    }
+                    foreach ($res_prize as $v){
+                        $amount=$v['amount'];
+                        $prizepool_prize_id = $v['prizepool_prize_id'];
+                        $lucky_pool_key = $key_pool.$prizepool_prize_id;
+                        $res_cachepool = $redis->get($lucky_pool_key);
+                        $prizepool_data = array();
+                        if(!empty($res_cachepool)){
+                            $prizepool_data = json_decode($res_cachepool,true);
+                        }
+                        for ($i=1;$i<=$amount;$i++){
+                            $p_key = $hotel_id.$id.$i;
+                            $prizepool_data[$p_key] = 2;
+                        }
+                        $redis->set($lucky_pool_key,json_encode($prizepool_data));
+                    }
+                    if($total_amount==0){
+                        $this->output('请先设置奖品', 'hotellottery/lotteryadd',2,0);
+                    }
+                    if($total_amount>9){
+                        $this->output('奖品数量不能超过9个', 'hotellottery/lotteryadd',2,0);
+                    }
+                }else{
+                    foreach ($res_prize as $v){
+                        $amount=$v['amount'];
+                        $prizepool_prize_id = $v['prizepool_prize_id'];
+                        $lucky_pool_key = $key_pool.$prizepool_prize_id;
+                        $res_cachepool = $redis->get($lucky_pool_key);
+                        $prizepool_data = array();
+                        if(!empty($res_cachepool)){
+                            $prizepool_data = json_decode($res_cachepool,true);
+                        }
+                        for ($i=1;$i<=$amount;$i++){
+                            $p_key = $hotel_id.$id.$i;
+                            unset($prizepool_data[$p_key]);
+                        }
+                        $redis->set($lucky_pool_key,json_encode($prizepool_data));
+                    }
+
+                }
+                $m_hotellottery->updateData(array('id'=>$id),$data);
             }else{
-                $result = $m_hotellottery->addData($data);
-                $id = $result;
+                $data['status'] = 2;
+                $m_hotellottery->addData($data);
             }
             $this->output('操作成功!', 'hotellottery/datalist');
         }else{
-            $vinfo = array('status'=>0,'wait_time'=>30,'type'=>2);
+            $vinfo = array('status'=>2,'wait_time'=>30,'type'=>2);
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_hotellottery->getInfo(array('id'=>$id));
@@ -119,11 +199,152 @@ class HotellotteryController extends BaseController {
     public function lotterydel(){
         $id = I('get.id',0,'intval');
         $m_hotellottery = new \Admin\Model\Smallapp\HotellotteryModel();
+        $vinfo = $m_hotellottery->getInfo(array('id'=>$id));
         $result = $m_hotellottery->delData(array('id'=>$id));
         if($result){
+            if($vinfo['status']==1){
+                $m_hotellottery_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
+                $fields = '*';
+                $res_prize = $m_hotellottery_prize->getDataList($fields,array('hotellottery_id'=>$id,'status'=>1),'id desc');
+                if(!empty($res_prize)){
+                    $redis = new \Common\Lib\SavorRedis();
+                    $redis->select(1);
+                    $key_pool = C('SAPP_PRIZEPOOL');
+                    foreach ($res_prize as $v){
+                        $amount=$v['amount'];
+                        $prizepool_prize_id = $v['prizepool_prize_id'];
+                        $lucky_pool_key = $key_pool.$prizepool_prize_id;
+                        $res_cachepool = $redis->get($lucky_pool_key);
+                        $prizepool_data = array();
+                        if(!empty($res_cachepool)){
+                            $prizepool_data = json_decode($res_cachepool,true);
+                        }
+                        for ($i=1;$i<=$amount;$i++){
+                            $p_key = $vinfo['hotel_id'].$id.$i;
+                            unset($prizepool_data[$p_key]);
+                        }
+                        $redis->set($lucky_pool_key,json_encode($prizepool_data));
+                    }
+                }
+
+            }
             $this->output('操作成功!', 'hotellottery/datalist',2);
         }else{
             $this->output('操作失败', 'hotellottery/datalist',2,0);
+        }
+    }
+
+    public function prizelist(){
+        $lottery_id = I('lottery_id',0,'intval');
+        $status = I('status',0,'intval');
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+
+        $m_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
+        $where = array('a.hotellottery_id'=>$lottery_id);
+        if($status){
+            $where['a.status'] = $status;
+        }
+        $start = ($pageNum-1)*$size;
+        $orderby = 'a.id desc';
+        $fields = 'a.*,p.name,p.image_url,p.type';
+        $res_list = $m_prize->getHotelpoolprizeList($fields,$where,$orderby, $start,$size);
+        $data_list = $res_list['list'];
+        $oss_host = get_oss_host();
+        foreach ($data_list as $k=>$v){
+            if($v['status']==1){
+                $data_list[$k]['statusstr'] = '可用';
+            }else{
+                $data_list[$k]['statusstr'] = '不可用';
+            }
+            $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
+            $data_list[$k]['typestr'] = $this->lottery_prize_types[$v['type']];
+            $data_list[$k]['levelstr'] = $this->lottery_prize_level[$v['level']];
+        }
+        $m_lottery = new \Admin\Model\Smallapp\HotellotteryModel();
+        $lottery_info = $m_lottery->getInfo(array('id'=>$lottery_id));
+
+        $this->assign('data',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->assign('status',$status);
+        $this->assign('lottery_id',$lottery_id);
+        $this->assign('lottery_type',$lottery_info['type']);
+        $this->display();
+    }
+
+    public function prizeadd(){
+        $id = I('id',0,'intval');
+        $lottery_id = I('lottery_id',0,'intval');
+        $m_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
+        $m_lottery = new \Admin\Model\Smallapp\HotellotteryModel();
+        $lottery_info = $m_lottery->getInfo(array('id'=>$lottery_id));
+        if(IS_POST){
+            $prizepool_prize_id = I('post.prizepool_prize_id',0,'intval');
+            $amount = I('post.amount',0,'intval');
+            $level = I('post.level',0,'intval');
+            $status = I('post.status',0,'intval');
+
+            $m_hotellottery_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
+            $fields = '*';
+            $res_prize = $m_hotellottery_prize->getDataList($fields,array('hotellottery_id'=>$lottery_id),'id desc');
+            
+            $data = array('hotellottery_id'=>$lottery_id,'prizepool_prize_id'=>$prizepool_prize_id,
+                'level'=>$level,'amount'=>$amount,'status'=>$status);
+            if($id){
+                $m_prize->updateData(array('id'=>$id),$data);
+            }else{
+                $m_prize->add($data);
+            }
+
+            $m_lottery->updateData(array('id'=>$lottery_id),array('status'=>2));
+            if(!empty($res_prize)){
+                $redis = new \Common\Lib\SavorRedis();
+                $redis->select(1);
+                $key_pool = C('SAPP_PRIZEPOOL');
+                foreach ($res_prize as $v){
+                    $amount=$v['amount'];
+                    $prizepool_prize_id = $v['prizepool_prize_id'];
+                    $lucky_pool_key = $key_pool.$prizepool_prize_id;
+                    $res_cachepool = $redis->get($lucky_pool_key);
+                    $prizepool_data = array();
+                    if(!empty($res_cachepool)){
+                        $prizepool_data = json_decode($res_cachepool,true);
+                    }
+                    for ($i=1;$i<=$amount;$i++){
+                        $p_key = $lottery_info['hotel_id'].$lottery_id.$i;
+                        unset($prizepool_data[$p_key]);
+                    }
+                    $redis->set($lucky_pool_key,json_encode($prizepool_data));
+                }
+            }
+
+            $this->output('操作成功!', 'hotellottery/prizelist');
+        }else{
+            $vinfo = array();
+            if($id){
+                $oss_host = get_oss_host();
+                $vinfo = $m_prize->getInfo(array('id'=>$id));
+                $vinfo['oss_addr'] = $oss_host.$vinfo['image_url'];
+                $lottery_id = $vinfo['hotellottery_id'];
+            }
+            $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
+            $fields = 'a.id,a.name as prize_name,a.type,p.name';
+            $where = array('hp.hotel_id'=>$lottery_info['hotel_id'],'p.status'=>1,'a.status'=>1);
+            $res_prizelist = $m_prizepool->getHotelpoolprizeList($fields,$where,'p.id asc');
+            $prizepools = array();
+            foreach ($res_prizelist as $v){
+                $name = $v['name'].'-'.$v['prize_name']."({$this->lottery_prize_types[$v['type']]})";
+                $prizepools[]=array('prizepool_prize_id'=>$v['id'],'name'=>$name);
+            }
+
+            $vinfo['lottery_type'] = $lottery_info['type'];
+            $this->assign('vinfo',$vinfo);
+            $this->assign('lottery_id',$lottery_id);
+            $this->assign('prizepools',$prizepools);
+            $this->assign('prize_levels',$this->lottery_prize_level);
+            $this->display();
         }
     }
 

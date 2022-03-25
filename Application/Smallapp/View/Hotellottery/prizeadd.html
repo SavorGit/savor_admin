@@ -1,0 +1,79 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+  <form method="post" action="{$host_url}/smallapp/hotellottery/prizeadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+    <input type="hidden" name="lottery_id" value="{$lottery_id}">
+
+    <div class="pageFormContent modal-body">
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                奖池奖品:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select name="prizepool_prize_id" id="prizepool_prize_id" class="form-control bs-select" >
+                    <volist name="prizepools" id="ppinfo">
+                        <option value="{$ppinfo.prizepool_prize_id}" <if condition="$ppinfo.prizepool_prize_id eq $vinfo['prizepool_prize_id']"> selected </if> >{$ppinfo['name']}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                奖品等级:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select name="level" class="form-control bs-select" >
+                    <option value="0">无</option>
+                    <volist name="prize_levels" id="plinfo">
+                        <option value="{$key}" <if condition="$key eq $vinfo['level']"> selected </if> >{$plinfo}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                数量:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="number" class="form-control" name="amount" min="0" max="100" value="{$vinfo.amount}" required >
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                状态：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="hidden" name="status" value="2">
+                <input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.status eq 1" >checked</if>>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" type="submit">保存</button>     
+    </div>
+
+  </form>
+</div>
+<script type="text/javascript">
+
+  $('.date-reset').click(function(){
+    $(this).parent().prev().val('')
+  });
+  $(function(){
+    $(".form-control.date").datetimepicker({
+      //minView: "month", //选择日期后，不会再跳转去选择时分秒
+      minView:"0",
+      language:  'zh-CN',
+      format: 'yyyy-mm-dd hh:ii:00',
+      todayBtn:  1,
+      autoclose: 1,
+    });
+  })
+</script>

@@ -74,7 +74,9 @@ class ActivityController extends BaseController {
                     }
                 }
                 $data_list[$k]['nums'] = $nums;
-                $data_list[$k]['image_url'] = $oss_host.'/'.$v['image_url'];
+                if(!empty($v['image_url'])){
+                    $data_list[$k]['image_url'] = $oss_host.'/'.$v['image_url'];
+                }
                 $data_list[$k]['status_str'] = $all_status[$v['status']];
             }
         }

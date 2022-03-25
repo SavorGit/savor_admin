@@ -7,9 +7,9 @@
             <div class="form-group row" >
                 <label class="col-xs-12 col-sm-2 control-label">抽奖类型：</label>
                 <div class="col-xs-12 col-sm-10">
-                    <select name="type" class="form-control bs-select" title="请选择">
-                        <option value="1" <if condition="$vinfo.type eq 1">selected</if> >霸王餐抽奖</option>
+                    <select name="type" class="form-control bs-select" title="请选择" required>
                         <option value="2" <if condition="$vinfo.type eq 2">selected</if> >售酒抽奖</option>
+                        <option value="1" <if condition="$vinfo.type eq 1">selected</if> disabled>霸王餐抽奖</option>
                     </select>
                 </div>
             </div>
@@ -23,6 +23,7 @@
                 </div>
             </div>
 
+            <!--
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
                     奖品名称:
@@ -58,7 +59,7 @@
                 </div>
             </div>
         </div>
-
+        -->
 
         <div class="form-group row send_time1">
             <label class="col-xs-12 col-sm-2 control-label">发送日期：</label>
