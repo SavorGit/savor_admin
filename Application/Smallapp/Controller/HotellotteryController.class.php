@@ -285,14 +285,23 @@ class HotellotteryController extends BaseController {
             $amount = I('post.amount',0,'intval');
             $level = I('post.level',0,'intval');
             $status = I('post.status',0,'intval');
+            if($level==1 && $amount>1){
+                $this->output('一等奖只能设置一个奖品', 'hotellottery/prizelist',2);
+            }
 
             $m_hotellottery_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
             $fields = '*';
             $res_prize = $m_hotellottery_prize->getDataList($fields,array('hotellottery_id'=>$lottery_id),'id desc');
-            
+
             $data = array('hotellottery_id'=>$lottery_id,'prizepool_prize_id'=>$prizepool_prize_id,
                 'level'=>$level,'amount'=>$amount,'status'=>$status);
             if($id){
+                $condition = array('level'=>$level,'status'=>1);
+                $condition['id'] = array('neq',$id);
+                $res_pinfo = $m_prize->getInfo($condition);
+                if(!empty($res_pinfo)){
+                    $this->output('请勿设置相同等级的奖品', 'hotellottery/prizelist',2);
+                }
                 $m_prize->updateData(array('id'=>$id),$data);
             }else{
                 $m_prize->add($data);

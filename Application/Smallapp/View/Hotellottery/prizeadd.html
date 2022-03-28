@@ -25,7 +25,6 @@
             </label>
             <div class="col-xs-12 col-sm-10">
                 <select name="level" class="form-control bs-select" >
-                    <option value="0">无</option>
                     <volist name="prize_levels" id="plinfo">
                         <option value="{$key}" <if condition="$key eq $vinfo['level']"> selected </if> >{$plinfo}</option>
                     </volist>

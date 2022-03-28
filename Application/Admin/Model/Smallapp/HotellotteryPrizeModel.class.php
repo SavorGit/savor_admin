@@ -14,16 +14,19 @@ class HotellotteryPrizeModel extends BaseModel{
             ->order($order)
             ->limit($start,$size)
             ->select();
-
-        $count = $this->alias('a')
-            ->join('savor_smallapp_prizepool_prize p on a.prizepool_prize_id=p.id','left')
-            ->field('a.id')
-            ->where($where)
-            ->select();
-        $count = count($count);
-        $objPage = new Page($count,$size);
-        $show = $objPage->admin_page();
-        $data = array('list'=>$list,'page'=>$show);
+        if($start>=0 && $size>0){
+            $count = $this->alias('a')
+                ->join('savor_smallapp_prizepool_prize p on a.prizepool_prize_id=p.id','left')
+                ->field('a.id')
+                ->where($where)
+                ->select();
+            $count = count($count);
+            $objPage = new Page($count,$size);
+            $show = $objPage->admin_page();
+            $data = array('list'=>$list,'page'=>$show);
+        }else{
+            $data = $list;
+        }
         return $data;
     }
 

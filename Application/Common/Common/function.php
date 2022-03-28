@@ -158,6 +158,38 @@ function bonus_random($total,$num,$min,$max){
 }
 /**
  * 发送主题消息
+ * @param $message消息内容
+ * @param $type 20 发红包到用户零钱
+ * @return Ambigous <boolean, mixed>
+ */
+function sendSmallappTopicMessage($message,$type){
+    if(empty($message) || empty($type)){
+        return false;
+    }
+    $all_type = array('20'=>'bonustomoney','30'=>'rewardmoney','40'=>'fileconversion','50'=>'prizemoney');
+    $accessId = C('OSS_ACCESS_ID');
+    $accessKey= C('OSS_ACCESS_KEY');
+    $endPoint = C('QUEUE_ENDPOINT');
+    $topicName = C('TOPIC_SMALLAPP_NAME');
+
+    $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
+    $mir_time = getmicrotime();
+    $serial_num = $mir_time*10000;
+    if(!is_array($message)){
+        $message = array($message);
+    }
+    $now_message = array();
+    foreach ($message as $v){
+        $now_message[] = array('order_id'=>$v,'serial_num'=>"$serial_num");
+    }
+    $messageBody = base64_encode(json_encode($now_message));
+    $messageTag = $all_type[$type];
+    $res = $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
+    return $res;
+}
+
+/**
+ * 发送主题消息
  * @param $message消息内容 酒楼ID或者array('酒楼ID')
  * @param $type 1.酒楼的基础信息、2.包间的基础信息、3.机顶盒的基础信息、4.电视的基础信息、5.音量开关、6.节目单、
  * 7.宣传片、8.A类广告、9.B类广告、10.C类广告、11.点播、12.推荐菜 、13.机顶盒apk、14.loading图、15.酒楼logo图

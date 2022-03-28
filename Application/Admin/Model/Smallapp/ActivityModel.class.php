@@ -177,7 +177,7 @@ class ActivityModel extends BaseModel{
 
         $start_time = date('Y-m-d 00:00:00');
         $end_time = date('Y-m-d 23:59:59');
-        $where = array('status'=>1,'type'=>array('in',array(1,4,10)));
+        $where = array('status'=>1,'type'=>array('in',array(1,4)));
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $res = $this->getDataList('*',$where,'id desc');
         if(empty($res)){
