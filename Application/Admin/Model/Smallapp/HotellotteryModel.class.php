@@ -107,7 +107,8 @@ class HotellotteryModel extends BaseModel{
         $end_time = date('Y-m-d 23:59:59');
         $where = array('status'=>1,'type'=>10);
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
-        $res = $this->getDataList('*',$where,'id desc');
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $res = $m_activity->getDataList('*',$where,'id desc');
         if(empty($res)){
             echo "no activity \r\n";
             exit;
@@ -133,7 +134,7 @@ class HotellotteryModel extends BaseModel{
                 $all_lottery_box_openid = array();
                 if(empty($res_apply_user)){
                     $is_send_prize = 0;
-                    $this->updateData(array('id'=>$activity_id),array('status'=>2));
+                    $m_activity->updateData(array('id'=>$activity_id),array('status'=>2));
                     echo "activity_id:{$v['id']} no lottery user \r\n";
                 }else{
                     $lottery_user_num = 0;
@@ -148,7 +149,7 @@ class HotellotteryModel extends BaseModel{
 
                     if($lottery_user_num<$v['people_num']){
                         $is_send_prize = 0;
-                        $this->updateData(array('id'=>$activity_id),array('status'=>2));
+                        $m_activity->updateData(array('id'=>$activity_id),array('status'=>2));
 
                         $netty_data = array('action'=>157,'content'=>'参与人数不足，无法开奖');
                         $message = json_encode($netty_data);
@@ -186,12 +187,12 @@ class HotellotteryModel extends BaseModel{
                 }
                 $all_prizes = array();
                 $first_num = $other_num = 0;
-                foreach ($res_prize as $v){
-                    $all_prizes[$v['level']]=$v;
-                    if($v['level']==1){
-                        $first_num=$v['amount'];
+                foreach ($res_prize as $pzv){
+                    $all_prizes[$pzv['level']]=$pzv;
+                    if($pzv['level']==1){
+                        $first_num=$pzv['amount'];
                     }else{
-                        $other_num+=$v['amount'];
+                        $other_num+=$pzv['amount'];
                     }
                 }
 
@@ -200,11 +201,12 @@ class HotellotteryModel extends BaseModel{
                 if($box_num>1){
                     $boxs = array_keys($all_lottery_box_openid);
                     shuffle($boxs);
+                    $now_prize_id = $res_prize[0]['id'];
                     unset($res_prize[0]);
                     $now_boxs = $boxs[0];
                     $now_openids = $all_lottery_box_openid[$now_boxs];
                     shuffle($now_openids);
-                    $lottery_user_openids[$now_openids[0]]=1;
+                    $lottery_user_openids[$now_openids[0]]=array('level'=>1,'prize_id'=>$now_prize_id);
                     unset($now_openids[0]);
 
                     $last_box_openids = array();
@@ -260,7 +262,7 @@ class HotellotteryModel extends BaseModel{
                         $prize_info = $all_prizes[$lp_info['level']];
 
                         $info = array('openid'=>$uv['openid'],'dish_name'=>$prize_info['name'],'dish_image'=>$prize_info['image_url'],
-                            'level'=>$lp_info['level'],'room_name'=>$uv['box_name']);
+                            'level'=>$lp_info['level'],'room_name'=>$uv['box_name'],'box_mac'=>$uv['box_mac']);
                         $prize_users[$uv['openid']]=$info;
 
                         $prize_apply_ids[]=$uv['id'];
@@ -271,11 +273,11 @@ class HotellotteryModel extends BaseModel{
                             $message_oid = $prize_info['prizepool_prize_id'].'_'.$uv['id'];
                             sendSmallappTopicMessage($message_oid,50);
                         }
-
                     }
                 }
+
                 if(!empty($prize_apply_ids)){
-                    $awhere = array('activity_id'=>$v['id']);
+                    $awhere = array('activity_id'=>$activity_id);
                     $awhere['id'] = array('not in',$prize_apply_ids);
                     $m_activityapply->updateData($awhere,array('status'=>3));
                 }
@@ -310,7 +312,7 @@ class HotellotteryModel extends BaseModel{
                         echo "box_mac:{$bv['mac']} push ok \r\n";
                     }
                 }
-                $this->updateData(array('id'=>$activity_id),array('status'=>2));
+                $m_activity->updateData(array('id'=>$activity_id),array('status'=>2));
             }
         }
     }
