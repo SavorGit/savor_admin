@@ -134,8 +134,8 @@ class ActivityController extends BaseController {
                 if($res_prize['level']>0){
                     $prize = $all_prizes[$res_prize['level']].':'.$prize;
                 }
+                $res[$k]['prize'] = $prize;
             }
-            $res[$k]['prize'] = $prize;
             $res[$k]['box_name'] = $boxs[$v['box_mac']];
             $res[$k]['status_str'] = $all_status[$v['status']];
         }
