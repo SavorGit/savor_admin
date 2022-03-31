@@ -83,6 +83,9 @@ class HotellotteryController extends BaseController {
                 $res_media = $m_media->getMediaInfoById($media_id);
                 $data['image_url'] = $res_media['oss_path'];
             }
+            $day_diff = (strtotime($data['end_date'])-strtotime($data['start_date']))/86400;
+            $day = $day_diff+1;
+
             if($id){
                 $m_activity = new \Admin\Model\Smallapp\ActivityModel();
                 $res_send_activity = $m_activity->getInfo(array('syslottery_id'=>$id,'type'=>10));
@@ -98,11 +101,14 @@ class HotellotteryController extends BaseController {
                 if($status==1){
                     $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
                     $total_amount = 0;
+
                     foreach ($res_prize as $v){
                         $total_amount+=$v['amount'];
+                        $now_amount = $v['amount']*$day;
+
                         $prizepool_prize_id = $v['prizepool_prize_id'];
                         $res_pool = $m_prizepool->getInfo(array('id'=>$prizepool_prize_id));
-                        $db_last_num = $res_pool['amount'] - ($res_pool['send_amount']+$v['amount']);
+                        $db_last_num = $res_pool['amount'] - ($res_pool['send_amount']+$now_amount);
 
                         $lucky_pool_key = $key_pool.$prizepool_prize_id;
                         $res_cachepool = $redis->get($lucky_pool_key);
@@ -111,13 +117,24 @@ class HotellotteryController extends BaseController {
                             $res_cachepool = json_decode($res_cachepool,true);
                             $cache_num = count($res_cachepool);
                         }
-                        $cache_last_num = $res_pool['amount'] - ($cache_num+$v['amount']);
+                        $cache_last_num = $res_pool['amount'] - ($cache_num+$now_amount);
                         if($db_last_num<0 || $cache_last_num<0){
-                            $this->output("奖品:{$res_pool['name']}中奖池数量不够", 'hotellottery/lotteryadd',2,0);
+                            $msg = '';
+                            if($day>1){
+                                $msg = $day.'天';
+                            }
+                            $this->output("奖品:{$res_pool['name']},{$msg}奖池数量不够", 'hotellottery/lotteryadd',2,0);
                         }
                     }
+                    if($total_amount==0){
+                        $this->output('请先设置奖品', 'hotellottery/lotteryadd',2,0);
+                    }
+                    if($total_amount>9){
+                        $this->output('奖品数量不能超过9个', 'hotellottery/lotteryadd',2,0);
+                    }
+
                     foreach ($res_prize as $v){
-                        $amount=$v['amount'];
+                        $amount=$v['amount']*$day;
                         $prizepool_prize_id = $v['prizepool_prize_id'];
                         $lucky_pool_key = $key_pool.$prizepool_prize_id;
                         $res_cachepool = $redis->get($lucky_pool_key);
@@ -131,15 +148,10 @@ class HotellotteryController extends BaseController {
                         }
                         $redis->set($lucky_pool_key,json_encode($prizepool_data));
                     }
-                    if($total_amount==0){
-                        $this->output('请先设置奖品', 'hotellottery/lotteryadd',2,0);
-                    }
-                    if($total_amount>9){
-                        $this->output('奖品数量不能超过9个', 'hotellottery/lotteryadd',2,0);
-                    }
+
                 }else{
                     foreach ($res_prize as $v){
-                        $amount=$v['amount'];
+                        $amount=$v['amount']*$day;
                         $prizepool_prize_id = $v['prizepool_prize_id'];
                         $lucky_pool_key = $key_pool.$prizepool_prize_id;
                         $res_cachepool = $redis->get($lucky_pool_key);
@@ -200,6 +212,19 @@ class HotellotteryController extends BaseController {
         $id = I('get.id',0,'intval');
         $m_hotellottery = new \Admin\Model\Smallapp\HotellotteryModel();
         $vinfo = $m_hotellottery->getInfo(array('id'=>$id));
+        $day_diff = (strtotime($vinfo['end_date'])-strtotime($vinfo['start_date']))/86400;
+        $all_day = $day_diff+1;
+
+        $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+        $res_send_activity = $m_activity->getAll('*',array('syslottery_id'=>$id,'type'=>10),0,1,'id desc');
+        if(!empty($res_send_activity)){
+            $now_end_date = date('Y-m-d',strtotime($res_send_activity[0]['start_time']));
+            $now_day_diff = (strtotime($now_end_date)-strtotime($vinfo['start_date']))/86400;
+            $day = $all_day-($now_day_diff+1);
+        }else{
+            $day = $all_day;
+        }
+
         $result = $m_hotellottery->delData(array('id'=>$id));
         if($result){
             if($vinfo['status']==1){
@@ -211,7 +236,7 @@ class HotellotteryController extends BaseController {
                     $redis->select(1);
                     $key_pool = C('SAPP_PRIZEPOOL');
                     foreach ($res_prize as $v){
-                        $amount=$v['amount'];
+                        $amount=$v['amount']*$day;
                         $prizepool_prize_id = $v['prizepool_prize_id'];
                         $lucky_pool_key = $key_pool.$prizepool_prize_id;
                         $res_cachepool = $redis->get($lucky_pool_key);
@@ -288,15 +313,39 @@ class HotellotteryController extends BaseController {
             if($level==1 && $amount>1){
                 $this->output('一等奖只能设置一个奖品', 'hotellottery/prizelist',2);
             }
+            $day_diff = (strtotime($lottery_info['end_date'])-strtotime($lottery_info['start_date']))/86400;
+            $day = $day_diff+1;
 
-            $m_hotellottery_prize = new \Admin\Model\Smallapp\HotellotteryPrizeModel();
+            $now_amount = $amount*$day;
+            $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
+            $res_pool = $m_prizepool->getInfo(array('id'=>$prizepool_prize_id));
+            $db_last_num = $res_pool['amount'] - ($res_pool['send_amount']+$now_amount);
+            $redis = new \Common\Lib\SavorRedis();
+            $redis->select(1);
+            $key_pool = C('SAPP_PRIZEPOOL');
+            $lucky_pool_key = $key_pool.$prizepool_prize_id;
+            $res_cachepool = $redis->get($lucky_pool_key);
+            $cache_num = 0;
+            if(!empty($res_cachepool)){
+                $res_cachepool = json_decode($res_cachepool,true);
+                $cache_num = count($res_cachepool);
+            }
+            $cache_last_num = $res_pool['amount'] - ($cache_num+$now_amount);
+            if($db_last_num<0 || $cache_last_num<0){
+                $msg = '';
+                if($day>1){
+                    $msg = $day.'天';
+                }
+                $this->output("奖品:{$res_pool['name']},{$msg}奖池数量不够", 'hotellottery/prizelist',2);
+            }
+
             $fields = '*';
-            $res_prize = $m_hotellottery_prize->getDataList($fields,array('hotellottery_id'=>$lottery_id),'id desc');
+            $res_prize = $m_prize->getDataList($fields,array('hotellottery_id'=>$lottery_id),'id desc');
 
             $data = array('hotellottery_id'=>$lottery_id,'prizepool_prize_id'=>$prizepool_prize_id,
                 'level'=>$level,'amount'=>$amount,'status'=>$status);
             if($id){
-                $condition = array('level'=>$level,'status'=>1);
+                $condition = array('hotellottery_id'=>$lottery_id,'level'=>$level,'status'=>1);
                 $condition['id'] = array('neq',$id);
                 $res_pinfo = $m_prize->getInfo($condition);
                 if(!empty($res_pinfo)){
@@ -309,11 +358,16 @@ class HotellotteryController extends BaseController {
 
             $m_lottery->updateData(array('id'=>$lottery_id),array('status'=>2));
             if(!empty($res_prize)){
-                $redis = new \Common\Lib\SavorRedis();
-                $redis->select(1);
-                $key_pool = C('SAPP_PRIZEPOOL');
+                $m_activity = new \Admin\Model\Smallapp\ActivityModel();
+                $res_send_activity = $m_activity->getAll('*',array('syslottery_id'=>$lottery_id,'type'=>10),0,1,'id desc');
+                if(!empty($res_send_activity)){
+                    $now_end_date = date('Y-m-d',strtotime($res_send_activity[0]['start_time']));
+                    $now_day_diff = (strtotime($now_end_date)-strtotime($lottery_info['start_date']))/86400;
+                    $day = $day-($now_day_diff+1);
+                }
+
                 foreach ($res_prize as $v){
-                    $amount=$v['amount'];
+                    $amount=$v['amount']*$day;
                     $prizepool_prize_id = $v['prizepool_prize_id'];
                     $lucky_pool_key = $key_pool.$prizepool_prize_id;
                     $res_cachepool = $redis->get($lucky_pool_key);
