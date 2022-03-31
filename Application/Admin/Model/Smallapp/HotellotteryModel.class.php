@@ -305,95 +305,10 @@ class HotellotteryModel extends BaseModel{
 
                 foreach ($res_pdata as $bv){
                     $ret = $m_netty->pushBox($bv['mac'],$message);
-                    if(isset($ret['error_code'])){
-                        $ret_str = json_encode($ret);
-                        echo "box_mac:{$bv['mac']} push error $ret_str \r\n";
-                    }else{
-                        echo "box_mac:{$bv['mac']} push ok \r\n";
-                    }
+                    $ret_str = json_encode($ret);
+                    echo "box_mac:{$bv['mac']} push $ret_str \r\n";
                 }
                 $m_activity->updateData(array('id'=>$activity_id),array('status'=>2));
-            }
-        }
-    }
-
-    public function pushTaskLotteryToMobile(){
-        $now_endtime = time() - 300;
-        $now_endtime = date('Y-m-d H:i:s',$now_endtime);
-        $where = array('status'=>2,'type'=>8);
-        $where['lottery_time'] = array('egt',$now_endtime);
-        $res = $this->getDataList('*',$where,'id desc');
-        if(empty($res)){
-            echo "no activity \r\n";
-            exit;
-        }
-        $ucconfig = C('ALIYUN_SMS_CONFIG');
-        $alisms = new \Common\Lib\AliyunSms();
-        $all_prizes = array('1'=>'一等奖','2'=>'二等奖','3'=>'三等奖');
-        $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
-        $m_taskuser = new \Admin\Model\Integral\TaskUserModel();
-        $m_user = new \Admin\Model\Smallapp\UserModel();
-        $m_account_sms_log = new \Admin\Model\AccountMsgLogModel();
-        $now_hour = date('Y-m-d H:i:00');
-        foreach ($res as $v){
-            $lottery_time = strtotime($v['lottery_time'])+60;
-            $lottery_time = date('Y-m-d H:i:00',$lottery_time);
-            if($lottery_time==$now_hour){
-                $activity_id = $v['id'];
-                $where = array('a.activity_id'=>$activity_id,'a.status'=>2);
-                $fields = 'a.id,a.activity_id,a.hotel_id,a.hotel_name,a.box_mac,a.box_name,a.openid,a.mobile,a.prize_id,prize.name as prize_name,prize.level';
-                $res_apply_user = $m_activityapply->alias('a')
-                    ->join('savor_smallapp_activity_prize prize on a.prize_id=prize.id','left')
-                    ->field($fields)
-                    ->where($where)
-                    ->order('prize.level asc')
-                    ->select();
-                if(empty($res_apply_user)){
-                    echo "activity_id:$activity_id no applylottery user \r\n";
-                    continue;
-                }
-                $res_taskuser = $m_taskuser->getInfo(array('id'=>$v['task_user_id']));
-                $res_user = $m_user->getOne('mobile',array('openid'=>$res_taskuser['openid'],'status'=>1),'id desc');
-                $staff_mobile = $res_user['mobile'];
-
-                $user_sms = array();
-                $staff_sms = array();
-                foreach ($res_apply_user as $uv){
-                    $user_sms[] = array('mobile'=>$uv['mobile'],'content'=>"{$all_prizes[$uv['level']]}（{$uv['prize_name']}）");
-                    $mobile_str = substr($uv['mobile'],-4);
-                    $staff_sms[$uv['level']][]=array('content'=>"{$uv['box_name']}包间手机尾号{$mobile_str}（{$uv['prize_name']}）");
-                }
-
-                $staff_content = '';
-                foreach ($staff_sms as $sk=>$sv){
-                    $staff_content.=$all_prizes[$sk].'：';
-                    $lottery_content = '';
-                    foreach ($sv as $cv){
-                        $lottery_content.=$cv['content'].'、';
-                    }
-                    $lottery_content = rtrim($lottery_content,'、');
-                    $staff_content.=$lottery_content.'；';
-                }
-                $staff_content = rtrim($staff_content,'；');
-
-                $params = array('name'=>$staff_content);
-                $template_code = $ucconfig['send_tasklottery_sponsor_templateid'];
-                $res_data = $alisms::sendSms($staff_mobile,$params,$template_code);
-                $data = array('type'=>14,'status'=>1,'create_time'=>date('Y-m-d H:i:s'),'update_time'=>date('Y-m-d H:i:s'),
-                    'url'=>join(',',$params),'tel'=>$staff_mobile,'resp_code'=>$res_data->Code,'msg_type'=>3
-                );
-                $m_account_sms_log->addData($data);
-
-                foreach ($user_sms as $uv){
-                    $uparams = array('name'=>$uv['content']);
-                    $template_code = $ucconfig['send_tasklottery_user_templateid'];
-                    $res_data = $alisms::sendSms($uv['mobile'],$uparams,$template_code);
-                    $data = array('type'=>14,'status'=>1,'create_time'=>date('Y-m-d H:i:s'),'update_time'=>date('Y-m-d H:i:s'),
-                        'url'=>join(',',$uparams),'tel'=>$staff_mobile,'resp_code'=>$res_data->Code,'msg_type'=>3
-                    );
-                    $m_account_sms_log->addData($data);
-                }
-
             }
         }
     }
