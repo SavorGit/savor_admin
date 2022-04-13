@@ -15,8 +15,8 @@ class PrinterController extends Controller {
         16=>array('name'=>'1带6二维码图','num'=>6,'codesize'=>array('big'=>20,'small'=>11),
             'template_img'=>'template6.jpg',
             'big_image_position'=>'g_east,x_200,y_40',
-            'image_position'=>array('g_nw,x_30,y_30','g_west,x_30,y_30','g_sw,x_30,y_30',
-            'g_nw,x_320,y_30','g_west,x_320,y_30','g_sw,x_320,y_30')
+            'image_position'=>array('g_nw,x_70,y_30','g_west,x_70,y_30','g_sw,x_70,y_30',
+            'g_nw,x_360,y_30','g_west,x_360,y_30','g_sw,x_360,y_30')
         ),
         14=>array('name'=>'1带4二维码图','num'=>4,'codesize'=>array(),
             'template_img'=>'',
@@ -123,7 +123,8 @@ class PrinterController extends Controller {
                 $qrcode_contents[$v['parent_id']][]=$v['id'];
             }
             $file_path = $qrcode_create_path."$content.png";//本地文件路径
-            Qrcode::png($content,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
+            $qrcontent = encrypt_data($content);
+            Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
 
             $file_name = $this->oss_code_path."$content.png";
             $res_upinfo = $aliyunoss->uploadFile($file_name, $file_path);
@@ -173,23 +174,21 @@ class PrinterController extends Controller {
         $cache_data['status'] = 4;
         $cache_data['etime'] = time();
         $cache_data['img_urls'] = $all_printer_imgs;
-        $redis->set($cache_key,json_encode($cache_data),600);
+        $redis->set($cache_key,json_encode($cache_data),300);
 
         //处理订阅消息到打印机
         $accessId = C('OSS_ACCESS_ID');
         $accessKey= C('OSS_ACCESS_KEY');
         $endPoint = C('QUEUE_ENDPOINT');
         $topicName = 'TagPrinter-LHS';
-        $messageTag = '3CF8628250DC';
+        $messageTag = '0015005DA6CD';
         $now_message = array('orientation'=>'PORTRAIT','printWidth'=>100.0,'printHeight'=>60.0,
             'printLeftSide'=>0.0,'printTopSide'=>0.0,'copiesNum'=>1);
         $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
         foreach ($all_printer_imgs as $v){
             $now_message['printFiles'] = array(array('type'=>'HTTPFile','path'=>$v));
-            $messageBody = base64_encode(json_encode($now_message));
-            $res_msn = $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
-            print_r($res_msn);
-            exit;
+            $messageBody = json_encode($now_message);
+            $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
         }
     }
 
