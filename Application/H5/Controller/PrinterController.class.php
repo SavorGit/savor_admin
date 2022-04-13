@@ -170,7 +170,7 @@ class PrinterController extends Controller {
             $print_img = $this->oss_host.$this->oss_code_path."$template_img?x-oss-process=image/watermark,image_$encode_file_name,$big_image_position";
             $all_printer_imgs[]=$print_img;
         }
-        $m_qrcode_content->updateData(array('id'=>array('in',$content_ids)),array('status'=>2));
+        $m_qrcode_content->updateData(array('id'=>array('in',$content_ids)),array('status'=>2,'update_time'=>date('Y-m-d H:i:s')));
         $cache_data['status'] = 4;
         $cache_data['etime'] = time();
         $cache_data['img_urls'] = $all_printer_imgs;
