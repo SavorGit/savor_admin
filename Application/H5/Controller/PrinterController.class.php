@@ -155,7 +155,7 @@ class PrinterController extends Controller {
             $img_url = $this->oss_host.$this->oss_code_path.$this->qtypes[$qtype]['template_img']."?x-oss-process=image/";
             $content = file_get_contents($img_url.$all_imgs);
 
-            $template_img = $this->qtypes[$qtype]['template_img']."-$k.jpg";
+            $template_img = str_replace('.jpg','',$this->qtypes[$qtype]['template_img'])."-$k.jpg";
             $file_path = $qrcode_create_path.$template_img;//本地文件路径
             file_put_contents($file_path, $content);
 
