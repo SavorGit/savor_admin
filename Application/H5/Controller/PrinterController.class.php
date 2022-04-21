@@ -15,8 +15,8 @@ class PrinterController extends Controller {
         16=>array('name'=>'1带6二维码图','num'=>6,'codesize'=>array('big'=>20,'small'=>11),
             'template_img'=>'template6.jpg',
             'big_image_position'=>'g_east,x_200,y_40',
-            'image_position'=>array('g_nw,x_70,y_30','g_west,x_70,y_30','g_sw,x_70,y_30',
-            'g_nw,x_360,y_30','g_west,x_360,y_30','g_sw,x_360,y_30')
+            'image_position'=>array('g_nw,x_360,y_30','g_west,x_360,y_30','g_sw,x_360,y_30',
+                'g_nw,x_70,y_30','g_west,x_70,y_30','g_sw,x_70,y_30',)
         ),
         14=>array('name'=>'1带4二维码图','num'=>4,'codesize'=>array(),
             'template_img'=>'',
@@ -123,7 +123,8 @@ class PrinterController extends Controller {
                 $qrcode_contents[$v['parent_id']][]=$v['id'];
             }
             $file_path = $qrcode_create_path."$content.png";//本地文件路径
-            $qrcontent = encrypt_data($content);
+//            $qrcontent = encrypt_data($content);
+            $qrcontent = $content;
             Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
 
             $file_name = $this->oss_code_path."$content.png";
