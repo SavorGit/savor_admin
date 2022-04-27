@@ -13,6 +13,7 @@ class PrinterController extends Controller {
     public $num = 100;
     public $qtypes = array(
         16=>array('name'=>'1带6二维码图','num'=>6,'codesize'=>array('big'=>20,'small'=>11),
+            'img_error_size'=>array('275'=>'?x-oss-process=image/resize,h_231,m_lfit'),
             'template_img'=>'template6.jpg',
             'big_image_position'=>'g_east,x_200,y_40',
             'image_position'=>array('g_nw,x_360,y_30','g_west,x_360,y_30','g_sw,x_360,y_30',
@@ -120,12 +121,21 @@ class PrinterController extends Controller {
                 $qrcode_size = $this->qtypes[$qtype]['codesize']['big'];
             }else{
                 $qrcode_size = $this->qtypes[$qtype]['codesize']['small'];
-                $qrcode_contents[$v['parent_id']][]=$v['id'];
             }
             $file_path = $qrcode_create_path."$content.png";//本地文件路径
-//            $qrcontent = encrypt_data($content);
-            $qrcontent = $content;
+            $qrcontent = encrypt_data($content);
             Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
+
+            if($v['type']==2){
+                $img_info = getimagesize($file_path);
+                $now_img_size = $img_info[0];
+                if(isset($this->qtypes[$qtype]['img_error_size'][$now_img_size])){
+                    $oss_process = $this->qtypes[$qtype]['img_error_size'][$now_img_size];
+                }else{
+                    $oss_process = '';
+                }
+                $qrcode_contents[$v['parent_id']][]=array('id'=>$v['id'],'oss_process'=>$oss_process);
+            }
 
             $file_name = $this->oss_code_path."$content.png";
             $res_upinfo = $aliyunoss->uploadFile($file_name, $file_path);
@@ -144,8 +154,8 @@ class PrinterController extends Controller {
             $p_i = 0;
             $now_images = array();
             foreach ($v as $sv){
-                $content = $sv;
-                $file_name = $this->oss_code_path."$content.png";
+                $content = $sv['id'];
+                $file_name = $this->oss_code_path."$content.png".$sv['oss_process'];
                 $encode_file_name = $this->urlsafe_b64encode($file_name);
                 $now_position = $image_position[$p_i];
                 $imgs = "watermark,image_$encode_file_name,$now_position";
@@ -193,6 +203,18 @@ class PrinterController extends Controller {
         }
     }
 
+
+    public function decode(){
+        $code = I('get.code','');
+        $qrcontent = decrypt_data($code);
+        $qr_id = intval($qrcontent);
+        $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
+        $res_qrcontent = $m_qrcode_content->getInfo(array('id'=>$qr_id));
+        $file_path = SITE_TP_PATH.'/Public/uploads/qrcode/'.$qr_id.'.png';
+        $img_info = getimagesize($file_path);
+        $res_qrcontent['img_info'] = $img_info;
+        print_r($res_qrcontent);
+    }
 
     private function urlsafe_b64encode($string) {
         $data = base64_encode($string);
