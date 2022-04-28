@@ -5,8 +5,8 @@ class Page{
     public $firstRow; // 起始行数
     public $listRows; // 列表每页显示行数
     public $parameter; // 分页跳转时要带的参数
-    public $totalRows; // 总行数
-    public $totalPages; // 分页总页面数
+    public $totalRows=0; // 总行数
+    public $totalPages=0; // 分页总页面数
     public $rollPage   = 11;// 分页栏每页显示的页数
 	public $lastSuffix = true; // 最后一页是否显示总页数
 
