@@ -88,11 +88,15 @@
                   <a title="增加积分" data-tip="增加积分" target="dialog" mask="true" href="{$host_url}/smallapp/saleuser/addintegral?openid={$dinfo.openid}" class="btn btn-default btn-icon">
                     <i class="fa fa-plus"></i>
                   </a>
-
-                  <a title="更改商家" data-tip="更改商家" target="dialog" mask="true" href="{$host_url}/smallapp/saleuser/changemerchant?openid={$dinfo.openid}" class="btn btn-default btn-icon">
-                    <i class="fa fa-pencil"></i>
-                  </a>
-
+                  <if condition="$dinfo.openid eq 'o9GS-4oGSdRGYiNZZ4oKQ9PBm_TI'">
+                    <a onclick="alertMsg.error('当前账号为通用管理员账号，无法进行更改商家')" href="#" class="btn btn-default btn-icon">
+                      <i class="fa fa-pencil"></i>
+                    </a>
+                  <else/>
+                    <a title="更改商家" data-tip="更改商家" target="dialog" mask="true" href="{$host_url}/smallapp/saleuser/changemerchant?openid={$dinfo.openid}" class="btn btn-default btn-icon">
+                      <i class="fa fa-pencil"></i>
+                    </a>
+                  </if>
                 </div>
               </td>
             </tr>
