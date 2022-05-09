@@ -1,0 +1,88 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/hotelinvitationconfig/configadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="id" type="hidden" value="{$vinfo.id}"/>
+        <div class="pageFormContent modal-body">
+
+            <div class="form-group row" >
+                <label class="col-xs-12 col-sm-2 control-label">请选择酒楼：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" >
+                        <volist name="hlist" id="vo">
+                            <option value="{$vo.id}" {$vo.is_select}> {$vo.name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row" >
+                <label class="col-xs-12 col-sm-2 control-label">
+                    背景图：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                            <a data-target="#modal-file" href="javascript:void(0)">
+                                <if condition="($vinfo['bg_img'] eq 'NULL') OR $vinfo['bg_img'] eq ''">
+                                    <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                    <else />
+                                    <img id="media_idimg" src="{$vinfo.bg_img}" border="0" />
+                                </if>
+                                <span id="media_idimgname"></span>
+                            </a>
+                        </div>
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+                            <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">主题色：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="theme_color" type="text" value="{$vinfo.theme_color}" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">主题反差色：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="theme_contrast_color" type="text" value="{$vinfo.theme_contrast_color}" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">主要色：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="pain_color" type="text" value="{$vinfo.pain_color}" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">弱视色：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="weak_color" type="text" value="{$vinfo.weak_color}" class="form-control" required/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    是否开启售卖：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="hidden" name="is_open_sellplatform" value="0">
+                    <input type="checkbox" value="1" class="make-switch status" name="is_open_sellplatform" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_open_sellplatform eq 1" >checked</if>>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>

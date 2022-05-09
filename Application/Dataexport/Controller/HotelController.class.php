@@ -185,4 +185,40 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         $this->exportToExcel($cell,$datalist,$filename,1);
 
     }
+
+    public function invitation(){
+        $static_date = I('date','');
+        if(empty($sdate)){
+            $static_date = date('Y-m-d',strtotime('-1 day'));
+        }else{
+            $static_date = date('Y-m-d',strtotime($static_date));
+        }
+        $start_time = "$static_date 00:00:00";
+        $end_time = "$static_date 23:59:59";
+
+        $m_invitation = new \Admin\Model\Smallapp\InvitationModel();
+        $where = array();
+        $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $res_datas = $m_invitation->getDataList('*',$where,'id desc');
+        $datalist = array();
+        foreach ($res_datas as $v){
+            $info = array('openid'=>$v['openid'],'name'=>$v['name'],'hotel_name'=>$v['hotel_name'],'hotel_id'=>$v['hotel_id'],
+                'room_name'=>$v['room_name'],'box_mac'=>$v['box_mac'],'book_time'=>$v['book_time'],'add_time'=>$v['add_time']
+            );
+            $datalist[]=$info;
+        }
+        $cell = array(
+            array('openid','用户openid'),
+            array('name','预订人'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','机顶盒MAC'),
+            array('book_time','预定时间'),
+            array('add_time','添加时间'),
+        );
+        $filename = '邀请函统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+
+    }
 }

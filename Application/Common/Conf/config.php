@@ -979,6 +979,15 @@ $config['BONUS_OPERATION_INFO'] = array(
     'avatarUrl'=>'http://oss.littlehotspot.com/media/resource/btCfRRhHkn.jpg',
     'popout_img'=>'WeChat/resource/popout-bonus.png'
 );
+$config['INVITATION_HOTEL_CONFIG'] = array(
+    'media_id'=>31130,
+    'bg_img'=>'media/resource/kJxFWZJEDG.jpeg',
+    'theme_color'=>'rgb(193,147,166)',
+    'theme_contrast_color'=>'rgb(255, 255, 255)',
+    'pain_color'=>'rgb(16, 16, 16)',
+    'weak_color'=>'rgb(153, 153, 153)',
+    'is_open_sellplatform'=>1
+);
 $config['RD_TEST_HOTEL'] =
     array (
 
