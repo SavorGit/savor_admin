@@ -1974,6 +1974,51 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
         return $all_hotel_level;
     }
 
+    public function gddata(){
+        $file_path = SITE_TP_PATH.'/Public/content/gd_bank_0511.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $all_data = array();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            $jyrq = $rowData[0][0];
+            $jysj = $rowData[0][1];
+            $jffse = $rowData[0][2];
+            $dffse = $rowData[0][3];
+            $zhye = $rowData[0][4];
+            if(empty($jffse)){
+                $jffse='';
+            }else{
+                $jffse = number_format($jffse,2);
+            }
+            if(empty($dffse)){
+                $dffse='';
+            }else{
+                $dffse = number_format($dffse,2);
+            }
+            if(empty($zhye)){
+                $zhye = '';
+            }else{
+                $zhye = number_format($zhye,2);
+            }
+
+            $all_data[]=array('jyrq'=>$jyrq,'jysj'=>$jysj,'jffse'=>$jffse,'dffse'=>$dffse,
+                'zhye'=>$zhye,'dfzh'=>$rowData[0][5],'dfmc'=>$rowData[0][6],'pzh'=>$rowData[0][7],
+                'lsh'=>$rowData[0][8],'zy'=>$rowData[0][9],'sort_num'=>$row
+            );
+        }
+        var_export($all_data);
+    }
+
     public function cachehotelassess(){
         $all_hotel_level = $this->hotellevel();
 
