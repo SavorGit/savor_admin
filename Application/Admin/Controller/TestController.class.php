@@ -1975,7 +1975,7 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
     }
 
     public function gddata(){
-        $file_path = SITE_TP_PATH.'/Public/content/gd_bank_0511.xlsx';
+        $file_path = SITE_TP_PATH.'/Public/content/gdbank_0513.xlsx';
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
 
@@ -1998,17 +1998,17 @@ where 1 and box.flag=0 and hotel.flag=0 and hotel.state=1 and hotel.hotel_box_ty
             if(empty($jffse)){
                 $jffse='';
             }else{
-                $jffse = number_format($jffse,2);
+//                $jffse = number_format($jffse,2);
             }
             if(empty($dffse)){
                 $dffse='';
             }else{
-                $dffse = number_format($dffse,2);
+//                $dffse = number_format($dffse,2);
             }
             if(empty($zhye)){
                 $zhye = '';
             }else{
-                $zhye = number_format($zhye,2);
+//                $zhye = number_format($zhye,2);
             }
 
             $all_data[]=array('jyrq'=>$jyrq,'jysj'=>$jysj,'jffse'=>$jffse,'dffse'=>$dffse,
