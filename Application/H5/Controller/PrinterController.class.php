@@ -34,6 +34,7 @@ class PrinterController extends Controller {
         $qtype = I('get.qtype',0,'intval');//类型16 1带6二维码图,14 1带4二维码,12 1带2二维码
         $num = I('get.num',0,'intval');//生成二维码数量
         $sign = I('get.sign');
+        $mac = I('get.mac','');
 
         if($sign!=$this->get_sign()){
             $this->output('params error');
@@ -60,7 +61,7 @@ class PrinterController extends Controller {
             }
             $this->output($msg);
         }else{
-            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php h5/printer/qrcodescript/sign/$sign/qtype/$qtype/num/$num > /tmp/null &";
+            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php h5/printer/qrcodescript/sign/$sign/qtype/$qtype/num/$num/mac/$mac > /tmp/null &";
             system($shell);
             $cache_data = array('status'=>1,'stime'=>time());
             $redis->set($cache_key,json_encode($cache_data),3600);
@@ -72,6 +73,7 @@ class PrinterController extends Controller {
         $qtype = I('get.qtype',0,'intval');//类型16 1带6二维码图,14 1带4二维码,12 1带2二维码
         $num = I('get.num',0,'intval');//生成二维码数量
         $sign = I('get.sign');
+        $mac = I('get.mac','');
         if($sign!=$this->get_sign()){
             $this->output('params error');
         }
@@ -193,6 +195,9 @@ class PrinterController extends Controller {
         $endPoint = C('QUEUE_ENDPOINT');
         $topicName = 'TagPrinter-LHS';
         $messageTag = '0015005DA6CD';
+        if(!empty($mac)){
+            $messageTag = $mac;
+        }
         $now_message = array('orientation'=>'PORTRAIT','printWidth'=>100.0,'printHeight'=>60.0,
             'printLeftSide'=>0.0,'printTopSide'=>0.0,'copiesNum'=>1);
         $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
