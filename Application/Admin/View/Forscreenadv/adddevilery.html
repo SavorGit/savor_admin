@@ -1,3 +1,5 @@
+<link href="/Public/admin/assets/css/fileinput.css" rel="stylesheet" type="text/css" />
+<script src="/Public/admin/assets/js/fileinput.min.js" type="text/javascript" />
 <style type="text/css">
 	#tops {
 		height: 40px;
@@ -261,7 +263,11 @@
 				已选<span>0</span>家酒楼的<span>0</span>个版位
 				</span>
 			</div>
-
+			<div class="form-group row" id="tops">
+				<button type="button" class="btn btn-primary" data-toggle="modal" id="checkout" aria-pressed="false" autocomplete="off" style="border-radius: 5px !important;" data-target=".bs-example-modal-sm"  class="btn btn-primary btn-xs">
+                导入酒楼明细
+				</button>
+			</div>
 			<div class="tianjiabw">
 				添加版位
 			</div>
@@ -363,6 +369,24 @@
 		<!-- /.modal-content -->
 	</div>
 	<!-- /.modal-dialog -->
+</div>
+<div id="mymodal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+
+  <div class="modal-dialog modal-sm" role="document" style="width:600px;">
+    <div class="modal-content">
+      <div class="form-group">
+          <div class="form-group">
+          <div class="form-group">
+            <input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]' value='浏览'>
+          </div>
+          <hr>
+          <button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">提交</button>
+
+          <button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">取消</button>
+            <input  type="hidden"  name="excelpath" id="excelpath" value="">
+        </div>
+    </div>
+  </div>
 </div>
 <!-- /.modal -->
 <script type="text/javascript">
@@ -960,4 +984,94 @@
             }
         });
     }
+	
+	//上传开始
+	$("#checkout").click(function () {
+
+		$('#file-4').fileinput('clear');
+		$("#excelpath").val('');
+	});
+
+
+  $("#file-4").fileinput({
+    language: 'zh',
+    uploadExtraData: {kvId: '10'},
+    maxFileCount: 1,
+    allowedFileExtensions:['csv', 'xlsx'],
+  });
+
+  $('#file-4').on('fileselectnone', function() {
+    //alert('Huh! You selected no files.');
+  });
+
+  $('#file-4').on('filebrowse', function() {
+    //alert('File browse clicked for #file-4');
+
+  });
+
+  $('#file-4').on('fileloaded', function() {
+    //alert('Fileerrre for #file-4');
+
+  });
+
+  $('#file-4').on('filepreupload', function() {
+
+  });
+  $('#file-4').on('fileuploaded', function(event, data, previewId, index) {
+    //alert(data);
+    //alert(data.files);
+    alert('上传EXCEL成功');
+    //$('#file-4').fileinput('lock');
+    //$('#file-4').fileinput('clear');
+    $("#excelsub").attr("disabled",false);
+    $("#excelpath").val(data.response);
+    //var form = data.form, files = data.files, extra = data.extra,
+    //	response = data.response, reader = data.reader;
+    //console.log('File uploaded triggered');
+  });
+  
+  
+	$("#excelsub").click(
+
+
+          //alert($("#m_type option:selected").val());
+         function(){
+            var excelpath = $("#excelpath").val();
+            //$(".bom_input #hoteldetail .accountcl").html('');
+
+            $.ajax({
+              type:"POST",
+              ContentType: "application/json; charset=utf-8",
+              dataType: "json",
+              url:"{$host_name}/forscreenadv/analyseExcel",
+              data:"excelpath="+excelpath,
+              success:function(data){
+                if(data.error==0){
+				  var hotel_nums = data.hotel_nums;
+				  var box_nums   = data.box_nums;
+                  var data = data.message;
+				  $('.ban_list').html('');
+				  for(var i=0;i<data.length;i++){
+					 var jiulou_name =	'<div class="jiu_names">'+
+                        '<span id='+data[i].id+'>'+data[i].name+'</span>'+
+                        '</div>'
+                     $('.ban_list').append(jiulou_name);
+				  }
+				  $('.jiuloushu').find('span').eq(0).html(hotel_nums)
+				  $('.jiuloushu').find('span').eq(1).html(box_nums)
+                  //$('#modales').modal('hide');
+				  
+				 
+
+                }else{
+                  alert(data.message);
+                  return false;
+                }
+              }
+            });
+         }
+
+	);
+  
+  //上传结束
 </script>

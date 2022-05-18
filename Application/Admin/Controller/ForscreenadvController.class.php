@@ -287,5 +287,128 @@ class ForscreenadvController extends BaseController {
         }
 
     }
+	/*
+	 * 处理excel数据
+	 */
+	public function analyseExcel(){
+		$path = $_POST['excelpath'];
+		if  ($path == '') {
+			$res = array('error'=>0,'message'=>array());
+			echo json_encode($res);
+		}
+		$type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+		vendor("PHPExcel.PHPExcel.IOFactory");
+		if ($type == 'xlsx' || $type == 'xls') {
+			$objPHPExcel = \PHPExcel_IOFactory::load($path);
+		} elseif ($type == 'csv') {
+			$objReader = \PHPExcel_IOFactory::createReader('CSV')
+				->setDelimiter(',')
+				->setInputEncoding('GBK')//不设置将导致中文列内容返回boolean(false)或乱码
+				->setEnclosure('"')
+				->setLineEnding("\r\n")
+				->setSheetIndex(0);
+			$objPHPExcel = $objReader->load($path);
+		} else {
+			//$this->output('文件格式不正确', 'importdata', 0, 0);
+			$res = array('error'=>1,'message'=>'文件格式不正确');
+			echo json_encode($res);
+			die;
+		}
+
+		$sheet = $objPHPExcel->getSheet(0);
+		//获取行数与列数,注意列数需要转换
+		$highestRowNum = $sheet->getHighestRow();
+		$highestColumn = $sheet->getHighestColumn();
+		$highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+		
+		if($highestColumnNum != 2){
+			$res = array('error'=>1,'message'=>'必须为两列');
+			echo json_encode($res);
+			die;
+		}
+		//取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+		$filed = array();
+		for ($i = 0; $i < $highestColumnNum; $i++) {
+			$cellName = \PHPExcel_Cell::stringFromColumnIndex($i) . '1';
+			$cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+			$filed[] = $cellVal;
+		}
+		if($filed[0] != 'id' || $filed[1] != 'name' ) {
+			$res = array('error'=>1,'message'=>'第一行对应两列必须为id,name');
+			echo json_encode($res);
+			die;
+		}
+
+		//开始取出数据并存入数组
+		$data = array();
+		$hotel_str = '';
+		$spx = '';
+		for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
+			$row = array();
+			for ($j = 0; $j < $highestColumnNum; $j++) {
+				$cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
+				$cellVal = (string)$sheet->getCell($cellName)->getValue();
+				if($cellVal === 'null'){
+					$cellVal = '';
+				}
+				if($cellVal === '"' ||  $cellVal === "'"){
+					$cellVal = '#';
+				}
+				if($cellVal === 'null'){
+					$cellVal = '';
+				}
+				$row[$filed[$j]] = $cellVal;
+			}
+			$hotel_str .= $spx. $row['id'];
+			$spx = ',';
+			$data [] = $row;
+		}
+		$boxModel = new \Admin\Model\BoxModel();
+		$hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+		
+        foreach($hotel_box_type_arr as $key=>$v){
+			
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+		
+		$field = 'sht.id, sht.name';
+        $hotelModel = new \Admin\Model\HotelModel();
+        $where = " sht.id in(".$hotel_str.") and  sht.flag=0 and sht.state=1 and  sht.hotel_box_type in ({$hotel_box_type_str}) ";
+		
+		//$where .= ' and '.$h_str;
+        //$orders = 'convert(sht.name using gbk) asc';
+        $data = $hotelModel->getHotelidByArea($where, $field);
+		
+		if(empty($data)){
+			$res = array('error'=>2,'message'=>'导入酒楼数据异常');
+			echo json_encode($res);
+			die;
+		}
+		
+		$where  = '';
+        $where .= " and sht.hotel_box_type in ({$hotel_box_type_str}) ";
+		$box_nums = 0;
+		
+		foreach($data as $key=>$v){
+			
+			$field = 'count(distinct (b.id)) num';
+			$where = ' 1=1 and b.state=1 and b.flag=0 and r.state=1 and
+			r.flag=0 and h.state=1 and h.flag=0 ';
+			
+			$where .= ' and h.id = '. $v['id'];
+			
+			
+			$b_arr = $boxModel->isHaveMac($field, $where);
+			$res = empty($b_arr[0]['num'])?0:$b_arr[0]['num'];
+			$box_nums += $res;
+		}
+		$res = array('error'=>0,'message'=>$data,'box_nums'=>$box_nums,'hotel_nums'=>count($data));
+		echo json_encode($res);
+		die;
+	}
 
 }
