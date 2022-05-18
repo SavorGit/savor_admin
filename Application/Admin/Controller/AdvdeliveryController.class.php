@@ -1812,6 +1812,8 @@ class AdvdeliveryController extends BaseController {
 
 		//开始取出数据并存入数组
 		$data = array();
+		$hotel_str = '';
+		$spx = '';
 		for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
 			$row = array();
 			for ($j = 0; $j < $highestColumnNum; $j++) {
@@ -1828,6 +1830,8 @@ class AdvdeliveryController extends BaseController {
 				}
 				$row[$filed[$j]] = $cellVal;
 			}
+			$hotel_str .= $spx. $row['id'];
+			$spx = ',';
 			$data [] = $row;
 		}
 		$boxModel = new \Admin\Model\BoxModel();
@@ -1835,12 +1839,31 @@ class AdvdeliveryController extends BaseController {
         $hotel_box_type_arr = array_keys($hotel_box_type_arr);
         $space = '';
         $hotel_box_type_str = '';
+		
         foreach($hotel_box_type_arr as $key=>$v){
+			
             $hotel_box_type_str .= $space .$v;
             $space = ',';
         }
+		
+		$field = 'sht.id, sht.name';
+        $hotelModel = new \Admin\Model\HotelModel();
+        $where = " sht.id in(".$hotel_str.") and  sht.flag=0 and sht.state=1 and  sht.hotel_box_type in ({$hotel_box_type_str}) ";
+		
+		//$where .= ' and '.$h_str;
+        //$orders = 'convert(sht.name using gbk) asc';
+        $data = $hotelModel->getHotelidByArea($where, $field);
+		
+		if(empty($data)){
+			$res = array('error'=>2,'message'=>'导入酒楼数据异常');
+			echo json_encode($res);
+			die;
+		}
+		
+		$where  = '';
         $where .= " and sht.hotel_box_type in ({$hotel_box_type_str}) ";
 		$box_nums = 0;
+		
 		foreach($data as $key=>$v){
 			
 			$field = 'count(distinct (b.id)) num';

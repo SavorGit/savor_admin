@@ -1,9 +1,9 @@
 <?php
-$DB_MASTER_HOST = '192.168.168.116';
-$DB_SLAVE_HOST  = '192.168.168.116';
+$DB_MASTER_HOST = '127.0.0.1';
+$DB_SLAVE_HOST  = '127.0.0.1';
 $db_name = 'cloud';
-$db_user = 'phpweb';
-$db_pwd = '123456';
+$db_user = 'root';
+$db_pwd = '';
 
 //redis缓存配置
 $redis['db1']['0']['host'] = '192.168.168.116';
