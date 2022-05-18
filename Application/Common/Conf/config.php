@@ -748,6 +748,7 @@ $config['SAPP_HOTPLAYDEMAND']   = 'smallapp:hotplaydemand';
 $config['SMALLAPP_FORSCREEN_ADS']   = 'smallapp:forscreen:ads:';
 $config['SMALLAPP_MARQUEE_ADS']   = 'smallapp:marquee:ads:';
 $config['SMALLAPP_LIFE_ADS']   = 'smallapp:life:ads:';
+$config['SMALLAPP_STORESALE_ADS']   = 'smallapp:storesale:ads:';
 $config['SAPP_BOX_FORSCREEN_NET']='smallapp:net:forscreen:';
 $config['SAPP_REDPACKET']='smallapp:redpacket:';
 $config['SAPP_PUBLIC_AUDITNUM']='smallapp:public:auditnum:';
@@ -971,6 +972,11 @@ $config['INTEGRAL_TYPES'] = array(
     11=>'完成品鉴酒活动任务',
     12=>'领取抽奖活动任务',
     13=>'完成抽奖活动任务',
+);
+$config['STORESALE_ADV_TYPES'] = array(
+//    '1'=>'预定酒水',
+    '2'=>'主推酒水',
+    '3'=>'随机酒水',
 );
 $config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目','2'=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
 $config['FORSCREEN_CONTENT_RECOURCE_CATE'] = array('1'=>'热播内容节目','2'=>'热播用户内容','3'=>'节目','4'=>'商城商品','5'=>'banner商品','6'=>'生日歌','7'=>'星座视频');

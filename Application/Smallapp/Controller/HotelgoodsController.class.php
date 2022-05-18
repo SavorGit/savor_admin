@@ -27,7 +27,8 @@ class HotelgoodsController extends BaseController {
         if($type){
             $where['type'] = $type;
         }else{
-            $where['type'] = array('in',array(40,43));
+//            $where['type'] = array('in',array(40,43));
+            $where['type'] = 43;
         }
 
         if($status)     $where['status'] = $status;
