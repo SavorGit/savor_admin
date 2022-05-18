@@ -133,12 +133,20 @@ class StoresaleadvController extends BaseController {
     public function advpreview(){
         $adsid = I('deliveryid','0','intval');
         $m_storesaleads = new \Admin\Model\StoresaleAdsModel();
-        $field = ' storesaleads.id,storesaleads.start_date,storesaleads.end_date,storesaleads.start_hour,storesaleads.end_hour,storesaleads.state state,
-        ads.name adname,ads.duration,med.oss_addr';
-        $where = 'storesaleads.id = '.$adsid;
+        $field = ' storesaleads.*,ads.name adname,ads.duration,med.oss_addr';
         $oss_host = $this->oss_host;
-        $vinfo = $m_storesaleads->getAdsInfoByid($field, $where);
+        $vinfo = $m_storesaleads->getAdsInfoByid($field, array('storesaleads.id'=>$adsid));
+        $is_price_str = '否';
+        if($vinfo['is_price']==1){
+            $is_price_str = '是';
+        }
 
+        $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
+        $res_goods = $m_goods->getInfo(array('id'=>$vinfo['goods_id']));
+        $all_types = C('STORESALE_ADV_TYPES');
+        $vinfo['goods_name'] = $res_goods['name'];
+        $vinfo['is_price_str'] = $is_price_str;
+        $vinfo['typestr'] = $all_types[$vinfo['type']];
         $vinfo['oss_addr'] = $oss_host.$vinfo['oss_addr'];
         $vinfo['start_date'] = date("Y/m/d", strtotime($vinfo['start_date']));
         $vinfo['end_date'] = date("Y/m/d", strtotime($vinfo['end_date']));
@@ -146,11 +154,10 @@ class StoresaleadvController extends BaseController {
         $m_ads_hotel = new \Admin\Model\StoresaleAdsHotelModel();
         $where = array('storesale_ads_id'=>$adsid);
         $hotel_count = $m_ads_hotel->getDataCount($where);
-        $display_html = 'advpreviewhotel';
         $this->assign('hotel_count',$hotel_count);
 
         $this->assign('vinfo',$vinfo);
-        $this->display($display_html);
+        $this->display('advpreviewhotel');
     }
 
     public function showdetail() {
