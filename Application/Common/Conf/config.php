@@ -652,6 +652,10 @@ $config['LIFE_OCCU']= array(
     'name'=>'本地生活广告位',
     'num' => '24',
 );
+$config['STORESALE_OCCU']= array(
+    'name'=>'本店有售广告位',
+    'num' => '10',
+);
 $config['POLY_SCREEN_MEDIA_LIST'] = array(
     '1'=>'百度聚屏',
     '2'=>'钛镁聚屏',

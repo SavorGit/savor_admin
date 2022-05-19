@@ -819,6 +819,10 @@ class ProgrammenuController extends BaseController{
             // 获取本地生活广告占位符
             $res_life_adv = $this->getLifeOccup($res);
 
+            // 获取本店售卖广告占位符
+            $res_storesale_adv = $this->getStoresaleOccup($res);
+
+
             // 取出name列
             $res_adv = array_column($res_adv, 'name');
             $res_xuan = array_column($res_xuan, 'name');
@@ -827,6 +831,7 @@ class ProgrammenuController extends BaseController{
             $activitygoods_adv = array_column($res_activitygoods_adv, 'name');
             $selectcontent_adv = array_column($res_selectcontent_adv, 'name');
             $life_adv = array_column($res_life_adv, 'name');
+            $storesale_adv = array_column($res_storesale_adv, 'name');
 
             $adv_promote_num_arr = C('ADVE_OCCU');
             $adv_name = $adv_promote_num_arr['name'];
@@ -844,6 +849,9 @@ class ProgrammenuController extends BaseController{
 
             $life_promote_num_arr = C('LIFE_OCCU');
             $lifeadv_name = $life_promote_num_arr['name'];
+
+            $storesale_promote_num_arr = C('STORESALE_OCCU');
+            $storesale_name = $storesale_promote_num_arr['name'];
 
             foreach ($id_arr as $k => $v) {
                 // 判断type类型 1广告位 2节目 3宣传片 4rtb广告 5聚屏广告位 6活动商品广告位 7精选内容广告位 8本地生活广告
@@ -869,6 +877,9 @@ class ProgrammenuController extends BaseController{
                 } elseif (in_array($ad_name, $life_adv)) {
                     $type = 8;//本地生活广告
                     $lo = str_replace($lifeadv_name, "", $ad_name);
+                } elseif (in_array($ad_name, $storesale_adv)) {
+                    $type = 9;//本店有售广告
+                    $lo = str_replace($storesale_name, "", $ad_name);
                 } else {
                     $type = 2;//节目
                     $lo = 0;
@@ -1247,6 +1258,29 @@ class ProgrammenuController extends BaseController{
         return $result;
     }
 
+    public function getStoresaleOccup($result, $filter = ''){
+        $adv_selectcontent_num_arr = C('STORESALE_OCCU');
+        if ($filter) {
+            $filter_arr = explode(',', $filter);
+        }
+        $adv_selectcontent_num = $adv_selectcontent_num_arr['num'];
+        $now_date_time = date("Y-m-d H:i:s");
+        for ($i = 1; $i <= $adv_selectcontent_num; $i ++) {
+            if (in_array($adv_selectcontent_num_arr['name'] . $i, $filter_arr)) {
+                continue;
+            } else {
+                $result[] = array(
+                    'id' => 0,
+                    'name' => $adv_selectcontent_num_arr['name'] . $i,
+                    'create_time' => $now_date_time,
+                    'duration' => 0,
+                    'type' => '33'
+                );
+            }
+        }
+        return $result;
+    }
+
     public function get_se_left(){
         $m_type = I('post.m_type', '0');
         
@@ -1285,6 +1319,8 @@ class ProgrammenuController extends BaseController{
                 $result = $this->getSelectcontentOccup($result);
 
                 $result = $this->getLifeOccup($result);
+
+                $result = $this->getStoresaleOccup($result);
                 break;
             case 3:
                 // 获取宣传片
@@ -1309,6 +1345,9 @@ class ProgrammenuController extends BaseController{
                 break;
             case 9:
                 $result = $this->getLifeOccup($result);
+                break;
+            case 10:
+                $result = $this->getStoresaleOccup($result);
                 break;
             default:
                 $where .= "	AND type = '{$m_type}'";

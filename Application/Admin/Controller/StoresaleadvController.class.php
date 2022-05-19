@@ -241,4 +241,59 @@ class StoresaleadvController extends BaseController {
         }
     }
 
+    public function getOcupHotel() {
+        $area_id = I('area_id',0);
+        $hotel_name = I('hotel_name', '');
+        $goods_id = I('goods_id',0,'intval');
+
+        $where = "1=1";
+        if ($area_id) {
+            $this->assign('area_k',$area_id);
+            $where .= "	AND sht.area_id = $area_id";
+        }
+        if($hotel_name){
+            $this->assign('name',$hotel_name);
+            $where .= "	AND name LIKE '%{$hotel_name}%'";
+        }
+        if($goods_id>0){
+            $hwhere = array('h.goods_id'=>$goods_id);
+            $m_hotelgoods  = new \Admin\Model\Smallapp\HotelGoodsModel();
+            $res_goods = $m_hotelgoods->getGoodsList('h.hotel_id',$hwhere,'','','h.hotel_id');
+            $hotel_ids = array();
+            foreach ($res_goods as $v){
+                $hotel_ids[]=$v['hotel_id'];
+            }
+            if(!empty($hotel_ids)){
+                $hotel_id_str = join(',',$hotel_ids);
+                $where .= " and sht.id in ({$hotel_id_str}) ";
+            }
+        }
+
+        //城市
+        $userinfo = session('sysUserInfo');
+        $pcity = $userinfo['area_city'];
+
+        if($userinfo['groupid'] == 1 || empty($userinfo['area_city'])) {
+            $this->assign('pusera', $userinfo);
+        }else {
+            $where .= "	AND sht.area_id in ($pcity)";
+        }
+        $hotel_box_type_arr = C('heart_hotel_box_type');
+        $hotel_box_type_arr = array_keys($hotel_box_type_arr);
+        $space = '';
+        $hotel_box_type_str = '';
+        foreach($hotel_box_type_arr as $key=>$v){
+            $hotel_box_type_str .= $space .$v;
+            $space = ',';
+        }
+        $where .= " and sht.hotel_box_type in ({$hotel_box_type_str}) ";
+        $field = 'sht.id hid, sht.name hname';
+        $hotelModel = new \Admin\Model\HotelModel();
+        $orders = 'convert(sht.name using gbk) asc';
+        $result = $hotelModel->getHotelidByArea($where, $field, $orders);
+        $msg = '';
+        $res = array('code'=>1,'msg'=>$msg,'data'=>$result);
+        echo json_encode($res);
+    }
+
 }

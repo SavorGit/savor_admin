@@ -154,7 +154,7 @@
 		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
 			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">选择商品：</label>
 			<div class="col-xs-12 col-sm-10  form-inline">
-				<select name="goods_id" class="form-control bs-select class-filter" data-live-search="true"  required>
+				<select name="goods_id" id="adv_goods_id" class="form-control bs-select class-filter" data-live-search="true"  required>
 					<volist name="all_goods" id="ginfo">
 						<option value="{$ginfo.id}" > {$ginfo.name}</option>
 					</volist>
@@ -857,12 +857,13 @@
         $('#box_qx').prop('checked',false);
         var city_id = $('.cityId').val();
         var serch_name = $('#serch-name').val();
+        var goods_id = $('#adv_goods_id').val();
         $('.position-list').html('');
         $.ajax({
             type:"post",
-            url:honame+"/advdelivery/getOcupHotel",
+            url:honame+"/storesaleadv/getOcupHotel",
             dataType:"json",
-            data:"area_id="+city_id+"&hotel_name="+serch_name,
+            data:"area_id="+city_id+"&hotel_name="+serch_name+"&goods_id="+goods_id,
             async:true,
             success:function(calls){
                 console.log(calls)
@@ -912,10 +913,12 @@
         $('#newarr').val('[]');
     })
     function boiteName(){  //酒楼名称
+		var goods_id = $('#adv_goods_id').val();
         $.ajax({
             type:"post",
-            url:honame+"/advdelivery/getOcupHotel",
+            url:honame+"/storesaleadv/getOcupHotel",
             dataType:"json",
+			data:"goods_id="+goods_id,
             async:true,
             success:function(calls){
                 console.log(calls)
