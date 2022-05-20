@@ -96,7 +96,7 @@ class HotelgoodsController extends BaseController {
             if($type==40){
                 $is_seckill = 1;
             }
-            $dinfo = array('type'=>$type,'amount'=>1,'tvmedia_type'=>0,'is_seckill'=>$is_seckill,'sort'=>1);
+            $dinfo = array('type'=>$type,'amount'=>1,'tvmedia_type'=>0,'is_seckill'=>$is_seckill,'sort'=>1,'wine_type'=>3);
             $goods_types = C('DISH_TYPE');
             if($id){
                 $m_media = new \Admin\Model\MediaModel();
@@ -181,15 +181,6 @@ class HotelgoodsController extends BaseController {
                 }
                 $cover_imgs[] = $img_info;
             }
-            $roll_contents = array();
-            for($i=1;$i<=$roll_num;$i++){
-                $info = array('id'=>$i,'content'=>'');
-                if(isset($now_roll_content[$i])){
-                    $info['content'] = $now_roll_content[$i];
-                }
-                $roll_contents[] = $info;
-            }
-            $this->assign('roll_contents',$roll_contents);
             $this->assign('cover_imgs',$cover_imgs);
             $this->assign('detail_imgs',$detail_imgs);
             $this->assign('goods_types',$goods_types);
@@ -207,6 +198,7 @@ class HotelgoodsController extends BaseController {
             $line_price = I('post.line_price',0);
             $is_seckill = I('post.is_seckill',0);
             $type = I('post.type',0,'intval');
+            $wine_type = I('post.wine_type',0,'intval');
             $sort = I('post.sort',0,'intval');
             $status = I('post.status',0,'intval');
             $tv_media_id = I('post.tv_media_id',0,'intval');
@@ -215,7 +207,6 @@ class HotelgoodsController extends BaseController {
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $start_time = I('post.start_time','');
             $end_time = I('post.end_time','');
-            $roll_content = I('post.roll_content','');
             if($tv_media_vid>0){
                 $tv_media_id = $tv_media_vid;
             }elseif($tv_media_id>0){
@@ -237,9 +228,9 @@ class HotelgoodsController extends BaseController {
             }else{
                 $res_goods = $m_goods->getInfo($where);
             }
-//            if(!empty($res_goods)){
-//                $this->output('名称不能重复', "hotelgoods/goodsadd", 2, 0);
-//            }
+            if(!empty($res_goods)){
+                $this->output('名称不能重复', "hotelgoods/goodsadd", 2, 0);
+            }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             if(empty($price))   $price = 0;
@@ -247,7 +238,7 @@ class HotelgoodsController extends BaseController {
             if(empty($line_price))   $line_price = 0;
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'is_seckill'=>$is_seckill,
-                'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'type'=>$type,
+                'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'type'=>$type,'wine_type'=>$wine_type,
                 'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             $data['status'] = $status;
             if(!empty($start_time)){
@@ -255,18 +246,6 @@ class HotelgoodsController extends BaseController {
             }
             if(!empty($end_time)){
                 $data['end_time'] = $end_time;
-            }
-            if(!empty($roll_content)){
-                $now_roll_content = array();
-                foreach ($roll_content as $v){
-                    $rv = trim($v);
-                    if(!empty($rv)){
-                        $now_roll_content[]=$rv;
-                    }
-                }
-                $data['roll_content'] = json_encode($now_roll_content);
-            }else{
-                $data['roll_content'] = '';
             }
 
             if($status==1){

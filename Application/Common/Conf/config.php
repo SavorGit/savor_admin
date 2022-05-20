@@ -977,7 +977,7 @@ $config['INTEGRAL_TYPES'] = array(
     12=>'领取抽奖活动任务',
     13=>'完成抽奖活动任务',
 );
-$config['STORESALE_ADV_TYPES'] = array(
+$config['GOODS_WINE_TYPES'] = array(
 //    '1'=>'预定酒水',
     '2'=>'主推酒水',
     '3'=>'随机酒水',

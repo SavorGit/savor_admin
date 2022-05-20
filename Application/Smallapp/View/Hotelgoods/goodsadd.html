@@ -217,16 +217,19 @@
 			</div>
 		</div>
 
-<div id="goods_roll_content">
-	<foreach name="roll_contents" item="rinfo" >
 		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">滚动内容{$rinfo.id}：</label>
+			<label class="col-xs-12 col-sm-2 control-label">
+				酒水类型:
+			</label>
 			<div class="col-xs-12 col-sm-10">
-				<input name="roll_content[]" type="text" value="{$rinfo.content}" class="form-control" />
+				<select name="wine_type" class="form-control bs-select" title="请选择..." data-size="20" required>
+					<volist name=":C('GOODS_WINE_TYPES')" id="wtype">
+						<option value="{$key}" <if condition="$vinfo['wine_type'] eq $key"> selected </if> > {$wtype}</option>
+					</volist>
+				</select>
 			</div>
 		</div>
-	</foreach>
-</div>
+
 		<div class="form-group row" id="goods_onoffline">
 			<label class="col-xs-12 col-sm-2 control-label">
 				上/下线状态:

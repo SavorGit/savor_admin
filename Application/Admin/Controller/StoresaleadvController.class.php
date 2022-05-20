@@ -62,7 +62,6 @@ class StoresaleadvController extends BaseController {
             $end_date = I('post.end_date', '');
             $goods_id = I('post.goods_id',0,'intval');
             $is_price = I('post.is_price',0,'intval');
-            $type = I('post.type',0,'intval');
             if (empty($ads_id)){
                 $this->output('上传广告视频失败请重新上传', 'storesaleadv/advlist',2,0);
             }
@@ -82,7 +81,7 @@ class StoresaleadvController extends BaseController {
             $start_datetime = date('Y-m-d 00:00:00',strtotime($start_date));
             $end_datetime = date('Y-m-d 23:59:59',strtotime($end_date));
             $save_data = array('ads_id'=>$ads_id,'start_date'=>$start_datetime,'end_date'=>$end_datetime,'add_time'=>$now_date,
-                'creator_id'=>$userInfo['id'],'state'=>1,'goods_id'=>$goods_id,'type'=>$type,'is_price'=>$is_price
+                'creator_id'=>$userInfo['id'],'state'=>1,'goods_id'=>$goods_id,'is_price'=>$is_price
             );
             $sale_ads_id = $m_storesaleads->addData($save_data);
             if(!$sale_ads_id){
@@ -143,10 +142,10 @@ class StoresaleadvController extends BaseController {
 
         $m_goods = new \Admin\Model\Smallapp\DishgoodsModel();
         $res_goods = $m_goods->getInfo(array('id'=>$vinfo['goods_id']));
-        $all_types = C('STORESALE_ADV_TYPES');
+        $all_types = C('GOODS_WINE_TYPES');
         $vinfo['goods_name'] = $res_goods['name'];
         $vinfo['is_price_str'] = $is_price_str;
-        $vinfo['typestr'] = $all_types[$vinfo['type']];
+        $vinfo['typestr'] = $all_types[$res_goods['wine_type']];
         $vinfo['oss_addr'] = $oss_host.$vinfo['oss_addr'];
         $vinfo['start_date'] = date("Y/m/d", strtotime($vinfo['start_date']));
         $vinfo['end_date'] = date("Y/m/d", strtotime($vinfo['end_date']));
