@@ -187,7 +187,7 @@ class PrinterController extends Controller {
         $cache_data['status'] = 4;
         $cache_data['etime'] = time();
         $cache_data['img_urls'] = $all_printer_imgs;
-        $redis->set($cache_key,json_encode($cache_data),300);
+        $redis->set($cache_key,json_encode($cache_data),120);
 
         //处理订阅消息到打印机
         $accessId = C('OSS_ACCESS_ID');
