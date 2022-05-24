@@ -3183,6 +3183,122 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($ret);
     }
 
+    public function stockprice(){
+        $model = M();
+        $sql = "SELECT * from savor_finance_stock_record where type=1 and id in(5,6,7,8,18,19) order by id asc";
+        $res_record = $model->query($sql);
+        $m_record = new \Admin\Model\FinanceStockRecordModel();
+        $error_ids = array();
+        $error_goods_ids = array();
+        $error_unit_ids = array();
+        foreach ($res_record as $v){
+            $id = $v['id'];
+            $stock_id = $v['stock_id'];
+            $stock_detail_id = $v['stock_detail_id'];
+            $sql_detail = "SELECT * from savor_finance_stock_detail where id={$stock_detail_id}";
+            $res_detail = $model->query($sql_detail);
+            $res_detail = $res_detail[0];
+
+            $goods_id = $res_detail['goods_id'];
+            $unit_id = $res_detail['unit_id'];
+            $purchase_detail_id = intval($res_detail['purchase_detail_id']);
+            $sql_purchase_detail = "select * from savor_finance_purchase_detail where id={$purchase_detail_id} and status=1";
+            $res_purchase = $model->query($sql_purchase_detail);
+            if(empty($res_purchase)){
+                $error_ids[]=$id;
+            }
+            elseif($goods_id!=$v['goods_id']){
+                $error_goods_ids[]=$id;
+            }
+            elseif($unit_id!=$v['unit_id']){
+                $error_unit_ids[]=$id;
+            }
+            else{
+                $amount = 1;
+                $sql_unit = "select * from savor_finance_unit where id={$unit_id}";
+                $res_unit = $model->query($sql_unit);
+                $res_unit = $res_unit[0];
+                $total_amount = $res_unit['convert_type']*$amount;
+
+                $total_fee = $res_purchase[0]['price'];
+                $price = sprintf("%.2f",$total_fee/$total_amount);//单瓶价格
+                $up_data = array('price'=>$price,'total_fee'=>$total_fee,'unit_id'=>$unit_id,
+                    'amount'=>$amount,'total_amount'=>$total_amount,'update_time'=>date('Y-m-d H:i:s'));
+
+//                $idcode = $v['idcode'];
+//                $sql_idcodes = "SELECT * from savor_finance_stock_record where idcode='{$idcode}' order by id asc";
+//                $res_idcodes = $model->query($sql_idcodes);
+//                foreach ($res_idcodes as $iv){
+//                    if($iv['amount']<0 && $iv['total_amount']<0){
+//                        $up_data['price'] = -$price;
+//                        $up_data['total_fee'] = -$total_fee;
+//                        $up_data['amount'] = -$amount;
+//                        $up_data['total_amount'] = -$total_amount;
+//                    }
+//                    $m_record->updateData(array('id'=>$iv['id']),$up_data);
+//                    echo 'id:'.$iv['id']."ok \r\n";
+//                }
+            }
+        }
+
+        echo 'error_ids:'.json_encode($error_ids);
+        echo 'error_goods_ids:'.json_encode($error_goods_ids);
+        echo 'error_unit_ids:'.json_encode($error_unit_ids);
+    }
+
+    public function stockunpackprice(){
+        $model = M();
+        $sql = "SELECT * from savor_finance_stock_record where type=3 order by id asc";
+        $res_record = $model->query($sql);
+        $m_record = new \Admin\Model\FinanceStockRecordModel();
+
+
+        foreach ($res_record as $v){
+            $id = $v['id'];
+            $stock_detail_id = $v['stock_detail_id'];
+            $idcode = $v['idcode'];
+
+            $sql_idcodes = "SELECT * from savor_finance_stock_record where idcode='{$idcode}' order by id asc";
+            $res_idcodes = $model->query($sql_idcodes);
+            if($res_idcodes[0]['type']==3){
+
+                $qrcode_id = decrypt_data($idcode,false);
+                $qrcode_id = intval($qrcode_id);
+                $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
+                $res_qrcode = $m_qrcode_content->getInfo(array('id'=>$qrcode_id));
+
+                if(!empty($res_qrcode['parent_id'])){
+                    $p_idcode = encrypt_data($res_qrcode['parent_id']);
+                    $where = array('idcode'=>$p_idcode,'type'=>1);
+                    $res_stock_record = $m_record->getInfo($where);
+
+                    $sql_detail = "SELECT * from savor_finance_stock_detail where id={$stock_detail_id}";
+                    $res_detail = $model->query($sql_detail);
+                    $res_detail = $res_detail[0];
+                    $goods_id = $res_detail['goods_id'];
+                    $unit_id = $res_detail['unit_id'];
+                    $price = $res_stock_record['price'];
+                    $amount = 1;
+
+                    $up_data = array('price'=>$price,'total_fee'=>$price,'unit_id'=>$unit_id,
+                        'amount'=>$amount,'total_amount'=>$amount,'update_time'=>date('Y-m-d H:i:s'));
+
+                    foreach ($res_idcodes as $iv){
+                        if($iv['amount']<0 && $iv['total_amount']<0){
+                            $up_data['price'] = -$price;
+                            $up_data['total_fee'] = -$price;
+                            $up_data['amount'] = -$amount;
+                            $up_data['total_amount'] = -$amount;
+                        }
+                        $m_record->updateData(array('id'=>$iv['id']),$up_data);
+                        echo 'id:'.$iv['id']."ok \r\n";
+                    }
+
+                }
+            }
+        }
+    }
+
 
 
 }
