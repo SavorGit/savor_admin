@@ -36,6 +36,18 @@ class HotelgoodsController extends BaseController {
         if(!empty($keyword)){
             $where['name'] = array('like',"%$keyword%");
         }
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(9);
+        $cache_key = C('FINANCE_GOODSSTOCK');
+        $res_cache = $redis->get($cache_key);
+        $finance_goods = array();
+        if(!empty($res_cache)){
+            $res_cache = json_decode($res_cache,true);
+            foreach ($res_cache as $v){
+                $finance_goods[$v['id']] = $v;
+            }
+        }
+
         $start  = ($page-1) * $size;
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
         $fields = '*';
@@ -71,6 +83,7 @@ class HotelgoodsController extends BaseController {
             $datalist[$k]['image'] = $image;
             $datalist[$k]['statusstr'] = $goods_status[$v['status']];
             $datalist[$k]['is_seckill_str'] = $is_seckill_str;
+            $datalist[$k]['finance_goods_name'] = $finance_goods[$v['finance_goods_id']]['name'];
         }
         $this->assign('status',$status);
         $this->assign('type',$type);
@@ -181,6 +194,16 @@ class HotelgoodsController extends BaseController {
                 }
                 $cover_imgs[] = $img_info;
             }
+            $redis = new \Common\Lib\SavorRedis();
+            $redis->select(9);
+            $cache_key = C('FINANCE_GOODSSTOCK');
+            $res_cache = $redis->get($cache_key);
+            $finance_goods = array();
+            if(!empty($res_cache)){
+                $finance_goods = json_decode($res_cache,true);
+            }
+
+            $this->assign('finance_goods',$finance_goods);
             $this->assign('cover_imgs',$cover_imgs);
             $this->assign('detail_imgs',$detail_imgs);
             $this->assign('goods_types',$goods_types);
@@ -205,6 +228,7 @@ class HotelgoodsController extends BaseController {
             $tv_media_vid = I('post.tv_media_vid',0,'intval');
             $model_media_id = I('post.model_media_id',0,'intval');
             $postermedia_id = I('post.postermedia_id',0,'intval');
+            $finance_goods_id = I('post.finance_goods_id',0,'intval');
             $start_time = I('post.start_time','');
             $end_time = I('post.end_time','');
             if($tv_media_vid>0){
@@ -221,7 +245,7 @@ class HotelgoodsController extends BaseController {
             if(!$price){
                 $this->output('建议零售价不能为空', "hotelgoods/goodsadd", 2, 0);
             }
-            $where = array('name'=>$name);
+            $where = array('name'=>$name,'status'=>1);
             if($id){
                 $where['id']= array('neq',$id);
                 $res_goods = $m_goods->getInfo($where);
@@ -239,7 +263,7 @@ class HotelgoodsController extends BaseController {
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'is_seckill'=>$is_seckill,
                 'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'type'=>$type,'wine_type'=>$wine_type,
-                'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
+                'finance_goods_id'=>$finance_goods_id,'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             $data['status'] = $status;
             if(!empty($start_time)){
                 $data['start_time'] = $start_time;
