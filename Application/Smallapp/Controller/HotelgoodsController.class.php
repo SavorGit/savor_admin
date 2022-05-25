@@ -42,10 +42,7 @@ class HotelgoodsController extends BaseController {
         $res_cache = $redis->get($cache_key);
         $finance_goods = array();
         if(!empty($res_cache)){
-            $res_cache = json_decode($res_cache,true);
-            foreach ($res_cache as $v){
-                $finance_goods[$v['id']] = $v;
-            }
+            $finance_goods = json_decode($res_cache,true);
         }
 
         $start  = ($page-1) * $size;
