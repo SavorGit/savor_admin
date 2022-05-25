@@ -108,9 +108,8 @@ class FinanceStockModel extends BaseModel{
                 }
 
                 $stock_num = $out_num+$wo_num+$report_num;
-                if($stock_num>0){
-                    $goods_list[]=array('id'=>$goods_id,'name'=>$gv['name'],'stock_num'=>$stock_num);
-                }
+
+                $goods_list[$goods_id]=array('id'=>$goods_id,'name'=>$gv['name'],'stock_num'=>$stock_num);
             }
         }
         $redis = new \Common\Lib\SavorRedis();
