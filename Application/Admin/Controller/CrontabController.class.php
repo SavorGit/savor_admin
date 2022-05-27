@@ -5419,9 +5419,32 @@ class CrontabController extends Controller
     }
 	public function playHotelWineAds(){
 		
+		$redis = SavorRedis::getInstance();
+        $redis->select(9);
+		$cache_key = C('FINANCE_HOTELSTOCK');
+		$stock_hotel = $redis->get($cache_key);
+		$stock_hotel = json_decode($stock_hotel,true);
+		if(empty($stock_hotel)){
+			
+			print_r("暂无售酒酒楼\n");
+			exit();
+		}
 		
+		//print_r($stock_hotel);exit;
+		$box_list =  curlPost('https://api-nzb.littlehotspot.com/netty/box/connections?showFields=box_mac,http_host,http_port,message_contents');
+        $box_list = json_decode($box_list,true);
+		$box_list = $box_list['result'];
+        foreach($box_list as $key=>$v){
+			
+			$hotel_info = json_decode( $v['message_contents'][1],true);
+			$hotel_id = $hotel_info['hotel_id'];
+			if(empty($stock_hotel[$hotel_id])){
+				unset($box_list[$key]);
+			}
+			
+		}
 		
-		
+		$box_list = array(array('box_mac'=>'00226D583ECD','http_host'=>'39.107.204.75','http_port'=>8081));    //上线去掉
 		
 		
 		
@@ -5433,26 +5456,14 @@ class CrontabController extends Controller
                     );
 		$msg = json_encode($msg);
 		$msg = str_replace('\\', '', $msg);
-		$url = 'https://netty-push.littlehotspot.com/push/box'; //调用接口的平台服务地址
-		$post_string = array('box_mac'=>$v['box_mac'],'cmd'=>'call-mini-program',
-							  'msg'=>$msg,'req_id'=>$timestamp
-		); 
-		 
-		$post_string = http_build_query($post_string);
-		
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-		curl_setopt($ch, CURLOPT_POSTFIELDS,$post_string);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
-
-		$result = curl_exec($ch);
-		if (curl_errno($ch)) {
-			continue;
+		foreach($box_list as $v){
+			$url =  'http://'.$v['http_host'].':' .$v['http_port'].'/push/box?box_mac='.$v['box_mac'].'&cmd=call-mini-program&msg='.$msg.'&req_id='.$timestamp;
+			curlPost($url);
+			
 			
 		}
-		curl_close($ch);
+		$rt_msg = date('Y-m-d H:i:s')."ok\n";
+		print_r($rt_msg);
 	}
     
 }
