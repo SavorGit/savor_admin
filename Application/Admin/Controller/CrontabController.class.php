@@ -3126,9 +3126,10 @@ class CrontabController extends Controller
     public function simulateForscreen(){
         echo "废弃" ;exit; 
         //获取目前链接netty的机顶盒
-        $box_list =  file_get_contents('https://netty-push.littlehotspot.com/netty/box/connections');
+        $box_list =  file_get_contents('https://api-nzb.littlehotspot.com/netty/box/connections');
         $box_list = json_decode($box_list,true);
-        $box_list = $box_list['result'];
+        print_r($box_list);exit;
+		$box_list = $box_list['result'];
         
         //上线关闭
         /*$box_list = array();
@@ -5397,5 +5398,42 @@ class CrontabController extends Controller
         echo date('Y-m-d H:i:s');
         
     }
+	public function playHotelWineAds(){
+		
+		
+		
+		
+		
+		
+		
+		$timestamp = getMillisecond();
+		 $msg = array('action'=>5,'url'=>'media/resource/sAzjEwFept.mp4',
+                                 'filename'=>'sAzjEwFept.mp4','openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE',
+                                 'resource_type'=>2,'video_id'=>$timestamp,
+								 'forscreen_id'=>$timestamp,'req_id'=>$timestamp
+                    );
+		$msg = json_encode($msg);
+		$msg = str_replace('\\', '', $msg);
+		$url = 'https://netty-push.littlehotspot.com/push/box'; //调用接口的平台服务地址
+		$post_string = array('box_mac'=>$v['box_mac'],'cmd'=>'call-mini-program',
+							  'msg'=>$msg,'req_id'=>$timestamp
+		); 
+		 
+		$post_string = http_build_query($post_string);
+		
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+		curl_setopt($ch, CURLOPT_POSTFIELDS,$post_string);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		
+
+		$result = curl_exec($ch);
+		if (curl_errno($ch)) {
+			continue;
+			
+		}
+		curl_close($ch);
+	}
     
 }
