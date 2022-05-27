@@ -101,6 +101,35 @@
 		</div>
 		</div>
 
+		<div class="form-group row" id="tv_advrightimg">
+			<label class="col-xs-12 col-sm-2 control-label">
+				广告右侧悬浮图：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['advright_oss_addr'] eq 'NULL') OR $vinfo['advright_oss_addr'] eq ''">
+								<img id="advrightmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="advrightmedia_idimg" src="{$vinfo.advright_oss_addr}" border="0" />
+							</if>
+							<span id="advrightmedia_idimgname"></span>
+						</a>
+					</div>
+					<span class="help-block" id="img-msg">请上传50x50像素的jpg格式图片，展示效果最佳</span>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=advrightmedia_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="advright_media_id" id="advrightmedia_id" value="{$vinfo.advright_media_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
 		<div class="form-group row" id="goods_poster_img" >
 			<label class="col-xs-12 col-sm-2 control-label">
 				小程序弹框图片：
@@ -225,6 +254,18 @@
 				<select name="wine_type" class="form-control bs-select" title="请选择..." data-size="20" required>
 					<volist name=":C('GOODS_WINE_TYPES')" id="wtype">
 						<option value="{$key}" <if condition="$vinfo['wine_type'] eq $key"> selected </if> > {$wtype}</option>
+					</volist>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">选择库存商品：</label>
+			<div class="col-xs-12 col-sm-10  form-inline">
+				<select name="finance_goods_id" class="form-control bs-select class-filter" data-live-search="true" required >
+					<option name="finance_goods_id" selected='selected' value="0">请选择商品</option>
+					<volist name="finance_goods" id="fginfo">
+						<option name="finance_goods_id" value="{$fginfo.id}" <if condition="$fginfo.id eq $vinfo['finance_goods_id']"> selected </if> > {$fginfo.name}</option>
 					</volist>
 				</select>
 			</div>

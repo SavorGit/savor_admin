@@ -779,6 +779,10 @@ $config['VSMALL_APK']   = "vsmall:apk:";
 //统计缓存key
 $config['STATS_CACHE_PRE'] = "statistics:";
 
+//财务后台缓存key
+$config['FINANCE_HOTELSTOCK']   = "finance:hotelstock";
+$config['FINANCE_GOODSSTOCK']   = "finance:goodsstock";
+
 $config['UPD_STR'] = array(
     1=>array(
         'ename'=>'get_channel',
