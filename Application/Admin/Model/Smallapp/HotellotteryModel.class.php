@@ -113,6 +113,10 @@ class HotellotteryModel extends BaseModel{
             echo "no activity \r\n";
             exit;
         }
+        $m_sys_config = new \Admin\Model\SysConfigModel();
+        $res_config = $m_sys_config->getAllconfig();
+        $hotellottery_people_num = $res_config['hotellottery_people_num'];
+
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
         $m_activityprize = new \Admin\Model\Smallapp\ActivityprizeModel();
         $m_box = new \Admin\Model\BoxModel();
@@ -147,7 +151,7 @@ class HotellotteryModel extends BaseModel{
                     $pwhere['hotel.id'] = $v['hotel_id'];
                     $res_pdata = $m_box->getBoxByCondition('box.mac,hotel.id as hotel_id',$pwhere,'');
 
-                    if($lottery_user_num<$v['people_num']){
+                    if($lottery_user_num<$hotellottery_people_num){
                         $is_send_prize = 0;
                         $m_activity->updateData(array('id'=>$activity_id),array('status'=>2));
 
