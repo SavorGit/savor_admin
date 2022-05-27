@@ -112,7 +112,7 @@ class HotelgoodsController extends BaseController {
                 $m_media = new \Admin\Model\MediaModel();
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
                 $type = $dinfo['type'];
-                $tv_oss_addr = $model_oss_addr = $poster_oss_addr = '';
+                $tv_oss_addr = $model_oss_addr = $poster_oss_addr = $advright_oss_addr = '';
 
                 if(!empty($dinfo['tv_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['tv_media_id']);
@@ -127,6 +127,11 @@ class HotelgoodsController extends BaseController {
                     $model_oss_addr = $res_media['oss_addr'];
                 }
                 $dinfo['model_oss_addr'] = $model_oss_addr;
+                if(!empty($dinfo['advright_media_id'])){
+                    $res_media = $m_media->getMediaInfoById($dinfo['advright_media_id']);
+                    $advright_oss_addr = $res_media['oss_addr'];
+                }
+                $dinfo['advright_oss_addr'] = $advright_oss_addr;
                 if(!empty($dinfo['poster_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['poster_media_id']);
                     $model_oss_addr = $res_media['oss_addr'];
@@ -225,6 +230,7 @@ class HotelgoodsController extends BaseController {
             $tv_media_vid = I('post.tv_media_vid',0,'intval');
             $model_media_id = I('post.model_media_id',0,'intval');
             $postermedia_id = I('post.postermedia_id',0,'intval');
+            $advright_media_id = I('post.advright_media_id',0,'intval');
             $finance_goods_id = I('post.finance_goods_id',0,'intval');
             $start_time = I('post.start_time','');
             $end_time = I('post.end_time','');
@@ -259,8 +265,9 @@ class HotelgoodsController extends BaseController {
             if(empty($line_price))   $line_price = 0;
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'is_seckill'=>$is_seckill,
-                'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'type'=>$type,'wine_type'=>$wine_type,
-                'finance_goods_id'=>$finance_goods_id,'sort'=>$sort,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
+                'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'advright_media_id'=>$advright_media_id,
+                'type'=>$type,'wine_type'=>$wine_type,'finance_goods_id'=>$finance_goods_id,'sort'=>$sort,'sysuser_id'=>$sysuser_id,
+                'update_time'=>date('Y-m-d H:i:s'));
             $data['status'] = $status;
             if(!empty($start_time)){
                 $data['start_time'] = $start_time;
