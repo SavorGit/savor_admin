@@ -62,6 +62,7 @@ class StoresaleadvController extends BaseController {
             $end_date = I('post.end_date', '');
             $goods_id = I('post.goods_id',0,'intval');
             $is_price = I('post.is_price',0,'intval');
+            $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
             if (empty($ads_id)){
                 $this->output('上传广告视频失败请重新上传', 'storesaleadv/advlist',2,0);
             }
@@ -81,7 +82,7 @@ class StoresaleadvController extends BaseController {
             $start_datetime = date('Y-m-d 00:00:00',strtotime($start_date));
             $end_datetime = date('Y-m-d 23:59:59',strtotime($end_date));
             $save_data = array('ads_id'=>$ads_id,'start_date'=>$start_datetime,'end_date'=>$end_datetime,'add_time'=>$now_date,
-                'creator_id'=>$userInfo['id'],'state'=>1,'goods_id'=>$goods_id,'is_price'=>$is_price
+                'creator_id'=>$userInfo['id'],'state'=>1,'goods_id'=>$goods_id,'is_price'=>$is_price,'cover_img_media_id'=>$cover_img_media_id
             );
             $sale_ads_id = $m_storesaleads->addData($save_data);
             if(!$sale_ads_id){
