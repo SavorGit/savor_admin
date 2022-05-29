@@ -66,13 +66,18 @@
 								小程序二维码:
 							</label>
 							<div class="col-xs-12 col-sm-10">
-				                <div class="col-md-2 col-sm-12">
-				                  <label>显示<input type="radio" required name="is_sapp_qrcode" value="1" ></label>
-				                </div>
-				                <div class="col-md-6 col-sm-12">
-				                  <label>不显示<input type="radio" required name="is_sapp_qrcode"  value="0" checked="checked"></label>
-				                </div>
-              				</div>
+								<div class="inline-radio-container">
+									<label class="radio-inline">
+										<input type="radio" name="is_sapp_qrcode" id="1" value='1'>
+										<span>显示</span>
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="is_sapp_qrcode" id="0" value='0' checked="checked" >
+										<span>不显示</span>
+									</label>
+
+								</div>
+							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-xs-12 col-sm-2 control-label">
@@ -399,6 +404,7 @@ accessid = ''
 				"oss_addr": $("#oss_addr").val(),
 				"oss_filesize": $("#oss_filesize").val(),
 				"name": $("#resource_name").val(),
+				"is_sapp_qrcode": $("input[name='is_sapp_qrcode']:checked").val(),
 				"type": resourceType,
 				"seco": $("#seco").val(),
 				"description": $("#description").val(),
