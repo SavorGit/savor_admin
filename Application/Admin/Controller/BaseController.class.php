@@ -519,7 +519,7 @@ class BaseController extends Controller {
                              'admin.optionuser.manager_list','admin.optionuser.searchhotel','admin.resource.searchresource',
                              'admin.opetasksta.getuserrolebycity','admin.singleproreport.getadsajax','admin.resource.uploadpolyresource',
                              'admin.boxshell.getroomlist','admin.boxshell.getboxlist','admin.boxshell.getboxapkversion','admin.hotel.getcountyinfo',
-                             'admin.advdelivery.getallhotel','integral.merchant.merchantaddstep'
+                             'admin.advdelivery.getallhotel','integral.merchant.merchantaddstep','admin.storesaleadv.getocuphotel'
         );
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);
