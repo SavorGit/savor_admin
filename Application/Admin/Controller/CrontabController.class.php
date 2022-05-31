@@ -5450,8 +5450,8 @@ class CrontabController extends Controller
 		
 		
 		$timestamp = getMillisecond();
-		 $msg = array('action'=>5,'url'=>'media/resource/sAzjEwFept.mp4',
-                                 'filename'=>'sAzjEwFept.mp4','openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE',
+		 $msg = array('action'=>5,'url'=>'media/resource/TYFeD6BXJc.mp4',
+                                 'filename'=>'TYFeD6BXJc.mp4','openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE',
                                  'resource_type'=>2,'video_id'=>$timestamp,
 								 'forscreen_id'=>$timestamp,'req_id'=>$timestamp
                     );
