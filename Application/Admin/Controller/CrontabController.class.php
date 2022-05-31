@@ -5444,7 +5444,7 @@ class CrontabController extends Controller
 			
 		}
 		
-		$box_list = array(array('box_mac'=>'00226D583ECD','http_host'=>'39.107.204.75','http_port'=>8081),
+		$box_list = array(array('box_mac'=>'00226D583ECD','http_host'=>'47.93.139.111','http_port'=>8081),
 						  array('box_mac'=>'00226D65531C','http_host'=>'39.107.204.75','http_port'=>8081));    //上线去掉
 		
 		
