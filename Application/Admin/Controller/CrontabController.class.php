@@ -5419,6 +5419,7 @@ class CrontabController extends Controller
     }
 	public function playHotelWineAds(){
 		
+		$iphost = I('iphost');
 		$redis = SavorRedis::getInstance();
         $redis->select(9);
 		$cache_key = C('FINANCE_HOTELSTOCK');
@@ -5444,14 +5445,14 @@ class CrontabController extends Controller
 			
 		}
 		
-		$box_list = array(array('box_mac'=>'00226D583ECD','http_host'=>'47.93.139.111','http_port'=>8081),
-						  array('box_mac'=>'00226D65531C','http_host'=>'39.107.204.75','http_port'=>8081));    //上线去掉
+		$box_list = array(array('box_mac'=>'00226D583ECD','http_host'=>$iphost,'http_port'=>8081),
+						  array('box_mac'=>'00226D65531C','http_host'=>$iphost,'http_port'=>8081));    //上线去掉
 		
 		
 		
 		$timestamp = getMillisecond();
-		 $msg = array('action'=>5,'url'=>'media/resource/TYFeD6BXJc.mp4',
-                                 'filename'=>'TYFeD6BXJc.mp4','openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE',
+		 $msg = array('action'=>5,'url'=>'media/resource/tBtFDitm8N.mp4',
+                                 'filename'=>'tBtFDitm8N.mp4','openid'=>'ofYZG4yZJHaV2h3lJHG5wOB9MzxE',
                                  'resource_type'=>2,'video_id'=>$timestamp,
 								 'forscreen_id'=>$timestamp,'req_id'=>$timestamp
                     );
