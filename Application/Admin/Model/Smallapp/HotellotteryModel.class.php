@@ -43,6 +43,7 @@ class HotellotteryModel extends BaseModel{
                     'start_time'=>$start_time,'end_time'=>$end_time,'lottery_time'=>$lottery_time,'status'=>1,
                     'type'=>$type,'syslottery_id'=>$v['id']);
                 $activity_id = $m_activity->add($add_activity_data);
+                $partake_name = $partakedish_img = '';
                 if($type==10){
                     $fields = 'a.prizepool_prize_id,a.amount,a.level,p.name,p.image_url,p.type';
                     $pwhere = array('a.hotellottery_id'=>$v['id'],'a.status'=>1);
@@ -53,8 +54,15 @@ class HotellotteryModel extends BaseModel{
                             'level'=>$pv['level'],'prizepool_prize_id'=>$pv['prizepool_prize_id'],'type'=>$pv['type']
                             );
                         $p_data[]=$info;
+                        if($pv['level']==1){
+                            $partake_name = $pv['name'];
+                            $partakedish_img = $pv['image_url'];
+                        }
                     }
                     $m_activity_prize->addAll($p_data);
+                }else{
+                    $partake_name = $v['prize'];
+                    $partakedish_img = $v['image_url'];
                 }
 
                 echo "ID:{$v['id']} activity_id:$activity_id ok\r\n";
@@ -62,15 +70,19 @@ class HotellotteryModel extends BaseModel{
                 $bwhere = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
                 $res_box = $m_box->getBoxByCondition('box.id as box_id,box.mac',$bwhere);
                 if(!empty($res_box)){
-                    $partakedish_img = $v['image_url'].'?x-oss-process=image/resize,m_mfit,h_200,w_300';
-                    $dish_name_info = pathinfo($v['image_url']);
+                    $partake_filename = '';
+                    if(!empty($partakedish_img)){
+                        $dish_name_info = pathinfo($partakedish_img);
+                        $partake_filename = $dish_name_info['basename'];
+                        $partakedish_img = $partakedish_img.'?x-oss-process=image/resize,m_mfit,h_200,w_300';
+                    }
                     $now_time = time();
                     $lottery_countdown = strtotime($lottery_time) - $now_time;
                     $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
 
                     $netty_msg = array(
-                        'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partakedish_img,'partake_filename'=>$dish_name_info['basename'],
-                        'partake_name'=>$v['prize'],'activity_name'=>$v['name'],
+                        'lottery_countdown'=>$lottery_countdown,'partake_img'=>$partakedish_img,'partake_filename'=>$partake_filename,
+                        'partake_name'=>$partake_name,'activity_name'=>$v['name'],
                     );
 
                     if($type==10){
