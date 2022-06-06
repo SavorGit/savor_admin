@@ -187,14 +187,18 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
     }
 
     public function invitation(){
-        $static_date = I('date','');
-        if(empty($sdate)){
-            $static_date = date('Y-m-d',strtotime('-1 day'));
+        $sdate = I('sdate','');
+        $edate = I('edate','');
+        if(!empty($sdate) && !empty($edate)){
+            $static_sdate = date('Y-m-d',strtotime($sdate));
+            $static_edate = date('Y-m-d',strtotime($edate));
+            $start_time = "$static_sdate 00:00:00";
+            $end_time = "$static_edate 23:59:59";
         }else{
-            $static_date = date('Y-m-d',strtotime($static_date));
+            $static_date = date('Y-m-d',strtotime('-1 day'));
+            $start_time = "$static_date 00:00:00";
+            $end_time = "$static_date 23:59:59";
         }
-        $start_time = "$static_date 00:00:00";
-        $end_time = "$static_date 23:59:59";
 
         $m_invitation = new \Admin\Model\Smallapp\InvitationModel();
         $where = array();
