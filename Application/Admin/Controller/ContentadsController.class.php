@@ -22,7 +22,7 @@ class ContentadsController extends BaseController{
 	public function getads_ajax(){
 		$searchtitle = I('adsname','');
 		$where = "1=1";
-		$where .= " AND type in(1,2,8)";
+		$where .= " AND type in(1,2,8,9)";
 		$field = "id,name,media_id,type";
 		if ($searchtitle) {
 			$where .= "	AND name LIKE '%{$searchtitle}%' ";
