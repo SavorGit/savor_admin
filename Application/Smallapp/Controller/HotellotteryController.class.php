@@ -57,6 +57,7 @@ class HotellotteryController extends BaseController {
         if(IS_POST){
             $name = I('post.name','');
             $prize = I('post.prize','');
+            $people_num = I('post.people_num',0,'intval');
             $media_id = I('post.media_id',0,'intval');
             $start_date = I('post.start_date','');
             $end_date = I('post.end_date','');
@@ -69,7 +70,7 @@ class HotellotteryController extends BaseController {
 
             $userInfo = session('sysUserInfo');
             $data = array('name'=>$name,'prize'=>$prize,'wait_time'=>$wait_time,'hotel_id'=>$hotel_id,'type'=>$type,
-                'start_date'=>$start_date,'end_date'=>$end_date,'sysuser_id'=>$userInfo['id'],'status'=>$status);
+                'people_num'=>$people_num,'start_date'=>$start_date,'end_date'=>$end_date,'sysuser_id'=>$userInfo['id'],'status'=>$status);
             if(empty($hour) || empty($minute)){
                 $this->output('发送时间不能为空', 'hotellottery/lotteryadd',2,0);
             }

@@ -40,7 +40,7 @@ class HotellotteryModel extends BaseModel{
                 }
 
                 $add_activity_data = array('hotel_id'=>$hotel_id,'name'=>$v['name'],'prize'=>$v['prize'],'image_url'=>$v['image_url'],
-                    'start_time'=>$start_time,'end_time'=>$end_time,'lottery_time'=>$lottery_time,'status'=>1,
+                    'start_time'=>$start_time,'end_time'=>$end_time,'lottery_time'=>$lottery_time,'people_num'=>$v['people_num'],'status'=>1,
                     'type'=>$type,'syslottery_id'=>$v['id']);
                 $activity_id = $m_activity->add($add_activity_data);
                 $partake_name = $partakedish_img = '';
@@ -142,6 +142,7 @@ class HotellotteryModel extends BaseModel{
         foreach ($res as $v){
             $activity_id = $v['id'];
             $lottery_time = strtotime($v['lottery_time']);
+            $activity_people_num = $v['people_num'];
             if($v['lottery_time']==$now_time){
                 $where = array('activity_id'=>$v['id']);
                 $res_apply_user = $m_activityapply->getDataList('*',$where,'id asc');
@@ -163,6 +164,9 @@ class HotellotteryModel extends BaseModel{
                     $pwhere['hotel.id'] = $v['hotel_id'];
                     $res_pdata = $m_box->getBoxByCondition('box.mac,hotel.id as hotel_id',$pwhere,'');
 
+                    if($activity_people_num>0){
+                        $hotellottery_people_num = $activity_people_num;
+                    }
                     if($lottery_user_num<$hotellottery_people_num){
                         $is_send_prize = 0;
                         $m_activity->updateData(array('id'=>$activity_id),array('status'=>2));
