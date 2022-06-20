@@ -8402,4 +8402,16 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'whnetboxroomnums';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
+    public function wineAdsSta(){
+        $hotel_ids = '1033,920,1257,1029,1064,720,1284,395,1287,1124,
+                      968,416,810,912,1324,964,970,963,1240,1047,
+                      1183,1107,1289,1041,411,415';
+        $m_hotel = new \Admin\Model\HotelModel();
+        $where = [];
+        $where['id'] = array('in',$hotel_ids);
+        $hotel_list  = $m_hotel->field('id','name')->where($where)->select();
+        print_r($hotel_list);
+        
+        
+    }
 }
