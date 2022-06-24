@@ -28,7 +28,7 @@ class FinanceStockModel extends BaseModel{
                     $out_num = $unpack_num = $wo_num = $report_num = 0;
                     $goods_id = $gv['goods_id'];
                     $rfileds = 'sum(a.total_amount) as total_amount,sum(a.total_fee) as total_fee,a.type';
-                    $rwhere = array('stock.hotel_id'=>$hotel_id,'stock.type'=>20,'stock.io_type'=>22,'a.goods_id'=>$goods_id);
+                    $rwhere = array('stock.hotel_id'=>$hotel_id,'stock.type'=>20,'stock.io_type'=>22,'a.goods_id'=>$goods_id,'a.dstatus'=>1);
                     $rwhere['a.type'] = 2;
                     $rgroup = 'a.type';
 
@@ -84,7 +84,7 @@ class FinanceStockModel extends BaseModel{
                 $out_num = $unpack_num = $wo_num = $report_num = 0;
                 $goods_id = $gv['goods_id'];
                 $rfileds = 'sum(a.total_amount) as total_amount';
-                $rwhere = array('stock.type'=>20,'stock.io_type'=>22,'a.goods_id'=>$goods_id);
+                $rwhere = array('stock.type'=>20,'stock.io_type'=>22,'a.goods_id'=>$goods_id,'a.dstatus'=>1);
                 $rwhere['a.type'] = 2;
 
                 $res_outrecord = $m_stock_record->getStockRecordList($rfileds,$rwhere,'a.id desc','','');
