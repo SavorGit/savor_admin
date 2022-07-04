@@ -272,6 +272,14 @@ class ForscreenadvController extends BaseController {
             $system_sapp_forscreen_nums = I('post.system_sapp_forscreen_nums',1,'intval');
             $status = I('post.status',0,'intval');
             $m_sysconfig->updateData($where,array('config_value'=>$system_sapp_forscreen_nums,'status'=>$status));
+
+            $redis  =  \Common\Lib\SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key = 'system_config';
+            $where = array('status'=>1);
+            $res_config = $m_sysconfig->where($where)->select();
+            $redis->set($cache_key,json_encode($res_config));
+
             $this->output('操作成功', 'forscreenadv/advlist');
         }else{
             $play_num = 10;
