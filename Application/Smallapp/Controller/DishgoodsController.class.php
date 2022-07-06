@@ -299,15 +299,18 @@ class DishgoodsController extends BaseController {
             }
 
             $where = array('name'=>$name,'merchant_id'=>$merchant_id);
-            if($id){
-                $where['id']= array('neq',$id);
-                $res_goods = $m_goods->getInfo($where);
-            }else{
-                $res_goods = $m_goods->getInfo($where);
+            if($type!=24){
+                if($id){
+                    $where['id']= array('neq',$id);
+                    $res_goods = $m_goods->getInfo($where);
+                }else{
+                    $res_goods = $m_goods->getInfo($where);
+                }
+                if(!empty($res_goods)){
+                    $this->output('名称不能重复', "dishgoods/goodsadd", 2, 0);
+                }
             }
-            if(!empty($res_goods)){
-                $this->output('名称不能重复', "dishgoods/goodsadd", 2, 0);
-            }
+
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             if(empty($price))   $price = 0;
