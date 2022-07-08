@@ -33,13 +33,14 @@ class DishgoodsController extends BaseController {
 
         if($display_type=='dish'){
             $display_html = 'dishgoodslist';
-            $type = 21;
+//            $type = 21;
+            $type = 24;//21商家外卖商品,22商家售全国商品,23赠送商品,24商家菜品商品
             $goods_types = C('DISH_TYPE');
             $where['a.type'] = $type;
         }else{
             $display_html = 'goodslist';
             $goods_types = C('DISH_TYPE');
-            unset($goods_types[21],$goods_types[40],$goods_types[43]);
+            unset($goods_types[21],$goods_types[24],$goods_types[40],$goods_types[43]);
             if($type){
                 $where['a.type'] = $type;
             }else{
@@ -129,6 +130,10 @@ class DishgoodsController extends BaseController {
             $detailaddr = $coveraddr = array();
             if($type==0){
                 $type = 22;
+            }
+            if($type==24){
+                $detail_img_num = 1;
+                $cover_img_num = 1;
             }
             $dinfo = array('type'=>$type,'amount'=>1,'gtype'=>1,'tvmedia_type'=>1,'sort'=>1);
 
@@ -286,7 +291,7 @@ class DishgoodsController extends BaseController {
                 $distribution_profit = 0;
             }
 
-            if($gtype==1 && !$price){
+            if($type!=24 && $gtype==1 && !$price){
                 $this->output('建议零售价不能为空', "dishgoods/goodsadd", 2, 0);
             }
             if(!$merchant_id){
@@ -400,14 +405,15 @@ class DishgoodsController extends BaseController {
                     }
                 }
             }
+            /*
             $m_merchant = new \Admin\Model\Integral\MerchantModel();
             $res_merchant = $m_merchant->getInfo(array('id'=>$merchant_id));
-
             if($res_merchant['is_takeout']==0){
                 $m_merchant->updateData(array('id'=>$res_merchant['id']),array('is_takeout'=>1));
             }
+            */
             if($result){
-                if($type==21){
+                if($type==21 || $type==24){
                     $display_html = 'dishgoods/dishgoodslist';
                 }else{
                     $display_html = 'dishgoods/goodslist';

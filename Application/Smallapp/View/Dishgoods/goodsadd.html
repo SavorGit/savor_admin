@@ -137,7 +137,7 @@
 			</div>
 		</div>
 
-		<div class="form-group row">
+		<div class="form-group row" id="goods_notice">
 			<label class="col-xs-12 col-sm-2 control-label">
 				公告：
 			</label>
@@ -279,7 +279,7 @@
 									<span id="{$dinfo.imgid}imgname"></span>
 								</a>
 							</div>
-							<span class="help-block" id="img-msg">请上传750x420像素的jpg格式图片，展示效果最佳</span>
+							<span class="help-block" id="goods-img-msg">请上传750x420像素的jpg格式图片，展示效果最佳</span>
 							<div>
 								<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed={$dinfo.imgid}&rtype=2" data-browse-file>
 									选择图片
@@ -437,7 +437,28 @@
             $('#sale_gift').show();
             $('#goods_onoffline').hide();
 			$('#goods_usecoupon').hide();
-        }else if($(this).val()==42 || $(this).val()==44){
+        }else if($(this).val()==24){
+			$('#goods_notice').hide();
+			$('#sale_category').hide();
+			$('#sale_modeltype').hide();
+			$('#goods_price').hide();
+			$('#sale_supply_price').hide();
+			$('#sale_line_price').hide();
+			$('#sale_distribution_profit').hide();
+			$('#sale_amount').hide();
+			$('#sale_video').hide();
+			$('#check_flag').hide();
+			$('#shop_localsale').hide();
+			$('#shop_poster_img').hide();
+			$('#shop_isrecommend').hide();
+			$('#sale_gift').hide();
+			$('#goods_usecoupon').hide();
+			$('#goods_detailimg').hide();
+			$('#goods_scenegift').hide();
+			$('#goods_sort').hide();
+			$('#goods-img-msg').text('请上传540x230像素的jpg格式图片，展示效果最佳');
+
+		}else if($(this).val()==42 || $(this).val()==44){
 			$('#goods_pricelabel').text('价格：');
 			$('#sale_category').hide();
 			$('#sale_supply_price').hide();
@@ -491,6 +512,13 @@
             if(now_goods_type==42 || now_goods_type==44){
 				$('#sale_supply_price').hide();
 				$('#sale_distribution_profit').hide();
+			}else if(now_goods_type==24){
+				$('#goods_price').hide();
+				$('#sale_supply_price').hide();
+				$('#sale_line_price').hide();
+				$('#sale_distribution_profit').hide();
+				$('#sale_amount').hide();
+				$('#sale_gift').hide();
 			}else{
 				$('#sale_supply_price').show();
 				$('#sale_distribution_profit').show();
