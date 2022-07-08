@@ -800,7 +800,7 @@ class HotelController extends BaseController {
             $pin = new \Common\Lib\Pin();
             $obj_pin = new \Overtrue\Pinyin\Pinyin();
             $code_charter = '';
-            if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
+            if(preg_match('/^[a-zA-Z].*/', $s_hotel_name)){
                 $code_first = getfirstchar($s_hotel_name);
                 $code_charter = $code_first.$s_hotel_name;
             }else {
@@ -810,11 +810,12 @@ class HotelController extends BaseController {
                     $code_charter .=$code_charter;
                 }
             }
+            
             if($code_charter){
                 $save['pinyin'] = strtolower($code_charter);
             }
         }
-
+        
 		$mac_addr = I('post.mac_addr','','trim');
 		$server_location = I('post.server_location','','trim');
 		$hotelModel = new \Admin\Model\HotelModel();
