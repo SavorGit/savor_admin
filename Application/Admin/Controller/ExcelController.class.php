@@ -8403,15 +8403,76 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
     public function wineAdsSta(){
-        $hotel_ids = '1033,920,1257,1029,1064,720,1284,395,1287,1124,
-                      968,416,810,912,1324,964,970,963,1240,1047,
-                      1183,1107,1289,1041,411,415';
+        $hotel_ids = '1033,920,1257,1029,1064,720,1284,395,1287,1124,968,416,810,912,1324,964,970,963,1240,1047,1183,1107,1289,1041,411,415';
         $m_hotel = new \Admin\Model\HotelModel();
         $where = [];
         $where['id'] = array('in',$hotel_ids);
-        $hotel_list  = $m_hotel->field('id','name')->where($where)->select();
-        print_r($hotel_list);
+        $hotel_list  = $m_hotel->field('id as hotel_id,name as hotel_name')->where($where)->select();
+        $start_date = '20220601';
+        $end_date   = '20220615';
+        
+        $start_time = "2022-06-01 00:00:00";
+        $end_time   = "2022-06-15 23:59:59";
+        $storesale_arr = array(
+            array('media_id'=>31439,'oss_addr'=>'media/resource/6xWZ36spcK.mp4','type'=>1),
+            array('media_id'=>31454,'oss_addr'=>'media/resource/WTm27JZDas.mp4','type'=>1),
+            array('media_id'=>31456,'oss_addr'=>'media/resource/fcx3H2dES5.mp4','type'=>1),
+            array('media_id'=>31485,'oss_addr'=>'media/resource/RaECcp4Biw.mp4','type'=>1),
+            array('media_id'=>31416,'oss_addr'=>'media/resource/tBtFDitm8N.mp4','type'=>0),
+        ); 
         
         
+        
+        foreach($hotel_list as $key=>$v){
+            $where = '';
+            //轮播数据
+            foreach($storesale_arr as $kk=>$vv){
+                $where = " media_id=".$vv['media_id']." and hotel_id=".$v['hotel_id']." and play_date>='".$start_date."' and play_date<='".$end_date."'";
+                $sql = 'select sum(play_count) as play_nums from savor_medias_sta where '.$where;
+                $ret = M()->query($sql);
+                if(empty($ret)){
+                    $hotel_list[$key]['storesale_'.$vv['media_id']] = 0;   
+                }else {
+                    $hotel_list[$key]['storesale_'.$vv['media_id']] = $ret[0]['play_nums'];
+                }
+            }
+            //点播数据
+            foreach($storesale_arr as $kk=>$vv){
+                if($vv['type']==1){
+                    $where = "`resource_id`=".$vv['media_id']." and small_app_id=5 and hotel_id!=7 and hotel_id=".$v['hotel_id']." and create_time>='".$start_time."' and create_time<='".$end_time."'";
+                    $sql ="select id from savor_smallapp_forscreen_record where ".$where;
+                    $ret = M()->query($sql);
+                    $hotel_list[$key]['playads_'.$vv['media_id']] = count($ret);
+                }else {
+                    $imgs = '["media\\\/resource\\\/tBtFDitm8N.mp4"]';
+                    $where = " imgs='".$imgs."' and small_app_id=5 and action=5  and hotel_id=".$v['hotel_id']." and create_time>='".$start_time."' and create_time<='".$end_time."'";
+                    $sql ="select id from savor_smallapp_forscreen_record where ".$where;
+                    //echo $sql;exit;
+                    $ret = M()->query($sql);
+                    $hotel_list[$key]['playads_'.$vv['media_id']] = count($ret);
+                    
+                }  
+            }
+            
+        }
+        
+        
+        $xlsCell = array(
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('storesale_31439','轮播-6月广告-剑南春水晶剑（60秒）'),    //media_id=31439
+            array('storesale_31454','轮播-6月广州--赖茅生肖狗（60秒）'),    //media_id=31454
+            array('storesale_31456','轮播-6月广州--冰清青梅（30秒）'),      //media_id=31456
+            array('storesale_31485','轮播-6月广州-- 习酒窖藏1988（60秒）'),  //media_id=31485
+            array('storesale_31416','轮播-6月广州-提醒广告(10秒）'),            //media_id=31416
+            array('playads_31439','点播-6月广告-剑南春水晶剑（60秒）'),
+            array('playads_31454','点播-6月广州--赖茅生肖狗（60秒）'),
+            array('playads_31456','点播-6月广州--冰清青梅（30秒）'),
+            array('playads_31485','点播-6月广州-- 习酒窖藏1988（60秒）'),
+            array('playads_31416','点播-6月广州-提醒广告(10秒）'), 
+        );
+        $xlsName = '三代机+网络电视包间版位数统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
     }
 }
