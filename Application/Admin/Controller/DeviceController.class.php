@@ -225,9 +225,9 @@ class DeviceController extends BaseController{
 		$m_box = new \Admin\Model\BoxModel();
 		$where = "b.id={$save['box_id']} and h.state=1 and h.flag=0";
 		$hotel_info = $m_box->isHaveMac('h.id hotel_id,h.type,r.is_device', $where);
-        if($hotel_info[0]['is_device']==1 || $hotel_info[0]['type']==4){
+        if($hotel_info[0]['is_device']==0 || $hotel_info[0]['type']==4){
             $msg = '当前酒楼为无设备酒楼';
-            if($hotel_info[0]['is_device']==1){
+            if($hotel_info[0]['is_device']==0){
                 $msg = '当前包间为无设备包间';
             }
             $this->error($msg);
@@ -307,16 +307,16 @@ class DeviceController extends BaseController{
 		$room_id = $save['room_id'];
 		$m_room = new \Admin\Model\RoomModel();
         $roomfields = 'a.is_device,hotel.type';
-        $roomwhere = array('room.id'=>$room_id,'hotel.state'=>1,'hotel.flag'=>0);
+        $roomwhere = array('a.id'=>$room_id,'hotel.state'=>1,'hotel.flag'=>0);
 		$res_room = $m_room->alias('a')
             ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
             ->field($roomfields)
             ->where($roomwhere)
             ->order('a.id desc')
             ->find();
-		if($res_room['is_device']==1 || $res_room['type']==4){
+		if($res_room['is_device']==0 || $res_room['type']==4){
 		    $msg = '当前酒楼为无设备酒楼';
-		    if($res_room['is_device']==1){
+		    if($res_room['is_device']==0){
                 $msg = '当前包间为无设备包间';
             }
             $this->error($msg);
