@@ -300,14 +300,14 @@
               <td data-title="技术运维人">{$vlist.tech_maintainer}</td>
               <td data-title="包间数量"><a title="{$vlist.name}包间列表" target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">{$vlist.room_num}</a></td>
               <td data-title="机顶盒数量">
-                <if condition="$vlist.box_num gt 0">
+                <if condition="($vlist.box_num gt 0) AND ($vlist.type neq 4)">
                   <a title="{$vlist.name}机顶盒列表" target="navTab" rel="device/box" href="{$host_name}/device/box?hotel_id={$vlist.id}">{$vlist.box_num}</a>
                   <else />
                   {$vlist.box_num}
                 </if>
               </td>
               <td data-title="电视数量">
-                <if condition="$vlist.tv_num gt 0">
+                <if condition="($vlist.tv_num gt 0) AND ($vlist.type neq 4)">
                   <a title="{$vlist.name}电视列表" target="navTab" rel="device/tv" href="{$host_name}/device/tv?hotel_id={$vlist.id}">{$vlist.tv_num}</a>
                   <else />
                   {$vlist.tv_num}
@@ -353,7 +353,9 @@
                     <i class="fa fa-video-camera"></i>
                   </a>
 
-
+                  <a data-tip="生成二维码" title="酒楼ID-{$vlist.id}" target="dialog" data-placement="left" mask="true" rel="hotelqrcode/createqrcode" href="{$host_name}/hotelqrcode/createqrcode?hotel_id={$vlist.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-qrcode"></i>
+                  </a>
 
                 </div>
               </td>

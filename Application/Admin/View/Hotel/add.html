@@ -180,8 +180,19 @@
         <div class="col-xs-12 col-sm-10">
           <input name="avg_expense" type="text" class="form-control" value="{$vinfo.avg_expense}" />
         </div>
-      </div>	 
-        
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            类型:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select name="type" class="form-control bs-select" data-size="20" required>
+                <option value="1" <if condition="$vinfo['type'] eq 1"> selected </if> > 正常酒楼 </option>
+                <option value="4" <if condition="$vinfo['type'] eq 4"> selected </if> > 无设备酒楼 </option>
+            </select>
+        </div>
+      </div>
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
