@@ -8479,20 +8479,21 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $type = I('type',1,'intval');
         $last_year = date('Y-m-d H:i:s',strtotime('-1 years'));
         
-        $res_size_arr = array(
-            array('min'=>0   ,'max'=>2048,'name'=>'2M以内','num'=>0),
-            array('min'=>2048,'max'=>3072,'name'=>'2M-3M','num'=>0),
-            array('min'=>3072,'max'=>4096,'name'=>'3M-4M','num'=>0),
-            array('min'=>4096,'max'=>5120,'name'=>'4M-5M以内','num'=>0),
-            array('min'=>5120,'max'=>1000000000,'name'=>'5M以上','num'=>0),
-        );
+        
         if($type==1){
+            $res_size_arr = array(
+                array('min'=>0   ,'max'=>2097152,'name'=>'2M以内','num'=>0),
+                array('min'=>2097152,'max'=>3145728,'name'=>'2M-3M','num'=>0),
+                array('min'=>3145728,'max'=>4194304,'name'=>'3M-4M','num'=>0),
+                array('min'=>4194304,'max'=>5242880,'name'=>'4M-5M以内','num'=>0),
+                array('min'=>5242880,'max'=>100000000000,'name'=>'5M以上','num'=>0),
+            );
             $sql ="select id, resource_size from savor_smallapp_forscreen_record where action= 4 
-                   and create_time>'".$last_year."'";
+                   and create_time>'".$last_year."' and mobile_brand!='devtools'";
             $data = M()->query($sql);
             foreach($data as $key=>$v){
                 foreach($res_size_arr as $kk=>$vv){
-                    if($v['resource_size']>$vv['min'] && $v['resource_size']<$vv['max']){
+                    if($v['resource_size']>$vv['min'] && $v['resource_size']<=$vv['max']){
                         $res_size_arr[$kk]['num'] ++;
                         break;
                     }
@@ -8509,6 +8510,33 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             $this->exportExcel($xlsName, $xlsCell, $res_size_arr,$filename);
             
         }else {
+            $res_size_arr = array(
+                array('min'=>0   ,'max'=>15728640,'name'=>'15M以内','num'=>0),
+                array('min'=>15728640,'max'=>31457280,'name'=>'15M-30M','num'=>0),
+                array('min'=>31457280,'max'=>52428800,'name'=>'30M-50M','num'=>0),
+                array('min'=>52428800,'max'=>100000000000,'name'=>'50M以上','num'=>0),
+                
+            );
+            $sql ="select id, resource_size from savor_smallapp_forscreen_record where ((action= 2 and resource_type=2) or action=3)
+                   and create_time>'".$last_year."' and mobile_brand!='devtools'";
+            $data = M()->query($sql);
+            foreach($data as $key=>$v){
+                foreach($res_size_arr as $kk=>$vv){
+                    if($v['resource_size']>$vv['min'] && $v['resource_size']<=$vv['max']){
+                        $res_size_arr[$kk]['num'] ++;
+                        break;
+                    }
+                }
+            }
+            $xlsCell = array(
+                array('name','投屏视频资源大小范围'),
+                array('num','数量(最近一年)'),
+                
+                
+            );
+            $xlsName = '三代机+网络电视包间版位数统计';
+            $filename = 'whnetboxroomnums';
+            $this->exportExcel($xlsName, $xlsCell, $res_size_arr,$filename);
             
         }
     }
