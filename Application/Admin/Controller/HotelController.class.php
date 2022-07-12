@@ -237,24 +237,18 @@ class HotelController extends BaseController {
 			}
 			ksort($hezuo_arr);
 			$this->assign('hezuo_arr',$hezuo_arr);
-            $fields = "a.id,a.name,a.addr,a.contractor,a.mobile,a.state,ext.maintainer_id,area.region_name";
+            $fields = "a.id,a.name,a.addr,a.contractor,a.type,a.mobile,a.state,ext.maintainer_id,area.region_name";
 			$result = $hotelModel->getListExt($where, $orders,$start,$size, $fields);
-		    //$result = $hotelModel->getList($where,$orders,$start,$size);
 		}
         
 		$datalist = $result['list'];
-		//$datalist = $areaModel->areaIdToAareName($result['list']);
 		foreach ($datalist as $k=>$v){
-
-			$conditon = array();
-			$men_arr = array();
 			$nums = $hotelModel->getStatisticalNumByHotelIdNew($v['id']);
 			$datalist[$k]['room_num'] = $nums['room_num'];
 			$datalist[$k]['box_num'] = $nums['box_num'];
 			$datalist[$k]['tv_num'] = $nums['tv_num'];
 			$hotel_id = $datalist[$k]['id'];
-			
-			//$main_info = $hotelExt->where('hotel_id='.$hotel_id)->find();
+
 			if($v['maintainer_id']) {
 				$datalist[$k]['maintainer'] = $u_arr[$v['maintainer_id']];
 			} else {
@@ -1023,10 +1017,11 @@ class HotelController extends BaseController {
 	public function addRoom(){
 		$id = I('get.hotel_id');
 		$hotelModel = new \Admin\Model\HotelModel();
-		$temp = $hotelModel->getRow('name',['id'=>$id]);
+		$temp = $hotelModel->getRow('name',array('id'=>$id));
 		$this->assign('hotel_name',$temp['name']);
 		$this->assign('hotel_id',$id);
 		$vinfo['state'] = 2;
+		$vinfo['is_device'] = 1;
 		$this->assign('vinfo',$vinfo);
 		$this->display('addRoom');
 	}
@@ -1059,6 +1054,8 @@ class HotelController extends BaseController {
 		$save['hotel_id'] = $hotel_id;
 		$save['name']        = I('post.name','','trim');
 		$save['type']        = I('post.type','','intval');
+		$save['is_device']   = I('post.is_device',0,'intval');
+		$save['people_num']   = I('post.people_num',0,'intval');
 		$save['flag']        = I('post.flag','','intval');
 		$save['state']       = I('post.state','','intval');
 		$save['probe']       = I('post.probe','','trim');

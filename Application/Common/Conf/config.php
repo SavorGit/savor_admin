@@ -1003,6 +1003,11 @@ $config['INVITATION_HOTEL_CONFIG'] = array(
     'weak_color'=>'rgb(153, 153, 153)',
     'is_open_sellplatform'=>1
 );
+$config['HOTELQRCODE_JUMP_PAGE'] = array(
+    '1'=>array('id'=>1,'name'=>'及时抽奖页面','page'=>'/pages/activity/turntable/lottery'),
+    '2'=>array('id'=>2,'name'=>'本地有售酒水列表页面','page'=>'/mall/pages/wine/index'),
+    '3'=>array('id'=>3,'name'=>'小程序首页','page'=>'/mall/pages/wine/index'),
+);
 $config['RD_TEST_HOTEL'] =
     array (
 

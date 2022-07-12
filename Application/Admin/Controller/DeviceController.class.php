@@ -170,7 +170,7 @@ class DeviceController extends BaseController{
 		//聚屏广告第三方媒体
 		$poly_screen_media_arr = C('POLY_SCREEN_MEDIA_LIST');
 		$this->assign('poly_screen_media_arr',$poly_screen_media_arr);
-		return $this->display('addBox');
+		$this->display('addBox');
 	}
 
 	/**
@@ -223,9 +223,16 @@ class DeviceController extends BaseController{
 		$tvModel = new TvModel;
 		$redis = SavorRedis::getInstance();
 		$m_box = new \Admin\Model\BoxModel();
-		$map = array();
-		$where = "1 and b.id=".$save['box_id'];
-		$hotel_info = $m_box->isHaveMac('h.id hotel_id', $where);
+		$where = "b.id={$save['box_id']} and h.state=1 and h.flag=0";
+		$hotel_info = $m_box->isHaveMac('h.id hotel_id,h.type,r.is_device', $where);
+        if($hotel_info[0]['is_device']==1 || $hotel_info[0]['type']==4){
+            $msg = '当前酒楼为无设备酒楼';
+            if($hotel_info[0]['is_device']==1){
+                $msg = '当前包间为无设备包间';
+            }
+            $this->error($msg);
+        }
+
 		if($id){
 			if($tvModel->editData($id,$save)){
 			    $redis->select(12);
@@ -297,6 +304,24 @@ class DeviceController extends BaseController{
 		}else {
 		    $save['tpmedia_id'] = '';
 		}
+		$room_id = $save['room_id'];
+		$m_room = new \Admin\Model\RoomModel();
+        $roomfields = 'a.is_device,hotel.type';
+        $roomwhere = array('room.id'=>$room_id,'hotel.state'=>1,'hotel.flag'=>0);
+		$res_room = $m_room->alias('a')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->field($roomfields)
+            ->where($roomwhere)
+            ->order('a.id desc')
+            ->find();
+		if($res_room['is_device']==1 || $res_room['type']==4){
+		    $msg = '当前酒楼为无设备酒楼';
+		    if($res_room['is_device']==1){
+                $msg = '当前包间为无设备包间';
+            }
+            $this->error($msg);
+        }
+
 		$boxModel = new BoxModel;
 		$save['update_time'] = date('Y-m-d H:i:s');
 		if($save['mac']){

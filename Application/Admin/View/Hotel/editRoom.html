@@ -49,7 +49,37 @@
           </select>
         </div>
       </div>
-      
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          是否有设备:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select name="is_device" class="form-control bs-select" data-size="20" required>
+            <option value="1" <if condition="$vinfo.is_device eq 1"> selected </if> > 有设备 </option>
+            <option value="0" <if condition="$vinfo.is_device eq 0"> selected </if> > 无设备 </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          包间大小:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="number" class="form-control" name="people_num" min="0" max="1000" value="{$vinfo.people_num}" >
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          WIFI探针:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="probe" minlength="2" maxlength="20" value="{$vinfo.probe}" >
+        </div>
+      </div>
+
 	  <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
         WIFI探针:

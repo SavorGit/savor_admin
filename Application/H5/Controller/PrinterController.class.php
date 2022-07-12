@@ -208,6 +208,136 @@ class PrinterController extends Controller {
         }
     }
 
+    public function hotelqrcode(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $type = I('type',0,'intval');//1包间二维码 2编号二维码
+        $num = I('num',0,'intval');
+
+        $qrcode_size = 35;
+        $oss_code_path = 'qrcode/hotel/';
+        $template_img = 'template.jpg';
+        $qrcode_create_path = SITE_TP_PATH.'/Public/uploads/qrcode/hotel/';
+        $errorCorrectionLevel = 'L';//容错级别
+        $accessKeyId = C('OSS_ACCESS_ID');
+        $accessKeySecret = C('OSS_ACCESS_KEY');
+        $endpoint = 'oss-cn-beijing.aliyuncs.com';
+        $bucket = C('OSS_BUCKET');
+        $aliyunoss = new Aliyun($accessKeyId, $accessKeySecret, $endpoint);
+        $aliyunoss->setBucket($bucket);
+
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $cache_key = 'cronscript:hotelqrcode:'.$hotel_id;
+        $m_hotel = new \Admin\Model\HotelModel();
+        $res_hotel = $m_hotel->getOne($hotel_id);
+        $now_time = date('YmdHis');
+        if($type==1){
+            $qr_type = 47;//47酒楼活动包间二维码 48酒楼活动编号二维码
+            $hotel_room_path = $qrcode_create_path."$hotel_id/room/";
+            $qname = "包间二维码{$now_time}.zip";
+            $cache_key.=':room';
+        }else{
+            $qr_type = 48;
+            $hotel_room_path = $qrcode_create_path."$hotel_id/number/";
+            $qname = "编号二维码{$now_time}.zip";
+            $cache_key.=':number';
+        }
+        if(!is_dir($hotel_room_path)){
+            mkdir($hotel_room_path, 0777, true);
+            chmod($hotel_room_path, 0777);
+        }else{
+            removeDir($hotel_room_path,$hotel_room_path);
+        }
+
+        if($type==1){
+            $m_room = new \Admin\Model\RoomModel();
+            $res_rooms = $m_room->getDataList('id,name',array('hotel_id'=>$hotel_id,'state'=>1,'flag'=>0));
+            if(!empty($res_rooms)){
+                foreach ($res_rooms as $v){
+                    $room_id = $v['id'];
+                    $room_name = $v['name'];
+                    $text = $room_name;
+
+                    $file_path = $qrcode_create_path."$hotel_id/$room_id.png";//本地文件路径
+                    $qrcontent = "ah_{$room_id}_$qr_type";
+                    Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
+
+                    $file_name = $oss_code_path."$room_id.png";
+                    $res_upinfo = $aliyunoss->uploadFile($file_name, $file_path);
+                    if(empty($res_upinfo['info']['url'])){
+                        $aliyunoss->uploadFile($file_name, $file_path);
+                    }
+                    $encode_file_name = $this->urlsafe_b64encode($file_name);
+                    $text_content = $this->urlsafe_b64encode($text);
+                    $image_position = 'g_north,x_30,y_30';
+                    $text_position = 'size_72,g_south,x_30,y_30';
+                    $print_img = $this->oss_host.$oss_code_path."$template_img?x-oss-process=image/watermark,image_$encode_file_name,$image_position/watermark,text_{$text_content},$text_position";
+                    $content = file_get_contents($print_img);
+
+                    $file_path = $hotel_room_path."$room_id.jpg";//本地文件路径
+                    file_put_contents($file_path, $content);
+                }
+            }
+        }else{
+            $userinfo = session('sysUserInfo');
+            $sysuser_id = intval($userinfo['id']);
+            $m_hotelqrcode = new \Admin\Model\HotelQrcodeModel();
+            for($i=0;$i<$num;$i++){
+                $add_data = array('hotel_id'=>$hotel_id,'sysuser_id'=>$sysuser_id);
+                $num_id = $m_hotelqrcode->add($add_data);
+                $room_id = $num_id;
+                $text = $room_id;
+
+                $file_path = $qrcode_create_path."$hotel_id/$room_id.png";//本地文件路径
+                $qrcontent = "ah_{$room_id}_$qr_type";
+                Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
+
+                $file_name = $oss_code_path."$room_id.png";
+                $res_upinfo = $aliyunoss->uploadFile($file_name, $file_path);
+                if(empty($res_upinfo['info']['url'])){
+                    $aliyunoss->uploadFile($file_name, $file_path);
+                }
+                $encode_file_name = $this->urlsafe_b64encode($file_name);
+                $text_content = $this->urlsafe_b64encode($text);
+                $image_position = 'g_north,x_30,y_30';
+                $text_position = 'size_72,g_south,x_30,y_30';
+                $print_img = $this->oss_host.$oss_code_path."$template_img?x-oss-process=image/watermark,image_$encode_file_name,$image_position/watermark,text_{$text_content},$text_position";
+                $content = file_get_contents($print_img);
+
+                $file_path = $hotel_room_path."$room_id.jpg";//本地文件路径
+                file_put_contents($file_path, $content);
+            }
+
+        }
+
+        $zip_name = "{$res_hotel['name']}-$qname";
+        $qrcode_zip = $qrcode_create_path.$hotel_id.'/'.$zip_name;
+        $zip = new \ZipArchive();
+        if($zip->open($qrcode_zip, $zip::CREATE) === TRUE){
+            $this->addFileToZip($hotel_room_path,strlen($hotel_room_path),$zip);
+            $zip->close();
+        }
+        $redis->set($cache_key,$zip_name,86400);
+    }
+
+    private function addFileToZip($path, $length,  &$zip){
+        $handler = opendir($path); //打开当前文件夹由$path指定。
+        while(($filename = readdir($handler)) !== false){
+            if ($filename != "." && $filename != ".." ){//文件夹文件名字为'.'和‘..’，不要对他们进行操作
+                $filePath = $path.'/'.$filename;
+                $localPath = substr($filePath, $length);
+                if (is_dir($filePath)){// 如果读取的某个对象是文件夹，则递归
+                    $zip->addEmptyDir($localPath);
+                    self::addFileToZip($filePath, $length, $zip);
+                }else{ //将文件加入zip对象
+                    $zip->addFile($filePath,$localPath);
+                }
+            }
+        }
+        closedir($handler);
+        return true;
+    }
+
 
     public function decode(){
         $code = I('get.code','');
