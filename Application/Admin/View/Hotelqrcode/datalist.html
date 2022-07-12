@@ -1,0 +1,82 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/hotelqrcode/datalist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+          <div class="tools-group s2">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/hotelqrcode/addjump" title="添加跳转" target="dialog" mask="true"><i class="fa fa-plus"></i><span>添加跳转</span></a>
+
+          </div>
+        </div>
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-6 pull-right">
+
+          <div class="input-group input-group-sm pull-right">
+            <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
+            <span class="input-group-btn input-group-sm">
+              <select name="status"  class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                <option value="0">全部</option>
+                <option value="1" <if condition="$status eq 1">selected</if> >正常</option>
+                <option value="2" <if condition="$status eq 2">selected</if> >禁用</option>
+              </select>
+            </span>
+
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+              </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>ID</th>
+            <th>酒楼ID</th>
+            <th>酒楼名称</th>
+            <th>时间</th>
+            <th>跳转页面</th>
+            <th>状态</th>
+            <th>添加时间</th>
+            <th class="table-tool">操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="时间">{$dinfo.time_str}</td>
+              <td data-title="跳转页面">{$dinfo.page}</td>
+              <td data-title="状态">{$dinfo.statusstr}</td>
+              <td data-title="发布时间">{$dinfo.add_time}</td>
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/hotelqrcode/addjump?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

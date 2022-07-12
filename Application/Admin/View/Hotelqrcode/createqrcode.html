@@ -1,0 +1,61 @@
+<div class="pageContent">
+	<form method="post" action="{$host_url}/hotelqrcode/createqrcode" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+		<input name="hotel_id" type="hidden" value="{$hotel_id}"/>
+		<div class="pageFormContent modal-body">
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">类型：</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="type" id="qrtype" class="form-control bs-select" data-size="20">
+						<option value="1">包间二维码</option>
+						<option value="2">编号二维码</option>
+					</select>
+				</div>
+
+			</div>
+
+			<div class="form-group row" id="qr_num">
+				<label class="col-xs-12 col-sm-2 control-label">生成数量：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="num" type="number" min="0" max="20" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row ">
+				<label class="col-xs-12 col-sm-2 control-label">包间二维码地址：</label>
+				<div class="col-xs-12 col-sm-10">
+					<label class="control-label">
+						<notempty name="box_url">
+							<a href="{$box_url}"><span style="color: #00a2d4">请点击下载</span></a>
+						</notempty>
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group row ">
+				<label class="col-xs-12 col-sm-2 control-label">编号二维码地址：</label>
+				<div class="col-xs-12 col-sm-10">
+					<label class="control-label">
+					<notempty name="num_url">
+						<a href="{$num_url}"><span style="color: #00a2d4">请点击下载</span></a>
+					</notempty>
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default close-m" type="button">取消</button>
+			<button class="btn btn-primary" type="submit">保存</button>
+		</div>
+</form>
+</div>
+<script>
+	$('#qrtype').change(function() {
+		if($(this).val()==1){
+			$('#qr_num').hide();
+		}else{
+			$('#qr_num').show();
+		}
+	})
+	$('#qrtype').trigger('change');
+</script>

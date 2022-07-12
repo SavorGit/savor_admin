@@ -1,0 +1,83 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/hotelqrcode/addjump" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="id" type="hidden" value="{$vinfo.id}"/>
+        <div class="pageFormContent modal-body">
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">选择酒楼：</label>
+                <div class="col-xs-12 col-sm-10  form-inline">
+                    <select name="hotel_id" class="form-control bs-select class-filter" data-live-search="true" required >
+                        <volist name="hlist" id="hinfo">
+                            <option value="{$hinfo.id}" <if condition="$hinfo.id eq $vinfo['hotel_id']">selected</if>> {$hinfo.name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">开始时间：</label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="start_hour" class="form-control">
+                        <option value="0">请选择小时</option>
+                        <volist name="hours" id="sh">
+                            <option value="{$sh}" <if condition="$sh eq $start_hour">selected</if> >{$sh}:</option>
+                        </volist>
+                    </select>
+                    <select name="start_minute" class="form-control">
+                        <option value="0">请选择分钟</option>
+                        <volist name="minutes" id="sm">
+                            <option value="{$sm}" <if condition="$sm eq $start_minute">selected</if> >{$sm}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">结束时间：</label>
+                <div class="col-xs-12 col-sm-10 form-inline">
+                    <select name="end_hour" class="form-control">
+                        <option value="0">请选择小时</option>
+                        <volist name="hours" id="eh">
+                            <option value="{$eh}" <if condition="$eh eq $end_hour">selected</if> >{$eh}:</option>
+                        </volist>
+                    </select>
+                    <select name="end_minute" class="form-control">
+                        <option value="0">请选择分钟</option>
+                        <volist name="minutes" id="em">
+                            <option value="{$em}" <if condition="$em eq $end_minute">selected</if> >{$em}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    打开小程序页面：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="open_page" class="form-control bs-select" title="请选择">
+                        <volist name=":C('HOTELQRCODE_JUMP_PAGE')" id="cinfo">
+                            <option value="{$cinfo.id}" <if condition="$cinfo.id eq $vinfo['open_page']">selected</if> >{$cinfo.name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    状态：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="hidden" name="status" value="2">
+                    <input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.status eq 1" >checked</if>>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>
