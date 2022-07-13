@@ -213,9 +213,10 @@ class PrinterController extends Controller {
         $type = I('type',0,'intval');//1包间二维码 2编号二维码
         $num = I('num',0,'intval');
 
-        $qrcode_size = 35;
+        $qrcode_size = 30;
         $oss_code_path = 'qrcode/hotel/';
         $template_img = 'template.jpg';
+        $qr_content = 'http://rd0.cn/p?s=';
         $qrcode_create_path = SITE_TP_PATH.'/Public/uploads/qrcode/hotel/';
         $errorCorrectionLevel = 'L';//容错级别
         $accessKeyId = C('OSS_ACCESS_ID');
@@ -259,7 +260,7 @@ class PrinterController extends Controller {
                     $text = $room_name;
 
                     $file_path = $qrcode_create_path."$hotel_id/$room_id.png";//本地文件路径
-                    $qrcontent = "ah_{$room_id}_$qr_type";
+                    $qrcontent = "{$qr_content}ah_{$room_id}_$qr_type";
                     Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
 
                     $file_name = $oss_code_path."$room_id.png";

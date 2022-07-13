@@ -127,7 +127,7 @@ class HotelqrcodeController extends BaseController {
             }
             $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php h5/printer/hotelqrcode/hotel_id/$hotel_id/type/$type/num/$num > /tmp/null &";
             system($shell);
-            $this->output('正在生成二维码,请稍微打开点击下载', 'hotel/manager');
+            $this->output('正在生成二维码,请稍后打开点击下载', 'hotel/manager');
         }else{
             $host_url = get_host_name();
             $url = "$host_url/Public/uploads/qrcode/hotel/$hotel_id/";
