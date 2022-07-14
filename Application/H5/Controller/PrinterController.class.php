@@ -217,6 +217,8 @@ class PrinterController extends Controller {
         $oss_code_path = 'qrcode/hotel/';
         $template_img = 'template.jpg';
         $qr_content = 'http://rd0.cn/p?s=';
+        $image_position = 'g_north,x_30,y_30';
+        $text_position = 'size_72,g_south,x_30,y_30';
         $qrcode_create_path = SITE_TP_PATH.'/Public/uploads/qrcode/hotel/';
         $errorCorrectionLevel = 'L';//容错级别
         $accessKeyId = C('OSS_ACCESS_ID');
@@ -270,8 +272,6 @@ class PrinterController extends Controller {
                     }
                     $encode_file_name = $this->urlsafe_b64encode($file_name);
                     $text_content = $this->urlsafe_b64encode($text);
-                    $image_position = 'g_north,x_30,y_30';
-                    $text_position = 'size_72,g_south,x_30,y_30';
                     $print_img = $this->oss_host.$oss_code_path."$template_img?x-oss-process=image/watermark,image_$encode_file_name,$image_position/watermark,text_{$text_content},$text_position";
                     $content = file_get_contents($print_img);
 
@@ -290,7 +290,7 @@ class PrinterController extends Controller {
                 $text = $room_id;
 
                 $file_path = $qrcode_create_path."$hotel_id/$room_id.png";//本地文件路径
-                $qrcontent = "ah_{$room_id}_$qr_type";
+                $qrcontent = "{$qr_content}ah_{$room_id}_$qr_type";
                 Qrcode::png($qrcontent,$file_path,$errorCorrectionLevel, $qrcode_size, 0);
 
                 $file_name = $oss_code_path."$room_id.png";
@@ -300,8 +300,6 @@ class PrinterController extends Controller {
                 }
                 $encode_file_name = $this->urlsafe_b64encode($file_name);
                 $text_content = $this->urlsafe_b64encode($text);
-                $image_position = 'g_north,x_30,y_30';
-                $text_position = 'size_72,g_south,x_30,y_30';
                 $print_img = $this->oss_host.$oss_code_path."$template_img?x-oss-process=image/watermark,image_$encode_file_name,$image_position/watermark,text_{$text_content},$text_position";
                 $content = file_get_contents($print_img);
 
