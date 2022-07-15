@@ -122,6 +122,13 @@ class HotelqrcodeController extends BaseController {
         if(IS_POST){
             $type = I('post.type',0,'intval');
             $num = I('post.num',0,'intval');
+            if($type==1){
+                $m_room = new \Admin\Model\RoomModel();
+                $res_room = $m_room->getAll('count(id) as num',array('hotel_id'=>$hotel_id,'state'=>1,'flag'=>0),0,1,'id desc','');
+                if($res_room[0]['num']<=0){
+                    $this->output('当前酒楼无包间,无法生成包间二维码', 'hotel/manager',2,0);
+                }
+            }
             if($type==2 && $num==0){
                 $this->output('请输入生成二维码的数量', 'hotel/manager',2,0);
             }
