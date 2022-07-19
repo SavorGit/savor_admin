@@ -8540,4 +8540,47 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             
         }
     }
+    public function gzhotelsta(){
+        $sql = "select hotel.id hotel_id,hotel.name hotel_name,ext.avg_expense,area.region_name,hotel.addr,
+        food.name food_name,qy.region_name qy_name
+        from savor_hotel hotel
+        left join savor_area_info area on area.id=hotel.area_id
+        left join savor_area_info qy on hotel.county_id=qy.id
+        left join savor_hotel_ext ext
+        left join savor_hotel_food_style    food  on ext.food_style_id= food.id
+        on hotel.id = ext.hotel_id where 1 and hotel.flag=0 and hotel.state=1 and hotel.area_id=236";
+        
+        $result = M()->query($sql); 
+        foreach($result as $key=>$v){
+            //版位数
+            $sql ="select count(tv.id) as nums from savor_tv as tv
+                   left join savor_box box on tv.box_id=box.id
+                   left join savor_room room on box.room_id=room.id
+                   left join savor_hotel hotel on room.hotel_id=hotel.id
+                   where hotel.id=".$v['hotel_id']."  and box.flag=0 and box.state!=3
+                   and tv.flag=0 and tv.state!=3";
+            
+            $ret = M()->query($sql);
+            $result[$key]['tv_nums'] = $ret[0]['nums'];
+            $result[$key]['state'] =  '正常';
+            
+        }
+        $xlsCell = array(
+            
+            array('region_name','城市'),
+            array('hotel_id','酒楼id'),
+            array('hotel_name','酒楼名称'),
+            array('state','酒楼状态'),
+            array('qy_name','所在区域'),
+            array('avg_expense','人均消费'),
+            
+            array('tv_nums','版位数'),
+            
+            array('addr','详细地址'),
+            
+        );
+        $xlsName = '广州酒楼数据统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
 }
