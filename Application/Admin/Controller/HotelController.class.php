@@ -702,7 +702,7 @@ class HotelController extends BaseController {
 		$save['addr']                = I('post.addr','','trim');
 		$save['contractor']          = I('post.contractor','','trim');
 
-		$save['tech_maintainer']          = I('post.techmaintainer','','trim');
+		$save['tech_maintainer']     = I('post.techmaintainer','','trim');
 		$save['tel']                 = I('post.tel','','trim');
 		$save['level']               = I('post.level','','trim');
 		$save['iskey']               = I('post.iskey','','intval');
@@ -713,6 +713,7 @@ class HotelController extends BaseController {
 		$save['collection_company']  = I('post.collection_company','','trim');
 		$save['bank_account']        = I('post.bank_account','','trim');
 		$save['bank_name']           = I('post.bank_name','','trim');
+		$save['type']                = I('post.type',1,'intval');
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
         $is_open_integral = I('post.is_open_integral',0,'intval');
