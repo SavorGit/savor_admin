@@ -5,24 +5,54 @@
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-6 col-md-10">
-          <div class="tools-group s2">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/coupon/couponadd" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i><span>新增</span></a>
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/coupon/couponadd" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+          <div class="form-inline">
+
+            <div class="form-group">
+              <div class="input-group input-group-sm">类型：</div>
+              <div class="input-group">
+                <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                  <option value=0>全部</option>
+                  <volist name=":C('COUPON_TYPES')" id="ctype">
+                    <option value="{$key}" <if condition="$type eq $key"> selected </if> > {$ctype}</option>
+                  </volist>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="input-group input-group-sm">状态：</div>
+              <div class="input-group">
+                <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                  <option value=0>全部</option>
+                  <option value="1" <if condition="$status eq 1">selected</if> >正常</option>
+                  <option value="2" <if condition="$status eq 2">selected</if> >禁用</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" name="keywords" value="{$keywords}" placeholder="请输入名称">
+              <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
 
           </div>
+
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
-          <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="keywords" value="{$keywords}" placeholder="请输入名称">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-            </span>
-          </div>
-        </div>
+
       </div>
     </div>
   </form>
 </div>
+
 <div class="pageContent" id="pagecontent">
   <div id="w_list_print">
     <div class="no-more-tables">
@@ -36,7 +66,9 @@
             <th>金额</th>
             <th>满减可用</th>
             <th>有效期</th>
+            <th>类型</th>
             <th>状态</th>
+<!--            <th>使用酒楼数</th>-->
             <th>添加时间</th>
             <th>操作</th>
           </tr>
@@ -49,13 +81,27 @@
               <td data-title="金额">{$dinfo.money}</td>
               <td data-title="满减可用">{$dinfo.min_price}</td>
               <td data-title="有效期">{$dinfo.date_str}</td>
+              <td data-title="类型">{$dinfo.type_str}</td>
               <td data-title="状态">{$dinfo.status_str}</td>
+<!--              <td data-title="使用酒楼数">-->
+<!--                <if condition="$dinfo.hotels gt 0">-->
+<!--                  <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="coupon/hotelcouponlist" href="{$host_url}/smallapp/coupon/hotelcouponlist?coupon_id={$dinfo.id}" >-->
+<!--                    {$dinfo.hotels}</a>-->
+<!--                  <else/>-->
+<!--                  {$dinfo.hotels}-->
+<!--                </if>-->
+<!--              </td>-->
               <td data-title="添加时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/coupon/couponadd?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
+
+<!--                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/coupon/hotelcouponadd?coupon_id={$dinfo.id}" class="btn btn-warning btn-icon">-->
+<!--                    <i class="fa fa-hotel"></i>-->
+<!--                  </a>-->
+
                 </div>
               </td>
             </tr>

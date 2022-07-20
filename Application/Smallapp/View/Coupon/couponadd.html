@@ -26,9 +26,60 @@
 			</div>
 
 			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					类型:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="type" id="coupon_type" class="form-control bs-select" data-size="20" required>
+						<volist name=":C('COUPON_TYPES')" id="ctype">
+							<option value="{$key}" <if condition="$vinfo['type'] eq $key"> selected </if> > {$ctype}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row" id="coupon_use_range">
+				<label class="col-xs-12 col-sm-2 control-label">
+					使用范围:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<div class="inline-radio-container">
+						<label class="radio-inline">
+							<input type="radio" name="use_range" id="1" value='1' <if condition="1 eq $vinfo['use_range']">checked</if>>
+							<span>全部酒水</span>
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="use_range" id="2" value='2' <if condition="2 eq $vinfo['use_range']">checked</if>>
+							<span>部分酒水</span>
+						</label>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row" id="coupon_goods_ids">
+    			<label class="col-xs-12 col-sm-2 control-label">选择酒水：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="range_finance_goods_ids[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+						<volist name="goods" id="ginfo">
+							<option value="{$ginfo.id}" {$ginfo.select}>{$ginfo.name}</option>
+						</volist>
+					</select>
+
+				</div>
+			</div>
+
+			<div class="form-group row" id="coupon_hour">
+				<label class="col-xs-12 col-sm-2 control-label">领取后使用时间(单位小时)：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="start_hour" type="number" value="{$vinfo.start_hour}" class="form-control"/>
+				</div>
+			</div>
+
+			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">备注：</label>
 				<div class="col-xs-12 col-sm-10">
-					<input name="remark" type="text" value="{$vinfo.remark}" class="form-control" required/>
+					<input name="remark" type="text" value="{$vinfo.remark}" class="form-control" />
 				</div>
 			</div>
 
@@ -37,7 +88,7 @@
 					开始时间:
 				</label>
 				<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
-					<input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="开始时间" value="{$vinfo.start_time}" readonly>
+					<input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="开始时间" value="{$vinfo.start_time}">
 					<span class="input-group-btn"  >
 				  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
 				  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -50,7 +101,7 @@
 					结束时间:
 				</label>
 				<div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
-					<input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="结束时间" value="{$vinfo.end_time}" readonly>
+					<input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="结束时间" value="{$vinfo.end_time}">
 					<span class="input-group-btn"  >
 				  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
 				  <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
@@ -83,6 +134,27 @@
 		format: 'yyyy-mm-dd hh:ii:00',
 		todayBtn:  1,
 		autoclose: 1,
+	});
+
+	$('#coupon_type').change(function() {
+		if($(this).val()==2){
+			$('#coupon_use_range').show();
+			$('#coupon_hour').show();
+		}else{
+			$('#coupon_use_range').hide();
+			$('#coupon_hour').hide();
+			$('#coupon_goods_ids').hide();
+		}
+	})
+	$('#coupon_type').trigger('change');
+
+	$("input[name='use_range']").click(function() {
+		var id = $(this).attr("id");
+		if (id == 2) {
+			$("#coupon_goods_ids").show();
+		} else {
+			$("#coupon_goods_ids").hide();
+		}
 	});
 
 </script>
