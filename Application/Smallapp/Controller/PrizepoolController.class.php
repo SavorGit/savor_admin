@@ -127,6 +127,7 @@ class PrizepoolController extends BaseController {
             $money = I('post.money',0,'intval');
             $amount = I('post.amount',0,'intval');
             $type = I('post.type',0,'intval');
+            $coupon_id = I('post.coupon_id',0,'intval');
             $status = I('post.status',0,'intval');
 
             if($type==1){
@@ -139,7 +140,7 @@ class PrizepoolController extends BaseController {
                 }
             }
             $data = array('prizepool_id'=>$prizepool_id,'name'=>$name,'money'=>$money,'type'=>$type,
-                'amount'=>$amount,'status'=>$status);
+                'coupon_id'=>$coupon_id,'amount'=>$amount,'status'=>$status);
             if($media_id){
                 $m_media = new \Admin\Model\MediaModel();
                 $res_media = $m_media->getMediaInfoById($media_id);
@@ -162,14 +163,27 @@ class PrizepoolController extends BaseController {
             }
             $this->output('操作成功!', 'prizepool/prizelist');
         }else{
+            $m_coupons = new \Admin\Model\Smallapp\CouponModel();
+            $coupons = $m_coupons->getDataList('id,name,money,min_price',array('status'=>1,'type'=>2),'id desc');
+            $coupon_id = 0;
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_prizepoolprize->getInfo(array('id'=>$id));
                 $vinfo['oss_addr'] = $oss_host.$vinfo['image_url'];
+                $coupon_id = $vinfo['coupon_id'];
                 $prizepool_id = $vinfo['prizepool_id'];
             }else{
                 $vinfo = array('type'=>1);
             }
+            foreach ($coupons as $k=>$v){
+                $select = '';
+                if($coupon_id==$v['id']){
+                    $select = 'selected';
+                }
+                $coupons[$k]['select'] = $select;
+                $coupons[$k]['name'] = $v['name']."({$v['money']}元-满{$v['min_price']}可用)";
+            }
+            $this->assign('coupons',$coupons);
             $this->assign('vinfo',$vinfo);
             $this->assign('prizepool_id',$prizepool_id);
             $this->display();
