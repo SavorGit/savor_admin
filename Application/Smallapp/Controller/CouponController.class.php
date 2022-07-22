@@ -191,5 +191,54 @@ class CouponController extends BaseController {
         }
     }
 
+    public function usercouponlist(){
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+        $hotel_name = I('hotel_name','','trim');
+        $ustatus = I('ustatus',0,'intval');
+
+        $where = array('coupon.type'=>2);
+        if($ustatus){
+            $where['a.ustatus'] = $ustatus;
+        }
+        if(!empty($hotel_name)){
+            $where['hotel.name'] = array('like',"%$hotel_name%");
+        }
+
+        $start = ($pageNum-1)*$size;
+        $orderby = 'a.id desc';
+        $fields = 'a.id,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,hotel.name as hotel_name,
+        user.nickName as user_name,a.op_openid,activity.type as activity_type,a.ustatus';
+        $m_coupon = new \Admin\Model\Smallapp\UserCouponModel();
+        $res_list = $m_coupon->getUserCouponList($fields,$where,$orderby,$start,$size);
+        $data_list = array();
+        if(!empty($res_list['list'])){
+            $all_status = C('COUPON_STATUS');
+            $m_user = new \Admin\Model\Smallapp\UserModel();
+            foreach ($res_list['list'] as $v){
+                $res_user = $m_user->getOne('nickName',array('openid'=>$v['op_openid']),'id desc');
+                $v['sale_name'] = $res_user['nickname'];
+                $source = '幸运抽奖';
+                if($v['activity_type']==14){
+                    $source = '售酒抽奖';
+                }
+                if($v['use_time']=='0000-00-00 00:00:00'){
+                    $v['use_time'] = '';
+                }
+                $v['source'] = $source;
+                $v['status_str'] = $all_status[$v['ustatus']];
+
+                $data_list[] = $v;
+            }
+        }
+        $this->assign('ustatus',$ustatus);
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('data',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->display();
+    }
+
 
 }

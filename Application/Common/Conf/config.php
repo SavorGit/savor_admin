@@ -1016,6 +1016,11 @@ $config['HOTELQRCODE_JUMP_PAGE'] = array(
     '2'=>array('id'=>2,'name'=>'本地有售酒水列表页面','page'=>'/mall/pages/wine/index'),
     '3'=>array('id'=>3,'name'=>'小程序首页','page'=>'/mall/pages/wine/index'),
 );
+$config['COUPON_STATUS'] = array(
+    '1'=>'未使用',
+    '2'=>'已使用',
+    '3'=>'已过期',
+);
 $config['RD_TEST_HOTEL'] =
     array (
 
