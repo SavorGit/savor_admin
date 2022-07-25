@@ -3070,8 +3070,9 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $bwhere = array('box.mac'=>$box_mac,'box.state'=>1,'box.flag'=>0);
         $m_box = new \Admin\Model\BoxModel();
         $res_box = $m_box->getBoxByCondition('box.id as box_id,box.mac',$bwhere);
+        $res_box = $res_box[0];
 
-        $activity_id = 11719;
+        $activity_id = 10510;
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
         $res_activity = $m_activity->getInfo(array('id'=>$activity_id));
         $host_name = 'https://mobile.littlehotspot.com';
@@ -3082,7 +3083,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
         $message = array('action'=>158,
             'lottery_countdown'=>$lottery_countdown,'partake_img'=>$res_activity['image_url'],'partake_filename'=>$dish_name_info['basename'],
-            'partake_name'=>$res_activity['prize'],'activity_name'=>$res_activity['name'],
+            'partake_name'=>$res_activity['prize'],'activity_name'=>'售酒抽奖',
         );
         $code_url = $host_name."/Smallapp46/qrcode/getBoxQrcode?box_id={$res_box['box_id']}&box_mac={$res_box['mac']}&data_id={$activity_id}&type=45";
         $message['codeUrl']=$code_url;
@@ -3090,7 +3091,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
         $ret = $m_netty->pushBox($box_mac,$now_message);
         echo $now_message;
-        print_r($ret);
     }
 
     public function testok(){
@@ -3297,6 +3297,87 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 }
             }
         }
+    }
+
+    public function stockqrcode(){
+        $file_path = SITE_TP_PATH.'/Public/content/箱码明细0620.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $code_url = 'https://oss.littlehotspot.com/qrcode/goods/template6';
+        $big_image_position = 'g_east,x_200,y_40';
+        $data = array();
+        $codes = array();
+        for ($row = 2; $row <= $highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $goods_id = $rowData[0][0];
+                $hotel_id = $rowData[0][1];
+                $hotel_name = trim($rowData[0][2]);
+                $goods_name = trim($rowData[0][3]);
+                $unit_name = $rowData[0][4];
+                $stock_num = $rowData[0][5];
+                $idcode = trim($rowData[0][6]);
+
+                $id_num = decrypt_data($idcode,false);
+                $big_file_name = "qrcode/goods/$id_num.png";
+                $encode_file_name = $this->urlsafe_b64encode($big_file_name);
+                $print_img = $code_url."-$id_num.jpg?x-oss-process=image/watermark,image_$encode_file_name,$big_image_position";
+
+                $dinfo = array('goods_id'=>$goods_id,'hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,
+                    'goods_name'=>$goods_name,'unit_name'=>$unit_name,'stock_num'=>$stock_num,
+                    'idcode'=>$idcode,'id'=>$id_num,'img'=>$print_img);
+                $data[]=$dinfo;
+                $codes[]=$idcode;
+            }
+        }
+        $cell = array(
+            array('goods_id','商品ID'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('goods_name','商品名称'),
+            array('unit_name','单位'),
+            array('stock_num','当前库存'),
+            array('idcode','箱码'),
+            array('img','二维码地址'),
+        );
+
+        $filename = '箱码明细';
+        $fileName = $filename.'_'.date('YmdHis');
+
+        $cellNum = count($cell);
+        $dataNum = count($data);
+
+        $objPHPExcel = new \PHPExcel();
+        $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
+
+        for ($i = 0; $i < $cellNum; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i] . '1', $cell[$i][1]);
+        }
+        for ($i = 0; $i < $dataNum; $i++) {
+            for ($j = 0; $j < $cellNum; $j++) {
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j] . ($i + 2), $data[$i][$cell[$j][0]]);
+            }
+        }
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $fileName . '.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+    }
+
+    private function urlsafe_b64encode($string) {
+        $data = base64_encode($string);
+        $data = str_replace(array('+','/','='),array('-','_',''),$data);
+        return $data;
     }
 
 
