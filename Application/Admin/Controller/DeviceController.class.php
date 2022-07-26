@@ -292,6 +292,14 @@ class DeviceController extends BaseController{
 		$save['fault_desc'] = I('post.fault_desc','','trim');
 		$save['is_open_popcomment'] = I('post.is_open_popcomment',0,'intval');
 		$save['is_open_reward'] = I('post.is_open_reward',1,'intval');
+		$save['box_carousel_volume']       = I('post.box_carousel_volume',0,'intval');
+		$save['box_pro_demand_volume']     = I('post.box_pro_demand_volume',0,'intval');
+		$save['box_content_demand_volume'] = I('post.box_content_demand_volume',0,'intval');
+		$save['box_video_froscreen_volume']= I('post.box_video_froscreen_volume',0,'intval');
+		$save['box_img_froscreen_volume']  = I('post.box_img_froscreen_volume',0,'intval');
+		$save['box_tv_volume']             = I('post.box_tv_volume',0,'intval');
+		$save['tv_volume']                 = I('post.tv_volume',0,'intval');
+		
 		$tpmedia_id_arr      = I('post.tpmedia_id');
 		$lanip = I('post.lanip','','trim');
         $save['lanip'] = $lanip;
