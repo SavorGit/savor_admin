@@ -232,6 +232,7 @@ class HotelgoodsController extends BaseController {
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $advright_media_id = I('post.advright_media_id',0,'intval');
             $finance_goods_id = I('post.finance_goods_id',0,'intval');
+            $is_lottery = I('post.is_lottery',0,'intval');
             $start_time = I('post.start_time','');
             $end_time = I('post.end_time','');
             if($tv_media_vid>0){
@@ -264,7 +265,7 @@ class HotelgoodsController extends BaseController {
             if(empty($supply_price))   $supply_price = 0;
             if(empty($line_price))   $line_price = 0;
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
-                'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'is_seckill'=>$is_seckill,
+                'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'is_seckill'=>$is_seckill,'is_lottery'=>$is_lottery,
                 'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'advright_media_id'=>$advright_media_id,
                 'type'=>$type,'wine_type'=>$wine_type,'finance_goods_id'=>$finance_goods_id,'sort'=>$sort,'sysuser_id'=>$sysuser_id,
                 'update_time'=>date('Y-m-d H:i:s'));

@@ -271,6 +271,17 @@
 			</div>
 		</div>
 
+
+		<div class="form-group row" >
+			<label class="col-xs-12 col-sm-2 control-label">是否开启酒水抽奖活动：</label>
+			<div class="col-xs-12 col-sm-10">
+				<select name="is_lottery" class="form-control bs-select" title="请选择">
+					<option value="0" <if condition="$vinfo.is_lottery eq 0">selected</if> >否</option>
+					<option value="1" <if condition="$vinfo.is_lottery eq 1">selected</if> >是</option>
+				</select>
+			</div>
+		</div>
+
 		<div class="form-group row" id="goods_onoffline">
 			<label class="col-xs-12 col-sm-2 control-label">
 				上/下线状态:

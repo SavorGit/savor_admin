@@ -67,9 +67,22 @@
                     <option value="1" <if condition="$vinfo.type eq 1"> selected </if> >现金</option>
                     <option value="2" <if condition="$vinfo.type eq 2"> selected </if> >实物</option>
                     <option value="3" <if condition="$vinfo.type eq 3"> selected </if> >无奖</option>
+                    <option value="4" <if condition="$vinfo.type eq 4"> selected </if> >优惠券</option>
                 </select>
             </div>
         </div>
+
+        <div class="form-group row" id="coupons">
+            <label class="col-xs-12 col-sm-2 control-label">选择优惠券：</label>
+            <div class="col-xs-12 col-sm-10  form-inline">
+                <select name="coupon_id" class="form-control bs-select" data-container="body" >
+                    <volist name="coupons" id="cinfo">
+                        <option value="{$cinfo.id}" {$cinfo.select}>{$cinfo.name}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
 
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
@@ -105,4 +118,13 @@
       autoclose: 1,
     });
   })
+
+  $('#type').change(function() {
+      if($(this).val()==4){
+          $('#coupons').show();
+      }else{
+          $('#coupons').hide();
+      }
+  })
+  $('#type').trigger('change');
 </script>

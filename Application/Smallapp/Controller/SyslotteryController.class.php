@@ -8,8 +8,8 @@ use Admin\Controller\BaseController ;
 class SyslotteryController extends BaseController {
 
 //    public $lottery_types = array('1'=>'系统抽奖','2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)');
-    public $lottery_types = array('2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)','4'=>'幸运抽奖(固定二维码)');
-    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖');
+    public $lottery_types = array('2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)','4'=>'幸运抽奖(固定二维码)','5'=>'幸运抽奖(售酒)');
+    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖','4'=>'优惠券');
 
     public function datalist(){
         $status = I('status',0,'intval');

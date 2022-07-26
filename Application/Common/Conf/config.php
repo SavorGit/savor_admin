@@ -981,11 +981,19 @@ $config['INTEGRAL_TYPES'] = array(
     11=>'完成品鉴酒活动任务',
     12=>'领取抽奖活动任务',
     13=>'完成抽奖活动任务',
+    14=>'完成销售任务',
+    15=>'邀请函发给客人',
+//        16=>'邀请函客人扩散',
+    17=>'开瓶费',
 );
 $config['GOODS_WINE_TYPES'] = array(
 //    '1'=>'预定酒水',
     '2'=>'主推酒水',
     '3'=>'随机酒水',
+);
+$config['COUPON_TYPES'] = array(
+    '1'=>'支付满减',
+    '2'=>'酒水核销现金'
 );
 $config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目','2'=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
 $config['FORSCREEN_CONTENT_RECOURCE_CATE'] = array('1'=>'热播内容节目','2'=>'热播用户内容','3'=>'节目','4'=>'商城商品','5'=>'banner商品','6'=>'生日歌','7'=>'星座视频');
@@ -1007,6 +1015,11 @@ $config['HOTELQRCODE_JUMP_PAGE'] = array(
     '1'=>array('id'=>1,'name'=>'及时抽奖页面','page'=>'/pages/activity/turntable/lottery'),
     '2'=>array('id'=>2,'name'=>'本地有售酒水列表页面','page'=>'/mall/pages/wine/index'),
     '3'=>array('id'=>3,'name'=>'小程序首页','page'=>'/mall/pages/wine/index'),
+);
+$config['COUPON_STATUS'] = array(
+    '1'=>'未使用',
+    '2'=>'已使用',
+    '3'=>'已过期',
 );
 $config['RD_TEST_HOTEL'] =
     array (

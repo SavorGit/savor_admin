@@ -38,7 +38,7 @@ class FinanceStockModel extends BaseModel{
                     }
 
                     $rwhere['a.type']=7;
-                    $rwhere['a.wo_status']= array('in',array(1,2));
+                    $rwhere['a.wo_status']= array('in',array(1,2,4));
                     $res_worecord = $m_stock_record->getStockRecordList($rfileds,$rwhere,'a.id desc','','');
                     if(!empty($res_worecord[0]['total_amount'])){
                         $wo_num = $res_worecord[0]['total_amount'];
@@ -93,7 +93,7 @@ class FinanceStockModel extends BaseModel{
                 }
 
                 $rwhere['a.type']=7;
-                $rwhere['a.wo_status']= array('in',array(1,2));
+                $rwhere['a.wo_status']= array('in',array(1,2,4));
                 $res_worecord = $m_stock_record->getStockRecordList($rfileds,$rwhere,'a.id desc','','');
                 if(!empty($res_worecord[0]['total_amount'])){
                     $wo_num = $res_worecord[0]['total_amount'];
