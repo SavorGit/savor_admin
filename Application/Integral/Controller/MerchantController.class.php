@@ -512,6 +512,7 @@ class MerchantController extends BaseController {
         $job = I('job','','trim');
         $mobile = I('mobile','','trim');
         $status = I('status',1,'intval');
+        $is_integral = I('is_integral',1,'intval');
 
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $merchant_info = $m_merchant->getInfo(array('id'=>$merchant_id));
@@ -529,7 +530,7 @@ class MerchantController extends BaseController {
         $sysuser_id = $userinfo['id'];
         $add_info = array('service_model_id'=>$service_model_id,'channel_id'=>$channel_id,'rate_groupid'=>$rate_groupid,
             'cash_rate'=>$cash_rate,'recharge_rate'=>$recharge_rate,'name'=>$name,'job'=>$job,'mobile'=>$mobile,
-            'status'=>$status,'sysuser_id'=>$sysuser_id);
+            'status'=>$status,'is_integral'=>$is_integral,'sysuser_id'=>$sysuser_id);
         if($mobile!=$merchant_info['mobile']){
             $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile,'status'=>1));
             if(!empty($res_merchant_mobile)){

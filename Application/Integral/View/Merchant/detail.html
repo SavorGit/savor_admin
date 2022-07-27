@@ -128,6 +128,17 @@
 					<input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="正常" data-off-text="冻结" <if condition="$merchant_info.status eq 1" >checked</if>>
 				</div>
 			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					积分是否发送给员工：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<input type="hidden" name="is_integral" value="0">
+					<input type="checkbox" value="1" class="make-switch is_integral" name="is_integral" data-size="small" data-on-text="是" data-off-text="否" <if condition="$merchant_info.is_integral eq 1" >checked</if>>
+				</div>
+			</div>
+
 		</div>
 
 		<div class="modal-footer">
