@@ -231,6 +231,15 @@ class ActivityModel extends BaseModel{
                     }
                     */
                 }else{
+                    $fields = 'box.mac,hotel.id as hotel_id';
+                    $where = array('box.state'=>1,'box.flag'=>0);
+                    $where['hotel.id'] = $v['hotel_id'];
+                    $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
+                    $all_boxs = array();
+                    foreach ($res_bdata as $bv){
+                        $all_boxs[]=$bv['mac'];
+                    }
+
                     $all_lottery_openid = array();
                     foreach ($res_apply_user as $ak=>$av){
                         $all_lottery_openid[]=$av['openid'];
@@ -241,6 +250,19 @@ class ActivityModel extends BaseModel{
                     if(count($all_lottery_openid)<$hotellottery_people_num){
                         $lottery_user_num =  count($all_lottery_openid);
                         $this->updateData(array('id'=>$activity_id),array('status'=>2));
+                        /*
+                        $netty_data = array('action'=>157,'content'=>'参与人数不足，无法开奖');
+                        $message = json_encode($netty_data);
+                        foreach ($all_boxs as $pmac){
+                            $ret = $m_netty->pushBox($pmac,$message);
+                            if(isset($ret['error_code'])){
+                                $ret_str = json_encode($ret);
+                                echo "box_mac:{$pmac} push error $ret_str \r\n";
+                            }else{
+                                echo "box_mac:{$pmac} push ok \r\n";
+                            }
+                        }
+                        */
                         echo "activity_id:{$v['id']} lottery_user_num:$lottery_user_num lt $hotellottery_people_num \r\n";
                         continue;
                     }
@@ -296,14 +318,6 @@ class ActivityModel extends BaseModel{
                 $message = json_encode($netty_data);
                 echo "message $message \r\n";
 
-                $fields = 'box.mac,hotel.id as hotel_id';
-                $where = array('box.state'=>1,'box.flag'=>0);
-                $where['hotel.id'] = $v['hotel_id'];
-                $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
-                $all_boxs = array();
-                foreach ($res_bdata as $bv){
-                    $all_boxs[]=$bv['mac'];
-                }
                 $url = 'https://api-nzb.littlehotspot.com/netty/box/connections';
                 $curl = new \Common\Lib\Curl();
                 $res_netty = '';
