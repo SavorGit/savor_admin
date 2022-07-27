@@ -39,6 +39,7 @@ class TaskUserModel extends BaseModel{
 
         $m_task = new \Admin\Model\Integral\TaskModel();
         $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
+        $m_staff = new \Admin\Model\Integral\StaffModel();
         foreach ($res_data as $v){
             $now_time = date('Y-m-d H:i:s');
             $task_id = $v['task_id'];
@@ -56,6 +57,17 @@ class TaskUserModel extends BaseModel{
             $task_content = json_decode($task_info['task_info'],true);
             $openid = $v['openid'];
             $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广 4邀请食客评价 5打赏补贴
+
+            $staff_merchant_info = $m_staff->getMerchantStaffInfo('m.id,m.is_integral',array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1));
+            if(empty($staff_merchant_info)){
+                echo "task_id:$task_id staff-merchant not exist \r\n";
+                continue;
+            }
+            if($staff_merchant_info['is_integral']==0){
+                echo "task_id:$task_id merchant get integral not user \r\n";
+                continue;
+            }
+
             if(in_array($task_type,array(4,5))){
                 switch ($dinner_type){
                     case 1:
@@ -74,7 +86,6 @@ class TaskUserModel extends BaseModel{
                     echo "task_id:$task_id begin and end time error \r\n";
                     continue;
                 }
-                $m_staff = new \Admin\Model\Integral\StaffModel();
                 $staff_info = $m_staff->getInfo(array('openid'=>$openid,'status'=>1));
                 if(empty($staff_info)){
                     echo "task_id:$task_id staff not exist \r\n";
@@ -137,7 +148,7 @@ class TaskUserModel extends BaseModel{
                         $task_date = date('Ymd');
                         $task_times = array('fj_bstime'=>$fj_bstime,'fj_estime'=>$fj_estime,'task_date'=>$task_date);
 
-                        $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广
+                        $task_type = $task_content['task_content_type'];//1开机 2互动 3活动推广(已废弃)
                         switch ($task_type){
                             case 1:
                                 $this->task_boot($task_times,$dinner_type,$task_info,$signv);
@@ -369,6 +380,7 @@ class TaskUserModel extends BaseModel{
     }
 
     private function task_activitypromote($task_times,$dinner_type,$task_info,$signv){
+        return true;
         $fj_bstime = $task_times['fj_bstime'];
         $fj_estime = $task_times['fj_estime'];
         $task_date = $task_times['task_date'];
