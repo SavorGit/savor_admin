@@ -7,7 +7,7 @@ use Admin\Controller\BaseController ;
  */
 class HotellotteryController extends BaseController {
 
-    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖');
+    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖','4'=>'优惠券');
     public $lottery_prize_level = array('1'=>'一等奖','2'=>'二等奖','3'=>'三等奖');
 
     public function datalist(){

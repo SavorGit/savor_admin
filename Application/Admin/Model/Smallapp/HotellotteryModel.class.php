@@ -289,9 +289,28 @@ class HotellotteryModel extends BaseModel{
                         $expire_time = date('Y-m-d H:i:s',$lottery_time+10800);
                         $adata = array('status'=>2,'expire_time'=>$expire_time,'prize_id'=>$lp_info['prize_id']);
                         $m_activityapply->updateData(array('id'=>$uv['id']),$adata);
-                        if($prize_info['type']==1){
-                            $message_oid = $prize_info['prizepool_prize_id'].'_'.$uv['id'];
-                            sendSmallappTopicMessage($message_oid,50);
+                        switch ($prize_info['type']){
+                            case 1:
+                                $message_oid = $prize_info['prizepool_prize_id'].'_'.$uv['id'];
+                                sendSmallappTopicMessage($message_oid,50);
+                                break;
+                            case 4:
+                                $res_prizepool = $m_prizepool->getInfo(array('id'=>$prize_info['prizepool_prize_id']));
+                                $coupon_id = intval($res_prizepool['coupon_id']);
+                                $m_coupon = new \Admin\Model\Smallapp\CouponModel();
+                                $res_coupon = $m_coupon->getInfo(array('id'=>$coupon_id));
+                                if($res_coupon['start_hour']>0){
+                                    $now_stime = time()+($res_coupon['start_hour']*3600);
+                                    $start_time = date('Y-m-d H:i:s',$now_stime);
+                                }else{
+                                    $start_time = $res_coupon['start_time'];
+                                }
+                                $coupon_data = array('openid'=>$uv['openid'],'coupon_id'=>$coupon_id,'money'=>$res_coupon['money'],'hotel_id'=>$uv['hotel_id'],
+                                    'min_price'=>$res_coupon['min_price'],'max_price'=>$res_coupon['max_price'],'activity_id'=>$activity_id,
+                                    'start_time'=>$start_time,'end_time'=>$res_coupon['end_time'],'ustatus'=>1);
+                                $m_user_coupon = new \Admin\Model\Smallapp\UserCouponModel();
+                                $m_user_coupon->add($coupon_data);
+                                break;
                         }
                     }
                 }
