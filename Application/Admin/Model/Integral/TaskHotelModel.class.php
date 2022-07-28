@@ -84,7 +84,7 @@ class TaskHotelModel extends BaseModel{
             $task_type = $task_info['task_type'];
 
             $res_merchant = $m_merchant->getInfo(array('hotel_id'=>$v['hotel_id'],'status'=>1));
-            if($res_merchant['is_integral']==1){
+            if(empty($res_merchant) || $res_merchant['is_integral']==1){
                 echo "hotel_id:{$v['hotel_id']} task_id:$task_id staff get integral \r\n";
                 continue;
             }
