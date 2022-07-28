@@ -80,6 +80,9 @@ class CouponController extends BaseController {
                 'start_time'=>$start_time,'end_time'=>$end_time,'type'=>$type,'use_range'=>$use_range,
                 'start_hour'=>$start_hour,'status'=>$status);
             if($type==2){
+                if($use_range==0){
+                    $this->output('请选择使用范围', 'coupon/couponadd',2,0);
+                }
                 if($use_range==2){
                     if(empty($range_finance_goods_ids)){
                         $this->output('请选择部分酒水', 'coupon/couponadd',2,0);
@@ -89,6 +92,13 @@ class CouponController extends BaseController {
                     }
                 }
             }
+            if($start_hour==0 && empty($start_time)){
+                $this->output('请选择开始时间或小时', 'coupon/couponadd',2,0);
+            }
+            if(empty($end_time)){
+                $this->output('请选择结束时间', 'coupon/couponadd',2,0);
+            }
+
             if($id){
                 $result = $m_coupon->updateData(array('id'=>$id),$data);
             }else{

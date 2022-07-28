@@ -992,7 +992,7 @@ $config['GOODS_WINE_TYPES'] = array(
     '3'=>'随机酒水',
 );
 $config['COUPON_TYPES'] = array(
-    '1'=>'支付满减',
+//    '1'=>'支付满减',
     '2'=>'酒水核销现金'
 );
 $config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目','2'=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');

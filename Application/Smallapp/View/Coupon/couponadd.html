@@ -12,14 +12,14 @@
 			</div>
 
 			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">金额：</label>
+				<label class="col-xs-12 col-sm-2 control-label">优惠券金额：</label>
 				<div class="col-xs-12 col-sm-10">
 					<input name="money" type="number" value="{$vinfo.money}" class="form-control" required/>
 				</div>
 			</div>
 
 			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">满减金额：</label>
+				<label class="col-xs-12 col-sm-2 control-label">满多少可用：</label>
 				<div class="col-xs-12 col-sm-10">
 					<input name="min_price" type="number" value="{$vinfo.min_price}" class="form-control" required/>
 				</div>
@@ -76,13 +76,6 @@
 				</div>
 			</div>
 
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">备注：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="remark" type="text" value="{$vinfo.remark}" class="form-control" />
-				</div>
-			</div>
-
 			<div class="form-group row" id="goods_start_date">
 				<label class="col-xs-6 col-sm-2 control-label">
 					开始时间:
@@ -108,7 +101,14 @@
 				</span>
 				</div>
 			</div>
-
+			<!--
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">备注：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="remark" type="text" value="{$vinfo.remark}" class="form-control" />
+				</div>
+			</div>
+			-->
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
 					状态：
