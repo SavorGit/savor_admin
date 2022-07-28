@@ -4999,6 +4999,8 @@ class CrontabController extends Controller
         set_time_limit(0);
         ini_set("memory_limit", "1024M");
         $yesterday = date('Y-m-d',strtotime('-1 day'));
+        
+        //echo $yesterday;exit;
         $start_date = $yesterday.' 00:00:00';
         $end_date   = $yesterday.' 23:59:59';
         
@@ -5221,51 +5223,53 @@ class CrontabController extends Controller
             $goods_id_str .= $space.$goods_id;
             $space = ',';
         }
-        $sql ="select d.id resource_id,m.oss_addr,d.name resource_name,m.id media_id from savor_smallapp_dishgoods d
-               left join savor_media m on d.video_intromedia_id = m.id
-               where  d.id in($goods_id_str)";
-        
-        $banner_goods_list = M()->query($sql);
-        
-        foreach($banner_goods_list as $key=>$v){
+        if(!empty($goods_id_str)){
+            $sql ="select d.id resource_id,m.oss_addr,d.name resource_name,m.id media_id from savor_smallapp_dishgoods d
+                   left join savor_media m on d.video_intromedia_id = m.id
+                   where  d.id in($goods_id_str)";
             
-            foreach($area_info as $vv){
-                $banner_goods_list[$key]['demand_nums_'.$vv['area_id']] =0;
-                $banner_goods_list[$key]['demand_fj_'.$vv['area_id']] =0;
-                $banner_goods_list[$key]['display_num_'.$vv['area_id']] = 0;
-            }
-            $sql = "select r.id ,r.area_id,r.create_time,box_id
-                from savor_smallapp_forscreen_record r
-                where resource_id=".$v['resource_id']." and r.action =14 and small_app_id =1 and r.create_time>='".$start_date.
-                "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
+            $banner_goods_list = M()->query($sql);
             
-            $rt = M()->query($sql);
-            
-            $lunch_temp = [];
-            $dinner_temp = [];
-            foreach($rt as $vv){
+            foreach($banner_goods_list as $key=>$v){
                 
-                $banner_goods_list[$key]['demand_nums_'.$vv['area_id']] +=1;
-                $f_time = date('H:i',strtotime($vv['create_time']));
-                if($f_time>=$meal_time['lunch'][0] && $f_time<=$meal_time['lunch'][1]){
-                    $lunch_temp[$vv['area_id']][$vv['box_id']] = $vv['box_id'];
+                foreach($area_info as $vv){
+                    $banner_goods_list[$key]['demand_nums_'.$vv['area_id']] =0;
+                    $banner_goods_list[$key]['demand_fj_'.$vv['area_id']] =0;
+                    $banner_goods_list[$key]['display_num_'.$vv['area_id']] = 0;
+                }
+                $sql = "select r.id ,r.area_id,r.create_time,box_id
+                    from savor_smallapp_forscreen_record r
+                    where resource_id=".$v['resource_id']." and r.action =14 and small_app_id =1 and r.create_time>='".$start_date.
+                    "' and r.create_time<='".$end_date."' and r.mobile_brand!='devtools'";
+                
+                $rt = M()->query($sql);
+                
+                $lunch_temp = [];
+                $dinner_temp = [];
+                foreach($rt as $vv){
+                    
+                    $banner_goods_list[$key]['demand_nums_'.$vv['area_id']] +=1;
+                    $f_time = date('H:i',strtotime($vv['create_time']));
+                    if($f_time>=$meal_time['lunch'][0] && $f_time<=$meal_time['lunch'][1]){
+                        $lunch_temp[$vv['area_id']][$vv['box_id']] = $vv['box_id'];
+                        
+                    }
+                    if($f_time>=$meal_time['dinner'][0] && $f_time<=$meal_time['dinner'][1]){
+                        $dinner_temp[$vv['area_id']][$vv['box_id']] = $vv['box_id'];
+                        
+                    }
                     
                 }
-                if($f_time>=$meal_time['dinner'][0] && $f_time<=$meal_time['dinner'][1]){
-                    $dinner_temp[$vv['area_id']][$vv['box_id']] = $vv['box_id'];
-                    
+                foreach($lunch_temp as $kk=>$vv){
+                    $banner_goods_list[$key]['demand_fj_'.$kk] += count($lunch_temp[$kk]);
                 }
                 
+                foreach($dinner_temp as $kk=>$vv){
+                    $banner_goods_list[$key]['demand_fj_'.$kk] += count($dinner_temp[$kk]);
+                }
+                $banner_goods_list[$key]['resource_cate'] = 5;
+                $banner_goods_list[$key]['sta_date'] = $yesterday;
             }
-            foreach($lunch_temp as $kk=>$vv){
-                $banner_goods_list[$key]['demand_fj_'.$kk] += count($lunch_temp[$kk]);
-            }
-            
-            foreach($dinner_temp as $kk=>$vv){
-                $banner_goods_list[$key]['demand_fj_'.$kk] += count($dinner_temp[$kk]);
-            }
-            $banner_goods_list[$key]['resource_cate'] = 5;
-            $banner_goods_list[$key]['sta_date'] = $yesterday;
         }
         //生日歌
         $sql ="select b.media_id resource_id,b.name resource_name,oss_addr,m.id media_id from savor_smallapp_birthday b 
@@ -5407,8 +5411,8 @@ class CrontabController extends Controller
             unset($constellations[$key]['end_day']);
             
         }
-        $data = array_merge($hot_program_list,$hot_user_list,$program_list,$goods_list,$banner_goods_list,$happy_list,$constellations);
-        
+        //$data = array_merge($hot_program_list,$hot_user_list,$program_list,$goods_list,$banner_goods_list,$happy_list,$constellations);
+        $data = array_merge($hot_program_list,$hot_user_list,$program_list,$goods_list,$happy_list,$constellations);
         $foreacreen_demandcontent = new \Admin\Model\Smallapp\ForscreendemandcontentModel();
         foreach($data as $key=>$v){
             $foreacreen_demandcontent->addData($v);
