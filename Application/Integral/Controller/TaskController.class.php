@@ -19,10 +19,18 @@ class TaskController extends BaseController {
     public function index(){
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
+        $status = I('status',99,'intval');
         $order = I('_order','id');
         $sort = I('_sort','desc');
+        $task_id = I('task_id','');
 
         $where = array('a.flag'=>1);
+        if($status!=99){
+            $where['a.status'] = $status;
+        }
+        if(!empty($task_id)){
+            $where['a.id'] = intval($task_id);
+        }
         
         $fields = 'a.id,a.name,a.type,a.task_type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
@@ -34,6 +42,8 @@ class TaskController extends BaseController {
             $count = $m_task_hotel->where(array('task_id'=>$v['id']))->count();
             $list['list'][$key]['hotel_num'] = $count;
         }
+        $this->assign('task_id',$task_id);
+        $this->assign('status',$status);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
         $this->assign('_order',$order);
@@ -1004,24 +1014,42 @@ class TaskController extends BaseController {
     }
 
     public function gethotelinfo(){
-        $task_id = I('get.task_id',0,'intval');
+        $task_id = I('task_id',0,'intval');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $hotel_name = I('hotel_name','','trim');
+
         $m_task = new \Admin\Model\Integral\TaskModel();
         $res_task = $m_task->getInfo(array('id'=>$task_id));
         $task_type = $res_task['task_type'];
         
         $where = array('a.task_id'=>$task_id);
-        $fields = 'a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state';
-        $order = 'convert(hotel.name using gbk) asc';
+        if(!empty($hotel_name)){
+            $where = array('task.status'=>1,'task.flag'=>1);
+            $where['hotel.name'] = array('like',"%$hotel_name%");
+        }
+        $fields = 'a.task_id,a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state,hotel.pinyin';
+        $order = 'hotel.pinyin asc';
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
-        $hotel_list = $m_task_hotel->alias('a')
-                                   ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
-                                   ->join('savor_area_info area on hotel.area_id = area.id','left')
-                                   ->where($where)
-                                   ->field($fields)
-                                   ->order($order)
-                                   ->select();
+        $start = ($page-1) * $size;
+        $list = $m_task_hotel->getList($fields, $where, $order, $start, $size);
+        $hotel_list = array();
+        if(!empty($list['list'])){
+            $all_state = C('HOTEL_STATE');
+            foreach ($list['list'] as $v){
+                $f_char = strtoupper(substr($v['pinyin'],0,1));
+                $v['hotel_name'] = $f_char.'-'.$v['hotel_name'];
+                $v['state_str'] = $all_state[$v['state']];
+                $hotel_list[]=$v;
+            }
+        }
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('task_id',$task_id);
         $this->assign('task_type',$task_type);
         $this->assign('hotel_list',$hotel_list);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->assign('page',$list['page']);
         $this->display();
     }
 
