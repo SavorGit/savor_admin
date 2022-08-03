@@ -1,0 +1,62 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/hoteldrinks/datalist" method="post" >
+    <input type="hidden" name="hotel_id" value="{$hotel_id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+          <div class="tools-group">
+          <a class="btn btn-success btn-sm add" href="{$host_name}/hoteldrinks/drinksadd?hotel_id={$hotel_id}" title="新增酒水照片" target="dialog" mask="true"><i class="fa fa-plus"></i>新增酒水照片</a>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-5 col-md-4 pull-right">
+          <div class="input-group input-group-sm">
+
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>酒店ID</th>
+              <th>酒水照片</th>
+              <th>添加时间</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="酒店ID">{$dinfo.hotel_id}</td>
+              <td data-title="酒水照片">
+                <if condition="$dinfo.content neq ''">
+                  {$dinfo.content}
+                <else/>
+                  <a href="{$dinfo.image}" target="_blank"><img src="{$dinfo.image}" ></a>
+                </if>
+              </td>
+              <td data-title="添加时间">{$dinfo.add_time}</td>
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
