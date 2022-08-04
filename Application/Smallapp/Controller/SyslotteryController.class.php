@@ -7,9 +7,9 @@ use Admin\Controller\BaseController ;
  */
 class SyslotteryController extends BaseController {
 
-//    public $lottery_types = array('1'=>'系统抽奖','2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)');
-    public $lottery_types = array('2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)','4'=>'幸运抽奖(固定二维码)','5'=>'幸运抽奖(售酒)');
-    public $lottery_prize_types = array('1'=>'现金','2'=>'实物','3'=>'无奖','4'=>'优惠券');
+    public $lottery_types = array(
+        //'1'=>'系统抽奖',
+        '2'=>'幸运抽奖','3'=>'幸运抽奖(通用活动)','4'=>'幸运抽奖(固定二维码)','5'=>'幸运抽奖(售酒)');
 
     public function datalist(){
         $status = I('status',0,'intval');
@@ -153,7 +153,7 @@ class SyslotteryController extends BaseController {
         $status = I('status',0,'intval');
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
-
+        $lottery_prize_types = C('PRIZE_TYPES');
         $m_syslottery_prize = new \Admin\Model\Smallapp\SyslotteryPrizeModel();
         $where = array('syslottery_id'=>$syslottery_id);
         if($status){
@@ -171,7 +171,7 @@ class SyslotteryController extends BaseController {
                 $data_list[$k]['statusstr'] = '不可用';
             }
             $data_list[$k]['image_url'] = $oss_host.$v['image_url'];
-            $data_list[$k]['typestr'] = $this->lottery_prize_types[$v['type']];
+            $data_list[$k]['typestr'] = $lottery_prize_types[$v['type']];
         }
         $m_syslottery = new \Admin\Model\Smallapp\SyslotteryModel();
         $lottery_info = $m_syslottery->getInfo(array('id'=>$syslottery_id));
@@ -235,6 +235,7 @@ class SyslotteryController extends BaseController {
             }
             $this->output('操作成功!', 'syslottery/prizelist');
         }else{
+            $lottery_prize_types = C('PRIZE_TYPES');
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_syslottery_prize->getInfo(array('id'=>$id));
@@ -255,7 +256,7 @@ class SyslotteryController extends BaseController {
             $res_prizelist = $m_prizepool->getHotelpoolprizeList($fields,$where,'p.id asc');
             $prizepools = array();
             foreach ($res_prizelist as $v){
-                $name = $v['name'].'-'.$v['prize_name']."({$this->lottery_prize_types[$v['type']]})";
+                $name = $v['name'].'-'.$v['prize_name']."({$lottery_prize_types[$v['type']]})";
                 $prizepools[]=array('prizepool_prize_id'=>$v['id'],'name'=>$name);
             }
 
@@ -263,7 +264,7 @@ class SyslotteryController extends BaseController {
             $this->assign('vinfo',$vinfo);
             $this->assign('syslottery_id',$syslottery_id);
             $this->assign('prizepools',$prizepools);
-            $this->assign('prize_types',$this->lottery_prize_types);
+            $this->assign('prize_types',$lottery_prize_types);
             $this->display();
         }
     }

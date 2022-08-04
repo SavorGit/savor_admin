@@ -128,6 +128,7 @@ class PrizepoolController extends BaseController {
             $amount = I('post.amount',0,'intval');
             $type = I('post.type',0,'intval');
             $coupon_id = I('post.coupon_id',0,'intval');
+            $coupon_ids = I('post.coupon_ids','');
             $status = I('post.status',0,'intval');
 
             if($type==1){
@@ -139,8 +140,20 @@ class PrizepoolController extends BaseController {
                     $this->output('请输入合适的数量', "prizepool/prizeadd", 2, 0);
                 }
             }
+            $now_coupon_ids = '';
+            if($type==5){
+                $coupon_id = 0;
+                if(empty($coupon_ids)){
+                    $this->output('请选择优惠券', "prizepool/prizeadd", 2, 0);
+                }
+                $all_coupon_ids = join(',',$coupon_ids);
+                $now_coupon_ids = ",$all_coupon_ids,";
+            }
             $data = array('prizepool_id'=>$prizepool_id,'name'=>$name,'money'=>$money,'type'=>$type,
                 'coupon_id'=>$coupon_id,'amount'=>$amount,'status'=>$status);
+            if(!empty($now_coupon_ids)){
+                $data['coupon_ids'] = $now_coupon_ids;
+            }
             if($media_id){
                 $m_media = new \Admin\Model\MediaModel();
                 $res_media = $m_media->getMediaInfoById($media_id);
@@ -165,19 +178,23 @@ class PrizepoolController extends BaseController {
         }else{
             $m_coupons = new \Admin\Model\Smallapp\CouponModel();
             $coupons = $m_coupons->getDataList('id,name,money,min_price',array('status'=>1,'type'=>2),'id desc');
-            $coupon_id = 0;
+            $coupon_ids = array();
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_prizepoolprize->getInfo(array('id'=>$id));
                 $vinfo['oss_addr'] = $oss_host.$vinfo['image_url'];
-                $coupon_id = $vinfo['coupon_id'];
+                if($vinfo['type']==4){
+                    $coupon_ids[]=$vinfo['coupon_id'];
+                }elseif($vinfo['type']==5){
+                    $coupon_ids = explode(',',trim($vinfo['coupon_ids'],','));
+                }
                 $prizepool_id = $vinfo['prizepool_id'];
             }else{
-                $vinfo = array('type'=>1);
+                $vinfo = array('type'=>1,'money'=>0);
             }
             foreach ($coupons as $k=>$v){
                 $select = '';
-                if($coupon_id==$v['id']){
+                if(in_array($v['id'],$coupon_ids)){
                     $select = 'selected';
                 }
                 $coupons[$k]['select'] = $select;

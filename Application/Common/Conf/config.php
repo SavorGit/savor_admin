@@ -995,6 +995,13 @@ $config['COUPON_TYPES'] = array(
 //    '1'=>'支付满减',
     '2'=>'酒水核销现金'
 );
+$config['PRIZE_TYPES'] = array(
+    '1'=>'现金',
+    '2'=>'实物',
+    '3'=>'无奖',
+//    '5'=>'优惠券礼包',
+    '4'=>'优惠券',
+);
 $config ['FORSCREEN_RECOURCE_CATE'] = array('1'=>'节目','2'=>'热播内容节目','3'=>'点播商品视频','4'=>'点播banner商品视频','5'=>'点播生日歌');
 $config['FORSCREEN_CONTENT_RECOURCE_CATE'] = array('1'=>'热播内容节目','2'=>'热播用户内容','3'=>'节目','4'=>'商城商品','5'=>'banner商品','6'=>'生日歌','7'=>'星座视频');
 $config['BONUS_OPERATION_INFO'] = array(
