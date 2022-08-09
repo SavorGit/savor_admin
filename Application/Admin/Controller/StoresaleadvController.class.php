@@ -32,6 +32,7 @@ class StoresaleadvController extends BaseController {
         $result = $m_storesaleads->getList($field,$where,$orders,$start,$size);
         $m_user = new \Admin\Model\UserModel();
         $datalist = $result['list'];
+        $m_ads_hotel = new \Admin\Model\StoresaleAdsHotelModel();
         foreach ($datalist as $k=>$v){
             if($v['resource_type']==1){
                 $v['resourcetypestr'] = '视频';
@@ -42,6 +43,9 @@ class StoresaleadvController extends BaseController {
             }
             $userinfo = $m_user->getUserInfo($v['creator_id']);
             $v['username'] = $userinfo['remark'];
+            $where = array('storesale_ads_id'=>$v['id']);
+            $hotels = $m_ads_hotel->getDataCount($where);
+            $v['hotels'] = $hotels;
             $datalist[$k] = $v;
         }
 
@@ -57,13 +61,32 @@ class StoresaleadvController extends BaseController {
         $m_storesaleads = new \Admin\Model\StoresaleAdsModel();
         if(IS_POST){
             $h_b_arr = $_POST['hbarr'];
-            $ads_id = I('post.marketid',0,'intval');
+            $marketid = I('post.marketid',0,'intval');
+            $media_vid = I('post.media_vid',0,'intval');
             $start_date = I('post.start_date', '');
             $end_date = I('post.end_date', '');
             $goods_id = I('post.goods_id',0,'intval');
             $is_price = I('post.is_price',0,'intval');
             $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
-            if (empty($ads_id)){
+
+            $m_ads = new \Admin\Model\AdsModel();
+            if(!empty($marketid)){
+                $ads_id = $marketid;
+            }elseif(!empty($media_vid)){
+                $m_media = new \Admin\Model\MediaModel();
+                $res_media = $m_media->getInfo(array('id'=>$media_vid));
+                if(empty($res_media['md5']) || empty($res_media['oss_filesize']) || empty($res_media['duration'])){
+                    $this->output('请选择资源库其他视频', 'storesaleadv/advlist',2,0);
+                }
+                $userInfo = session('sysUserInfo');
+                $ads_data = array('media_id'=>$media_vid,'name'=>$res_media['name'],'duration'=>$res_media['duration'],'type'=>9,
+                    'create_time'=>date("Y-m-d H:i:s"),'state'=>1,'creator_name'=>'','creator_id'=>$userInfo['id'],'resource_type'=>$res_media['type']
+                );
+                $ads_id = $m_ads->add($ads_data);
+            }else{
+                $ads_id = 0;
+            }
+            if(empty($ads_id)){
                 $this->output('上传广告视频失败请重新上传', 'storesaleadv/advlist',2,0);
             }
             $now_date = date("Y-m-d H:i:s");
@@ -74,7 +97,6 @@ class StoresaleadvController extends BaseController {
             if($start_date < $now_day){
                 $this->output('投放开始时间必须大于等于今天', 'storesaleadv/advlist',2,0);
             }
-            $m_ads = new \Admin\Model\AdsModel();
             $m_ads->updateData(array('id'=>$ads_id),array('type'=>9));
 
             $userInfo = session('sysUserInfo');
@@ -185,6 +207,104 @@ class StoresaleadvController extends BaseController {
         $this->assign('datalist', $datalist);
         $this->assign('page',  $result['page']);
         $this->display('showdetail');
+    }
+
+    public function hoteldatalist() {
+        $adsid = I('deliveryid',0,'intval');
+        $page = I('pageNum',1);
+        $size = I('numPerPage',50);//显示每页记录数
+        $order = I('_order','id');
+        $sort = I('_sort','desc');
+        $keyword = I('keyword','','trim');
+
+        $m_ads_hotel = new \Admin\Model\StoresaleAdsHotelModel();
+        $field = 'adshotel.id,adshotel.add_time,hotel.id as hotel_id,hotel.name as hotel_name';
+        $where = array('adshotel.storesale_ads_id'=>$adsid);
+        if(!empty($keyword)){
+            $where['hotel.name'] = array('like',"%$keyword%");
+        }
+        $start = ($page-1)*$size;
+        $result = $m_ads_hotel->getList($field,$where,'id asc',$start,$size);
+        $datalist = $result['list'];
+
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->assign('_sort',$sort);
+        $this->assign('_order',$order);
+        $this->assign('deliveryid', $adsid);
+        $this->assign('datalist', $datalist);
+        $this->assign('keyword', $keyword);
+        $this->assign('page',  $result['page']);
+        $this->display();
+    }
+
+    public function hoteladd(){
+        $deliveryid = I('deliveryid',0,'intval');
+        if(IS_POST){
+            $hbarr = $_POST['hbarr'];
+            if(empty($hbarr)){
+                $this->output('请选择酒楼','storesaleadv/hoteladd',2,0);
+            }
+            $hotel_arr = json_decode($hbarr, true);
+            if(empty($hotel_arr)){
+                $this->output('请选择酒楼','storesaleadv/hoteladd',2,0);
+            }
+            $m_adshotel = new \Admin\Model\StoresaleAdsHotelModel();
+            $data_hotel = array();
+            $tmp_hb = array();
+            foreach ($hotel_arr as $k=>$v) {
+                $hotel_id = $v['hotel_id'];
+                if(array_key_exists($hotel_id, $tmp_hb)){
+                    continue;
+                }
+                $tmp_hb[$hotel_id] = 1;
+                $data_hotel[] = array('hotel_id'=>$hotel_id,'storesale_ads_id'=>$deliveryid);
+            }
+            $res = $m_adshotel->addAll($data_hotel);
+            if($res){
+                $redis = SavorRedis::getInstance();
+                $redis->select(12);
+                $cache_key_pre = C('SMALLAPP_STORESALE_ADS');
+                foreach($hotel_arr as $key=>$v){
+                    $period = getMillisecond();
+                    $redis->set($cache_key_pre.$v['hotel_id'],$period,86400*14);
+                }
+                $this->output('添加成功','storesaleadv/advlist');
+            }else {
+                $this->output('添加失败','storesaleadv/advlist',2,0);
+            }
+        }else{
+            $m_storesaleads = new \Admin\Model\StoresaleAdsModel();
+            $field = 'storesaleads.*,ads.name,ads.duration,med.oss_addr';
+            $oss_host = $this->oss_host;
+            $dinfo = $m_storesaleads->getAdsInfoByid($field, array('storesaleads.id'=>$deliveryid));
+            $dinfo['oss_addr'] = $oss_host.$dinfo['oss_addr'];
+
+            $areaModel  = new \Admin\Model\AreaModel();
+            $area_arr = $areaModel->getAllArea();
+            $this->assign('areainfo', $area_arr);
+            $this->assign('vinfo', $dinfo);
+            $this->assign('deliveryid', $deliveryid);
+            $this->display('hoteladd');
+        }
+    }
+
+    public function hoteldel(){
+        $id = I('get.id',0,'intval');
+        $hotel_id = I('get.hotel_id',0,'intval');
+        $m_adshotel = new \Admin\Model\StoresaleAdsHotelModel();
+        $result = $m_adshotel->delData(array('id'=>$id));
+        if($result){
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key_pre = C('SMALLAPP_STORESALE_ADS');
+            $period = getMillisecond();
+            $redis->set($cache_key_pre.$hotel_id,$period,86400*14);
+
+            $this->output('操作成功!', 'storesaleadv/hoteldatalist',2);
+        }else{
+            $this->output('操作失败', 'storesaleadv/hoteldatalist',2,0);
+        }
     }
 
     public function operateStatus(){
