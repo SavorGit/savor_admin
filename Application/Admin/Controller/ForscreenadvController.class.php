@@ -63,28 +63,50 @@ class ForscreenadvController extends BaseController {
         $where = array('state'=>array('in','0,1'));//状态:0未执行,1执行中,2可用,3不可用,4已删除
         $res_forscreen = $m_forscreenads->getDataList('id',$where,'id desc',0,1);
         if($res_forscreen['total']){
-            $this->output('当前有广告正在发布，暂时无法添加，请稍后再试', 'forscreenadv/advlist',2,0);
+            $this->output('当前有广告正在发布，暂时无法添加，请稍后再试', 'forscreenadv/adddevilery',2,0);
         }
         if(IS_POST){
             $h_b_arr = $_POST['hbarr'];
-            $ads_id = I('post.marketid',0,'intval');
+            $marketid = I('post.marketid',0,'intval');
+            $media_vid = I('post.media_videoid',0,'intval');
             $screen_type = I('post.screenadv_type','1');//投放类型1机顶盒2酒店
             $start_date = I('post.start_time', '');
             $end_date = I('post.end_time', '');
             $play_position = I('post.play_position',0,'intval');
-            if (empty($ads_id)){
-                $this->output('上传广告视频失败请重新上传', 'forscreenadv/advlist',2,0);
-            }
+            $is_sapp_qrcode = I('post.is_sapp_qrcode',0,'intval');
+
             $now_date = date("Y-m-d H:i:s");
             $now_day = date("Y-m-d");
             if($start_date > $end_date){
-                $this->output('投放开始时间必须小于等于结束时间', 'forscreenadv/advlist',2,0);
+                $this->output('投放开始时间必须小于等于结束时间', 'forscreenadv/adddevilery',2,0);
             }
             if($start_date < $now_day){
-                $this->output('投放开始时间必须大于等于今天', 'forscreenadv/advlist',2,0);
+                $this->output('投放开始时间必须大于等于今天', 'forscreenadv/adddevilery',2,0);
             }
-            $userInfo = session('sysUserInfo');
 
+            $m_ads = new \Admin\Model\AdsModel();
+            if(!empty($marketid)){
+                $ads_id = $marketid;
+            }elseif(!empty($media_vid)){
+                $m_media = new \Admin\Model\MediaModel();
+                $res_media = $m_media->getInfo(array('id'=>$media_vid));
+                if(empty($res_media['md5']) || empty($res_media['oss_filesize']) || empty($res_media['duration'])){
+                    $this->output('请选择资源库其他视频', 'forscreenadv/adddevilery',2,0);
+                }
+                $userInfo = session('sysUserInfo');
+                $ads_data = array('media_id'=>$media_vid,'name'=>$res_media['name'],'duration'=>$res_media['duration'],
+                    'is_sapp_qrcode'=>$is_sapp_qrcode,'create_time'=>date("Y-m-d H:i:s"),'state'=>1,'creator_name'=>'','creator_id'=>$userInfo['id'],'resource_type'=>$res_media['type']
+                );
+                $ads_id = $m_ads->add($ads_data);
+            }else{
+                $ads_id = 0;
+            }
+            if(empty($ads_id)){
+                $this->output('上传广告视频失败请重新上传', 'forscreenadv/adddevilery',2,0);
+            }
+            $m_ads->updateData(array('id'=>$ads_id),array('is_sapp_qrcode'=>$is_sapp_qrcode));
+
+            $userInfo = session('sysUserInfo');
             $hotel_arr = json_decode($h_b_arr, true);
             $save_data = array();
             $save_data['ads_id'] = $ads_id;
@@ -102,7 +124,7 @@ class ForscreenadvController extends BaseController {
 
             $forscreen_ads_id = $m_forscreenads->addData($save_data);
             if(!$forscreen_ads_id){
-                $this->output('添加失败','forscreenadv/advlist',2,0);
+                $this->output('添加失败','forscreenadv/adddevilery',2,0);
             }
 
             if($screen_type == 2){
@@ -120,7 +142,7 @@ class ForscreenadvController extends BaseController {
                 $res = $m_forscreenhotel->addAll($data_hotel);
                 if($res){
                     $this->output('添加成功','forscreenadv/advlist');
-                }else {
+                }else{
                     $this->output('添加失败','forscreenadv/advlist',2,0);
                 }
             }else{
@@ -187,7 +209,7 @@ class ForscreenadvController extends BaseController {
 
         $m_forscreenads = new \Admin\Model\ForscreenAdsModel();
         $res_ads = $m_forscreenads->getInfo(array('id'=>$adsid));
-        if($res_ads['state']!=2){
+        if($res_ads['state']==1){
             $this->output('广告正在发布中', 'forscreenadv/advlist',2,0);
         }
         $m_forscreen_adsbox = new \Admin\Model\ForscreenAdsBoxModel();

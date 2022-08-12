@@ -156,13 +156,58 @@
 			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
 				广告素材：
 			</label>
-			<a class="btn btn-success btn-file" style="margin-left: 14px;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
-				选择视频
-			</a>
-			<a class="btn btn-success btn-file" style="margin-left: 14px;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=2" data-browse-file>
-				选择图片
-			</a>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_videoid&rtype=1" data-browse-file>
+							<img id="media_videoidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
+							<span id="media_videoidimgname">{$vinfo.name}</span>
+						</a>
+					</div>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_videoid&rtype=1" data-browse-file>
+							选择视频
+						</a>
+						<input type="hidden" name="media_videoid" id="media_videoid" value="0">
+					</div>
+				</div>
+
+<!--				<div class="fileinput fileinput-new" data-fileinput>-->
+<!--					<div class="fileinput-preview thumbnail" data-trigger="fileinput">-->
+<!--						<a data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_imgid&rtype=1" data-browse-file>-->
+<!--							<img id="media_imgidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>-->
+<!--							<span id="media_imgidimgname">{$vinfo.name}</span>-->
+<!--						</a>-->
+<!--					</div>-->
+<!--					<div>-->
+<!--						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_imgid&rtype=2" data-browse-file>-->
+<!--							选择图片-->
+<!--						</a>-->
+<!--						<input type="hidden" name="media_imgid" id="media_imgid" value="0">-->
+<!--					</div>-->
+<!--				</div>-->
+
+			</div>
 		</div>
+
+		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
+			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
+				小程序二维码:
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="inline-radio-container">
+					<label class="radio-inline">
+						<input type="radio" required name="is_sapp_qrcode" value="1" >
+						<span>显示</span>
+					</label>
+					<label class="radio-inline">
+						<input type="radio" required name="is_sapp_qrcode"  value="0" checked="checked">
+						<span>不显示</span>
+					</label>
+				</div>
+			</div>
+		</div>
+
 		<div class="form-group row" id="newsp" style="margin-top: 40px;margin-left: 17px;display: none;">
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
@@ -213,6 +258,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="form-group row" style="margin-top: 20px;margin-left: 17px;background-color:#c7c7c7;padding-top: 13px;">
 			<label class="col-xs-12 control-label">投放方式</label>
 			<div class="form-group row" style="margin-top: 33px;">
@@ -246,7 +292,7 @@
 		</div>
 		<div class="form-group row" style="margin-left: 20px;">
 			<input class="mokuai" name="rad" checked="true" type="radio" id="rad_jiulou"/><label for="rad_jiulou">选择酒楼</label>
-			<input class="mokuai" name="rad" style="margin-left: 15px;" type="radio" id="rad_banw"/><label for="rad_banw">选择版位</label>
+<!--			<input class="mokuai" name="rad" style="margin-left: 15px;" type="radio" id="rad_banw"/><label for="rad_banw">选择版位</label>-->
 			<button type="button" class="btn btn-primary" data-toggle="modal" id="checkout" aria-pressed="false" autocomplete="off" style="border-radius: 5px !important;margin-left:20px;" data-target=".bs-example-modal-sm"  class="btn btn-primary btn-xs">
                 导入酒楼明细
 			</button>
@@ -360,7 +406,7 @@
 				<h4 class="modal-title">请确认广告发布信息</h4>
 			</div>
 			<div class="modal-body" id="bc_p" style="height: 290px;">
-				<p style="margin-top: 12%;">您的视频"<span class="vid_names">jasld</span>"</p>
+				<p style="margin-top: 12%;">您的视频</p>
 				<p>是否要在【<span class="str_time">asdasd</span>-<span class="end_time">asdasda</span>】时间段内,</p>
 				<p>发布到选择的<span class="ljiu_num">5</span>家酒楼的<span class="h_num">30</span>个机顶盒上</p>
 			</div>
@@ -811,7 +857,7 @@
         })
         var arrstr = JSON.stringify(arr);
         $('#hbars').val(arrstr);
-        $('.vid_names').html($('#sp_name').html())
+        // $('.vid_names').html($('#sp_name').html())
         $('.str_time').html($('.dval').eq(0).val())
         $('.end_time').html($('.dval').eq(1).val())
         $('.ljiu_num').html($('.jiuloushu span').eq(0).html())
@@ -821,8 +867,8 @@
         if($('.ban_list').html()!=''&& sp_isid!='none'){
             $('#bctk').modal('show');
         }else{
-            //$('#bctk').modal('show');
-            alert('请补全信息!')
+            $('#bctk').modal('show');
+            // alert('请补全信息!')
         }
         //console.log(arr)
     })

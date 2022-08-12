@@ -68,6 +68,16 @@ class StoresaleadvController extends BaseController {
             $goods_id = I('post.goods_id',0,'intval');
             $is_price = I('post.is_price',0,'intval');
             $cover_img_media_id = I('post.cover_img_media_id',0,'intval');
+            $is_sapp_qrcode = I('post.is_sapp_qrcode',0,'intval');
+
+            $now_date = date("Y-m-d H:i:s");
+            $now_day = date("Y-m-d");
+            if($start_date > $end_date){
+                $this->output('投放开始时间必须小于等于结束时间', 'storesaleadv/advlist',2,0);
+            }
+            if($start_date < $now_day){
+                $this->output('投放开始时间必须大于等于今天', 'storesaleadv/advlist',2,0);
+            }
 
             $m_ads = new \Admin\Model\AdsModel();
             if(!empty($marketid)){
@@ -80,7 +90,7 @@ class StoresaleadvController extends BaseController {
                 }
                 $userInfo = session('sysUserInfo');
                 $ads_data = array('media_id'=>$media_vid,'name'=>$res_media['name'],'duration'=>$res_media['duration'],'type'=>9,
-                    'create_time'=>date("Y-m-d H:i:s"),'state'=>1,'creator_name'=>'','creator_id'=>$userInfo['id'],'resource_type'=>$res_media['type']
+                    'is_sapp_qrcode'=>$is_sapp_qrcode,'create_time'=>date("Y-m-d H:i:s"),'state'=>1,'creator_name'=>'','creator_id'=>$userInfo['id'],'resource_type'=>$res_media['type']
                 );
                 $ads_id = $m_ads->add($ads_data);
             }else{
@@ -89,15 +99,7 @@ class StoresaleadvController extends BaseController {
             if(empty($ads_id)){
                 $this->output('上传广告视频失败请重新上传', 'storesaleadv/advlist',2,0);
             }
-            $now_date = date("Y-m-d H:i:s");
-            $now_day = date("Y-m-d");
-            if($start_date > $end_date){
-                $this->output('投放开始时间必须小于等于结束时间', 'storesaleadv/advlist',2,0);
-            }
-            if($start_date < $now_day){
-                $this->output('投放开始时间必须大于等于今天', 'storesaleadv/advlist',2,0);
-            }
-            $m_ads->updateData(array('id'=>$ads_id),array('type'=>9));
+            $m_ads->updateData(array('id'=>$ads_id),array('type'=>9,'is_sapp_qrcode'=>$is_sapp_qrcode));
 
             $userInfo = session('sysUserInfo');
             $hotel_arr = json_decode($h_b_arr, true);
@@ -144,6 +146,9 @@ class StoresaleadvController extends BaseController {
             $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
             $where = array('type'=>43,'status'=>1,'flag'=>2);
             $all_goods = $m_goods->getDataList('*',$where, 'id desc');
+            foreach ($all_goods as $k=>$v){
+                $all_goods[$k]['name'] = $v['name']."({$v['price']})";
+            }
 
             $this->assign('all_goods',$all_goods);
             $this->assign('is_city_search',1);
@@ -466,7 +471,6 @@ class StoresaleadvController extends BaseController {
 			echo json_encode($res);
 			die;
 		}
-
 		//开始取出数据并存入数组
 		$data = array();
 		$hotel_str = '';
@@ -496,40 +500,26 @@ class StoresaleadvController extends BaseController {
         $hotel_box_type_arr = array_keys($hotel_box_type_arr);
         $space = '';
         $hotel_box_type_str = '';
-		
         foreach($hotel_box_type_arr as $key=>$v){
-			
             $hotel_box_type_str .= $space .$v;
             $space = ',';
         }
 		
-		$field = 'sht.id, sht.name';
+		$field = 'sht.id,sht.name';
         $hotelModel = new \Admin\Model\HotelModel();
         $where = " sht.id in(".$hotel_str.") and  sht.flag=0 and sht.state=1 and  sht.hotel_box_type in ({$hotel_box_type_str}) ";
-		
-		//$where .= ' and '.$h_str;
-        //$orders = 'convert(sht.name using gbk) asc';
         $data = $hotelModel->getHotelidByArea($where, $field);
-		
 		if(empty($data)){
 			$res = array('error'=>2,'message'=>'导入酒楼数据异常');
 			echo json_encode($res);
 			die;
 		}
-		
-		$where  = '';
-        $where .= " and sht.hotel_box_type in ({$hotel_box_type_str}) ";
 		$box_nums = 0;
-		
 		foreach($data as $key=>$v){
-			
 			$field = 'count(distinct (b.id)) num';
-			$where = ' 1=1 and b.state=1 and b.flag=0 and r.state=1 and
+			$where = 'b.state=1 and b.flag=0 and r.state=1 and
 			r.flag=0 and h.state=1 and h.flag=0 ';
-			
 			$where .= ' and h.id = '. $v['id'];
-			
-			
 			$b_arr = $boxModel->isHaveMac($field, $where);
 			$res = empty($b_arr[0]['num'])?0:$b_arr[0]['num'];
 			$box_nums += $res;
