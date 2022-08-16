@@ -675,7 +675,7 @@ class AdvdeliveryController extends BaseController {
         //$bool = false;
         if($pb_data) {
             foreach( $pb_data as $pk=>$pv) {
-                if($pv['state']== 3) {
+                if($pv['state']== 3 || $pv['state']==0) {
                     echo '<script>$.pdialog.closeCurrent();  alertMsg.error("有版位在计算中");</script>';
                 }
             }
@@ -1393,6 +1393,9 @@ class AdvdeliveryController extends BaseController {
         }
         $ret = $m_pub_ads->updateInfo(array('id'=>$pub_ads_id), array('state'=>2));
         if($ret){
+            $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+            $redis->set($program_ads_menu_num_key, date('YmdHis'));
+            
             $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
             $m_pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
             $box_list = $m_pub_ads_box->getBoxArrByPubAdsId($pub_ads_id);
@@ -1445,6 +1448,9 @@ class AdvdeliveryController extends BaseController {
         }
         $ret = $m_pub_ads->updateInfo(array('id'=>$pub_ads_id), array('state'=>2,'is_stop'=>1,'update_time'=>date('Y-m-d H:i:s')));
         if($ret){
+            
+            $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+            $redis->set($program_ads_menu_num_key, date('YmdHis'));
             $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
             $m_pub_ads_hotel = new \Admin\Model\PubAdsHotelModel();
             $box_list = $m_pub_ads_box->getBoxArrByPubAdsId($pub_ads_id);
@@ -1606,6 +1612,181 @@ class AdvdeliveryController extends BaseController {
             $this->assign('id',$id);
             $this->display();
         }
+    }
+    public function editPubHotel(){
+        $id = I('id',0,'intval');
+        $m_pubads = new \Admin\Model\PubAdsModel();
+        $m_pubads_hotel = new \Admin\Model\PubAdsHotelModel();
+        $m_pubads_box   = new \Admin\Model\PubAdsBoxModel();
+        if(IS_POST){
+            $ids = I('ids'); //所选酒楼
+            if(empty($ids)){
+                $this->error('所选酒楼不能为空');
+            }
+            $original_hotel_list = $m_pubads_hotel->getAdsHotelId($id);
+            $original_ids = array();
+            $original_ids = array_column($original_hotel_list, 'hotel_id');
+            
+            $del_hotel_list = array_diff($original_ids,$ids);
+            //print_r($del_hotel_list);exit;
+            
+            
+            
+            $m_pubads_hotel->startTrans();
+            //删除pub_ads_hotel表
+            $where = [];
+            $where['pub_ads_id'] = $id;
+            $del_hotel_ret = $m_pubads_hotel->delData($where);
+            
+            //删除pub_ads_box表
+            $where = [];
+            $where['pub_ads_id'] = $id;
+            $del_box_ret = $m_pubads_box->delData($where);
+            
+            //添加pub_ads_hotel表
+            $data = [];
+            foreach($ids as $key=>$v){
+                $data[$key]['hotel_id'] = $v;
+                $data[$key]['pub_ads_id'] = $id;
+            }
+            $add_hotel_ret = $m_pubads_hotel->addAll($data);
+            
+            $where = [];
+            $where['id'] = $id;
+            $data = [];
+            $data['update_time'] = date('Y-m-d H:i:s');
+            $data['state'] =3;
+            $uptime_pub_ads_ret = $m_pubads->updateInfo($where,$data);
+            
+            
+            if($del_hotel_ret && $del_box_ret && $add_hotel_ret && $uptime_pub_ads_ret){
+                $m_pubads_hotel->commit();
+                $redis = SavorRedis::getInstance();
+                $redis->select(12);
+                
+                
+                if(!empty($del_hotel_list)){
+                    $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+                    $redis->set($program_ads_menu_num_key, date('YmdHis')); 
+                    //删除实体小平台广告接口缓存
+                    $m_box = new \Admin\Model\BoxModel();
+                    
+                    $ads_key = C('PROGRAM_ADS_CACHE_PRE');
+                    foreach ($del_hotel_list as $v){
+                        
+                        $where =" h.id=".$v." and h.state=1 and h.flag=0 and b.state=1 and b.flag=0";
+                        $box_list = $m_box->isHaveMac('b.id box_id', $where);
+                        
+                        foreach($box_list as $kk=>$vv){
+                            $cache_key = $ads_key.$vv['box_id'];
+                            $redis->remove($cache_key);
+                        }
+                    }
+                    
+                    //删除虚拟小平台广告接口缓存
+                    $v_ads_key = C('VSMALL_ADS');
+                    $redis->select(10);
+                    foreach($del_hotel_list as $v){
+                        $keys_arr = $redis->keys($v_ads_key.$v."*");
+                        foreach($keys_arr as $vv){
+                            $redis->remove($vv);
+                        }
+                    }
+                    
+                }
+                echo '<script>
+                        navTab.closeTab("advdelivery/editpubhotel");
+                        navTab.reloadFlag("advdelivery/getlist");
+                        alertMsg.correct("修改成功！");</script>';
+                
+            }else {
+                $m_pubads_hotel->rollback();
+                echo '<script>
+                            navTab.closeTab("advdelivery/editpubhotel");
+                            navTab.reloadFlag("advdelivery/getlist");
+                            alertMsg.success("修改失败！");</script>';
+            }
+            
+        }else {
+            
+            $map['state'] = array(array('eq',3),array('eq',0), 'or') ;
+            $field = 'type,state';
+            $p_data = $m_pubads->getWhere($map,$field);
+            if($p_data) {
+                echo '<script>
+                navTab.closeTab("advdelivery/editpubhotel");
+                alertMsg.error("当前有广告正在发布，暂时无法修改，请稍后再试！");</script>';
+            }
+            
+            
+            
+            $where = [];
+            $where['id'] = $id;
+            $where['state'] = array('neq',2);
+            $pubads_info = $m_pubads->field('state,type')->where($where)->find();
+            
+            if(empty($pubads_info)){
+                echo '<script>
+                navTab.closeTab("advdelivery/editpubhotel");
+                alertMsg.error("该广告不存在或已被删除！");</script>';
+            }
+            if($pubads_info['state']!=1){
+                echo '<script>
+                navTab.closeTab("advdelivery/editpubhotel");
+                alertMsg.error("广告计算中不可修改！");</script>';
+            }
+            if($pubads_info['type']!=2){
+                echo '<script>
+                navTab.closeTab("advdelivery/editpubhotel");
+                alertMsg.error("该广告未按酒楼发布！");</script>';
+            }
+            $hotel_box_type = C('hotel_box_type');
+            $where = [];
+            $where['a.pub_ads_id'] = $id;
+            $fields = 'a.hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type';
+            $hotel_list = $m_pubads_hotel->alias('a')
+                                         ->join('savor_hotel  hotel on a.hotel_id=hotel.id','left')
+                                         ->join('savor_area_info area on hotel.area_id=area.id','left')
+                                         ->where($where)
+                                         ->field($fields)
+                                         ->select();
+            
+            $hid_arr = array_column($hotel_list, 'hotel_id');
+            
+                                         
+            $box_type_str = getHeartBoXtypeIds(1);
+            $hotel_box_types = getHeartBoXtypeIds(2);
+            
+            $m_hotel = new \Admin\Model\HotelModel();
+            $where = [];
+            $where['a.state'] = 1;
+            $where['a.flag']  = 0;
+            $where['a.hotel_box_type'] = array('in',$box_type_str);
+            $fields = 'a.id hotel_id,a.name hotel_name,area.region_name,a.hotel_box_type';
+            $all_hotel_list = $m_hotel->alias('a')
+                    ->join('savor_area_info area on a.area_id=area.id','left')
+                    ->where($where)
+                    ->field($fields)
+                    ->order('a.id desc')
+                    ->select();
+            foreach($all_hotel_list as $key=>$v){
+                if(in_array($v['hotel_id'], $hid_arr)){
+                    $all_hotel_list[$key]['checked'] = 1;
+                }else {
+                    $all_hotel_list[$key]['checked'] = 0;
+                }
+            } 
+            sortArrByOneField($all_hotel_list,'is_select',true);
+            
+            
+             
+            
+            $this->assign('hotel_box_type',$hotel_box_type);
+            $this->assign('list',$all_hotel_list);
+            $this->assign('id',$id);
+            $this->display();
+        }
+        
     }
     public function selectHotel_bac(){
         $id = I('id',0,'intval');

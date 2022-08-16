@@ -977,6 +977,11 @@ class CrontabController extends Controller
             $m_hotel = new \Admin\Model\HotelModel();
             $m_hotel->cleanWanHotelCache(array_values($all_hotel_ids));
         }
+        if(!empty($pub_ads_list)){
+            $redis->select(12);
+            $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+            $redis->set($program_ads_menu_num_key, date('YmdHis'));
+        }
         echo "OK";
     }
 
@@ -2217,6 +2222,10 @@ class CrontabController extends Controller
 
 
             }
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+            $redis->set($program_ads_menu_num_key, date('YmdHis'));
         } else {
             echo '数据处理完毕';
         }

@@ -91,8 +91,8 @@
               </td>
 			  <td data-title="修改所选酒楼">
 			  	<if condition="$vlist.estate eq 1 && $vlist.type eq 2">
-			  	<a data-tip="修改所选酒楼" rel="advdelivery/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/advdelivery/selecthotel?id={$vlist.id}">修改所选酒楼({$vlist.hotel_nums})</a>
-			
+			  	<!-- <a data-tip="修改所选酒楼" rel="advdelivery/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/advdelivery/selecthotel?id={$vlist.id}">修改所选酒楼({$vlist.hotel_nums})</a> -->
+				<a data-tip="修改所选酒楼" rel="advdelivery/editpubhotel" class="btn btn-success " target="navTab" mask="true" href="{$host_name}/advdelivery/editpubhotel?id={$vlist.id}">修改所选酒楼({$vlist.hotel_nums})</a>
 			  	<elseif condition="$vlist.estate neq 1 " />
 			  	<span style="color:red">计算中不可修改</span>
 			  	<elseif condition="$vlist.type neq 2" >
@@ -104,13 +104,13 @@
                 {$vlist['stap']}
               </td>
 
-              <td data-title="投放进程" style="text-align:center;">
-                {$vlist['state']}
-              </td>
+              
               <td data-title="创建时间" style="text-align:center;">
                 {$vlist['create_time']}
               </td>
-
+			  <td data-title="投放进程" style="text-align:center;">
+                {$vlist['state']}
+              </td>
 
               <td class="table-tool" data-title="操作">
 

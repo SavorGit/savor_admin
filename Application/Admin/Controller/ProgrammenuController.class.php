@@ -99,13 +99,28 @@ class ProgrammenuController extends BaseController{
         $ids = I('ids');
         $data = array();
         $arr = array();
-        foreach ($ids as $k => $v) {
-            $arr = explode('|', $v);
-            $data[] = array(
-                'hoid' => $arr[0],
-                'honame' => $arr[1]
-            );
+        if(!empty($ids)){
+            foreach ($ids as $k => $v) {
+                $arr = explode('|', $v);
+                $data[] = array(
+                    'hoid' => $arr[0],
+                    'honame' => $arr[1]
+                );
+            }
+        }else {
+            $hotels = I('hotels');
+            $hnames = I('hnames');
+            foreach ($hotels as $k=>$v){
+                $data[] = array(
+                    'hoid' => $v,
+                    'honame' => $hnames[$k]
+                );
+            }
         }
+        if(empty($data)){
+            $this->error('请选择或导入酒楼');
+        }
+        
         $this->assign('menuid', $menu_id);
         $this->assign('menuname', $menu_name);
         $this->assign('vinfo', $data);
