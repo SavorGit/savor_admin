@@ -130,8 +130,10 @@ class StoresaleadvController extends BaseController {
                 $redis->select(12);
                 $cache_key_pre = C('SMALLAPP_STORESALE_ADS');
                 foreach($hotel_arr as $key=>$v){
-                    $period = getMillisecond();
-                    $redis->set($cache_key_pre.$v['hotel_id'],$period,86400*14);
+                    if(!empty($v['hotel_id'])){
+                        $period = getMillisecond();
+                        $redis->set($cache_key_pre.$v['hotel_id'],$period,86400*14);
+                    }
                 }
                 $this->output('添加成功','storesaleadv/advlist');
             }else {
