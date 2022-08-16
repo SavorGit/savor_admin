@@ -16,7 +16,7 @@
               <td>{$sinfo.name}<input type="hidden" name="item_ids[]" value="{$sinfo.id}" /></td>
               <td>
                 <select name="goods_ids[]" class="form-control bs-select class-filter" data-live-search="true" required >
-                  <option name="goods_ids[]" selected='selected' value="0">请选择在售酒品</option>
+                  <option name="goods_ids[]" selected='selected' value="0">请选择在售酒品(库存商品)</option>
                   <volist name="goods" id="ginfo">
                     <option name="ads_id[]" value="{$ginfo.id}" <if condition="$sinfo.goods_id eq $ginfo['id']">selected</if> > {$ginfo.name}</option>
                   </volist>
@@ -27,7 +27,7 @@
           <tr>
             <td>状态：</td>
             <td>
-              <select name="flag" class="form-control bs-select" data-size="20">
+              <select name="status" class="form-control bs-select" data-size="20">
                 <volist name=":C('DATA_STATUS')" id="vo">
                   <option value="{$key}" <if condition="$vinfo['status'] eq $key"> selected </if> > {$vo}</option>
                 </volist>
