@@ -49,7 +49,7 @@
             </div>
         </div>
 
-        <div class="form-group row">
+        <div class="form-group row" id="prize_money">
             <label class="col-xs-12 col-sm-2 control-label">
                 金额
             </label>
@@ -64,10 +64,9 @@
             </label>
             <div class="col-xs-12 col-sm-10">
                 <select name="type" id="type" class="form-control bs-select" required>
-                    <option value="1" <if condition="$vinfo.type eq 1"> selected </if> >现金</option>
-                    <option value="2" <if condition="$vinfo.type eq 2"> selected </if> >实物</option>
-                    <option value="3" <if condition="$vinfo.type eq 3"> selected </if> >无奖</option>
-                    <option value="4" <if condition="$vinfo.type eq 4"> selected </if> >优惠券</option>
+                <volist name=":C('PRIZE_TYPES')" id="pinfo">
+                    <option value="{$key}" <if condition="$key eq $vinfo['type']">selected</if> >{$pinfo}</option><br>
+                </volist>
                 </select>
             </div>
         </div>
@@ -78,6 +77,17 @@
                 <select name="coupon_id" class="form-control bs-select" data-container="body" >
                     <volist name="coupons" id="cinfo">
                         <option value="{$cinfo.id}" {$cinfo.select}>{$cinfo.name}</option>
+                    </volist>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row" id="bag_coupons">
+            <label class="col-xs-12 col-sm-2 control-label">选择优惠券：</label>
+            <div class="col-xs-12 col-sm-10  form-inline">
+                <select name="coupon_ids[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+                    <volist name="coupons" id="couponinfo">
+                        <option value="{$couponinfo.id}" {$couponinfo.select}>{$couponinfo.name}</option>
                     </volist>
                 </select>
             </div>
@@ -122,8 +132,16 @@
   $('#type').change(function() {
       if($(this).val()==4){
           $('#coupons').show();
-      }else{
+          $('#bag_coupons').hide();
+          $('#prize_money').hide();
+      }else if($(this).val()==5){
+          $('#bag_coupons').show();
           $('#coupons').hide();
+          $('#prize_money').hide();
+      }else{
+          $('#bag_coupons').hide();
+          $('#coupons').hide();
+          $('#prize_money').show();
       }
   })
   $('#type').trigger('change');

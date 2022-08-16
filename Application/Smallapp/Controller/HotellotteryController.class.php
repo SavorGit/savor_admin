@@ -396,6 +396,7 @@ class HotellotteryController extends BaseController {
             $m_prizepool = new \Admin\Model\Smallapp\PrizepoolprizeModel();
             $fields = 'a.id,a.name as prize_name,a.type,p.name';
             $where = array('hp.hotel_id'=>$lottery_info['hotel_id'],'p.status'=>1,'a.status'=>1);
+            $where['a.type'] = array('in',array_keys($this->lottery_prize_types));
             $res_prizelist = $m_prizepool->getHotelpoolprizeList($fields,$where,'p.id asc');
             $prizepools = array();
             foreach ($res_prizelist as $v){

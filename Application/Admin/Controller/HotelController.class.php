@@ -441,33 +441,22 @@ class HotelController extends BaseController {
 		$pcity = $userinfo['area_city'];
 		if($userinfo['groupid'] ==1 || empty($pcity)){
 		    $area = $areaModel->getAllArea();
-		}else {
-		    $where = array();
-		    $where['is_in_hotel'] = 1;
-		    $where['id'] = $pcity;
+		}else{
+		    $where = array('is_in_hotel'=>1,'id'=>$pcity);
 		    $area = $areaModel->getWhere('id,region_name',$where);
 		}
-		
-		$this->assign('area',$area);
-		//获取所有发布者列表
-        //获取发布者列表
+
 		$m_opuser_role = new \Admin\Model\OpuserroleModel();
-		$fields = 'a.user_id main_id,user.remark ';
-		$map['state']   = 1;
-		$map['role_id']   = 1;
-		$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
-		
+		$fields = 'a.user_id main_id,user.remark';
+		$user_info = $m_opuser_role->getAllRole($fields,array('state'=>1,'role_id'=>1),'' );
 		$l_c = count($user_info);
 		$user_info[$l_c] = array(
 			'main_id'=>0,
 			'remark'=>'无',
 		);
-
-		$this->assign('pub_info',$user_info);
 		//菜系
 		$m_food_style = new \Admin\Model\FoodStyleModel(); 
 		$food_style_list = $m_food_style->getWhere('id,name', array('status'=>1));
-		$this->assign('food_style_list',$food_style_list);
 
         $groups = array(1,56,62);
         $sysuserInfo = session('sysUserInfo');
@@ -547,7 +536,6 @@ class HotelController extends BaseController {
 			$m_area_info = new \Admin\Model\AreaModel();
 			$parent_id = $this->getParentAreaid($area_id);
 			$county_list = $m_area_info->getWhere('id,region_name',array('parent_id'=>$parent_id));
-			
 			$this->assign('county_list',$county_list);
 			$this->assign('navtp',$navtp);
 			$this->assign('vinfo',$vinfo);
@@ -570,7 +558,21 @@ class HotelController extends BaseController {
             $tinfo = array('id'=>$v['id'],'name'=>$v['remark'],'selected_str'=>$selected_str);
 		    $trainers[]=$tinfo;
         }
+		$business_circles = array();
+		if($vinfo['area_id'] && $vinfo['county_id']){
+            $m_circles  = new \Admin\Model\BusinessCircleModel();
+            $where = array('area_id'=>$vinfo['area_id'],'county_id'=>$vinfo['county_id'],'status'=>1);
+            $business_circles = $m_circles->getDataList('id,name',$where,'id desc');
+            if(!empty($business_circles)){
+                $tmp_data = array(array('id'=>0,'name'=>'无'));
+                $business_circles = array_merge($tmp_data,$business_circles);
+            }
+        }
 
+        $this->assign('circle_list',$business_circles);
+        $this->assign('food_style_list',$food_style_list);
+        $this->assign('area',$area);
+        $this->assign('pub_info',$user_info);
 		$this->assign('trainers',$trainers);
 		$this->assign('is_lablefiter',$is_lablefiter);
 		$this->display('add');
@@ -789,6 +791,7 @@ class HotelController extends BaseController {
 
 		$save['area_id']             = I('post.area_id','','intval');
 		$save['county_id']           = I('post.county_id',0,'intval');
+		$save['business_circle_id']  = I('post.business_circle_id',0,'intval');
 		$save['media_id']             = I('post.media_id','0','intval');
         $s_hotel_name = $save['name'];
 		if(!empty($s_hotel_name)){
@@ -1804,9 +1807,7 @@ class HotelController extends BaseController {
 		} else {
 			$this->output('删除宣传片失败!', 'hotel/pubmanager');
 		}
-		;
 	}
-
 
 	public function changeCustomState(){
 		$cid = I('request.cid');
@@ -1836,6 +1837,30 @@ class HotelController extends BaseController {
         $where = array();
         $where['parent_id'] = $parent_id;
         $list = $m_area_info->getWhere($fields, $where);
+        echo json_encode($list);
+    }
+
+    public function getBusinesscircle(){
+        $area_id = I('area_id',0,'intval');
+        $county_id = I('county_id',0,'intval');
+        $business_circle_id = I('business_circle_id',0,'intval');
+        $list = array();
+        if($area_id && $county_id){
+            $m_circles  = new \Admin\Model\BusinessCircleModel();
+            $where = array('area_id'=>$area_id,'county_id'=>$county_id,'status'=>1);
+            $list = $m_circles->getDataList('id,name',$where,'id desc');
+            if(!empty($list)){
+                foreach ($list as $k=>$v){
+                    $is_select = '';
+                    if($v['id']==$business_circle_id){
+                        $is_select = 'selected';
+                    }
+                    $list[$k]['is_select'] = $is_select;
+                }
+                $tmp_data = array(array('id'=>0,'name'=>'无'));
+                $list = array_merge($tmp_data,$list);
+            }
+        }
         echo json_encode($list);
     }
 

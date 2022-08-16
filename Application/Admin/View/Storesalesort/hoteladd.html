@@ -1,441 +1,272 @@
-<link href="/Public/admin/assets/css/fileinput.css" rel="stylesheet" type="text/css" />
-<script src="/Public/admin/assets/js/fileinput.min.js" type="text/javascript" />
 <style type="text/css">
-	#tops {
-		height: 40px;
-		background-color: #c7c7c7;
-	}
+    #tops {
+        height: 40px;
+        background-color: #c7c7c7;
+    }
 
-	.biaoti {
-		float: left;
-		margin-top: 13px;
-		margin-left: 36px;
-	}
+    .biaoti {
+        float: left;
+        margin-top: 13px;
+        margin-left: 36px;
+    }
 
-	.jiuloushu {
-		float: right;
-		margin-top: 13px;
-		margin-right: 36px;
-	}
+    .jiuloushu {
+        float: right;
+        margin-top: 13px;
+        margin-right: 36px;
+    }
 
-	.tianjiabw {
-		width: 150px;
-		height: 90px;
-		border: 1px dashed black;
-		margin-left: 31px;
-		text-align: center;
-		line-height: 90px;
-		cursor: pointer;
-	}
+    .tianjiabw {
+        width: 150px;
+        height: 90px;
+        border: 1px dashed black;
+        margin-left: 31px;
+        text-align: center;
+        line-height: 90px;
+        cursor: pointer;
+    }
 
-	.cityId {
-		margin-left: 10px;
-		width: 174px;
-		height: 33px;
-	}
+    .cityId {
+        margin-left: 10px;
+        width: 174px;
+        height: 33px;
+    }
 
-	#serch-name {
-		width: 174px;
-		height: 33px;
-	}
+    #serch-name {
+        width: 174px;
+        height: 33px;
+    }
 
-	.select-position {
-		width: 100%;
-		float: left;
-	}
+    .select-position {
+        width: 100%;
+        float: left;
+    }
 
-	.select-position-top {
-		width: 100%;
-		height: 30px;
-		background-color: #bdbdbd;
-		line-height: 30px;
-		padding-left: 10px;
-	}
+    .select-position-top {
+        width: 100%;
+        height: 30px;
+        background-color: #bdbdbd;
+        line-height: 30px;
+        padding-left: 10px;
+    }
 
-	.position-list {
-		height: 377px;
-		overflow: auto;
-	}
+    .position-list {
+        height: 377px;
+        overflow: auto;
+    }
 
-	.position-one {
-		margin: 10px;
-		cursor: pointer;
-	}
+    .position-one {
+        margin: 10px;
+        cursor: pointer;
+    }
 
-	.xuanz-right {
-		width: 24%;
-		height: 504px;
-		float: right;
-		background-color: #78909c;
-		position: relative;
-	}
+    .xuanz-right {
+        width: 24%;
+        height: 504px;
+        float: right;
+        background-color: #78909c;
+        position: relative;
+    }
 
-	.xuanz-right-top {
-		height: 30px;
-		width: 100%;
-		color: white;
-		line-height: 30px;
-		padding-left: 6px;
-	}
+    .xuanz-right-top {
+        height: 30px;
+        width: 100%;
+        color: white;
+        line-height: 30px;
+        padding-left: 6px;
+    }
 
-	.acitve-position-lists {
-		width: 90%;
-		margin-left: 15px;
-		padding-top: 10px;
-		height: 77%;
-		overflow: auto;
-		font-size: 12px;
-	}
-	.position-list-group{
-		margin-bottom: 10px;
-	}
-	.acitve-position-jname {
-		display: inline-block;
-		min-width: 85px;
-		max-width: 162px;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
+    .acitve-position-lists {
+        width: 90%;
+        margin-left: 15px;
+        padding-top: 10px;
+        height: 77%;
+        overflow: auto;
+        font-size: 12px;
+    }
+    .position-list-group{
+        margin-bottom: 10px;
+    }
+    .acitve-position-jname {
+        display: inline-block;
+        min-width: 85px;
+        max-width: 162px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 
-	.acitve-position-del {
-		color: white;
-		font-size: 20px;
-		cursor: pointer;
-		margin-left: 10px;
-	}
+    .acitve-position-del {
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+    }
 
-	.xuanz-right-bottom {
-		width: 100%;
-		position: absolute;
-		bottom: 0px;
-	}
+    .xuanz-right-bottom {
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+    }
 
-	.ban_list {
-		margin-top: 20px;
-		margin-left: 13px;
-	}
+    .ban_list {
+        margin-top: 20px;
+        margin-left: 13px;
+    }
 
-	.jiu_names {
-		margin-bottom: 10px;
-	}
+    .jiu_names {
+        margin-bottom: 10px;
+    }
 
-	.jiu_names span {
-		font-weight: 700;
-		font-size: 20px;
-	}
+    .jiu_names span {
+        font-weight: 700;
+        font-size: 20px;
+    }
 
-	.ban_a {
-		display: inline-block;
-		width: 123px;
-		height: 26px;
-	}
-	#bc_p p{
-		text-align: center;
-		margin-bottom: 15px;
-		font-size: 15px;
-	}
-	#bc_p p span{
-		color: red;
-		font-size: 15px;
-	}
+    .ban_a {
+        display: inline-block;
+        width: 123px;
+        height: 26px;
+    }
+    #bc_p p{
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 15px;
+    }
+    #bc_p p span{
+        color: red;
+        font-size: 15px;
+    }
 </style>
-<form method="post" style="height: 100%;overflow:auto;" id="adddevileryts" action="{$host_name}/forscreenadv/adddevilery" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+<form method="post" style="height: 100%;overflow:auto;" id="adddevileryts" action="{$host_url}/storesalesort/hoteladd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
 
-	<input type="hidden" name="id" value="{$vinfo.id}">
+    <input type="hidden" name="sortid" value="{$sortid}"/>
+    <input type="hidden" id="pagetotal" value="{$pagecount}">
+    <input type="hidden" id="honame" value="{$host_name}">
+    <input type="hidden" id="bczhi" />
+    <input type="hidden" id="newarr" value=""/>
+    <input type="hidden" name="hbarr" id="hbars" />
+    <div class="form-group row">
 
-	<input type="hidden" id="pagetotal" value="{$pagecount}">
-	<input type="hidden" id="honame" value="{$host_name}">
-	<input type="hidden" id="bczhi" />
-	<input type="hidden" id="newarr" value=""/>
-	<input type="hidden" name="hbarr" id="hbars" />
-	<input type="hidden" name="screenadv_type" id="scree_type" value="2"/>
-	<div class="form-group row">
-		<input type="hidden" name="marketid" id="marketid" value="" />
-		<div class="form-group row" id="sp" style="margin-top: 40px;margin-left: 17px;">
-			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
-				广告素材：
-			</label>
-			<div class="col-xs-12 col-sm-10">
-				<div class="fileinput fileinput-new" data-fileinput>
-					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
-						<a data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_videoid&rtype=1" data-browse-file>
-							<img id="media_videoidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>
-							<span id="media_videoidimgname">{$vinfo.name}</span>
-						</a>
-					</div>
-					<div>
-						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_videoid&rtype=1" data-browse-file>
-							选择视频
-						</a>
-						<input type="hidden" name="media_videoid" id="media_videoid" value="0">
-					</div>
-				</div>
+        <div class="form-group row" id="sp" style="margin-top: 40px;margin-left: 17px;">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
+                    名称：
+                </label>
+                <label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">{$vinfo.name}</label>
 
-<!--				<div class="fileinput fileinput-new" data-fileinput>-->
-<!--					<div class="fileinput-preview thumbnail" data-trigger="fileinput">-->
-<!--						<a data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_imgid&rtype=1" data-browse-file>-->
-<!--							<img id="media_imgidimg"  src="/Public/admin/assets/img/noimage.png" border="0"/>-->
-<!--							<span id="media_imgidimgname">{$vinfo.name}</span>-->
-<!--						</a>-->
-<!--					</div>-->
-<!--					<div>-->
-<!--						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?source=ads&filed=media_imgid&rtype=2" data-browse-file>-->
-<!--							选择图片-->
-<!--						</a>-->
-<!--						<input type="hidden" name="media_imgid" id="media_imgid" value="0">-->
-<!--					</div>-->
-<!--				</div>-->
+            </div>
+        </div>
 
-			</div>
-		</div>
+        <div class="form-group row" style="margin-left: 20px;">
+            <input class="mokuai" name="rad" checked="true" type="radio" id="rad_jiulou"/><label for="rad_jiulou">选择酒楼</label>
+        </div>
 
-		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
-			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
-				小程序二维码:
-			</label>
-			<div class="col-xs-12 col-sm-10">
-				<div class="inline-radio-container">
-					<label class="radio-inline">
-						<input type="radio" required name="is_sapp_qrcode" value="1" >
-						<span>显示</span>
-					</label>
-					<label class="radio-inline">
-						<input type="radio" required name="is_sapp_qrcode"  value="0" checked="checked">
-						<span>不显示</span>
-					</label>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group row" id="newsp" style="margin-top: 40px;margin-left: 17px;display: none;">
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
-					广告名称：
-				</label>
-				<label class="col-xs-12 col-sm-2 control-label" id="sp_name" style="width: auto;">钛晶手机，你值得拥有</label>
-				<a class="" style="margin-left: 14px;color: blue;" data-target="#modal-file" href="{$host_name}/resource/uploadAdvdeliveryResource?filed=media_id&rtype=1" data-browse-file>
-					重新选择
-				</a>
-			</div>
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
-					广告时长：
-				</label>
-				<label class="col-xs-12 col-sm-2 control-label" id="sp_time" style="width: auto;">60秒</label>
-			</div>
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;">
-					URL：
-				</label>
-				<label class="col-xs-12 col-sm-2 control-label" id="sp_url" style="width: auto;">https://pro.modao.cc/app/cdY3v0DbsenVjHAR04WvTjycLUTjsWu?#screen=s3EA34B3A4B1506394954112</label>
-			</div>
-		</div>
-		<div class="form-group row" style="margin-top: 40px;margin-left: 17px;">
-			<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 10px;">
-				视频封面：
-			</label>
-			<div class="col-xs-12 col-sm-10">
-				<div class="fileinput fileinput-new" data-fileinput>
-					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
-						<a  href="javascript:void(0)" >
-							<if condition="($vinfo['cover_img'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
-								<img src="/Public/admin/assets/img/noimage.png" border="0" id="covervideo_idimg" />
-								<else />
-								<img src="{$oss_host}{$vinfo.cover_img}" id="covervideo_idimg" border="0" />
-							</if>
-							<span id="covervideo_idimgname"></span>
-						</a>
-					</div>
-					<div>
-						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=covervideo_id&rtype=2" data-browse-file>
-							选择封面
-						</a>
-						<input type="hidden" name="cover_img_media_id" id="covervideo_id" value="" >
-						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
-							删除 </a>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group row" style="margin-top: 20px;margin-left: 17px;background-color:#c7c7c7;padding-top: 13px;">
-			<label class="col-xs-12 control-label">投放方式</label>
-			<div class="form-group row" style="margin-top: 33px;">
-				<label class="col-xs-12 col-sm-2 control-label" style="width: 71px;margin-top: 8px;">
-					播放时段：
-				</label>
-				<div class="input-group input-group-sm date form_datetime" id="datetimepicker" data-ymd="true"  data-date="{$timeinfo.now_time}" style="width:250px; float: left;">
-					<input style="margin-left: 6px;" name="start_time" type="text" size="16" class="form-control date dval" placeholder="开始日期" value="" readonly>
-					<span class="input-group-btn">
-                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
-                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
-                  </span>
-				</div>
-
-				<div class="input-group input-group-sm date form_datetime" id="datetimepicker2" data-ymd="true" data-date="{$timeinfo.now_time}" style="width:250px;float: left;">
-
-					<input name="end_time" type="text" size="16" id="asd" class="form-control date dval" placeholder="结束日期" value="" readonly>
-					<span class="input-group-btn" style="padding:0px;margin:0px;">
-                    <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
-                    <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
-                  </span>
-				</div>
-				<label style="float: left;margin-top: 8px;">插播位置</label>
-				<select name="play_position" id="cishu" style="float: left;width: 170px;height: 30px;margin-left: 11px;">
-					<option value="0">请选择</option>
-					<option value="1">投屏前</option>
-					<option value="2">投屏后</option>
-
-				</select>
-			</div>
-		</div>
-		<div class="form-group row" style="margin-left: 20px;">
-			<input class="mokuai" name="rad" checked="true" type="radio" id="rad_jiulou"/><label for="rad_jiulou">选择酒楼</label>
-<!--			<input class="mokuai" name="rad" style="margin-left: 15px;" type="radio" id="rad_banw"/><label for="rad_banw">选择版位</label>-->
-			<button type="button" class="btn btn-primary" data-toggle="modal" id="checkout" aria-pressed="false" autocomplete="off" style="border-radius: 5px !important;margin-left:20px;" data-target=".bs-example-modal-sm"  class="btn btn-primary btn-xs">
-                导入酒楼明细
-			</button>
-		</div>
-		<!--<div id="del_hall" class="form-group row" style="margin-left: 20px;">-->
-			<!--<label >是否剔除非包间版位</label>-->
-			<!--<select name="del_hall">-->
-				<!--<option value="0">否</option>-->
-				<!--<option value="1">是</option>-->
-			<!--</select>-->
-			<!---->
-		<!--</div>-->
-		<div class="form-group row" style="margin-top: 20px;border: 1px solid #999;height: 280px;padding-bottom: 15px;overflow: auto;">
-			<div class="form-group row" id="tops">
-				<span class="biaoti">选择版位</span>
-				<span class="jiuloushu">
-				已选<span>0</span>家酒楼的<span>0</span>个版位
+        <div class="form-group row" style="margin-top: 20px;border: 1px solid #999;height: 280px;padding-bottom: 15px;overflow: auto;">
+            <div class="form-group row" id="tops">
+                <span class="biaoti">选择酒楼</span>
+                <span class="jiuloushu">
+				已选<span>0</span>家酒楼
 				</span>
-			</div>
-			<!--<div class="form-group row" id="tops">
-				<button type="button" class="btn btn-primary" data-toggle="modal" id="checkout" aria-pressed="false" autocomplete="off" style="border-radius: 5px !important;" data-target=".bs-example-modal-sm"  class="btn btn-primary btn-xs">
-                导入酒楼明细
-				</button>
-			</div>-->
-			<div class="tianjiabw">
-				添加版位
-			</div>
-			<div class="ban_list">
+            </div>
 
-			</div>
-		</div>
-		<div class="form-group row" style="">
-			<button type="button" class="btn btn-primary" style="margin-left: 43%;margin-right: " id="qb_save">保存</button>
+            <div class="tianjiabw">
+                添加酒楼
+            </div>
+            <div class="ban_list">
 
-			<button type="button" class="btn btn-default close-m">取消</button>
-		</div>
+            </div>
+        </div>
+        <div class="form-group row" style="">
+            <button type="button" class="btn btn-primary" style="margin-left: 43%;margin-right: " id="qb_save">保存</button>
+
+            <button type="button" class="btn btn-default close-m">取消</button>
+        </div>
 </form>
 <!--选择版位-->
 <div class="modal fade bs-example-modal-lg" id="modales" style="position: absolute;" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-	<div class="modal-dialog modal-lg" style="width: 100%;" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: white;">X</span></button>
-				<h4 class="modal-title" id="myModalLabel">选择酒楼</h4>
-			</div>
-			<div class="modal-body" style="height: 520px;">
-				<div style="margin-bottom: 30px;width: 75%;height: 43px;float: left;">
+    <div class="modal-dialog modal-lg" style="width: 100%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color: white;">X</span></button>
+                <h4 class="modal-title" id="myModalLabel">选择酒楼</h4>
+            </div>
+            <div class="modal-body" style="height: 520px;">
+                <div style="margin-bottom: 30px;width: 75%;height: 43px;float: left;">
 
-					<if condition="$is_city_search eq 1">
-						<div class="form-group row" style="margin-left: 15px;width: 240px;float: left;">
-							<label>城市</label>
-							<select name="" class="cityId">
-								<option value=0>所有城市</option>
-								<volist name="areainfo" id="vo">
-									<option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
-								</volist>
-							</select>
-						</div>
-						<else />
-						<input type="hidden" value='0' class="cityId">
-					</if>
+                        <div class="form-group row" style="margin-left: 15px;width: 240px;float: left;">
+                            <label>城市</label>
+                            <select name="" class="cityId">
+                                <option value=0>所有城市</option>
+                                <volist name="areainfo" id="vo">
+                                    <option value="{$vo.id}" <if condition="$vo.id eq $area_k">selected</if>>{$vo.region_name}</option><br>
+                                </volist>
+                            </select>
+                        </div>
 
-					<div class="form-group row" style="float: left;margin-left: 40px;">
-						<input type="text" id="serch-name" />
-						<span class="input-group-btn" style="display:inline-block;">
+
+                    <div class="form-group row" style="float: left;margin-left: 40px;">
+                        <input type="text" id="serch-name" />
+                        <span class="input-group-btn" style="display:inline-block;">
 					     	<button class="btn btn-primary" style="height: 33px;margin-top: -3px;margin-left: 15px;line-height: 2px; background-color:#2988e6 ;" type="button" id="sdd"><i class="fa fa-search"></i></button>
 					    </span>
-					</div>
-					<div class="select-position">
-						<div class="select-position-top" style="display: none;">
-							筛选版位
-						</div>
-						<div class="select-position-top">
-							<input style="vertical-align: middle;margin: 0;" type="checkbox" id="box_qx"/><label style="vertical-align: middle;margin-left: 6px;" for="box_qx">全选</label>
-						</div>
-						<div class="position-list">
+                    </div>
+                    <div class="select-position">
+                        <div class="select-position-top" style="display: none;">
+                            筛选版位
+                        </div>
+                        <div class="select-position-top">
+                            <input style="vertical-align: middle;margin: 0;" type="checkbox" id="box_qx"/><label style="vertical-align: middle;margin-left: 6px;" for="box_qx">全选</label>
+                        </div>
+                        <div class="position-list">
 
-						</div>
-						<button class="btn btn-primary" id="xuanzhe_btn" type="button">选择</button>
-					</div>
-				</div>
-				<!--右-->
-				<div class="xuanz-right">
-					<div class="xuanz-right-top">
-						已选版位
-					</div>
+                        </div>
+                        <button class="btn btn-primary" id="xuanzhe_btn" type="button">选择</button>
+                    </div>
+                </div>
+                <!--右-->
+                <div class="xuanz-right">
+                    <div class="xuanz-right-top">
+                        已选版位
+                    </div>
 
-					<div class="acitve-position-lists">
+                    <div class="acitve-position-lists">
 
-					</div>
+                    </div>
 
-					<div class="xuanz-right-bottom">
-						<div class="" style="height: 26px;line-height: 26px;text-align: center;color: white;">
+                    <div class="xuanz-right-bottom">
+                        <div class="" style="height: 26px;line-height: 26px;text-align: center;color: white;">
 
-							已选<span class="jiuloushuliang">0</span>家酒楼的<span class="banweishu">0</span>个版位
-						</div>
-						<button class="btn btn-primary" id="bw_bc" type="button" style="margin-left: 40%;margin-top: 10px;">保存</button>
-					</div>
-				</div>
+                            已选<span class="jiuloushuliang">0</span>家酒楼
+                        </div>
+                        <button class="btn btn-primary" id="bw_bc" type="button" style="margin-left: 40%;margin-top: 10px;">保存</button>
+                    </div>
+                </div>
 
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </div>
 <!--保存弹框-->
 <div class="modal fade" tabindex="-1" role="dialog" id="bctk" style="position: absolute;">
-	<div class="modal-dialog" role="document" style="top: 20%;">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">请确认广告发布信息</h4>
-			</div>
-			<div class="modal-body" id="bc_p" style="height: 290px;">
-				<p style="margin-top: 12%;">您的视频</p>
-				<p>是否要在【<span class="str_time">asdasd</span>-<span class="end_time">asdasda</span>】时间段内,</p>
-				<p>发布到选择的<span class="ljiu_num">5</span>家酒楼的<span class="h_num">30</span>个机顶盒上</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-				<button type="button" id="q_fb" class="btn btn-primary">确认发布</button>
-			</div>
-		</div>
-		<!-- /.modal-content -->
-	</div>
-	<!-- /.modal-dialog -->
-</div>
-<div id="mymodal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-
-  <div class="modal-dialog modal-sm" role="document" style="width:600px;">
-    <div class="modal-content">
-      <div class="form-group">
-          <div class="form-group">
-          <div class="form-group">
-            <input id="file-4" type="file" class="file-loading" data-upload-url="{$host_name}/menu/getfile" data-allowed-file-extensions='["csv", "xlsx"]' value='浏览'>
-          </div>
-          <hr>
-          <button name="excelsub" class="btn btn-primary" type="button" id="excelsub" data-dismiss="modal" disabled="disabled">提交</button>
-
-          <button  class="btn btn-default" style="margin-left:435px;" type="button" data-dismiss="modal">取消</button>
-            <input  type="hidden"  name="excelpath" id="excelpath" value="">
+    <div class="modal-dialog" role="document" style="top: 20%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">请确认广告发布信息</h4>
+            </div>
+            <div class="modal-body" id="bc_p" style="height: 290px;">
+                <p style="margin-top: 12%;">您的商品"<span class="vid_names">jasld</span>"</p>
+                <p>发布到选择的<span class="ljiu_num">5</span>家酒楼</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="q_fb" class="btn btn-primary">确认发布</button>
+            </div>
         </div>
+        <!-- /.modal-content -->
     </div>
-  </div>
+    <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
 <script type="text/javascript">
@@ -452,39 +283,10 @@
     $('.ban_list').html('');//初始化
     var honame = $('#honame').val();
     $('.tianjiabw').click(function(){
-        //alert($('.dval').val())
         $('.position-list').html('');
         var tsnull = 1;
-        $('.dval').each(function(){
-            if($(this).val()==''||$('#cishu').val()==''){
-                tsnull = 2;
-            }else if($('#marketid').val()==''){
-                tsnull =1;
-            }
-        })
-        var add_startTime = $('.dval').eq(0).val();
-        var add_endTime = $('.dval').eq(1).val();
-        var add_tadatime = new Date();
-        add_startTime=add_startTime.replaceAll("-","/");
-        add_endTime=add_endTime.replaceAll("-","/");
-        var add_startTime1 = new Date(Date.parse(add_startTime));
-        var add_endTime1 = new Date(Date.parse(add_endTime));
 
-        if (add_startTime1 > add_endTime1) {
-            tsnull =4;
-        }
-        /*if(add_tadatime>add_startTime1){
-            tsnull =5;
-        }*/
-        if(tsnull==2){
-            alert('日期和插播位置不可以为空！')
-        }else if(tsnull==3){
-            alert('请添加视频')
-        }else if(tsnull==4){
-            alert('结束时间不可以小于开始时间')
-        }else if(tsnull==5){
-            alert('开始时间不能小于等于当前时间')
-        }else if(tsnull==1){
+        if(tsnull==1){
             boiteName()
             $('#modales').modal('show');
             if($('#rad_jiulou').prop('checked')==false){
@@ -705,8 +507,8 @@
                         arr_null.push($(this).find('label').prop('id'))
                     }
                 })
-                console.log(arr_null)
-                addAjaxBoxNum(JSON.stringify(arr_null))
+                // console.log(arr_null)
+                // addAjaxBoxNum(JSON.stringify(arr_null))
                 $('.jiuloushuliang').html($('.position-list-group').length)
             }else{
 
@@ -742,7 +544,7 @@
                 if(arr_null==''){
                     $('.banweishu').html('0')
                 }
-                addAjaxBoxNum(JSON.stringify(arr_null))
+                // addAjaxBoxNum(JSON.stringify(arr_null))
                 $('.jiuloushuliang').html($('.position-list-group').length)
 
             }
@@ -779,7 +581,7 @@
             $('.position-list-group').each(function(){
                 arr_null.push($(this).prop('id'))
             })
-            addAjaxBoxNum(JSON.stringify(arr_null))
+            // addAjaxBoxNum(JSON.stringify(arr_null))
 
             $('.jiuloushuliang').html($('.position-list-group').length)
         }
@@ -852,52 +654,27 @@
             })
             var arrs2 = arr2.join(',');
             obj.hotel_id = lname;
-            obj.box_str = arr2;
+            // obj.box_str = arr2;
             arr.push(obj)
         })
         var arrstr = JSON.stringify(arr);
         $('#hbars').val(arrstr);
-        // $('.vid_names').html($('#sp_name').html())
-        $('.str_time').html($('.dval').eq(0).val())
-        $('.end_time').html($('.dval').eq(1).val())
+        $('.vid_names').html($('#sp_name').html())
         $('.ljiu_num').html($('.jiuloushu span').eq(0).html())
-        $('.h_num').html($('.jiuloushu span').eq(1).html())
         $('.bf_cishu').html($('#cishu').val())
         var sp_isid = $('#newsp').css('display');
         if($('.ban_list').html()!=''&& sp_isid!='none'){
             $('#bctk').modal('show');
         }else{
-            $('#bctk').modal('show');
-            // alert('请补全信息!')
+            //$('#bctk').modal('show');
+            alert('请补全信息!')
         }
         //console.log(arr)
     })
     $('#q_fb').click(function(){
         $('#bctk').modal('hide')
     })
-    /*点击保存视频*/
 
-    $('body').on('click','#saveImg',function(){
-        /*var media_url = $('#media_url').val();  //视频地址
-        var resource_name = $('#resource_name').val();  //视频名称
-        var seco = $('#seco').val();  //视频时长
-        $('#sp_name').html(resource_name);
-        $('#sp_url').html(media_url);
-        if(seco<60){
-
-            $('#sp_time').html(seco+'秒')
-        }else if(seco>=60){
-            var fen = parseInt(seco/60);
-            var miaos = seco-60*fen;
-            if(miaos==0){
-                $('#sp_time').html(fen+'分钟00秒');
-            }else{
-                $('#sp_time').html(fen+'分钟'+miaos+'秒');
-            }
-        }
-        $('#newsp').show()
-        $('#sp').hide();*/
-    })
     $('#sdd').click(function(){
         $('#box_qx').prop('checked',false);
         var city_id = $('.cityId').val();
@@ -1033,94 +810,4 @@
             }
         });
     }
-	
-	//上传开始
-	$("#checkout").click(function () {
-
-		$('#file-4').fileinput('clear');
-		$("#excelpath").val('');
-	});
-
-
-  $("#file-4").fileinput({
-    language: 'zh',
-    uploadExtraData: {kvId: '10'},
-    maxFileCount: 1,
-    allowedFileExtensions:['csv', 'xlsx'],
-  });
-
-  $('#file-4').on('fileselectnone', function() {
-    //alert('Huh! You selected no files.');
-  });
-
-  $('#file-4').on('filebrowse', function() {
-    //alert('File browse clicked for #file-4');
-
-  });
-
-  $('#file-4').on('fileloaded', function() {
-    //alert('Fileerrre for #file-4');
-
-  });
-
-  $('#file-4').on('filepreupload', function() {
-
-  });
-  $('#file-4').on('fileuploaded', function(event, data, previewId, index) {
-    //alert(data);
-    //alert(data.files);
-    alert('上传EXCEL成功');
-    //$('#file-4').fileinput('lock');
-    //$('#file-4').fileinput('clear');
-    $("#excelsub").attr("disabled",false);
-    $("#excelpath").val(data.response);
-    //var form = data.form, files = data.files, extra = data.extra,
-    //	response = data.response, reader = data.reader;
-    //console.log('File uploaded triggered');
-  });
-  
-  
-	$("#excelsub").click(
-
-
-          //alert($("#m_type option:selected").val());
-         function(){
-            var excelpath = $("#excelpath").val();
-            //$(".bom_input #hoteldetail .accountcl").html('');
-
-            $.ajax({
-              type:"POST",
-              ContentType: "application/json; charset=utf-8",
-              dataType: "json",
-              url:"{$host_name}/forscreenadv/analyseExcel",
-              data:"excelpath="+excelpath,
-              success:function(data){
-                if(data.error==0){
-				  var hotel_nums = data.hotel_nums;
-				  var box_nums   = data.box_nums;
-                  var data = data.message;
-				  $('.ban_list').html('');
-				  for(var i=0;i<data.length;i++){
-					 var jiulou_name =	'<div class="jiu_names">'+
-                        '<span id='+data[i].id+'>'+data[i].name+'</span>'+
-                        '</div>'
-                     $('.ban_list').append(jiulou_name);
-				  }
-				  $('.jiuloushu').find('span').eq(0).html(hotel_nums)
-				  $('.jiuloushu').find('span').eq(1).html(box_nums)
-                  //$('#modales').modal('hide');
-				  
-				 
-
-                }else{
-                  alert(data.message);
-                  return false;
-                }
-              }
-            });
-         }
-
-	);
-  
-  //上传结束
 </script>

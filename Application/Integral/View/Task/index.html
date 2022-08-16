@@ -9,17 +9,44 @@
     <input type="hidden" id="high" value="{$hightest}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="form-inline" >
-          <div class="form-inline" >
-          	<div class="input-group input-group-sm pull-left">
-              <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/add" title="创建任务" target="dialog" mask="true"><i class="fa fa-plus"></i> 创建任务</a>
-              <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitymoney" title="活动现金" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动现金</a>
-              <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitysale" title="活动品鉴售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动品鉴售卖</a>
-              <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitylottery" title="活动抽奖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动抽奖</a>
-              <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitygroupbuysale" title="活动团购售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动团购售卖</a>
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/add" title="创建任务" target="dialog" mask="true"><i class="fa fa-plus"></i> 创建任务</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitymoney" title="活动现金" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动现金</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitysale" title="活动品鉴售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动品鉴售卖</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitylottery" title="活动抽奖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动抽奖</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitygroupbuysale" title="活动团购售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动团购售卖</a>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">状态：</div>
+            <div class="input-group">
+              <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=99>全部</option>
+                <option value="1" <if condition="$status eq 1">selected</if>>上线</option>
+                <option value="0" <if condition="$status eq 2">selected</if>>下线</option>
+              </select>
             </div>
           </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm"></div>
+            <div class="input-group">
+              <input type="number" class="form-control" name="task_id" value="{$task_id}" placeholder="请输入任务ID">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
   </form>

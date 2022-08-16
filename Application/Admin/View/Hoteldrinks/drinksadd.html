@@ -1,0 +1,55 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/hoteldrinks/drinksadd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="hotel_id" type="hidden" value="{$hotel_id}"/>
+
+        <div class="pageFormContent modal-body" id="drinks_img">
+            <div class="form-group row" >
+                <label class="col-xs-12 col-sm-2 control-label">
+                    图片：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                            <a data-target="#modal-file" href="javascript:void(0)">
+                                <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                <span id="media_idimgname"></span>
+                            </a>
+                        </div>
+
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="0" >
+                            <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">是否无在售酒水：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="is_nosell" id="drinks_is_nosell" class="form-control bs-select" title="请选择">
+                        <option value="1" <if condition="$vinfo.is_nosell eq 1">selected</if> >是</option>
+                        <option value="0" <if condition="$vinfo.is_nosell eq 0">selected</if> >否</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>
+<script>
+    $('#drinks_is_nosell').change(function() {
+        if($(this).val()==1){
+            $('#drinks_img').hide();
+        }else{
+            $('#drinks_img').show();
+        }
+    })
+    $('#drinks_is_nosell').trigger('change');
+
+</script>

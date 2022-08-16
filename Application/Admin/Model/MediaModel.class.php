@@ -1,13 +1,6 @@
 <?php
-/**
- *酒店model
- *@author  hongwei <[<email address>]>
- * 
- */
 namespace Admin\Model;
-
 use Common\Lib\Page;
-use Admin\Model\BaseModel;
 
 class MediaModel extends BaseModel{
 
@@ -32,10 +25,8 @@ class MediaModel extends BaseModel{
 
 	public function getWhere($where, $field){
 		$list = $this->where($where)->field($field)->select();
-
 		return $list;
 	}
-
 
 	public function getMediaInfoById($media_id){
 	    $oss_host = get_oss_host();
@@ -46,10 +37,5 @@ class MediaModel extends BaseModel{
 	    }
 	    return $vinfo;
 	}
-	
-	public function getMediaInfoByName($name){
-	    
-	}
-
 
 }

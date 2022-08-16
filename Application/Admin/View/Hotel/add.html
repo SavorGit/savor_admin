@@ -29,6 +29,7 @@
     <input type="hidden" name="id" value="{$vinfo.id}">
       <input type="hidden" name="navtp" value="{$navtp}">
       <input type="hidden" id="honame" value="{$host_name}">
+      <input type="hidden" id="hotel_business_circle_id" value="{$vinfo.business_circle_id}">
     <div class="pageFormContent modal-body">
 
       <div class="form-group row">
@@ -111,11 +112,9 @@
         </label>
         <div class="col-xs-12 col-sm-10">
           <select id="hotel_area_id" name="area_id" class="form-control bs-select" title="请选择..." data-size="20" required>
-              
              <volist name="area" id="row">
                  <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['area_id']"> selected </if> > {$row['region_name']} </option>
              </volist>
-
           </select>
         </div>
       </div>
@@ -131,6 +130,20 @@
              </volist>
 
           </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            商圈:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select id="business_circle_id" name="business_circle_id" class="form-control" data-size="20">
+                <volist name="circle_list" id="row">
+                    <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['business_circle_id']"> selected </if> > {$row['name']} </option>
+                </volist>
+
+            </select>
         </div>
       </div>
 
@@ -368,7 +381,7 @@
 
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
-                安装日期:：
+                安装日期:
             </label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group date form_datetime" data-date="{$vinfo.install_date}" data-ymd="true">
@@ -781,6 +794,28 @@
 				}
 			});
 		});
+
+        $('#hotel_county_id').change(function(){
+            var business_circle_id = $("#hotel_business_circle_id").val();
+            var area_id = $("#hotel_area_id option:selected").val();
+            var county_id = $(this).val();
+            honame = $('#honame').val();
+            $.ajax({
+                type:"post",
+                url:honame+"/hotel/getBusinesscircle",
+                dataType:"json",
+                data:"area_id="+area_id+"&county_id="+county_id+"&business_circle_id="+business_circle_id,
+                async:true,
+                success:function(calls){
+                    var circle_str = '';
+                    for(var i=0;i<calls.length;i++){
+                        circle_str+='<option value="'+calls[i].id+'"'+calls[i].is_select+'>'+calls[i].name+'</option>';
+                    }
+                    $('#business_circle_id').html(circle_str);
+                }
+            });
+        });
+        $('#hotel_county_id').trigger('change');
 
     });
 

@@ -31,6 +31,8 @@ class TaskHotelModel extends BaseModel{
 	    $list = $this->alias('a')
 	                 ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
 	                 ->join('savor_sysuser user on a.uid=user.id','left')
+                     ->join('savor_area_info area on hotel.area_id = area.id','left')
+                     ->join('savor_integral_task task on a.task_id=task.id ','left')
 	                 ->field($fields)
 	                 ->where($where)
 	                 ->order($order)

@@ -1,0 +1,46 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+      <form method="post" action="{$host_url}/storesalesort/addsort" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input type="hidden" name="id" value="{$vinfo.id}" />
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr>
+            <td>名称：</td>
+            <td><input name="name" type="text" value="{$vinfo.name}" class="form-control" required/></td>
+          </tr>
+          <volist name="all_sort" id="sinfo">
+            <tr>
+              <td>{$sinfo.name}<input type="hidden" name="item_ids[]" value="{$sinfo.id}" /></td>
+              <td>
+                <select name="goods_ids[]" class="form-control bs-select class-filter" data-live-search="true" required >
+                  <option name="goods_ids[]" selected='selected' value="0">请选择在售酒品</option>
+                  <volist name="goods" id="ginfo">
+                    <option name="ads_id[]" value="{$ginfo.id}" <if condition="$sinfo.goods_id eq $ginfo['id']">selected</if> > {$ginfo.name}</option>
+                  </volist>
+                </select>
+              </td>
+            </tr>
+          </volist>
+          <tr>
+            <td>状态：</td>
+            <td>
+              <select name="flag" class="form-control bs-select" data-size="20">
+                <volist name=":C('DATA_STATUS')" id="vo">
+                  <option value="{$key}" <if condition="$vinfo['status'] eq $key"> selected </if> > {$vo}</option>
+                </volist>
+              </select>
+            </td>
+          </tr>
+            <th colspan="3">
+              <button class="btn btn-default close-m" type="button">取消</button>
+              <button class="btn btn-primary" type="submit">保存</button>
+            </th>
+          </thead>
+          </tbody>
+        </table>
+      </form>
+  </div>
+</div>

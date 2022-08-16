@@ -43,6 +43,7 @@
             <th>广告名称</th>
             <th>展示时长</th>
             <th>广告类型</th>
+            <th>发布酒楼数</th>
             <th>创建人</th>
             <th>创建时间</th>
             <th>状态</th>
@@ -56,6 +57,14 @@
               <td data-title="名称">{$dinfo.name}</td>
               <td data-title="展示时长">{$dinfo.duration}</td>
               <td data-title="广告类型">{$dinfo.resourcetypestr}</td>
+              <td data-title="发布酒楼数">
+                <if condition="$dinfo.hotels gt 0">
+                  <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="storesaleadv/hoteldatalist" href="{$host_url}/storesaleadv/hoteldatalist?deliveryid={$dinfo.id}" >
+                    {$dinfo.hotels}</a>
+                  <else/>
+                  {$dinfo.hotels}
+                </if>
+              </td>
               <td data-title="创建人">{$dinfo.username}</td>
               <td data-title="创建时间">{$dinfo.add_time}</td>
               <td data-title="状态">
@@ -74,14 +83,18 @@
                   <a data-tip="预览" href="{$host_name}/storesaleadv/advpreview?deliveryid={$dinfo.id}" rel="storesaleadv/advpreview" title="广告预览" target="navTab" class="btn btn-success btn-icon">
                     <i class="fa fa-eye"></i>
                   </a>
-                  <a data-tip="查看明细" target="navTab" data-placement="left" mask="true" rel="storesaleadvshowdetail" href="{$host_name}/storesaleadv/showdetail?deliveryid={$dinfo.id}" class="btn btn-success btn-icon" title="查看明细">
+                  <a data-tip="查看明细" target="navTab" data-placement="left" mask="true" rel="storesaleadv/hoteldatalist" href="{$host_url}/storesaleadv/hoteldatalist?deliveryid={$dinfo.id}" class="btn btn-success btn-icon" title="查看明细">
                     <i class="fa fa-heart-o"></i>
                   </a>
-                </div>
-                <div class="tools-edit">
+
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/storesaleadv/deleteAds?id={$dinfo.id}"  class="btn btn-success btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
+
+                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_name}/storesaleadv/hoteladd?deliveryid={$dinfo.id}" class="btn btn-warning btn-icon">
+                    <i class="fa fa-hotel"></i>
+                  </a>
+
                 </div>
               </td>
 
