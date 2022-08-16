@@ -1,5 +1,6 @@
 <?php
 namespace Admin\Controller;
+use \Common\Lib\SavorRedis;
 
 class StoresalesortController extends BaseController {
 
@@ -163,6 +164,15 @@ class StoresalesortController extends BaseController {
             }
             $res = $m_sort_hotel->addAll($data_hotel);
             if($res){
+                $redis = SavorRedis::getInstance();
+                $redis->select(12);
+                $cache_key_pre = C('SMALLAPP_STORESALE_ADS');
+                foreach($hotel_arr as $key=>$v){
+                    if(!empty($v['hotel_id'])){
+                        $period = getMillisecond();
+                        $redis->set($cache_key_pre.$v['hotel_id'],$period,86400*14);
+                    }
+                }
                 $this->output('添加成功','storesalesort/datalist');
             }else {
                 $this->output('添加失败','storesalesort/datalist',2,0);
@@ -186,6 +196,11 @@ class StoresalesortController extends BaseController {
         $m_sorthotel = new \Admin\Model\StoresaleSortHotelModel();
         $result = $m_sorthotel->delData(array('id'=>$id));
         if($result){
+            $redis = SavorRedis::getInstance();
+            $redis->select(12);
+            $cache_key_pre = C('SMALLAPP_STORESALE_ADS');
+            $period = getMillisecond();
+            $redis->set($cache_key_pre.$hotel_id,$period,86400*14);
             $this->output('操作成功!', 'storesalesort/hoteldatalist',2);
         }else{
             $this->output('操作失败', 'storesalesort/hoteldatalist',2,0);
