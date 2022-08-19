@@ -9,7 +9,8 @@ class GlobalconfigController extends BaseController {
 
     public function configdata(){
         $m_sys_config = new \Admin\Model\SysConfigModel();
-        $where = " config_key in('distribution_profit','hotellottery_people_num','seckill_roll_content')";
+        $where = array();
+        $where['config_key'] = array('in',array('distribution_profit','hotellottery_people_num','seckill_roll_content','vip_coupons'));
         $volume_arr = $m_sys_config->getList($where);
         $info = array();
         $now_roll_content = array();
@@ -26,6 +27,7 @@ class GlobalconfigController extends BaseController {
             }
             $info[$v['config_key']] = $config_value;
         }
+
         $roll_contents = array();
         $roll_num = 3;
         for($i=1;$i<=$roll_num;$i++){
@@ -37,6 +39,22 @@ class GlobalconfigController extends BaseController {
         }
         $info['seckill_roll_content'] = $roll_contents;
 
+        $coupon_ids = array();
+        if(!empty($info['vip_coupons'])){
+            $coupon_ids = json_decode($info['vip_coupons'],true);
+        }
+        $m_coupons = new \Admin\Model\Smallapp\CouponModel();
+        $coupons = $m_coupons->getDataList('id,name,money,min_price',array('status'=>1,'type'=>2),'id desc');
+        foreach ($coupons as $k=>$v){
+            $select = '';
+            if(in_array($v['id'],$coupon_ids)){
+                $select = 'selected';
+            }
+            $coupons[$k]['select'] = $select;
+            $coupons[$k]['name'] = $v['name']."({$v['money']}元-满{$v['min_price']}可用)";
+        }
+
+        $this->assign('coupons',$coupons);
         $this->assign('info',$info);
         $this->display('configdata');
     }
@@ -45,6 +63,7 @@ class GlobalconfigController extends BaseController {
         $distribution_profit = I('post.distribution_profit',0);
         $hotellottery_people_num = I('post.hotellottery_people_num',0);
         $seckill_roll_content = I('post.seckill_roll_content','');
+        $coupon_ids = I('post.coupon_ids','');
 
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $data_distribution_profit = array('config_value'=>$distribution_profit);
@@ -63,6 +82,12 @@ class GlobalconfigController extends BaseController {
         }
         $data_seckill_roll_content = array('config_value'=>json_encode($now_seckill_roll_content));
         $rts = $m_sys_config->editData($data_seckill_roll_content, 'seckill_roll_content');
+        $now_coupons = array();
+        if(!empty($coupon_ids)){
+            $now_coupons = $coupon_ids;
+        }
+        $data_seckill_roll_content = array('config_value'=>json_encode($now_coupons));
+        $rts = $m_sys_config->editData($data_seckill_roll_content, 'vip_coupons');
 
         $sys_list = $m_sys_config->getList(array('status'=>1));
         $redis  =  \Common\Lib\SavorRedis::getInstance();
