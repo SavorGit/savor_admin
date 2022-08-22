@@ -68,7 +68,7 @@
             <th>有效期</th>
             <th>类型</th>
             <th>状态</th>
-<!--            <th>使用酒楼数</th>-->
+            <th>使用酒楼数</th>
             <th>添加时间</th>
             <th>操作</th>
           </tr>
@@ -83,14 +83,14 @@
               <td data-title="有效期">{$dinfo.date_str}</td>
               <td data-title="类型">{$dinfo.type_str}</td>
               <td data-title="状态">{$dinfo.status_str}</td>
-<!--              <td data-title="使用酒楼数">-->
-<!--                <if condition="$dinfo.hotels gt 0">-->
-<!--                  <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="coupon/hotelcouponlist" href="{$host_url}/smallapp/coupon/hotelcouponlist?coupon_id={$dinfo.id}" >-->
-<!--                    {$dinfo.hotels}</a>-->
-<!--                  <else/>-->
-<!--                  {$dinfo.hotels}-->
-<!--                </if>-->
-<!--              </td>-->
+              <td data-title="使用酒楼数">
+                <if condition="$dinfo.hotels gt 0">
+                  <a class="btn btn-success " title="酒楼数:{$dinfo.hotels}" target="navTab" mask="true" rel="coupon/hotelcouponlist" href="{$host_url}/smallapp/coupon/hotelcouponlist?coupon_id={$dinfo.id}" >
+                    {$dinfo.hotels}</a>
+                  <else/>
+                  {$dinfo.hotels}
+                </if>
+              </td>
               <td data-title="添加时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
@@ -98,9 +98,9 @@
                     <i class="fa fa-pencil"></i>
                   </a>
 
-<!--                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/coupon/hotelcouponadd?coupon_id={$dinfo.id}" class="btn btn-warning btn-icon">-->
-<!--                    <i class="fa fa-hotel"></i>-->
-<!--                  </a>-->
+                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/coupon/hotelcouponadd?coupon_id={$dinfo.id}" class="btn btn-warning btn-icon">
+                    <i class="fa fa-hotel"></i>
+                  </a>
 
                 </div>
               </td>
