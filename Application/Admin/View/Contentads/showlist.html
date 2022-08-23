@@ -266,6 +266,7 @@ ele_key.onkeyup = function (e) {
     function clickcontentads(obj){
       var hiddenaid = $(".strid").val();
       var title = $('#contenseid').val();
+      title = title.replace(/\+/g, "%2B");
       var st = $('input[name="adsstarttime"]').val();
       var end = $('input[name="adsendtime"]').val();
       var hre = $("#contentxiaohref").val();
