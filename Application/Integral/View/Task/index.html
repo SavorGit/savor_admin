@@ -18,6 +18,7 @@
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitysale" title="活动品鉴售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动品鉴售卖</a>
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitylottery" title="活动抽奖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动抽奖</a>
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitygroupbuysale" title="活动团购售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动团购售卖</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitydemandadv" title="活动广告点播" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动广告点播</a>
           </div>
 
           <div class="form-group">
@@ -113,18 +114,17 @@ href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_
                       <a data-tip="奖品信息" title="奖品信息" target="navTab" rel="task/prizelist" href="{$host_url}/Integral/task/prizelist?task_id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-list"></i></a>
                     <elseif condition="$vlist['task_type'] eq 24"/>
                       <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitygroupbuysale?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
+                    <elseif condition="$vlist['task_type'] eq 25"/>
+                      <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addactivitydemandadv?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
                     </if>
                   </if>
 
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/Integral/task/delete?id={$vlist.id}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
-                  <a warn="警告" data-tip="复制" title="你确定要复制新增任务吗？" title="复制新增任务"  target="ajaxTodo" calback="navTabAjaxDone"
-
-                       href="{$host_url}/integral/task/copy?task_id={$vlist.id}"
-                       class="btn btn-success btn-icon">
+                  <a warn="警告" data-tip="复制" title="你确定要复制新增任务吗？" title="复制新增任务"  target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/task/copy?task_id={$vlist.id}" class="btn btn-success btn-icon">
                         <i class="fa fa-copy"></i>
-                    </a>
+                  </a>
                   
                 </div>
               </td>
