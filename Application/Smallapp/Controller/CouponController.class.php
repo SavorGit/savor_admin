@@ -217,21 +217,19 @@ class CouponController extends BaseController {
 
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
-        $fields = 'a.id,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,hotel.name as hotel_name,
+        $fields = 'a.id,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,a.type,hotel.name as hotel_name,
         user.nickName as user_name,a.op_openid,activity.type as activity_type,a.ustatus';
         $m_coupon = new \Admin\Model\Smallapp\UserCouponModel();
         $res_list = $m_coupon->getUserCouponList($fields,$where,$orderby,$start,$size);
         $data_list = array();
         if(!empty($res_list['list'])){
             $all_status = C('COUPON_STATUS');
+            $all_source = array('1'=>'售酒抽奖','2'=>'会员礼包');
             $m_user = new \Admin\Model\Smallapp\UserModel();
             foreach ($res_list['list'] as $v){
                 $res_user = $m_user->getOne('nickName',array('openid'=>$v['op_openid']),'id desc');
                 $v['sale_name'] = $res_user['nickname'];
-                $source = '幸运抽奖';
-                if($v['activity_type']==14){
-                    $source = '售酒抽奖';
-                }
+                $source = $all_source[$v['type']];
                 if($v['use_time']=='0000-00-00 00:00:00'){
                     $v['use_time'] = '';
                 }
