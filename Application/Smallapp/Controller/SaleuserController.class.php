@@ -119,7 +119,7 @@ class SaleuserController extends BaseController {
                 if($v['status']==1){
                     $status_str = '可用';
                 }elseif($v['status']==2){
-                    $status_str = '未结算不可用';
+                    $status_str = '待核销';
                 }
             }
             $data_list[$k]['status_str']  = $status_str;
