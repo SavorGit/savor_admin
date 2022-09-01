@@ -96,6 +96,7 @@
 	          <input type="checkbox" name="is_long_time" value="1" />
 	        </div>
         </div>
+        <!--
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 是否支持分润:
@@ -107,6 +108,7 @@
                 </select>
             </div>
         </div>
+
         <div class="form-group row " id="shareprofit_config" <if condition="$vinfo['is_shareprofit'] eq 0">style="display:none;"</if> >
             <label class="col-xs-12 col-sm-2 control-label">
                 分润设置：
@@ -116,7 +118,7 @@
                 <span class="form-control">员工</span><input type="number" class="form-control" name="shareprofit_level2" value="{$vinfo.shareprofit_level2}" min="0" max="100">
             </div>
         </div>
-
+        -->
         <div class="form-group row">
 	        <label class="col-xs-12 col-sm-2 control-label">
 	          奖励积分:
@@ -440,7 +442,65 @@
 
             </div>
         </div>
-    </div><!--邀请食客评价结束 -->
+    </div><!--打赏补贴结束 -->
+
+
+    <div class="pageFormContent modal-body" id="invitation_user" style="display:none">
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  午饭-开始时间:
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：12:00" name="invite_lunch_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.lunch_start_time}" >
+              </div>
+
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  午饭-结束时间:
+              </label>
+
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：14:00" name="invite_lunch_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.lunch_end_time}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  晚饭-开始时间:
+              </label>
+
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：18:00" name="invite_dinner_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.dinner_start_time}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                  晚饭-结束时间:
+              </label>
+
+              <div class="col-xs-12 col-sm-10">
+                  <input placeholder="例如：21:00" name="invite_dinner_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.dinner_end_time}" >
+              </div>
+          </div>
+          <div class="form-group row">
+              <label class="col-xs-6 col-sm-2 control-label">
+                任务内容：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                  <p>
+                      一个用户一周打开邀请函奖励
+                      <input min='1' type="text" name="week_num" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo.user_reward.week_num}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;次<span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
+                  </p>
+
+                  <p>
+                      饭点内一个包间奖励
+                      <input min='1' type="text" name="room_num" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo.user_reward.room_num}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;次<span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
+                  </p>
+
+
+              </div>
+          </div>
+      </div><!--打赏补贴结束 -->
 
 
     <div class="modal-footer">
@@ -473,35 +533,47 @@
   			$('#tasl_content').show();
   			var tt_v = $("#task_content_type").val();
   			if(tt_v==1){
-  				$('#tv_on').show();
   	    		$('#tv_interact').hide();
   	    		$('#tv_activity').hide();
                 $('#reward_subsidy').hide();
                 $('#user_comment').hide();
+                $('#invitation_user').hide();
+                $('#tv_on').show();
   			}else if(tt_v==2){
   				$('#tv_on').hide();
-  	    		$('#tv_interact').show();
                 $('#tv_activity').hide();
                 $('#reward_subsidy').hide();
                 $('#user_comment').hide();
+                $('#invitation_user').hide();
+                $('#tv_interact').show();
   			}else if(tt_v==3){
                 $('#tv_on').hide();
                 $('#tv_interact').hide();
                 $('#reward_subsidy').hide();
                 $('#user_comment').hide();
+                $('#invitation_user').hide();
                 $('#tv_activity').show();
             }else if(tt_v==4){
                 $('#tv_on').hide();
                 $('#tv_interact').hide();
                 $('#tv_activity').hide();
                 $('#reward_subsidy').hide();
+                $('#invitation_user').hide();
                 $('#user_comment').show();
             }else if(tt_v==5){
                 $('#tv_on').hide();
                 $('#tv_interact').hide();
                 $('#tv_activity').hide();
                 $('#user_comment').hide();
+                $('#invitation_user').hide();
                 $('#reward_subsidy').show();
+            }else if(tt_v==6){
+                $('#tv_on').hide();
+                $('#tv_interact').hide();
+                $('#tv_activity').hide();
+                $('#user_comment').hide();
+                $('#reward_subsidy').hide();
+                $('#invitation_user').show();
             }
   		}else if(type==2){
   			$('#tasl_content').hide();
@@ -509,40 +581,53 @@
     		$('#tv_interact').hide();
             $('#user_comment').hide();
             $('#reward_subsidy').hide();
-  		}		  	  
+            $('#invitation_user').hide();
+  		}
   　　})  
     $('#task_content_type').change(function(){
     	var type= $(this).children('option:selected').val();
     	if(type==1){
-    		$('#tv_on').show();
     		$('#tv_interact').hide();
             $('#user_comment').hide();
     		$('#tv_activity').hide();
             $('#reward_subsidy').hide();
+            $('#invitation_user').hide();
+            $('#tv_on').show();
     	}else if(type==2){
     		$('#tv_on').hide();
             $('#tv_activity').hide();
             $('#user_comment').hide();
             $('#reward_subsidy').hide();
+            $('#invitation_user').hide();
     		$('#tv_interact').show();
     	}else if(type==3){
             $('#tv_on').hide();
             $('#tv_interact').hide();
             $('#user_comment').hide();
             $('#reward_subsidy').hide();
+            $('#invitation_user').hide();
             $('#tv_activity').show();
         }else if(type==4){
             $('#tv_on').hide();
             $('#tv_interact').hide();
             $('#tv_activity').hide();
             $('#reward_subsidy').hide();
+            $('#invitation_user').hide();
             $('#user_comment').show();
         }else if(type==5){
             $('#tv_on').hide();
             $('#tv_interact').hide();
             $('#tv_activity').hide();
             $('#user_comment').hide();
+            $('#invitation_user').hide();
             $('#reward_subsidy').show();
+        }else if(type==6){
+            $('#tv_on').hide();
+            $('#tv_interact').hide();
+            $('#tv_activity').hide();
+            $('#user_comment').hide();
+            $('#reward_subsidy').hide();
+            $('#invitation_user').show();
         }
 
     })
