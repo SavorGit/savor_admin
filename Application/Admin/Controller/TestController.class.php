@@ -15,6 +15,114 @@ use Common\Lib\AliyunMsn;
  */
 class TestController extends Controller {
 
+    public function updatemaintainer(){
+        //$path = "D:\\upmant.xlsx";
+        exit;
+        $path = '/application_data/web/php/savor_admin/Public/zyt.xlsx';
+        if  ($path == '') {
+            $res = array('error'=>0,'message'=>array());
+            echo json_encode($res);
+        }
+        $type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        if ($type == 'xlsx' || $type == 'xls') {
+            $objPHPExcel = \PHPExcel_IOFactory::load($path);
+        } elseif ($type == 'csv') {
+            $objReader = \PHPExcel_IOFactory::createReader('CSV')
+            ->setDelimiter(',')
+            ->setInputEncoding('GBK')//不设置将导致中文列内容返回boolean(false)或乱码
+            ->setEnclosure('"')
+            ->setLineEnding("\r\n")
+            ->setSheetIndex(0);
+            $objPHPExcel = $objReader->load($path);
+        } else {
+            //$this->output('文件格式不正确', 'importdata', 0, 0);
+            $res = array('error'=>1,'message'=>'文件格式不正确');
+            echo json_encode($res);
+            die;
+        }
+        
+        $sheet = $objPHPExcel->getSheet(0);
+        //获取行数与列数,注意列数需要转换
+        $highestRowNum = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+       
+        
+        //取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+        $filed = array();
+        for ($i = 0; $i < $highestColumnNum; $i++) {
+            $cellName = \PHPExcel_Cell::stringFromColumnIndex($i) . '1';
+            $cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+            $filed[] = $cellVal;
+        }
+        
+        //开始取出数据并存入数组
+        $data = array();
+        $hotel_str = '';
+        $spx = '';
+        for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
+            $row = array();
+            for ($j = 0; $j < $highestColumnNum; $j++) {
+                $cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
+                $cellVal = (string)$sheet->getCell($cellName)->getValue();
+                if($cellVal === 'null'){
+                    $cellVal = '';
+                }
+                if($cellVal === '"' ||  $cellVal === "'"){
+                    $cellVal = '#';
+                }
+                if($cellVal === 'null'){
+                    $cellVal = '';
+                }
+                $row[$filed[$j]] = $cellVal;
+            }
+            $hotel_str .= $spx. $row['id'];
+            $spx = ',';
+            if(!empty($row['id'])){
+                $data [] = $row;
+            }
+        }
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        $m_sysuser = new \Admin\Model\UserModel();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $flag = 0 ;
+        //$data = array_slice($data,0,1);
+        foreach($data as $key=>$v){
+            
+            if($v['name']=='辛立娟'){
+                $v['name'] = '辛丽娟';
+            }
+            $where           = [];
+            $where['remark'] = $v['name'];
+            $where['status'] = 1;
+            $ret = $m_sysuser->field('id maintainer_id')->where($where)->find();
+            /*if(empty($ret)){
+                echo $v['id'].'-'.$v['name']."<br>";
+            }*/
+            
+            $ext_info = $m_hotel_ext->field('*')->where(array('hotel_id'=>$v['id']))->find();
+            //echo $m_hotel_ext->getLastSql();exit;
+            
+            if($ret['maintainer_id'] != $ext_info['maintainer_id']){
+                $sql ="update savor_hotel_ext set maintainer_id=".$ret['maintainer_id']." where hotel_id=".$v['id'].' limit 1';
+                //echo $sql."<br>";
+                
+                $rts = M()->execute($sql);
+                if($rts){
+                    $ext_info['maintainer_id'] = $ret['maintainer_id'];
+                    $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$v['id'];
+                    $hotel_ext_info = $ext_info;
+                    $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
+                    $flag ++;
+                }
+                
+            }
+        }
+        echo $flag;
+        
+    }
     public function resetNewSmallappUser(){
         $openid = I('openid','');
         $type = I('type',1,'intval');
