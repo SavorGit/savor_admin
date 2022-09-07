@@ -1,0 +1,85 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/member/datalist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group"></div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+          <div class="form-inline">
+
+            <div class="form-group">
+              <div class="input-group input-group-sm">会员等级：</div>
+              <div class="input-group">
+                <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                  <option value=0>全部</option>
+                  <volist name=":C('VIP_LEVELS')" id="vip">
+                    <option value="{$key}" <if condition="$vip_level eq $key"> selected </if> > {$vip}</option>
+                  </volist>
+                </select>
+              </div>
+            </div>
+
+
+            <div class="input-group input-group-sm">
+              <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>ID</th>
+            <th>昵称</th>
+            <th>头像</th>
+            <th>用户openid</th>
+            <th>手机号码</th>
+            <th>会员等级</th>
+            <th>加入时间</th>
+            <th>来源销售经理</th>
+            <th>来源酒楼ID</th>
+            <th>来源酒楼</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="data_list" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="昵称">{$dinfo.nickname}</td>
+              <td data-title="头像"><img src="{$dinfo.avatarurl}"/></td>
+              <td data-title="用户openid">{$dinfo.openid}</td>
+              <td data-title="手机号码">{$dinfo.mobile}</td>
+              <td data-title="会员等级">{$dinfo.vip_level_str}</td>
+              <td data-title="加入时间">{$dinfo.invite_time}</td>
+              <td data-title="来源销售经理">{$dinfo.sale_name}</td>
+              <td data-title="来源酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="来源酒楼">{$dinfo.hotel_name}</td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
