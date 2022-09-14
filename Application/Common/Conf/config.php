@@ -1036,6 +1036,11 @@ $config['DATA_STATUS'] = array(
     '1'=>'正常',
     '2'=>'禁用',
 );
+$config['VIP_LEVELS'] = array(
+    '1'=>'银卡',
+    '2'=>'金卡',
+    '3'=>'钻石',
+);
 $config['RD_TEST_HOTEL'] =
     array (
 

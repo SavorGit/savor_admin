@@ -52,6 +52,7 @@ class StaffModel extends BaseModel{
     public function getMerchantStaffUserList($fields,$where){
         $res_data = $this->alias('a')
             ->join('savor_integral_merchant m on a.merchant_id=m.id','left')
+            ->join('savor_hotel h on m.hotel_id=h.id','left')
             ->join('savor_smallapp_user u on a.openid=u.openid','left')
             ->field($fields)
             ->where($where)

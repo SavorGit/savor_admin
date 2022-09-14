@@ -1,32 +1,31 @@
 <include file="Public/script"/>
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/coupon/usercouponlist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/member/datalist" method="post">
     <input type="hidden" name="pageNum" value="{$pageNum}"/>
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
         <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
-          <div class="tools-group">
-          </div>
+          <div class="tools-group"></div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
 
           <div class="form-inline">
 
             <div class="form-group">
-              <div class="input-group input-group-sm">状态：</div>
+              <div class="input-group input-group-sm">会员等级：</div>
               <div class="input-group">
-                <select name="ustatus" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <select name="vip_level" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
                   <option value=0>全部</option>
-                  <volist name=":C('COUPON_STATUS')" id="cstatus">
-                    <option value="{$key}" <if condition="$ustatus eq $key"> selected </if> > {$cstatus}</option>
+                  <volist name=":C('VIP_LEVELS')" id="vip">
+                    <option value="{$key}" <if condition="$vip_level eq $key"> selected </if> > {$vip}</option>
                   </volist>
                 </select>
               </div>
             </div>
 
+
             <div class="input-group input-group-sm">
-              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">
               <span class="input-group-btn">
                   <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
                 </span>
@@ -50,36 +49,30 @@
 
           <tr id="post">
             <th>ID</th>
-            <th>优惠券ID</th>
-            <th>金额</th>
-            <th>领取时间</th>
-            <th>过期时间</th>
-            <th>使用时间</th>
-            <th>酒楼ID</th>
-            <th>酒楼名称</th>
-            <th>用户名称</th>
+            <th>昵称</th>
+            <th>头像</th>
             <th>用户openid</th>
-            <th>核销人员</th>
-            <th>优惠券来源</th>
-            <th>状态</th>
+            <th>手机号码</th>
+            <th>会员等级</th>
+            <th>加入时间</th>
+            <th>来源销售经理</th>
+            <th>来源酒楼ID</th>
+            <th>来源酒楼</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
-          <volist name="data" id="dinfo">
+          <volist name="data_list" id="dinfo">
             <tr target="sid_user">
               <td data-title="ID">{$dinfo.id}</td>
-              <td data-title="优惠券ID">{$dinfo.coupon_id}</td>
-              <td data-title="金额">{$dinfo.money}</td>
-              <td data-title="领取时间">{$dinfo.add_time}</td>
-              <td data-title="过期时间">{$dinfo.end_time}</td>
-              <td data-title="使用时间">{$dinfo.use_time}</td>
-              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
-              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
-              <td data-title="用户名称">{$dinfo.user_name}</td>
+              <td data-title="昵称">{$dinfo.nickname}</td>
+              <td data-title="头像"><img src="{$dinfo.avatarurl}"/></td>
               <td data-title="用户openid">{$dinfo.openid}</td>
-              <td data-title="核销人员">{$dinfo.sale_name}</td>
-              <td data-title="优惠券来源">{$dinfo.source}</td>
-              <td data-title="状态">{$dinfo.status_str}</td>
+              <td data-title="手机号码">{$dinfo.mobile}</td>
+              <td data-title="会员等级">{$dinfo.vip_level_str}</td>
+              <td data-title="加入时间">{$dinfo.invite_time}</td>
+              <td data-title="来源销售经理">{$dinfo.sale_name}</td>
+              <td data-title="来源酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="来源酒楼">{$dinfo.hotel_name}</td>
             </tr>
           </volist>
           </tbody>

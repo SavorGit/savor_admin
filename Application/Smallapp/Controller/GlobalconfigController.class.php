@@ -44,17 +44,41 @@ class GlobalconfigController extends BaseController {
             $coupon_ids = json_decode($info['vip_coupons'],true);
         }
         $m_coupons = new \Admin\Model\Smallapp\CouponModel();
-        $coupons = $m_coupons->getDataList('id,name,money,min_price',array('status'=>1,'type'=>2),'id desc');
-        foreach ($coupons as $k=>$v){
-            $select = '';
-            if(in_array($v['id'],$coupon_ids)){
-                $select = 'selected';
+        $res_coupons = $m_coupons->getDataList('id,name,money,min_price',array('status'=>1,'type'=>2),'id desc');
+        $coupons1 = $coupons2 = $coupons3 = array();
+        foreach ($res_coupons as $k=>$v){
+            $v['name'] = $v['name']."({$v['money']}元-满{$v['min_price']}可用)";
+
+            if(isset($coupon_ids[1])){
+                $select = '';
+                if(in_array($v['id'],$coupon_ids[1])){
+                    $select = 'selected';
+                }
+                $v['select'] = $select;
+                $coupons1[]=$v;
             }
-            $coupons[$k]['select'] = $select;
-            $coupons[$k]['name'] = $v['name']."({$v['money']}元-满{$v['min_price']}可用)";
+            if(isset($coupon_ids[2])){
+                $select = '';
+                if(in_array($v['id'],$coupon_ids[2])){
+                    $select = 'selected';
+                }
+                $v['select'] = $select;
+                $coupons2[]=$v;
+            }
+
+            if(isset($coupon_ids[3])){
+                $select = '';
+                if(in_array($v['id'],$coupon_ids[3])){
+                    $select = 'selected';
+                }
+                $v['select'] = $select;
+                $coupons3[]=$v;
+            }
         }
 
-        $this->assign('coupons',$coupons);
+        $this->assign('coupons1',$coupons1);
+        $this->assign('coupons2',$coupons2);
+        $this->assign('coupons3',$coupons3);
         $this->assign('info',$info);
         $this->display('configdata');
     }
@@ -63,7 +87,9 @@ class GlobalconfigController extends BaseController {
         $distribution_profit = I('post.distribution_profit',0);
         $hotellottery_people_num = I('post.hotellottery_people_num',0);
         $seckill_roll_content = I('post.seckill_roll_content','');
-        $coupon_ids = I('post.coupon_ids','');
+        $coupon_ids1 = I('post.coupon_ids1','');
+        $coupon_ids2 = I('post.coupon_ids2','');
+        $coupon_ids3 = I('post.coupon_ids3','');
 
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $data_distribution_profit = array('config_value'=>$distribution_profit);
@@ -82,10 +108,8 @@ class GlobalconfigController extends BaseController {
         }
         $data_seckill_roll_content = array('config_value'=>json_encode($now_seckill_roll_content));
         $rts = $m_sys_config->editData($data_seckill_roll_content, 'seckill_roll_content');
-        $now_coupons = array();
-        if(!empty($coupon_ids)){
-            $now_coupons = $coupon_ids;
-        }
+
+        $now_coupons = array('1'=>$coupon_ids1,'2'=>$coupon_ids2,'3'=>$coupon_ids3);
         $data_seckill_roll_content = array('config_value'=>json_encode($now_coupons));
         $rts = $m_sys_config->editData($data_seckill_roll_content, 'vip_coupons');
 

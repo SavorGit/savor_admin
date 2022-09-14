@@ -217,7 +217,7 @@ class CouponController extends BaseController {
 
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
-        $fields = 'a.id,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,a.type,hotel.name as hotel_name,
+        $fields = 'a.id,a.openid,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,a.type,hotel.name as hotel_name,
         user.nickName as user_name,a.op_openid,activity.type as activity_type,a.ustatus';
         $m_coupon = new \Admin\Model\Smallapp\UserCouponModel();
         $res_list = $m_coupon->getUserCouponList($fields,$where,$orderby,$start,$size);
@@ -235,6 +235,9 @@ class CouponController extends BaseController {
                 }
                 $v['source'] = $source;
                 $v['status_str'] = $all_status[$v['ustatus']];
+                if($v['hotel_id']==0){
+                    $v['hotel_name'] = '多酒楼使用';
+                }
 
                 $data_list[] = $v;
             }

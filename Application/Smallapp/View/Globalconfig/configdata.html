@@ -37,10 +37,29 @@
 
           <th colspan="3">会员大礼包</th>
           <tr >
-            <td>礼包优惠券：
-              <select name="coupon_ids[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
-                <volist name="coupons" id="couponinfo">
-                  <option value="{$couponinfo.id}" {$couponinfo.select}>{$couponinfo.name}</option>
+            <td>银牌会员礼包优惠券：
+              <select name="coupon_ids1[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+                <volist name="coupons1" id="couponinfo1">
+                  <option value="{$couponinfo1.id}" {$couponinfo1.select}>{$couponinfo1.name}</option>
+                </volist>
+              </select>
+            </td>
+          </tr>
+          <tr >
+            <td>金牌会员礼包优惠券：
+              <select name="coupon_ids2[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+                <volist name="coupons2" id="couponinfo2">
+                  <option value="{$couponinfo2.id}" {$couponinfo2.select}>{$couponinfo2.name}</option>
+                </volist>
+              </select>
+            </td>
+          </tr>
+
+          <tr >
+            <td>钻石会员礼包优惠券：
+              <select name="coupon_ids3[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+                <volist name="coupons3" id="couponinfo3">
+                  <option value="{$couponinfo3.id}" {$couponinfo3.select}>{$couponinfo3.name}</option>
                 </volist>
               </select>
             </td>
