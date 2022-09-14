@@ -136,7 +136,7 @@ class TestController extends Controller {
                         $redis->select(5);
                         $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
 
-                        $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0));
+                        $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0,'vip_level'=>0,'buy_wine_num'=>0));
                         $redis->remove($cache_key);
                         break;
                     case 2:
