@@ -44,7 +44,7 @@
                     奖励积分:
                 </label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="integral" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.integral}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+                    <input name="integral" type="number" class="form-control" min="0" max="10000"  value="{$vinfo.integral}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
                 </div>
             </div>
 
@@ -53,7 +53,28 @@
                     每日积分上限:
                 </label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="max_daily_integral" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.task_info.max_daily_integral}" required>
+                    <input name="max_daily_integral" type="number" class="form-control" min="0" max="100000"  value="{$vinfo.task_info.max_daily_integral}" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    每个包间每个饭点点播奖励积分几次:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="room_num" type="number" class="form-control" min="0" max="100000"  value="{$vinfo.task_info.room_num}" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">选择广告：</label>
+                <div class="col-xs-12 col-sm-10  form-inline">
+                    <select name="ads_id" class="form-control bs-select class-filter" data-live-search="true" required>
+                        <option name="ads_id" selected='selected' value="0">请选择广告</option>
+                        <volist name="ads_list" id="adsinfo">
+                            <option name="ads_id" value="{$adsinfo.ads_id}" {$adsinfo.is_select}> {$adsinfo.ads_name}</option>
+                        </volist>
+                    </select>
                 </div>
             </div>
 

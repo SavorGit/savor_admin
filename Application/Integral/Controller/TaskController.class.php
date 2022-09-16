@@ -492,11 +492,14 @@ class TaskController extends BaseController {
             $dinner_start_time  = I('post.dinner_start_time');
             $dinner_end_time    = I('post.dinner_end_time');
             $max_daily_integral = I('post.max_daily_integral',0,'intval');
+            $room_num = I('post.room_num',0,'intval');
+            $ads_id = I('post.ads_id',0,'intval');
 
             $type = 2;
             $task_type = 25;
             $task_info = array('lunch_start_time'=>$lunch_start_time,'lunch_end_time'=>$lunch_end_time,'dinner_start_time'=>$dinner_start_time,
-                'dinner_end_time'=>$dinner_end_time,'max_daily_integral'=>$max_daily_integral);
+                'dinner_end_time'=>$dinner_end_time,'max_daily_integral'=>$max_daily_integral,'room_num'=>$room_num,'ads_id'=>$ads_id);
+
             $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'integral'=>$integral,
                 'start_time'=>$start_time,'end_time'=>$end_time,'task_info'=>json_encode($task_info),'status'=>0,'flag'=>1);
             $userinfo = session('sysUserInfo');
@@ -527,6 +530,7 @@ class TaskController extends BaseController {
                 'dinner_start_time'=>$meal_time['dinner'][0],'dinner_end_time'=>$meal_time['dinner'][1]
                 )
             );
+            $now_ads_id = 0;
             if($id){
                 $vinfo = $m_task->getInfo(array('id'=>$id));
                 $m_media = new \Admin\Model\MediaModel();
@@ -540,7 +544,22 @@ class TaskController extends BaseController {
                     $is_edit = 1;
                 }
                 $vinfo['task_info'] = json_decode($vinfo['task_info'],true);
+                $now_ads_id = $vinfo['task_info']['ads_id'];
             }
+            $m_pub_ads = new \Admin\Model\PubAdsModel();
+            $field = 'pads.id as pub_ads_id,pads.create_time,pads.ads_id,ads.name as ads_name';
+            $where = array('pads.is_remove'=>0,'pads.state'=>array('neq',2));
+            $where['pads.end_date'] = array('egt',date('Y-m-d'));
+            $res_ads = $m_pub_ads->getPubAdsList($field, $where,'pads.id desc');
+            foreach ($res_ads as $k=>$v){
+                $is_select = '';
+                if($v['ads_id']==$now_ads_id){
+                    $is_select = 'selected';
+                }
+                $res_ads[$k]['is_select'] = $is_select;
+            }
+
+            $this->assign('ads_list',$res_ads);
             $this->assign('is_edit',$is_edit);
             $this->assign('vinfo',$vinfo);
             $this->display();
