@@ -69,9 +69,13 @@ class PrizepoolController extends BaseController {
                 if($status==1 && $prize_num<3){
                     $this->output('请先配置至少3个奖品', 'syslottery/syslotteryadd',2,0);
                 }
-
                 $m_prizepool->updateData(array('id'=>$id),$data);
                 $result = true;
+                if($status==1){
+                    $m_prizepoolprize->updateData(array('prizepool_id'=>$id),array('status'=>1));
+                }else{
+                    $m_prizepoolprize->updateData(array('prizepool_id'=>$id),array('status'=>2));
+                }
             }else{
                 $result = $m_prizepool->add($data);
             }
