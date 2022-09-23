@@ -158,7 +158,8 @@ class TestController extends Controller {
                         $redis->select(5);
                         $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
 
-                        $m_user->updateInfo(array('openid'=>$openid), array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0,'vip_level'=>0,'buy_wine_num'=>0));
+                        $up_data = array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0,'vip_level'=>0,'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00');
+                        $m_user->updateInfo(array('openid'=>$openid),$up_data);
                         $redis->remove($cache_key);
                         break;
                     case 2:
@@ -3199,24 +3200,33 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $box_mac = I('mac','','trim');
         $bwhere = array('box.mac'=>$box_mac,'box.state'=>1,'box.flag'=>0);
         $m_box = new \Admin\Model\BoxModel();
-        $res_box = $m_box->getBoxByCondition('box.id as box_id,box.mac',$bwhere);
+        $res_box = $m_box->getBoxByCondition('box.id as box_id,box.mac as box_mac,hotel.name,ext.hotel_cover_media_id',$bwhere);
         $res_box = $res_box[0];
 
-        $activity_id = 10510;
+        $host_name = 'https://mobile.littlehotspot.com';
+        $activity_id = 999;
+        $headPic = '';
+        if($res_box['hotel_cover_media_id']>0){
+            $m_media = new \Admin\Model\MediaModel();
+            $res_media = $m_media->getMediaInfoById($res_box['hotel_cover_media_id']);
+            $headPic = base64_encode($res_media['oss_addr']);
+        }
+        /*
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
         $res_activity = $m_activity->getInfo(array('id'=>$activity_id));
-        $host_name = 'https://mobile.littlehotspot.com';
-
         $dish_name_info = pathinfo($res_activity['image_url']);
         $lottery_countdown = 60;
         $lottery_countdown = $lottery_countdown>0?$lottery_countdown:0;
-
         $message = array('action'=>158,
             'lottery_countdown'=>$lottery_countdown,'partake_img'=>$res_activity['image_url'],'partake_filename'=>$dish_name_info['basename'],
             'partake_name'=>$res_activity['prize'],'activity_name'=>'售酒抽奖',
         );
         $code_url = $host_name."/Smallapp46/qrcode/getBoxQrcode?box_id={$res_box['box_id']}&box_mac={$res_box['mac']}&data_id={$activity_id}&type=45";
         $message['codeUrl']=$code_url;
+        */
+        $code_url = $host_name."/Smallapp46/qrcode/getBoxQrcode?box_id={$res_box['box_id']}&box_mac={$res_box['box_mac']}&data_id={$activity_id}&type=49";
+        $message = array('action'=>138,'countdown'=>120,'nickName'=>$res_box['name'],'headPic'=>$headPic,'codeUrl'=>$code_url);
+
         $now_message = json_encode($message);
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
         $ret = $m_netty->pushBox($box_mac,$now_message);

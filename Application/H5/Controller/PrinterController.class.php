@@ -347,6 +347,10 @@ class PrinterController extends Controller {
         $file_path = SITE_TP_PATH.'/Public/uploads/qrcode/'.$qr_id.'.png';
         $img_info = getimagesize($file_path);
         $res_qrcontent['img_info'] = $img_info;
+        if($res_qrcontent['parent_id']){
+            $qrcontent = encrypt_data($res_qrcontent['parent_id']);
+            $res_qrcontent['parent_code'] = $qrcontent;
+        }
         print_r($res_qrcontent);
     }
 

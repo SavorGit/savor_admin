@@ -249,16 +249,16 @@ class HotelgoodsController extends BaseController {
             if(!$price){
                 $this->output('建议零售价不能为空', "hotelgoods/goodsadd", 2, 0);
             }
-            $where = array('name'=>$name,'status'=>1);
-            if($id){
-                $where['id']= array('neq',$id);
-                $res_goods = $m_goods->getInfo($where);
-            }else{
-                $res_goods = $m_goods->getInfo($where);
-            }
-            if(!empty($res_goods)){
-                $this->output('名称不能重复', "hotelgoods/goodsadd", 2, 0);
-            }
+//            $where = array('name'=>$name,'status'=>1);
+//            if($id){
+//                $where['id']= array('neq',$id);
+//                $res_goods = $m_goods->getInfo($where);
+//            }else{
+//                $res_goods = $m_goods->getInfo($where);
+//            }
+//            if(!empty($res_goods)){
+//                $this->output('名称不能重复', "hotelgoods/goodsadd", 2, 0);
+//            }
             $userinfo = session('sysUserInfo');
             $sysuser_id = $userinfo['id'];
             if(empty($price))   $price = 0;
