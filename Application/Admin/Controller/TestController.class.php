@@ -123,6 +123,28 @@ class TestController extends Controller {
         echo $flag;
         
     }
+    public function deleteSmallappUser(){
+        $openid  = I('openid');
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        if(!empty($openid)){
+            $user_info = $m_user->getOne('is_interact', array('openid'=>$openid));
+            if(!empty($user_info)){
+                $redis = SavorRedis::getInstance();
+                $redis->select(5);
+                $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
+                $redis->remove($cache_key);
+                $where = [];
+                $where['openid'] = $openid;
+                $m_user->where($where)->limit(1)->delete();
+                echo "OK";
+            }else {
+                echo 'user empty';
+            }
+        }else {
+            echo "openid can not empty";
+        }
+        
+    }
     public function resetNewSmallappUser(){
         $openid = I('openid','');
         $type = I('type',1,'intval');
