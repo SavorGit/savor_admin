@@ -142,11 +142,7 @@ class UserController extends BaseController {
                 }
                 $user = new \Admin\Model\UserModel();
                 $result = $user->addData($data, $acttype);
-                if($result) {
-                    $this->output('操作成功!', 'user/userList');
-                } else {
-                    $this->error('操作失败!');
-                }
+                $this->output('操作成功!', 'user/userList');
             } else {
                 $this->output('缺少必要参数!', 'user/userEdit');
             }
