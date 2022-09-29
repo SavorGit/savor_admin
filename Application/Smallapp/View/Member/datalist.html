@@ -58,6 +58,7 @@
             <th>来源销售经理</th>
             <th>来源酒楼ID</th>
             <th>来源酒楼</th>
+            <th>操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -73,6 +74,11 @@
               <td data-title="来源销售经理">{$dinfo.sale_name}</td>
               <td data-title="来源酒楼ID">{$dinfo.hotel_id}</td>
               <td data-title="来源酒楼">{$dinfo.hotel_name}</td>
+              <td data-title="操作">
+                <a warn="警告" data-tip="清除会员" title="你确定要清除会员'{$dinfo.nickname}'相关数据吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/member/cleandata?id={$dinfo.id}&openid={$dinfo.openid}"  class="btn btn-danger btn-icon">
+                  <i class="fa fa-trash"></i>
+                </a>
+              </td>
             </tr>
           </volist>
           </tbody>

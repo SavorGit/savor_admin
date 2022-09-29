@@ -42,4 +42,18 @@ class MemberController extends BaseController {
         $this->display();
     }
 
+    public function cleandata(){
+        $id = I('get.id',0,'intval');
+        $openid = I('get.openid','');
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $data = array('vip_level'=>0,'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00');
+        $res_data = $m_user->updateInfo(array('id'=>$id),$data);
+        if($res_data){
+            $m_usercoupon = new \Admin\Model\Smallapp\UserCouponModel();
+            $condition = array('openid'=>$openid);
+            $m_usercoupon->delData($condition);
+        }
+        $this->output('操作成功!', 'member/datalist',2);
+    }
+
 }
