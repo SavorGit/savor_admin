@@ -3553,4 +3553,21 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         die($msg);
     }
 
+    public function handlestockgoods(){
+        $model = M();
+        $sql = 'select * from savor_finance_stock_record where type=5 and dstatus=1 order by id desc';
+        $res = $model->query($sql);
+        $res_data = array();
+        foreach ($res as $v){
+            $idcode = $v['idcode'];
+            $sql_unpack = "select * from savor_finance_stock_record where idcode='{$idcode}' and  dstatus=1 order by id desc";
+            $res_unpack = $model->query($sql_unpack);
+            if(!empty($res_unpack) && $res_unpack[0]['type']==3){
+                $res_data[]=$idcode;
+                echo "$idcode \r\n";
+            }
+        }
+        print_r($res_data);
+    }
+
 }
