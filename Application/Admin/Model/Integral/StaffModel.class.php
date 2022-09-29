@@ -30,6 +30,24 @@ class StaffModel extends BaseModel{
         return $data;
     }
 
+    public function getStafflList($fields,$where,$order,$start,$size){
+        $list = $this->alias('a')
+            ->join('savor_smallapp_user u on a.openid=u.openid','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $count = $this->alias('a')
+            ->join('savor_smallapp_user u on a.openid=u.openid','left')
+            ->where($where)
+            ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
+
     public function getMerchantStaffInfo($fields,$where){
         $data = $this->alias('a')
             ->join('savor_integral_merchant m on a.merchant_id=m.id','left')

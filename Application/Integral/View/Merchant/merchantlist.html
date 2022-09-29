@@ -114,7 +114,14 @@
               <td data-title="汇率">{$dinfo.rate}</td>
               <td data-title="管理员">{$dinfo.name}</td>
               <td data-title="管理员电话">{$dinfo.mobile}</td>
-              <td data-title="员工数量">{$dinfo.staff_num}</td>
+              <td data-title="员工数量">
+                <if condition="$dinfo.staff_num gt 0">
+                  <a class="btn btn-success " title="{$dinfo.hotel_name}-员工任务:{$dinfo.staff_num}" target="navTab" mask="true" rel="merchant/stafflist" href="{$host_url}/integral/merchant/stafflist?merchant_id={$dinfo.id}" >
+                    {$dinfo.staff_num}</a>
+                <else/>
+                  {$dinfo.staff_num}
+                </if>
+              </td>
               <td data-title="维护人">{$dinfo.maintainer}</td>
               <td data-title="创建时间">{$dinfo.add_time}</td>
               <td data-title="创建人">{$dinfo.creater}</td>

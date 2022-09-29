@@ -594,6 +594,55 @@ class MerchantController extends BaseController {
     }
 
 
+    public function stafflist(){
+        $merchant_id = I('merchant_id',0,'intval');
+        $keyword = I('keyword','','trim');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+
+        $where = array('a.merchant_id'=>$merchant_id,'a.parent_id'=>array('gt',0));
+        if(!empty($keyword)){
+            $where['u.nickName'] = array('like',"%$keyword%");
+        }
+        $start  = ($page-1) * $size;
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $fields = 'a.id,a.openid,a.level,a.status,a.add_time,u.nickName';
+        $order = 'a.level asc';
+        $result = $m_staff->getStafflList($fields,$where,$order,$start,$size);
+        $datalist = array();
+        if(!empty($result['list'])){
+            $all_level = array('1'=>'管理员','2'=>'经理','3'=>'服务员');
+            $all_status = C('DATA_STATUS');
+            foreach ($result['list'] as $v){
+                $level_str = '';
+                if(isset($all_level[$v['level']])){
+                    $level_str = $all_level[$v['level']];
+                }
+                $v['level_str'] = $level_str;
+                $v['status_str'] = $all_status[$v['status']];
+                $datalist[]=$v;
+            }
+        }
+        $this->assign('merchant_id',$merchant_id);
+        $this->assign('keyword',$keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display();
+    }
+
+    public function editstaffstatus(){
+        $id = I('get.id',0,'intval');
+        $status = I('get.status',0,'intval');
+
+        $m_staff = new \Admin\Model\Integral\StaffModel();
+        $data = array('status'=>$status,'update_time'=>date('Y-m-d H:i:s'));
+        $m_staff->updateData(array('id'=>$id),$data);
+
+        $this->output('状态更新成功', 'activity/index',2);
+    }
+
     public function getServiceByModelid(){
         $model_id = I('post.model_id',0,'intval');
         $data = array();
@@ -621,9 +670,6 @@ class MerchantController extends BaseController {
         }
         echo json_encode($data);
     }
-
-
-
 
     private function getOpuser($maintainer_id=0){
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
