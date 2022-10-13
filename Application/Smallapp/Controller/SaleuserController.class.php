@@ -32,7 +32,7 @@ class SaleuserController extends BaseController {
         }
         $start = ($pageNum-1)*$size;
         $m_staffuser = new \Admin\Model\Integral\StaffModel();
-        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,hotel.name as hotel_name,u.create_time,IFNULL(i.integral ,0) as integral";
+        $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,u.name as username,u.idnumber,hotel.id as hotel_id,hotel.name as hotel_name,u.create_time,IFNULL(i.integral ,0) as integral";
         $res_list = $m_staffuser->getUserIntegralList($fields,$where,'i.integral desc',$start,$size);
 
         $data_list = $res_list['list'];

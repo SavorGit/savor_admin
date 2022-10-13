@@ -3520,6 +3520,54 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         return $data;
     }
 
+    public function cleanactivity(){
+        $idcode = I('code','');
+        $qrcontent = decrypt_data($idcode);
+        $qr_id = intval($qrcontent);
+        $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
+        $res_qrcontent = $m_qrcode_content->getInfo(array('id'=>$qr_id));
+        if(empty($res_qrcontent)){
+            $this->output('此码不存在');
+        }
+        $model = M();
+        $sql = "select * from savor_smallapp_activityapply where activity_id in 
+            (select id from savor_smallapp_activity where idcode='$idcode')";
+        $res_apply = $model->query($sql);
+        $res_activity = $model->query("select id from savor_smallapp_activity where idcode='$idcode'");
 
+        if(empty($res_apply) && empty($res_activity)){
+            $this->output('此码没有发起过售酒抽奖，可正常使用');
+        }
+        $sql_delapply = "delete from savor_smallapp_activityapply where activity_id in (
+            select id from savor_smallapp_activity where idcode='$idcode')";
+        $model->execute($sql_delapply);
+
+        $sql_delactivity = "delete from savor_smallapp_activity where idcode='$idcode'";
+        $model->execute($sql_delactivity);
+
+        $this->output('清理成功,可再次发起售酒抽奖');
+    }
+
+    private function output($msg){
+        header("Content-type: text/html; charset=utf-8");
+        die($msg);
+    }
+
+    public function handlestockgoods(){
+        $model = M();
+        $sql = 'select * from savor_finance_stock_record where type=5 and dstatus=1 order by id desc';
+        $res = $model->query($sql);
+        $res_data = array();
+        foreach ($res as $v){
+            $idcode = $v['idcode'];
+            $sql_unpack = "select * from savor_finance_stock_record where idcode='{$idcode}' and  dstatus=1 order by id desc";
+            $res_unpack = $model->query($sql_unpack);
+            if(!empty($res_unpack) && $res_unpack[0]['type']==3){
+                $res_data[]=$idcode;
+                echo "$idcode \r\n";
+            }
+        }
+        print_r($res_data);
+    }
 
 }

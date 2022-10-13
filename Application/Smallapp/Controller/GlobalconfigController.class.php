@@ -10,7 +10,7 @@ class GlobalconfigController extends BaseController {
     public function configdata(){
         $m_sys_config = new \Admin\Model\SysConfigModel();
         $where = array();
-        $where['config_key'] = array('in',array('distribution_profit','hotellottery_people_num','seckill_roll_content','vip_coupons'));
+        $where['config_key'] = array('in',array('distribution_profit','hotellottery_people_num','seckill_roll_content','vip_coupons','exchange_money'));
         $volume_arr = $m_sys_config->getList($where);
         $info = array();
         $now_roll_content = array();
@@ -86,6 +86,7 @@ class GlobalconfigController extends BaseController {
     public function editconfig(){
         $distribution_profit = I('post.distribution_profit',0);
         $hotellottery_people_num = I('post.hotellottery_people_num',0);
+        $exchange_money = I('post.exchange_money',0);
         $seckill_roll_content = I('post.seckill_roll_content','');
         $coupon_ids1 = I('post.coupon_ids1','');
         $coupon_ids2 = I('post.coupon_ids2','');
@@ -97,6 +98,9 @@ class GlobalconfigController extends BaseController {
 
         $data_hotellottery_people_num = array('config_value'=>$hotellottery_people_num);
         $rts = $m_sys_config->editData($data_hotellottery_people_num, 'hotellottery_people_num');
+
+        $data_exchange_money = array('config_value'=>$exchange_money);
+        $rts = $m_sys_config->editData($data_exchange_money, 'exchange_money');
 
         $now_seckill_roll_content = array();
         if(!empty($seckill_roll_content)){

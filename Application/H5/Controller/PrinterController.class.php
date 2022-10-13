@@ -74,6 +74,7 @@ class PrinterController extends Controller {
         $num = I('get.num',0,'intval');//生成二维码数量
         $sign = I('get.sign');
         $mac = I('get.mac','');
+        $ctype = I('get.ctype',1,'intval');//创建码类型1打印纸质码,2电子码
         if($sign!=$this->get_sign()){
             $this->output('params error');
         }
@@ -101,11 +102,11 @@ class PrinterController extends Controller {
         $cache_data = json_decode($res_cache,true);
 
         for ($i=1;$i<=$num;$i++){
-            $pdata = array('status'=>1,'type'=>1);
+            $pdata = array('status'=>1,'type'=>1,'ctype'=>$ctype);
             $parent_id = $m_qrcode_content->add($pdata);
             $all_sdata = array();
             for($si=1;$si<=$this->qtypes[$qtype]['num'];$si++){
-                $sdata = array('parent_id'=>$parent_id,'status'=>1,'type'=>2);
+                $sdata = array('parent_id'=>$parent_id,'status'=>1,'type'=>2,'ctype'=>$ctype);
                 $all_sdata[]=$sdata;
             }
             $m_qrcode_content->addAll($all_sdata);
@@ -113,7 +114,7 @@ class PrinterController extends Controller {
         $cache_data['status'] = 2;
         $redis->set($cache_key,json_encode($cache_data),3600);
 
-        $res_datas = $m_qrcode_content->getDataList('*',array('status'=>1),'id asc');
+        $res_datas = $m_qrcode_content->getDataList('*',array('status'=>1,'ctype'=>$ctype),'id asc');
         $qrcode_contents = array();
         $content_ids = array();
         foreach ($res_datas as $v){
@@ -190,21 +191,23 @@ class PrinterController extends Controller {
         $redis->set($cache_key,json_encode($cache_data),120);
 
         //处理订阅消息到打印机
-        $accessId = C('OSS_ACCESS_ID');
-        $accessKey= C('OSS_ACCESS_KEY');
-        $endPoint = C('QUEUE_ENDPOINT');
-        $topicName = 'TagPrinter-LHS';
-        $messageTag = '0015005DA6CD';
-        if(!empty($mac)){
-            $messageTag = $mac;
-        }
-        $now_message = array('orientation'=>'PORTRAIT','printWidth'=>100.0,'printHeight'=>60.0,
-            'printLeftSide'=>0.0,'printTopSide'=>0.0,'copiesNum'=>1);
-        $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
-        foreach ($all_printer_imgs as $v){
-            $now_message['printFiles'] = array(array('type'=>'HTTPFile','path'=>$v));
-            $messageBody = json_encode($now_message);
-            $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
+        if($ctype==1){
+            $accessId = C('OSS_ACCESS_ID');
+            $accessKey= C('OSS_ACCESS_KEY');
+            $endPoint = C('QUEUE_ENDPOINT');
+            $topicName = 'TagPrinter-LHS';
+            $messageTag = '0015005DA6CD';
+            if(!empty($mac)){
+                $messageTag = $mac;
+            }
+            $now_message = array('orientation'=>'PORTRAIT','printWidth'=>100.0,'printHeight'=>60.0,
+                'printLeftSide'=>0.0,'printTopSide'=>0.0,'copiesNum'=>1);
+            $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
+            foreach ($all_printer_imgs as $v){
+                $now_message['printFiles'] = array(array('type'=>'HTTPFile','path'=>$v));
+                $messageBody = json_encode($now_message);
+                $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
+            }
         }
     }
 

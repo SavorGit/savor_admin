@@ -72,6 +72,12 @@
             <td><button class="btn btn-primary" type="submit">保存</button></td>
           </tr>
 
+          <th colspan="3">兑换金额弹框收集用户信息</th>
+          <tr >
+            <td>金额(元)：<input type="text" name="exchange_money" value="{$info.exchange_money}" min='1' max='100000'  /></td>
+            <td><button class="btn btn-primary" type="submit">保存</button></td>
+          </tr>
+
           <th colspan="3">秒杀滚动内容</th>
           <foreach name="info.seckill_roll_content" item="rinfo" >
           <tr >

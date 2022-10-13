@@ -1,0 +1,69 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/integral/merchant/stafflist" method="post">
+    <input type="hidden" name="merchant_id" value="{$merchant_id}"/>
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-6 col-md-10">
+          <div class="tools-group s2">
+
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="请输入昵称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>用户openid</th>
+              <th>昵称</th>
+              <th>等级</th>
+              <th>状态</th>
+              <th>添加时间</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="用户openid"><a class="click-able-title">{$dinfo.openid}</a></td>
+              <td data-title="昵称">{$dinfo.nickname}</td>
+              <td data-title="等级">{$dinfo.level_str}</td>
+              <td data-title="状态">
+                <if condition="$dinfo['status'] eq 1">
+                  <a data-tip="正常" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                  <i class="fa fa-toggle-on"></i></span></a>
+                <else/>
+                  <a data-tip="禁用" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                <i class="fa fa-toggle-off"></i></span></a>
+                </if>
+              </td>
+              <td data-title="添加时间">{$dinfo.add_time}</td>
+            </tr>
+
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
