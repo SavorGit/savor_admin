@@ -46,7 +46,10 @@ class MemberController extends BaseController {
         $id = I('get.id',0,'intval');
         $openid = I('get.openid','');
         $m_user = new \Admin\Model\Smallapp\UserModel();
-        $data = array('vip_level'=>0,'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00');
+        $data = array('vip_level'=>0,'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00',
+            'invite_gold_openid'=>'','invite_gold_time'=>'0000-00-00 00:00:00','invite_type'=>0,
+            'hotel_id'=>0,'room_id'=>0
+        );
         $res_data = $m_user->updateInfo(array('id'=>$id),$data);
         if($res_data){
             $m_usercoupon = new \Admin\Model\Smallapp\UserCouponModel();
