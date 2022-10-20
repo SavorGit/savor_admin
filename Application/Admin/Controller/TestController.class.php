@@ -158,7 +158,11 @@ class TestController extends Controller {
                         $redis->select(5);
                         $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
 
-                        $up_data = array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0,'vip_level'=>0,'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00');
+                        $up_data = array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0,'vip_level'=>0,
+                            'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00',
+                            'invite_gold_openid'=>'','invite_gold_time'=>'0000-00-00 00:00:00',
+                            'invite_type'=>0,'hotel_id'=>0,'room_id'=>0
+                            );
                         $m_user->updateInfo(array('openid'=>$openid),$up_data);
                         $redis->remove($cache_key);
                         break;
@@ -3568,6 +3572,26 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             }
         }
         print_r($res_data);
+    }
+
+    public function cleandevsell(){
+        $dev_idcodes = "'7b949a819efc4af4','da85d75c1af9b074','f0c46956cf9c2ceb','dfa47a62ecf97108','28401d8af46e6016','566df1cafaa2aa8d','7f7144b1ae584e52','9540bf692c156f39','0b6e2109b0ec64e3','706c048d9f181a6b','905d28125391f848','abc5cd9d536cb2fd','06e41b8476e91942','960687635d7f736d','e14d0f22d85bf841','55b152928eaa4d95','86b5855c8df4c092','24e211212eb9ae35','7ef3ea2b832d6ade'";
+
+
+        $sql_1 = "delete from savor_finance_stock_record where idcode in ({$dev_idcodes}) and type=7";
+        $sql_2 = "delete from savor_smallapp_activityapply where activity_id in (select id from savor_smallapp_activity where 
+         idcode in ({$dev_idcodes}))";
+        $sql_3 = "delete from savor_smallapp_activity where idcode in ({$dev_idcodes})";
+        $sql_4 = "delete from savor_smallapp_user_integralrecord where jdorder_id in ({$dev_idcodes})";
+        $sql_5 = "UPDATE `cloud`.`savor_smallapp_usercoupon` SET `idcode` = '', `use_time` = '', `ustatus` = 1, `op_openid` = '' WHERE idcode in ({$dev_idcodes})";
+
+        $model = M();
+        $model->execute($sql_1);
+        $model->execute($sql_2);
+        $model->execute($sql_3);
+        $model->execute($sql_4);
+        $model->execute($sql_5);
+        echo 'clean ok';
     }
 
 }
