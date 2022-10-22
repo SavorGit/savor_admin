@@ -42,7 +42,7 @@ class MemberController extends BaseController {
                     $hotel_name = $res_hotel['name'];
                 }else{
                     $sfields = 'u.nickName as sale_name,h.id as hotel_id,h.name as hotel_name';
-                    $res_staff = $m_staff->getMerchantStaffUserList($sfields,array('a.openid'=>$v['invite_openid'],'a.status'=>1));
+                    $res_staff = $m_staff->getMerchantStaffUserList($sfields,array('a.openid'=>$v['invite_openid']));
                     $sale_name = $res_staff[0]['sale_name'];
                     $hotel_id = $res_staff[0]['hotel_id'];
                     $hotel_name = $res_staff[0]['hotel_name'];
@@ -78,7 +78,7 @@ class MemberController extends BaseController {
         if($res_data){
             $m_usercoupon = new \Admin\Model\Smallapp\UserCouponModel();
             $condition = array('openid'=>$openid);
-            $m_usercoupon->delData($condition);
+            $m_usercoupon->updateData($condition,array('status'=>2));
         }
         $this->output('操作成功!', 'member/datalist',2);
     }
