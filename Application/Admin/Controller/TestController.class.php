@@ -158,11 +158,7 @@ class TestController extends Controller {
                         $redis->select(5);
                         $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
 
-                        $up_data = array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0,'is_vip'=>0,'vip_level'=>0,
-                            'buy_wine_num'=>0,'invite_openid'=>'','invite_time'=>'0000-00-00 00:00:00',
-                            'invite_gold_openid'=>'','invite_gold_time'=>'0000-00-00 00:00:00',
-                            'invite_type'=>0,'hotel_id'=>0,'room_id'=>0
-                            );
+                        $up_data = array('is_interact'=>0,'mobile'=>'','is_wx_auth'=>0);
                         $m_user->updateInfo(array('openid'=>$openid),$up_data);
                         $redis->remove($cache_key);
                         break;
