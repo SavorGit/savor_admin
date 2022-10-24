@@ -74,12 +74,12 @@ class MemberController extends BaseController {
             'invite_gold_openid'=>'','invite_gold_time'=>'0000-00-00 00:00:00','invite_type'=>0,
             'hotel_id'=>0,'room_id'=>0
         );
-        $res_data = $m_user->updateInfo(array('id'=>$id),$data);
-        if($res_data){
-            $m_usercoupon = new \Admin\Model\Smallapp\UserCouponModel();
-            $condition = array('openid'=>$openid);
-            $m_usercoupon->updateData($condition,array('status'=>2));
-        }
+        $m_user->updateInfo(array('id'=>$id),$data);
+
+        $m_usercoupon = new \Admin\Model\Smallapp\UserCouponModel();
+        $condition = array('openid'=>$openid);
+        $m_usercoupon->updateData($condition,array('status'=>2));
+
         $this->output('操作成功!', 'member/datalist',2);
     }
 
