@@ -1046,7 +1046,8 @@ $config['VIP_LEVELS'] = array(
 $config['INVITE_TYPES'] = array(
     '1'=>'售酒抽奖',
     '2'=>'扫商品码',
-    '3'=>'线下二维码'
+    '3'=>'线下二维码',
+    '4'=>'会员任务'
 );
 $config['RD_TEST_HOTEL'] =
     array (
