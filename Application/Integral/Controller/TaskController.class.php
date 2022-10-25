@@ -475,6 +475,70 @@ class TaskController extends BaseController {
         }
     }
 
+    public function addinvitevip(){
+        $id = I('id',0,'intval');
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        $is_edit = 0;
+        if(IS_POST){
+            $name = I('post.name','','trim');
+            $media_id = I('post.media_id',0,'intval');
+            $invite_vip_reward_saler = I('post.invite_vip_reward_saler',0,'intval');
+            $buy_reward_saler = I('post.buy_reward_saler',0,'intval');
+            $desc = I('post.desc','','trim');
+            $start_time = I('post.start_time','0000-00-00 00:00:00','trim');
+            $end_time = I('post.end_time','0000-00-00 00:00:00','trim');
+
+            $type = 2;
+            $task_type = 26;
+            $task_info = array('invite_vip_reward_saler'=>$invite_vip_reward_saler,'buy_reward_saler'=>$buy_reward_saler);
+            $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,
+                'start_time'=>$start_time,'end_time'=>$end_time,'task_info'=>json_encode($task_info),'status'=>0,'flag'=>1);
+            $userinfo = session('sysUserInfo');
+            $data['uid'] = $userinfo['id'];
+            if(!empty($desc)){
+                $data['desc'] = $desc;
+            }
+            if($id){
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0){
+                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                    if($data['task_info']!=$res_task_info['task_info']){
+                        $this->output('任务已下发,请勿修改任务信息', "task/addinvitevip",2,0);
+                    }
+                }
+                unset($data['uid']);
+                $data['update_time'] = date('Y-m-d H:i:s');
+                $data['e_uid'] = $userinfo['id'];
+                $m_task->updateData(array('id'=>$id),$data);
+            }else{
+                $m_task->add($data);
+            }
+            $this->output('添加成功', "task/index");
+        }else{
+            $vinfo = array();
+            if($id){
+                $vinfo = $m_task->getInfo(array('id'=>$id));
+                $m_media = new \Admin\Model\MediaModel();
+                if($vinfo['media_id']){
+                    $res_media = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $vinfo['oss_addr'] = $res_media['oss_addr'];
+                }
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0) {
+                    $is_edit = 1;
+                }
+                $task_info = json_decode($vinfo['task_info'],true);
+                $vinfo['invite_vip_reward_saler'] = $task_info['invite_vip_reward_saler'];
+                $vinfo['buy_reward_saler'] = $task_info['buy_reward_saler'];
+            }
+            $this->assign('is_edit',$is_edit);
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
+    }
+
     public function addactivitydemandadv(){
         $id = I('id',0,'intval');
         $m_task = new \Admin\Model\Integral\TaskModel();
@@ -493,15 +557,25 @@ class TaskController extends BaseController {
             $dinner_end_time    = I('post.dinner_end_time');
             $max_daily_integral = I('post.max_daily_integral',0,'intval');
             $room_num = I('post.room_num',0,'intval');
+            $box_finish_num = I('post.box_finish_num',0,'intval');
+            $interval_time = I('post.interval_time',0,'intval');
             $ads_id = I('post.ads_id',0,'intval');
+            if($box_finish_num>1){
+                if($interval_time==0){
+                    $this->output('请设置任务生效间隔时间', "task/addactivitydemandadv",2,0);
+                }
+            }
 
             $type = 2;
             $task_type = 25;
             $task_info = array('lunch_start_time'=>$lunch_start_time,'lunch_end_time'=>$lunch_end_time,'dinner_start_time'=>$dinner_start_time,
-                'dinner_end_time'=>$dinner_end_time,'max_daily_integral'=>$max_daily_integral,'room_num'=>$room_num,'ads_id'=>$ads_id);
-
+                'dinner_end_time'=>$dinner_end_time,'max_daily_integral'=>$max_daily_integral,'room_num'=>$room_num,
+                'box_finish_num'=>$box_finish_num,'interval_time'=>$interval_time,'ads_id'=>$ads_id);
             $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'integral'=>$integral,
                 'start_time'=>$start_time,'end_time'=>$end_time,'task_info'=>json_encode($task_info),'status'=>0,'flag'=>1);
+
+            $this->chekInfoParam($task_info,$data);
+
             $userinfo = session('sysUserInfo');
             $data['uid'] = $userinfo['id'];
             if(!empty($desc)){
@@ -525,10 +599,8 @@ class TaskController extends BaseController {
             }
             $this->output('添加成功', "task/index");
         }else{
-            $meal_time = C('MEAL_TIME');
-            $vinfo = array('task_info'=>array('lunch_start_time'=>$meal_time['lunch'][0],'lunch_end_time'=>$meal_time['lunch'][1],
-                'dinner_start_time'=>$meal_time['dinner'][0],'dinner_end_time'=>$meal_time['dinner'][1]
-                )
+            $vinfo = array('task_info'=>array('lunch_start_time'=>'11:30','lunch_end_time'=>'13:30',
+                'dinner_start_time'=>'18:30','dinner_end_time'=>'20:00')
             );
             $now_ads_id = 0;
             if($id){
@@ -1169,9 +1241,9 @@ class TaskController extends BaseController {
         if($data['dinner_end_time']<=$data['dinner_start_time']){
             $this->error('晚饭结束时间必须大于开始时间');
         }
-
         if($data['lunch_end_time']>'17:00') $this->error('午饭结束时间不能大于17点');
         if($data['dinner_end_time']>'23:00') $this->error('晚饭结束时间不能大于23点');
+
         if($data['task_content_type']==1){
             if(empty($data['heart_time']['type'])) $this->error('请选择开机奖励类型');
             if(empty($data['heart_time']['value'])) $this->error('请输入开机时长');

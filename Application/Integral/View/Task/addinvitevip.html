@@ -1,6 +1,6 @@
 <!--修改样式2 p元素自适应宽度 start-->
 <div class="pageContent">
-    <form method="post" action="{$host_url}/integral/task/addactivitydemandadv" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <form method="post" action="{$host_url}/integral/task/addinvitevip" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
         <input type="hidden" name="id" value="{$vinfo.id}">
 
         <div class="pageFormContent modal-body">
@@ -41,86 +41,19 @@
 
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
-                    奖励积分:
+                    会员积分奖励:
                 </label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="integral" type="number" class="form-control" min="0" max="10000"  value="{$vinfo.integral}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+                    <input name="invite_vip_reward_saler" type="number" class="form-control" min="0" max="10000"  value="{$vinfo.invite_vip_reward_saler}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
-                    每日积分上限:
+                    复购积分奖励:
                 </label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="max_daily_integral" type="number" class="form-control" min="0" max="100000"  value="{$vinfo.task_info.max_daily_integral}" required>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-xs-12 col-sm-2 control-label">
-                    每个版位每个饭点任务可完成几次:
-                </label>
-                <div class="col-xs-12 col-sm-10">
-                    <input name="box_finish_num" type="number" class="form-control" min="0" max="100000"  value="{$vinfo.task_info.box_finish_num}" required>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-xs-12 col-sm-2 control-label">
-                    任务生效间隔时间(分钟):
-                </label>
-                <div class="col-xs-12 col-sm-10">
-                    <input name="interval_time" type="number" class="form-control" min="5" max="300"  value="{$vinfo.task_info.interval_time}" required>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-xs-12 col-sm-2 control-label">选择广告：</label>
-                <div class="col-xs-12 col-sm-10  form-inline">
-                    <select name="ads_id" class="form-control bs-select class-filter" data-live-search="true" required>
-                        <option name="ads_id" selected='selected' value="0">请选择广告</option>
-                        <volist name="ads_list" id="adsinfo">
-                            <option name="ads_id" value="{$adsinfo.ads_id}" {$adsinfo.is_select}> {$adsinfo.ads_name}</option>
-                        </volist>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-xs-6 col-sm-2 control-label">
-                    午饭-开始时间:
-                </label>
-                <div class="col-xs-12 col-sm-10">
-                    <input placeholder="例如：12:00" name="lunch_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.task_info.lunch_start_time}" required>
-                </div>
-
-            </div>
-            <div class="form-group row">
-                <label class="col-xs-6 col-sm-2 control-label">
-                    午饭-结束时间:
-                </label>
-
-                <div class="col-xs-12 col-sm-10">
-                    <input placeholder="例如：14:00" name="lunch_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.task_info.lunch_end_time}" required>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-xs-6 col-sm-2 control-label">
-                    晚饭-开始时间:
-                </label>
-
-                <div class="col-xs-12 col-sm-10">
-                    <input placeholder="例如：18:00" name="dinner_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.task_info.dinner_start_time}" required>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-xs-6 col-sm-2 control-label">
-                    晚饭-结束时间:
-                </label>
-
-                <div class="col-xs-12 col-sm-10">
-                    <input placeholder="例如：21:00" name="dinner_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.task_info.dinner_end_time}" required>
+                    <input name="buy_reward_saler" type="number" class="form-control" min="0" max="10000"  value="{$vinfo.buy_reward_saler}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
                 </div>
             </div>
 

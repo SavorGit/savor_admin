@@ -54,12 +54,13 @@
 
       <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
-          任务描述:
+            任务描述：
         </label>
         <div class="col-xs-12 col-sm-10">
-          <textarea name="desc" placeholder="请输入描述，允许为空"rows="7"cols="120">{$vinfo.desc}</textarea>
+            <script id="editor" type="text/plain" class="ueditor-init" name="desc" style="height: 150px; width: 100%" data-html-content='{$vinfo.desc}'></script>
         </div>
       </div>
+
       <div class="form-group row">
             <label class="col-xs-6 col-sm-2 control-label">
                 任务时段-开始时间:
@@ -88,6 +89,8 @@
                 </span>
         	</div>
         </div>
+        <!--
+
         <div class="form-group row">
 	        <label class="col-xs-12 col-sm-2 control-label">
 	          是否长期任务:
@@ -96,7 +99,7 @@
 	          <input type="checkbox" name="is_long_time" <if condition="$vinfo.is_long_time eq 1">checked="checked"  </if> value="1" />
 	        </div>
         </div>
-        <!--
+
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 是否支持分润:
