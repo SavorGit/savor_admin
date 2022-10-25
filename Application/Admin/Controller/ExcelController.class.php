@@ -8583,4 +8583,27 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'whnetboxroomnums';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
+    function getGzHotelInfo(){
+        $sql = "select hotel.id hotel_id,hotel.name hotel_name,hotel.addr,
+                CONCAT('https://oss.littlehotspot.com/',media.oss_addr) as oss_addr
+                from savor_hotel hotel 
+                left join savor_hotel_ext ext on hotel.id=ext.hotel_id
+                left join savor_media media  on ext.hotel_cover_media_id=media.id
+                where 1 and hotel.flag=0 and hotel.state=1 and hotel.area_id=236";
+        $result = M()->query($sql); 
+        
+        $xlsCell = array(
+            
+            
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            
+            
+            array('oss_addr','门头图片'),
+            
+        );
+        $xlsName = '广州酒楼数据统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $result,$filename);
+    }
 }
