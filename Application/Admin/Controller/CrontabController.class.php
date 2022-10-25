@@ -3724,8 +3724,18 @@ class CrontabController extends Controller
     }
 
     public function userintegral(){
+        //废弃
         $m_usersignin = new \Admin\Model\Smallapp\UserSigninModel();
         $m_usersignin->userintegral();
+    }
+
+    public function usergettask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "usergettask start:$now_time \r\n";
+        $m_task = new \Admin\Model\Integral\TaskUserModel();
+        $m_task->handel_get_task();
+        $now_time = date('Y-m-d H:i:s');
+        echo "usergettask end:$now_time \r\n";
     }
 
     public function usertask(){

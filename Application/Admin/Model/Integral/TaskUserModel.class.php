@@ -6,6 +6,187 @@ class TaskUserModel extends BaseModel{
 
     protected $tableName='integral_task_user';
 
+    public function handel_get_task(){
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        $task_types = array(25);
+        $where = array('status'=>1,'flag'=>1,'task_type'=>array('in',$task_types));
+        $res_task = $m_task->getDataList('*',$where,'id asc');
+        if(empty($res_task)){
+            $now_time = date('Y-m-d H:i:s');
+            echo "$now_time task empty \r\n";
+            exit;
+        }
+        $m_taskhotel = new \Admin\Model\Integral\TaskHotelModel();
+        $now_time = date('Y-m-d H:i:s');
+        foreach($res_task as $v){
+            $now_task_info = json_decode($v['task_info'],true);
+            $v['task_info'] = $now_task_info;
+            $task_id = $v['id'];
+            $task_type = $v['task_type'];
+            if($now_time>=$v['end_time']){
+                $m_task->updateData(array('id'=>$v['id']),array('status'=>0));
+                echo "task_id:{$task_id} has end \r\n";
+                continue;
+            }
+            switch ($task_type){
+                case 25:
+                    $before_demand_time = date("Y-m-d H:00:00", strtotime("-1 hour"));
+                    $lunch_start_time = $now_task_info['lunch_start_time'];
+                    $lunch_end_time = $now_task_info['lunch_end_time'];
+                    $dinner_start_time = $now_task_info['dinner_start_time'];
+                    $dinner_end_time = $now_task_info['dinner_end_time'];
+                    $lunch_stime = date("Y-m-d {$lunch_start_time}:00");
+                    $lunch_etime = date("Y-m-d {$lunch_end_time}:00");
+                    $dinner_stime = date("Y-m-d {$dinner_start_time}:00");
+                    $dinner_etime = date("Y-m-d {$dinner_end_time}:59");
+                    $meal_stime = $meal_etime = '';
+                    if($before_demand_time>=$lunch_stime && $before_demand_time<=$lunch_etime){
+                        $meal_stime = $lunch_stime;
+                        $meal_etime = $lunch_etime;
+                    }elseif($before_demand_time>=$dinner_stime && $before_demand_time<=$dinner_etime){
+                        $meal_stime = $dinner_stime;
+                        $meal_etime = $dinner_etime;
+                    }
+                    if(empty($meal_stime)){
+                        echo "task_id:{$task_id} not in meal time \r\n";
+                        continue;
+                    }
+                    $v['meal_stime'] = $meal_stime;
+                    $v['meal_etime'] = $meal_etime;
+                    break;
+            }
+            $task = $v;
+
+            $res_taskhotel = $m_taskhotel->getDataList('*',array('task_id'=>$task_id),'id desc');
+            if(empty($res_taskhotel)){
+                echo "task_id:{$task_id} no hotel \r\n";
+                continue;
+            }
+            foreach($res_taskhotel as $thv){
+                $hotel_id = $thv['hotel_id'];
+                $uwhere = array('task_id'=>$task_id,'hotel_id'=>$hotel_id,'status'=>1);
+                $uwhere["DATE_FORMAT(add_time,'%Y-%m-%d')"] = date('Y-m-d');
+                $res_usertask = $this->getDataList('*',$uwhere,'id desc');
+                if(empty($res_usertask)){
+                    echo "task_id:{$task_id}-hotel_id:{$hotel_id} no getuser \r\n";
+                    continue;
+                }
+                switch ($task_type){
+                    case 25:
+                        $this->task_demandadv($task,$hotel_id);
+                        break;
+                }
+
+            }
+
+        }
+    }
+
+    private function task_demandadv($task,$hotel_id){
+        $m_usertask_record = new \Admin\Model\Smallapp\UsertaskrecordModel();
+        $where = array('hotel_id'=>$hotel_id,'task_id'=>$task['id']);
+        $where['add_time'] = array(array('EGT',$task['meal_stime']),array('ELT',$task['meal_etime']));
+        $res_box = $m_usertask_record->getAll('box_mac',$where,0,100000,'','box_mac');
+        if(empty($res_box)){
+            echo "task_id:{$task['id']}-hotel_id:{$hotel_id} no demand box \r\n";
+            return true;
+        }
+        $task_content = $task['task_info'];
+        $box_finish_num = $task_content['box_finish_num'];
+        $interval_time = $task_content['interval_time'];
+        $max_daily_integral = $task_content['max_daily_integral'];
+        $task_integral = $task['integral'];
+        $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $m_box = new \Admin\Model\BoxModel();
+        foreach ($res_box as $bv){
+            $box_mac = $bv['box_mac'];
+            $box_info = $m_box->getHotelInfoByBoxMac($box_mac);
+
+            $box_where = array('hotel_id'=>$hotel_id,'box_mac'=>$box_mac,'task_id'=>$task['id']);
+            $box_where['add_time'] = array(array('EGT',$task['meal_stime']),array('ELT',$task['meal_etime']));
+            $res_record = $m_usertask_record->getAll('id,openid,type,add_time',$box_where,0,100000,'id asc','');
+            $now_box_finish_num = 0;
+            $last_demand_time = 0;
+            foreach ($res_record as $rk=>$rv){
+                $demand_record_id = $rv['id'];
+                $openid = $rv['openid'];
+                if($now_box_finish_num>=$box_finish_num){
+                    echo "task_id:{$task['id']}-hotel_id:{$hotel_id}-box:{$box_mac},demand_num:{$now_box_finish_num} finish \r\n";
+                    break;
+                }
+                $is_add_integral=0;
+                $str_demand_time = strtotime($rv['add_time']);
+                if($rk==0){
+                    $now_box_finish_num++;
+                    $last_demand_time = $str_demand_time + $interval_time*60;
+                    if($rv['type']==1){
+                        $is_add_integral=1;
+                    }
+                }else{
+                    if($str_demand_time>=$last_demand_time){
+                        $now_box_finish_num++;
+                        $last_demand_time = $str_demand_time + $interval_time*60;
+                        if($rv['type']==1){
+                            $is_add_integral=1;
+                        }
+                    }
+                }
+                if($is_add_integral==1){
+                    $stime = date('Y-m-d 00:00:00');
+                    $etime = date('Y-m-d 23:59:59');
+                    $where = array('openid'=>$openid,'type'=>20);
+                    $where['add_time'] = array(array('egt',$stime),array('elt',$etime), 'and');
+                    $fields = 'sum(integral) as total_integral';
+                    $res = $m_userintegralrecord->field($fields)->where($where)->find();
+                    $total_integral = 0;
+                    if(!empty($res)){
+                        $total_integral = intval($res['total_integral']);
+                    }
+                    if($total_integral<$max_daily_integral) {
+                        if ($total_integral + $task_integral > $max_daily_integral) {
+                            $task_integral = $max_daily_integral - $total_integral > 0 ? $max_daily_integral - $total_integral : 0;
+                        }
+                        if($task_integral>0){
+                            $where = array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1);
+                            $m_staff = new \Admin\Model\Integral\StaffModel();
+                            $res_staff = $m_staff->getMerchantStaffInfo('m.id as merchant_id,m.hotel_id,m.is_integral',$where);
+                            if($res_staff['is_integral']==1){
+                                $integralrecord_openid = $openid;
+                                $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+                                $res_integral = $m_userintegral->getInfo(array('openid'=>$openid));
+                                if(!empty($res_integral)){
+                                    $userintegral = $res_integral['integral']+$task_integral;
+                                    $m_userintegral->updateData(array('id'=>$res_integral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+                                }else{
+                                    $m_userintegral->add(array('openid'=>$openid,'integral'=>$task_integral));
+                                }
+                            }else{
+                                $integralrecord_openid = $res_staff['hotel_id'];
+                                $m_merchant = new \Admin\Model\Integral\MerchantModel();
+                                $where = array('id'=>$res_staff['merchant_id']);
+                                $m_merchant->where($where)->setInc('integral',$task_integral);
+                            }
+                            $integralrecord_data = array('openid'=>$integralrecord_openid,'area_id'=>$box_info['area_id'],'area_name'=>$box_info['area_name'],
+                                'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],'hotel_box_type'=>$box_info['hotel_box_type'],
+                                'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],'box_id'=>$box_info['box_id'],'box_mac'=>$box_mac,
+                                'box_type'=>$box_info['box_type'],'task_id'=>$task['id'],'integral'=>$task_integral,'jdorder_id'=>$demand_record_id,'content'=>1,'type'=>20,
+                                'integral_time'=>date('Y-m-d H:i:s'));
+                            $m_userintegralrecord->add($integralrecord_data);
+
+                            $m_usertask_record->updateData(array('id'=>$demand_record_id),array('type'=>3));
+                            if($rv['usertask_id']>0){
+                                $this->where(array('id'=>$rv['usertask_id']))->setInc('integral',$task_integral);
+                            }
+
+                            echo "task_id:{$task['id']}-hotel_id:{$hotel_id}-box:{$box_mac},demand_id:{$demand_record_id} get integral ok \r\n";
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
     public function handle_user_task(){
         $now_date = date('Y-m-d');
         $date_h = date('H');
