@@ -474,6 +474,7 @@ class HotelController extends BaseController {
 			$vinfo['is_activity'] = $main_info['is_activity'];
 			$vinfo['is_annualmeeting'] = $main_info['is_annualmeeting'];
 			$vinfo['is_salestat'] = $main_info['is_salestat'];
+			$vinfo['is_salehotel'] = $main_info['is_salehotel'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
             $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
@@ -731,6 +732,7 @@ class HotelController extends BaseController {
         $is_reward = I('post.is_reward',0,'intval');
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
         $is_salestat = I('post.is_salestat',0,'intval');
+        $is_salehotel = I('post.is_salehotel',0,'intval');
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -883,7 +885,7 @@ class HotelController extends BaseController {
         $data['is_reward'] = $is_reward;
         $data['is_annualmeeting'] = $is_annualmeeting;
         $data['is_salestat'] = $is_salestat;
-
+        $data['is_salehotel'] = $is_salehotel;
 
 		$tranDb = new Model();
 		$tranDb->startTrans();

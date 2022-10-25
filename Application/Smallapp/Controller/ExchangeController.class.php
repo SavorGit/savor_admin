@@ -27,7 +27,12 @@ class ExchangeController extends BaseController {
 
         $where = array();
         if($area_id)    $where['area.id']=$area_id;
-        if($status)     $where['a.status']=$status;
+        if($status){
+            $where['a.status']=$status;
+            if($status==20){
+                $where['a.audit_status'] = 0;
+            }
+        }
         if($type){
             $where['a.type']=$type;
         }else{

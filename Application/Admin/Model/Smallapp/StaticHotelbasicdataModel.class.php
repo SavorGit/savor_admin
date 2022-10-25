@@ -240,11 +240,15 @@ class StaticHotelbasicdataModel extends BaseModel{
                 );
                 if($hv['trainer_id']){
                     $res_user = $m_sysuser->getUserInfo($hv['trainer_id']);
-                    $add_data['trainer'] = $res_user['remark'];
+                    if(!empty($res_user)){
+                        $add_data['trainer'] = $res_user['remark'];
+                    }
                 }
                 if($hv['maintainer_id']){
                     $res_user = $m_sysuser->getUserInfo($hv['maintainer_id']);
-                    $add_data['maintainer'] = $res_user['remark'];
+                    if(!empty($res_user)){
+                        $add_data['maintainer'] = $res_user['remark'];
+                    }
                 }
 
                 $this->add($add_data);

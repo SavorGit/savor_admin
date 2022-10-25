@@ -30,6 +30,8 @@ class UserSigninModel extends BaseModel{
     }
 
 	public function userintegral(){
+        //已废弃 2022年10月14日16:01:01
+        return true;
         $nowtime = strtotime('-1 days');
         $now_date = date('Y-m-d',$nowtime);
         $begin_time = $now_date." 00:00:00";

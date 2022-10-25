@@ -205,11 +205,15 @@ class CouponController extends BaseController {
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
         $hotel_name = I('hotel_name','','trim');
+        $idcode = I('idcode','','trim');
         $ustatus = I('ustatus',0,'intval');
 
         $where = array('coupon.type'=>2);
         if($ustatus){
             $where['a.ustatus'] = $ustatus;
+        }
+        if(!empty($idcode)){
+            $where['a.idcode'] = $idcode;
         }
         if(!empty($hotel_name)){
             $where['hotel.name'] = array('like',"%$hotel_name%");
@@ -218,7 +222,7 @@ class CouponController extends BaseController {
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
         $fields = 'a.id,a.openid,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,a.type,hotel.name as hotel_name,
-        user.nickName as user_name,a.op_openid,activity.type as activity_type,a.ustatus';
+        user.nickName as user_name,a.op_openid,a.idcode,activity.type as activity_type,a.ustatus';
         $m_coupon = new \Admin\Model\Smallapp\UserCouponModel();
         $res_list = $m_coupon->getUserCouponList($fields,$where,$orderby,$start,$size);
         $data_list = array();
@@ -243,6 +247,7 @@ class CouponController extends BaseController {
             }
         }
         $this->assign('ustatus',$ustatus);
+        $this->assign('idcode',$idcode);
         $this->assign('hotel_name',$hotel_name);
         $this->assign('data',$data_list);
         $this->assign('page',$res_list['page']);
