@@ -80,7 +80,7 @@ class OptionuserController extends BaseController{
         
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $set_user_list = $m_opuser_role->getList('user_id','state=1');
-
+        
         foreach($set_user_list as $v){
             $tmp[] = $v['user_id'];
         }
