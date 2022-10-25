@@ -215,9 +215,9 @@ class CouponController extends BaseController {
         if(!empty($idcode)){
             $where['a.idcode'] = $idcode;
         }
-        if(!empty($hotel_name)){
-            $where['hotel.name'] = array('like',"%$hotel_name%");
-        }
+//        if(!empty($hotel_name)){
+//            $where['hotel.name'] = array('like',"%$hotel_name%");
+//        }
 
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
@@ -229,10 +229,14 @@ class CouponController extends BaseController {
         if(!empty($res_list['list'])){
             $all_status = C('COUPON_STATUS');
             $all_source = array('1'=>'售酒抽奖','2'=>'会员礼包');
-            $m_user = new \Admin\Model\Smallapp\UserModel();
+            $m_staff = new \Admin\Model\Integral\StaffModel();
             foreach ($res_list['list'] as $v){
-                $res_user = $m_user->getOne('nickName',array('openid'=>$v['op_openid']),'id desc');
-                $v['sale_name'] = $res_user['nickname'];
+                $ufields = 'h.id as hotel_id,h.name as hotel_name,u.nickName';
+                $uwhere = array('a.openid'=>$v['op_openid'],'m.status'=>1);
+                $res_user = $m_staff->getMerchantStaffUserList($ufields,$uwhere);
+                $v['sale_name'] = $res_user[0]['nickname'];
+                $v['use_hotel_id'] = $res_user[0]['hotel_id'];
+                $v['use_hotel_name'] = $res_user[0]['hotel_name'];
                 $source = $all_source[$v['type']];
                 if($v['use_time']=='0000-00-00 00:00:00'){
                     $v['use_time'] = '';
