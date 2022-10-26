@@ -50,10 +50,29 @@
 
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
+                    餐厅单日积分上限比例:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="hotel_max_rate" type="number" class="form-control" min="0" max="10"  value="{$vinfo.task_info.hotel_max_rate}" required>
+                    <span class="help-block" id="img-msg">具体算法为：比例*奖励积分*餐厅正常版位数</span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
                     每个销售经理单日积分上限:
                 </label>
                 <div class="col-xs-12 col-sm-10">
                     <input name="max_daily_integral" type="number" class="form-control" min="0" max="100000"  value="{$vinfo.task_info.max_daily_integral}" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    每个包间每个饭点点播奖励积分几次（新任务按照版位点播上线后废弃）:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="room_num" type="number" class="form-control" min="0" max="100000"  value="{$vinfo.task_info.room_num}" required>
                 </div>
             </div>
 

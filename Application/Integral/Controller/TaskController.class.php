@@ -556,6 +556,7 @@ class TaskController extends BaseController {
             $dinner_start_time  = I('post.dinner_start_time');
             $dinner_end_time    = I('post.dinner_end_time');
             $max_daily_integral = I('post.max_daily_integral',0,'intval');
+            $hotel_max_rate = I('post.hotel_max_rate',0);
             $room_num = I('post.room_num',0,'intval');
             $box_finish_num = I('post.box_finish_num',0,'intval');
             $interval_time = I('post.interval_time',0,'intval');
@@ -569,7 +570,7 @@ class TaskController extends BaseController {
             $type = 2;
             $task_type = 25;
             $task_info = array('lunch_start_time'=>$lunch_start_time,'lunch_end_time'=>$lunch_end_time,'dinner_start_time'=>$dinner_start_time,
-                'dinner_end_time'=>$dinner_end_time,'max_daily_integral'=>$max_daily_integral,'room_num'=>$room_num,
+                'dinner_end_time'=>$dinner_end_time,'max_daily_integral'=>$max_daily_integral,'hotel_max_rate'=>$hotel_max_rate,'room_num'=>$room_num,
                 'box_finish_num'=>$box_finish_num,'interval_time'=>$interval_time,'ads_id'=>$ads_id);
             $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'integral'=>$integral,
                 'start_time'=>$start_time,'end_time'=>$end_time,'task_info'=>json_encode($task_info),'status'=>0,'flag'=>1);
@@ -600,7 +601,7 @@ class TaskController extends BaseController {
             $this->output('添加成功', "task/index");
         }else{
             $vinfo = array('task_info'=>array('lunch_start_time'=>'11:30','lunch_end_time'=>'13:30',
-                'dinner_start_time'=>'18:30','dinner_end_time'=>'20:00')
+                'dinner_start_time'=>'18:30','dinner_end_time'=>'20:00','hotel_max_rate'=>'1.8')
             );
             $now_ads_id = 0;
             if($id){
@@ -733,8 +734,10 @@ class TaskController extends BaseController {
                 $this->output('添加失败', "task/index",2,0);
             }
         }else {
+            $cinfo = array('user_reward'=>array('hotel_max_rate'=>'1.6'));
             $this->assign('integral_task_type',$this->integral_task_type);
             $this->assign('system_task_content',$this->system_task_content);
+            $this->assign('cinfo',$cinfo);
             $this->display();
         }
     }
@@ -876,6 +879,7 @@ class TaskController extends BaseController {
                     $task_content['dinner_end_time']    = I('post.invite_dinner_end_time');
                     $task_content['user_reward']['week_num'] = I('post.week_num',0,'intval');
                     $task_content['user_reward']['room_num'] = I('post.room_num',0,'intval');
+                    $task_content['user_reward']['hotel_max_rate'] = I('post.hotel_max_rate',0);
                 }
                 $this->chekInfoParam($task_content);
                 $data['task_info'] = json_encode($task_content);
@@ -1258,6 +1262,7 @@ class TaskController extends BaseController {
             if(empty($data['user_reward']['type'])) $this->error('请选择打赏奖励类型');
             if(empty($data['max_daily_integral'])) $this->error('请输入每日积分上限');
         }elseif($data['task_content_type']==6){
+            if(empty($data['user_reward']['hotel_max_rate'])) $this->error('请输入餐厅单日积分上限比例');
             if(empty($data['user_reward']['week_num'])) $this->error('请输入打开邀请函奖励次数');
             if(empty($data['user_reward']['room_num'])) $this->error('请输入饭点包间奖励次数');
         }

@@ -493,6 +493,10 @@
             </label>
             <div class="col-xs-12 col-sm-10">
                 <p>
+                    餐厅单日积分上限比例:
+                    <input min='0' type="text" name="hotel_max_rate" style="width:8%;height:25px;padding:6px 12px;"  minlength="0" maxlength="10"  value="{$cinfo.user_reward.hotel_max_rate}" />&nbsp;&nbsp;&nbsp;&nbsp;(具体算法为：比例*奖励积分*餐厅正常包间数)<span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
+                </p>
+                <p>
                     一个用户一周打开邀请函奖励
                     <input min='1' type="text" name="week_num" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo.user_reward.week_num}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;次<span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
                 </p>
