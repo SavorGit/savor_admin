@@ -16,6 +16,7 @@ class TaskUserModel extends BaseModel{
             echo "$now_time task empty \r\n";
             exit;
         }
+        $m_box = new \Admin\Model\BoxModel();
         $m_taskhotel = new \Admin\Model\Integral\TaskHotelModel();
         $now_time = date('Y-m-d H:i:s');
         foreach($res_task as $v){
@@ -73,6 +74,10 @@ class TaskUserModel extends BaseModel{
                 }
                 switch ($task_type){
                     case 25:
+                        $bwhere = array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0);
+                        $res_box = $m_box->getBoxByCondition('count(box.id) as num',$bwhere);
+                        $hotel_box_num = intval($res_box[0]['num']);
+                        $task['task_info']['hotel_box_num'] = $hotel_box_num;
                         $this->task_demandadv($task,$hotel_id);
                         break;
                 }
@@ -96,7 +101,22 @@ class TaskUserModel extends BaseModel{
         $interval_time = $task_content['interval_time'];
         $max_daily_integral = $task_content['max_daily_integral'];
         $task_integral = $task['integral'];
+        $hotel_max_integral = $task_content['hotel_max_rate']*$task_content['hotel_box_num']*$task_integral;
+
         $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $stime = date('Y-m-d 00:00:00');
+        $etime = date('Y-m-d 23:59:59');
+        $hotelwhere = array('hotel_id'=>$hotel_id,'type'=>20);
+        $hotelwhere['add_time'] = array(array('egt',$stime),array('elt',$etime), 'and');
+        $fields = 'sum(integral) as total_integral';
+        $res_hotel_integral = $m_userintegralrecord->field($fields)->where($hotelwhere)->find();
+        if(!empty($res_hotel_integral)){
+            $now_hotel_integral = intval($res_hotel_integral[0]['total_integral']);
+            if($now_hotel_integral>=$hotel_max_integral){
+                echo "task_id:{$task['id']}-hotel_id:{$hotel_id}-integral:{$now_hotel_integral}>={$hotel_max_integral} had integral limit \r\n";
+                return true;
+            }
+        }
         $m_box = new \Admin\Model\BoxModel();
         foreach ($res_box as $bv){
             $box_mac = $bv['box_mac'];
