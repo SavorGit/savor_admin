@@ -10,7 +10,7 @@ class TaskUserModel extends BaseModel{
         $m_task = new \Admin\Model\Integral\TaskModel();
         $task_types = array(25);
         $where = array('status'=>1,'flag'=>1,'task_type'=>array('in',$task_types));
-        $res_task = $m_task->getDataList('*',$where,'id asc');
+        $res_task = $m_task->getDataList('*',$where,'id desc');
         if(empty($res_task)){
             $now_time = date('Y-m-d H:i:s');
             echo "$now_time task empty \r\n";
@@ -57,7 +57,6 @@ class TaskUserModel extends BaseModel{
                     break;
             }
             $task = $v;
-
             $res_taskhotel = $m_taskhotel->getDataList('*',array('task_id'=>$task_id),'id desc');
             if(empty($res_taskhotel)){
                 echo "task_id:{$task_id} no hotel \r\n";
@@ -124,7 +123,7 @@ class TaskUserModel extends BaseModel{
 
             $box_where = array('hotel_id'=>$hotel_id,'box_mac'=>$box_mac,'task_id'=>$task['id']);
             $box_where['add_time'] = array(array('EGT',$task['meal_stime']),array('ELT',$task['meal_etime']));
-            $res_record = $m_usertask_record->getAll('id,openid,type,add_time',$box_where,0,100000,'id asc','');
+            $res_record = $m_usertask_record->getAll('id,openid,type,usertask_id,add_time',$box_where,0,100000,'id asc','');
             $now_box_finish_num = 0;
             $last_demand_time = 0;
             foreach ($res_record as $rk=>$rv){
