@@ -702,8 +702,9 @@ class TaskController extends BaseController {
                     $task_content['lunch_end_time']     = I('post.invite_lunch_end_time');
                     $task_content['dinner_start_time']  = I('post.invite_dinner_start_time');
                     $task_content['dinner_end_time']    = I('post.invite_dinner_end_time');
-                    $task_content['user_reward']['week_num'] = I('post.week_num',0,'intval');
+                    $task_content['user_reward']['hotel_max_rate'] = I('post.hotel_max_rate',0);
                     $task_content['user_reward']['room_num'] = I('post.room_num',0,'intval');
+                    $task_content['user_reward']['week_num'] = I('post.week_num',0,'intval');
                 }
                 $this->chekInfoParam($task_content,$data);
                 $data['task_info'] = json_encode($task_content);
@@ -959,8 +960,24 @@ class TaskController extends BaseController {
             $redis->select(14);
             $goods_program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
             foreach($ids as $key=> $v){
+                $hwhere = array('hotel_id'=>$v);
+                $res_hoteltask = $m_task_hotel->getDataList('*',$hwhere,'id desc');
+                if(!empty($res_hoteltask)){
+                    foreach ($res_hoteltask as $tv){
+                        $tid = $tv['task_id'];
+                        $res_task = $m_task->getInfo(array('id'=>$tid,'status'=>1));
+                        if(!empty($res_task)){
+                            if($now_task_type==$res_task['task_type']){
+                                $has_task_hids[]=$v;
+                                $has_task_ids[$tid]=$tid;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 $t_info = array('task_id'=>$task_id,'hotel_id'=>$v,'uid'=>$uid,'create_time'=>$create_time);
-                if($res_task['type']==2 && $res_task['task_type']==21){
+                if($res_task['task_type']==21){
                     $b_field = 'count(box.id) as boxnum';
                     $b_where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>$t_info['hotel_id']);
                     $res_box = $m_box->getBoxByCondition($b_field,$b_where);
@@ -998,27 +1015,12 @@ class TaskController extends BaseController {
                         }
                         $t_info['lottery_num'] = $lottery_num;
                     }
-                }else{
-                    $hwhere = array('hotel_id'=>$v);
-                    $res_hoteltask = $m_task_hotel->getDataList('*',$hwhere,'id desc');
-                    if(!empty($res_hoteltask)){
-                        foreach ($res_hoteltask as $tv){
-                            $tid = $tv['task_id'];
-                            $res_task = $m_task->getInfo(array('id'=>$tid));
-                            $task_type = $res_task['task_type'];
-                            if($res_task['type']==1 && $now_task_type==$task_type){
-                                $has_task_hids[]=$v;
-                                $has_task_ids[$tid]=$tid;
-                                break;
-                            }
-                        }
-                    }
-                    if($res_task['task_type']==22 || $res_task['task_type']==24){
-                        $program_key = $goods_program_key.":{$v}";
-                        $period = getMillisecond();
-                        $period_data = array('period'=>$period);
-                        $redis->set($program_key,json_encode($period_data));
-                    }
+                }
+                if($res_task['task_type']==22 || $res_task['task_type']==24){
+                    $program_key = $goods_program_key.":{$v}";
+                    $period = getMillisecond();
+                    $period_data = array('period'=>$period);
+                    $redis->set($program_key,json_encode($period_data));
                 }
                 $data[] = $t_info;
             }
