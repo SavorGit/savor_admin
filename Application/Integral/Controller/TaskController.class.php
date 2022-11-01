@@ -583,10 +583,10 @@ class TaskController extends BaseController {
                 $data['desc'] = $desc;
             }
             if($id){
+                $res_task_info = $m_task->getInfo(array('id'=>$id));
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
-                if($res_task_hotel['total']>0){
-                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                if($res_task_hotel['total']>0 && $res_task_info['status']==1){
                     if($data['task_info']!=$res_task_info['task_info']){
                         $this->output('任务已下发,请勿修改任务信息', "task/addactivitydemandadv",2,0);
                     }
