@@ -965,9 +965,9 @@ class TaskController extends BaseController {
                 if(!empty($res_hoteltask)){
                     foreach ($res_hoteltask as $tv){
                         $tid = $tv['task_id'];
-                        $res_task = $m_task->getInfo(array('id'=>$tid,'status'=>1));
-                        if(!empty($res_task)){
-                            if($now_task_type==$res_task['task_type']){
+                        $res_htask = $m_task->getInfo(array('id'=>$tid,'status'=>1));
+                        if(!empty($res_htask)){
+                            if($now_task_type==$res_htask['task_type']){
                                 $has_task_hids[]=$v;
                                 $has_task_ids[$tid]=$tid;
                                 break;
@@ -1024,7 +1024,7 @@ class TaskController extends BaseController {
                 }
                 $data[] = $t_info;
             }
-            if(!empty($has_task_hids)){
+            if(!empty($has_task_hids) && $res_task['status']==1){
                 $hid_str = join(',',$has_task_hids);
                 $tid_str = join(',',array_values($has_task_ids));
                 $message = '如下酒楼ID：'.$hid_str.' 已有相似任务,任务ID为：'.$tid_str;
