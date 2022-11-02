@@ -29,7 +29,7 @@ class StaticHotelbasicdataModel extends BaseModel{
 
         $m_hotel = new \Admin\Model\HotelModel();
         $field = 'a.id as hotel_id,a.name as hotel_name,area.id as area_id,area.region_name as area_name,a.hotel_box_type,a.level as hotel_level,
-	    a.is_4g,a.is_5g,ext.trainer_id,ext.train_date,ext.maintainer_id,a.tech_maintainer,ext.trade_area_type';
+	    a.is_4g,a.is_5g,ext.trainer_id,ext.train_date,ext.maintainer_id,a.tech_maintainer,ext.trade_area_type,ext.is_salehotel';
         $where = array('a.state'=>1,'a.flag'=>0,'a.type'=>1);
         $where['a.hotel_box_type'] = array('in',array_keys($all_hotel_types));
         $res_hotel = $m_hotel->getHotels($field,$where);
@@ -224,7 +224,7 @@ class StaticHotelbasicdataModel extends BaseModel{
 
                 $add_data = array('area_id'=>$hv['area_id'],'area_name'=>$hv['area_name'],'hotel_id'=>$hv['hotel_id'],'hotel_name'=>$hv['hotel_name'],
                     'hotel_box_type'=>$hv['hotel_box_type'],'is_4g'=>$hv['is_4g'],'is_5g'=>$hv['is_5g'],'hotel_level'=>$hv['hotel_level'],'trainer_id'=>$hv['trainer_id'],'train_date'=>$hv['train_date'],
-                    'maintainer_id'=>$hv['maintainer_id'],'trade_area_type'=>$hv['trade_area_type'],'tech_maintainer'=>$hv['tech_maintainer'],'box_num'=>$box_num,'faultbox_num'=>$faultbox_num,'normalbox_num'=>$normalbox_num,
+                    'maintainer_id'=>$hv['maintainer_id'],'trade_area_type'=>$hv['trade_area_type'],'is_salehotel'=>$hv['is_salehotel'],'tech_maintainer'=>$hv['tech_maintainer'],'box_num'=>$box_num,'faultbox_num'=>$faultbox_num,'normalbox_num'=>$normalbox_num,
                     'fault_rate'=>$fault_rate,'lostbox_num'=>$lost_boxnum,'lostfault_rate'=>$lostfault_rate,'wlnum'=>$wlnum,'wl_hdnum'=>$wl_hdnum,'heart_num'=>$heart_num,'avg_down_speed'=>$avg_down_speed,
                     'user_lunch_zxhdnum'=>$user_lunch_zxhdnum,'lunch_zxhdnum'=>$lunch_zxhdnum,'user_lunch_cvr'=>$user_lunch_cvr,'user_dinner_zxhdnum'=>$user_dinner_zxhdnum,
                     'dinner_zxhdnum'=>$dinner_zxhdnum,'user_dinner_cvr'=>$user_dinner_cvr,'sale_lunch_zxhdnum'=>$sale_lunch_zxhdnum,'sale_dinner_zxhdnum'=>$sale_dinner_zxhdnum,

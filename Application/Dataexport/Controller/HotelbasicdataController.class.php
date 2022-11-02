@@ -24,7 +24,7 @@ class HotelbasicdataController extends BaseController{
         if($area_id)    $where['area_id'] = $area_id;
         if($maintainer_id)    $where['maintainer_id'] = $maintainer_id;
 
-        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,is_5g,maintainer,trade_area_type,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
+        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,is_5g,maintainer,trade_area_type,is_salehotel,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
         sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
         sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum,sum(room_heart_num) as room_heart_num,sum(room_meal_heart_num) as room_meal_heart_num";
@@ -84,11 +84,16 @@ class HotelbasicdataController extends BaseController{
             }else{
                 $v['network'] = 'wifi';
             }
-            if($v['trade_area_type']==0){
-                $v['trade_area_str'] = '非聚焦性商圈';
-            }else if($v['trade_area_type']==1){
-                $v['trade_area_str'] = '聚焦性商圈';
+            if($v['is_salehotel']==1){
+                if($v['trade_area_type']==0){
+                    $v['trade_area_str'] = '非聚焦性商圈';
+                }else if($v['trade_area_type']==1){
+                    $v['trade_area_str'] = '聚焦性商圈';
+                }
+            }else{
+                $v['trade_area_str'] = '';
             }
+            
             $v['day_avg_heart_num'] = round($v['heart_num'] / $v['box_num']);
             
             $datalist[]=$v;
