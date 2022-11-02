@@ -857,6 +857,10 @@ $config['HOTEL_STANDALONE_CONFIG'] = array(
     '15'=>'死机',
     '16'=>'其它',
 );
+$config['TRADE_AREA_TYPE_ARR'] = array(
+    array('id'=>0,'name'=>'非聚焦商圈'),
+    array('id'=>1,'name'=>'聚焦商圈')
+);
 $config['HEART_LOSS_HOURS'] = 48;
 //发送邮件配置
 $config['MAIL_ADDRESS'] = 'xxx@xxx.com'; // 邮箱地址

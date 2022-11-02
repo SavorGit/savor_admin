@@ -24,7 +24,7 @@ class HotelbasicdataController extends BaseController{
         if($area_id)    $where['area_id'] = $area_id;
         if($maintainer_id)    $where['maintainer_id'] = $maintainer_id;
 
-        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,is_5g,maintainer,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
+        $fields = "area_id,area_name,hotel_id,hotel_name,hotel_box_type,is_4g,is_5g,maintainer,trade_area_type,sum(interact_standard_num+interact_mini_num+interact_game_num) as interact_num,
         sum(heart_num) as heart_num,avg(NULLIF(avg_down_speed,0)) as avg_speed,sum(scancode_num) as scancode_num,sum(user_num) as user_num,sum(user_lunch_zxhdnum) as user_lunch_zxhdnum,
         sum(lunch_zxhdnum) as lunch_zxhdnum,sum(user_dinner_zxhdnum) as user_dinner_zxhdnum,sum(dinner_zxhdnum) as dinner_zxhdnum,sum(user_lunch_interact_num) as user_lunch_interact_num,
         sum(user_dinner_interact_num) as user_dinner_interact_num,sum(interact_sale_num-interact_sale_signnum) as interact_sale_nosignnum,sum(room_heart_num) as room_heart_num,sum(room_meal_heart_num) as room_meal_heart_num";
@@ -84,6 +84,13 @@ class HotelbasicdataController extends BaseController{
             }else{
                 $v['network'] = 'wifi';
             }
+            if($v['trade_area_type']==0){
+                $v['trade_area_str'] = '非聚焦性商圈';
+            }else if($v['trade_area_type']==1){
+                $v['trade_area_str'] = '聚焦性商圈';
+            }
+            $v['day_avg_heart_num'] = round($v['heart_num'] / $v['box_num']);
+            
             $datalist[]=$v;
         }
         $cell = array(
@@ -113,6 +120,8 @@ class HotelbasicdataController extends BaseController{
             array('hotel_box_type_str','酒楼设备类型'),
             array('network','上网方式(wifi/4g/5g)'),
             array('maintainer','维护人'),
+            array('trade_area_str','商圈类型'),
+            array('day_avg_heart_num','日均单屏心跳数')
         );
         $filename = '酒楼数据统计';
         $this->exportToExcel($cell,$datalist,$filename,1);

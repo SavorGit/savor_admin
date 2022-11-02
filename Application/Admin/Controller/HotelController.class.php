@@ -476,6 +476,7 @@ class HotelController extends BaseController {
 			$vinfo['is_salestat'] = $main_info['is_salestat'];
 			$vinfo['is_salehotel'] = $main_info['is_salehotel'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
+			$vinfo['trade_area_type'] = $main_info['trade_area_type'];
             $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
 				$mediaModel = new \Admin\Model\MediaModel();
@@ -569,7 +570,9 @@ class HotelController extends BaseController {
                 $business_circles = array_merge($tmp_data,$business_circles);
             }
         }
-
+        $trade_area_type_arr = C('TRADE_AREA_TYPE_ARR');
+        
+        $this->assign('trade_area_type_arr',$trade_area_type_arr);
         $this->assign('circle_list',$business_circles);
         $this->assign('food_style_list',$food_style_list);
         $this->assign('area',$area);
@@ -733,6 +736,8 @@ class HotelController extends BaseController {
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
+        $trade_area_type = I('post.trade_area_type',0,'intval');
+        
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -886,6 +891,7 @@ class HotelController extends BaseController {
         $data['is_annualmeeting'] = $is_annualmeeting;
         $data['is_salestat'] = $is_salestat;
         $data['is_salehotel'] = $is_salehotel;
+        $data['trade_area_type'] = $trade_area_type;
 
 		$tranDb = new Model();
 		$tranDb->startTrans();
