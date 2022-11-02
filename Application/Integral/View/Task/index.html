@@ -27,7 +27,17 @@
         </div>
 
         <div class="form-inline pull-right">
-
+          <div class="form-group">
+            <div class="input-group input-group-sm">任务类型：</div>
+            <div class="input-group">
+              <select name="task_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name=":C('all_task_types')" id="tname">
+                <option value="{$key}" <if condition="$key eq $task_type">selected</if>>{$tname}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
           <div class="form-group">
             <div class="input-group input-group-sm">状态：</div>
             <div class="input-group">
@@ -83,7 +93,7 @@
             <tr target="sid_user">
               <td data-title="序号">{$vlist.id}</td>
               <td data-title="任务名称">{$vlist.name}</td>
-              <td data-title="任务类型">{$integral_task_type[$vlist['type']]}</td>
+              <td data-title="任务类型">{$vlist.task_type_str}</td>
               <td data-title="创建人">{$vlist.user_name}</td>
               <td data-title="编辑人">{$vlist.e_user_name}</td>
               <td data-title="创建时间">{$vlist.create_time}</td>

@@ -23,6 +23,7 @@ class TaskController extends BaseController {
         $order = I('_order','id');
         $sort = I('_sort','desc');
         $task_id = I('task_id','');
+        $task_type = I('task_type',0,'intval');
 
         $where = array('a.flag'=>1);
         if($status!=99){
@@ -31,6 +32,10 @@ class TaskController extends BaseController {
         if(!empty($task_id)){
             $where['a.id'] = intval($task_id);
         }
+        if($task_type){
+            $where['a.task_type'] = $task_type;
+        }
+        $all_task_types = C('all_task_types');
         $fields = 'a.id,a.name,a.type,a.task_type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
         $orders = $order.' '.$sort;
@@ -40,7 +45,13 @@ class TaskController extends BaseController {
         foreach($list['list'] as $key=>$v){
             $count = $m_task_hotel->where(array('task_id'=>$v['id']))->count();
             $list['list'][$key]['hotel_num'] = $count;
+            $task_type_str = '';
+            if(isset($all_task_types[$v['task_type']])){
+                $task_type_str = $all_task_types[$v['task_type']];
+            }
+            $list['list'][$key]['task_type_str'] = $task_type_str;
         }
+        $this->assign('task_type',$task_type);
         $this->assign('task_id',$task_id);
         $this->assign('status',$status);
         $this->assign('pageNum',$page);
