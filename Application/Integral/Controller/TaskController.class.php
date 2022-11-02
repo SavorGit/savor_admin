@@ -23,6 +23,7 @@ class TaskController extends BaseController {
         $order = I('_order','id');
         $sort = I('_sort','desc');
         $task_id = I('task_id','');
+        $task_type = I('task_type',0,'intval');
 
         $where = array('a.flag'=>1);
         if($status!=99){
@@ -31,6 +32,10 @@ class TaskController extends BaseController {
         if(!empty($task_id)){
             $where['a.id'] = intval($task_id);
         }
+        if($task_type){
+            $where['a.task_type'] = $task_type;
+        }
+        $all_task_types = C('all_task_types');
         $fields = 'a.id,a.name,a.type,a.task_type,a.create_time,a.update_time,user.remark user_name,euser.remark e_user_name,a.status';
         $m_integral_task = new \Admin\Model\Integral\TaskModel();
         $orders = $order.' '.$sort;
@@ -40,7 +45,13 @@ class TaskController extends BaseController {
         foreach($list['list'] as $key=>$v){
             $count = $m_task_hotel->where(array('task_id'=>$v['id']))->count();
             $list['list'][$key]['hotel_num'] = $count;
+            $task_type_str = '';
+            if(isset($all_task_types[$v['task_type']])){
+                $task_type_str = $all_task_types[$v['task_type']];
+            }
+            $list['list'][$key]['task_type_str'] = $task_type_str;
         }
+        $this->assign('task_type',$task_type);
         $this->assign('task_id',$task_id);
         $this->assign('status',$status);
         $this->assign('pageNum',$page);
@@ -499,10 +510,10 @@ class TaskController extends BaseController {
                 $data['desc'] = $desc;
             }
             if($id){
+                $res_task_info = $m_task->getInfo(array('id'=>$id));
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
-                if($res_task_hotel['total']>0){
-                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                if($res_task_hotel['total']>0 && $res_task_info['status']==1){
                     if($data['task_info']!=$res_task_info['task_info']){
                         $this->output('任务已下发,请勿修改任务信息', "task/addinvitevip",2,0);
                     }
@@ -885,6 +896,16 @@ class TaskController extends BaseController {
                 $this->chekInfoParam($task_content);
                 $data['task_info'] = json_encode($task_content);
             }
+
+            $res_task_info = $m_task->getInfo(array('id'=>$id));
+            $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+            $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+            if($res_task_hotel['total']>0 && $res_task_info['status']==1){
+                if($data['task_info']!=$res_task_info['task_info']){
+                    $this->output('任务已下发,请勿修改任务信息', "task/edit",2,0);
+                }
+            }
+
             $data['status'] = 0;
             $data['flag']   = 1;
             $userinfo = session('sysUserInfo');
@@ -917,10 +938,8 @@ class TaskController extends BaseController {
             $task_content = json_decode($task_info['task_info'],true);
             $m_media = new \Admin\Model\MediaModel();
             $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
-            
             $m_info = $m_media->getRow('oss_addr',array('id'=>$task_info['media_id']));
             $task_info['oss_addr'] = $oss_host.$m_info['oss_addr'];
-
             $m_taskshareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
             $res_profit = $m_taskshareprofit->getInfo(array('task_id'=>$id,'hotel_id'=>0));
             $shareprofit_level1 = $shareprofit_level2 = '';
@@ -965,9 +984,9 @@ class TaskController extends BaseController {
                 if(!empty($res_hoteltask)){
                     foreach ($res_hoteltask as $tv){
                         $tid = $tv['task_id'];
-                        $res_task = $m_task->getInfo(array('id'=>$tid,'status'=>1));
-                        if(!empty($res_task)){
-                            if($now_task_type==$res_task['task_type']){
+                        $res_htask = $m_task->getInfo(array('id'=>$tid,'status'=>1));
+                        if(!empty($res_htask)){
+                            if($now_task_type==$res_htask['task_type']){
                                 $has_task_hids[]=$v;
                                 $has_task_ids[$tid]=$tid;
                                 break;
@@ -1024,7 +1043,7 @@ class TaskController extends BaseController {
                 }
                 $data[] = $t_info;
             }
-            if(!empty($has_task_hids)){
+            if(!empty($has_task_hids) && $res_task['status']==1){
                 $hid_str = join(',',$has_task_hids);
                 $tid_str = join(',',array_values($has_task_ids));
                 $message = '如下酒楼ID：'.$hid_str.' 已有相似任务,任务ID为：'.$tid_str;
