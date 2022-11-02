@@ -510,10 +510,10 @@ class TaskController extends BaseController {
                 $data['desc'] = $desc;
             }
             if($id){
+                $res_task_info = $m_task->getInfo(array('id'=>$id));
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
-                if($res_task_hotel['total']>0){
-                    $res_task_info = $m_task->getInfo(array('id'=>$id));
+                if($res_task_hotel['total']>0 && $res_task_info['status']==1){
                     if($data['task_info']!=$res_task_info['task_info']){
                         $this->output('任务已下发,请勿修改任务信息', "task/addinvitevip",2,0);
                     }
@@ -896,6 +896,16 @@ class TaskController extends BaseController {
                 $this->chekInfoParam($task_content);
                 $data['task_info'] = json_encode($task_content);
             }
+
+            $res_task_info = $m_task->getInfo(array('id'=>$id));
+            $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+            $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+            if($res_task_hotel['total']>0 && $res_task_info['status']==1){
+                if($data['task_info']!=$res_task_info['task_info']){
+                    $this->output('任务已下发,请勿修改任务信息', "task/edit",2,0);
+                }
+            }
+
             $data['status'] = 0;
             $data['flag']   = 1;
             $userinfo = session('sysUserInfo');
@@ -928,10 +938,8 @@ class TaskController extends BaseController {
             $task_content = json_decode($task_info['task_info'],true);
             $m_media = new \Admin\Model\MediaModel();
             $oss_host = 'http://'.C('OSS_HOST_NEW').'/';
-            
             $m_info = $m_media->getRow('oss_addr',array('id'=>$task_info['media_id']));
             $task_info['oss_addr'] = $oss_host.$m_info['oss_addr'];
-
             $m_taskshareprofit = new \Admin\Model\Integral\TaskShareprofitModel();
             $res_profit = $m_taskshareprofit->getInfo(array('task_id'=>$id,'hotel_id'=>0));
             $shareprofit_level1 = $shareprofit_level2 = '';
