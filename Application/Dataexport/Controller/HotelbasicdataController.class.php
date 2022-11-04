@@ -96,6 +96,10 @@ class HotelbasicdataController extends BaseController{
             
             $v['day_avg_heart_num'] = round($v['heart_num'] / $v['box_num']);
             
+            
+            //
+            $rts = $m_hotelbasicdata->field('maintainer')->where(array('hotel_id'=>$v['hotel_id'],'static_date'=>$end_time))->find();
+            $v['maintainer'] = $rts['maintainer'];
             $datalist[]=$v;
         }
         $cell = array(
