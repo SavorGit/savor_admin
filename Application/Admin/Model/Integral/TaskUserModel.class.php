@@ -6,6 +6,18 @@ class TaskUserModel extends BaseModel{
 
     protected $tableName='integral_task_user';
 
+    public function getUserTask($fileds,$where,$order,$limit,$group=''){
+        $res = $this->alias('a')
+            ->field($fileds)
+            ->join('savor_integral_task task on a.task_id=task.id', 'left')
+            ->where($where)
+            ->order($order)
+            ->limit($limit)
+            ->group($group)
+            ->select();
+        return $res;
+    }
+
     public function handel_get_task(){
         $m_task = new \Admin\Model\Integral\TaskModel();
         $task_types = array(25);

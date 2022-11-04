@@ -13,6 +13,16 @@ class RoomModel extends BaseModel
 {
 	protected $tableName='room';
 
+    public function getRoomByCondition($fields='room.*',$where,$group=''){
+        $res = $this->alias('room')
+            ->join('savor_hotel hotel on room.hotel_id=hotel.id','left')
+            ->field($fields)
+            ->where($where)
+            ->group($group)
+            ->select();
+        return $res;
+    }
+
 	public function getRoomBox($field ='*',$where){
 		$result = $this->alias('rom')
 					   ->field($field)

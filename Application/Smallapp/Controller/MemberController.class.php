@@ -35,7 +35,7 @@ class MemberController extends BaseController {
             $m_staff = new \Admin\Model\Integral\StaffModel();
             $m_hotel = new \Admin\Model\HotelModel();
             foreach ($res_list['list'] as $v){
-                if($v['invite_type']==3){
+                if($v['invite_type']==3 || $v['invite_type']==5){
                     $res_hotel = $m_hotel->getOne($v['hotel_id']);
                     $sale_name = '';
                     $hotel_id = $v['hotel_id'];
