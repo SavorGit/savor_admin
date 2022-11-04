@@ -1043,7 +1043,7 @@ class TaskController extends BaseController {
                 }
                 $data[] = $t_info;
             }
-            if(!empty($has_task_hids) && $res_task['status']==1){
+            if(!empty($has_task_hids)){
                 $hid_str = join(',',$has_task_hids);
                 $tid_str = join(',',array_values($has_task_ids));
                 $message = '如下酒楼ID：'.$hid_str.' 已有相似任务,任务ID为：'.$tid_str;
