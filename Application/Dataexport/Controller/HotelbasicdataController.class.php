@@ -19,6 +19,10 @@ class HotelbasicdataController extends BaseController{
         }else{
             $end_time = date('Y-m-d',strtotime($end_time));
         }
+        
+        $datediff   = strtotime($end_time.' 23:59:59') - strtotime($start_time.' 00:00:00');
+        $all_days   = round($datediff / (60 * 60 * 24));
+        
         $m_hotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $where = array('static_date'=>array(array('EGT',$start_time),array('ELT',$end_time)));
         if($area_id)    $where['area_id'] = $area_id;
@@ -94,7 +98,7 @@ class HotelbasicdataController extends BaseController{
                 $v['trade_area_str'] = '';
             }
             
-            $v['day_avg_heart_num'] = round($v['heart_num'] / $v['box_num']);
+            $v['day_avg_heart_num'] = round($v['heart_num'] / ($v['box_num'] * $all_days));
             
             
             //
