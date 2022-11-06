@@ -5,43 +5,67 @@
     <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
       <div class="clearfix">
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
-          <div class="tools-group">
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">唯一识别码：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="idcode" value="{$idcode}">
+            </div>
           </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
 
-          <div class="form-inline">
-
-            <div class="form-group">
-              <div class="input-group input-group-sm">唯一识别码：</div>
-              <div class="input-group">
-                <input type="text" class="form-control" name="idcode" value="{$idcode}">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="input-group input-group-sm">状态：</div>
-              <div class="input-group">
-                <select name="ustatus" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
-                  <option value=0>全部</option>
-                  <volist name=":C('COUPON_STATUS')" id="cstatus">
-                    <option value="{$key}" <if condition="$ustatus eq $key"> selected </if> > {$cstatus}</option>
-                  </volist>
-                </select>
-              </div>
-            </div>
-
-            <div class="input-group input-group-sm">
-<!--              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">-->
+          <div class="form-group">
+            <div class="input-group input-group-sm">使用时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+              <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
               <span class="input-group-btn">
-                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
-                </span>
+                  <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                  <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
             </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+              <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
 
+          <div class="form-group">
+            <div class="input-group input-group-sm">支付状态：</div>
+            <div class="input-group">
+              <select name="wxpay_status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <option value="2" <if condition="$wxpay_status eq 2"> selected </if> > 成功</option>
+                <option value="1" <if condition="$wxpay_status eq 1"> selected </if> > 失败</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">状态：</div>
+            <div class="input-group">
+              <select name="ustatus" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name=":C('COUPON_STATUS')" id="cstatus">
+                  <option value="{$key}" <if condition="$ustatus eq $key"> selected </if> > {$cstatus}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm">
+<!--              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">-->
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+              </span>
           </div>
 
         </div>
+
+
 
       </div>
     </div>
@@ -70,6 +94,7 @@
             <th>唯一识别码</th>
             <th>优惠券来源</th>
             <th>状态</th>
+            <th>操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -89,6 +114,13 @@
               <td data-title="唯一识别码">{$dinfo.idcode}</td>
               <td data-title="优惠券来源">{$dinfo.source}</td>
               <td data-title="状态">{$dinfo.status_str}</td>
+              <td class="table-tool" data-title="操作">
+                <if condition="$dinfo.wxpay_status gt 0">
+                  <a data-tip="支付记录" title="支付记录" target="navTab" rel="userforscreen/track" href="{$host_url}/smallapp/coupon/paylog?coupon_uid={$dinfo.id}" class="btn btn-default btn-icon">
+                    <i class="fa fa-info"></i>
+                  </a>
+                </if>
+              </td>
             </tr>
           </volist>
           </tbody>

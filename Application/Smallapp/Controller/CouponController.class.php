@@ -205,15 +205,32 @@ class CouponController extends BaseController {
         $size = I('numPerPage',50,'intval');//显示每页记录数
         $pageNum = I('pageNum',1,'intval');//当前页码
         $hotel_name = I('hotel_name','','trim');
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
         $idcode = I('idcode','','trim');
         $ustatus = I('ustatus',0,'intval');
+        $wxpay_status = I('wxpay_status',0,'intval');
 
         $where = array('coupon.type'=>2);
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'coupon/usercouponlist', 2, 0);
+            }
+            $ustatus = 2;
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['a.use_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
         if($ustatus){
             $where['a.ustatus'] = $ustatus;
         }
         if(!empty($idcode)){
             $where['a.idcode'] = $idcode;
+        }
+        if($wxpay_status){
+            $where['a.wxpay_status'] = $wxpay_status;
         }
 //        if(!empty($hotel_name)){
 //            $where['hotel.name'] = array('like',"%$hotel_name%");
@@ -222,7 +239,7 @@ class CouponController extends BaseController {
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
         $fields = 'a.id,a.openid,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,a.type,hotel.name as hotel_name,
-        user.nickName as user_name,a.op_openid,a.idcode,activity.type as activity_type,a.ustatus';
+        user.nickName as user_name,a.op_openid,a.idcode,activity.type as activity_type,a.ustatus,a.wxpay_status';
         $m_coupon = new \Admin\Model\Smallapp\UserCouponModel();
         $res_list = $m_coupon->getUserCouponList($fields,$where,$orderby,$start,$size);
         $data_list = array();
@@ -257,7 +274,48 @@ class CouponController extends BaseController {
         $this->assign('page',$res_list['page']);
         $this->assign('numPerPage',$size);
         $this->assign('pageNum',$pageNum);
+        $this->assign('wxpay_status',$wxpay_status);
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
         $this->display();
+    }
+
+    public function paylog(){
+        $coupon_uid = I('coupon_uid',0,'intval');
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+
+        $start = ($pageNum-1)*$size;
+        $where = array('coupon_user_id'=>$coupon_uid);
+        $m_paylog = new \Admin\Model\Smallapp\PaylogModel();
+        $res_list = $m_paylog->getDataList('*',$where,'id desc',$start,$size);
+        $data_list = array();
+        if(!empty($res_list['list'])){
+            foreach ($res_list['list'] as $v){
+                $pay_result = json_decode($v['pay_result'],true);
+                $pay_result_str = '';
+                foreach ($pay_result['wxresult'] as $pk=>$pv){
+                    $pv_str = $pv;
+                    if(is_array($pv)){
+                        $pv_str = '';
+                        foreach ($pv as $pvk=>$pvv){
+                            $pv_str.="$pvk=$pvv ";
+                        }
+                    }
+                    $pay_result_str.="$pk:$pv_str ";
+                }
+                $v['pay_result_str'] = $pay_result_str;
+                $data_list[]=$v;
+            }
+
+        }
+        $this->assign('datalist',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->assign('coupon_uid',$coupon_uid);
+        $this->display();
+
     }
 
 
