@@ -3570,6 +3570,20 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($res_data);
     }
 
+    public function encodecoupon(){
+        $coupon_id = I('get.couponuer_id',0,'intval');
+        $en_data = array('type'=>'coupon','id'=>$coupon_id);
+        $data_id = encrypt_data(json_encode($en_data),C('API_SECRET_KEY'));
+        echo $data_id;
+    }
+
+    public function decodecoupon(){
+        $code = I('get.coupon','');
+        $coupon_content = decrypt_data($code,true,C('API_SECRET_KEY'));
+        print_r($coupon_content);
+        exit;
+    }
+
     public function cleandevsell(){
         $dev_idcodes = "'7b949a819efc4af4','da85d75c1af9b074','f0c46956cf9c2ceb','dfa47a62ecf97108','28401d8af46e6016','566df1cafaa2aa8d','7f7144b1ae584e52','9540bf692c156f39','0b6e2109b0ec64e3','706c048d9f181a6b','905d28125391f848','abc5cd9d536cb2fd','06e41b8476e91942','960687635d7f736d','e14d0f22d85bf841','55b152928eaa4d95','86b5855c8df4c092','24e211212eb9ae35','7ef3ea2b832d6ade'";
 
@@ -3588,6 +3602,11 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $model->execute($sql_4);
         $model->execute($sql_5);
         echo 'clean ok';
+    }
+
+    public function opstaskdata(){
+        $m_hotelstaffdata = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
+        $m_hotelstaffdata->handle_hotel_basicdata();
     }
 
 }
