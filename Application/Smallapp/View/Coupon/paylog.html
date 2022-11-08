@@ -33,6 +33,8 @@
                     <tr id="post">
                         <th>ID</th>
                         <th>用户优惠券ID</th>
+                        <th>核销酒楼</th>
+                        <th>核销人</th>
                         <th>调起微信支付ID</th>
                         <th>支付数据</th>
                         <th>时间</th>
@@ -43,6 +45,8 @@
                         <tr target="sid_user">
                             <td data-title="id">{$dinfo.id}</td>
                             <td data-title="用户优惠券ID">{$dinfo.coupon_user_id}</td>
+                            <td data-title="核销酒楼">{$dinfo.hotel_name}</td>
+                            <td data-title="核销人">{$dinfo.username}</td>
                             <td data-title="调起微信支付ID">{$dinfo.wxorder_id}</td>
                             <td data-title="支付数据">{$dinfo.pay_result_str}</td>
                             <td data-title="时间">{$dinfo.add_time}</td>

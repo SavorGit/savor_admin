@@ -211,7 +211,7 @@ class CouponController extends BaseController {
         $ustatus = I('ustatus',0,'intval');
         $wxpay_status = I('wxpay_status',0,'intval');
 
-        $where = array('coupon.type'=>2);
+        $where = array('coupon.type'=>2,'coupon.status'=>1);
         if($start_date && $end_date){
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
@@ -239,7 +239,7 @@ class CouponController extends BaseController {
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
         $fields = 'a.id,a.openid,a.coupon_id,a.money,a.add_time,a.end_time,a.use_time,a.hotel_id,a.type,hotel.name as hotel_name,
-        user.nickName as user_name,a.op_openid,a.idcode,activity.type as activity_type,a.ustatus,a.wxpay_status';
+        user.nickName as user_name,user.mobile as user_mobile,a.op_openid,a.idcode,activity.type as activity_type,a.ustatus,a.wxpay_status';
         $m_coupon = new \Admin\Model\Smallapp\UserCouponModel();
         $res_list = $m_coupon->getUserCouponList($fields,$where,$orderby,$start,$size);
         $data_list = array();
@@ -291,6 +291,8 @@ class CouponController extends BaseController {
         $res_list = $m_paylog->getDataList('*',$where,'id desc',$start,$size);
         $data_list = array();
         if(!empty($res_list['list'])){
+            $m_hotel = new \Admin\Model\HotelModel();
+            $m_user = new \Admin\Model\Smallapp\UserModel();
             foreach ($res_list['list'] as $v){
                 $pay_result = json_decode($v['pay_result'],true);
                 $pay_result_str = '';
@@ -305,6 +307,18 @@ class CouponController extends BaseController {
                     $pay_result_str.="$pk:$pv_str ";
                 }
                 $v['pay_result_str'] = $pay_result_str;
+                $hotel_name = '';
+                $username = '';
+                if($v['hotel_id']){
+                    $res_hotel = $m_hotel->getOne($v['hotel_id']);
+                    $hotel_name = $res_hotel['name'];
+                }
+                if(!empty($v['openid'])){
+                    $res_user = $m_user->getOne('nickName,mobile',array('openid'=>$v['openid']),'id desc');
+                    $username = $res_user['nickname']."({$res_user['mobile']})";
+                }
+                $v['hotel_name'] = $hotel_name;
+                $v['username'] = $username;
                 $data_list[]=$v;
             }
 
