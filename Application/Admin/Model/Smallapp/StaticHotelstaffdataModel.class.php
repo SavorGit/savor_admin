@@ -22,7 +22,7 @@ class StaticHotelstaffdataModel extends BaseModel{
         return $data;
     }
 
-    public function handle_hotel_basicdata(){
+    public function handle_hotel_staffdata(){
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
@@ -31,8 +31,7 @@ class StaticHotelstaffdataModel extends BaseModel{
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $fields = 'id,hotel_id,name,mobile,status';
         $where = array('status'=>1);
-//        $where['id'] = array('not in',array(3,92,881));
-        $where['id'] = 929;
+        $where['id'] = array('not in',array(3,92));//九重天-公司员工,小热点自营官方旗舰店-上线专用
         $res_merchant = $m_merchant->getDataList($fields,$where,'id asc');
 
         $m_staff = new \Admin\Model\Integral\StaffModel();
@@ -154,7 +153,7 @@ class StaticHotelstaffdataModel extends BaseModel{
                         $money = intval($res_money[0]['total_fee']);
                     }
                     $sale_num = 0;
-                    $sale_where = array('op_openid'=>$openid,'type'=>7,'wo_status'=>2);
+                    $sale_where = array('op_openid'=>$openid,'type'=>7,'wo_status'=>array('in',array('1','2','4')));
                     $sale_where['add_time'] = array(array('egt',$start_time),array('elt',$end_time));
                     $res_sale = $m_stockrecord->field('sum(total_amount) as total_amount')->where($sale_where)->select();
                     if(!empty($res_sale)){
@@ -169,7 +168,7 @@ class StaticHotelstaffdataModel extends BaseModel{
                         if(!empty($res_task_invitevip)){
                             $task_invitevip_get_num = 1;
 
-                            $invitevip_rewardintegral_where = array('hotel_id'=>$hotel_id,'openid'=>$openid,'task_id'=>$invitevip_task_id,'status'=>1);
+                            $invitevip_rewardintegral_where = array('hotel_id'=>$hotel_id,'openid'=>$openid,'task_id'=>$invitevip_task_id,'status'=>array('in',array('1','2')));
                             $invitevip_rewardintegral_where['add_time'] = array(array('egt',$start_time),array('elt',$end_time));
                             $res_vipintegral = $m_userintegralrecord->field('sum(integral) as total_integral')->where($invitevip_rewardintegral_where)->select();
                             if(!empty($res_vipintegral)){
@@ -242,6 +241,7 @@ class StaticHotelstaffdataModel extends BaseModel{
                         'task_demand_finish_num'=>$task_demand_finish_num,'task_demand_rewardintegral_num'=>$task_demand_rewardintegral_num,
                         'task_invitation_release_num'=>$task_invitation_release_num,'task_invitation_get_num'=>$task_invitation_get_num,'task_invitation_operate_num'=>$task_invitation_operate_num,
                         'task_invitation_finish_num'=>$task_invitation_finish_num,'task_invitation_rewardintegral_num'=>$task_invitation_rewardintegral_num,
+                        'task_invitevip_id'=>$invitevip_task_id,'task_demand_id'=>$demand_task_id,'task_invitation_id'=>$invitation_task_id,
                         'static_date'=>$static_date
                     );
                     if($hotel_info['maintainer_id']){
