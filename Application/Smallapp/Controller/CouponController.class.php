@@ -208,6 +208,7 @@ class CouponController extends BaseController {
         $start_date = I('start_date','');
         $end_date = I('end_date','');
         $idcode = I('idcode','','trim');
+        $openid = I('openid','','trim');
         $ustatus = I('ustatus',0,'intval');
         $wxpay_status = I('wxpay_status',0,'intval');
 
@@ -231,6 +232,9 @@ class CouponController extends BaseController {
         }
         if($wxpay_status){
             $where['a.wxpay_status'] = $wxpay_status;
+        }
+        if(!empty($openid)){
+            $where['a.openid'] = $openid;
         }
 //        if(!empty($hotel_name)){
 //            $where['hotel.name'] = array('like',"%$hotel_name%");
@@ -268,6 +272,7 @@ class CouponController extends BaseController {
             }
         }
         $this->assign('ustatus',$ustatus);
+        $this->assign('openid',$openid);
         $this->assign('idcode',$idcode);
         $this->assign('hotel_name',$hotel_name);
         $this->assign('data',$data_list);

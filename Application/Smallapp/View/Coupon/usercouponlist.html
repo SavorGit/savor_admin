@@ -14,6 +14,12 @@
               <input type="text" class="form-control" name="idcode" value="{$idcode}">
             </div>
           </div>
+          <div class="form-group">
+            <div class="input-group input-group-sm">用户openid：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="openid" value="{$openid}">
+            </div>
+          </div>
 
           <div class="form-group">
             <div class="input-group input-group-sm">使用时间：</div>
@@ -34,17 +40,6 @@
           </div>
 
           <div class="form-group">
-            <div class="input-group input-group-sm">支付状态：</div>
-            <div class="input-group">
-              <select name="wxpay_status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
-                <option value=0>全部</option>
-                <option value="2" <if condition="$wxpay_status eq 2"> selected </if> > 成功</option>
-                <option value="1" <if condition="$wxpay_status eq 1"> selected </if> > 失败</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
             <div class="input-group input-group-sm">状态：</div>
             <div class="input-group">
               <select name="ustatus" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
@@ -56,17 +51,24 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <div class="input-group input-group-sm">支付状态：</div>
+            <div class="input-group">
+              <select name="wxpay_status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <option value="2" <if condition="$wxpay_status eq 2"> selected </if> > 成功</option>
+                <option value="1" <if condition="$wxpay_status eq 1"> selected </if> > 失败</option>
+              </select>
+            </div>
+          </div>
+
           <div class="input-group input-group-sm">
-<!--              <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="请输入酒楼名称">-->
             <span class="input-group-btn">
                 <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
               </span>
           </div>
 
         </div>
-
-
-
       </div>
     </div>
   </form>
