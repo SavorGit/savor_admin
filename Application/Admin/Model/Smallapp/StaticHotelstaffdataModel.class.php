@@ -77,6 +77,9 @@ class StaticHotelstaffdataModel extends BaseModel{
                     foreach ($res_taskhotel as $thv){
                         if($thv['task_type']==6){
                             $invitation_task_id = $thv['task_id'];
+                            $rwhere = array('hotel.id'=>$hotel_id,'room.state'=>1,'room.flag'=>0);
+                            $res_room = $m_room->getRoomByCondition('count(room.id) as num',$rwhere);
+                            $hotel_room_num = intval($res_room[0]['num']);
                         }
                         if($thv['task_type']==25){
                             $demand_task_id = $thv['task_id'];
@@ -86,9 +89,6 @@ class StaticHotelstaffdataModel extends BaseModel{
                         }
                         if($thv['task_type']==26){
                             $invitevip_task_id = $thv['task_id'];
-                            $rwhere = array('hotel.id'=>$hotel_id,'room.state'=>1,'room.flag'=>0);
-                            $res_room = $m_room->getRoomByCondition('count(room.id) as num',$rwhere);
-                            $hotel_room_num = intval($res_room[0]['num']);
                         }
                     }
                 }
@@ -139,7 +139,7 @@ class StaticHotelstaffdataModel extends BaseModel{
                     }
 
                     $integral = 0;
-                    $integral_where = array('hotel_id'=>$hotel_id,'openid'=>$openid,'status'=>1,'type'=>array('neq',4));
+                    $integral_where = array('hotel_id'=>$hotel_id,'openid'=>$openid,'type'=>array('neq',4));
                     $integral_where['add_time'] = array(array('egt',$start_time),array('elt',$end_time));
                     $res_integral = $m_userintegralrecord->field('sum(integral) as total_integral')->where($integral_where)->select();
                     if(!empty($res_integral)){
@@ -203,11 +203,12 @@ class StaticHotelstaffdataModel extends BaseModel{
                                 $task_demand_rewardintegral_num = intval($res_demandintegral[0]['total_integral']);
                                 $task_demand_finish_num = intval($res_demandintegral[0]['finish_num']);
                             }
-                            if($sv['level']==1){
-                                $task_demand_operate_num = round(1.8 * $hotel_box_num);
-                            }
                         }
                     }
+                    if($sv['level']==1){
+                        $task_demand_operate_num = round(1.8 * $hotel_box_num);
+                    }
+
                     $task_invitation_release_num = $task_invitation_get_num = $task_invitation_operate_num = $task_invitation_finish_num = $task_invitation_rewardintegral_num = 0;
                     if($invitation_task_id){
                         $task_invitation_release_num = 1;
@@ -225,10 +226,10 @@ class StaticHotelstaffdataModel extends BaseModel{
                                 $task_invitation_rewardintegral_num = intval($res_invitationintegral[0]['total_integral']);
                                 $task_invitation_finish_num = intval($res_invitationintegral[0]['finish_num']);
                             }
-                            if($sv['level']==1){
-                                $task_invitation_operate_num = round(1.6 * $hotel_room_num);
-                            }
                         }
+                    }
+                    if($sv['level']==1){
+                        $task_invitation_operate_num = round(1.6 * $hotel_room_num);
                     }
 
                     $add_data = array('openid'=>$sv['openid'],'merchant_staff_id'=>$sv['id'],'merchant_staff_level'=>$sv['level'],'area_id'=>$hotel_info['area_id'],
