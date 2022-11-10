@@ -212,7 +212,7 @@ class CouponController extends BaseController {
         $ustatus = I('ustatus',0,'intval');
         $wxpay_status = I('wxpay_status',0,'intval');
 
-        $where = array('coupon.type'=>2,'coupon.status'=>1);
+        $where = array('coupon.type'=>2,'coupon.status'=>1,'a.status'=>1);
         if($start_date && $end_date){
             $stime = strtotime($start_date);
             $etime = strtotime($end_date);
