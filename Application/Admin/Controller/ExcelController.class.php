@@ -8606,4 +8606,79 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'whnetboxroomnums';
         $this->exportExcel($xlsName, $xlsCell, $result,$filename);
     }
+    public function saleAppAdsDemandSta(){
+        //统计天数
+        $sta_date_arr = array('2022-11-02','2022-11-03','2022-11-04','2022-11-05','2022-11-06','2022-11-07',
+                              '2022-11-08','2022-11-09','2022-11-10','2022-11-11','2022-11-12','2022-11-13',
+        );
+        //统计酒楼 
+        
+        $sql ="select hotel.id hotel_id, hotel.name hotel_name ,area.region_name as area_name
+               from savor_hotel hotel 
+               left join savor_area_info area on hotel.area_id=area.id
+               left join savor_hotel_ext ext  on hotel.id = ext.hotel_id 
+               where  hotel.state=1 and hotel.flag=0 and ext.is_salehotel=1";
+        $hotel_list = M()->query($sql);
+        
+        $ret = [];
+        $flag = 0;
+        foreach($hotel_list as $key=>$v){
+            
+            foreach($sta_date_arr as $kk=>$vv){
+                
+                
+                $sql ="select sum(task_demand_release_num) as release_num,
+                       sum(task_demand_get_num) as get_num,
+                       sum(task_demand_finish_num) as finish_num
+                       from savor_smallapp_static_hotelstaffdata
+                       where  static_date='".$vv."' and  hotel_id=".$v['hotel_id'];
+                
+                $rt = M()->query($sql);
+                $release_num = intval($rt[0]['release_num']);
+                $get_num     = intval($rt[0]['get_num']);
+                $finish_num  = intval($rt[0]['finish_num']);
+                $tmp =  $v;
+                //点播任务发布次数
+                $tmp['release_num'] = $release_num;
+                //点播任务领取次数
+                $tmp['get_num']     = $get_num;
+                //点播完成任务次数
+                $tmp['finish_num']  = $finish_num;
+                $tmp['static_date'] = $vv;
+                //点播次数
+                $start_time = $vv.' 00:00:00';
+                $end_time   = $vv.' 23:59:59';
+                $sql = "select count(id) as demand_nums from savor_smallapp_forscreen_record
+                        where small_app_id = 5 and  action=59 and hotel_id=".$v['hotel_id']." and create_time>='".$start_time.
+                        "' and create_time<='".$end_time."'";
+                
+                $rt =  M()->query($sql);
+                $demand_nums = intval($rt[0]['demand_nums']);
+                $tmp['demand_nums'] = $demand_nums;
+                
+                
+                
+                $ret[$flag] = $tmp;
+                
+                
+                $flag  ++;
+            }//end $sta_date_arr
+        }//end $hotel_list
+        $xlsCell = array(
+            
+            array('hotel_id','餐厅id'),
+            array('hotel_name','餐厅名称'),
+            array('area_name','城市'),
+            array('static_date','日期'),
+            array('release_num','任务发布次数'),
+            array('get_num','任务领取次数'),
+            array('demand_nums','任务点播次数'),
+            array('finish_num','任务完成次数'),
+            
+        );
+        $xlsName = '广州酒楼数据统计';
+        $filename = 'whnetboxroomnums';
+        $this->exportExcel($xlsName, $xlsCell, $ret,$filename);
+        
+    }
 }
