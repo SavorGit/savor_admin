@@ -23,6 +23,7 @@ class StaticHotelstaffdataModel extends BaseModel{
     }
 
     public function handle_hotel_staffdata(){
+        $test_hotels = C('TEST_HOTEL');
         $m_statistics = new \Admin\Model\Smallapp\StatisticsModel();
         $start = date('Y-m-d',strtotime('-1day'));
         $end = date('Y-m-d',strtotime('-1day'));
@@ -56,6 +57,11 @@ class StaticHotelstaffdataModel extends BaseModel{
             foreach ($res_merchant as $mv){
                 $merchant_id = $mv['id'];
                 $hotel_id = $mv['hotel_id'];
+                if(in_array($hotel_id,$test_hotels)){
+                    echo "merchant_id:{$merchant_id}-hotel_id:{$hotel_id} hotel is test \r\n";
+                    continue;
+                }
+
                 $hotel_field = 'a.id as hotel_id,a.name as hotel_name,area.id as area_id,area.region_name as area_name,ext.maintainer_id';
                 $hotel_where = array('a.id'=>$hotel_id,'a.state'=>1,'a.flag'=>0);
                 $res_hotel = $m_hotel->getHotels($hotel_field,$hotel_where);
