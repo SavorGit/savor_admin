@@ -47,6 +47,15 @@ class MemberController extends BaseController {
                     $hotel_id = $res_staff[0]['hotel_id'];
                     $hotel_name = $res_staff[0]['hotel_name'];
                 }
+                $extfields = 'area.region_name as area_name,sysuser.remark as maintainer_name';
+                $res_hotel_ext = $m_hotel->getHotelInfo($extfields,array('a.id'=>$hotel_id));
+                $area_name = $maintainer_name = '';
+                if(!empty($res_hotel_ext)){
+                    $area_name = $res_hotel_ext['area_name'];
+                    $maintainer_name = $res_hotel_ext['maintainer_name'];
+                }
+                $v['area_name'] = $area_name;
+                $v['maintainer_name'] = $maintainer_name;
                 $v['sale_name'] = $sale_name;
                 $v['hotel_id'] = $hotel_id;
                 $v['hotel_name'] = $hotel_name;

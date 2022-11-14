@@ -76,6 +76,8 @@
             <th>来源销售经理</th>
             <th>来源酒楼ID</th>
             <th>来源酒楼</th>
+            <th>维护人</th>
+            <th>城市</th>
             <th>邀请类型</th>
             <th>操作</th>
           </tr>
@@ -93,6 +95,8 @@
               <td data-title="来源销售经理">{$dinfo.sale_name}</td>
               <td data-title="来源酒楼ID">{$dinfo.hotel_id}</td>
               <td data-title="来源酒楼">{$dinfo.hotel_name}</td>
+              <td data-title="维护人">{$dinfo.maintainer_name}</td>
+              <td data-title="城市">{$dinfo.area_name}</td>
               <td data-title="邀请类型">{$dinfo.invite_type_str}</td>
               <td data-title="操作">
                 <a warn="警告" data-tip="清除会员" title="你确定要清除会员'{$dinfo.nickname}'相关数据吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/member/cleandata?id={$dinfo.id}&openid={$dinfo.openid}"  class="btn btn-danger btn-icon">
