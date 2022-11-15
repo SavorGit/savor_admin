@@ -139,6 +139,36 @@
 				</div>
 			</div>
 
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					是否开启分润:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<select name="is_shareprofit" id="is_shareprofit" class="form-control bs-select" title="请选择..." data-size="20" required>
+						<option value="1" <if condition="$merchant_info['is_shareprofit'] eq 1"> selected </if> > 是</option>
+						<option value="0" <if condition="$merchant_info['is_shareprofit'] eq 0"> selected </if> > 否</option>
+					</select>
+				</div>
+			</div>
+
+			<div id="shareprofit_config" <if condition="$merchant_info.is_shareprofit eq 0">style="display:none;"</if> >
+
+			<foreach name="shareprofit_types" item="spinfo">
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					{$spinfo.name}分润设置：
+				</label>
+				<div class="col-xs-12 col-sm-10 form-inline">
+					<span class="form-control">店长</span><input type="number" class="form-control" name="shareprofit_config[{$spinfo.type}][]" value="{$spinfo.values.0}" min="0" max="100">
+					<span class="form-control">经理</span><input type="number" class="form-control" name="shareprofit_config[{$spinfo.type}][]" value="{$spinfo.values.1}" min="0" max="100">
+				</div>
+			</div>
+			</foreach>
+
+			</div>
+
+
+
 		</div>
 
 		<div class="modal-footer">
@@ -163,4 +193,14 @@
 
     })
     $('#smodel_id').trigger('change');
+
+	$('#is_shareprofit').change(function() {
+		if($(this).val()==1){
+			$('#shareprofit_config').show();
+		}else{
+			$('#shareprofit_config').hide();
+
+		}
+	})
+	$('#is_shareprofit').trigger('change');
 </script>

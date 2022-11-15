@@ -492,12 +492,24 @@ class MerchantController extends BaseController {
         $merchant_info['maintainer'] = $maintainer;
         $merchant_info['hotel_name'] = $res_hotel['hotel_name'];
         $merchant_info['city'] = $res_hotel['city'];
+        $all_shareprofit_types = C('all_shareprofit_types');
+        if($merchant_info['is_shareprofit']){
+            $shareprofit_config = json_decode($merchant_info['shareprofit_config'],true);
+            foreach ($all_shareprofit_types as $k=>$v){
+                $values = array();
+                if(isset($shareprofit_config[$k])){
+                    $values = $shareprofit_config[$k];
+                }
+                $all_shareprofit_types[$k]['values'] = $values;
+            }
+        }
 
         $this->assign('is_modify_name',$is_modify_name);
         $this->assign('is_modify_job',$is_modify_job);
         $this->assign('is_modify_mobile',$is_modify_mobile);
         $this->assign('smodels',$smodels);
         $this->assign('merchant_info',$merchant_info);
+        $this->assign('shareprofit_types',$all_shareprofit_types);
         $this->display();
     }
 
@@ -513,11 +525,36 @@ class MerchantController extends BaseController {
         $mobile = I('mobile','','trim');
         $status = I('status',1,'intval');
         $is_integral = I('is_integral',1,'intval');
+        $is_shareprofit = I('is_shareprofit',1,'intval');
+        $shareprofit_config = I('shareprofit_config','');
 
+        if($is_integral==0 && $is_shareprofit==1){
+            $this->output('请勿同时开启分润和积分发放给商家操作', 'merchant/merchantadd',2,0);
+        }
+        if($is_shareprofit){
+            $all_shareprofit_types = C('all_shareprofit_types');
+            $now_shareprofit_config = array();
+            foreach ($shareprofit_config as $k=>$v){
+                $shareprofit_percent = array_sum($v);
+                if($shareprofit_percent>0){
+                    if($shareprofit_percent==100){
+                        if($v[0]==0 || $v[1]==0){
+                            $tips = $all_shareprofit_types[$k]['name'].'分润设置一方不能为0';
+                            $this->output($tips, 'merchant/merchantadd',2,0);
+                        }
+                    }else{
+                        $tips = $all_shareprofit_types[$k]['name'].'分润设置加和不等于100';
+                        $this->output($tips, 'merchant/merchantadd',2,0);
+                    }
+                    $now_shareprofit_config[$k]=$v;
+                }
+            }
+            $shareprofit_config = $now_shareprofit_config;
+        }else{
+            $shareprofit_config = array();
+        }
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $merchant_info = $m_merchant->getInfo(array('id'=>$merchant_id));
-
-        $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $hotel_id = $merchant_info['hotel_id'];
         $where = array('hotel_id'=>$hotel_id,'status'=>1);
         $where['id'] = array('neq',$merchant_id);
@@ -525,12 +562,17 @@ class MerchantController extends BaseController {
         if(!empty($res_merchant)){
             $this->output('当前商家已存在', 'merchant/merchantadd',2,0);
         }
-
         $userinfo = session('sysUserInfo');
         $sysuser_id = $userinfo['id'];
         $add_info = array('service_model_id'=>$service_model_id,'channel_id'=>$channel_id,'rate_groupid'=>$rate_groupid,
             'cash_rate'=>$cash_rate,'recharge_rate'=>$recharge_rate,'name'=>$name,'job'=>$job,'mobile'=>$mobile,
-            'status'=>$status,'is_integral'=>$is_integral,'sysuser_id'=>$sysuser_id);
+            'status'=>$status,'is_integral'=>$is_integral,'is_shareprofit'=>$is_shareprofit,'shareprofit_config'=>json_encode($shareprofit_config),
+            'sysuser_id'=>$sysuser_id);
+        if(empty($merchant_info['shareprofit_config'])){
+            $add_info['shareprofit_time'] = date('Y-m-d H:i:s');
+        }else{
+            $add_info['shareprofit_uptime'] = date('Y-m-d H:i:s');
+        }
         if($mobile!=$merchant_info['mobile']){
             $res_merchant_mobile = $m_merchant->getInfo(array('mobile'=>$mobile,'status'=>1));
             if(!empty($res_merchant_mobile)){
@@ -545,7 +587,6 @@ class MerchantController extends BaseController {
                 if(preg_match('/[a-zA-Z]/', $s_hotel_name)){
                     $code_charter = $s_hotel_name;
                 }else {
-                    $pin = new \Common\Lib\Pin();
                     $obj_pin = new \Overtrue\Pinyin\Pinyin();
                     $code_charter = $obj_pin->abbr($s_hotel_name);
                     $code_charter  = strtolower($code_charter);

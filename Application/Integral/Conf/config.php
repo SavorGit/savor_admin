@@ -25,6 +25,13 @@ $config = array(
         '25'=>'广告点播',
         '26'=>'会员邀请'
     ),
+    'all_shareprofit_types'=>array(
+        'yhj'=>array('name'=>'优惠券任务','type'=>'yhj'),
+        'yqh'=>array('name'=>'邀请函任务','type'=>'yqh'),
+        'ggdb'=>array('name'=>'广告点播任务','type'=>'ggdb'),
+        'kpf'=>array('name'=>'开瓶费','type'=>'kpf'),
+        'fgjl'=>array('name'=>'复购奖励','type'=>'fgjl'),
+    ),
     'service_list'=>array('tv_forscreen'=>'电视投屏','room_signin'=>'包间签到','pro_play'=>'循环播放',
                           'activity_pop'=>'活动促销','hotel_activity'=>'餐厅活动','integral_manage'=>'积分收益',
                           'integral_shop'=>'积分兑换','goods_manage'=>'活动商品管理','staff_manage'=>'员工管理',
