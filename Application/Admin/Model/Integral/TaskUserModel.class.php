@@ -178,10 +178,26 @@ class TaskUserModel extends BaseModel{
                             $task_integral = $max_daily_integral - $total_integral > 0 ? $max_daily_integral - $total_integral : 0;
                         }
                         if($task_integral>0){
+                            $admin_integral = 0;
                             $where = array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1);
                             $m_staff = new \Admin\Model\Integral\StaffModel();
-                            $res_staff = $m_staff->getMerchantStaffInfo('m.id as merchant_id,m.hotel_id,m.is_integral',$where);
+                            $res_staff = $m_staff->getMerchantStaffInfo('a.level,m.id as merchant_id,m.hotel_id,m.is_integral,m.is_shareprofit,m.shareprofit_config',$where);
                             if($res_staff['is_integral']==1){
+                                if($res_staff['is_shareprofit']==1 && $res_staff['level']==2){
+                                    $shareprofit_config = json_decode($res_staff['shareprofit_config'],true);
+                                    if(!empty($shareprofit_config['ggdb'])){
+                                        $staff_integral = ($shareprofit_config['ggdb'][1]/100)*$task_integral;
+                                        if($staff_integral>1){
+                                            $staff_integral = round($staff_integral);
+                                        }else{
+                                            $staff_integral = 1;
+                                        }
+                                        $admin_integral = $task_integral - $staff_integral;
+                                        $task_integral = $staff_integral;
+                                        echo "task_id:{$task['id']}-hotel_id:{$hotel_id}-box:{$box_mac},demand_id:{$demand_record_id},shareprofit:$task_integral=$admin_integral+$staff_integral \r\n";
+                                    }
+                                }
+
                                 $integralrecord_openid = $openid;
                                 $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
                                 $res_integral = $m_userintegral->getInfo(array('openid'=>$openid));
@@ -207,6 +223,28 @@ class TaskUserModel extends BaseModel{
                             $m_usertask_record->updateData(array('id'=>$demand_record_id),array('type'=>3));
                             if($rv['usertask_id']>0){
                                 $this->where(array('id'=>$rv['usertask_id']))->setInc('integral',$task_integral);
+                            }
+
+                            if($admin_integral>0){
+                                $adminwhere = array('merchant_id'=>$res_staff['merchant_id'],'level'=>1,'status'=>1);
+                                $res_admin_staff = $m_staff->getAll('id,openid',$adminwhere,0,1,'id desc');
+                                if(!empty($res_admin_staff)){
+                                    $admin_openid = $res_admin_staff[0]['openid'];
+                                    $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
+                                    $res_integral = $m_userintegral->getInfo(array('openid'=>$admin_openid));
+                                    if(!empty($res_integral)){
+                                        $userintegral = $res_integral['integral']+$admin_integral;
+                                        $m_userintegral->updateData(array('id'=>$res_integral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
+                                    }else{
+                                        $m_userintegral->add(array('openid'=>$admin_openid,'integral'=>$admin_integral));
+                                    }
+                                    $integralrecord_data = array('openid'=>$admin_openid,'area_id'=>$box_info['area_id'],'area_name'=>$box_info['area_name'],
+                                        'hotel_id'=>$box_info['hotel_id'],'hotel_name'=>$box_info['hotel_name'],'hotel_box_type'=>$box_info['hotel_box_type'],
+                                        'room_id'=>$box_info['room_id'],'room_name'=>$box_info['room_name'],'box_id'=>$box_info['box_id'],'box_mac'=>$box_mac,
+                                        'box_type'=>$box_info['box_type'],'task_id'=>$task['id'],'integral'=>$admin_integral,'jdorder_id'=>$demand_record_id,'content'=>1,'type'=>20,
+                                        'integral_time'=>date('Y-m-d H:i:s'),'source'=>4);
+                                    $m_userintegralrecord->add($integralrecord_data);
+                                }
                             }
 
                             echo "task_id:{$task['id']}-hotel_id:{$hotel_id}-box:{$box_mac},demand_id:{$demand_record_id} get integral ok \r\n";
