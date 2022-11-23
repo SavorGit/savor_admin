@@ -163,6 +163,7 @@ class TaskUserModel extends BaseModel{
                     }
                 }
                 if($is_add_integral==1){
+					$task_integral = $task['integral'];  //重置一下任务积分
                     $stime = date('Y-m-d 00:00:00');
                     $etime = date('Y-m-d 23:59:59');
                     $where = array('openid'=>$openid,'type'=>20);
