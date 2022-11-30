@@ -5,7 +5,11 @@ namespace Admin\Controller;
  *
  */
 class CategoryController extends BaseController {
-    
+
+    public $all_types = array('1'=>'内容','2'=>'场景','3'=>'人员属性','4'=>'饭局性质','5'=>'内容所用软件',
+        '6'=>'欢迎词背景图','7'=>'商城','8'=>'本地生活');
+    public $visit_types = array('9'=>'拜访目的','10'=>'拜访类型');
+
     public function __construct() {
         parent::__construct();
     }
@@ -27,14 +31,16 @@ class CategoryController extends BaseController {
         		$where['trees'] = array('like',"%,$category_id,%");
         	}
         }
+        $all_types = $this->all_types;
         if($type){
             $where['type'] = $type;
             unset($where['id'],$where['trees']);
+        }else{
+            $where['type'] = array('not in',array_keys($this->visit_types));
         }
         $start  = ($page-1) * $size;
         $m_category  = new \Admin\Model\CategoryModel();
         $result = $m_category->getCustomList($where, 'id desc', $start, $size);
-        $all_types = array(0=>'',1=>'内容',2=>'场景',3=>'人员属性',4=>'饭局性质',5=>'内容所用软件',6=>'欢迎词背景图',7=>'商城',8=>'本地生活');
         foreach ($result['list'] as $k=>$v){
         	$trees = $m_category->get_category_tree($v['id']);
         	if(!empty($trees)){
@@ -44,7 +50,6 @@ class CategoryController extends BaseController {
         	$result['list'][$k]['typestr'] = $all_types[$v['type']];
         }
         $category = $m_category->getCategory($category_id,1,1);
-        unset($all_types[0]);
         $this->assign('alltype',$all_types);
         $this->assign('type',$type);
         $this->assign('category',$category);
@@ -175,5 +180,89 @@ class CategoryController extends BaseController {
     	}else{
     		$this->output('删除失败', '',2);
     	}
+    }
+
+    public function visitlist() {
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $type = I('type',0,'intval');//类型1内容,2场景,3人员属性,4饭局性质,5内容所用软件,6欢迎词背景图分类,7商城,8本地生活,9拜访目的,10拜访类型
+
+        $all_types = $this->visit_types;
+        if($type){
+            $where['type'] = $type;
+        }else{
+            $where['type'] = array('in',array_keys($all_types));
+        }
+        $start  = ($page-1) * $size;
+        $m_category  = new \Admin\Model\CategoryModel();
+        $result = $m_category->getCustomList($where, 'id desc', $start, $size);
+
+        foreach ($result['list'] as $k=>$v){
+            $result['list'][$k]['typestr'] = $all_types[$v['type']];
+        }
+        $this->assign('alltype',$all_types);
+        $this->assign('type',$type);
+        $this->assign('datalist', $result['list']);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('visitlist');
+    }
+
+    public function visitadd(){
+        $id = I('id', 0, 'intval');
+        $type = I('type',0,'intval');
+        $m_category  = new \Admin\Model\CategoryModel();
+        if(IS_GET){
+            $dinfo = array('status'=>1,'type'=>$type);
+            if($id){
+                $dinfo = $m_category->getInfo(array('id'=>$id));
+            }
+            $this->assign('alltype',$this->visit_types);
+            $this->assign('dinfo',$dinfo);
+            $this->display('visitadd');
+        }else{
+            $name = I('post.name','','trim');
+            $type = I('post.type',0,'intval');
+            $status = I('post.status',1,'intval');
+            $where = array('name'=>$name,'type'=>$type);
+            if($id){
+                $where['id']= array('neq',$id);
+                $res_category = $m_category->getInfo($where);
+            }else{
+                $res_category = $m_category->getInfo($where);
+            }
+            if(!empty($res_category)){
+                $this->output('名称不能重复', 'category/visitadd', 2, 0);
+            }
+            $data = array('name'=>$name,'type'=>$type,'status'=>$status);
+            if($id){
+                $result = $m_category->updateData(array('id'=>$id),$data);
+            }else{
+                $result = $m_category->add($data);
+            }
+            if($result){
+                $this->output('操作成功', 'category/visitlist');
+            }else{
+                $this->output('操作失败', 'category/visitadd',2,0);
+            }
+        }
+    }
+
+    public function visitoperatestatus(){
+        $id = I('get.id',0,'intval');
+        $status = I('get.status',0,'intval');
+        $condition = array('id'=>$id);
+        $data = array('status'=>$status);
+        $m_category = new \Admin\Model\CategoryModel();
+        $m_category->updateData($condition, $data);
+        if($status==1){
+            $message = '启用成功';
+        }elseif($status==0){
+            $message = '禁用成功';
+        }else{
+            $message = '操作成功';
+        }
+        $this->output($message, 'category/visitlist',2);
     }
 }
