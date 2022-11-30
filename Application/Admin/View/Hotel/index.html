@@ -293,7 +293,9 @@
               <td data-title="状态">
                 <if condition="$vlist.state eq 1"> 正常
                   <elseif condition="$vlist.state eq 2"/> 冻结
-                  <else />报损
+                  <elseif condition="$vlist.state eq 3"/> 报损
+                  <elseif condition="$vlist.state eq 4"/> 待补充信息
+                  <else />无
                 </if>
               </td>
               <td data-title="合作维护人">{$vlist.maintainer}</td>

@@ -229,6 +229,7 @@ $config['HOTEL_STATE'] = array(
     '1'=>'正常',
     '2'=>'冻结',
     '3'=>'报损',
+    '4'=>'待补充信息',
 );
 
 $config['HOTEL_KEY'] = array(
