@@ -253,7 +253,7 @@ class CouponController extends BaseController {
             $m_staff = new \Admin\Model\Integral\StaffModel();
             foreach ($res_list['list'] as $v){
                 $ufields = 'h.id as hotel_id,h.name as hotel_name,u.nickName';
-                $uwhere = array('a.openid'=>$v['op_openid'],'m.status'=>1);
+                $uwhere = array('a.openid'=>$v['op_openid'],'a.status'=>1,'m.status'=>1);
                 $res_user = $m_staff->getMerchantStaffUserList($ufields,$uwhere);
                 $v['sale_name'] = $res_user[0]['nickname'];
                 $v['use_hotel_id'] = $res_user[0]['hotel_id'];
