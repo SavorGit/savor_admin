@@ -28,12 +28,13 @@ class MemberController extends BaseController {
         $start = ($pageNum-1)*$size;
         $orderby = 'a.id desc';
         $m_user = new \Admin\Model\Smallapp\UserModel();
-        $fields = 'a.id,a.openid,a.nickName,a.avatarUrl,a.mobile,a.vip_level,a.invite_type,a.invite_openid,a.invite_time,a.hotel_id,a.room_id';
+        $fields = 'a.id,a.openid,a.nickName,a.avatarUrl,a.mobile,a.vip_level,a.invite_type,a.invite_openid,a.invite_time,a.hotel_id,a.room_id,a.create_time';
         $res_list = $m_user->getUserList($fields,$where,$orderby,$start,$size);
         $data_list = array();
         if(!empty($res_list['list'])){
             $m_staff = new \Admin\Model\Integral\StaffModel();
             $m_hotel = new \Admin\Model\HotelModel();
+			$m_room  = new \Admin\Model\RoomModel();
             foreach ($res_list['list'] as $v){
                 if($v['invite_type']==3 || $v['invite_type']==5){
                     $res_hotel = $m_hotel->getOne($v['hotel_id']);
@@ -49,12 +50,17 @@ class MemberController extends BaseController {
                 }
                 $extfields = 'area.region_name as area_name,sysuser.remark as maintainer_name';
                 $res_hotel_ext = $m_hotel->getHotelInfo($extfields,array('a.id'=>$hotel_id));
-                $area_name = $maintainer_name = '';
+                $area_name = $maintainer_name = $room_name =  '';
                 if(!empty($res_hotel_ext)){
                     $area_name = $res_hotel_ext['area_name'];
                     $maintainer_name = $res_hotel_ext['maintainer_name'];
                 }
-                $v['area_name'] = $area_name;
+				$rets_room = $m_room->field('name')->where(array('id'=>$v['room_id']))->find();
+                if(!empty($rets_room)){
+					$room_name = $rets_room['name'];
+				}
+				$v['room_name'] = $room_name;
+				$v['area_name'] = $area_name;
                 $v['maintainer_name'] = $maintainer_name;
                 $v['sale_name'] = $sale_name;
                 $v['hotel_id'] = $hotel_id;

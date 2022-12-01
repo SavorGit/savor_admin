@@ -72,10 +72,12 @@
             <th>用户openid</th>
             <th>手机号码</th>
             <th>会员等级</th>
-            <th>加入时间</th>
+			<th>用户创建时间</th>
+            <th>加入会员时间</th>
             <th>来源销售经理</th>
             <th>来源酒楼ID</th>
             <th>来源酒楼</th>
+			<th>来源包间</th>
             <th>维护人</th>
             <th>城市</th>
             <th>邀请类型</th>
@@ -91,10 +93,12 @@
               <td data-title="用户openid">{$dinfo.openid}</td>
               <td data-title="手机号码">{$dinfo.mobile}</td>
               <td data-title="会员等级">{$dinfo.vip_level_str}</td>
+			  <td data-title="加入时间">{$dinfo.create_time}</td>
               <td data-title="加入时间">{$dinfo.invite_time}</td>
               <td data-title="来源销售经理">{$dinfo.sale_name}</td>
               <td data-title="来源酒楼ID">{$dinfo.hotel_id}</td>
               <td data-title="来源酒楼">{$dinfo.hotel_name}</td>
+			  <td data-title="来源酒楼">{$dinfo.room_name}</td>
               <td data-title="维护人">{$dinfo.maintainer_name}</td>
               <td data-title="城市">{$dinfo.area_name}</td>
               <td data-title="邀请类型">{$dinfo.invite_type_str}</td>
