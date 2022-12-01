@@ -159,6 +159,8 @@ class ExcelController extends Controller
          }else if($filename=='whnetboxroomnums'){
              $tmpname = '三代机+网络电视包间版位数统计';
              $filename = '';
+         }else if($filename=='no7heartLogHotel'){
+             $tmpname = '失联7天以上酒楼信息';
          }
 
 
@@ -8680,5 +8682,61 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'whnetboxroomnums';
         $this->exportExcel($xlsName, $xlsCell, $ret,$filename);
         
+    }
+    public function no7heartLogHotel(){
+        $hotel_box_types = getHeartBoXtypeIds(2);
+        $sql ="select area.region_name,hotel.name hotel_name ,hotel.id hotel_id,user.remark from savor_hotel hotel
+        left join savor_area_info area on hotel.area_id=area.id
+        left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+        left join savor_sysuser user on user.id= ext.maintainer_id
+        where hotel.hotel_box_type in($hotel_box_types) and hotel.state=1 and hotel.flag=0 ";
+        
+        $hotel_list = M()->query($sql);
+        //$sl_date = date('Y-m-d 00:00:00',strtotime('-7 days')) ;
+        $lose_time = I('lose_time');
+        $lose_date = strtotime($lose_time);
+        $redis = new SavorRedis();
+        $redis->select(13);
+        //print_r($hotel_list);exit;
+        //$hotel_list = array_slice($hotel_list, 0,1);
+        //print_r($hotel_list);exit;
+        $m_box = new \Admin\Model\BoxModel();
+        $ret = [];
+        foreach($hotel_list as $key=>$v){
+            $is_have_heart_log = 0;
+            $where =" 1 and room.hotel_id=".$v['hotel_id'].' and a.state =1 and a.flag =0 ';
+            $box_list = $m_box->getListInfo( 'a.id,room.name rname, a.name boxname, a.mac,a.id box_id',$where);
+            //print_r($box_list);exit;
+            foreach($box_list as $ks=>$vs){
+               $keys = 'heartbeat:2:'.$vs['mac'];
+               $is_keys = $redis->keys($keys);
+               //var_dump($is_keys);exit;
+               if(!empty($is_keys)){
+                   $heart_info = $redis->get($keys);
+                   $heart_info = json_decode($heart_info,true);
+                   //print_r($heart_info);exit;
+                   $heart_time = strtotime($heart_info['date']);
+                   if($heart_time>$lose_date){
+                       $is_have_heart_log = 1;
+                       break;
+                   }
+               }
+            }
+            if($is_have_heart_log==0){
+                $ret[] = $v;
+            }
+        }
+        //print_r($ret);exit;
+        $xlsCell = array(
+            
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('region_name','城市'),
+            array('remark','维护人'),
+            
+        );
+        $xlsName = '失联七天酒楼';
+        $filename = 'no7heartLogHotel';
+        $this->exportExcel($xlsName, $xlsCell, $ret,$filename);
     }
 }
