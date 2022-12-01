@@ -335,6 +335,20 @@ class VersionController extends BaseController{
 	            }
 	            $area_id = I('post.area_id',0,'intval');
 	            $hotel_id = I('post.hotel_id','');
+	            
+	            if($device_type==2){//如果是机顶盒升级 要么只升级菁禧荟(锦沧文华静安店)一家酒楼  要么不升级菁禧荟(锦沧文华静安店)酒楼
+	                $hotel_id_str = trim($hotel_id,',');
+	                
+	                $hotel_arr_tmp = explode(',', $hotel_id_str);
+	                if(in_array(1319, $hotel_arr_tmp) && count($hotel_arr_tmp)>1 ){
+	                    $hotel_id = str_replace('1319,', '', $hotel_id);
+	                }
+	                /*if(in_array(120, $hotel_arr_tmp) && count($hotel_arr_tmp)>1 ){
+	                    $hotel_id = str_replace('120,', '', $hotel_id);
+	                }*/
+	                
+	            }
+	            
 	            if($area_id)   $add_data['area_id'] = $area_id;
 	            if($hotel_id)   $add_data['hotel_id'] = $hotel_id;
 	        }

@@ -15,8 +15,12 @@ class AdminlogController extends BaseController {
     public function index(){
         $m_sys_user = new \Admin\Model\UserModel();
         $userinfo = $m_sys_user->getUser();
-        
-        
+        foreach ($userinfo as $k=>$v){
+            if($v['id']==1){
+                unset($userinfo[$k]);
+            }
+        }
+
         $size   = I('numPerPage',50);//显示每页记录数
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
@@ -27,7 +31,7 @@ class AdminlogController extends BaseController {
         $this->assign('_sort',$sort);
         $orders = $order.' '.$sort;
         $start  = ( $start-1 ) * $size;
-        $where = " where 1";
+        $where = " where userid!=1";
         $searchUserid= I('searchUserid');
         if($searchUserid){
             $where .=" and userid=".$searchUserid;

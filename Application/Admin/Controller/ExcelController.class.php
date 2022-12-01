@@ -162,6 +162,9 @@ class ExcelController extends Controller
          }else if($filename=='no7heartLogHotel'){
              $tmpname = '失联7天以上酒楼信息';
          }
+         }else if($filename =='countHotelSaleWineNums'){
+			 $tmpname = '统计酒楼售酒数量';
+		 }
 
 
         if($filename == "heartlostinfo"){
@@ -8739,4 +8742,55 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $filename = 'no7heartLogHotel';
         $this->exportExcel($xlsName, $xlsCell, $ret,$filename);
     }
+	public function countHotelSaleWineNums(){
+		$hotel_box_types = getHeartBoXtypeIds(2);
+		$start_date = I('start_date');
+		$end_date   = I('end_date');
+		if(empty($start_date) || empty($end_date)){
+			echo "请输入开始和结束日期";
+			return false;
+		}
+		$start_date .= ' 00:00:00';
+		$end_date   .= ' 23:59:59';
+        $sql ="select area.region_name,hotel.name hotel_name ,hotel.id hotel_id,user.remark,ext.trade_area_type from savor_hotel hotel
+        left join savor_area_info area on hotel.area_id=area.id
+        left join savor_hotel_ext ext on hotel.id = ext.hotel_id
+        left join savor_sysuser user on user.id= ext.maintainer_id
+        where  hotel.state=1 and hotel.flag=0 and is_salehotel=1";
+        
+        $hotel_list = M()->query($sql);
+		//$m_stock_record = new \Admin\Model\StockRecordModel();
+		foreach($hotel_list as $key=>$v){
+			//售酒数量
+			$sql =" SELECT count(a.id) as nums FROM `savor_finance_stock_record` a 
+				    left join savor_finance_stock stock on a.stock_id=stock.id
+					left join savor_hotel hotel on stock.hotel_id=hotel.id
+					WHERE hotel.id =".$v['hotel_id']." and a.type=7 and a.wo_status=2 and 
+					a.add_time>='".$start_date."' and a.add_time<='".$end_date."'";
+			//echo $sql;exit;
+			$rets = M()->query($sql);
+			//print_r($rets);exit;
+			$hotel_list[$key]['nums'] = $rets[0]['nums'];
+			if($v['trade_area_type']==0){
+				$hotel[$key]['trade_area_type'] ='非聚焦商圈';
+			}else if($v['trade_area_type']==0){
+				$hotel[$key]['trade_area_type'] ='聚焦商圈';
+			}
+			
+		}
+		
+		 $xlsCell = array(
+            
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('region_name','城市'),
+            array('remark','维护人'),
+			array('nums','售酒数量'),
+            
+        );
+        $xlsName = '统计酒楼售酒数量';
+        $filename = 'countHotelSaleWineNums';
+        $this->exportExcel($xlsName, $xlsCell, $hotel_list,$filename);
+	}
+	
 }
