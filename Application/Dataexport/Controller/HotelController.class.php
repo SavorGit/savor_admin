@@ -225,4 +225,39 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         $this->exportToExcel($cell,$datalist,$filename,1);
 
     }
+
+    public function sellmonthmgr(){
+        $all_test_hotel = C('TEST_HOTEL');
+        $sql = "select a.op_openid,count(a.id) as num,DATE_FORMAT(a.add_time,'%Y-%m') as sell_date,hotel.id as hotel_id,hotel.name as hotel_name,
+            area.region_name as area_name from savor_finance_stock_record as a 
+            left join savor_finance_stock stock on a.stock_id=stock.id left join savor_hotel hotel on stock.hotel_id=hotel.id
+            left join savor_hotel_ext ext on hotel.id=ext.hotel_id left join savor_area_info area on area.id=hotel.area_id
+            where a.type=7 and a.wo_reason_type=1 and a.wo_status=2 group by a.op_openid,sell_date";
+        $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $res_data = $m_stock_record->query($sql);
+        $datalist = array();
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        foreach ($res_data as $v){
+            $res_user = $m_user->getWhere('id,mobile,create_time as reg_time',array('openid'=>$v['op_openid'],'status'=>1),'id desc','0,1','');
+            $info = array('reg_time'=>$res_user[0]['reg_time'],'openid'=>$v['op_openid'],'mobile'=>$res_user[0]['mobile'],
+                'sell_date'=>$v['sell_date'],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
+                'area_name'=>$v['area_name'],'sell_num'=>$v['num']
+            );
+            if(!in_array($v['hotel_id'],$all_test_hotel)){
+                $datalist[]=$info;
+            }
+        }
+        $cell = array(
+            array('reg_time','注册时间'),
+            array('openid','openid'),
+            array('mobile','手机号码'),
+            array('sell_date','统计时段'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','酒楼城市'),
+            array('sell_num','销售数量(瓶数)'),
+        );
+        $filename = '餐厅经理分月销售统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+    }
 }
