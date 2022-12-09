@@ -26,7 +26,7 @@ class MemberController extends BaseController {
             $where['a.invite_type'] = $invite_type;
         }
         $start = ($pageNum-1)*$size;
-        $orderby = 'a.id desc';
+        $orderby = 'a.invite_time desc';
         $m_user = new \Admin\Model\Smallapp\UserModel();
         $fields = 'a.id,a.openid,a.nickName,a.avatarUrl,a.mobile,a.vip_level,a.invite_type,a.invite_openid,a.invite_time,a.hotel_id,a.room_id,a.create_time';
         $res_list = $m_user->getUserList($fields,$where,$orderby,$start,$size);
