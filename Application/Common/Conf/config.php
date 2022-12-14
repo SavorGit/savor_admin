@@ -231,6 +231,11 @@ $config['HOTEL_STATE'] = array(
     '3'=>'报损',
     '4'=>'待补充信息',
 );
+$config['HOTEL_COOPERATE_STATUS'] = array(
+    '0'=>'未开始合作',
+    '1'=>'合作中',
+    '2'=>'已中止合作',
+);
 
 $config['HOTEL_KEY'] = array(
     '1'=>'重点',

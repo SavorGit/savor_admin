@@ -408,6 +408,19 @@
           </select>
         </div>
       </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒楼状态:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+         <select name="cooperate_status"  class="form-control bs-select" required>
+             <volist name=":C('HOTEL_COOPERATE_STATUS')" id="vo">
+                    <option value="{$key}" <if condition="$key eq $vinfo['cooperate_status']">selected</if>>{$vo}</option><br>
+                </volist>
+          </select>
+        </div>
+      </div>
 
        <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
