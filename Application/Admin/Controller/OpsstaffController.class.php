@@ -100,6 +100,11 @@ class OpsstaffController extends BaseController {
         	if(empty($area_id) || ($hscope==2 && empty($hotel_area_id))){
         		$this->output('缺少必要参数!', 'opsstaff/staffadd', 2, 0);
         	}
+        	if($hscope==4){
+        	    if(!in_array($area_id,$hotel_area_id)){
+                    $this->output('请勾选上自己所在的城市', 'opsstaff/staffadd', 2, 0);
+                }
+            }
         	$data = array('sysuser_id'=>$sysuser_id,'area_id'=>$area_id,'job'=>$job,'mobile'=>$mobile,'status'=>$status,
                 'hotel_role_type'=>$hscope);
             $permission = array('hotel_info'=>array('type'=>$hscope,'area_ids'=>$hotel_area_id));
