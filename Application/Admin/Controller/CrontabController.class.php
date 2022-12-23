@@ -4644,6 +4644,16 @@ class CrontabController extends Controller
         echo "handle_goods_stock end:$now_time \r\n";
     }
 
+    public function stathotelgoodsprice(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "handle_goods_settlement_price start:$now_time \r\n";
+        $m_pricehotel = new \Admin\Model\FinancePriceTemplateHotelModel();
+        $m_pricehotel->handle_goods_settlement_price();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "handle_goods_settlement_price end:$now_time \r\n";
+    }
+
     public function pushdishlottery(){
         $now_time = date('Y-m-d H:i:s');
         echo "pushdishlottery start:$now_time \r\n";

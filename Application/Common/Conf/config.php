@@ -791,6 +791,7 @@ $config['STATS_CACHE_PRE'] = "statistics:";
 //财务后台缓存key
 $config['FINANCE_HOTELSTOCK']   = "finance:hotelstock";
 $config['FINANCE_GOODSSTOCK']   = "finance:goodsstock";
+$config['FINANCE_HOTELGOODS_PRICE']   = "finance:hotelgoods:price";//酒楼售卖酒商品结算价
 
 $config['UPD_STR'] = array(
     1=>array(
