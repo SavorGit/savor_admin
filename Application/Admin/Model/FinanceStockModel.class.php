@@ -10,8 +10,10 @@ class FinanceStockModel extends BaseModel{
         $res_stockhotels = $this->getAll('hotel_id',$where,0,100000,'','hotel_id');
         $m_stock_detail = new \Admin\Model\FinanceStockDetailModel();
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(9);
+        $cache_key = C('FINANCE_HOTELSTOCK');
         $data_list = array();
-
         foreach ($res_stockhotels as $v){
             $hotel_id = $v['hotel_id'];
             $hotel_name = '';
@@ -59,13 +61,17 @@ class FinanceStockModel extends BaseModel{
                     }
                 }
             }
+            $hotel_cache_key = $cache_key.":$hotel_id";
             if(!empty($goods_list)){
-                $data_list[$hotel_id]=array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'goods_ids'=>$goods_ids,'goods_list'=>$goods_list);
+                $hotel_data = array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'goods_ids'=>$goods_ids,'goods_list'=>$goods_list);
+                $redis->set($hotel_cache_key,json_encode($hotel_data));
+
+                $data_list[$hotel_id]=$hotel_data;
+            }else{
+                $redis->del($hotel_cache_key);
             }
         }
-        $redis = new \Common\Lib\SavorRedis();
-        $redis->select(9);
-        $cache_key = C('FINANCE_HOTELSTOCK');
+
         $redis->set($cache_key,json_encode($data_list));
         return true;
     }
