@@ -260,4 +260,44 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         $filename = '餐厅经理分月销售统计';
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
+
+    public function hoteltaskdata(){
+        $tmonth = I('get.tmonth');
+        if(empty($tmonth)){
+            $tmonth = date('Y-m');
+        }
+        $static_sdate = $tmonth.'-01';
+        $static_edate = $tmonth.'-31';
+
+        $sql = "select a.area_name,a.maintainer,a.hotel_id,a.hotel_name,case hotel.iskey when 1 then '重点' when 2 then '非重点' END AS iskey,
+sum(a.task_invitevip_release_num) as task_invitevip_release_num,sum(a.task_invitevip_get_num) as task_invitevip_get_num,sum(a.task_invitevip_sale_num) as task_invitevip_sale_num,
+sum(a.task_demand_release_num) as task_demand_release_num,sum(a.task_demand_get_num) as task_demand_get_num,sum(a.task_demand_operate_num) as task_demand_operate_num,
+sum(a.task_demand_finish_num) as task_demand_finish_num,sum(a.task_invitation_release_num) as task_invitation_release_num,sum(a.task_invitation_get_num) as task_invitation_get_num,
+sum(a.task_invitation_operate_num) as task_invitation_operate_num,sum(a.task_invitation_finish_num) as task_invitation_finish_num
+from savor_smallapp_static_hotelstaffdata as a left join savor_hotel as hotel on a.hotel_id=hotel.id 
+where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by a.hotel_id order by a.area_id asc";
+        $model = M();
+        $datalist = $model->query($sql);
+        $cell = array(
+            array('area_name','地区'),
+            array('maintainer','维护人'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('iskey','是否重点酒楼'),
+            array('task_invitevip_release_num','任务券发布数'),
+            array('task_invitevip_get_num','任务券领取数'),
+            array('task_invitevip_sale_num','任务券售酒数'),
+            array('task_demand_release_num','点播发布数'),
+            array('task_demand_get_num','点播领取数'),
+            array('task_demand_operate_num','点播应操作数'),
+            array('task_demand_finish_num','点播完成数'),
+            array('task_invitation_release_num','邀请函发布数'),
+            array('task_invitation_get_num','邀请函领取数'),
+            array('task_invitation_operate_num','邀请函应操作数'),
+            array('task_invitation_finish_num','邀请函完成数'),
+        );
+        $filename = '餐厅任务完成情况统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+
+    }
 }
