@@ -262,14 +262,13 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
     }
 
     public function hoteltaskdata(){
-        $tmonth = I('get.tmonth');
-        if(empty($tmonth)){
-            $tmonth = date('Y-m');
-        }
-        $static_sdate = $tmonth.'-01';
-        $static_edate = $tmonth.'-31';
+        $sdate = I('get.sdate');
+        $edate = I('get.edate');
 
-        $sql = "select a.area_name,a.maintainer,a.hotel_id,a.hotel_name,case hotel.iskey when 1 then '重点' when 2 then '非重点' END AS iskey,
+        $static_sdate = date('Y-m-d',strtotime($sdate));
+        $static_edate = date('Y-m-d',strtotime($edate));
+
+        $sql = "select a.area_name,a.maintainer,a.hotel_id,a.hotel_name,
 sum(a.task_invitevip_release_num) as task_invitevip_release_num,sum(a.task_invitevip_get_num) as task_invitevip_get_num,sum(a.task_invitevip_sale_num) as task_invitevip_sale_num,
 sum(a.task_demand_release_num) as task_demand_release_num,sum(a.task_demand_get_num) as task_demand_get_num,sum(a.task_demand_operate_num) as task_demand_operate_num,
 sum(a.task_demand_finish_num) as task_demand_finish_num,sum(a.task_invitation_release_num) as task_invitation_release_num,sum(a.task_invitation_get_num) as task_invitation_get_num,
@@ -283,7 +282,6 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             array('maintainer','维护人'),
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
-            array('iskey','是否重点酒楼'),
             array('task_invitevip_release_num','任务券发布数'),
             array('task_invitevip_get_num','任务券领取数'),
             array('task_invitevip_sale_num','任务券售酒数'),
