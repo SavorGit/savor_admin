@@ -250,41 +250,108 @@ class OpsstaffModel extends BaseModel{
 
     private function stats_resourceupdate($res_box,$type,$area_id,$staff_id){
         $redis = new \Common\Lib\SavorRedis();
-        $redis->select(13);
+
         $hotel_versions = array();
         $hotels = array();
         foreach ($res_box as $v){
             $hotels[$v['hotel_id']] = $v['mac_addr'];
         }
+        $m_new_menu_hotel = new \Admin\Model\ProgramMenuHotelModel();
         foreach ($hotels as $k=>$m){
-            $sql_adv_version = "select max(update_time) as max_update_time from savor_ads where hotel_id={$k} and type=3";
+            $hotel_id = $k;
+
+            $sql_adv_version = "select max(update_time) as max_update_time from savor_ads where hotel_id={$hotel_id} and type=3";
             $res_adv_version = $this->query($sql_adv_version);
-            $adv = 0;//宣传片期号
+            $adv = '20190101000000';//宣传片期号
             if(!empty($res_adv_version)){
                 $adv = date('YmdHis',strtotime($res_adv_version[0]['max_update_time']));
             }
-            $hotel_versions[$k] = array('adv'=>$adv);
+            $menu_info = $m_new_menu_hotel->getLatestMenuid($hotel_id);//获取最新的一期节目单
+            $menu_num= $menu_info['menu_num'];
+
+            $hotel_versions[$k] = array('adv'=>$adv,'menu_num'=>$menu_num);
         }
+
         $box_num = 0;
         $adv_up_num = $pro_up_num = $ads_up_num = 0;
         $adv_notup_hotels = $pro_notup_hotels = $ads_notup_hotels = array();
         foreach ($res_box as $v){
             $box_num++;
             $ckey = 'heartbeat:2:'.$v['mac'];
+            $redis->select(13);
             $res_cache = $redis->get($ckey);
             if(!empty($res_cache)){
                 $cache_data = json_decode($res_cache,true);
-                if($hotel_versions[$v['hotel_id']]['adv'].$cache_data['pro_download_period']==$cache_data['adv_period']){
+                if($hotel_versions[$v['hotel_id']]['adv'].$hotel_versions[$v['hotel_id']]['menu_num']==$cache_data['adv_period']){
                     $adv_up_num++;
                 }else{
                     $adv_notup_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
-                if($cache_data['pro_download_period']==$cache_data['pro_period']){
+                if($hotel_versions[$v['hotel_id']]['menu_num']==$cache_data['pro_period']){
                     $pro_up_num++;
                 }else{
                     $pro_notup_hotels[$v['hotel_id']][]=$v['box_id'];
                 }
-                if($cache_data['ads_download_period']==$cache_data['period']){
+
+                //获取机顶盒的广告期号
+                if($v['mac_addr']=='000000000000'){//虚拟小平台
+                    $redis->select(10);
+                    $cache_key = 'vsmall:ads:'.$v['hotel_id'].":".$v['mac'];
+                    $cache_info = $redis->get($cache_key);
+                    $ads_info = json_decode($cache_info,true);
+                    if(!empty($ads_info['media_lib'])){
+                        $ads_proid = $ads_info['menu_num'];
+                    }else{
+                        $ads_proid = '';
+                    }
+                }else{//实体小平台
+                    $redis->select(12);
+                    $program_ads_key = C('PROGRAM_ADS_CACHE_PRE');
+                    $cache_key = $program_ads_key.$v['box_id'];
+                    $cache_value = $redis->get($cache_key);
+                    $ads_info = json_decode($cache_value,true);
+                    $ads_proid = $ads_info['menu_num'];
+                }
+                if(empty($ads_proid)){
+                    $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
+                    $max_adv_location = C('MAX_ADS_LOCATION_NUMS');
+                    $now_date = date('Y-m-d H:i:s');
+                    $ads_num_arr = array();
+                    $ads_time_arr = array();
+                    for($i=1;$i<=$max_adv_location;$i++){
+                        $adv_arr = $m_pub_ads_box->getAdsList($v['box_id'],$i);  //获取当前机顶盒得某一个位置得广告
+                        $adv_arr = $this->changeadvList($adv_arr);
+                        if(!empty($adv_arr)){
+                            $flag =0;
+                            foreach($adv_arr as $ak=>$av){
+                                if($av['start_date']>$now_date){
+                                    $flag ++;
+                                }
+                                if($flag==2){
+                                    unset($adv_arr[$ak]);
+                                    break;
+                                }
+                                $ads_arr['create_time'] = $av['create_time'];
+                                $ads_num_arr[] = $ads_arr;
+                                $ads_time_arr[] = $av['create_time'];
+                                unset($av['pub_ads_id']);
+                                unset($av['create_time']);
+
+                            }
+                        }
+                    }
+                    if(!empty($ads_num_arr)){//如果该机顶盒下广告位不为空
+                        $ads_time_str = max($ads_time_arr);
+                        //$ads_proid = date('YmdHis',strtotime($ads_time_str));
+                        $redis->select(12);
+                        $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+                        $program_ads_menu_num = $redis->get($program_ads_menu_num_key);
+                        $ads_proid = $program_ads_menu_num;
+                    }
+                }
+                //end
+
+                if($ads_proid==$cache_data['period']){
                     $ads_up_num++;
                 }else{
                     $ads_notup_hotels[$v['hotel_id']][]=$v['box_id'];
@@ -502,5 +569,32 @@ class OpsstaffModel extends BaseModel{
                 break;
         }
         return true;
+    }
+
+    private function changeadvList($res,$type=1){
+        if($res){
+            foreach ($res as $vk=>$val) {
+                if(!empty($val['sortNum'])){
+                    if($type==1){
+                        $res[$vk]['order'] =  $res[$vk]['sortNum'];
+                    }else {
+                        $res[$vk]['location_id'] = $res[$vk]['sortNum'];
+                    }
+
+                    unset($res[$vk]['sortNum']);
+                }
+
+                if(!empty($val['name'])){
+                    $ttp = explode('/', $val['name']);
+                    $res[$vk]['name'] = $ttp[2];
+                }
+                if($val['media_type']==2){
+                    $res[$vk]['md5_type'] = 'fullMd5';
+                }
+                $res[$vk]['is_sapp_qrcode'] = intval($val['is_sapp_qrcode']);
+            }
+
+        }
+        return $res;
     }
 }
