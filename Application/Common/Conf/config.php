@@ -507,12 +507,6 @@ $config['SMALLAPP_CONFIG'] = array(
     'appsecret'=>'b9b93aef8d6609722596e35385ff05c5'
 );
 
-$config['SMALLAPP_SALE_CONFIG'] = array(
-    'cache_key'=>'smallapp_sale_token',
-    'appid'=>'wxfc48bdfa3fcaf358',
-    'appsecret'=>'8fe57f640a23cc3ecfb3d5f8fff70144'
-);
-
 $config['XIAO_REDIAN_DING'] = array(
     'appid'=>'wxb19f976865ae9404',
     'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
