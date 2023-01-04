@@ -448,7 +448,14 @@ class HotelController extends BaseController {
 
 		$m_opuser_role = new \Admin\Model\OpuserroleModel();
 		$fields = 'a.user_id main_id,user.remark';
-		$user_info = $m_opuser_role->getAllRole($fields,array('state'=>1,'role_id'=>1),'' );
+		
+		$mps = [];
+		$mps['a.state'] = 1;
+		$mps['user.status'] = 1;
+		$mps['a.role_id'] = array('in',array(1,3));
+		$mps['user.id'] = array('gt',0);
+		$user_info = $m_opuser_role->getAllRole($fields,$mps,'' );
+		
 		$l_c = count($user_info);
 		$user_info[$l_c] = array(
 			'main_id'=>0,
