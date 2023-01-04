@@ -61,6 +61,7 @@ $config = array(
 //     20:极简版大二维码21:极简版呼二维码22购物二维码 23销售二维码 24菜品商家 25单个菜品 26海报分销售卖商品 27 商城商家 28商城商品大屏购买
 //     29推广渠道投屏码 30投屏帮助视频 31活动霸王菜
     'TEST_HOTEL'=>array(7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925),
+    'MAX_ADS_LOCATION_NUMS'=>50,
 
 );
 if(APP_DEBUG === false){
@@ -506,12 +507,6 @@ $config['SMALLAPP_CONFIG'] = array(
     'appsecret'=>'b9b93aef8d6609722596e35385ff05c5'
 );
 
-$config['SMALLAPP_SALE_CONFIG'] = array(
-    'cache_key'=>'smallapp_sale_token',
-    'appid'=>'wxfc48bdfa3fcaf358',
-    'appsecret'=>'8fe57f640a23cc3ecfb3d5f8fff70144'
-);
-
 $config['XIAO_REDIAN_DING'] = array(
     'appid'=>'wxb19f976865ae9404',
     'appsecret'=>'977d15e1ce3c342c123ae6f30bcfeb48',
@@ -791,6 +786,7 @@ $config['STATS_CACHE_PRE'] = "statistics:";
 //财务后台缓存key
 $config['FINANCE_HOTELSTOCK']   = "finance:hotelstock";
 $config['FINANCE_GOODSSTOCK']   = "finance:goodsstock";
+$config['FINANCE_HOTELGOODS_PRICE']   = "finance:hotelgoods:price";//酒楼售卖酒商品结算价
 
 $config['UPD_STR'] = array(
     1=>array(

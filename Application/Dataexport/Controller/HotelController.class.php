@@ -260,4 +260,123 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
         $filename = '餐厅经理分月销售统计';
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
+
+    public function hoteltaskdata(){
+        $sdate = I('get.sdate');
+        $edate = I('get.edate');
+
+        $static_sdate = date('Y-m-d',strtotime($sdate));
+        $static_edate = date('Y-m-d',strtotime($edate));
+
+        $sql = "select a.area_name,a.maintainer,a.hotel_id,a.hotel_name,
+sum(a.task_invitevip_release_num) as task_invitevip_release_num,sum(a.task_invitevip_get_num) as task_invitevip_get_num,sum(a.task_invitevip_sale_num) as task_invitevip_sale_num,
+sum(a.task_demand_release_num) as task_demand_release_num,sum(a.task_demand_get_num) as task_demand_get_num,sum(a.task_demand_operate_num) as task_demand_operate_num,
+sum(a.task_demand_finish_num) as task_demand_finish_num,sum(a.task_invitation_release_num) as task_invitation_release_num,sum(a.task_invitation_get_num) as task_invitation_get_num,
+sum(a.task_invitation_operate_num) as task_invitation_operate_num,sum(a.task_invitation_finish_num) as task_invitation_finish_num
+from savor_smallapp_static_hotelstaffdata as a left join savor_hotel as hotel on a.hotel_id=hotel.id 
+where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by a.hotel_id order by a.area_id asc";
+        $model = M();
+        $datalist = $model->query($sql);
+        $cell = array(
+            array('area_name','地区'),
+            array('maintainer','维护人'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('task_invitevip_release_num','任务券发布数'),
+            array('task_invitevip_get_num','任务券领取数'),
+            array('task_invitevip_sale_num','任务券售酒数'),
+            array('task_demand_release_num','点播发布数'),
+            array('task_demand_get_num','点播领取数'),
+            array('task_demand_operate_num','点播应操作数'),
+            array('task_demand_finish_num','点播完成数'),
+            array('task_invitation_release_num','邀请函发布数'),
+            array('task_invitation_get_num','邀请函领取数'),
+            array('task_invitation_operate_num','邀请函应操作数'),
+            array('task_invitation_finish_num','邀请函完成数'),
+        );
+        $filename = '餐厅任务完成情况统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+
+    }
+
+    public function sellwinestat(){
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(9);
+        $cache_key = C('FINANCE_HOTELSTOCK');
+        $res_stock_hotel = $redis->get($cache_key);
+        $all_stock_hotel = json_decode($res_stock_hotel,true);
+        $model = M();
+        $sql_goods = "select goods.id,goods.name as goods_name,brand.name as brand_name from savor_finance_goods as goods left join savor_finance_brand as brand on goods.brand_id=brand.id
+            where goods.id!=15 order by goods.brand_id asc ";
+        $res_goods = $model->query($sql_goods);
+        $datalist = array();
+        foreach ($res_goods as $v){
+            $goods_id = $v['id'];
+            $goods_name = $v['goods_name'];
+            $brand_name = $v['brand_name'];
+
+            $sql_rk_date = "select a.id,a.stock_id,stock.io_date from savor_finance_stock_record as a left join savor_finance_stock stock on a.stock_id=stock.id where a.goods_id={$goods_id} and a.type=1 and a.dstatus=1 order by a.id asc limit 1 ";
+            $res_rk_date = $model->query($sql_rk_date);
+            $rk_date = $res_rk_date[0]['io_date'];
+
+            $sql_purchase = "select sum(total_amount) as total_num from savor_finance_stock_record where goods_id={$goods_id} and type=1 and dstatus=1 order by id desc";
+            $res_purchase = $model->query($sql_purchase);
+            $purchase_num = intval($res_purchase[0]['total_num']);
+
+            $sql_hotel = "select COUNT(DISTINCT stock.hotel_id) as hotel_num,count(a.id) as sell_num from savor_finance_stock_record as a 
+            left join savor_finance_stock stock on a.stock_id=stock.id where a.goods_id={$goods_id} and a.type=7 and a.wo_reason_type=1 and a.wo_status=2 order by a.id desc";
+            $res_hotel = $model->query($sql_hotel);
+            $hotel_num = intval($res_hotel[0]['hotel_num']);
+            $sell_num = intval($res_hotel[0]['sell_num']);
+
+            $out_sql = "select sum(total_amount) as total_num from savor_finance_stock_record where goods_id={$goods_id} and type=2 and dstatus=1 order by id desc";
+            $res_out = $model->query($out_sql);
+            $out_num = 0;
+            if(!empty($res_out[0]['total_num'])){
+                $out_num = abs($res_out[0]['total_num']);
+            }
+            $wo_sql = "select sum(total_amount) as total_num from savor_finance_stock_record where goods_id={$goods_id} and type=7 and wo_status in (1,2,4) and dstatus=1 order by id desc";
+            $res_wo = $model->query($wo_sql);
+            $wo_num = 0;
+            if(!empty($res_wo[0]['total_num'])){
+                $wo_num = $res_wo[0]['total_num'];
+            }
+            $report_sql = "select sum(total_amount) as total_num from savor_finance_stock_record where goods_id={$goods_id} and type=6 and status in (1,2) and dstatus=1 order by id desc";
+            $res_report = $model->query($report_sql);
+            $report_num = 0;
+            if(!empty($res_report[0]['total_num'])){
+                $report_num = $res_report[0]['total_num'];
+            }
+            $hotel_stock_num = $out_num+$wo_num+$report_num;
+
+            $stock_sql = "select sum(total_amount) as total_num from savor_finance_stock_record where goods_id={$goods_id} and type in(1,2) and dstatus=1 order by id desc";
+            $res_stock = $model->query($stock_sql);
+            $stock_num = intval($res_stock[0]['total_num']);
+
+            $now_sell_hotel_num = 0;
+            foreach ($all_stock_hotel as $sk=>$sv){
+                if(in_array($goods_id,$sv['goods_ids'])){
+                    $now_sell_hotel_num++;
+                }
+            }
+            $datalist[]=array('brand'=>$brand_name,'sku'=>$goods_name,'rk_date'=>$rk_date,'purchase_num'=>$purchase_num,
+                'now_sell_hotel_num'=>$now_sell_hotel_num,'hotel_num'=>$hotel_num,'sell_num'=>$sell_num,
+                'hotel_stock_num'=>$hotel_stock_num,'stock_num'=>$stock_num);
+        }
+        $cell = array(
+            array('brand','品牌'),
+            array('sku','SKU'),
+            array('rk_date','首批入库时间'),
+            array('purchase_num','总采购量'),
+            array('now_sell_hotel_num','在销售餐厅数量'),
+            array('hotel_num','已经有动销餐厅数量'),
+            array('sell_num','已经核销数量'),
+            array('hotel_stock_num','酒楼库存'),
+            array('stock_num','公司库存'),
+        );
+        $filename = '小热点白酒销售统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+
+
+    }
 }

@@ -392,4 +392,15 @@ class HotelModel extends BaseModel{
         }
         return true;
     }
+
+    public function getHotelDatas($field,$where,$order){
+        $res = $this->alias('hotel')
+            ->field($field)
+            ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+            ->join('savor_area_info area on area.id=hotel.area_id','left')
+            ->where($where)
+            ->order($order)
+            ->select();
+        return $res;
+    }
 }

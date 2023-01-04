@@ -24,18 +24,15 @@ smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel
 	}
 
 	public function getWhere($where, $order, $field, $group=''){
-
 		$list = $this->where($where)
 					->order($order)
 					->field($field)
 					->group($group)
 					->select();
-
 		return $list;
 	}
 
 	public function getMenuHotelPub($where, $field){
-
 		$list = $this->alias('nh')
 			         ->where($where)
 			         ->join('savor_hotel nho on nho.id = nh
@@ -45,6 +42,7 @@ smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel
 
 		return $list;
 	}
+
 	public function getProgramByHotelId($hotel_id,$fields,$order,$limit){
 	    $where =  array();
 	    $where['a.hotel_id'] = $hotel_id;
@@ -58,9 +56,19 @@ smlist ON smh.menu_id = smlist.id  WHERE hotel_id IN (SELECT id FROM savor_hotel
 	         ->select();
 	    return $data;
 	}
+
 	public function countWhere($where,$group){
 	    $nums = $this->where($where)->group($group)->count();
 	    return $nums;
 	}
+
+    public function getLatestMenuid($hotel_id){
+        $now_date = date('Y-m-d H:i:s');
+        $data = $this->alias('a')
+            ->join('savor_programmenu_list b  on a.menu_id=b.id')
+            ->field('a.menu_id,b.menu_num,a.pub_time')
+            ->where("a.hotel_id=$hotel_id and a.pub_time<='$now_date'")->order('a.pub_time desc')->find();
+        return $data;
+    }
 
 }//End Class
