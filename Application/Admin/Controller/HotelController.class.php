@@ -222,7 +222,7 @@ class HotelController extends BaseController {
 			$fields = 'a.user_id uid,user.remark ';
 			$map = array();
 			$map['state']   = 1;
-			$map['role_id']   = 1;
+			$map['role_id']   = array('in',array(1,3)) ;
 			$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
 			$u_arr = array();
 			$hezuo_arr = array();
