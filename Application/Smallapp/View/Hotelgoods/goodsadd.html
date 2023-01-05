@@ -158,6 +158,34 @@
 			</div>
 		</div>
 
+		<div class="form-group row" id="goods_model_img" >
+			<label class="col-xs-12 col-sm-2 control-label">
+				小程序酒水小图片：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['small_oss_addr'] eq 'NULL') OR $vinfo['small_oss_addr'] eq ''">
+								<img id="smallmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="smallmedia_idimg" src="{$vinfo.small_oss_addr}" border="0" />
+							</if>
+							<span id="smallmedia_idimgname"></span>
+						</a>
+					</div>
+					<span class="help-block" id="img-msg">请上传200*250像素的jpg格式图片，展示效果最佳</span>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=smallmedia_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="smallmedia_id" id="smallmedia_id" value="{$vinfo.small_media_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div id="goods_coverimg">
 			<foreach name="cover_imgs" item="dinfo" >
 				<div class="form-group row" >
