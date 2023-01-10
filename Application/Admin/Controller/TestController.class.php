@@ -3604,9 +3604,30 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo 'clean ok';
     }
 
-    public function opstaskdata(){
-        $m_hotelstaffdata = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
-        $m_hotelstaffdata->handle_hotel_basicdata();
+    public function avgprice(){
+        $m_goods = new \Admin\Model\FinanceGoodsModel();
+        $res_goods = $m_goods->getDataList('*',array(),'id asc');
+        $m_goods_avgprice = new \Admin\Model\FinanceGoodsAvgpriceModel();
+        foreach ($res_goods as $v){
+            $goods_id = $v['id'];
+            $sql = "select goods_id,stock_id,stock_detail_id,sum(total_amount) as total_num,price from savor_finance_stock_record 
+            where goods_id={$goods_id} and type in (1,3) and status=0 and dstatus=1 group by stock_detail_id";
+            $res_num = $m_goods->query($sql);
+            $price = 0;
+            if(!empty($res_num)){
+                $p_num = 0;
+                $p_price = 0;
+                foreach ($res_num as $pv){
+                    if($pv['total_num']>0 && $pv['price']>0){
+                        $p_num+=$pv['total_num'];
+                        $p_price+=$pv['total_num']*$pv['price'];
+                    }
+                }
+                $price = sprintf("%.2f",$p_price/$p_num);
+            }
+            $m_goods_avgprice->add(array('goods_id'=>$goods_id,'price'=>$price));
+            echo "goods_id:$goods_id,price:$price ok \r\n";
+        }
     }
 
 }

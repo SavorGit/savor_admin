@@ -112,7 +112,7 @@ class HotelgoodsController extends BaseController {
                 $m_media = new \Admin\Model\MediaModel();
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
                 $type = $dinfo['type'];
-                $tv_oss_addr = $model_oss_addr = $poster_oss_addr = $advright_oss_addr = '';
+                $tv_oss_addr = $model_oss_addr = $poster_oss_addr = $advright_oss_addr = $small_oss_addr = '';
 
                 if(!empty($dinfo['tv_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['tv_media_id']);
@@ -134,9 +134,14 @@ class HotelgoodsController extends BaseController {
                 $dinfo['advright_oss_addr'] = $advright_oss_addr;
                 if(!empty($dinfo['poster_media_id'])){
                     $res_media = $m_media->getMediaInfoById($dinfo['poster_media_id']);
-                    $model_oss_addr = $res_media['oss_addr'];
+                    $poster_oss_addr = $res_media['oss_addr'];
                 }
-                $dinfo['poster_oss_addr'] = $model_oss_addr;
+                $dinfo['poster_oss_addr'] = $poster_oss_addr;
+                if(!empty($dinfo['small_media_id'])){
+                    $res_media = $m_media->getMediaInfoById($dinfo['small_media_id']);
+                    $small_oss_addr = $res_media['oss_addr'];
+                }
+                $dinfo['small_oss_addr'] = $small_oss_addr;
 
                 if($dinfo['amount']==0){
                     $dinfo['amount'] = 1;
@@ -229,6 +234,7 @@ class HotelgoodsController extends BaseController {
             $tv_media_id = I('post.tv_media_id',0,'intval');
             $tv_media_vid = I('post.tv_media_vid',0,'intval');
             $model_media_id = I('post.model_media_id',0,'intval');
+            $small_media_id = I('post.smallmedia_id',0,'intval');
             $postermedia_id = I('post.postermedia_id',0,'intval');
             $advright_media_id = I('post.advright_media_id',0,'intval');
             $finance_goods_id = I('post.finance_goods_id',0,'intval');
@@ -267,7 +273,7 @@ class HotelgoodsController extends BaseController {
             $data = array('name'=>$name,'video_intromedia_id'=>$video_intromedia_id,'intro'=>$intro,'notice'=>$notice,'price'=>$price,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'is_seckill'=>$is_seckill,'is_lottery'=>$is_lottery,
                 'poster_media_id'=>$postermedia_id,'tv_media_id'=>$tv_media_id,'model_media_id'=>$model_media_id,'advright_media_id'=>$advright_media_id,
-                'type'=>$type,'wine_type'=>$wine_type,'finance_goods_id'=>$finance_goods_id,'sort'=>$sort,'sysuser_id'=>$sysuser_id,
+                'small_media_id'=>$small_media_id,'type'=>$type,'wine_type'=>$wine_type,'finance_goods_id'=>$finance_goods_id,'sort'=>$sort,'sysuser_id'=>$sysuser_id,
                 'update_time'=>date('Y-m-d H:i:s'));
             $data['status'] = $status;
             if(!empty($start_time)){
