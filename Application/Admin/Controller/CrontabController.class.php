@@ -3738,6 +3738,15 @@ class CrontabController extends Controller
         echo "usergettask end:$now_time \r\n";
     }
 
+    public function timeplay(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "timeplay start:$now_time \r\n";
+        $m_timplay = new \Admin\Model\Smallapp\TimeplayModel();
+        $m_timplay->handle_timeplay();
+        $now_time = date('Y-m-d H:i:s');
+        echo "timeplay end:$now_time \r\n";
+    }
+
     public function usertask(){
         $now_time = date('Y-m-d H:i:s');
         echo "usertask:$now_time \r\n";
