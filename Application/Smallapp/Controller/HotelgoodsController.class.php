@@ -397,7 +397,7 @@ class HotelgoodsController extends BaseController {
             $where['h.name'] = array('like',"%$keyword%");
         }
         $start  = ($page-1) * $size;
-        $fields = 'a.id,a.add_time,h.id as hotel_id,h.name as hotel_name';
+        $fields = 'a.id,a.add_time,h.id as hotel_id,h.name as hotel_name,area.region_name';
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         $result = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.id desc', $start,$size);
         $datalist = $result['list'];

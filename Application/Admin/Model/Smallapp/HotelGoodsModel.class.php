@@ -9,6 +9,7 @@ class HotelGoodsModel extends BaseModel{
     public function getHotelgoodsList($fields,$where,$order, $start=0,$size=5){
         $list = $this->alias('a')
             ->join('savor_hotel h on a.hotel_id=h.id','left')
+            ->join('savor_area_info area on h.area_id=area.id','left')
             ->field($fields)
             ->where($where)
             ->order($order)
