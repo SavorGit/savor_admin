@@ -996,6 +996,7 @@ $config['INTEGRAL_TYPES'] = array(
     18=>'邀请新会员',
     19=>'会员购买奖励',
     20=>'广告点播',
+    21=>'奖励',
 );
 $config['GOODS_WINE_TYPES'] = array(
 //    '1'=>'预定酒水',
