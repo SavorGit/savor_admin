@@ -33,7 +33,7 @@ class TimeplayModel extends BaseModel{
                 $resource_size = $ads_info[$v['ads_id']]['resource_size'];
             }else{
                 $res_ads = $m_ads->getInfo(array('id'=>$v['ads_id']));
-                $media_info = $m_media->getMediaInfoById($res_ads[0]['media_id']);
+                $media_info = $m_media->getMediaInfoById($res_ads['media_id']);
                 $url = $media_info['oss_path'];
                 $oss_path_info = pathinfo($url);
                 $filename = $oss_path_info['basename'];
@@ -57,19 +57,22 @@ class TimeplayModel extends BaseModel{
                 'avatarUrl'=>$avatarUrl,'nickName'=>$nickName,'forscreen_id'=>$nowtime,
                 'resource_size'=>$resource_size);
             $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+            $t_message = json_encode($message);
+            echo "id:{$v['id']} message:$t_message \r\n";
+
             if(isset($res_netty['error_code'])){
                 $netty_code = $res_netty['netty_data']['code'];
-                $netty_result = $res_netty['netty_data'];
+                $netty_result = json_encode($res_netty['netty_data']);
                 $updata = array('status'=>2,'play_time'=>date('Y-m-d H:i:s'),'netty_code'=>$netty_code,'netty_result'=>$netty_result);
                 $this->updateData(array('id'=>$v['id']),$updata);
-                echo "id:{$v['id']} nettycode:$netty_code \r\n";
+                echo "id:{$v['id']} nettycode:$netty_code $netty_result \r\n";
                 continue;
             }else{
                 $netty_code = 10000;
-                $netty_result = $res_netty;
+                $netty_result = json_encode($res_netty);
                 $updata = array('status'=>2,'play_time'=>date('Y-m-d H:i:s'),'netty_code'=>$netty_code,'netty_result'=>$netty_result);
                 $this->updateData(array('id'=>$v['id']),$updata);
-                echo "id:{$v['id']} nettycode:$netty_code \r\n";
+                echo "id:{$v['id']} nettycode:$netty_code $netty_result\r\n";
             }
             $imgs = array($url);
             $data = array('action'=>59,'box_mac'=>$box_mac,'duration'=>$duration,'forscreen_char'=>'','forscreen_id'=>$nowtime,
