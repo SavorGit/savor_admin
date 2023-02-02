@@ -512,6 +512,7 @@ class HotelController extends BaseController {
 			$vinfo['meal_time']   = $res_hotelext['meal_time'];
             $vinfo['is_comment']   = $res_hotelext['is_comment'];
             $vinfo['is_reward']   = $res_hotelext['is_reward'];
+            $vinfo['jd_custom_no']   = $res_hotelext['jd_custom_no'];
 
 			if($res_hotelext['train_date']=='0000-00-00'){
                 $res_hotelext['train_date'] = '';
@@ -745,7 +746,8 @@ class HotelController extends BaseController {
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
-        
+        $jd_custom_no = I('post.jd_custom_no','','trim');
+
 
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
@@ -753,7 +755,7 @@ class HotelController extends BaseController {
             }
         }
         if($activity_contact){
-            if(  mb_strlen($activity_contact)<2 ||  mb_strlen($activity_contact)>10 ){
+            if(mb_strlen($activity_contact)<2 ||  mb_strlen($activity_contact)>10){
                 $this->error('联系人2至10个字符');
             }
         }
@@ -776,8 +778,8 @@ class HotelController extends BaseController {
 		$save['mobile']              = I('post.mobile','','trim');
 		$save['gps']				 = I('post.gps','','trim');
 		$save['hotel_box_type']      = I('post.hotel_box_type',0,'intval');
-		$save['bill_per']				 = I('post.bill_per','','trim');
-		$save['bill_tel']				 = I('post.bill_tel','','trim');
+		$save['bill_per']		     = I('post.bill_per','','trim');
+		$save['bill_tel']		     = I('post.bill_tel','','trim');
 		if($save['bill_tel']){
 			if(!preg_match('/^1[34578]{1}\d{9}$/',$save['bill_tel'], $result)){
 				$this->error('手机号非法输入');
@@ -901,7 +903,7 @@ class HotelController extends BaseController {
         $data['is_salestat'] = $is_salestat;
         $data['is_salehotel'] = $is_salehotel;
         $data['trade_area_type'] = $trade_area_type;
-
+        $data['jd_custom_no'] = $jd_custom_no;
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
