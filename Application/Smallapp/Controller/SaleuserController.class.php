@@ -172,6 +172,23 @@ class SaleuserController extends BaseController {
                         $msg =  '第一次增加积分:'.$integral;
                     }
                 }
+                if($is_up){
+                    $m_staff = new \Admin\Model\Integral\StaffModel();
+                    $where = array('a.openid'=>$openid,'a.status'=>1,'m.status'=>1);
+                    $res_staff = $m_staff->getMerchantStaffInfo('m.hotel_id',$where);
+                    $hotel_id = intval($res_staff['hotel_id']);
+                    $m_hotel = new \Admin\Model\HotelModel();
+                    $field = 'a.id as hotel_id,a.name as hotel_name,a.area_id,a.hotel_box_type,area.region_name as area_name';
+                    $res_hotel = $m_hotel->getHotels($field,array('a.id'=>$hotel_id));
+                    if(!empty($res_hotel)){
+                        $m_userintegralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+                        $integralrecord_data = array('openid'=>$openid,'area_id'=>$res_hotel[0]['area_id'],
+                            'area_name'=>$res_hotel[0]['area_name'],'hotel_id'=>$res_hotel[0]['hotel_id'],'hotel_name'=>$res_hotel[0]['hotel_name'],
+                            'hotel_box_type'=>$res_hotel[0]['hotel_box_type'],
+                            'integral'=>$integral,'content'=>1,'type'=>21,'integral_time'=>date('Y-m-d H:i:s'));
+                        $m_userintegralrecord->add($integralrecord_data);
+                    }
+                }
             }
             $this->output($msg, 'saleuser/userlist');
 
