@@ -9,6 +9,7 @@ class FinanceChangepriceRecordModel extends BaseModel{
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $m_stock_detail = new \Admin\Model\FinanceStockDetailModel();
         $m_purchase_detail = new \Admin\Model\FinancePurchaseDetailModel();
+        $m_avgprice = new \Admin\Model\FinanceGoodsAvgpriceModel();
         $where = array('status'=>array('in','0,1'));
         $where["DATE_FORMAT(add_time,'%Y-%m-%d')"] = date('Y-m-d',strtotime('-1 day'));
         $res_data = $this->getDataList('*',$where,'goods_id asc,id asc');
@@ -104,7 +105,13 @@ class FinanceChangepriceRecordModel extends BaseModel{
                 //更新savor_finance_stock_record表中 移动平均价avg_price
                 $m_stock_record->updateData(array('idcode'=>array('in',$now_idcodes)),array('avg_price'=>$avg_price));
 
-                $this->updateData(array('id'=>$v['id']),array('status'=>2));
+                foreach ($now_goods_avgprices as $ngav){
+                    $avg_data = array('goods_id'=>$goods_id,'stock_detail_id'=>$ngav['stock_detail_id'],
+                        'purchase_detail_id'=>$ngav['purchase_detail_id'],'price'=>$ngav['avg_price']);
+                    $m_avgprice->add($avg_data);
+                }
+
+                $this->updateData(array('id'=>$v['id']),array('status'=>2,'update_time'=>date('Y-m-d H:i:s')));
                 echo "id: {$v['id']}-{$v['goods_id']}-{$v['purchase_detail_id']} end \r\n";
             }
         }
