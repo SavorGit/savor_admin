@@ -4628,7 +4628,6 @@ class CrontabController extends Controller
         echo "pushhoteldishactivity start:$now_time \r\n";
         $m_activity = new \Admin\Model\Smallapp\HotellotteryModel();
         $m_activity->push_hotellottery();
-
         $now_time = date('Y-m-d H:i:s');
         echo "pushhoteldishactivity end:$now_time \r\n";
     }
@@ -4638,7 +4637,6 @@ class CrontabController extends Controller
         echo "stathotelstock start:$now_time \r\n";
         $m_stock = new \Admin\Model\FinanceStockModel();
         $m_stock->handle_hotel_stock();
-
         $now_time = date('Y-m-d H:i:s');
         echo "stathotelstock end:$now_time \r\n";
     }
@@ -4648,7 +4646,6 @@ class CrontabController extends Controller
         echo "handle_goods_stock start:$now_time \r\n";
         $m_stock = new \Admin\Model\FinanceStockModel();
         $m_stock->handle_goods_stock();
-
         $now_time = date('Y-m-d H:i:s');
         echo "handle_goods_stock end:$now_time \r\n";
     }
@@ -4658,9 +4655,17 @@ class CrontabController extends Controller
         echo "handle_goods_settlement_price start:$now_time \r\n";
         $m_pricehotel = new \Admin\Model\FinancePriceTemplateHotelModel();
         $m_pricehotel->handle_goods_settlement_price();
-
         $now_time = date('Y-m-d H:i:s');
         echo "handle_goods_settlement_price end:$now_time \r\n";
+    }
+
+    public function changestockprice(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "changestockprice start:$now_time \r\n";
+        $m_changeprice = new \Admin\Model\FinanceChangepriceRecordModel();
+        $m_changeprice->changestockprice();
+        $now_time = date('Y-m-d H:i:s');
+        echo "changestockprice end:$now_time \r\n";
     }
 
     public function pushdishlottery(){
