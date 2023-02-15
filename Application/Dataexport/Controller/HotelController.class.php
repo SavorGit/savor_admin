@@ -226,6 +226,79 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
 
     }
 
+    public function invitationqrj(){
+        $sdate = '2023-02-14';
+        $edate = '2023-02-14';
+        if(!empty($sdate) && !empty($edate)){
+            $static_sdate = date('Y-m-d',strtotime($sdate));
+            $static_edate = date('Y-m-d',strtotime($edate));
+            $start_time = "$static_sdate 00:00:00";
+            $end_time = "$static_edate 23:59:59";
+        }else{
+            $static_date = date('Y-m-d',strtotime('-1 day'));
+            $start_time = "$static_date 00:00:00";
+            $end_time = "$static_date 23:59:59";
+        }
+
+        $m_invitation = new \Admin\Model\Smallapp\InvitationModel();
+        $m_invitation_user = new \Admin\Model\Smallapp\InvitationUserModel();
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $where = array();
+        $where['book_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $res_datas = $m_invitation->getDataList('*',$where,'id desc');
+        $datalist = array();
+        foreach ($res_datas as $v){
+            $invitation_id = $v['id'];
+            $res_invitation = $m_invitation_user->getInfo(array('invitation_id'=>$invitation_id,'type'=>1));
+            $dk_openid = $dk_mobile = $open_time = '';
+            $is_sale = 0;
+            if(!empty($res_invitation)){
+                $dk_openid = $res_invitation['openid'];
+                $open_time = $res_invitation['add_time'];
+                $res_user = $m_user->getOne('id,unionId,mobile',array('openid'=>$dk_openid,'small_app_id'=>1),'id desc');
+
+                if(!empty($res_user['mobile'])){
+                    $dk_mobile = $res_user['mobile'];
+                    $res_user = $m_user->getOne('id',array('mobile'=>$res_user['mobile'],'small_app_id'=>5),'id desc');
+                    if(!empty($res_user['id'])){
+                        $is_sale = 1;
+                    }
+                }
+                if($is_sale==0){
+                    if(!empty($res_user['unionId'])){
+                        $res_user = $m_user->getOne('id',array('unionId'=>$res_user['unionId'],'small_app_id'=>5),'id desc');
+                        if(!empty($res_user['id'])){
+                            $is_sale = 1;
+                        }
+                    }
+                }
+            }
+            if($is_sale==0){
+                $info = array('openid'=>$v['openid'],'name'=>$v['name'],'hotel_name'=>$v['hotel_name'],'hotel_id'=>$v['hotel_id'],
+                    'room_name'=>$v['room_name'],'box_mac'=>$v['box_mac'],'book_time'=>$v['book_time'],'dk_openid'=>$dk_openid,
+                    'dk_mobile'=>$dk_mobile,'open_time'=>$open_time,'add_time'=>$v['add_time']
+                );
+                $datalist[]=$info;
+            }
+        }
+        $cell = array(
+            array('openid','用户openid'),
+            array('name','预订人'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','机顶盒MAC'),
+            array('book_time','预定时间'),
+            array('dk_openid','打开用户openid'),
+            array('dk_mobile','打开用户手机号'),
+            array('open_time','打开时间'),
+            array('add_time','添加时间'),
+        );
+        $filename = '邀请函统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+
+    }
+
     public function sellmonthmgr(){
         $all_test_hotel = C('TEST_HOTEL');
         $sql = "select a.op_openid,count(a.id) as num,DATE_FORMAT(a.add_time,'%Y-%m') as sell_date,hotel.id as hotel_id,hotel.name as hotel_name,
