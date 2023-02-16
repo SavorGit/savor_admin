@@ -69,6 +69,7 @@ class SellwineactivityController extends BaseController {
         if(IS_POST){
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
+            $tvleftmedia_id = I('post.tvleftmedia_id',0,'intval');
             $start_date = I('post.start_date');
             $end_date = I('post.end_date');
             $lunch_start_time = I('post.lunch_start_time');
@@ -83,7 +84,7 @@ class SellwineactivityController extends BaseController {
             $sysuser_id = $user['id'];
             $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
             $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
-            $add_data = array('name'=>$name,'media_id'=>$media_id,'start_date'=>$start_time,'end_date'=>$end_time,
+            $add_data = array('name'=>$name,'media_id'=>$media_id,'tvleftmedia_id'=>$tvleftmedia_id,'start_date'=>$start_time,'end_date'=>$end_time,
                 'lunch_start_time'=>$lunch_start_time,'lunch_end_time'=>$lunch_end_time,'dinner_start_time'=>$dinner_start_time,'dinner_end_time'=>$dinner_end_time,
                 'daily_money_limit'=>$daily_money_limit,'money_limit'=>$money_limit,'sysuser_id'=>$sysuser_id,'status'=>$status
             );
@@ -96,15 +97,20 @@ class SellwineactivityController extends BaseController {
         }else{
             $vinfo = array('status'=>2,'lunch_start_time'=>'11:30','lunch_end_time'=>'13:30','dinner_start_time'=>'18:30','dinner_end_time'=>'20:00');
             if($id){
+                $m_media = new \Admin\Model\MediaModel();
                 $vinfo = $m_activity->getInfo(array('id'=>$id));
-                $image_url = '';
+                $image_url = $tvleftimage_url = '';
                 if($vinfo['media_id']){
-                    $m_media = new \Admin\Model\MediaModel();
                     $res_meida = $m_media->getMediaInfoById($vinfo['media_id']);
                     $image_url = $res_meida['oss_addr'];
                 }
+                if($vinfo['tvleftmedia_id']){
+                    $res_meida = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $tvleftimage_url = $res_meida['oss_addr'];
+                }
 
                 $vinfo['image_url'] = $image_url;
+                $vinfo['tvleftimage_url'] = $tvleftimage_url;
                 $vinfo['start_date'] = date('Y-m-d',strtotime($vinfo['start_date']));
                 $vinfo['end_date'] = date('Y-m-d',strtotime($vinfo['end_date']));
                 $vinfo['lunch_start_time'] = date('H:i',strtotime($vinfo['lunch_start_time']));
