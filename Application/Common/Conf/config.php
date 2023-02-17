@@ -63,6 +63,12 @@ $config = array(
     'TEST_HOTEL'=>array(7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925),
     'MAX_ADS_LOCATION_NUMS'=>50,
 
+    'SELLWINE_ACTIVITY' =>array(
+        'url'=>'media/resource/ZntWp83Ghb.mp4',
+        'filename'=>'ZntWp83Ghb.mp4',
+        'md5'=>'76cab8082192f43a2e0a076f258dfc43',
+        'is_offline'=>0,
+    ),
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件

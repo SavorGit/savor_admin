@@ -4668,6 +4668,15 @@ class CrontabController extends Controller
         echo "changestockprice end:$now_time \r\n";
     }
 
+    public function pushsellwineactivity(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushsellwineactivity start:$now_time \r\n";
+        $m_changeprice = new \Admin\Model\Smallapp\SellwineActivityModel();
+        $m_changeprice->pushsellwineactivity();
+        $now_time = date('Y-m-d H:i:s');
+        echo "pushsellwineactivity end:$now_time \r\n";
+    }
+
     public function pushdishlottery(){
         $now_time = date('Y-m-d H:i:s');
         echo "pushdishlottery start:$now_time \r\n";
