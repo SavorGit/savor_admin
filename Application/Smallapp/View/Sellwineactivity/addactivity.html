@@ -91,6 +91,18 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">推送间隔时间：</label>
+				<div class="col-xs-12 col-sm-10 form-inline">
+					<select name="interval_time" class="form-control" required>
+						<volist name="vinfo.interval_minutes" id="wm">
+							<option value="{$wm}" <if condition="$wm eq $vinfo['interval_time']">selected</if> >{$wm}分钟</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
 			<div class="form-group row">
 				<label class="col-xs-6 col-sm-2 control-label">
 					午饭-开始时间:

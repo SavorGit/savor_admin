@@ -78,15 +78,28 @@ class SellwineactivityController extends BaseController {
             $dinner_end_time = I('post.dinner_end_time');
             $daily_money_limit = I('post.daily_money_limit',0,'intval');
             $money_limit = I('post.money_limit',0,'intval');
+            $interval_time = I('post.interval_time',0,'intval');
             $status = I('post.status',0,'intval');
 
+            $push_times = array();
+            $lunch_stime = date("Y-m-d $lunch_start_time");
+            $lunch_etime = date("Y-m-d {$lunch_end_time}");
+            $dinner_stime = date("Y-m-d {$dinner_start_time}");
+            $dinner_etime = date("Y-m-d {$dinner_end_time}");
+            if($lunch_stime>=$lunch_etime){
+                $this->output('午饭开始时间不能大于结束时间', 'sellwineactivity/addactivity',2,0);
+            }
+            if($dinner_stime>=$dinner_etime){
+                $this->output('晚饭开始时间不能大于结束时间', 'sellwineactivity/addactivity',2,0);
+            }
             $user = session('sysUserInfo');
             $sysuser_id = $user['id'];
             $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
             $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
             $add_data = array('name'=>$name,'media_id'=>$media_id,'tvleftmedia_id'=>$tvleftmedia_id,'start_date'=>$start_time,'end_date'=>$end_time,
                 'lunch_start_time'=>$lunch_start_time,'lunch_end_time'=>$lunch_end_time,'dinner_start_time'=>$dinner_start_time,'dinner_end_time'=>$dinner_end_time,
-                'daily_money_limit'=>$daily_money_limit,'money_limit'=>$money_limit,'sysuser_id'=>$sysuser_id,'status'=>$status
+                'daily_money_limit'=>$daily_money_limit,'money_limit'=>$money_limit,'sysuser_id'=>$sysuser_id,'status'=>$status,
+                'interval_time'=>$interval_time,'push_times'=>$push_times
             );
             if($id){
                 $m_activity->updateData(array('id'=>$id),$add_data);
@@ -96,6 +109,10 @@ class SellwineactivityController extends BaseController {
             $this->output('操作成功!', 'sellwineactivity/datalist');
         }else{
             $vinfo = array('status'=>2,'lunch_start_time'=>'11:30','lunch_end_time'=>'13:30','dinner_start_time'=>'18:30','dinner_end_time'=>'20:00');
+            $interval_minutes = array();
+            for($i=1;$i<7;$i++){
+                $interval_minutes[]=$i*10;
+            }
             if($id){
                 $m_media = new \Admin\Model\MediaModel();
                 $vinfo = $m_activity->getInfo(array('id'=>$id));
@@ -108,7 +125,6 @@ class SellwineactivityController extends BaseController {
                     $res_meida = $m_media->getMediaInfoById($vinfo['media_id']);
                     $tvleftimage_url = $res_meida['oss_addr'];
                 }
-
                 $vinfo['image_url'] = $image_url;
                 $vinfo['tvleftimage_url'] = $tvleftimage_url;
                 $vinfo['start_date'] = date('Y-m-d',strtotime($vinfo['start_date']));
@@ -118,6 +134,7 @@ class SellwineactivityController extends BaseController {
                 $vinfo['dinner_start_time'] = date('H:i',strtotime($vinfo['dinner_start_time']));
                 $vinfo['dinner_end_time'] = date('H:i',strtotime($vinfo['dinner_end_time']));
             }
+            $vinfo['interval_minutes'] = $interval_minutes;
             $this->assign('vinfo',$vinfo);
             $this->display();
         }
