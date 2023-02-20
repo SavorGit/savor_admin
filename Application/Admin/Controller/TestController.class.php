@@ -2926,6 +2926,46 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         exit;
     }
 
+    public function pushsellwine(){
+        $box_mac = I('mac','','trim');
+        $countdown = I('countdown',3600,'intval');
+        $activity_id = 1;
+        $m_sellwine_activity = new \Admin\Model\Smallapp\SellwineActivityModel();
+        $res_activity = $m_sellwine_activity->getInfo(array('id'=>$activity_id));
+
+        $m_media = new \Admin\Model\MediaModel();
+        $res_media = $m_media->getMediaInfoById($res_activity['tvleftmedia_id']);
+        $img_path = $res_media['oss_path'];
+
+        $name = '每瓶酒可奖励';
+        $content = '20-100元红包';
+        $filename = 'ZntWp83Ghb.mp4';
+        $video_path = 'media/resource/ZntWp83Ghb.mp4';
+        $netty_data = array('action'=>163,'img_path'=>$img_path,'video_path'=>$video_path,'filename'=>$filename,'name'=>$name,'content'=>$content,'countdown'=>$countdown);
+        $message = json_encode($netty_data);
+        echo $message;
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $ret = $m_netty->pushBox($box_mac,$message);
+        print_r($ret);
+    }
+
+    public function pushbonus(){
+        $box_mac = I('mac','');
+
+        $http_host = 'https://mobile.littlehotspot.com';
+        $trade_no = 10188;
+        $qrinfo =  $trade_no.'_'.$box_mac;
+        $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
+        $op_info = C('BONUS_OPERATION_INFO');
+        $message = array('action'=>121,'nickName'=>$op_info['nickName'],'rtype'=>1,
+            'avatarUrl'=>$op_info['avatarUrl'],'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img'],'content'=>'和朋友们分享，一起抢红包');
+
+        $message['headPic'] = base64_encode($message['avatarUrl']);
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $res_netty = $m_netty->pushBox($box_mac,json_encode($message));
+        print_r($res_netty);
+    }
+
     public function sendsms(){
         $sms_config = C('ALIYUN_SMS_CONFIG');
         $alisms = new \Common\Lib\AliyunSms();
