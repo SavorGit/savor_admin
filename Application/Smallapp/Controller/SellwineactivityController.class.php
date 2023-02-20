@@ -122,7 +122,7 @@ class SellwineactivityController extends BaseController {
                     $image_url = $res_meida['oss_addr'];
                 }
                 if($vinfo['tvleftmedia_id']){
-                    $res_meida = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $res_meida = $m_media->getMediaInfoById($vinfo['tvleftmedia_id']);
                     $tvleftimage_url = $res_meida['oss_addr'];
                 }
                 $vinfo['image_url'] = $image_url;
