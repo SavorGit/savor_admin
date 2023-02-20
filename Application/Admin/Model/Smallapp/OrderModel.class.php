@@ -64,4 +64,29 @@ class OrderModel extends BaseModel{
             ->select();
         return $data;
     }
+
+    public function getSellwineOrderList($fields,$where,$order,$start=0,$size=5){
+        $list = $this->alias('a')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->join('savor_smallapp_dishgoods goods on a.goods_id=goods.id','left')
+            ->join('savor_smallapp_orderlocation olocal on a.id=olocal.order_id','left')
+            ->join('savor_sellwine_activity_redpacket ared on a.id=ared.order_id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $count = $this->alias('a')
+            ->join('savor_smallapp_user user on a.openid=user.openid','left')
+            ->join('savor_smallapp_dishgoods goods on a.goods_id=goods.id','left')
+            ->join('savor_smallapp_orderlocation olocal on a.id=olocal.order_id','left')
+            ->join('savor_sellwine_activity_redpacket ared on a.id=ared.order_id','left')
+            ->field('a.id')
+            ->where($where)
+            ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 }

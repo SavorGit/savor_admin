@@ -1,0 +1,57 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/sellwineactivity/paylog" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <input type="hidden" name="order_id" value="{$order_id}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>调起微信支付ID</th>
+                        <th>支付数据</th>
+                        <th>时间</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="id">{$dinfo.id}</td>
+                            <td data-title="调起微信支付ID">{$dinfo.wxorder_id}</td>
+                            <td data-title="支付数据">{$dinfo.pay_result_str}</td>
+                            <td data-title="时间">{$dinfo.add_time}</td>
+                        </tr>
+
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>

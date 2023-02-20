@@ -284,6 +284,110 @@ class SellwineactivityController extends BaseController {
             $this->assign('vinfo',$vinfo);
             $this->display();
         }
+    }
+
+    public function orderlist() {
+        $start_date = I('post.start_date','');
+        $end_date = I('post.end_date','');
+        $hotel_name = I('post.hotel_name','','trim');
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);
+
+        $where = array('a.otype'=>9);
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'sellwineactivity/orderlist', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }
+        if(!empty($hotel_name)){
+            $where['olocal.hotel_name'] = array('like',"%$hotel_name%");
+        }
+        $start  = ($page-1) * $size;
+        $m_order  = new \Admin\Model\Smallapp\OrderModel();
+        $fields = 'a.id,a.openid,a.sellwine_activity_id,a.price,a.amount,a.total_fee,a.status,a.add_time,a.pay_type,goods.name as goods_name,
+        olocal.hotel_id,olocal.hotel_name,olocal.room_name,olocal.box_mac,user.nickName,user.avatarUrl,ared.money,ared.type,ared.status';
+        $result = $m_order->getSellwineOrderList($fields,$where, 'a.id desc', $start, $size);
+        $datalist = $result['list'];
+        $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
+        $m_red = new \Admin\Model\Smallapp\RedpacketModel();
+        $ared_types = array('10'=>'微信零钱','20'=>'电视红包');
+        $ared_status = array('11'=>'领取成功','12'=>'领取失败','21'=>'发送成功','22'=>'发送失败');
+        foreach ($datalist as $k=>$v){
+            $field_goods = 'goods.name,goods.attr_name,goods.gtype,goods.parent_id,og.amount,og.price';
+            $res_ordergoods = $m_ordergoods->getOrdergoodsList($field_goods,array('og.order_id'=>$v['id']),'og.id asc');
+            $details = array();
+            foreach ($res_ordergoods as $gv){
+                $goods_name = $gv['name'];
+                $details[]=$goods_name.',数量：'.$gv['amount'].',价格：'.$gv['price'];
+            }
+            $details = join('、',$details);
+            $datalist[$k]['details'] = $details;
+            $red_type=$red_status=$red_money=$red_id='';
+            if(!empty($v['type'])){
+                $red_type = $ared_types[$v['type']];
+                $red_status = $ared_status[$v['status']];
+                $red_money = $v['money'];
+                if($v['type']==20){
+                    $res_red = $m_red->getInfo(array('order_id'=>$v['id']));
+                    $red_id = $res_red['id'];
+                }
+            }
+            $datalist[$k]['red_id'] = $red_id;
+            $datalist[$k]['red_type'] = $red_type;
+            $datalist[$k]['red_status'] = $red_status;
+            $datalist[$k]['red_money'] = $red_money;
+        }
+
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('hotel_name',$hotel_name);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display('orderlist');
+    }
+
+    public function paylog(){
+        $order_id = I('order_id',0,'intval');
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+
+        $start = ($pageNum-1)*$size;
+        $where = array('order_id'=>$order_id);
+        $m_paylog = new \Admin\Model\Smallapp\PaylogModel();
+        $res_list = $m_paylog->getDataList('*',$where,'id desc',$start,$size);
+        $data_list = array();
+        if(!empty($res_list['list'])){
+            foreach ($res_list['list'] as $v){
+                $pay_result = json_decode($v['pay_result'],true);
+                $pay_result_str = '';
+                foreach ($pay_result['wxresult'] as $pk=>$pv){
+                    $pv_str = $pv;
+                    if(is_array($pv)){
+                        $pv_str = '';
+                        foreach ($pv as $pvk=>$pvv){
+                            $pv_str.="$pvk=$pvv ";
+                        }
+                    }
+                    $pay_result_str.="$pk:$pv_str ";
+                }
+                $v['pay_result_str'] = $pay_result_str;
+                $data_list[]=$v;
+            }
+
+        }
+        $this->assign('datalist',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->assign('order_id',$order_id);
+        $this->display();
 
     }
 
