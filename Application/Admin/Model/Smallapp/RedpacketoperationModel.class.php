@@ -248,7 +248,7 @@ class RedpacketoperationModel extends BaseModel{
         $nowdtime = date('Y-m-d H:i:s');
         $operation_uid = 42996;
         $m_order = new \Admin\Model\Smallapp\RedpacketModel();
-        $where = array('user_id'=>$operation_uid,'status'=>array('in','4,6'),'scope'=>array('in','2,3'));
+        $where = array('user_id'=>$operation_uid,'status'=>array('in','4,6'),'scope'=>array('in','2,3'),'operate_type'=>2);
         $again_time = date('Y-m-d H:i:s',time()-3600);
         $where['add_time'] = array('egt',$again_time);
         $res_order = $m_order->getDataList('*',$where,'id asc');

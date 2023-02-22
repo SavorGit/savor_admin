@@ -28,6 +28,13 @@
                     </div>
 
                     <div class="form-group">
+                        <div class="input-group input-group-sm">唯一识别码：</div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="idcode" value="{$idcode}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="input-group input-group-sm">酒楼名称：</div>
                         <div class="input-group">
                             <input type="text" class="form-control" name="hotel_name" value="{$hotel_name}" placeholder="酒楼名称">
@@ -58,12 +65,12 @@
                     <tr id="post">
                         <th>ID</th>
                         <th>酒楼名称</th>
-                        <th>订单商品明细</th>
-                        <th>订单数量</th>
+                        <th>商品名称</th>
                         <th>订单总价</th>
                         <th>openid</th>
                         <th>昵称</th>
                         <th>下单时间</th>
+                        <th>唯一识别码</th>
                         <th>活动ID</th>
                         <th>红包金额</th>
                         <th>红包类型</th>
@@ -77,12 +84,12 @@
                         <tr target="sid_user">
                             <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
                             <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
-                            <td data-title="订单商品明细">{$dinfo.details}</td>
-                            <td data-title="订单数量">{$dinfo.amount}</td>
+                            <td data-title="商品名称">{$dinfo.details}</td>
                             <td data-title="订单总价">{$dinfo.total_fee}</td>
                             <td data-title="openid">{$dinfo.openid}</td>
                             <td data-title="昵称">{$dinfo.nickname}</td>
                             <td data-title="下单时间">{$dinfo.add_time}</td>
+                            <td data-title="唯一识别码">{$dinfo.idcode}</td>
                             <td data-title="活动ID">{$dinfo.sellwine_activity_id}</td>
                             <td data-title="红包金额">{$dinfo.red_money}</td>
                             <td data-title="红包类型">{$dinfo.red_type}</td>

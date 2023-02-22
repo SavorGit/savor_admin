@@ -153,9 +153,13 @@ class SellwineactivityController extends BaseController {
                 $this->output('请选择酒楼','sellwineactivity/datalist',2,0);
             }
             $m_activityhotel = new \Admin\Model\Smallapp\SellwineActivityHotelModel();
+            $now_time = date('Y-m-d H:i:s');
             foreach ($hotel_arr as $v){
                 $hotel_id = $v['hotel_id'];
-                $has_activity = $m_activityhotel->getInfo(array('hotel_id'=>$hotel_id,'status'=>1));
+                $awhere = array('a.hotel_id'=>$hotel_id,'a.status'=>1,'activity.status'=>1);
+                $awhere['activity.start_date'] = array('elt',$now_time);
+                $awhere['activity.end_date'] = array('egt',$now_time);
+                $has_activity = $m_activityhotel->getHotelActivity('a.id',$awhere,'a.id desc');
                 if(!empty($has_activity)){
                     $this->output("酒楼ID:$hotel_id,已有活动:{$has_activity['activity_id']}",'sellwineactivity/datalist',2,0);
                 }
@@ -290,6 +294,7 @@ class SellwineactivityController extends BaseController {
         $start_date = I('post.start_date','');
         $end_date = I('post.end_date','');
         $hotel_name = I('post.hotel_name','','trim');
+        $idcode = I('post.idcode','','trim');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
@@ -304,12 +309,15 @@ class SellwineactivityController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
+        if(!empty($idcode)){
+            $where['a.idcode'] = $idcode;
+        }
         if(!empty($hotel_name)){
             $where['olocal.hotel_name'] = array('like',"%$hotel_name%");
         }
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\OrderModel();
-        $fields = 'a.id,a.openid,a.sellwine_activity_id,a.price,a.amount,a.total_fee,a.status,a.add_time,a.pay_type,goods.name as goods_name,
+        $fields = 'a.id,a.openid,a.sellwine_activity_id,a.price,a.amount,a.total_fee,a.status,a.add_time,a.idcode,a.pay_type,goods.name as goods_name,
         olocal.hotel_id,olocal.hotel_name,olocal.room_name,olocal.box_mac,user.nickName,user.avatarUrl,ared.money,ared.type,ared.status';
         $result = $m_order->getSellwineOrderList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
@@ -323,7 +331,8 @@ class SellwineactivityController extends BaseController {
             $details = array();
             foreach ($res_ordergoods as $gv){
                 $goods_name = $gv['name'];
-                $details[]=$goods_name.',数量：'.$gv['amount'].',价格：'.$gv['price'];
+//                $details[]=$goods_name.',数量：'.$gv['amount'].',价格：'.$gv['price'];
+                $details[]=$goods_name;
             }
             $details = join('、',$details);
             $datalist[$k]['details'] = $details;
@@ -346,6 +355,7 @@ class SellwineactivityController extends BaseController {
         $this->assign('start_date',$start_date);
         $this->assign('end_date',$end_date);
         $this->assign('hotel_name',$hotel_name);
+        $this->assign('idcode',$idcode);
         $this->assign('datalist', $datalist);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);

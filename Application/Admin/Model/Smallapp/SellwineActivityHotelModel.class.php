@@ -26,4 +26,14 @@ class SellwineActivityHotelModel extends BaseModel{
         $data = array('list'=>$list,'page'=>$show);
         return $data;
     }
+
+    public function getHotelActivity($fields,$where,$order){
+        $list = $this->alias('a')
+            ->join('savor_sellwine_activity activity on a.activity_id=activity.id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->select();
+        return $list;
+    }
 }
