@@ -7,9 +7,9 @@
 			<div class="form-group row" id="coupon_goods_ids">
     			<label class="col-xs-12 col-sm-2 control-label">选择商品：</label>
 				<div class="col-xs-12 col-sm-10  form-inline">
-					<select name="finance_goods_id" class="form-control bs-select class-filter" data-live-search="true" data-container="body" >
+					<select name="finance_goods_id" class="form-control bs-select class-filter" data-live-search="true" data-container="body" <if condition="$vinfo.finance_goods_id gt 0">disabled</if> >
 						<volist name="goods" id="ginfo">
-							<option value="{$ginfo.id}" <if condition="$vinfo.goods_id eq $ginfo['id']">selected</if> >{$ginfo.name}</option>
+							<option value="{$ginfo.id}" <if condition="$vinfo.finance_goods_id eq $ginfo['id']">selected</if> >{$ginfo.name}</option>
 						</volist>
 					</select>
 

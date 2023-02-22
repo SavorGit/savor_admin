@@ -318,7 +318,7 @@ class SellwineactivityController extends BaseController {
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\OrderModel();
         $fields = 'a.id,a.openid,a.sellwine_activity_id,a.price,a.amount,a.total_fee,a.status,a.add_time,a.idcode,a.pay_type,goods.name as goods_name,
-        olocal.hotel_id,olocal.hotel_name,olocal.room_name,olocal.box_mac,user.nickName,user.avatarUrl,ared.money,ared.type,ared.status';
+        olocal.hotel_id,olocal.hotel_name,olocal.room_name,olocal.box_mac,user.nickName,user.avatarUrl,user.mobile,ared.money,ared.type,ared.status';
         $result = $m_order->getSellwineOrderList($fields,$where, 'a.id desc', $start, $size);
         $datalist = $result['list'];
         $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
@@ -350,6 +350,7 @@ class SellwineactivityController extends BaseController {
             $datalist[$k]['red_type'] = $red_type;
             $datalist[$k]['red_status'] = $red_status;
             $datalist[$k]['red_money'] = $red_money;
+
         }
 
         $this->assign('start_date',$start_date);
