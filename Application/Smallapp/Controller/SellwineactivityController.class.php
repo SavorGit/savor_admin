@@ -324,7 +324,7 @@ class SellwineactivityController extends BaseController {
         $m_ordergoods = new \Admin\Model\Smallapp\OrdergoodsModel();
         $m_red = new \Admin\Model\Smallapp\RedpacketModel();
         $ared_types = array('10'=>'微信零钱','20'=>'电视红包');
-        $ared_status = array('11'=>'领取成功','12'=>'领取失败','21'=>'发送成功','22'=>'发送失败');
+        $ared_status = array('11'=>'领取成功','12'=>'领取失败','21'=>'发送成功','22'=>'发送失败','23'=>'领取成功');
         foreach ($datalist as $k=>$v){
             $field_goods = 'goods.name,goods.attr_name,goods.gtype,goods.parent_id,og.amount,og.price';
             $res_ordergoods = $m_ordergoods->getOrdergoodsList($field_goods,array('og.order_id'=>$v['id']),'og.id asc');
