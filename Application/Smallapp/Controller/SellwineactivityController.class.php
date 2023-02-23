@@ -267,6 +267,11 @@ class SellwineactivityController extends BaseController {
                 $this->output('商品不能重复添加','sellwineactivity/goodsadd',2,0);
             }
             if($id){
+                $res_agoods = $m_activitygoods->getInfo(array('id'=>$id));
+                if($finance_goods_id!=$res_agoods['finance_goods_id']){
+                    $this->output('商品已添加不能更换,可重新添加其他商品','sellwineactivity/goodsadd',2,0);
+                }
+
                 $user = session('sysUserInfo');
                 $sysuser_id = $user['id'];
                 $data['update_time'] = date('Y-m-d H:i:s');
