@@ -257,7 +257,6 @@ class SellwineactivityController extends BaseController {
             $finance_goods_id = I('post.finance_goods_id',0,'intval');
             $money = I('post.money',0,'intval');
             $status = I('post.status',0,'intval');
-            $data = array('activity_id'=>$activity_id,'finance_goods_id'=>$finance_goods_id,'money'=>$money,'status'=>$status);
             $where = array('activity_id'=>$activity_id,'finance_goods_id'=>$finance_goods_id);
             if($id){
                 $where['id'] = array('neq',$id);
@@ -266,6 +265,8 @@ class SellwineactivityController extends BaseController {
             if(!empty($res_data)){
                 $this->output('商品不能重复添加','sellwineactivity/goodsadd',2,0);
             }
+
+            $data = array('activity_id'=>$activity_id,'finance_goods_id'=>$finance_goods_id,'money'=>$money,'status'=>$status);
             if($id){
                 $res_agoods = $m_activitygoods->getInfo(array('id'=>$id));
                 if($finance_goods_id!=$res_agoods['finance_goods_id']){
