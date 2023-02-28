@@ -64,9 +64,9 @@ $config = array(
     'MAX_ADS_LOCATION_NUMS'=>50,
 
     'SELLWINE_ACTIVITY' =>array(
-        'url'=>'media/resource/ZntWp83Ghb.mp4',
-        'filename'=>'ZntWp83Ghb.mp4',
-        'md5'=>'76cab8082192f43a2e0a076f258dfc43',
+        'url'=>'media/resource/iWzxhCKCDN.mp4',
+        'filename'=>'iWzxhCKCDN.mp4',
+        'md5'=>'785c9ed61d2118b46a18028d772d2955',
         'is_offline'=>0,
     ),
 );
