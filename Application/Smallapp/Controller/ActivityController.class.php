@@ -162,6 +162,8 @@ class ActivityController extends BaseController {
             $start_time = date('Y-m-d 00:00:00',$stime);
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        }else{
+            $where['add_time'] = array('egt',date('2023-01-01 00:00:00'));
         }
         if($status){
             $where['status'] = $status;
@@ -188,7 +190,8 @@ class ActivityController extends BaseController {
                 if(!empty($res_hnum)){
                     $hotel_num = intval($res_hnum[0]['num']);
                 }
-
+                $data_list[$k]['lunch_time'] = $v['lunch_start_time'].'-'.$v['lunch_end_time'];
+                $data_list[$k]['dinner_time'] = $v['dinner_start_time'].'-'.$v['dinner_end_time'];
                 $activity_date = date('Y-m-d',strtotime($v['start_time'])).'-'.date('Y-m-d',strtotime($v['end_time']));
                 $data_list[$k]['activity_date'] = $activity_date;
                 $data_list[$k]['hotel_num'] = $hotel_num;
@@ -214,19 +217,41 @@ class ActivityController extends BaseController {
         $id = I('id',0,'intval');
         $name = I('post.name','','trim');
         $prize = I('post.prize','','trim');
-        $people_num = I('post.people_num',0,'intval');
         $start_date = I('post.start_date');
         $end_date = I('post.end_date');
         $media_id = I('post.media_id',0,'intval');
         $portraitmedia_id = I('post.portraitmedia_id',0,'intval');
         $status = I('post.status',0,'intval');
+        $lunch_start_time = I('post.lunch_start_time');
+        $lunch_end_time = I('post.lunch_end_time');
+        $dinner_start_time = I('post.dinner_start_time');
+        $dinner_end_time = I('post.dinner_end_time');
+        $wine_ml = I('post.wine_ml',0,'intval');
+        $meal_get_num = I('post.meal_get_num',0,'intval');
+        $box_get_num = I('post.box_get_num',0,'intval');
+        $bottle_num = I('post.bottle_num',0,'intval');
+        $join_num = I('post.join_num',0,'intval');
+        $finance_goods_id = I('post.finance_goods_id',0,'intval');
 
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
         if(IS_POST){
             $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
             $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
-            $add_data = array('name'=>$name,'prize'=>$prize,'start_time'=>$start_time,'end_time'=>$end_time,
-                'people_num'=>$people_num,'status'=>$status,'type'=>6
+            $user = session('sysUserInfo');
+            $sysuser_id = $user['id'];
+
+            $bottle = 500;
+            if($finance_goods_id==10){
+                $bottle = 750;
+            }
+            $people_num = $bottle/$wine_ml;
+            if(!is_int($people_num)){
+                $this->output('请输入能均分倒完的毫升', 'activity/addtastwine',2,0);
+            }
+            $add_data = array('name'=>$name,'start_time'=>$start_time,'end_time'=>$end_time,
+                'lunch_start_time'=>$lunch_start_time,'lunch_end_time'=>$lunch_end_time,'dinner_start_time'=>$dinner_start_time,'dinner_end_time'=>$dinner_end_time,
+                'wine_ml'=>$wine_ml,'meal_get_num'=>$meal_get_num,'box_get_num'=>$box_get_num,'bottle_num'=>$bottle_num,
+                'join_num'=>$join_num,'finance_goods_id'=>$finance_goods_id,'type'=>6,'status'=>$status,'people_num'=>$people_num,'sysuser_id'=>$sysuser_id,
             );
             $m_media = new \Admin\Model\MediaModel();
             if($media_id){
@@ -244,7 +269,7 @@ class ActivityController extends BaseController {
             }
             $this->output('操作成功!', 'activity/tastwinelist');
         }else{
-            $vinfo = array('status'=>1);
+            $vinfo = array('status'=>1,'lunch_start_time'=>'11:30','lunch_end_time'=>'13:30','dinner_start_time'=>'18:30','dinner_end_time'=>'20:00');
             if($id){
                 $oss_host = get_oss_host();
                 $vinfo = $m_activity->getInfo(array('id'=>$id));
@@ -256,7 +281,14 @@ class ActivityController extends BaseController {
                 }
                 $vinfo['start_date'] = date('Y-m-d',strtotime($vinfo['start_time']));
                 $vinfo['end_date'] = date('Y-m-d',strtotime($vinfo['end_time']));
+                $vinfo['lunch_start_time'] = date('H:i',strtotime($vinfo['lunch_start_time']));
+                $vinfo['lunch_end_time'] = date('H:i',strtotime($vinfo['lunch_end_time']));
+                $vinfo['dinner_start_time'] = date('H:i',strtotime($vinfo['dinner_start_time']));
+                $vinfo['dinner_end_time'] = date('H:i',strtotime($vinfo['dinner_end_time']));
             }
+            $m_finance_goods = new \Admin\Model\FinanceGoodsModel();
+            $goods = $m_finance_goods->getDataList('id,name',array('status'=>1),'brand_id asc,id asc');
+            $this->assign('goods',$goods);
             $this->assign('vinfo',$vinfo);
             $this->display();
         }

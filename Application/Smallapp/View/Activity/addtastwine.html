@@ -10,17 +10,15 @@
 				</div>
 			</div>
 
-			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">酒品名称：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="prize" type="text" value="{$vinfo.prize}" class="form-control" required/>
-				</div>
-			</div>
+			<div class="form-group row" id="coupon_goods_ids">
+				<label class="col-xs-12 col-sm-2 control-label">选择酒商品：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="finance_goods_id" class="form-control bs-select class-filter" data-live-search="true" data-container="body" >
+						<volist name="goods" id="ginfo">
+							<option value="{$ginfo.id}" <if condition="$vinfo.finance_goods_id eq $ginfo['id']">selected</if> >{$ginfo.name}</option>
+						</volist>
+					</select>
 
-			<div class="form-group row" id="goods_price">
-				<label class="col-xs-12 col-sm-2 control-label">每桌最大参与人数：</label>
-				<div class="col-xs-12 col-sm-10">
-					<input name="people_num" type="number" value="{$vinfo.people_num}" class="form-control" required/>
 				</div>
 			</div>
 
@@ -103,6 +101,79 @@
 							<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
 						</div>
 					</div>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-6 col-sm-2 control-label">
+					午饭-开始时间:
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<input placeholder="例如：12:00" name="lunch_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.lunch_start_time}" required>
+				</div>
+
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-6 col-sm-2 control-label">
+					午饭-结束时间:
+				</label>
+
+				<div class="col-xs-12 col-sm-10">
+					<input placeholder="例如：14:00" name="lunch_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.lunch_end_time}" required>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-xs-6 col-sm-2 control-label">
+					晚饭-开始时间:
+				</label>
+
+				<div class="col-xs-12 col-sm-10">
+					<input placeholder="例如：18:00" name="dinner_start_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.dinner_start_time}" required>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-xs-6 col-sm-2 control-label">
+					晚饭-结束时间:
+				</label>
+
+				<div class="col-xs-12 col-sm-10">
+					<input placeholder="例如：21:00" name="dinner_end_time" type="text" class="form-control" minlength="1" maxlength="5"  value="{$vinfo.dinner_end_time}" required>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">每份品鉴量(ml)：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="wine_ml" type="number" value="{$vinfo.wine_ml}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">每个餐厅总瓶数：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="bottle_num" type="number" value="{$vinfo.bottle_num}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">每个餐厅每个饭点最大领取份数：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="meal_get_num" type="number" value="{$vinfo.meal_get_num}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">每个包间每个饭点最大领取份数：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="box_get_num" type="number" value="{$vinfo.box_get_num}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">每人每个活动最多可参与次数：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="join_num" type="number" value="{$vinfo.join_num}" class="form-control" required/>
 				</div>
 			</div>
 

@@ -1,0 +1,133 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+    <form method="post" action="{$host_url}/integral/task/addtastwine" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input type="hidden" name="id" value="{$vinfo.id}">
+
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    任务名称:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
+                </div>
+            </div>
+            <div class="form-group row" id="defaultpic">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    任务图标(必填)：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <div class="fileinput fileinput-new" data-fileinput>
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                            <a data-target="#modal-file" href="javascript:void(0)">
+                                <if condition="($vinfo['oss_addr'] eq 'NULL') OR $vinfo['oss_addr'] eq ''">
+                                    <img id="media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                                    <else />
+                                    <img id="media_idimg" src="{$vinfo.oss_addr}" border="0" />
+                                </if>
+                                <span id="media_idimgname"></span>
+                            </a>
+                        </div>
+                        <div>
+                            <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=media_id&rtype=2" data-browse-file>
+                                选择图片
+                            </a>
+                            <input type="hidden" name="media_id" id="media_id" value="{$vinfo.media_id}" >
+                            <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    类型:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="task_type" id="task_type" class="form-control bs-select" title="请选择" data-size="20" required>
+                        <option value="27" <if condition="$vinfo['task_type'] eq 27"> selected </if> > 品鉴倒酒</option>
+                        <option value="28" <if condition="$vinfo['task_type'] eq 28"> selected </if> > 物料回收</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row" id="coupon_goods_ids">
+                <label class="col-xs-12 col-sm-2 control-label">选择酒商品：</label>
+                <div class="col-xs-12 col-sm-10  form-inline">
+                    <select name="goods_id" class="form-control bs-select class-filter" data-live-search="true" data-container="body" >
+                        <volist name="goods" id="ginfo">
+                            <option value="{$ginfo.id}" <if condition="$vinfo.goods_id eq $ginfo['id']">selected</if> >{$ginfo.name}</option>
+                        </volist>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    积分奖励:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="integral" type="number" class="form-control" min="0" max="10000"  value="{$vinfo.integral}" <if condition="$is_edit gt 0">readonly<else/>required</if>>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-6 col-sm-2 control-label">
+                    任务时段-开始时间:
+                </label>
+                <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
+                    <input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="任务开始时间" value="{$vinfo.start_time}" readonly>
+                    <span class="input-group-btn"  >
+              <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+              <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-6 col-sm-2 control-label">
+                    任务时段-结束时间:
+                </label>
+                <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
+                    <input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="任务结束时间" value="{$vinfo.end_time}" readonly>
+                    <span class="input-group-btn"  >
+              <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+              <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    任务描述：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <script id="editor" type="text/plain" class="ueditor-init" name="desc" style="height: 250px; width: 100%" data-html-content='{$vinfo.desc}'></script>
+                </div>
+            </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default close-m" type="button">取消</button>
+                <button class="btn btn-primary" type="submit">保存</button>
+            </div>
+
+    </form>
+</div>
+<script type="text/javascript">
+
+    $('.date-reset').click(function(){
+        $(this).parent().prev().val('')
+    });
+    $(function(){
+        $(".form-control.date").datetimepicker({
+            //minView: "month", //选择日期后，不会再跳转去选择时分秒
+            minView:"0",
+            language:  'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:00',
+            todayBtn:  1,
+            autoclose: 1,
+        });
+    })
+</script>

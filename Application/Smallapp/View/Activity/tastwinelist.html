@@ -65,8 +65,9 @@
               <th>ID</th>
               <th>名称</th>
               <th>活动时段</th>
+              <th>午饭时间</th>
+              <th>晚饭时间</th>
               <th>图片</th>
-              <th>每桌最大参与人数</th>
               <th>所在酒楼数</th>
               <th>状态</th>
               <th>参与人数</th>
@@ -80,8 +81,9 @@
               <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
               <td data-title="名称"><a class="click-able-title">{$dinfo.name}</a></td>
               <td data-title="活动时段">{$dinfo.activity_date}</td>
+              <td data-title="午饭时间">{$dinfo.lunch_time}</td>
+              <td data-title="晚饭时间">{$dinfo.dinner_time}</td>
               <td data-title="图片"><a href="{$dinfo.image_url}" target="_blank"><img src="{$dinfo.image_url}" ></a></td>
-              <td data-title="每桌最大参与人数">{$dinfo.people_num}</td>
               <td data-title="所在酒楼数">
                 <if condition="$dinfo.hotel_num gt 0">
                     <a class="btn btn-success " title="酒楼数:{$dinfo.hotel_num}" target="navTab" mask="true" rel="activity/hotellist" href="{$host_url}/smallapp/activity/hotellist?activity_id={$dinfo.id}" >
@@ -102,11 +104,11 @@
               <td data-title="创建时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/activity/addtastwinehotel?id={$dinfo.id}" class="btn btn-success btn-icon">
-                    <i class="fa fa-hotel"></i>
-                  </a>
                   <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/activity/addtastwine?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
+                  </a>
+                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/activity/addtastwinehotel?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-hotel"></i>
                   </a>
                 </div>
               </td>

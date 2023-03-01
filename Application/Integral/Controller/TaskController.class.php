@@ -550,6 +550,71 @@ class TaskController extends BaseController {
         }
     }
 
+    public function addtastwine(){
+        $id = I('id',0,'intval');
+        $m_task = new \Admin\Model\Integral\TaskModel();
+        $is_edit = 0;
+        if(IS_POST){
+            $name = I('post.name','','trim');
+            $media_id = I('post.media_id',0,'intval');
+            $task_type = I('post.task_type',0,'intval');
+            $integral = I('post.integral',0,'intval');
+            $desc = I('post.desc','','trim');
+            $start_time = I('post.start_time','0000-00-00 00:00:00','trim');
+            $end_time = I('post.end_time','0000-00-00 00:00:00','trim');
+
+            $type = 2;
+            $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,
+                'integral'=>$integral,'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
+            $userinfo = session('sysUserInfo');
+            $data['uid'] = $userinfo['id'];
+            if(!empty($desc)){
+                $data['desc'] = $desc;
+            }
+            if($id){
+                $res_task_info = $m_task->getInfo(array('id'=>$id));
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0 && $res_task_info['status']==1){
+                    if($data['task_info']!=$res_task_info['task_info']){
+                        $this->output('任务已下发,请勿修改任务信息', "task/addinvitevip",2,0);
+                    }
+                }
+                unset($data['uid']);
+                $data['update_time'] = date('Y-m-d H:i:s');
+                $data['e_uid'] = $userinfo['id'];
+                $m_task->updateData(array('id'=>$id),$data);
+            }else{
+                $m_task->add($data);
+            }
+            $this->output('添加成功', "task/index");
+        }else{
+            $vinfo = array();
+            if($id){
+                $vinfo = $m_task->getInfo(array('id'=>$id));
+                $m_media = new \Admin\Model\MediaModel();
+                if($vinfo['media_id']){
+                    $res_media = $m_media->getMediaInfoById($vinfo['media_id']);
+                    $vinfo['oss_addr'] = $res_media['oss_addr'];
+                }
+                $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+                $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
+                if($res_task_hotel['total']>0) {
+                    $is_edit = 1;
+                }
+                $task_info = json_decode($vinfo['task_info'],true);
+                $vinfo['invite_vip_reward_saler'] = $task_info['invite_vip_reward_saler'];
+                $vinfo['buy_reward_saler'] = $task_info['buy_reward_saler'];
+            }
+            $m_finance_goods = new \Admin\Model\FinanceGoodsModel();
+            $goods = $m_finance_goods->getDataList('id,name',array('status'=>1),'brand_id asc,id asc');
+            $this->assign('goods',$goods);
+            $this->assign('is_edit',$is_edit);
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
+    }
+
     public function addactivitydemandadv(){
         $id = I('id',0,'intval');
         $m_task = new \Admin\Model\Integral\TaskModel();
