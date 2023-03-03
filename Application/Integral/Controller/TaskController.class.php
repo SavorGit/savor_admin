@@ -558,13 +558,14 @@ class TaskController extends BaseController {
             $name = I('post.name','','trim');
             $media_id = I('post.media_id',0,'intval');
             $task_type = I('post.task_type',0,'intval');
+            $goods_id = I('post.goods_id',0,'intval');
             $integral = I('post.integral',0,'intval');
             $desc = I('post.desc','','trim');
             $start_time = I('post.start_time','0000-00-00 00:00:00','trim');
             $end_time = I('post.end_time','0000-00-00 00:00:00','trim');
 
             $type = 2;
-            $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,
+            $data = array('name'=>$name,'media_id'=>$media_id,'type'=>$type,'task_type'=>$task_type,'goods_id'=>$goods_id,
                 'integral'=>$integral,'start_time'=>$start_time,'end_time'=>$end_time,'status'=>0,'flag'=>1);
             $userinfo = session('sysUserInfo');
             $data['uid'] = $userinfo['id'];

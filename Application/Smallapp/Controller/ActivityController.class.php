@@ -388,7 +388,8 @@ class ActivityController extends BaseController {
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
         $m_activity = new \Admin\Model\Smallapp\ActivityModel();
-        $all_activity = $m_activity->getDataList('id,name,prize',array('type'=>array('in',array(6,7))),'id asc');
+        $awhere = array('type'=>array('in',array(6,7)),'add_time'=>array('egt','2023-03-01 00:00:00'));
+        $all_activity = $m_activity->getDataList('id,name',$awhere,'id asc');
         $start  = ($page-1) * $size;
         $fields = 'a.id,activity.name as activity_name,a.hotel_name,a.box_name,a.box_mac,a.openid,a.mobile,user.nickName,user.avatarUrl,a.add_time';
         $m_activityapply = new \Admin\Model\Smallapp\ActivityapplyModel();
