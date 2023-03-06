@@ -732,4 +732,50 @@ class ActivityModel extends BaseModel{
             }
         }
     }
+
+    public function pushtastewineactivity(){
+        $now_time = date('Y-m-d H:i:s');
+        $where = array('status'=>1,'type'=>6);
+        $where['start_date'] = array('elt',$now_time);
+        $where['end_date'] = array('egt',$now_time);
+        $res = $this->getDataList('*',$where,'id desc');
+        if(empty($res)){
+            echo "no activity \r\n";
+            exit;
+        }
+        $sellwine_config = C('SELL_TASTE_WINE_ACTIVITY');
+        $m_activity_hotel = new \Admin\Model\Smallapp\SellwineActivityHotelModel();
+        $m_box = new \Admin\Model\BoxModel();
+        $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        foreach ($res as $v){
+            $activity_id = $v['id'];
+
+            $res_hotels = $m_activity_hotel->getDataList('*',array('activity_id'=>$activity_id,'status'=>1),'id asc');
+            if(empty($res_hotels)){
+                echo "activity_id:$activity_id no hotel \r\n";
+                continue;
+            }
+
+            $netty_data = array('action'=>163,'video_path'=>$sellwine_config['url'],'filename'=>$sellwine_config['filename'],
+                'img_path'=>'','name'=>'','content'=>'','countdown'=>0);
+            $message = json_encode($netty_data);
+            foreach ($res_hotels as $hv){
+                $hotel_id = $hv['hotel_id'];
+                $fields = 'box.mac';
+                $where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>$hotel_id);
+                $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
+                foreach ($res_bdata as $bv){
+                    $ret = $m_netty->pushBox($bv['mac'],$message);
+                    if(isset($ret['error_code'])){
+                        $ret_str = json_encode($ret);
+                        echo "activity_id:{$v['id']},hotel_id:$hotel_id,box_mac:{$bv['mac']} push error $ret_str \r\n";
+                    }else{
+                        echo "activity_id:{$v['id']},hotel_id:$hotel_id,box_mac:{$bv['mac']} push ok \r\n";
+                    }
+                }
+                echo "activity_id:{$v['id']},hotel_id:$hotel_id ok \r\n";
+            }
+
+        }
+    }
 }

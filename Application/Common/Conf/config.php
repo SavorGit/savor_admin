@@ -69,6 +69,14 @@ $config = array(
         'md5'=>'785c9ed61d2118b46a18028d772d2955',
         'is_offline'=>0,
     ),
+
+    'SELL_TASTE_WINE_ACTIVITY' =>array(
+        'url'=>'media/resource/CDeRfecCWd.mp4',
+        'filename'=>'CDeRfecCWd.mp4',
+        'md5'=>'f4c6c52a45788d7d4349ab55dcb58153',
+        'is_offline'=>0,
+        'offline_filename'=>''
+    ),
 );
 if(APP_DEBUG === false){
     $config['TMPL_TRACE_FILE'] = APP_PATH.'Site/View/Public/404.html';   // 页面Trace的模板文件
