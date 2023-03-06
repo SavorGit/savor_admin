@@ -736,21 +736,21 @@ class ActivityModel extends BaseModel{
     public function pushtastewineactivity(){
         $now_time = date('Y-m-d H:i:s');
         $where = array('status'=>1,'type'=>6);
-        $where['start_date'] = array('elt',$now_time);
-        $where['end_date'] = array('egt',$now_time);
+        $where['start_time'] = array('elt',$now_time);
+        $where['end_time'] = array('egt',$now_time);
         $res = $this->getDataList('*',$where,'id desc');
         if(empty($res)){
             echo "no activity \r\n";
             exit;
         }
         $sellwine_config = C('SELL_TASTE_WINE_ACTIVITY');
-        $m_activity_hotel = new \Admin\Model\Smallapp\SellwineActivityHotelModel();
+        $m_activity_hotel = new \Admin\Model\Smallapp\ActivityhotelModel();
         $m_box = new \Admin\Model\BoxModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
         foreach ($res as $v){
             $activity_id = $v['id'];
 
-            $res_hotels = $m_activity_hotel->getDataList('*',array('activity_id'=>$activity_id,'status'=>1),'id asc');
+            $res_hotels = $m_activity_hotel->getDataList('*',array('activity_id'=>$activity_id),'id asc');
             if(empty($res_hotels)){
                 echo "activity_id:$activity_id no hotel \r\n";
                 continue;
