@@ -3326,13 +3326,12 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($all_probability);
     }
 
-    public function senduserbonus(){
-        $orderid= I('oid',0,'intval');
+    public function sendbonus(){
         $box_mac = I('mac','','trim');
         $op_info = C('BONUS_OPERATION_INFO');
 
         $http_host = 'https://mobile.littlehotspot.com';
-        $trade_no = $orderid;
+        $trade_no = 16455;
         $qrinfo =  $trade_no.'_'.$box_mac;
         $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
         $netty_data = array('action'=>121,'nickName'=>$op_info['nickName'],
@@ -3345,17 +3344,13 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($ret);
     }
 
-    public function sendbonus(){
+    public function sendtaste(){
         $box_mac = I('mac','','trim');
-        $op_info = C('BONUS_OPERATION_INFO');
 
-        $http_host = 'https://mobile.littlehotspot.com';
-        $trade_no = 16455;
-        $qrinfo =  $trade_no.'_'.$box_mac;
-        $mpcode = $http_host.'/h5/qrcode/mpQrcode?qrinfo='.$qrinfo;
-        $netty_data = array('action'=>121,'nickName'=>$op_info['nickName'],
-            'avatarUrl'=>$op_info['avatarUrl'],'codeUrl'=>$mpcode,'img_path'=>$op_info['popout_img']);
-        $netty_data['headPic'] = base64_encode($netty_data['avatarUrl']);
+        $filename = 'CDeRfecCWd.mp4';
+        $video_path = 'media/resource/CDeRfecCWd.mp4';
+        $netty_data = array('action'=>163,'video_path'=>$video_path,'filename'=>$filename,
+            'img_path'=>'','name'=>'','content'=>'','countdown'=>0);
         $message = json_encode($netty_data);
         echo $message;
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
