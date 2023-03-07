@@ -300,15 +300,24 @@ class ActivityController extends BaseController {
         if(IS_POST){
             $hbarr = $_POST['hbarr'];
             if(empty($hbarr)){
-                $this->output('请选择酒楼','activity/tastwinelist',2,0);
+                $this->output('请选择酒楼','activity/addtastwinehotel',2,0);
             }
             $hotel_arr = json_decode($hbarr, true);
             if(empty($hotel_arr)){
-                $this->output('请选择酒楼','activity/tastwinelist',2,0);
+                $this->output('请选择酒楼','activity/addtastwinehotel',2,0);
             }
             $m_activityhotel = new \Admin\Model\Smallapp\ActivityhotelModel();
+            $now_time = date('Y-m-d H:i:s');
             foreach ($hotel_arr as $v){
                 $hotel_id = $v['hotel_id'];
+                $awhere = array('a.hotel_id'=>$hotel_id,'activity.status'=>1);
+                $awhere['activity.start_time'] = array('elt',$now_time);
+                $awhere['activity.end_time'] = array('egt',$now_time);
+                $has_activity = $m_activityhotel->getHotelActivity('a.id',$awhere,'a.id desc');
+                if(!empty($has_activity)){
+                    $this->output("酒楼ID:$hotel_id,已有活动:{$has_activity['activity_id']}",'activity/addtastwinehotel',2,0);
+                }
+
                 $data = array('hotel_id'=>$hotel_id,'activity_id'=>$id);
                 $res = $m_activityhotel->where($data)->find();
                 if(empty($res)){
