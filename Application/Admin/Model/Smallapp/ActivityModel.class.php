@@ -747,8 +747,32 @@ class ActivityModel extends BaseModel{
         $m_activity_hotel = new \Admin\Model\Smallapp\ActivityhotelModel();
         $m_box = new \Admin\Model\BoxModel();
         $m_netty = new \Admin\Model\Smallapp\NettyModel();
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(9);
+        $key = C('FINANCE_HOTELSTOCK');
         foreach ($res as $v){
             $activity_id = $v['id'];
+            $finance_goods_id = $v['finance_goods_id'];
+
+            $lunch_stime = date("Y-m-d {$v['lunch_start_time']}");
+            $lunch_etime = date("Y-m-d {$v['lunch_end_time']}");
+            $dinner_stime = date("Y-m-d {$v['dinner_start_time']}");
+            $dinner_etime = date("Y-m-d {$v['dinner_end_time']}");
+            $meal_type = '';
+            $meal_stime = $meal_etime = '';
+            if($now_time>=$lunch_stime && $now_time<=$lunch_etime){
+                $meal_type = 'lunch';
+                $meal_stime = $lunch_stime;
+                $meal_etime = $lunch_etime;
+            }elseif($now_time>=$dinner_stime && $now_time<=$dinner_etime){
+                $meal_type = 'dinner';
+                $meal_stime = $dinner_stime;
+                $meal_etime = $dinner_etime;
+            }
+            if(empty($meal_type)){
+                echo "activity_id:$activity_id no in mealtime \r\n";
+                continue;
+            }
 
             $res_hotels = $m_activity_hotel->getDataList('*',array('activity_id'=>$activity_id),'id asc');
             if(empty($res_hotels)){
@@ -761,6 +785,19 @@ class ActivityModel extends BaseModel{
             $message = json_encode($netty_data);
             foreach ($res_hotels as $hv){
                 $hotel_id = $hv['hotel_id'];
+                $hotel_key = $key.':'.$hotel_id;
+                $res_cache = $redis->get($hotel_key);
+                if(!empty($res_cache)) {
+                    $hotel_stock = json_decode($res_cache, true);
+                    if(!in_array($finance_goods_id,$hotel_stock['goods_ids'])){
+                        echo "activity_id:{$v['id']},hotel_id:$hotel_id,goods_id:{$finance_goods_id} no stock \r\n";
+                        continue;
+                    }
+                }else{
+                    echo "activity_id:{$v['id']},hotel_id:$hotel_id,goods_id:{$finance_goods_id} no stock \r\n";
+                    continue;
+                }
+
                 $fields = 'box.mac';
                 $where = array('box.state'=>1,'box.flag'=>0,'hotel.id'=>$hotel_id);
                 $res_bdata = $m_box->getBoxByCondition($fields,$where,'');
