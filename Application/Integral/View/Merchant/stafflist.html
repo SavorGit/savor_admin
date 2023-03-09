@@ -32,9 +32,11 @@
           <thead>
             <tr id="post">
               <th>ID</th>
-              <th>用户openid</th>
+              <th>销售端openid</th>
               <th>昵称</th>
               <th>等级</th>
+              <th>用户端openid</th>
+              <th>手机号码</th>
               <th>状态</th>
               <th>添加时间</th>
             </tr>
@@ -43,9 +45,11 @@
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
               <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="用户openid"><a class="click-able-title">{$dinfo.openid}</a></td>
+              <td data-title="销售端openid"><a class="click-able-title">{$dinfo.sale_openid}</a></td>
               <td data-title="昵称">{$dinfo.nickname}</td>
               <td data-title="等级">{$dinfo.level_str}</td>
+              <td data-title="用户端openid">{$dinfo.openid}</td>
+              <td data-title="手机号码">{$dinfo.mobile}</td>
               <td data-title="状态">
                 <if condition="$dinfo['status'] eq 1">
                   <a data-tip="正常" target="ajaxTodo" href="{$host_url}/integral/merchant/editstaffstatus?id={$dinfo.id}&status=2" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>

@@ -647,13 +647,14 @@ class MerchantController extends BaseController {
         }
         $start  = ($page-1) * $size;
         $m_staff = new \Admin\Model\Integral\StaffModel();
-        $fields = 'a.id,a.openid,a.level,a.status,a.add_time,u.nickName';
+        $fields = 'a.id,a.openid as sale_openid,a.level,a.status,a.add_time,u.nickName,u.mobile,u.unionId';
         $order = 'a.level asc';
         $result = $m_staff->getStafflList($fields,$where,$order,$start,$size);
         $datalist = array();
         if(!empty($result['list'])){
             $all_level = array('1'=>'管理员','2'=>'经理','3'=>'服务员');
             $all_status = C('DATA_STATUS');
+            $m_user = new \Admin\Model\Smallapp\UserModel();
             foreach ($result['list'] as $v){
                 $level_str = '';
                 if(isset($all_level[$v['level']])){
@@ -661,6 +662,12 @@ class MerchantController extends BaseController {
                 }
                 $v['level_str'] = $level_str;
                 $v['status_str'] = $all_status[$v['status']];
+                $openid='';
+                if(!empty($v['unionid'])){
+                    $res_user = $m_user->getOne('openid',array('unionId'=>$v['unionid']),'id desc');
+                    $openid = $res_user['openid'];
+                }
+                $v['openid']=$openid;
                 $datalist[]=$v;
             }
         }
