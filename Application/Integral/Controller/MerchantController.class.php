@@ -664,7 +664,7 @@ class MerchantController extends BaseController {
                 $v['status_str'] = $all_status[$v['status']];
                 $openid='';
                 if(!empty($v['unionid'])){
-                    $res_user = $m_user->getOne('openid',array('unionId'=>$v['unionid']),'id desc');
+                    $res_user = $m_user->getOne('openid',array('unionId'=>$v['unionid'],'small_app_id'=>1,'status'=>1),'id desc');
                     $openid = $res_user['openid'];
                 }
                 $v['openid']=$openid;
