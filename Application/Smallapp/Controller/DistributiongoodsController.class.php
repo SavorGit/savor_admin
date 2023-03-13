@@ -204,6 +204,9 @@ class DistributiongoodsController extends BaseController {
                     $nums = explode('-',$v_arr[0]);
                     $min = intval($nums[0]);
                     $max = intval($nums[1]);
+                    if(empty($min) || empty($max) || empty($plist_price)){
+                        $this->output('价格列表设置错误', 'distributiongoods/goodsadd',2,0);
+                    }
                     $prices[]=array('min'=>$min,'max'=>$max,'pirce'=>$plist_price);
                 }
             }
