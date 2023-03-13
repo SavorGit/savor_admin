@@ -1,0 +1,96 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/distributionuser/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/smallapp/distributionuser/adduser?level=1" title="新增用户" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增用户</a>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+            <div class="form-inline">
+
+            <div class="form-group">
+                <div class="input-group input-group-sm">用户姓名：</div>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="name" value="{$name}" placeholder="用户姓名">
+                </div>
+            </div>
+
+          <div class="input-group input-group-sm">
+            <span class="input-group-btn">
+              <select name="status" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body">
+                <option value='0' >全部</option>
+                <option value="1" <if condition="$status eq 1">selected</if> >正常</option>
+                <option value="2" <if condition="$status eq 2">selected</if> >禁用</option>
+              </select>
+            </span>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>openid</th>
+              <th>姓名</th>
+              <th>手机号码</th>
+              <th>等级</th>
+              <th>二级用户数</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="openid">{$dinfo.openid}</td>
+              <td data-title="姓名"><a class="click-able-title">{$dinfo.name}</a></td>
+              <td data-title="手机号码">{$dinfo.mobile}</td>
+              <td data-title="等级">{$dinfo.level_str}</td>
+              <td data-title="二级用户数">
+                  <a class="btn btn-success" title="用户数:{$dinfo.user_num}" target="navTab" mask="true" rel="distributionuser/userlist" href="{$host_url}/smallapp/distributionuser/userlist?parent_id={$dinfo.id}" >
+                      {$dinfo.user_num}</a>
+               </td>
+              <td data-title="状态">{$dinfo.status_str}</td>
+              <td data-title="创建时间">{$dinfo.add_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                    <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/distributionuser/adduser?id={$dinfo.id}" class="btn btn-success btn-icon">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                </div>
+              </td>
+            </tr>
+
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
