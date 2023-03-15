@@ -227,7 +227,7 @@ class DistributiongoodsController extends BaseController {
             $data = array('name'=>$name,'intro'=>$intro,'notice'=>$notice,'price'=>$price,'reward_money'=>$reward_money,'distribution_reward_money'=>$distribution_reward_money,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'price_list'=>$price_list,
                 'distribution_config'=>$distribution_config,'duser_id'=>$duser_id,'type'=>45,'finance_goods_id'=>$finance_goods_id,
-                'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
+                'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             $data['status'] = $status;
             if($status==1){
                 $flag = 2;
