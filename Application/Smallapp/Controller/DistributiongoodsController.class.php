@@ -97,7 +97,7 @@ class DistributiongoodsController extends BaseController {
                 }
                 $price_list = json_decode($dinfo['price_list'],true);
                 foreach ($price_list as $k=>$v){
-                    $price_info = $v['min'].'-'.$v['max'].','.$v['pirce'];
+                    $price_info = $v['min'].'-'.$v['max'].','.$v['price'];
                     $all_price_list[$k]['value']=$price_info;
                 }
 
@@ -207,7 +207,7 @@ class DistributiongoodsController extends BaseController {
                     if(empty($min) || empty($max) || empty($plist_price)){
                         $this->output('价格列表设置错误', 'distributiongoods/goodsadd',2,0);
                     }
-                    $prices[]=array('min'=>$min,'max'=>$max,'pirce'=>$plist_price);
+                    $prices[]=array('min'=>$min,'max'=>$max,'price'=>$plist_price);
                 }
             }
             $price_list = json_encode($prices);
