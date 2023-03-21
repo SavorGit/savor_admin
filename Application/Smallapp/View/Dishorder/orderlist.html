@@ -97,7 +97,6 @@
                         <th>电话</th>
                         <th>地址</th>
                         <th>订单类型</th>
-                        <th>备注</th>
                         <th>状态</th>
                         <th>购买人</th>
                         <th>头像</th>
@@ -123,7 +122,6 @@
                             <td data-title="电话">{$dinfo.phone}</td>
                             <td data-title="地址">{$dinfo.address}</td>
                             <td data-title="订单类型">{$dinfo.otype_str}</td>
-                            <td data-title="备注">{$dinfo.remark}</td>
                             <td data-title="状态">{$dinfo.status_str}</td>
                             <td data-title="购买人">{$dinfo.nickname}</td>
                             <td data-title="头像"><a href="{$dinfo.avatarurl}" target="_blank"><img src="{$dinfo.avatarurl}" ></a></td>
@@ -131,7 +129,7 @@
                             <td data-title="下单时间">{$dinfo.add_time}</td>
                             <td class="table-tool" data-title="操作">
                                 <div class="tools-edit">
-                                    <if condition="($dinfo.otype eq 5) OR ($dinfo.otype eq 6) OR ($dinfo.otype eq 7) OR ($dinfo.otype eq 8)">
+                                    <if condition="($dinfo.otype eq 5) OR ($dinfo.otype eq 6) OR ($dinfo.otype eq 7) OR ($dinfo.otype eq 8) OR ($dinfo.otype eq 10)">
                                         <if condition="($dinfo.status eq 51) OR ($dinfo.status eq 52)">
                                         <a data-tip="接单/拒单" target="dialog" mask="true" href="{$host_url}/smallapp/dishorder/orderreceive?id={$dinfo.id}" class="btn btn-success btn-icon">
                                             <i class="fa fa-pencil"></i>

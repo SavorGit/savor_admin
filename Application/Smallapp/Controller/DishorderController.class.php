@@ -29,7 +29,7 @@ class DishorderController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $otypes = array('5'=>'商品订单','6'=>'赠送订单','7'=>'转赠订单','8'=>'团购订单','3'=>'外卖订单','51'=>'商品销售订单');
+        $otypes = array('5'=>'商品订单','10'=>'团购分销订单','6'=>'赠送订单','7'=>'转赠订单','8'=>'团购订单','3'=>'外卖订单','51'=>'商品销售订单',);
         if($display_type=='dish'){
             $otype = 3;
             $display_html = 'dishorderlist';
@@ -88,6 +88,7 @@ class DishorderController extends BaseController {
             $m_user = new \Admin\Model\Smallapp\UserModel();
             $m_ordergift = new \Admin\Model\Smallapp\OrdergiftModel();
             $m_ordermap = new \Admin\Model\Smallapp\OrdermapModel();
+
             foreach ($datalist as $k=>$v){
                 $sale_uname = '';
                 $gift_uname = '';
