@@ -2,10 +2,7 @@
 namespace Smallapp\Controller;
 use Common\Lib\Page;
 use Admin\Controller\BaseController ;
-/**
- * @desc 小程序数据统计-授权用户
- *
- */
+
 class UserController extends BaseController {
     public function __construct() {
         parent::__construct();
@@ -108,6 +105,132 @@ class UserController extends BaseController {
         $this->assign('page',$page);
         $this->assign('datalist',$data);
         $this->display();
-        
     }
+
+    public function customerlist(){
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+        $openid = I('openid','','trim');
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $where = array('a.sale_uid'=>array('gt',0));
+        if(!empty($openid)){
+            $where['a.openid'] = $openid;
+        }
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'user/customerlist', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['a.customer_time'] = array(array('egt',$start_time),array('elt',$end_time));
+        }
+        $start = ($pageNum-1)*$size;
+
+        $m_user = new \Admin\Model\Smallapp\UserModel();
+        $res_list = $m_user->getUserList('a.*',$where,'a.customer_time desc', $start,$size);
+        $data_list = $res_list['list'];
+        if(!empty($data_list)){
+            $m_order = new \Admin\Model\Smallapp\OrderModel();
+            foreach ($data_list as $k=>$v){
+                $buy_money = 0;
+                $res_order = $m_order->getRow('sum(total_fee) as money',array('openid'=>$v['openid'],'otype'=>10,'status'=>array('egt',51)));
+                if(!empty($res_order['money'])){
+                    $buy_money = $res_order['money'];
+                }
+                $data_list[$k]['buy_money'] = $buy_money;
+            }
+        }
+        $this->assign('openid',$openid);
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('datalist',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->display();
+    }
+
+    public function distorderlist(){
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+        $openid = I('openid','','trim');
+        $start_date = I('start_date','');
+        $end_date = I('end_date','');
+
+        $where = array();
+        if(!empty($openid)){
+            $where['a.openid'] = $openid;
+        }
+        $where['a.otype'] = 10;
+        $where['a.status'] = array('egt',51);
+        if($start_date && $end_date){
+            $stime = strtotime($start_date);
+            $etime = strtotime($end_date);
+            if($stime>$etime){
+                $this->output('开始时间不能大于结束时间', 'user/customerlist', 2, 0);
+            }
+            $start_time = date('Y-m-d 00:00:00',$stime);
+            $end_time = date('Y-m-d 23:59:59',$etime);
+            $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time));
+        }
+        $start = ($pageNum-1)*$size;
+        $m_order = new \Admin\Model\Smallapp\OrderModel();
+        $fields = 'a.id,a.openid,a.price,a.amount,a.total_fee,a.status,a.contact,a.phone,a.status,
+        a.address,a.remark,a.delivery_time,a.add_time,a.otype,a.sale_uid,a.address,a.pay_type,
+        a.is_settlement,goods.name as goods_name,user.mobile,user.openid,user.nickName,user.avatarUrl';
+        $res_list = $m_order->getDistributionOrderList($fields,$where,'a.id desc',$start,$size);
+        $data_list = $res_list['list'];
+        $order_status = C('ORDER_ALLSTATUS');
+        if(!empty($data_list)){
+            foreach ($data_list as $k=>$v){
+                $settlement_str = '未结算';
+                if($v['is_settlement']==1){
+                    $settlement_str = '已结算';
+                }
+                $data_list[$k]['settlement_str'] = $settlement_str;
+                $data_list[$k]['status_str'] = $order_status[$v['status']];
+            }
+        }
+
+        $this->assign('start_date',$start_date);
+        $this->assign('end_date',$end_date);
+        $this->assign('openid',$openid);
+        $this->assign('datalist',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->display();
+    }
+
+    public function settlementlist(){
+        $order_id = I('order_id',0,'intval');
+        $size = I('numPerPage',50,'intval');//显示每页记录数
+        $pageNum = I('pageNum',1,'intval');//当前页码
+
+        $where = array('order_id'=>$order_id);
+        $m_ordersettle = new \Admin\Model\Smallapp\OrdersettlementModel();
+        $fields = 'a.*,user.name,user.mobile,user.level';
+        $res_list = $m_ordersettle->getSettlementList($fields,$where,'a.id desc');
+        $data_list = $res_list['list'];
+        if(!empty($data_list)){
+            $all_level = array('1'=>'一级','2'=>'二级');
+            $all_pay_status = array('1'=>'成功','2'=>'失败');
+            foreach ($data_list as $k=>$v){
+                $data_list[$k]['level_str'] = $all_level[$v['level']];
+                $data_list[$k]['status_str'] = $all_pay_status[$v['pay_status']];
+            }
+        }
+        $this->assign('order_id',$order_id);
+        $this->assign('datalist',$data_list);
+        $this->assign('page',$res_list['page']);
+        $this->assign('numPerPage',$size);
+        $this->assign('pageNum',$pageNum);
+        $this->display();
+    }
+
+
 }

@@ -1,0 +1,108 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/user/distorderlist" method="post">
+        <input type="hidden" name="pageNum" value="{$pageNum}"/>
+        <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+        <div class="searchBar">
+            <div class="clearfix">
+
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">时间：</div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_date}" data-ymd="true">
+                            <input name="start_date" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>
+                        <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_date}" data-ymd="true">
+                            <input name="end_date" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_date}">
+                            <span class="input-group-btn">
+                            <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                            <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+                          </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">用户openid：</div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="openid" value="{$openid}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group input-group-sm pull-right">
+                            <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+    <div id="w_list_print">
+        <div class="no-more-tables">
+            <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+                <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+                    <thead>
+                    <tr id="post">
+                        <th>ID</th>
+                        <th>商品名称</th>
+                        <th>数量</th>
+                        <th>订单总价</th>
+                        <th>联系人</th>
+                        <th>电话</th>
+                        <th>地址</th>
+                        <th>状态</th>
+                        <th>购买人openid</th>
+                        <th>购买人手机号码</th>
+                        <th>销售人员ID</th>
+                        <th>下单时间</th>
+                        <th>是否已结算</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody data-check="list" data-parent=".table">
+                    <foreach name="datalist" item="dinfo">
+                        <tr target="sid_user">
+                            <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                            <td data-title="商品名称">{$dinfo.goods_name}</td>
+                            <td data-title="数量">{$dinfo.amount}</td>
+                            <td data-title="订单总价">{$dinfo.total_fee}</td>
+                            <td data-title="联系人">{$dinfo.contact}</td>
+                            <td data-title="电话">{$dinfo.phone}</td>
+                            <td data-title="地址">{$dinfo.address}</td>
+                            <td data-title="状态">{$dinfo.status_str}</td>
+                            <td data-title="购买人openid">{$dinfo.openid}</td>
+                            <td data-title="购买人手机号码">{$dinfo.mobile}</td>
+                            <td data-title="销售人员ID">{$dinfo.sale_uid}</td>
+                            <td data-title="下单时间">{$dinfo.add_time}</td>
+                            <td data-title="是否已结算">{$dinfo.settlement_str}</td>
+                            <td class="table-tool" data-title="操作">
+                                <div class="tools-edit">
+                                    <a data-tip="结算信息" title="结算信息-{$dinfo.id}" target="navTab" rel="user/settlementlist" href="{$host_url}/smallapp/user/settlementlist?order_id={$dinfo.id}" class="btn btn-success btn-icon">
+                                        <i class="fa fa-info"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </foreach>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+    {$page}
+</div>
