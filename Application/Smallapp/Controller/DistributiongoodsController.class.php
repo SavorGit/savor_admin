@@ -161,7 +161,7 @@ class DistributiongoodsController extends BaseController {
             $covermedia_id = I('post.covermedia_id','');
             $detailmedia_id = I('post.detailmedia_id','');
             $intro = I('post.intro','');
-            $notice = I('post.notice','','trim');
+            $desc = I('post.desc','');
             $price = I('post.price',0,'intval');
             $price_list = I('post.price_list','');
             $reward_money = I('post.reward_money',0,'intval');
@@ -200,7 +200,7 @@ class DistributiongoodsController extends BaseController {
             if(!empty($price_list)){
                 foreach ($price_list as $v){
                     $v_arr = explode(',',$v);
-                    $plist_price = intval($v_arr[1]);
+                    $plist_price = $v_arr[1];
                     $nums = explode('-',$v_arr[0]);
                     $min = intval($nums[0]);
                     $max = intval($nums[1]);
@@ -224,7 +224,7 @@ class DistributiongoodsController extends BaseController {
             if(empty($price))   $price = 0;
             if(empty($supply_price))   $supply_price = 0;
             if(empty($line_price))   $line_price = 0;
-            $data = array('name'=>$name,'intro'=>$intro,'notice'=>$notice,'price'=>$price,'reward_money'=>$reward_money,'distribution_reward_money'=>$distribution_reward_money,
+            $data = array('name'=>$name,'intro'=>$intro,'desc'=>$desc,'price'=>$price,'reward_money'=>$reward_money,'distribution_reward_money'=>$distribution_reward_money,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'price_list'=>$price_list,
                 'distribution_config'=>$distribution_config,'duser_id'=>$duser_id,'type'=>45,'finance_goods_id'=>$finance_goods_id,
                 'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));

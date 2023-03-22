@@ -35,22 +35,22 @@
 				</div>
 			</div>
 
-
-		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">
-				公告：
-			</label>
-			<div class="col-xs-12 col-sm-10">
-				<textarea name="notice" value="{$vinfo.notice}" type="textInput" class="form-control" maxlength="1000">{$vinfo.notice}</textarea>
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					商品介绍：
+				</label>
+				<div class="col-xs-12 col-sm-10">
+					<textarea name="intro" value="{$vinfo.intro}" type="textInput" class="form-control" maxlength="1000">{$vinfo.intro}</textarea>
+				</div>
 			</div>
-		</div>
+
 
 		<div class="form-group row">
 			<label class="col-xs-12 col-sm-2 control-label">
-				商品介绍：
+				奖励规则介绍：
 			</label>
 			<div class="col-xs-12 col-sm-10">
-				<script id="editor" type="text/plain" class="ueditor-init" name="intro" style="height: 250px; width: 100%" data-html-content='{$vinfo.intro}'></script>
+				<script id="editor" type="text/plain" class="ueditor-init" name="desc" style="height: 250px; width: 100%" data-html-content='{$vinfo.desc}'></script>
 			</div>
 		</div>
 		<div id="goods_coverimg">
