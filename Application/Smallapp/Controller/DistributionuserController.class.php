@@ -63,6 +63,13 @@ class DistributionuserController extends BaseController {
             if($id){
                 $add_data['update_time'] = date('Y-m-d H:i:s');
                 $m_duser->updateData(array('id'=>$id),$add_data);
+                if($level==1){
+                    if($status==2){
+                        $m_duser->updateData(array('parent_id'=>$id),array('status'=>2,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s')));
+                    }else{
+                        $m_duser->updateData(array('parent_id'=>$id),array('status'=>1,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s')));
+                    }
+                }
             }else{
                 $m_duser->addData($add_data);
             }
