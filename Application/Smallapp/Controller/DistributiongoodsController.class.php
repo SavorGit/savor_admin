@@ -71,13 +71,15 @@ class DistributiongoodsController extends BaseController {
         $type = I('type', 0, 'intval');
 
         $all_distribution_config = array(
-            'ty'=>array('name'=>'通用奖励','type'=>'ty'),
-            'ts'=>array('name'=>'特殊奖励','type'=>'ts'),
-        );
-        $all_price_list = array(
-            array('name'=>'一种','value'=>'1-5,777'),
-            array('name'=>'二种','value'=>'6-20,666'),
-            array('name'=>'三种','value'=>'21-1000,555'),
+            array('name'=>'阶梯价一','min'=>1,'max'=>5,'price'=>777,
+                'reward_money'=>'','distribution_reward_money'=>'','ty'=>array(),'ts'=>array()
+            ),
+            array('name'=>'阶梯价二','min'=>6,'max'=>20,'price'=>666,
+                'reward_money'=>'','distribution_reward_money'=>'','ty'=>array(),'ts'=>array()
+            ),
+            array('name'=>'阶梯价三','min'=>21,'max'=>99999,'price'=>555,
+                'reward_money'=>'','distribution_reward_money'=>'','ty'=>array(),'ts'=>array()
+            ),
         );
         $m_goods  = new \Admin\Model\Smallapp\DishgoodsModel();
         if(IS_GET){
@@ -93,12 +95,8 @@ class DistributiongoodsController extends BaseController {
                     if(isset($distribution_config[$k])){
                         $values = $distribution_config[$k];
                     }
-                    $all_distribution_config[$k]['values'] = $values;
-                }
-                $price_list = json_decode($dinfo['price_list'],true);
-                foreach ($price_list as $k=>$v){
-                    $price_info = $v['min'].'-'.$v['max'].','.$v['price'];
-                    $all_price_list[$k]['value']=$price_info;
+                    $values['name'] = $v['name'];
+                    $all_distribution_config[$k] = $values;
                 }
 
                 $oss_host = get_oss_host();
@@ -139,6 +137,7 @@ class DistributiongoodsController extends BaseController {
             }
             $redis = new \Common\Lib\SavorRedis();
             $redis->select(9);
+
             $cache_key = C('FINANCE_GOODSSTOCK');
             $res_cache = $redis->get($cache_key);
             $finance_goods = array();
@@ -149,7 +148,6 @@ class DistributiongoodsController extends BaseController {
             $duser_list = $m_duser->getDataList('id,name',array('level'=>1,'status'=>1),'id asc');
 
             $this->assign('duser_list',$duser_list);
-            $this->assign('all_price_list',$all_price_list);
             $this->assign('all_distribution_config',$all_distribution_config);
             $this->assign('finance_goods',$finance_goods);
             $this->assign('cover_imgs',$cover_imgs);
@@ -163,9 +161,6 @@ class DistributiongoodsController extends BaseController {
             $intro = I('post.intro','');
             $desc = I('post.desc','');
             $price = I('post.price',0,'intval');
-            $price_list = I('post.price_list','');
-            $reward_money = I('post.reward_money',0,'intval');
-            $distribution_reward_money = I('post.distribution_reward_money',0,'intval');
             $amount = I('post.amount',0,'intval');
             $line_price = I('post.line_price',0);
             $status = I('post.status',0,'intval');
@@ -179,38 +174,17 @@ class DistributiongoodsController extends BaseController {
             if(!$price){
                 $this->output('建议零售价不能为空', "distributiongoods/goodsadd", 2, 0);
             }
-            $now_shareprofit_config = array();
             foreach ($distribution_config as $k=>$v){
-                $shareprofit_percent = array_sum($v);
-                if($shareprofit_percent>0){
-                    if($shareprofit_percent==100){
-                        if($v[0]==0 || $v[1]==0){
-                            $tips = $all_distribution_config[$k]['name'].'分销设置一方不能为0';
-                            $this->output($tips, 'distributiongoods/goodsadd',2,0);
-                        }
-                    }else{
-                        $tips = $all_distribution_config[$k]['name'].'分销设置加和不等于100';
-                        $this->output($tips, 'distributiongoods/goodsadd',2,0);
+                if($v['price']>$price){
+                    $this->output('请设置正确的阶梯价', "distributiongoods/goodsadd", 2, 0);
+                }
+                if($k=0){
+                    if($v['price']!=$price){
+                        $this->output('请设置正确的阶梯价一', "distributiongoods/goodsadd", 2, 0);
                     }
-                    $now_shareprofit_config[$k]=$v;
                 }
             }
-            $distribution_config = json_encode($now_shareprofit_config);
-            $prices = array();
-            if(!empty($price_list)){
-                foreach ($price_list as $v){
-                    $v_arr = explode(',',$v);
-                    $plist_price = $v_arr[1];
-                    $nums = explode('-',$v_arr[0]);
-                    $min = intval($nums[0]);
-                    $max = intval($nums[1]);
-                    if(empty($min) || empty($max) || empty($plist_price)){
-                        $this->output('价格列表设置错误', 'distributiongoods/goodsadd',2,0);
-                    }
-                    $prices[]=array('min'=>$min,'max'=>$max,'price'=>$plist_price);
-                }
-            }
-            $price_list = json_encode($prices);
+            $distribution_config = json_encode($distribution_config);
             $where = array('name'=>$name,'status'=>1,'type'=>45);
             if($id){
                 $where['id']= array('neq',$id);
@@ -224,8 +198,8 @@ class DistributiongoodsController extends BaseController {
             if(empty($price))   $price = 0;
             if(empty($supply_price))   $supply_price = 0;
             if(empty($line_price))   $line_price = 0;
-            $data = array('name'=>$name,'intro'=>$intro,'desc'=>$desc,'price'=>$price,'reward_money'=>$reward_money,'distribution_reward_money'=>$distribution_reward_money,
-                'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,'price_list'=>$price_list,
+            $data = array('name'=>$name,'intro'=>$intro,'desc'=>$desc,'price'=>$price,
+                'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'distribution_config'=>$distribution_config,'duser_id'=>$duser_id,'type'=>45,'finance_goods_id'=>$finance_goods_id,
                 'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
             $data['status'] = $status;

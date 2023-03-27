@@ -24,14 +24,57 @@
 				</div>
 			</div>
 
+			<foreach name="all_distribution_config" item="atcinfo" key="atck">
+
 			<div class="form-group row">
 				<label class="col-xs-12 col-sm-2 control-label">
-					价格列表：
+					{$atcinfo.name}：
 				</label>
 				<div class="col-xs-12 col-sm-10 form-inline">
-					<foreach name="all_price_list" item="apinfo">
-					<span class="form-control">{$apinfo.name}</span><input type="text" class="form-control" name="price_list[]" value="{$apinfo.value}" required>
-					</foreach>
+					<span class="form-control">最小数</span><input type="text" class="form-control" name="distribution_config[{$atck}][min]" value="{$atcinfo.min}" required>
+					<span class="form-control">最大数</span><input type="text" class="form-control" name="distribution_config[{$atck}][max]" value="{$atcinfo.max}" required>
+					<span class="form-control">价格</span><input type="text" class="form-control" name="distribution_config[{$atck}][price]" value="{$atcinfo.price}" required>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">{$atcinfo.name}-售卖奖励(元)：</label>
+				<div class="col-xs-12 col-sm-10">
+					<input name="distribution_config[{$atck}][reward_money]" type="text" value="{$atcinfo.reward_money}" class="form-control" required/>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					{$atcinfo.name}-通用奖励分销设置(元)：
+				</label>
+				<div class="col-xs-12 col-sm-10 form-inline">
+					<span class="form-control">一级</span><input type="number" class="form-control" name="distribution_config[{$atck}][ty][]" value="{$atcinfo.ty.0}" min="0" max="100">
+					<span class="form-control">二级</span><input type="number" class="form-control" name="distribution_config[{$atck}][ty][]" value="{$atcinfo.ty.1}" min="0" max="100">
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">
+					{$atcinfo.name}-特殊奖励分销设置(元)：
+				</label>
+				<div class="col-xs-12 col-sm-10 form-inline">
+					<span class="form-control">一级</span><input type="number" class="form-control" name="distribution_config[{$atck}][ts][]" value="{$atcinfo.ts.0}" min="0" max="100">
+					<span class="form-control">二级</span><input type="number" class="form-control" name="distribution_config[{$atck}][ts][]" value="{$atcinfo.ts.1}" min="0" max="100">
+				</div>
+			</div>
+
+			</foreach>
+
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">选择一级分销用户：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="duser_id" class="form-control bs-select class-filter" data-live-search="true" required >
+						<option name="duser_id" selected='selected' value="0">请选择用户</option>
+						<volist name="duser_list" id="duinfo">
+							<option name="duser_id" value="{$duinfo.id}" <if condition="$duinfo.id eq $vinfo['duser_id']"> selected </if> > {$duinfo.name}</option>
+						</volist>
+					</select>
 				</div>
 			</div>
 
@@ -124,44 +167,6 @@
 					<option name="finance_goods_id" selected='selected' value="0">请选择商品</option>
 					<volist name="finance_goods" id="fginfo">
 						<option name="finance_goods_id" value="{$fginfo.id}" <if condition="$fginfo.id eq $vinfo['finance_goods_id']"> selected </if> > {$fginfo.name}</option>
-					</volist>
-				</select>
-			</div>
-		</div>
-
-		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">售卖奖励(元)：</label>
-			<div class="col-xs-12 col-sm-10">
-				<input name="reward_money" type="text" value="{$vinfo.reward_money}" class="form-control" required/>
-			</div>
-		</div>
-
-		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">分销售卖奖励(元)：</label>
-			<div class="col-xs-12 col-sm-10">
-				<input name="distribution_reward_money" type="text" value="{$vinfo.distribution_reward_money}" class="form-control" required/>
-			</div>
-		</div>
-
-		<foreach name="all_distribution_config" item="dcinfo">
-		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">
-				{$dcinfo.name}分销设置：
-			</label>
-			<div class="col-xs-12 col-sm-10 form-inline">
-				<span class="form-control">一级</span><input type="number" class="form-control" name="distribution_config[{$dcinfo.type}][]" value="{$dcinfo.values.0}" min="0" max="100">
-				<span class="form-control">二级</span><input type="number" class="form-control" name="distribution_config[{$dcinfo.type}][]" value="{$dcinfo.values.1}" min="0" max="100">
-			</div>
-		</div>
-		</foreach>
-
-		<div class="form-group row">
-			<label class="col-xs-12 col-sm-2 control-label">选择一级分销用户：</label>
-			<div class="col-xs-12 col-sm-10  form-inline">
-				<select name="duser_id" class="form-control bs-select class-filter" data-live-search="true" required >
-					<option name="duser_id" selected='selected' value="0">请选择用户</option>
-					<volist name="duser_list" id="duinfo">
-						<option name="duser_id" value="{$duinfo.id}" <if condition="$duinfo.id eq $vinfo['duser_id']"> selected </if> > {$duinfo.name}</option>
 					</volist>
 				</select>
 			</div>
