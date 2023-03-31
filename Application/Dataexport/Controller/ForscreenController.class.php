@@ -985,4 +985,49 @@ class ForscreenController extends BaseController{
         $redis->set($cache_key,$path,3600);
     }
 
+    public function saledemandads(){
+        $start_date = I('sdate','');
+        $end_date = I('edate','');
+        $start_time = date('Y-m-d 00:00:00',strtotime($start_date));
+        $end_time = date('Y-m-d 23:59:59',strtotime($end_date));
+        $fields = 'a.id,a.area_name,a.hotel_name,a.room_name,a.box_mac,a.box_type,a.openid,user.avatarUrl,user.nickName,a.mobile_brand,a.mobile_model,
+        a.action,a.imgs,a.resource_size,a.duration,a.create_time';
+        $sql = "select $fields from savor_smallapp_forscreen_record as a left join savor_smallapp_user as user on a.openid=user.openid
+            where a.small_app_id=5 and a.create_time>='$start_time' 
+            and a.create_time<='$end_time' and a.action=59 order by a.id desc ";
+        $model = M();
+        $res = $model->query($sql);
+        $data = array();
+        $all_box_types = C('hotel_box_type');
+        foreach ($res as $v){
+            $box_type_str = '';
+            if(isset($all_box_types[$v['box_type']])){
+                $box_type_str = $all_box_types[$v['box_type']];
+            }
+            $v['box_type_str'] = $box_type_str;
+            $resource_size = '';
+            if(!empty($v['resource_size'])){
+                $resource_size = formatBytes($v['resource_size']);
+            }
+            $v['resource_size'] = $resource_size;
+            $data[] = $v;
+        }
+        $cell = array(
+            array('id','序号'),
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('room_name','包间名称'),
+            array('box_mac','MAC地址'),
+            array('box_type_str','机顶盒类型'),
+            array('openid','openid'),
+            array('nickName','用户昵称'),
+            array('mobile_brand','手机品牌'),
+            array('mobile_model','手机型号'),
+            array('resource_size','资源大小'),
+            array('duration','资源时长'),
+            array('create_time','投屏时间'),
+        );
+        $this->exportToExcel($cell,$data,'销售端广告点播投屏数据',1);
+    }
+
 }
