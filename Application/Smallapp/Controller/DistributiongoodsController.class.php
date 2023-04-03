@@ -160,6 +160,7 @@ class DistributiongoodsController extends BaseController {
             $detailmedia_id = I('post.detailmedia_id','');
             $intro = I('post.intro','');
             $desc = I('post.desc','');
+            $desc2 = I('post.desc2','');
             $price = I('post.price',0,'intval');
             $amount = I('post.amount',0,'intval');
             $line_price = I('post.line_price',0);
@@ -173,6 +174,9 @@ class DistributiongoodsController extends BaseController {
             }
             if(!$price){
                 $this->output('建议零售价不能为空', "distributiongoods/goodsadd", 2, 0);
+            }
+            if(empty($desc) || empty($desc2)){
+                $this->output('请输入奖励规则介绍信息', "distributiongoods/goodsadd", 2, 0);
             }
             foreach ($distribution_config as $k=>$v){
                 if($v['price']>$price){
@@ -198,7 +202,7 @@ class DistributiongoodsController extends BaseController {
             if(empty($price))   $price = 0;
             if(empty($supply_price))   $supply_price = 0;
             if(empty($line_price))   $line_price = 0;
-            $data = array('name'=>$name,'intro'=>$intro,'desc'=>$desc,'price'=>$price,
+            $data = array('name'=>$name,'intro'=>$intro,'desc'=>$desc,'desc2'=>$desc2,'price'=>$price,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'distribution_config'=>$distribution_config,'duser_id'=>$duser_id,'type'=>45,'finance_goods_id'=>$finance_goods_id,
                 'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
