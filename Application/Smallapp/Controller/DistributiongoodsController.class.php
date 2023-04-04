@@ -135,15 +135,9 @@ class DistributiongoodsController extends BaseController {
                 }
                 $cover_imgs[] = $img_info;
             }
-            $redis = new \Common\Lib\SavorRedis();
-            $redis->select(9);
+            $m_finance_goods = new \Admin\Model\FinanceGoodsModel();
+            $finance_goods = $m_finance_goods->getDataList('id,name',array('status'=>1),'brand_id asc,id asc');
 
-            $cache_key = C('FINANCE_GOODSSTOCK');
-            $res_cache = $redis->get($cache_key);
-            $finance_goods = array();
-            if(!empty($res_cache)){
-                $finance_goods = json_decode($res_cache,true);
-            }
             $m_duser = new \Admin\Model\Smallapp\DistributionUserModel();
             $duser_list = $m_duser->getDataList('id,name',array('level'=>1,'status'=>1),'id asc');
 
