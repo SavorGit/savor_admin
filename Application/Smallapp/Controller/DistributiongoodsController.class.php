@@ -22,13 +22,11 @@ class DistributiongoodsController extends BaseController {
         if(!empty($keyword)){
             $where['name'] = array('like',"%$keyword%");
         }
-        $redis = new \Common\Lib\SavorRedis();
-        $redis->select(9);
-        $cache_key = C('FINANCE_GOODSSTOCK');
-        $res_cache = $redis->get($cache_key);
+        $m_finance_goods = new \Admin\Model\FinanceGoodsModel();
+        $res_finance_goods = $m_finance_goods->getDataList('id,name',array('status'=>1),'brand_id asc,id asc');
         $finance_goods = array();
-        if(!empty($res_cache)){
-            $finance_goods = json_decode($res_cache,true);
+        foreach ($res_finance_goods as $v){
+            $finance_goods[$v['id']]=$v;
         }
 
         $start  = ($page-1) * $size;
