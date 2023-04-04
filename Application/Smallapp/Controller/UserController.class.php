@@ -24,6 +24,7 @@ class UserController extends BaseController {
         $is_subscribe = I('is_subscribe',-1,'intval');
         $nickname = I('nickname','','trim');
         $openid = I('openid','','trim');
+        $mobile = I('mobile','','trim');
 
         $where = array();
         if($start_date && $end_date){
@@ -68,6 +69,9 @@ class UserController extends BaseController {
         if(!empty($openid)){
             $where['openid'] = $openid;
         }
+        if(!empty($mobile)){
+            $where['mobile'] = $mobile;
+        }
         $start = ($pagenum-1)* $size;
         $limit ="$start,$size";
         
@@ -89,6 +93,7 @@ class UserController extends BaseController {
 
         $this->assign('openid',$openid);
         $this->assign('nickname',$nickname);
+        $this->assign('mobile',$mobile);
         $this->assign('is_subscribe',$is_subscribe);
         $this->assign('is_wx_auth',$is_wx_auth);
         $this->assign('small_app_id',$small_app_id);
