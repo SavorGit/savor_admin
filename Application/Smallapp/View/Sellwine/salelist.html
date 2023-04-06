@@ -1,0 +1,96 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/sellwine/salelist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_time}" data-ymd="true">
+              <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+              <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">酒楼名称：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="酒楼名称">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm pull-right">
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Dataexport/hotel/sellwinehotelsaledata?start_time={$start_time}&end_time={$end_time}" title="导出统计数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出统计数据</a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>酒楼ID</th>
+              <th>酒楼名称</th>
+              <th>城市</th>
+              <th>维护人</th>
+              <th>开启售酒日期</th>
+              <th>首次进店时间</th>
+              <th>首次销售时间</th>
+              <th>销量</th>
+              <th>撤店日期</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="城市">{$dinfo.area_name}</td>
+              <td data-title="维护人">{$dinfo.maintainer}</td>
+              <td data-title="开启售酒时间">{$dinfo.sale_start_date}</td>
+              <td data-title="首次进店时间">{$dinfo.in_hotel_date}</td>
+              <td data-title="首次销售时间">{$dinfo.sell_date}</td>
+              <td data-title="销量">{$dinfo.sell_num}</td>
+              <td data-title="撤店日期">{$dinfo.sale_end_date}</td>
+            </tr>
+          </volist>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

@@ -19,4 +19,54 @@ class FinanceStockRecordModel extends BaseModel{
             ->select();
         return $res;
     }
+
+    public function getSellIndateHotels(){
+        $fileds = 'stock.hotel_id,MIN(a.add_time) as hotel_in_time';
+        $where = array('a.type'=>4);
+        $res = $this->alias('a')
+            ->field($fileds)
+            ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
+            ->where($where)
+            ->group('stock.hotel_id')
+            ->select();
+        $datalist = array();
+        foreach ($res as $v){
+            $datalist[$v['hotel_id']]=$v['hotel_in_time'];
+        }
+        return $datalist;
+    }
+
+    public function getSellDateHotels(){
+        $fileds = 'stock.hotel_id,MIN(a.add_time) as sell_time';
+        $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'));
+        $res = $this->alias('a')
+            ->field($fileds)
+            ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
+            ->where($where)
+            ->group('stock.hotel_id')
+            ->select();
+        $datalist = array();
+        foreach ($res as $v){
+            $datalist[$v['hotel_id']]=$v['sell_time'];
+        }
+        return $datalist;
+    }
+
+    public function getHotelSellwineNums($start_time,$end_time){
+        $start_time = date('Y-m-d 00:00:00',strtotime($start_time));
+        $end_time = date('Y-m-d 23:59:59',strtotime($end_time));
+        $fileds = 'stock.hotel_id,count(a.total_amount) as total_amount';
+        $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        $res = $this->alias('a')
+            ->field($fileds)
+            ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
+            ->where($where)
+            ->group('stock.hotel_id')
+            ->select();
+        $datalist = array();
+        foreach ($res as $v){
+            $datalist[$v['hotel_id']]=$v['total_amount'];
+        }
+        return $datalist;
+    }
 }

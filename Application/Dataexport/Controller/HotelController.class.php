@@ -449,7 +449,111 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         );
         $filename = '小热点白酒销售统计';
         $this->exportToExcel($cell,$datalist,$filename,1);
+    }
 
+    public function sellwinehotelsaledata(){
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $where = array('a.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0);
 
+        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,a.sale_start_date,a.sale_end_date';
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc');
+        $datalist = array();
+        $m_finance_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $in_hotel_dates = $m_finance_stock_record->getSellIndateHotels();
+        $sell_hotel_dates = $m_finance_stock_record->getSellDateHotels();
+        $sell_nums = $m_finance_stock_record->getHotelSellwineNums($start_time,$end_time);
+        foreach ($result as $k=>$v){
+            $in_hotel_date = '';
+            if(isset($in_hotel_dates[$v['hotel_id']])){
+                $in_hotel_date = $in_hotel_dates[$v['hotel_id']];
+            }
+            $sell_date = '';
+            if(isset($sell_hotel_dates[$v['hotel_id']])){
+                $sell_date = $sell_hotel_dates[$v['hotel_id']];
+            }
+            $sell_num = 0;
+            if(isset($sell_nums[$v['hotel_id']])){
+                $sell_num = $sell_nums[$v['hotel_id']];
+            }
+            if($v['sale_start_date']=='0000-00-00'){
+                $v['sale_start_date'] = '';
+            }
+            if($v['sale_end_date']=='0000-00-00'){
+                $v['sale_end_date'] = '';
+            }
+            $v['in_hotel_date'] = $in_hotel_date;
+            $v['sell_date'] = $sell_date;
+            $v['sell_num'] = $sell_num;
+            $datalist[]=$v;
+        }
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','城市'),
+            array('maintainer','维护人'),
+            array('sale_start_date','开启售酒日期'),
+            array('in_hotel_date','首次进店时间'),
+            array('sell_date','首次销售时间'),
+            array('sell_num','销量'),
+            array('sale_end_date','撤店日期'),
+        );
+        $filename = '酒楼销售统计';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+    }
+
+    public function hotelsaledata(){
+        $data = array('company'=>'北京热点投屏科技有限公司','hotel_name'=>'永峰写字楼（2023.1.1-2023.3.1）','sale_num'=>'100瓶','sale_money'=>'10000元',
+            'integral'=>'999积分','stock_num'=>'22瓶','qk_money'=>'894787元','cqqk_money'=>'1452元');
+
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+        $objPHPExcel = new \PHPExcel();
+        $objActSheet = $objPHPExcel->getActiveSheet();
+        $objActSheet->getColumnDimension('A')->setWidth(15);
+        $objActSheet->getColumnDimension('B')->setWidth(15);
+        $objActSheet->getColumnDimension('C')->setWidth(15);
+        $objActSheet->getColumnDimension('D')->setWidth(15);
+        $objActSheet->getRowDimension('1')->setRowHeight(30);
+        $objActSheet->getRowDimension('2')->setRowHeight(20);
+        $objActSheet->getRowDimension('3')->setRowHeight(20);
+        $objActSheet->getRowDimension('4')->setRowHeight(20);
+        $objActSheet->getRowDimension('5')->setRowHeight(20);
+        $objActSheet->getStyle('A')->getFont()->setSize(14);
+        $objActSheet->getStyle('B')->getFont()->setSize(14);
+        $objActSheet->getStyle('C')->getFont()->setSize(14);
+        $objActSheet->getStyle('D')->getFont()->setSize(14);
+        $objActSheet->mergeCells('A1:D1');//合并单元格
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1',$data['hotel_name']);
+        $objActSheet->getStyle('A1')->getFont()->setBold(true);//设置是否加粗
+        $objActSheet->getStyle('A1')->getFont()->setSize(16);
+        $objActSheet->getStyle('A1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);//设置文字居左（HORIZONTAL_LEFT，默认值）中（HORIZONTAL_CENTER）右（HORIZONTAL_RIGHT）
+        $objActSheet->getStyle('A1:D5')->getBorders()->getAllBorders()->setBorderStyle(\PHPExcel_Style_Border::BORDER_THIN);
+
+        $objActSheet->setCellValue('A2', '销售瓶数')
+            ->setCellValue('B2', $data['sale_num'])
+            ->setCellValue('C2', '销售额')
+            ->setCellValue('D2', $data['sale_money'])
+            ->setCellValue('A3', '利润')
+            ->setCellValue('B3', $data['integral'])
+            ->setCellValue('C3', '当前库存瓶数')
+            ->setCellValue('D3', $data['stock_num'])
+            ->setCellValue('A4', '总欠款')
+            ->setCellValue('B4', $data['qk_money'])
+            ->setCellValue('C4', '超期欠款')
+            ->setCellValue('D4', $data['cqqk_money']);
+
+        $objActSheet->mergeCells('A5:D5');
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A5',$data['company']);
+        $objActSheet->getStyle('A5')->getFont()->setSize(12);
+        $objActSheet->getStyle('A5')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+
+        $fileName = '酒楼销售统计单'.date('YmdHis');
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $fileName . '.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
     }
 }
