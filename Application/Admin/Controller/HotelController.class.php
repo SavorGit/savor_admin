@@ -747,6 +747,8 @@ class HotelController extends BaseController {
         $is_salehotel = I('post.is_salehotel',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
         $jd_custom_no = I('post.jd_custom_no','','trim');
+        $sale_start_date = I('post.sale_start_date','');
+        $sale_end_date = I('post.sale_end_date','');
 
 
         if($activity_phone){
@@ -896,6 +898,16 @@ class HotelController extends BaseController {
         }
         if(!empty($meal_time)){
             $data['meal_time'] = $meal_time;
+        }
+        if(!empty($sale_start_date)){
+            $data['sale_start_date'] = $sale_start_date;
+        }else{
+            $data['sale_start_date'] = '0000-00-00';
+        }
+        if(!empty($sale_end_date)){
+            $data['sale_end_date'] = $sale_end_date;
+        }else{
+            $data['sale_end_date'] = '0000-00-00';
         }
         $data['is_comment'] = $is_comment;
         $data['is_reward'] = $is_reward;

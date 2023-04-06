@@ -260,6 +260,7 @@
                 </div>
             </div>
         </div>
+
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 培训备注:
@@ -487,7 +488,33 @@
             <input type="checkbox" value="1" class="make-switch status" name="is_salehotel" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_salehotel eq 1" >checked</if>>
         </div>
     </div>
-    
+
+    <div class="form-group row send_time">
+        <label class="col-xs-12 col-sm-2 control-label">开始售酒日期：</label>
+        <div class="col-xs-12 col-sm-10">
+            <div class="input-group date form_datetime" data-date="{$vinfo.start_sale_date}" data-ymd="true">
+                <input name="sale_start_date" type="text" size="16" class="form-control date" placeholder="开始售酒日期" value="{$vinfo.start_sale_date}">
+                <span class="input-group-btn">
+                    <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row send_time">
+        <label class="col-xs-12 col-sm-2 control-label">酒水撤店日期：</label>
+        <div class="col-xs-12 col-sm-10">
+            <div class="input-group date form_datetime" data-date="{$vinfo.sale_end_date}" data-ymd="true">
+                <input name="sale_end_date" type="text" size="16" class="form-control date" placeholder="酒水撤店日期" value="{$vinfo.sale_end_date}">
+                <span class="input-group-btn">
+                <button class="btn default date-reset" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+            </div>
+        </div>
+    </div>
+
     <div class="form-group row" >
         <label class="col-xs-12 col-sm-2 control-label">
           商圈类型:
