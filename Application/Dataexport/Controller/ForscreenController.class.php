@@ -1010,6 +1010,7 @@ class ForscreenController extends BaseController{
                 $resource_size = formatBytes($v['resource_size']);
             }
             $v['resource_size'] = $resource_size;
+            $v['action']='广告点播任务';
             $data[] = $v;
         }
         $cell = array(
@@ -1023,6 +1024,7 @@ class ForscreenController extends BaseController{
             array('nickName','用户昵称'),
             array('mobile_brand','手机品牌'),
             array('mobile_model','手机型号'),
+            array('action','投屏动作'),
             array('resource_size','资源大小'),
             array('duration','资源时长'),
             array('create_time','投屏时间'),
