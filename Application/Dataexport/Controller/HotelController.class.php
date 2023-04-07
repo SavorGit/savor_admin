@@ -504,6 +504,10 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
     }
 
     public function hotelsaledata(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+
         $data = array('company'=>'北京热点投屏科技有限公司','hotel_name'=>'永峰写字楼（2023.1.1-2023.3.1）','sale_num'=>'100瓶','sale_money'=>'10000元',
             'integral'=>'999积分','stock_num'=>'22瓶','qk_money'=>'894787元','cqqk_money'=>'1452元');
 

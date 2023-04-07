@@ -119,4 +119,95 @@ class SellwineController extends BaseController {
         $this->assign('numPerPage',$size);
         $this->display();
     }
+
+    public function hoteldata(){
+        $hotel_id = I('hotel_id',0,'intval');
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        if(empty($start_time)){
+            $start_time = date('Y-m-d',strtotime('-1 day'));
+        }else{
+            $start_time = date('Y-m-d',strtotime($start_time));
+        }
+        if(empty($end_time)){
+            $end_time = $start_time;
+        }else{
+            $end_time = date('Y-m-d',strtotime($end_time));
+        }
+        $data = array();
+        if($hotel_id){
+            $m_hotel = new \Admin\Model\HotelModel();
+            $res_hotel = $m_hotel->getOne($hotel_id);
+
+            $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+            $fileds = 'sum(a.total_amount) as total_amount';
+            $where = array('stock.hotel_id'=>$hotel_id,'a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),
+                'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+            $res_worecord = $m_stock_record->getStockRecordList($fileds,$where,'a.id desc','','');
+            $sale_num = abs(intval($res_worecord[0]['total_amount']));
+
+            $redis = new \Common\Lib\SavorRedis();
+            $redis->select(9);
+            $cache_key = C('FINANCE_HOTELSTOCK').":$hotel_id";
+            $res_cache_stock = $redis->get($cache_key);
+            $stock_num = 0;
+            if(!empty($res_cache_stock)){
+                $res_cache_stock = json_decode($res_cache_stock,true);
+                foreach ($res_cache_stock['goods_list'] as $v){
+                    $stock_num+=$v['stock_num'];
+                }
+            }
+
+            $m_integral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+            $where = array('hotel_id'=>$hotel_id,'type'=>17,'add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+            $res_integral = $m_integral_record->getRow('sum(integral) as total_integral',$where);
+            $integral = intval($res_integral['total_integral']);
+
+            $m_sale = new \Admin\Model\FinanceSaleModel();
+            $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+            $fileds = 'sum(a.settlement_price*record.total_amount) as sale_money';
+            $res_sale = $m_sale->getSaleStockRecordList($fileds,$sale_where,'','');
+            $sale_money = abs(intval($res_sale[0]['sale_money']));
+
+            $sale_where['a.status'] = array('in','0,1');
+            $res_sale_qk = $m_sale->getSaleStockRecordList($fileds,$sale_where,'','');
+            $qk_money = abs(intval($res_sale_qk[0]['sale_money']));
+
+            $res_sale_qk = $m_sale->getSaleStockRecordList('a.settlement_price,a.add_time,record.total_amount',$sale_where,'','');
+            $cqqk_money = 0;
+            if(!empty($res_sale_qk)){
+                $expire_time = 7*86400;
+                foreach ($res_sale_qk as $v){
+                    $sale_time = strtotime($v['add_time']);
+                    $now_time = time();
+                    if($now_time-$sale_time>=$expire_time){
+                        $money = intval($v['total_amount']*$v['settlement_price']);
+                        $cqqk_money+=$money;
+                    }
+                }
+            }
+            $cqqk_money = abs($cqqk_money);
+            $data = array('hotel_id'=>$hotel_id,'hotel_name'=>$res_hotel['name'],'sale_num'=>$sale_num,'sale_money'=>$sale_money,
+                'stock_num'=>$stock_num,'integral'=>$integral,'qk_money'=>$qk_money,'cqqk_money'=>$cqqk_money);
+        }
+
+        $m_hotel = new \Admin\Model\HotelModel();
+        $fields = 'a.id as hotel_id,a.name as hotel_name';
+        $where = array('a.state'=>1,'a.flag'=>0,'b.is_salehotel'=>1);
+        $hotels = $m_hotel->getHotelLists($where,'a.pinyin asc','',$fields);
+        foreach ($hotels as $k=>$v){
+            if($v['hotel_id']==$hotel_id){
+                $v['is_select'] = 'selected';
+            }else{
+                $v['is_select'] = '';
+            }
+            $hotels[$k] = $v;
+        }
+        $this->assign('start_time',$start_time);
+        $this->assign('end_time',$end_time);
+        $this->assign('hotels', $hotels);
+        $this->assign('hotel_id', $hotel_id);
+        $this->assign('dinfo', $data);
+        $this->display();
+    }
 }

@@ -55,7 +55,7 @@ class FinanceStockRecordModel extends BaseModel{
     public function getHotelSellwineNums($start_time,$end_time){
         $start_time = date('Y-m-d 00:00:00',strtotime($start_time));
         $end_time = date('Y-m-d 23:59:59',strtotime($end_time));
-        $fileds = 'stock.hotel_id,count(a.total_amount) as total_amount';
+        $fileds = 'stock.hotel_id,sum(a.total_amount) as total_amount';
         $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
         $res = $this->alias('a')
             ->field($fileds)
@@ -65,7 +65,7 @@ class FinanceStockRecordModel extends BaseModel{
             ->select();
         $datalist = array();
         foreach ($res as $v){
-            $datalist[$v['hotel_id']]=$v['total_amount'];
+            $datalist[$v['hotel_id']]=abs($v['total_amount']);
         }
         return $datalist;
     }
