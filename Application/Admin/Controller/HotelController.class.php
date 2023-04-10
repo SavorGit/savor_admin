@@ -482,6 +482,14 @@ class HotelController extends BaseController {
 			$vinfo['is_annualmeeting'] = $main_info['is_annualmeeting'];
 			$vinfo['is_salestat'] = $main_info['is_salestat'];
 			$vinfo['is_salehotel'] = $main_info['is_salehotel'];
+			if($main_info['sale_start_date']=='0000-00-00'){
+                $main_info['sale_start_date']='';
+            }
+            if($main_info['sale_end_date']=='0000-00-00'){
+                $main_info['sale_end_date']='';
+            }
+			$vinfo['sale_start_date'] = $main_info['sale_start_date'];
+			$vinfo['sale_end_date'] = $main_info['sale_end_date'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
 			$vinfo['trade_area_type'] = $main_info['trade_area_type'];
 			$vinfo['cooperate_status'] = $main_info['cooperate_status'];
