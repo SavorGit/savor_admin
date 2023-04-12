@@ -3766,4 +3766,25 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($all_goods_avg_prices);
     }
 
+    public function upsale(){
+        exit;
+        $sql_time = "and a.add_time<'2023-02-02 17:29:36'";
+        $sql_time = '';
+        $idcodes = "and a.idcode in ('0f9ebef5165662f5','06c1dd8d4aefc804')";//未发起核销申请
+        $idcodes = '';
+        $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
+        from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
+        left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
+        where a.type=7 and a.wo_status in (1,2,4) {$sql_time} {$idcodes}order by a.id asc ";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $res_data = $m_sale->query($sql);
+        $id = 2789;
+        foreach ($res_data as $v){
+            $id++;
+            $v['id']=$id;
+            $row_id = $m_sale->add($v);
+            echo 'id:'.$row_id."ok \r\n";
+        }
+    }
+
 }
