@@ -165,24 +165,31 @@ class SellwineController extends BaseController {
 
             $m_sale = new \Admin\Model\FinanceSaleModel();
             $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
-            $fileds = 'sum(a.settlement_price*record.total_amount) as sale_money';
+            $fileds = 'sum(a.settlement_price) as sale_money';
             $res_sale = $m_sale->getSaleStockRecordList($fileds,$sale_where,'','');
             $sale_money = abs(intval($res_sale[0]['sale_money']));
 
-            $sale_where['a.status'] = array('in','0,1');
-            $res_sale_qk = $m_sale->getSaleStockRecordList($fileds,$sale_where,'','');
-            $qk_money = abs(intval($res_sale_qk[0]['sale_money']));
-
-            $res_sale_qk = $m_sale->getSaleStockRecordList('a.settlement_price,a.add_time,record.total_amount',$sale_where,'','');
+            $sale_where['a.ptype'] = array('in','0,2');
+            $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.add_time',$sale_where,'','');
+            $qk_money = 0;
             $cqqk_money = 0;
             if(!empty($res_sale_qk)){
+                $m_sale_payment_record = new \Admin\Model\FinanceSalePaymentRecordModel();
                 $expire_time = 7*86400;
                 foreach ($res_sale_qk as $v){
+                    if($v['ptype']==0){
+                        $now_money = $v['settlement_price'];
+                    }else{
+                        $res_had_pay = $m_sale_payment_record->getRow('sum(pay_money) as total_pay_money',array('sale_id'=>$v['sale_id']));
+                        $had_pay_money = intval($res_had_pay['total_pay_money']);
+                        $now_money = $v['settlement_price']-$had_pay_money;
+                    }
+                    $qk_money+=$now_money;
+
                     $sale_time = strtotime($v['add_time']);
                     $now_time = time();
                     if($now_time-$sale_time>=$expire_time){
-                        $money = intval($v['total_amount']*$v['settlement_price']);
-                        $cqqk_money+=$money;
+                        $cqqk_money+=$now_money;
                     }
                 }
             }

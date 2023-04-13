@@ -508,8 +508,77 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $start_time = I('start_time','');
         $end_time = I('end_time','');
 
-        $data = array('company'=>'北京热点投屏科技有限公司','hotel_name'=>'永峰写字楼（2023.1.1-2023.3.1）','sale_num'=>'100瓶','sale_money'=>'10000元',
-            'integral'=>'999积分','stock_num'=>'22瓶','qk_money'=>'894787元','cqqk_money'=>'1452元');
+        $m_hotel = new \Admin\Model\HotelModel();
+        $res_hotel = $m_hotel->getOne($hotel_id);
+
+        $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $fileds = 'sum(a.total_amount) as total_amount';
+        $where = array('stock.hotel_id'=>$hotel_id,'a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),
+            'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        $res_worecord = $m_stock_record->getStockRecordList($fileds,$where,'a.id desc','','');
+        $sale_num = abs(intval($res_worecord[0]['total_amount']));
+
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(9);
+        $cache_key = C('FINANCE_HOTELSTOCK').":$hotel_id";
+        $res_cache_stock = $redis->get($cache_key);
+        $stock_num = 0;
+        if(!empty($res_cache_stock)){
+            $res_cache_stock = json_decode($res_cache_stock,true);
+            foreach ($res_cache_stock['goods_list'] as $v){
+                $stock_num+=$v['stock_num'];
+            }
+        }
+
+        $m_integral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $where = array('hotel_id'=>$hotel_id,'type'=>17,'add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        $res_integral = $m_integral_record->getRow('sum(integral) as total_integral',$where);
+        $integral = intval($res_integral['total_integral']);
+
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        $fileds = 'sum(a.settlement_price) as sale_money';
+        $res_sale = $m_sale->getSaleStockRecordList($fileds,$sale_where,'','');
+        $sale_money = abs(intval($res_sale[0]['sale_money']));
+
+        $sale_where['a.ptype'] = array('in','0,2');
+        $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.add_time',$sale_where,'','');
+        $qk_money = 0;
+        $cqqk_money = 0;
+        if(!empty($res_sale_qk)){
+            $m_sale_payment_record = new \Admin\Model\FinanceSalePaymentRecordModel();
+            $expire_time = 7*86400;
+            foreach ($res_sale_qk as $v){
+                if($v['ptype']==0){
+                    $now_money = $v['settlement_price'];
+                }else{
+                    $res_had_pay = $m_sale_payment_record->getRow('sum(pay_money) as total_pay_money',array('sale_id'=>$v['sale_id']));
+                    $had_pay_money = intval($res_had_pay['total_pay_money']);
+                    $now_money = $v['settlement_price']-$had_pay_money;
+                }
+                $qk_money+=$now_money;
+
+                $sale_time = strtotime($v['add_time']);
+                $now_time = time();
+                if($now_time-$sale_time>=$expire_time){
+                    $cqqk_money+=$now_money;
+                }
+            }
+        }
+        $cqqk_money = abs($cqqk_money);
+        $data = array('hotel_id'=>$hotel_id,'hotel_name'=>$res_hotel['name'],'sale_num'=>$sale_num,'sale_money'=>$sale_money,
+            'stock_num'=>$stock_num,'integral'=>$integral,'qk_money'=>$qk_money,'cqqk_money'=>$cqqk_money);
+
+        $data['company'] = '北京热点投屏科技有限公司';
+        $start_time = date('Y.m.d',strtotime($start_time));
+        $end_time = date('Y.m.d',strtotime($end_time));
+        $data['hotel_name'] = "{$data['hotel_name']}（{$start_time}-{$end_time}）";
+        $data['sale_num'] = $data['sale_num'].'瓶';
+        $data['sale_money'] = $data['sale_money'].'元';
+        $data['integral'] = $data['integral'].'积分';
+        $data['stock_num'] = $data['stock_num'].'瓶';
+        $data['qk_money'] = $data['qk_money'].'元';
+        $data['cqqk_money'] = $data['cqqk_money'].'元';
 
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
