@@ -3787,4 +3787,46 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
     }
 
+    public function uperrorsale(){
+        exit;
+        $m_price_template_hotel = new \Admin\Model\FinancePriceTemplateHotelModel();
+
+        $sql = "select * from savor_finance_sale where sale_openid in (
+            select openid from savor_integral_merchant_staff where merchant_id in (89,3) group by openid
+            ) and goods_id not in (15,24)  and id>2791 order by id asc ";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $res_data = $m_sale->query($sql);
+        $all_data = array();
+        foreach ($res_data as $v){
+            $goods_id = $v['goods_id'];
+
+            $sql_stock = "select stock.hotel_id,ext.maintainer_id
+            from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
+            left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
+            where a.id={$v['stock_record_id']}";
+            $res_stock = $m_sale->query($sql_stock);
+            if(empty($res_stock)){
+                continue;
+            }
+            $hotel_id = $res_stock[0]['hotel_id'];
+            $maintainer_id = $res_stock[0]['maintainer_id'];
+            $updata = array();
+            if($v['ptype']==0){
+                $settlement_price = $m_price_template_hotel->getHotelGoodsPrice($hotel_id,$goods_id,0);
+                $updata['settlement_price'] = $settlement_price;
+            }
+            if($v['hotel_id']!=$hotel_id){
+                $updata['hotel_id'] = $hotel_id;
+                $updata['maintainer_id'] = $maintainer_id;
+            }
+            if(!empty($updata)){
+                $m_sale->updateData(array('id'=>$v['id']),$updata);
+                echo "ID:{$v['id']} OK \r\n";
+            }
+
+        }
+        print_r($all_data);
+        exit;
+    }
+
 }
