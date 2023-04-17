@@ -3791,9 +3791,12 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         exit;
         $m_price_template_hotel = new \Admin\Model\FinancePriceTemplateHotelModel();
 
-        $sql = "select * from savor_finance_sale where sale_openid in (
-            select openid from savor_integral_merchant_staff where merchant_id in (89,3) group by openid
-            ) and goods_id not in (15,24)  and id>2791 order by id asc ";
+//        $sql = "select * from savor_finance_sale where sale_openid in (
+//            select openid from savor_integral_merchant_staff where merchant_id in (89,3) group by openid
+//            ) and goods_id not in (15,24)  and id>2791 order by id asc ";
+
+        $sql = "select sale.* from savor_finance_stock_record as a left join savor_finance_sale as sale on a.id=sale.stock_record_id
+            where a.wo_reason_type=1 and sale.settlement_price=0 and sale.ptype=0 order by sale.id desc ";
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $res_data = $m_sale->query($sql);
         $all_data = array();
@@ -3819,6 +3822,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 $updata['hotel_id'] = $hotel_id;
                 $updata['maintainer_id'] = $maintainer_id;
             }
+            $all_data[$v['id']]=$updata;
             if(!empty($updata)){
                 $m_sale->updateData(array('id'=>$v['id']),$updata);
                 echo "ID:{$v['id']} OK \r\n";
