@@ -125,14 +125,14 @@ class SellwineController extends BaseController {
         $start_time = I('start_time','');
         $end_time = I('end_time','');
         if(empty($start_time)){
-            $start_time = date('Y-m-d',strtotime('-1 day'));
+            $start_time = date('Y-m-d 00:00:00',strtotime('-1 day'));
         }else{
-            $start_time = date('Y-m-d',strtotime($start_time));
+            $start_time = date('Y-m-d 00:00:00',strtotime($start_time));
         }
         if(empty($end_time)){
             $end_time = $start_time;
         }else{
-            $end_time = date('Y-m-d',strtotime($end_time));
+            $end_time = date('Y-m-d 23:59:59',strtotime($end_time));
         }
         $data = array();
         if($hotel_id){
