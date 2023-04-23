@@ -67,7 +67,7 @@ class OpsstaffController extends BaseController {
                     }
                     $area_arr[$k]['is_select'] = $select_str;
                 }
-                if(in_array($vinfo['hscope'],array(2,4))){
+                if(in_array($vinfo['hscope'],array(2,4,6))){
                     $vinfo['is_show_area'] = 1;
                 }
         	}
@@ -83,7 +83,7 @@ class OpsstaffController extends BaseController {
                 $tinfo = array('id'=>$v['id'],'name'=>$v['remark'],'selected_str'=>$selected_str);
                 $sysusers[]=$tinfo;
             }
-            $hotel_scopes = array('1'=>'全国','2'=>'城市','3'=>'个人','4'=>'城市+个人');
+            $hotel_scopes = array('1'=>'全国','2'=>'城市','3'=>'个人','4'=>'城市+个人','5'=>'全国财务','6'=>'城市财务');
             $this->assign('hotel_scopes', $hotel_scopes);
             $this->assign('areas', $area_arr);
             $this->assign('sysusers',$sysusers);
