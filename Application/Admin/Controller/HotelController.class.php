@@ -482,6 +482,8 @@ class HotelController extends BaseController {
 			$vinfo['is_annualmeeting'] = $main_info['is_annualmeeting'];
 			$vinfo['is_salestat'] = $main_info['is_salestat'];
 			$vinfo['is_salehotel'] = $main_info['is_salehotel'];
+			$vinfo['is_goods_leftpop_wind'] = $main_info['is_goods_leftpop_wind'];
+			$vinfo['is_goods_roll_content'] = $main_info['is_goods_roll_content'];
 			if($main_info['sale_start_date']=='0000-00-00'){
                 $main_info['sale_start_date']='';
             }
@@ -753,6 +755,8 @@ class HotelController extends BaseController {
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
+        $is_goods_roll_content = I('post.is_goods_roll_content',0,'intval');
+        $is_goods_leftpop_wind = I('post.is_goods_leftpop_wind',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
         $jd_custom_no = I('post.jd_custom_no','','trim');
         $sale_start_date = I('post.sale_start_date','');
@@ -922,6 +926,8 @@ class HotelController extends BaseController {
         $data['is_annualmeeting'] = $is_annualmeeting;
         $data['is_salestat'] = $is_salestat;
         $data['is_salehotel'] = $is_salehotel;
+        $data['is_goods_leftpop_wind'] = $is_goods_leftpop_wind;
+        $data['is_goods_roll_content'] = $is_goods_roll_content;
         $data['trade_area_type'] = $trade_area_type;
         $data['jd_custom_no'] = $jd_custom_no;
 		$tranDb = new Model();
