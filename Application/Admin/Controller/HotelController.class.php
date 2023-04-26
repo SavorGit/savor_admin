@@ -750,6 +750,7 @@ class HotelController extends BaseController {
         $trainer_id = I('post.trainer_id',0,'intval');
         $train_date = I('post.train_date','');
         $train_desc = I('post.train_desc','','trim');
+        $dp_comment_num = I('post.dp_comment_num',0,'intval');
         $is_comment = I('post.is_comment',0,'intval');
         $is_reward = I('post.is_reward',0,'intval');
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
@@ -930,6 +931,7 @@ class HotelController extends BaseController {
         $data['is_goods_roll_content'] = $is_goods_roll_content;
         $data['trade_area_type'] = $trade_area_type;
         $data['jd_custom_no'] = $jd_custom_no;
+        $data['dp_comment_num'] = $dp_comment_num;
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
