@@ -523,6 +523,7 @@ class HotelController extends BaseController {
             $vinfo['is_comment']   = $res_hotelext['is_comment'];
             $vinfo['is_reward']   = $res_hotelext['is_reward'];
             $vinfo['jd_custom_no']   = $res_hotelext['jd_custom_no'];
+            $vinfo['dp_comment_num']   = $res_hotelext['dp_comment_num'];
 
 			if($res_hotelext['train_date']=='0000-00-00'){
                 $res_hotelext['train_date'] = '';
