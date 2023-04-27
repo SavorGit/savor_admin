@@ -3766,4 +3766,149 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($all_goods_avg_prices);
     }
 
+    public function upsale(){
+        exit;
+        $sql_time = "and a.add_time<'2023-02-02 17:29:36'";
+        $sql_time = '';
+        $idcodes = "and a.idcode in ('0f9ebef5165662f5','06c1dd8d4aefc804')";//未发起核销申请
+        $idcodes = '';
+        $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
+        from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
+        left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
+        where a.type=7 and a.wo_status in (1,2,4) {$sql_time} {$idcodes}order by a.id asc ";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $res_data = $m_sale->query($sql);
+        $id = 2789;
+        foreach ($res_data as $v){
+            $id++;
+            $v['id']=$id;
+            $row_id = $m_sale->add($v);
+            echo 'id:'.$row_id."ok \r\n";
+        }
+    }
+
+    public function uperrorsale(){
+        exit;
+        $m_price_template_hotel = new \Admin\Model\FinancePriceTemplateHotelModel();
+
+//        $sql = "select * from savor_finance_sale where sale_openid in (
+//            select openid from savor_integral_merchant_staff where merchant_id in (89,3) group by openid
+//            ) and goods_id not in (15,24)  and id>2791 order by id asc ";
+
+        $sql = "select sale.* from savor_finance_stock_record as a left join savor_finance_sale as sale on a.id=sale.stock_record_id
+            where a.wo_reason_type=1 and sale.settlement_price=0 and sale.ptype=0 order by sale.id desc ";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $res_data = $m_sale->query($sql);
+        $all_data = array();
+        foreach ($res_data as $v){
+            $goods_id = $v['goods_id'];
+
+            $sql_stock = "select stock.hotel_id,ext.maintainer_id
+            from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
+            left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
+            where a.id={$v['stock_record_id']}";
+            $res_stock = $m_sale->query($sql_stock);
+            if(empty($res_stock)){
+                continue;
+            }
+            $hotel_id = $res_stock[0]['hotel_id'];
+            $maintainer_id = $res_stock[0]['maintainer_id'];
+            $updata = array();
+            if($v['ptype']==0){
+                $settlement_price = $m_price_template_hotel->getHotelGoodsPrice($hotel_id,$goods_id,0);
+                $updata['settlement_price'] = $settlement_price;
+            }
+            if($v['hotel_id']!=$hotel_id){
+                $updata['hotel_id'] = $hotel_id;
+                $updata['maintainer_id'] = $maintainer_id;
+            }
+            $all_data[$v['id']]=$updata;
+            if(!empty($updata)){
+                $m_sale->updateData(array('id'=>$v['id']),$updata);
+                echo "ID:{$v['id']} OK \r\n";
+            }
+
+        }
+        print_r($all_data);
+        exit;
+    }
+
+    public function woerrorcode(){
+        $file_path = SITE_TP_PATH.'/Public/content/核对核销原因数据0419.xlsx';
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $all_wo_reason_type = array('1'=>'餐厅售卖','2'=>'品鉴酒','3'=>'活动');
+        $map_wo_reason_type_str = array('餐厅售卖'=>'1','品鉴酒'=>'2','活动'=>'3');
+
+        $all_wo_status = array('1'=>'待审核','2'=>'审核通过','3'=>'审核不通过','4'=>'待补充资料');
+        $m_stock = new \Admin\Model\FinanceStockRecordModel();
+        $data = array();
+        for ($row = 2; $row<=$highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $idcode = trim($rowData[0][0]);
+                $reason_str = trim($rowData[0][1]);
+
+                $is_wo=$is_eq=$excel_wo_reason_type=0;
+                $new_reason_str = '';
+                $res_stock_record = $m_stock->getAll('id,idcode,wo_reason_type,wo_status',
+                    array('idcode'=>$idcode,'type'=>7),0,1,'id desc');
+                if(!empty($res_stock_record)){
+                    $is_wo = 1;
+                    $new_reason_str = $all_wo_reason_type[$res_stock_record[0]['wo_reason_type']];
+                    if($new_reason_str==$reason_str){
+                        $is_eq=1;
+                    }else{
+                        $excel_wo_reason_type = $map_wo_reason_type_str[$reason_str];
+                        $m_stock->updateData(array('id'=>$res_stock_record[0]['id']),array('wo_reason_type'=>$excel_wo_reason_type));
+                        echo "$idcode \r\n";
+                    }
+                }
+                $dinfo = array('idcode'=>$idcode,'reason_str'=>$reason_str,'new_reason_str'=>$new_reason_str,
+                    'is_wo'=>$is_wo,'is_eq'=>$is_eq,'excel_wo_reason_type'=>$excel_wo_reason_type);
+                $data[]=$dinfo;
+            }
+        }
+        $cell = array(
+            array('idcode','唯一识别码'),
+            array('reason_str','核销原因'),
+            array('new_reason_str','数据库核销原因'),
+            array('is_wo','数据库是否核销'),
+            array('is_eq','数据库状态是否一致'),
+            array('excel_wo_reason_type','表格核销原因')
+        );
+
+        $filename = '核销原因不一致数据';
+        $fileName = $filename.'_'.date('YmdHis');
+        $cellNum = count($cell);
+        $dataNum = count($data);
+        $objPHPExcel = new \PHPExcel();
+        $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
+        for ($i = 0; $i < $cellNum; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i] . '1', $cell[$i][1]);
+        }
+        for ($i = 0; $i < $dataNum; $i++) {
+            for ($j = 0; $j < $cellNum; $j++) {
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j] . ($i + 2), $data[$i][$cell[$j][0]]);
+            }
+        }
+//        header('pragma:public');
+//        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $fileName . '.xls"');
+//        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+//        $objWriter->save('php://output');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $file_path = "/Public/content/$fileName.xls";
+        $file_rootpath =  SITE_TP_PATH.$file_path;
+        $objWriter->save($file_rootpath);
+    }
 }

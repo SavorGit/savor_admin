@@ -482,6 +482,16 @@ class HotelController extends BaseController {
 			$vinfo['is_annualmeeting'] = $main_info['is_annualmeeting'];
 			$vinfo['is_salestat'] = $main_info['is_salestat'];
 			$vinfo['is_salehotel'] = $main_info['is_salehotel'];
+			$vinfo['is_goods_leftpop_wind'] = $main_info['is_goods_leftpop_wind'];
+			$vinfo['is_goods_roll_content'] = $main_info['is_goods_roll_content'];
+			if($main_info['sale_start_date']=='0000-00-00'){
+                $main_info['sale_start_date']='';
+            }
+            if($main_info['sale_end_date']=='0000-00-00'){
+                $main_info['sale_end_date']='';
+            }
+			$vinfo['sale_start_date'] = $main_info['sale_start_date'];
+			$vinfo['sale_end_date'] = $main_info['sale_end_date'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
 			$vinfo['trade_area_type'] = $main_info['trade_area_type'];
 			$vinfo['cooperate_status'] = $main_info['cooperate_status'];
@@ -740,11 +750,14 @@ class HotelController extends BaseController {
         $trainer_id = I('post.trainer_id',0,'intval');
         $train_date = I('post.train_date','');
         $train_desc = I('post.train_desc','','trim');
+        $dp_comment_num = I('post.dp_comment_num',0,'intval');
         $is_comment = I('post.is_comment',0,'intval');
         $is_reward = I('post.is_reward',0,'intval');
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
+        $is_goods_roll_content = I('post.is_goods_roll_content',0,'intval');
+        $is_goods_leftpop_wind = I('post.is_goods_leftpop_wind',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
         $jd_custom_no = I('post.jd_custom_no','','trim');
         $sale_start_date = I('post.sale_start_date','');
@@ -914,8 +927,11 @@ class HotelController extends BaseController {
         $data['is_annualmeeting'] = $is_annualmeeting;
         $data['is_salestat'] = $is_salestat;
         $data['is_salehotel'] = $is_salehotel;
+        $data['is_goods_leftpop_wind'] = $is_goods_leftpop_wind;
+        $data['is_goods_roll_content'] = $is_goods_roll_content;
         $data['trade_area_type'] = $trade_area_type;
         $data['jd_custom_no'] = $jd_custom_no;
+        $data['dp_comment_num'] = $dp_comment_num;
 		$tranDb = new Model();
 		$tranDb->startTrans();
 		if ($hotel_id) {
