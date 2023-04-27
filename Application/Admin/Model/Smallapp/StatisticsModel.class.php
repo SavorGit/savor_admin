@@ -6,9 +6,10 @@
  */
 namespace Admin\Model\Smallapp;
 use Think\Model;
+use Admin\Model\BaseModel;
 use Common\Lib\Page;
-class StatisticsModel extends Model
-{
+class StatisticsModel extends BaseModel{
+
 	protected $tableName='smallapp_statistics';
 	public function getPageList($fields,$where,$order,$group,$start,$size){
 	    $list = $this->alias('a')
