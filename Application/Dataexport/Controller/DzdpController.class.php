@@ -4,6 +4,7 @@ namespace Dataexport\Controller;
 
 class DzdpController extends BaseController{
     public function exportCircle(){
+        exit('已执行该脚本');
         set_time_limit(9000);
         ini_set("memory_limit", "8018M");
         
@@ -85,10 +86,130 @@ class DzdpController extends BaseController{
         $m_business_circle->addAll($datas);
         echo date('Y-m-d H:i:s').' ok';
     }
+    public function updateHotelInfos(){
+        set_time_limit(9000);
+        ini_set("memory_limit", "8018M");
+        
+        $path = '/application_data/web/php/savor_admin/Public/uploads/2023-04-27/uphotels-dzdp.xlsx';
+        
+        
+        $type = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        $objPHPExcel = \PHPExcel_IOFactory::load($path);
+        
+        
+        $sheet = $objPHPExcel->getSheet(0);
+        //获取行数与列数,注意列数需要转换
+        $highestRowNum = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnNum = \PHPExcel_Cell::columnIndexFromString($highestColumn);
+        
+        
+        //取得字段，这里测试表格中的第一行为数据的字段，因此先取出用来作后面数组的键名
+        $filed = array();
+        for ($i = 0; $i < $highestColumnNum; $i++) {
+            $cellName = \PHPExcel_Cell::stringFromColumnIndex($i) . '1';
+            $cellVal = $sheet->getCell($cellName)->getValue();//取得列内容
+            $filed[] = $cellVal;
+        }
+        
+        
+        //开始取出数据并存入数组
+        $datas = array();
+        //$hotel_str = '';
+        //$spx = '';
+        $serial_number_new = [];
+        for ($i = 2; $i <= $highestRowNum; $i++) {//ignore row 1
+            $row = array();
+            for ($j = 0; $j < $highestColumnNum; $j++) {
+                $cellName = \PHPExcel_Cell::stringFromColumnIndex($j) . $i;
+                $cellVal = (string)$sheet->getCell($cellName)->getValue();
+                if($cellVal === 'null'){
+                    $cellVal = '';
+                }
+                if($cellVal === '"' ||  $cellVal === "'"){
+                    $cellVal = '#';
+                }
+                if($cellVal === 'null'){
+                    $cellVal = '';
+                }
+                $row[$filed[$j]] = $cellVal;
+            }
+            $datas [] = $row;
+        }
+        //print_r($datas);exit;
+        $m_circle = new \Admin\Model\BusinessCircleModel();
+        $m_hotel  = new \Admin\Model\HotelModel();
+        
+        $result = [];
+        foreach($datas as $key=>$v){
+            
+            if(empty($v['circle_name'])){
+                
+            }else {
+                $map = [];
+                $map['id'] = $v['hotel_id'];
+                $hotel_info = $m_hotel->field('name hotel_name,area_id,county_id')->where($map)->find();
+                
+                
+                $map = [];
+                $map['name'] = $v['circle_name'];
+                $map['area_id'] = $hotel_info['area_id'];
+                $map['county_id']= $hotel_info['county_id'];
+                $c_info = $m_circle->where($map)->find();
+                $datas[$key]['business_circle_id'] = $c_info['id'];
+                $result[] = $datas[$key];
+            }
+            
+            
+        }
+        //print_r($result);exit;
+        $rts = [];
+        foreach($result as $key=>$v){
+            if(!empty($v['circle_name']) && empty($v['business_circle_id'])){
+                $rts [] = $v;
+            }
+        }
+        
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            
+            array('circle_name','商圈'),
+        );
+        $filename = '未找到商圈的酒楼';
+        $this->exportToExcel($cell,$rts,$filename,1);
+        
+        exit;
+        
+        
+        $no_hotel = [];
+        foreach($datas as $key=>$v){
+            $map = [];
+            $up_info = [];
+            if(!empty($v['business_circle_id'])){
+                //$map['business_circle_id'] = $v['business_circle_id'];
+                $map['id'] = $v['hotel_id'];
+                $up_info['business_circle_id'] = $v['business_circle_id'];
+                
+                //print_r($map);
+                //print_r($up_info);
+                //exit;
+                $m_hotel->updateData($map, $up_info);
+            }else {
+                $no_hotel[] = $v;
+            }
+        }
+        print_r($no_hotel);
+    }
+    
+    
+    
+    
     //更新几个数据表的酒楼名称
     public function updateHotelname(){
         exit('已执行该脚本');
-        $sql ="select id,name from savor_hotel where
+        /*$sql ="select id,name from savor_hotel where
                id in (
                     468,28,590,972,848,550,1507,1564,1007,548,1510,1365,668,572,462,156,
                     49,476,1282,563,81,123,94,65,1253,79,1347,1223,1497,686,1766,1796,1723,
@@ -126,9 +247,30 @@ class DzdpController extends BaseController{
                     1408,1606,1486,1525,1571,1367,1481,1493,1502,1588,1635,1591,1428,1579,1454,1565,1554,
                     1712,1637,1418,1501,1521,1474,1483,1596,1633,1582,1590,1385,1498,1578,1549,1622,1503,
                     1602,1512,1638,1581,1482,1532,1777,1514,1685,1372,1661,1504,1775,1597
+               )";*/
+        
+        //第二个给的酒楼
+        $sql = "select id,name from savor_hotel where
+               id in (
+                   33 ,46 ,53 ,152 ,201 ,219 ,250 ,254 ,257 ,266 ,276 ,285 ,291 ,337 ,338 ,
+                   348 ,352 ,353 ,360 ,385 ,387 ,399 ,414 ,418 ,419 ,442 ,443 ,483 ,506 ,508 ,
+                   586 ,611 ,791 ,818 ,831 ,854 ,861 ,870 ,883 ,889 ,915 ,925 ,929 ,949 ,961 ,962 ,
+                   971 ,981 ,1018 ,1032 ,1043 ,1052 ,1081 ,1103 ,1116 ,1126 ,1192 ,1205 ,1230 ,1234 ,
+                   1235 ,1236 ,1245 ,1251 ,1256 ,1260 ,1266 ,1272 ,1275 ,1280 ,1290 ,1297 ,1301 ,1303 ,
+                   1304 ,1305 ,1309 ,1311 ,1312 ,1313 ,1316 ,1319 ,1332 ,1337 ,1340 ,1343 ,1350 ,1357 ,
+                   1366 ,1404 ,1441 ,184 ,249 ,277 ,282 ,395 ,401 ,720 ,740 ,928 ,935 ,965 ,970 ,1033 ,1069 ,
+                   1128 ,1204 ,1207 ,1211 ,1220 ,1232 ,1246 ,1281 ,1284 ,1289 ,1317 ,1318 ,1321 ,1322 ,1324 ,
+                   1325 ,1326 ,1327 ,1328 ,1334 ,1342 ,1349 ,1354 ,1363 ,1364 ,1368 ,1369 ,1370 ,1373 ,1377 ,
+                   1379 ,1383 ,1387 ,1388 ,1389 ,1390 ,1391 ,1401 ,1403 ,1407 ,1409 ,1410 ,1413 ,1414 ,1419 ,
+                   1420 ,1421 ,1422 ,1424 ,1426 ,1427 ,1429 ,1430 ,1431 ,1432 ,1434 ,1439 ,1440 ,1545 ,1574 ,
+                   1580 ,1585 ,1609 ,1610 ,1611 ,1612 ,1618 ,1634 ,1640 ,1643 ,1645 ,1647 ,1650 ,1651 ,1701 ,
+                   1707 ,1717 
                )";
         
+        
+        
         $hotel_list = M()->query($sql);
+        //print_r($hotel_list);exit;
         $m_StaticHotelbasicdata = new \Admin\Model\Smallapp\StaticHotelbasicdataModel();
         $m_ForscreenRecord      = new \Admin\Model\Smallapp\ForscreenRecordModel();
         $m_StaticHotelstaffdata = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
