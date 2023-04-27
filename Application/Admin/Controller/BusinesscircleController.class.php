@@ -77,9 +77,9 @@ class BusinesscircleController extends BaseController {
         	}else{
                 $res_names = $m_circles->getInfo($where);
         	}
-        	if(!empty($res_names)){
-        		$this->output('商圈名称不能重复添加', 'businesscircle/circleadd', 2, 0);
-        	}
+//        	if(!empty($res_names)){
+//        		$this->output('商圈名称不能重复添加', 'businesscircle/circleadd', 2, 0);
+//        	}
         	$data = array('name'=>$name,'area_id'=>$area_id,'county_id'=>$county_id,'status'=>$status);
         	if($id){
         		$condition = array('id'=>$id);
