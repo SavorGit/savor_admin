@@ -14,7 +14,14 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
-
+    public function getRedisInfo(){
+        $redis = SavorRedis::getInstance();
+        $redis->select(15);
+        $key = 'savor_room_13309';
+        $info = $redis->get($key);
+        $info = json_decode($info,true);
+        print_r($info);
+    }
     public function updatemaintainer(){
         //$path = "D:\\upmant.xlsx";
         exit;
