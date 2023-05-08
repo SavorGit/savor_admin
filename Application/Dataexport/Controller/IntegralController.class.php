@@ -194,6 +194,27 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
         $redis  =  \Common\Lib\SavorRedis::getInstance();
         $redis->select(1);
         $redis->set($cache_key,$path,3600);
+    }
 
+    public function exchangemoney(){
+        $money = I('money',500,'intval');
+        $start_time = date('Y-m-01 00:00:00',strtotime('-1 month'));
+        $end_time = date('Y-m-31 23:59:59',strtotime('-1 month'));
+
+        $sql = "select um.*,user.mobile,user.nickName,user.name,user.idnumber from 
+            (select sum(total_fee) as money,openid from savor_smallapp_exchange where status=21 and 
+            add_time>='{$start_time}' and add_time<='{$end_time}' group by openid) as um left join savor_smallapp_user as user on um.openid=user.openid 
+            where um.money>={$money}";
+        $datalist = M()->query($sql);
+        $cell = array(
+            array('money','金额'),
+            array('openid','用户openid'),
+            array('mobile','手机号码'),
+            array('nickname','昵称'),
+            array('name','姓名'),
+            array('idnumber','身份证号码'),
+        );
+        $filename = '兑换金额大于500的用户';
+        $this->exportToExcel($cell,$datalist,$filename,1);
     }
 }
