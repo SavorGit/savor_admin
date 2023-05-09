@@ -416,7 +416,7 @@ class HotelController extends BaseController {
 	    }
 	    if($ajaxversion){
 	        $start = 0;
-	        $size = 1000;
+	        $size = 10000;
 	        $result = $hotelModel->getList($where,$orders,$start,$size);
 	        $res_hotel = array();
 	        foreach ($result['list'] as $v){
