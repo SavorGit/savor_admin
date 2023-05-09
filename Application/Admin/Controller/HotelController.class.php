@@ -325,8 +325,8 @@ class HotelController extends BaseController {
 	    $orders = $order.' '.$sort;
 	    $start  = ( $start-1 ) * $size;
 	    
-	    
-	    $where = "1=1";
+	    $hotel_box_type_str = getHeartBoXtypeIds(2);
+	    $where = "hotel_box_type in(".$hotel_box_type_str.") and  flag=0 and state=1 ";
 	    $name = I('name');
 	    $beg_time = I('starttime','');
 	    $end_time = I('endtime','');
@@ -414,6 +414,7 @@ class HotelController extends BaseController {
     	        }
 	       }
 	    }
+	    //echo $where;exit;
 	    if($ajaxversion){
 	        $start = 0;
 	        $size = 10000;
