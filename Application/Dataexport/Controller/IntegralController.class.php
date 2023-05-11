@@ -202,10 +202,19 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
         $end_time = date('Y-m-31 23:59:59',strtotime('-1 month'));
 
         $sql = "select um.*,user.mobile,user.nickName,user.name,user.idnumber from 
-            (select sum(total_fee) as money,openid from savor_smallapp_exchange where status=21 and 
+            (select sum(total_fee) as money,openid,hotel_id from savor_smallapp_exchange where status=21 and 
             add_time>='{$start_time}' and add_time<='{$end_time}' group by openid) as um left join savor_smallapp_user as user on um.openid=user.openid 
             where um.money>={$money}";
         $datalist = M()->query($sql);
+        $m_hotel = new \Admin\Model\HotelModel();
+        foreach ($datalist as $k=>$v){
+            $res_hotel = $m_hotel->getOne($v['hotel_id']);
+            $datalist[$k]['hotel_name'] = $res_hotel['name'];
+            $datalist[$k]['month'] = date('Y-m',strtotime($start_time));
+            if(!empty($v['idnumber'])){
+                $datalist[$k]['idnumber'] = "'{$v['idnumber']}";
+            }
+        }
         $cell = array(
             array('money','金额'),
             array('openid','用户openid'),
@@ -213,6 +222,9 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
             array('nickname','昵称'),
             array('name','姓名'),
             array('idnumber','身份证号码'),
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('month','月份'),
         );
         $filename = '兑换金额大于500的用户';
         $this->exportToExcel($cell,$datalist,$filename,1);
