@@ -1,0 +1,104 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/invitation/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">时间：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$start_time}" data-ymd="true">
+              <input name="start_time" type="text" size="16" class="form-control date" placeholder="开始日期" value="{$start_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$end_time}" data-ymd="true">
+              <input name="end_time" type="text" size="16" class="form-control date" placeholder="结束日期" value="{$end_time}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">酒楼名称：</div>
+            <div class="input-group">
+              <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="酒楼名称">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm pull-right">
+<!--            <a class="btn btn-success btn-sm add" href="{$host_url}/Dataexport/hotel/sellwinehotelsaledata?start_time={$start_time}&end_time={$end_time}" title="导出统计数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出统计数据</a>-->
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>酒楼名称</th>
+              <th>酒楼ID</th>
+              <th>包间名称</th>
+              <th>包间类型</th>
+              <th>预定时间</th>
+              <th>预定人</th>
+              <th>预定人手机号码</th>
+              <th>发送时间</th>
+              <th>客人是否打开</th>
+              <th>餐厅维护人</th>
+              <th>餐厅经理名称</th>
+              <th>添加时间</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
+              <td data-title="包间名称">{$dinfo.room_name}</td>
+              <td data-title="包间类型">{$dinfo.room_type_str}</td>
+              <td data-title="预定时间">{$dinfo.book_time}</td>
+              <td data-title="预定人">{$dinfo.name}</td>
+              <td data-title="预定人手机号码">{$dinfo.mobile}</td>
+              <td data-title="发送时间">{$dinfo.send_time}</td>
+              <td data-title="客人是否打开">{$dinfo.is_open}</td>
+              <td data-title="餐厅维护人">{$dinfo.maintainer_name}</td>
+              <td data-title="餐厅经理名称">{$dinfo.customer_name}</td>
+              <td data-title="添加时间">{$dinfo.add_time}</td>
+            </tr>
+          </volist>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
