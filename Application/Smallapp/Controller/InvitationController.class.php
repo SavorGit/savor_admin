@@ -38,7 +38,7 @@ class InvitationController extends BaseController {
             }
             $customer_name = $v['nickname']."({$v['cust_mobile']})";
             $is_open = '否';
-            $res_open = $m_invitation_user->getInfo(array('invitation_id'=>$v['id']));
+            $res_open = $m_invitation_user->getInfo(array('invitation_id'=>$v['id'],'type'=>1));
             if(!empty($res_open)){
                 $is_open = '是';
             }
