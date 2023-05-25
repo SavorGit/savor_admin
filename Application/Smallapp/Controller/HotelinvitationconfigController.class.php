@@ -54,6 +54,7 @@ class HotelinvitationconfigController extends BaseController {
             $pain_color = I('post.pain_color','','trim');
             $weak_color = I('post.weak_color','','trim');
             $is_open_sellplatform = I('post.is_open_sellplatform',0,'intval');
+            $is_view_wine_switch  = I('post.is_view_wine_switch',0,'intval');
 
             if(empty($hotel_id)){
                 $this->output('请选择酒楼', 'hotelinvitationconfig/configadd', 2, 0);
@@ -71,7 +72,7 @@ class HotelinvitationconfigController extends BaseController {
             $hotel_name = $res_hotel['name'];
             $data = array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'theme_color'=>$theme_color,
                 'theme_contrast_color'=>$theme_contrast_color,'pain_color'=>$pain_color,'weak_color'=>$weak_color,
-                'is_open_sellplatform'=>$is_open_sellplatform
+                'is_open_sellplatform'=>$is_open_sellplatform,'is_view_wine_switch'=>$is_view_wine_switch
             );
             if($media_id){
                 $m_media = new \Admin\Model\MediaModel();

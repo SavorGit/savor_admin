@@ -75,7 +75,17 @@
                 </label>
                 <div class="col-xs-12 col-sm-10">
                     <input type="hidden" name="is_open_sellplatform" value="0">
-                    <input type="checkbox" value="1" class="make-switch status" name="is_open_sellplatform" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_open_sellplatform eq 1" >checked</if>>
+                    <input type="checkbox" id="is_open_sellplatform" value="1" class="make-switch status" name="is_open_sellplatform" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_open_sellplatform eq 1" >checked</if>>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    销售端邀请函酒水信息开关：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="hidden" name="is_view_wine_btn" value="0">
+                    <input type="checkbox" value="1" class="make-switch status" name="is_view_wine_switch" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.is_view_wine_switch eq 1" >checked</if>>
                 </div>
             </div>
 
