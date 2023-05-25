@@ -782,6 +782,8 @@ class TaskController extends BaseController {
                     $task_content['user_reward']['hotel_max_rate'] = I('post.hotel_max_rate',0);
                     $task_content['user_reward']['room_num'] = I('post.room_num',0,'intval');
                     $task_content['user_reward']['week_num'] = I('post.week_num',0,'intval');
+                    $task_content['user_reward']['hotel_table_max_rate'] = I('post.hotel_table_max_rate',0);
+                    $task_content['user_reward']['not_wine_integral'] = I('post.not_wine_integral',0,'intval');
                 }
                 $this->chekInfoParam($task_content,$data);
                 $data['task_info'] = json_encode($task_content);
@@ -958,6 +960,8 @@ class TaskController extends BaseController {
                     $task_content['user_reward']['week_num'] = I('post.week_num',0,'intval');
                     $task_content['user_reward']['room_num'] = I('post.room_num',0,'intval');
                     $task_content['user_reward']['hotel_max_rate'] = I('post.hotel_max_rate',0);
+                    $task_content['user_reward']['hotel_table_max_rate'] = I('post.hotel_table_max_rate',0);
+                    $task_content['user_reward']['not_wine_integral'] = I('post.not_wine_integral',0,'intval');
                 }
                 $this->chekInfoParam($task_content);
                 $data['task_info'] = json_encode($task_content);
@@ -1354,6 +1358,8 @@ class TaskController extends BaseController {
             if(empty($data['user_reward']['hotel_max_rate'])) $this->error('请输入餐厅单日积分上限比例');
             if(empty($data['user_reward']['week_num'])) $this->error('请输入打开邀请函奖励次数');
             if(empty($data['user_reward']['room_num'])) $this->error('请输入饭点包间奖励次数');
+            if(empty($data['user_reward']['hotel_table_max_rate'])) $this->error('请输入大厅单日积分上限比例');
+            if(empty($data['user_reward']['not_wine_integral'])) $this->error('请输入无酒水信息奖励积分');
         }
         return true;
     }

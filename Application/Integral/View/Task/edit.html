@@ -506,6 +506,15 @@
                     <input min='1' type="text" name="room_num" style="width:8%;height:25px;padding:6px 12px;"  minlength="1" maxlength="5"  value="{$cinfo.user_reward.room_num}" placeholder="次" />&nbsp;&nbsp;&nbsp;&nbsp;次<span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
                 </p>
 
+                <p>
+                    餐厅大厅单日积分上限比例:
+                    <input min='0' max='1' type="text" name="hotel_table_max_rate" style="width:8%;height:25px;padding:6px 12px;" value="{$cinfo.user_reward.hotel_table_max_rate}" />&nbsp;&nbsp;&nbsp;&nbsp;(具体算法为：比例*餐厅单日积分上限)<span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
+                </p>
+
+                <p>
+                    无酒水信息奖励积分:
+                    <input min='0' type="text" name="not_wine_integral" style="width:8%;height:25px;padding:6px 12px;"  minlength="0" maxlength="10"  value="{$cinfo.user_reward.not_wine_integral}" /><span for="reward_promote_2" generated="true" class="help-block help-block-error"></span>
+                </p>
 
             </div>
         </div>

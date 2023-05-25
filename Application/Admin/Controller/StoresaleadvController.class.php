@@ -257,11 +257,16 @@ class StoresaleadvController extends BaseController {
                 $this->output('请选择酒楼','storesaleadv/hoteladd',2,0);
             }
             $m_adshotel = new \Admin\Model\StoresaleAdsHotelModel();
+            $res_ads_hotel = $m_adshotel->getDataList('hotel_id',array('storesale_ads_id'=>$deliveryid),'id desc');
+            $ads_hotels = array();
+            foreach ($res_ads_hotel as $v){
+                $ads_hotels[]=$v['hotel_id'];
+            }
             $data_hotel = array();
             $tmp_hb = array();
             foreach ($hotel_arr as $k=>$v) {
                 $hotel_id = $v['hotel_id'];
-                if(array_key_exists($hotel_id, $tmp_hb)){
+                if(array_key_exists($hotel_id, $tmp_hb) || in_array($hotel_id,$ads_hotels)){
                     continue;
                 }
                 $tmp_hb[$hotel_id] = 1;
