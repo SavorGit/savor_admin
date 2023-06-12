@@ -592,7 +592,6 @@ class HotelController extends BaseController {
             }
         }
         $trade_area_type_arr = C('TRADE_AREA_TYPE_ARR');
-        
         $this->assign('trade_area_type_arr',$trade_area_type_arr);
         $this->assign('circle_list',$business_circles);
         $this->assign('food_style_list',$food_style_list);
@@ -741,6 +740,7 @@ class HotelController extends BaseController {
 		$save['bank_account']        = I('post.bank_account','','trim');
 		$save['bank_name']           = I('post.bank_name','','trim');
 		$save['type']                = I('post.type',1,'intval');
+		$save['wtype']               = I('post.wtype',0,'intval');
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
         $is_open_integral = I('post.is_open_integral',0,'intval');
