@@ -1,0 +1,330 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<style type="text/css">
+	.zhezhao{
+			display: none;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			background-color: black;
+			opacity: 0.7;
+			text-align: center;
+			z-index: 999;
+		}
+	.big{
+			display: none;
+		}
+	.addbig{
+		position: absolute;
+		width: 500px;
+		height: 500px;
+		top: 100px;
+		left: 26%;
+		z-index: 1000;
+	}
+</style>
+<div class="pageContent">
+  <form method="post" action="{$host_name}/noworkhotel/hoteladd" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+    <input type="hidden" name="id" value="{$vinfo.id}">
+      <input type="hidden" name="navtp" value="{$navtp}">
+      <input type="hidden" id="honame" value="{$host_name}">
+      <input type="hidden" id="hotel_business_circle_id" value="{$vinfo.business_circle_id}">
+    <div class="pageFormContent modal-body">
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒店名称:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="name" minlength="1" maxlength="50" value="{$vinfo.name}" required>
+        </div>
+      </div>
+
+      <div class="form-group row" id="hotel_cover">
+              <label class="col-xs-12 col-sm-2 control-label">
+                	酒楼封面图：
+              </label>
+              <div class="col-xs-12 col-sm-10">
+                <div class="fileinput fileinput-new" data-fileinput>
+                  <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                    <a data-target="#modal-file" href="javascript:void(0)">
+                      <if condition="($vinfo['hotel_cover_url'] eq 'NULL') OR $vinfo['hotel_cover_url'] eq ''">
+                        <img id="select_media_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+                        <else />
+                        <img id="select_media_idimg" src="{$vinfo.hotel_cover_url}" border="0" />
+                      </if>
+                       <span id="select_media_idimgname"></span>
+                    </a>
+                  </div>
+                  <div>
+                    <a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResourceNew?filed=select_media_id&rtype=2" data-browse-file>
+                      选择图片
+                    </a>
+                    <input type="hidden" name="hotel_cover_media_id" id="select_media_id" value="{$vinfo['hotel_cover_media_id']}">
+                    <a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">
+                      删除 </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒店地址:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="addr" minlength="2"  value="{$vinfo.addr}" required>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          酒店区域:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select id="hotel_area_id" name="area_id" class="form-control bs-select" title="请选择..." data-size="20" required>
+             <volist name="area" id="row">
+                 <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['area_id']"> selected </if> > {$row['region_name']} </option>
+             </volist>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          区/县:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select id="hotel_county_id" name="county_id" class="form-control " title="请选择..." data-size="20" required>
+             <volist name="county_list" id="row">
+                 <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['county_id']"> selected </if> > {$row['region_name']} </option>
+             </volist>
+
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            商圈:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select id="business_circle_id" name="business_circle_id" class="form-control" data-size="20">
+                <volist name="circle_list" id="row">
+                    <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['business_circle_id']"> selected </if> > {$row['name']} </option>
+                </volist>
+
+            </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         酒店联系人：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input type="text" class="form-control" name="contractor" minlength="1" value="{$vinfo.contractor}" required>
+        </div>
+      </div>
+
+        <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          手机:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="mobile" type="text" class="form-control digits" value="{$vinfo.mobile}" required/>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          固定电话:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="tel" type="text" class="form-control" value="{$vinfo.tel}" />
+        </div>
+      </div>
+	  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          菜系:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <select  name="food_style_id" class="form-control bs-select" title="请选择..." data-size="20" required>
+             <volist name="food_style_list" id="row">
+                 <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['food_style_id']"> selected </if> > {$row['name']} </option>
+             </volist>
+
+          </select>
+        </div>
+      </div>	
+	  <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+          人均消费:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+          <input name="avg_expense" type="text" class="form-control" value="{$vinfo.avg_expense}" required/>
+        </div>
+      </div>
+
+	  
+      <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+         酒楼位置坐标:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+
+          <input value="{$vinfo.gps}" type="text" placeholder ="请输入经纬度并以,隔开" class="form-control" name="gps" required>
+        	<a href="http://api.map.baidu.com/lbsapi/getpoint/index.html" target="_blank">查找坐标:http://api.map.baidu.com/lbsapi/getpoint/index.html</a>
+        </div>
+      </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                大众点评评论数：
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <input type="text" class="form-control" name="dp_comment_num" minlength="1" value="{$vinfo.dp_comment_num}">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-xs-12 col-sm-2 control-label">
+                酒楼类型:
+            </label>
+            <div class="col-xs-12 col-sm-10">
+                <select name="htype" class="form-control bs-select" required>
+                    <option value="20" <if condition="$vinfo.htype eq 20"> selected </if> >未合作餐厅</option>
+                    <option value="10" <if condition="$vinfo.htype eq 10"> selected </if> >合作餐厅</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default close-m" type="button">取消</button>
+      <button class="btn btn-primary" id="saveinfos" type="submit">保存</button>
+    </div>
+    	<div class="zhezhao"></div>
+			<img class="big" src=""/>
+  </form>
+</div>
+<script type="text/javascript">
+    $(function(){
+    	$('#htdq_time_reset').click(function(){
+    	    $(this).parent().prev().val('')
+    	  });
+    	$("#htdq_time").datetimepicker({
+    	      minView: "month", //选择日期后，不会再跳转去选择时分秒
+    	      language:  'zh-CN',
+    	      format: 'yyyy-mm-dd',
+    	      todayBtn:  1,
+    	      autoclose: 1,
+    	    });
+	$('#media_idimg').click(function(){
+		var $a = $(this).attr('src');
+			$('.big').prop('src',$a).addClass('addbig')
+			$('.zhezhao').show(500);
+			$('.big').show(500);
+	})
+  $('.zhezhao').click(function(){
+
+		$('.zhezhao').hide(500);
+		$('.big').hide(500);
+   })
+        $('#mac_addr').blur(function(){
+                var vp = $(this).val();
+                var ln = $(this).val().length;
+                var reg = /^[0-9A-F]+$/;
+                var r = vp.match(reg);
+                if(ln==0){
+                    $('.macccc').css('display','none');
+                }else if(ln!=12){
+                    $('.macccc').css('display','');
+                    $('.macccc div').html('请输入12位字符');
+
+                }else{
+                    if(r==null) {
+                        $('.macccc').css('display', '');
+                        $('.macccc div').html('不允许输入非法字符，请输入正确字符');
+
+                    }else{
+                        $('.macccc').css('display','none');
+                    }
+                }
+
+
+        });
+
+        $('#saveinfos').click(function(){
+            var vp = $('#mac_addr').val();
+            var ln = $('#mac_addr').val().length;
+            var reg = /^[0-9A-F]+$/;
+            var r = vp.match(reg);
+            if(ln==0){
+                $('.macccc').css('display','none');
+                return true;
+            }else if(ln!=12){
+                $('.macccc').css('display','');
+                $('.macccc div').html('请输入12位字符');
+                return false;
+            }else{
+                if(r==null) {
+                    $('.macccc').css('display', '');
+                    $('.macccc div').html('不允许输入非法字符，请输入正确字符');
+                    return false;
+                }else{
+                    $('.macccc').css('display','none');
+                    return true;
+                }
+            }
+        });
+		$('#hotel_area_id').change(function(){
+			var area_id = $(this).val();
+			honame = $('#honame').val();
+			//alert(honame);
+			$.ajax({
+				type:"post",
+				url:honame+"/hotel/getCountyInfo",
+				dataType:"json",
+				data:"area_id="+area_id,
+				async:true,
+				success:function(calls){
+					var county_str = '';
+					for(var i=0;i<calls.length;i++){
+						county_str +="<option value="+calls[i].id+">"+calls[i].region_name+"</option>";
+					}
+					$('#hotel_county_id').html(county_str);
+				}
+			});
+		});
+
+        $('#hotel_county_id').change(function(){
+            var business_circle_id = $("#hotel_business_circle_id").val();
+            var area_id = $("#hotel_area_id option:selected").val();
+            var county_id = $(this).val();
+            honame = $('#honame').val();
+            $.ajax({
+                type:"post",
+                url:honame+"/hotel/getBusinesscircle",
+                dataType:"json",
+                data:"area_id="+area_id+"&county_id="+county_id+"&business_circle_id="+business_circle_id,
+                async:true,
+                success:function(calls){
+                    var circle_str = '';
+                    for(var i=0;i<calls.length;i++){
+                        circle_str+='<option value="'+calls[i].id+'"'+calls[i].is_select+'>'+calls[i].name+'</option>';
+                    }
+                    $('#business_circle_id').html(circle_str);
+                }
+            });
+        });
+        $('#hotel_county_id').trigger('change');
+
+    });
+
+
+
+
+</script>

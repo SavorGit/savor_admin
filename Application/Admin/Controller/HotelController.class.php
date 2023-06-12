@@ -42,7 +42,7 @@ class HotelController extends BaseController {
 		$area_arr = $areaModel->getAllArea();
 		$this->assign('area', $area_arr);
 		
-		$where = "1=1";
+		$where = "a.htype=10";
 		$beg_time = I('starttime','');   //安装开始时间
 		$end_time = I('endtime','');     //安装结束时间
 		if($beg_time){
