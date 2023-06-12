@@ -30,6 +30,11 @@ class SaleuserController extends BaseController {
         if(!empty($uname)){
             $where['u.nickName'] = array('like',"%$uname%");
         }
+        $userinfo = session('sysUserInfo');
+        $area_city = intval($userinfo['area_city']);
+        if($area_city>0){
+            $where['hotel.area_id'] = $area_city;
+        }
         $start = ($pageNum-1)*$size;
         $m_staffuser = new \Admin\Model\Integral\StaffModel();
         $fields = "u.id,u.openid,u.mobile,u.avatarUrl,u.nickName,u.name as username,u.idnumber,hotel.id as hotel_id,hotel.name as hotel_name,u.create_time,IFNULL(i.integral ,0) as integral";
