@@ -3918,4 +3918,98 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $file_rootpath =  SITE_TP_PATH.$file_path;
         $objWriter->save($file_rootpath);
     }
+
+    public function dpdata(){
+        exit;
+        $ip = '47.93.76.149';
+        $url = 'https://www.dianping.com/shanghai/ch10/g110';
+        $header = array(
+            'Host: www.dianping.com',
+            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$ip Safari/537.36",
+            'Referer: https://www.dianping.com/',
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $html = curl_exec($ch);
+        curl_close($ch);
+        $dom = new \DOMDocument();
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $restaurant_nodes = $xpath->query("//div[@id='shop-all-list']/ul/li/div[@class='txt']/div[@class='tit']/a");
+        print_r($restaurant_nodes);
+        exit;
+
+        $all_hotel = array();
+        foreach ($restaurant_nodes as $restaurant_node) {
+            $restaurant_url = $restaurant_node->getAttribute('href');
+            // to do: 获取每个餐厅详情页面HTML，解析详细信息并存储到数据库中
+
+            $header = array(
+                'Host: www.dianping.com',
+                'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+                'Referer: https://www.dianping.com/',
+            );
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $restaurant_url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $detail_html = curl_exec($ch);
+            curl_close($ch);
+
+            $dom = new \DOMDocument();
+            $dom->loadHTML($detail_html);
+            $xpath = new \DOMXPath($dom);
+            $name_node = $xpath->query("//h1[@class='shop-name']/span");
+            $name = $name_node->item(0)->nodeValue;
+            $address_node = $xpath->query("//div[@class='expand-info address']/span[@itemprop='street-address']");
+            $address = $address_node->item(0)->nodeValue;
+
+            $phone_node = $xpath->query("//p[@class='expand-info tel']/span[@itemprop='tel']");
+            $phone = $phone_node->item(0)->nodeValue;
+
+            $review_node = $xpath->query("//div[@class='brief-info']/a[@class='review-num']");
+            $review = $review_node->item(0)->nodeValue;
+
+            $all_hotel[]=array('name'=>$name,'address'=>$address,'phone'=>$phone,'review'=>$review);
+            echo "name ok \r\n";
+        }
+        print_r($all_hotel);
+        exit;
+    }
+
+    public function signhotel(){
+        $sql = "SELECT min(record.id) as id FROM savor_crm_salerecord record left JOIN savor_hotel hotel on
+            hotel.id=record.signin_hotel_id WHERE record.type = 1 AND record.status = 2 AND record.visit_type IN ('184','171') AND
+            record.signin_hotel_id > 0 AND hotel.id NOT IN
+            ('7','482','504','791','508','844','845','597','201','493','883','53','598','1366','1337','925') AND hotel.htype = 20
+            GROUP BY record.signin_hotel_id";
+        $model = M();
+        $res_data = $model->query($sql);
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_signhotel = new \Admin\Model\Crm\SignhotelModel();
+        $m_salerecord = new \Admin\Model\Crm\SalerecordModel();
+        foreach ($res_data as $v){
+            $sale_record_id = $v['id'];
+            $sql_sale = "select * from savor_crm_salerecord where id={$sale_record_id}";
+            $res_record = $model->query($sql_sale);
+            $hotel_id = $res_record[0]['signin_hotel_id'];
+            $ops_staff_id = $res_record[0]['ops_staff_id'];
+            $m_hotel->saveData(array('no_work_type'=>22), array('id'=>$hotel_id));
+            $adata = array('ops_staff_id'=>$ops_staff_id,'hotel_id'=>$hotel_id,'visit_num'=>1,
+                'sign_progress_id'=>1,'start_time'=>$res_record[0]['add_time']);
+            $m_signhotel->add($adata);
+
+            $m_salerecord->updateData(array('id'=>$sale_record_id),array('sign_progress_id'=>1));
+
+            echo "sale_record_id:$sale_record_id,hotel_id:$hotel_id \r\n";
+        }
+
+
+    }
 }
