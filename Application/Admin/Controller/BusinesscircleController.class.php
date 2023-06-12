@@ -60,7 +60,8 @@ class BusinesscircleController extends BaseController {
                 }
             }
             $county_list = $m_area->getWhere('id,region_name',array('parent_id'=>$parent_id));
-
+            $trade_area_type_arr = C('TRADE_AREA_TYPE_ARR');
+            $this->assign('trade_area_type_arr',$trade_area_type_arr);
             $this->assign('county_list',$county_list);
             $this->assign('area',$area);
         	$this->assign('dinfo',$dinfo);
@@ -70,6 +71,7 @@ class BusinesscircleController extends BaseController {
         	$area_id = I('post.area_id',0,'intval');
         	$county_id = I('post.county_id',0,'intval');
         	$status = I('post.status',0,'intval');
+        	$trade_area_type = I('post.trade_area_type',0,'intval');
         	$where = array('name'=>$name);
         	if($id){
                 $where['id']= array('neq',$id);
@@ -80,7 +82,7 @@ class BusinesscircleController extends BaseController {
 //        	if(!empty($res_names)){
 //        		$this->output('商圈名称不能重复添加', 'businesscircle/circleadd', 2, 0);
 //        	}
-        	$data = array('name'=>$name,'area_id'=>$area_id,'county_id'=>$county_id,'status'=>$status);
+        	$data = array('name'=>$name,'area_id'=>$area_id,'county_id'=>$county_id,'status'=>$status,'trade_area_type'=>$trade_area_type);
         	if($id){
         		$condition = array('id'=>$id);
         		$result = $m_circles->updateData($condition,$data);

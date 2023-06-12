@@ -251,6 +251,11 @@ $config['HOTEL_COOPERATE_STATUS'] = array(
     '1'=>'合作中',
     '2'=>'已中止合作',
 );
+$config['HOTEL_COOPERATE_TYPE'] = array(
+    '1'=>'酒水售卖',
+    '2'=>'大屏合作',
+    '3'=>'酒水售卖和大屏合作',
+);
 
 $config['HOTEL_KEY'] = array(
     '1'=>'重点',
@@ -874,7 +879,7 @@ $config['HOTEL_STANDALONE_CONFIG'] = array(
     '16'=>'其它',
 );
 $config['TRADE_AREA_TYPE_ARR'] = array(
-    array('id'=>0,'name'=>'非聚焦商圈'),
+    array('id'=>2,'name'=>'普通商圈'),
     array('id'=>1,'name'=>'聚焦商圈')
 );
 $config['HEART_LOSS_HOURS'] = 48;
