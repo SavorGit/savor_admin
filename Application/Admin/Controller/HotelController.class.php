@@ -891,8 +891,9 @@ class HotelController extends BaseController {
 		$data['food_style_id']   = I('post.food_style_id',0,'intval');
 		$data['avg_expense']     = I('post.avg_expense',0,'intval');
 		$data['hotel_cover_media_id'] = I('post.hotel_cover_media_id',0,'intval');
-		$data['cooperate_status'] = I('post.cooperate_status',0,'intval');
+		$cooperate_status = I('post.cooperate_status',0,'intval');
 		$contract_expiretime = I('post.contract_expiretime','');
+        $data['cooperate_status'] = $cooperate_status;
 		if($contract_expiretime){
 		    $data['contract_expiretime'] = $contract_expiretime;
         }
@@ -936,6 +937,12 @@ class HotelController extends BaseController {
         $data['dp_comment_num'] = $dp_comment_num;
 		$tranDb = new Model();
 		$tranDb->startTrans();
+
+		if($cooperate_status==2){
+            $save['state'] = 4;
+            $save['htype'] = 20;
+            $save['no_work_type'] = 21;
+        }
 		if ($hotel_id) {
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
