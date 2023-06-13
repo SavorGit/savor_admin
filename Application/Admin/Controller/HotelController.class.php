@@ -947,6 +947,7 @@ class HotelController extends BaseController {
 				$this->error('操作失败1');
 			}
 		} else {
+			$save['htype'] = 10;
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$bool = $hotelModel->addData($save);
 			if($bool){
