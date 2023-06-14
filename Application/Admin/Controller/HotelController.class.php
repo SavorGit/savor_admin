@@ -219,10 +219,8 @@ class HotelController extends BaseController {
 		}else{
 			//获取所有合作维护人
 			$m_opuser_role = new \Admin\Model\OpuserroleModel();
-			$fields = 'a.user_id uid,user.remark ';
-			$map = array();
-			$map['state']   = 1;
-			$map['role_id']   = array('in',array(1,3)) ;
+			$fields = 'a.user_id uid,user.remark';
+			$map = array('a.state'=>1,'a.role_id'=>array('in',array(1,3)),'user.remark'=>array('neq',''));
 			$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
 			$u_arr = array();
 			$hezuo_arr = array();
@@ -230,7 +228,7 @@ class HotelController extends BaseController {
 				$u_arr[$uv['uid']] = trim($uv['remark']);
 			}
 			foreach($u_arr as $key=>$v){
-			    $firstCharter = getFirstCharter(cut_str($v, 1));
+			    $firstCharter = getFirstCharter($v);
 			    $tmp['uid'] = $key;
 			    $tmp['remark'] = $v;
 			    $hezuo_arr[$firstCharter][] = $tmp;
@@ -941,7 +939,7 @@ class HotelController extends BaseController {
 		if($cooperate_status==2){
             $save['state'] = 4;
             $save['htype'] = 20;
-            $save['no_work_type'] = 21;
+            $save['no_work_type'] = 23;
         }
 		if ($hotel_id) {
 			$where =  'id='.$hotel_id;
@@ -2004,4 +2002,6 @@ class HotelController extends BaseController {
             $this->display('addfoodstyle');
         }
     }
+
+
 }

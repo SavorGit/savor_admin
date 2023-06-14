@@ -39,7 +39,7 @@ class NoworkhotelController extends BaseController {
             foreach ($res_list['list'] as $v){
                 $process = '';
                 if(!empty($v['sign_progress_id']) && $v['sign_progress_id']>=1){
-                    $process = $all_process[$v['sign_progress_id']]['name'];
+                    $process = $all_process[$v['sign_progress_id']]['percent'].'%';
                 }
                 $v['no_work_type_str'] = $all_types[$v['no_work_type']];
                 $v['process'] = $process;
