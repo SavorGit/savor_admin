@@ -4009,6 +4009,40 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
 
             echo "sale_record_id:$sale_record_id,hotel_id:$hotel_id \r\n";
         }
+    }
+
+    public function upgps(){
+        $m_area = new \Admin\Model\AreaModel();
+        $curl = new \Common\Lib\Curl();
+        $citys = array('1'=>'北京市','9'=>'上海市','236'=>'广州市','248'=>'佛山市','246'=>'深圳市');
+        $m_hotel = new \Admin\Model\HotelModel();
+        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=236 and state in(1,4) and flag=0 and gps='' order by id asc ";
+        $res_data = $m_hotel->query($sql);
+        foreach ($res_data as $v){
+            $hotel_id = $v['id'];
+            $area_id = $v['area_id'];
+            $county = '';
+            if($v['county_id']>0){
+                $res_area_info = $m_area->getWhere('id,region_name',array('id'=>$v['county_id']),'id desc','0,1');
+                $county = $res_area_info[0]['region_name'];
+            }
+            $address = $citys[$area_id].$county.$v['addr'];
+//            $address = urlencode($address);
+            $url = "https://api.map.baidu.com/geocoding/v3/?address={$address}&output=json&ak=1Dzrskry6AVpiYo3QEBKTfBBwfsMw7lk=RD615";
+            $gps_info = '';
+            $curl::get($url,$gps_info);
+            if(!empty($gps_info)){
+                $geocode_info = json_decode($gps_info,true);
+                if($geocode_info['status']==0 && !empty($geocode_info['result']['location'])){
+                    $gps = $geocode_info['result']['location']['lng'].','.$geocode_info['result']['location']['lat'];
+                    $m_hotel->saveData(array('gps'=>$gps),array('id'=>$hotel_id));
+                    echo $hotel_id.' '.$v['name']."\r\n";
+                }
+            }
+
+        }
+
+
 
 
     }
