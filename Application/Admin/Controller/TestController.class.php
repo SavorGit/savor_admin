@@ -4044,13 +4044,10 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function ocr(){
-        //请求参数 https://help.aliyun.com/document_detail/442282.html?spm=a2c4g.442265.0.0.2c0733c30eG3kv
-        $arr = array(
-            "Action"=>'RecognizeShoppingReceipt',  //接口类型
-            "Url"=>'https://oss.littlehotspot.com/forscreen/resource/1681787380658.jpg',  //要识别的图片链接
-        );
-        $ali_ocr = new \Common\Lib\AliyunOCR($arr);
-        $res_ocr = $ali_ocr->result();
+        //阿里云文档 请求参数 https://help.aliyun.com/document_detail/442282.html?spm=a2c4g.442265.0.0.2c0733c30eG3kv
+        $url = 'https://oss.littlehotspot.com/forscreen/resource/1686835293235.jpg';
+        $ali_ocr = new \Common\Lib\AliyunOCR();
+        $res_ocr = $ali_ocr->recognizeShoppingReceipt($url);
         $res_data = json_decode($res_ocr['Data'],true);
         print_r($res_data);
     }
