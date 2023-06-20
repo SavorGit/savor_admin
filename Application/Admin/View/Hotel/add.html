@@ -520,7 +520,8 @@
           商圈类型:
         </label>
         <div class="col-xs-12 col-sm-10">
-          <select id="trade_area_type" name="trade_area_type" class="form-control bs-select" title="请选择..." data-size="20" required>
+          <!-- <select id="trade_area_type" name="trade_area_type" class="form-control bs-select" title="请选择..." data-size="20" required> -->
+          	 <select id="trade_area_type" name="trade_area_type" class="form-control bs-select" title="请选择..." data-size="20" >
              <volist name="trade_area_type_arr" id="row">
                  <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['trade_area_type']"> selected </if> > {$row['name']} </option>
              </volist>
