@@ -14,6 +14,115 @@ use Common\Lib\AliyunMsn;
  *
  */
 class TestController extends Controller {
+    
+    public function spider(){
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+        ini_set("display_errors", "On");//打开错误提示
+        ini_set("error_reporting",E_ALL);//显示所有错误
+        header("Content-Type: text/html; charset=utf-8");
+        
+        $header = $this->header();
+        
+        $id = I('id');
+        $page = I('page',1);
+        
+        
+        $header[] = 'Referer: https://item.jd.com/'.$id.'.html';
+        
+        //设置浏览器信息
+        $header[] = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36';
+        
+        $url = 'https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98&productId='.$id.'&score=0&sortType=5&page='.$page.'&pageSize=1000&isShadowSku=0&rid=0&fold=1';
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        //为防止爬取多次禁用Ip，可用代理ip
+        //            curl_setopt($ch, CURLOPT_PROXY,'88.198.50.103'); //代理服务器地址
+        //            curl_setopt($ch, CURLOPT_PROXYPORT, '8080'); //代理服务器端口
+        
+        $output = curl_exec($ch);
+        curl_close($ch);
+        $output=str_replace('fetchJSON_comment98(','',$output);
+        $output=str_replace('});','}',$output);
+        $encode = mb_detect_encoding($output, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
+        if($encode == 'UTF-8'){
+            echo $encode;
+        }else{
+            $output = mb_convert_encoding($output, 'UTF-8', $encode);
+        }
+        //print_r($output);exit;
+        $result = json_decode($output, true);
+        //print_r($result);exit;
+        $pjs = [];
+        foreach($result['comments'] as $key=>$v){
+            $tmp['content'] =  trim($v['content']);
+            $pjs[] = $tmp;
+        }
+        $cell = array(
+            array('content',' '),
+            
+        );
+        //print_r($pjs);exit;
+        $filename = '评价语';
+        $fileName = $filename.'_'.date('YmdHis');
+        
+        $cellNum = count($cell);
+        $dataNum = count($pjs);
+        
+        $objPHPExcel = new \PHPExcel();
+        $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
+        
+        for ($i = 0; $i < $cellNum; $i++) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i] . '1', $cell[$i][1]);
+        }
+        for ($i = 0; $i < $dataNum; $i++) {
+            for ($j = 0; $j < $cellNum; $j++) {
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j] . ($i + 2), $pjs[$i][$cell[$j][0]]);
+            }
+        }
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $fileName . '.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+    }
+    
+    
+    //此函数提供了国内的IP地址
+    public static function header(){
+        $ip_long = array(
+            array('607649792', '608174079'), //36.56.0.0-36.63.255.255
+            array('1038614528', '1039007743'), //61.232.0.0-61.237.255.255
+            array('1783627776', '1784676351'), //106.80.0.0-106.95.255.255
+            array('2035023872', '2035154943'), //121.76.0.0-121.77.255.255
+            array('2078801920', '2079064063'), //123.232.0.0-123.235.255.255
+            array('-1950089216', '-1948778497'), //139.196.0.0-139.215.255.255
+            array('-1425539072', '-1425014785'), //171.8.0.0-171.15.255.255
+            array('-1236271104', '-1235419137'), //182.80.0.0-182.92.255.255
+            array('-770113536', '-768606209'), //210.25.0.0-210.47.255.255
+            array('-569376768', '-564133889'), //222.16.0.0-222.95.255.255
+        );
+        $rand_key = mt_rand(0, 9);
+        $ip= long2ip(mt_rand($ip_long[$rand_key][0], $ip_long[$rand_key][1]));
+        
+        $headers['CLIENT-IP'] =$ip;
+        $headers['X-FORWARDED-FOR'] =$ip;
+        $headers["VIA"] = $ip;
+        $headers["REMOTE_ADDR"] = $ip;
+        
+        //        $header[] = 'Referer: https://item.jd.com/'.$goods_id.'.html';
+        
+        $headerArr = array();
+        foreach($headers as $n => $v ) {
+            $headerArr[] = $n .': ' . $v;
+        }
+        return $headerArr;
+    }
     public function getRedisInfo(){
         $redis = SavorRedis::getInstance();
         $redis->select(15);
