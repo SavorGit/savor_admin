@@ -1,0 +1,104 @@
+<include file="Public/script"/>
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/noworkhotel/datalist" method="post">
+    <input type="hidden" name="pageNum" value="{$pageNum}"/>
+    <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+          <div class="tools-group"></div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-10">
+
+          <div class="form-inline">
+
+            <div class="form-group">
+              <div class="input-group input-group-sm">城市：</div>
+              <div class="input-group">
+                <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body">
+                  <option value=0>全部</option>
+                  <volist name="area" id="vo">
+                    <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
+                  </volist>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="input-group input-group-sm">类型：</div>
+              <div class="input-group">
+                <select name="no_work_type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                  <option value=0>全部</option>
+                  <volist name=":C('NO_WORK_TYPES')" id="ctype">
+                    <option value="{$key}" <if condition="$no_work_type eq $key"> selected </if> > {$ctype}</option>
+                  </volist>
+                </select>
+              </div>
+            </div>
+
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" name="keywords" value="{$keywords}" placeholder="请输入酒楼名称">
+              <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+
+          <tr id="post">
+            <th>酒楼ID</th>
+            <th>酒楼名称</th>
+            <th>城市</th>
+            <th>地址</th>
+            <th>联系人</th>
+            <th>联系电话</th>
+            <th>类型</th>
+            <th>签约进度</th>
+            <th>添加时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="data" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="酒楼ID">{$dinfo.id}</td>
+              <td data-title="酒楼名称">{$dinfo.name}</td>
+              <td data-title="城市">{$dinfo.area_name}</td>
+              <td data-title="地址">{$dinfo.addr}</td>
+              <td data-title="联系人">{$dinfo.contractor}</td>
+              <td data-title="联系电话">{$dinfo.mobile}</td>
+              <td data-title="类型">{$dinfo.no_work_type_str}</td>
+              <td data-title="签约进度">{$dinfo.process}</td>
+              <td data-title="添加时间">{$dinfo.create_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a data-tip="修改" target="dialog" mask="true" href="{$host_name}/noworkhotel/hoteladd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+
+                </div>
+              </td>
+            </tr>
+          </volist>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>

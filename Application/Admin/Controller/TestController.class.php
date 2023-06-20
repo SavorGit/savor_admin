@@ -4027,4 +4027,137 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $file_rootpath =  SITE_TP_PATH.$file_path;
         $objWriter->save($file_rootpath);
     }
+
+    public function dpdata(){
+        exit;
+        $ip = '47.93.76.149';
+        $url = 'https://www.dianping.com/shanghai/ch10/g110';
+        $header = array(
+            'Host: www.dianping.com',
+            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$ip Safari/537.36",
+            'Referer: https://www.dianping.com/',
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $html = curl_exec($ch);
+        curl_close($ch);
+        $dom = new \DOMDocument();
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $restaurant_nodes = $xpath->query("//div[@id='shop-all-list']/ul/li/div[@class='txt']/div[@class='tit']/a");
+        print_r($restaurant_nodes);
+        exit;
+
+        $all_hotel = array();
+        foreach ($restaurant_nodes as $restaurant_node) {
+            $restaurant_url = $restaurant_node->getAttribute('href');
+            // to do: 获取每个餐厅详情页面HTML，解析详细信息并存储到数据库中
+
+            $header = array(
+                'Host: www.dianping.com',
+                'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+                'Referer: https://www.dianping.com/',
+            );
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $restaurant_url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $detail_html = curl_exec($ch);
+            curl_close($ch);
+
+            $dom = new \DOMDocument();
+            $dom->loadHTML($detail_html);
+            $xpath = new \DOMXPath($dom);
+            $name_node = $xpath->query("//h1[@class='shop-name']/span");
+            $name = $name_node->item(0)->nodeValue;
+            $address_node = $xpath->query("//div[@class='expand-info address']/span[@itemprop='street-address']");
+            $address = $address_node->item(0)->nodeValue;
+
+            $phone_node = $xpath->query("//p[@class='expand-info tel']/span[@itemprop='tel']");
+            $phone = $phone_node->item(0)->nodeValue;
+
+            $review_node = $xpath->query("//div[@class='brief-info']/a[@class='review-num']");
+            $review = $review_node->item(0)->nodeValue;
+
+            $all_hotel[]=array('name'=>$name,'address'=>$address,'phone'=>$phone,'review'=>$review);
+            echo "name ok \r\n";
+        }
+        print_r($all_hotel);
+        exit;
+    }
+
+    public function signhotel(){
+        $sql = "SELECT min(record.id) as id FROM savor_crm_salerecord record left JOIN savor_hotel hotel on
+            hotel.id=record.signin_hotel_id WHERE record.type = 1 AND record.status = 2 AND record.visit_type IN ('184','171') AND
+            record.signin_hotel_id > 0 AND hotel.id NOT IN
+            ('7','482','504','791','508','844','845','597','201','493','883','53','598','1366','1337','925') AND hotel.htype = 20
+            GROUP BY record.signin_hotel_id";
+        $model = M();
+        $res_data = $model->query($sql);
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_signhotel = new \Admin\Model\Crm\SignhotelModel();
+        $m_salerecord = new \Admin\Model\Crm\SalerecordModel();
+        foreach ($res_data as $v){
+            $sale_record_id = $v['id'];
+            $sql_sale = "select * from savor_crm_salerecord where id={$sale_record_id}";
+            $res_record = $model->query($sql_sale);
+            $hotel_id = $res_record[0]['signin_hotel_id'];
+            $ops_staff_id = $res_record[0]['ops_staff_id'];
+            $m_hotel->saveData(array('no_work_type'=>22), array('id'=>$hotel_id));
+            $adata = array('ops_staff_id'=>$ops_staff_id,'hotel_id'=>$hotel_id,'visit_num'=>1,
+                'sign_progress_id'=>1,'start_time'=>$res_record[0]['add_time']);
+            $m_signhotel->add($adata);
+
+            $m_salerecord->updateData(array('id'=>$sale_record_id),array('sign_progress_id'=>1));
+
+            echo "sale_record_id:$sale_record_id,hotel_id:$hotel_id \r\n";
+        }
+    }
+
+    public function upgps(){
+        $m_area = new \Admin\Model\AreaModel();
+        $curl = new \Common\Lib\Curl();
+        $citys = array('1'=>'北京市','9'=>'上海市','236'=>'广州市','248'=>'佛山市','246'=>'深圳市');
+        $m_hotel = new \Admin\Model\HotelModel();
+        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=236 and state in(1,4) and flag=0 and gps='' order by id asc ";
+        $res_data = $m_hotel->query($sql);
+        foreach ($res_data as $v){
+            $hotel_id = $v['id'];
+            $area_id = $v['area_id'];
+            $county = '';
+            if($v['county_id']>0){
+                $res_area_info = $m_area->getWhere('id,region_name',array('id'=>$v['county_id']),'id desc','0,1');
+                $county = $res_area_info[0]['region_name'];
+            }
+            $address = $citys[$area_id].$county.$v['addr'];
+//            $address = urlencode($address);
+            $url = "https://api.map.baidu.com/geocoding/v3/?address={$address}&output=json&ak=1Dzrskry6AVpiYo3QEBKTfBBwfsMw7lk=RD615";
+            $gps_info = '';
+            $curl::get($url,$gps_info);
+            if(!empty($gps_info)){
+                $geocode_info = json_decode($gps_info,true);
+                if($geocode_info['status']==0 && !empty($geocode_info['result']['location'])){
+                    $gps = $geocode_info['result']['location']['lng'].','.$geocode_info['result']['location']['lat'];
+                    $m_hotel->saveData(array('gps'=>$gps),array('id'=>$hotel_id));
+                    echo $hotel_id.' '.$v['name']."\r\n";
+                }
+            }
+
+        }
+    }
+
+    public function ocr(){
+        //阿里云文档 请求参数 https://help.aliyun.com/document_detail/442282.html?spm=a2c4g.442265.0.0.2c0733c30eG3kv
+        $url = 'https://oss.littlehotspot.com/forscreen/resource/1686835293235.jpg';
+        $ali_ocr = new \Common\Lib\AliyunOCR();
+        $res_ocr = $ali_ocr->recognizeShoppingReceipt($url);
+        $res_data = json_decode($res_ocr['Data'],true);
+        print_r($res_data);
+    }
 }

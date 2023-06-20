@@ -403,4 +403,24 @@ class HotelModel extends BaseModel{
             ->select();
         return $res;
     }
+
+    public function getNoworkList($fields,$where,$order='',$start=0,$size=5){
+        $list = $this->alias('a')
+            ->field($fields)
+            ->where($where)
+            ->join('savor_area_info area on a.area_id=area.id','left')
+            ->join('savor_crm_signhotel signhotel on a.id=signhotel.hotel_id','left')
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+        $count = $this->alias('a')
+            ->join('savor_area_info area on a.area_id=area.id','left')
+            ->join('savor_crm_signhotel signhotel on a.id=signhotel.hotel_id','left')
+            ->where($where)
+            ->count();
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 }

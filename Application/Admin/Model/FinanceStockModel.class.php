@@ -10,6 +10,7 @@ class FinanceStockModel extends BaseModel{
         $res_stockhotels = $this->getAll('hotel_id',$where,0,100000,'','hotel_id');
         $m_stock_detail = new \Admin\Model\FinanceStockDetailModel();
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(9);
         $cache_key = C('FINANCE_HOTELSTOCK');
@@ -62,7 +63,9 @@ class FinanceStockModel extends BaseModel{
                 }
             }
             $hotel_cache_key = $cache_key.":$hotel_id";
+            $is_salehotel_stock = 0;
             if(!empty($goods_list)){
+                $is_salehotel_stock = 1;
                 $hotel_data = array('hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'goods_ids'=>$goods_ids,'goods_list'=>$goods_list);
                 $redis->set($hotel_cache_key,json_encode($hotel_data));
 
@@ -70,6 +73,7 @@ class FinanceStockModel extends BaseModel{
             }else{
                 $redis->del($hotel_cache_key);
             }
+            $m_hotel_ext->saveData(array('is_salehotel_stock'=>$is_salehotel_stock),array('hotel_id'=>$hotel_id));
         }
 
         $redis->set($cache_key,json_encode($data_list));

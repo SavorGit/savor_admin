@@ -42,7 +42,7 @@ class HotelController extends BaseController {
 		$area_arr = $areaModel->getAllArea();
 		$this->assign('area', $area_arr);
 		
-		$where = "1=1";
+		$where = "a.htype=10";
 		$beg_time = I('starttime','');   //安装开始时间
 		$end_time = I('endtime','');     //安装结束时间
 		if($beg_time){
@@ -219,10 +219,8 @@ class HotelController extends BaseController {
 		}else{
 			//获取所有合作维护人
 			$m_opuser_role = new \Admin\Model\OpuserroleModel();
-			$fields = 'a.user_id uid,user.remark ';
-			$map = array();
-			$map['state']   = 1;
-			$map['role_id']   = array('in',array(1,3)) ;
+			$fields = 'a.user_id uid,user.remark';
+			$map = array('a.state'=>1,'a.role_id'=>array('in',array(1,3)),'user.remark'=>array('neq',''));
 			$user_info = $m_opuser_role->getAllRole($fields,$map,'' );
 			$u_arr = array();
 			$hezuo_arr = array();
@@ -230,7 +228,7 @@ class HotelController extends BaseController {
 				$u_arr[$uv['uid']] = trim($uv['remark']);
 			}
 			foreach($u_arr as $key=>$v){
-			    $firstCharter = getFirstCharter(cut_str($v, 1));
+			    $firstCharter = getFirstCharter($v);
 			    $tmp['uid'] = $key;
 			    $tmp['remark'] = $v;
 			    $hezuo_arr[$firstCharter][] = $tmp;
@@ -592,7 +590,6 @@ class HotelController extends BaseController {
             }
         }
         $trade_area_type_arr = C('TRADE_AREA_TYPE_ARR');
-        
         $this->assign('trade_area_type_arr',$trade_area_type_arr);
         $this->assign('circle_list',$business_circles);
         $this->assign('food_style_list',$food_style_list);
@@ -741,6 +738,7 @@ class HotelController extends BaseController {
 		$save['bank_account']        = I('post.bank_account','','trim');
 		$save['bank_name']           = I('post.bank_name','','trim');
 		$save['type']                = I('post.type',1,'intval');
+		$save['wtype']               = I('post.wtype',0,'intval');
         $activity_contact            = I('post.activity_contact','','trim');
         $activity_phone              = I('post.activity_phone','','trim');
         $is_open_integral = I('post.is_open_integral',0,'intval');
@@ -891,8 +889,9 @@ class HotelController extends BaseController {
 		$data['food_style_id']   = I('post.food_style_id',0,'intval');
 		$data['avg_expense']     = I('post.avg_expense',0,'intval');
 		$data['hotel_cover_media_id'] = I('post.hotel_cover_media_id',0,'intval');
-		$data['cooperate_status'] = I('post.cooperate_status',0,'intval');
+		$cooperate_status = I('post.cooperate_status',0,'intval');
 		$contract_expiretime = I('post.contract_expiretime','');
+        $data['cooperate_status'] = $cooperate_status;
 		if($contract_expiretime){
 		    $data['contract_expiretime'] = $contract_expiretime;
         }
@@ -936,6 +935,12 @@ class HotelController extends BaseController {
         $data['dp_comment_num'] = $dp_comment_num;
 		$tranDb = new Model();
 		$tranDb->startTrans();
+
+		if($cooperate_status==2){
+            $save['state'] = 4;
+            $save['htype'] = 20;
+            $save['no_work_type'] = 23;
+        }
 		if ($hotel_id) {
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
@@ -947,6 +952,7 @@ class HotelController extends BaseController {
 				$this->error('操作失败1');
 			}
 		} else {
+			$save['htype'] = 10;
 			$save['create_time'] = date('Y-m-d H:i:s');
 			$bool = $hotelModel->addData($save);
 			if($bool){
@@ -1996,4 +2002,6 @@ class HotelController extends BaseController {
             $this->display('addfoodstyle');
         }
     }
+
+
 }

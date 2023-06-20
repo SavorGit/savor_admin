@@ -528,6 +528,19 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            合作类型:
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select name="wtype"  class="form-control bs-select" required>
+                <option value="0" <if condition="$vinfo.wtype eq 0">selected</if> >无</option>
+                <volist name=":C('HOTEL_COOPERATE_TYPE')" id="hctinfo">
+                    <option value="{$key}" <if condition="$key eq $vinfo['wtype']">selected</if>>{$hctinfo}</option>
+                </volist>
+            </select>
+        </div>
+    </div>
 
      <div class="form-group row">
         <label class="col-xs-12 col-sm-2 control-label">
