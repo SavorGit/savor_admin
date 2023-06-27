@@ -229,4 +229,61 @@ where merchant.status=1 and hotel.id not in(7,883) group by hotel.id ";
         $filename = '兑换金额大于500的用户';
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
+
+    public function hotelintegral(){
+        $integral_time = '2023-01-01 00:00:00';
+        $m_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+        $sql = "select a.hotel_id,hotel.name as hotel_name,a.area_id,a.area_name from savor_smallapp_user_integralrecord as a 
+left join savor_hotel as hotel on a.hotel_id=hotel.id where a.hotel_id not in(7,883) and a.add_time>='$integral_time' 
+and a.type in (15,20) group by hotel.id order by a.area_id ";
+        $res_hotels = $m_integralrecord->query($sql);
+        $m_box = new \Admin\Model\BoxModel();
+        $m_room = new \Admin\Model\RoomModel();
+        $datalist = array();
+        foreach ($res_hotels as $v){
+            $box_fields = 'count(box.id) as num';
+            $bwhere = array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0);
+            $res_box = $m_box->getBoxByCondition($box_fields,$bwhere);
+            $box_num = 0;
+            if(!empty($res_box)){
+                $box_num = intval($res_box[0]['num']);
+            }
+            $room_fields = 'count(room.id) as num';
+            $roomwhere = array('hotel.id'=>$v['hotel_id'],'room.state'=>1,'room.flag'=>0);
+            $res_room = $m_room->getRoomByCondition($room_fields,$roomwhere);
+            $room_num = 0;
+            if(!empty($res_room)){
+                $room_num = intval($res_room[0]['num']);
+            }
+
+            $i_fields = 'sum(integral) as integral,type';
+            $i_where = array('hotel_id'=>$v['hotel_id'],'type'=>array('in','15,20'));
+            $i_where['add_time'] = array('egt',$integral_time);
+            $all_integral = $m_integralrecord->getAll($i_fields,$i_where,0,10,'','type');
+            $yqh=$db=0;
+            if(!empty($all_integral)){
+                foreach ($all_integral as $iv){
+                    if($iv['type']==15){
+                        $yqh = $iv['integral'];
+                    }elseif($iv['type']==20){
+                        $db = $iv['integral'];
+                    }
+                }
+            }
+            $datalist[] = array('hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],
+                'box_num'=>$box_num,'room_num'=>$room_num,'yqh'=>$yqh,'db'=>$db);
+            echo "hotel_id:{$v['hotel_id']} \r\n";
+        }
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','城市'),
+            array('room_num','正常包间数量'),
+            array('box_num','正常机顶盒数量'),
+            array('yqh','累计产生邀请函积分'),
+            array('db','累计产生点播积分'),
+        );
+        $filename = '邀请函点播积分餐厅名录';
+        $this->exportToExcel($cell,$datalist,$filename,2);
+    }
 }
