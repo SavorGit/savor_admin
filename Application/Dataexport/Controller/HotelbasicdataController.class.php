@@ -88,22 +88,19 @@ class HotelbasicdataController extends BaseController{
             }else{
                 $v['network'] = 'wifi';
             }
-            if($v['is_salehotel']==1){
-                if($v['trade_area_type']==0){
-                    $v['trade_area_str'] = '非聚焦性商圈';
-                }else if($v['trade_area_type']==1){
-                    $v['trade_area_str'] = '聚焦性商圈';
+            $rts_end = $m_hotelbasicdata->field('is_salehotel,trade_area_type,maintainer')->where(array('hotel_id'=>$v['hotel_id'],'static_date'=>$end_time))->find();
+            $trade_area_str = '';
+            if($rts_end['is_salehotel']==1){
+                if($rts_end['trade_area_type']==1){
+                    $trade_area_str = '聚焦性商圈';
+                }else{
+                    $trade_area_str = '非聚焦性商圈';
                 }
-            }else{
-                $v['trade_area_str'] = '';
             }
-            
+            $v['trade_area_str'] = $trade_area_str;
+            $v['maintainer'] = $rts_end['maintainer'];
             $v['day_avg_heart_num'] = round($v['heart_num'] / ($v['box_num'] * $all_days));
-            
-            
-            //
-            $rts = $m_hotelbasicdata->field('maintainer')->where(array('hotel_id'=>$v['hotel_id'],'static_date'=>$end_time))->find();
-            $v['maintainer'] = $rts['maintainer'];
+
             $datalist[]=$v;
         }
         $cell = array(
