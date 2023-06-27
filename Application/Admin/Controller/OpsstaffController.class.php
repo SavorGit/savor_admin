@@ -12,6 +12,7 @@ class OpsstaffController extends BaseController {
     
     public function stafflist() {
     	$keyword = I('keyword','','trim');
+        $status = I('status',0,'intval');
         $area_id = I('area_id',0,'intval');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
@@ -21,6 +22,9 @@ class OpsstaffController extends BaseController {
         }
         if($area_id){
             $where['a.area_id'] = $area_id;
+        }
+        if($status){
+            $where['a.status'] = $status;
         }
         $m_area  = new \Admin\Model\AreaModel();
         $area_arr = $m_area->getAllArea();
@@ -34,9 +38,17 @@ class OpsstaffController extends BaseController {
         $result = $m_opsstaff->getCustomList($fields,$where,'a.id desc',$start,$size);
         $datalist = $result['list'];
         foreach ($datalist as $k=>$v){
+            if($v['status']==1){
+                $status_str = '正常';
+            }else{
+                $status_str = '禁用';
+            }
+            $datalist[$k]['status_str'] = $status_str;
             $datalist[$k]['area_name'] = $all_area[$v['area_id']]['region_name'];
         }
 
+        $this->assign('area_id', $area_id);
+        $this->assign('status', $status);
         $this->assign('area', $area_arr);
         $this->assign('keyword',$keyword);
         $this->assign('datalist', $datalist);
