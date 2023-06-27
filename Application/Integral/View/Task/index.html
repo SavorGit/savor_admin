@@ -43,9 +43,9 @@
             <div class="input-group input-group-sm">状态：</div>
             <div class="input-group">
               <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
-                <option value=99>全部</option>
+                <option value="99" <if condition="$status eq 99">selected</if> >全部</option>
                 <option value="1" <if condition="$status eq 1">selected</if>>上线</option>
-                <option value="0" <if condition="$status eq 2">selected</if>>下线</option>
+                <option value="0" <if condition="$status eq 0">selected</if>>下线</option>
               </select>
             </div>
           </div>
