@@ -350,6 +350,12 @@ from savor_smallapp_static_hotelstaffdata as a left join savor_hotel as hotel on
 where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by a.hotel_id order by a.area_id asc";
         $model = M();
         $datalist = $model->query($sql);
+        foreach ($datalist as $k=>$v){
+            $hotel_id = $v['hotel_id'];
+            $sql_hotel = "select maintainer from savor_smallapp_static_hotelstaffdata where static_date='$static_edate' and hotel_id={$hotel_id} ";
+            $res_hotel = $model->query($sql_hotel);
+            $datalist[$k]['maintainer'] = $res_hotel[0]['maintainer'];
+        }
         $cell = array(
             array('area_name','地区'),
             array('maintainer','维护人'),

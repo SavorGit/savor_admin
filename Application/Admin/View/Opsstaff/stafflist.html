@@ -16,8 +16,15 @@
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="用户名">
             <span class="input-group-btn">
+              <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
+                <option value=0>全部状态</option>
+                <option value="1" <if condition="$status eq 1">selected</if>>正常</option>
+                <option value="2" <if condition="$status eq 2">selected</if>>禁用</option>
+              </select>
+            </span>
+            <span class="input-group-btn">
               <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" placeholder="模块名称">
-                <option value=0>全部</option>
+                <option value=0>全部城市</option>
                 <volist name="area" id="vo">
                     <option value="{$vo.id}" <if condition="$vo.id eq $area_id">selected</if>>{$vo.region_name}</option>
                 </volist>
@@ -45,6 +52,7 @@
               <th>城市</th>
               <th>职位</th>
               <th>手机号码</th>
+              <th>状态</th>
               <th>添加时间</th>
               <th class="table-tool">操作</th>
             </tr>
@@ -57,13 +65,14 @@
              <td data-title="城市">{$dinfo.area_name}</td>
              <td data-title="职位">{$dinfo.job}</td>
              <td data-title="手机号码">{$dinfo.mobile}</td>
+             <td data-title="状态">{$dinfo.status_str}</td>
              <td data-title="添加时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_name}/opsstaff/staffadd?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-pencil"></i>
                   </a>
-                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/opsstaff/staffdel?id={$dinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
+<!--                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/opsstaff/staffdel?id={$dinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>-->
                 </div>
               </td>
             </tr>
@@ -76,10 +85,3 @@
   </div>
   {$page}
 </div>
-<script>
-  $(function(){
-    $(".class-filter").change(function (){
-      $(this).closest("form").submit();
-    })
-  })
-</script>

@@ -241,6 +241,7 @@ class TestController extends Controller {
     }
     public function deleteSmallappUser(){
         $openid  = I('openid');
+        $del_staff = I('del_staff',0,'intval');
         $m_user = new \Admin\Model\Smallapp\UserModel();
         if(!empty($openid)){
             $user_info = $m_user->getOne('is_interact', array('openid'=>$openid));
@@ -249,9 +250,15 @@ class TestController extends Controller {
                 $redis->select(5);
                 $cache_key = C('SAPP_FORSCREEN_NUMS').$openid;
                 $redis->remove($cache_key);
-                $where = [];
-                $where['openid'] = $openid;
+                $where = array('openid'=>$openid);
                 $m_user->where($where)->limit(1)->delete();
+                if($del_staff==1){
+                    $m_staff_user = new \Admin\Model\Integral\StaffModel();
+                    $res_staff = $m_staff_user->getInfo(array('openid'=>$openid));
+                    if(!empty($res_staff)){
+                        $m_staff_user->delData(array('id'=>$res_staff['id']));
+                    }
+                }
                 echo "OK";
             }else {
                 echo 'user empty';
