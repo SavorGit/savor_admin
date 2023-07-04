@@ -4593,6 +4593,16 @@ class CrontabController extends Controller
         echo "cleantestdata end:$now_time \r\n";
     }
 
+    public function stockcheckerrormsgstat(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "stockcheckerrormsgstat start:$now_time \r\n";
+        $m_message = new \Admin\Model\Smallapp\MessageModel();
+        $m_message->stockCheckErrorStat();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "stockcheckerrormsgstat end:$now_time \r\n";
+    }
+
     public function collectforscreen(){
         $now_time = date('Y-m-d H:i:s');
         echo "collectforscreen start:$now_time \r\n";

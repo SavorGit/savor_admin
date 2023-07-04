@@ -67,4 +67,19 @@ class MessageModel extends BaseModel{
 
         return true;
     }
+
+    public function stockCheckErrorStat(){
+        $sql = "select a.ops_staff_id,GROUP_CONCAT( DISTINCT sc.hotel_id) as hotel_ids from savor_smallapp_message as a left join savor_smallapp_stockcheck as sc on a.content_id=sc.id  where a.type=13
+            and sc.is_handle_stock_check=0 and sc.stock_check_success_status in (22,23,24) group by a.ops_staff_id";
+        $res_data = $this->query($sql);
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(22);
+        $cache_key = C('SAPP_OPS').'msgschotels';
+        foreach ($res_data as $v){
+            if(!empty($v['hotel_ids'])){
+                $redis->set($cache_key.":{$v['ops_staff_id']}",$v['hotel_ids']);
+                echo "ops_staff_id:{$v['ops_staff_id']} ok \r\n";
+            }
+        }
+    }
 }
