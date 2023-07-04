@@ -17,6 +17,7 @@
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitydemandadv" title="广告点播" target="dialog" mask="true"><i class="fa fa-plus"></i>广告点播</a>
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addinvitevip" title="会员邀请" target="dialog" mask="true"><i class="fa fa-plus"></i>会员邀请</a>
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addtastwine" title="品鉴酒" target="dialog" mask="true"><i class="fa fa-plus"></i> 品鉴酒</a>
+            <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addstockcheck" title="盘点" target="dialog" mask="true"><i class="fa fa-plus"></i>盘点</a>
             <!--
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitymoney" title="活动现金" target="dialog" mask="true"><i class="fa fa-plus"></i> 活动现金</a>
             <a class="btn btn-success btn-sm add" href="{$host_url}/Integral/task/addactivitysale" title="品鉴售卖" target="dialog" mask="true"><i class="fa fa-plus"></i> 品鉴售卖</a>
@@ -138,6 +139,8 @@ href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_
                       <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addinvitevip?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
                     <elseif condition="($vlist['task_type'] eq 27) OR ($vlist['task_type'] eq 28)"/>
                       <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addtastwine?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
+                    <elseif condition="$vlist['task_type'] eq 29"/>
+                      <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/Integral/task/addstockcheck?id={$vlist.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
                     </if>
 
                   </if>
