@@ -161,7 +161,7 @@ class ExcelController extends Controller
              $filename = '';
          }else if($filename=='no7heartLogHotel'){
              $tmpname = '失联7天以上酒楼信息';
-         }
+         
          }else if($filename =='countHotelSaleWineNums'){
 			 $tmpname = '统计酒楼售酒数量';
 		 }
@@ -6516,6 +6516,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->AddAddress("zhang.lijuan@littlehotspot.com");
             $mail->AddAddress("he.yongrui@littlehotspot.com");
             $mail->AddAddress("yang.kai@littlehotspot.com");
+			$mail->AddAddress("chen.lingyu@littlehotspot.com");
             $mail->AddAddress("zhang.yingtao@littlehotspot.com");
             
             $mail->IsHTML(true);
