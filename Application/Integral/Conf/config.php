@@ -26,6 +26,7 @@ $config = array(
         '26'=>'会员邀请',
         '27'=>'品鉴倒酒',
         '28'=>'物料回收',
+        '29'=>'酒水盘点',
     ),
     'all_shareprofit_types'=>array(
         'yhj'=>array('name'=>'优惠券任务','type'=>'yhj'),
@@ -33,6 +34,7 @@ $config = array(
         'ggdb'=>array('name'=>'广告点播任务','type'=>'ggdb'),
         'kpf'=>array('name'=>'开瓶费','type'=>'kpf'),
         'fgjl'=>array('name'=>'复购奖励','type'=>'fgjl'),
+        'jspd'=>array('name'=>'酒水盘点','type'=>'jspd'),
     ),
     'service_list'=>array('tv_forscreen'=>'电视投屏','room_signin'=>'包间签到','pro_play'=>'循环播放',
                           'activity_pop'=>'活动促销','hotel_activity'=>'餐厅活动','integral_manage'=>'积分收益',
