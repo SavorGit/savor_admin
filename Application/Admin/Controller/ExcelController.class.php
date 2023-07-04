@@ -161,7 +161,7 @@ class ExcelController extends Controller
              $filename = '';
          }else if($filename=='no7heartLogHotel'){
              $tmpname = '失联7天以上酒楼信息';
-         }
+         
          }else if($filename =='countHotelSaleWineNums'){
 			 $tmpname = '统计酒楼售酒数量';
 		 }
