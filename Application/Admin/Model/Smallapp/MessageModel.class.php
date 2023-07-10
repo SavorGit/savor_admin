@@ -77,7 +77,7 @@ class MessageModel extends BaseModel{
         $cache_key = C('SAPP_OPS').'msgschotels';
         foreach ($res_data as $v){
             if(!empty($v['hotel_ids'])){
-                $redis->set($cache_key.":{$v['ops_staff_id']}",$v['hotel_ids']);
+                $redis->set($cache_key.":{$v['ops_staff_id']}",$v['hotel_ids'],86000);
                 echo "ops_staff_id:{$v['ops_staff_id']} ok \r\n";
             }
         }
