@@ -324,7 +324,7 @@ class HotelController extends BaseController {
 	    $start  = ( $start-1 ) * $size;
 	    
 	    $hotel_box_type_str = getHeartBoXtypeIds(2);
-	    $where = "hotel_box_type in(".$hotel_box_type_str.") and  flag=0 and state=1 ";
+	    $where = "state=1 and flag=0 and hotel_box_type in(".$hotel_box_type_str.")";
 	    $name = I('name');
 	    $beg_time = I('starttime','');
 	    $end_time = I('endtime','');
@@ -416,9 +416,9 @@ class HotelController extends BaseController {
 	    if($ajaxversion){
 	        $start = 0;
 	        $size = 10000;
-	        $result = $hotelModel->getList($where,$orders,$start,$size);
+	        $result = $hotelModel->getAll('id,name',$where,$start,$size,$orders,'');
 	        $res_hotel = array();
-	        foreach ($result['list'] as $v){
+	        foreach ($result as $v){
 	           $res_hotel[] = array('hotel_id'=>$v['id'],'hotel_name'=>$v['name']);
 	        }
 	        echo json_encode($res_hotel);
