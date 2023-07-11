@@ -350,6 +350,7 @@ class PrinterController extends Controller {
         $file_path = SITE_TP_PATH.'/Public/uploads/qrcode/'.$qr_id.'.png';
         $img_info = getimagesize($file_path);
         $res_qrcontent['img_info'] = $img_info;
+        $res_qrcontent['url'] = "https://oss.littlehotspot.com/qrcode/goods/$qr_id.png";
         if($res_qrcontent['parent_id']){
             $qrcontent = encrypt_data($res_qrcontent['parent_id']);
             $res_qrcontent['parent_code'] = $qrcontent;
