@@ -934,6 +934,7 @@ class VersionController extends BaseController{
 	    if(IS_POST){
 	        $devicetype = I('post.devicetype','0','intval');//终端类型：1小平台，2机顶盒，3手机
 	        $clienttype = I('post.clienttype','3','intval');//设备3手机android，4手机iphone
+	        $model      = I('post.model',0,'intval'); //0 非系统签名类设备 (机顶盒，视为通，飞利浦，王牌4K) 1多视彩(mtk主板)电视机
 	        $oss_addr = I('post.oss_addr','');
 	        $version_name = I('post.version_name','');
 	        $version_code = I('post.version_code','');
@@ -948,6 +949,12 @@ class VersionController extends BaseController{
 	            }
 	        }
 	        $version_data = array('version_name'=>$version_name,'version_code'=>$version_code,'device_type'=>$devicetype);
+	        
+	        if($devicetype!=2){
+	            $version_data['model'] = 0 ;
+	        } else {
+	            $version_data['model'] = $model ;
+	        }
 	        if($remark)    $version_data['remark'] = $remark;
 	        $version_data['create_time'] = date('Y-m-d H:i:s');
 	        if($oss_addr){

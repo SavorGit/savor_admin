@@ -39,6 +39,18 @@
 			        	<div id="ossfile"></div>
 			        </div>
 		       </div>
+		       <div class="form-group row" id="model_type" style="display:none">
+		      		<label class="col-xs-12 col-sm-2 control-label">
+    			    	APK包类型
+		        	</label>
+		        	<div class="col-xs-12 col-sm-10">
+		      		<select  name="model" class="form-control bs-select" title="请选择..." data-size="10" required>
+		             <volist name=":C('BOX_UPGRADE_MODELS')" id="row">
+		                 <option value="{$row['id']}" <if condition="$row['id'] eq $vinfo['model']"> selected </if> > {$row['name']} </option>
+		             </volist>
+		           	</select>
+		           	</div>
+		       </div>
 		        
 		        <div class="form-group row" id="file_up">
     			    <label class="col-xs-12 col-sm-2 control-label">
@@ -106,6 +118,12 @@ var fileExt="apk,ipa,war";
         $("#clienttype").show();
       } else {
         $("#clienttype").hide();
+      }
+      if(id==2){
+    	  $("#model_type").show();
+    	  
+      }else {
+    	  $("#model_type").hide();
       }
       $("#file_up").show();
       $("#download_url").show();

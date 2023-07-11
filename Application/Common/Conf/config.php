@@ -1091,6 +1091,10 @@ $config['SIGN_PROCESS'] = array(
     '7'=>array('id'=>7,'name'=>'签合同','percent'=>90),
     '8'=>array('id'=>8,'name'=>'进酒并和驻店人员交接','percent'=>100),
 );
+$config['BOX_UPGRADE_MODELS'] = array(
+    array('id'=>0,'name'=>'非系统签名类设备 (机顶盒，视为通，飞利浦，王牌4K)'),
+    array('id'=>1,'name'=>'多视彩(mtk主板)电视机'),
+);
 $config['RD_TEST_HOTEL'] =
     array (
 
