@@ -4603,6 +4603,35 @@ class CrontabController extends Controller
         echo "stockcheckerrormsgstat end:$now_time \r\n";
     }
 
+    public function opssalenotify(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opssalenotify start:$now_time \r\n";
+        $m_message = new \Admin\Model\Smallapp\MessageModel();
+        $m_message->opsSaleNotify();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "opssalenotify end:$now_time \r\n";
+    }
+
+    public function opsohtersnotify(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsohtersnotify start:$now_time \r\n";
+        $m_message = new \Admin\Model\Smallapp\MessageModel();
+        $m_message->opsOhtersNotify();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "opsohtersnotify end:$now_time \r\n";
+    }
+
+    public function handleexpiresale(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "handleexpiresale start:$now_time \r\n";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $m_sale->handleExpireSale();
+        $now_time = date('Y-m-d H:i:s');
+        echo "handleexpiresale end:$now_time \r\n";
+    }
+
     public function collectforscreen(){
         $now_time = date('Y-m-d H:i:s');
         echo "collectforscreen start:$now_time \r\n";

@@ -16,4 +16,10 @@ class FinanceSaleModel extends BaseModel{
         return $res;
     }
 
+    public function handleExpireSale(){
+        $diff_time = time() - 86400*7;
+        $where = array('ptype'=>array('in','0,2'),'is_expire'=>0);
+        $where['UNIX_TIMESTAMP(add_time)'] = array('elt',$diff_time);
+        $this->updateData($where,array('is_expire'=>1));
+    }
 }
