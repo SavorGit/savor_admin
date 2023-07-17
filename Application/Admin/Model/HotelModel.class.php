@@ -5,6 +5,16 @@ use Common\Lib\Page;
 class HotelModel extends BaseModel{
 	protected $tableName = 'hotel';
 
+    public function getHotelById($field,$where){
+        $res = $this->alias('hotel')
+            ->field($field)
+            ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+            ->join('savor_area_info area on area.id=hotel.area_id','left')
+            ->where($where)
+            ->find();
+        return $res;
+    }
+
 	public function gethotellogoInfo($hotelid){
 		$sql = "SELECT
         media.id AS id,
