@@ -49,6 +49,15 @@ class BaseModel extends Model{
 		return $res;
 	}
 
+    public function getAllData($field='*',$filter='',$order='',$group=''){
+        $res = $this->field($field)
+            ->where($filter)
+            ->order($order)
+            ->group($group)
+            ->select();
+        return $res;
+    }
+
     public function getDataList($fields,$where,$orderby,$start=0,$size=0){
         if($start >= 0 && $size){
             $list = $this->field($fields)->where($where)->order($orderby)->limit($start,$size)->select();

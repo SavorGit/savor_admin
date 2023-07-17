@@ -51,7 +51,7 @@ class HotelViewReportModel extends Model
 		return $data;
 	}
 
-	public function getAllData($where, $field="*") {
+	public function getAllDatas($where, $field="*") {
 		$data = $this->alias('a')->where($where)->field($field)->select();
 		return $data;
 	}

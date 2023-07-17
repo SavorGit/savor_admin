@@ -81,7 +81,7 @@ class HotelviewrepController extends BaseController {
         $result = $htrpModel->getList($field, $where, $order,$group, $start, $size);
         //算总数
 
-        $total_result = $htrpModel->getAllData($where, $field);
+        $total_result = $htrpModel->getAllDatas($where, $field);
         $total_adv = round($total_result[0]['vdur']/$total_result[0]['vtime'], 1);
         $this->assign('total_adv', $total_adv);
 
