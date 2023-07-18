@@ -164,38 +164,53 @@ class SellwineController extends BaseController {
             $integral = intval($res_integral['total_integral']);
 
             $m_sale = new \Admin\Model\FinanceSaleModel();
-            $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+            $sale_where = array('a.hotel_id'=>$hotel_id,'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)),'record.wo_reason_type'=>1);
             $fileds = 'sum(a.settlement_price) as sale_money';
             $res_sale = $m_sale->getSaleStockRecordList($fileds,$sale_where,'','');
             $sale_money = abs(intval($res_sale[0]['sale_money']));
 
             $sale_where['a.ptype'] = array('in','0,2');
-            $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.add_time',$sale_where,'','');
+            $res_sale_qk = $m_sale->getSaleStockRecordList('sum(a.settlement_price) as money,a.ptype',$sale_where,'','','a.ptype');
             $qk_money = 0;
-            $cqqk_money = 0;
-            if(!empty($res_sale_qk)){
-                $m_sale_payment_record = new \Admin\Model\FinanceSalePaymentRecordModel();
-                $expire_time = 7*86400;
-                foreach ($res_sale_qk as $v){
-                    if($v['ptype']==0){
-                        $now_money = $v['settlement_price'];
-                    }else{
-                        $res_had_pay = $m_sale_payment_record->getRow('sum(pay_money) as total_pay_money',array('sale_id'=>$v['sale_id']));
-                        $had_pay_money = intval($res_had_pay['total_pay_money']);
-                        $now_money = $v['settlement_price']-$had_pay_money;
-                    }
-                    $qk_money+=$now_money;
-
-                    $sale_time = strtotime($v['add_time']);
-                    $now_time = time();
-                    if($now_time-$sale_time>=$expire_time){
-                        $cqqk_money+=$now_money;
-                    }
+            $bf_qk_money = 0;
+            foreach ($res_sale_qk as $v){
+                if($v['ptype']==0){
+                    $qk_money = $v['money'];
+                }elseif($v['ptype']==2){
+                    $bf_qk_money = $v['money'];
                 }
             }
-            $cqqk_money = abs($cqqk_money);
+            $m_salepayrecord = new \Admin\Model\FinanceSalePaymentRecordModel();
+            if($bf_qk_money>0){
+                $where = array('sale.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'sale.ptype'=>2);
+                $where['sale.add_time'] = array(array('egt',$start_time),array('elt',$end_time));
+                $fileds = 'sum(a.pay_money) as has_pay_money';
+                $res_payrecord = $m_salepayrecord->getSalePaymentRecordList($fileds,$where);
+                $has_pay_money = intval($res_payrecord[0]['has_pay_money']);
+                $qk_money = $qk_money+($bf_qk_money-$has_pay_money);
+            }
+
+            $sale_where['a.is_expire'] = 1;
+            $res_sale_cqqk = $m_sale->getSaleStockRecordList('sum(a.settlement_price) as money,a.ptype',$sale_where,'','','a.ptype');
+            $cqqk_money = 0;
+            $bf_cqqk_money = 0;
+            foreach ($res_sale_cqqk as $v){
+                if($v['ptype']==0){
+                    $cqqk_money = $v['money'];
+                }elseif($v['ptype']==2){
+                    $bf_cqqk_money = $v['money'];
+                }
+            }
+            if($bf_cqqk_money>0){
+                $where = array('sale.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'sale.ptype'=>2,'sale.is_expire'=>1);
+                $where['sale.add_time'] = array(array('egt',$start_time),array('elt',$end_time));
+                $fileds = 'sum(a.pay_money) as has_pay_money';
+                $res_payrecord = $m_salepayrecord->getSalePaymentRecordList($fileds,$where);
+                $has_pay_money = intval($res_payrecord[0]['has_pay_money']);
+                $cqqk_money = $cqqk_money+($bf_cqqk_money-$has_pay_money);
+            }
             $data = array('hotel_id'=>$hotel_id,'hotel_name'=>$res_hotel['name'],'sale_num'=>$sale_num,'sale_money'=>$sale_money,
-                'stock_num'=>$stock_num,'integral'=>$integral,'qk_money'=>$qk_money,'cqqk_money'=>$cqqk_money);
+                'stock_num'=>$stock_num,'integral'=>$integral,'qk_money'=>intval($qk_money),'cqqk_money'=>intval($cqqk_money));
         }
 
         $m_hotel = new \Admin\Model\HotelModel();
