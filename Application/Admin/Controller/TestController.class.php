@@ -4167,4 +4167,101 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $res_data = json_decode($res_ocr['Data'],true);
         print_r($res_data);
     }
+
+    public function upsaleprice(){
+//        $file_path = SITE_TP_PATH.'/Public/content/2022.10.01价格调控.xlsx';
+//        $time_range = "sale.add_time>='2022-10-01 00:00:00' and sale.add_time<'2022-12-05 00:00:00'";
+
+//        $file_path = SITE_TP_PATH.'/Public/content/2022.12.05价格调控.xlsx';
+//        $time_range = "sale.add_time>='2022-12-05 00:00:00' and sale.add_time<'2023-01-05 00:00:00'";
+
+//        $file_path = SITE_TP_PATH.'/Public/content/2023.01.05价格调控.xlsx';
+//        $time_range = "sale.add_time>='2023-01-05 00:00:00' and sale.add_time<'2023-04-01 00:00:00'";
+
+        $file_path = SITE_TP_PATH.'/Public/content/2023.04.01价格调控.xlsx';
+        $time_range = "sale.add_time>='2023-04-01 00:00:00' and sale.add_time<'2023-07-15 00:00:00'";
+
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+        for ($row = 2; $row<=$highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            if(!empty($rowData[0][0])){
+                $goods_id = intval($rowData[0][0]);
+                $city_id = $rowData[0][1];
+                $hotel_id = $rowData[0][2];
+                $price = intval($rowData[0][3]);
+                $res_goods = $m_dishgoods->getInfo(array('id'=>$goods_id));
+                $finance_goods_id = $res_goods['finance_goods_id'];
+                $sql_sale = "select sale.* from savor_finance_sale as sale left join savor_hotel as hotel on sale.hotel_id=hotel.id
+                left join savor_finance_stock_record as record on sale.stock_record_id=record.id 
+                where {$time_range} and record.wo_reason_type=1 
+                and sale.goods_id={$finance_goods_id}";
+                if(!empty($city_id)){
+                    $sql_sale.=" and hotel.area_id in ($city_id)";
+                }elseif(!empty($hotel_id)){
+                    $sql_sale.=" and hotel.id in ($hotel_id)";
+                }
+                $res_sale = $m_sale->query($sql_sale);
+                foreach ($res_sale as $sv){
+                    $m_sale->updateData(array('id'=>$sv['id']),array('sale_price'=>$price));
+                    echo "sale_id:{$sv['id']} ok \r\n";
+                }
+            }
+        }
+    }
+
+    public function upsalepricezero(){
+        $sql = "select sale.* from savor_finance_sale as sale left join savor_hotel as hotel on sale.hotel_id=hotel.id
+            left join savor_finance_stock_record as record on sale.stock_record_id=record.id 
+            where record.wo_reason_type=1 
+            and sale.add_time>='2022-10-01 00:00:00' and sale.sale_price=0 order by sale.id desc ";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $res_data = $m_sale->query($sql);
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        foreach ($res_data as $sv){
+            $fields = 'g.id,g.name,g.price';
+            $where = array('h.hotel_id'=>$sv['hotel_id'],'g.type'=>43,'g.finance_goods_id'=>$sv['goods_id'],'g.status'=>1);
+            $res_goods = $m_hotelgoods->getGoodsList($fields,$where,'g.id desc','0,1','');
+            if(!empty($res_goods[0]['price'])){
+                $price = $res_goods[0]['price'];
+                $m_sale->updateData(array('id'=>$sv['id']),array('sale_price'=>$price));
+                echo "sale_id:{$sv['id']} ok \r\n";
+            }else{
+                $fields = 'g.id,g.name,g.price';
+                $where = array('g.type'=>43,'g.finance_goods_id'=>$sv['goods_id'],'g.status'=>1);
+                $res_goods = $m_hotelgoods->getGoodsList($fields,$where,'g.id desc','0,1','');
+                if(!empty($res_goods[0]['price'])) {
+                    $price = $res_goods[0]['price'];
+                    $m_sale->updateData(array('id' => $sv['id']), array('sale_price' => $price));
+                    echo "sale_id:{$sv['id']} ok \r\n";
+                }
+            }
+        }
+    }
+
+    public function addtaskhotel(){
+        exit;
+        $task_id = 838;
+        $hotel_ids = array(7,10,28,31,48,52,53,79,95,140,167,169,181,184,210,214,215,223,249,277,282,302,367,372,378,384,388,392,395,401,415,416,427,436,493,598,674,720,721,740,753,810,833,848,861,863,870,872,874,884,889,898,912,921,925,927,928,931,935,940,943,949,952,955,958,962,964,965,967,968,970,1007,1022,1023,1029,1032,1033,1039,1041,1043,1045,1047,1051,1053,1056,1065,1068,1076,1091,1097,1103,1106,1107,1109,1110,1116,1124,1177,1185,1207,1211,1214,1215,1216,1220,1221,1225,1229,1231,1232,1234,1236,1239,1242,1243,1245,1246,1247,1257,1258,1262,1267,1281,1284,1286,1289,1299,1300,1313,1317,1318,1320,1321,1322,1324,1326,1327,1328,1329,1330,1331,1333,1334,1335,1337,1338,1339,1341,1342,1344,1345,1346,1348,1349,1351,1353,1354,1356,1360,1362,1363,1364,1365,1367,1368,1369,1370,1371,1372,1373,1374,1377,1378,1379,1380,1381,1382,1383,1384,1385,1386,1387,1388,1393,1394,1395,1396,1397,1398,1399,1401,1402,1403,1405,1406,1407,1408,1409,1410,1412,1413,1414,1415,1420,1421,1422,1423,1424,1425,1426,1427,1428,1429,1430,1432,1433,1435,1439,1440,1465,1512,1545,1548,1574,1577,1578,1580,1581,1585,1606,1609,1610,1611,1612,1614,1615,1618,1626,1627,1628,1629,1630,1631,1632,1633,1634,1640,1643,1645,1649,1650,1651,1654,1658,1661,1694,1697,1701,1707,1709,1713,1717,1792,1798,1826,1831,1836,1841,1892,1941,1962,1991,2000,2002,2042,2043,2048,2087,2108,2120,2146,2160,2163,2164,2212,2229,2231,2233,2237,2243,2249,2268,2288,2289,2291,2343,2361,2362,2363,2364,2365,2366,2367,2372,2373,2415,2452,2461,2472,2507,7418,8325,8592,8644,10133,10245,10251,10426,10666,10685,11146,11492,16467,17715,17951,29497,29815,29874,29887,29889,29894,29895,29909,29911,29915,29920,29926,29955,29956,29957,29963,30024,30060);
+        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+        $add_hotels = array();
+        $i = 0;
+        foreach ($hotel_ids as $hid){
+            $add_hotels[]=array('task_id'=>$task_id,'hotel_id'=>$hid);
+            $i++;
+        }
+        $m_task_hotel->addAll($add_hotels);
+        echo "add hotel $i ok";
+    }
 }
