@@ -92,13 +92,14 @@ class MessageModel extends BaseModel{
         $config_qk_day = 3;
         foreach ($res_data as $v){
             $hotel_id = $v['hotel_id'];
-            $qk_day = round((time() - strtotime($v['new_time']))/86400);
-            if($qk_day<=$config_qk_day){
+            $diff_day = round((time() - strtotime($v['new_time']))/86400);
+            if($diff_day>=$config_qk_day){
                 $money = $v['total_money'];
                 $res_has_pay = $m_payrecord->getAllData('sum(pay_money) as all_pay_money',array('sale_id'=>array('in',$v['sale_ids'])));
                 if($res_has_pay[0]['all_pay_money']>0){
                     $money = $money-$res_has_pay[0]['all_pay_money'];
                 }
+                $qk_day = 7-$diff_day;
                 $message_data = array('money'=>$money,'sale_ids'=>$v['sale_ids'],'qk_day'=>$qk_day);
                 $this->addNotifyMessage($hotel_id,$message_data,14);//14收款(运维端),15超期欠款(运维端)
                 $m_sale->updateData(array('id'=>array('in',$v['sale_ids'])),array('is_notifymsg_sk'=>1));
@@ -175,6 +176,7 @@ class MessageModel extends BaseModel{
                 if(!empty($message_data['content_id']))     $minfo['content_id'] = $message_data['content_id'];
                 if(!empty($message_data['staff_openid']))   $minfo['staff_openid'] = $message_data['staff_openid'];
                 if(!empty($message_data['money']))          $minfo['money'] = $message_data['money'];
+                if(!empty($message_data['integral']))       $minfo['integral'] = $message_data['integral'];
                 if(!empty($message_data['sale_ids']))       $minfo['sale_ids'] = $message_data['sale_ids'];
                 if(!empty($message_data['qk_day']))         $minfo['qk_day'] = $message_data['qk_day'];
                 $mssage_data[] = $minfo;
@@ -187,6 +189,7 @@ class MessageModel extends BaseModel{
             if(!empty($message_data['content_id']))     $minfo['content_id'] = $message_data['content_id'];
             if(!empty($message_data['staff_openid']))   $minfo['staff_openid'] = $message_data['staff_openid'];
             if(!empty($message_data['money']))          $minfo['money'] = $message_data['money'];
+            if(!empty($message_data['integral']))       $minfo['integral'] = $message_data['integral'];
             if(!empty($message_data['sale_ids']))       $minfo['sale_ids'] = $message_data['sale_ids'];
             if(!empty($message_data['qk_day']))         $minfo['qk_day'] = $message_data['qk_day'];
             $mssage_data[] = $minfo;
