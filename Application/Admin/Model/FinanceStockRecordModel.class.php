@@ -52,11 +52,14 @@ class FinanceStockRecordModel extends BaseModel{
         return $datalist;
     }
 
-    public function getHotelSellwineNums($start_time,$end_time){
+    public function getHotelSellwineNums($start_time,$end_time,$hotel_id=0){
         $start_time = date('Y-m-d 00:00:00',strtotime($start_time));
         $end_time = date('Y-m-d 23:59:59',strtotime($end_time));
         $fileds = 'stock.hotel_id,sum(a.total_amount) as total_amount';
         $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),'a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        if($hotel_id){
+            $where['stock.hotel_id'] = $hotel_id;
+        }
         $res = $this->alias('a')
             ->field($fileds)
             ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
