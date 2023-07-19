@@ -130,13 +130,7 @@ class OptionuserController extends BaseController{
             $hotel_info_str = $hotel_info;
         }
         if(empty($id)){
-        
-            
             $skill_info = I('post.skill');            //技能
-
-
-
-            
             $m_opser_role = new \Admin\Model\OpuserroleModel();
             $role_info = $m_opser_role->getList('id',array('user_id'=>$user_id,'state'=>1));
             if(!empty($role_info)){
@@ -150,13 +144,6 @@ class OptionuserController extends BaseController{
                 }
             }
             $is_lead_install = I('post.is_lead_install',0,'intval');  //是否带队安装
-            /* if($role_id ==1 || $role_id==3){
-                $manage_city = I('post.manage_city_one');
-            }else {
-                $manage_city = I('post.manage_city');
-            }
-            
-             */
             $manage_city = I('post.manage_city');
             $manage_city_one = I('post.manage_city_one');
             foreach($manage_city as $key=>$v){
@@ -168,7 +155,6 @@ class OptionuserController extends BaseController{
                     $this->error('发布者和执行者不能选择多个城市');
                 }
             }
-            
             $userinfo = session('sysUserInfo');
             $oprator_id = $userinfo['id'];                //操作人id
             $data = array();
@@ -216,7 +202,6 @@ class OptionuserController extends BaseController{
             }
 
             $skill_info = I('post.skill');            //技能
-            
             foreach($skill_info as $key=> $v){
                 if(!empty($v)){
                     $skill_info_str .= $space .$v;
