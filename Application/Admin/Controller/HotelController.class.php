@@ -492,6 +492,8 @@ class HotelController extends BaseController {
 			$vinfo['sale_start_date'] = $main_info['sale_start_date'];
 			$vinfo['sale_end_date'] = $main_info['sale_end_date'];
 			$vinfo['main_id'] = $main_info['maintainer_id'];
+			$vinfo['signer_id'] = $main_info['signer_id'];
+			$vinfo['residenter_id'] = $main_info['residenter_id'];
 			$vinfo['trade_area_type'] = $main_info['trade_area_type'];
 			$vinfo['cooperate_status'] = $main_info['cooperate_status'];
             $trainer_id = $main_info['trainer_id'];
@@ -521,6 +523,7 @@ class HotelController extends BaseController {
 			$vinfo['meal_time']   = $res_hotelext['meal_time'];
             $vinfo['is_comment']   = $res_hotelext['is_comment'];
             $vinfo['is_reward']   = $res_hotelext['is_reward'];
+            $vinfo['is_new']   = $res_hotelext['is_new'];
             $vinfo['jd_custom_no']   = $res_hotelext['jd_custom_no'];
             $vinfo['dp_comment_num']   = $res_hotelext['dp_comment_num'];
 
@@ -756,8 +759,11 @@ class HotelController extends BaseController {
         $is_annualmeeting = I('post.is_annualmeeting',0,'intval');
         $is_salestat = I('post.is_salestat',0,'intval');
         $is_salehotel = I('post.is_salehotel',0,'intval');
+        $residenter_id = I('post.residenter_id',0,'intval');
+        $signer_id = I('post.signer_id',0,'intval');
         $is_goods_roll_content = I('post.is_goods_roll_content',0,'intval');
         $is_goods_leftpop_wind = I('post.is_goods_leftpop_wind',0,'intval');
+        $is_new = I('post.is_new',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
         $jd_custom_no = I('post.jd_custom_no','','trim');
         $sale_start_date = I('post.sale_start_date','');
@@ -930,9 +936,12 @@ class HotelController extends BaseController {
         $data['is_salehotel'] = $is_salehotel;
         $data['is_goods_leftpop_wind'] = $is_goods_leftpop_wind;
         $data['is_goods_roll_content'] = $is_goods_roll_content;
+        $data['is_new'] = $is_new;
         $data['trade_area_type'] = $trade_area_type;
         $data['jd_custom_no'] = $jd_custom_no;
         $data['dp_comment_num'] = $dp_comment_num;
+        $data['residenter_id'] = $residenter_id;
+        $data['signer_id'] = $signer_id;
 		$tranDb = new Model();
 		$tranDb->startTrans();
 
