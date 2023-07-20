@@ -4632,6 +4632,15 @@ class CrontabController extends Controller
         echo "handleexpiresale end:$now_time \r\n";
     }
 
+    public function statsigndata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "statsigndata start:$now_time \r\n";
+        $m_data = new \Admin\Model\StaticSigndataModel();
+        $m_data->statSignData();
+        $now_time = date('Y-m-d H:i:s');
+        echo "statsigndata end:$now_time \r\n";
+    }
+
     public function collectforscreen(){
         $now_time = date('Y-m-d H:i:s');
         echo "collectforscreen start:$now_time \r\n";
