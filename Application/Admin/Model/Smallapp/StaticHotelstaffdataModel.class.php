@@ -6,6 +6,16 @@ class StaticHotelstaffdataModel extends BaseModel{
 
     protected $tableName='smallapp_static_hotelstaffdata';
 
+    public function getHotelDataList($fileds,$where,$group=''){
+        $res_data = $this->alias('a')
+            ->field($fileds)
+            ->join('savor_hotel_ext ext on a.hotel_id=ext.hotel_id','left')
+            ->where($where)
+            ->group($group)
+            ->select();
+        return $res_data;
+    }
+
     public function getCustomeList($fields="*",$where,$groupby='',$order='',$countfields='',$start=0,$size=5){
         $list = $this->field($fields)
             ->where($where)

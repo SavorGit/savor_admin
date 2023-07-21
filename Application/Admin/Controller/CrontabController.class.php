@@ -4651,6 +4651,15 @@ class CrontabController extends Controller
         echo "statsigndata end:$now_time \r\n";
     }
 
+    public function statresidentdata(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "statresidentdata start:$now_time \r\n";
+        $m_data = new \Admin\Model\StaticResidentModel();
+        $m_data->statResidentData();
+        $now_time = date('Y-m-d H:i:s');
+        echo "statresidentdata end:$now_time \r\n";
+    }
+
     public function collectforscreen(){
         $now_time = date('Y-m-d H:i:s');
         echo "collectforscreen start:$now_time \r\n";
