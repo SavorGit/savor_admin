@@ -4593,6 +4593,16 @@ class CrontabController extends Controller
         echo "cleantestdata end:$now_time \r\n";
     }
 
+    public function recordhotelhistory(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "recordhotelhistory start:$now_time \r\n";
+        $m_hoteldata_history = new \Admin\Model\HotelDataHistoryModel();
+        $m_hoteldata_history->recordhistory();
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "recordhotelhistory end:$now_time \r\n";
+    }
+
     public function stockcheckerrormsgstat(){
         $now_time = date('Y-m-d H:i:s');
         echo "stockcheckerrormsgstat start:$now_time \r\n";
