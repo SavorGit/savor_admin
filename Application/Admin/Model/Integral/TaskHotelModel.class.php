@@ -38,7 +38,16 @@ class TaskHotelModel extends BaseModel{
 	                 ->order($order)
 	                 ->limit($start,$size)
 	                 ->select();
-	    $count = count($list);
+
+        $res_count = $this->alias('a')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_sysuser user on a.uid=user.id','left')
+            ->join('savor_area_info area on hotel.area_id = area.id','left')
+            ->join('savor_integral_task task on a.task_id=task.id ','left')
+            ->field('count(a.id) as num')
+            ->where($where)
+            ->select();
+        $count = $res_count[0]['num'];
 	    $objPage = new Page($count,$size);
 	    $show = $objPage->admin_page();
 	    $data = array('list'=>$list,'page'=>$show);

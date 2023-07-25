@@ -1226,7 +1226,6 @@ class TaskController extends BaseController {
                                            ->field($fields)
                                            ->where($where)
                                            ->order($order)
-                                           ->limit(0,50)
                                            ->select();
                 $this->assign('in_task_id',$in_task_id);
             }else {
@@ -1256,7 +1255,7 @@ class TaskController extends BaseController {
             //机顶盒类型
             $hotel_box_type = C('hotel_box_type');
             //任务列表
-            $twhere = array('task.flag'=>1,'task.task_type'=>array('in','6,25,26,27,28'));
+            $twhere = array('task.flag'=>1,'task.task_type'=>array('in','6,25,26,27,28,29'));
             $twhere['task.create_time'] = array('egt','2023-01-01 00:00:00');
             $task_list = $m_task_hotel->alias('a')
                                       ->join('savor_integral_task task on a.task_id=task.id','left')
