@@ -1,6 +1,6 @@
 <?php
 namespace Admin\Controller;
-
+use DeviceDetector\DeviceDetector;
 use Common\Lib\Aliyun;
 use Think\Controller;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -4263,5 +4263,41 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
         $m_task_hotel->addAll($add_hotels);
         echo "add hotel $i ok";
+    }
+
+    public function getos(){
+        require_once APP_PATH.'Common/Lib/DeviceDetector/spyc-0.6.2/Spyc.php';
+        require_once APP_PATH.'Common/Lib/DeviceDetector/autoload.php';
+
+        $model = M();
+        $sql = "select openid from savor_ops_staff where status=1 and openid!='' order by id desc ";
+        $res_openids = $model->query($sql);
+        $all_data = array();
+        foreach ($res_openids as $v){
+            $openid = $v['openid'];
+
+            $sql_access = "select user_agent from savor_smallapp_access_log where openid='$openid' order by id desc limit 1";
+            $res_ua = $model->query($sql_access);
+            $data = array();
+            if(!empty($res_ua)){
+                $deviceDetector = new DeviceDetector($res_ua[0]['user_agent']);
+                $deviceDetector->parse();
+                $res_os = $deviceDetector->getOs();
+                if(!empty($res_os)){
+                    $data['mobile_os'] = $res_os['name'];
+                }
+                $res_brand = $deviceDetector->getBrandName();
+                if(!empty($res_brand)){
+                    $data['mobile_brand'] = $res_brand;
+                }
+                $res_model = $deviceDetector->getModel();
+                if(!empty($res_model)){
+                    $data['mobile_model'] = $res_model;
+                }
+            }
+            $all_data[]=$data;
+        }
+        print_r($all_data);
+
     }
 }
