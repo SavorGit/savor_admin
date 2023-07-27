@@ -73,13 +73,13 @@
                 </a>
               </td>
               <td class="table-tool" data-title="操作">
-                <div class="tools-edit">
-                <if condition="$vlist['id'] neq 1">   
-                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/user/userDels?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
-                <else/>
-                  <a onclick="alertMsg.error('admin用户不能被删除，请谨慎操作！')" href="#" class="btn btn-danger btn-icon" style="opacity:0.6"><span><i class="fa fa-trash"></i></span></a>
-                </if>
-                </div>
+<!--                <div class="tools-edit">-->
+<!--                <if condition="$vlist['id'] neq 1">   -->
+<!--                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/user/userDels?id={$vlist.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>-->
+<!--                <else/>-->
+<!--                  <a onclick="alertMsg.error('admin用户不能被删除，请谨慎操作！')" href="#" class="btn btn-danger btn-icon" style="opacity:0.6"><span><i class="fa fa-trash"></i></span></a>-->
+<!--                </if>-->
+<!--                </div>-->
               </td>
             </tr>
             </volist>
