@@ -80,6 +80,16 @@ class UserModel extends Model{
         return $result;
     }
 
+    public function getUserData($field='*',$filter='',$order='',$group=''){
+        $res = $this->field($field)
+            ->where($filter)
+            ->order($order)
+            ->group($group)
+            ->select();
+        return $res;
+        return $result;
+    }
+
     public function getUserCount($where){
         return $this->where($where)->count();
     }

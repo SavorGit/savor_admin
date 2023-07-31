@@ -85,8 +85,7 @@ class OpsstaffController extends BaseController {
         	}
             $sysusers = array();
             $m_sysuser = new \Admin\Model\UserModel();
-            $uwhere = 'and id!=1';
-            $res_user = $m_sysuser->getUser($uwhere);
+            $res_user = $m_sysuser->getUserData('*',array('id'=>array('neq',1)));
             foreach ($res_user as $v){
                 $selected_str = '';
                 if($v['id']==$sysuser_id){
