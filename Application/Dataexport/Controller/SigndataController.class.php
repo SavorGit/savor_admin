@@ -4,8 +4,7 @@ namespace Dataexport\Controller;
 class SigndataController extends BaseController{
 
     public function datalist(){
-//        $static_month = date('Ym',strtotime('-1 month'));
-        $static_month = date('Ym');
+        $static_month = date('Ym',strtotime('-1 month'));
         $m_static_signdata = new \Admin\Model\StaticSigndataModel();
         $field = 'area_id,area_name,signer_id,signer_name,sum(num) as num,sum(day30_num) as day30_num,sum(new_num) as new_num,
         sum(old_num) as old_num';
