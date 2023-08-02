@@ -93,7 +93,7 @@ class ResidentController extends BaseController{
             $fx_yszl = round($fx_ar_day_money/$ar_money,2);
 
             $datalist[]=array('area_id'=>$area_id,'area_name'=>$all_citys[$area_id],'residenter_id'=>$v['residenter_id'],'residenter_name'=>$v['residenter_name'],
-                'pjhk_day'=>$pjhk_day,'yszl'=>$yszl,'fx_yszl'=>$fx_yszl
+                'pjhk_day'=>$pjhk_day,'ar_money'=>$ar_money,'yszl'=>$yszl,'fx_yszl'=>$fx_yszl
             );
         }
 
@@ -101,6 +101,7 @@ class ResidentController extends BaseController{
             array('area_name','城市'),
             array('residenter_name','驻店人'),
             array('pjhk_day','平均回款天数'),
+            array('ar_money','应收款总额'),
             array('yszl','平均账龄'),
             array('fx_yszl','有风险的平均账龄'),
         );
@@ -177,7 +178,7 @@ class ResidentController extends BaseController{
             $fx_yszl = round($fx_ar_day_money/$ar_money,2);
 
             $datalist[]=array('area_id'=>$area_id,'area_name'=>$all_citys[$area_id],'hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],
-                'pjhk_day'=>$pjhk_day,'yszl'=>$yszl,'fx_yszl'=>$fx_yszl
+                'pjhk_day'=>$pjhk_day,'ar_money'=>$ar_money,'yszl'=>$yszl,'fx_yszl'=>$fx_yszl
             );
         }
 
@@ -186,6 +187,7 @@ class ResidentController extends BaseController{
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
             array('pjhk_day','平均回款天数'),
+            array('ar_money','应收款总额'),
             array('yszl','平均账龄'),
             array('fx_yszl','有风险的平均账龄'),
         );
