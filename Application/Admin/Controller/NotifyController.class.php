@@ -44,7 +44,7 @@ class NotifyController extends Controller {
             }
         }
         $log_content = date("Y-m-d H:i:s").'[resp_result]'.$content.'[params]'.json_encode($orders).'[client_ip]'.get_client_ip()."\n";
-        $log_file_name = APP_PATH.'Runtime/Logs/'.'hotel_subscribe_'.date("Ymd").".log";
+        $log_file_name = APP_PATH.'Runtime/Logs/'.'companystock_'.date("Ymd").".log";
         @file_put_contents($log_file_name, $log_content, FILE_APPEND);
         if(empty($orders[0]['order_id'])){
             return true;
