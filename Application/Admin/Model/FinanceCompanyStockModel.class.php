@@ -78,6 +78,7 @@ class FinanceCompanyStockModel extends BaseModel{
             $res_company_stock = $this->getInfo(array('area_id'=>$area_id,'goods_id'=>$goods_id));
             if(!empty($res_company_stock)){
                 $company_stock_id = $res_company_stock['id'];
+                $this->updateData(array('id'=>$company_stock_id),array('num'=>$num,'update_time'=>date('Y-m-d H:i:s')));
             }else{
                 $company_stock_id = $this->add(array('area_id'=>$area_id,'goods_id'=>$goods_id,'num'=>$num));
             }
