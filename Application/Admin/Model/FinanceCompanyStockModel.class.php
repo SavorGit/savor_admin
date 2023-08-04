@@ -41,7 +41,12 @@ class FinanceCompanyStockModel extends BaseModel{
                         if(!empty($res_record[0]['type'])){
                             $is_unpack = 1;
                             if($res_record[0]['type']==1 || $res_record[0]['type']==3){
-                                $bottle_codes[]=$sv_code;
+                                $sql_check = "SELECT a.idcode FROM savor_finance_stock_record a left JOIN savor_finance_stock stock on a.stock_id=stock.id 
+                                    WHERE a.idcode='{$sv_code}' and a.dstatus=1 and stock.area_id={$area_id} order by a.id desc limit 0,1";
+                                $res_check = $this->query($sql_check);
+                                if(!empty($res_check)){
+                                    $bottle_codes[]=$sv_code;
+                                }
                             }
                         }else{
                             $is_unpack = 0;
