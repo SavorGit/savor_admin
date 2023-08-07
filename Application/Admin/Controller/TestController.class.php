@@ -4385,82 +4385,43 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo json_encode($res_data);
     }
 
-    public function qstock1(){
-        $start_time = time();
-        $area_id = 236;
-        $model = M();
-        $sql_goods = "select * from savor_finance_goods where brand_id!=11 order by id asc ";
-        $res_goods = $model->query($sql_goods);
-        $all_goods_stock = array();
-        foreach($res_goods as $vg){
-            $goods_id = $vg['id'];
-            $goods_nmae = $vg['name'];
+    public function printqrcode(){
+        exit;
+        $box_codes_imgs = array();
+        $code_url = 'https://oss.littlehotspot.com/qrcode/goods/template6';
+        $big_image_position = 'g_east,x_200,y_40';
 
-//            $sql_stock = "SELECT sum(a.total_amount) as total_amount FROM savor_finance_stock_record a
-//            left JOIN savor_finance_stock stock on a.stock_id=stock.id WHERE a.goods_id ={$goods_id}
-//            AND a.type in (1,2) AND stock.area_id={$area_id}";
-//            $res_stock_num = $model->query($sql_stock);
-//            $stock_num  = intval($res_stock_num[0]['total_amount']);
+        $sql = "select * from savor_finance_company_stock_detail where area_id=236 and goods_id=10 and type=1 order by id desc";
+        $res_data = M()->query($sql);
+        foreach ($res_data as $v){
+            $code = $v['idcode'];
 
-            $sql = "SELECT a.* FROM savor_finance_stock_record a
-        left JOIN savor_finance_stock stock on a.stock_id=stock.id WHERE a.goods_id ={$goods_id}
-        AND a.type=1 and a.dstatus=1 AND stock.area_id ={$area_id}";
+            $qrcontent = decrypt_data($code,false);
+            $qr_id = intval($qrcontent);
 
-            $res_idcodes = $model->query($sql);
-            $bottle_codes = $box_codes = array();
-            $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
-            foreach ($res_idcodes as $v){
-                $code = $v['idcode'];
-                $sql_coderecord = "select type,wo_status from savor_finance_stock_record where idcode='{$code}' and dstatus=1 order by id desc limit 0,1";
-                $res_coderecord = $model->query($sql_coderecord);
-
-                $qrcontent = decrypt_data($code,false);
-                $qr_id = intval($qrcontent);
-                $res_qrcontent = $m_qrcode_content->getInfo(array('id'=>$qr_id));
-                if($res_qrcontent['type']==1 && $res_qrcontent['parent_id']==0){
-
-                    $res_scodes = $m_qrcode_content->getDataList('*',array('parent_id'=>$qr_id),'id desc');
-                    $is_unpack = 0;
-                    foreach ($res_scodes as $sv){
-                        $sv_code = encrypt_data($sv['id']);
-                        $sql_record = "select type,wo_status from savor_finance_stock_record where idcode='{$sv_code}' and dstatus=1 order by id desc limit 0,1";
-                        $res_record = $model->query($sql_record);
-                        if(!empty($res_record[0]['type'])){
-                            $is_unpack = 1;
-                            if($res_record[0]['type']==1 || $res_record[0]['type']==3){
-                                $bottle_codes[]=$sv_code;
-                            }
-                        }else{
-                            $is_unpack = 0;
-                            break;
-                        }
-                    }
-                    if($is_unpack==0){
-                        $sql_record = "select type,wo_status from savor_finance_stock_record where idcode='{$code}' and dstatus=1 order by id desc limit 0,1";
-                        $res_record = $model->query($sql_record);
-                        if($res_record[0]['type']==1){
-                            $box_codes[]=$code;
-                        }
-                    }
-                }else{
-                    if($res_coderecord[0]['type']==1 || $res_coderecord[0]['type']==3){
-                        $bottle_codes[]=$code;
-                    }
-                }
-
-            }
-            $bottle_codes = array_unique($bottle_codes);
-            $box_num = count($box_codes);
-            $bottle_num = count($bottle_codes);
-            $num = $box_num*6+$bottle_num;
-
-//            $all_goods_stock[]=array('id'=>$goods_id,'name'=>$goods_nmae,'num'=>$num);
-            $all_goods_stock[]=array('id'=>$goods_id,'num'=>$num);
+            $id_num = $qr_id;
+            $big_file_name = "qrcode/goods/$id_num.png";
+            $encode_file_name = $this->urlsafe_b64encode($big_file_name);
+            $print_img = $code_url."-$id_num.jpg?x-oss-process=image/watermark,image_$encode_file_name,$big_image_position";
+            $box_codes_imgs[]=$print_img;
         }
-        $end_time = time();
-        $diff_time = $end_time-$start_time;
-        echo json_encode(array('datas'=>$all_goods_stock,'time'=>$diff_time));
 
+        $accessId = C('OSS_ACCESS_ID');
+        $accessKey= C('OSS_ACCESS_KEY');
+        $endPoint = C('QUEUE_ENDPOINT');
+        $topicName = 'TagPrinter-LHS';
+        $messageTag = '0015005DA6CD';
+
+        $now_message = array('orientation'=>'PORTRAIT','printWidth'=>100.0,'printHeight'=>60.0,
+            'printLeftSide'=>0.0,'printTopSide'=>0.0,'copiesNum'=>1);
+        $ali_msn = new AliyunMsn($accessId, $accessKey, $endPoint);
+
+        foreach ($box_codes_imgs as $v){
+            $now_message['printFiles'] = array(array('type'=>'HTTPFile','path'=>$v));
+            $messageBody = json_encode($now_message);
+            $ali_msn->sendTopicMessage($topicName,$messageBody,$messageTag);
+        }
+        echo 'ok';
     }
 
     public function qstock(){
@@ -4557,21 +4518,22 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function uppdtask(){
-        $sql = "select staff_id,integral from savor_smallapp_stockcheck where stock_check_success_status=21 
-            and add_time>='2023-07-01 00:00:00' and add_time<='2023-07-31 23:59:59' order by id asc ";
+//        $sql = "select staff_id,integral from savor_smallapp_stockcheck where stock_check_success_status=21
+//            and add_time>='2023-07-01 00:00:00' and add_time<='2023-07-31 23:59:59' order by id asc ";
+        $sql = "select openid,integral from savor_smallapp_user_integralrecord where type=24 and integral=300 
+                 and add_time<='2023-08-01 13:43:59' order by id desc ";
         $model = M();
         $res_data = $model->query($sql);
         $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
         foreach ($res_data as $v){
-            $staff_id = $v['staff_id'];
+//            $staff_id = $v['staff_id'];
+//            $integral = $v['integral'];
+//            $sql_staff = "select openid from savor_integral_merchant_staff where id={$staff_id}";
+//            $res_staff = $model->query($sql_staff);
+//
+//            $openid = $res_staff[0]['openid'];
+            $openid = $v['openid'];
             $integral = $v['integral'];
-            $sql_staff = "select openid from savor_integral_merchant_staff where id={$staff_id}";
-            $res_staff = $model->query($sql_staff);
-
-            $openid = $res_staff[0]['openid'];
-            if($openid=='o9GS-4huqiiiMxACCNDxZMR_BGOo' || $openid=='o9GS-4oN1ZdbYqPPTJxPJP_qUqW8'){
-                continue;
-            }
             $res_integral = $m_userintegral->getInfo(array('openid'=>$openid));
             if(!empty($res_integral)){
                 $userintegral = $res_integral['integral']+$integral;
