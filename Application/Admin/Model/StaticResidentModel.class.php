@@ -27,38 +27,29 @@ class StaticResidentModel extends BaseModel{
             $res_opusers = $m_opuser_role->getAllRole($fields,$where,'a.id desc');
             $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
             $m_sale_payment = new \Admin\Model\FinanceSalePaymentModel();
+            $m_sale_paymentrecord = new \Admin\Model\FinanceSalePaymentRecordModel();
+
+            $m_sale = new \Admin\Model\FinanceSaleModel();
             $m_hoteldata_history = new \Admin\Model\HotelDataHistoryModel();
             $m_hotelstaff_data = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
             $add_data = array();
             foreach ($res_opusers as $v){
                 $area_id = $v['manage_city'];
 
-                $salewhere = array('a.wo_reason_type'=>1,'a.wo_status'=>2,'ext.residenter_id'=>$v['residenter_id']);
-                $salewhere['a.update_time'] = array(array('egt',$start_time),array('elt',$end_time));
-                $res_stock_record = $m_stock_record->alias('a')
+                $salewhere = array('a.residenter_id'=>$v['residenter_id'],'record.wo_reason_type'=>1,'record.wo_status'=>2);
+                $salewhere['record.update_time'] = array(array('egt',$start_time),array('elt',$end_time));
+                $res_stock_record = $m_sale->alias('a')
                     ->field('count(a.id) as num')
-                    ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
-                    ->join('savor_hotel_ext ext on stock.hotel_id=ext.hotel_id','left')
+                    ->join('savor_finance_stock_record record on a.stock_record_id=record.id','left')
                     ->where($salewhere)
                     ->select();
                 $num = intval($res_stock_record[0]['num']);
 
-                $paywhere = array('ext.residenter_id'=>$v['residenter_id']);
+                $paywhere = array('sale.residenter_id'=>$v['residenter_id'],'record.wo_reason_type'=>1,'record.wo_status'=>2);
                 $paywhere['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time));
-                $pfields = 'sum(a.pay_money) as pay_money,a.hotel_id,a.pay_time';
-                $res_paymoney = $m_sale_payment->getSalePaymentList($pfields,$paywhere,'a.hotel_id,a.pay_time');
-                $sale_money = 0;
-                foreach ($res_paymoney as $pv){
-                    if($pv['pay_time']==$static_date){
-                        $sale_money+=$pv['pay_money'];
-                    }else{
-                        $res_hotel_history = $m_hoteldata_history->getInfo(array('static_date'=>$pv['pay_time'],'hotel_id'=>$pv['hotel_id']));
-                        if(!empty($res_hotel_history['residenter_id'])){
-                            $upwhere = array('static_date'=>$pv['pay_time'],'residenter_id'=>$res_hotel_history['residenter_id']);
-                            $this->where($upwhere)->setInc('sale_money',$pv['pay_money']);
-                        }
-                    }
-                }
+                $pfields = 'sum(a.pay_money) as pay_money';
+                $res_paymoney = $m_sale_paymentrecord->getSalePaymentRecordList($pfields,$paywhere);
+                $sale_money = intval($res_paymoney[0]['pay_money']);
 
                 $staff_fields = 'sum(a.task_demand_finish_num) as task_demand_finish_num,sum(task_demand_operate_num) as task_demand_operate_num,
             sum(a.task_invitation_finish_num) as task_invitation_finish_num,sum(a.task_invitation_operate_num) as task_invitation_operate_num';
