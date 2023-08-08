@@ -1098,6 +1098,10 @@ $config['BOX_UPGRADE_MODELS'] = array(
     array('id'=>0,'name'=>'非系统签名类设备 (机顶盒，视为通，飞利浦，王牌4K)'),
     array('id'=>1,'name'=>'多视彩(mtk主板)电视机'),
 );
+$config['ORDER_EXPRESS_TYPES'] = array(
+    array('id'=>1,'name'=>'普通快递'),
+    array('id'=>2,'name'=>'其他快递'),
+);
 $config['RD_TEST_HOTEL'] =
     array (
 

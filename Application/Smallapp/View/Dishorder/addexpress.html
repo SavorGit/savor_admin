@@ -15,15 +15,28 @@
                     <input name="total_fee" type="text" value="{$vinfo.total_fee}" class="form-control" readonly/>
                 </div>
             </div>
-
+            
             <div class="form-group row">
-                <label class="col-xs-12 col-sm-2 control-label">快递单号：</label>
+                <label class="col-xs-12 col-sm-2 control-label">
+                    	快递类型:
+                </label>
                 <div class="col-xs-12 col-sm-10">
-                    <input name="enum" id="enumno" type="text" value="{$einfo.enum}" class="form-control" required/>
+                    <select id="ex_type" name="ex_type" class="form-control bs-select class-filter" >
+                        <volist name="order_express_types" id="exinfo">
+                            <option value="{$exinfo.id}" <if condition="$exinfo['id'] eq $einfo['type']">selected</if>>{$exinfo.name}</option>
+                        </volist>
+                    </select>
                 </div>
             </div>
 
-            <div class="form-group row">
+            <div class="form-group row" id="ex_enum">
+                <label class="col-xs-12 col-sm-2 control-label">快递单号：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="enum" id="enumno" type="text" value="{$einfo.enum}" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row" id="ex_comcode">
                 <label class="col-xs-12 col-sm-2 control-label">
                     物流公司:
                 </label>
@@ -53,6 +66,21 @@
 </form>
 </div>
 <script type="text/javascript">
+
+$('#ex_type').change(function () {
+	var type  = $('#ex_type').val();
+	
+	if(type==2){
+		$('#ex_enum').hide()
+		$('#ex_comcode').hide();
+	}else {
+		$('#ex_enum').show();
+		$('#ex_comcode').show();
+	}
+  });
+
+
+
         $("#enum").blur(function() {
         var express_num = $('#enum').val()
         $.ajax({

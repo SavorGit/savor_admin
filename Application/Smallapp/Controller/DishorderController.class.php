@@ -286,19 +286,26 @@ class DishorderController extends BaseController {
                 }
                 $result[]=$v;
             }
+            $order_express_types = C('ORDER_EXPRESS_TYPES');
+            
             $this->assign('eid',$eid);
             $this->assign('einfo',$einfo);
             $this->assign('express',$result);
             $this->assign('vinfo',$vinfo);
+            $this->assign('order_express_types',$order_express_types);
             $this->display();
         }else{
             $enum = I('post.enum','','trim');
             $comcode = I('post.comcode','');
+            $type   = I('post.ex_type',1,'intval');
 //            $res_express = $m_orderexpress->getInfo(array('order_id'=>$order_id));
 //            if(!empty($res_express)){
 //                $this->output('请勿重复录入物流单号', "dishorder/orderlist",2,0);
 //            }
-            $data = array('order_id'=>$order_id,'comcode'=>$comcode,'enum'=>$enum);
+            if($type==1 && $enum==''){
+                $this->error('快递单号不能为空');
+            }
+            $data = array('order_id'=>$order_id,'comcode'=>$comcode,'enum'=>$enum,'type'=>$type);
             if($eid){
                 $m_orderexpress->updateData(array('id'=>$eid),$data);
             }else{
