@@ -17,22 +17,28 @@ class ReturnedmoneyController extends BaseController{
         }
         $start_date .= ' 00:00:00';
         $end_date   .= ' 23:59:59';
-        $where = "  a.pay_time>='".$start_date."' and a.pay_time<='".$end_date."'";
+        $where = "  a.add_time>='".$start_date."' and a.add_time<='".$end_date."'";
         
-        $sql = "select hotel.id hotel_id,hotel.name hotel_name,user1.remark as sign_user,user2.remark residenter_user 
-                from savor_finance_sale_payment a 
-                left join savor_hotel      hotel on a.hotel_id        = hotel.id
+        $sql = "select hotel.id hotel_id,sale.residenter_id,hotel.name hotel_name,user1.remark as sign_user,user2.remark residenter_user 
+                from savor_finance_sale_payment_record a 
+                left join savor_finance_sale sale on a.sale_id= sale.id
+
+                left join savor_hotel      hotel on sale.hotel_id     = hotel.id
                 left join savor_hotel_ext  ext   on hotel.id          = ext.hotel_id
+
                 left join savor_sysuser    user1 on ext.signer_id     = user1.id
-                left join savor_sysuser    user2 on ext.residenter_id = user2.id
-                where $where group by a.hotel_id";
+                left join savor_sysuser    user2 on sale.residenter_id = user2.id
+                where $where group by sale.hotel_id,sale.residenter_id";
+        
         
         $data = M()->query($sql);
         foreach($data as $key=>$v){
             $map  = '';
             $map .= $where;
-            $map .= ' and a.hotel_id='.$v['hotel_id'];
-            $sql  = "select sum(pay_money) as total_money from savor_finance_sale_payment a where ".$map;
+            $map .= ' and sale.hotel_id='.$v['hotel_id'];
+            $map .= ' and sale.residenter_id ='.$v['residenter_id'];
+            $sql  = "select sum(a.pay_money) as total_money from savor_finance_sale_payment_record a
+                     left join savor_finance_sale sale on a.sale_id=sale.id where ".$map;
             $ret = M()->query($sql);
             $data[$key]['total_money'] = $ret[0]['total_money'];
             
