@@ -514,9 +514,7 @@ class TaskController extends BaseController {
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
                 if($res_task_hotel['total']>0 && $res_task_info['status']==1){
-                    if($data['task_info']!=$res_task_info['task_info']){
-                        $this->output('任务已下发,请勿修改任务信息', "task/addinvitevip",2,0);
-                    }
+                    $this->checkEditTime();
                 }
                 unset($data['uid']);
                 $data['update_time'] = date('Y-m-d H:i:s');
@@ -577,9 +575,7 @@ class TaskController extends BaseController {
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
                 if($res_task_hotel['total']>0 && $res_task_info['status']==1){
-                    if($data['task_info']!=$res_task_info['task_info']){
-                        $this->output('任务已下发,请勿修改任务信息', "task/addstockcheck",2,0);
-                    }
+                    $this->checkEditTime();
                 }
                 unset($data['uid']);
                 $data['update_time'] = date('Y-m-d H:i:s');
@@ -638,9 +634,7 @@ class TaskController extends BaseController {
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
                 if($res_task_hotel['total']>0 && $res_task_info['status']==1){
-                    if($data['task_info']!=$res_task_info['task_info']){
-                        $this->output('任务已下发,请勿修改任务信息', "task/addinvitevip",2,0);
-                    }
+                    $this->checkEditTime();
                 }
                 unset($data['uid']);
                 $data['update_time'] = date('Y-m-d H:i:s');
@@ -725,9 +719,7 @@ class TaskController extends BaseController {
                 $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
                 $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
                 if($res_task_hotel['total']>0 && $res_task_info['status']==1){
-                    if($data['task_info']!=$res_task_info['task_info']){
-                        $this->output('任务已下发,请勿修改任务信息', "task/addactivitydemandadv",2,0);
-                    }
+                    $this->checkEditTime();
                 }
                 unset($data['uid']);
                 $data['update_time'] = date('Y-m-d H:i:s');
@@ -1032,9 +1024,7 @@ class TaskController extends BaseController {
             $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
             $res_task_hotel = $m_task_hotel->getDataList('*',array('task_id'=>$id),'id desc',0,1);
             if($res_task_hotel['total']>0 && $res_task_info['status']==1){
-                if($data['task_info']!=$res_task_info['task_info']){
-                    $this->output('任务已下发,请勿修改任务信息', "task/edit",2,0);
-                }
+                $this->checkEditTime();
             }
 
             $data['status'] = 0;
@@ -1172,7 +1162,10 @@ class TaskController extends BaseController {
                     $period_data = array('period'=>$period);
                     $redis->set($program_key,json_encode($period_data));
                 }
-                $data[] = $t_info;
+                $res_thotel = $m_task_hotel->getInfo(array('task_id'=>$task_id,'hotel_id'=>$v));
+                if(empty($res_thotel)){
+                    $data[] = $t_info;
+                }
             }
             if(!empty($has_task_hids)){
                 $hid_str = join(',',$has_task_hids);
@@ -1200,26 +1193,23 @@ class TaskController extends BaseController {
             $area_id_arr = I('include_a');
             $in_task_id  = I('in_task_id',0,'intval');//所选任务包含酒楼
             $task_id = I('task_id',0,'intval');
-            $where = [];
-            $where['task_id'] = $task_id;
+            /*
+            $where = array('task_id'=>$task_id);
             $count = $m_task_hotel->where($where)->count();
             if(!empty($count)) {
                 echo '<script>
                 navTab.closeTab("integral/selecthotel");
                 alertMsg.error("该任务已选择酒楼！");</script>';
             }
-
+            */
             if($in_task_id){
                 $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type';
-                $where = [];
-                $where['hotel.state'] = 1;
-                $where['hotel.flag']  = 0;
-                $where['a.task_id']   = $in_task_id;
+                $where = array('hotel.state'=>1,'hotel.flag'=>0,'a.task_id'=>$in_task_id);
                 if(!empty($area_id_arr)){
                     $where['area.id'] = array('in',$area_id_arr);
                     $this->assign('include_ak',$area_id_arr);
                 }
-                $order = 'convert(hotel.name using gbk) asc';
+                $order = 'hotel.pinyin asc';
                 $hotel_list = $m_task_hotel->alias('a')
                                            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
                                            ->join('savor_area_info area on area.id=hotel.area_id','left')
@@ -1230,15 +1220,12 @@ class TaskController extends BaseController {
                 $this->assign('in_task_id',$in_task_id);
             }else {
                 $fields = 'hotel.id hotel_id,hotel.name hotel_name,area.region_name,hotel.hotel_box_type,a.mobile';
-                $where = [];
-                $where['a.status']    = 1;
-                $where['hotel.state'] = 1;
-                $where['hotel.flag']  = 0;
+                $where = array('hotel.state'=>1,'hotel.flag'=>0,'a.status'=>1);
                 if(!empty($area_id_arr)){
                     $where['area.id'] = array('in',$area_id_arr);
                     $this->assign('include_ak',$area_id_arr);
                 }
-                $order = 'convert(hotel.name using gbk) asc';
+                $order = 'hotel.pinyin asc';
                 //选择酒楼
                 $m_merchant = new \Admin\Model\Integral\MerchantModel();
                 $hotel_list = $m_merchant->alias('a')
@@ -1342,7 +1329,7 @@ class TaskController extends BaseController {
             $where = array('task.status'=>1,'task.flag'=>1);
             $where['hotel.name'] = array('like',"%$hotel_name%");
         }
-        $fields = 'a.task_id,a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state,hotel.pinyin';
+        $fields = 'a.id,a.task_id,a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state,hotel.pinyin';
         $order = 'hotel.pinyin asc';
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         $start = ($page-1) * $size;
@@ -1365,6 +1352,33 @@ class TaskController extends BaseController {
         $this->assign('numPerPage',$size);
         $this->assign('page',$list['page']);
         $this->display();
+    }
+
+    public function delhotel(){
+        $id = I('get.id');
+        $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
+        $res_task = $m_task_hotel->getHoteltasks('task.task_type,task.status,hoteltask.hotel_id',array('hoteltask.id'=>$id),'');
+        if($res_task[0]['status']==1){
+            $this->checkEditTime();
+        }
+        if($res_task[0]['task_type']==22 || $res_task[0]['task_type']==24){
+            $redis = \Common\Lib\SavorRedis::getInstance();
+            $redis->select(14);
+            $goods_program_key = C('SAPP_SALE_ACTIVITYGOODS_PROGRAM');
+            $program_key = $goods_program_key.":{$res_task[0]['hotel_id']}";
+            $period = getMillisecond();
+            $period_data = array('period'=>$period);
+            $redis->set($program_key,json_encode($period_data));
+        }
+        $m_task_hotel->delData(array('id'=>$id));
+
+        $this->output('删除成功', "task/gethotelinfo",2);
+    }
+
+    private function checkEditTime(){
+        if(date('Gi')>1100){
+            $this->error('请在每天上午11:00分前进行操作');
+        }
     }
 
     private function checkMainParam($data){

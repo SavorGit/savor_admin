@@ -49,6 +49,7 @@
               <th>任务参与抽奖人数</th>
             </if>
             <th>酒楼状态</th>
+            <th>操作</th>
           </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -66,6 +67,14 @@
               </if>
               <td data-title="酒楼状态">
                 {$vo.state_str}
+              </td>
+
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/task/delhotel?id={$vo.id}"  class="btn btn-danger btn-icon">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                </div>
               </td>
             </tr>
           </volist>

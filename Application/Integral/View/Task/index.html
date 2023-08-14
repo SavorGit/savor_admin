@@ -101,12 +101,8 @@
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time}</td>
               <td data-title="针对商家">
-              <if condition="$vlist.hotel_num eq 0 && $vlist['task_type'] neq 23">
-              	<a data-tip="请选择商家" rel="integral/selecthotel" class="btn btn-success " target="navTab" mask="true" href="{$host_url}/integral/task/selecthotel?task_id={$vlist.id}">请选择商家</a>
-              <else/> 
-                <a data-tip="酒楼数为" class="btn btn-success " target="navTab" mask="true" rel="ingtegral/haveselecthotel"
-href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_num}</a>
-              </if>
+                <a data-tip="酒楼数为" class="btn btn-success" target="navTab" mask="true" rel="ingtegral/haveselecthotel"
+                  href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_num}</a>
               </td>
               <td data-title="状态" style="text-align:center;">
 	                <if condition="$vlist['status'] eq 1">
@@ -145,12 +141,22 @@ href="{$host_url}/integral/task/gethotelinfo?task_id={$vlist.id}">{$vlist.hotel_
 
                   </if>
 
+                  <if condition="$vlist['task_type'] neq 23">
+
+                    <a data-tip="请选择酒楼" title="请选择酒楼" target="navTab" mask="true" rel="integral/selecthotel" href="{$host_url}/integral/task/selecthotel?task_id={$vlist.id}" class="btn btn-success btn-icon">
+                      <i class="fa fa-hotel"></i>
+                    </a>
+
+                  </if>
+
+                  <a warn="警告" data-tip="复制" title="你确定要复制新增任务吗？" title="复制新增任务"  target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/task/copy?task_id={$vlist.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-copy"></i>
+                  </a>
+
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/Integral/task/delete?id={$vlist.id}"  class="btn btn-danger btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
-                  <a warn="警告" data-tip="复制" title="你确定要复制新增任务吗？" title="复制新增任务"  target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/integral/task/copy?task_id={$vlist.id}" class="btn btn-success btn-icon">
-                        <i class="fa fa-copy"></i>
-                  </a>
+
                   
                 </div>
               </td>
