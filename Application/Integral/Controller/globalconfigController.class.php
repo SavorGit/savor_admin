@@ -1,12 +1,11 @@
 <?php
-namespace Integral\Controller;
-use Admin\Controller\BaseController ;
-/**
- * @desc 促销活动配置
- *
- */
+namespace Admin\Controller;
+
 class GlobalconfigController extends BaseController {
 
+    public function __construct() {
+        parent::__construct();
+    }
 
     public function configdata(){
         $m_sys_config = new \Admin\Model\SysConfigModel();
