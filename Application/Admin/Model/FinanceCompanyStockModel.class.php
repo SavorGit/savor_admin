@@ -5,6 +5,11 @@ class FinanceCompanyStockModel extends BaseModel{
     protected $tableName='finance_company_stock';
 
     public function handle_company_stock($area_id,$goods_id=0){
+        $now_hour = date('G');
+        if($now_hour<7){
+            echo "not in hour \r\n";
+            exit;
+        }
         $m_company_stock_detail = new \Admin\Model\FinanceCompanyStockDetailModel();
         $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
         $m_finance_goods = new \Admin\Model\FinanceGoodsModel();
