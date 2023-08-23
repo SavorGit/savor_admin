@@ -461,7 +461,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $start_time = I('start_time','');
         $end_time = I('end_time','');
         $where = array('a.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0);
-
+        $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
         $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,a.sale_start_date,a.sale_end_date';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc');

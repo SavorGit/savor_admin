@@ -76,6 +76,7 @@ class SellwineController extends BaseController {
         if(!empty($keyword)){
             $where['hotel.name'] = array('like',"%$keyword%");
         }
+        $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
         $start  = ($page-1) * $size;
         $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,a.sale_start_date,a.sale_end_date';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
