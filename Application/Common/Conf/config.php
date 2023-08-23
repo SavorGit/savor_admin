@@ -299,6 +299,7 @@ $config['MANGER_KEY'] = array(
     'smallapp'=>'小程序数据统计节点',
     'miniprogram'=>'小程序管理',
     'integral'=>'积分系统',
+    'crmtask'=>'渠道任务',
 
 );
 $config['STATE_REASON'] = array(
@@ -1083,6 +1084,19 @@ $config['NO_WORK_TYPES'] = array(
     '21'=>'目标餐厅',
     '22'=>'已拜访餐厅',
     '23'=>'终止合作餐厅',
+);
+$config['CRM_TASK_TYPES'] = array(
+    '1'=>'店长销售端开通',
+    '2'=>'配送酒水',
+    '3'=>'回款',
+    '4'=>'超期欠款',
+    '5'=>'完善包间信息',
+    '6'=>'推广邀请函',
+    '7'=>'推广盘点',
+    '8'=>'推广点播',
+    '9'=>'开机任务',
+    '10'=>'企业微信加餐厅人员',
+    '11'=>'自定义'
 );
 $config['SIGN_PROCESS'] = array(
     '1'=>array('id'=>1,'name'=>'陌拜完成','percent'=>0),
