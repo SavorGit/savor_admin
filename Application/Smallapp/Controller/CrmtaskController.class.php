@@ -58,7 +58,6 @@ class CrmtaskController extends BaseController {
             $stock_num = I('post.stock_num',0,'intval');
             $task_finish_rate = I('post.task_finish_rate',0);
             $task_finish_day = I('post.task_finish_rate',0,'intval');
-            $residenter_ids = I('post.residenter_ids');
             $is_upimg = I('post.is_upimg',0,'intval');
             $is_check_location = I('post.is_check_location',0,'intval');
             $start_time = I('post.start_time');
@@ -72,15 +71,10 @@ class CrmtaskController extends BaseController {
             $sysuser_id = $sysuserInfo['id'];
             $update_time = date('Y-m-d H:i:s');
 
-            if(!empty($residenter_ids)){
-                $residenter_ids = join(',',$residenter_ids);
-            }else{
-                $residenter_ids = '';
-            }
             $updata = array('name'=>$name,'sale_manager_num'=>$sale_manager_num,'cate_num'=>$cate_num,'stock_num'=>$stock_num,
                 'task_finish_rate'=>$task_finish_rate,'task_finish_day'=>$task_finish_day,'is_upimg'=>$is_upimg,'is_check_location'=>$is_check_location,
                 'start_time'=>$start_time,'end_time'=>$end_time,'desc'=>$desc,'notify_day'=>$notify_day,'notify_handle_day'=>$notify_handle_day,
-                'residenter_ids'=>$residenter_ids,'status'=>$status,'update_time'=>$update_time,'sysuser_id'=>$sysuser_id
+                'status'=>$status,'update_time'=>$update_time,'sysuser_id'=>$sysuser_id
                 );
             $m_crmtask->updateData(array('id'=>$id),$updata);
 

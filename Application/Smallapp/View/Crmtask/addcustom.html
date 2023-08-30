@@ -13,20 +13,6 @@
                 </div>
             </div>
 
-
-            <div class="form-group row">
-                <label class="col-xs-12 col-sm-2 control-label">
-                    指定驻店人：
-                </label>
-                <div class="col-xs-12 col-sm-10">
-                    <select name="residenter_ids[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" required>
-                        <volist name="residenter_list" id="residenter">
-                            <option value="{$residenter.main_id}" {$residenter.is_select} >{$residenter.remark}</option><br>
-                        </volist>
-                    </select>
-                </div>
-            </div>
-
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
                     是否需上传照片：
