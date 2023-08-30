@@ -1936,6 +1936,25 @@ class HotelController extends BaseController {
         $res_staff = $m_staff->getMerchantStaffUserList($fields,$where);
         die(json_encode($res_staff));
     }
+
+    public function getSellwineHotels(){
+        $area_id = I('area_id',0);
+        $hotel_name = I('hotel_name','','trim');
+        $where = array('ext.is_salehotel'=>1,'a.state'=>1,'a.flag'=>0);
+        if($area_id){
+            $where['a.area_id'] = $area_id;
+        }
+        if($hotel_name){
+            $where['a.name'] = array('like',"%{$hotel_name}%");
+        }
+        $field = 'a.id as hid,a.name as hname';
+        $m_hotel = new \Admin\Model\HotelModel();
+        $result = $m_hotel->getHotels($field,$where,'a.pinyin asc');
+        $msg = '';
+        $res = array('code'=>1,'msg'=>$msg,'data'=>$result);
+        echo json_encode($res);
+    }
+
     /**
      * @desc 酒楼菜系
      */

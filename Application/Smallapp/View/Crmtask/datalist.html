@@ -77,6 +77,14 @@
               <td data-title="添加时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/addtask?id={$dinfo.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
+                <if condition="$dinfo.type eq 11">
+                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/addhotel?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-hotel"></i>
+                  </a>
+                  <a title="酒楼列表" data-tip="酒楼列表" target="navTab" mask="true" rel="crmtask/hotellist" href="{$host_url}/smallapp/crmtask/hotellist?task_id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-list"></i>
+                  </a>
+                </if>
               </td>
             </tr>
           </volist>

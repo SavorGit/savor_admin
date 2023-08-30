@@ -522,7 +522,7 @@ class BaseController extends Controller {
                              'admin.advdelivery.getallhotel','integral.merchant.merchantaddstep','integral.merchant.getservicebymodelid',
                              'admin.storesaleadv.getocuphotel','admin.advdelivery.analyseexcel',
 							 'admin.forscreenadv.analyseexcel','admin.storesaleadv.analyseexcel',
-                             'admin.hotel.getbusinesscircle'
+                             'admin.hotel.getbusinesscircle','admin.hotel.getsellwinehotels'
         );
         $model_name      = strtolower(MODULE_NAME);
         $controller_name = strtolower(CONTROLLER_NAME);
