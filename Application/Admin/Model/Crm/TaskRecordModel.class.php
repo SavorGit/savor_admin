@@ -1,9 +1,35 @@
 <?php
 namespace Admin\Model\Crm;
 use Admin\Model\BaseModel;
+use Common\Lib\Page;
 
 class TaskRecordModel extends BaseModel{
 	protected $tableName='crm_task_record';
+
+    public function getTaskRecordList($fields,$where,$order, $start=0,$size=5){
+        $list = $this->alias('a')
+            ->join('savor_crm_task task on a.task_id=task.id','left')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+            ->field($fields)
+            ->where($where)
+            ->order($order)
+            ->limit($start,$size)
+            ->select();
+
+        $count = $this->alias('a')
+            ->join('savor_crm_task task on a.task_id=task.id','left')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+            ->field('a.id')
+            ->where($where)
+            ->select();
+        $count = count($count);
+        $objPage = new Page($count,$size);
+        $show = $objPage->admin_page();
+        $data = array('list'=>$list,'page'=>$show);
+        return $data;
+    }
 
     public function getTaskRecords($fileds,$where,$orderby='',$limit='',$group=''){
         $res = $this->alias('a')

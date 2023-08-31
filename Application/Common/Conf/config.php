@@ -1098,6 +1098,12 @@ $config['CRM_TASK_TYPES'] = array(
     '10'=>'企业微信加餐厅人员',
     '11'=>'自定义'
 );
+$config['CRM_TASK_STATUS'] = array(
+    '1'=>'进行中','2'=>'未完成','3'=>'已完成'
+);
+$config['CRM_TASK_FORM_TYPE'] = array(
+    '1'=>'人工处理','2'=>'自动完成'
+);
 $config['SIGN_PROCESS'] = array(
     '1'=>array('id'=>1,'name'=>'陌拜完成','percent'=>0),
     '2'=>array('id'=>2,'name'=>'见到店长或其他关键人','percent'=>10),

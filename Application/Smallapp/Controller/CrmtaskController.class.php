@@ -177,6 +177,93 @@ class CrmtaskController extends BaseController {
         }
     }
 
+    public function recordlist(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $status = I('status',0,'intval');
+        $start_date = I('start_time','');
+        $end_date = I('end_time','');
+        $keyword = I('keyword','','trim');
+
+        if(empty($start_date)){
+            $start_date = date('Y-m-d',strtotime('-7 days'));
+        }
+        if(empty($end_date)){
+            $end_date = date('Y-m-d');
+        }
+        $start_time = "$start_date 00:00:00";
+        $end_time = "$end_date 23:59:59";
+        $where = array('a.add_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        if(!empty($keyword)){
+            $where['hotel.name'] = array('like',"%{$keyword}%");
+        }
+        if($status){
+            $where['a.status'] = $status;
+        }
+        $m_taskrecord = new \Admin\Model\Crm\TaskRecordModel();
+        $start = ($page-1) * $size;
+        $fields = 'a.*,hotel.name as hotel_name,task.name as task_name';
+        $result = $m_taskrecord->getTaskRecordList($fields,$where,'a.id desc', $start,$size);
+
+        $datalist = array();
+        $all_status_map = C('CRM_TASK_STATUS');
+        $all_form_type = C('CRM_TASK_FORM_TYPE');
+        foreach ($result['list'] as $v){
+            if($v['finish_time']=='0000-00-00 00:00:00'){
+                $v['finish_time'] = '';
+            }
+            $status_str = '';
+            if(isset($all_status_map[$v['status']])){
+                $status_str = $all_status_map[$v['status']];
+            }
+            $v['status_str'] = $status_str;
+            $form_type_str = '';
+            if(isset($all_form_type[$v['form_type']])){
+                $form_type_str = $all_form_type[$v['form_type']];
+            }
+            $v['form_type_str'] = $form_type_str;
+            $is_trigger_str = '否';
+            if($v['is_trigger']==1){
+                $is_trigger_str = '是';
+            }
+            $v['is_trigger_str'] = $is_trigger_str;
+            $datalist[]=$v;
+        }
+
+        $this->assign('start_time',$start_date);
+        $this->assign('end_time',$end_date);
+        $this->assign('status', $status);
+        $this->assign('keyword', $keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
+        $this->display();
+    }
+
+    public function handletask(){
+        $id = I('id',0,'intval');
+        $m_taskrecord = new \Admin\Model\Crm\TaskRecordModel();
+        $vinfo = $m_taskrecord->getInfo(array('id'=>$id));
+        if(IS_POST){
+            $audit_handle_status = I('post.audit_handle_status',0,'intval');//1不通过 2通过
+            $userinfo = session('sysUserInfo');
+            $audit_uid = $userinfo['id'];
+            if($audit_handle_status==2){
+                $status = 3;
+            }else{
+                $status = 2;
+            }
+
+            $updata = array('status'=>$status,'form_type'=>1,'audit_handle_status'=>$audit_handle_status,
+                'audit_time'=>date('Y-m-d H:i:s'),'audit_uid'=>$audit_uid);
+            $m_taskrecord->updateData(array('id'=>$id),$updata);
+            $this->output('操作成功!', 'crmtask/recordlist');
+        }else{
+            $this->assign('vinfo',$vinfo);
+            $this->display();
+        }
+    }
 
 
 }

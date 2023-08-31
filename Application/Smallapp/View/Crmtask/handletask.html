@@ -1,0 +1,30 @@
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/crmtask/handletask" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input name="id" type="hidden" value="{$vinfo.id}"/>
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">任务名称：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="text" value="{$hotel_name}" class="form-control" readonly/>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    审核状态:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select name="audit_handle_status" class="form-control bs-select" data-size="20" required>
+                        <option value="1" <if condition="$vinfo['audit_handle_status'] eq $key"> selected </if> > 审核不通过</option>
+                        <option value="2" <if condition="$vinfo['audit_handle_status'] eq $key"> selected </if> > 审核通过</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+    </form>
+</div>
