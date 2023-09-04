@@ -17,7 +17,7 @@ class ReturnedmoneyController extends BaseController{
         }
         $start_date .= ' 00:00:00';
         $end_date   .= ' 23:59:59';
-        $where = "  a.add_time>='".$start_date."' and a.add_time<='".$end_date."'";
+        $where = "  a.add_time>='".$start_date."' and a.add_time<='".$end_date."' sale.type=1";
         
         $sql = "select hotel.id hotel_id,sale.residenter_id,hotel.name hotel_name,user1.remark as sign_user,user2.remark residenter_user 
                 from savor_finance_sale_payment_record a 
@@ -31,6 +31,7 @@ class ReturnedmoneyController extends BaseController{
                 where $where group by sale.hotel_id,sale.residenter_id";
         
         
+        
         $data = M()->query($sql);
         foreach($data as $key=>$v){
             $map  = '';
@@ -39,6 +40,7 @@ class ReturnedmoneyController extends BaseController{
             $map .= ' and sale.residenter_id ='.$v['residenter_id'];
             $sql  = "select sum(a.pay_money) as total_money from savor_finance_sale_payment_record a
                      left join savor_finance_sale sale on a.sale_id=sale.id where ".$map;
+            
             $ret = M()->query($sql);
             $data[$key]['total_money'] = $ret[0]['total_money'];
             
