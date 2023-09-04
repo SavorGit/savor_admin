@@ -461,7 +461,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $start_time = I('start_time','');
         $end_time = I('end_time','');
         $where = array('a.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0);
-
+        $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
         $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,a.sale_start_date,a.sale_end_date';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc');
@@ -548,12 +548,11 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $sale_money = abs(intval($res_sale[0]['sale_money']));
 
         $sale_where['a.ptype'] = array('in','0,2');
-        $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.add_time',$sale_where,'','');
+        $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.is_expire,a.add_time',$sale_where,'','');
         $qk_money = 0;
         $cqqk_money = 0;
         if(!empty($res_sale_qk)){
             $m_sale_payment_record = new \Admin\Model\FinanceSalePaymentRecordModel();
-            $expire_time = 7*86400;
             foreach ($res_sale_qk as $v){
                 if($v['ptype']==0){
                     $now_money = $v['settlement_price'];
@@ -563,10 +562,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
                     $now_money = $v['settlement_price']-$had_pay_money;
                 }
                 $qk_money+=$now_money;
-
-                $sale_time = strtotime($v['add_time']);
-                $now_time = time();
-                if($now_time-$sale_time>=$expire_time){
+                if($v['is_expire']==1){
                     $cqqk_money+=$now_money;
                 }
             }

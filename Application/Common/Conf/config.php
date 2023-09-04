@@ -5,7 +5,7 @@ $config = array(
     'URL_MODEL'				=>2,
     'URL_CASE_INSENSITIVE'  => true, //url支持大小写
     'MODULE_DENY_LIST'      => array('Common','Runtime'), // 禁止访问的模块列表
-    'MODULE_ALLOW_LIST'     => array('Admin','H5','Smallapp','Dataexport','Integral'), //模块配置
+    'MODULE_ALLOW_LIST'     => array('Admin','H5','Smallapp','Dataexport','Integral','Crontab'), //模块配置
     'DEFAULT_MODULE'        => 'Admin',
     //session cookie配置
     'SESSION_AUTO_START'    =>  true,    // 是否自动开启Session
@@ -299,6 +299,7 @@ $config['MANGER_KEY'] = array(
     'smallapp'=>'小程序数据统计节点',
     'miniprogram'=>'小程序管理',
     'integral'=>'积分系统',
+    'crmtask'=>'渠道任务',
 
 );
 $config['STATE_REASON'] = array(
@@ -1083,6 +1084,25 @@ $config['NO_WORK_TYPES'] = array(
     '21'=>'目标餐厅',
     '22'=>'已拜访餐厅',
     '23'=>'终止合作餐厅',
+);
+$config['CRM_TASK_TYPES'] = array(
+    '1'=>'店长销售端开通',
+    '2'=>'配送酒水',
+    '3'=>'回款',
+    '4'=>'超期欠款',
+    '5'=>'完善包间信息',
+    '6'=>'推广邀请函',
+    '7'=>'推广盘点',
+    '8'=>'推广点播',
+    '9'=>'开机任务',
+    '10'=>'企业微信加餐厅人员',
+    '11'=>'自定义'
+);
+$config['CRM_TASK_STATUS'] = array(
+    '1'=>'进行中','2'=>'未完成','3'=>'已完成'
+);
+$config['CRM_TASK_FORM_TYPE'] = array(
+    '1'=>'人工处理','2'=>'自动完成'
 );
 $config['SIGN_PROCESS'] = array(
     '1'=>array('id'=>1,'name'=>'陌拜完成','percent'=>0),

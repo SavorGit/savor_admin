@@ -1,0 +1,99 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/crmtask/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">任务类型：</div>
+            <div class="input-group">
+              <select name="type" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name=":C('CRM_TASK_TYPES')" id="tname">
+                  <option value="{$key}" <if condition="$key eq $type">selected</if>>{$tname}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">状态：</div>
+            <div class="input-group">
+              <select name="status" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value="0" <if condition="$status eq 0">selected</if> >全部</option>
+                <option value="1" <if condition="$status eq 1">selected</if>>正常</option>
+                <option value="2" <if condition="$status eq 2">selected</if>>禁用</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm pull-right"></div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent" style="margin-top:25px;">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>任务ID</th>
+              <th>名称</th>
+              <th>任务类型</th>
+              <th>状态</th>
+              <th>操作人</th>
+              <th>更新时间</th>
+              <th>添加时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="任务ID">{$dinfo.id}</td>
+              <td data-title="名称">{$dinfo.name}</td>
+              <td data-title="任务类型">{$dinfo.type_str}</td>
+              <td data-title="状态">{$dinfo.status_str}</td>
+              <td data-title="操作人">{$dinfo.sys_uname}</td>
+              <td data-title="添加时间">{$dinfo.update_time}</td>
+              <td data-title="添加时间">{$dinfo.add_time}</td>
+              <td class="table-tool" data-title="操作">
+                <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/addtask?id={$dinfo.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
+                <if condition="$dinfo.type eq 11">
+                  <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/addhotel?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-hotel"></i>
+                  </a>
+                  <a title="酒楼列表" data-tip="酒楼列表" target="navTab" mask="true" rel="crmtask/hotellist" href="{$host_url}/smallapp/crmtask/hotellist?task_id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-list"></i>
+                  </a>
+                </if>
+              </td>
+            </tr>
+          </volist>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
