@@ -102,7 +102,7 @@
               <td data-title="是否触发上级">{$dinfo.is_trigger_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
-                  <if condition="$dinfo.type eq 11">
+                  <if condition="$dinfo.is_handle eq 1">
                     <a title="ID: {$dinfo.id}" data-tip="处理任务" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/handletask?id={$dinfo.id}" class="btn btn-success btn-icon">
                       <i class="fa fa-pencil"></i>
                     </a>

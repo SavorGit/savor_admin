@@ -202,7 +202,7 @@ class CrmtaskController extends BaseController {
         }
         $m_taskrecord = new \Admin\Model\Crm\TaskRecordModel();
         $start = ($page-1) * $size;
-        $fields = 'a.*,hotel.name as hotel_name,task.name as task_name';
+        $fields = 'a.*,hotel.name as hotel_name,task.name as task_name,task.type';
         $result = $m_taskrecord->getTaskRecordList($fields,$where,'a.id desc', $start,$size);
 
         $datalist = array();
@@ -227,6 +227,11 @@ class CrmtaskController extends BaseController {
                 $is_trigger_str = '是';
             }
             $v['is_trigger_str'] = $is_trigger_str;
+            $is_handle = 0;
+            if(in_array($v['type'],array(10,11)) && in_array($v['status'],array(1,2))){
+                $is_handle= 1;
+            }
+            $v['is_handle'] = $is_handle;
             $datalist[]=$v;
         }
 
@@ -244,7 +249,8 @@ class CrmtaskController extends BaseController {
     public function handletask(){
         $id = I('id',0,'intval');
         $m_taskrecord = new \Admin\Model\Crm\TaskRecordModel();
-        $vinfo = $m_taskrecord->getInfo(array('id'=>$id));
+        $vinfo = $m_taskrecord->getTaskRecords('a.id,task.name',array('a.id'=>$id));
+        $vinfo = $vinfo[0];
         if(IS_POST){
             $audit_handle_status = I('post.audit_handle_status',0,'intval');//1不通过 2通过
             $userinfo = session('sysUserInfo');
