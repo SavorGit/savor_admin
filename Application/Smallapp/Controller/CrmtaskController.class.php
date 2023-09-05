@@ -57,7 +57,7 @@ class CrmtaskController extends BaseController {
             $cate_num = I('post.cate_num',0,'intval');
             $stock_num = I('post.stock_num',0,'intval');
             $task_finish_rate = I('post.task_finish_rate',0);
-            $task_finish_day = I('post.task_finish_rate',0,'intval');
+            $task_finish_day = I('post.task_finish_day',0,'intval');
             $is_upimg = I('post.is_upimg',0,'intval');
             $is_check_location = I('post.is_check_location',0,'intval');
             $start_time = I('post.start_time');
@@ -208,6 +208,8 @@ class CrmtaskController extends BaseController {
         $datalist = array();
         $all_status_map = C('CRM_TASK_STATUS');
         $all_form_type = C('CRM_TASK_FORM_TYPE');
+
+        $oss_host = get_oss_host();
         foreach ($result['list'] as $v){
             if($v['finish_time']=='0000-00-00 00:00:00'){
                 $v['finish_time'] = '';
@@ -232,6 +234,9 @@ class CrmtaskController extends BaseController {
                 $is_handle= 1;
             }
             $v['is_handle'] = $is_handle;
+            if(!empty($v['img'])){
+                $v['img'] = $oss_host.$v['img'];
+            }
             $datalist[]=$v;
         }
 
@@ -256,13 +261,12 @@ class CrmtaskController extends BaseController {
             $userinfo = session('sysUserInfo');
             $audit_uid = $userinfo['id'];
             if($audit_handle_status==2){
-                $status = 3;
+                $updata = array('status'=>3,'form_type'=>1,'finish_time'=>date('Y-m-d H:i:s'),
+                    'audit_handle_status'=>$audit_handle_status,'audit_time'=>date('Y-m-d H:i:s'),'audit_uid'=>$audit_uid);
             }else{
-                $status = 2;
+                $updata = array('status'=>0,'form_type'=>0,'handle_status'=>0,
+                    'audit_time'=>date('Y-m-d H:i:s'),'audit_uid'=>$audit_uid);
             }
-
-            $updata = array('status'=>$status,'form_type'=>1,'audit_handle_status'=>$audit_handle_status,
-                'audit_time'=>date('Y-m-d H:i:s'),'audit_uid'=>$audit_uid);
             $m_taskrecord->updateData(array('id'=>$id),$updata);
             $this->output('操作成功!', 'crmtask/recordlist');
         }else{
