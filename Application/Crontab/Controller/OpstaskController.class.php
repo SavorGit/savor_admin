@@ -5,6 +5,8 @@ use Think\Controller;
 class OpstaskController extends Controller{
 
     public function releasetask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "releasetask start:$now_time \r\n";
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
         $m_staff = new \Admin\Model\Integral\StaffModel();
@@ -13,6 +15,7 @@ class OpstaskController extends Controller{
         $m_hotelstaff_data = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
         $m_taskhotel = new \Admin\Model\Integral\TaskHotelModel();
         $m_crm_taskhotel = new \Admin\Model\Crm\TaskHotelModel();
+        $m_sysuser = new \Admin\Model\UserModel();
         $redis = new \Common\Lib\SavorRedis();
         $cache_key = C('FINANCE_HOTELSTOCK');
         $m_crmtask = new \Admin\Model\Crm\TaskModel();
@@ -24,36 +27,52 @@ class OpstaskController extends Controller{
             where hotel.state=1 and hotel.flag=0 and ext.is_salehotel=1 order by hotel.id asc ";
         $model = M();
         $res_hotel = $model->query($sql);
+        $now_month = date('Ym');
         foreach ($res_hotel as $v){
             $hotel_id = $v['hotel_id'];
             $residenter_id = $v['residenter_id'];
             $residenter_name = $v['residenter_name'];
             if($residenter_id==0){
                 $residenter_name = '';
+            }else{
+                $res_sysuser = $m_sysuser->getUserInfo($residenter_id);
+                if($res_sysuser['status']==2){
+                    $residenter_id = 0;
+                    $residenter_name = '';
+                }
             }
             foreach ($alltask as $task){
-                $rfields = 'id,task_id,status,handle_status,audit_handle_status,integral_task_id';
-                $rtwhere = array('hotel_id'=>$hotel_id,'residenter_id'=>$residenter_id,'task_id'=>$task['id']);
+                $rfields = 'id,task_id,status,handle_status,audit_handle_status,integral_task_id,add_time';
+                $rtwhere = array('hotel_id'=>$hotel_id,'residenter_id'=>$residenter_id,'task_id'=>$task['id'],'off_state'=>1);
                 $now_residenter_task = $m_crmtask_record->getAll($rfields,$rtwhere,0,1,'id desc');
+                $task_month = 0;
+                if(!empty($now_residenter_task)){
+                    $task_month = date('Ym',strtotime($now_residenter_task[0]['add_time']));
+                }
 
                 $add_data = array('task_id'=>$task['id'],'hotel_id'=>$hotel_id,'residenter_id'=>$residenter_id,'residenter_name'=>$residenter_name);
                 $task_type = $task['type'];
                 switch ($task_type){
                     case 1:
-                        if(!empty($now_residenter_task)){
+                        if(($task_month>0 && $now_residenter_task[0]['status']==3) || $now_month==$task_month){
                             continue;
                         }
                         $mfields = 'count(a.id) as num';
                         $res_staff = $m_staff->getMerchantStaffList($mfields,array('m.hotel_id'=>$hotel_id,'m.status'=>1,'a.level'=>2));
                         $staff_num = intval($res_staff[0]['num']);
                         if($staff_num<$task['sale_manager_num']){
+                            $remind_content = "店内销售端人数少于{$task['sale_manager_num']}人，请尽快开通";
+                            $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
                         break;
                     case 2:
-                        if(!empty($now_residenter_task) && $now_residenter_task[0]['status']!=3){
-                            continue;
+                        if($task_month>0){
+                            if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
+                                continue;
+                            }
                         }
+
                         $hotel_cache_key = $cache_key.":$hotel_id";
                         $redis->select(9);
                         $res_hotel_cache = $redis->get($hotel_cache_key);
@@ -66,57 +85,62 @@ class OpstaskController extends Controller{
                             }
                         }
                         if($cate_num<$task['cate_num'] || $stock_num<$task['stock_num']){
-                            if($cate_num<$task['cate_num']){
-                                $remind_content = "店内酒水库存种类不足{$task['cate_num']}类，请及时为餐厅补货。";
-                            }else{
-                                $remind_content = "店内酒水库存不足{$task['stock_num']}瓶，请及时为餐厅补货。";
-                            }
+                            $remind_content = "店内酒水库存不足，请及时为餐厅补货";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
                         break;
                     case 3:
-                        if(!empty($now_residenter_task) && $now_residenter_task[0]['status']!=3){
-                            continue;
+                        if($task_month>0){
+                            if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
+                                continue;
+                            }
                         }
                         $swhere = array('a.hotel_id'=>$hotel_id,'a.ptype'=>array('in','0,2'),'record.wo_reason_type'=>1,'record.wo_status'=>2);
                         $sfields = 'count(a.id) as num,sum(a.settlement_price) as money';
                         $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','');
                         if($res_sale[0]['num']>0){
-                            $remind_content = "店内售卖了{$res_sale[0]['num']}瓶酒水，尚有{$res_sale[0]['money']}元未回款，请及时处理。";
+                            $remind_content = "店内售卖了{$res_sale[0]['num']}瓶酒水，产生{$res_sale[0]['money']}元欠款，请及时处理";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
 
                         }
                         break;
                     case 4:
-                        if(!empty($now_residenter_task) && $now_residenter_task[0]['status']!=3){
-                            continue;
+                        if($task_month>0){
+                            if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
+                                continue;
+                            }
                         }
                         $swhere = array('a.hotel_id'=>$hotel_id,'a.ptype'=>array('in','0,2'),'a.is_expire'=>1,'record.wo_reason_type'=>1,'record.wo_status'=>2);
                         $sfields = 'sum(a.settlement_price) as money,min(a.add_time) as sale_min_add_time';
                         $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','');
                         if($res_sale[0]['money']>0){
-                            $no_pay_time = (time()-$res_sale[0]['sale_min_add_time'])/86400;
+                            $no_pay_time = (time()-strtotime($res_sale[0]['sale_min_add_time']))/86400;
                             $pay_day = round($no_pay_time);
-                            $remind_content = "店内有{$res_sale[0]['money']}元超期欠款未收回，最长欠款时间{$pay_day}天，请及时回款。";
+                            $remind_content = "店内有{$res_sale[0]['money']}元欠款已超期，请及时催收";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
                         break;
                     case 5:
-                        if(!empty($now_residenter_task)){
+                        if(($task_month>0 && $now_residenter_task[0]['status']==3) || $now_month==$task_month){
                             continue;
                         }
+
                         $rwhere = array('hotel.id'=>$hotel_id,'room.state'=>1,'room.flag'=>0);
                         $res_room_num = $m_room->getRoomByCondition('count(room.id) as num',$rwhere);
                         if($res_room_num[0]['num']==0){
+                            $remind_content = '该店运维端无包间信息，请及时完善';
+                            $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
                         break;
                     case 6:
-                        if(!empty($now_residenter_task) && $now_residenter_task[0]['status']!=3){
-                            continue;
+                        if($task_month>0){
+                            if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
+                                continue;
+                            }
                         }
                         $task_finish_day = $task['task_finish_day']+1;
                         $task_finish_rate = $task['task_finish_rate'];
@@ -129,7 +153,7 @@ class OpstaskController extends Controller{
                         $res_task_data = $m_hotelstaff_data->getHotelDataList($staff_fields,$staff_where);
                         $task_invitation_finish_rate = sprintf("%.2f",$res_task_data[0]['task_invitation_finish_num']/$res_task_data[0]['task_invitation_operate_num']);
                         if($task_invitation_finish_rate<$task_finish_rate){
-                            $remind_content = "此店邀请函发送频率较低，请发动经理使用邀请函";
+                            $remind_content = "该店邀请函使用频率较低，请发动经理使用邀请函";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
@@ -144,12 +168,16 @@ class OpstaskController extends Controller{
                                 continue;
                             }
                             $add_data['integral_task_id'] = $res_check_task[0]['id'];
+                            $remind_content = "餐厅端盘点任务已下发，请及时完成";
+                            $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
                         break;
                     case 8:
-                        if(!empty($now_residenter_task) && $now_residenter_task[0]['status']!=3){
-                            continue;
+                        if($task_month>0){
+                            if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
+                                continue;
+                            }
                         }
                         $task_finish_day = $task['task_finish_day']+1;
                         $task_finish_rate = $task['task_finish_rate'];
@@ -162,14 +190,18 @@ class OpstaskController extends Controller{
                         $res_task_data = $m_hotelstaff_data->getHotelDataList($staff_fields,$staff_where);
                         $task_demand_finish_rate = sprintf("%.2f",$res_task_data[0]['task_demand_finish_num']/$res_task_data[0]['task_demand_operate_num']);
                         if($task_demand_finish_rate<$task_finish_rate){
+                            $remind_content = "该店点播任务完成率低，请发动经理完成点播";
+                            $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
                         break;
                     case 9:
-                        if(!empty($now_residenter_task) && $now_residenter_task[0]['status']!=3){
-                            continue;
+                        if($task_month>0){
+                            if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
+                                continue;
+                            }
                         }
-                        $res_box = $m_box->getBoxByCondition('box.mac',array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0));
+                        $res_box = $m_box->getBoxByCondition('box.mac,box.name',array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0));
                         if(!empty($res_box)){
                             $boxs = array();
                             $day_time = $task['task_finish_day']*86400;
@@ -182,8 +214,10 @@ class OpstaskController extends Controller{
                                     $report_time = strtotime($cache_data['date']);
                                     $diff_time = time() - $report_time;
                                     if($diff_time>$day_time){
-                                        $boxs[]=$bv['mac'];
+                                        $boxs[]=$bv['name'];
                                     }
+                                }else{
+                                    $boxs[]=$bv['name'];
                                 }
                             }
                             if(!empty($boxs)){
@@ -195,15 +229,15 @@ class OpstaskController extends Controller{
                         }
                         break;
                     case 10:
-                        if(!empty($now_residenter_task)){
+                        if(($task_month>0 && $now_residenter_task[0]['status']==3) || $now_month==$task_month){
                             continue;
                         }
-                        $remind_content = "此店为将餐厅人员加至企业微信，添加后请上传截图。";
+                        $remind_content = "请用企业微信添加餐厅人员的微信，添加后请上传截图";
                         $add_data['remind_content'] = $remind_content;
                         $m_crmtask_record->add($add_data);
                         break;
                     case 11:
-                        if(!empty($now_residenter_task)){
+                        if(($task_month>0 && $now_residenter_task[0]['status']==3) || $now_month==$task_month){
                             continue;
                         }
                         $res_has_hotel = $m_crm_taskhotel->getInfo(array('task_id'=>$task['id'],'hotel_id'=>$hotel_id));
@@ -215,11 +249,14 @@ class OpstaskController extends Controller{
                         break;
                 }
             }
-            echo "hotel_id:$hotel_id ok \r\n";
         }
+        $now_time = date('Y-m-d H:i:s');
+        echo "releasetask end:$now_time \r\n";
     }
 
     public function finishtype1(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "finishtype1 start:$now_time \r\n";
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
         $res_task_record = $m_crmtask_record->getHandleTasks(1);
         $m_staff = new \Admin\Model\Integral\StaffModel();
@@ -236,6 +273,8 @@ class OpstaskController extends Controller{
 
             $this->handle_task_record($is_finish,$v,$m_crmtask_record);
         }
+        $now_time = date('Y-m-d H:i:s');
+        echo "finishtype1 end:$now_time \r\n";
     }
 
     public function finishtype2(){
@@ -277,7 +316,7 @@ class OpstaskController extends Controller{
             $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','');
             $is_finish = 0;
             if($res_sale[0]['num']>0){
-                $remind_content = "店内售卖了{$res_sale[0]['num']}瓶酒水，尚有{$res_sale[0]['money']}元未回款，请及时处理。";
+                $remind_content = "店内售卖了{$res_sale[0]['num']}瓶酒水，产生{$res_sale[0]['money']}元欠款，请及时处理";
                 $m_crmtask_record->updateData(array('id'=>$v['id']),array('remind_content'=>$remind_content));
             }else{
                 $is_finish = 1;
@@ -299,7 +338,7 @@ class OpstaskController extends Controller{
             if($res_sale[0]['money']>0){
                 $no_pay_time = (time()-$res_sale[0]['sale_min_add_time'])/86400;
                 $pay_day = round($no_pay_time);
-                $remind_content = "店内有{$res_sale[0]['money']}元超期欠款未收回，最长欠款时间{$pay_day}天，请及时回款。";
+                $remind_content = "店内有{$res_sale[0]['money']}元欠款已超期，请及时催收";
                 $m_crmtask_record->updateData(array('id'=>$v['id']),array('remind_content'=>$remind_content));
             }else{
                 $is_finish = 1;
@@ -402,7 +441,7 @@ class OpstaskController extends Controller{
         foreach ($res_task_record as $v){
             $hotel_id = $v['hotel_id'];
 
-            $res_box = $m_box->getBoxByCondition('box.mac',array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0));
+            $res_box = $m_box->getBoxByCondition('box.mac,box.name',array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0));
             if(!empty($res_box)){
                 $boxs = array();
                 $day_time = $v['task_finish_day']*86400;
@@ -415,8 +454,10 @@ class OpstaskController extends Controller{
                         $report_time = strtotime($cache_data['date']);
                         $diff_time = time() - $report_time;
                         if($diff_time>$day_time){
-                            $boxs[]=$bv['mac'];
+                            $boxs[]=$bv['name'];
                         }
+                    }else{
+                        $boxs[]=$bv['name'];
                     }
                 }
                 if(!empty($boxs)){
@@ -432,6 +473,36 @@ class OpstaskController extends Controller{
         }
     }
 
+    public function uptaskoffstate(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "uptaskoffstate start:$now_time \r\n";
+        $m_sysuser = new \Admin\Model\UserModel();
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $start_time = date('Y-m-01 00:00:00');
+        $end_time = date('Y-m-31 23:00:00');
+        $where = array('add_time'=>array(array('egt',$start_time),array('elt',$end_time), 'and'),'off_state'=>1);
+        $field = 'hotel_id,residenter_id,GROUP_CONCAT(id) as all_ids';
+        $res_record = $m_crmtask_record->getAllData($field,$where,'','hotel_id');
+        foreach ($res_record as $v){
+            $hotel_id = $v['hotel_id'];
+            $residenter_id = $v['residenter_id'];
+            $res_ext = $m_hotel_ext->getOneData('residenter_id', array('hotel_id'=>$hotel_id));
+            if($res_ext['residenter_id']!=$residenter_id){
+                $m_crmtask_record->updateData(array('id'=>array('in',$v['all_ids'])),array('off_state'=>2));
+                echo "hotel_id:$hotel_id {$res_ext['residenter_id']}!={$residenter_id} \r\n";
+            }
+            $res_sysuser = $m_sysuser->getUserInfo($residenter_id);
+            if($res_sysuser['status']==2){
+                $m_crmtask_record->updateData(array('id'=>array('in',$v['all_ids'])),array('off_state'=>2));
+                echo "hotel_id:$hotel_id {$residenter_id} not in company\r\n";
+            }
+        }
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "uptaskoffstate end:$now_time \r\n";
+    }
+
 
 
 
@@ -442,7 +513,7 @@ class OpstaskController extends Controller{
         }else{
             if($info['is_trigger']==0){
                 $notify_day_time = $info['notify_day']*86400;
-                $diff_notify_time = time()-$info['add_time'];
+                $diff_notify_time = time()-strtotime($info['add_time']);
                 if($diff_notify_time>=$notify_day_time){
                     $updata = array('trigger_time'=>date('Y-m-d H:i:s'),'is_trigger'=>1,'update_time'=>date('Y-m-d H:i:s'));
                     $m_crmtask_record->updateData(array('id'=>$info['id']),$updata);
@@ -455,7 +526,7 @@ class OpstaskController extends Controller{
             }else{
                 $reset_time = $info['reset_time'];
             }
-            $diff_notify_time = time()-$reset_time;
+            $diff_notify_time = time()-strtotime($reset_time);
             if($diff_notify_time>=$notify_handle_day_time){
                 $updata = array('status'=>0,'handle_status'=>0,'handle_time'=>'0000-00-00 00:00:00','reset_time'=>date('Y-m-d H:i:s'),'update_time'=>date('Y-m-d H:i:s'));
                 $m_crmtask_record->updateData(array('id'=>$info['id']),$updata);
