@@ -78,6 +78,11 @@
               <td class="table-tool" data-title="操作">
                 <a data-tip="修改" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/addtask?id={$dinfo.id}" class="btn btn-success btn-icon"><i class="fa fa-pencil"></i></a>
                 <if condition="$dinfo.type eq 11">
+                <a warn="警告" data-tip="复制" title="你确定要复制新增任务吗？" title="复制新增任务"  target="ajaxTodo" calback="navTabAjaxDone" href="{$host_url}/smallapp/crmtask/copytask?task_id={$dinfo.id}" class="btn btn-success btn-icon">
+                  <i class="fa fa-copy"></i>
+                </a>
+                </if>
+                <if condition="$dinfo.type eq 11">
                   <a title="发布酒楼" data-tip="发布酒楼" target="dialog" mask="true" href="{$host_url}/smallapp/crmtask/addhotel?id={$dinfo.id}" class="btn btn-success btn-icon">
                     <i class="fa fa-hotel"></i>
                   </a>

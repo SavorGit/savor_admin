@@ -104,6 +104,25 @@ class CrmtaskController extends BaseController {
         }
     }
 
+    public function copytask(){
+        $task_id = I('get.task_id');
+
+        $m_crmtask = new \Admin\Model\Smallapp\CrmtaskModel();
+        $task_info = $m_crmtask->getInfo(array('id'=>$task_id));
+        unset($task_info['id'],$task_info['update_time'],$task_info['add_time']);
+        $userinfo = session('sysUserInfo');
+        $uid = $userinfo['id'];
+        $task_info['name'] = $task_info['name'].'-'.date('YmdHis');
+        $task_info['sysuser_id']  = $uid;
+        $task_info['status'] = 2;
+        $ret = $m_crmtask->addData($task_info);
+        if($ret){
+            $this->output('复制成功', "crmtask/datalist",2);
+        }else {
+            $this->output('删除失败', "crmtask/datalist",2,0);
+        }
+    }
+
     public function addhotel(){
         $id = I('id',0,'intval');
 
