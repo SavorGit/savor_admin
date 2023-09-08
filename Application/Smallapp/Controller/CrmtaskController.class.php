@@ -253,9 +253,17 @@ class CrmtaskController extends BaseController {
                 $is_handle= 1;
             }
             $v['is_handle'] = $is_handle;
+            $imgs = array();
             if(!empty($v['img'])){
-                $v['img'] = $oss_host.$v['img'];
+                $tmp_imgs = explode(',',$v['img']);
+                foreach ($tmp_imgs as $iv){
+                    if(!empty($iv)){
+                        $imgs[]=$oss_host.$iv;
+                    }
+                }
             }
+            $v['imgs'] = $imgs;
+
             $datalist[]=$v;
         }
 

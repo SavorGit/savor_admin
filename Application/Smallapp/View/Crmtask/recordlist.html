@@ -102,9 +102,9 @@
               <td data-title="任务完成形式">{$dinfo.form_type_str}</td>
               <td data-title="是否触发上级">{$dinfo.is_trigger_str}</td>
               <td data-title="图片">
-                <notempty name="dinfo.img">
-                <a href="{$dinfo.img}" target="_blank"><img src="{$dinfo.img}" ></a>
-                </notempty>
+                <volist name="dinfo.imgs" id="img">
+                  <a href="{$img}" target="_blank"><img src="{$img}" ></a>
+                </volist>
               </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
