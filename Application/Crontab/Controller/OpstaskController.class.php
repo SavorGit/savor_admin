@@ -17,7 +17,7 @@ class OpstaskController extends Controller{
         $m_crm_taskhotel = new \Admin\Model\Crm\TaskHotelModel();
         $m_sysuser = new \Admin\Model\UserModel();
         $redis = new \Common\Lib\SavorRedis();
-        $cache_key = C('FINANCE_HOTELSTOCK');
+        $cache_hotel_stock_key = C('FINANCE_HOTELSTOCK');
         $m_crmtask = new \Admin\Model\Crm\TaskModel();
         $alltask = $m_crmtask->getAllData('*',array('status'=>1,'end_time'=>array('egt',date('Y-m-d H:i:s'))));
 
@@ -73,18 +73,19 @@ class OpstaskController extends Controller{
                             }
                         }
 
-                        $hotel_cache_key = $cache_key.":$hotel_id";
+                        $hotel_cache_key = $cache_hotel_stock_key.":$hotel_id";
                         $redis->select(9);
                         $res_hotel_cache = $redis->get($hotel_cache_key);
                         $cate_num=$stock_num=0;
                         if(!empty($res_hotel_cache)){
                             $cache_data = json_decode($res_hotel_cache,true);
                             $cate_num = count($cache_data['goods_ids']);
-                            foreach ($cache_data as $cv){
+                            foreach ($cache_data['goods_list'] as $cv){
                                 $stock_num+=$cv['stock_num'];
                             }
                         }
                         if($cate_num<$task['cate_num'] || $stock_num<$task['stock_num']){
+                            echo "hotel_id:{$hotel_id} $cate_num<{$task['cate_num']} || $stock_num<{$task['stock_num']} \r\n";
                             $remind_content = "店内酒水库存不足，请及时为餐厅补货";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
@@ -166,6 +167,10 @@ class OpstaskController extends Controller{
                         if(!empty($res_check_task)){
                             if($res_check_task[0]['id']==$now_residenter_task[0]['integral_task_id']){
                                 continue;
+                            }else{
+                                if($now_residenter_task[0]['status']==0 || $now_residenter_task[0]['status']==1){
+                                    $m_crmtask_record->updateData(array('id'=>$now_residenter_task[0]['id']),array('status'=>2));
+                                }
                             }
                             $add_data['integral_task_id'] = $res_check_task[0]['id'];
                             $remind_content = "餐厅端盘点任务已下发，请及时完成";
@@ -207,8 +212,8 @@ class OpstaskController extends Controller{
                             $day_time = $task['task_finish_day']*86400;
                             foreach ($res_box as $bv){
                                 $redis->select(13);
-                                $cache_key  = 'heartbeat:2:'.$bv['mac'];
-                                $res_cache = $redis->get($cache_key);
+                                $box_cache_key  = 'heartbeat:2:'.$bv['mac'];
+                                $res_cache = $redis->get($box_cache_key);
                                 if(!empty($res_cache)){
                                     $cache_data = json_decode($res_cache,true);
                                     $report_time = strtotime($cache_data['date']);
@@ -292,7 +297,7 @@ class OpstaskController extends Controller{
             if(!empty($res_hotel_cache)){
                 $cache_data = json_decode($res_hotel_cache,true);
                 $cate_num = count($cache_data['goods_ids']);
-                foreach ($cache_data as $cv){
+                foreach ($cache_data['goods_list'] as $cv){
                     $stock_num+=$cv['stock_num'];
                 }
             }
@@ -372,8 +377,7 @@ class OpstaskController extends Controller{
         foreach ($res_task_record as $v){
             $hotel_id = $v['hotel_id'];
 
-
-            $task_finish_day = $v['task_finish_day']+1;
+            $task_finish_day = $v['task_finish_day'];
             $task_finish_rate = $v['task_finish_rate'];
             $start_date = date('Y-m-d',strtotime("-$task_finish_day day"));
             $end_date = date('Y-m-d',strtotime('-1 day'));
@@ -415,7 +419,7 @@ class OpstaskController extends Controller{
         foreach ($res_task_record as $v){
             $hotel_id = $v['hotel_id'];
 
-            $task_finish_day = $v['task_finish_day']+1;
+            $task_finish_day = $v['task_finish_day'];
             $task_finish_rate = $v['task_finish_rate'];
             $start_date = date('Y-m-d',strtotime("-$task_finish_day day"));
             $end_date = date('Y-m-d',strtotime('-1 day'));
