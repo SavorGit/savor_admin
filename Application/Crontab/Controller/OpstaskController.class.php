@@ -481,10 +481,12 @@ class OpstaskController extends Controller{
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
         $res_task_record = $m_crmtask_record->getHandleTasks(10);
         foreach ($res_task_record as $v){
-            if($v['status']==1){
+            if(!empty($v['img'])){
+                $is_finish = 1;
+            }else{
                 $is_finish = 0;
-                $this->handle_task_record($is_finish,$v,$m_crmtask_record);
             }
+            $this->handle_task_record($is_finish,$v,$m_crmtask_record);
         }
     }
 
@@ -492,7 +494,7 @@ class OpstaskController extends Controller{
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
         $res_task_record = $m_crmtask_record->getHandleTasks(11);
         foreach ($res_task_record as $v){
-            if($v['status']==1){
+            if($v['status']==1 && empty($v['img']) && $v['location_hotel_id']==0){
                 $is_finish = 0;
                 $this->handle_task_record($is_finish,$v,$m_crmtask_record);
             }
