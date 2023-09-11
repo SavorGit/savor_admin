@@ -46,7 +46,7 @@ class TaskRecordModel extends BaseModel{
     }
 
     public function getHandleTasks($type){
-        $where = array('a.status'=>1,'task.type'=>$type,'task.status'=>1);
+        $where = array('a.status'=>1,'a.off_state'=>1,'task.type'=>$type,'task.status'=>1);
         $fileds = 'a.id,a.task_id,a.hotel_id,a.residenter_id,a.status,a.form_type,a.handle_status,a.audit_handle_status,
         a.is_trigger,a.integral_task_id,a.reset_time,a.add_time,
         task.sale_manager_num,task.cate_num,task.stock_num,task.task_finish_rate,task.task_finish_day,task.is_upimg,
