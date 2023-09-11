@@ -477,6 +477,28 @@ class OpstaskController extends Controller{
         }
     }
 
+    public function finishtype10(){
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $res_task_record = $m_crmtask_record->getHandleTasks(10);
+        foreach ($res_task_record as $v){
+            if($v['status']==1){
+                $is_finish = 0;
+                $this->handle_task_record($is_finish,$v,$m_crmtask_record);
+            }
+        }
+    }
+
+    public function finishtype11(){
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $res_task_record = $m_crmtask_record->getHandleTasks(11);
+        foreach ($res_task_record as $v){
+            if($v['status']==1){
+                $is_finish = 0;
+                $this->handle_task_record($is_finish,$v,$m_crmtask_record);
+            }
+        }
+    }
+
     public function uptaskoffstate(){
         $now_time = date('Y-m-d H:i:s');
         echo "uptaskoffstate start:$now_time \r\n";
