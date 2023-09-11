@@ -6501,7 +6501,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->SMTPAuth = true;
             $mail->Username = $mail_config['username'];
             $mail->Password = $mail_config['password'];
-            $mail->Port = 25;
+            $mail->Port = 465;
             $mail->From = $mail_config['username'];
             $mail->FromName = $title;
             
