@@ -529,6 +529,25 @@ class OpstaskController extends Controller{
         echo "uptaskoffstate end:$now_time \r\n";
     }
 
+    public function triggertask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "triggertask start:$now_time \r\n";
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $where = array('a.is_trigger'=>0,'a.off_state'=>1,'task.status'=>1);
+        $fileds = 'a.id,a.task_id,a.hotel_id,a.residenter_id,a.status,a.form_type,a.handle_status,a.audit_handle_status,
+        a.is_trigger,a.integral_task_id,a.reset_time,a.add_time,task.notify_day,task.notify_handle_day';
+        $res_task = $m_crmtask_record->getTaskRecords($fileds,$where,'a.id asc');
+        foreach ($res_task as $v){
+            $notify_day_time = $v['notify_day']*86400;
+            $diff_notify_time = time()-strtotime($v['add_time']);
+            if($diff_notify_time>=$notify_day_time){
+                $updata = array('trigger_time'=>date('Y-m-d H:i:s'),'is_trigger'=>1,'update_time'=>date('Y-m-d H:i:s'));
+                $m_crmtask_record->updateData(array('id'=>$v['id']),$updata);
+            }
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "triggertask end:$now_time \r\n";
+    }
 
 
 
