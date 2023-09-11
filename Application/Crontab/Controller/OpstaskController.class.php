@@ -533,7 +533,7 @@ class OpstaskController extends Controller{
         $now_time = date('Y-m-d H:i:s');
         echo "triggertask start:$now_time \r\n";
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
-        $where = array('a.is_trigger'=>0,'a.off_state'=>1,'task.status'=>1);
+        $where = array('a.status'=>0,'a.off_state'=>1,'a.is_trigger'=>0,'task.status'=>1);
         $fileds = 'a.id,a.task_id,a.hotel_id,a.residenter_id,a.status,a.form_type,a.handle_status,a.audit_handle_status,
         a.is_trigger,a.integral_task_id,a.reset_time,a.add_time,task.notify_day,task.notify_handle_day';
         $res_task = $m_crmtask_record->getTaskRecords($fileds,$where,'a.id asc');
