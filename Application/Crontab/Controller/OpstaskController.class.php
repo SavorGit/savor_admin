@@ -85,7 +85,6 @@ class OpstaskController extends Controller{
                             }
                         }
                         if($cate_num<$task['cate_num'] || $stock_num<$task['stock_num']){
-                            echo "hotel_id:{$hotel_id} $cate_num<{$task['cate_num']} || $stock_num<{$task['stock_num']} \r\n";
                             $remind_content = "店内酒水库存不足，请及时为餐厅补货";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
