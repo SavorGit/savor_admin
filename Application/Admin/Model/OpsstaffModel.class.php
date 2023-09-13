@@ -275,6 +275,9 @@ class OpsstaffModel extends BaseModel{
         $box_num = 0;
         $adv_up_num = $pro_up_num = $ads_up_num = 0;
         $adv_notup_hotels = $pro_notup_hotels = $ads_notup_hotels = array();
+        $max_adv_location = C('MAX_ADS_LOCATION_NUMS');
+        $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
+        $program_ads_key = C('PROGRAM_ADS_CACHE_PRE');
         foreach ($res_box as $v){
             $box_num++;
             $ckey = 'heartbeat:2:'.$v['mac'];
@@ -306,7 +309,6 @@ class OpsstaffModel extends BaseModel{
                     }
                 }else{//实体小平台
                     $redis->select(12);
-                    $program_ads_key = C('PROGRAM_ADS_CACHE_PRE');
                     $cache_key = $program_ads_key.$v['box_id'];
                     $cache_value = $redis->get($cache_key);
                     $ads_info = json_decode($cache_value,true);
@@ -314,37 +316,51 @@ class OpsstaffModel extends BaseModel{
                 }
                 if(empty($ads_proid)){
                     $m_pub_ads_box = new \Admin\Model\PubAdsBoxModel();
-                    $max_adv_location = C('MAX_ADS_LOCATION_NUMS');
                     $now_date = date('Y-m-d H:i:s');
                     $ads_num_arr = array();
                     $ads_time_arr = array();
-                    for($i=1;$i<=$max_adv_location;$i++){
-                        $adv_arr = $m_pub_ads_box->getAdsList($v['box_id'],$i);  //获取当前机顶盒得某一个位置得广告
-                        $adv_arr = $this->changeadvList($adv_arr);
-                        if(!empty($adv_arr)){
-                            $flag =0;
-                            foreach($adv_arr as $ak=>$av){
-                                if($av['start_date']>$now_date){
-                                    $flag ++;
-                                }
-                                if($flag==2){
-                                    unset($adv_arr[$ak]);
-                                    break;
-                                }
-                                $ads_arr['create_time'] = $av['create_time'];
-                                $ads_num_arr[] = $ads_arr;
-                                $ads_time_arr[] = $av['create_time'];
-                                unset($av['pub_ads_id']);
-                                unset($av['create_time']);
 
+                    $box_had_ads_status = 1;
+                    $tmp_stat_box_ads_cache_key = 'tmp_stat_box_ads_'.$v['box_id'];
+                    $redis->select(12);
+                    $res_stat_box_ads = $redis->get($tmp_stat_box_ads_cache_key);
+                    if(!empty($res_stat_box_ads)){
+                        if($res_stat_box_ads==2){
+                            $ads_num_arr = 2;
+                        }
+                    }else{
+                        for($i=1;$i<=$max_adv_location;$i++){
+                            $adv_arr = $m_pub_ads_box->getAdsList($v['box_id'],$i);  //获取当前机顶盒得某一个位置得广告
+                            $adv_arr = $this->changeadvList($adv_arr);
+                            if(!empty($adv_arr)){
+                                $flag =0;
+                                foreach($adv_arr as $ak=>$av){
+                                    if($av['start_date']>$now_date){
+                                        $flag ++;
+                                    }
+                                    if($flag==2){
+                                        unset($adv_arr[$ak]);
+                                        break;
+                                    }
+                                    $ads_arr['create_time'] = $av['create_time'];
+                                    $ads_num_arr[] = $ads_arr;
+                                    $ads_time_arr[] = $av['create_time'];
+                                    unset($av['pub_ads_id']);
+                                    unset($av['create_time']);
+                                }
+                            }
+                            if(!empty($ads_num_arr)){
+                                $box_had_ads_status = 2;
+                                break;
                             }
                         }
+                        $redis->set($tmp_stat_box_ads_cache_key,$box_had_ads_status,900);
                     }
+
                     if(!empty($ads_num_arr)){//如果该机顶盒下广告位不为空
-                        $ads_time_str = max($ads_time_arr);
-                        //$ads_proid = date('YmdHis',strtotime($ads_time_str));
+//                        $ads_time_str = max($ads_time_arr);
+//                        $ads_proid = date('YmdHis',strtotime($ads_time_str));
                         $redis->select(12);
-                        $program_ads_menu_num_key = C('PROGRAM_ADS_MENU_NUM');
                         $program_ads_menu_num = $redis->get($program_ads_menu_num_key);
                         $ads_proid = $program_ads_menu_num;
                     }
