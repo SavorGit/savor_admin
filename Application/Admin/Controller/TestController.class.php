@@ -3889,6 +3889,29 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($all_goods_avg_prices);
     }
 
+    public function writeoffok(){
+        $stock_record_id = I('woid',0,'intval');
+
+        $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
+        from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
+        left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
+        where a.id={$stock_record_id} and a.wo_status=3";
+        $res_data = $m_stock_record->query($sql);
+        if(!empty($res_data)){
+            $sale_info = $res_data[0];
+            $up_data = array('wo_status'=>2,'recycle_status'=>1,'update_time'=>date('Y-m-d H:i:s'));
+            $m_stock_record->updateData(array('id'=>$sale_info['stock_record_id']),$up_data);
+
+            $m_price_template_hotel = new \Admin\Model\FinancePriceTemplateHotelModel();
+            $settlement_price = $m_price_template_hotel->getHotelGoodsPrice($sale_info['hotel_id'],$sale_info['goods_id'],0);
+            $sale_info['settlement_price'] = $settlement_price;
+
+            $m_sale = new \Admin\Model\FinanceSaleModel();
+            $row_id = $m_sale->add($sale_info);
+            echo 'sale_id:'.$row_id."ok \r\n";
+        }
+    }
     public function upsale(){
         exit;
         $sql_time = "and a.add_time<'2023-02-02 17:29:36'";
@@ -4033,70 +4056,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $file_path = "/Public/content/$fileName.xls";
         $file_rootpath =  SITE_TP_PATH.$file_path;
         $objWriter->save($file_rootpath);
-    }
-
-    public function dpdata(){
-        exit;
-        $ip = '47.93.76.149';
-        $url = 'https://www.dianping.com/shanghai/ch10/g110';
-        $header = array(
-            'Host: www.dianping.com',
-            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$ip Safari/537.36",
-            'Referer: https://www.dianping.com/',
-        );
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        $html = curl_exec($ch);
-        curl_close($ch);
-        $dom = new \DOMDocument();
-        $dom->loadHTML($html);
-        $xpath = new \DOMXPath($dom);
-        $restaurant_nodes = $xpath->query("//div[@id='shop-all-list']/ul/li/div[@class='txt']/div[@class='tit']/a");
-        print_r($restaurant_nodes);
-        exit;
-
-        $all_hotel = array();
-        foreach ($restaurant_nodes as $restaurant_node) {
-            $restaurant_url = $restaurant_node->getAttribute('href');
-            // to do: 获取每个餐厅详情页面HTML，解析详细信息并存储到数据库中
-
-            $header = array(
-                'Host: www.dianping.com',
-                'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-                'Referer: https://www.dianping.com/',
-            );
-
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $restaurant_url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            $detail_html = curl_exec($ch);
-            curl_close($ch);
-
-            $dom = new \DOMDocument();
-            $dom->loadHTML($detail_html);
-            $xpath = new \DOMXPath($dom);
-            $name_node = $xpath->query("//h1[@class='shop-name']/span");
-            $name = $name_node->item(0)->nodeValue;
-            $address_node = $xpath->query("//div[@class='expand-info address']/span[@itemprop='street-address']");
-            $address = $address_node->item(0)->nodeValue;
-
-            $phone_node = $xpath->query("//p[@class='expand-info tel']/span[@itemprop='tel']");
-            $phone = $phone_node->item(0)->nodeValue;
-
-            $review_node = $xpath->query("//div[@class='brief-info']/a[@class='review-num']");
-            $review = $review_node->item(0)->nodeValue;
-
-            $all_hotel[]=array('name'=>$name,'address'=>$address,'phone'=>$phone,'review'=>$review);
-            echo "name ok \r\n";
-        }
-        print_r($all_hotel);
-        exit;
     }
 
     public function signhotel(){

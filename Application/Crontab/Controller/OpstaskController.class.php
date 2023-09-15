@@ -85,7 +85,6 @@ class OpstaskController extends Controller{
                             }
                         }
                         if($cate_num<$task['cate_num'] || $stock_num<$task['stock_num']){
-                            echo "hotel_id:{$hotel_id} $cate_num<{$task['cate_num']} || $stock_num<{$task['stock_num']} \r\n";
                             $remind_content = "店内酒水库存不足，请及时为餐厅补货";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
@@ -477,6 +476,30 @@ class OpstaskController extends Controller{
         }
     }
 
+    public function finishtype10(){
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $res_task_record = $m_crmtask_record->getHandleTasks(10);
+        foreach ($res_task_record as $v){
+            if(!empty($v['img'])){
+                $is_finish = 1;
+            }else{
+                $is_finish = 0;
+            }
+            $this->handle_task_record($is_finish,$v,$m_crmtask_record);
+        }
+    }
+
+    public function finishtype11(){
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $res_task_record = $m_crmtask_record->getHandleTasks(11);
+        foreach ($res_task_record as $v){
+            if($v['status']==1 && empty($v['img']) && $v['location_hotel_id']==0){
+                $is_finish = 0;
+                $this->handle_task_record($is_finish,$v,$m_crmtask_record);
+            }
+        }
+    }
+
     public function uptaskoffstate(){
         $now_time = date('Y-m-d H:i:s');
         echo "uptaskoffstate start:$now_time \r\n";
@@ -507,6 +530,25 @@ class OpstaskController extends Controller{
         echo "uptaskoffstate end:$now_time \r\n";
     }
 
+    public function triggertask(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "triggertask start:$now_time \r\n";
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $where = array('a.status'=>0,'a.off_state'=>1,'a.is_trigger'=>0,'task.status'=>1);
+        $fileds = 'a.id,a.task_id,a.hotel_id,a.residenter_id,a.status,a.form_type,a.handle_status,a.audit_handle_status,
+        a.is_trigger,a.integral_task_id,a.reset_time,a.add_time,task.notify_day,task.notify_handle_day';
+        $res_task = $m_crmtask_record->getTaskRecords($fileds,$where,'a.id asc');
+        foreach ($res_task as $v){
+            $notify_day_time = $v['notify_day']*86400;
+            $diff_notify_time = time()-strtotime($v['add_time']);
+            if($diff_notify_time>=$notify_day_time){
+                $updata = array('trigger_time'=>date('Y-m-d H:i:s'),'is_trigger'=>1,'update_time'=>date('Y-m-d H:i:s'));
+                $m_crmtask_record->updateData(array('id'=>$v['id']),$updata);
+            }
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "triggertask end:$now_time \r\n";
+    }
 
 
 
