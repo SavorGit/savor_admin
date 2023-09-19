@@ -142,7 +142,7 @@ class OpstaskController extends Controller{
                                 continue;
                             }
                         }
-                        $task_finish_day = $task['task_finish_day']+1;
+                        $task_finish_day = $task['task_finish_day'];
                         $task_finish_rate = $task['task_finish_rate'];
                         $start_date = date('Y-m-d',strtotime("-$task_finish_day day"));
                         $end_date = date('Y-m-d',strtotime('-1 day'));
@@ -183,7 +183,7 @@ class OpstaskController extends Controller{
                                 continue;
                             }
                         }
-                        $task_finish_day = $task['task_finish_day']+1;
+                        $task_finish_day = $task['task_finish_day'];
                         $task_finish_rate = $task['task_finish_rate'];
                         $start_date = date('Y-m-d',strtotime("-$task_finish_day day"));
                         $end_date = date('Y-m-d',strtotime('-1 day'));
