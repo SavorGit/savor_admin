@@ -3979,119 +3979,14 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         exit;
     }
 
-    public function woerrorcode(){
-        $file_path = SITE_TP_PATH.'/Public/content/核对核销原因数据0419.xlsx';
-        vendor("PHPExcel.PHPExcel.IOFactory");
-        vendor("PHPExcel.PHPExcel");
-
-        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
-        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-        $objPHPExcel = $objReader->load($file_path);
-
-        $sheet = $objPHPExcel->getSheet(0);
-        $highestRow = $sheet->getHighestRow();
-        $highestColumn = $sheet->getHighestColumn();
-
-        $all_wo_reason_type = array('1'=>'餐厅售卖','2'=>'品鉴酒','3'=>'活动');
-        $map_wo_reason_type_str = array('餐厅售卖'=>'1','品鉴酒'=>'2','活动'=>'3');
-
-        $all_wo_status = array('1'=>'待审核','2'=>'审核通过','3'=>'审核不通过','4'=>'待补充资料');
-        $m_stock = new \Admin\Model\FinanceStockRecordModel();
-        $data = array();
-        for ($row = 2; $row<=$highestRow; $row++){
-            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
-            if(!empty($rowData[0][0])){
-                $idcode = trim($rowData[0][0]);
-                $reason_str = trim($rowData[0][1]);
-
-                $is_wo=$is_eq=$excel_wo_reason_type=0;
-                $new_reason_str = '';
-                $res_stock_record = $m_stock->getAll('id,idcode,wo_reason_type,wo_status',
-                    array('idcode'=>$idcode,'type'=>7),0,1,'id desc');
-                if(!empty($res_stock_record)){
-                    $is_wo = 1;
-                    $new_reason_str = $all_wo_reason_type[$res_stock_record[0]['wo_reason_type']];
-                    if($new_reason_str==$reason_str){
-                        $is_eq=1;
-                    }else{
-                        $excel_wo_reason_type = $map_wo_reason_type_str[$reason_str];
-                        $m_stock->updateData(array('id'=>$res_stock_record[0]['id']),array('wo_reason_type'=>$excel_wo_reason_type));
-                        echo "$idcode \r\n";
-                    }
-                }
-                $dinfo = array('idcode'=>$idcode,'reason_str'=>$reason_str,'new_reason_str'=>$new_reason_str,
-                    'is_wo'=>$is_wo,'is_eq'=>$is_eq,'excel_wo_reason_type'=>$excel_wo_reason_type);
-                $data[]=$dinfo;
-            }
-        }
-        $cell = array(
-            array('idcode','唯一识别码'),
-            array('reason_str','核销原因'),
-            array('new_reason_str','数据库核销原因'),
-            array('is_wo','数据库是否核销'),
-            array('is_eq','数据库状态是否一致'),
-            array('excel_wo_reason_type','表格核销原因')
-        );
-
-        $filename = '核销原因不一致数据';
-        $fileName = $filename.'_'.date('YmdHis');
-        $cellNum = count($cell);
-        $dataNum = count($data);
-        $objPHPExcel = new \PHPExcel();
-        $cellName = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ');
-        for ($i = 0; $i < $cellNum; $i++) {
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i] . '1', $cell[$i][1]);
-        }
-        for ($i = 0; $i < $dataNum; $i++) {
-            for ($j = 0; $j < $cellNum; $j++) {
-                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j] . ($i + 2), $data[$i][$cell[$j][0]]);
-            }
-        }
-//        header('pragma:public');
-//        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="' . $fileName . '.xls"');
-//        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-//        $objWriter->save('php://output');
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $file_path = "/Public/content/$fileName.xls";
-        $file_rootpath =  SITE_TP_PATH.$file_path;
-        $objWriter->save($file_rootpath);
-    }
-
-    public function signhotel(){
-        $sql = "SELECT min(record.id) as id FROM savor_crm_salerecord record left JOIN savor_hotel hotel on
-            hotel.id=record.signin_hotel_id WHERE record.type = 1 AND record.status = 2 AND record.visit_type IN ('184','171') AND
-            record.signin_hotel_id > 0 AND hotel.id NOT IN
-            ('7','482','504','791','508','844','845','597','201','493','883','53','598','1366','1337','925') AND hotel.htype = 20
-            GROUP BY record.signin_hotel_id";
-        $model = M();
-        $res_data = $model->query($sql);
-        $m_hotel = new \Admin\Model\HotelModel();
-        $m_signhotel = new \Admin\Model\Crm\SignhotelModel();
-        $m_salerecord = new \Admin\Model\Crm\SalerecordModel();
-        foreach ($res_data as $v){
-            $sale_record_id = $v['id'];
-            $sql_sale = "select * from savor_crm_salerecord where id={$sale_record_id}";
-            $res_record = $model->query($sql_sale);
-            $hotel_id = $res_record[0]['signin_hotel_id'];
-            $ops_staff_id = $res_record[0]['ops_staff_id'];
-            $m_hotel->saveData(array('no_work_type'=>22), array('id'=>$hotel_id));
-            $adata = array('ops_staff_id'=>$ops_staff_id,'hotel_id'=>$hotel_id,'visit_num'=>1,
-                'sign_progress_id'=>1,'start_time'=>$res_record[0]['add_time']);
-            $m_signhotel->add($adata);
-
-            $m_salerecord->updateData(array('id'=>$sale_record_id),array('sign_progress_id'=>1));
-
-            echo "sale_record_id:$sale_record_id,hotel_id:$hotel_id \r\n";
-        }
-    }
-
     public function upgps(){
         $m_area = new \Admin\Model\AreaModel();
         $curl = new \Common\Lib\Curl();
         $citys = array('1'=>'北京市','9'=>'上海市','236'=>'广州市','248'=>'佛山市','246'=>'深圳市');
         $m_hotel = new \Admin\Model\HotelModel();
-        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=236 and state in(1,4) and flag=0 and gps='' order by id asc ";
+//        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=236 and state in(1,4) and flag=0 and gps='' order by id asc ";
+        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=1
+        and create_time>='2023-09-15 13:51:30' and create_time<='2023-09-15 15:00:10' and gps='' order by id asc ";
         $res_data = $m_hotel->query($sql);
         foreach ($res_data as $v){
             $hotel_id = $v['id'];
@@ -4102,8 +3997,9 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 $county = $res_area_info[0]['region_name'];
             }
             $address = $citys[$area_id].$county.$v['addr'];
-//            $address = urlencode($address);
-            $url = "https://api.map.baidu.com/geocoding/v3/?address={$address}&output=json&ak=1Dzrskry6AVpiYo3QEBKTfBBwfsMw7lk=RD615";
+            $address = urlencode($address);
+            $ak = C('BAIDU_SAPP_OPS_KEY');
+            $url = "https://api.map.baidu.com/geocoding/v3/?address={$address}&output=json&ak=$ak";
             $gps_info = '';
             $curl::get($url,$gps_info);
             if(!empty($gps_info)){
@@ -4111,8 +4007,12 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
                 if($geocode_info['status']==0 && !empty($geocode_info['result']['location'])){
                     $gps = $geocode_info['result']['location']['lng'].','.$geocode_info['result']['location']['lat'];
                     $m_hotel->saveData(array('gps'=>$gps),array('id'=>$hotel_id));
-                    echo $hotel_id.' '.$v['name']."\r\n";
+                    echo $hotel_id.' '.$v['name']."ok \r\n";
+                }else{
+                    echo $hotel_id.' '.$v['name']."error \r\n";
                 }
+            }else{
+                echo $hotel_id.' '.$v['name']."error \r\n";
             }
 
         }
@@ -4127,18 +4027,8 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         print_r($res_data);
     }
 
-    public function upsaleprice(){
-//        $file_path = SITE_TP_PATH.'/Public/content/2022.10.01价格调控.xlsx';
-//        $time_range = "sale.add_time>='2022-10-01 00:00:00' and sale.add_time<'2022-12-05 00:00:00'";
-
-//        $file_path = SITE_TP_PATH.'/Public/content/2022.12.05价格调控.xlsx';
-//        $time_range = "sale.add_time>='2022-12-05 00:00:00' and sale.add_time<'2023-01-05 00:00:00'";
-
-//        $file_path = SITE_TP_PATH.'/Public/content/2023.01.05价格调控.xlsx';
-//        $time_range = "sale.add_time>='2023-01-05 00:00:00' and sale.add_time<'2023-04-01 00:00:00'";
-
-        $file_path = SITE_TP_PATH.'/Public/content/2023.04.01价格调控.xlsx';
-        $time_range = "sale.add_time>='2023-04-01 00:00:00' and sale.add_time<'2023-07-15 00:00:00'";
+    public function importsalegroup(){
+        $file_path = SITE_TP_PATH.'/Public/content/cw20230918.xlsx';
 
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");
@@ -4150,33 +4040,87 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $sheet = $objPHPExcel->getSheet(0);
         $highestRow = $sheet->getHighestRow();
         $highestColumn = $sheet->getHighestColumn();
-
-        $m_sale = new \Admin\Model\FinanceSaleModel();
-        $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+        $all_citys = array('北京'=>1,'上海'=>9,'广州'=>236,'佛山'=>248,'深圳'=>246);
+        $all_datas = array();
         for ($row = 2; $row<=$highestRow; $row++){
             $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
             if(!empty($rowData[0][0])){
-                $goods_id = intval($rowData[0][0]);
-                $city_id = $rowData[0][1];
-                $hotel_id = $rowData[0][2];
-                $price = intval($rowData[0][3]);
-                $res_goods = $m_dishgoods->getInfo(array('id'=>$goods_id));
-                $finance_goods_id = $res_goods['finance_goods_id'];
-                $sql_sale = "select sale.* from savor_finance_sale as sale left join savor_hotel as hotel on sale.hotel_id=hotel.id
-                left join savor_finance_stock_record as record on sale.stock_record_id=record.id 
-                where {$time_range} and record.wo_reason_type=1 
-                and sale.goods_id={$finance_goods_id}";
-                if(!empty($city_id)){
-                    $sql_sale.=" and hotel.area_id in ($city_id)";
-                }elseif(!empty($hotel_id)){
-                    $sql_sale.=" and hotel.id in ($hotel_id)";
+                $series_id = $rowData[0][0];
+                $idcode = $rowData[0][4];
+                $goods_id = intval($rowData[0][6]);
+                $add_time = $rowData[0][9];
+                if(is_numeric($add_time)) {
+                    $add_phptime = \PHPExcel_Shared_Date::ExcelToPHP($add_time);
+                    $add_time = date('Y-m-d H:i:s',$add_phptime);
                 }
-                $res_sale = $m_sale->query($sql_sale);
-                foreach ($res_sale as $sv){
-                    $m_sale->updateData(array('id'=>$sv['id']),array('sale_price'=>$price));
-                    echo "sale_id:{$sv['id']} ok \r\n";
+                $city_name = $rowData[0][10];
+                $area_id = $all_citys[$city_name];
+                $pay_time = $rowData[0][13];
+                $maintainer_name = trim($rowData[0][15]);
+                if(is_numeric($pay_time)) {
+                    $pay_phptime = \PHPExcel_Shared_Date::ExcelToPHP($pay_time);
+                    $pay_time = date('Y-m-d',$pay_phptime);
                 }
+                $sale_money = $rowData[0][14];
+
+                $all_datas[$series_id][]=array('goods_id'=>$goods_id,'idcode'=>$idcode,
+                    'area_id'=>$area_id,'maintainer_name'=>$maintainer_name,'add_time'=>$add_time,
+                    'pay_time'=>$pay_time,'sale_money'=>$sale_money);
             }
+        }
+
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $m_salepayment = new \Admin\Model\FinanceSalePaymentModel();
+        $m_salerecord = new \Admin\Model\FinanceSalePaymentRecordModel();
+        $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $model = M();
+        foreach ($all_datas as $k=>$v){
+            $first_data = $v[0];
+            $idcode = $first_data['idcode'];
+            $fileds = 'a.id,a.type,a.idcode,goods.name as goods_name,goods.id goods_id,a.price as cost_price,unit.name as unit_name,
+                      stock.area_id,unit.convert_type,a.wo_status,a.dstatus,a.add_time';
+            $res_list = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>$idcode,'a.dstatus'=>1),'a.id desc','0,1','');
+            $cost_price = 0;
+            if(!empty($res_list[0]['cost_price'])){
+                $cost_price = abs($res_list[0]['cost_price']);
+            }
+            $maintainer_name = $first_data['maintainer_name'];
+            $sql_user = "select id from savor_sysuser where remark='{$maintainer_name}' order by id desc limit 0,1";
+            $res_user = $model->query($sql_user);
+            $maintainer_id = intval($res_user[0]['id']);
+            $settlement_price = 0;
+            $all_idcodes = array();
+            foreach ($v as $vv){
+                $settlement_price+=$vv['sale_money'];
+                $all_idcodes[]=$vv['idcode'];
+            }
+            $nowdate = date('Ymd',strtotime($first_data['pay_time']));
+            $where = array('DATE_FORMAT(add_time, "%Y%m%d")'=>$nowdate);
+            $res_salepayment = $m_salepayment->getAllData('count(id) as num',$where);
+            if($res_salepayment[0]['num']>0){
+                $number = $res_salepayment[0]['num']+1;
+            }else{
+                $number = 1;
+            }
+            $num_str = str_pad($number,4,'0',STR_PAD_LEFT);
+            $serial_number = "SKD-$nowdate-$num_str";
+
+            $payment_info = array('serial_number'=>$serial_number,'tax_rate'=>13,'pay_money'=>$settlement_price,
+                'pay_time'=>$first_data['pay_time'],'type'=>2,'add_time'=>"{$first_data['pay_time']} 10:00:00");
+            $sale_payment_id = $m_salepayment->add($payment_info);
+
+            $idcodes = join("\n",$all_idcodes);
+            $sale_info = array('goods_id'=>$first_data['goods_id'],'idcode'=>$idcodes,'area_id'=>$first_data['area_id'],
+                'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>2,
+                'cost_price'=>$cost_price,'settlement_price'=>$settlement_price,'sale_payment_id'=>$sale_payment_id,
+                'add_time'=>$first_data['add_time']);
+            $sale_id = $m_sale->add($sale_info);
+
+            $payment_record_info = array('sale_id'=>$sale_id,'sale_payment_id'=>$sale_payment_id,'pay_money'=>$settlement_price,
+                'add_time'=>"{$first_data['pay_time']} 10:00:00");
+            $m_salerecord->add($payment_record_info);
+            echo "$k ok\r\n";
+
         }
     }
 
@@ -4474,33 +4418,5 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             }
         }
         echo join(',',$ids);
-    }
-
-    public function uppdtask(){
-//        $sql = "select staff_id,integral from savor_smallapp_stockcheck where stock_check_success_status=21
-//            and add_time>='2023-07-01 00:00:00' and add_time<='2023-07-31 23:59:59' order by id asc ";
-        $sql = "select openid,integral from savor_smallapp_user_integralrecord where type=24 and integral=300 
-                 and add_time<='2023-08-01 13:43:59' order by id desc ";
-        $model = M();
-        $res_data = $model->query($sql);
-        $m_userintegral = new \Admin\Model\Smallapp\UserIntegralModel();
-        foreach ($res_data as $v){
-//            $staff_id = $v['staff_id'];
-//            $integral = $v['integral'];
-//            $sql_staff = "select openid from savor_integral_merchant_staff where id={$staff_id}";
-//            $res_staff = $model->query($sql_staff);
-//
-//            $openid = $res_staff[0]['openid'];
-            $openid = $v['openid'];
-            $integral = $v['integral'];
-            $res_integral = $m_userintegral->getInfo(array('openid'=>$openid));
-            if(!empty($res_integral)){
-                $userintegral = $res_integral['integral']+$integral;
-                $m_userintegral->updateData(array('id'=>$res_integral['id']),array('integral'=>$userintegral,'update_time'=>date('Y-m-d H:i:s')));
-            }else{
-                $m_userintegral->add(array('openid'=>$openid,'integral'=>$integral));
-            }
-            echo "$openid ok \r\n";
-        }
     }
 }
