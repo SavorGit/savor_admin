@@ -21,10 +21,11 @@ class OpstaskController extends Controller{
         $m_crmtask = new \Admin\Model\Crm\TaskModel();
         $alltask = $m_crmtask->getAllData('*',array('status'=>1,'end_time'=>array('egt',date('Y-m-d H:i:s'))));
 
+        $test_hotel_ids = C('TEST_HOTEL');
         $sql = "select hotel.id as hotel_id,hotel.name as hotel_name,ext.residenter_id,sysuser.remark as residenter_name from savor_hotel as hotel 
             left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
             left join savor_sysuser as sysuser on ext.residenter_id=sysuser.id 
-            where hotel.state=1 and hotel.flag=0 and ext.is_salehotel=1 order by hotel.id asc ";
+            where hotel.state=1 and hotel.flag=0 and ext.is_salehotel=1 and hotel.id not in ($test_hotel_ids) order by hotel.id asc ";
         $model = M();
         $res_hotel = $model->query($sql);
         $now_month = date('Ym');
@@ -514,15 +515,16 @@ class OpstaskController extends Controller{
         foreach ($res_record as $v){
             $hotel_id = $v['hotel_id'];
             $residenter_id = $v['residenter_id'];
+            $res_sysuser = $m_sysuser->getUserInfo($residenter_id);
+            if($res_sysuser['status']==2){
+                $residenter_id = 0;
+                echo "hotel_id:$hotel_id {$residenter_id} not in company\r\n";
+            }
+
             $res_ext = $m_hotel_ext->getOneData('residenter_id', array('hotel_id'=>$hotel_id));
             if($res_ext['residenter_id']!=$residenter_id){
                 $m_crmtask_record->updateData(array('id'=>array('in',$v['all_ids'])),array('off_state'=>2));
                 echo "hotel_id:$hotel_id {$res_ext['residenter_id']}!={$residenter_id} \r\n";
-            }
-            $res_sysuser = $m_sysuser->getUserInfo($residenter_id);
-            if($res_sysuser['status']==2){
-                $m_crmtask_record->updateData(array('id'=>array('in',$v['all_ids'])),array('off_state'=>2));
-                echo "hotel_id:$hotel_id {$residenter_id} not in company\r\n";
             }
         }
 
