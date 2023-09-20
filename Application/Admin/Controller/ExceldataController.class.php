@@ -204,4 +204,45 @@ class ExceldataController extends Controller {
 		fclose($handle);
 		echo $flag ;
 	}
+	function updateCircle(){
+	    exit();
+	    vendor("PHPExcel.PHPExcel.IOFactory");
+	    vendor("PHPExcel.PHPExcel");
+	    $file_path = SITE_TP_PATH.'/Public/business_circle/商圈汇总.xlsx';
+	    $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+	    $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+	    $objPHPExcel = $objReader->load($file_path);
+	    
+	    $sheet = $objPHPExcel->getSheet(0);
+	    $highestRow = $sheet->getHighestRow();
+	    $highestColumn = $sheet->getHighestColumn();
+	    
+	    $m_hotel = new \Admin\Model\HotelModel();
+	    $m_hotel_ext = new \Admin\Model\HotelExtModel();
+	    $m_business_circle = new \Admin\Model\BusinessCircleModel();
+	    
+	    $data = array();
+	    $hotel_list = array();
+	    //$highestRow = 3;
+	    
+	    $flag = 0;
+	    for ($row = 2; $row<=$highestRow; $row++){
+	        $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+	        //print_r($rowData);exit;
+	        $map = array();
+	        $map['area_id'] = $rowData[0][3];
+	        $map['name']    = $rowData[0][2];
+	        $map['status']  = 1;
+	        $info = array();
+	        $info['trade_area_type'] = 1;
+	        
+	        $rts = $m_business_circle->updateData($map,$info);
+	        if($rts){
+	            $flag ++;
+	            echo  "$rowData[0][3] - $rowData[0][2] \r\n";
+	        }
+	        
+	    }
+	    echo $flag;exit;
+	}
 }
