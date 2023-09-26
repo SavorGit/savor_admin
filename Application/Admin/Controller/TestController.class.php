@@ -3893,7 +3893,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $stock_record_id = I('woid',0,'intval');
 
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
-        $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
+        $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,hotel.area_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
         from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
         left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
         where a.id={$stock_record_id} and a.wo_status=3";
@@ -3912,24 +3912,15 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             echo 'sale_id:'.$row_id."ok \r\n";
         }
     }
-    public function upsale(){
-        exit;
-        $sql_time = "and a.add_time<'2023-02-02 17:29:36'";
-        $sql_time = '';
-        $idcodes = "and a.idcode in ('0f9ebef5165662f5','06c1dd8d4aefc804')";//未发起核销申请
-        $idcodes = '';
-        $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
-        from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
-        left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
-        where a.type=7 and a.wo_status in (1,2,4) {$sql_time} {$idcodes}order by a.id asc ";
+
+    public function upsaleareaid(){
+        $sql = "select a.id,a.area_id,hotel.area_id as hotel_area_id from savor_finance_sale as a left join savor_hotel as hotel on a.hotel_id=hotel.id 
+        where a.area_id=0 order by a.id desc ";
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $res_data = $m_sale->query($sql);
-        $id = 2789;
         foreach ($res_data as $v){
-            $id++;
-            $v['id']=$id;
-            $row_id = $m_sale->add($v);
-            echo 'id:'.$row_id."ok \r\n";
+            $row_id = $m_sale->updateData(array('id'=>$v['id']),array('area_id'=>$v['hotel_area_id']));
+            echo 'id:'.$v['id']."ok \r\n";
         }
     }
 
@@ -4028,7 +4019,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function importsalegroup(){
-        $file_path = SITE_TP_PATH.'/Public/content/cw20230918.xlsx';
+        $file_path = '/application_data/web/php/savor_admin/Public/content/cw20230919.xlsx';
 
         vendor("PHPExcel.PHPExcel.IOFactory");
         vendor("PHPExcel.PHPExcel");

@@ -21,7 +21,7 @@ class OpstaskController extends Controller{
         $m_crmtask = new \Admin\Model\Crm\TaskModel();
         $alltask = $m_crmtask->getAllData('*',array('status'=>1,'end_time'=>array('egt',date('Y-m-d H:i:s'))));
 
-        $test_hotel_ids = C('TEST_HOTEL');
+        $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql = "select hotel.id as hotel_id,hotel.name as hotel_name,ext.residenter_id,sysuser.remark as residenter_name from savor_hotel as hotel 
             left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
             left join savor_sysuser as sysuser on ext.residenter_id=sysuser.id 
