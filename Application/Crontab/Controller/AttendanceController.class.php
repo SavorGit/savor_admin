@@ -9,7 +9,7 @@ class AttendanceController extends Controller{
         $m_hotel = new \Admin\Model\HotelModel();
         $sql_ops = "select a.id as ops_staff_id,a.area_id,area.region_name as area_name,a.job,suser.remark as ops_uname from savor_ops_staff as a 
             left join savor_area_info as area on a.area_id=area.id
-            left join savor_sysuser as suser on a.sysuser_id=suser.id where suser.remark!=''
+            left join savor_sysuser as suser on a.sysuser_id=suser.id where a.is_attendance=1 and suser.remark!=''
             order by a.area_id asc ";
         $res_staff = $m_attendance->query($sql_ops);
 
@@ -99,6 +99,8 @@ class AttendanceController extends Controller{
             $m_attendance->add($add_data);
         }
         echo "static_date:$static_date ok \r\n";
+
+
 
     }
 }
