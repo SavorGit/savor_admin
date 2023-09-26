@@ -70,7 +70,7 @@ class ExporthotelController extends BaseController{
                 array('maintainer_name','维护人'),
                 
                 array('circle_name','商圈'),
-                array('trade_area_type','是否聚焦商圈'),
+                array('trade_area_type','是否核心商圈'),
                 array('is_cooperation','是否签约'),
                 array('have_box','是否有屏幕')
             );
@@ -163,6 +163,8 @@ class ExporthotelController extends BaseController{
 		$mail->AddAddress("alex.liu@littlehotspot.com");
 		$mail->AddAddress("xie.yunhang@littlehotspot.com");
 		$mail->AddAddress("hu.shunhua@littlehotspot.com");
+		$mail->AddAddress("jiang.gongjing@littlehotspot.com");
+		$mail->AddAddress("zheng.wei@littlehotspot.com");
 		$mail->AddAddress("zhang.yingtao@littlehotspot.com");
         foreach($file_path_arr as $ks=>$vs){
             $mail->AddAttachment($vs); // 添加附件
