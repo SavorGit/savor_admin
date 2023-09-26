@@ -49,7 +49,8 @@ class StockcheckController extends BaseController{
             $v['release_num'] = isset($all_release_nums[$v['hotel_id']])?$all_release_nums[$v['hotel_id']]:0;
             $v['get_num'] = isset($all_get_nums[$v['hotel_id']])?$all_get_nums[$v['hotel_id']]:0;
             $v['finish_num'] = isset($all_finish_nums[$v['hotel_id']])?$all_finish_nums[$v['hotel_id']]:0;
-
+            $check_rate = $v['finish_num']/$v['release_num']>=1?1:$v['finish_num']/$v['release_num'];
+            $v['check_rate'] = sprintf("%.2f",$check_rate);
             $datalist[]=$v;
         }
 
