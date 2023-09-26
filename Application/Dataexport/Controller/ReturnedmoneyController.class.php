@@ -32,21 +32,23 @@ class ReturnedmoneyController extends BaseController{
                      left join savor_finance_sale sale on a.sale_id=sale.id where ".$money_where;
             $ret = M()->query($sql);
             $v['total_money'] = $ret[0]['total_money'];
+            $v['type_str'] = '餐厅售卖';
 
             $datalist[]=$v;
         }
         $groupby_where = "a.add_time>='{$start_time}' and a.add_time<='{$end_time}' and sale.type=2";
-        $sql = "select sale.residenter_id,user2.remark residenter_user,sum(a.pay_money) as total_money
+        $sql = "select sale.maintainer_id,user2.remark residenter_user,sum(a.pay_money) as total_money
                 from savor_finance_sale_payment_record a 
                 left join savor_finance_sale sale on a.sale_id= sale.id
-                left join savor_sysuser    user2 on sale.residenter_id = user2.id
-                where {$groupby_where} group by sale.residenter_id";
+                left join savor_sysuser    user2 on sale.maintainer_id = user2.id
+                where {$groupby_where} group by sale.maintainer_id";
         $data_groupby = M()->query($sql);
         foreach ($data_groupby as $v){
-            $datalist[]=array('hotel_id'=>'','hotel_name'=>'','sign_user'=>'',
+            $datalist[]=array('hotel_id'=>'','hotel_name'=>'','sign_user'=>'','type_str'=>'团购售卖',
                 'residenter_user'=>$v['residenter_user'],'total_money'=>$v['total_money']);
         }
         $cell = array(
+            array('type_str','类型'),
             array('hotel_id','餐厅ID'),
             array('hotel_name','餐厅名称'),
             array('sign_user','签约人'),
