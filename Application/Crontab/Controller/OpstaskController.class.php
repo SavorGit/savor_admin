@@ -514,7 +514,7 @@ class OpstaskController extends Controller{
         $res_record = $m_crmtask_record->getAllData($field,$where,'','hotel_id');
         foreach ($res_record as $v){
             $hotel_id = $v['hotel_id'];
-            $residenter_id = $v['residenter_id'];
+            $residenter_id = intval($v['residenter_id']);
             $res_sysuser = $m_sysuser->getUserInfo($residenter_id);
             if($res_sysuser['status']==2){
                 $residenter_id = 0;
@@ -522,9 +522,16 @@ class OpstaskController extends Controller{
             }
 
             $res_ext = $m_hotel_ext->getOneData('residenter_id', array('hotel_id'=>$hotel_id));
-            if($res_ext['residenter_id']!=$residenter_id){
+            $ext_residenter_id = intval($res_ext['residenter_id']);
+            $res_extsysuser = $m_sysuser->getUserInfo($ext_residenter_id);
+            if($res_extsysuser['status']==2){
+                $ext_residenter_id = 0;
+                echo "exthotel_id:$hotel_id {$ext_residenter_id} extdata not in company\r\n";
+            }
+
+            if($ext_residenter_id!=$residenter_id){
                 $m_crmtask_record->updateData(array('id'=>array('in',$v['all_ids'])),array('off_state'=>2));
-                echo "hotel_id:$hotel_id {$res_ext['residenter_id']}!={$residenter_id} \r\n";
+                echo "hotel_id:$hotel_id {$ext_residenter_id}!={$residenter_id} \r\n";
             }
         }
 
