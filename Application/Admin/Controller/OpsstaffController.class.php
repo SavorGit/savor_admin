@@ -108,6 +108,7 @@ class OpsstaffController extends BaseController {
             $hscope = I('post.hscope',0,'intval');
             $hotel_area_id = I('post.hotel_area_id');
         	$status = I('post.status',1,'intval');
+        	$is_attendance = I('post.is_attendance',1,'intval');
         	$is_operrator = I('post.is_operrator',0,'intval');
         	if(empty($area_id) || ($hscope==2 && empty($hotel_area_id))){
         		$this->output('缺少必要参数!', 'opsstaff/staffadd', 2, 0);
@@ -118,7 +119,7 @@ class OpsstaffController extends BaseController {
                 }
             }
         	$data = array('sysuser_id'=>$sysuser_id,'area_id'=>$area_id,'job'=>$job,'mobile'=>$mobile,'status'=>$status,
-        	    'hotel_role_type'=>$hscope,'is_operrator'=>$is_operrator);
+        	    'hotel_role_type'=>$hscope,'is_operrator'=>$is_operrator,'is_attendance'=>$is_attendance);
             $permission = array('hotel_info'=>array('type'=>$hscope,'area_ids'=>$hotel_area_id));
             $data['permission'] = json_encode($permission);
         	if($id){
