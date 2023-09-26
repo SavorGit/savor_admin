@@ -4019,7 +4019,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function importsalegroup(){
-        $file_path = SITE_TP_PATH.'/Public/content/cw20230918.xlsx';
         $file_path = '/application_data/web/php/savor_admin/Public/content/cw20230919.xlsx';
 
         vendor("PHPExcel.PHPExcel.IOFactory");
