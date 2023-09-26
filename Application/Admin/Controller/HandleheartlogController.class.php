@@ -95,5 +95,102 @@ class HandleheartlogController extends Controller
         }
         echo date('Y-m-d H:i:s')."\n";
     }
+    public function countHeartLogOnlie(){
+        $m_heart_all_log = new \Admin\Model\HeartAllLogModel();
+        $m_hotel = new \Admin\Model\HotelModel();
+        $m_box   = new \Admin\Model\BoxModel();
+        
+        $redis = SavorRedis::getInstance();
+        $redis->select(13);
+        
+        $sql ="select box.mac box_mac from savor_box box
+               left join savor_room room on room.id= box.room_id
+               left join savor_hotel hotel on room.hotel_id = hotel.id
+               where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag = 0 limit 5000";
+        
+        $box_arr = $m_box->query($sql);
+        
+        foreach($box_arr as $kk=>$vv){
+            $keys = $redis->keys('heartlog_'.$vv['box_mac'].'*');
+            
+            if(empty($keys)){
+                continue;
+            }
+            foreach($keys as $v){
+                $data = array();
+                $info = $redis->get($v);
+                if(!empty($info)){
+                    $info = json_decode($info,true);
+                    if(empty($info['mac']) || empty($info['clientid']) || empty($info['date'])){
+                        $redis->remove($v);
+                        continue;
+                    }
+                    $date = substr($info['date'],0,8);
+                    $loginfo = $m_heart_all_log->getOne($info['mac'], $info['clientid'], $date);
+                    $hour = intval(substr($info['date'], 8,2));
+                    
+                    if(empty($loginfo)){
+                        if($info['clientid'] ==1){
+                            $hotelInfo = $m_hotel->getHotelInfoByMac($info['mac']);
+                            if($hotelInfo){
+                                $data['area_id']    = $hotelInfo['area_id'];
+                                $data['area_name']  = $hotelInfo['area_name'];
+                                $data['hotel_id']   = $info['hotelId'];
+                                $data['hotel_name'] = $hotelInfo['hotel_name'];
+                                $data['mac']        = $info['mac'];
+                                $data['type']       = $info['clientid'];
+                                $data['date']       = $date;
+                                $data['hour'.$hour] = 1;
+                                $ret = $m_heart_all_log->addInfo($data);
+                            }
+                            
+                        }else if($info['clientid'] ==2){
+                            $hotelInfo =  $m_box->getHotelInfoByBoxMac($info['mac']);
+                            if($hotelInfo){
+                                $data['area_id']    = $hotelInfo['area_id'];
+                                $data['area_name']  = $hotelInfo['area_name'];
+                                $data['hotel_id']   = $info['hotelId'];
+                                $data['hotel_name'] = $hotelInfo['hotel_name'];
+                                $data['room_id']    = $hotelInfo['room_id'];
+                                $data['room_name']  = $hotelInfo['room_name'];
+                                $data['box_id']     = $hotelInfo['box_id'];
+                                $data['mac']        = $info['mac'];
+                                $data['type']       = $info['clientid'];
+                                $data['date']       = $date;
+                                $data['apk_version']= $info['apk'];
+                                $data['hour'.$hour] = 1;
+                                $ret = $m_heart_all_log->addInfo($data);
+                            }
+                        }
+                    }else {
+                        $total = $loginfo['hour'.$hour];
+                        if($total>=12){
+                            $ret = true;
+                        }else {
+                            $where = array();
+                            if($info['clientid'] ==1){
+                                $where['mac'] = $info['mac'];
+                                $where['type']= $info['clientid'];
+                                $where['date']= $date;
+                                $ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}");
+                                
+                            }else if($info['clientid'] ==2){
+                                $where['mac'] = $info['mac'];
+                                $where['type']= $info['clientid'];
+                                $where['date']= $date;
+                                //$ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}");
+                                $ret = $m_heart_all_log->updateInfo($where['mac'], $where['type'], $where['date'], $filed = "hour{$hour}",$info['apk']);
+                            }
+                        }
+                        
+                    }
+                    if($ret){
+                        $redis->remove($v);
+                    }
+                }
+            }
+        }
+    }
+    
     
 }
