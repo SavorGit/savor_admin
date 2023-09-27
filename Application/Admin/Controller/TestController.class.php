@@ -3901,7 +3901,7 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         if(!empty($res_data)){
             $sale_info = $res_data[0];
             $sale_info['type'] = 1;
-            $up_data = array('wo_status'=>2,'recycle_status'=>1,'update_time'=>date('Y-m-d H:i:s'));
+            $up_data = array('wo_status'=>1,'recycle_status'=>0,'update_time'=>'0000-00-00 00:00:00');//重置为待审核(涉及到积分发放)
             $m_stock_record->updateData(array('id'=>$sale_info['stock_record_id']),$up_data);
 
             $m_price_template_hotel = new \Admin\Model\FinancePriceTemplateHotelModel();
