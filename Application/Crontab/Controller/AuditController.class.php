@@ -8,16 +8,22 @@ class AuditController extends Controller{
         $now_time = date('Y-m-d H:i:s');
         echo "writeoffdata start:$now_time \r\n";
 
-        $start_time = '2023-10-08 00:00:00';
+        $auto_audit_start_time = '2023-10-08 00:00:00';
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $where = array('type'=>7,'wo_status'=>1,'dstatus'=>1);
-        $where['add_time'] = array('egt',$start_time);
+        $where['add_time'] = array('egt',$auto_audit_start_time);
         $field = 'id,idcode,wo_reason_type,stock_id,goods_id,unit_id,op_openid';
         $res_data = $m_stock_record->getAllData($field,$where,'id asc');
         if(empty($res_data)){
             $now_time = date('Y-m-d H:i:s');
             echo "time:$now_time no data \r\n";
             exit;
+        }
+        $m_hotel_blacklist = new \Admin\Model\FinanceHotelBlacklistModel();
+        $res_blacklist = $m_hotel_blacklist->getDataList('hotel_id',array(),'id desc');
+        $hotel_blacklist = array();
+        foreach ($res_blacklist as $v){
+            $hotel_blacklist[]=$v['hotel_id'];
         }
 
         $m_goodsconfig = new \Admin\Model\FinanceGoodsConfigModel();
@@ -36,6 +42,12 @@ class AuditController extends Controller{
             $goods_id = $recordv['goods_id'];
             $stock_id = $recordv['stock_id'];
 
+            $res_stock = $m_stock->getInfo(array('id'=>$stock_id));
+            if(in_array($res_stock['hotel_id'],$hotel_blacklist)){
+                echo "stock_record_id:$stock_record_id,hotel_id:{$res_stock['hotel_id']} in blacklist \r\n";
+                continue;
+            }
+
             $data = array('wo_status'=>2,'update_time'=>date('Y-m-d H:i:s'),
                 'recycle_status'=>2,'recycle_time'=>date('Y-m-d H:i:s'));
             $m_stock_record->updateData(array('id'=>$stock_record_id), $data);
@@ -45,7 +57,7 @@ class AuditController extends Controller{
                 echo "stock_record_id:$stock_record_id,goods_id:$goods_id,integral:0 \r\n";
                 continue;
             }
-            $res_stock = $m_stock->getInfo(array('id'=>$stock_id));
+
             if(empty($res_stock) || $res_stock['hotel_id']==0){
                 echo "stock_record_id:$stock_record_id,stock_id:$stock_id error \r\n";
                 continue;
