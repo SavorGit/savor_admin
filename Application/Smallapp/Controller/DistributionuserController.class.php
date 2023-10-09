@@ -53,21 +53,22 @@ class DistributionuserController extends BaseController {
             $name = I('post.name','','trim');
             $mobile = I('post.mobile','','trim');
             $parent_id = I('post.parent_id',0,'intval');
+            $sysuser_id = I('post.sysuser_id',0,'intval');
             $status = I('post.status',0,'intval');
 
 
             $user = session('sysUserInfo');
-            $sysuser_id = $user['id'];
+            $op_sysuser_id = $user['id'];
             $add_data = array('name'=>$name,'openid'=>$openid,'mobile'=>$mobile,'parent_id'=>$parent_id,
-                'level'=>$level,'sysuser_id'=>$sysuser_id,'status'=>$status);
+                'level'=>$level,'op_sysuser_id'=>$op_sysuser_id,'sysuser_id'=>$sysuser_id,'status'=>$status);
             if($id){
                 $add_data['update_time'] = date('Y-m-d H:i:s');
                 $m_duser->updateData(array('id'=>$id),$add_data);
                 if($level==1){
                     if($status==2){
-                        $m_duser->updateData(array('parent_id'=>$id),array('status'=>2,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s')));
+                        $m_duser->updateData(array('parent_id'=>$id),array('status'=>2,'op_sysuser_id'=>$op_sysuser_id,'update_time'=>date('Y-m-d H:i:s')));
                     }else{
-                        $m_duser->updateData(array('parent_id'=>$id),array('status'=>1,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s')));
+                        $m_duser->updateData(array('parent_id'=>$id),array('status'=>1,'op_sysuser_id'=>$op_sysuser_id,'update_time'=>date('Y-m-d H:i:s')));
                     }
                 }
             }else{
@@ -83,6 +84,18 @@ class DistributionuserController extends BaseController {
             if($level==2){
                 $duser_list = $m_duser->getDataList('id,name',array('level'=>1,'status'=>1),'id asc');
             }
+            $sysusers = array();
+            $m_sysuser = new \Admin\Model\UserModel();
+            $res_user = $m_sysuser->getUserData('*',array('id'=>array('neq',1)));
+            foreach ($res_user as $v){
+                $selected_str = '';
+                if($v['id']==$vinfo['sysuser_id']){
+                    $selected_str = 'selected';
+                }
+                $tinfo = array('id'=>$v['id'],'name'=>$v['remark'],'selected_str'=>$selected_str);
+                $sysusers[]=$tinfo;
+            }
+            $this->assign('sysusers',$sysusers);
             $this->assign('duser_list',$duser_list);
             $this->assign('vinfo',$vinfo);
             $this->display();

@@ -25,9 +25,21 @@
 				</div>
 			</div>
 
+			<div class="form-group row">
+				<label class="col-xs-12 col-sm-2 control-label">关联系统用户：</label>
+				<div class="col-xs-12 col-sm-10  form-inline">
+					<select name="sysuser_id" class="form-control bs-select class-filter" data-live-search="true" >
+						<option value="0">请选择用户</option>
+						<volist name="sysusers" id="tinfo">
+							<option value="{$tinfo.id}" {$tinfo.selected_str} > {$tinfo.name}</option>
+						</volist>
+					</select>
+				</div>
+			</div>
+
 			<if condition="$vinfo.level eq 2">
 			<div class="form-group row">
-				<label class="col-xs-12 col-sm-2 control-label">选择分享商：</label>
+				<label class="col-xs-12 col-sm-2 control-label">选择分销商：</label>
 				<div class="col-xs-12 col-sm-10  form-inline">
 					<select name="parent_id" class="form-control bs-select" title="请选择...">
 						<volist name="duser_list" id="du">
