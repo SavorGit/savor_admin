@@ -273,6 +273,8 @@ class DishorderController extends BaseController {
             $einfo = array();
             if($eid){
                 $einfo = $m_orderexpress->getInfo(array('id'=>$eid));
+            }else{
+                $einfo = $m_orderexpress->getInfo(array('order_id'=>$order_id));
             }
             $express = new \Common\Lib\Express();
             $all_express = $express->getCompany();
@@ -287,6 +289,13 @@ class DishorderController extends BaseController {
                 $result[]=$v;
             }
             $order_express_types = C('ORDER_EXPRESS_TYPES');
+            $m_sale = new \Admin\Model\FinanceSaleModel();
+            $res_sale = $m_sale->getInfo(array('order_id'=>$order_id));
+            if(!empty($res_sale)){
+                $vinfo['idcode'] = $res_sale['idcode'];
+            }else{
+                $vinfo['idcode'] = '';
+            }
             
             $this->assign('eid',$eid);
             $this->assign('einfo',$einfo);
@@ -296,8 +305,10 @@ class DishorderController extends BaseController {
             $this->display();
         }else{
             $enum = I('post.enum','','trim');
+            $all_idcodes = I('post.idcode','');
             $comcode = I('post.comcode','');
             $type   = I('post.ex_type',1,'intval');
+
 //            $res_express = $m_orderexpress->getInfo(array('order_id'=>$order_id));
 //            if(!empty($res_express)){
 //                $this->output('请勿重复录入物流单号', "dishorder/orderlist",2,0);
@@ -305,7 +316,11 @@ class DishorderController extends BaseController {
             if($type==1 && $enum==''){
                 $this->error('快递单号不能为空');
             }
-            $data = array('order_id'=>$order_id,'comcode'=>$comcode,'enum'=>$enum,'type'=>$type);
+            $data = array('order_id'=>$order_id,'type'=>$type);
+            if($type==1){
+                $data['comcode'] = $comcode;
+                $data['enum'] = $enum;
+            }
             if($eid){
                 $m_orderexpress->updateData(array('id'=>$eid),$data);
             }else{
@@ -351,6 +366,53 @@ class DishorderController extends BaseController {
                 $m_income = new \Admin\Model\Smallapp\UserincomeModel();
                 $m_income->addAll($add_data);
             }
+            if($vinfo['otype']==10 && !empty($all_idcodes)){
+                $m_sale = new \Admin\Model\FinanceSaleModel();
+                $res_sale = $m_sale->getInfo(array('order_id'=>$order_id));
+                if(empty($res_sale)){
+                    $m_dishgoods = new \Admin\Model\Smallapp\DishgoodsModel();
+                    $res_goods = $m_dishgoods->getInfo(array('id'=>$vinfo['goods_id']));
+                    $goods_id = $res_goods['finance_goods_id'];
+
+                    $nowdate = date('Ymd',strtotime($vinfo['pay_time']));
+                    $where = array('DATE_FORMAT(add_time, "%Y%m%d")'=>$nowdate);
+                    $m_salepayment = new \Admin\Model\FinanceSalePaymentModel();
+                    $res_salepayment = $m_salepayment->getAllData('count(id) as num',$where);
+                    if($res_salepayment[0]['num']>0){
+                        $number = $res_salepayment[0]['num']+1;
+                    }else{
+                        $number = 1;
+                    }
+                    $num_str = str_pad($number,4,'0',STR_PAD_LEFT);
+                    $serial_number = "SKD-$nowdate-$num_str";
+
+                    $payment_info = array('serial_number'=>$serial_number,'tax_rate'=>13,'pay_money'=>$vinfo['total_fee'],
+                        'pay_time'=>date('Y-m-d',strtotime($vinfo['pay_time'])),'type'=>2,'add_time'=>$vinfo['pay_time']);
+                    $sale_payment_id = $m_salepayment->add($payment_info);
+
+                    $m_duser = new \Admin\Model\Smallapp\DistributionUserModel();
+                    $res_duser = $m_duser->getInfo(array('id'=>$vinfo['sale_uid']));
+                    if($res_duser['level']==2){
+                        $res_duser = $m_duser->getInfo(array('id'=>$res_duser['parent_id']));
+                    }
+                    $maintainer_id = $res_duser['sysuser_id'];
+                    $m_opsstaff = new \Admin\Model\OpsstaffModel();
+                    $res_opsstaff = $m_opsstaff->getInfo(array('sysuser_id'=>$maintainer_id));
+                    $area_id = $res_opsstaff['area_id'];
+
+                    $sale_info = array('goods_id'=>$goods_id,'idcode'=>$all_idcodes,'area_id'=>$area_id,'order_id'=>$vinfo['id'],
+                        'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>4,
+                        'cost_price'=>0,'settlement_price'=>$vinfo['total_fee'],'sale_payment_id'=>$sale_payment_id,
+                        'add_time'=>$vinfo['add_time']);
+                    $sale_id = $m_sale->add($sale_info);
+
+                    $payment_record_info = array('sale_id'=>$sale_id,'sale_payment_id'=>$sale_payment_id,'pay_money'=>$vinfo['total_fee'],
+                        'add_time'=>$vinfo['add_time']);
+                    $m_salerecord = new \Admin\Model\FinanceSalePaymentRecordModel();
+                    $m_salerecord->add($payment_record_info);
+                }
+
+            }
             if($eid){
                 $nav_url = 'dishorder/expresslist';
             }else{
@@ -364,7 +426,7 @@ class DishorderController extends BaseController {
     public function getexpress(){
         $express_id = I('eid',0,'intval');
         $order_id = I('id',0,'intval');
-        $url = 'http://'.C('SAVOR_API_URL')."/Smallsale19/express/getExpress?order_id=$order_id&express_id=$express_id";
+        $url = 'http://'.C('SAVOR_API_URL')."/Smallsale22/express/getExpress?order_id=$order_id&express_id=$express_id";
         $curl = new \Common\Lib\Curl();
         $response = json_encode(array());
         $curl::get($url,$response,5);
@@ -382,7 +444,7 @@ class DishorderController extends BaseController {
 
     public function autonumber(){
         $enum = I('enum','');
-        $url = 'http://'.C('SAVOR_API_URL')."/Smallsale19/express/autonumber?enum=$enum";
+        $url = 'http://'.C('SAVOR_API_URL')."/Smallsale22/express/autonumber?enum=$enum";
         $curl = new \Common\Lib\Curl();
         $response = json_encode(array());
         $curl::get($url,$response,5);
