@@ -1104,6 +1104,9 @@ $config['CRM_TASK_STATUS'] = array(
 $config['CRM_TASK_FORM_TYPE'] = array(
     '1'=>'人工处理','2'=>'自动完成'
 );
+$config['CRM_TASK_HANDLE_STATUS'] = array(
+    '0'=>'无点击','1'=>'点击拒绝','2'=>'点击处理',
+);
 $config['SIGN_PROCESS'] = array(
     '1'=>array('id'=>1,'name'=>'陌拜完成','percent'=>0),
     '2'=>array('id'=>2,'name'=>'见到店长或其他关键人','percent'=>10),

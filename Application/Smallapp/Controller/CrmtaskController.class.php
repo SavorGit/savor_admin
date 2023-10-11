@@ -200,6 +200,7 @@ class CrmtaskController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
         $status = I('status',0,'intval');
+        $handle_status = I('handle_status',99,'intval');
         $start_date = I('start_time','');
         $end_date = I('end_time','');
         $keyword = I('keyword','','trim');
@@ -219,6 +220,9 @@ class CrmtaskController extends BaseController {
         if($status){
             $where['a.status'] = $status;
         }
+        if($handle_status!=99){
+            $where['a.handle_status'] = $handle_status;
+        }
         $m_taskrecord = new \Admin\Model\Crm\TaskRecordModel();
         $start = ($page-1) * $size;
         $fields = 'a.*,hotel.name as hotel_name,task.name as task_name,task.type';
@@ -227,7 +231,7 @@ class CrmtaskController extends BaseController {
         $datalist = array();
         $all_status_map = C('CRM_TASK_STATUS');
         $all_form_type = C('CRM_TASK_FORM_TYPE');
-
+        $all_handle_status = C('CRM_TASK_HANDLE_STATUS');
         $oss_host = get_oss_host();
         foreach ($result['list'] as $v){
             if($v['finish_time']=='0000-00-00 00:00:00'){
@@ -238,6 +242,7 @@ class CrmtaskController extends BaseController {
                 $status_str = $all_status_map[$v['status']];
             }
             $v['status_str'] = $status_str;
+            $v['handle_status_str'] = $all_handle_status[$v['handle_status']];
             $form_type_str = '';
             if(isset($all_form_type[$v['form_type']])){
                 $form_type_str = $all_form_type[$v['form_type']];
@@ -269,6 +274,7 @@ class CrmtaskController extends BaseController {
 
         $this->assign('start_time',$start_date);
         $this->assign('end_time',$end_date);
+        $this->assign('handle_status', $handle_status);
         $this->assign('status', $status);
         $this->assign('keyword', $keyword);
         $this->assign('datalist', $datalist);
