@@ -135,8 +135,9 @@ class MessageModel extends BaseModel{
             ->select();
         foreach ($res_stock_record as $v){
             $message_data = array('staff_openid'=>$v['op_openid'],'content_id'=>$v['id']);
-            $this->addNotifyMessage($v['hotel_id'],$message_data,16);//16酒水售卖(运维端),17积分到账(运维端),18积分提现(运维端)
+            $row_id = $this->addNotifyMessage($v['hotel_id'],$message_data,16);//16酒水售卖(运维端),17积分到账(运维端),18积分提现(运维端)
             $m_stock_record->updateData(array('id'=>$v['id']),array('is_notifymsg'=>1));
+            echo "message_type:16,stock_record_id:{$v['id']},message_id:$row_id ok \r\n";
         }
         echo "message_type:16 ok \r\n";
         $m_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
@@ -167,7 +168,7 @@ class MessageModel extends BaseModel{
         $owhere = array('area_id'=>$area_id,'hotel_role_type'=>array('in','2,4'),'is_operrator'=>0,'status'=>1);
         $no_ids = array('7');
         $m_opstaff = new \Admin\Model\OpsstaffModel();
-        $mssage_data = array();
+        $all_message_data = array();
         if($res_hotel['maintainer_id']>0){
             $res_ops_staf = $m_opstaff->getInfo(array('sysuser_id'=>$res_hotel['maintainer_id'],'status'=>1));
             if(!empty($res_ops_staf)){
@@ -179,7 +180,7 @@ class MessageModel extends BaseModel{
                 if(!empty($message_data['integral']))       $minfo['integral'] = $message_data['integral'];
                 if(!empty($message_data['sale_ids']))       $minfo['sale_ids'] = $message_data['sale_ids'];
                 if(!empty($message_data['qk_day']))         $minfo['qk_day'] = $message_data['qk_day'];
-                $mssage_data[] = $minfo;
+                $all_message_data[] = $minfo;
             }
         }
         $owhere['id'] = array('not in',$no_ids);
@@ -192,8 +193,12 @@ class MessageModel extends BaseModel{
             if(!empty($message_data['integral']))       $minfo['integral'] = $message_data['integral'];
             if(!empty($message_data['sale_ids']))       $minfo['sale_ids'] = $message_data['sale_ids'];
             if(!empty($message_data['qk_day']))         $minfo['qk_day'] = $message_data['qk_day'];
-            $mssage_data[] = $minfo;
+            $all_message_data[] = $minfo;
         }
-        $this->addAll($mssage_data);
+        $row_id = 0;
+        if(!empty($all_message_data)){
+            $row_id = $this->addAll($all_message_data);
+        }
+        return $row_id;
     }
 }
