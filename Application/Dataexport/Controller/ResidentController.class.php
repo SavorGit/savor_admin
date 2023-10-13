@@ -55,19 +55,21 @@ class ResidentController extends BaseController{
             $weeks[$week_num-1]['end'] = $endOfMonth;
         }
         */
-        $weeks = array();
-        $first_day_of_month = date('Y-m-01');
-        $first_day_of_month_week = date("W", strtotime($first_day_of_month));
-        $current_week = date("W") - $first_day_of_month_week + 1;
-//        $current_week = 5;
-        for ($i=1; $i<=$current_week; $i++) {
-            $date = date("Y-m-d", strtotime($first_day_of_month ." +".(7 * ($i - 1)) .'days'));
-            $week_start_date = date('Y-m-d', strtotime("last monday", strtotime($date)));
-            $week_end_date = date('Y-m-d', strtotime("next sunday", strtotime($date)));
-            $weeks[]=array('start'=>$week_start_date,'end'=>$week_end_date);
-        }
+//        $weeks = array();
+//        $first_day_of_month = date('Y-m-01');
+//        $first_day_of_month_week = date("W", strtotime($first_day_of_month));
+//        $current_week = date("W") - $first_day_of_month_week + 1;
+//        for ($i=1; $i<=$current_week; $i++) {
+//            $date = date("Y-m-d", strtotime($first_day_of_month ." +".(7 * ($i - 1)) .'days'));
+//            $week_start_date = date('Y-m-d', strtotime("last monday", strtotime($date)));
+//            $week_end_date = date('Y-m-d', strtotime("next sunday", strtotime($date)));
+//            $weeks[]=array('start'=>$week_start_date,'end'=>$week_end_date);
+//        }
+
         $month_start_time = "$startOfMonth 00:00:00";
         $month_end_time = "$endOfMonth 23:59:59";
+        $month = date('m',strtotime($month_start_time));
+        $weeks = $this->getWeeksMonth($year,$month);
 
         $sql ="select a.id as hotel_id,a.name as hotel_name,a.area_id,area.region_name as area_name,circle.name circle_name,
             ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name
@@ -103,7 +105,7 @@ class ResidentController extends BaseController{
                 ->select();
             $sale_num = intval($res_stock_record[0]['num']);
 
-            $sale_week1_num=$sale_week2_num=$sale_week3_num=$sale_week4_num=$sale_week5_num=0;
+            $sale_week1_num=$sale_week2_num=$sale_week3_num=$sale_week4_num=$sale_week5_num=$sale_week6_num=0;
             foreach ($weeks as $wk=>$wday){
                 $w_stime = "{$wday['start']} 00:00:00";
                 $w_etime = "{$wday['end']} 23:59:59";
@@ -118,6 +120,7 @@ class ResidentController extends BaseController{
                 if($wk==2)  $sale_week3_num=intval($res_week_stock_record[0]['num']);
                 if($wk==3)  $sale_week4_num=intval($res_week_stock_record[0]['num']);
                 if($wk==4)  $sale_week5_num=intval($res_week_stock_record[0]['num']);
+                if($wk==5)  $sale_week6_num=intval($res_week_stock_record[0]['num']);
             }
 
             $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$month_start_time),array('elt',$month_end_time)));
@@ -174,7 +177,8 @@ class ResidentController extends BaseController{
 
             $datalist[]=array('hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],
                 'circle_name'=>$circle_name,'room_num'=>$room_num,'sale_num'=>$sale_num,'sale_week1_num'=>$sale_week1_num,
-                'sale_week2_num'=>$sale_week2_num,'sale_week3_num'=>$sale_week3_num,'sale_week4_num'=>$sale_week4_num,'sale_week5_num'=>$sale_week5_num,
+                'sale_week2_num'=>$sale_week2_num,'sale_week3_num'=>$sale_week3_num,'sale_week4_num'=>$sale_week4_num,
+                'sale_week5_num'=>$sale_week5_num,'sale_week6_num'=>$sale_week6_num,
                 'signer_name'=>$v['signer_name'],'residenter_name'=>$v['residenter_name'],'qk_money'=>$qk_money,'cqqk_money'=>$cqqk_money,'sale_people_num'=>$sale_people_num,
                 'sku_num'=>$sku_num,'task_demand_finish_rate'=>$task_demand_finish_rate,'task_invitation_finish_rate'=>$task_invitation_finish_rate,
                 'is_shareprofit_str'=>$is_shareprofit_str,
@@ -192,6 +196,7 @@ class ResidentController extends BaseController{
             array('sale_week3_num','3周销量'),
             array('sale_week4_num','4周销量'),
             array('sale_week5_num','5周销量'),
+            array('sale_week6_num','6周销量'),
             array('signer_name','签约人'),
             array('residenter_name','驻店人'),
             array('qk_money','总欠款'),
@@ -208,4 +213,82 @@ class ResidentController extends BaseController{
         $this->exportToExcel($cell,$datalist,$filename,1);
 
     }
+
+    public function getweeks(){
+        // 指定年份和月份
+        $year = 2023;
+        $month = 9;
+        $date = new \DateTime("$year-$month-01");
+        $weeks = array();
+        // 如果第一天不是周一，将第一个周的开始日期设置为第一个周一
+        if ($date->format('N') != 1) {
+            $date->modify("last monday of previous month");
+        }
+        // 循环获取每周的开始和结束日期
+        while ($date->format('m') <= $month) {
+            $startOfWeek = $date->format('Y-m-d');
+            $date->modify('next sunday');
+            $endOfWeek = $date->format('Y-m-d');
+            if(date('m',strtotime($startOfWeek))!=$month && date('m',strtotime($endOfWeek))!=$month){
+                break;
+            }
+            // 存储本周的开始和结束日期到数组中
+            $weeks[] = array(
+                'start' => $startOfWeek,
+                'end' => $endOfWeek
+            );
+            // 移动到下一周的周一
+            $date->modify('next monday');
+        }
+        print_r($weeks);
+        exit;
+    }
+
+    private function getWeeksMonth($year,$month){
+        $date = new \DateTime("$year-$month-01");
+        $weeks = array();
+        // 如果第一天不是周一，将第一个周的开始日期设置为第一个周一
+        if ($date->format('N') != 1) {
+            $date->modify("last monday of previous month");
+        }
+        // 循环获取每周的开始和结束日期
+        while ($date->format('m') <= $month) {
+            $startOfWeek = $date->format('Y-m-d');
+            $date->modify('next sunday');
+            $endOfWeek = $date->format('Y-m-d');
+            if(date('m',strtotime($startOfWeek))!=$month && date('m',strtotime($endOfWeek))!=$month){
+                break;
+            }
+            // 存储本周的开始和结束日期到数组中
+            $weeks[] = array(
+                'start' => $startOfWeek,
+                'end' => $endOfWeek
+            );
+            // 移动到下一周的周一
+            $date->modify('next monday');
+        }
+        return $weeks;
+    }
+
+    private function getWeeksInMonth($year, $month) {
+        $weeks = array();
+        $first_day = date("w", strtotime("$year-$month-01")); // 0 (Sun) to 6 (Sat)
+        $last_day = date("t", strtotime("$year-$month-01")); // Number of days in the month
+        $current_week = array();
+        for ($day = 1; $day <= $last_day; $day++) {
+            $date = "$year-$month-" . str_pad($day, 2, "0", STR_PAD_LEFT);
+            $day_of_week = date("w", strtotime($date));
+            if ($day_of_week == 1) {
+                $current_week['start'] = $date;
+            } elseif ($day_of_week == 0 || $day == $last_day) {
+                // Sunday, end of the week or end of the month
+                $current_week['end'] = $date;
+                $weeks[] = $current_week;
+            }
+        }
+        return $weeks;
+    }
+
+
+
 }
