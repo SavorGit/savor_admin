@@ -11,12 +11,18 @@ class FinanceStockModel extends BaseModel{
         $m_stock_detail = new \Admin\Model\FinanceStockDetailModel();
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
+        $m_hotel_stock = new \Admin\Model\FinanceHotelStockModel();
+        $m_hotel = new \Admin\Model\HotelModel();
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(9);
         $cache_key = C('FINANCE_HOTELSTOCK');
         $data_list = array();
         foreach ($res_stockhotels as $v){
             $hotel_id = $v['hotel_id'];
+            $res_hotel = $m_hotel->getHotelById('hotel.name as hotel_name,hotel.area_id,ext.is_salehotel',array('hotel.id'=>$hotel_id));
+            $hotel_area_id = $res_hotel['area_id'];
+            $is_salehotel = $res_hotel['is_salehotel'];
+
             $hotel_name = '';
             $goods_ids = array();
             $goods_list = array();
@@ -74,6 +80,26 @@ class FinanceStockModel extends BaseModel{
                 $redis->del($hotel_cache_key);
             }
             $m_hotel_ext->saveData(array('is_salehotel_stock'=>$is_salehotel_stock),array('hotel_id'=>$hotel_id));
+
+            if(!empty($goods_list)){
+                $del_stock_goods_ids = array('hotel_id'=>$hotel_id,'goods_id'=>array('not in',$goods_ids));
+                $m_hotel_stock->delData($del_stock_goods_ids);
+                foreach ($goods_list as $gv){
+                    $n_ginfo = array('area_id'=>$hotel_area_id,'hotel_id'=>$hotel_id,'goods_id'=>$gv['id']);
+                    $res_hstock = $m_hotel_stock->getInfo($n_ginfo);
+                    $n_ginfo['num']=$gv['stock_num'];
+                    if(!empty($res_hstock)){
+                        $n_ginfo['update_time'] = date('Y-m-d H:i:s');
+                        $m_hotel_stock->updateData(array('id'=>$res_hstock['id']),$n_ginfo);
+                    }else{
+                        $n_ginfo['num']=$gv['stock_num'];
+                        $m_hotel_stock->add($n_ginfo);
+                    }
+                }
+            }else{
+                $m_hotel_stock->delData(array('hotel_id'=>$hotel_id));
+            }
+
         }
 
         $redis->set($cache_key,json_encode($data_list));
