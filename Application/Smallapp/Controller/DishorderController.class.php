@@ -410,6 +410,8 @@ class DishorderController extends BaseController {
                         'add_time'=>$vinfo['add_time']);
                     $m_salerecord = new \Admin\Model\FinanceSalePaymentRecordModel();
                     $m_salerecord->add($payment_record_info);
+                }else{
+                    $m_sale->updateData(array('id'=>$res_sale['id']),array('idcode'=>$all_idcodes));
                 }
 
             }
