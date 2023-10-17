@@ -137,6 +137,7 @@ class AuditController extends Controller{
             $m_integralrecord->add($integralrecord_data);
             //end
 
+            /*
             //邀请新会员(优惠券任务) 审核通过后立即发放积分
             $res_recordinfo = $m_integralrecord->getAllData('*',array('jdorder_id'=>$idcode,'type'=>18,'status'=>2),'id desc');
             if(!empty($res_recordinfo)){
@@ -188,6 +189,7 @@ class AuditController extends Controller{
                     }
                 }
             }
+            */
             echo "stock_record_id:$stock_record_id ok \r\n";
         }
 
