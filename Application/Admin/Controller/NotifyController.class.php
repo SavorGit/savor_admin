@@ -72,6 +72,7 @@ class NotifyController extends Controller {
     }
 
     public function auditwriteoff(){
+        return true;
         $content = file_get_contents('php://input');
         $orders = array();
         if(!empty($content)) {
