@@ -87,6 +87,7 @@
             <th>用户头像</th>
             <th>积分信息</th>
             <th>所得积分</th>
+            <if condition="$type eq 17"><th>核销ID</th></if>
             <th>积分状态</th>
             <th>类型</th>
             <th>积分时间</th>
@@ -104,6 +105,9 @@
               <td data-title="用户头像"><img src="{$dinfo.avatarurl}" /></td>
               <td data-title="积分信息">{$dinfo.info}</td>
               <td data-title="所得积分">{$dinfo.integral}</td>
+              <if condition="$type eq 17">
+              <td data-title="核销ID">{$dinfo.jdorder_id}</td>
+              </if>
               <td data-title="积分状态">{$dinfo.status_str}</td>
               <td data-title="类型">{$dinfo.type_str}</td>
               <td data-title="积分时间">{$dinfo.add_time}</td>

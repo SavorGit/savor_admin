@@ -113,8 +113,14 @@ class SaleuserController extends BaseController {
                     $goods_info = $m_goods->getInfo(array('id'=>$v['goods_id']));
                     $info = $integral_types[$v['type']].'商品：'.$goods_info['name'].' 数量：'.$v['content'];
                     break;
+                case 17:
+                    $info = $integral_types[$v['type']];
+                    if($v['source']==4){
+                        $info.="(分润)";
+                    }
+                    break;
                 default:
-                    $info = $integral_types[$v['type']];;
+                    $info = $integral_types[$v['type']];
             }
             $data_list[$k]['info'] = $info;
             $status_str = '';
