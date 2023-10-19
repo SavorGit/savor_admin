@@ -37,6 +37,9 @@ class StatgoodsController extends Controller{
             $week_number = $k;
             $week_start_date = $v['start'];
             $week_end_date = $v['end'];
+            if($week_number==42){
+                $week_end_date = '2023-10-18';
+            }
 
             $sql_purchase = "select a.goods_id,sum(a.total_amount) as total_amount from savor_finance_purchase_detail as a left join savor_finance_purchase as p 
             on a.purchase_id=p.id where p.purchase_date>='$week_start_date' and p.purchase_date<='$week_end_date'
@@ -48,13 +51,28 @@ class StatgoodsController extends Controller{
                     $all_purchase_nums[$pv['goods_id']]=$pv['total_amount'];
                 }
             }
-
             $week_start_date_time = "$week_start_date 00:00:00";
             $week_end_date_time = "$week_end_date 23:59:59";
+            $all_groupby_nums = array();
+            $sql_groupby = "select idcode,area_id,goods_id from savor_finance_sale where type in (2,4) and goods_id in (1,6,45,49) and 
+            add_time>='$week_start_date_time' and add_time<='$week_end_date_time' order by id desc";
+            $res_groupby = $model->query($sql_groupby);
+            if(!empty($res_groupby)){
+                $tmp_groupby = array();
+                foreach ($res_groupby as $gbv){
+                    $all_idcodes = explode("\n",$gbv['idcode']);
+                    $tmp_groupby[$gbv['goods_id']][]=count($all_idcodes);
+                }
+                foreach ($tmp_groupby as $tggk=>$tggv){
+                    $all_groupby_nums[$tggk] = array_sum($tggv);
+                }
+            }
+
             foreach ($goods_list as $gv){
                 $goods_id = $gv['goods_id'];
                 $goods_name = $gv['goods_name'];
                 $purchase_num = isset($all_purchase_nums[$goods_id])?$all_purchase_nums[$goods_id]:0;
+                $groupby_num = isset($all_groupby_nums[$goods_id])?$all_groupby_nums[$goods_id]:0;
 
                 $zzc_stock_allnum=$qzc_stock_allnum=$qzc_hotel_allnum=$qzc_wo_allnum=0;
                 $all_area_data = array();
@@ -151,7 +169,7 @@ class StatgoodsController extends Controller{
 
                 $gdata = array('goods_id'=>$goods_id,'goods_name'=>$goods_name,'week_number'=>$week_number,'week_start_date'=>$week_start_date,'week_end_date'=>$week_end_date,
                     'purchase_num'=>$purchase_num,'zzc_stock_allnum'=>$zzc_stock_allnum,'qzc_stock_allnum'=>$qzc_stock_allnum,
-                    'qzc_hotel_allnum'=>$qzc_hotel_allnum,'qzc_wo_allnum'=>$qzc_wo_allnum
+                    'qzc_hotel_allnum'=>$qzc_hotel_allnum,'qzc_wo_allnum'=>$qzc_wo_allnum,'groupby_num'=>$groupby_num
                 );
                 $goodstrend_id = $m_static_goodstrend->add($gdata);
                 $add_area_data = array();
