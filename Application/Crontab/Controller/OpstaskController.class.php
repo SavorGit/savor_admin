@@ -15,6 +15,7 @@ class OpstaskController extends Controller{
         $m_hotelstaff_data = new \Admin\Model\Smallapp\StaticHotelstaffdataModel();
         $m_taskhotel = new \Admin\Model\Integral\TaskHotelModel();
         $m_crm_taskhotel = new \Admin\Model\Crm\TaskHotelModel();
+        $m_hotel_stock = new \Admin\Model\FinanceHotelStockModel();
         $m_sysuser = new \Admin\Model\UserModel();
         $redis = new \Common\Lib\SavorRedis();
         $cache_hotel_stock_key = C('FINANCE_HOTELSTOCK');
@@ -22,7 +23,7 @@ class OpstaskController extends Controller{
         $alltask = $m_crmtask->getAllData('*',array('status'=>1,'end_time'=>array('egt',date('Y-m-d H:i:s'))));
 
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
-        $sql = "select hotel.id as hotel_id,hotel.name as hotel_name,ext.residenter_id,sysuser.remark as residenter_name from savor_hotel as hotel 
+        $sql = "select hotel.id as hotel_id,hotel.name as hotel_name,ext.residenter_id,sysuser.remark as residenter_name,ext.sale_hotel_in_time from savor_hotel as hotel 
             left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
             left join savor_sysuser as sysuser on ext.residenter_id=sysuser.id 
             where hotel.state=1 and hotel.flag=0 and ext.is_salehotel=1 and hotel.id not in ($test_hotel_ids) order by hotel.id asc ";
@@ -31,6 +32,7 @@ class OpstaskController extends Controller{
         $now_month = date('Ym');
         foreach ($res_hotel as $v){
             $hotel_id = $v['hotel_id'];
+            $sale_hotel_in_time = $v['sale_hotel_in_time'];
             $residenter_id = $v['residenter_id'];
             $residenter_name = $v['residenter_name'];
             if($residenter_id==0){
@@ -143,6 +145,10 @@ class OpstaskController extends Controller{
                                 continue;
                             }
                         }
+                        if($sale_hotel_in_time=='0000-00-00 00:00:00'){
+                            echo "hotel_id:$hotel_id,task_id:{$task['id']},task_type:$task_type,sale_hotel_in_time:$sale_hotel_in_time error \r\n";
+                            continue;
+                        }
                         $task_finish_day = $task['task_finish_day'];
                         $task_finish_rate = $task['task_finish_rate'];
                         $start_date = date('Y-m-d',strtotime("-$task_finish_day day"));
@@ -165,6 +171,21 @@ class OpstaskController extends Controller{
                         $task_where['task.end_time'] = array('egt',date('Y-m-d H:i:s'));
                         $res_check_task = $m_taskhotel->getHoteltasks($task_fields,$task_where,'');
                         if(!empty($res_check_task)){
+
+                            $task_check_key = 'finance:notaskhotel:'.$hotel_id;
+                            $redis->select(9);
+                            $res_hotelstock = $m_hotel_stock->getInfo(array('hotel_id'=>$hotel_id));
+                            if(empty($res_hotelstock)){
+                                $redis->set($task_check_key,$res_check_task[0]['id'],86400*15);
+                                echo "hotel_id:$hotel_id,task_id:{$task['id']},task_type:$task_type,task_id:{$res_check_task[0]['id']} nostock \r\n";
+                                continue;
+                            }
+                            $cache_check_task_id = $redis->get($task_check_key);
+                            if(!empty($cache_check_task_id) && $res_check_task[0]['id']==$cache_check_task_id){
+                                echo "hotel_id:$hotel_id,task_id:{$task['id']},task_type:$task_type,task_id:{$res_check_task[0]['id']} had in nostock \r\n";
+                                continue;
+                            }
+
                             if($res_check_task[0]['id']==$now_residenter_task[0]['integral_task_id']){
                                 continue;
                             }else{
@@ -183,6 +204,11 @@ class OpstaskController extends Controller{
                             if($now_month==$task_month && $now_residenter_task[0]['status']!=3){
                                 continue;
                             }
+                        }
+                        $res_box = $m_box->getBoxByCondition('box.mac,box.name',array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0));
+                        if(empty($res_box)){
+                            echo "hotel_id:$hotel_id,task_id:{$task['id']},task_type:$task_type,box:0 error \r\n";
+                            continue;
                         }
                         $task_finish_day = $task['task_finish_day'];
                         $task_finish_rate = $task['task_finish_rate'];
