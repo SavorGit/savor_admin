@@ -367,6 +367,38 @@ class DishorderController extends BaseController {
                 $m_income->addAll($add_data);
             }
             if($vinfo['otype']==10 && !empty($all_idcodes)){
+                $all_idcodes_arr = explode("\n",$all_idcodes);
+                $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+                $fileds = 'a.id,a.type,a.idcode,goods.name as goods_name,goods.id goods_id,a.price as cost_price,unit.name as unit_name,
+                      stock.area_id,unit.convert_type,a.wo_status,a.dstatus,a.add_time';
+                $res_list = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>trim($all_idcodes_arr[0]),'a.dstatus'=>1),'a.id desc','0,1','');
+                if(empty($res_list)){
+                    $this->error('商品识别码异常');
+                }
+                if($res_list[0]['convert_type']>1){
+                    $this->error('商品识别码异常,请录入瓶码');
+                }
+
+                $now_idcodes = array();
+                foreach ($all_idcodes_arr as $v){
+                    if(!empty($v)){
+                        $tidcode = trim($v);
+                        $res_info = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>$tidcode,'a.dstatus'=>1),'a.id desc','0,1','');
+                        if(empty($res_info)){
+                            $this->error("商品识别码{$v}异常");
+                        }
+                        if($res_info[0]['convert_type']>1){
+                            $this->error('商品识别码异常,请录入瓶码');
+                        }
+                        if($res_list[0]['goods_name']!=$res_info[0]['goods_name']){
+                            $this->error("团购商品识别码,必须是同一种商品");
+                        }
+                        $now_idcodes[]=$tidcode;
+                    }
+                }
+                $idcode_num = count($now_idcodes);
+                $all_idcodes = join("\n",$now_idcodes);
+
                 $m_sale = new \Admin\Model\FinanceSaleModel();
                 $res_sale = $m_sale->getInfo(array('order_id'=>$order_id));
                 if(empty($res_sale)){
@@ -401,7 +433,7 @@ class DishorderController extends BaseController {
                     $area_id = $res_opsstaff['area_id'];
 
                     $sale_info = array('goods_id'=>$goods_id,'idcode'=>$all_idcodes,'area_id'=>$area_id,'order_id'=>$vinfo['id'],
-                        'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>4,
+                        'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>4,'num'=>$idcode_num,
                         'cost_price'=>0,'settlement_price'=>$vinfo['total_fee'],'sale_payment_id'=>$sale_payment_id,
                         'add_time'=>$vinfo['add_time']);
                     $sale_id = $m_sale->add($sale_info);
@@ -411,7 +443,7 @@ class DishorderController extends BaseController {
                     $m_salerecord = new \Admin\Model\FinanceSalePaymentRecordModel();
                     $m_salerecord->add($payment_record_info);
                 }else{
-                    $m_sale->updateData(array('id'=>$res_sale['id']),array('idcode'=>$all_idcodes));
+                    $m_sale->updateData(array('id'=>$res_sale['id']),array('idcode'=>$all_idcodes,'num'=>$idcode_num));
                 }
 
             }
