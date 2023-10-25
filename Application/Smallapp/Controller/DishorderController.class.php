@@ -397,6 +397,9 @@ class DishorderController extends BaseController {
                     }
                 }
                 $idcode_num = count($now_idcodes);
+                if($idcode_num>90){
+                    $this->error("请输入90个以下的码");
+                }
                 $all_idcodes = join("\n",$now_idcodes);
 
                 $m_sale = new \Admin\Model\FinanceSaleModel();
