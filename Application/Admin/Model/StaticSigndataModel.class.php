@@ -21,14 +21,23 @@ class StaticSigndataModel extends BaseModel{
             $end_time = "$static_date 23:59:59";
             $all_citys = array('1'=>'北京','9'=>'上海','236'=>'广州','246'=>'深圳','248'=>'佛山');
 
-            $sql_in_dates = "select stock.hotel_id,MIN(a.add_time) as hotel_in_time,ext.sale_hotel_in_time from savor_finance_stock_record as a left join 
+            $sql_in_dates = "select stock.hotel_id,MIN(a.add_time) as hotel_in_time,ext.sale_hotel_in_time,ext.is_sale3bottle from savor_finance_stock_record as a left join 
             savor_finance_stock stock on a.stock_id=stock.id left join savor_hotel_ext as ext on stock.hotel_id=ext.hotel_id
             where a.type=4 and stock.hotel_id>0 group by stock.hotel_id";
             $in_hotel_dates = $this->query($sql_in_dates);
             $m_hotel_ext = new \Admin\Model\HotelExtModel();
+            $m_sale = new \Admin\Model\FinanceSaleModel();
             foreach ($in_hotel_dates as $v){
-                if($v['sale_hotel_in_time']=='0000-00-00 00:00:00'){
-                    $m_hotel_ext->updateData(array('hotel_id'=>$v['hotel_id']),array('sale_hotel_in_time'=>$v['hotel_in_time']));
+                $sale_hotel_in_time = $v['sale_hotel_in_time'];
+                if($sale_hotel_in_time=='0000-00-00 00:00:00'){
+                    $sale_hotel_in_time = $v['hotel_in_time'];
+                    $m_hotel_ext->updateData(array('hotel_id'=>$v['hotel_id']),array('sale_hotel_in_time'=>$sale_hotel_in_time));
+                }
+                if($v['is_sale3bottle']==0){
+                    $res_sale3bottle = $m_sale->getAll('id,add_time',array('hotel_id'=>$v['hotel_id'],'type'=>1),0,3,'id asc');
+                    if(count($res_sale3bottle)==3){
+                        $m_hotel_ext->updateData(array('hotel_id'=>$v['hotel_id']),array('is_sale3bottle'=>1,'sale3bottle_time'=>$res_sale3bottle[2]['add_time']));
+                    }
                 }
             }
             sleep(1);
