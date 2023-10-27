@@ -78,7 +78,8 @@ class SellwineController extends BaseController {
         }
         $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
         $start  = ($page-1) * $size;
-        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,a.sale_start_date,a.sale_end_date';
+        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,
+        a.sale_start_date,a.sale_end_date,a.trade_area_type,susigner.remark as signer,a.sale3bottle_time';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc',$start,$size);
         $datalist = array();
@@ -86,6 +87,9 @@ class SellwineController extends BaseController {
         $in_hotel_dates = $m_finance_stock_record->getSellIndateHotels();
         $sell_hotel_dates = $m_finance_stock_record->getSellDateHotels();
         $sell_nums = $m_finance_stock_record->getHotelSellwineNums($start_time,$end_time);
+        $m_contract_hotel = new \Admin\Model\ContracthotelModel();
+        $contract_times = $m_contract_hotel->getContractTime();
+        $trade_area_type_arr = C('TRADE_AREA_TYPE_ARR');
         foreach ($result['list'] as $k=>$v){
             $in_hotel_date = '';
             if(isset($in_hotel_dates[$v['hotel_id']])){
@@ -105,6 +109,23 @@ class SellwineController extends BaseController {
             if($v['sale_end_date']=='0000-00-00'){
                 $v['sale_end_date'] = '';
             }
+            if($v['sale3bottle_time']=='0000-00-00 00:00:00'){
+                $v['sale3bottle_time'] = '';
+            }else{
+                $v['sale3bottle_time'] = date('Y-m-d',strtotime($v['sale3bottle_time']));
+            }
+            $sign_time = $archive_time = '';
+            if(isset($contract_times[$v['hotel_id']])){
+                $sign_time = $contract_times[$v['hotel_id']]['sign_time'];
+                $archive_time = $contract_times[$v['hotel_id']]['archive_time'];
+            }
+            $trade_area_type_str = '';
+            if(isset($trade_area_type_arr[$v['trade_area_type']])){
+                $trade_area_type_str = $trade_area_type_arr[$v['trade_area_type']]['name'];
+            }
+            $v['sign_time'] = $sign_time;
+            $v['archive_time'] = $archive_time;
+            $v['trade_area_type_str'] = $trade_area_type_str;
             $v['in_hotel_date'] = $in_hotel_date;
             $v['sell_date'] = $sell_date;
             $v['sell_num'] = $sell_num;

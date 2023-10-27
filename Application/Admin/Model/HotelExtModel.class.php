@@ -68,6 +68,7 @@ class HotelExtModel extends BaseModel{
                 ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
                 ->join('savor_area_info area on area.id=hotel.area_id','left')
                 ->join('savor_sysuser su on a.maintainer_id=su.id','left')
+                ->join('savor_sysuser susigner on a.signer_id=susigner.id','left')
                 ->field($fields)
                 ->where($where)
                 ->order($orderby)

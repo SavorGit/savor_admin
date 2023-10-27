@@ -35,4 +35,23 @@ class ContracthotelModel extends BaseModel{
         }
         return $data;
     }
+
+    public function getContractTime(){
+        $fields = 'a.contract_id,a.hotel_id,contract.sign_time,contract.archive_time';
+        $where = array('ext.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0,'contract.type'=>10);
+        $group = 'a.hotel_id';
+        $res_data = $this->alias('a')
+            ->join('savor_finance_contract contract on a.contract_id=contract.id','left')
+            ->join('savor_hotel hotel on a.hotel_id=hotel.id','left')
+            ->join('savor_hotel_ext ext on hotel.id=ext.hotel_id','left')
+            ->field($fields)
+            ->where($where)
+            ->group($group)
+            ->select();
+        $all_times = array();
+        foreach ($res_data as $v){
+            $all_times[$v['hotel_id']] = $v;
+        }
+        return $all_times;
+    }
 }

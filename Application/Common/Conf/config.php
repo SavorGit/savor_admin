@@ -880,8 +880,8 @@ $config['HOTEL_STANDALONE_CONFIG'] = array(
     '16'=>'其它',
 );
 $config['TRADE_AREA_TYPE_ARR'] = array(
-    array('id'=>2,'name'=>'普通商圈'),
-    array('id'=>1,'name'=>'聚焦商圈')
+    '2'=>array('id'=>2,'name'=>'普通商圈'),
+    '1'=>array('id'=>1,'name'=>'聚焦商圈')
 );
 $config['HEART_LOSS_HOURS'] = 48;
 //发送邮件配置

@@ -64,11 +64,16 @@
               <th>酒楼名称</th>
               <th>城市</th>
               <th>维护人</th>
+              <th>签约人</th>
+              <th>商圈类型</th>
               <th>开启售酒日期</th>
               <th>首次进店时间</th>
               <th>首次销售时间</th>
               <th>销量</th>
               <th>撤店日期</th>
+              <th>合同签署日期</th>
+              <th>合同归档日期</th>
+              <th>首次达标日期</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -78,11 +83,16 @@
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
               <td data-title="城市">{$dinfo.area_name}</td>
               <td data-title="维护人">{$dinfo.maintainer}</td>
+              <td data-title="签约人">{$dinfo.signer}</td>
+              <td data-title="商圈类型">{$dinfo.trade_area_type_str}</td>
               <td data-title="开启售酒时间">{$dinfo.sale_start_date}</td>
               <td data-title="首次进店时间">{$dinfo.in_hotel_date}</td>
               <td data-title="首次销售时间">{$dinfo.sell_date}</td>
               <td data-title="销量">{$dinfo.sell_num}</td>
               <td data-title="撤店日期">{$dinfo.sale_end_date}</td>
+              <td data-title="合同签署日期">{$dinfo.sign_time}</td>
+              <td data-title="合同归档日期">{$dinfo.archive_time}</td>
+              <td data-title="首次达标日期">{$dinfo.sale3bottle_time}</td>
             </tr>
           </volist>
 
