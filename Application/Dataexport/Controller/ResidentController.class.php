@@ -211,8 +211,32 @@ class ResidentController extends BaseController{
 
         $filename = '驻店人员工作表';
         $this->exportToExcel($cell,$datalist,$filename,1);
-
     }
+
+    public function hotelselldata(){
+        $month = I('month',0,'intval');
+        $start_time = date('Y-m-01 00:00:00',strtotime($month));
+        $end_time = date('Y-m-31 23:59:59',strtotime($month));
+        $model = M();
+        $sql = "select a.hotel_id,hotel.name as hotel_name,a.residenter_id,sysuser.remark as residenter_name,count(a.id) as sale_num from savor_finance_sale as a 
+            left join savor_hotel as hotel on a.hotel_id=hotel.id
+            left join savor_sysuser as sysuser on a.residenter_id=sysuser.id
+            where a.add_time>='$start_time' and a.add_time<='$end_time'
+            and a.type=1
+            group by hotel_id,residenter_id order by hotel_id asc";
+        $datalist = $model->query($sql);
+
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('residenter_name','驻店人'),
+            array('sale_num','本月销量'),
+        );
+
+        $filename = '酒楼驻店人售卖表';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+    }
+
 
     public function getweeks(){
         // 指定年份和月份

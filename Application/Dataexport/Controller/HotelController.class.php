@@ -45,7 +45,7 @@ left join savor_area_info as area on hotel.area_id=area.id where hotel.state in(
             }
 
             $datalist[] = array('hotel_id'=>$v['hotel_id'],'area_name'=>$all_area[$v['area_id']],'hotel_name'=>$v['hotel_name'],
-            'district'=>$district,'addr'=>$v['addr'],'hotel_state_str'=>$hotel_state_str,'box_num'=>$box_num);
+                'district'=>$district,'addr'=>$v['addr'],'hotel_state_str'=>$hotel_state_str,'box_num'=>$box_num);
         }
         $cell = array(
             array('hotel_id','酒楼ID'),
@@ -462,7 +462,8 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $end_time = I('end_time','');
         $where = array('a.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0);
         $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
-        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,a.sale_start_date,a.sale_end_date';
+        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,
+        a.sale_start_date,a.sale_end_date,a.trade_area_type,susigner.remark as signer,a.sale3bottle_time';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc');
         $datalist = array();
@@ -470,6 +471,9 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $in_hotel_dates = $m_finance_stock_record->getSellIndateHotels();
         $sell_hotel_dates = $m_finance_stock_record->getSellDateHotels();
         $sell_nums = $m_finance_stock_record->getHotelSellwineNums($start_time,$end_time);
+        $m_contract_hotel = new \Admin\Model\ContracthotelModel();
+        $contract_times = $m_contract_hotel->getContractTime();
+        $trade_area_type_arr = C('TRADE_AREA_TYPE_ARR');
         foreach ($result as $k=>$v){
             $in_hotel_date = '';
             if(isset($in_hotel_dates[$v['hotel_id']])){
@@ -489,6 +493,23 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             if($v['sale_end_date']=='0000-00-00'){
                 $v['sale_end_date'] = '';
             }
+            if($v['sale3bottle_time']=='0000-00-00 00:00:00'){
+                $v['sale3bottle_time'] = '';
+            }else{
+                $v['sale3bottle_time'] = date('Y-m-d',strtotime($v['sale3bottle_time']));
+            }
+            $sign_time = $archive_time = '';
+            if(isset($contract_times[$v['hotel_id']])){
+                $sign_time = $contract_times[$v['hotel_id']]['sign_time'];
+                $archive_time = $contract_times[$v['hotel_id']]['archive_time'];
+            }
+            $trade_area_type_str = '';
+            if(isset($trade_area_type_arr[$v['trade_area_type']])){
+                $trade_area_type_str = $trade_area_type_arr[$v['trade_area_type']]['name'];
+            }
+            $v['sign_time'] = $sign_time;
+            $v['archive_time'] = $archive_time;
+            $v['trade_area_type_str'] = $trade_area_type_str;
             $v['in_hotel_date'] = $in_hotel_date;
             $v['sell_date'] = $sell_date;
             $v['sell_num'] = $sell_num;
@@ -499,11 +520,16 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             array('hotel_name','酒楼名称'),
             array('area_name','城市'),
             array('maintainer','维护人'),
+            array('signer','签约人'),
+            array('trade_area_type_str','商圈类型'),
             array('sale_start_date','开启售酒日期'),
             array('in_hotel_date','首次进店时间'),
             array('sell_date','首次销售时间'),
             array('sell_num','销量'),
             array('sale_end_date','撤店日期'),
+            array('sign_time','合同签署日期'),
+            array('archive_time','合同归档日期'),
+            array('sale3bottle_time','首次达标日期'),
         );
         $filename = '酒楼销售统计';
         $this->exportToExcel($cell,$datalist,$filename,1);
@@ -632,7 +658,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $objWriter->save('php://output');
     }
     //获取根据人均消费获取某个城市的
-    
+
     //++ 是否售酒  是否有 正常机顶盒
     public function getDiffExpenceHotels(){
         $city_id = I('city_id',1);
@@ -640,13 +666,13 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         /*$sql = "select a.id as hotel_id,a.name as hotel_name,a.area_id,area.region_name as area_name,
                 a.county_id,a.business_circle_id,ext.dp_comment_num,ext.avg_expense ,
                 count.region_name as count_name,circle.name circle_name,
-                
+
                 case ext.is_salehotel
 				when 0 then '否'
 				when 1 then '是'
 				END AS is_salehotel
-                from savor_hotel as a 
-                left join savor_hotel_ext as ext on a.id=ext.hotel_id 
+                from savor_hotel as a
+                left join savor_hotel_ext as ext on a.id=ext.hotel_id
                 left join savor_area_info as area on a.area_id=area.id
                 left join savor_area_info as count on a.county_id = count.id
                 left join savor_business_circle as circle on a.business_circle_id = circle.id
@@ -669,7 +695,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
 
 
                     where hotel.id=".$v['hotel_id'].' and box.flag=0 and box.state=1';
-            
+
             $rts = M()->query($sql);
             if(empty($rts)){
                 $datalist[$key]['have_box'] = '无';
@@ -677,7 +703,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
                 $datalist[$key]['have_box'] = '有';
             }
         }
-        
+
         $cell = array(
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
@@ -692,6 +718,6 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $filename = $datalist[0]['area_name'].'人均消费少于'.$below_expence.'酒楼数据';
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
-	
-	
+
+
 }
