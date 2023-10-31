@@ -22,7 +22,7 @@ class SalerecordController extends BaseController{
         $where ="a.add_time>='".$start_date."' and a.add_time<='".$end_date."' and a.type=1 and a.status=2";
         
         $sql ="select a.ops_staff_id,area.region_name,user.remark,hotel.id hotel_id,hotel.name hotel_name,
-               a.signin_time,a.signout_time,a.update_time,a.visit_type,a.visit_purpose,staff.job
+               a.signin_time,a.signout_time,a.update_time,a.add_time,a.visit_type,a.visit_purpose,staff.job
                from savor_crm_salerecord a
                left join savor_ops_staff  staff on a.ops_staff_id = staff.id
                left join savor_sysuser    user  on user.id = staff.sysuser_id
@@ -41,6 +41,12 @@ class SalerecordController extends BaseController{
             $data[$key]['visit_purpose_str'] = $visit_p_s;
             $data[$key]['visite_type_str']   = $cate_arr[$v['visit_type']]['name'];
             $data[$key]['visit_duration']    = secsToStr(strtotime($v['signout_time']) - strtotime($v['signin_time']));
+            if($v['update_time']=='0000-00-00 00:00:00'){
+                $add_time = $v['add_time'];
+            }else{
+                $add_time = $v['update_time'];
+            }
+            $data[$key]['add_time'] = $add_time;
         }
         
         $cell = array(
@@ -54,7 +60,7 @@ class SalerecordController extends BaseController{
             array('visit_duration','拜访时长'),
             array('visite_type_str','拜访类型'),
             array('visit_purpose_str','拜访目的'),
-            array('update_time','提交时间'),
+            array('add_time','提交时间'),
         );
         $filename = '运维端销售记录报表';
         $this->exportToExcel($cell,$data,$filename,1);
