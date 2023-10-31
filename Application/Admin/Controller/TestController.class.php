@@ -4411,4 +4411,152 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
         echo join(',',$ids);
     }
+
+    public function errorintegral(){
+        $m_userintegreal = new \Admin\Model\Smallapp\UserIntegralModel();
+        $m_userintegral_record = new \Admin\Model\Smallapp\UserIntegralrecordModel();
+
+        $sql_1 = "select a.* from (
+            SELECT count(id) as num,jdorder_id,integral,sum(integral) as total_integral,GROUP_CONCAT(id) as all_ids,openid FROM `savor_smallapp_user_integralrecord` where 
+            type=17 and add_time>='2023-10-08 00:00:00' and add_time<='2023-10-17 09:00:22' and source=1 group by jdorder_id
+            ) a 
+            where a.num>1";
+        $res_data1 = M()->query($sql_1);
+        $ok_ids = array();
+        $error_ids1 = array();
+        foreach ($res_data1 as $v){
+            $all_ids = explode(',',$v['all_ids']);
+            $ok_ids[]=$all_ids[0];
+            unset($all_ids[0]);
+            $error_ids1[] = join(',',$all_ids);
+        }
+        $error_ids1_str = join(',',$error_ids1);
+//        $error_sql1 = "SELECT id,openid,integral FROM `savor_smallapp_user_integralrecord` where id in ($error_ids1_str)";
+        $error_sql1 = "SELECT count(id) as num,jdorder_id,integral,sum(integral) as total_integral,GROUP_CONCAT(id) as all_ids,openid 
+        FROM `savor_smallapp_user_integralrecord` where id in ($error_ids1_str) group by openid";
+        $res_error1 = M()->query($error_sql1);
+        $back_error1_ids = array();
+        $back_error1_ohterids = array();
+        foreach ($res_error1 as $v){
+            $openid = $v['openid'];
+            $res_userintegral = $m_userintegreal->getInfo(array('openid'=>$openid));
+            $now_uintegral = intval($res_userintegral['integral']);
+            if($now_uintegral>=$v['total_integral']){
+                $back_error1_ids[]=$v['all_ids'];
+            }else{
+                $tmp_ids = explode(',',$v['all_ids']);
+                foreach ($tmp_ids as $idsk=>$idsv){
+                    $now_uintegral-=$v['integral'];
+                    if($now_uintegral>0){
+                        $back_error1_ohterids[]=$idsv;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+        $back_error1_ids_str = join(',',$back_error1_ids);
+        $back_error1_ohterids_str = join(',',$back_error1_ohterids);
+        $del_ids1 = $back_error1_ids_str.','.$back_error1_ohterids_str;
+        echo $del_ids1;
+        exit;
+
+        $del_sql1 = "SELECT count(id) as num,jdorder_id,integral,sum(integral) as total_integral,GROUP_CONCAT(id) as all_ids,openid 
+        FROM `savor_smallapp_user_integralrecord` where id in ($del_ids1) group by openid";
+        $res_del1 = M()->query($del_sql1);
+        $del1_i=0;
+        foreach ($res_del1 as $v){
+            $openid = $v['openid'];
+            $res_userintegral = $m_userintegreal->getInfo(array('openid'=>$openid));
+            $now_uintegral = intval($res_userintegral['integral']);
+            if($now_uintegral>=$v['total_integral']){
+                $now_last_integral = $now_uintegral-$v['total_integral'];
+                $m_userintegreal->updateData(array('openid'=>$openid),array('integral'=>$now_last_integral));
+
+                $m_userintegral_record->delData(array('id'=>array('in',$v['all_ids'])));
+                $del1_i++;
+                echo "$openid $del1_i ok \r\n";
+            }
+        }
+
+
+
+
+
+        $sql_2 = "select a.* from (
+            SELECT count(id) as num,jdorder_id,integral,sum(integral) as total_integral,GROUP_CONCAT(id) as all_ids,openid FROM `savor_smallapp_user_integralrecord` where 
+            type=17 and add_time>='2023-10-08 00:00:00' and source=4 group by jdorder_id
+            ) a 
+            where a.num>1";
+        $res_data2 = M()->query($sql_2);
+        $error_ids2 = array();
+        $ok_ids2= array();
+        foreach ($res_data2 as $v){
+            $all_ids = explode(',',$v['all_ids']);
+            $ok_ids2[]=$all_ids[0];
+            unset($all_ids[0]);
+            $error_ids2[] = join(',',$all_ids);
+        }
+        $error_ids2_str = join(',',$error_ids2);
+
+//        $error_sql2 = "SELECT id,openid,integral FROM `savor_smallapp_user_integralrecord` where id in ($error_ids2_str)";
+        $error_sql2 = "SELECT count(id) as num,jdorder_id,integral,sum(integral) as total_integral,GROUP_CONCAT(id) as all_ids,openid 
+        FROM `savor_smallapp_user_integralrecord` where id in ($error_ids2_str) group by openid";
+        $res_error2 = M()->query($error_sql2);
+        $back_error2_ids = array();
+        $back_error2_otherids = array();
+        foreach ($res_error2 as $v){
+            $openid = $v['openid'];
+            $res_userintegral = $m_userintegreal->getInfo(array('openid'=>$openid));
+            $now_uintegral = intval($res_userintegral['integral']);
+            if($now_uintegral>=$v['total_integral']){
+                $back_error2_ids[]=$v['all_ids'];
+            }else{
+                $tmp_ids = explode(',',$v['all_ids']);
+                foreach ($tmp_ids as $idsk=>$idsv){
+                    $now_uintegral-=$v['integral'];
+                    if($now_uintegral>0){
+                        $back_error2_otherids[]=$idsv;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+        $back_error2_ids_str = join(',',$back_error2_ids);
+        $back_error2_ohterids_str = join(',',$back_error2_otherids);
+        $del_ids2 = $back_error2_ids_str.','.$back_error2_ohterids_str;
+        $del_sql2 = "SELECT count(id) as num,jdorder_id,integral,sum(integral) as total_integral,GROUP_CONCAT(id) as all_ids,openid 
+        FROM `savor_smallapp_user_integralrecord` where id in ($del_ids2) group by openid";
+        $res_del2 = M()->query($del_sql2);
+        $del1_i=0;
+        foreach ($res_del2 as $v){
+            $openid = $v['openid'];
+            $res_userintegral = $m_userintegreal->getInfo(array('openid'=>$openid));
+            $now_uintegral = intval($res_userintegral['integral']);
+            if($now_uintegral>=$v['total_integral']){
+                $now_last_integral = $now_uintegral-$v['total_integral'];
+                $m_userintegreal->updateData(array('openid'=>$openid),array('integral'=>$now_last_integral));
+
+                $m_userintegral_record->delData(array('id'=>array('in',$v['all_ids'])));
+                $del1_i++;
+                echo "$openid $del1_i  $now_uintegral-{$v['total_integral']}=$now_last_integral ok \r\n";
+            }
+        }
+        exit;
+
+    }
+
+    public function upsalenum(){
+        exit;
+        $sql = "select id,idcode,num from savor_finance_sale where type!=1 order by id desc ";
+        $res_data = M()->query($sql);
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        foreach ($res_data as $v){
+            $all_idcode = explode("\n",$v['idcode']);
+            $num = count($all_idcode);
+            $m_sale->updateData(array('id'=>$v['id']),array('num'=>$num));
+            echo "id:{$v['id']},$num ok \r\n";
+        }
+    }
 }
