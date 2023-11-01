@@ -38,7 +38,7 @@ class ContracthotelModel extends BaseModel{
 
     public function getContractTime(){
         $fields = 'a.contract_id,a.hotel_id,contract.sign_time,contract.archive_time';
-        $where = array('ext.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0,'contract.type'=>10);
+        $where = array('ext.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0,'contract.type'=>20);
         $group = 'a.hotel_id';
         $res_data = $this->alias('a')
             ->join('savor_finance_contract contract on a.contract_id=contract.id','left')

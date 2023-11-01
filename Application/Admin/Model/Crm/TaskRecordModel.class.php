@@ -50,7 +50,7 @@ class TaskRecordModel extends BaseModel{
         $fileds = 'a.id,a.task_id,a.hotel_id,a.residenter_id,a.status,a.form_type,a.handle_status,a.audit_handle_status,
         a.img,a.location_hotel_id,a.is_trigger,a.integral_task_id,a.reset_time,a.add_time,
         task.sale_manager_num,task.cate_num,task.stock_num,task.task_finish_rate,task.task_finish_day,task.is_upimg,
-        task.is_check_location,task.notify_day,task.notify_handle_day';
+        task.is_check_location,task.notify_day,task.notify_handle_day,task.type';
         $res = $this->alias('a')
             ->field($fileds)
             ->join('savor_crm_task task on a.task_id=task.id','left')
