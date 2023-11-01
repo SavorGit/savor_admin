@@ -20,7 +20,7 @@ class OpstaskController extends Controller{
         $redis = new \Common\Lib\SavorRedis();
         $cache_hotel_stock_key = C('FINANCE_HOTELSTOCK');
         $m_crmtask = new \Admin\Model\Crm\TaskModel();
-        $alltask = $m_crmtask->getAllData('*',array('status'=>1,'end_time'=>array('egt',date('Y-m-d H:i:s'))));
+        $alltask = $m_crmtask->getAllData('*',array('status'=>1,'end_time'=>array('egt',date('Y-m-d H:i:s')),'type'=>array('neq',11)));
 
         $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql = "select hotel.id as hotel_id,hotel.name as hotel_name,ext.residenter_id,sysuser.remark as residenter_name,ext.sale_hotel_in_time from savor_hotel as hotel 
@@ -517,6 +517,7 @@ class OpstaskController extends Controller{
     }
 
     public function finishtype11(){
+        return true;
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
         $res_task_record = $m_crmtask_record->getHandleTasks(11);
         foreach ($res_task_record as $v){
@@ -534,8 +535,9 @@ class OpstaskController extends Controller{
         $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $start_time = date('Y-m-01 00:00:00');
-        $end_time = date('Y-m-31 23:00:00');
-        $where = array('add_time'=>array(array('egt',$start_time),array('elt',$end_time), 'and'),'off_state'=>1);
+        $end_time = date('Y-m-31 23:59:59');
+        $where = array('add_time'=>array(array('egt',$start_time),array('elt',$end_time), 'and'),
+            'off_state'=>1,'status'=>array('in','0,1,2'));
         $field = 'hotel_id,residenter_id,GROUP_CONCAT(id) as all_ids';
         $res_record = $m_crmtask_record->getAllData($field,$where,'','hotel_id');
         foreach ($res_record as $v){
@@ -591,6 +593,10 @@ class OpstaskController extends Controller{
         if($is_finish){
             $updata = array('finish_time'=>date('Y-m-d H:i:s'),'status'=>3,'form_type'=>2,'update_time'=>date('Y-m-d H:i:s'));
             $m_crmtask_record->updateData(array('id'=>$info['id']),$updata);
+            if($info['type']!=7){
+                $link_upwhere = array('hotel_id'=>$info['hotel_id'],'task_id'=>$info['task_id'],'off_state'=>1);
+                $m_crmtask_record->updateData($link_upwhere,array('finish_task_record_id'=>$info['id'],'update_time'=>date('Y-m-d H:i:s')));
+            }
         }else{
             if($info['is_trigger']==0){
                 $notify_day_time = $info['notify_day']*86400;
