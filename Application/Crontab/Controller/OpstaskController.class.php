@@ -595,6 +595,7 @@ class OpstaskController extends Controller{
             $m_crmtask_record->updateData(array('id'=>$info['id']),$updata);
             if($info['type']!=7){
                 $link_upwhere = array('hotel_id'=>$info['hotel_id'],'task_id'=>$info['task_id'],'off_state'=>1);
+                $link_upwhere['id'] = array('neq',$info['id']);
                 $m_crmtask_record->updateData($link_upwhere,array('finish_task_record_id'=>$info['id'],'update_time'=>date('Y-m-d H:i:s')));
             }
         }else{
