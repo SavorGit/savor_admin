@@ -23,12 +23,17 @@ class CrmtaskController extends BaseController {
         $res_list = $m_crmtask->getDataList('*',$where,$orderby,$start,$size);
         $data_list = array();
         if(!empty($res_list['list'])){
+            $m_ops_staff = new \Admin\Model\OpsstaffModel();
             $m_sysuser = new \Admin\Model\UserModel();
             $all_types = C('CRM_TASK_TYPES');
             $all_status = array('1'=>'正常','2'=>'禁用');
             foreach ($res_list['list'] as $v){
                 if($v['update_time']=='0000-00-00 00:00:00'){
                     $v['update_time'] = '';
+                }
+                if($v['sysuser_id']==0 && $v['ops_staff_id']){
+                    $res_ops = $m_ops_staff->getInfo(array('id'=>$v['ops_staff_id']));
+                    $v['sysuser_id'] = $res_ops['sysuser_id'];
                 }
                 $res_suser = $m_sysuser->getUserInfo($v['sysuser_id']);
                 $v['sys_uname'] = $res_suser['remark'];
