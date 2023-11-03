@@ -268,6 +268,7 @@ class OpstaskController extends Controller{
                         $m_crmtask_record->add($add_data);
                         break;
                     case 11:
+                        continue;
                         if(($task_month>0 && $now_residenter_task[0]['status']==3) || $now_month==$task_month){
                             continue;
                         }
