@@ -1329,7 +1329,7 @@ class TaskController extends BaseController {
             $where = array('task.status'=>1,'task.flag'=>1);
             $where['hotel.name'] = array('like',"%$hotel_name%");
         }
-        $fields = 'a.id,a.task_id,a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.name hotel_name,hotel.addr,hotel.state,hotel.pinyin';
+        $fields = 'a.id,a.task_id,a.meal_num,a.interact_num,a.comment_num,a.lottery_num,area.region_name,hotel.id as hotel_id,hotel.name hotel_name,hotel.addr,hotel.state,hotel.pinyin';
         $order = 'hotel.pinyin asc';
         $m_task_hotel = new \Admin\Model\Integral\TaskHotelModel();
         $start = ($page-1) * $size;
@@ -1338,8 +1338,6 @@ class TaskController extends BaseController {
         if(!empty($list['list'])){
             $all_state = C('HOTEL_STATE');
             foreach ($list['list'] as $v){
-                $f_char = strtoupper(substr($v['pinyin'],0,1));
-                $v['hotel_name'] = $f_char.'-'.$v['hotel_name'];
                 $v['state_str'] = $all_state[$v['state']];
                 $hotel_list[]=$v;
             }

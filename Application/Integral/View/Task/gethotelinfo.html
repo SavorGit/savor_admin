@@ -40,6 +40,7 @@
           <tr id="post">
             <th>任务ID</th>
             <th>所属城市</th>
+            <th>酒楼ID</th>
             <th>酒楼名称</th>
             <th>酒楼地址</th>
             <if condition="$task_type eq 21">
@@ -57,6 +58,7 @@
             <tr target="sid_user">
               <td data-title="任务ID">{$vo.task_id}</td>
               <td data-title="所属城市">{$vo.region_name}</td>
+              <td data-title="酒楼ID">{$vo.hotel_id}</td>
               <td data-title="酒楼名称">{$vo.hotel_name}</td>
               <td data-title="酒楼地址">{$vo.addr}</td>
               <if condition="$task_type eq 21">
