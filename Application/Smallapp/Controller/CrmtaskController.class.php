@@ -246,6 +246,11 @@ class CrmtaskController extends BaseController {
             if(isset($all_status_map[$v['status']])){
                 $status_str = $all_status_map[$v['status']];
             }
+            $off_state_str = '正常';
+            if($v['off_state']==2){
+                $off_state_str = '删除';
+            }
+            $v['off_state_str'] = $off_state_str;
             $v['status_str'] = $status_str;
             $v['handle_status_str'] = $all_handle_status[$v['handle_status']];
             $form_type_str = '';

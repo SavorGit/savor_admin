@@ -96,6 +96,7 @@
               <th>处理状态</th>
               <th>是否触发上级</th>
               <th>图片</th>
+              <th>数据状态</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -119,6 +120,7 @@
                   <a href="{$img}" target="_blank"><img src="{$img}" ></a>
                 </volist>
               </td>
+              <td data-title="数据状态">{$dinfo.off_state_str}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <if condition="$dinfo.is_handle eq 1">
