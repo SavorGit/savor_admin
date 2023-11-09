@@ -1,1 +1,103 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_name}/vintner/datalist" method="post">
+      <input type="hidden" name="pageNum" value="{$pageNum}"/>
+      <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
+    <div class="searchBar">
+      <div class="clearfix">
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-98">
+          <div class="tools-group">
+            <a class="btn btn-success btn-sm add" href="{$host_name}/vintner/vintneradd" title="新增" target="dialog" mask="true"><i class="fa fa-plus"></i> 新增</a>
           </div>
+        </div>
+        
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 pull-right">
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control" name="keyword" value="{$keyword}" placeholder="名称">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+            <tr id="post">
+              <th>ID</th>
+              <th>用户名</th>
+              <th>手机号码</th>
+              <th>openid</th>
+              <th>状态</th>
+              <th>添加时间</th>
+              <th class="table-tool">操作</th>
+            </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+            <foreach name="datalist" item="dinfo">
+            <tr target="sid_user">
+              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+              <td data-title="用户名">{$dinfo.name}</td>
+              <td data-title="手机号码">{$dinfo.mobile}</td>
+              <td data-title="openid">{$dinfo.openid}</td>
+              <td data-title="状态">{$dinfo.status_str}</td>
+              <td data-title="添加时间">{$dinfo.add_time}</td>
+              <td class="table-tool" data-title="操作">
+                <div class="tools-edit">
+                  <a title="修改" data-tip="修改" target="dialog" mask="true" href="{$host_name}/vintner/vintneradd?id={$dinfo.id}" class="btn btn-success btn-icon">
+                    <i class="fa fa-pencil"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            <notempty name="dinfo.trees">
+            	<volist name="dinfo.trees" id="treeinfo">
+	            <tr target="sid_user">
+	              <td data-title="ID"><a class="click-able-title"><span class="lvl">{$treeinfo.html}</span>{$treeinfo.id}</a></td>
+	              <td data-title="名称">{$treeinfo.name}</td>
+                <td data-title="状态">
+                <if condition="$treeinfo['status'] eq 1">
+                    <a data-tip="可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$treeinfo.id}&status=0" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                        <i class="fa fa-toggle-on"></i></span></a>
+                    <else/>
+                    <a data-tip="不可用" target="ajaxTodo" href="{$host_name}/category/operatestatus?id={$treeinfo.id}&status=1" calback="navTabAjaxDone" class="btn btn-default btn-icon"><span>
+                        <i class="fa fa-toggle-off"></i></span></a>
+                </if>
+                </td>
+                 <td data-title="类型">{$treeinfo.typestr}</td>
+	             <td data-title="排序值">{$treeinfo.sort}</td>
+	              <td class="table-tool" data-title="操作">
+	                <div class="tools-edit">
+	                  <a title="修改分类" data-tip="修改分类" target="dialog" mask="true" href="{$host_name}/category/categoryadd?id={$treeinfo.id}" class="btn btn-success btn-icon">
+	                    <i class="fa fa-pencil"></i>
+	                  </a>
+	                  <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/category/categorydel?id={$treeinfo.id}" calback="navTabAjaxDone" class="btn btn-danger btn-icon"><span><i class="fa fa-trash"></i></span></a>
+	                </div>
+	              </td>
+	            </tr>   
+	            </volist>         
+            </notempty>
+            </foreach>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
+<script>
+  $(function(){
+    $(".class-filter").change(function (){
+      $(this).closest("form").submit();
+    })
+  })
+</script>
