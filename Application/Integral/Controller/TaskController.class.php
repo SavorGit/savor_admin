@@ -1276,43 +1276,19 @@ class TaskController extends BaseController {
         if(empty($task_info)) $this->error('该任务不存在');
         $task_info['name'] = $task_info['name'].'-'.date('YmdHis');
         $task_info['uid']  = $uid;
-        $ret = $m_task->addData($task_info);
-        if($ret){
-            $this->output('复制成功', "task/index",2);
-        }else {
-            $this->output('删除失败', "task/index",2,0);
+        $now_task_id = $m_task->addData($task_info);
+        if($task_info['task_type']==29){
+            $fields = 'task_id,hotel_id';
+            $hotel_list = $m_task_hotel->field($fields)->where(array('task_id'=>$task_id))->select();
+            if(!empty($hotel_list)){
+                $all_task_hotels = array();
+                foreach ($hotel_list as $v){
+                    $all_task_hotels[]=array('task_id'=>$now_task_id,'hotel_id'=>$v['hotel_id'],'uid'=>$uid);
+                }
+                $m_task_hotel->addAll($all_task_hotels);
+            }
         }
-        /* $where  = [];
-        $where['task_id'] = $task_id;
-        
-        $hotel_nums = $m_task_hotel->where($where)->count();
-        if(!empty($hotel_nums)){
-            $fields = 'hotel_id';
-            $hotel_list = $m_task_hotel->field($fields)->where($where)->select();
-            foreach($hotel_list as $key=>$v){
-                $hotel_list[$key]['task_id'] = $ret;
-                $hotel_list[$key]['uid'] = $uid;
-            }
-            $rts = $m_task_hotel->addAll($hotel_list);
-            if($ret && $rts){
-                $m_task->commit();
-                $this->output('复制成功', "task/index",2);
-                
-            }else {
-                $m_task->rollback();
-                $this->error('复制失败');
-            }
-        }else {
-            if($ret){
-                $m_task->commit();
-                $this->output('复制成功', "task/index",2);
-                
-            }else {
-                $m_task->rollback();
-                $this->error('复制失败');
-            }
-            
-        }  */
+        $this->output('复制成功', "task/index",2);
     }
 
     public function gethotelinfo(){
