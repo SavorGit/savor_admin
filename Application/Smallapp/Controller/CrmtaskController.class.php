@@ -294,7 +294,7 @@ class CrmtaskController extends BaseController {
                 }
             }
             $v['imgs'] = $imgs;
-            $v['area_name'] = $all_areas[$v['aera_id']]['name'];
+            $v['area_name'] = $all_areas[$v['area_id']]['name'];
 
             $datalist[]=$v;
         }
