@@ -206,6 +206,7 @@ class CrmtaskController extends BaseController {
         $size   = I('numPerPage',50);//显示每页记录数
         $status = I('status',0,'intval');
         $handle_status = I('handle_status',99,'intval');
+        $area_id = I('area_id',0,'intval');
         $start_date = I('start_time','');
         $end_date = I('end_time','');
         $keyword = I('keyword','','trim');
@@ -228,9 +229,24 @@ class CrmtaskController extends BaseController {
         if($handle_status!=99){
             $where['a.handle_status'] = $handle_status;
         }
+        if($area_id){
+            $where['hotel.area_id'] = $area_id;
+        }
+        $m_area = new \Admin\Model\AreaModel();
+        $awhere = array('is_in_hotel'=>1,'id'=>array('neq',246));
+        $res_area = $m_area->getWhere('id,region_name as name',$awhere,'id asc','');
+        $all_areas = array();
+        foreach ($res_area as $v){
+            $is_select = '';
+            if($area_id==$v['id']){
+                $is_select = 'selected';
+            }
+            $v['is_select'] = $is_select;
+            $all_areas[$v['id']]=$v;
+        }
         $m_taskrecord = new \Admin\Model\Crm\TaskRecordModel();
         $start = ($page-1) * $size;
-        $fields = 'a.*,hotel.name as hotel_name,task.name as task_name,task.type';
+        $fields = 'a.*,hotel.name as hotel_name,hotel.area_id,task.name as task_name,task.type';
         $result = $m_taskrecord->getTaskRecordList($fields,$where,'a.id desc', $start,$size);
 
         $datalist = array();
@@ -278,6 +294,7 @@ class CrmtaskController extends BaseController {
                 }
             }
             $v['imgs'] = $imgs;
+            $v['area_name'] = $all_areas[$v['aera_id']]['name'];
 
             $datalist[]=$v;
         }
@@ -288,6 +305,7 @@ class CrmtaskController extends BaseController {
         $this->assign('status', $status);
         $this->assign('keyword', $keyword);
         $this->assign('datalist', $datalist);
+        $this->assign('all_areas', $all_areas);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
