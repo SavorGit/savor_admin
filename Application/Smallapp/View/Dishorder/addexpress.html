@@ -15,7 +15,20 @@
                     <input name="total_fee" type="text" value="{$vinfo.total_fee}" class="form-control" readonly/>
                 </div>
             </div>
-            
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    发货类型:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <select id="dtype" name="dtype" class="form-control bs-select class-filter" >
+                        <volist name=":C('ORDER_EXPRESS_DTYPES')" id="dtinfo">
+                            <option value="{$dtinfo.id}" <if condition="$einfo.dtype eq $dtinfo['id']">selected</if>>{$dtinfo.name}</option>
+                        </volist>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group row">
                 <label class="col-xs-12 col-sm-2 control-label">
                     	快递类型:
@@ -23,7 +36,7 @@
                 <div class="col-xs-12 col-sm-10">
                     <select id="ex_type" name="ex_type" class="form-control bs-select class-filter" >
                         <volist name="order_express_types" id="exinfo">
-                            <option value="{$exinfo.id}" <if condition="$einfo.type eq $exinfo['id']">selected</if>>{$exinfo.name}</option>
+                            <option value="{$exinfo.id}" <if condition="$einfo.dtype eq $exinfo['id']">selected</if>>{$exinfo.name}</option>
                         </volist>
                     </select>
                 </div>
@@ -49,12 +62,19 @@
                 </div>
             </div>
         <if condition="$vinfo.otype eq 10">
-            <div class="form-group row">
+            <div class="form-group row" id="goods_idcode">
                 <label class="col-xs-12 col-sm-2 control-label">
                     商品识别码:
                 </label>
                 <div class="col-xs-12 col-sm-10">
-                    <textarea name="idcode" value="{$vinfo.idcode}" type="textInput" class="form-control" required>{$vinfo.idcode}</textarea>
+                    <textarea name="idcode" value="{$vinfo.idcode}" type="textInput" class="form-control">{$vinfo.idcode}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group row" id="bottle_num">
+                <label class="col-xs-12 col-sm-2 control-label">瓶数：</label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="bottle_num" type="text" value="{$vinfo.bottle_num}" class="form-control"/>
                 </div>
             </div>
         </if>
@@ -88,6 +108,20 @@
         }
       });
     $('#ex_type').trigger('change');
+
+    $('#dtype').change(function () {
+        var dtype  = $('#dtype').val();
+
+        if(dtype==2){
+            $('#goods_idcode').hide()
+            $('#bottle_num').show()
+        }else {
+            $('#goods_idcode').show();
+            $('#bottle_num').hide()
+        }
+    });
+    $('#dtype').trigger('change');
+
 
     $("#enum").blur(function() {
     var express_num = $('#enum').val()

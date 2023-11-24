@@ -293,8 +293,10 @@ class DishorderController extends BaseController {
             $res_sale = $m_sale->getInfo(array('order_id'=>$order_id));
             if(!empty($res_sale)){
                 $vinfo['idcode'] = $res_sale['idcode'];
+                $vinfo['bottle_num'] = $res_sale['num'];
             }else{
                 $vinfo['idcode'] = '';
+                $vinfo['bottle_num'] = 0;
             }
             
             $this->assign('eid',$eid);
@@ -308,19 +310,33 @@ class DishorderController extends BaseController {
             $all_idcodes = I('post.idcode','');
             $comcode = I('post.comcode','');
             $type   = I('post.ex_type',1,'intval');
+            $dtype   = I('post.dtype',1,'intval');
+            $bottle_num   = I('post.bottle_num',0,'intval');
 
-//            $res_express = $m_orderexpress->getInfo(array('order_id'=>$order_id));
-//            if(!empty($res_express)){
-//                $this->output('请勿重复录入物流单号', "dishorder/orderlist",2,0);
-//            }
             if($type==1 && $enum==''){
                 $this->error('快递单号不能为空');
             }
-            $data = array('order_id'=>$order_id,'type'=>$type);
+            if($dtype==1){
+                if(empty($all_idcodes)){
+                    $this->error('请录入商品识别码');
+                }
+            }else{
+                if(empty($bottle_num)){
+                    $this->error('请录入售卖瓶数');
+                }
+            }
+            $data = array('order_id'=>$order_id,'type'=>$type,'dtype'=>$dtype);
             if($type==1){
                 $data['comcode'] = $comcode;
                 $data['enum'] = $enum;
             }
+            if($eid==0){
+                $einfo = $m_orderexpress->getInfo(array('order_id'=>$order_id));
+                if(!empty($einfo)){
+                    $eid = $einfo['id'];
+                }
+            }
+
             if($eid){
                 $m_orderexpress->updateData(array('id'=>$eid),$data);
             }else{
@@ -366,41 +382,46 @@ class DishorderController extends BaseController {
                 $m_income = new \Admin\Model\Smallapp\UserincomeModel();
                 $m_income->addAll($add_data);
             }
-            if($vinfo['otype']==10 && !empty($all_idcodes)){
-                $all_idcodes_arr = explode("\n",$all_idcodes);
-                $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
-                $fileds = 'a.id,a.type,a.idcode,goods.name as goods_name,goods.id goods_id,a.price as cost_price,unit.name as unit_name,
+            if($vinfo['otype']==10){
+                if(!empty($all_idcodes)){
+                    $all_idcodes_arr = explode("\n",$all_idcodes);
+                    $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+                    $fileds = 'a.id,a.type,a.idcode,goods.name as goods_name,goods.id goods_id,a.price as cost_price,unit.name as unit_name,
                       stock.area_id,unit.convert_type,a.wo_status,a.dstatus,a.add_time';
-                $res_list = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>trim($all_idcodes_arr[0]),'a.dstatus'=>1),'a.id desc','0,1','');
-                if(empty($res_list)){
-                    $this->error('商品识别码异常');
-                }
-                if($res_list[0]['convert_type']>1){
-                    $this->error('商品识别码异常,请录入瓶码');
-                }
-
-                $now_idcodes = array();
-                foreach ($all_idcodes_arr as $v){
-                    if(!empty($v)){
-                        $tidcode = trim($v);
-                        $res_info = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>$tidcode,'a.dstatus'=>1),'a.id desc','0,1','');
-                        if(empty($res_info)){
-                            $this->error("商品识别码{$v}异常");
-                        }
-                        if($res_info[0]['convert_type']>1){
-                            $this->error('商品识别码异常,请录入瓶码');
-                        }
-                        if($res_list[0]['goods_name']!=$res_info[0]['goods_name']){
-                            $this->error("团购商品识别码,必须是同一种商品");
-                        }
-                        $now_idcodes[]=$tidcode;
+                    $res_list = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>trim($all_idcodes_arr[0]),'a.dstatus'=>1),'a.id desc','0,1','');
+                    if(empty($res_list)){
+                        $this->error('商品识别码异常');
                     }
+                    if($res_list[0]['convert_type']>1){
+                        $this->error('商品识别码异常,请录入瓶码');
+                    }
+
+                    $now_idcodes = array();
+                    foreach ($all_idcodes_arr as $v){
+                        if(!empty($v)){
+                            $tidcode = trim($v);
+                            $res_info = $m_stock_record->getStockRecordList($fileds,array('a.idcode'=>$tidcode,'a.dstatus'=>1),'a.id desc','0,1','');
+                            if(empty($res_info)){
+                                $this->error("商品识别码{$v}异常");
+                            }
+                            if($res_info[0]['convert_type']>1){
+                                $this->error('商品识别码异常,请录入瓶码');
+                            }
+                            if($res_list[0]['goods_name']!=$res_info[0]['goods_name']){
+                                $this->error("团购商品识别码,必须是同一种商品");
+                            }
+                            $now_idcodes[]=$tidcode;
+                        }
+                    }
+                    $idcode_num = count($now_idcodes);
+                    if($idcode_num>90){
+                        $this->error("请输入90个以下的码");
+                    }
+                    $all_idcodes = join("\n",$now_idcodes);
+                }else{
+                    $all_idcodes = '';
+                    $idcode_num = $bottle_num;
                 }
-                $idcode_num = count($now_idcodes);
-                if($idcode_num>90){
-                    $this->error("请输入90个以下的码");
-                }
-                $all_idcodes = join("\n",$now_idcodes);
 
                 $m_sale = new \Admin\Model\FinanceSaleModel();
                 $res_sale = $m_sale->getInfo(array('order_id'=>$order_id));
