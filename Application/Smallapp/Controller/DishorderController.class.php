@@ -446,16 +446,19 @@ class DishorderController extends BaseController {
                         'pay_time'=>date('Y-m-d',strtotime($vinfo['pay_time'])),'type'=>2,'add_time'=>$vinfo['pay_time']);
                     $sale_payment_id = $m_salepayment->add($payment_info);
 
-                    $m_duser = new \Admin\Model\Smallapp\DistributionUserModel();
-                    $res_duser = $m_duser->getInfo(array('id'=>$vinfo['sale_uid']));
-                    if($res_duser['level']==2){
-                        $res_duser = $m_duser->getInfo(array('id'=>$res_duser['parent_id']));
+                    $maintainer_id = 0;
+                    $area_id = 0;
+                    if(!empty($vinfo['sale_uid'])){
+                        $m_duser = new \Admin\Model\Smallapp\DistributionUserModel();
+                        $res_duser = $m_duser->getInfo(array('id'=>$vinfo['sale_uid']));
+                        if($res_duser['level']==2){
+                            $res_duser = $m_duser->getInfo(array('id'=>$res_duser['parent_id']));
+                        }
+                        $maintainer_id = $res_duser['sysuser_id'];
+                        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+                        $res_opsstaff = $m_opsstaff->getInfo(array('sysuser_id'=>$maintainer_id));
+                        $area_id = $res_opsstaff['area_id'];
                     }
-                    $maintainer_id = $res_duser['sysuser_id'];
-                    $m_opsstaff = new \Admin\Model\OpsstaffModel();
-                    $res_opsstaff = $m_opsstaff->getInfo(array('sysuser_id'=>$maintainer_id));
-                    $area_id = $res_opsstaff['area_id'];
-
                     $sale_info = array('goods_id'=>$goods_id,'idcode'=>$all_idcodes,'area_id'=>$area_id,'order_id'=>$vinfo['id'],
                         'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>4,'num'=>$idcode_num,
                         'cost_price'=>0,'settlement_price'=>$vinfo['total_fee'],'sale_payment_id'=>$sale_payment_id,

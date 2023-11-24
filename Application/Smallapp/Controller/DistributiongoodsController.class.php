@@ -195,11 +195,14 @@ class DistributiongoodsController extends BaseController {
                 $this->output('请输入奖励规则介绍信息', "distributiongoods/goodsadd", 2, 0);
             }
             foreach ($distribution_config as $k=>$v){
-                if($v['price']>$price){
+                $now_price = intval($v['price']);
+                $distribution_config[$k]['price'] = $now_price;
+
+                if($now_price>$price){
                     $this->output('请设置正确的阶梯价', "distributiongoods/goodsadd", 2, 0);
                 }
                 if($k=0){
-                    if($v['price']!=$price){
+                    if($now_price!=$price){
                         $this->output('请设置正确的阶梯价一', "distributiongoods/goodsadd", 2, 0);
                     }
                 }
