@@ -1125,6 +1125,11 @@ $config['ORDER_EXPRESS_TYPES'] = array(
     array('id'=>1,'name'=>'普通快递'),
     array('id'=>2,'name'=>'其他快递'),
 );
+$config['ORDER_EXPRESS_DTYPES'] = array(
+    '1'=>array('id'=>1,'name'=>'自主发货'),
+    '2'=>array('id'=>2,'name'=>'第三方发货'),
+
+);
 $config['RD_TEST_HOTEL'] =
     array (
 

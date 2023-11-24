@@ -83,10 +83,20 @@ class DistributiongoodsController extends BaseController {
         if(IS_GET){
             $detail_img_num = $cover_img_num = 6;
             $detailaddr = $coveraddr = array();
-            $dinfo = array('type'=>$type,'amount'=>1);
+            $area_ids = array();
+            $dinfo = array('type'=>$type,'amount'=>1,'is_top'=>0,'top_oss_addr'=>'');
             if($id){
                 $dinfo = $m_goods->getInfo(array('id'=>$id));
                 $dinfo['price'] = intval($dinfo['price']);
+                if($dinfo['top_media_id']>0){
+                    $m_media = new \Admin\Model\MediaModel();
+                    $res_media = $m_media->getMediaInfoById($dinfo['top_media_id']);
+                    $dinfo['top_oss_addr'] = $res_media['oss_addr'];
+                }
+                if(!empty($dinfo['area_ids'])){
+                    $area_ids = explode(',',$dinfo['area_ids']);
+                }
+
                 $distribution_config = json_decode($dinfo['distribution_config'],true);
                 foreach ($all_distribution_config as $k=>$v){
                     $values = array();
@@ -139,6 +149,17 @@ class DistributiongoodsController extends BaseController {
             $m_duser = new \Admin\Model\Smallapp\DistributionUserModel();
             $duser_list = $m_duser->getDataList('id,name',array('level'=>1,'status'=>1),'id asc');
 
+            $m_area = new \Admin\Model\AreaModel();
+            $all_areas = $m_area->getHotelAreaList();
+            foreach ($all_areas as $k=>$v){
+                $is_select = '';
+                if(in_array($v['id'],$area_ids)){
+                    $is_select = 'selected';
+                }
+                $all_areas[$k]['is_select'] = $is_select;
+            }
+
+            $this->assign('all_areas',$all_areas);
             $this->assign('duser_list',$duser_list);
             $this->assign('all_distribution_config',$all_distribution_config);
             $this->assign('finance_goods',$finance_goods);
@@ -159,7 +180,10 @@ class DistributiongoodsController extends BaseController {
             $status = I('post.status',0,'intval');
             $finance_goods_id = I('post.finance_goods_id',0,'intval');
             $distribution_config = I('post.distribution_config','');
+            $area_ids = I('post.area_ids');
             $duser_id = I('post.duser_id',0,'intval');
+            $is_top = I('post.is_top',0,'intval');
+            $top_media_id = I('post.topmedia_id',0,'intval');
 
             if($line_price && $line_price<$price){
                 $this->output('划线价必须大于零售价', "distributiongoods/goodsadd", 2, 0);
@@ -194,10 +218,16 @@ class DistributiongoodsController extends BaseController {
             if(empty($price))   $price = 0;
             if(empty($supply_price))   $supply_price = 0;
             if(empty($line_price))   $line_price = 0;
+            $data_area_ids = '';
+            if(!empty($area_ids)){
+                $data_area_ids = join(',',$area_ids);
+            }
             $data = array('name'=>$name,'intro'=>$intro,'desc'=>$desc,'desc2'=>$desc2,'price'=>$price,
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'distribution_config'=>$distribution_config,'duser_id'=>$duser_id,'type'=>45,'finance_goods_id'=>$finance_goods_id,
-                'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'));
+                'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),
+                'is_top'=>$is_top,'top_media_id'=>$top_media_id,'area_ids'=>$data_area_ids);
+
             $data['status'] = $status;
             if($status==1){
                 $flag = 2;

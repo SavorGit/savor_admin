@@ -171,6 +171,57 @@
 		</div>
 
 		<div class="form-group row">
+			<label class="col-xs-12 col-sm-2 control-label">支持售卖城市：</label>
+			<div class="col-xs-12 col-sm-10  form-inline">
+				<select name="area_ids[]" class="form-control bs-select class-filter" data-live-search="true" data-container="body" multiple="multiple" >
+					<volist name="all_areas" id="areainfo">
+						<option value="{$areainfo.id}" {$areainfo.is_select}>{$areainfo.region_name}</option>
+					</volist>
+				</select>
+
+			</div>
+		</div>
+
+		<div class="form-group row" id="goods_storebuy">
+			<label class="col-xs-12 col-sm-2 control-label">
+				是否置顶：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<input type="hidden" name="is_top" value="0">
+				<input type="checkbox" value="1" class="make-switch status" name="is_top" data-size="small" data-on-text="是" data-off-text="否" <if condition="$vinfo.is_top eq 1" >checked</if>>
+			</div>
+		</div>
+
+		<div class="form-group row" >
+			<label class="col-xs-12 col-sm-2 control-label">
+				置顶图片：
+			</label>
+			<div class="col-xs-12 col-sm-10">
+				<div class="fileinput fileinput-new" data-fileinput>
+					<div class="fileinput-preview thumbnail" data-trigger="fileinput">
+						<a data-target="#modal-file" href="javascript:void(0)">
+							<if condition="($vinfo['top_oss_addr'] eq 'NULL') OR $vinfo['top_oss_addr'] eq ''">
+								<img id="topmedia_idimg" src="/Public/admin/assets/img/noimage.png" border="0" />
+								<else />
+								<img id="topmedia_idimg" src="{$vinfo.top_oss_addr}" border="0" />
+							</if>
+							<span id="topmedia_idimgname"></span>
+						</a>
+					</div>
+					<span class="help-block" id="img-msg">请上传750x750像素的jpg格式图片，展示效果最佳</span>
+					<div>
+						<a class="btn btn-success btn-file" data-target="#modal-file" href="{$host_name}/resource/uploadResource?filed=topmedia_id&rtype=2" data-browse-file>
+							选择图片
+						</a>
+						<input type="hidden" name="topmedia_id" id="topmedia_id" value="{$vinfo.top_media_id}" >
+						<a href="javascript:;" class="btn btn-danger" data-remove-file="/Public/admin/assets/img/noimage.png">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="form-group row">
 			<label class="col-xs-12 col-sm-2 control-label">选择库存商品：</label>
 			<div class="col-xs-12 col-sm-10  form-inline">
 				<select name="finance_goods_id" class="form-control bs-select class-filter" data-live-search="true" required >
