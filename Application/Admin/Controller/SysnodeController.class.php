@@ -232,9 +232,6 @@ class SysnodeController extends BaseController {
     
     //新增用户
     public function sysnodeadd(){
-
-
-
         $sysMenu = new \Admin\Model\SysmenuModel();
         $sysNode = new \Admin\Model\SysnodeModel();
         $acttype = I('acttype', 0, 'int');
@@ -242,7 +239,7 @@ class SysnodeController extends BaseController {
         //处理提交数据
         if(IS_POST) {
             //获取参数
-            $id          = I('post.id', '', 'int');
+            $node_id          = I('post.id', '', 'intval');
             $nodekey     = I('post.nodekey');
             $modulename  = I('post.modulename','','trim');
             $menulevel   = I('post.menulevel');
@@ -276,14 +273,11 @@ class SysnodeController extends BaseController {
                         $this->error('不能新增相同三级节点');
                     } else {
                         $result = $sysNode->add($nodeparm);
-
                     }
-
                 } else {
                     $nodeparm['isenable'] = $isenable;
-                    if ($nodeinfo) {
-                        $nid = $nodeinfo['id'];
-                        $result = $sysNode->where("id={$nid}")->save($nodeparm);
+                    if ($node_id) {
+                        $result = $sysNode->where(array('id'=>$node_id))->save($nodeparm);
                         $result = true;
                     } else {
                         $result = $sysNode->add($nodeparm);
@@ -316,7 +310,6 @@ class SysnodeController extends BaseController {
                     }
                 }
             }
-
             //判断添加
             if($modulename) {
                 /*$data['id']     = $id;
@@ -353,13 +346,12 @@ class SysnodeController extends BaseController {
                 if($media_id) $nodeparm['media_id'] = $media_id;
 
                 if($select_media_id) $nodeparm['select_media_id'] = $select_media_id;
-                if ($nodeinfo) {
+                if ($node_id) {
                     $nid = $nodeinfo['id'];
-                    $result = $sysNode->where("id={$nid}")->save($nodeparm);
+                    $result = $sysNode->where(array('id'=>$node_id))->save($nodeparm);
                     $result = true;
                 } else {
                     //二级节点
-
                     if($menulevel == 1){
                         $pat['nodekey'] = $nodekey;
                         $pat['parentid'] = 0;
