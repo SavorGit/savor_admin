@@ -5,6 +5,13 @@ use Think\Controller;
 class AttendanceController extends Controller{
 
     public function statsalerecord(){
+        $sdate = I('sdate','');
+        if(empty($sdate)){
+            $static_date = date('Y-m-d',strtotime('-1 day'));
+        }else{
+            $static_date = $sdate;
+        }
+
         $m_attendance = new \Admin\Model\AttendanceModel();
         $m_hotel = new \Admin\Model\HotelModel();
         $sql_ops = "select a.id as ops_staff_id,a.area_id,area.region_name as area_name,a.job,suser.remark as ops_uname from savor_ops_staff as a 
@@ -13,7 +20,6 @@ class AttendanceController extends Controller{
             order by a.area_id asc ";
         $res_staff = $m_attendance->query($sql_ops);
 
-        $static_date = date('Y-m-d',strtotime('-1 day'));
         $static_month = date('Ym',strtotime($static_date));
         $start_time = "$static_date 00:00:00";
         $end_time = "$static_date 23:59:59";
