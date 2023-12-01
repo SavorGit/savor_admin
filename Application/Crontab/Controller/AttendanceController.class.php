@@ -34,7 +34,7 @@ class AttendanceController extends Controller{
             $ops_staff_name = $sv['ops_uname'];
             $ops_staff_id = $sv['ops_staff_id'];
 
-            if(!in_array($job,array('驻店销售','渠道开发','运维工程师'))){
+            if(!in_array($job,array('驻店销售','驻店主管','渠道开发','运维工程师'))){
                 continue;
             }
             $belate_status = 0;
@@ -68,7 +68,7 @@ class AttendanceController extends Controller{
                     $first_clock_hotel_name = $res_hotel['name'];
                 }
                 $clock_in_time = $clock_out_time = '';
-                if($job=='驻店销售'){
+                if($job=='驻店销售' || $job=='驻店主管'){
                     $clock_in_time = "$static_date 10:30:00";
                     $clock_out_time = "$static_date 20:30:00";
                 }elseif($job=='渠道开发' || $job=='运维工程师'){
