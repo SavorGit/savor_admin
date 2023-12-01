@@ -1,0 +1,102 @@
+<!--修改样式2 p元素自适应宽度 start-->
+<div class="pageContent">
+    <form method="post" action="{$host_url}/smallapp/crmtask/addtask" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <input type="hidden" name="id" value="{$vinfo.id}">
+
+        <div class="pageFormContent modal-body">
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    任务名称:
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="name" type="text" class="form-control" minlength="1" maxlength="20"  value="{$vinfo.name}" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    通知上级(天):
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="notify_day" type="number" class="form-control" min="1" max="100"  value="{$vinfo.notify_day}" required>
+                    <span class="help-block">任务发布xx天后</span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    任务完成失败(重置状态):
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input name="notify_handle_day" type="number" class="form-control" min="1" max="100"  value="{$vinfo.notify_handle_day}" required>
+                    <span class="help-block" id="img-msg">点击"处理"后，xx天内未完成</span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-xs-6 col-sm-2 control-label">
+                    任务时段-开始时间:
+                </label>
+                <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.start_time}" >
+                    <input id="start_time" name="start_time" type="text" size="2" class="form-control date" placeholder="任务开始时间" value="{$vinfo.start_time}" readonly>
+                    <span class="input-group-btn"  >
+              <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+              <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-6 col-sm-2 control-label">
+                    任务时段-结束时间:
+                </label>
+                <div class="input-group input-group-sm date form_date" data-ymd="true" data-date="{$vinfo.end_time}" >
+                    <input id="end_time" name="end_time" type="text" size="2" class="form-control date" placeholder="任务结束时间" value="{$vinfo.end_time}" readonly>
+                    <span class="input-group-btn"  >
+              <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+              <button  class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+            </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    描述：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <textarea name="desc" value="{$vinfo.desc}" type="textInput" class="form-control" required>{$vinfo.desc}</textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-xs-12 col-sm-2 control-label">
+                    状态：
+                </label>
+                <div class="col-xs-12 col-sm-10">
+                    <input type="hidden" name="status" value="2">
+                    <input type="checkbox" value="1" class="make-switch status" name="status" data-size="small" data-on-text="开启" data-off-text="关闭" <if condition="$vinfo.status eq 1" >checked</if>>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-default close-m" type="button">取消</button>
+            <button class="btn btn-primary" type="submit">保存</button>
+        </div>
+
+    </form>
+</div>
+<script type="text/javascript">
+
+    $('.date-reset').click(function(){
+        $(this).parent().prev().val('')
+    });
+    $(function(){
+        $(".form-control.date").datetimepicker({
+            //minView: "month", //选择日期后，不会再跳转去选择时分秒
+            minView:"0",
+            language:  'zh-CN',
+            format: 'yyyy-mm-dd hh:ii:00',
+            todayBtn:  1,
+            autoclose: 1,
+        });
+    })
+</script>

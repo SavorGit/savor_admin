@@ -1,0 +1,88 @@
+<include file="Public/script"/>
+<!--显示列表样式1 start-->
+<div class="pageHeader">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/crmtask/statdata" method="post">
+
+    <div class="searchBar">
+      <div class="clearfix">
+
+        <div class="form-inline">
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">选择月份：</div>
+            <div class="input-group input-group-sm date form_datetime" data-pos="auto" data-date="{$stat_month}" data-ymd="true">
+              <input name="stat_month" type="text" size="16" class="form-control date" placeholder="选择月份" value="{$stat_month}">
+              <span class="input-group-btn">
+                <button class="btn default date-reset  btn-sm" type="button"><i class="fa fa-times"></i></button>
+                <button class="btn btn-success date-set  btn-sm" type="button"><i class="fa fa-calendar"></i></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm">城市：</div>
+            <div class="input-group">
+              <select name="area_id" class="form-control bs-select class-filter" data-style="btn-success btn-sm" data-container="body" >
+                <option value=0>全部</option>
+                <volist name="all_areas" id="area_info">
+                  <option value="{$area_info.id}" {$area_info.is_select} > {$area_info.name}</option>
+                </volist>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="input-group input-group-sm pull-right">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="submit" id="choosedata">查询</button>
+            </span>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm pull-right"></div>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>
+<div class="pageContent" id="pagecontent">
+  <div id="w_list_print">
+    <div class="no-more-tables">
+      <form method="post" action="#" id="del-form" class="pageForm required-validate" enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDone)">
+        <table class="table table-bordered table-striped" targetType="navTab" asc="asc" desc="desc">
+          <thead>
+          <tr id="post">
+            <th>城市</th>
+            <th>驻店人</th>
+            <th>当前负责餐厅家数</th>
+            <th>本月完成任务的餐厅家数</th>
+            <th>发布任务数</th>
+            <th>处理完成任务数</th>
+            <th>总完成任务数</th>
+            <th>总超期未完成任务数</th>
+          </tr>
+          </thead>
+          <tbody data-check="list" data-parent=".table">
+          <volist name="datalist" id="dinfo">
+            <tr target="sid_user">
+              <td data-title="城市">{$dinfo.area_name}</td>
+              <td data-title="驻店人">{$dinfo.residenter_name}</td>
+              <td data-title="当前负责餐厅家数">{$dinfo.hotel_num}</td>
+              <td data-title="本月完成任务的餐厅家数">{$dinfo.all_finish_hotel_num}</td>
+              <td data-title="发布任务数">{$dinfo.release_num}</td>
+              <td data-title="处理完成任务数">{$dinfo.finish_num}</td>
+              <td data-title="总完成任务数">{$dinfo.all_finish_num}</td>
+              <td data-title="总超期未完成任务数">{$dinfo.overdue_not_finish_num}</td>
+            </tr>
+          </volist>
+
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+  </div>
+  {$page}
+</div>
