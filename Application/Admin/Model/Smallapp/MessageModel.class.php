@@ -185,7 +185,7 @@ class MessageModel extends BaseModel{
                 echo "message_type:19,residenter_id:{$message_data['residenter_id']} error \r\n";
             }
         }else{
-            $res_hotel = $m_hotel->getHotelById('hotel.area_id,ext.maintainer_id,ext.',array('hotel.id'=>$hotel_id));
+            $res_hotel = $m_hotel->getHotelById('hotel.area_id,ext.maintainer_id',array('hotel.id'=>$hotel_id));
             $area_id = $res_hotel['area_id'];
             $owhere = array('area_id'=>$area_id,'hotel_role_type'=>array('in','2,4'),'is_operrator'=>0,'status'=>1);
             if($res_hotel['maintainer_id']>0){
