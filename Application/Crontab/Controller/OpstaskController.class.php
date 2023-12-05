@@ -114,7 +114,8 @@ class OpstaskController extends Controller{
                         }
                         break;
                     case 4:
-                        $swhere = array('a.hotel_id'=>$hotel_id,'a.ptype'=>array('in','0,2'),'a.is_expire'=>1,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+                        $swhere = array('a.hotel_id'=>$hotel_id,'a.ptype'=>array('in','0,2'),'a.is_expire'=>1,
+                            'record.wo_reason_type'=>1,'record.wo_status'=>2,'a.settlement_price'=>array('gt',0));
                         $sfields = 'a.id,a.settlement_price-a.pay_money as money';
                         $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','');
                         if(!empty($res_sale)){
