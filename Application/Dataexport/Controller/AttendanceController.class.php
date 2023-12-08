@@ -5,8 +5,6 @@ class AttendanceController extends BaseController{
 
     public function datalist(){
         $static_month = I('month',0,'intval');
-
-        $static_month = date('Ym',strtotime($static_month));
         $m_oa_attendance = new \Admin\Model\AttendanceModel();
         $res_data = $m_oa_attendance->getAllData('*',array('static_month'=>$static_month),'static_date asc');
         $datalist = array();

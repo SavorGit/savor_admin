@@ -86,7 +86,7 @@ class CrmtaskController extends BaseController {
             $this->output('操作成功!', 'crmtask/datalist');
         }else{
             $all_jump_url = array('1'=>'addopensale','2'=>'adddeliverdrinks','3'=>'addarrears','4'=>'addoverduearrears','5'=>'addroom',
-                '6'=>'addinvitation','7'=>'addcheck','8'=>'adddemand','9'=>'addboot','10'=>'addwechat','11'=>'addcustom'
+                '6'=>'addinvitation','7'=>'addcheck','8'=>'adddemand','9'=>'addboot','10'=>'addwechat','11'=>'addcustom','12'=>'addmaterial'
             );
             $display_html = $all_jump_url[$task_type];
             if($task_type==11){
@@ -334,6 +334,119 @@ class CrmtaskController extends BaseController {
             $this->assign('vinfo',$vinfo);
             $this->display();
         }
+    }
+
+    public function statdata(){
+        $stat_month = I('stat_month','');
+        $area_id = I('area_id',0,'intval');
+
+        $m_area = new \Admin\Model\AreaModel();
+        $awhere = array('is_in_hotel'=>1,'id'=>array('neq',246));
+        $res_area = $m_area->getWhere('id,region_name as name',$awhere,'id asc','');
+        $all_areas = array();
+        foreach ($res_area as $v){
+            $is_select = '';
+            if($area_id==$v['id']){
+                $is_select = 'selected';
+            }
+            $v['is_select'] = $is_select;
+            $all_areas[$v['id']]=$v;
+        }
+
+        if(empty($stat_month)){
+            $stat_date = date('Y-m');
+        }else{
+            $stat_date = date('Y-m',strtotime($stat_month));
+        }
+        $start_time = $stat_date.'-01 00:00:00';
+        $end_time = $stat_date.'-31 23:59:59';
+
+        $m_hotel = new \Admin\Model\HotelModel();
+        $field = 'count(a.id) as num,ext.residenter_id';
+        $where = array('a.state'=>1,'a.flag'=>0,'ext.is_salehotel'=>1,'ext.residenter_id'=>array('gt',0));
+        $res_hotels = $m_hotel->getHotels($field,$where,'','ext.residenter_id');
+        $hotel_nums = array();
+        foreach ($res_hotels as $v){
+            $hotel_nums[$v['residenter_id']]=$v['num'];
+        }
+        $m_crmtask_record = new \Admin\Model\Crm\TaskRecordModel();
+        $where = array();
+        $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time));
+        $where['ext.is_salehotel'] = 1;
+        $where['a.off_state'] = 1;
+        if($area_id){
+            $where['hotel.area_id'] = $area_id;
+        }
+        $fileds = 'count(a.id) as num,a.residenter_id';
+        $res_release = $m_crmtask_record->getTaskRecords($fileds,$where,'','','a.residenter_id');
+        $release_nums = array();
+        foreach ($res_release as $v){
+            $release_nums[$v['residenter_id']]=$v['num'];
+        }
+        $where['a.status'] = 3;
+        $fileds = 'count(DISTINCT a.hotel_id) as hotel_num,count(a.id) as num,a.residenter_id';
+        $res_all_finish = $m_crmtask_record->getTaskRecords($fileds,$where,'','','a.residenter_id');
+        $all_finish_nums =array();
+        foreach ($res_all_finish as $v){
+            $all_finish_nums[$v['residenter_id']]=$v;
+        }
+        $where['a.handle_status'] = array('gt',0);
+        $where['a.status'] = 3;
+        $fileds = 'count(a.id) as num,a.residenter_id';
+        $res_finish = $m_crmtask_record->getTaskRecords($fileds,$where,'','','a.residenter_id');
+        $finish_nums = array();
+        foreach ($res_finish as $v){
+            $finish_nums[$v['residenter_id']]=$v['num'];
+        }
+
+        $where['a.status'] = 2;
+        $where['a.is_trigger'] = 1;
+        $where['a.status'] = array('neq',3);
+        $where['a.handle_status'] = array('in','0,2');
+        $where['a.add_time'] = array('elt',$end_time);
+        $where['a.finish_task_record_id'] = 0;
+        $where['task.type'] = array('neq',7);
+        $res_overdue_not_finishids = $m_crmtask_record->getTaskRecords('max(a.id) as last_id',$where,'','','a.hotel_id,a.task_id');
+        $overdue_not_finishids = array();
+        foreach ($res_overdue_not_finishids as $v){
+            $overdue_not_finishids[]=$v['last_id'];
+        }
+        $field = 'count(id) as num,residenter_id';
+        $res_overdue_not_finish = $m_crmtask_record->getAllData($field,array('id'=>array('in',$overdue_not_finishids)),'','residenter_id');
+        $overdue_not_finish_nums = array();
+        foreach ($res_overdue_not_finish as $v){
+            $overdue_not_finish_nums[$v['residenter_id']]=$v['num'];
+        }
+
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $fields = 'u.id as residenter_id,u.remark as residenter_name,a.area_id,area.region_name as area_name';
+        $where = array('a.hotel_role_type'=>array('in','3,4'),'a.status'=>1);
+        if($area_id){
+            $where['a.area_id'] = $area_id;
+        }
+        $res_staff = $m_opsstaff->alias('a')
+                ->join('savor_sysuser u on a.sysuser_id=u.id','left')
+                ->join('savor_area_info area on a.area_id=area.id','left')
+                ->field($fields)
+                ->where($where)
+                ->order('a.area_id asc')
+                ->select();
+        $datalist = array();
+        foreach ($res_staff as $v){
+            $v['hotel_num'] = isset($hotel_nums[$v['residenter_id']])?$hotel_nums[$v['residenter_id']]:0;
+            $v['release_num'] = isset($release_nums[$v['residenter_id']])?$release_nums[$v['residenter_id']]:0;
+            $v['finish_num'] = isset($finish_nums[$v['residenter_id']])?$finish_nums[$v['residenter_id']]:0;
+            $v['overdue_not_finish_num'] = isset($overdue_not_finish_nums[$v['residenter_id']])?$overdue_not_finish_nums[$v['residenter_id']]:0;
+            $v['all_finish_num'] = isset($all_finish_nums[$v['residenter_id']]['num'])?$all_finish_nums[$v['residenter_id']]['num']:0;
+            $v['all_finish_hotel_num'] = isset($all_finish_nums[$v['residenter_id']]['hotel_num'])?$all_finish_nums[$v['residenter_id']]['hotel_num']:0;
+
+            $datalist[]=$v;
+        }
+        $this->assign('datalist', $datalist);
+        $this->assign('all_areas', $all_areas);
+        $this->assign('stat_month',"$stat_date-01");
+        $this->assign('page','');
+        $this->display();
     }
 
 

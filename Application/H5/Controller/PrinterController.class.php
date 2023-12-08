@@ -46,7 +46,7 @@ class PrinterController extends Controller {
             $this->output("请输入小于{$this->num}的二维码数量");
         }
 
-        $cache_key = $this->cache_key;
+        $cache_key = $this->cache_key.$mac;
         $redis  =  \Common\Lib\SavorRedis::getInstance();
         $redis->select(1);
         $res = $redis->get($cache_key);
@@ -95,7 +95,7 @@ class PrinterController extends Controller {
 
         $qrcode_create_path = SITE_TP_PATH.'/Public/uploads/qrcode/';
         $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
-        $cache_key = $this->cache_key;
+        $cache_key = $this->cache_key.$mac;
         $redis  =  \Common\Lib\SavorRedis::getInstance();
         $redis->select(1);
         $res_cache = $redis->get($cache_key);

@@ -127,10 +127,11 @@ class MessageModel extends BaseModel{
     public function opsOhtersNotify(){
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $where = array('a.type'=>7,'a.wo_reason_type'=>1,'a.wo_status'=>array('in','1,2,4'),'a.is_notifymsg'=>0);
-        $fileds = 'a.id,a.op_openid,stock.hotel_id';
+        $fileds = 'a.id,a.op_openid,stock.hotel_id,sale.settlement_price as money,sale.residenter_id';
         $res_stock_record = $m_stock_record->alias('a')
             ->field($fileds)
             ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
+            ->join('savor_finance_sale sale on a.id=sale.stock_record_id','left')
             ->where($where)
             ->select();
         foreach ($res_stock_record as $v){
@@ -138,6 +139,11 @@ class MessageModel extends BaseModel{
             $row_id = $this->addNotifyMessage($v['hotel_id'],$message_data,16);//16酒水售卖(运维端),17积分到账(运维端),18积分提现(运维端)
             $m_stock_record->updateData(array('id'=>$v['id']),array('is_notifymsg'=>1));
             echo "message_type:16,stock_record_id:{$v['id']},message_id:$row_id ok \r\n";
+
+            $message_data = array('content_id'=>$v['id'],'money'=>$v['money'],'residenter_id'=>$v['residenter_id']);
+            $row_id = $this->addNotifyMessage($v['hotel_id'],$message_data,19);//19酒水回款(运维端)
+            echo "message_type:19,stock_record_id:{$v['id']},message_id:$row_id ok \r\n";
+
         }
         echo "message_type:16 ok \r\n";
         $m_integralrecord = new \Admin\Model\Smallapp\UserIntegralrecordModel();
@@ -161,19 +167,45 @@ class MessageModel extends BaseModel{
     }
 
     public function addNotifyMessage($hotel_id,$message_data,$type){
+        $all_message_data = array();
         $m_hotel = new \Admin\Model\HotelModel();
-        $res_hotel = $m_hotel->getHotelById('hotel.area_id,ext.maintainer_id',array('hotel.id'=>$hotel_id));
-        $area_id = $res_hotel['area_id'];
-
-        $owhere = array('area_id'=>$area_id,'hotel_role_type'=>array('in','2,4'),'is_operrator'=>0,'status'=>1);
         $no_ids = array('7');
         $m_opstaff = new \Admin\Model\OpsstaffModel();
-        $all_message_data = array();
-        if($res_hotel['maintainer_id']>0){
-            $res_ops_staf = $m_opstaff->getInfo(array('sysuser_id'=>$res_hotel['maintainer_id'],'status'=>1));
-            if(!empty($res_ops_staf)){
-                $no_ids[]=$res_ops_staf['id'];
-                $minfo = array('ops_staff_id'=>$res_ops_staf['id'],'hotel_id'=>$hotel_id,'type'=>$type,'read_status'=>1);
+        if($type==19){
+            if($message_data['residenter_id']>0){
+                $res_ops_staf = $m_opstaff->getInfo(array('sysuser_id'=>$message_data['residenter_id'],'status'=>1));
+                if(!empty($res_ops_staf)){
+                    $minfo = array('ops_staff_id'=>$res_ops_staf['id'],'content_id'=>$message_data['content_id'],
+                        'money'=>$message_data['money'],'hotel_id'=>$hotel_id,'type'=>$type,'read_status'=>1);
+                    $all_message_data[]=$minfo;
+                }else{
+                    echo "message_type:19,residenter_id:{$message_data['residenter_id']} status error \r\n";
+                }
+            }else{
+                echo "message_type:19,residenter_id:{$message_data['residenter_id']} error \r\n";
+            }
+        }else{
+            $res_hotel = $m_hotel->getHotelById('hotel.area_id,ext.maintainer_id',array('hotel.id'=>$hotel_id));
+            $area_id = $res_hotel['area_id'];
+            $owhere = array('area_id'=>$area_id,'hotel_role_type'=>array('in','2,4'),'is_operrator'=>0,'status'=>1);
+            if($res_hotel['maintainer_id']>0){
+                $res_ops_staf = $m_opstaff->getInfo(array('sysuser_id'=>$res_hotel['maintainer_id'],'status'=>1));
+                if(!empty($res_ops_staf)){
+                    $no_ids[]=$res_ops_staf['id'];
+                    $minfo = array('ops_staff_id'=>$res_ops_staf['id'],'hotel_id'=>$hotel_id,'type'=>$type,'read_status'=>1);
+                    if(!empty($message_data['content_id']))     $minfo['content_id'] = $message_data['content_id'];
+                    if(!empty($message_data['staff_openid']))   $minfo['staff_openid'] = $message_data['staff_openid'];
+                    if(!empty($message_data['money']))          $minfo['money'] = $message_data['money'];
+                    if(!empty($message_data['integral']))       $minfo['integral'] = $message_data['integral'];
+                    if(!empty($message_data['sale_ids']))       $minfo['sale_ids'] = $message_data['sale_ids'];
+                    if(!empty($message_data['qk_day']))         $minfo['qk_day'] = $message_data['qk_day'];
+                    $all_message_data[] = $minfo;
+                }
+            }
+            $owhere['id'] = array('not in',$no_ids);
+            $res_mdata = $m_opstaff->getDataList('id,openid',$owhere,'id desc');
+            foreach ($res_mdata as $v){
+                $minfo = array('ops_staff_id'=>$v['id'],'hotel_id'=>$hotel_id,'type'=>$type,'read_status'=>1);
                 if(!empty($message_data['content_id']))     $minfo['content_id'] = $message_data['content_id'];
                 if(!empty($message_data['staff_openid']))   $minfo['staff_openid'] = $message_data['staff_openid'];
                 if(!empty($message_data['money']))          $minfo['money'] = $message_data['money'];
@@ -183,18 +215,7 @@ class MessageModel extends BaseModel{
                 $all_message_data[] = $minfo;
             }
         }
-        $owhere['id'] = array('not in',$no_ids);
-        $res_mdata = $m_opstaff->getDataList('id,openid',$owhere,'id desc');
-        foreach ($res_mdata as $v){
-            $minfo = array('ops_staff_id'=>$v['id'],'hotel_id'=>$hotel_id,'type'=>$type,'read_status'=>1);
-            if(!empty($message_data['content_id']))     $minfo['content_id'] = $message_data['content_id'];
-            if(!empty($message_data['staff_openid']))   $minfo['staff_openid'] = $message_data['staff_openid'];
-            if(!empty($message_data['money']))          $minfo['money'] = $message_data['money'];
-            if(!empty($message_data['integral']))       $minfo['integral'] = $message_data['integral'];
-            if(!empty($message_data['sale_ids']))       $minfo['sale_ids'] = $message_data['sale_ids'];
-            if(!empty($message_data['qk_day']))         $minfo['qk_day'] = $message_data['qk_day'];
-            $all_message_data[] = $minfo;
-        }
+
         $row_id = 0;
         if(!empty($all_message_data)){
             $row_id = $this->addAll($all_message_data);
