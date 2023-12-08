@@ -778,4 +778,30 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $decimal = $degrees + ($minutes / 60) + ($seconds / 3600);
         return $decimal;
     }
+    function getGzHotelList(){
+        $sql ="select a.id as hotel_id,a.name as hotel_name,a.addr,a.area_id,area.region_name as area_name,
+               count.region_name as count_name, a.county_id,a.business_circle_id,circle.name circle_name,
+               case circle.trade_area_type when 1 then '聚焦商圈' when 2 then '普通商圈' END AS circle_type
+               from savor_hotel as a
+               left join savor_hotel_ext as ext on a.id=ext.hotel_id
+               left join savor_area_info as area on a.area_id=area.id
+               left join savor_area_info as count on a.county_id = count.id 
+               left join savor_business_circle as circle on a.business_circle_id = circle.id
+               where 1 and  a.state in (1,4) and a.flag=0 and a.area_id =236";
+        
+        $datalist  = M()->query($sql);
+        
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('count_name','所属区域'),
+            array('circle_type','商圈类型'),
+            array('circle_name','商圈名称'),
+            
+        );
+        $filename = '酒楼数据';
+        $this->exportToExcel($cell,$datalist,$filename,1);
+        
+    }
 }
