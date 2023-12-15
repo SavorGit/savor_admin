@@ -21,6 +21,11 @@ class Curl {
 		$retry = 1;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
+		if($GLOBALS['HEADERINFO']){//如设置访问header
+		    $header = $GLOBALS['HEADERINFO'];
+		    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);//设置HTTP头
+		}
+		
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 		if (defined('CURLOPT_SSL_VERIFYHOST')) {
@@ -65,7 +70,12 @@ class Curl {
 		($timeout<10) && $timeout = 10;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-	    curl_setopt($ch, CURLOPT_HEADER, 0); //过滤HTTP头
+		if($GLOBALS['HEADERINFO']){//如设置访问header
+		    $header = $GLOBALS['HEADERINFO'];
+		    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);//设置HTTP头
+		}else{
+		    curl_setopt($ch, CURLOPT_HEADER, 0); //过滤HTTP头
+		}
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
