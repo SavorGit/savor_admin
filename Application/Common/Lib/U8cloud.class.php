@@ -105,6 +105,7 @@ class U8cloud {
         $api = '/u8cloud/api/uapbd/accsubj/update';
         $method = 'post';
         $res = $this->apiquery($api,$method,$params);
+        return $res;
     }
     //客商基本档案新增
     public function addCustdoc($params){
