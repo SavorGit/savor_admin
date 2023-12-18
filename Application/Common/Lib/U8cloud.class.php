@@ -90,5 +90,19 @@ class U8cloud {
         $res = $this->apiquery($api,$method,$params);
         return $res;
     }
+    //新增会计科目
+    public function addAccsubj($params){
+        $api = '/u8cloud/api/uapbd/accsubj/insert';
+        $method = 'post';
+        $res = $this->apiquery($api,$method,$params);
+        return $res;
+    }
+    //编辑会计科目
+    public function editAccsubj($params){
+        $api = '/u8cloud/api/uapbd/accsubj/update';
+        $method = 'post';
+        $res = $this->apiquery($api,$method,$params);
+        return $res;
+    }
 }
 ?>
