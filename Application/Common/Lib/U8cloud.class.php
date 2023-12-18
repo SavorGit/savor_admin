@@ -2,7 +2,7 @@
 namespace Common\Lib;
 class U8cloud {
 
-    public function apiquery($api,$method,$params){
+    public function apiquery($api,$method,$params,$trantype=''){
         $u8_conf = C('U8_CONFIG');
         $api_host = $u8_conf['api_host'];
         $system = $u8_conf['system'];
@@ -15,6 +15,9 @@ class U8cloud {
             "password: $password",
             "system: $system",
         );
+        if(!empty($trantype)){
+            $header_info[]="trantype: $trantype";
+        }
         $GLOBALS['HEADERINFO'] = $header_info;
         $api_url = $api_host.$api;
         $res = '';
@@ -47,7 +50,7 @@ class U8cloud {
         $res = $this->apiquery($api,$method,$params);
         return $res;
     }
-    
+
     //部门人员新增、修改
     public function saveDepartmentUser($params){
         $api = '/u8cloud/api/uapbd/bdpsn/save';
@@ -102,6 +105,22 @@ class U8cloud {
         $api = '/u8cloud/api/uapbd/accsubj/update';
         $method = 'post';
         $res = $this->apiquery($api,$method,$params);
+    }
+    //客商基本档案新增
+    public function addCustdoc($params){
+        $api = '/u8cloud/api/uapbd/custdoc/insert';
+        $method = 'post';
+        $trantype = 'code';
+        $res = $this->apiquery($api,$method,$params,$trantype);
+        return $res;
+    }
+    //客商基本档案修改
+    public function editCustdoc($params){
+        $api = '/u8cloud/api/uapbd/custdoc/update';
+        $method = 'post';
+        $trantype = 'code';
+        $res = $this->apiquery($api,$method,$params,$trantype);
+
         return $res;
     }
 }
