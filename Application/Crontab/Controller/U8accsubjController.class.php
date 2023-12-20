@@ -4,7 +4,7 @@ use Think\Controller;
 
 class U8accsubjController extends Controller{
     
-    //新增修改
+    //新增修改会计科目
     public function saveAccsubj(){
         
         $u8 = new \Common\Lib\U8cloud();
@@ -91,8 +91,10 @@ class U8accsubjController extends Controller{
                 
                 if($v['id']<10){
                     $data['accsubjParentVO']['subjcode']     = '1405'.$brand_id.'0'.$v['id'];
+                    $u8_pk_accsubj                           = '1405'.$brand_id.'0'.$v['id'];
                 }else {
                     $data['accsubjParentVO']['subjcode']     = '1405'.$brand_id.$v['id'];
+                    $u8_pk_accsubj                           = '1405'.$brand_id.$v['id'];
                 }
                 $data['accsubjParentVO']['subjname'] = $v['name'];
                 $params['billvo'] = $data;
@@ -107,6 +109,7 @@ class U8accsubjController extends Controller{
                     $ret_data = json_decode($result['data'],true);
                     
                     $info['u8_subjcode'] = $ret_data[0]['accsubjParentVO']['pk_accsubj'];
+                    $info['u8_pk_accsubj'] = $u8_pk_accsubj;
                     $rts = $m_goods->updateData($map, $info);
                 }
             }else {//编辑
