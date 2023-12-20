@@ -25,6 +25,7 @@ class U8accsubjController extends Controller{
                 $data['accsubjParentVO']['pk_subjscheme']= '0001'; //科目方案编码
                 $data['accsubjParentVO']['pk_subjtype']  = '00010000000000000001';  //科目类型  选择资产
                 $data['accsubjParentVO']['cashbankflag'] = 0;      //现金分类 0-其他;1-现金科目;2-银行科目;3-现金等价物;
+                $data['accsubjParentVO']['beginyear'] = '2023';
                 
                 if($v['id']<10){
                     $data['accsubjParentVO']['subjcode']     = '1405'.'0'.$v['id'];
@@ -81,6 +82,7 @@ class U8accsubjController extends Controller{
                 $data['accsubjParentVO']['pk_subjscheme']= '0001'; //科目方案编码
                 $data['accsubjParentVO']['pk_subjtype']  = '00010000000000000001';  //科目类型  选择资产
                 $data['accsubjParentVO']['cashbankflag'] = 0;      //现金分类 0-其他;1-现金科目;2-银行科目;3-现金等价物;
+                $data['accsubjParentVO']['beginyear'] = '2023';
                 
                 $brand_id = $v['brand_id'];
                 if($brand_id<10){
@@ -115,6 +117,32 @@ class U8accsubjController extends Controller{
             }
         }
         echo date('Y-m-d H:i:s').' OK';
+    }
+    
+    public function alterAccsubj(){
+        
+        $u8 = new \Common\Lib\U8cloud();
+        $m_brand = new \Admin\Model\FinanceBrandModel();
+        
+        $where['status'] = 1;
+        $where['u8_pk_id'] = array('neq','');
+        $brand_list = $m_brand->getAllData('id,name brand_name,u8_pk_id',$where);
+        
+        //print_r($brand_list);exit;
+        foreach($brand_list as $key=>$v){
+            
+            $data = [];
+            $params = [];
+            $data['alterVO']['alterSubjPk'] = $v['u8_pk_id'];
+            $data['alterVO']['alterType']   = 0;
+            $data['alterVO']['alterYear']   = '2023';
+            
+            $params['billvo'][] = $data;
+            $ret = $u8->alterAccsbj($params);
+            $result = $ret['result'];
+            $result = json_decode($result,true);
+            print_r($result);exit;
+        }
     }
     
 }
