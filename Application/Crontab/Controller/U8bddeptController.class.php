@@ -55,13 +55,16 @@ class U8bddeptController extends Controller{
                 }
             }else {//编辑
                 $data['pk_deptdoc'] = $v['u8_pk_id'];
-                $data['deptcode']   = $v['id'];
+                //$data['deptcode']   = $v['id'];
                 $data['deptname']   = $v['name'];
-                $data['pk_fathedept'] = $v['parent_id'];
+                //$data['pk_fathedept'] = $v['parent_id'];
                 $data['pk_corp']    = '02'; //北京热点投屏科技发展有限公司
                 
                 $params['deptdoc'][] = $data;
+                
+               
                 $ret = $u8->editDepartmentInfo($params);
+                
                 
             }
         }
