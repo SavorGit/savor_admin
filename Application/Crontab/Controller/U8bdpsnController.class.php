@@ -66,4 +66,41 @@ class U8bdpsnController extends Controller{
         }
         echo date('Y-m-d H:i:s').' OK';
     }
+    
+    public function sysuserToDepartment(){
+        $m_department_user = new \Admin\Model\FinanceDepartmentUserModel();
+        $m_sys_user = new \Admin\Model\UserModel();
+        $m_opuser_role = new \Admin\Model\OpuserroleModel();
+        $where = [];
+        $where['status'] =2;
+        $user_list = $m_department_user->getAllData('id,sys_user_id,department_id,name,u8_pk_id',$where);
+        $flag = 0;
+        foreach ($user_list as $key=>$v){
+            $map = [];
+            $map['remark'] = $v['name'];
+            $map['status'] = 1;
+            
+            //$sys_user_info = $m_sys_user->field('id,remark')->where($map)->find();
+            
+            
+            $where = [];
+            $where['a.state']  = 1;
+            $where['b.status'] = 1;
+            $where['b.remark'] = $v['name'];
+            $sys_user_info =  $m_opuser_role->alias('a')
+                                ->join('savor_sysuser b on a.user_id=b.id','left')
+                                ->field('a.manage_city,a.user_id,b.remark as username')
+                                ->order('a.manage_city asc')
+                                ->where($where)
+                                ->find();
+            
+            
+            if(!empty($sys_user_info)){
+                $m_department_user->updateData(array('id'=>$v['id']), array('sys_user_id'=>$sys_user_info['user_id']));
+                $flag ++;
+            }
+        }
+        echo $flag ."<br>";
+        echo date('Y-m-d H:i:s');
+    }
 }
