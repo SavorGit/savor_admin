@@ -117,6 +117,10 @@ class U8custdocController extends Controller{
                     $m_user->updateInfo(array('id'=>$v['id']),array('u8_pk_id'=>$parentvo));
                     break;
             }
+            if($action=='add'){
+                $assign_params = array('custbasvo'=>array(array('pk_corp'=>'02','custprop'=>'2','pk_cubasdoc'=>$parentvo)));
+                $u8cloud->assignCustdoc($assign_params);
+            }
             echo "$custcode:{$v['id']},action:$action,parentvo:{$parentvo} ok \r\n";
         }
 
