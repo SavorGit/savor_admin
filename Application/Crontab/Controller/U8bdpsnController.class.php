@@ -103,4 +103,23 @@ class U8bdpsnController extends Controller{
         echo $flag ."<br>";
         echo date('Y-m-d H:i:s');
     }
+    public function getrepeatUsers(){
+        $m_department_user = new \Admin\Model\FinanceDepartmentUserModel();
+        
+        $where['department_id']= 3;
+        $user_list = $m_department_user->getAllData('*',$where);
+        $repeat_users = [];
+        foreach ($user_list as $key=>$v){
+            $map = [];
+            $map['department_id'] = array('in','9,10,16,17,18,19,20,21,');
+            $map['name']  = $v['name'];
+            
+            $ret = $m_department_user->getAllData('*',$map);
+            if(!empty($ret)){
+                $repeat_users[] = $ret[0];
+            }
+            
+        }
+        print_r($repeat_users);exit;
+    }
 }
