@@ -100,8 +100,7 @@ class U8bdpsnController extends Controller{
                 $flag ++;
             }
         }
-        echo $flag ."<br>";
-        echo date('Y-m-d H:i:s');
+        echo date('Y-m-d H:i:s').' OK';
     }
     public function getrepeatUsers(){
         $m_department_user = new \Admin\Model\FinanceDepartmentUserModel();
