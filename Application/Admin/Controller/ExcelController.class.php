@@ -6427,9 +6427,12 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                 
                 if(!empty($ret_pro)){
                     $diff_time = time() - strtotime($ret_pro['create_time']);
+                    $data[$key]['expire_days'] = ceil($diff_time / 86400) - 1 ;
+                }else {
+                    $data[$key]['expire_days'] = '';
                 }
                 
-                $data[$key]['expire_days'] = ceil($diff_time / 86400) - 1 ;
+                
                 
                     
                     
