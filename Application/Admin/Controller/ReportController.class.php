@@ -168,6 +168,7 @@ class ReportController extends BaseController{
         $redis = SavorRedis::getInstance();
         $redis->select(13);
         $cache_key = "heartbeat:";
+        $m_program = new \Admin\Model\ProgramMenuListModel();
 		foreach ($result['list'] as $key=> &$val) {
 			//$val['indnum'] = ++$ind;
 			/* //$d_time = strtotime($val['last_heart_time']);
@@ -192,6 +193,9 @@ class ReportController extends BaseController{
 			}else {
 			    $val['last_heart_time'] = '30天前';
 			} */
+		    $program_info = $m_program->field('create_time')->where(array('menu_num'=>$val['pro_period']))->find();
+		    
+		    $val['program_add_time'] = $program_info['create_time'];
 			$val['indnum'] = ++$ind;
 			$d_time = strtotime($val['last_heart_time']);
 			$diff = $time - $d_time;

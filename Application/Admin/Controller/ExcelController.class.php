@@ -6412,16 +6412,24 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
                 $order = 'pl.create_time desc';
                 $limit = ' 2';
                 $pro_arr = $promenuHoModel->getProgramByHotelId($room_info['hotel_id'], $fields, $order, $limit);
-
+                
+                $ret_pro = $promenuListModel->field('create_time')->where(array('menu_num'=>$v['pro_period']))->find();
                 $tmp_pro_arr = [];
                 foreach($pro_arr as $kk=>$vv){
                     $tmp_pro_arr[] = $vv['menu_num'];
                 }
                 if(in_array($v['pro_period'], $tmp_pro_arr)){
                     $data[$key]['last_pro_update'] =  '是';
+                    
                 }else {
                     $data[$key]['last_pro_update'] =  '否';
                 }
+                
+                if(!empty($ret_pro)){
+                    $diff_time = time() - strtotime($ret_pro['create_time']);
+                }
+                
+                $data[$key]['expire_days'] = ceil($diff_time / 86400) - 1 ;
                 
                     
                     
@@ -6469,6 +6477,10 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             array(
                 'apk_version',
                 'apk版本号'
+            ),
+            array(
+                'expire_days',
+                '节目单过期天数'
             )
         );
         $xlsName = '网络版位节目单更新状态表';
@@ -6512,11 +6524,11 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->AddAddress("xin.lijuan@littlehotspot.com");
             $mail->AddAddress("cao.jie@littlehotspot.com");
             $mail->AddAddress("ma.feng@littlehotspot.com");
-            //$mail->AddAddress("zhang.song@littlehotspot.com");
+            
             $mail->AddAddress("zhang.lijuan@littlehotspot.com");
             $mail->AddAddress("he.yongrui@littlehotspot.com");
             $mail->AddAddress("yang.kai@littlehotspot.com");
-			//$mail->AddAddress("chen.lingyu@littlehotspot.com");
+			
 			$mail->AddAddress("liao.liejin@littlehotspot.com");
 			$mail->AddAddress("wang.pengfei@littlehotspot.com");
             $mail->AddAddress("zhang.yingtao@littlehotspot.com");
