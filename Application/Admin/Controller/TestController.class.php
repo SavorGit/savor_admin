@@ -3743,8 +3743,9 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
     }
 
     public function cleandevsell(){
+        echo 'please use cleantestsell';
+        exit;
         $dev_idcodes = "'7b949a819efc4af4','da85d75c1af9b074','f0c46956cf9c2ceb','dfa47a62ecf97108','28401d8af46e6016','566df1cafaa2aa8d','7f7144b1ae584e52','9540bf692c156f39','0b6e2109b0ec64e3','706c048d9f181a6b','905d28125391f848','abc5cd9d536cb2fd','06e41b8476e91942','960687635d7f736d','e14d0f22d85bf841','55b152928eaa4d95','86b5855c8df4c092','24e211212eb9ae35','7ef3ea2b832d6ade'";
-
 
         $sql_1 = "delete from savor_finance_stock_record where idcode in ({$dev_idcodes}) and type=7";
         $sql_2 = "delete from savor_smallapp_activityapply where activity_id in (select id from savor_smallapp_activity where 
@@ -3753,6 +3754,31 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         $sql_4 = "delete from savor_smallapp_user_integralrecord where jdorder_id in ({$dev_idcodes})";
         $sql_5 = "UPDATE `cloud`.`savor_smallapp_usercoupon` SET `idcode` = '', `use_time` = '', `ustatus` = 1, `op_openid` = '' WHERE idcode in ({$dev_idcodes})";
 
+        $model = M();
+        $model->execute($sql_1);
+        $model->execute($sql_2);
+        $model->execute($sql_3);
+        $model->execute($sql_4);
+        $model->execute($sql_5);
+        echo 'clean ok';
+    }
+
+    public function cleantestsell(){
+        $now_time = date('Y-m-d 00:00:00');
+        $sql_1 = "delete from  savor_finance_sale_payment where hotel_id in (7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925)";
+        $sql_2 = "delete from savor_finance_sale_payment_record where sale_id in(
+            select id from savor_finance_sale where hotel_id in (7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925)
+            )";
+        $sql_3 = "delete from savor_finance_sale where hotel_id in (7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925)";
+        $sql_4 = "delete from savor_finance_stock_record where id in (
+            select t.id from (
+            select a.id from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id where 
+            a.type=7 and stock.hotel_id in 
+            (7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925) 
+            ) as t
+            )";
+
+        $sql_5="delete from savor_smallapp_user_integralrecord where hotel_id in (7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925) and add_time>='$now_time'";
         $model = M();
         $model->execute($sql_1);
         $model->execute($sql_2);
@@ -4558,5 +4584,50 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
             $m_sale->updateData(array('id'=>$v['id']),array('num'=>$num));
             echo "id:{$v['id']},$num ok \r\n";
         }
+    }
+
+    public function upopstask8(){
+        exit;
+        $sql = "SELECT a.hotel_id,hotel.name as hotel_name,a.task_id,GROUP_CONCAT(a.id) as ids,max(a.id) as last_id FROM savor_crm_task_record a left JOIN
+        savor_crm_task task on a.task_id=task.id left JOIN savor_hotel hotel on a.hotel_id=hotel.id left JOIN savor_hotel_ext
+        ext on hotel.id=ext.hotel_id WHERE a.add_time <= '2023-11-31 23:59:59' AND ext.is_salehotel=1
+        AND a.off_state=1 AND a.status!=3 AND a.is_trigger=1 AND a.handle_status IN ('0','2') AND a.finish_task_record_id=0
+        AND task.type=8 GROUP BY a.hotel_id,a.task_id";
+        $res_tasks = M()->query($sql);
+        $m_box = new \Admin\Model\BoxModel();
+        $all_hotels = array();
+        $all_task_ids = array();
+        foreach ($res_tasks as $v){
+            $hotel_id = $v['hotel_id'];
+            $res_box = $m_box->getBoxByCondition('box.mac,box.name',array('hotel.id'=>$hotel_id,'box.state'=>1,'box.flag'=>0));
+            if(empty($res_box)){
+                $all_hotels[$hotel_id]=$v['hotel_name'];
+                $all_task_ids[]=$v['ids'];
+            }
+        }
+        print_r($all_hotels);
+        echo join(',',$all_task_ids);
+    }
+
+    public function upopstask6(){
+        exit;
+        $sql = "SELECT a.hotel_id,hotel.name as hotel_name,ext.sale_hotel_in_time,a.task_id,GROUP_CONCAT(a.id) as ids,max(a.id) as last_id FROM savor_crm_task_record a left JOIN
+        savor_crm_task task on a.task_id=task.id left JOIN savor_hotel hotel on a.hotel_id=hotel.id left JOIN savor_hotel_ext
+        ext on hotel.id=ext.hotel_id WHERE a.add_time <= '2023-11-31 23:59:59' AND ext.is_salehotel=1
+        AND a.off_state=1 AND a.status!=3 AND a.is_trigger=1 AND a.handle_status IN ('0','2') AND a.finish_task_record_id=0
+        AND task.type=6 GROUP BY a.hotel_id,a.task_id";
+        $res_tasks = M()->query($sql);
+        $all_hotels = array();
+        $all_task_ids = array();
+        foreach ($res_tasks as $v){
+            $hotel_id = $v['hotel_id'];
+            $sale_hotel_in_time = $v['sale_hotel_in_time'];
+            if($sale_hotel_in_time=='0000-00-00 00:00:00'){
+                $all_hotels[$hotel_id]=$v['hotel_name'];
+                $all_task_ids[]=$v['ids'];
+            }
+        }
+        print_r($all_hotels);
+        echo join(',',$all_task_ids);
     }
 }
