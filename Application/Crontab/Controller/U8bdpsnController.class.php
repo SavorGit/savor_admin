@@ -72,7 +72,7 @@ class U8bdpsnController extends Controller{
         $m_sys_user = new \Admin\Model\UserModel();
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $where = [];
-        $where['status'] =2;
+        $where['status'] =1;
         $user_list = $m_department_user->getAllData('id,sys_user_id,department_id,name,u8_pk_id',$where);
         $flag = 0;
         foreach ($user_list as $key=>$v){
