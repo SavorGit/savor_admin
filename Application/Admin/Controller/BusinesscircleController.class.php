@@ -11,7 +11,27 @@ class BusinesscircleController extends BaseController {
         $name = I('name','','trim');
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);//显示每页记录数
+        $area_id = I('area_id',0,'intval');
+        $county_id = I('county_id',0,'intval');
         $where = array();
+        //print_r($_POST);
+        $m_area  = new \Admin\Model\AreaModel();
+        if(!empty($area_id)){
+            $where['area_id'] = $area_id;
+            
+            $parent_id = $this->getParentAreaid($area_id);
+            
+            
+            $fields = 'id,region_name';
+            $map = array();
+            $map['parent_id'] = $parent_id;
+            $county_list = $m_area->getWhere($fields, $map);
+            $this->assign('county',$county_list);
+        }
+        if(!empty($county_id)){
+            $where['county_id'] = $county_id;
+        }
+        
         if(!empty($name)){
             $where['name'] = array('like',"%$name%");
         }
@@ -34,11 +54,22 @@ class BusinesscircleController extends BaseController {
             $v['county'] = $county;
             $datalist[]=$v;
         }
-
+        
+        
+        $res_area = $m_area->getHotelAreaList();
+        $area_arr = array();
+        foreach ($res_area as $v){
+            $area_arr[$v['id']]=$v;
+        }
+        
+        $this->assign('area_id',$area_id);
+        $this->assign('county_id',$county_id);
+        $this->assign('area',$area_arr);
         $this->assign('datalist', $datalist);
         $this->assign('page',  $result['page']);
         $this->assign('pageNum',$page);
         $this->assign('numPerPage',$size);
+        $this->assign('name',$name);
         $this->display('datalist');
     }
 
