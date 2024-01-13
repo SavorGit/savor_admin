@@ -719,6 +719,57 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $this->exportToExcel($cell,$datalist,$filename,1);
     }
 
+    public function wodatagps(){
+        $geo_key = C('GAODE_KEY');
+        $model = M();
+        $sql = "select a.idcode,a.hotel_id,hotel.name as hotel_name,hotel.addr,hotel.gps as hotel_gps,a.area_id,area.region_name as area_name,
+            a.idcode,su.remark as maintainer,u.nickName,u.mobile,a.add_time,record.longitude,record.latitude 
+            from savor_finance_sale as a left join savor_finance_stock_record as record on a.stock_record_id=record.id
+            left join savor_hotel as hotel on a.hotel_id=hotel.id left join savor_area_info as area on a.area_id=area.id
+            left join savor_sysuser as su on a.maintainer_id=su.id left join savor_smallapp_user as u on record.op_openid=u.openid
+            where a.add_time>='2024-01-04 18:30:00' and record.longitude!=''  order by a.id desc";
+        $res_data = $model->query($sql);
+        $datalist = array();
+        foreach ($res_data as $v){
+            $gps_arr = explode(',',$v['hotel_gps']);
+            $bd_lnglat = gpsToBaidu($v['longitude'], $v['latitude']);
+            $latitude = $bd_lnglat['latitude'];
+            $longitude = $bd_lnglat['longitude'];
+            $dis = geo_distance($latitude,$longitude,$gps_arr[1],$gps_arr[0]);
+            $v['dis_km'] = round($dis/1000,2);
+
+            $url = "https://restapi.amap.com/v3/geocode/regeo?output=json&location={$v['longitude']},{$v['latitude']}&key=$geo_key";
+            $result = file_get_contents($url);
+            $res_map = json_decode($result,true);
+            $v['wo_addr'] = $res_map['regeocode']['formatted_address'];
+
+            $datalist[]=$v;
+            echo "{$v['idcode']} {$v['dis_km']} \r\n";
+//            if($v['dis_km']>=5){
+//                $url = "https://restapi.amap.com/v3/geocode/regeo?output=json&location={$v['longitude']},{$v['latitude']}&key=$geo_key";
+//                $result = file_get_contents($url);
+//                $res_map = json_decode($result,true);
+//                $v['wo_addr'] = $res_map['regeocode']['formatted_address'];
+//
+//                $datalist[]=$v;
+//                echo "{$v['idcode']} {$v['dis_km']} \r\n";
+//            }
+        }
+        $cell = array(
+            array('idcode','唯一识别码'),
+            array('add_time','核销时间'),
+            array('area_name','城市'),
+            array('hotel_name','酒楼名称'),
+            array('addr','酒楼地址'),
+            array('maintainer','驻店人'),
+            array('nickname','核销人'),
+            array('mobile','核销人手机号码'),
+            array('dis_km','距离(千米)'),
+            array('wo_addr','核销地址'),
+        );
+        $filename = '酒楼核销位置数据';
+        $this->exportToExcel($cell,$datalist,$filename,2);
+    }
 
     public function salelnglat(){
         $json_data = file_get_contents('/application_data/web/php/savor_admin/code.json');
