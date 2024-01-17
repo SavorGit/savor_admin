@@ -184,6 +184,7 @@ class DistributiongoodsController extends BaseController {
             $duser_id = I('post.duser_id',0,'intval');
             $is_top = I('post.is_top',0,'intval');
             $top_media_id = I('post.topmedia_id',0,'intval');
+            $sort = I('post.sort',0,'intval');
 
             if($line_price && $line_price<$price){
                 $this->output('划线价必须大于零售价', "distributiongoods/goodsadd", 2, 0);
@@ -229,7 +230,7 @@ class DistributiongoodsController extends BaseController {
                 'distribution_profit'=>0,'amount'=>$amount,'supply_price'=>$supply_price,'line_price'=>$line_price,
                 'distribution_config'=>$distribution_config,'duser_id'=>$duser_id,'type'=>45,'finance_goods_id'=>$finance_goods_id,
                 'merchant_id'=>92,'sysuser_id'=>$sysuser_id,'update_time'=>date('Y-m-d H:i:s'),
-                'is_top'=>$is_top,'top_media_id'=>$top_media_id,'area_ids'=>$data_area_ids);
+                'is_top'=>$is_top,'top_media_id'=>$top_media_id,'sort'=>$sort,'area_ids'=>$data_area_ids);
 
             $data['status'] = $status;
             if($status==1){
