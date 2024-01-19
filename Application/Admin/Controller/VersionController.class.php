@@ -1067,7 +1067,12 @@ class VersionController extends BaseController{
 	        }else{
 	            $datalist[$k]['update_typestr'] = '';
 	        }
-	        $where = array('version_code'=>$v['version'],'device_type'=>$type);
+	        if($device_type==2){
+	            $where = array('version_code'=>$v['version'],'device_type'=>$type,'model'=>0);
+	        }else {
+	            $where = array('version_code'=>$v['version'],'device_type'=>$type);
+	        }
+	        
 	        $oss_info = $versionModel->where($where)->find();
 	        if($oss_info['oss_addr']){
 	            $datalist[$k]['oss_addr'] = $this->oss_host.$oss_info['oss_addr'];
