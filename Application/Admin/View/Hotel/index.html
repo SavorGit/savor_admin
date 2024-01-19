@@ -263,17 +263,22 @@
             </th> -->
             <th>ID</th>
             <th>酒店名称</th>
+            <th>是否售酒酒楼</th>
             <th>城市</th>
+            <th>城区</th>
+            <th>商圈</th>
             <th>地址</th>
             <th>联系人</th>
             <th>联系电话</th>
             <th>状态</th>
             <th>合作维护人</th>
-            <th>技术运维人</th>
+            <th>签约人</th>
+            <th>驻店人</th>
+            <!-- <th>技术运维人</th> -->
             <th>包间数量</th>
             <th>机顶盒数量</th>
             <th>电视数量</th>
-            <th>单机版节目单</th>
+            <!-- <th>单机版节目单</th> -->
             <th>网络版节目单</th>
             <th class="table-tool">操作</th>
           </tr>
@@ -286,7 +291,10 @@
               </td> -->
               <td data-title="酒店ID">{$vlist.id}</td>
               <td data-title="酒店名称">{$vlist.name}</td>
+              <td data-title="是否售酒酒楼">{$vlist.is_salehotel}</td>
               <td data-title="城市">{$vlist.region_name}</td>
+              <td data-title="城区">{$vlist.country_name}</td>
+              <td data-title="商圈">{$vlist.circle_name}</td>
               <td data-title="地址">{$vlist.addr}</td>
               <td data-title="联系人">{$vlist.contractor}</td>
               <td data-title="联系电话">{$vlist.mobile}</td>
@@ -299,7 +307,9 @@
                 </if>
               </td>
               <td data-title="合作维护人">{$vlist.maintainer}</td>
-              <td data-title="技术运维人">{$vlist.tech_maintainer}</td>
+              <td data-title="签约人">{$vlist.signer_name}</td>
+              <td data-title="驻店人">{$vlist.residenter_name}</td>
+              <!-- <td data-title="技术运维人">{$vlist.tech_maintainer}</td> -->
               <td data-title="包间数量"><a title="{$vlist.name}包间列表" target="navTab" rel="hotel/room" href="{$host_name}/hotel/room?hotel_id={$vlist.id}">{$vlist.room_num}</a></td>
               <td data-title="机顶盒数量">
                 <if condition="($vlist.box_num gt 0) AND ($vlist.type neq 4)">
@@ -315,7 +325,7 @@
                   {$vlist.tv_num}
                 </if>
               </td>
-              <td data-title="节目单"> <if condition="$vlist.menu_id GT 0">  <a title="{$vlist.name}节目单列表" target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a><else />无</if></td>
+              <!-- <td data-title="节目单"> <if condition="$vlist.menu_id GT 0">  <a title="{$vlist.name}节目单列表" target="dialog" rel="device/tv" href="{$host_name}/menu/getdetail?id={$vlist.menu_id}&name={$vlist.menu_name}">{$vlist.menu_name}</a><else />无</if></td> -->
 
               <td data-title="新节目单"> <if condition="$vlist.promenu_id GT 0">  <a title="{$vlist.name}节目单列表" target="dialog" rel="device/tv" href="{$host_name}/programmenu/getdetail?id={$vlist.promenu_id}&name={$vlist.promenu_name}">{$vlist.promenu_name}</a><else />无</if></td>
 

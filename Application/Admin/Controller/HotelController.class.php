@@ -235,7 +235,13 @@ class HotelController extends BaseController {
 			}
 			ksort($hezuo_arr);
 			$this->assign('hezuo_arr',$hezuo_arr);
-            $fields = "a.id,a.name,a.addr,a.contractor,a.type,a.mobile,a.state,ext.maintainer_id,area.region_name";
+            $fields = "a.id,a.name,a.addr,a.contractor,a.type,a.mobile,a.state,
+                       ext.maintainer_id,area.region_name,country.region_name country_name,
+                       circle.name circle_name,user1.remark signer_name,user2.remark residenter_name,
+                       case ext.is_salehotel
+                       when 0 THEN '否'
+                       when 1 then '是'
+                       end as is_salehotel";
 			$result = $hotelModel->getListExt($where, $orders,$start,$size, $fields);
 		}
         
