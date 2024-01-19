@@ -78,7 +78,8 @@ class SellwineController extends BaseController {
         }
         $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
         $start  = ($page-1) * $size;
-        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,
+        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,
+                   county.region_name county_name,su.remark as maintainer,
         a.sale_start_date,a.sale_end_date,a.trade_area_type,susigner.remark as signer,a.sale3bottle_time';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc',$start,$size);
