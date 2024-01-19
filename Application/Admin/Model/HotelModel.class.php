@@ -61,6 +61,10 @@ class HotelModel extends BaseModel{
 		        ->where($where)
     			->join('savor_hotel_ext ext on ext.hotel_id=a.id','left')
     			->join('savor_area_info area on a.area_id=area.id','left')
+    			->join('savor_area_info country on country.id=a.county_id','left')
+    			->join('savor_business_circle circle on   a.business_circle_id=circle.id','left')
+    			->join('savor_sysuser user1 on   ext.signer_id=user1.id','left')
+    			->join('savor_sysuser user2 on   ext.residenter_id=user2.id','left')
     			->order($order)
     			->limit($start,$size)
     			->select();
