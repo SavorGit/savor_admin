@@ -13,6 +13,9 @@ class FinanceChangepriceRecordModel extends BaseModel{
         $where = array('status'=>array('in','0,1'));
         $where["DATE_FORMAT(add_time,'%Y-%m-%d')"] = date('Y-m-d',strtotime('-1 day'));
         $res_data = $this->getDataList('*',$where,'goods_id asc,id asc');
+//        $res_data = array(
+//            array('id'=>'ts9999','goods_id'=>6,'purchase_detail_id'=>0,'price'=>0)
+//        );//处理特殊情况
         foreach ($res_data as $v){
             $this->updateData(array('id'=>$v['id']),array('status'=>1));
             echo "id: {$v['id']}-{$v['goods_id']}-{$v['purchase_detail_id']} start \r\n";
