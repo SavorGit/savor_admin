@@ -167,7 +167,8 @@ function sendSmallappTopicMessage($message,$type){
         return false;
     }
     $all_type = array('20'=>'bonustomoney','30'=>'rewardmoney','40'=>'fileconversion','50'=>'prizemoney',
-        '60'=>'saleorder','70'=>'upcompanystock','80'=>'auditwriteoff','81'=>'sellvoucher1','82'=>'sellvoucher3');
+        '60'=>'saleorder','70'=>'upcompanystock','80'=>'auditwriteoff','81'=>'sellvoucher1','82'=>'sellvoucher3',
+        '88'=>'groupbuyvoucher','89'=>'sellvoucher2');
     $accessId = C('OSS_ACCESS_ID');
     $accessKey= C('OSS_ACCESS_KEY');
     $endPoint = C('QUEUE_ENDPOINT');
