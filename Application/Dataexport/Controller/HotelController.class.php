@@ -770,65 +770,104 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $filename = '酒楼核销位置数据';
         $this->exportToExcel($cell,$datalist,$filename,2);
     }
+    public function hoteldata(){
+        $startOfMonth = date('Y-m-01');
+        $endOfMonth = date('Y-m-t');
+        $month_start_time = "$startOfMonth 00:00:00";
+        $month_end_time = "$endOfMonth 23:59:59";
 
-    public function salelnglat(){
-        $json_data = file_get_contents('/application_data/web/php/savor_admin/code.json');
-        $data = json_decode($json_data,true);
-        $model = M();
-        $m_hotel = new \Admin\Model\HotelModel();
+        $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.county_id,a.business_circle_id,county.region_name as country_name,circle.name as circle_name,
+            ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name,ext.is_salehotel from savor_hotel as a left join savor_hotel_ext as ext 
+            on a.id=ext.hotel_id 
+            left join savor_area_info as area on a.area_id=area.id
+            left join savor_area_info as county on a.county_id = county.id 
+            left join savor_business_circle as circle on a.business_circle_id = circle.id 
+            left join savor_sysuser as signer on ext.signer_id=signer.id
+            left join savor_sysuser as residenter on ext.residenter_id=residenter.id
+            where a.state=1 and a.flag=0 and a.htype=10 and a.id not in (7,482,504,791,508,844,845,597,201,493,883,53,598,1366,1337,925)
+            order by a.area_id asc";
+        $result = M()->query($sql);
+        $m_room = new \Admin\Model\RoomModel();
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $m_merchant = new \Admin\Model\Integral\MerchantModel();
+        $m_salerecord = new \Admin\Model\Crm\SalerecordModel();
+        $redis = new \Common\Lib\SavorRedis();
+        $redis->select(9);
+        $cache_key = C('FINANCE_HOTELSTOCK');
         $datalist = array();
-        foreach ($data as $k=>$v){
-            $hotel_id = $k;
-            $res_hotel = $m_hotel->getHotelById('hotel.id,hotel.name,hotel.gps,area.region_name as area_name',array('hotel.id'=>$hotel_id));
-            $hotel_name = $res_hotel['name'];
-            $gps_arr = explode(',',$res_hotel['gps']);
-            foreach ($v as $cv){
-                $idcode = $cv['idcode'];
-                $sql_user = "select a.sale_openid,u.mobile,u.avatarUrl,u.nickName from savor_finance_sale as a left join savor_smallapp_user as u on a.sale_openid=u.openid
-                where a.idcode='$idcode'";
-                $res_user = $model->query($sql_user);
+        foreach ($result as $v){
+            $hotel_id = $v['hotel_id'];
+            $circle_name = !empty($v['circle_name'])?$v['circle_name']:'';
+            $res_room = $m_room->getRoomByCondition('count(room.id) as num',array('hotel.id'=>$v['hotel_id'],'room.state'=>1,'room.flag'=>0));
+            $room_num = intval($res_room[0]['num']);
 
-                $gps_latitude = $cv['gps_latitude']['value'];
-                $gps_longitude = $cv['gps_longitude']['value'];
-                $latitude = $this->dmsToDecimal($gps_latitude);
-                $longitude = $this->dmsToDecimal($gps_longitude);
-//                $bd_lnglat = gpsToBaidu($longitude, $latitude);
-//                $latitude = $bd_lnglat['latitude'];
-//                $longitude = $bd_lnglat['longitude'];
+            $salewhere = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'record.wo_status'=>2);
+            $salewhere['record.add_time'] = array(array('egt',$month_start_time),array('elt',$month_end_time));
+            $res_stock_record = $m_sale->alias('a')
+                ->field('count(a.id) as num')
+                ->join('savor_finance_stock_record record on a.stock_record_id=record.id','left')
+                ->where($salewhere)
+                ->select();
+            $sale_num = intval($res_stock_record[0]['num']);
 
-                $dis = geo_distance($latitude,$longitude,$gps_arr[1],$gps_arr[0]);
+            $visitwhere = array('signin_hotel_id'=>$v['hotel_id'],'type'=>1,'status'=>2);
+            $visitwhere['add_time'] = array(array('egt',$month_start_time),array('elt',$month_end_time));
+            $res_visit = $m_salerecord->getDataList('count(id) as num',$visitwhere);
+            $visit_num = intval($res_visit[0]['num']);
 
-                $datalist[]=array('idcode'=>$idcode,'hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'area_name'=>$res_hotel['area_name'],
-                    'openid'=>$res_user[0]['sale_openid'],'nickName'=>$res_user[0]['nickName'],'mobile'=>$res_user[0]['mobile'],
-                    'dis'=>$dis,'gps'=>"{$longitude},{$latitude}",'org_gps'=>"$gps_latitude,$gps_longitude"
-                    );
+            $res_merchant = $m_merchant->getMerchants('a.id,a.is_shareprofit',array('a.hotel_id'=>$hotel_id,'a.status'=>1),'');
+            $is_shareprofit_str = '';
+            if(!empty($res_merchant[0]['id'])){
+                $is_shareprofit = $res_merchant[0]['is_shareprofit'];
+                if($is_shareprofit==1){
+                    $is_shareprofit_str = '是';
+                }else{
+                    $is_shareprofit_str = '否';
+                }
             }
+            $is_salehotel_str = $v['is_salehotel']==1?'是':'否';
+
+            $sku_num = 0;
+            $stock_num = 0;
+            $res_cache_stock = $redis->get($cache_key.":$hotel_id");
+            if(!empty($res_cache_stock)){
+                $cache_stock = json_decode($res_cache_stock,true);
+                $sku_num = count($cache_stock['goods_ids']);
+                if($sku_num>0){
+                    foreach ($cache_stock['goods_list'] as $gv){
+                        $stock_num+=$gv['stock_num'];
+                    }
+                }
+            }
+
+            $datalist[]=array('hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],'country_name'=>$v['country_name'],
+                'circle_name'=>$circle_name,'room_num'=>$room_num,'sale_num'=>$sale_num,'visit_num'=>$visit_num,
+                'signer_name'=>$v['signer_name'],'residenter_name'=>$v['residenter_name'],'sku_num'=>$sku_num,'stock_num'=>$stock_num,
+                'is_shareprofit_str'=>$is_shareprofit_str,'is_salehotel_str'=>$is_salehotel_str,
+            );
         }
+
         $cell = array(
-            array('hotel_id','酒楼ID'),
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
             array('area_name','城市'),
-            array('idcode','唯一识别码'),
-            array('openid','用户openid'),
-            array('nickName','昵称'),
-            array('mobile','手机号码'),
-            array('dis','距离'),
-            array('gps','GPS'),
-            array('org_gps','ORG_GPS'),
+            array('country_name','区域'),
+            array('circle_name','商圈'),
+            array('room_num','包间数'),
+            array('sale_num','本月销量'),
+            array('visit_num','本月拜访次数'),
+            array('signer_name','签约人'),
+            array('residenter_name','驻店人'),
+            array('sku_num','sku数'),
+            array('stock_num','库存数'),
+            array('is_shareprofit_str','是否分润'),
+            array('is_salehotel_str','是否是售酒餐厅'),
         );
-        $filename = '酒楼数据';
-        $this->exportToExcel($cell,$datalist,$filename,1);
+
+        $filename = '酒楼数据表';
+        $this->exportToExcel($cell,$datalist,$filename,2);
     }
 
-    function dmsToDecimal($dms) {
-        preg_match('/(\d+)deg (\d+)\' ([\d.]+)"/', $dms, $matches);
-        $degrees = (int) $matches[1];
-        $minutes = (int) $matches[2];
-        $seconds = (float) $matches[3];
-        $decimal = $degrees + ($minutes / 60) + ($seconds / 3600);
-        return $decimal;
-    }
     function getGzHotelList(){
         $sql ="select a.id as hotel_id,a.name as hotel_name,a.addr,a.area_id,area.region_name as area_name,
                count.region_name as count_name, a.county_id,a.business_circle_id,circle.name circle_name,
