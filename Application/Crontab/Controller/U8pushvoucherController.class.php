@@ -32,4 +32,38 @@ class U8pushvoucherController extends Controller{
         echo "voucher end:$now_time \r\n";
     }
 
+    public function salevoucher(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "salevoucher start:$now_time \r\n";
+
+        $last_time = time() - 3600;
+        $start_time = date('Y-m-d 00:00:00',$last_time);
+        $end_time = date('Y-m-d H:59:59',$last_time);
+
+        $start_time = '2024-01-11 00:00:00';
+        $end_time = '2024-01-21 23:59:59';
+
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $fileds = 'id as sale_id,type,add_time';
+        $where = array('type'=>array('in','1,4'),'ptype'=>1);
+        $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
+        $where['push_u8_status2'] = 0;
+
+        $res_data = $m_sale->getDataList($fileds,$where,'id asc');
+        $map_push_type = array('1'=>89,'4'=>88);
+        foreach ($res_data as $v){
+            $sale_id = $v['sale_id'];
+            $type = $v['type'];
+            $push_type = $map_push_type[$type];
+
+            sendSmallappTopicMessage($sale_id,$push_type);
+
+            usleep(500000);
+
+            echo "sale_id:$sale_id,type:$type \r\n";
+        }
+        $now_time = date('Y-m-d H:i:s');
+        echo "salevoucher end:$now_time \r\n";
+    }
+
 }
