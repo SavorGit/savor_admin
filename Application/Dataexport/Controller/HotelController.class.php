@@ -776,9 +776,10 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $month_start_time = "$startOfMonth 00:00:00";
         $month_end_time = "$endOfMonth 23:59:59";
 
-        $sql ="select a.id as hotel_id,a.name as hotel_name,area.region_name as area_name,a.county_id,a.business_circle_id,county.region_name as country_name,circle.name as circle_name,
-            ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name,ext.is_salehotel from savor_hotel as a left join savor_hotel_ext as ext 
-            on a.id=ext.hotel_id 
+        $sql ="select a.id as hotel_id,a.name as hotel_name,a.addr,area.region_name as area_name,a.county_id,a.business_circle_id,county.region_name as country_name,circle.name as circle_name,
+            ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name,ext.is_salehotel,
+            ext.avg_expense,a.contractor,a.mobile,a.tel
+            from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_area_info as county on a.county_id = county.id 
             left join savor_business_circle as circle on a.business_circle_id = circle.id 
@@ -788,9 +789,12 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             order by a.area_id asc";
         $result = M()->query($sql);
         $m_room = new \Admin\Model\RoomModel();
+        $m_box = new \Admin\Model\BoxModel();
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $m_merchant = new \Admin\Model\Integral\MerchantModel();
         $m_salerecord = new \Admin\Model\Crm\SalerecordModel();
+        $m_opsstaff = new \Admin\Model\OpsstaffModel();
+        $m_contract = new \Admin\Model\FinanceContractHotelModel();
         $redis = new \Common\Lib\SavorRedis();
         $redis->select(9);
         $cache_key = C('FINANCE_HOTELSTOCK');
@@ -800,6 +804,13 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             $circle_name = !empty($v['circle_name'])?$v['circle_name']:'';
             $res_room = $m_room->getRoomByCondition('count(room.id) as num',array('hotel.id'=>$v['hotel_id'],'room.state'=>1,'room.flag'=>0));
             $room_num = intval($res_room[0]['num']);
+
+            $res_box = $m_box->getBoxByCondition('count(box.id) as num',array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0));
+            $all_box_num = intval($res_box[0]['num']);
+
+            $res_box = $m_box->getBoxByCondition('count(box.id) as num',array('hotel.id'=>$v['hotel_id'],'box.state'=>1,'box.flag'=>0,'box.box_type'=>7));
+            $tv_num = intval($res_box[0]['num']);
+            $box_num = $all_box_num-$tv_num;
 
             $salewhere = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'record.wo_status'=>2);
             $salewhere['record.add_time'] = array(array('egt',$month_start_time),array('elt',$month_end_time));
@@ -826,6 +837,22 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
                 }
             }
             $is_salehotel_str = $v['is_salehotel']==1?'是':'否';
+            $residenter_mobile='';
+            if($v['residenter_id']){
+                $res_staff = $m_opsstaff->getInfo(array('sysuser_id'=>$v['residenter_id']));
+                $residenter_mobile = $res_staff['mobile'];
+            }
+            $mobile_arr = array();
+            if(!empty($v['mobile']))    $mobile_arr[]=$v['mobile'];
+            if(!empty($v['tel']))       $mobile_arr[]=$v['tel'];
+            $hotel_mobile = !empty($mobile_arr)?join('/',$mobile_arr):'';
+
+            $cwhere = array('a.hotel_id'=>$hotel_id,'contract.type'=>20,'contract.ctype'=>21);
+            $res_contract = $m_contract->getContract('contract.company_name',$cwhere,'a.id desc');
+            $company_name = '';
+            if(!empty($res_contract[0]['company_name'])){
+                $company_name = $res_contract[0]['company_name'];
+            }
 
             $sku_num = 0;
             $stock_num = 0;
@@ -839,11 +866,13 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
                     }
                 }
             }
+            echo "hotel_id:$hotel_id ok \r\n";
 
             $datalist[]=array('hotel_id'=>$v['hotel_id'],'hotel_name'=>$v['hotel_name'],'area_name'=>$v['area_name'],'country_name'=>$v['country_name'],
-                'circle_name'=>$circle_name,'room_num'=>$room_num,'sale_num'=>$sale_num,'visit_num'=>$visit_num,
+                'circle_name'=>$circle_name,'room_num'=>$room_num,'box_num'=>$box_num,'sale_num'=>$sale_num,'visit_num'=>$visit_num,
                 'signer_name'=>$v['signer_name'],'residenter_name'=>$v['residenter_name'],'sku_num'=>$sku_num,'stock_num'=>$stock_num,
-                'is_shareprofit_str'=>$is_shareprofit_str,'is_salehotel_str'=>$is_salehotel_str,
+                'is_shareprofit_str'=>$is_shareprofit_str,'is_salehotel_str'=>$is_salehotel_str,'addr'=>$v['addr'],'residenter_mobile'=>$residenter_mobile,
+                'tv_num'=>$tv_num,'contractor'=>$v['contractor'],'avg_expense'=>$v['avg_expense'],'mobile'=>$hotel_mobile,'company_name'=>$company_name
             );
         }
 
@@ -854,14 +883,22 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             array('country_name','区域'),
             array('circle_name','商圈'),
             array('room_num','包间数'),
+            array('box_num','机顶盒数'),
+            array('tv_num','电视机数'),
             array('sale_num','本月销量'),
             array('visit_num','本月拜访次数'),
             array('signer_name','签约人'),
             array('residenter_name','驻店人'),
+            array('residenter_mobile','驻店人联系电话'),
             array('sku_num','sku数'),
             array('stock_num','库存数'),
             array('is_shareprofit_str','是否分润'),
             array('is_salehotel_str','是否是售酒餐厅'),
+            array('addr','地址'),
+            array('company_name','签约主体名称'),
+            array('avg_expense','人均消费'),
+            array('contractor','酒楼联系人'),
+            array('mobile','酒楼联系电话'),
         );
 
         $filename = '酒楼数据表';
