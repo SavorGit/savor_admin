@@ -191,6 +191,7 @@ class UserController extends BaseController {
         $data_list = $res_list['list'];
         $order_status = C('ORDER_ALLSTATUS');
         if(!empty($data_list)){
+            $m_distuser = new \Admin\Model\Smallapp\DistributionUserModel();
             foreach ($data_list as $k=>$v){
                 $settlement_str = '未结算';
                 if($v['is_settlement']==1){
@@ -198,6 +199,20 @@ class UserController extends BaseController {
                 }
                 $data_list[$k]['settlement_str'] = $settlement_str;
                 $data_list[$k]['status_str'] = $order_status[$v['status']];
+
+                $sale_user_name = '';
+                if($v['sale_uid']){
+                    $res_duser = $m_distuser->getInfo(array('id'=>$v['sale_uid']));
+                    $sale_user_name = $res_duser['name'].'/'.$res_duser['mobile'];
+                    if($res_duser['level']==1){
+                        $sale_user_name.='(一级)';
+                    }else{
+                        $sale_user_name.='(二级)';
+                        $res_duser = $m_distuser->getInfo(array('id'=>$res_duser['parent_id']));
+                        $sale_user_name.= '----'.$res_duser['name'].'/'.$res_duser['mobile'].'(一级)';
+                    }
+                }
+                $data_list[$k]['sale_user_name'] = $sale_user_name;
             }
         }
 
