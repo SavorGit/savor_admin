@@ -58,8 +58,12 @@ class FinanceChangepriceRecordModel extends BaseModel{
                 //更新savor_finance_stock_detail,savor_finance_stock_record表price
                 if($change_purchase_detail_id==$gv['purchase_detail_id']){
                     $m_stock_detail->updateData(array('id'=>$stock_detail_id),array('price'=>$change_price));
+
+                    $res_nowpd = $m_purchase_detail->getInfo(array('id'=>$change_purchase_detail_id));
+                    $now_change_price = sprintf("%.2f",$res_nowpd['total_fee']/$res_nowpd['total_amount']);
+
                     $idcodes_str = join("','",$idcodes);
-                    $change_price_sql = "update savor_finance_stock_record set price=$change_price*amount,total_fee=$change_price*total_amount where idcode in('$idcodes_str')";
+                    $change_price_sql = "update savor_finance_stock_record set price=$now_change_price*amount,total_fee=$now_change_price*total_amount where idcode in('$idcodes_str')";
                     $m_stock_record->execute($change_price_sql);
                 }
             }
