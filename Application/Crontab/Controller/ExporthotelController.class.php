@@ -328,7 +328,6 @@ class ExporthotelController extends BaseController{
         $mail->Subject = $title;
         $mail->Body = $body;
 
-
         $mail->AddAddress("alex.liu@littlehotspot.com");
         $mail->AddAddress("ma.feng@littlehotspot.com");
         $mail->AddAddress("hu.shunhua@littlehotspot.com");
