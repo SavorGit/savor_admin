@@ -462,8 +462,10 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $end_time = I('end_time','');
         $where = array('a.is_salehotel'=>1,'hotel.state'=>1,'hotel.flag'=>0);
         $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
-        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,su.remark as maintainer,
+        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,
+                   county.region_name county_name,su.remark as maintainer,
         a.sale_start_date,a.sale_end_date,a.trade_area_type,susigner.remark as signer,a.sale3bottle_time';
+        
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc');
         $datalist = array();
@@ -519,6 +521,7 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
             array('area_name','城市'),
+            array('county_name','城区'),
             array('maintainer','维护人'),
             array('signer','签约人'),
             array('trade_area_type_str','商圈类型'),
