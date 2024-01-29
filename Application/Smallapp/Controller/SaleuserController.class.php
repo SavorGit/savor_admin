@@ -114,6 +114,7 @@ class SaleuserController extends BaseController {
                     $info = $integral_types[$v['type']].'商品：'.$goods_info['name'].' 数量：'.$v['content'];
                     break;
                 case 17:
+                case 25:
                     $info = $integral_types[$v['type']];
                     if($v['source']==4){
                         $info.="(分润)";
@@ -130,7 +131,7 @@ class SaleuserController extends BaseController {
                 if($v['status']==1){
                     $status_str = '可用';
                 }elseif($v['status']==2){
-                    $status_str = '待核销';
+                    $status_str = '冻结';
                 }
             }
             $data_list[$k]['status_str']  = $status_str;

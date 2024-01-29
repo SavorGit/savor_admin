@@ -774,64 +774,6 @@ where a.static_date>='$static_sdate' and a.static_date<='$static_edate' group by
         $this->exportToExcel($cell,$datalist,$filename,2);
     }
 
-    public function salelnglat(){
-        $json_data = file_get_contents('/application_data/web/php/savor_admin/code.json');
-        $data = json_decode($json_data,true);
-        $model = M();
-        $m_hotel = new \Admin\Model\HotelModel();
-        $datalist = array();
-        foreach ($data as $k=>$v){
-            $hotel_id = $k;
-            $res_hotel = $m_hotel->getHotelById('hotel.id,hotel.name,hotel.gps,area.region_name as area_name',array('hotel.id'=>$hotel_id));
-            $hotel_name = $res_hotel['name'];
-            $gps_arr = explode(',',$res_hotel['gps']);
-            foreach ($v as $cv){
-                $idcode = $cv['idcode'];
-                $sql_user = "select a.sale_openid,u.mobile,u.avatarUrl,u.nickName from savor_finance_sale as a left join savor_smallapp_user as u on a.sale_openid=u.openid
-                where a.idcode='$idcode'";
-                $res_user = $model->query($sql_user);
-
-                $gps_latitude = $cv['gps_latitude']['value'];
-                $gps_longitude = $cv['gps_longitude']['value'];
-                $latitude = $this->dmsToDecimal($gps_latitude);
-                $longitude = $this->dmsToDecimal($gps_longitude);
-//                $bd_lnglat = gpsToBaidu($longitude, $latitude);
-//                $latitude = $bd_lnglat['latitude'];
-//                $longitude = $bd_lnglat['longitude'];
-
-                $dis = geo_distance($latitude,$longitude,$gps_arr[1],$gps_arr[0]);
-
-                $datalist[]=array('idcode'=>$idcode,'hotel_id'=>$hotel_id,'hotel_name'=>$hotel_name,'area_name'=>$res_hotel['area_name'],
-                    'openid'=>$res_user[0]['sale_openid'],'nickName'=>$res_user[0]['nickName'],'mobile'=>$res_user[0]['mobile'],
-                    'dis'=>$dis,'gps'=>"{$longitude},{$latitude}",'org_gps'=>"$gps_latitude,$gps_longitude"
-                    );
-            }
-        }
-        $cell = array(
-            array('hotel_id','酒楼ID'),
-            array('hotel_id','酒楼ID'),
-            array('hotel_name','酒楼名称'),
-            array('area_name','城市'),
-            array('idcode','唯一识别码'),
-            array('openid','用户openid'),
-            array('nickName','昵称'),
-            array('mobile','手机号码'),
-            array('dis','距离'),
-            array('gps','GPS'),
-            array('org_gps','ORG_GPS'),
-        );
-        $filename = '酒楼数据';
-        $this->exportToExcel($cell,$datalist,$filename,1);
-    }
-
-    function dmsToDecimal($dms) {
-        preg_match('/(\d+)deg (\d+)\' ([\d.]+)"/', $dms, $matches);
-        $degrees = (int) $matches[1];
-        $minutes = (int) $matches[2];
-        $seconds = (float) $matches[3];
-        $decimal = $degrees + ($minutes / 60) + ($seconds / 3600);
-        return $decimal;
-    }
     function getGzHotelList(){
         $sql ="select a.id as hotel_id,a.name as hotel_name,a.addr,a.area_id,area.region_name as area_name,
                count.region_name as count_name, a.county_id,a.business_circle_id,circle.name circle_name,

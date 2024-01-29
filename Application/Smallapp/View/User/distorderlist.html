@@ -67,6 +67,7 @@
                         <th>购买人openid</th>
                         <th>购买人手机号码</th>
                         <th>销售人员ID</th>
+                        <th>销售人员姓名</th>
                         <th>下单时间</th>
                         <th>是否已结算</th>
                         <th>操作</th>
@@ -75,7 +76,7 @@
                     <tbody data-check="list" data-parent=".table">
                     <foreach name="datalist" item="dinfo">
                         <tr target="sid_user">
-                            <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
+                            <td data-title="ID">{$dinfo.id}</td>
                             <td data-title="商品名称">{$dinfo.goods_name}</td>
                             <td data-title="数量">{$dinfo.amount}</td>
                             <td data-title="订单总价">{$dinfo.total_fee}</td>
@@ -86,6 +87,7 @@
                             <td data-title="购买人openid">{$dinfo.openid}</td>
                             <td data-title="购买人手机号码">{$dinfo.mobile}</td>
                             <td data-title="销售人员ID">{$dinfo.sale_uid}</td>
+                            <td data-title="销售人员姓名">{$dinfo.sale_user_name}</td>
                             <td data-title="下单时间">{$dinfo.add_time}</td>
                             <td data-title="是否已结算">{$dinfo.settlement_str}</td>
                             <td class="table-tool" data-title="操作">

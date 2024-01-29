@@ -36,7 +36,7 @@
                 <div class="col-xs-12 col-sm-10">
                     <select id="ex_type" name="ex_type" class="form-control bs-select class-filter" >
                         <volist name="order_express_types" id="exinfo">
-                            <option value="{$exinfo.id}" <if condition="$einfo.dtype eq $exinfo['id']">selected</if>>{$exinfo.name}</option>
+                            <option value="{$exinfo.id}" <if condition="$einfo.type eq $exinfo['id']">selected</if>>{$exinfo.name}</option>
                         </volist>
                     </select>
                 </div>

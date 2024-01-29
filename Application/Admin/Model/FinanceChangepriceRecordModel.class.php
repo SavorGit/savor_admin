@@ -14,7 +14,8 @@ class FinanceChangepriceRecordModel extends BaseModel{
         $where["DATE_FORMAT(add_time,'%Y-%m-%d')"] = date('Y-m-d',strtotime('-1 day'));
         $res_data = $this->getDataList('*',$where,'goods_id asc,id asc');
 //        $res_data = array(
-//            array('id'=>'ts9999','goods_id'=>6,'purchase_detail_id'=>0,'price'=>0)
+//            array('id'=>'ts9991','goods_id'=>1,'purchase_detail_id'=>0,'price'=>0),
+//            array('id'=>'ts9994','goods_id'=>4,'purchase_detail_id'=>0,'price'=>0)
 //        );//处理特殊情况
         foreach ($res_data as $v){
             $this->updateData(array('id'=>$v['id']),array('status'=>1));
@@ -57,8 +58,12 @@ class FinanceChangepriceRecordModel extends BaseModel{
                 //更新savor_finance_stock_detail,savor_finance_stock_record表price
                 if($change_purchase_detail_id==$gv['purchase_detail_id']){
                     $m_stock_detail->updateData(array('id'=>$stock_detail_id),array('price'=>$change_price));
+
+                    $res_nowpd = $m_purchase_detail->getInfo(array('id'=>$change_purchase_detail_id));
+                    $now_change_price = sprintf("%.2f",$res_nowpd['total_fee']/$res_nowpd['total_amount']);
+
                     $idcodes_str = join("','",$idcodes);
-                    $change_price_sql = "update savor_finance_stock_record set price=$change_price*amount,total_fee=$change_price*total_amount where idcode in('$idcodes_str')";
+                    $change_price_sql = "update savor_finance_stock_record set price=$now_change_price*amount,total_fee=$now_change_price*total_amount where idcode in('$idcodes_str')";
                     $m_stock_record->execute($change_price_sql);
                 }
             }
