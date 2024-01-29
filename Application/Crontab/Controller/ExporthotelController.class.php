@@ -308,7 +308,7 @@ class ExporthotelController extends BaseController{
         $file_path = $this->exportToExcel($cell,$datalist,$filename,2);
         $now_file_path = SITE_TP_PATH .$file_path;
 
-        $title = $filename.'-' . $start_date.'-'.$end_date;
+        $title = $filename.'-' . $start_date.'至'.$end_date;
         $body = '导出合作酒楼数据表，详情见附件';
         $mail_config = C('SEND_MAIL_CONF');
         $mail_config = $mail_config['littlehotspot'];
