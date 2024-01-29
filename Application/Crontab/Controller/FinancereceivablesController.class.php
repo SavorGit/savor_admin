@@ -13,7 +13,9 @@ class FinancereceivablesController extends Controller{
         $where['a.add_time'] = array(array('ELT',$end_date.' 23:59:59'));
         $where['a.hotel_id'] = array(array('not in',C('TEST_HOTEL')));
         
-        $fields = "a.type,a.maintainer_id,a.hotel_id,hotel.name hotel_name,area.id area_id,area.region_name,user.remark,ar.region_name tg_region_name";
+        $fields = "a.type,a.maintainer_id,a.hotel_id,hotel.name hotel_name,
+                   area.id area_id,area.region_name,user.remark,
+                   ar.region_name tg_region_name,sum(a.settlement_price-a.pay_money) as ys_money";
         $group  = "a.hotel_id";
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $m_sale_paymeng_record = new \Admin\Model\FinanceSalePaymentRecordModel();
@@ -32,7 +34,7 @@ class FinancereceivablesController extends Controller{
         foreach($list as $key=>$v){
             
             $map = [];
-            $map['sale.hotel_id'] = $v['hotel_id'];
+            /*$map['sale.hotel_id'] = $v['hotel_id'];
             $map['sale.add_time'] = array(array('ELT',$end_date.' 23:59:59'));
             $map['record.wo_status'] = 2;
             
@@ -41,13 +43,13 @@ class FinancereceivablesController extends Controller{
                                                     ->join('savor_finance_stock_record record on sale.stock_record_id=record.id','left')
                                                     ->field('sum(a.pay_money) pay_money')
                                                     ->where($map)->find();
-           
-           
-           if(!empty($payment_result['pay_money'])){
-               $v['pay_money'] = $payment_result['pay_money'];
+                              
+            
+            if(!empty($v['ys_money'])){
+               $v['pay_money'] = $v['ys_money'];
            }else {
                $v['pay_money'] = 0 ;
-           }
+           }*/
            
            if($v['hotel_id'] && !empty($v['hotel_name'])){
                $add_info = [];
@@ -57,7 +59,7 @@ class FinancereceivablesController extends Controller{
                $add_info['hotel_id']         = $v['hotel_id'];
                $add_info['business_man_id']  = intval($v['maintainer_id']);
                $add_info['business_man']     = !empty($v['remark']) ? $v['remark'] :'';
-               $add_info['receivable_money'] = $v['pay_money'];
+               $add_info['receivable_money'] = $v['ys_money'];
                $add_info['static_date']      = $end_date;
                
                $m_finance_data_receivables->addData($add_info);
