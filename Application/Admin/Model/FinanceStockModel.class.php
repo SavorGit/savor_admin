@@ -7,7 +7,7 @@ class FinanceStockModel extends BaseModel{
     public function handle_hotel_stock(){
         $where = array('type'=>20);
         $where['hotel_id'] = array('gt',0);
-        $res_stockhotels = $this->getAll('hotel_id',$where,0,100000,'','hotel_id');
+        $res_stockhotels = $this->getAllData('hotel_id',$where,'','hotel_id');
         $m_stock_detail = new \Admin\Model\FinanceStockDetailModel();
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
