@@ -4494,39 +4494,6 @@ class CrontabController extends Controller
         echo "opsstatresourceup end:$now_time \r\n";
     }
 
-    public function companystockbj(){
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystockbj start:$now_time \r\n";
-        $m_stock = new \Admin\Model\FinanceCompanyStockModel();
-        $m_stock->handle_company_stock(1);//1 北京,9 上海,236 广州,248 佛山,246 深圳
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystockbj end:$now_time \r\n";
-    }
-    public function companystocksh(){
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystocksh start:$now_time \r\n";
-        $m_stock = new \Admin\Model\FinanceCompanyStockModel();
-        $m_stock->handle_company_stock(9);//1 北京,9 上海,236 广州,248 佛山,246 深圳
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystocksh end:$now_time \r\n";
-    }
-    public function companystockgz(){
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystockgz start:$now_time \r\n";
-        $m_stock = new \Admin\Model\FinanceCompanyStockModel();
-        $m_stock->handle_company_stock(236);//1 北京,9 上海,236 广州,248 佛山,246 深圳
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystockgz end:$now_time \r\n";
-    }
-    public function companystockfs(){
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystockfs start:$now_time \r\n";
-        $m_stock = new \Admin\Model\FinanceCompanyStockModel();
-        $m_stock->handle_company_stock(248);//1 北京,9 上海,236 广州,248 佛山,246 深圳
-        $now_time = date('Y-m-d H:i:s');
-        echo "companystockfs end:$now_time \r\n";
-    }
-
     public function countsmallappusetime(){
         $date = strtotime('-1 day');
         $yesterday_start_time = date('Y-m-d 00:00:00',$date);
