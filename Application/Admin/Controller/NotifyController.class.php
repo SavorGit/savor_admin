@@ -52,19 +52,19 @@ class NotifyController extends Controller {
         $area_id = intval($orders[0]['order_id']);//1 北京,9 上海,236 广州,248 佛山,246 深圳
         switch ($area_id){
             case 1:
-                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php admin/crontab/companystockbj > /tmp/null &";
+                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php crontab/companystock/stockbj > /tmp/null &";
                 system($shell);
                 break;
             case 9:
-                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php admin/crontab/companystocksh > /tmp/null &";
+                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php crontab/companystock/stocksh > /tmp/null &";
                 system($shell);
                 break;
             case 236:
-                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php admin/crontab/companystockgz > /tmp/null &";
+                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php crontab/companystock/stockgz > /tmp/null &";
                 system($shell);
                 break;
             case 248:
-                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php admin/crontab/companystockfs > /tmp/null &";
+                $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php crontab/companystock/stockfs > /tmp/null &";
                 system($shell);
                 break;
         }
