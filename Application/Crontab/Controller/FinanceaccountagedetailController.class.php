@@ -9,8 +9,9 @@ class FinanceaccountagedetailController extends Controller{
         $end_date = date('Y-m-d',strtotime('-1 day'));
         $m_accountage_detail = new \Admin\Model\FinanceDataAccountageDetailModel();
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
+        $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
         $where = [];
-        $where['stock.io_type'] = 11;
+        //$where['stock.io_type'] = 11;
         $where['a.add_time']     = array(array('elt',$end_date.' 23:59:59'));
         $where['a.dstatus']      = 1;
         
@@ -20,10 +21,12 @@ class FinanceaccountagedetailController extends Controller{
                        ->join('savor_finance_stock stock on a.stock_id= stock.id','left')
                        ->field('a.id,a.stock_id,a.stock_detail_id,a.idcode')
                        ->where($where)
+                       ->group('a.idcode')
                        ->select();
         
         //$idcode_list = array_slice($idcode_list, 0,500);  //上线去掉***************
-                 
+        //$idcode_list = array_slice($idcode_list, 0,564);
+        //print_r($idcode_list);exit;
         foreach($idcode_list as $key=>$v){
             
             $field = 'stock.id,a.idcode,goods.id goods_id,goods.name goods_name';
@@ -51,7 +54,7 @@ class FinanceaccountagedetailController extends Controller{
             
             
             $ifields = 'a.type,a.add_time,area.id area_id,
-                      area.region_name area_name,stock.hotel_id,hotel.name hotel_name';
+                      area.region_name area_name,stock.hotel_id,hotel.name hotel_name,stock.io_type';
             $info = $m_stock_record->alias('a')
                                    ->field($ifields)
                                    ->join('savor_finance_stock stock on a.stock_id= stock.id','left')
@@ -60,10 +63,11 @@ class FinanceaccountagedetailController extends Controller{
                                    ->where(array('a.idcode'=>$v['idcode']))
                                    ->order('a.id desc')
                                    ->find();
-                                   
+                       
             if($info['type']==6) continue;  //报损的不处理
             $account_detail_info['area_id']    = !empty($info['area_id']) ? $info['area_id'] :0;
             $account_detail_info['area_name']  = !empty($info['area_name']) ? $info['area_name']: '';
+            $account_detail_info['io_type']    = $info['io_type'];
                                    
             if(!empty($info['hotel_id'])){
                 $account_detail_info['store_id']    = !empty($info['hotel_id']) ? $info['hotel_id'] :0;
@@ -103,22 +107,48 @@ class FinanceaccountagedetailController extends Controller{
                 $account_detail_info['duration'] = $duration;
                 
             }else if(!in_array($info['type'], $type_arr)){
-                if($info['type']==1 || $info['type']==3){
+                if($info['type']==1){
                     $duration = time() - strtotime($info['add_time']);
                     $duration = round($duration/86400,2);
                     $store_in_time = $info['add_time'];
                     $store_type = 1;
                     
+                }else if($info['type']==3){
+                    $record_info = $m_stock_record->field('type,add_time')
+                    ->where(array('idcode'=>$v['idcode'],'type'=>1))
+                    ->order('id desc')
+                    ->find();
+                    $duration = time() - strtotime($record_info['add_time']);
+                    $duration = round($duration/86400,2);
+                    $store_in_time = $info['add_time'];
+                    $store_type = 1;
                 }else{
                     $record_info = $m_stock_record->field('type,add_time')
                                                     ->where(array('idcode'=>$v['idcode'],'type'=>1))
                                                     ->order('id desc')
                                                     ->find();
+                    if(empty($record_info)){
+                        
+                        $qrcontent = decrypt_data($v['idcode']);
+                        $qr_id = intval($qrcontent);
+                        $qr_info = $m_qrcode_content->where(array('id'=>$qr_id))
+                                         ->field('parent_id')
+                                         ->find();
+                        $pidcode = encrypt_data($qr_info['parent_id']);
+                       
+                        $record_info = $m_stock_record->field('type,add_time')
+                                                      ->where(array('idcode'=>$pidcode,'type'=>1))
+                                                      ->order('id desc')
+                                                      ->find();
+                        
+                    }
+                    
                     $duration = time() - strtotime($record_info['add_time']);
                     $duration = round($duration/86400,2);
                     
                     $store_in_time = $record_info['add_time'];
                     $store_type = 2;
+                    
                 }
                 
                 
