@@ -66,7 +66,7 @@ class OpstaskController extends Controller{
                         $res_staff = $m_staff->getMerchantStaffList($mfields,array('m.hotel_id'=>$hotel_id,'m.status'=>1,'a.level'=>2));
                         $staff_num = intval($res_staff[0]['num']);
                         if($staff_num<$task['sale_manager_num']){
-                            $remind_content = "店内销售端人数少于{$task['sale_manager_num']}人，请尽快开通";
+                            $remind_content = "店内餐厅经理的销售端开通人数少于{$task['sale_manager_num']}人，请尽快开通";
                             $add_data['remind_content'] = $remind_content;
                             $m_crmtask_record->add($add_data);
                         }
