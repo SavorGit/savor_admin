@@ -60,7 +60,7 @@ class FinanceaccountagedetailController extends Controller{
                                    ->join('savor_finance_stock stock on a.stock_id= stock.id','left')
                                    ->join('savor_area_info area on stock.area_id=area.id','left')
                                    ->join('savor_hotel hotel on stock.hotel_id=hotel.id','left')
-                                   ->where(array('a.idcode'=>$v['idcode']))
+                                   ->where(array('a.idcode'=>$v['idcode'],'a.add_time'=>array('elt',$end_date.' 23:59:59')))
                                    ->order('a.id desc')
                                    ->find();
                        
