@@ -29,7 +29,7 @@ class FinanceStockModel extends BaseModel{
 
             $fileds = 'a.goods_id,goods.name,goods.barcode,cate.name as cate_name,spec.name as sepc_name,a.unit_id,unit.name as unit_name,hotel.id as hotel_id,hotel.name as hotel_name';
             $group = 'a.goods_id';
-            $where = array('stock.hotel_id'=>$hotel_id,'stock.type'=>20);
+            $where = array('stock.hotel_id'=>$hotel_id,'stock.type'=>20,'stock.io_type'=>22);
             $res_list = $m_stock_detail->getHotelStockGoods($fileds,$where,$group,0,10000);
             if(!empty($res_list)){
                 $hotel_name = $res_list[0]['hotel_name'];
@@ -107,7 +107,7 @@ class FinanceStockModel extends BaseModel{
     }
 
     public function handle_goods_stock(){
-        $where = array('stock.hotel_id'=>array('gt',0),'stock.type'=>20);
+        $where = array('stock.hotel_id'=>array('gt',0),'stock.type'=>20,'stock.io_type'=>22);
 
         $fileds = 'a.goods_id,goods.name,goods.barcode,cate.name as cate_name,spec.name as sepc_name';
         $group = 'a.goods_id';
@@ -120,7 +120,7 @@ class FinanceStockModel extends BaseModel{
                 $out_num = $unpack_num = $wo_num = $report_num = 0;
                 $goods_id = $gv['goods_id'];
                 $rfileds = 'sum(a.total_amount) as total_amount';
-                $rwhere = array('stock.type'=>20,'a.goods_id'=>$goods_id,'a.dstatus'=>1);
+                $rwhere = array('stock.type'=>20,'stock.io_type'=>22,'a.goods_id'=>$goods_id,'a.dstatus'=>1);
                 $rwhere['a.type'] = 2;
 
                 $res_outrecord = $m_stock_record->getStockRecordList($rfileds,$rwhere,'a.id desc','','');

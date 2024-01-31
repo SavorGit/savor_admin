@@ -72,4 +72,16 @@ class FinanceStockRecordModel extends BaseModel{
         }
         return $datalist;
     }
+
+    public function getAllStock($fileds,$where,$order,$group='',$limit=''){
+        $res = $this->alias('a')
+            ->field($fileds)
+            ->join('savor_finance_stock stock on a.stock_id=stock.id','left')
+            ->where($where)
+            ->order($order)
+            ->limit($limit)
+            ->group($group)
+            ->select();
+        return $res;
+    }
 }
