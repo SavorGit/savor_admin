@@ -63,7 +63,7 @@ class FinanceChangepriceRecordModel extends BaseModel{
                     $now_change_price = sprintf("%.2f",$res_nowpd['total_fee']/$res_nowpd['total_amount']);
 
                     $idcodes_str = join("','",$idcodes);
-                    $change_price_sql = "update savor_finance_stock_record set price=$now_change_price*amount,total_fee=$now_change_price*total_amount where idcode in('$idcodes_str')";
+                    $change_price_sql = "update savor_finance_stock_record set price=$now_change_price*amount,total_fee=$now_change_price*total_amount where idcode in('$idcodes_str') and type!=7";
                     $m_stock_record->execute($change_price_sql);
                 }
             }
@@ -111,7 +111,7 @@ class FinanceChangepriceRecordModel extends BaseModel{
                 $now_goods_avgprices[$gdk] = array('avg_price'=>$avg_price,'purchase_detail_id'=>$gdv['purchase_detail_id'],
                     'stock_detail_id'=>$gdv['stock_detail_id'],'stock_num'=>$stock_num);
                 //更新savor_finance_stock_record表中 移动平均价avg_price
-                $m_stock_record->updateData(array('idcode'=>array('in',$now_idcodes)),array('avg_price'=>$avg_price));
+                $m_stock_record->updateData(array('idcode'=>array('in',$now_idcodes),'type'=>array('neq',7)),array('avg_price'=>$avg_price));
 
                 foreach ($now_goods_avgprices as $ngav){
                     $avg_data = array('goods_id'=>$goods_id,'stock_detail_id'=>$ngav['stock_detail_id'],
