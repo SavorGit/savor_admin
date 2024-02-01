@@ -459,9 +459,13 @@ class DishorderController extends BaseController {
                         $res_opsstaff = $m_opsstaff->getInfo(array('sysuser_id'=>$maintainer_id));
                         $area_id = $res_opsstaff['area_id'];
                     }
+                    $m_avg_price = new \Admin\Model\FinanceGoodsAvgpriceModel();
+                    $res_avg_price = $m_avg_price->getAll('price',array('goods_id'=>$goods_id),0,1,'id desc');
+                    $now_avg_price = $res_avg_price[0]['price']>0?$res_avg_price[0]['price']:0;
+
                     $sale_info = array('goods_id'=>$goods_id,'idcode'=>$all_idcodes,'area_id'=>$area_id,'order_id'=>$vinfo['id'],
                         'maintainer_id'=>$maintainer_id,'sale_payment_id'=>0,'status'=>2,'ptype'=>1,'type'=>4,'num'=>$idcode_num,
-                        'cost_price'=>0,'settlement_price'=>$vinfo['total_fee'],'sale_payment_id'=>$sale_payment_id,
+                        'cost_price'=>0,'settlement_price'=>$vinfo['total_fee'],'now_avg_price'=>$now_avg_price,'sale_payment_id'=>$sale_payment_id,
                         'add_time'=>$vinfo['add_time']);
                     $sale_id = $m_sale->add($sale_info);
 
