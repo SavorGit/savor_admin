@@ -55,8 +55,9 @@ class DistributionuserController extends BaseController {
             $parent_id = I('post.parent_id',0,'intval');
             $sysuser_id = I('post.sysuser_id',0,'intval');
             $status = I('post.status',0,'intval');
-
-
+            if(empty($sysuser_id)){
+                $this->output('请关联系统用户', 'distributionuser/datalist',2,0);
+            }
             $user = session('sysUserInfo');
             $op_sysuser_id = $user['id'];
             $add_data = array('name'=>$name,'openid'=>$openid,'mobile'=>$mobile,'parent_id'=>$parent_id,
