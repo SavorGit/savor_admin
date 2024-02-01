@@ -176,7 +176,7 @@
   		<div class="form-group" id="all_city_list" <if condition="($info.role_id eq 1) or ($info.role_id eq 3)">style="display:none"<else />style="display:block" </if>>
     <div class="input-group-sm input-group" style="margin-top:5px;">
       <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
-        所属城市：
+        所属城市1：
       </label>
         <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
       <select id="inch" name="manage_city[]" style="width: 20px;display:none !important;" class="form-control bs-select" data-style="btn-success btn-sm" data-container="body" >
@@ -202,6 +202,23 @@
     </span>
     </div>
   </div>
+  
+  <div class="form-group" id="city_list" >
+    <div class="input-group-sm input-group" style="margin-top:5px;">
+      <label style="margin-left: 14%;margin-top: 10px;width: 83px;">
+        是否删除：
+      </label>
+        <span class="input-group-btn input-group-sm" style="width: 132px;margin-right: 22px;">
+      <select  name="state" style="width: 20px;display:none !important;" class="form-control bs-select"  data-container="body"  >
+       
+           <option <if condition="$info['state'] eq 1"> selected </if>   value="1">正常</option>
+           <option <if condition="$info['state'] eq 0"> selected </if>   value="0">删除</option>
+       
+      </select>
+    </span>
+    </div>
+  </div>
+  
 <if condition="$info.role_id EQ 6">
   <div class="form-group" id="disjl"><!--选择酒楼-->
   	<div style="margin-left: 12px;margin-bottom: 30px;">

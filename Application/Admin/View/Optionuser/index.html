@@ -114,6 +114,7 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
             <th>区域经理</th>
             <th>创建时间</th>
             <th>更新时间</th>
+            <th>删除状态</th>
             <th class="table-tool">操作</th>
           </tr>
           </thead>
@@ -137,6 +138,8 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
               <td data-title="区域经理"><if condition="$vlist.is_leader eq 1">是</if></td>
               <td data-title="创建时间">{$vlist.create_time}</td>
               <td data-title="更新时间">{$vlist.update_time} </td>
+              
+              <td data-title="更新时间">{$vlist.state_str} </td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
                   <a data-tip="修改状态" target="dialog" mask="true"
@@ -145,12 +148,13 @@ enctype="multipart/form-data" onsubmit="return iframeCallback(this, dialogAjaxDo
                   <i class="fa fa-pencil"></i>
                   </a>
                 </div>
-                
-                <div class="tools-edit">
+                <if condition="$vlist.state eq 1">
+                <div class="tools-edit" >
                   <a warn="警告" data-tip="删除" title="你确定要删除吗？" target="ajaxTodo" href="{$host_name}/optionuser/delete?id={$vlist.id}"  class="btn btn-success btn-icon">
                     <i class="fa fa-trash"></i>
                   </a>
                 </div>
+                </if>
               </td>
             </tr>
           </volist>

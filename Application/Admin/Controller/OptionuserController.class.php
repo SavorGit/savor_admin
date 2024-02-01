@@ -20,15 +20,17 @@ class OptionuserController extends BaseController{
         $this->assign('numPerPage',$size);
         $start = I('pageNum',1);
         $this->assign('pageNum',$start);
-        $order = I('_order','a.update_time');
+        $order = I('_order','a.id');
         $this->assign('_order',$order);
         $sort = I('_sort','desc');
         $this->assign('_sort',$sort);
-        $orders = $order.' '.$sort;
+        $orders = $order.' '.$sort.',a.state asc';
         $start  = ( $start-1 ) * $size;
         $opuser_arr = C('OPUSER_ARRAY');
         $this->assign('opuser_arr',$opuser_arr);
-        $where = ' a.state=1 and b.status=1';
+        //$where = ' a.state=1 and b.status=1';
+        $where = ' b.status=1';
+        
         $m_opuser_role = new \Admin\Model\OpuserroleModel();
         $list = $m_opuser_role->getPageList('a.*,b.remark as username',$where,$orders,$start,$size);
         
@@ -57,6 +59,7 @@ class OptionuserController extends BaseController{
                 }
                 
             }
+            $list['list'][$key]['state_str'] = $v['state'] ==1 ?'正常': '删除';
             $list['list'][$key]['role_name'] = $this->option_user_role_arr[$v['role_id']];
         }
         $this->assign('list',$list['list']);
@@ -211,6 +214,7 @@ class OptionuserController extends BaseController{
             $is_lead_install = I('post.is_lead_install',0,'intval');  //是否带队安装
             $manage_city = I('post.manage_city');
             $manage_city_one = I('post.manage_city_one');
+            $state  = I('post.state',0,'intval');
             
             foreach($manage_city as $key=>$v){
                 $manage_city_str .= $separator . $v;
@@ -242,7 +246,8 @@ class OptionuserController extends BaseController{
             
             $data['oprator_id']  = $oprator_id;
             $data['update_time'] = date("Y-m-d H:i:s");
-            $data['hotel_info']    = $hotel_info_str;
+            $data['hotel_info']  = $hotel_info_str;
+            $data['state']       = $state;
 
             $ret = $m_opser_role->saveInfo($map,$data);
             //$ret = $m_opser_role->addInfo($data);
@@ -555,7 +560,7 @@ class OptionuserController extends BaseController{
         $m_opser_role = new \Admin\Model\OpuserroleModel();
         $where = array();
         $where['a.id'] = $id;
-        $fields = 'a.role_id,a.skill_info,a.is_lead_install,a.manage_city,user.id  ,user.remark,a.hotel_info hotel_id_str';
+        $fields = 'a.state,a.role_id,a.skill_info,a.is_lead_install,a.manage_city,user.id  ,user.remark,a.hotel_info hotel_id_str';
         $info =  $m_opser_role->getInfo($fields,$where);
         if($info['hotel_id_str']) {
             $hotelModel = new \Admin\Model\HotelModel();
