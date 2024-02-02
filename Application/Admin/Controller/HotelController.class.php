@@ -775,7 +775,6 @@ class HotelController extends BaseController {
         $sale_start_date = I('post.sale_start_date','');
         $sale_end_date = I('post.sale_end_date','');
 
-
         if($activity_phone){
             if(!preg_match('/^1[34578]{1}\d{9}$/',$activity_phone, $result)){
                 $this->error('手机号非法输入');
@@ -786,7 +785,6 @@ class HotelController extends BaseController {
                 $this->error('联系人2至10个字符');
             }
         }
-
 		$save['is_4g']               = I('post.is_4g',0,'intval');  //是否为4G酒楼
 		$save['is_5g']               = I('post.is_5g',0,'intval');  //是否为5G酒楼
 		if(mb_strlen($save['collection_company'])>50 || mb_strlen($save['bank_account'])>50 || mb_strlen($save['bank_name'])>50){
@@ -852,7 +850,6 @@ class HotelController extends BaseController {
                     $code_charter .=$code_charter;
                 }
             }
-            
             if($code_charter){
                 $save['pinyin'] = strtolower($code_charter);
             }
@@ -957,6 +954,14 @@ class HotelController extends BaseController {
             $save['no_work_type'] = 23;
         }
 		if ($hotel_id) {
+		    if($is_salehotel==0){
+		        $m_hotelstock = new \Admin\Model\FinanceHotelStockModel();
+		        $res_hotel_stock = $m_hotelstock->getDataList('sum(num) as stock_num',array('hotel_id'=>$hotel_id),'');
+                if(!empty($res_hotel_stock[0]['stock_num']) && $res_hotel_stock[0]['stock_num']>0){
+                    $this->error('当前酒楼还有库存酒水,暂时无法关闭售酒开关');
+                }
+		    }
+
 			$where =  'id='.$hotel_id;
 			$bool = $hotelModel->saveData($save, $where);
 			if($bool){
