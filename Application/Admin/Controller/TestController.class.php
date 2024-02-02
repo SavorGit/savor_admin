@@ -3788,136 +3788,26 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         echo 'clean ok';
     }
 
-    public function avgprice(){
-        //暂时废弃
+    public function saleavgprices(){
         exit;
-        $m_goods = new \Admin\Model\FinanceGoodsModel();
-        $res_goods = $m_goods->getDataList('*',array(),'id asc');
-        $m_goods_avgprice = new \Admin\Model\FinanceGoodsAvgpriceModel();
-        foreach ($res_goods as $v){
-            $goods_id = $v['id'];
-            $sql = "select goods_id,stock_id,stock_detail_id,sum(total_amount) as total_num,price from savor_finance_stock_record 
-            where goods_id={$goods_id} and type in (1,3) and status=0 and dstatus=1 group by stock_detail_id";
-            $res_num = $m_goods->query($sql);
-            $price = 0;
-            if(!empty($res_num)){
-                $p_num = 0;
-                $p_price = 0;
-                foreach ($res_num as $pv){
-                    if($pv['total_num']>0 && $pv['price']>0){
-                        $p_num+=$pv['total_num'];
-                        $p_price+=$pv['total_num']*$pv['price'];
-                    }
-                }
-                $price = sprintf("%.2f",$p_price/$p_num);
-            }
-            $m_goods_avgprice->add(array('goods_id'=>$goods_id,'price'=>$price));
-            echo "goods_id:$goods_id,price:$price ok \r\n";
-        }
-    }
-
-    public function avgprices(){
-        $m_qrcode_content = new \Admin\Model\FinanceQrcodeContentModel();
-        $m_goods = new \Admin\Model\FinanceGoodsModel();
-        $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
-        $m_purchase_detail = new \Admin\Model\FinancePurchaseDetailModel();
+        $sql = "select id,goods_id,idcode,now_avg_price from savor_finance_sale where add_time>='2024-01-01 00:00:00' 
+         order by id asc";
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        $res_data = $m_sale->query($sql);
         $m_avgprice = new \Admin\Model\FinanceGoodsAvgpriceModel();
-
-        $res_goods = $m_goods->getDataList('*',array(),'id asc');
-        $all_goods_avg_prices = array();
-        foreach ($res_goods as $v){
-            $goods_id = $v['id'];
-
-            $sql = "select a.goods_id,sum(a.total_amount) as total_num,a.price,a.stock_id,a.stock_detail_id,stock.purchase_id,detail.purchase_detail_id from savor_finance_stock_record as a 
-                left join savor_finance_stock as stock on a.stock_id=stock.id
-                left join savor_finance_stock_detail as detail on a.stock_detail_id=detail.id
-                where a.goods_id={$goods_id} and a.type=1 and stock.io_type=11 group by a.stock_detail_id";
-            $res_data = $m_stock_record->query($sql);
-            $goods_data = array();
-            foreach ($res_data as $gk=>$gv){
-                $stock_detail_id = $gv['stock_detail_id'];
-                $in_where = array('goods_id'=>$goods_id,'stock_detail_id'=>$stock_detail_id,'type'=>1);
-                $res_inend = $m_stock_record->getDataList('idcode,add_time,amount,total_amount',$in_where,'id desc');
-                $idcodes = array();
-                foreach ($res_inend as $inv){
-                    if($inv['total_amount']==$inv['amount']){
-                        $idcodes[]=$inv['idcode'];
-                    }else{
-                        $idcodes[]=$inv['idcode'];
-                        $qrcontent = decrypt_data($inv['idcode']);
-                        $qr_id = intval($qrcontent);
-                        $res_allqrcode = $m_qrcode_content->getDataList('id',array('parent_id'=>$qr_id),'id asc');
-                        foreach ($res_allqrcode as $qrv){
-                            $qrcontent = encrypt_data($qrv['id']);
-                            $idcodes[]=$qrcontent;
-                        }
-                    }
-                }
-                $gv['in_time'] = $res_inend[0]['add_time'];
-                $gv['idcodes'] = $idcodes;
-                $goods_data[]=$gv;
-            }
-            sortArrByOneField($goods_data,'in_time',false);
-
-            $now_goods_avgprices = array();
-            foreach ($goods_data as $gdk=>$gdv){
-                $num = $gdv['total_num'];
-                $now_idcodes = $gdv['idcodes'];
-
-                $res_pd = $m_purchase_detail->getInfo(array('id'=>$gdv['purchase_detail_id']));
-                $now_price = sprintf("%.2f",$res_pd['total_fee']/$res_pd['total_amount']);
-                if($gdk==0){
-                    $avg_price = ($num*$now_price)/$num;
-                    $stock_num = 0;
-                }else{
-                    $last_total_num = $goods_data[$gdk-1]['total_num'];
-                    $last_stock_idcodes = $goods_data[$gdk-1]['idcodes'];
-                    $start_time = $goods_data[$gdk-1]['in_time'];
-                    $end_time = $gdv['in_time'];
-
-                    $wo_where = array('goods_id'=>$goods_id,'idcode'=>array('in',$last_stock_idcodes),'type'=>7,'wo_status'=>array('in','1,2,4'));
-//                    $wo_where['add_time'] = array(array('egt',$start_time),array('elt',$end_time));
-                    $wo_fields = 'sum(total_amount) as total_num';
-                    $res_wo_num = $m_stock_record->getAll($wo_fields,$wo_where,0,1);
-                    $wo_num = 0;
-                    if(!empty($res_wo_num[0]['total_num'])){
-                        $wo_num = abs($res_wo_num[0]['total_num']);
-                    }
-                    $re_where = array('goods_id'=>$goods_id,'idcode'=>array('in',$last_stock_idcodes),'type'=>6,'status'=>array('in','1,2'));
-//                    $re_where['add_time'] = array(array('egt',$start_time),array('elt',$end_time));
-                    $re_fields = 'sum(total_amount) as total_num';
-                    $res_re_num = $m_stock_record->getAll($re_fields,$re_where,0,1);
-                    $report_num = 0;
-                    if(!empty($res_re_num[0]['total_num'])){
-                        $report_num = abs($res_re_num[0]['total_num']);
-                    }
-                    $stock_num  = $last_total_num-$wo_num-$report_num;
-                    $stock_num = $stock_num + $now_goods_avgprices[$gdk-1]['stock_num'];
-                    $last_avg_price = $now_goods_avgprices[$gdk-1]['avg_price'];
-
-                    $avg_price = ($num*$now_price+$stock_num*$last_avg_price)/($num+$stock_num);
-                    $avg_price = sprintf("%.2f",$avg_price);
-                }
-                $now_goods_avgprices[$gdk] = array('avg_price'=>$avg_price,'purchase_detail_id'=>$gdv['purchase_detail_id'],
-                    'stock_detail_id'=>$gdv['stock_detail_id'],'stock_num'=>$stock_num);
-                //更新savor_finance_stock_record表中 移动平均价avg_price
-//                $m_stock_record->updateData(array('idcode'=>array('in',$now_idcodes)),array('avg_price'=>$avg_price));
-            }
-
-//            foreach ($now_goods_avgprices as $ngav){
-//                $avg_data = array('goods_id'=>$goods_id,'stock_detail_id'=>$ngav['stock_detail_id'],
-//                    'purchase_detail_id'=>$ngav['purchase_detail_id'],'price'=>$ngav['avg_price']);
-//                $m_avgprice->add($avg_data);
-//            }
-            echo "goods_id:{$goods_id} ok \r\n";
-            $all_goods_avg_prices[$goods_id] = $now_goods_avgprices;
+        foreach ($res_data as $v){
+            $sale_id = $v['id'];
+            $goods_id = $v['goods_id'];
+            $res_avg_price = $m_avgprice->getAll('price',array('goods_id'=>$goods_id),0,1,'id desc');
+            $now_avg_price = $res_avg_price[0]['price']>0?$res_avg_price[0]['price']:0;
+            $m_sale->updateData(array('id'=>$sale_id),array('now_avg_price'=>$now_avg_price));
+            echo "sale_id:$sale_id,now_avg_price:$now_avg_price \r\n";
         }
-        print_r($all_goods_avg_prices);
     }
 
     public function writeoffok(){
+        exit;
         $stock_record_id = I('woid',0,'intval');
-
         $m_stock_record = new \Admin\Model\FinanceStockRecordModel();
         $sql = "select a.id as stock_record_id,a.goods_id,a.idcode,ABS(a.price) as cost_price,stock.hotel_id,hotel.area_id,a.op_openid as sale_openid,ext.maintainer_id,a.add_time
         from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
@@ -3948,91 +3838,6 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         foreach ($res_data as $v){
             $row_id = $m_sale->updateData(array('id'=>$v['id']),array('area_id'=>$v['hotel_area_id']));
             echo 'id:'.$v['id']."ok \r\n";
-        }
-    }
-
-    public function uperrorsale(){
-        exit;
-        $m_price_template_hotel = new \Admin\Model\FinancePriceTemplateHotelModel();
-
-//        $sql = "select * from savor_finance_sale where sale_openid in (
-//            select openid from savor_integral_merchant_staff where merchant_id in (89,3) group by openid
-//            ) and goods_id not in (15,24)  and id>2791 order by id asc ";
-
-        $sql = "select sale.* from savor_finance_stock_record as a left join savor_finance_sale as sale on a.id=sale.stock_record_id
-            where a.wo_reason_type=1 and sale.settlement_price=0 and sale.ptype=0 order by sale.id desc ";
-        $m_sale = new \Admin\Model\FinanceSaleModel();
-        $res_data = $m_sale->query($sql);
-        $all_data = array();
-        foreach ($res_data as $v){
-            $goods_id = $v['goods_id'];
-
-            $sql_stock = "select stock.hotel_id,ext.maintainer_id
-            from savor_finance_stock_record as a left join savor_finance_stock as stock on a.stock_id=stock.id 
-            left join savor_hotel as hotel on stock.hotel_id=hotel.id left join savor_hotel_ext as ext on hotel.id=ext.hotel_id
-            where a.id={$v['stock_record_id']}";
-            $res_stock = $m_sale->query($sql_stock);
-            if(empty($res_stock)){
-                continue;
-            }
-            $hotel_id = $res_stock[0]['hotel_id'];
-            $maintainer_id = $res_stock[0]['maintainer_id'];
-            $updata = array();
-            if($v['ptype']==0){
-                $settlement_price = $m_price_template_hotel->getHotelGoodsPrice($hotel_id,$goods_id,0);
-                $updata['settlement_price'] = $settlement_price;
-            }
-            if($v['hotel_id']!=$hotel_id){
-                $updata['hotel_id'] = $hotel_id;
-                $updata['maintainer_id'] = $maintainer_id;
-            }
-            $all_data[$v['id']]=$updata;
-            if(!empty($updata)){
-                $m_sale->updateData(array('id'=>$v['id']),$updata);
-                echo "ID:{$v['id']} OK \r\n";
-            }
-
-        }
-        print_r($all_data);
-        exit;
-    }
-
-    public function upgps(){
-        $m_area = new \Admin\Model\AreaModel();
-        $curl = new \Common\Lib\Curl();
-        $citys = array('1'=>'北京市','9'=>'上海市','236'=>'广州市','248'=>'佛山市','246'=>'深圳市');
-        $m_hotel = new \Admin\Model\HotelModel();
-//        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=236 and state in(1,4) and flag=0 and gps='' order by id asc ";
-        $sql = "select id,name,addr,area_id,county_id,gps from savor_hotel where area_id=1
-        and create_time>='2023-09-15 13:51:30' and create_time<='2023-09-15 15:00:10' and gps='' order by id asc ";
-        $res_data = $m_hotel->query($sql);
-        foreach ($res_data as $v){
-            $hotel_id = $v['id'];
-            $area_id = $v['area_id'];
-            $county = '';
-            if($v['county_id']>0){
-                $res_area_info = $m_area->getWhere('id,region_name',array('id'=>$v['county_id']),'id desc','0,1');
-                $county = $res_area_info[0]['region_name'];
-            }
-            $address = $citys[$area_id].$county.$v['addr'];
-            $address = urlencode($address);
-            $ak = C('BAIDU_SAPP_OPS_KEY');
-            $url = "https://api.map.baidu.com/geocoding/v3/?address={$address}&output=json&ak=$ak";
-            $gps_info = '';
-            $curl::get($url,$gps_info);
-            if(!empty($gps_info)){
-                $geocode_info = json_decode($gps_info,true);
-                if($geocode_info['status']==0 && !empty($geocode_info['result']['location'])){
-                    $gps = $geocode_info['result']['location']['lng'].','.$geocode_info['result']['location']['lat'];
-                    $m_hotel->saveData(array('gps'=>$gps),array('id'=>$hotel_id));
-                    echo $hotel_id.' '.$v['name']."ok \r\n";
-                }else{
-                    echo $hotel_id.' '.$v['name']."error \r\n";
-                }
-            }else{
-                echo $hotel_id.' '.$v['name']."error \r\n";
-            }
-
         }
     }
 
