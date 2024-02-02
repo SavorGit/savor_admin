@@ -12,6 +12,9 @@ class U8pushvoucherController extends Controller{
         $start_time = date('Y-m-d 00:00:00',$last_time);
         $end_time = date('Y-m-d H:59:59',$last_time);
 
+//        $start_time = '2024-02-01 00:00:00';
+//        $end_time = '2024-02-02 10:00:00';
+
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $fileds = 'a.id as sale_id,a.add_time,record.wo_reason_type';
         $where = array('a.type'=>1,'record.wo_status'=>2,'record.wo_reason_type'=>array('in','1,2'));
@@ -26,7 +29,7 @@ class U8pushvoucherController extends Controller{
 
             usleep(500000);
 
-            echo "sale_id:$sale_id,wo_reason_type:$reason_type \r\n";
+            echo "sale_id:$sale_id,wo_reason_type:$reason_type,add_time:{$v['add_time']} \r\n";
         }
         $now_time = date('Y-m-d H:i:s');
         echo "voucher end:$now_time \r\n";
@@ -40,8 +43,8 @@ class U8pushvoucherController extends Controller{
         $start_time = date('Y-m-d 00:00:00',$last_time);
         $end_time = date('Y-m-d H:59:59',$last_time);
 
-        $start_time = '2024-01-11 00:00:00';
-        $end_time = '2024-01-21 23:59:59';
+//        $start_time = '2024-01-01 00:00:00';
+//        $end_time = '2024-01-31 23:59:59';
 
         $m_sale = new \Admin\Model\FinanceSaleModel();
         $fileds = 'id as sale_id,type,add_time';
@@ -60,7 +63,7 @@ class U8pushvoucherController extends Controller{
 
             usleep(500000);
 
-            echo "sale_id:$sale_id,type:$type \r\n";
+            echo "sale_id:$sale_id,type:$type,add_time:{$v['add_time']} \r\n";
         }
         $now_time = date('Y-m-d H:i:s');
         echo "salevoucher end:$now_time \r\n";
