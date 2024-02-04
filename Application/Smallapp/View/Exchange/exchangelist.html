@@ -148,7 +148,7 @@
                     </a>
                     </if>
 
-                    <if condition="$dinfo.status eq 20 and $dinfo.goods_type eq 31">
+                    <if condition="($dinfo.status eq 20) and ($dinfo.goods_type eq 31 OR $dinfo.type eq 7)">
                     <a title="兑换信息" data-tip="兑换商品" target="dialog" mask="true" href="{$host_url}/smallapp/exchange/exchange?id={$dinfo.id}&goods_type={$dinfo.goods_type}" class="btn btn-success btn-icon">
                         <i class="fa fa-exchange"></i>
                     </a>

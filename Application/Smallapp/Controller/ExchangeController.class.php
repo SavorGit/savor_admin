@@ -53,7 +53,9 @@ class ExchangeController extends BaseController {
             $end_time = date('Y-m-d 23:59:59',$etime);
             $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         }
-        $fields = 'a.id,a.openid,a.hotel_id,a.goods_id,a.price,a.amount,a.total_fee,a.status,a.sysuser_id,a.add_time,a.audit_status,goods.is_audit,goods.type as goods_type,goods.rebate_integral,hotel.name as hotel_name,area.region_name as city,ext.maintainer_id';
+        $fields = 'a.id,a.openid,a.hotel_id,a.goods_id,a.price,a.amount,a.total_fee,a.status,a.sysuser_id,a.add_time,
+        a.audit_status,a.type,goods.is_audit,goods.type as goods_type,goods.rebate_integral,hotel.name as hotel_name,
+        area.region_name as city,ext.maintainer_id';
 
         $start  = ($page-1) * $size;
         $m_order  = new \Admin\Model\Smallapp\ExchangeModel();
@@ -177,6 +179,40 @@ class ExchangeController extends BaseController {
                 $this->assign('vinfo',$res_order);
                 $this->display('exchange');
             }
+        }elseif($res_order['type']==7 && $goods_type==0){
+            if(IS_POST){
+                $userinfo = session('sysUserInfo');
+                $sysuser_id = $userinfo['id'];
+
+                if($res_order['status']==21){
+                    $this->output('请勿重复兑换', 'exchange/exchangelist',2);
+                }
+                $audit_status = I('post.audit_status',0,'intval');//1审核通过
+                if($audit_status==0){
+                    $this->output('请选择审核状态', 'exchange/exchangelist');
+                }
+                if($audit_status==1){
+                    $url = C('SAVOR_API_URL').'/smallapp46/withdraw/failchange';
+                    $curl = new Curl();
+                    $data = array('openid'=>$res_order['openid'],'exchange_id'=>$res_order['id']);
+                    $resapi = array();
+                    $curl::post($url,$data,$resapi,10);
+                    $resapi = json_decode($resapi,true);
+                    if($resapi['code']==10000){
+                        $message = '提现成功';
+                        $m_order = new \Admin\Model\Smallapp\ExchangeModel();
+                        $m_order->updateData(array('id'=>$order_id),array('status'=>21,'audit_status'=>$audit_status,'sysuser_id'=>$sysuser_id));
+                    }else{
+                        $message = '提现失败';
+                    }
+                    $this->output($message, 'exchange/exchangelist');
+                }
+            }else{
+                $this->assign('goods_type',0);
+                $this->assign('vinfo',$res_order);
+                $this->display('walletchange');
+            }
+
         }else{
             if(IS_POST){
                 $userinfo = session('sysUserInfo');
