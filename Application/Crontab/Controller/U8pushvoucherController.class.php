@@ -20,6 +20,8 @@ class U8pushvoucherController extends Controller{
         $where = array('a.type'=>1,'record.wo_status'=>2,'record.wo_reason_type'=>array('in','1,2'));
         $where['a.add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $where['a.push_u8_status13'] = 0;
+        $where['a.hotel_id'] = array('not in',C('TEST_HOTEL'));
+
         $res_data = $m_sale->getSaleStockRecordList($fileds,$where,'a.id asc','');
         foreach ($res_data as $v){
             $sale_id = $v['sale_id'];
@@ -51,6 +53,7 @@ class U8pushvoucherController extends Controller{
         $where = array('type'=>array('in','1,4'),'ptype'=>1);
         $where['add_time'] = array(array('egt',$start_time),array('elt',$end_time), 'and');
         $where['push_u8_status2'] = 0;
+        $where['hotel_id'] = array('not in',C('TEST_HOTEL'));
 
         $res_data = $m_sale->getDataList($fileds,$where,'id asc');
         $map_push_type = array('1'=>89,'4'=>88);

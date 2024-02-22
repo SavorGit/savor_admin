@@ -116,32 +116,32 @@ class OpstaskController extends Controller{
                     case 4:
                         $swhere = array('a.hotel_id'=>$hotel_id,'a.ptype'=>array('in','0,2'),'a.is_expire'=>1,
                             'record.wo_reason_type'=>1,'record.wo_status'=>2,'a.settlement_price'=>array('gt',0));
-                        $sfields = 'a.id,a.settlement_price-a.pay_money as money';
-                        $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','');
+                        $sfields = "DATE_FORMAT(a.add_time,'%Y%m%d') as sale_date,sum(a.settlement_price-a.pay_money) as money";
+                        $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','','sale_date');
                         if(!empty($res_sale)){
                             $cq_sales = array();
-                            $cq_sale_ids = array();
+                            $cq_sale_dates = array();
                             foreach ($res_sale as $stv){
-                                $cq_sales[$stv['id']]=$stv;
-                                $cq_sale_ids[]=$stv['id'];
+                                $cq_sales[$stv['sale_date']]=$stv;
+                                $cq_sale_dates[]=$stv['sale_date'];
                             }
 
                             $sale_where = array('hotel_id'=>$hotel_id,'task_id'=>$task['id'],'residenter_id'=>$residenter_id,
-                                'sale_id'=>array('in',$cq_sale_ids),'off_state'=>1);
+                                'sale_date'=>array('in',$cq_sale_dates),'off_state'=>1);
                             $sale_where['add_time'] = array(array('egt',$now_month_stime),array('elt',$now_month_etime), 'and');
-                            $now_residenter_sale_task = $m_crmtask_record->getAllData('GROUP_CONCAT(sale_id) as sale_ids',$sale_where);
-                            if(!empty($now_residenter_sale_task[0]['sale_ids'])){
-                                $task_sale_ids = explode(',',$now_residenter_sale_task[0]['sale_ids']);
-                                $last_cq_sale_ids = array_diff($cq_sale_ids,$task_sale_ids);
+                            $now_residenter_sale_task = $m_crmtask_record->getAllData('GROUP_CONCAT(sale_date) as sale_dates',$sale_where);
+                            if(!empty($now_residenter_sale_task[0]['sale_dates'])){
+                                $task_sale_dates = explode(',',$now_residenter_sale_task[0]['sale_dates']);
+                                $last_cq_sale_dates = array_diff($cq_sale_dates,$task_sale_dates);
                             }else{
-                                $last_cq_sale_ids = $cq_sale_ids;
+                                $last_cq_sale_dates = $cq_sale_dates;
                             }
-                            foreach ($last_cq_sale_ids as $slvid){
-                                $now_sale_id = $slvid;
-                                $money = $cq_sales[$now_sale_id]['money'];
+                            foreach ($last_cq_sale_dates as $slvid){
+                                $now_sale_date = $slvid;
+                                $money = $cq_sales[$now_sale_date]['money'];
 
                                 $remind_content = "店内有{$money}元欠款已超期，请及时催收";
-                                $add_data['sale_id'] = $now_sale_id;
+                                $add_data['sale_date'] = $now_sale_date;
                                 $add_data['remind_content'] = $remind_content;
                                 $m_crmtask_record->add($add_data);
                             }
@@ -397,13 +397,20 @@ class OpstaskController extends Controller{
         $m_sale = new \Admin\Model\FinanceSaleModel();
         foreach ($res_task_record as $v){
             $hotel_id = $v['hotel_id'];
-            $sale_id = $v['sale_id'];
-            $res_sale = $m_sale->getInfo(array('id'=>$sale_id));
+            $sale_date = $v['sale_date'];
+            $dateTime = \DateTime::createFromFormat('Ymd',"$sale_date");
+            $sale_date_time = $dateTime->format('Y-m-d');
+
+            $swhere = array('a.hotel_id'=>$hotel_id,'a.ptype'=>array('in','0,2'),'a.is_expire'=>1,
+                'record.wo_reason_type'=>1,'record.wo_status'=>2,'a.settlement_price'=>array('gt',0));
+            $swhere['a.add_time'] = array(array('egt',"$sale_date_time 00:00:00"),array('elt',"$sale_date_time 23:59:59"), 'and');
+            $sfields = "sum(a.settlement_price-a.pay_money) as money";
+            $res_sale = $m_sale->getSaleStockRecordList($sfields,$swhere,'','','');
+            $money = intval($res_sale[0]['money']);
             $is_finish = 0;
-            if($res_sale['ptype']==1){
+            if($money==0){
                 $is_finish = 1;
             }else{
-                $money = $res_sale['settlement_price']-$res_sale['pay_money'];
                 $remind_content = "店内有{$money}元欠款已超期，请及时催收";
                 $m_crmtask_record->updateData(array('id'=>$v['id']),array('remind_content'=>$remind_content));
             }
@@ -642,7 +649,7 @@ class OpstaskController extends Controller{
             if($info['type']!=7){
                 $link_upwhere = array('hotel_id'=>$info['hotel_id'],'task_id'=>$info['task_id'],'off_state'=>1);
                 if($info['type']==4){
-                    $link_upwhere['sale_id'] = $info['sale_id'];
+                    $link_upwhere['sale_date'] = $info['sale_date'];
                 }
                 $link_upwhere['id'] = array('neq',$info['id']);
                 $m_crmtask_record->updateData($link_upwhere,array('finish_task_record_id'=>$info['id'],'update_time'=>date('Y-m-d H:i:s')));
