@@ -72,7 +72,7 @@ class HotelgoodsController extends BaseController {
             }
 
             $fields = "count(DISTINCT hotel_id) as num";
-            $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'openid'=>'','type'=>1),'id desc');
+            $res_hotelgoods = $m_hotelgoods->getRow($fields,array('goods_id'=>$v['id'],'type'=>1),'id desc');
             $hotels = intval($res_hotelgoods['num']);
             $datalist[$k]['hotels'] = $hotels;
             $datalist[$k]['typestr']=$goods_types[$v['type']];
@@ -398,15 +398,20 @@ class HotelgoodsController extends BaseController {
         $page = I('pageNum',1);
         $size   = I('numPerPage',50);
 
-        $where = array('a.goods_id'=>$goods_id,'a.type'=>1,'a.openid'=>'');
+        $where = array('a.goods_id'=>$goods_id,'a.type'=>1);
         if(!empty($keyword)){
             $where['h.name'] = array('like',"%$keyword%");
         }
         $start  = ($page-1) * $size;
-        $fields = 'a.id,a.add_time,h.id as hotel_id,h.name as hotel_name,area.region_name';
+        $fields = 'a.id,a.hotel_price,a.add_time,h.id as hotel_id,h.name as hotel_name,area.region_name';
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
-        $result = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.id desc', $start,$size);
+        $result = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.hotel_price desc,a.id desc', $start,$size);
         $datalist = $result['list'];
+        foreach ($datalist as $k=>$v){
+            if($v['hotel_price']==0){
+                $datalist[$k]['hotel_price'] = '';
+            }
+        }
 
         $this->assign('goods_id',$goods_id);
         $this->assign('keyword',$keyword);
