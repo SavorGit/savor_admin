@@ -221,7 +221,7 @@
          合作维护人：
         </label>
         <div class="col-xs-12 col-sm-10">
-            <select name="maintainer" class="form-control bs-select" title="请选择..."  data-style="btn-success btn-sm" data-container="body">
+            <select name="maintainer" class="form-control bs-select" title="请选择..." data-style="btn-success btn-sm" data-live-search="true" data-container="body">
                 <volist name="pub_info" id="vlist">
                     <option value="{$vlist.main_id}" <if condition="$vlist['main_id'] eq $vinfo['main_id']">selected</if>>{$vlist.remark}</option><br>
                 </volist>
@@ -234,7 +234,7 @@
             签约人：
         </label>
         <div class="col-xs-12 col-sm-10">
-            <select name="signer_id" class="form-control bs-select" title="请选择..."  data-style="btn-success btn-sm" data-container="body">
+            <select name="signer_id" class="form-control bs-select" title="请选择..." data-style="btn-success btn-sm"  data-live-search="true" data-container="body">
                 <volist name="pub_info" id="signer">
                     <option value="{$signer.main_id}" <if condition="$signer['main_id'] eq $vinfo['signer_id']">selected</if>>{$signer.remark}</option>
                 </volist>
@@ -247,7 +247,7 @@
             驻店人：
         </label>
         <div class="col-xs-12 col-sm-10">
-            <select name="residenter_id" class="form-control bs-select" title="请选择..."  data-style="btn-success btn-sm" data-container="body">
+            <select name="residenter_id" class="form-control bs-select" title="请选择..." data-style="btn-success btn-sm"  data-live-search="true" data-container="body">
                 <volist name="pub_info" id="residenter">
                     <option value="{$residenter.main_id}" <if condition="$residenter['main_id'] eq $vinfo['residenter_id']">selected</if>>{$residenter.remark}</option><br>
                 </volist>
