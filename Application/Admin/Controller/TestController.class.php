@@ -637,84 +637,17 @@ class TestController extends Controller {
         $data = M()->query($sql);
         $data = array();
         foreach($data  as $key=>$v){
-            $hotel_info = array();
-            $hotel_ext_info = array();
             $hotel_id = $v['id'];
-            /*
-            $hotel_info['name']      = $v['name'];
-            $hotel_info['addr']      = $v['addr'];
-            $hotel_info['area_id']   = $v['area_id'];
-            $hotel_info['county_id'] = $v['county_id'];
-            $hotel_info['media_id']  = $v['media_id'];
-            $hotel_info['contractor']= $v['contractor'];
-            $hotel_info['mobile']    = $v['mobile'];
-            $hotel_info['tel']       = $v['tel'];
-            $hotel_info['maintainer']= $v['maintainer'];
-            $hotel_info['level']     = $v['level'];
-            $hotel_info['iskey']     = $v['iskey'];
-            $hotel_info['install_date'] = $v['install_date'];
-            $hotel_info['state']     = $v['state'];
-            $hotel_info['state_change_reason'] = $v['state_change_reason'];
-            $hotel_info['gps']       = $v['gps'];
-            $hotel_info['remark']    = $v['remark'];
-            $hotel_info['hotel_box_type'] = $v['hotel_box_type'];
-            $hotel_info['create_time']=$v['create_time'];
-            $hotel_info['update_time']=$v['update_time'];
-            $hotel_info['flag']      = $v['flag'];
-            $hotel_info['tech_maintainer'] = $v['tech_maintainer'];
-            $hotel_info['remote_id'] = $v['remote_id'];
-            $hotel_info['hotel_wifi']= $v['hotel_wifi'];
-            $hotel_info['hotel_wifi_pas'] = $v['hotel_wifi_pas'];
-            $hotel_info['bill_per']  = $v['bill_per'];
-            $hotel_info['collection_company'] = $v['collection_company'];
-            $hotel_info['bank_account'] = $v['bank_account'];
-            $hotel_info['bank_name'] = $v['bank_name'];
-            $hotel_info['is_4g']     = $v['is_4g'];
-            */
             $hotel_info = $v;
             $hotel_cache_key = C('DB_PREFIX').'hotel_'.$hotel_id;
             $redis->set($hotel_cache_key, json_encode($hotel_info));
 
-            /* $hotel_ext_info['mac_addr'] = $v['mac_addr'];
-            $hotel_ext_info['ip_local'] = $v['ip_local'];
-            $hotel_ext_info['ip']       = $v['ip'];
-            $hotel_ext_info['server_location'] = $v['server_location'];
-            $hotel_ext_info['tag']      = $v['tag'];
-            $hotel_ext_info['hotel_id'] = $v['hotel_id'];
-            $hotel_ext_info['is_open_customer'] = $v['is_open_customer'];
-            $hotel_ext_info['maintainer_id'] = $v['maintainer_id'];
-            $hotel_ext_info['adplay_num'] = $v['adplay_num'];
-            $hotel_ext_info['food_style_id'] = $v['food_style_id'];
-            $hotel_ext_info['avg_expense']= $v['avg_expense'];
-            $hotel_ext_info['hotel_cover_media_id'] = $v['hotel_cover_media_id'];
-            $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
-            $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
-            $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info)); */
         }
         $sql ="select * from savor_hotel_ext";
         $data = M()->query($sql);
         $data = array();
         foreach ($data as $key=>$v){
              $hotel_id = $v['hotel_id'];
-             $hotel_ext_info = array();
-             /*
-             $hotel_ext_info['mac_addr'] = $v['mac_addr'];
-             $hotel_ext_info['ip_local'] = $v['ip_local'];
-             $hotel_ext_info['ip']       = $v['ip'];
-             $hotel_ext_info['server_location'] = $v['server_location'];
-             $hotel_ext_info['tag']      = $v['tag'];
-             $hotel_ext_info['hotel_id'] = $v['hotel_id'];
-             $hotel_ext_info['is_open_customer'] = $v['is_open_customer'];
-             $hotel_ext_info['is_open_integral'] = $v['is_open_integral'];
-             $hotel_ext_info['maintainer_id'] = $v['maintainer_id'];
-             $hotel_ext_info['adplay_num'] = $v['adplay_num'];
-             $hotel_ext_info['food_style_id'] = $v['food_style_id'];
-             $hotel_ext_info['avg_expense']= $v['avg_expense'];
-             $hotel_ext_info['hotel_cover_media_id'] = $v['hotel_cover_media_id'];
-             $hotel_ext_info['contract_expiretime']  = $v['contract_expiretime'];
-             $hotel_ext_info['activity_contact']     = $v['activity_contact'];
-             $hotel_ext_info['activity_phone']       = $v['activity_phone'];
-             */
              $hotel_ext_cache_key = C('DB_PREFIX').'hotel_ext_'.$hotel_id;
              $hotel_ext_info = $v;
              $redis->set($hotel_ext_cache_key, json_encode($hotel_ext_info));
@@ -745,44 +678,15 @@ class TestController extends Controller {
         $sql = "select box.* from savor_box box
                 left join savor_room room on box.room_id=room.id
                 left join savor_hotel hotel on room.hotel_id=hotel.id
-                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0 and hotel.area_id=1";
+                where hotel.state=1 and hotel.flag=0 and box.state=1 and box.flag=0";
         $data = M()->query($sql);
         $flag = 0;
         $data = array();
         foreach($data as $key=>$v){
 
-            $sql ="update savor_box set switch_time=30 where id=".$v['id'].' limit 1';
-            //echo $sql;exit;
-            M()->execute($sql);
-
-            $box_info = array();
+//            $sql ="update savor_box set switch_time=30 where id=".$v['id'].' limit 1';
+//            M()->execute($sql);
             $box_id = $v['id'];
-            /*
-            $box_info['id']      = $v['id'];
-            $box_info['room_id'] = $v['room_id'];
-            $box_info['name']    = $v['name'];
-            $box_info['mac']     = $v['mac'];
-            $box_info['switch_time'] = 30;
-            $box_info['volum']   = $v['volum'];
-            $box_info['tag']     = $v['tag'];
-            $box_info['device_token'] = $v['device_token'];
-            $box_info['state']   = $v['state'];
-            $box_info['flag']    = $v['flag'];
-            $box_info['create_time'] = $v['create_time'];
-            $box_info['update_time'] = $v['update_time'];
-            $box_info['adv_mach']    = $v['adv_mach'];
-            $box_info['tpmedia_id']  = $v['tpmedia_id'];
-            $box_info['qrcode_type'] = $v['qrcode_type'];
-            $box_info['is_sapp_forscreen'] = $v['is_sapp_forscreen'];
-            $box_info['is_4g']       = $v['is_4g'];
-            $box_info['box_type']    = $v['box_type'];
-            $box_info['wifi_name']   = $v['wifi_name'];
-            $box_info['wifi_password']=$v['wifi_password'];
-            $box_info['wifi_mac']    = $v['wifi_mac'];
-            $box_info['is_open_simple'] = $v['is_open_simple'];
-            $box_info['is_open_interactscreenad'] = $v['is_open_interactscreenad'];
-            $box_info['is_open_signin'] = $v['is_open_signin'];
-            */
             $box_info = $v;
             $box_cache_key = C('DB_PREFIX').'box_'.$box_id;
             $redis->set($box_cache_key, json_encode($box_info));
@@ -4434,5 +4338,43 @@ from savor_smallapp_static_hotelassess as a left join savor_hotel_ext as ext on 
         }
         print_r($all_hotels);
         echo join(',',$all_task_ids);
+    }
+
+    public function repeatvoucher(){
+        $file_path = '/application_data/web/php/savor_admin/Public/content/20240221huikuan.xls';
+
+        vendor("PHPExcel.PHPExcel.IOFactory");
+        vendor("PHPExcel.PHPExcel");
+
+        $inputFileType = \PHPExcel_IOFactory::identify($file_path);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($file_path);
+
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $all_datas = array();
+        for ($row = 2; $row<=$highestRow; $row++){
+            $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE);
+            $sale_id = $rowData[0][3];
+            $idcode = $rowData[0][4];
+            $all_datas[$sale_id][]=$rowData[0];
+        }
+        $error_sales = array();
+        $m_sale = new \Admin\Model\FinanceSaleModel();
+        foreach ($all_datas as $k=>$v){
+            if(count($v)>2){
+                $v_money = 0;
+                foreach ($v as $vv){
+                    $v_money+=intval($vv[1]);
+                }
+                $res_sale = $m_sale->getInfo(array('id'=>$k));
+                if($v_money>$res_sale['goods_settlement_price']){
+                    $error_sales[]=$k;
+                }
+
+            }
+        }
+        echo join("\n",$error_sales);
     }
 }
