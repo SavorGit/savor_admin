@@ -34,6 +34,7 @@
               <th>ID</th>
               <th>酒楼ID</th>
               <th>酒楼名称</th>
+              <th>酒楼特殊价格</th>
               <th>城市</th>
               <th>添加时间</th>
               <th class="table-tool">操作</th>
@@ -42,10 +43,11 @@
           <tbody data-check="list" data-parent=".table">
             <foreach name="datalist" item="dinfo">
             <tr target="sid_user">
-              <td data-title="ID"><a class="click-able-title">{$dinfo.id}</a></td>
-              <td data-title="酒楼ID"><a class="click-able-title">{$dinfo.hotel_id}</a></td>
+              <td data-title="ID">{$dinfo.id}</td>
+              <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
-              <td data-title="酒楼名称">{$dinfo.region_name}</td>
+              <td data-title="酒楼价格">{$dinfo.hotel_price}</td>
+              <td data-title="城市">{$dinfo.region_name}</td>
               <td data-title="添加时间">{$dinfo.add_time}</td>
               <td class="table-tool" data-title="操作">
                 <div class="tools-edit">
