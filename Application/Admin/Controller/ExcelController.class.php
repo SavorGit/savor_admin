@@ -6376,7 +6376,9 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
         $not_hotel_in = '201,1129,925,791,7,883,845,598,597,504,482,493,53';
         $sql = "select area.region_name,hotel.name hotel_name ,room.name room_name,user.remark,
         box.mac box_mac,hlog.last_heart_time ,box.id box_id ,hlog.box_id hlog_box_id,hlog.pro_period,
-        hlog.apk_version
+        hlog.apk_version,case ext.is_salehotel 
+				when 1 then '是'
+				when 0 then '否' END AS is_salehotel
         from savor_box box
         left join savor_room room on box.room_id= room.id
         left join savor_hotel hotel on room.hotel_id=hotel.id
@@ -6484,6 +6486,10 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             array(
                 'expire_days',
                 '节目单过期天数'
+            ),
+            array(
+                'is_salehotel',
+                '是否售酒餐厅'
             )
         );
         $xlsName = '网络版位节目单更新状态表';
@@ -6527,6 +6533,7 @@ on ext.food_style_id=food.id where hotel.state=1 and hotel.flag=0 and hotel.type
             $mail->AddAddress("xin.lijuan@littlehotspot.com");
             $mail->AddAddress("cao.jie@littlehotspot.com");
             $mail->AddAddress("ma.feng@littlehotspot.com");
+            $mail->AddAddress("xiao.lei@littlehotspot.com");
             
             $mail->AddAddress("zhang.lijuan@littlehotspot.com");
             $mail->AddAddress("he.yongrui@littlehotspot.com");
