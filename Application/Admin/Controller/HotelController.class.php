@@ -504,6 +504,7 @@ class HotelController extends BaseController {
 			$vinfo['cooperate_status'] = $main_info['cooperate_status'];
 			$vinfo['department_name'] = $main_info['department_name'];
 			$vinfo['team_name'] = $main_info['team_name'];
+			$vinfo['service_fee'] = $main_info['service_fee'];
             $trainer_id = $main_info['trainer_id'];
 			if(!empty($vinfo['media_id'])){
 				$mediaModel = new \Admin\Model\MediaModel();
@@ -771,6 +772,7 @@ class HotelController extends BaseController {
         $signer_id = I('post.signer_id',0,'intval');
         $is_goods_roll_content = I('post.is_goods_roll_content',0,'intval');
         $is_goods_leftpop_wind = I('post.is_goods_leftpop_wind',0,'intval');
+        $service_fee = I('post.service_fee',0,'intval');
         $is_new = I('post.is_new',0,'intval');
         $trade_area_type = I('post.trade_area_type',0,'intval');
         $jd_custom_no = I('post.jd_custom_no','','trim');
@@ -946,6 +948,7 @@ class HotelController extends BaseController {
         $data['is_new'] = $is_new;
         $data['trade_area_type'] = $trade_area_type;
         $data['department_name'] = $department_name;
+        $data['service_fee'] = $service_fee;
         $data['team_name'] = $team_name;
         $data['jd_custom_no'] = $jd_custom_no;
         $data['dp_comment_num'] = $dp_comment_num;
