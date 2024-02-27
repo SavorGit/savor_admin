@@ -165,7 +165,7 @@ class ExporthotelController extends BaseController{
 
         $sql ="select a.id as hotel_id,a.name as hotel_name,a.addr,area.region_name as area_name,a.county_id,a.business_circle_id,county.region_name as country_name,circle.name as circle_name,
             ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name,ext.is_salehotel,
-            ext.avg_expense,a.contractor,a.mobile,a.tel
+            ext.avg_expense,a.contractor,a.mobile,a.tel,ext.department_name,ext.team_name
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id 
             left join savor_area_info as area on a.area_id=area.id
             left join savor_area_info as county on a.county_id = county.id 
@@ -278,6 +278,8 @@ class ExporthotelController extends BaseController{
         $cell = array(
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
+            array('department_name','部门'),
+            array('team_name','小组'),
             array('area_name','城市'),
             array('country_name','区域'),
             array('circle_name','商圈'),
@@ -344,6 +346,109 @@ class ExporthotelController extends BaseController{
 
         $now_time = date('Y-m-d H:i:s');
         echo "cooperatehotel end:$now_time \r\n";
+    }
+
+
+    public function abnormalpricehotels(){
+        $now_time = date('Y-m-d H:i:s');
+        echo "abnormalpricehotels start:$now_time \r\n";
+
+        $start_date = date('Y-m-d',strtotime('-7 day'));
+        $end_date = date('Y-m-d',strtotime('-1 day'));
+        $start_time = "$start_date 00:00:00";
+        $end_time = "$end_date 23:59:59";
+
+        $where = array('dg.status'=>1,'dg.type'=>43,'a.hotel_price'=>array('gt',0),
+            'a.update_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        $where['h.id'] = array('not in',C('TEST_HOTEL'));
+        $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.team_name,
+        a.goods_id,dg.name as goods_name,a.hotel_price,a.update_time,dg.price';
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $datalist = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.hotel_id desc');
+
+        $cell = array(
+            array('hotel_id','酒楼ID'),
+            array('hotel_name','酒楼名称'),
+            array('area_name','城市'),
+            array('department_name','部门'),
+            array('team_name','小组'),
+            array('area_name','城市'),
+            array('goods_id','酒水ID'),
+            array('goods_name','酒水名称'),
+            array('hotel_price','酒水价格'),
+            array('price','公司售价'),
+        );
+
+        $filename = '未按照公司定价售酒酒楼明细';
+        $file_path = $this->exportToExcel($cell,$datalist,$filename,2);
+        $now_file_path = SITE_TP_PATH .$file_path;
+
+        $title = $filename.'-' . $start_date.'至'.$end_date;
+        $body = '导出未按照公司定价售酒酒楼明细，详情见附件';
+        $mail_config = C('SEND_MAIL_CONF');
+        $mail_config = $mail_config['littlehotspot'];
+        $ma_auto = new MailAuto();
+        $mail = new \Mail\PHPMailer();
+        $mail->CharSet = "UTF-8";
+        $mail->IsSMTP();
+        $mail->Host = $mail_config['host'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $mail_config['username'];
+        $mail->Password = $mail_config['password'];
+        $mail->Port = 465;
+        $mail->From = $mail_config['username'];
+        $mail->FromName = $title;
+        $mail->IsHTML(true);
+
+        $mail->Subject = $title;
+        $mail->Body = $body;
+        $mail->AddAddress("liu.bin@littlehotspot.com");
+        $mail->AddAttachment($now_file_path); // 添加附件
+        if ($mail->Send()) {
+            echo date('Y-m-d') . '邮件发送成功'."\n";
+        } else {
+            echo date('Y-m-d') . '邮件发送失败'."\n";
+        }
+        $mail->ClearAddresses();
+        $mail->ClearAttachments();
+
+        $department_datas = array();
+        foreach($datalist as $v){
+            if(!empty($v['department_name'])){
+                $department_datas[$v['department_name']][]=$v;
+            }
+        }
+        $email_map = array('北京一部'=>'li.cong@littlehotspot.com','北京二部'=>'sun.zijia@littlehotspot.com',
+            '广州一部'=>'wu.lin@littlehotspot.com','广州二部'=>'xie.binglei@littlehotspot.com',
+            '上海一部'=>'cao.jie@littlehotspot.com','佛山一部'=>'xiao.lei@littlehotspot.com'
+        );
+        foreach ($department_datas as $k=>$v){
+            if(isset($email_map[$k])){
+                $email = $email_map[$k];
+            }else{
+                continue;
+            }
+
+            $now_filename = $k.$filename;
+            $file_path = $this->exportToExcel($cell,$datalist,$now_filename,2);
+            $now_file_path = SITE_TP_PATH .$file_path;
+            $now_body = $k.$body;
+
+            $mail->Body = $now_body;
+            $mail->AddAddress($email);
+            $mail->AddAttachment($now_file_path); // 添加附件
+            if ($mail->Send()) {
+                echo date('Y-m-d') . '邮件发送成功'."\n";
+            } else {
+                echo date('Y-m-d') . '邮件发送失败'."\n";
+            }
+            $mail->ClearAddresses();
+            $mail->ClearAttachments();
+        }
+
+
+        $now_time = date('Y-m-d H:i:s');
+        echo "abnormalpricehotels end:$now_time \r\n";
     }
     
 }
