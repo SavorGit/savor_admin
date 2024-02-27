@@ -78,8 +78,8 @@ class SellwineController extends BaseController {
         }
         $where['hotel.id'] = array('not in',C('TEST_HOTEL'));
         $start  = ($page-1) * $size;
-        $fields = 'a.hotel_id,hotel.name as hotel_name,hotel.area_id,area.region_name as area_name,
-                   county.region_name county_name,su.remark as maintainer,
+        $fields = 'a.hotel_id,hotel.name as hotel_name,a.department_name,a.team_name,
+        hotel.area_id,area.region_name as area_name,county.region_name county_name,su.remark as maintainer,
         a.sale_start_date,a.sale_end_date,a.trade_area_type,susigner.remark as signer,a.sale3bottle_time';
         $m_hotel_ext = new \Admin\Model\HotelExtModel();
         $result = $m_hotel_ext->getSellwineList($fields,$where,'hotel.pinyin asc',$start,$size);
@@ -253,6 +253,46 @@ class SellwineController extends BaseController {
         $this->assign('hotels', $hotels);
         $this->assign('hotel_id', $hotel_id);
         $this->assign('dinfo', $data);
+        $this->display();
+    }
+
+    public function abnormalpricehotels(){
+        $page = I('pageNum',1);
+        $size   = I('numPerPage',50);//显示每页记录数
+        $start_time = I('start_time','');
+        $end_time = I('end_time','');
+        $keyword = I('keyword','','trim');
+
+        if(empty($start_time)){
+            $start_time = date('Y-m-d',strtotime('-1 month'));
+        }else{
+            $start_time = date('Y-m-d',strtotime($start_time));
+        }
+        if(empty($end_time)){
+            $end_time = date('Y-m-d');
+        }else{
+            $end_time = date('Y-m-d',strtotime($end_time));
+        }
+        $where = array('dg.status'=>1,'dg.type'=>43,'a.hotel_price'=>array('gt',0),
+            'a.update_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+        if(!empty($keyword)){
+            $where['h.name'] = array('like',"%$keyword%");
+        }
+//        $where['h.id'] = array('not in',C('TEST_HOTEL'));
+        $start  = ($page-1) * $size;
+        $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.team_name,
+        a.goods_id,dg.name as goods_name,a.hotel_price,a.update_time,dg.price';
+        $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
+        $result = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.hotel_id desc', $start,$size);
+        $datalist = $result['list'];
+
+        $this->assign('start_time',date('Y-m-d',strtotime($start_time)));
+        $this->assign('end_time',date('Y-m-d',strtotime($end_time)));
+        $this->assign('keyword', $keyword);
+        $this->assign('datalist', $datalist);
+        $this->assign('page',  $result['page']);
+        $this->assign('pageNum',$page);
+        $this->assign('numPerPage',$size);
         $this->display();
     }
 }

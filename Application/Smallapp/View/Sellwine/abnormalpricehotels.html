@@ -1,7 +1,7 @@
 <include file="Public/script"/>
 <!--显示列表样式1 start-->
 <div class="pageHeader">
-  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/sellwine/salelist" method="post">
+  <form onsubmit="return navTabSearch(this);" id="pagerForm" action="{$host_url}/smallapp/sellwine/abnormalpricehotels" method="post">
       <input type="hidden" name="pageNum" value="{$pageNum}"/>
       <input type="hidden" name="numPerPage" value="{$numPerPage}"/>
     <div class="searchBar">
@@ -43,9 +43,6 @@
             </div>
           </div>
 
-          <div class="input-group input-group-sm pull-right">
-            <a class="btn btn-success btn-sm add" href="{$host_url}/Dataexport/hotel/sellwinehotelsaledata?start_time={$start_time}&end_time={$end_time}" title="导出统计数据" target="_blank" mask="true"><i class="fa fa-plus"></i> 导出统计数据</a>
-          </div>
 
         </div>
 
@@ -62,21 +59,14 @@
             <tr id="post">
               <th>酒楼ID</th>
               <th>酒楼名称</th>
+              <th>城市</th>
               <th>部门</th>
               <th>小组</th>
-              <th>城市</th>
-              <th>城区</th>
-              <th>维护人</th>
-              <th>签约人</th>
-              <th>商圈类型</th>
-              <th>开启售酒日期</th>
-              <th>首次进店时间</th>
-              <th>首次销售时间</th>
-              <th>销量</th>
-              <th>撤店日期</th>
-              <th>合同签署日期</th>
-              <th>合同归档日期</th>
-              <th>首次达标日期</th>
+              <th>酒水ID</th>
+              <th>酒水名称</th>
+              <th>酒水价格</th>
+              <th>公司售价</th>
+              <th>更改时间</th>
             </tr>
           </thead>
           <tbody data-check="list" data-parent=".table">
@@ -84,21 +74,14 @@
             <tr target="sid_user">
               <td data-title="酒楼ID">{$dinfo.hotel_id}</td>
               <td data-title="酒楼名称">{$dinfo.hotel_name}</td>
+              <td data-title="城市">{$dinfo.area_name}</td>
               <td data-title="部门">{$dinfo.department_name}</td>
               <td data-title="小组">{$dinfo.team_name}</td>
-              <td data-title="城市">{$dinfo.area_name}</td>
-              <td data-title="城区">{$dinfo.county_name}</td>
-              <td data-title="维护人">{$dinfo.maintainer}</td>
-              <td data-title="签约人">{$dinfo.signer}</td>
-              <td data-title="商圈类型">{$dinfo.trade_area_type_str}</td>
-              <td data-title="开启售酒时间">{$dinfo.sale_start_date}</td>
-              <td data-title="首次进店时间">{$dinfo.in_hotel_date}</td>
-              <td data-title="首次销售时间">{$dinfo.sell_date}</td>
-              <td data-title="销量">{$dinfo.sell_num}</td>
-              <td data-title="撤店日期">{$dinfo.sale_end_date}</td>
-              <td data-title="合同签署日期">{$dinfo.sign_time}</td>
-              <td data-title="合同归档日期">{$dinfo.archive_time}</td>
-              <td data-title="首次达标日期">{$dinfo.sale3bottle_time}</td>
+              <td data-title="酒水ID">{$dinfo.goods_id}</td>
+              <td data-title="酒水名称">{$dinfo.goods_name}</td>
+              <td data-title="酒水价格">{$dinfo.hotel_price}</td>
+              <td data-title="公司售价">{$dinfo.price}</td>
+              <td data-title="更改时间">{$dinfo.update_time}</td>
             </tr>
           </volist>
 
