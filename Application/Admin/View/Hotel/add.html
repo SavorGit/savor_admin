@@ -255,6 +255,34 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            城市部门：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select name="department_name" class="form-control bs-select" data-container="body" required>
+                <option value="">请选择</option>
+                <volist name=":C('DEPARTMENT_NAME')" id="dmt_name">
+                    <option value="{$dmt_name}" <if condition="$dmt_name eq $vinfo['department_name']">selected</if>>{$dmt_name}</option>
+                </volist>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2 control-label">
+            小组名称：
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <select name="team_name" class="form-control bs-select class-filter" data-live-search="true" data-container="body" required>
+                <option value="">请选择</option>
+                <volist name=":C('TEAM_NAME')" id="tm_name">
+                    <option value="{$tm_name}" <if condition="$tm_name eq $vinfo['team_name']">selected</if>>{$tm_name}</option>
+                </volist>
+            </select>
+        </div>
+    </div>
+
         <div class="form-group row">
             <label class="col-xs-12 col-sm-2 control-label">
                 技术运维人：
