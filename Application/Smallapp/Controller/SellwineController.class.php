@@ -274,7 +274,7 @@ class SellwineController extends BaseController {
             $end_time = date('Y-m-d',strtotime($end_time));
         }
         $where = array('dg.status'=>1,'dg.type'=>43,'a.hotel_price'=>array('gt',0),
-            'a.update_time'=>array(array('egt',$start_time),array('elt',$end_time)));
+            'a.update_time'=>array(array('egt',"$start_time 00:00:00"),array('elt',"$end_time 23:59:59")));
         if(!empty($keyword)){
             $where['h.name'] = array('like',"%$keyword%");
         }
