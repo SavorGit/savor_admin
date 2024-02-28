@@ -362,7 +362,7 @@ class ExporthotelController extends BaseController{
             'a.update_time'=>array(array('egt',$start_time),array('elt',$end_time)));
         $where['h.id'] = array('not in',C('TEST_HOTEL'));
         $fields = 'a.hotel_id,h.name as hotel_name,area.region_name as area_name,ext.department_name,ext.team_name,
-        a.goods_id,dg.name as goods_name,a.hotel_price,a.update_time,dg.price';
+        ext.bdm_name,a.goods_id,dg.name as goods_name,a.hotel_price,a.update_time,dg.price';
         $m_hotelgoods = new \Admin\Model\Smallapp\HotelGoodsModel();
         $datalist = $m_hotelgoods->getHotelgoodsList($fields,$where,'a.hotel_id desc');
 
@@ -412,17 +412,14 @@ class ExporthotelController extends BaseController{
         $mail->ClearAddresses();
         $mail->ClearAttachments();
 
-        $department_datas = array();
+        $bdm_datas = array();
         foreach($datalist as $v){
-            if(!empty($v['department_name'])){
-                $department_datas[$v['department_name']][]=$v;
+            if(!empty($v['bdm_name'])){
+                $bdm_datas[$v['bdm_name']][]=$v;
             }
         }
-        $email_map = array('北京一部'=>'li.cong@littlehotspot.com','北京二部'=>'sun.zijia@littlehotspot.com',
-            '广州一部'=>'wu.lin@littlehotspot.com','广州二部'=>'xie.binglei@littlehotspot.com',
-            '上海一部'=>'cao.jie@littlehotspot.com','佛山一部'=>'xiao.lei@littlehotspot.com'
-        );
-        foreach ($department_datas as $k=>$v){
+        $email_map = C('BDM_NAME');
+        foreach ($bdm_datas as $k=>$v){
             if(isset($email_map[$k])){
                 $email = $email_map[$k];
             }else{
