@@ -123,27 +123,14 @@ class ResidentController extends BaseController{
                 if($wk==5)  $sale_week6_num=intval($res_week_stock_record[0]['num']);
             }
 
-            $sale_where = array('stock.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$month_start_time),array('elt',$month_end_time)));
+            $sale_where = array('a.hotel_id'=>$hotel_id,'record.wo_reason_type'=>1,'a.add_time'=>array(array('egt',$month_start_time),array('elt',$month_end_time)));
             $sale_where['a.ptype'] = array('in','0,2');
-            $res_sale_qk = $m_sale->getSaleStockRecordList('a.id as sale_id,a.settlement_price,a.ptype,a.is_expire,a.add_time',$sale_where,'','');
-            $qk_money = 0;
-            $cqqk_money = 0;
-            if(!empty($res_sale_qk)){
-                foreach ($res_sale_qk as $salev){
-                    if($salev['ptype']==0){
-                        $now_money = $salev['settlement_price'];
-                    }else{
-                        $res_had_pay = $m_sale_payment_record->getRow('sum(pay_money) as total_pay_money',array('sale_id'=>$salev['sale_id']));
-                        $had_pay_money = intval($res_had_pay['total_pay_money']);
-                        $now_money = $salev['settlement_price']-$had_pay_money;
-                    }
-                    $qk_money+=$now_money;
-                    if($salev['is_expire']==1){
-                        $cqqk_money+=$now_money;
-                    }
-                }
-            }
-            $cqqk_money = abs($cqqk_money);
+            $res_sale_qk = $m_sale->getSaleStockRecordList('sum(a.settlement_price-a.pay_money) as money',$sale_where,'','');
+            $qk_money = $res_sale_qk[0]['money']>0?$res_sale_qk[0]['money']:0;
+
+            $sale_where['a.is_expire'] = 1;
+            $res_sale_qk = $m_sale->getSaleStockRecordList('sum(a.settlement_price-a.pay_money) as money',$sale_where,'','');
+            $cqqk_money = $res_sale_qk[0]['money']>0?$res_sale_qk[0]['money']:0;
 
             $res_merchant = $m_merchant->getMerchants('a.id,a.is_shareprofit',array('a.hotel_id'=>$hotel_id,'a.status'=>1),'');
             $is_shareprofit = 0;
@@ -156,7 +143,6 @@ class ResidentController extends BaseController{
                 }else{
                     $is_shareprofit_str = '否';
                 }
-
                 $res_staff_num = $m_staff->getRow('count(*) as num',array('merchant_id'=>$res_merchant[0]['id'],'status'=>1));
                 $sale_people_num = intval($res_staff_num['num']);
             }
