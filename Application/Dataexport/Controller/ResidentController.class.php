@@ -100,7 +100,7 @@ class ResidentController extends BaseController{
         $month_end_time = "$endOfMonth 23:59:59";
         $month = date('m',strtotime($month_start_time));
         $weeks = $this->getWeeksMonth($year,$month);
-
+        $test_hotel_ids = join(',',C('TEST_HOTEL'));
         $sql ="select a.id as hotel_id,a.name as hotel_name,a.area_id,area.region_name as area_name,circle.name circle_name,
             ext.signer_id,ext.residenter_id,signer.remark as signer_name,residenter.remark as residenter_name
             from savor_hotel as a left join savor_hotel_ext as ext on a.id=ext.hotel_id
@@ -108,7 +108,7 @@ class ResidentController extends BaseController{
             left join savor_business_circle as circle on a.business_circle_id = circle.id
             left join savor_sysuser signer on ext.signer_id=signer.id
             left join savor_sysuser residenter on ext.residenter_id=residenter.id
-            where a.state=1 and a.flag=0 and ext.is_salehotel=1 and a.area_id={$area_id} order by a.id desc";
+            where a.state=1 and a.flag=0 and ext.is_salehotel=1 and a.area_id={$area_id} and a.id not in ($test_hotel_ids) order by a.id desc";
         $result = M()->query($sql);
         $m_room = new \Admin\Model\RoomModel();
         $m_sale = new \Admin\Model\FinanceSaleModel();
