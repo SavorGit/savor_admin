@@ -28,8 +28,38 @@ class ResidentController extends BaseController{
     public function selldata(){
         $area_id = I('get.area_id',1,'intval');
         $month = I('get.month',1,'intval');
-        $year = date('Y');
 
+        $cache_key = 'cronscript:resident:selldata'.$area_id.$month;
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $res = $redis->get($cache_key);
+        if(!empty($res)){
+            if($res == 1){
+                $this->success('数据正在生成中,请稍后访问下载');
+            }else{
+                //下载
+                $file_name = $res;
+                $file_path = SITE_TP_PATH.$file_name;
+                $file_size = filesize($file_path);
+                header("Content-type:application/octet-tream");
+                header('Content-Transfer-Encoding: binary');
+                header("Content-Length:$file_size");
+                header("Content-Disposition:attachment;filename=".$file_name);
+                @readfile($file_path);
+            }
+        }else{
+            $shell = "/opt/install/php/bin/php /application_data/web/php/savor_admin/cli.php dataexport/resident/selldatascript/area_id/$area_id/month/$month > /tmp/null &";
+            system($shell);
+            $redis->set($cache_key,1,3600);
+            $this->success('数据正在生成中,请稍后访问下载');
+        }
+    }
+
+    public function selldatascript(){
+        $area_id = I('get.area_id',1,'intval');
+        $month = I('get.month',1,'intval');
+        $year = date('Y');
+        $cache_file_key = 'cronscript:resident:selldata'.$area_id.$month;
         $startOfMonth = date('Y-m-01', strtotime($year . '-' . $month . '-01'));
         $endOfMonth = date('Y-m-t', strtotime($year . '-' . $month . '-01'));
         /*
@@ -170,7 +200,6 @@ class ResidentController extends BaseController{
                 'is_shareprofit_str'=>$is_shareprofit_str,
             );
         }
-
         $cell = array(
             array('hotel_id','酒楼ID'),
             array('hotel_name','酒楼名称'),
@@ -192,11 +221,13 @@ class ResidentController extends BaseController{
             array('task_demand_finish_rate','点播任务完成率'),
             array('task_invitation_finish_rate','邀请函任务完成率'),
             array('is_shareprofit_str','是否分润'),
-
         );
 
         $filename = '驻店人员工作表';
-        $this->exportToExcel($cell,$datalist,$filename,1);
+        $path = $this->exportToExcel($cell,$datalist,$filename,2);
+        $redis  =  \Common\Lib\SavorRedis::getInstance();
+        $redis->select(1);
+        $redis->set($cache_file_key,$path,3600);
     }
 
     public function hotelselldata(){
