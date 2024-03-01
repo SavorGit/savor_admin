@@ -73,6 +73,10 @@ $config = array(
     ),
     'TEAM_NAME'=>array(
         '李丛'=>'li.cong@littlehotspot.com',
+        '曹捷'=>'cao.jie@littlehotspot.com',
+        '吴琳'=>'wu.lin@littlehotspot.com',
+        '谢冰蕾'=>'xie.binglei@littlehotspot.com',
+        '肖雷'=>'xiao.lei@littlehotspot.com',
         '辛立娟'=>'xin.lijuan@littlehotspot.com',
         '卢琼'=>'lu.qiong@littlehotspot.com',
         '张松'=>'zhang.song@littlehotspot.com',
