@@ -87,7 +87,6 @@ class UserModel extends Model{
             ->group($group)
             ->select();
         return $res;
-        return $result;
     }
 
     public function getUserCount($where){
