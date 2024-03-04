@@ -155,6 +155,8 @@ class ExporthotelController extends BaseController{
     }
 
     public function cooperatehotel(){
+        echo '暂停使用';
+        exit;
         $now_time = date('Y-m-d H:i:s');
         echo "cooperatehotel start:$now_time \r\n";
 
@@ -669,17 +671,22 @@ class ExporthotelController extends BaseController{
         $mail->AddAddress("alex.liu@littlehotspot.com");
         $mail->AddAddress("xie.yunhang@littlehotspot.com");
         $mail->AddAddress("hu.shunhua@littlehotspot.com");
+        $mail->AddAddress("jiang.gongjing@littlehotspot.com");
+        $mail->AddAddress("ma.feng@littlehotspot.com");
+        $mail->AddAddress("he.yongrui@littlehotspot.com");
+        $mail->AddAddress("pang.mengying@littlehotspot.com");
+        $mail->AddAddress("zhao.cuiyan@littlehotspot.com");
         $mail->AddAttachment($now_file_path); // 添加附件
         if ($mail->Send()) {
-            echo "email: 4num send ok \r\n";
+            echo "email: 9num send ok \r\n";
         } else {
-            echo "email: 4num send fail \r\n";
+            echo "email: 9num send fail \r\n";
         }
         $mail->ClearAddresses();
         $mail->ClearAttachments();
 
         $now_time = date('Y-m-d H:i:s');
-        echo "email: 4num send,$now_time \r\n";
+        echo "email: 9num send,$now_time \r\n";
 
         $bdm_datas = array();
         $bd_datas = array();
